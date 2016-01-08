@@ -1,109 +1,127 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160108 build: 0 failures 9 warnings (next-20160108)
-Date: Fri, 08 Jan 2016 11:01:02 +0000
-Message-ID: <E1aHUn0-0002LO-JW@optimist>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 8 Jan 2016 07:53:41 -0800
+Message-ID: <20160108155341.GC3818@linux.vnet.ibm.com>
+References: <20160107195725.3a130b4d@canb.auug.org.au>
+ <20160107180244.GR3818@linux.vnet.ibm.com>
+ <20160108071932.060a9bcc@canb.auug.org.au>
+ <20160107205220.GU3818@linux.vnet.ibm.com>
+ <20160108013631.GA11410@fixme-laptop.cn.ibm.com>
+ <20160108034157.GZ3818@linux.vnet.ibm.com>
+ <20160108150850.1ec97e78@canb.auug.org.au>
+ <20160108044835.GB3818@linux.vnet.ibm.com>
+ <20160108045453.GB4300@fixme-laptop.cn.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41747 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754687AbcAHLBL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jan 2016 06:01:11 -0500
+Received: from e31.co.us.ibm.com ([32.97.110.149]:47207 "EHLO
+	e31.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755497AbcAHPxh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jan 2016 10:53:37 -0500
+Received: from localhost
+	by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Fri, 8 Jan 2016 08:53:36 -0700
+Content-Disposition: inline
+In-Reply-To: <20160108045453.GB4300@fixme-laptop.cn.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>
 
-Tree/Branch: next-20160108
-Git describe: next-20160108
-Commit: e04c94f10a Add linux-next specific files for 20160108
+On Fri, Jan 08, 2016 at 12:54:53PM +0800, Boqun Feng wrote:
+> On Thu, Jan 07, 2016 at 08:48:35PM -0800, Paul E. McKenney wrote:
+> > On Fri, Jan 08, 2016 at 03:08:50PM +1100, Stephen Rothwell wrote:
+> > > Hi Paul,
+> > > 
+> > > On Thu, 7 Jan 2016 19:41:57 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > > >
+> > > > Indeed, I suspect that SRCU might not be the only thing that would like
+> > > > static per-CPU variables.  ;-)
+> > > 
+> > > from include/linux/percpu-defs.h:
+> > > 
+> > >  * s390 and alpha modules require percpu variables to be defined as
+> > >  * weak to force the compiler to generate GOT based external
+> > >  * references for them.  This is necessary because percpu sections
+> > >  * will be located outside of the usually addressable area.
+> > >  *
+> > >  * This definition puts the following two extra restrictions when
+> > >  * defining percpu variables.
+> > >  *
+> > >  * 1. The symbol must be globally unique, even the static ones.
+> > >  * 2. Static percpu variables cannot be defined inside a function.
+> > >  *
+> > >  * Archs which need weak percpu definitions should define
+> > >  * ARCH_NEEDS_WEAK_PER_CPU in asm/percpu.h when necessary.
+> > >  *
+> > >  * To ensure that the generic code observes the above two
+> > >  * restrictions, if CONFIG_DEBUG_FORCE_WEAK_PER_CPU is set weak
+> > >  * definition is used for all cases.
+> > > 
+> > > so they can be static, but must be globally unique.
+> 
+> Interesting ;-) Thank you.
+> 
+> > Thank you for the tutorial!  I have updated the patch to use a unique
+> > name for the srcu_struct added by rcuperf.c.
+> 
+> Plus a comment for DEFINE_STATIC_SRCU saying srcu can be defined as
+> static but must have a unique name for this reason?
 
-Build Time: 73 min 41 sec
+Yes, plus some words about how to work around the limitation.  How about
+the patch below?
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+							Thanx, Paul
 
-Errors: 0
-Warnings: 9
-Section Mismatches: 0
+------------------------------------------------------------------------
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+commit 61822ff81839ee3c5b6094ce348944d972b87892
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Fri Jan 8 07:43:50 2016 -0800
 
--------------------------------------------------------------------------------
+    rcu: Document unique-name limitation for DEFINE_STATIC_SRCU()
+    
+    SRCU uses per-CPU variables, and DEFINE_STATIC_SRCU() uses a static
+    per-CPU variable.  However, per-CPU variables have significant
+    restrictions, for example, names of per-CPU variables must be globally
+    unique, even if declared static.  These restrictions carry over to
+    DEFINE_STATIC_SRCU(), and this commit therefore documents these
+    restrictions.
+    
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Reported-by: kbuild test robot <fengguang.wu@intel.com>
+    Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-Warnings Summary: 9
-	  7 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 arch/arm/configs/multi_v7_defconfig:436:warning: symbol value 'm' invalid for MFD_DA9063
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:436:warning: symbol value 'm' invalid for MFD_DA9063
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index f5f80c5643ac..dc8eb63c6568 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -99,8 +99,23 @@ void process_srcu(struct work_struct *work);
+ 	}
+ 
+ /*
+- * define and init a srcu struct at build time.
+- * dont't call init_srcu_struct() nor cleanup_srcu_struct() on it.
++ * Define and initialize a srcu struct at build time.
++ * Do -not- call init_srcu_struct() nor cleanup_srcu_struct() on it.
++ *
++ * Note that although DEFINE_STATIC_SRCU() hides the name from other
++ * files, the per-CPU variable rules nevertheless require that the
++ * chosen name be globally unique.  These rules also prohibit use of
++ * DEFINE_STATIC_SRCU() within a function.  If these rules are too
++ * restrictive, declare the srcu_struct manually.  For example, in
++ * each file:
++ *
++ *	static struct srcu_struct my_srcu;
++ *
++ * Then, before the first use of each my_srcu, manually initialize it:
++ *
++ *	init_srcu_struct(&my_srcu);
++ *
++ * See include/linux/percpu-defs.h for the rules on per-CPU variables.
+  */
+ #define __DEFINE_SRCU(name, is_static)					\
+ 	static DEFINE_PER_CPU(struct srcu_struct_array, name##_srcu_array);\
