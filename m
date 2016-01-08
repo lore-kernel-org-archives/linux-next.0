@@ -1,44 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-updates tree with the rdma
- tree
-Date: Fri, 8 Jan 2016 15:34:57 +1100
-Message-ID: <20160108153457.2e08bfdf@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Thu, 7 Jan 2016 20:48:35 -0800
+Message-ID: <20160108044835.GB3818@linux.vnet.ibm.com>
+References: <20160107195725.3a130b4d@canb.auug.org.au>
+ <20160107180244.GR3818@linux.vnet.ibm.com>
+ <20160108071932.060a9bcc@canb.auug.org.au>
+ <20160107205220.GU3818@linux.vnet.ibm.com>
+ <20160108013631.GA11410@fixme-laptop.cn.ibm.com>
+ <20160108034157.GZ3818@linux.vnet.ibm.com>
+ <20160108150850.1ec97e78@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46697 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753544AbcAHEe6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jan 2016 23:34:58 -0500
+Received: from e31.co.us.ibm.com ([32.97.110.149]:44483 "EHLO
+	e31.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753612AbcAHEsb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 23:48:31 -0500
+Received: from localhost
+	by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Thu, 7 Jan 2016 21:48:30 -0700
+Content-Disposition: inline
+In-Reply-To: <20160108150850.1ec97e78@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Doug Ledford <dledford@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Boqun Feng <boqun.feng@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>
 
-Hi Nicholas,
+On Fri, Jan 08, 2016 at 03:08:50PM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> On Thu, 7 Jan 2016 19:41:57 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> >
+> > Indeed, I suspect that SRCU might not be the only thing that would like
+> > static per-CPU variables.  ;-)
+> 
+> from include/linux/percpu-defs.h:
+> 
+>  * s390 and alpha modules require percpu variables to be defined as
+>  * weak to force the compiler to generate GOT based external
+>  * references for them.  This is necessary because percpu sections
+>  * will be located outside of the usually addressable area.
+>  *
+>  * This definition puts the following two extra restrictions when
+>  * defining percpu variables.
+>  *
+>  * 1. The symbol must be globally unique, even the static ones.
+>  * 2. Static percpu variables cannot be defined inside a function.
+>  *
+>  * Archs which need weak percpu definitions should define
+>  * ARCH_NEEDS_WEAK_PER_CPU in asm/percpu.h when necessary.
+>  *
+>  * To ensure that the generic code observes the above two
+>  * restrictions, if CONFIG_DEBUG_FORCE_WEAK_PER_CPU is set weak
+>  * definition is used for all cases.
+> 
+> so they can be static, but must be globally unique.
 
-Today's linux-next merge of the target-updates tree got a conflict in:
+Thank you for the tutorial!  I have updated the patch to use a unique
+name for the srcu_struct added by rcuperf.c.
 
-  drivers/infiniband/ulp/isert/ib_isert.c
-
-between commit:
-
-  4a061b287b1e ("IB/ulps: Avoid calling ib_query_device")
-
-from the rdma tree and commit:
-
-  373a4cd73782 ("iser-target: Fix non negative ERR_PTR isert_device_get usage")
-
-from the target-updates tree.
-
-I fixed it up (the former removed the code fixed up by the latter)
-and can carry the fix as necessary (no action
-is required).
-
-
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
+							Thanx, Paul
