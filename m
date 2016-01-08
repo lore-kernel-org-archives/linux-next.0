@@ -1,41 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the vhost
+From: "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the vhost
  tree
-Date: Fri, 8 Jan 2016 16:59:08 +1100
-Message-ID: <20160108165908.2da89bfd@canb.auug.org.au>
+Date: Fri, 8 Jan 2016 08:46:15 +0200
+Message-ID: <20160108083449-mutt-send-email-mst@redhat.com>
+References: <20160108165908.2da89bfd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43987 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:59848 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750851AbcAHF7K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Jan 2016 00:59:10 -0500
+	id S1750766AbcAHGqS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Jan 2016 01:46:18 -0500
+Content-Disposition: inline
+In-Reply-To: <20160108165908.2da89bfd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Minchan Kim <minchan@kernel.org>
 
-Hi Andrew,
+On Fri, Jan 08, 2016 at 04:59:08PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+> 
+>   mm/balloon_compaction.c
+> 
+> between commit:
+> 
+>   0b5ffdb4f7c6 ("balloon: fix page list locking")
+> 
+> from the vhost tree and commit:
+> 
+>   0c983ec0c078 ("virtio_balloon: fix race between migration and ballooning")
+> 
+> from the akpm-current tree.
+> 
+> I fixed it up (I think that the former is a superset of the latter, so
+> I used that, completely reversing the latter patch) and can carry the
+> fix as necessary (no action is required).
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Oops, it isn't.
 
-  mm/balloon_compaction.c
+Andrew, your tree seems to still carry original patch by Minchan Kim:
 
-between commit:
+0c983ec0c078ed5d5c219cf97af06364e7a8e19f
 
-  0b5ffdb4f7c6 ("balloon: fix page list locking")
+I reported on list that it has a deadlock:
+http://article.gmane.org/gmane.linux.kernel.stable/159208
 
-from the vhost tree and commit:
+I think it should be reverted and my patch applied - it's in my tree
+but if you prefer it in yours instead, please let me know.
 
-  0c983ec0c078 ("virtio_balloon: fix race between migration and ballooning")
+Thanks!
 
-from the akpm-current tree.
-
-I fixed it up (I think that the former is a superset of the latter, so
-I used that, completely reversing the latter patch) and can carry the
-fix as necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
