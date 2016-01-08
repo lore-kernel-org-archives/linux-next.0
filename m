@@ -1,183 +1,63 @@
-From: Boqun Feng <boqun.feng@gmail.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 8 Jan 2016 09:37:04 +0800
-Message-ID: <20160108013631.GA11410@fixme-laptop.cn.ibm.com>
-References: <20160107195725.3a130b4d@canb.auug.org.au>
- <20160107180244.GR3818@linux.vnet.ibm.com>
- <20160108071932.060a9bcc@canb.auug.org.au>
- <20160107205220.GU3818@linux.vnet.ibm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
+ (next-20160107)
+Date: Fri, 8 Jan 2016 02:47:55 +0000
+Message-ID: <20160108024755.GK6588@sirena.org.uk>
+References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
+ <20160107155958.GG6588@sirena.org.uk>
+ <20160107162810.GA25177@ulmo>
+ <20160107185739.GA29951@kroah.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="g5OIygP5QP1fC/+Y"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41252 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752634AbcAHCsQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jan 2016 21:48:16 -0500
 Content-Disposition: inline
-In-Reply-To: <20160107205220.GU3818@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20160107185739.GA29951@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 
 
---DBIVS5p969aUjpLe
+--g5OIygP5QP1fC/+Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 07, 2016 at 12:52:20PM -0800, Paul E. McKenney wrote:
-> On Fri, Jan 08, 2016 at 07:19:32AM +1100, Stephen Rothwell wrote:
-> > Hi Paul,
-> >=20
-> > On Thu, 7 Jan 2016 10:02:44 -0800 "Paul E. McKenney" <paulmck@linux.vne=
-t.ibm.com> wrote:
-> > >
-> > > On Thu, Jan 07, 2016 at 07:57:25PM +1100, Stephen Rothwell wrote:
-> > > > Hi Paul,
-> > > >=20
-> > > > [I found this a few days ago, but I think I forgot to send the emai=
-l,
-> > > > sorry.]
-> > > >=20
-> > > > After merging the rcu tree, today's linux-next build (powerpc
-> > > > allyesconfig) failed like this:
-> > > >=20
-> > > > kernel/rcu/rcuperf.o:(.discard+0x0): multiple definition of `__pcpu=
-_unique_srcu_ctl_srcu_array'
-> > > > kernel/rcu/rcutorture.o:(.discard+0x0): first defined here
-> > > >=20
-> > > > Caused by commit
-> > > >=20
-> > > >   abcd7ec0808e ("rcutorture: Add RCU grace-period performance tests=
-")
-> > > >=20
-> > > > I have reverted that commit for today. =20
-> > >=20
-> > > Hello, Stephen,
-> > >=20
-> > > Very strange.  The "static" keyword does not mean anything here?
-> > > Easy enough to use different symbols in the two different files,
-> > > but this situation is not so good for information hiding.
-> > >=20
-> > > Happy to update rcuperf.c to use a different name, but in the
-> > > immortal words of MSDOS, "Are you sure?" :-)
-> >=20
-> > I have no idea why it happens, but I do get the error above unless I
-> > revert that commit.  So, yes, I am sure :-)
-> >=20
-> > OK, I looked further and
-> >=20
-> > DEFINE_STATIC_SRCU(srcu_ctl);
-> >=20
-> > becomes this (NLs added for clarity):
-> >=20
-> > static __attribute__((section(".discard"), unused)) char __pcpu_scope_s=
-rcu_ctl_srcu_array;
-> > extern __attribute__((section(".discard"), unused)) char __pcpu_unique_=
-srcu_ctl_srcu_array;
-> > __attribute__((section(".discard"), unused)) char __pcpu_unique_srcu_ct=
-l_srcu_array;
-> > extern __attribute__((section(".data..percpu" ""))) __typeof__(struct s=
-rcu_struct_array) srcu_ctl_srcu_array;
-> > __attribute__((section(".data..percpu" ""))) __attribute__((weak)) __ty=
-peof__(struct srcu_struct_array) srcu_ctl_srcu_array;
-> > static struct srcu_struct srcu_ctl =3D {
-> > 	.
-> > 	.
-> > };
-> >=20
-> > So, the "static" is not very effective :-(
->=20
-> Oddly enough, this appears to be toolchain dependent.  No idea why.
->=20
+On Thu, Jan 07, 2016 at 10:57:39AM -0800, Greg Kroah-Hartman wrote:
+> On Thu, Jan 07, 2016 at 05:28:10PM +0100, Thierry Reding wrote:
+> > On Thu, Jan 07, 2016 at 03:59:58PM +0000, Mark Brown wrote:
 
-Maybe the reason is because "static" doesn't work well with
-DEFINE_PER_CPU sometimes?
+> > I think this is merely waiting to be picked up into the tty tree. I
+> > suspect the reason why there's output in the first place is because
+> > of earlyprintk. I've seen recent linux-next work properly, with the
+> > serial console hanging at some point (fbcon shows login prompt). If
+> > I apply the above patch things are back to normal.
 
-The definition of __DEFINE_STATIC_SRCU is:
+> I'll go queue that up later, but how is this suddenly showing up in
+> -next?  The tty tree has been pretty quiet for a while now..
 
-#define __DEFINE_SRCU(name, is_static)					\
-	static DEFINE_PER_CPU(struct srcu_struct_array, name##_srcu_array);\
-	is_static struct srcu_struct name =3D __SRCU_STRUCT_INIT(name)
+There were some memory management issues which broke booting on almost
+all ARM platforms for most of this week so nothing else was really
+visible and relatively few -next builds over the Christmas vacation (as
+one would expect).
 
-whereas DEFINE_PER_CPU(which calls DEFINE_PER_CPU_SECTION) *could*
-consists of *several* definitions:
-
-#if defined(ARCH_NEEDS_WEAK_PER_CPU) || defined(CONFIG_DEBUG_FORCE_WEAK_PER=
-_CPU)
-=2E..
-#define DEFINE_PER_CPU_SECTION(type, name, sec)				\
-	__PCPU_DUMMY_ATTRS char __pcpu_scope_##name;			\
-	extern __PCPU_DUMMY_ATTRS char __pcpu_unique_##name;		\
-	__PCPU_DUMMY_ATTRS char __pcpu_unique_##name;			\
-	extern __PCPU_ATTRS(sec) __typeof__(type) name;			\
-	__PCPU_ATTRS(sec) PER_CPU_DEF_ATTRIBUTES __weak			\
-	__typeof__(type) name
-#else
-=2E..
-#define DEFINE_PER_CPU_SECTION(type, name, sec)				\
-	__PCPU_ATTRS(sec) PER_CPU_DEF_ATTRIBUTES			\
-	__typeof__(type) name
-#endif
-
-So if ARCH_NEEDS_WEAK_PER_CPU=3Dy or CONFIG_DEBUG_FORCE_WEAK_PER_CPU=3Dy,
-the "static" keyword only has effects on the first definition i.e.
-__pcpu_scope_##name.
-
-Mind to check your config options, Stephen?
-
-
-IOW, DEFINE_PER_CPU is not designed to work with "static", maybe we
-should add STATIC_DEFINE_PER_CPU for that purpose?
-
-Cc Tejun and Christoph for their opinions.
-
-Regards,
-Boqun
-
-> Here is a patch that I will be merging in.
->=20
-> 							Thanx, Paul
->=20
-> ------------------------------------------------------------------------
->=20
-> commit d81f900405de0dc6152692a2088258b8b35d740d
-> Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-> Date:   Thu Jan 7 12:39:10 2016 -0800
->=20
->     Merge with abcd7ec0808e (rcutorture: Add RCU grace-period performance=
- tests)
->    =20
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->=20
-> diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-> index eef82a9460d8..4c8d99aa4f5e 100644
-> --- a/kernel/rcu/rcuperf.c
-> +++ b/kernel/rcu/rcuperf.c
-> @@ -188,8 +188,8 @@ static struct rcu_perf_ops rcu_bh_ops =3D {
->   * Definitions for srcu perf testing.
->   */
-> =20
-> -DEFINE_STATIC_SRCU(srcu_ctl);
-> -static struct srcu_struct *srcu_ctlp =3D &srcu_ctl;
-> +DEFINE_STATIC_SRCU(srcu_ctl_perf);
-> +static struct srcu_struct *srcu_ctlp =3D &srcu_ctl_perf;
-> =20
->  static int srcu_perf_read_lock(void) __acquires(srcu_ctlp)
->  {
->=20
-
---DBIVS5p969aUjpLe
+--g5OIygP5QP1fC/+Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAABCAAGBQJWjxK7AAoJEEl56MO1B/q4SBoIAIAT9l/4bHntLJPdJOOOl/LZ
-zkmcpgRa/x84aEvPwfAZC8pKSgbJATRAX9bU/wtJHhvP8RqM92UvHDvBmKNtQDpW
-IZS2FvEBYGDgB7VlLDFFdJOfXIaVGPdJC3u2JUOiM1JiTBwHYccgEB0xHaGQhXW1
-E1ydS1jxyvdG7I8H4rlYTzYshPa977ux/U5udcR2tR5wPz6aw3kO5azQed6ObRtX
-XL/UItymsutG5L2nPgFG0/+tkdDJChLDEI1KBVe4o1lKyETMmuOVrHfmCGyYqaq2
-U1pfgMtpJ2luwKQD/89/Nc7qqiu9FfveChuo9B28FazvP72v7sN1fUjmqJ4z3HI=
-=Gfrp
+iQEcBAEBCAAGBQJWjyNaAAoJECTWi3JdVIfQJi8H+wXnxbpktnbMtjaJsgn8QRAo
+vpl14xYflxZclifzKEY2UkzwjHIKQZ2hApVIbr75uRhLsELighaly2QKZw+1Jo0i
+Cmz1hFBgsD8/PKRQ1m474e82+TzJeu+Z3xm0ctIcDA3hv1Qa8+vXFwU1ET83UuwT
+Q/gy2QKHzbOtsoXj7wnrdHf8K168XiPuMbU1g+QQqNd+Z93GWTWrFStKg2oXv/2i
+AWdR5NpR25aT9hutMs1x5yrjOuMtRta42B0HbyN6J2pePjLhI9o2mK+QhW+DAD9q
+KrmdI26iRWSkh6bVA+RlFjPBCo5PgVZ3Uh+ns1sWTIOqRTsikWhf449hfLg1yCk=
+=DjR0
 -----END PGP SIGNATURE-----
 
---DBIVS5p969aUjpLe--
+--g5OIygP5QP1fC/+Y--
