@@ -1,72 +1,60 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH] [net] phy: micrel: Fix build failure in ksz9031_config_init()
-Date: Mon, 11 Jan 2016 10:23:40 +0100
-Message-ID: <CA+icZUX-1HUsopevnyD+VCtcuV8cDTyJ8bSvZtHX2QfUGDw+=g@mail.gmail.com>
-References: <1452340757-29507-1-git-send-email-sedat.dilek@gmail.com>
-	<201601101922.K4rPhj8d%fengguang.wu@intel.com>
-Reply-To: sedat.dilek@gmail.com
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 11 Jan 2016 12:39:34 +0100
+Message-ID: <20160111113934.GA9810@gmail.com>
+References: <20151231221529.1b997dce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f52.google.com ([209.85.213.52]:34392 "EHLO
-	mail-vk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758693AbcAKJXm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2016 04:23:42 -0500
-In-Reply-To: <201601101922.K4rPhj8d%fengguang.wu@intel.com>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33774 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757704AbcAKLji (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2016 06:39:38 -0500
+Content-Disposition: inline
+In-Reply-To: <20151231221529.1b997dce@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, Roosen Henri <Henri.Roosen@ginzinger.com>, Andrew Lunn <andrew@lunn.ch>, David Daney <david.daney@cavium.com>, Florian Fainelli <f.fainelli@gmail.com>, "David S . Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo <acme@infradead.org>, Jiri Olsa <jolsa@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dan Williams <dan.j.williams@intel.com>
 
-On Sun, Jan 10, 2016 at 12:50 PM, kbuild test robot <lkp@intel.com> wrote:
-> Hi Sedat,
->
-> [auto build test ERROR on net/master]
-> [cannot apply to net-next/master v4.4-rc8 next-20160108]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
->
 
-Hi,
+[Cc:-ed perf tooling guys as well.]
 
-Andrew Lunn explained when this build-failure happens in [1].
-Short answer: When you merge net.git with net-next.git.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Steven posted and added the same fix for his latest next-20160111 tree
-(see [2]).
-Dave ACKed it in [3].
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (perf)
+> failed like this:
+> 
+> In file included from /home/sfr/next/next/tools/include/linux/list.h:5:0,
+>                  from arch/../util/map.h:6,
+>                  from arch/../util/event.h:8,
+>                  from arch/../util/debug.h:7,
+>                  from arch/common.c:4:
+> /home/sfr/next/next/tools/include/linux/../../../include/linux/list.h: In function 'list_force_poison':
+> /home/sfr/next/next/tools/include/linux/../../../include/linux/list.h:123:56: error: unused parameter 'entry' [-Werror=unused-parameter]
+>  static inline void list_force_poison(struct list_head *entry)
+>                                                         ^
+> 
+> and many more like that.
+> 
+> Caused by commit
+> 
+>   a471eb786598 ("mm, dax, pmem: introduce {get|put}_dev_pagemap() for dax-gup")
+> 
+> I just left the perf build broken for today.
 
-- Sedat -
+So I think it's time to create a tooling copy of list.h as well, to decouple 
+tooling and kernel side uses of list.h.
 
-[0] http://marc.info/?l=linux-netdev&m=145235493501557&w=2
-[1] http://marc.info/?l=linux-netdev&m=145248039325668&w=2
-[3] http://marc.info/?l=linux-netdev&m=145248135925825&w=2
+We could do the same trick as with tools/lib/rbtree.c and 
+tools/include/linux/rbtree.h: create a copy, and use 'diff' during tools build to 
+generate a (non-fatal) warning if the two versions diverge.
 
-> url:    https://github.com/0day-ci/linux/commits/Sedat-Dilek/phy-micrel-Fix-build-failure-in-ksz9031_config_init/20160109-200009
-> config: x86_64-rhel (attached as .config)
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
->
-> All errors (new ones prefixed by >>):
->
->    drivers/net/phy/micrel.c: In function 'ksz9031_config_init':
->>> drivers/net/phy/micrel.c:479:22: error: 'struct phy_device' has no member named 'mdio'
->      dev_walker = &phydev->mdio.dev;
->                          ^
->
-> vim +479 drivers/net/phy/micrel.c
->
->    473          const struct device *dev_walker;
->    474
->    475          /* The Micrel driver has a deprecated option to place phy OF
->    476           * properties in the MAC node. Walk up the tree of devices to
->    477           * find a device with an OF node.
->    478           */
->  > 479          dev_walker = &phydev->mdio.dev;
->    480          do {
->    481                  of_node = dev_walker->of_node;
->    482                  dev_walker = dev_walker->parent;
->
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+This makes sure that tooling always syncs up with kernel side changes - without 
+creating hard build failure dependencies.
+
+Thanks,
+
+	Ingo
