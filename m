@@ -1,65 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Mon, 11 Jan 2016 12:42:22 +1100
-Message-ID: <20160111124222.4eb47c81@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 11 Jan 2016 13:46:15 +1100
+Message-ID: <20160111134615.60c08c54@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39773 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757590AbcAKBmX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 10 Jan 2016 20:42:23 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stanimir Varbanov <svarbanov@mm-sol.com>, Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Roosen Henri <Henri.Roosen@ginzinger.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Bjorn,
+Hi all,
 
-After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-drivers/pci/host/pcie-designware.c: In function 'dw_pcie_host_init':
-drivers/pci/host/pcie-designware.c:554:7: error: implicit declaration of function 'pci_has_flag' [-Werror=implicit-function-declaration]
-  if (!pci_has_flag(PCI_PROBE_ONLY)) {
-       ^
-drivers/pci/host/pcie-designware.c:554:20: error: 'PCI_PROBE_ONLY' undeclared (first use in this function)
-  if (!pci_has_flag(PCI_PROBE_ONLY)) {
-                    ^
+drivers/net/phy/micrel.c: In function 'ksz9031_config_init':
+drivers/net/phy/micrel.c:492:22: error: 'struct phy_device' has no member named 'dev'
+  dev_walker = &phydev->dev;
+                      ^
 
 Caused by commit
 
-  755007e88a5e ("PCI: qcom: Add Qualcomm PCIe controller driver")
+  e5a03bfd873c ("phy: Add an mdio_device structure")
 
-Please only use CONFIG_COMPILE_TEST *after* testing for cross compile
-problems ...
+interacting with commit
 
-I have added thse folloeing patch for today:
+  b4c19f71252e ("phy: micrel: Fix finding PHY properties in MAC node for KSZ9031.")
+
+from the net tree.
+
+I applied the following merge fix patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 Jan 2016 12:37:58 +1100
-Subject: [PATCH] PCI: qcom: the Qualcomm PCIe controller driver should not
- depend on COMPILE_TEST
+Date: Mon, 11 Jan 2016 13:25:09 +1100
+Subject: [PATCH] phy: micrel: fix up for "phy: Add an mdio_device structure"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/pci/host/Kconfig | 2 +-
+ drivers/net/phy/micrel.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/Kconfig b/drivers/pci/host/Kconfig
-index de403b206391..75a605426538 100644
---- a/drivers/pci/host/Kconfig
-+++ b/drivers/pci/host/Kconfig
-@@ -183,7 +183,7 @@ config PCI_HISI
- 
- config PCIE_QCOM
- 	bool "Qualcomm PCIe controller"
--	depends on ARCH_QCOM && OF || COMPILE_TEST
-+	depends on ARCH_QCOM && OF
- 	select PCIE_DW
- 	select PCIEPORTBUS
- 	help
+diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
+index 41b598548f2e..03833dbfca67 100644
+--- a/drivers/net/phy/micrel.c
++++ b/drivers/net/phy/micrel.c
+@@ -489,7 +489,7 @@ static int ksz9031_config_init(struct phy_device *phydev)
+ 	 * properties in the MAC node. Walk up the tree of devices to
+ 	 * find a device with an OF node.
+ 	 */
+-	dev_walker = &phydev->dev;
++	dev_walker = &phydev->mdio.dev;
+ 	do {
+ 		of_node = dev_walker->of_node;
+ 		dev_walker = dev_walker->parent;
 -- 
 2.6.4
 
