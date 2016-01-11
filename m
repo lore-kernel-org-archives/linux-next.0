@@ -1,63 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Mon, 11 Jan 2016 13:46:15 +1100
-Message-ID: <20160111134615.60c08c54@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: manual merge of the vfs tree with the nsfd tree
+Date: Sun, 10 Jan 2016 21:59:18 -0500
+Message-ID: <20160111025918.GB25396@fieldses.org>
+References: <20160111121632.26fd5873@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160111121632.26fd5873@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Roosen Henri <Henri.Roosen@ginzinger.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Mon, Jan 11, 2016 at 12:16:32PM +1100, Stephen Rothwell wrote:
+> Today's linux-next merge of the vfs tree got a conflict in:
+> 
+>   fs/namei.c
+> 
+> between commit:
+> 
+>   1932ac9d7cef ("nfsd: don't hold i_mutex over userspace upcalls")
+> 
+> from the nfsd tree and commit:
+> 
+>   bbddca8e8fac ("nfsd: don't hold i_mutex over userspace upcalls")
+> 
+> from the vfs tree.
+> 
+> Similar patch, but slightly different. :-(
+> 
+> I fixed it up (I used the vfs tree version) and can carry the fix as
+> necessary (no action is required).
 
-After merging the net-next tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Thanks, I've dropped my version.
 
-drivers/net/phy/micrel.c: In function 'ksz9031_config_init':
-drivers/net/phy/micrel.c:492:22: error: 'struct phy_device' has no member named 'dev'
-  dev_walker = &phydev->dev;
-                      ^
-
-Caused by commit
-
-  e5a03bfd873c ("phy: Add an mdio_device structure")
-
-interacting with commit
-
-  b4c19f71252e ("phy: micrel: Fix finding PHY properties in MAC node for KSZ9031.")
-
-from the net tree.
-
-I applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 11 Jan 2016 13:25:09 +1100
-Subject: [PATCH] phy: micrel: fix up for "phy: Add an mdio_device structure"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/net/phy/micrel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 41b598548f2e..03833dbfca67 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -489,7 +489,7 @@ static int ksz9031_config_init(struct phy_device *phydev)
- 	 * properties in the MAC node. Walk up the tree of devices to
- 	 * find a device with an OF node.
- 	 */
--	dev_walker = &phydev->dev;
-+	dev_walker = &phydev->mdio.dev;
- 	do {
- 		of_node = dev_walker->of_node;
- 		dev_walker = dev_walker->parent;
--- 
-2.6.4
-
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+--b.
