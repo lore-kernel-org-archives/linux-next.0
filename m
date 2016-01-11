@@ -1,161 +1,48 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: next-20160111 build: 2 failures 11 warnings (next-20160111)
-Date: Mon, 11 Jan 2016 16:00:14 -0500
-Message-ID: <CAP=VYLq0DsrKkg0+58RWZvFaoHsOdxGv+hpd5MGWbugiAP+nsA@mail.gmail.com>
-References: <E1aIbLY-0004jS-9h@optimist>
+From: Helge Deller <deller@gmx.de>
+Subject: Re: linux-next: strange commit in the parisc-hd tree
+Date: Mon, 11 Jan 2016 22:46:48 +0100
+Message-ID: <569422C8.4000706@gmx.de>
+References: <20160111092822.4b4c0233@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f53.google.com ([74.125.82.53]:37194 "EHLO
-	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932495AbcAKVAp (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2016 16:00:45 -0500
-Received: by mail-wm0-f53.google.com with SMTP id f206so289078509wmf.0
-        for <linux-next@vger.kernel.org>; Mon, 11 Jan 2016 13:00:44 -0800 (PST)
-In-Reply-To: <E1aIbLY-0004jS-9h@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Build bot for Mark Brown <broonie@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, maruthi.bayyavarapu@amd.com
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20160111092822.4b4c0233@canb.auug.org.au>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Parisc List <linux-parisc@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 11, 2016 at 7:13 AM, Build bot for Mark Brown
-<broonie@kernel.org> wrote:
-> Tree/Branch: next-20160111
-> Git describe: next-20160111
-> Commit: bf976ab690 Add linux-next specific files for 20160111
->
-> Build Time: 65 min 25 sec
->
-> Passed:    7 / 9   ( 77.78 %)
-> Failed:    2 / 9   ( 22.22 %)
->
-> Errors: 2
-> Warnings: 11
-> Section Mismatches: 0
->
-> Failed defconfigs:
->         arm64-allmodconfig
->         arm-allmodconfig
->
-> Errors:
->
->         arm64-allmodconfig
-> ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
-> ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
->
->         arm-allmodconfig
-> ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
-> ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+On 10.01.2016 23:28, Stephen Rothwell wrote:
+> I noticed the following commit in the parisc-hd tree today:
+> 
+>   43122681dd75 ("Fix __ARCH_SI_PREAMBLE_SIZE on parisc")
+> 
+> which among other things says:
+> 
+>   This patch is not planned to be committed as it currently is.
 
-Not a regression in an existing driver, but appears 1st commit for when
-this  new driver was added.  Cc'ing author.
+Right, I split it up into two.
 
-Paul.
---
+> [...] Please remove it from linux-next inclusion until it is ready.
 
->
-> -------------------------------------------------------------------------------
-> defconfigs with issues (other than build errors):
->       4 warnings    0 mismatches  : arm64-allmodconfig
->       3 warnings    0 mismatches  : arm-multi_v5_defconfig
->       8 warnings    0 mismatches  : arm-multi_v7_defconfig
->       6 warnings    0 mismatches  : arm-allmodconfig
->       1 warnings    0 mismatches  : arm-allnoconfig
->       1 warnings    0 mismatches  : arm64-defconfig
->
-> -------------------------------------------------------------------------------
->
-> Errors summary: 2
->           2 ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
->           2 ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
->
-> Warnings Summary: 11
->           6 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->           4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
->           3 ../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
->           2 ../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
->           2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
->           1 arch/arm/configs/multi_v7_defconfig:440:warning: symbol value 'm' invalid for MFD_DA9063
->           1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
->           1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
->           1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
->           1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
->           1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->
->
->
-> ===============================================================================
-> Detailed per-defconfig build reports below:
->
->
-> -------------------------------------------------------------------------------
-> arm64-allmodconfig : FAIL, 2 errors, 4 warnings, 0 section mismatches
->
-> Errors:
->         ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
->         ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
->
-> Warnings:
->         ../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
->         ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
->         ../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
->         ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
->
-> -------------------------------------------------------------------------------
-> arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
->
-> Warnings:
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->         ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->
-> -------------------------------------------------------------------------------
-> arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
->
-> Warnings:
->         arch/arm/configs/multi_v7_defconfig:440:warning: symbol value 'm' invalid for MFD_DA9063
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->         ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
->         ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
->         ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
->         ../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
->         ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->
-> -------------------------------------------------------------------------------
-> arm-allmodconfig : FAIL, 2 errors, 6 warnings, 0 section mismatches
->
-> Errors:
->         ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
->         ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
->
-> Warnings:
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->         ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->         ../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
->         ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
->         ../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
->         ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
->
-> -------------------------------------------------------------------------------
-> arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
->
-> Warnings:
->         <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
->
-> -------------------------------------------------------------------------------
-> arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
->
-> Warnings:
->         ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-> -------------------------------------------------------------------------------
->
-> Passed with no errors, warnings or mismatches:
->
-> x86_64-allnoconfig
-> arm64-allnoconfig
-> x86_64-defconfig
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sure, I just removed it now.
+
+> Delibeately introducing a patch to linux-next that may well cause build breakage
+> in other architectures just before the merge window opens is a bit antisocial.
+
+That was in no way my intention.
+In contrary, I wanted to see if other platforms are affected by the same bug without knowing.
+Do you by any chance know if it broke some of the existing platforms?
+If yes, that would be valuable info...
+
+Just in case people want to know what this is all about:
+On parisc I found __ARCH_SI_PREAMBLE_SIZE to have a wrong value in 64bit kernel builds.
+Patch which fixes it is here:
+https://patchwork.kernel.org/patch/7994821/
+
+To prevent other (existing and future) architectures to run into the same
+problem I wanted to test this patch via linux-next and inform them:
+http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/commit/?h=test__ARCH_SI_PREAMBLE_SIZE
+
+Helge
