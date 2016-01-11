@@ -1,38 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: strange commit in the parisc-hd tree
-Date: Mon, 11 Jan 2016 09:28:22 +1100
-Message-ID: <20160111092822.4b4c0233@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the nfs tree
+Date: Mon, 11 Jan 2016 12:16:28 +1100
+Message-ID: <20160111121628.1e2597fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56114 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35738 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753259AbcAJW2Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 10 Jan 2016 17:28:24 -0500
+	id S1752434AbcAKBQa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 Jan 2016 20:16:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Trond Myklebust <trond.myklebust@fys.uio.no>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-Hi all,
+Hi Al,
 
-I noticed the following commit in the parisc-hd tree today:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-  43122681dd75 ("Fix __ARCH_SI_PREAMBLE_SIZE on parisc")
+  fs/nfs/nfs4file.c
 
-which among other things says:
+between commit:
 
-  This patch is not planned to be committed as it currently is.
+  926ea40a7ee2 ("NFSv4: Fix a compile warning about no prototype for nfs4_ioctl()")
 
-It also has no Signed-off-by :-(
+from the nfs tree and commit:
 
-Please remove it from linux-next inclusion until it is ready.  Delibeately
-introducing a patch to linux-next that may well cause build breakage
-in other architectures just before the merge window opens is a bit
-antisocial.
+  04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
 
-I will merge a revert commit for it today.
+from the vfs tree.
+
+I fixed it up (the latter removed the code fixed in the former) and can
+carry the fix as necessary (no action is required).
 
 -- 
 Cheers,
