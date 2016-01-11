@@ -1,60 +1,141 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 11 Jan 2016 12:39:34 +0100
-Message-ID: <20160111113934.GA9810@gmail.com>
-References: <20151231221529.1b997dce@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160111 build: 2 failures 11 warnings (next-20160111)
+Date: Mon, 11 Jan 2016 12:13:16 +0000
+Message-ID: <E1aIbLY-0004jS-9h@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:33774 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757704AbcAKLji (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2016 06:39:38 -0500
-Content-Disposition: inline
-In-Reply-To: <20151231221529.1b997dce@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46687 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932471AbcAKMNW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jan 2016 07:13:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo <acme@infradead.org>, Jiri Olsa <jolsa@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dan Williams <dan.j.williams@intel.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20160111
+Git describe: next-20160111
+Commit: bf976ab690 Add linux-next specific files for 20160111
+
+Build Time: 65 min 25 sec
+
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 2
+Warnings: 11
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+
+	arm-allmodconfig
+../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      8 warnings    0 mismatches  : arm-multi_v7_defconfig
+      6 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+	  2 ../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 11
+	  6 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	  3 ../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
+	  2 ../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
+	  2 ../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	  1 arch/arm/configs/multi_v7_defconfig:440:warning: symbol value 'm' invalid for MFD_DA9063
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
 
-[Cc:-ed perf tooling guys as well.]
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+===============================================================================
+Detailed per-defconfig build reports below:
 
-> Hi Andrew,
-> 
-> After merging the akpm-current tree, today's linux-next build (perf)
-> failed like this:
-> 
-> In file included from /home/sfr/next/next/tools/include/linux/list.h:5:0,
->                  from arch/../util/map.h:6,
->                  from arch/../util/event.h:8,
->                  from arch/../util/debug.h:7,
->                  from arch/common.c:4:
-> /home/sfr/next/next/tools/include/linux/../../../include/linux/list.h: In function 'list_force_poison':
-> /home/sfr/next/next/tools/include/linux/../../../include/linux/list.h:123:56: error: unused parameter 'entry' [-Werror=unused-parameter]
->  static inline void list_force_poison(struct list_head *entry)
->                                                         ^
-> 
-> and many more like that.
-> 
-> Caused by commit
-> 
->   a471eb786598 ("mm, dax, pmem: introduce {get|put}_dev_pagemap() for dax-gup")
-> 
-> I just left the perf build broken for today.
 
-So I think it's time to create a tooling copy of list.h as well, to decouple 
-tooling and kernel side uses of list.h.
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 2 errors, 4 warnings, 0 section mismatches
 
-We could do the same trick as with tools/lib/rbtree.c and 
-tools/include/linux/rbtree.h: create a copy, and use 'diff' during tools build to 
-generate a (non-fatal) warning if the two versions diverge.
+Errors:
+	../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+	../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
 
-This makes sure that tooling always syncs up with kernel side changes - without 
-creating hard build failure dependencies.
+Warnings:
+	../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
+	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
+	../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
 
-Thanks,
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
 
-	Ingo
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:440:warning: symbol value 'm' invalid for MFD_DA9063
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../fs/ext4/ioctl.c:426:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 6 warnings, 0 section mismatches
+
+Errors:
+	../sound/soc/amd/acp-pcm-dma.c:83:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+	../sound/soc/amd/acp-pcm-dma.c:88:2: error: implicit declaration of function 'writel' [-Werror=implicit-function-declaration]
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../sound/soc/codecs/hdac_hdmi.c:313:12: warning: 'hdac_hdmi_query_pin_connlist' defined but not used [-Wunused-function]
+	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/ppevvmath.h:382:5: warning: comparison of distinct pointer types lacks a cast [enabled by default]
+	../drivers/pci/host/pcie-designware.c:683:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
