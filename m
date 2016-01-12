@@ -1,121 +1,44 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160112 build: 1 failures 6 warnings (next-20160112)
-Date: Tue, 12 Jan 2016 14:08:55 +0000
-Message-ID: <E1aIzd0-0003oe-GX@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49571 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762579AbcALOJD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jan 2016 09:09:03 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Benjamin LaHaise <bcrl@kvack.org>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Tue, 12 Jan 2016 11:38:35 -0500
+Message-ID: <20160112163835.GD347@kvack.org>
+References: <20160112164034.0fe945a7@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160112164034.0fe945a7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160112
-Git describe: next-20160112
-Commit: d299f5e5d5 Add linux-next specific files for 20160112
+On Tue, Jan 12, 2016 at 04:40:34PM +1100, Stephen Rothwell wrote:
+> Hi Benjamin,
+> 
+> After merging the aio tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> fs/built-in.o: In function `aio_thread_op_foo_at':
+> file.c:(.text+0x43808): undefined reference to `__get_user_bad'
+> file.c:(.text+0x43838): undefined reference to `__get_user_bad'
 
-Build Time: 153 min 42 sec
+This is very strange.  It seems to imply that __get_user() doesn't 
+handle 64 bit values, which is completely broken behaviour on the 
+architecture's part if true.  Can any ARM folks comment on the right 
+fix here?
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+		-ben
 
-Errors: 2
-Warnings: 6
-Section Mismatches: 0
+> Caused by commit
+> 
+>   150a0b4905f1 ("aio: add support for async openat()")
+> 
+> I have used the aio tree from next-20160111 for today.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell                    sfr@canb.auug.org.au
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/mfd/asic3.c:505:12: error: expected ';' before ')' token
-../drivers/mfd/asic3.c:505:12: error: expected statement before ')' token
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ../drivers/mfd/asic3.c:505:12: error: expected statement before ')' token
-	  1 ../drivers/mfd/asic3.c:505:12: error: expected ';' before ')' token
-
-Warnings Summary: 6
-	  6 <stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/vc4/vc4_validate.c:864:4: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t' [-Wformat=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/mfd/asic3.c:505:12: error: expected ';' before ')' token
-	../drivers/mfd/asic3.c:505:12: error: expected statement before ')' token
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1307:2: warning: #warning syscall copy_file_range not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+"Thought is the essence of where you are now."
