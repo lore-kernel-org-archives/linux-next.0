@@ -1,28 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 12 Jan 2016 22:58:11 +1100
-Message-ID: <20160112225811.2c70c1a4@canb.auug.org.au>
-References: <20160112131505.2228f559@canb.auug.org.au>
-	<20160112091102.GA12607@colbert.idosch.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+Date: Tue, 12 Jan 2016 23:32:47 +1100 (AEDT)
+Message-ID: <20160112123248.131801401E7@ozlabs.org>
+References: <20160107191613.0228560b@canb.auug.org.au>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160112091102.GA12607@colbert.idosch.org>
+In-Reply-To: <20160107191613.0228560b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ido Schimmel <idosch@mellanox.com>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: Michael Neuling <mikey@neuling.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Ido,
+On Thu, 2016-07-01 at 08:16:13 UTC, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the powerpc tree, today's linux-next build (powerpc64
+> allnoconfig) failed like this:
+> 
+> arch/powerpc/mm/hash_utils_64.c: In function 'get_paca_psize':
+> arch/powerpc/mm/hash_utils_64.c:869:19: error: 'struct paca_struct' has no member named 'context'
+>   return get_paca()->context.user_psize;
+>                    ^
+> arch/powerpc/mm/hash_utils_64.c:870:1: error: control reaches end of non-void function [-Werror=return-type]
+>  }
+>  ^
+> 
+> Caused by commit
+> 
+>   2fc251a8dda5 ("powerpc: Copy only required pieces of the mm_context_t to the paca")
+> 
+> This build has CONFIG_PPC_MM_SLICES not set ...
+> 
+> I have applied the following patch for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 7 Jan 2016 19:07:18 +1100
+> Subject: [PATCH] powerpc: restore the user_psize member of the mm_context_t in
+>  the paca
+> 
+> It is used when CONFIG_PPC_MM_SLICES is not set.
+> 
+> Fixes: 2fc251a8dda5 ("powerpc: Copy only required pieces of the mm_context_t to the paca")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-On Tue, 12 Jan 2016 11:11:02 +0200 Ido Schimmel <idosch@mellanox.com> wrote:
->
-> The lock can be moved further down, just before mlxsw_reg_sfd_pack.
-> Other than that everything looks fine. Thank you!
+Applied to powerpc next, thanks.
 
-Thanks, I wasn't sure but I will do that tomorrow (unless Dave beats me to it).
+https://git.kernel.org/powerpc/c/c33e54fafacaf83b3e345aae0e
 
--- 
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
+cheers
