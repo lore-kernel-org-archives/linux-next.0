@@ -1,26 +1,56 @@
-From: Dave Airlie <airlied@linux.ie>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Tue, 12 Jan 2016 00:31:17 +0000 (GMT)
-Message-ID: <alpine.DEB.2.00.1601120030550.30844@skynet.skynet.ie>
-References: <20151231213124.1973e995@canb.auug.org.au> <20160107134403.59337b3f@canb.auug.org.au> <20160112095457.06457d28@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 12 Jan 2016 13:15:05 +1100
+Message-ID: <20160112131505.2228f559@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from gir.skynet.ie ([193.1.99.77]:33928 "EHLO gir.skynet.ie"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1762282AbcALAbV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jan 2016 19:31:21 -0500
-In-Reply-To: <20160112095457.06457d28@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
+List-Id: linux-next.vger.kernel.org
 
-> 
-> Did this get fixed in some non-obvious way?
-> 
+Hi all,
 
-I don't think so, I just applied it as is.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Thanks,
-Dave.
+  drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+
+between commit:
+
+  366ce6031529 ("mlxsw: spectrum: Add FDB lock to prevent session interleaving")
+
+from the net tree and commit:
+
+  54a732018d8e ("mlxsw: spectrum: Adjust switchdev ops for VLAN devices")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 80e266063aee,4cdc18e72222..000000000000
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@@ -650,7 -1057,14 +1057,15 @@@ static int mlxsw_sp_port_fdb_dump(struc
+  	if (!sfd_pl)
+  		return -ENOMEM;
+  
+ +	mutex_lock(&mlxsw_sp_port->mlxsw_sp->fdb_lock);
++ 	if (mlxsw_sp_port_is_vport(mlxsw_sp_port)) {
++ 		u16 tmp;
++ 
++ 		tmp = mlxsw_sp_vport_vfid_get(mlxsw_sp_port);
++ 		vport_fid = mlxsw_sp_vfid_to_fid(tmp);
++ 		vport_vid = mlxsw_sp_vport_vid_get(mlxsw_sp_port);
++ 	}
++ 
+  	mlxsw_reg_sfd_pack(sfd_pl, MLXSW_REG_SFD_OP_QUERY_DUMP, 0);
+  	do {
+  		mlxsw_reg_sfd_num_rec_set(sfd_pl, MLXSW_REG_SFD_REC_MAX_COUNT);
