@@ -1,35 +1,66 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 12 Jan 2016 15:20:25 -0500 (EST)
-Message-ID: <20160112.152025.2172413970912429668.davem@davemloft.net>
-References: <20160112131505.2228f559@canb.auug.org.au>
-	<20160112091102.GA12607@colbert.idosch.org>
-	<20160112225811.2c70c1a4@canb.auug.org.au>
+From: Helge Deller <deller@gmx.de>
+Subject: Re: linux-next: strange commit in the parisc-hd tree
+Date: Tue, 12 Jan 2016 22:43:54 +0100
+Message-ID: <5695739A.9050700@gmx.de>
+References: <20160111092822.4b4c0233@canb.auug.org.au>
+ <569422C8.4000706@gmx.de> <1452551991.23317.3.camel@ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([149.20.54.216]:53699 "EHLO
-	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752218AbcALUU3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jan 2016 15:20:29 -0500
-In-Reply-To: <20160112225811.2c70c1a4@canb.auug.org.au>
+Received: from mout.gmx.net ([212.227.17.21]:62048 "EHLO mout.gmx.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753735AbcALVoD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jan 2016 16:44:03 -0500
+In-Reply-To: <1452551991.23317.3.camel@ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: idosch@mellanox.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jiri@mellanox.com
+To: Michael Ellerman <mpe@ellerman.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Parisc List <linux-parisc@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 12 Jan 2016 22:58:11 +1100
-
-> Hi Ido,
-> 
-> On Tue, 12 Jan 2016 11:11:02 +0200 Ido Schimmel <idosch@mellanox.com> wrote:
+On 11.01.2016 23:39, Michael Ellerman wrote:
+> On Mon, 2016-01-11 at 22:46 +0100, Helge Deller wrote:
+>> On 10.01.2016 23:28, Stephen Rothwell wrote:
+>>> I noticed the following commit in the parisc-hd tree today:
+>>>
+>>>   43122681dd75 ("Fix __ARCH_SI_PREAMBLE_SIZE on parisc")
+>>>
+>>> which among other things says:
+>>>
+>>>   This patch is not planned to be committed as it currently is.
 >>
->> The lock can be moved further down, just before mlxsw_reg_sfd_pack.
->> Other than that everything looks fine. Thank you!
+>> Right, I split it up into two.
+>>
+>>> [...] Please remove it from linux-next inclusion until it is ready.
+>>
+>> Sure, I just removed it now.
+>>
+>>> Delibeately introducing a patch to linux-next that may well cause build breakage
+>>> in other architectures just before the merge window opens is a bit antisocial.
+>>
+>> That was in no way my intention.
+>> In contrary, I wanted to see if other platforms are affected by the same bug without knowing.
+>> Do you by any chance know if it broke some of the existing platforms?
+>> If yes, that would be valuable info...
+>>
+>> Just in case people want to know what this is all about:
+>> On parisc I found __ARCH_SI_PREAMBLE_SIZE to have a wrong value in 64bit kernel builds.
+>> Patch which fixes it is here:
+>> https://patchwork.kernel.org/patch/7994821/
+>>
+>> To prevent other (existing and future) architectures to run into the same
+>> problem I wanted to test this patch via linux-next and inform them:
+>> http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/commit/?h=test__ARCH_SI_PREAMBLE_SIZE
 > 
-> Thanks, I wasn't sure but I will do that tomorrow (unless Dave beats me to it).
+> That doesn't fire on powerpc, ie. we have it correct.
 
-I did the merge but did not move the locking.  Feel free to send me
-a patch to do so.
+It really seems that parisc was the only architecture left which had a wrong value for __ARCH_SI_PREAMBLE_SIZE.
+I followed Stephens suggestion to try it via the zero day build farm and it was only reported one problem (for parisc).
+Tree is here: http://git.kernel.org/cgit/linux/kernel/git/deller/parisc-linux.git/log/?h=for-next-test
+ 
+> Though I wonder why it's not just defined using offsetof? Possibly just that
+> it's awkward with the way the headers are organised.
+
+Yes.
+
+Helge
