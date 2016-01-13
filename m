@@ -1,70 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rdma tree
-Date: Wed, 13 Jan 2016 12:35:49 +1100
-Message-ID: <20160113123549.7293b76a@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Wed, 13 Jan 2016 13:07:08 +1100
+Message-ID: <20160113130708.3aa560ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [103.22.144.67] ([103.22.144.67]:59558 "EHLO ozlabs.org"
+Received: from [103.22.144.67] ([103.22.144.67]:52356 "EHLO ozlabs.org"
 	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1751058AbcAMBgs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Jan 2016 20:36:48 -0500
+	id S1753257AbcAMCIF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jan 2016 21:08:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Maor Gottlieb <maorg@mellanox.com>, Achiad Shochat <achiad@mellanox.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Keith Busch <keith.busch@intel.com>
 
-Hi Doug,
+Hi Jens,
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the block tree got a conflict in:
 
-drivers/infiniband/hw/mlx5/main.c: In function 'mlx5_ib_add':
-drivers/infiniband/hw/mlx5/main.c:2255:6: error: too few arguments to function 'mlx5_ib_port_link_layer'
-  if (mlx5_ib_port_link_layer(&dev->ib_dev) ==
-      ^
-drivers/infiniband/hw/mlx5/main.c:89:1: note: declared here
- mlx5_ib_port_link_layer(struct ib_device *device, u8 port_num)
- ^
+  drivers/nvme/host/Makefile
 
-Caused by commit
+between commit:
 
-  ebd61f68e1c7 ("IB/mlx5: Support IB device's callback for getting the link layer")
+  c4699e70d1db ("lightnvm: Simplify config when disabled")
 
-interacting with commit
+from Linus' tree and commit:
 
-  038d2ef87572 ("IB/mlx5: Add flow steering support")
+  21d34711e1b5 ("nvme: split command submission helpers out of pci.c")
 
-from the net-next tree.
+from the block tree.
 
-I have added the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 13 Jan 2016 12:30:50 +1100
-Subject: [PATCH] IB/mlx5: merge fix for mlx5_ib_port_link_layer API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/infiniband/hw/mlx5/main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index 307a8c040a11..a2613d828578 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -2252,7 +2252,7 @@ static void *mlx5_ib_add(struct mlx5_core_dev *mdev)
- 			(1ull << IB_USER_VERBS_CMD_CLOSE_XRCD);
- 	}
- 
--	if (mlx5_ib_port_link_layer(&dev->ib_dev) ==
-+	if (mlx5_ib_port_link_layer(&dev->ib_dev, 1) ==
- 	    IB_LINK_LAYER_ETHERNET) {
- 		dev->ib_dev.create_flow	= mlx5_ib_create_flow;
- 		dev->ib_dev.destroy_flow = mlx5_ib_destroy_flow;
--- 
-2.6.4
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc drivers/nvme/host/Makefile
+index a5fe23952586,baf9f52bbfa5..000000000000
+--- a/drivers/nvme/host/Makefile
++++ b/drivers/nvme/host/Makefile
+@@@ -1,5 -1,5 +1,6 @@@
+  
+  obj-$(CONFIG_BLK_DEV_NVME)     += nvme.o
+  
+- lightnvm-$(CONFIG_NVM)	:= lightnvm.o
+- nvme-y		+= pci.o scsi.o $(lightnvm-y)
+ -nvme-y					+= core.o pci.o lightnvm.o
+++lightnvm-$(CONFIG_NVM)			:= lightnvm.o
+++nvme-y					+= core.o pci.o $(lightnvm-y)
++ nvme-$(CONFIG_BLK_DEV_NVME_SCSI)        += scsi.o
