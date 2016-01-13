@@ -1,26 +1,37 @@
 From: Michal Hocko <mhocko@kernel.org>
-Subject: mmotm git tree since-4.4 branch created (was: mmotm 2016-01-12-16-44
- uploaded)
-Date: Wed, 13 Jan 2016 14:42:11 +0100
-Message-ID: <20160113134211.GD28942@dhcp22.suse.cz>
+Subject: Re: mmotm git tree since-4.4 branch created (was: mmotm
+ 2016-01-12-16-44 uploaded)
+Date: Wed, 13 Jan 2016 16:10:44 +0100
+Message-ID: <20160113151044.GA17512@dhcp22.suse.cz>
 References: <56959f89.w3mPYnkFwRbLPsAK%akpm@linux-foundation.org>
+ <20160113134211.GD28942@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f175.google.com ([209.85.192.175]:32975 "EHLO
+	mail-pf0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751918AbcAMPKt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Jan 2016 10:10:49 -0500
 Content-Disposition: inline
-In-Reply-To: <56959f89.w3mPYnkFwRbLPsAK%akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20160113134211.GD28942@dhcp22.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: akpm@linux-foundation.org
 Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
 
-I have just created since-4.4 branch in mm git tree
-(http://git.kernel.org/?p=linux/kernel/git/mhocko/mm.git;a=summary). It
-is based on v4.4 tag in Linus tree and mmotm-2016-01-12-16-44.
+On Wed 13-01-16 14:42:11, Michal Hocko wrote:
+> I have just created since-4.4 branch in mm git tree
+> (http://git.kernel.org/?p=linux/kernel/git/mhocko/mm.git;a=summary). It
+> is based on v4.4 tag in Linus tree and mmotm-2016-01-12-16-44.
+> 
+> As usual mmotm trees are tagged with signed tag
+> (finger print BB43 1E25 7FB8 660F F2F1 D22D 48E2 09A2 B310 E347)
 
-As usual mmotm trees are tagged with signed tag
-(finger print BB43 1E25 7FB8 660F F2F1 D22D 48E2 09A2 B310 E347)
-
+Unfortunatelly my scripts have missed the whole post-linux-next section
+in the series file. So the last push didn't have many patches.  This
+is now fixed. I have overwritten the previous tag but the change is
+incremental (aka no rebase...):
+ 
 The shortlog says:
 Alexander Kuleshov (3):
       mm/memblock: remove rgnbase and rgnsize variables
@@ -34,7 +45,7 @@ Andrea Arcangeli (2):
       ksm: introduce ksm_max_page_sharing per page deduplication limit
       ksm: validate STABLE_NODE_DUP_HEAD conditional to gcc version
 
-Andrew Morton (26):
+Andrew Morton (29):
       account-certain-kmem-allocations-to-memcg-checkpatch-fixes
       include-define-__phys_to_pfn-as-phys_pfn-fix
       mempolicy-convert-the-shared_policy-lock-to-a-rwlock-fix-2
@@ -61,25 +72,58 @@ Andrew Morton (26):
       mm/page_alloc.c: rework code layout in memmap_init_zone()
       mm-hugetlbfs-unmap-pages-if-page-fault-raced-with-hole-punch-fix
       mm-soft-offline-exit-with-failure-for-non-anonymous-thp-fix
+      net-drop-tcp_memcontrolc-fix
+      mm-memcontrol-reign-in-the-config-space-madness-fix
+      mm-memcontrol-reign-in-the-config-space-madness-fix-fix
 
-Arnd Bergmann (3):
+Arnd Bergmann (6):
       cpuset: Replace all instances of time_t with time64_t
       mm: include linux/pfn.h for PHYS_PFN definition
       ARM: thp: fix unterminated ifdef in header file
+      memstick: use sector_div instead of do_div
+      mm: memcontrol: only manage socket pressure for CONFIG_INET
+      memcg: fix SLOB build regression
 
 Chen Gang (3):
       mm/mmap.c: remove redundant local variables for may_expand_vm()
       mm: add PHYS_PFN, use it in __phys_to_pfn()
       arch/*/include/uapi/asm/mman.h: : let MADV_FREE have same value for all architectures
 
+Christian Borntraeger (3):
+      dma: Provide simple noop dma ops
+      alpha/dma: use common noop dma ops
+      s390/dma: Allow per device dma ops
+
+Christoph Hellwig (19):
+      dma-mapping: make the generic coherent dma mmap implementation optional
+      arc: convert to dma_map_ops
+      arc: dma mapping fixes
+      avr32: convert to dma_map_ops
+      blackfin: convert to dma_map_ops
+      c6x: convert to dma_map_ops
+      c6x: dma mapping fixes
+      cris: convert to dma_map_ops
+      nios2: convert to dma_map_ops
+      nios2: dma mapping fixes
+      frv: convert to dma_map_ops
+      parisc: convert to dma_map_ops
+      mn10300: convert to dma_map_ops
+      m68k: convert to dma_map_ops
+      metag: convert to dma_map_ops
+      sparc: use generic dma_set_mask
+      tile: uninline dma_set_mask
+      dma-mapping: always provide the dma_map_ops based implementation
+      dma-mapping: remove <asm-generic/dma-coherent.h>
+
 Christoph Lameter (2):
       vmstat: make vmstat_updater deferrable again and shut down on idle
       vmstat-make-vmstat_updater-deferrable-again-and-shut-down-on-idle-fix
 
-Dan Carpenter (1):
+Dan Carpenter (2):
       mm/huge_memory: add a missing tab
+      C6X: fix build breakage
 
-Dan Williams (28):
+Dan Williams (29):
       pmem, dax: clean up clear_pmem()
       dax: increase granularity of dax_clear_blocks() operations
       dax: guarantee page aligned results from bdev_direct_access()
@@ -108,6 +152,7 @@ Dan Williams (28):
       mm, x86: get_user_pages() for dax mappings
       dax: provide diagnostics for pmd mapping failures
       dax: re-enable dax pmd mappings
+      dax: fix dax_pmd_dbg build warning
 
 Daniel Cashman (8):
       mm: mmap: add new /proc tunable for mmap_base ASLR
@@ -118,6 +163,9 @@ Daniel Cashman (8):
       arm64-mm-support-arch_mmap_rnd_bits-v7
       x86: mm: support ARCH_MMAP_RND_BITS
       x86-mm-support-arch_mmap_rnd_bits-v7.txt
+
+Dave Chinner (1):
+      xfs: fix recursive splice read locking with DAX
 
 David Rientjes (1):
       mm, vmalloc: remove VM_VPAGES
@@ -134,7 +182,7 @@ Ebru Akagunduz (3):
 Florian Fainelli (1):
       include/linux/memblock.h: fix ordering of 'flags' argument in comments
 
-Geliang Tang (13):
+Geliang Tang (14):
       mm/slab.c use list_first_entry_or_null()
       mm/slab.c: use list_for_each_entry in cache_flusharray
       mm/slab.c: add a helper function get_first_slab
@@ -148,6 +196,7 @@ Geliang Tang (13):
       mm/swapfile.c: use list_for_each_entry_safe in free_swap_count_continuations
       mm: move lru_to_page to mm_inline.h
       mm/zbud.c: use list_last_entry() instead of list_tail_entry()
+      dma-mapping: use offset_in_page macro
 
 Guenter Roeck (1):
       mn10300: Declare __pfn_to_phys() to fix build error
@@ -156,11 +205,18 @@ Hugh Dickins (2):
       memcg: avoid vmpressure oops when memcg disabled
       mm: make swapoff more robust against soft dirty
 
+Jan Kara (5):
+      ext4: fix races between page faults and hole punching
+      ext4: move unlocked dio protection from ext4_alloc_file_blocks()
+      ext4: fix races between buffered IO and collapse / insert range
+      ext4: fix races of writeback with punch hole and zero range
+      ext4: document lock ordering
+
 Jerome Marchand (2):
       mm, shmem: add internal shmem resident memory accounting
       mm, procfs: breakdown RSS for anon, shmem and file in /proc/pid/status
 
-Johannes Weiner (20):
+Johannes Weiner (34):
       cgroup: clean up the kernel configuration menu nomenclature
       cgroup: put controller Kconfig options in meaningful order
       mm: page_alloc: generalize the dirty balance reserve
@@ -181,6 +237,20 @@ Johannes Weiner (20):
       mm: memcontrol: hook up vmpressure to socket pressure
       mm: memcontrol: switch to the updated jump-label API
       mm/oom_kill.c: don't ignore oom score on exiting tasks
+      mm: memcontrol: drop unused @css argument in memcg_init_kmem
+      mm: memcontrol: remove double kmem page_counter init
+      mm: memcontrol: give the kmem states more descriptive names
+      mm: memcontrol: group kmem init and exit functions together
+      mm: memcontrol: separate kmem code from legacy tcp accounting code
+      mm: memcontrol: move kmem accounting code to CONFIG_MEMCG
+      mm-memcontrol-move-kmem-accounting-code-to-config_memcg-v2
+      mm-memcontrol-move-kmem-accounting-code-to-config_memcg-fix
+      mm: memcontrol: account "kmem" consumers in cgroup2 memory controller
+      mm: memcontrol: introduce CONFIG_MEMCG_LEGACY_KMEM
+      mm: memcontrol: rein in the CONFIG space madness
+      mm: memcontrol: flatten struct cg_proto
+      mm: memcontrol: clean up alloc, online, offline, free functions
+      mm: memcontrol: clean up alloc, online, offline, free functions fix
 
 John Allen (1):
       drivers/base/memory.c: fix kernel warning during memory hotplug on ppc64
@@ -368,9 +438,23 @@ Rami Rosen (2):
 Rodrigo Freire (1):
       Documentation/filesystems: describe the shared memory usage/accounting
 
-Ross Zwisler (2):
+Ross Zwisler (16):
       cgroup: Fix uninitialized variable warning
       mm, dax: fix livelock, allow dax pmd mappings to become writeable
+      dax: fix NULL pointer dereference in __dax_dbg()
+      dax: fix conversion of holes to PMDs
+      pmem: add wb_cache_pmem() to the PMEM API
+      pmem-add-wb_cache_pmem-to-the-pmem-api-v6
+      dax: support dirty DAX entries in radix tree
+      dax-support-dirty-dax-entries-in-radix-tree-v6
+      mm: add find_get_entries_tag()
+      dax: add support for fsync/sync
+      dax-add-support-for-fsync-sync-v6
+      dax: add support for fsync/msync
+      dax-add-support-for-fsync-msync-v8
+      ext2: call dax_pfn_mkwrite() for DAX fsync/msync
+      ext4: call dax_pfn_mkwrite() for DAX fsync/msync
+      xfs: call dax_pfn_mkwrite() for DAX fsync/msync
 
 Sergey Senozhatsky (2):
       zram/zcomp: use GFP_NOIO to allocate streams
@@ -410,11 +494,17 @@ Toshi Kani (3):
       x86/mm/pat: Change free_memtype() to support shrinking case
       dax: Split pmd map when fallback on COW
 
+Valentin Rothberg (1):
+      HAVE_DMA_ATTRS: remove leftovers in Kconfig
+
+Vineet Gupta (1):
+      ARC: dma mapping fixes #2
+
 Vitaly Kuznetsov (2):
       memory-hotplug: don't BUG() in register_memory_resource()
       memory-hotplug-dont-bug-in-register_memory_resource-v2
 
-Vladimir Davydov (12):
+Vladimir Davydov (21):
       Revert "kernfs: do not account ino_ida allocations to memcg"
       Revert "gfp: add __GFP_NOACCOUNT"
       memcg: only account kmem allocations marked as __GFP_ACCOUNT
@@ -427,6 +517,15 @@ Vladimir Davydov (12):
       mm/khugepaged: fix scan not aborted on SCAN_EXCEED_SWAP_PTE
       mm: add page_check_address_transhuge() helper
       mm-add-page_check_address_transhuge-helper-fix
+      mm: memcontrol: allow to disable kmem accounting for cgroup2
+      net: drop tcp_memcontrol.c
+      mm: memcontrol: charge swap to cgroup2
+      mm: vmscan: pass memcg to get_scan_count()
+      mm: memcontrol: replace mem_cgroup_lruvec_online with mem_cgroup_online
+      swap.h: move memcg related stuff to the end of the file
+      mm: vmscan: do not scan anon pages if memcg swap limit is hit
+      mm: free swap cache aggressively if memcg swap is full
+      Documentation: cgroup: add memory.swap.{current,max} description
 
 Vlastimil Babka (4):
       mm, documentation: clarify /proc/pid/status VmSwap limitations for shmem
