@@ -1,41 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Fri, 15 Jan 2016 13:24:11 +1100
-Message-ID: <20160115132411.3193fff9@canb.auug.org.au>
-References: <20160112164034.0fe945a7@canb.auug.org.au>
+Subject: linux-next: manual merge of the luto-misc tree with Linus' tree
+Date: Fri, 15 Jan 2016 13:45:28 +1100
+Message-ID: <20160115134528.5e2831a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44050 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52899 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751577AbcAOCYM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 14 Jan 2016 21:24:12 -0500
-In-Reply-To: <20160112164034.0fe945a7@canb.auug.org.au>
+	id S1750863AbcAOCpa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 14 Jan 2016 21:45:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin LaHaise <bcrl@kvack.org>
+To: Andy Lutomirski <luto@amacapital.net>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Benjamin,
+Hi Andy,
 
-On Tue, 12 Jan 2016 16:40:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the aio tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> fs/built-in.o: In function `aio_thread_op_foo_at':
-> file.c:(.text+0x43808): undefined reference to `__get_user_bad'
-> file.c:(.text+0x43838): undefined reference to `__get_user_bad'
-> 
-> Caused by commit
-> 
->   150a0b4905f1 ("aio: add support for async openat()")
-> 
-> I have used the aio tree from next-20160111 for today.
+Today's linux-next merge of the luto-misc tree got a conflict in:
 
-I am still getting this error.
+  tools/testing/selftests/x86/Makefile
+
+between commit:
+
+  0f672809f91a ("selftests/x86: Disable the ldt_gdt_64 test for now")
+
+from Linus' tree and commit:
+
+  4b154c54fff1 ("x86/signal/64: Re-add support for SS in the 64-bit signal context")
+
+from the luto-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
+
+diff --cc tools/testing/selftests/x86/Makefile
+index d0c473f65850,7d01da819d83..000000000000
+--- a/tools/testing/selftests/x86/Makefile
++++ b/tools/testing/selftests/x86/Makefile
+@@@ -4,11 -4,9 +4,11 @@@ include ../lib.m
+  
+  .PHONY: all all_32 all_64 warn_32bit_failure clean
+  
+- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall
+- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault sigreturn test_syscall_vdso unwind_vdso \
+ -TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs ldt_gdt syscall_nt ptrace_syscall sigreturn
+++TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall sigreturn
++ TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
+ -			test_FCMOV test_FCOMI test_FISTTP
+ +			test_FCMOV test_FCOMI test_FISTTP \
+ +			ldt_gdt \
+ +			vdso_restorer
+  
+  TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
+  BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
