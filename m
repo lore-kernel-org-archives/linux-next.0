@@ -1,76 +1,74 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: linux-next: manual merge of the luto-misc tree with Linus' tree
-Date: Fri, 15 Jan 2016 08:34:25 -0800
-Message-ID: <CALCETrVBqiSfg769maAgEoGxdbpu+WCpasTfJUoGYGdkU5DLeg@mail.gmail.com>
-References: <20160115134528.5e2831a7@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Fri, 15 Jan 2016 13:05:27 -0800
+Message-ID: <20160115130527.c43357d0aef93d22380c6673@linux-foundation.org>
+References: <20151231232210.7ab890f1@canb.auug.org.au>
+	<20160114151541.17e76d23@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:33097 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbcAOQep (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jan 2016 11:34:45 -0500
-Received: by mail-ob0-f172.google.com with SMTP id is5so114261651obc.0
-        for <linux-next@vger.kernel.org>; Fri, 15 Jan 2016 08:34:44 -0800 (PST)
-In-Reply-To: <20160115134528.5e2831a7@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54319 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751821AbcAOVF2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jan 2016 16:05:28 -0500
+In-Reply-To: <20160114151541.17e76d23@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vinod Koul <vinod.koul@linux.intel.com>, Takashi Iwai <tiwai@suse.de>, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-On Thu, Jan 14, 2016 at 6:45 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andy,
->
-> Today's linux-next merge of the luto-misc tree got a conflict in:
->
->   tools/testing/selftests/x86/Makefile
->
-> between commit:
->
->   0f672809f91a ("selftests/x86: Disable the ldt_gdt_64 test for now")
->
-> from Linus' tree and commit:
->
->   4b154c54fff1 ("x86/signal/64: Re-add support for SS in the 64-bit signal context")
->
-> from the luto-misc tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+On Thu, 14 Jan 2016 15:15:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-This isn't quite correct.  I'll fix it up, since semantically it's
-more a functionality change than a merge issue.
+> Hi Andrew,
+> 
+> On Thu, 31 Dec 2015 23:22:10 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the akpm tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > sound/core/compress_offload.c: In function 'snd_compr_ioctl':
+> > /home/sfr/next/next/sound/core/compress_offload.c:804:2: error: case label does not reduce to an integer constant
+> >   case _IOC_NR(SNDRV_COMPRESS_GET_CODEC_CAPS):
+> >   ^
+> > 
+> > I have no idea what caused that and have just left it broken for now.
+> 
+> I am still getting this.  Something in mmotm is causing or exposing this.
 
---Andy
+I'm getting this as well.  If I do
 
->
-> --
-> Cheers,
-> Stephen Rothwell                    sfr@canb.auug.org.au
->
-> diff --cc tools/testing/selftests/x86/Makefile
-> index d0c473f65850,7d01da819d83..000000000000
-> --- a/tools/testing/selftests/x86/Makefile
-> +++ b/tools/testing/selftests/x86/Makefile
-> @@@ -4,11 -4,9 +4,11 @@@ include ../lib.m
->
->   .PHONY: all all_32 all_64 warn_32bit_failure clean
->
-> - TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall
-> - TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault sigreturn test_syscall_vdso unwind_vdso \
->  -TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs ldt_gdt syscall_nt ptrace_syscall sigreturn
-> ++TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt ptrace_syscall sigreturn
-> + TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
->  -                      test_FCMOV test_FCOMI test_FISTTP
->  +                      test_FCMOV test_FCOMI test_FISTTP \
->  +                      ldt_gdt \
->  +                      vdso_restorer
->
->   TARGETS_C_32BIT_ALL := $(TARGETS_C_BOTHBITS) $(TARGETS_C_32BIT_ONLY)
->   BINARIES_32 := $(TARGETS_C_32BIT_ALL:%=%_32)
+--- a/include/uapi/sound/compress_offload.h~a
++++ a/include/uapi/sound/compress_offload.h
+@@ -163,8 +163,7 @@ struct snd_compr_metadata {
+  */
+ #define SNDRV_COMPRESS_IOCTL_VERSION	_IOR('C', 0x00, int)
+ #define SNDRV_COMPRESS_GET_CAPS		_IOWR('C', 0x10, struct snd_compr_caps)
+-#define SNDRV_COMPRESS_GET_CODEC_CAPS	_IOWR('C', 0x11,\
+-						struct snd_compr_codec_caps)
++#define SNDRV_COMPRESS_GET_CODEC_CAPS	_IOWR('C', 0x11, struct snd_compr_caps)
+ #define SNDRV_COMPRESS_SET_PARAMS	_IOW('C', 0x12, struct snd_compr_params)
+ #define SNDRV_COMPRESS_GET_PARAMS	_IOR('C', 0x13, struct snd_codec)
+ #define SNDRV_COMPRESS_SET_METADATA	_IOW('C', 0x14,\
 
+then it compiles OK.  So there's something special about `struct
+snd_compr_codec_caps' which is confusing the compiler.
 
+Looking at the cpp output:
 
--- 
-Andy Lutomirski
-AMA Capital Management, LLC
+ case ((((((2U|4U) << (((0 +8)+8)+13)) | ((('C')) << (0 +8)) | (((0x10)) << 0) | (((((sizeof(struct snd_compr_caps) == sizeof(struct snd_compr_caps[1]) && sizeof(struct snd_compr_caps) < (1 << 13)) ? sizeof(struct snd_compr_caps) : __invalid_size_argument_for_IOC))) << ((0 +8)+8)))) >> 0) & ((1 << 8)-1)):
+  retval = snd_compr_get_caps(stream, arg);
+  break;
+
+^^ this is SNDRV_COMPRESS_GET_CAPS and it works OK
+
+ case ((((((2U|4U) << (((0 +8)+8)+13)) | ((('C')) << (0 +8)) | (((0x11)) << 0) | (((((sizeof(struct snd_compr_codec_caps) == sizeof(struct snd_compr_codec_caps[1]) && sizeof(struct snd_compr_codec_caps) < (1 << 13)) ? sizeof(struct snd_compr_codec_caps) : __invalid_size_argument_for_IOC))) << ((0 +8)+8)))) >> 0) & ((1 << 8)-1)):
+  retval = snd_compr_get_codec_caps(stream, arg);
+
+^^ this is SNDRV_COMPRESS_GET_CODEC_CAPS and it fails
+
+And they are identical apart from 0x10 vs 0x11 and the struct name.
+
+It happens in vanilla linux-next as well, without the -mm patch pile.
+
+Confused.
