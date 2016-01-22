@@ -1,7 +1,7 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Fri, 22 Jan 2016 13:40:45 +1100
-Message-ID: <20160122134045.438cd9d9@canb.auug.org.au>
+Date: Fri, 22 Jan 2016 14:03:12 +1100
+Message-ID: <20160122140312.1587dd03@canb.auug.org.au>
 References: <20151231232210.7ab890f1@canb.auug.org.au>
 	<20160114151541.17e76d23@canb.auug.org.au>
 	<20160115130527.c43357d0aef93d22380c6673@linux-foundation.org>
@@ -14,12 +14,16 @@ References: <20151231232210.7ab890f1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57864 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751249AbcAVDDO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Jan 2016 22:03:14 -0500
 In-Reply-To: <20160122112442.75c07aac@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Takashi Iwai <tiwai@suse.de>
-Cc: Vinod Koul <vinod.koul@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Vinod Koul <vinod.koul@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>
 
 Hi all,
 
@@ -52,34 +56,19 @@ On Fri, 22 Jan 2016 11:24:42 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > The preprocessed file is the same in both cases, but with these flags
 > the compiler errors.
 
-So for now I have suppressed the error using the following patch (which
-I will keep in my fixes tree until some other fix is applied):
+I have discussed this with the PowerPC maintainer (Michael) and he
+figured out why the compiler does not produce an error (normally).  It
+is because this driver is using _IOC_NR(xxx) to match ioctls instead of
+the full ioctl number.  Because of that, the compiler can figure out
+that it does not care about the undefined reference to
+__invalid_size_argument_for_IOC that the size check shouold generate
+(since _IOC_NR shifts and masks it out).
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 22 Jan 2016 13:24:57 +1100
-Subject: [PATCH] next: suppress the building of all the sound codecs on PPC
- for now
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- sound/soc/codecs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-index 50693c867e71..ee5f36b9c787 100644
---- a/sound/soc/codecs/Kconfig
-+++ b/sound/soc/codecs/Kconfig
-@@ -13,6 +13,7 @@ menu "CODEC drivers"
- config SND_SOC_ALL_CODECS
- 	tristate "Build all ASoC CODEC drivers"
- 	depends on COMPILE_TEST
-+	depends on !PPC
- 	select SND_SOC_88PM860X if MFD_88PM860X
- 	select SND_SOC_L3
- 	select SND_SOC_AB8500_CODEC if ABX500_CORE
--- 
-2.6.4
-
+So, the switch statement in snd_compr_ioctl() should be rewritten to
+check against the full ioctl number (since currently it could
+theoretically match any number of ioctls, not just the relevant ones).
+And then something needs to be done about the very large structure
+being passed.
 -- 
 Cheers,
 Stephen Rothwell                    sfr@canb.auug.org.au
