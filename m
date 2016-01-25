@@ -1,8 +1,10 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 25 Jan 2016 16:48:06 +0530
-Message-ID: <20160125111806.GA21907@sudip-pc>
-References: <20160116100047.681e0e03@canb.auug.org.au>
+Date: Mon, 25 Jan 2016 11:41:50 +0000
+Message-ID: <20160125114150.GK6588@sirena.org.uk>
+References: <20160114151541.17e76d23@canb.auug.org.au>
+ <20160115130527.c43357d0aef93d22380c6673@linux-foundation.org>
+ <20160116100047.681e0e03@canb.auug.org.au>
  <20160115151401.03fe1a39ca397079407c2ca9@linux-foundation.org>
  <s5h4meductq.wl-tiwai@suse.de>
  <s5hmvs0uytw.wl-tiwai@suse.de>
@@ -10,89 +12,72 @@ References: <20160116100047.681e0e03@canb.auug.org.au>
  <20160122112442.75c07aac@canb.auug.org.au>
  <20160122134045.438cd9d9@canb.auug.org.au>
  <s5h60yiatwt.wl-tiwai@suse.de>
- <20160125104555.GA16749@sudip-pc>
- <s5hsi1lapk5.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f182.google.com ([209.85.192.182]:36476 "EHLO
-	mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756057AbcAYLSZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jan 2016 06:18:25 -0500
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AUv0/Bqt5dWl9oeU"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <s5hsi1lapk5.wl-tiwai@suse.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <s5h60yiatwt.wl-tiwai@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Takashi Iwai <tiwai@suse.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Vinod Koul <vinod.koul@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 25, 2016 at 12:03:54PM +0100, Takashi Iwai wrote:
-> On Mon, 25 Jan 2016 11:45:56 +0100,
-> Sudip Mukherjee wrote:
-> > 
-> > On Mon, Jan 25, 2016 at 10:29:54AM +0100, Takashi Iwai wrote:
-> > > On Fri, 22 Jan 2016 03:40:45 +0100,
-> > > Stephen Rothwell wrote:
-> > > > 
-> > > > Hi all,
-> > > > 
-<snip>
-> > > > 
-> > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > Date: Fri, 22 Jan 2016 13:24:57 +1100
-> > > > Subject: [PATCH] next: suppress the building of all the sound codecs on PPC
-> > > >  for now
-> > > > 
-> > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > ---
-> > > >  sound/soc/codecs/Kconfig | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > > 
-> > > > diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
-> > > > index 50693c867e71..ee5f36b9c787 100644
-> > > > --- a/sound/soc/codecs/Kconfig
-> > > > +++ b/sound/soc/codecs/Kconfig
-> > > > @@ -13,6 +13,7 @@ menu "CODEC drivers"
-> > > >  config SND_SOC_ALL_CODECS
-> > > >  	tristate "Build all ASoC CODEC drivers"
-> > > >  	depends on COMPILE_TEST
-> > > > +	depends on !PPC
-> > > >  	select SND_SOC_88PM860X if MFD_88PM860X
-> > > >  	select SND_SOC_L3
-> > > >  	select SND_SOC_AB8500_CODEC if ABX500_CORE
-> > > 
-> > > Suppressing this whole is an overreaction, IMO.  It should suffice
-> > > just to disable compile-testing Intel driver.
-> > > How about the patch below?
-> > > 
-> > > 
-> > > thanks,
-> > > 
-> > > Takashi
-> > > 
-> > > -- 8< --
-> > > From: Takashi Iwai <tiwai@suse.de>
-> > > Subject: [PATCH] ASoC: intel: suppress compile-test with PowerPC
-> > > 
-> > > Since some ioctl in compress offload API is broken for PPC (the struct
-> > > size overflows), now we get actually the build error.
-> > > 
-> > > Until we get the proper solution (e.g. alternative ioctl), let's
-> > > disable the build of Intel ASoC driver that is the only driver who
-> > > enables SND_SOC_COMPRESS (and eventually SND_COMPRESS_OFFLOAD) in the
-> > > mainline tree.
-> > 
-> > Sorry, but this does not fix the build failure.
-> > I can still see SND_COMPRESS_OFFLOAD=m in .config and the build fails.
-> 
-> Who sets this config?  SND_COMPRESS_OFFLOAD has no prompt, so this
-> should be default off.
 
-I think when we are doing allmodconfig SND_SOC_COMPRESS will be selected
-which in turn will select SND_COMPRESS_OFFLOAD as SND_SOC_COMPRESS
-depends only on SND_SOC.
+--AUv0/Bqt5dWl9oeU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-And alpha is not affected. It builds fine.
+On Mon, Jan 25, 2016 at 10:29:54AM +0100, Takashi Iwai wrote:
+> Stephen Rothwell wrote:
 
-regards
-sudip
+> > diff --git a/sound/soc/codecs/Kconfig b/sound/soc/codecs/Kconfig
+> > index 50693c867e71..ee5f36b9c787 100644
+> > --- a/sound/soc/codecs/Kconfig
+> > +++ b/sound/soc/codecs/Kconfig
+> > @@ -13,6 +13,7 @@ menu "CODEC drivers"
+> >  config SND_SOC_ALL_CODECS
+> >  	tristate "Build all ASoC CODEC drivers"
+> >  	depends on COMPILE_TEST
+> > +	depends on !PPC
+> >  	select SND_SOC_88PM860X if MFD_88PM860X
+> >  	select SND_SOC_L3
+> >  	select SND_SOC_AB8500_CODEC if ABX500_CORE
+
+> Suppressing this whole is an overreaction, IMO.  It should suffice
+> just to disable compile-testing Intel driver.
+
+Please send patches and reports to maintainers :(  I agree that this is
+an absurdly wide change.
+
+> diff --git a/sound/soc/intel/Kconfig b/sound/soc/intel/Kconfig
+> index 803f95e40679..d854cd66e090 100644
+> --- a/sound/soc/intel/Kconfig
+> +++ b/sound/soc/intel/Kconfig
+> @@ -31,6 +31,8 @@ config SND_SOC_INTEL_SST
+>  	tristate
+>  	select SND_SOC_INTEL_SST_ACPI if ACPI
+>  	depends on (X86 || COMPILE_TEST)
+> +	# FIXME: a part of compress API is broken for PPC
+> +	depends on !PPC
+
+Why is an Intel CPU thing being enabled by SND_SOC_ALL_CODECS?  I'm also
+unclear why this will help when we're selecting in the drivers so their
+dependencies will be ignored.
+
+--AUv0/Bqt5dWl9oeU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWpgn+AAoJECTWi3JdVIfQmG0H/RrMReX0uFDnY1ZA8twErhq6
+CnVk7mjWLaQA/8NGOgD3uqxGeRlAKDcsvwzj7gAHg6votsgKVsSTo1lduueGrJEm
+MY7JnEEIOPIl7AzqZkqb2R7bNwVjtF8aqtvkxqsN2rat4y7TirJaRUf3wF3WP5xp
+IP2TeHXvQDIrsiOSwUUAbn4EiJAxn0vdYEuqvBHQTctiohRxvFUSkHuWDz8WwZkI
+BvvhbWWPcHdnbYh4imnQu5/XYh9UBoU41TeNNWmbXpHGtOYVhKsuiByNRNHjoOyb
+rDLhQYEDTGhmM5Vd3gX431IJQ7I/pdI96vNyQbo/+3/ycUIiurXK+uuSV7eHpgI=
+=Y47A
+-----END PGP SIGNATURE-----
+
+--AUv0/Bqt5dWl9oeU--
