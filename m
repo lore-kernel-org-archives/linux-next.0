@@ -1,44 +1,42 @@
-From: Ralf Baechle <ralf@linux-mips.org>
-Subject: Re: linux-next: manual merge of the mips tree with Linus' tree
-Date: Mon, 25 Jan 2016 08:42:29 +0100
-Message-ID: <20160125074229.GA22276@linux-mips.org>
-References: <20160125092510.50a6fb35@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jan 25
+Date: Mon, 25 Jan 2016 19:50:38 +1100
+Message-ID: <20160125195038.55a375c8@canb.auug.org.au>
+References: <20160125123248.0dc51ccc@canb.auug.org.au>
+	<20160125131141.41364cf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from eddie.linux-mips.org ([148.251.95.138]:60816 "EHLO
-	cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753321AbcAYHmg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jan 2016 02:42:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20160125092510.50a6fb35@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:56091 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751403AbcAYIul (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 25 Jan 2016 03:50:41 -0500
+In-Reply-To: <20160125131141.41364cf5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, James Hogan <james.hogan@imgtec.com>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Mon, Jan 25, 2016 at 09:25:10AM +1100, Stephen Rothwell wrote:
+Hi all,
 
+On Mon, 25 Jan 2016 13:11:41 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Mon, 25 Jan 2016 12:32:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Please do not add any material for v4.6 to your linux-next included
+> > branches until after v4.5-rc1 is released.  
 > 
-> Today's linux-next merge of the mips tree got conflicts in:
+> It has been pointed out that this is no longer relevant.
 > 
->   arch/mips/kvm/tlb.c
+> > Changes since 20160122:  
 > 
-> between commit:
+> Also, I forgot to mention that my fixes tree contains this:
 > 
->   ba049e93aef7 ("kvm: rename pfn_t to kvm_pfn_t")
-> 
-> from Linus' tree and commit:
-> 
->   cb1b447f0c36 ("MIPS: KVM: Convert EXPORT_SYMBOL to _GPL")
-> 
-> from the mips tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+> 	next: suppress the building of all the sound codecs on PPC for now
 
-Linus has pulled so I'm reseting my branch for you back to v4.5-rc1.
+Also, there will be no linux-next release tomorrow.
 
-Thanks,
-
-  Ralf
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
