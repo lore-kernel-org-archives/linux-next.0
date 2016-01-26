@@ -1,43 +1,37 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: Add my git tree for linux-next
-Date: Tue, 26 Jan 2016 11:26:17 +0100
-Message-ID: <20160126102617.GC8567@suse.cz>
-References: <20160125182445.GA8567@twin.jikos.cz>
- <20160126101616.682677d4@canb.auug.org.au>
-Reply-To: dsterba@suse.cz
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 26 Jan 2016 17:56:47 +0530
+Message-ID: <20160126122647.GK11130@localhost>
+References: <20160115151401.03fe1a39ca397079407c2ca9@linux-foundation.org>
+ <s5h4meductq.wl-tiwai@suse.de>
+ <s5hmvs0uytw.wl-tiwai@suse.de>
+ <20160121073859.3a6c22a3@canb.auug.org.au>
+ <20160122112442.75c07aac@canb.auug.org.au>
+ <20160122134045.438cd9d9@canb.auug.org.au>
+ <s5h60yiatwt.wl-tiwai@suse.de>
+ <20160125114150.GK6588@sirena.org.uk>
+ <s5hmvrtajoy.wl-tiwai@suse.de>
+ <s5hio2hai24.wl-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36194 "EHLO mx2.suse.de"
+Received: from mga14.intel.com ([192.55.52.115]:7905 "EHLO mga14.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965164AbcAZK02 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jan 2016 05:26:28 -0500
+	id S1752924AbcAZMW4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2016 07:22:56 -0500
 Content-Disposition: inline
-In-Reply-To: <20160126101616.682677d4@canb.auug.org.au>
+In-Reply-To: <s5hio2hai24.wl-tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: clm@fb.com, linux-next@vger.kernel.org, linux-btrfs@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 
-On Tue, Jan 26, 2016 at 10:16:16AM +1100, Stephen Rothwell wrote:
-> Hi David,
-> 
-> On Mon, 25 Jan 2016 19:24:45 +0100 David Sterba <dsterba@suse.cz> wrote:
-> >
-> > please add my git tree to linux-next branches
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-> > 
-> > It's not populated yet, I'm planning to add namely other developer
-> > patchsets (targeting the next release cycle) as I'm able to review them.
-> > I won't track all pending patchsets nor all single patches that go to
-> > the mailinglist, due to time reasons.
-> 
-> What subsystem will these patches relate to? (just btrfs)?  Will you be sending pull
-> requests?  To whom? (Chris and Josef)?  If so, how will this be
-> different to the current btrfs tree?
+On Mon, Jan 25, 2016 at 02:45:55PM +0100, Takashi Iwai wrote:
+> Below is the revised one.
 
-Just btrfs, pull requests to Chris. As he wrote, this already happens.
-Another point is to make it a bit more clear to the other developers
-which patchsets/branches are heading upstream. Sorry for lack of details
-in the request.
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+
+Thanks for fixing this up...
+
+-- 
+~Vinod
