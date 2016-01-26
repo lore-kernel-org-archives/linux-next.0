@@ -1,68 +1,110 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Add my git tree for linux-next
-Date: Wed, 27 Jan 2016 07:37:18 +1100
-Message-ID: <20160127073718.10ef442f@canb.auug.org.au>
-References: <20160125182445.GA8567@twin.jikos.cz>
-	<20160126101616.682677d4@canb.auug.org.au>
-	<20160126005914.n5zvov6q3v23hvad@floor.thefacebook.com>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Wed, 27 Jan 2016 07:51:30 +1100
+Message-ID: <20160127075130.1afbfc07@canb.auug.org.au>
+References: <20160114151541.17e76d23@canb.auug.org.au>
+	<20160115130527.c43357d0aef93d22380c6673@linux-foundation.org>
+	<20160116100047.681e0e03@canb.auug.org.au>
+	<20160115151401.03fe1a39ca397079407c2ca9@linux-foundation.org>
+	<s5h4meductq.wl-tiwai@suse.de>
+	<s5hmvs0uytw.wl-tiwai@suse.de>
+	<20160121073859.3a6c22a3@canb.auug.org.au>
+	<20160122112442.75c07aac@canb.auug.org.au>
+	<20160122134045.438cd9d9@canb.auug.org.au>
+	<s5h60yiatwt.wl-tiwai@suse.de>
+	<20160125114150.GK6588@sirena.org.uk>
+	<s5hmvrtajoy.wl-tiwai@suse.de>
+	<s5hio2hai24.wl-tiwai@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-btrfs-owner@vger.kernel.org>
-In-Reply-To: <20160126005914.n5zvov6q3v23hvad@floor.thefacebook.com>
-Sender: linux-btrfs-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Chris Mason <clm@fb.com>, linux-next@vger.kernel.org, linux-btrfs@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38024 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751193AbcAZUvc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jan 2016 15:51:32 -0500
+In-Reply-To: <s5hio2hai24.wl-tiwai@suse.de>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, Michael Ellerman <mpe@ellerman.id.au>
 
-Hi David,
+Hi Takashi,
 
-On Mon, 25 Jan 2016 19:59:14 -0500 Chris Mason <clm@fb.com> wrote:
+On Mon, 25 Jan 2016 14:45:55 +0100 Takashi Iwai <tiwai@suse.de> wrote:
 >
-> On Tue, Jan 26, 2016 at 10:16:16AM +1100, Stephen Rothwell wrote:
-> > 
-> > On Mon, 25 Jan 2016 19:24:45 +0100 David Sterba <dsterba@suse.cz> wrote:  
-> > >
-> > > please add my git tree to linux-next branches
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-> > > 
-> > > It's not populated yet, I'm planning to add namely other developer
-> > > patchsets (targeting the next release cycle) as I'm able to review them.
-> > > I won't track all pending patchsets nor all single patches that go to
-> > > the mailinglist, due to time reasons.  
-> > 
-> > What subsystem will these patches relate to? (just btrfs)?  Will you be sending pull
-> > requests?  To whom? (Chris and Josef)?  If so, how will this be
-> > different to the current btrfs tree?  
+> From: Takashi Iwai <tiwai@suse.de>
+> Subject: [PATCH v2] ALSA: compress: Disable GET_CODEC_CAPS ioctl for some
+>  architectures
 > 
-> Dave is one of the btrfs maintainers, and I frequently pull in his trees
-> directly for my pull requests to Linus.  Getting them earlier exposure in
-> linux-next will definitely help.
+> Some architectures like PowerPC can handle the maximum struct size in
+> an ioctl only up to 13 bits, and struct snd_compr_codec_caps used by
+> SNDRV_COMPRESS_GET_CODEC_CAPS ioctl overflows this limit.  This
+> problem was revealed recently by a powerpc change, as it's now treated
+> as a fatal build error.
 > 
-> If we ever share the pull-request duties to Linus, it'll also be important to
-> have Dave's trees in there.
+> This patch is a workaround for that: for architectures with less than
+> 14 bit ioctl struct size, get rid of the handling of the relevant
+> ioctl.  We should provide an alternative equivalent ioctl code later,
+> but for now just paper over it.  Luckily, the compress API hasn't been
+> used on such architectures, so the impact must be effectively zero.
+> 
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  sound/core/compress_offload.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+> index 18b8dc45bb8f..0609e618107a 100644
+> --- a/sound/core/compress_offload.c
+> +++ b/sound/core/compress_offload.c
+> @@ -46,6 +46,13 @@
+>  #include <sound/compress_offload.h>
+>  #include <sound/compress_driver.h>
+>  
+> +/* FIXME: struct snd_compr_codec_caps overflows the ioctl bit size for some
+> + *        architectures, so we need to disable the relevant ioctls.
+> + */
+> +#if _IOC_SIZEBITS < 14
+> +#define COMPR_CODEC_CAPS_OVERFLOW
+> +#endif
+> +
+>  /* TODO:
+>   * - add substream support for multiple devices in case of
+>   *	SND_DYNAMIC_MINORS is not used
+> @@ -440,6 +447,7 @@ out:
+>  	return retval;
+>  }
+>  
+> +#ifndef COMPR_CODEC_CAPS_OVERFLOW
+>  static int
+>  snd_compr_get_codec_caps(struct snd_compr_stream *stream, unsigned long arg)
+>  {
+> @@ -463,6 +471,7 @@ out:
+>  	kfree(caps);
+>  	return retval;
+>  }
+> +#endif /* !COMPR_CODEC_CAPS_OVERFLOW */
+>  
+>  /* revisit this with snd_pcm_preallocate_xxx */
+>  static int snd_compr_allocate_buffer(struct snd_compr_stream *stream,
+> @@ -801,9 +810,11 @@ static long snd_compr_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
+>  	case _IOC_NR(SNDRV_COMPRESS_GET_CAPS):
+>  		retval = snd_compr_get_caps(stream, arg);
+>  		break;
+> +#ifndef COMPR_CODEC_CAPS_OVERFLOW
+>  	case _IOC_NR(SNDRV_COMPRESS_GET_CODEC_CAPS):
+>  		retval = snd_compr_get_codec_caps(stream, arg);
+>  		break;
+> +#endif
+>  	case _IOC_NR(SNDRV_COMPRESS_SET_PARAMS):
+>  		retval = snd_compr_set_params(stream, arg);
+>  		break;
+> -- 
+> 2.7.0
 
-Added from today.  I called it btrfs-kdave.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgment of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
+I have replaced my other patch in my fixes tree until someone gets this
+patch to Linus.
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell                    sfr@canb.auug.org.au
