@@ -1,220 +1,142 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Fri, 29 Jan 2016 11:30:57 +0000
-Message-ID: <20160129113056.GP10826@n2100.arm.linux.org.uk>
-References: <20160112164034.0fe945a7@canb.auug.org.au>
- <20160112163835.GD347@kvack.org>
- <20160127134024.0fababf6@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160129 build: 0 failures 10 warnings (next-20160129)
+Date: Fri, 29 Jan 2016 11:39:26 +0000
+Message-ID: <E1aP7Of-0006IT-KD@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:44543 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752821AbcA2LbI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jan 2016 06:31:08 -0500
-Content-Disposition: inline
-In-Reply-To: <20160127134024.0fababf6@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52142 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755538AbcA2Ljf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jan 2016 06:39:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin LaHaise <bcrl@kvack.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Wed, Jan 27, 2016 at 01:40:24PM +1100, Stephen Rothwell wrote:
-> Hi Benjamin,
-> 
-> On Tue, 12 Jan 2016 11:38:35 -0500 Benjamin LaHaise <bcrl@kvack.org> wrote:
-> >
-> > On Tue, Jan 12, 2016 at 04:40:34PM +1100, Stephen Rothwell wrote:
-> > > 
-> > > After merging the aio tree, today's linux-next build (arm
-> > > multi_v7_defconfig) failed like this:
-> > > 
-> > > fs/built-in.o: In function `aio_thread_op_foo_at':
-> > > file.c:(.text+0x43808): undefined reference to `__get_user_bad'
-> > > file.c:(.text+0x43838): undefined reference to `__get_user_bad'  
-> > 
-> > This is very strange.  It seems to imply that __get_user() doesn't 
-> > handle 64 bit values, which is completely broken behaviour on the 
-> > architecture's part if true.  Can any ARM folks comment on the right 
-> > fix here?
-> 
-> Well, probably only if you cc them :-)
-> 
-> Indeed, __get_user on arm does not handle 64 bit objects, where as
-> get_user does ...
+Tree/Branch: next-20160129
+Git describe: next-20160129
+Commit: 735cfa5115 Add linux-next specific files for 20160129
 
-I believe adding 64-bit support to __get_user() is going to be a really
-painful exercise.  It took long enough to make get_user() accept it
-without creating any new warnings, and then bug fix it for big endian.
-__get_user() has the added complexity that it's inline assembler, and
-we can't play the same games that we used in __get_user().
+Build Time: 137 min 33 sec
 
-It's not a simple case of:
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
- #define __get_user_err(x, ptr, err)					\
- do {									\
- 	unsigned long __gu_addr = (unsigned long)(ptr); 		\
--	unsigned long __gu_val; 					\
-+	unsigned long long __gu_val; 					\
- 	unsigned int __ua_flags;					\
- 	__chk_user_ptr(ptr);						\
- 	might_fault();							\
- 	__ua_flags = uaccess_save_and_enable(); 			\
- 	switch (sizeof(*(ptr))) {					\
- 	case 1: __get_user_asm_byte(__gu_val, __gu_addr, err);	break;	\
- 	case 2: __get_user_asm_half(__gu_val, __gu_addr, err);	break;	\
- 	case 4: __get_user_asm_word(__gu_val, __gu_addr, err);	break;	\
-+	case 8: __get_user_asm_dword(__gu_val, __gu_addr, err); break;	\
- 	default: (__gu_val) = __get_user_bad(); 			\
- 	}								\
- 	uaccess_restore(__ua_flags);					\
- 	(x) = (__typeof__(*(ptr)))__gu_val;				\
- } while (0)
+Errors: 0
+Warnings: 10
+Section Mismatches: 4
 
-as, while that works for integer 'x', it doesn't work when 'x' is a
-pointer type, as the cast on the last line creates a GCC warning
-about casting to a different size.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+     13 warnings    0 mismatches  : arm-multi_v7_defconfig
+      8 warnings    0 mismatches  : x86_64-defconfig
+      7 warnings    4 mismatches  : arm-allmodconfig
+      5 warnings    0 mismatches  : arm64-defconfig
 
-You can't move the cast into the switch to eliminate that, because
-GCC still warns even though the code is unreachable.  Same problem
-exists if you move the variable declaration inside the switch.
+-------------------------------------------------------------------------------
 
-> Background: new aio code is adding __get_user() calls referencing 64
-> bit quantities (__u64 and __s64).
+Warnings Summary: 10
+	 20 ../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	  4 ../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	  4 ../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	  2 ../fs/ocfs2/file.c:2198:1: warning: label 'relock' defined but not used [-Wunused-label]
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-There's lots more architectures which do not support 64-bit get_user()
-_or_ __get_user(): avr32, blackfin, metag for example, and m68k which
-has this interesting thing "/* case 8: disabled because gcc-4.1 has a
-broken typeof \" in its *get_user() implementation.
+Section Mismatch Summary: 4
+	  1 WARNING: vmlinux.o(.text+0xcb7b40): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/clk/sunxi/built-in.o(.text+0x3d64): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/clk/built-in.o(.text+0x529e0): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/built-in.o(.text+0x47736c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
 
-Even x86-32 doesn't support it:
 
-#define __get_user(x, ptr)                                              \
-        __get_user_nocheck((x), (ptr), sizeof(*(ptr)))
 
-#define __get_user_nocheck(x, ptr, size)                                \
-({                                                                      \
-        int __gu_err;                                                   \
-        unsigned long __gu_val;                                         \
-        __uaccess_begin();                                              \
-        __get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);    \
-        __uaccess_end();                                                \
-        (x) = (__force __typeof__(*(ptr)))__gu_val;                     \
-        __builtin_expect(__gu_err, 0);                                  \
-})
+===============================================================================
+Detailed per-defconfig build reports below:
 
-#define __get_user_size(x, ptr, size, retval, errret)                   \
-do {                                                                    \
-        retval = 0;                                                     \
-        __chk_user_ptr(ptr);                                            \
-        switch (size) {                                                 \
-...
-        case 8:                                                         \
-                __get_user_asm_u64(x, ptr, retval, errret);             \
-                break;                                                  \
-        default:                                                        \
-                (x) = __get_user_bad();                                 \
-        }                                                               \
-} while (0)
 
-#ifdef CONFIG_X86_32
-#define __get_user_asm_u64(x, ptr, retval, errret)      (x) = __get_user_bad()
-#define __get_user_asm_ex_u64(x, ptr)                   (x) = __get_user_bad()
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
 
-Note that __get_user_nocheck() above always uses a 32-bit integer for
-__gu_val, so fixing x86-32 will not be a case of just providing a
-better __get_user_asm_u64() - it's the same problem that I have on ARM.
+Warnings:
+	../fs/ocfs2/file.c:2198:1: warning: label 'relock' defined but not used [-Wunused-label]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
 
-The problem for 32-bit architectures is being able to cope sanely with:
-* different endians on the same arch
-* gcc warning about casting to different sizes, even when the code is
-  unreachable
-* preserving proper and correct typechecking in get_user() and friends
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
-So, I suspect if AIO were to run a test build on x86-32, they would find
-the same errors.
+Warnings:
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
 
-Anyone working on this needs to ensure that any implementation builds
-without warning on all of these:
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 13 warnings, 0 section mismatches
 
-int test_8(unsigned char *v, unsigned char *p)
-{
-        return __get_user(*v, p);
-}
+Warnings:
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'r192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/bluetooth/mgmt.c:5493:8: warning: 'h192' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
 
-int test_8_constp(unsigned char *v, const unsigned char *p)
-{
-        return __get_user(*v, p);
-}
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
 
-int test_8_volatilep(unsigned char *v, volatile unsigned char *p)
-{
-        return __get_user(*v, p);
-}
+Warnings:
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
 
-int test_16(unsigned short *v, unsigned short *p)
-{
-        return __get_user(*v, p);
-}
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 7 warnings, 4 section mismatches
 
-int test_16_constp(unsigned short *v, const unsigned short *p)
-{
-        return __get_user(*v, p);
-}
+Warnings:
+	../crypto/wp512.c:987:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../fs/ocfs2/file.c:2198:1: warning: label 'relock' defined but not used [-Wunused-label]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
 
-int test_32(unsigned int *v, unsigned int *p)
-{
-        return __get_user(*v, p);
-}
+Section Mismatches:
+	WARNING: drivers/clk/sunxi/built-in.o(.text+0x3d64): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: drivers/clk/built-in.o(.text+0x529e0): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: drivers/built-in.o(.text+0x47736c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: vmlinux.o(.text+0xcb7b40): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
 
-int test_32_constp(unsigned int *v, const unsigned int *p)
-{
-        return __get_user(*v, p);
-}
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
 
-int test_64(unsigned long long *v, unsigned long long *p)
-{
-        return __get_user(*v, p);
-}
+Warnings:
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../include/net/iw_handler.h:446:13: warning: 'wireless_nlevent_flush' defined but not used [-Wunused-function]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
 
-int test_64_constp(unsigned long long *v, const unsigned long long *p)
-{
-        return __get_user(*v, p);
-}
+Passed with no errors, warnings or mismatches:
 
-int test_ptr(unsigned int **v, unsigned int **p)
-{
-        return __get_user(*v, p);
-}
-
-int test_const(unsigned int *v, const unsigned int *p)
-{
-        return __get_user(*v, p);
-}
-
-int test_64_narrow(unsigned long *v, unsigned long long *p)
-{
-        return __get_user(*v, p);
-}
-
-int test_32_wide(unsigned long long *v, unsigned long *p)
-{
-        return __get_user(*v, p);
-}
-
-except for this which must warn:
-
-int test_wrong(char **v, const char **p)
-{
-        return __get_user(*v, p);
-}
-
-which comes from my test set for when get_user() was being worked on.
-
-So, in summary, it seems that the 32-bit architectures I've looked at
-so far do not support 64-bit __get_user(), even the popular ones.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
