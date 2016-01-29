@@ -1,52 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160128 build: 4 failures 9 warnings (next-20160128)
-Date: Thu, 28 Jan 2016 12:18:36 +0000
-Message-ID: <20160128121836.GD6078@sirena.org.uk>
-References: <E1aOjcQ-0007JT-Fl@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Fri, 29 Jan 2016 12:45:57 +1100
+Message-ID: <20160129124557.30f3f73f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6WlEvdN9Dv0WHSBl"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50569 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754710AbcA1MSq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jan 2016 07:18:46 -0500
-Content-Disposition: inline
-In-Reply-To: <E1aOjcQ-0007JT-Fl@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Gang <Gang.Liu@nxp.com>
+List-Id: linux-next.vger.kernel.org
 
+Hi Linus,
 
---6WlEvdN9Dv0WHSBl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-On Thu, Jan 28, 2016 at 10:16:02AM +0000, Build bot for Mark Brown wrote:
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_gpio_save_regs':
+drivers/gpio/gpio-mpc8xxx.c:57:21: error: implicit declaration of function 'in_be32' [-Werror=implicit-function-declaration]
+  mpc8xxx_gc->data = in_be32(mm->regs + GPIO_DAT);
+                     ^
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_gpio_set':
+drivers/gpio/gpio-mpc8xxx.c:100:2: error: implicit declaration of function 'out_be32' [-Werror=implicit-function-declaration]
+  out_be32(mm->regs + GPIO_DAT, mpc8xxx_gc->data);
+  ^
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_gpio_dir_in':
+drivers/gpio/gpio-mpc8xxx.c:139:2: error: implicit declaration of function 'clrbits32' [-Werror=implicit-function-declaration]
+  clrbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+  ^
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_gpio_dir_out':
+drivers/gpio/gpio-mpc8xxx.c:156:2: error: implicit declaration of function 'setbits32' [-Werror=implicit-function-declaration]
+  setbits32(mm->regs + GPIO_DIR, mpc8xxx_gpio2mask(gpio));
+  ^
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc512x_irq_set_type':
+drivers/gpio/gpio-mpc8xxx.c:289:3: error: implicit declaration of function 'clrsetbits_be32' [-Werror=implicit-function-declaration]
+   clrsetbits_be32(reg, 3 << shift, 2 << shift);
+   ^
+drivers/gpio/gpio-mpc8xxx.c: In function 'mpc8xxx_probe':
+drivers/gpio/gpio-mpc8xxx.c:419:26: error: 'NO_IRQ' undeclared (first use in this function)
+  if (mpc8xxx_gc->irqn == NO_IRQ)   
+                          ^
+drivers/gpio/gpio-mpc8xxx.c:419:26: note: each undeclared identifier is reported only once for each function it appears in
 
-Today's -next fails to build at all on arm64 due to lots and lots of:
+Exposed by commit
 
-> ../arch/arm64/include/asm/page.h:64:28: error: 'READ_IMPLIES_EXEC' undeclared (first use in this function)
+  5df7fd46b70b ("pio/qoriq: Add qoriq platforms support")
 
-which looks to be due to the removal of an implicit inclusion, probably
-triggered by the cleanups from "mm: warn about VmData over RLIMIT_DATA"
-but I didn't investigate properly since I already identified a fairly
-obvious fix.  Patch incoming.
+The COMPILE_TEST dependency has revealed several implicit includes ...
 
---6WlEvdN9Dv0WHSBl
-Content-Type: application/pgp-signature; name="signature.asc"
+I have used the gpio tree from next-20160128 for today.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWqgcbAAoJECTWi3JdVIfQ8kMH/itcopoNKuYAwtU6nI1f33Hi
-Hf0+Pb6Z8ffMpYf1q9Y+tgSDbpRdZAJ3ibfovLEY3bU17c/rMAAzuYC72MbBPPj8
-DIq0/tYG6LcWLOq7diu8ZtCikqBiT0HwnMQR8oJlxM+/Tc/s7+U9zYFmD8RFoeb9
-3hzdg7wSVf1fpXLP9MZu0Ti7tr5+7kCm62tg6bQcUleDK6GMDGsvCFoCoE0wbHIe
-EIZCUdYLGJdQ/kVpAr9O4QNBdhj70znF07XNpuODeH2KNgxTAOfS9cvesWQslX6x
-PsJizwrhYglJd7lHe7/QEUOc0feSoPZ2+AXldKb2+BVbo9hnBbzTXWiJq9e14Bk=
-=adCE
------END PGP SIGNATURE-----
-
---6WlEvdN9Dv0WHSBl--
+-- 
+Cheers,
+Stephen Rothwell                    sfr@canb.auug.org.au
