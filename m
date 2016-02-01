@@ -1,123 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
-Date: Tue, 2 Feb 2016 10:22:16 +1100
-Message-ID: <20160202102216.60d1d550@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the btrfs-kdave tree
+Date: Tue, 2 Feb 2016 10:39:04 +1100
+Message-ID: <20160202103904.4cb77c87@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46075 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45515 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750726AbcBAXWT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 1 Feb 2016 18:22:19 -0500
+	id S1750823AbcBAXjG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2016 18:39:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Sterba <dsterba@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hi David,
 
-Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+After merging the btrfs-kdave tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  fs/btrfs/file.c
+fs/btrfs/reada.c:326:29: error: invalid storage class for function 'reada_find_extent'
+ static struct reada_extent *reada_find_extent(struct btrfs_root *root,
+                             ^
 
-between commit:
+and lots of others.
 
-  5955102c9984 ("wrappers for ->i_mutex access")
+Caused by commit:
 
-from Linus' tree and commit:
+  cbf8f71bc8d5 ("Merge branch 'for-next-4.6-20160201' into for-next-20160201")
 
-  9703fefe0b13 ("Btrfs: fallocate: Work with sectorsized blocks")
+The following patches appear on bothe sides of the merge and there are
+following changes in the for-next-4.6-20160201.  The merge resolution
+is just very bad (I don't know if git did that automatically or not)
+and would have shown up if it was build tested.
 
-from the btrfs-kdave tree.
+4c22a2ccc220 btrfs: reada: bypass adding extent when all zones failed
+d34d58265213 btrfs: reada: add all reachable mirrors into reada device list
+2aafd08e648c btrfs: reada: Avoid many times of empty loop
+dc9529f670fd btrfs: reada: Add missed segment checking in reada_find_zone
+9f2c3244dcf1 btrfs: reada: Fix in-segment calculation for reada
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+e47319f6119c btrfs: reada: bypass adding extent when all zones failed
+440f28b7523a btrfs: reada: add all reachable mirrors into reada device list
+14a5db53a0fc btrfs: reada: Avoid many times of empty loop
+730af4ef7c49 btrfs: reada: Add missed segment checking in reada_find_zone
+a38b691f5d07 btrfs: reada: Fix in-segment calculation for reada
+
+Please fix this up.
+
+I have used the btrfs-kdave tree from next-20160201 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/btrfs/file.c
-index 098bb8f690c9,953f0ad17802..000000000000
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@@ -1761,11 -1778,13 +1778,13 @@@ static ssize_t btrfs_file_write_iter(st
-  	ssize_t err;
-  	loff_t pos;
-  	size_t count;
-+ 	loff_t oldsize;
-+ 	int clean_page = 0;
-  
- -	mutex_lock(&inode->i_mutex);
- +	inode_lock(inode);
-  	err = generic_write_checks(iocb, from);
-  	if (err <= 0) {
- -		mutex_unlock(&inode->i_mutex);
- +		inode_unlock(inode);
-  		return err;
-  	}
-  
-@@@ -1799,14 -1818,17 +1818,17 @@@
-  	pos = iocb->ki_pos;
-  	count = iov_iter_count(from);
-  	start_pos = round_down(pos, root->sectorsize);
-- 	if (start_pos > i_size_read(inode)) {
-+ 	oldsize = i_size_read(inode);
-+ 	if (start_pos > oldsize) {
-  		/* Expand hole size to cover write data, preventing empty gap */
-  		end_pos = round_up(pos + count, root->sectorsize);
-- 		err = btrfs_cont_expand(inode, i_size_read(inode), end_pos);
-+ 		err = btrfs_cont_expand(inode, oldsize, end_pos);
-  		if (err) {
- -			mutex_unlock(&inode->i_mutex);
- +			inode_unlock(inode);
-  			goto out;
-  		}
-+ 		if (start_pos > round_up(oldsize, root->sectorsize))
-+ 			clean_page = 1;
-  	}
-  
-  	if (sync)
-@@@ -1818,9 -1840,12 +1840,12 @@@
-  		num_written = __btrfs_buffered_write(file, from, pos);
-  		if (num_written > 0)
-  			iocb->ki_pos = pos + num_written;
-+ 		if (clean_page)
-+ 			pagecache_isize_extended(inode, oldsize,
-+ 						i_size_read(inode));
-  	}
-  
- -	mutex_unlock(&inode->i_mutex);
- +	inode_unlock(inode);
-  
-  	/*
-  	 * We also have to set last_sub_trans to the current log transid,
-@@@ -2303,8 -2328,8 +2328,8 @@@ static int btrfs_punch_hole(struct inod
-  	if (ret)
-  		return ret;
-  
- -	mutex_lock(&inode->i_mutex);
- +	inode_lock(inode);
-- 	ino_size = round_up(inode->i_size, PAGE_CACHE_SIZE);
-+ 	ino_size = round_up(inode->i_size, root->sectorsize);
-  	ret = find_first_non_hole(inode, &offset, &len);
-  	if (ret < 0)
-  		goto out_only_mutex;
-@@@ -2338,12 -2362,12 +2362,12 @@@
-  		goto out_only_mutex;
-  	}
-  
-- 	/* zero back part of the first page */
-+ 	/* zero back part of the first block */
-  	if (offset < ino_size) {
-- 		truncated_page = true;
-- 		ret = btrfs_truncate_page(inode, offset, 0, 0);
-+ 		truncated_block = true;
-+ 		ret = btrfs_truncate_block(inode, offset, 0, 0);
-  		if (ret) {
- -			mutex_unlock(&inode->i_mutex);
- +			inode_unlock(inode);
-  			return ret;
-  		}
-  	}
