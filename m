@@ -1,45 +1,55 @@
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: Build failures (s390) in -next due to 'mm, printk: introduce new
- format string for flags'
-Date: Fri, 29 Jan 2016 16:40:46 +0100
-Message-ID: <56AB87FE.8010800@suse.cz>
-References: <56AB86BA.8020507@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dt-rh tree with the qcom tree
+Date: Mon, 1 Feb 2016 13:10:17 +1100
+Message-ID: <20160201131017.5a843363@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:33890 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([103.22.144.67]:35457 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932254AbcA2Pks (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Jan 2016 10:40:48 -0500
-In-Reply-To: <56AB86BA.8020507@roeck-us.net>
+	id S933224AbcBACKT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 31 Jan 2016 21:10:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>, linux-s390 <linux-s390@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Rob Herring <robherring2@gmail.com>, Andy Gross <agross@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
-On 01/29/2016 04:35 PM, Guenter Roeck wrote:
-> Hi,
-> 
-> s390 builds in -next fail with lots of errors such as:
-> 
-> include/linux/jump_label.h: In function 'static_key_count':
-> include/linux/jump_label.h:122:2: error: implicit declaration of function 'atomic_read' [-Werror=implicit-function-declaration]
->    return atomic_read(&key->enabled);
-> ...
-> ./arch/s390/include/asm/atomic.h: At top level:
-> ./arch/s390/include/asm/atomic.h:74:19: error: static declaration of 'atomic_read' follows non-static declaration
->   static inline int atomic_read(const atomic_t *v)
-> 
-> As far as I can see this is due to recursive inclusion of linux/atomic.h
-> (which in turn is triggered by recursive inclusion of linux/mmdebug.h).
-> 
-> I was able to "fix" the problem by removing the inclusion of mmdebug.h from
-> arch/s390/include/asm/cmpxchg.h. That is not a proper fix, though, since the file
-> uses VM_BUG_ON(), which is defined in mmdebug.h.
-> 
-> The problem was introduced with 'mm, printk: introduce new format string for flags'.
+Hi Rob,
 
-Yeah sorry about that, I sent a fixed fix:
+Today's linux-next merge of the dt-rh tree got a conflict in:
 
-http://marc.info/?l=linux-mm&m=145406672221395&w=2
+  MAINTAINERS
+
+between commit:
+
+  43ed2986476d ("MAINTAINERS: add qcom i2c and spi drivers to list")
+
+from the qcom tree and commit:
+
+  e68d7c143a62 ("MAINTAINERS: Add missing platform maintainers for dts files")
+
+from the dt-rh tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 5318f7972fb9,973336739ae5..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -1431,9 -1434,8 +1440,10 @@@ S:	Maintaine
+  F:	arch/arm/boot/dts/qcom-*.dts
+  F:	arch/arm/boot/dts/qcom-*.dtsi
+  F:	arch/arm/mach-qcom/
++ F:	arch/arm64/boot/dts/qcom/*
+ +F:	drivers/i2c/busses/i2c-qup.c
+  F:	drivers/soc/qcom/
+ +F:	drivers/spi/spi-qup.c
+  F:	drivers/tty/serial/msm_serial.h
+  F:	drivers/tty/serial/msm_serial.c
+  F:	drivers/*/pm8???-*
