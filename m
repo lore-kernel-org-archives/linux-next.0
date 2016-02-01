@@ -1,51 +1,51 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Mon, 1 Feb 2016 01:53:57 -0800
-Message-ID: <20160201095357.GO6719@linux.vnet.ibm.com>
-References: <20160201135551.657cd095@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160201 build: 1 failures 25 warnings (next-20160201)
+Date: Mon, 1 Feb 2016 17:28:31 +0000
+Message-ID: <20160201172831.GE4455@sirena.org.uk>
+References: <E1aQHbv-0001K4-HG@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e34.co.us.ibm.com ([32.97.110.152]:46214 "EHLO
-	e34.co.us.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751693AbcBAJyE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2016 04:54:04 -0500
-Received: from localhost
-	by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-	Mon, 1 Feb 2016 02:54:03 -0700
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57920 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754485AbcBAR2j (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2016 12:28:39 -0500
 Content-Disposition: inline
-In-Reply-To: <20160201135551.657cd095@canb.auug.org.au>
+In-Reply-To: <E1aQHbv-0001K4-HG@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Feb 01, 2016 at 01:55:51PM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> In file included from /home/sfr/next/next/include/linux/spinlock_types.h:18:0,
->                  from /home/sfr/next/next/include/linux/spinlock.h:81,
->                  from /home/sfr/next/next/kernel/rcu/tree.c:33:
-> /home/sfr/next/next/kernel/rcu/tree.c: In function 'rcu_init_one':
-> /home/sfr/next/next/include/linux/lockdep.h:299:27: error: 'struct rt_mutex' has no member named 'dep_map'
->    lockdep_init_map(&(lock)->dep_map, name, key, 0)
->                            ^
-> /home/sfr/next/next/kernel/rcu/tree.c:4572:4: note: in expansion of macro 'lockdep_set_class_and_name'
->     lockdep_set_class_and_name(&rnp->exp_funnel_mutex,
->     ^
-> 
-> Caused by commit
-> 
->   725b7f3805c6 ("rcu: Convert expedited grace-period funnel lock to rt_mutex")
-> 
-> I have used the rcu tree from next-20160129 for today.
 
-Apologies, that was too experimental for -next.  I have placed rcu/next
-to precede the offending commit.
+--XvKFcGCOAo53UbWW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+On Mon, Feb 01, 2016 at 04:45:57PM +0000, Build bot for Mark Brown wrote:
+> Tree/Branch: next-20160201
+> Git describe: next-20160201
+> Commit: 99e832465a Add linux-next specific files for 20160201
+>=20
+> Build Time: 187 min 35 sec
+
+The failures here were false positives caused by an issue with the
+environment I believe, things should be fine for future builds.
+
+--XvKFcGCOAo53UbWW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWr5W+AAoJECTWi3JdVIfQ5IMH/iqgoJ2YA0NNcQBZgPDv09m0
+cyoZpAEosIUrSCgKo146yqJfydb4rqEZMMhDe6CDVt8b7BrxW8zlZN0IBWNdPH+v
+zJ+I1M9PP5qoMxtJWG402MRZOIO07Ccvhzo4MbvwaBjWoZxXYuBM6d8Dj6UYW3Px
+DQYI2C2L9qMhyuDNRINeze3R93uNweVj5QLzW0Crq76txHk0zt6RnU5TKL4fpHOr
+3zbhESsqChvRZHtBFVCA8kboYllt93rT7eoiOy0qTcRbZNzv/INf3U8+qN16HtQ5
+Ybf1adUJIyXHzIuG8ruR7KP6QMnOfK8ywBMdbG1cLTqJJotjoegtkxwo2GYMPLE=
+=P4rc
+-----END PGP SIGNATURE-----
+
+--XvKFcGCOAo53UbWW--
