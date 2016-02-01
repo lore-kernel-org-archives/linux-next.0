@@ -1,51 +1,123 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160201 build: 1 failures 25 warnings (next-20160201)
-Date: Mon, 1 Feb 2016 17:28:31 +0000
-Message-ID: <20160201172831.GE4455@sirena.org.uk>
-References: <E1aQHbv-0001K4-HG@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
+Date: Tue, 2 Feb 2016 10:22:16 +1100
+Message-ID: <20160202102216.60d1d550@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XvKFcGCOAo53UbWW"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57920 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754485AbcBAR2j (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Feb 2016 12:28:39 -0500
-Content-Disposition: inline
-In-Reply-To: <E1aQHbv-0001K4-HG@optimist>
+Received: from ozlabs.org ([103.22.144.67]:46075 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750726AbcBAXWT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Feb 2016 18:22:19 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: David Sterba <dsterba@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chandan Rajendra <chandan@linux.vnet.ibm.com>, Al Viro <viro@zeniv.linux.org.uk>
 
+Hi David,
 
---XvKFcGCOAo53UbWW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the btrfs-kdave tree got a conflict in:
 
-On Mon, Feb 01, 2016 at 04:45:57PM +0000, Build bot for Mark Brown wrote:
-> Tree/Branch: next-20160201
-> Git describe: next-20160201
-> Commit: 99e832465a Add linux-next specific files for 20160201
->=20
-> Build Time: 187 min 35 sec
+  fs/btrfs/file.c
 
-The failures here were false positives caused by an issue with the
-environment I believe, things should be fine for future builds.
+between commit:
 
---XvKFcGCOAo53UbWW
-Content-Type: application/pgp-signature; name="signature.asc"
+  5955102c9984 ("wrappers for ->i_mutex access")
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+from Linus' tree and commit:
 
-iQEcBAEBCAAGBQJWr5W+AAoJECTWi3JdVIfQ5IMH/iqgoJ2YA0NNcQBZgPDv09m0
-cyoZpAEosIUrSCgKo146yqJfydb4rqEZMMhDe6CDVt8b7BrxW8zlZN0IBWNdPH+v
-zJ+I1M9PP5qoMxtJWG402MRZOIO07Ccvhzo4MbvwaBjWoZxXYuBM6d8Dj6UYW3Px
-DQYI2C2L9qMhyuDNRINeze3R93uNweVj5QLzW0Crq76txHk0zt6RnU5TKL4fpHOr
-3zbhESsqChvRZHtBFVCA8kboYllt93rT7eoiOy0qTcRbZNzv/INf3U8+qN16HtQ5
-Ybf1adUJIyXHzIuG8ruR7KP6QMnOfK8ywBMdbG1cLTqJJotjoegtkxwo2GYMPLE=
-=P4rc
------END PGP SIGNATURE-----
+  9703fefe0b13 ("Btrfs: fallocate: Work with sectorsized blocks")
 
---XvKFcGCOAo53UbWW--
+from the btrfs-kdave tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/btrfs/file.c
+index 098bb8f690c9,953f0ad17802..000000000000
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@@ -1761,11 -1778,13 +1778,13 @@@ static ssize_t btrfs_file_write_iter(st
+  	ssize_t err;
+  	loff_t pos;
+  	size_t count;
++ 	loff_t oldsize;
++ 	int clean_page = 0;
+  
+ -	mutex_lock(&inode->i_mutex);
+ +	inode_lock(inode);
+  	err = generic_write_checks(iocb, from);
+  	if (err <= 0) {
+ -		mutex_unlock(&inode->i_mutex);
+ +		inode_unlock(inode);
+  		return err;
+  	}
+  
+@@@ -1799,14 -1818,17 +1818,17 @@@
+  	pos = iocb->ki_pos;
+  	count = iov_iter_count(from);
+  	start_pos = round_down(pos, root->sectorsize);
+- 	if (start_pos > i_size_read(inode)) {
++ 	oldsize = i_size_read(inode);
++ 	if (start_pos > oldsize) {
+  		/* Expand hole size to cover write data, preventing empty gap */
+  		end_pos = round_up(pos + count, root->sectorsize);
+- 		err = btrfs_cont_expand(inode, i_size_read(inode), end_pos);
++ 		err = btrfs_cont_expand(inode, oldsize, end_pos);
+  		if (err) {
+ -			mutex_unlock(&inode->i_mutex);
+ +			inode_unlock(inode);
+  			goto out;
+  		}
++ 		if (start_pos > round_up(oldsize, root->sectorsize))
++ 			clean_page = 1;
+  	}
+  
+  	if (sync)
+@@@ -1818,9 -1840,12 +1840,12 @@@
+  		num_written = __btrfs_buffered_write(file, from, pos);
+  		if (num_written > 0)
+  			iocb->ki_pos = pos + num_written;
++ 		if (clean_page)
++ 			pagecache_isize_extended(inode, oldsize,
++ 						i_size_read(inode));
+  	}
+  
+ -	mutex_unlock(&inode->i_mutex);
+ +	inode_unlock(inode);
+  
+  	/*
+  	 * We also have to set last_sub_trans to the current log transid,
+@@@ -2303,8 -2328,8 +2328,8 @@@ static int btrfs_punch_hole(struct inod
+  	if (ret)
+  		return ret;
+  
+ -	mutex_lock(&inode->i_mutex);
+ +	inode_lock(inode);
+- 	ino_size = round_up(inode->i_size, PAGE_CACHE_SIZE);
++ 	ino_size = round_up(inode->i_size, root->sectorsize);
+  	ret = find_first_non_hole(inode, &offset, &len);
+  	if (ret < 0)
+  		goto out_only_mutex;
+@@@ -2338,12 -2362,12 +2362,12 @@@
+  		goto out_only_mutex;
+  	}
+  
+- 	/* zero back part of the first page */
++ 	/* zero back part of the first block */
+  	if (offset < ino_size) {
+- 		truncated_page = true;
+- 		ret = btrfs_truncate_page(inode, offset, 0, 0);
++ 		truncated_block = true;
++ 		ret = btrfs_truncate_block(inode, offset, 0, 0);
+  		if (ret) {
+ -			mutex_unlock(&inode->i_mutex);
+ +			inode_unlock(inode);
+  			return ret;
+  		}
+  	}
