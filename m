@@ -1,34 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 3 Feb 2016 16:27:28 +1100
-Message-ID: <20160203162728.32e6f283@canb.auug.org.au>
+Date: Wed, 3 Feb 2016 16:36:13 +1100
+Message-ID: <20160203163613.327c6101@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39650 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751116AbcBCF1a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Feb 2016 00:27:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joonsoo Kim <js1304@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi Andrew,
 
 After merging the akpm-current tree, today's linux-next build (arm
-allnoconfig) failed like this:
+ep93xx_defconfig) failed like this:
 
-In file included from kernel/memremap.c:17:0:
-include/linux/pfn_t.h:108:7: error: 'pud_mkdevmap' declared as function returning an array
+mm/slab.c: In function 'is_debug_pagealloc_cache':
+mm/slab.c:1608:2: error: implicit declaration of function 'debug_pagealloc_enabled' [-Werror=implicit-function-declaration]
 
 Caused by commit
 
-  a27da20ed50e ("mm: add support for PUD-sized transparent hugepages")
+  0a244aea1a61 ("mm/slab: clean up DEBUG_PAGEALLOC processing code")
+
+CONFIG_DEBUG_PAGEALLOC is not enabled in this build.
 
 Discovered after the linux-next release.
-
 -- 
 Cheers,
 Stephen Rothwell
