@@ -1,221 +1,160 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 3 Feb 2016 16:08:06 +0900
-Message-ID: <20160203070806.GA30520@swordfish>
-References: <20160203162728.32e6f283@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160203 build: 2 failures 8 warnings (next-20160203)
+Date: Wed, 03 Feb 2016 08:19:07 +0000
+Message-ID: <E1aQseY-0000bY-Sf@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f172.google.com ([209.85.192.172]:34461 "EHLO
-	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933179AbcBCHGy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Feb 2016 02:06:54 -0500
-Content-Disposition: inline
-In-Reply-To: <20160203162728.32e6f283@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60411 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754843AbcBCITP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 3 Feb 2016 03:19:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matthew Wilcox <willy@linux.intel.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hello,
+Tree/Branch: next-20160203
+Git describe: next-20160203
+Commit: 8babd99a86 Add linux-next specific files for 20160203
 
-On (02/03/16 16:27), Stephen Rothwell wrote:
-> Hi Andrew,
->=20
-> After merging the akpm-current tree, today's linux-next build (arm
-> allnoconfig) failed like this:
->=20
-> In file included from kernel/memremap.c:17:0:
-> include/linux/pfn_t.h:108:7: error: 'pud_mkdevmap' declared as functi=
-on returning an array
->=20
-> Caused by commit
->=20
->   a27da20ed50e ("mm: add support for PUD-sized transparent hugepages"=
-)
->=20
-> Discovered after the linux-next release.
+Build Time: 82 min 10 sec
 
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
-=2Econfig
+Errors: 7
+Warnings: 8
+Section Mismatches: 4
 
-  CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=3Dy
-# CONFIG_TRANSPARENT_HUGEPAGE is not set
+Failed defconfigs:
+	x86_64-defconfig
+	arm-allnoconfig
 
+Errors:
 
-makes the build unhappy
+	x86_64-defconfig
+../fs/proc/task_mmu.c:596:2: error: implicit declaration of function 'is_huge_zero_pud' [-Werror=implicit-function-declaration]
+../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_599' declared with attribute error: BUILD_BUG failed
+../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_602' declared with attribute error: BUILD_BUG failed
+../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_604' declared with attribute error: BUILD_BUG failed
+../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_607' declared with attribute error: BUILD_BUG failed
+../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_609' declared with attribute error: BUILD_BUG failed
 
-fs/proc/task_mmu.c: In function =E2=80=98smaps_pud_range=E2=80=99:
-fs/proc/task_mmu.c:596:6: error: implicit declaration of function =E2=80=
-=98is_huge_zero_pud=E2=80=99 [-Werror=3Dimplicit-function-declaration]
-  if (is_huge_zero_pud(*pud))
-      ^
+	arm-allnoconfig
+../include/linux/pfn_t.h:108:7: error: 'pud_mkdevmap' declared as function returning an array
 
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      3 warnings    0 mismatches  : arm-multi_v7_defconfig
+     14 warnings    4 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-seems there is no =E2=80=98is_huge_zero_pud=E2=80=99 for !CONFIG_TRANSP=
-ARENT_HUGEPAGE.
+-------------------------------------------------------------------------------
 
+Errors summary: 7
+	  1 ../include/linux/pfn_t.h:108:7: error: 'pud_mkdevmap' declared as function returning an array
+	  1 ../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_609' declared with attribute error: BUILD_BUG failed
+	  1 ../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_607' declared with attribute error: BUILD_BUG failed
+	  1 ../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_604' declared with attribute error: BUILD_BUG failed
+	  1 ../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_602' declared with attribute error: BUILD_BUG failed
+	  1 ../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_599' declared with attribute error: BUILD_BUG failed
+	  1 ../fs/proc/task_mmu.c:596:2: error: implicit declaration of function 'is_huge_zero_pud' [-Werror=implicit-function-declaration]
 
-and a bunch of other errors as a result
+Warnings Summary: 8
+	  7 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	  4 ../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	  4 ../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-
-In file included from include/asm-generic/bug.h:4:0,
-                 from ./arch/x86/include/asm/bug.h:35,
-                 from include/linux/bug.h:4,
-                 from include/linux/mmdebug.h:4,
-                 from include/linux/mm.h:8,
-                 from fs/proc/task_mmu.c:1:
-include/linux/compiler.h:505:38: error: call to =E2=80=98__compiletime_=
-assert_599=E2=80=99 declared with attribute error: BUILD_BUG failed
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:488:4: note: in definition of macro =E2=80=98_=
-_compiletime_assert=E2=80=99
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:505:2: note: in expansion of macro =E2=80=98_c=
-ompiletime_assert=E2=80=99
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro =E2=80=98compile=
-time_assert=E2=80=99
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:84:21: note: in expansion of macro =E2=80=98BUILD_B=
-UG_ON_MSG=E2=80=99
- #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-                     ^
-include/linux/huge_mm.h:221:27: note: in expansion of macro =E2=80=98BU=
-ILD_BUG=E2=80=99
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
-                           ^
-fs/proc/task_mmu.c:599:19: note: in expansion of macro =E2=80=98HPAGE_P=
-UD_SIZE=E2=80=99
-  mss->resident +=3D HPAGE_PUD_SIZE;
-                   ^
-In function =E2=80=98smaps_pud_range.part.10=E2=80=99,
-    inlined from =E2=80=98smaps_pud_range=E2=80=99:
-include/linux/compiler.h:505:38: error: call to =E2=80=98__compiletime_=
-assert_602=E2=80=99 declared with attribute error: BUILD_BUG failed
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:488:4: note: in definition of macro =E2=80=98_=
-_compiletime_assert=E2=80=99
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:505:2: note: in expansion of macro =E2=80=98_c=
-ompiletime_assert=E2=80=99
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro =E2=80=98compile=
-time_assert=E2=80=99
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:84:21: note: in expansion of macro =E2=80=98BUILD_B=
-UG_ON_MSG=E2=80=99
- #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-                     ^
-include/linux/huge_mm.h:221:27: note: in expansion of macro =E2=80=98BU=
-ILD_BUG=E2=80=99
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
-                           ^
-fs/proc/task_mmu.c:602:25: note: in expansion of macro =E2=80=98HPAGE_P=
-UD_SIZE=E2=80=99
-    mss->shared_dirty +=3D HPAGE_PUD_SIZE;
-                         ^
-include/linux/compiler.h:505:38: error: call to =E2=80=98__compiletime_=
-assert_604=E2=80=99 declared with attribute error: BUILD_BUG failed
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:488:4: note: in definition of macro =E2=80=98_=
-_compiletime_assert=E2=80=99
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:505:2: note: in expansion of macro =E2=80=98_c=
-ompiletime_assert=E2=80=99
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro =E2=80=98compile=
-time_assert=E2=80=99
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:84:21: note: in expansion of macro =E2=80=98BUILD_B=
-UG_ON_MSG=E2=80=99
- #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-                     ^
-include/linux/huge_mm.h:221:27: note: in expansion of macro =E2=80=98BU=
-ILD_BUG=E2=80=99
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
-                           ^
-fs/proc/task_mmu.c:604:25: note: in expansion of macro =E2=80=98HPAGE_P=
-UD_SIZE=E2=80=99
-    mss->shared_clean +=3D HPAGE_PUD_SIZE;
-                         ^
-fs/proc/task_mmu.c: In function =E2=80=98smaps_pud_range=E2=80=99:
-include/linux/compiler.h:505:38: error: call to =E2=80=98__compiletime_=
-assert_607=E2=80=99 declared with attribute error: BUILD_BUG failed
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:488:4: note: in definition of macro =E2=80=98_=
-_compiletime_assert=E2=80=99
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:505:2: note: in expansion of macro =E2=80=98_c=
-ompiletime_assert=E2=80=99
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro =E2=80=98compile=
-time_assert=E2=80=99
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:84:21: note: in expansion of macro =E2=80=98BUILD_B=
-UG_ON_MSG=E2=80=99
- #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-                     ^
-include/linux/huge_mm.h:221:27: note: in expansion of macro =E2=80=98BU=
-ILD_BUG=E2=80=99
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
-                           ^
-fs/proc/task_mmu.c:607:26: note: in expansion of macro =E2=80=98HPAGE_P=
-UD_SIZE=E2=80=99
-    mss->private_dirty +=3D HPAGE_PUD_SIZE;
-                          ^
-include/linux/compiler.h:505:38: error: call to =E2=80=98__compiletime_=
-assert_609=E2=80=99 declared with attribute error: BUILD_BUG failed
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:488:4: note: in definition of macro =E2=80=98_=
-_compiletime_assert=E2=80=99
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:505:2: note: in expansion of macro =E2=80=98_c=
-ompiletime_assert=E2=80=99
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro =E2=80=98compile=
-time_assert=E2=80=99
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:84:21: note: in expansion of macro =E2=80=98BUILD_B=
-UG_ON_MSG=E2=80=99
- #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-                     ^
-include/linux/huge_mm.h:221:27: note: in expansion of macro =E2=80=98BU=
-ILD_BUG=E2=80=99
- #define HPAGE_PUD_SIZE ({ BUILD_BUG(); 0; })
-                           ^
-fs/proc/task_mmu.c:609:26: note: in expansion of macro =E2=80=98HPAGE_P=
-UD_SIZE=E2=80=99
-    mss->private_clean +=3D HPAGE_PUD_SIZE;
-                          ^
-cc1: some warnings being treated as errors
-scripts/Makefile.build:258: recipe for target 'fs/proc/task_mmu.o' fail=
-ed
-make[2]: *** [fs/proc/task_mmu.o] Error 1
-scripts/Makefile.build:407: recipe for target 'fs/proc' failed
-make[1]: *** [fs/proc] Error 2
-make[1]: *** Waiting for unfinished jobs....
+Section Mismatch Summary: 4
+	  1 WARNING: vmlinux.o(.text+0xbd74d4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/clk/sunxi/built-in.o(.text+0x3b8c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/clk/built-in.o(.text+0x4e4b4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	  1 WARNING: drivers/built-in.o(.text+0x424a9c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
 
 
-	-ss
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : FAIL, 6 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../fs/proc/task_mmu.c:596:2: error: implicit declaration of function 'is_huge_zero_pud' [-Werror=implicit-function-declaration]
+	../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_599' declared with attribute error: BUILD_BUG failed
+	../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_602' declared with attribute error: BUILD_BUG failed
+	../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_604' declared with attribute error: BUILD_BUG failed
+	../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_607' declared with attribute error: BUILD_BUG failed
+	../include/linux/compiler.h:505:38: error: call to '__compiletime_assert_609' declared with attribute error: BUILD_BUG failed
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 14 warnings, 4 section mismatches
+
+Warnings:
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../drivers/usb/host/xhci.c:2440:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+	../drivers/usb/host/xhci.c:2499:2: warning: enumeration value 'USB_SPEED_SUPER_PLUS' not handled in switch [-Wswitch]
+
+Section Mismatches:
+	WARNING: drivers/clk/sunxi/built-in.o(.text+0x3b8c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: drivers/clk/built-in.o(.text+0x4e4b4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: drivers/built-in.o(.text+0x424a9c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+	WARNING: vmlinux.o(.text+0xbd74d4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/pfn_t.h:108:7: error: 'pud_mkdevmap' declared as function returning an array
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
