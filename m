@@ -1,41 +1,82 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: mmotm 2016-02-03-16-36 uploaded
-Date: Thu, 4 Feb 2016 18:16:02 +0100
-Message-ID: <20160204171601.GJ14425@dhcp22.suse.cz>
-References: <56b29d2d.92SImyffndn0eAz+%akpm@linux-foundation.org>
- <20160204165744.GG14425@dhcp22.suse.cz>
- <CAAmzW4OPM_+tgxxPpyb0y=qro68+MY1bio=UT+P1O_B4JKe2Yg@mail.gmail.com>
- <20160204171054.GI14425@dhcp22.suse.cz>
+From: Benjamin LaHaise <bcrl@kvack.org>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Thu, 4 Feb 2016 13:48:25 -0500
+Message-ID: <20160204184825.GG16315@kvack.org>
+References: <CAMuHMdUy-cqeN8COO4rdpY-mOH+6gth40wB31-edkj8CO5PFCw@mail.gmail.com> <20160204131959.6695c7bf@canb.auug.org.au> <20160204134142.GA16315@kvack.org> <20160204135056.GE10826@n2100.arm.linux.org.uk> <20160204140822.GB16315@kvack.org> <20160204141253.GF10826@n2100.arm.linux.org.uk> <20160204143204.GC16315@kvack.org> <20160204143907.GG10826@n2100.arm.linux.org.uk> <20160204160101.GD16315@kvack.org> <20160204161741.GH10826@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kanga.kvack.org ([205.233.56.17]:49685 "EHLO kanga.kvack.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S964943AbcBDSs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Feb 2016 13:48:26 -0500
 Content-Disposition: inline
-In-Reply-To: <20160204171054.GI14425@dhcp22.suse.cz>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Joonsoo Kim <js1304@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux Memory Management List <linux-mm@kvack.org>, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org, Minchan Kim <minchan@kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20160204161741.GH10826@n2100.arm.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu 04-02-16 18:10:54, Michal Hocko wrote:
-> On Fri 05-02-16 02:02:08, Joonsoo Kim wrote:
-> > 2016-02-05 1:57 GMT+09:00 Michal Hocko <mhocko@kernel.org>:
-> > > [CCing Minchan]
-> > >
-> > > I am getting many compilation errors if !CONFIG_COMPACTION and
-> > > CONFIG_MEMORY_ISOLATION=y. I didn't get to check what has hanged in that
-> > > regards because this code is quite old but the previous mmotm seemed ok,
-> > > maybe some subtle change in my config?
-> > 
-> > It would be caused by Vlastimil's "mm, hugetlb: don't require CMA for
-> > runtime gigantic pages".
-> > 
-> > https://lkml.org/lkml/2016/2/3/841
-> > 
-> > Fix is already there.
-> 
-> What would be the fix? Maybe I have missed it in the current mmotm...
+On Thu, Feb 04, 2016 at 04:17:42PM +0000, Russell King - ARM Linux wrote:
+> __gu_val will be 32-bit, even when you're wanting a 64-bit quantity.
+> That's where the fun and games start...
 
-Ohh, v2, I should have read the rest of the thread.
+Okay, I figured out how to do it: instead of using a 64 bit unsigned long 
+long for __gu_val, use an array of 2 unsigned longs.  See the patch below 
+which I verified boots, passes your tests and doesn't truncate 64 bit 
+values.  Comments?  A simple test module to verify things is located at 
+http://www.kvack.org/~bcrl/test_module2.c .
+
+		-ben
 -- 
-Michal Hocko
-SUSE Labs
+"Thought is the essence of where you are now."
+
+
+diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
+index 09b1b0a..53244ae 100644
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -326,7 +326,22 @@ do {									\
+ } while (0)
+ 
+ #ifdef CONFIG_X86_32
+-#define __get_user_asm_u64(x, ptr, retval, errret)	(x) = __get_user_bad()
++#define __get_user_asm_u64(x, addr, err, errret)			\
++	asm volatile(ASM_STAC "\n"					\
++		     "1:	movl %2,%%eax\n"			\
++		     "2:	movl %3,%%edx\n"			\
++		     "3: " ASM_CLAC "\n"				\
++		     ".section .fixup,\"ax\"\n"				\
++		     "4:	mov %4,%0\n"				\
++		     "	xorl %%eax,%%eax\n"				\
++		     "	xorl %%edx,%%edx\n"				\
++		     "	jmp 3b\n"					\
++		     ".previous\n"					\
++		     _ASM_EXTABLE(1b, 4b)				\
++		     _ASM_EXTABLE(2b, 4b)				\
++		     : "=r" (err), "=A"(x)				\
++		     : "m" (__m(addr)), "m" __m(((u32 *)addr) + 1), "i" (errret), "0" (err))
++
+ #define __get_user_asm_ex_u64(x, ptr)			(x) = __get_user_bad()
+ #else
+ #define __get_user_asm_u64(x, ptr, retval, errret) \
+@@ -407,9 +422,16 @@ do {									\
+ #define __get_user_nocheck(x, ptr, size)				\
+ ({									\
+ 	int __gu_err;							\
+-	unsigned long __gu_val;						\
+-	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
+-	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
++	if (size == 8) {						\
++		unsigned long __gu_val[2];				\
++		__gu_err = 0;						\
++		__get_user_asm_u64(__gu_val, ptr, __gu_err, -EFAULT);	\
++		(x) = *(__force __typeof__((ptr)))__gu_val;		\
++	} else {							\
++		unsigned long __gu_val;					\
++		__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT); \
++		(x) = (__force __typeof__(*(ptr)))__gu_val;		\
++	}								\
+ 	__builtin_expect(__gu_err, 0);					\
+ })
+ 
