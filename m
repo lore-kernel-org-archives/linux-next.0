@@ -1,82 +1,52 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Thu, 4 Feb 2016 13:48:25 -0500
-Message-ID: <20160204184825.GG16315@kvack.org>
-References: <CAMuHMdUy-cqeN8COO4rdpY-mOH+6gth40wB31-edkj8CO5PFCw@mail.gmail.com> <20160204131959.6695c7bf@canb.auug.org.au> <20160204134142.GA16315@kvack.org> <20160204135056.GE10826@n2100.arm.linux.org.uk> <20160204140822.GB16315@kvack.org> <20160204141253.GF10826@n2100.arm.linux.org.uk> <20160204143204.GC16315@kvack.org> <20160204143907.GG10826@n2100.arm.linux.org.uk> <20160204160101.GD16315@kvack.org> <20160204161741.GH10826@n2100.arm.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sunxi tree
+Date: Fri, 5 Feb 2016 10:14:12 +1100
+Message-ID: <20160205101412.56e4631b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kanga.kvack.org ([205.233.56.17]:49685 "EHLO kanga.kvack.org"
+Received: from ozlabs.org ([103.22.144.67]:39676 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964943AbcBDSs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 4 Feb 2016 13:48:26 -0500
-Content-Disposition: inline
-In-Reply-To: <20160204161741.GH10826@n2100.arm.linux.org.uk>
+	id S1757537AbcBDXOO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Feb 2016 18:14:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Feb 04, 2016 at 04:17:42PM +0000, Russell King - ARM Linux wrote:
-> __gu_val will be 32-bit, even when you're wanting a 64-bit quantity.
-> That's where the fun and games start...
+Hi Maxime,
 
-Okay, I figured out how to do it: instead of using a 64 bit unsigned long 
-long for __gu_val, use an array of 2 unsigned longs.  See the patch below 
-which I verified boots, passes your tests and doesn't truncate 64 bit 
-values.  Comments?  A simple test module to verify things is located at 
-http://www.kvack.org/~bcrl/test_module2.c .
+After merging the sunxi tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-		-ben
+drivers/clk/sunxi/clk-sunxi.c: In function 'sunxi_mux_clk_setup':
+drivers/clk/sunxi/clk-sunxi.c:712:2: warning: 'return' with no value, in function returning non-void [-Wreturn-type]
+  return;
+  ^
+drivers/clk/sunxi/clk-sunxi.c:718:20: error: invalid storage class for function 'sun4i_cpu_clk_setup'
+ static void __init sun4i_cpu_clk_setup(struct device_node *node)
+                    ^
+drivers/clk/sunxi/clk-sunxi.c:718:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static void __init sun4i_cpu_clk_setup(struct device_node *node)
+ ^
+In file included from include/linux/clk-provider.h:15:0,
+                 from drivers/clk/sunxi/clk-sunxi.c:18:
+include/linux/of.h:937:16: error: initializer element is not constant
+        .data = (fn == (fn_type)NULL) ? fn : fn  }
+                ^
+include/linux/of.h:950:3: note: in expansion of macro '_OF_DECLARE'
+   _OF_DECLARE(table, name, compat, fn, of_init_fn_1)
+   ^
+
+and on and on ...
+
+Caused by commit
+
+  1190461d5ad8 ("clk: sunxi: Remove clk_register_clkdev calls")
+
+I have used the sunxi tree from next-20160204 for today.
+
 -- 
-"Thought is the essence of where you are now."
-
-
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index 09b1b0a..53244ae 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -326,7 +326,22 @@ do {									\
- } while (0)
- 
- #ifdef CONFIG_X86_32
--#define __get_user_asm_u64(x, ptr, retval, errret)	(x) = __get_user_bad()
-+#define __get_user_asm_u64(x, addr, err, errret)			\
-+	asm volatile(ASM_STAC "\n"					\
-+		     "1:	movl %2,%%eax\n"			\
-+		     "2:	movl %3,%%edx\n"			\
-+		     "3: " ASM_CLAC "\n"				\
-+		     ".section .fixup,\"ax\"\n"				\
-+		     "4:	mov %4,%0\n"				\
-+		     "	xorl %%eax,%%eax\n"				\
-+		     "	xorl %%edx,%%edx\n"				\
-+		     "	jmp 3b\n"					\
-+		     ".previous\n"					\
-+		     _ASM_EXTABLE(1b, 4b)				\
-+		     _ASM_EXTABLE(2b, 4b)				\
-+		     : "=r" (err), "=A"(x)				\
-+		     : "m" (__m(addr)), "m" __m(((u32 *)addr) + 1), "i" (errret), "0" (err))
-+
- #define __get_user_asm_ex_u64(x, ptr)			(x) = __get_user_bad()
- #else
- #define __get_user_asm_u64(x, ptr, retval, errret) \
-@@ -407,9 +422,16 @@ do {									\
- #define __get_user_nocheck(x, ptr, size)				\
- ({									\
- 	int __gu_err;							\
--	unsigned long __gu_val;						\
--	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
--	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-+	if (size == 8) {						\
-+		unsigned long __gu_val[2];				\
-+		__gu_err = 0;						\
-+		__get_user_asm_u64(__gu_val, ptr, __gu_err, -EFAULT);	\
-+		(x) = *(__force __typeof__((ptr)))__gu_val;		\
-+	} else {							\
-+		unsigned long __gu_val;					\
-+		__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT); \
-+		(x) = (__force __typeof__(*(ptr)))__gu_val;		\
-+	}								\
- 	__builtin_expect(__gu_err, 0);					\
- })
- 
+Cheers,
+Stephen Rothwell
