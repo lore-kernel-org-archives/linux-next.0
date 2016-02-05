@@ -1,107 +1,99 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160205 build: 0 failures 6 warnings (next-20160205)
-Date: Fri, 05 Feb 2016 08:03:08 +0000
-Message-ID: <E1aRbMB-0000tn-8v@optimist>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the sunxi tree
+Date: Fri, 5 Feb 2016 10:10:04 +0100
+Message-ID: <20160205091004.GC1139@lukather>
+References: <20160205101412.56e4631b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36002 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750776AbcBEIDQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Feb 2016 03:03:16 -0500
+Received: from down.free-electrons.com ([37.187.137.238]:50761 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751433AbcBEJKH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Feb 2016 04:10:07 -0500
+Content-Disposition: inline
+In-Reply-To: <20160205101412.56e4631b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160205
-Git describe: next-20160205
-Commit: bc91a31afe Add linux-next specific files for 20160205
-
-Build Time: 153 min 58 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 6
-Section Mismatches: 4
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-     12 warnings    4 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 6
-	  7 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	  4 ../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 4
-	  1 WARNING: vmlinux.o(.text+0xbd7744): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	  1 WARNING: drivers/clk/sunxi/built-in.o(.text+0x3b8c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	  1 WARNING: drivers/clk/built-in.o(.text+0x4e4b4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	  1 WARNING: drivers/built-in.o(.text+0x424aac): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+--S1BNGpv0yoYahz37
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Hi Stephen,
 
+On Fri, Feb 05, 2016 at 10:14:12AM +1100, Stephen Rothwell wrote:
+> Hi Maxime,
+>=20
+> After merging the sunxi tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> drivers/clk/sunxi/clk-sunxi.c: In function 'sunxi_mux_clk_setup':
+> drivers/clk/sunxi/clk-sunxi.c:712:2: warning: 'return' with no value, in =
+function returning non-void [-Wreturn-type]
+>   return;
+>   ^
+> drivers/clk/sunxi/clk-sunxi.c:718:20: error: invalid storage class for fu=
+nction 'sun4i_cpu_clk_setup'
+>  static void __init sun4i_cpu_clk_setup(struct device_node *node)
+>                     ^
+> drivers/clk/sunxi/clk-sunxi.c:718:1: warning: ISO C90 forbids mixed decla=
+rations and code [-Wdeclaration-after-statement]
+>  static void __init sun4i_cpu_clk_setup(struct device_node *node)
+>  ^
+> In file included from include/linux/clk-provider.h:15:0,
+>                  from drivers/clk/sunxi/clk-sunxi.c:18:
+> include/linux/of.h:937:16: error: initializer element is not constant
+>         .data =3D (fn =3D=3D (fn_type)NULL) ? fn : fn  }
+>                 ^
+> include/linux/of.h:950:3: note: in expansion of macro '_OF_DECLARE'
+>    _OF_DECLARE(table, name, compat, fn, of_init_fn_1)
+>    ^
+>=20
+> and on and on ...
+>=20
+> Caused by commit
+>=20
+>   1190461d5ad8 ("clk: sunxi: Remove clk_register_clkdev calls")
+>=20
+> I have used the sunxi tree from next-20160204 for today.
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+It was a flacky merge on my side, sorry for that.
 
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+It's fixed and pushed, hopefully it won't break in the next version.
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+Thanks!
+Maxime
 
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 12 warnings, 4 section mismatches
+--S1BNGpv0yoYahz37
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Section Mismatches:
-	WARNING: drivers/clk/sunxi/built-in.o(.text+0x3b8c): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	WARNING: drivers/clk/built-in.o(.text+0x4e4b4): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	WARNING: drivers/built-in.o(.text+0x424aac): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
-	WARNING: vmlinux.o(.text+0xbd7744): Section mismatch in reference from the function sun6i_a31_ar100_clk_probe() to the (unknown reference) .init.rodata:(unknown)
+iQIcBAEBAgAGBQJWtGbsAAoJEBx+YmzsjxAgBM8QAJ/nWp+tImKJzBqB6Zoppt1A
+Q3tj6P1vw8EeM3a8WGDIIHaeySsYU+IuD2Psmj1ef0NTOdUL1nCtafPlCQXHcCVR
+B1HTHOA9d+1B02KhJRo6NnLARxp2MKJadXPOZ1elH3wPkC8Q7eWz0fRCr291G8y5
+Ed1K+BoVcKgqWpL0xMaIqCgXu/bDoHuJvcksBO5IMvwCmeB8MZ8TLu07kxmuHdn+
+9FbUj4qhlmsrkR0OvSNurzXlWu3nmGcIpoRaFZ73eGOVXplcAlOLcQPnJBBDus/+
+ltbJN84yBq94FrlLGYpETeeD8on1f0IHqIkGIt5B80ZJrgYi0RKEdwfZe4uny7n0
+sMns+fLuugXPYB6q5I327EIslspUAQZs6ug3Wkcakxu9b9Vyhd5V2yuJCd+YjKqV
+R5NPpcly1FnEw4yjEv5ulhV1hjqEe3oPH/p8t5saq9ptPj5CTgaXU1UdB3p9NEGd
+kcvmC8Ux1NEwOJGW4tzXKERp6+Qh9z2/m+TgGqLnuL/1ZaT7Zsn63oLM94i5qHk+
+GQgLkJDVXigiLaaYW8ZRRWrrYScqH83C9L2AqQthWyJTtFi5TiRp9iG3UWT4n2ni
+9q1a+Q4u2QHIkkQoQkRCJ+MRD2Qz9wQZcD6zyihv7eWl/hhzju/nSRjH4ofDrvBc
+sC39SXPJ+1xNDRAtIT4f
+=p2ZR
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/amba-pl011.c:190:27: warning: 'vendor_zte' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+--S1BNGpv0yoYahz37--
