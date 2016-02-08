@@ -1,72 +1,39 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160208 build: 0 failures 5 warnings (next-20160208)
-Date: Mon, 08 Feb 2016 08:22:46 +0000
-Message-ID: <E1aSh5q-0005nM-JI@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39447 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755517AbcBHIWy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Feb 2016 03:22:54 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Feb 8
+Date: Mon, 8 Feb 2016 17:26:11 +0530
+Message-ID: <20160208115611.GA10929@sudip-pc>
+References: <20160208161756.6809f31a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160208161756.6809f31a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Steven Miao <realmz6@gmail.com>, Chris Metcalf <cmetcalf@ezchip.com>, adi-buildroot-devel@lists.sourceforge.net
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160208
-Git describe: next-20160208
-Commit: 32a7516299 Add linux-next specific files for 20160208
+On Mon, Feb 08, 2016 at 04:17:56PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160205:
 
-Build Time: 83 min 38 sec
+My blackfin defconfig build fails with:
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+kallsyms failure: relative symbol value 0xffa00000 out of range in
+relative mode
 
-Errors: 0
-Warnings: 5
-Section Mismatches: 0
+build log at:
+https://travis-ci.org/sudipm-mukherjee/parport/jobs/107707060
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     11 warnings    0 mismatches  : arm-allmodconfig
+and tilegx defconfig fails with:
+kallsyms failure: relative symbol value 0xfffffff700020000 out of range
+in relative mode
 
--------------------------------------------------------------------------------
+build log at:
+https://travis-ci.org/sudipm-mukherjee/parport/jobs/107707069
 
-Warnings Summary: 5
-	  7 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+I will do a bisect later today to see which has caused this.
 
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
+regards
+sudip
