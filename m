@@ -1,13 +1,14 @@
-From: Eric Sandeen <sandeen@sandeen.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the xfs tree
-Date: Mon, 8 Feb 2016 18:30:40 -0600
-Message-ID: <56B93330.20608@sandeen.net>
+Date: Tue, 9 Feb 2016 11:41:02 +1100
+Message-ID: <20160209114102.118fdc02@canb.auug.org.au>
 References: <20160209111721.359f8558@canb.auug.org.au>
+	<56B93330.20608@sandeen.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <xfs-bounces@oss.sgi.com>
-In-Reply-To: <20160209111721.359f8558@canb.auug.org.au>
+In-Reply-To: <56B93330.20608@sandeen.net>
 List-Unsubscribe: <http://oss.sgi.com/mailman/options/xfs>,
 	<mailto:xfs-request@oss.sgi.com?subject=unsubscribe>
 List-Archive: <http://oss.sgi.com/pipermail/xfs>
@@ -17,34 +18,24 @@ List-Subscribe: <http://oss.sgi.com/mailman/listinfo/xfs>,
 	<mailto:xfs-request@oss.sgi.com?subject=subscribe>
 Errors-To: xfs-bounces@oss.sgi.com
 Sender: xfs-bounces@oss.sgi.com
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ben Myers <bpm@sgi.com>, David Chinner <david@fromorbit.com>, xfs@oss.sgi.com
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Eric Sandeen <sandeen@sandeen.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, xfs@oss.sgi.com
 List-Id: linux-next.vger.kernel.org
 
-Dave just sent a patch to the xfs list to fix this,
+Hi Eric,
 
-[PATCH] xfs: log recovery needs to be aware of CONFIG_XFS_RT now
+On Mon, 8 Feb 2016 18:30:40 -0600 Eric Sandeen <sandeen@sandeen.net> wrote:
+>
+> Dave just sent a patch to the xfs list to fix this,
+> 
+> [PATCH] xfs: log recovery needs to be aware of CONFIG_XFS_RT now
 
-Thanks,
--Eric
+Thanks.  Hopefully it will be fixed in the xfs tree for linux-next
+tomorrow, then,
 
-
-On 2/8/16 6:17 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the xfs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> ERROR: "xfs_rtbuf_ops" [fs/xfs/xfs.ko] undefined!
-> 
-> Caused by commit
-> 
->   ca4de5c7e86a ("xfs: RT bitmap and summary buffers need verifiers")
-> 
-> CONFIG_XFS_RT is not set for this build.
-> 
-> I have used the xfs tree from next-20160208 for today.
-> 
+-- 
+Cheers,
+Stephen Rothwell
 
 _______________________________________________
 xfs mailing list
