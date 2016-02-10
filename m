@@ -1,50 +1,105 @@
-From: Lukas Wunner <lukas@wunner.de>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Wed, 10 Feb 2016 09:41:38 +0100
-Message-ID: <20160210084138.GA15392@wunner.de>
-References: <20160210122451.55391e43@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160210122451.55391e43@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Darren Hart <dvhart@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160210 build: 2 failures 4 warnings (next-20160210)
+Date: Wed, 10 Feb 2016 09:12:25 +0000
+Message-ID: <E1aTQoy-0005cH-Tr@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43327 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752090AbcBJJMe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 04:12:34 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-W2NjICs9IFJhZmFlbCBKLiBXeXNvY2tpLCBsaW51eC1hY3BpXQoKSGkgU3RlcGhlbiwKCk9uIFdl
-ZCwgRmViIDEwLCAyMDE2IGF0IDEyOjI0OjUxUE0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3Jv
-dGU6Cj4gSGkgYWxsLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5
-J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4gbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQgbGlr
-ZSB0aGlzOgo+IAo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS9ub3V2ZWF1X2RybS5jOjI1OjA6Cj4gaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4Lmg6IEluIGZ1
-bmN0aW9uICdhcHBsZV9nbXV4X3ByZXNlbnQnOgo+IGluY2x1ZGUvbGludXgvYXBwbGUtZ211eC5o
-OjM2OjQyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2FjcGlfZGV2
-X3ByZXNlbnQnIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ICAgcmV0
-dXJuIElTX0VOQUJMRUQoQ09ORklHX0FQUExFX0dNVVgpICYmIGFjcGlfZGV2X3ByZXNlbnQoR01V
-WF9BQ1BJX0hJRCk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-Xgo+IAo+IENhdXNlZCBieSBjb21taXQKPiAKPiAgIDI0MTMzMDZjMjU2NiAoImFwcGxlLWdtdXg6
-IEFkZCBoZWxwZXIgZm9yIHByZXNlbmNlIGRldGVjdCIpCj4gCj4gSSBoYXZlIHVzZWQgdGhlIGRy
-bS1taXNjIHRyZWUgZnJvbSBuZXh0LTIwMTYwMjA5IGZvciB0b2RheS4KClVnaCwgYXBvbG9naWVz
-LCBJIGRpZG4ndCBoYXZlIGEgbm9uLUFDUEkgcGxhdGZvcm0gYXZhaWxhYmxlIHRvIHRlc3QKdGhp
-cyBvbi4KClNvbHV0aW9uIGlzIHRvIGVpdGhlciBhZGQgdG8gaW5jbHVkZS9saW51eC9hY3BpLmgK
-CnN0YXRpYyBpbmxpbmUgYm9vbCBhY3BpX2Rldl9wcmVzZW50KGNvbnN0IGNoYXIgKmhpZCkKewoJ
-cmV0dXJuIGZhbHNlOwp9Cgpzb21ld2hlcmUgYmVsb3cKCiNlbHNlCS8qICFDT05GSUdfQUNQSSAq
-LwoKb3IgYWx0ZXJuYXRpdmVseSB0byBhZGQgdG8gaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4LmgK
-CklTX0VOQUJMRUQoQ09ORklHX0FDUEkpCgppbiBhcHBsZV9nbXV4X3ByZXNlbnQoKS4KCkknbGwg
-Y2hlY2sgdGhlIG90aGVyIHVzZXJzIG9mIGFjcGlfZGV2X3ByZXNlbnQoKSB0byBzZWUgd2hpY2gg
-b2YKdGhlc2UgdHdvIHNvbHV0aW9ucyBpcyBtb3JlIGFwcHJvcHJpYXRlIGFuZCB3aWxsIHBvc3Qg
-YSBmaXggc2hvcnRseS4KClRoYW5rcyBhIGxvdCBmb3IgcmVwb3J0aW5nIHRoaXMuCgpMdWthcwpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Tree/Branch: next-20160210
+Git describe: next-20160210
+Commit: b613c2bfa3 Add linux-next specific files for 20160210
+
+Build Time: 73 min 31 sec
+
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 2
+Warnings: 4
+Section Mismatches: 1
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-multi_v5_defconfig
+
+Errors:
+
+	arm64-allmodconfig
+../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+
+	arm-multi_v5_defconfig
+../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      0 warnings    1 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  5 ../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+	  1 ../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 4
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+Section Mismatch Summary: 1
+	  1 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 5 errors, 0 warnings, 1 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+
+Section Mismatches:
+	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
