@@ -1,67 +1,77 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] irq_work: unhide irq_work_queue_on declaration on non-SMP
-Date: Wed, 10 Feb 2016 18:10:15 +0000
-Message-ID: <20160210181015.GA13270@sirena.org.uk>
-References: <E1aTQoy-0005cH-Tr@optimist>
- <20160210095252.GS13270@sirena.org.uk>
- <CAJZ5v0iamr-b5h=eS1SWo6WMj_NNOqnXoxnC6R03VmtLBG5dEA@mail.gmail.com>
- <4447865.IoQjlk8ngP@wuerfel>
- <CAJZ5v0h41Xm4LAZB_XiDjZih6g7W5aJjA-t3f=HFo1zGkAPSgA@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 10 Feb 2016 11:55:07 -0800
+Message-ID: <20160210115507.f1521e162a8489c18b02048b@linux-foundation.org>
+References: <20160210165514.412992a5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="edESjMboOAwUFn6i"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44795 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752533AbcBJSKs (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 13:10:48 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0h41Xm4LAZB_XiDjZih6g7W5aJjA-t3f=HFo1zGkAPSgA@mail.gmail.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44075 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752695AbcBJTzI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 14:55:08 -0500
+In-Reply-To: <20160210165514.412992a5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, kernel-build-reports@lists.linaro.org, Viresh Kumar <viresh.kumar@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>
 
+On Wed, 10 Feb 2016 16:55:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---edESjMboOAwUFn6i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from arch/x86/include/asm/bug.h:35:0,
+>                  from include/linux/bug.h:4,
+>                  from include/linux/thread_info.h:11,
+>                  from arch/x86/include/asm/preempt.h:6,
+>                  from include/linux/preempt.h:59,
+>                  from include/linux/radix-tree.h:25,
+>                  from kernel/memremap.c:13:
+> kernel/memremap.c: In function 'devm_memremap_pages_release':
+> kernel/memremap.c:230:54: error: expected ')' before '__func__'
+>    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+>                                                       ^
+> include/asm-generic/bug.h:74:69: note: in definition of macro '__WARN_printf'
+>  #define __WARN_printf(arg...) warn_slowpath_fmt(__FILE__, __LINE__, arg)
+>                                                                      ^
+> include/linux/device.h:1312:2: note: in expansion of macro 'WARN'
+>   WARN(condition, "%s %s: " format,   \
+>   ^
+> kernel/memremap.c:230:3: note: in expansion of macro 'dev_WARN'
+>    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+>    ^
+> include/linux/device.h:1312:18: warning: format '%s' expects a matching 'char *' argument [-Wformat=]
+>   WARN(condition, "%s %s: " format,   \
+>                   ^
+> include/asm-generic/bug.h:74:69: note: in definition of macro '__WARN_printf'
+>  #define __WARN_printf(arg...) warn_slowpath_fmt(__FILE__, __LINE__, arg)
+>                                                                      ^
+> include/linux/device.h:1312:2: note: in expansion of macro 'WARN'
+>   WARN(condition, "%s %s: " format,   \
+>   ^
+> kernel/memremap.c:230:3: note: in expansion of macro 'dev_WARN'
+>    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+>    ^
+> 
+> Probably exposed by commit
+> 
+>   27ffb3827ac7 ("mm: CONFIG_NR_ZONES_EXTENDED")
+> 
+> originally caused by commit
+> 
+>   5c2c2587b132 ("mm, dax, pmem: introduce {get|put}_dev_pagemap() for dax-gup")
+> 
+> which was added in v4.5-rc1.
+> 
+> I added the below patch for today but then discovered the waiting patch
+> in the akpm tree ("kernel/memremap.c: add new arg to dev_WARN") which
+> should be sent to Linus ASAP (and should have appeared much earlier in
+> the series).
 
-On Wed, Feb 10, 2016 at 04:27:42PM +0100, Rafael J. Wysocki wrote:
-
-> > +#else
-> > +static inline bool irq_work_queue_on(struct irq_work *work, int cpu)
-> > +{
-> > +       return irq_work_queue(work);
-> > +}
-> >  #endif
-
-> I was thinking about this too, but then cpufreq will be the only user of it.
-
-> In any case can do it at any time later. :-)
-
-Well, there's currently only two other users of irq_work_queue_on()
-anyway so that's a third of the userbase and it does seem the obvious
-way to support any other future users that want to scale down to !SMP
-cases painlessly.
-
-Reviwed-by: Mark Brown <broonie@kernel.org>
-
-FWIW.
-
---edESjMboOAwUFn6i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWu30GAAoJECTWi3JdVIfQTugH/Rt57SHLz4sNFbSNFs/v5JOw
-p9TF+JsvqvrODqrU0xOXXvrwtneFSw2eNsNFdz4a2NL4bCdnQkFDtoSMSzwialDR
-0MZprKb4HAAmUlVvsTN1z2DvMfwGx73SdkQBrHN3lahwugC/v7Ho4S2dPWWREurK
-eueeQQgEkXmp31qQhI9LoB30WP+VbUc5K+M42SmUsAEsB6eZ2GnxstC4iQdyjkZN
-sHkhcfrHvQ3BbEskAq3btSSXasHwd8NDBzvvnUd4Lf/HimLcX1k+RlOv2meR6u7C
-YWCQsW7yUDEH00+IlWGb7MWdUS9fjJjlLnveOlSC5BbjllPSUAy99uSxmKiT4uY=
-=z+CZ
------END PGP SIGNATURE-----
-
---edESjMboOAwUFn6i--
+kernel-memremapc-add-new-arg-to-dev_warn.patch fixes ee49ac85bc24b946
+("treewide: let dev_WARN() accept a condition") which is only in
+linux-next?
