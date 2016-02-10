@@ -1,46 +1,50 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Lukas Wunner <lukas@wunner.de>
 Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Wed, 10 Feb 2016 07:31:19 +0100
-Message-ID: <20160210063119.GC11240@phenom.ffwll.local>
+Date: Wed, 10 Feb 2016 09:41:38 +0100
+Message-ID: <20160210084138.GA15392@wunner.de>
 References: <20160210122451.55391e43@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f48.google.com ([74.125.82.48]:37950 "EHLO
-	mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751058AbcBJGa5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 01:30:57 -0500
-Received: by mail-wm0-f48.google.com with SMTP id p63so12606189wmp.1
-        for <linux-next@vger.kernel.org>; Tue, 09 Feb 2016 22:30:56 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
 In-Reply-To: <20160210122451.55391e43@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Darren Hart <dvhart@linux.intel.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Darren Hart <dvhart@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 10, 2016 at 12:24:51PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the drm-misc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> In file included from drivers/gpu/drm/nouveau/nouveau_drm.c:25:0:
-> include/linux/apple-gmux.h: In function 'apple_gmux_present':
-> include/linux/apple-gmux.h:36:42: error: implicit declaration of function 'acpi_dev_present' [-Werror=implicit-function-declaration]
->   return IS_ENABLED(CONFIG_APPLE_GMUX) && acpi_dev_present(GMUX_ACPI_HID);
->                                           ^
-> 
-> Caused by commit
-> 
->   2413306c2566 ("apple-gmux: Add helper for presence detect")
-> 
-> I have used the drm-misc tree from next-20160209 for today.
-
-Can you pls attach your .config? The function is there, I suspect we're
-just missing some depends in Kconfig.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+W2NjICs9IFJhZmFlbCBKLiBXeXNvY2tpLCBsaW51eC1hY3BpXQoKSGkgU3RlcGhlbiwKCk9uIFdl
+ZCwgRmViIDEwLCAyMDE2IGF0IDEyOjI0OjUxUE0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3Jv
+dGU6Cj4gSGkgYWxsLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5
+J3MgbGludXgtbmV4dCBidWlsZCAoYXJtCj4gbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQgbGlr
+ZSB0aGlzOgo+IAo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVh
+dS9ub3V2ZWF1X2RybS5jOjI1OjA6Cj4gaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4Lmg6IEluIGZ1
+bmN0aW9uICdhcHBsZV9nbXV4X3ByZXNlbnQnOgo+IGluY2x1ZGUvbGludXgvYXBwbGUtZ211eC5o
+OjM2OjQyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2FjcGlfZGV2
+X3ByZXNlbnQnIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ICAgcmV0
+dXJuIElTX0VOQUJMRUQoQ09ORklHX0FQUExFX0dNVVgpICYmIGFjcGlfZGV2X3ByZXNlbnQoR01V
+WF9BQ1BJX0hJRCk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+Xgo+IAo+IENhdXNlZCBieSBjb21taXQKPiAKPiAgIDI0MTMzMDZjMjU2NiAoImFwcGxlLWdtdXg6
+IEFkZCBoZWxwZXIgZm9yIHByZXNlbmNlIGRldGVjdCIpCj4gCj4gSSBoYXZlIHVzZWQgdGhlIGRy
+bS1taXNjIHRyZWUgZnJvbSBuZXh0LTIwMTYwMjA5IGZvciB0b2RheS4KClVnaCwgYXBvbG9naWVz
+LCBJIGRpZG4ndCBoYXZlIGEgbm9uLUFDUEkgcGxhdGZvcm0gYXZhaWxhYmxlIHRvIHRlc3QKdGhp
+cyBvbi4KClNvbHV0aW9uIGlzIHRvIGVpdGhlciBhZGQgdG8gaW5jbHVkZS9saW51eC9hY3BpLmgK
+CnN0YXRpYyBpbmxpbmUgYm9vbCBhY3BpX2Rldl9wcmVzZW50KGNvbnN0IGNoYXIgKmhpZCkKewoJ
+cmV0dXJuIGZhbHNlOwp9Cgpzb21ld2hlcmUgYmVsb3cKCiNlbHNlCS8qICFDT05GSUdfQUNQSSAq
+LwoKb3IgYWx0ZXJuYXRpdmVseSB0byBhZGQgdG8gaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4LmgK
+CklTX0VOQUJMRUQoQ09ORklHX0FDUEkpCgppbiBhcHBsZV9nbXV4X3ByZXNlbnQoKS4KCkknbGwg
+Y2hlY2sgdGhlIG90aGVyIHVzZXJzIG9mIGFjcGlfZGV2X3ByZXNlbnQoKSB0byBzZWUgd2hpY2gg
+b2YKdGhlc2UgdHdvIHNvbHV0aW9ucyBpcyBtb3JlIGFwcHJvcHJpYXRlIGFuZCB3aWxsIHBvc3Qg
+YSBmaXggc2hvcnRseS4KClRoYW5rcyBhIGxvdCBmb3IgcmVwb3J0aW5nIHRoaXMuCgpMdWthcwpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
