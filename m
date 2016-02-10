@@ -1,54 +1,55 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20160210 build: 2 failures 4 warnings (next-20160210)
-Date: Wed, 10 Feb 2016 09:52:52 +0000
-Message-ID: <20160210095252.GS13270@sirena.org.uk>
+Date: Wed, 10 Feb 2016 10:08:37 +0000
+Message-ID: <20160210100837.GT13270@sirena.org.uk>
 References: <E1aTQoy-0005cH-Tr@optimist>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wnBGVoaGQwxWUIo6"
+	protocol="application/pgp-signature"; boundary="JHjDRUnf1JOMxzko"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43381 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43470 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752629AbcBJJxG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 04:53:06 -0500
+	with ESMTP id S1751645AbcBJKIt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 05:08:49 -0500
 Content-Disposition: inline
 In-Reply-To: <E1aTQoy-0005cH-Tr@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-pm@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Andrew Pinski <apinski@cavium.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
---wnBGVoaGQwxWUIo6
+--JHjDRUnf1JOMxzko
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Wed, Feb 10, 2016 at 09:12:25AM +0000, Build bot for Mark Brown wrote:
 
-Today's -next fails to build on non-SMP configurations due to:
+Today's -next fails to build an arm64 allmodconfig due to:
 
-> 	arm-multi_v5_defconfig
-> ../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
+> 	arm64-allmodconfig
+> ../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
 
-caused by 0144fa03ef4606ae (cpufreq: governor: Replace timers with
-utilization update callbacks).  IS_ENABLED() in an if statement doesn't
-do a good job of making things conditional here since the code still has
-to compile cleanly in both cases and there is no definition at all of
-irq_work_queue_on() for !SMP.
+due to 52e662326e1e915 (arm64: prefetch: don't provide
+spin_lock_prefetch with LSE) which adds use of ARM64_LSE_ATOMIC_INSN but
+does not add an inclusion of asm/lse.h which defines it.  Most files
+have an implicit include so build fine but a few don't which causes the
+failure.  It does add an inclusion of asm/alternative.h which may be the
+best place to add the inclusion.
 
---wnBGVoaGQwxWUIo6
+--JHjDRUnf1JOMxzko
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWuwhyAAoJECTWi3JdVIfQ+sAH/1dAzTF2pTuG9wKtSo6K3aGP
-avVB8jZQA1dbCXLXa+cRH6XBltE1VZzLMr5fGIVo5OHMwSYOaFqk0Us4SVC0K3dJ
-+PIlfiYMBwQzoUjCf16DoMFH+xSY4nUOZmGo4TzaD4cfg9Ni+J3Mawo6p5zTXxby
-nE+vGEal6HNk24Z1EepVJUVi3VgUDLobDYzPB+D4W0KQU50lQKcY3D1yT5hjwALA
-ktnVFZfTuiiWyKZy4EqTCsQpCM9UBbyE9UxV/Bp3GA0aZZrITSXgk8bjIJ3a7Dr0
-PCutSJaPf6rJ7M/hZMO+TknEyMqheZ5KT6zOjH9lWZWWE5oLMEe1P1QsF4ZFolY=
-=1RUA
+iQEcBAEBCAAGBQJWuwwkAAoJECTWi3JdVIfQTJwH/2htIf2xNaKLuO3K3M6ye77Y
+Oiu6Pu16WHvA/Smek9Z5AswBmXe/E9oITwVrn8VwyzKQi2yNE2uUUEuQ0m+Y19T9
+lOEPfk1fSuJdml/N8J3b8C9WaZ7Oo3ca2sVkm25EMe92K8AWRPh2Ox25fTmuLvcU
+eK8zbwtz1HdDPJeVLwi3Ai1sNPgHzgP9/sfLZffgHG1hHzdFVU4sdMBCaZ8VHzIf
+FiYiNU2mWxMhMoINdB1Fodphc3QbgZaRasbmR5YF83pSKIO2hYsIOxbajUUajCgs
+xnxbnHcey4Sileacaw0gxC4b7J9GKLjNbZQS5W3bgx90MhksgalpbPbH0zEQHsI=
+=DdT2
 -----END PGP SIGNATURE-----
 
---wnBGVoaGQwxWUIo6--
+--JHjDRUnf1JOMxzko--
