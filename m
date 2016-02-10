@@ -1,38 +1,89 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: next-20160210 build: 2 failures 4 warnings (next-20160210)
-Date: Wed, 10 Feb 2016 10:12:39 +0000
-Message-ID: <20160210101238.GC1052@arm.com>
-References: <E1aTQoy-0005cH-Tr@optimist>
- <20160210100837.GT13270@sirena.org.uk>
+From: Lukas Wunner <lukas@wunner.de>
+Subject: Re: linux-next: build failure after merge of the
+	drm-misc tree
+Date: Wed, 10 Feb 2016 14:17:41 +0100
+Message-ID: <20160210131741.GA15492@wunner.de>
+References: <20160210122451.55391e43@canb.auug.org.au>
+ <20160210084138.GA15392@wunner.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45861 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751994AbcBJKMg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Feb 2016 05:12:36 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <20160210100837.GT13270@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Andrew Pinski <apinski@cavium.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20160210084138.GA15392@wunner.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Darren Hart <dvhart@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 10, 2016 at 10:08:37AM +0000, Mark Brown wrote:
-> On Wed, Feb 10, 2016 at 09:12:25AM +0000, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build an arm64 allmodconfig due to:
-> 
-> > 	arm64-allmodconfig
-> > ../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-> 
-> due to 52e662326e1e915 (arm64: prefetch: don't provide
-> spin_lock_prefetch with LSE) which adds use of ARM64_LSE_ATOMIC_INSN but
-> does not add an inclusion of asm/lse.h which defines it.  Most files
-> have an implicit include so build fine but a few don't which causes the
-> failure.  It does add an inclusion of asm/alternative.h which may be the
-> best place to add the inclusion.
-
-I just sent a fix to the list.
-
-Will
+SGksCgpPbiBXZWQsIEZlYiAxMCwgMjAxNiBhdCAwOTo0MTozOEFNICswMTAwLCBMdWthcyBXdW5u
+ZXIgd3JvdGU6Cj4gT24gV2VkLCBGZWIgMTAsIDIwMTYgYXQgMTI6MjQ6NTFQTSArMTEwMCwgU3Rl
+cGhlbiBSb3Rod2VsbCB3cm90ZToKPiA+IEhpIGFsbCwKPiA+IAo+ID4gQWZ0ZXIgbWVyZ2luZyB0
+aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkIChhcm0KPiA+IG11bHRp
+X3Y3X2RlZmNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoKPiA+IAo+ID4gSW4gZmlsZSBpbmNsdWRl
+ZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmM6MjU6MDoKPiA+IGlu
+Y2x1ZGUvbGludXgvYXBwbGUtZ211eC5oOiBJbiBmdW5jdGlvbiAnYXBwbGVfZ211eF9wcmVzZW50
+JzoKPiA+IGluY2x1ZGUvbGludXgvYXBwbGUtZ211eC5oOjM2OjQyOiBlcnJvcjogaW1wbGljaXQg
+ZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2FjcGlfZGV2X3ByZXNlbnQnIFstV2Vycm9yPWltcGxp
+Y2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ID4gICByZXR1cm4gSVNfRU5BQkxFRChDT05GSUdf
+QVBQTEVfR01VWCkgJiYgYWNwaV9kZXZfcHJlc2VudChHTVVYX0FDUElfSElEKTsKPiA+ICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIF4KPiA+IAo+ID4gQ2F1c2VkIGJ5
+IGNvbW1pdAo+ID4gCj4gPiAgIDI0MTMzMDZjMjU2NiAoImFwcGxlLWdtdXg6IEFkZCBoZWxwZXIg
+Zm9yIHByZXNlbmNlIGRldGVjdCIpCj4gPiAKPiA+IEkgaGF2ZSB1c2VkIHRoZSBkcm0tbWlzYyB0
+cmVlIGZyb20gbmV4dC0yMDE2MDIwOSBmb3IgdG9kYXkuCj4gCj4gVWdoLCBhcG9sb2dpZXMsIEkg
+ZGlkbid0IGhhdmUgYSBub24tQUNQSSBwbGF0Zm9ybSBhdmFpbGFibGUgdG8gdGVzdAo+IHRoaXMg
+b24uCj4gCj4gU29sdXRpb24gaXMgdG8gZWl0aGVyIGFkZCB0byBpbmNsdWRlL2xpbnV4L2FjcGku
+aAo+IAo+IHN0YXRpYyBpbmxpbmUgYm9vbCBhY3BpX2Rldl9wcmVzZW50KGNvbnN0IGNoYXIgKmhp
+ZCkKPiB7Cj4gCXJldHVybiBmYWxzZTsKPiB9Cj4gCj4gc29tZXdoZXJlIGJlbG93Cj4gCj4gI2Vs
+c2UJLyogIUNPTkZJR19BQ1BJICovCj4gCj4gb3IgYWx0ZXJuYXRpdmVseSB0byBhZGQgdG8gaW5j
+bHVkZS9saW51eC9hcHBsZS1nbXV4LmgKPiAKPiBJU19FTkFCTEVEKENPTkZJR19BQ1BJKQo+IAo+
+IGluIGFwcGxlX2dtdXhfcHJlc2VudCgpLgo+IAo+IEknbGwgY2hlY2sgdGhlIG90aGVyIHVzZXJz
+IG9mIGFjcGlfZGV2X3ByZXNlbnQoKSB0byBzZWUgd2hpY2ggb2YKPiB0aGVzZSB0d28gc29sdXRp
+b25zIGlzIG1vcmUgYXBwcm9wcmlhdGUgYW5kIHdpbGwgcG9zdCBhIGZpeCBzaG9ydGx5LgoKVGhl
+IHBhdGNoIGluY2x1ZGVkIGJlbG93IGZpeGVzIHRoZSBidWlsZCBpZiBDT05GSUdfQUNQSSBpcyBu
+b3Qgc2V0LgoKQERhbmllbCBWZXR0ZXI6IFdvdWxkIGl0IGJlIHBvc3NpYmxlIHRvIHNxdWFzaCB0
+aGlzIHdpdGggMjQxMzMwNmMyNTY2CigiYXBwbGUtZ211eDogQWRkIGhlbHBlciBmb3IgcHJlc2Vu
+Y2UgZGV0ZWN0Iikgb24gdG9waWMvZHJtLW1pc2Mgc28KYXMgdG8gYXZvaWQgYnVpbGQgYnJlYWth
+Z2UgZm9yIGFueW9uZSB0cnlpbmcgdG8gYmlzZWN0IGJldHdlZW4gdGhhdApjb21taXQgYW5kIHRo
+aXMgZml4PwoKSSBjaGVja2VkIGFsbCBvdGhlciB1c2VycyBvZiBhY3BpX2Rldl9wcmVzZW50KCkg
+YW5kIGFsbCBvZiB0aGVtIGFyZQpvbmx5IGNvbXBpbGVkIGlmIENPTkZJR19BQ1BJIGlzIHNldC4g
+SGVuY2UgSSBvcHRlZCB0byBmaXggdGhpcyBpbgo8bGludXgvYXBwbGUtZ211eC5oPiByYXRoZXIg
+dGhhbiBpbiA8bGludXgvYWNwaS5oPi4KClRoYW5rcyBhZ2FpbiBTdGVwaGVuIGZvciByZXBvcnRp
+bmcgdGhpcyBhdCBzdWNoIGFuIGVhcmx5IHN0YWdlLAp0aG91Z2ggZG91YnRsZXNzbHkgaXQgd291
+bGQgaGF2ZSBiZWVuIGJldHRlciBpZiBJIGhhZCB0aG91Z2h0IG9mCnRoaXMgcG9zc2liaWxpdHkg
+d2hlbiBwcmVwYXJpbmcgdGhlIG9yaWdpbmFsIHBhdGNoLCBvciBpZiBJIGhhZApjb21waWxlLXRl
+c3RlZCB3aXRob3V0IENPTkZJR19BQ1BJLiA6LSgKCkx1a2FzCgotLSA+OCAtLQpTdWJqZWN0OiBb
+UEFUQ0hdIGFwcGxlLWdtdXg6IEZpeCBidWlsZCBicmVha2FnZSBpZiAhQ09ORklHX0FDUEkKClRo
+ZSBEUk0gZHJpdmVycyBpOTE1LCBub3V2ZWF1IGFuZCByYWRlb24gbWF5IGJlIGNvbXBpbGVkIHdp
+dGgKQ09ORklHX0FDUEkgbm90IHNldCwgaW4gd2hpY2ggY2FzZSBhY3BpX2Rldl9wcmVzZW50KCkg
+aXMgdW5kZWZpbmVkLgoKQWRkIGEgbm8tb3Agc3R1YiBmb3IgYXBwbGVfZ211eF9wcmVzZW50KCkg
+d2hpY2ggaXMgdXNlZCBpZgpDT05GSUdfQVBQTEVfR01VWCBpcyBub3QgZW5hYmxlZCB0byBhdm9p
+ZCBidWlsZCBicmVha2FnZS4KKENPTkZJR19BUFBMRV9HTVVYIGRlcGVuZHMgb24gQ09ORklHX0FD
+UEkuKQoKUmVwb3J0ZWQtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1
+PgpTaWduZWQtb2ZmLWJ5OiBMdWthcyBXdW5uZXIgPGx1a2FzQHd1bm5lci5kZT4KLS0tCiBpbmNs
+dWRlL2xpbnV4L2FwcGxlLWdtdXguaCB8IDEzICsrKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2Vk
+LCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9s
+aW51eC9hcHBsZS1nbXV4LmggYi9pbmNsdWRlL2xpbnV4L2FwcGxlLWdtdXguaAppbmRleCBmZWVi
+YzI4Li5iMmQzMmUwIDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4L2FwcGxlLWdtdXguaAorKysg
+Yi9pbmNsdWRlL2xpbnV4L2FwcGxlLWdtdXguaApAQCAtMjIsNiArMjIsOCBAQAogCiAjZGVmaW5l
+IEdNVVhfQUNQSV9ISUQgIkFQUDAwMEIiCiAKKyNpZiBJU19FTkFCTEVEKENPTkZJR19BUFBMRV9H
+TVVYKQorCiAvKioKICAqIGFwcGxlX2dtdXhfcHJlc2VudCgpIC0gZGV0ZWN0IGlmIGdtdXggaXMg
+YnVpbHQgaW50byB0aGUgbWFjaGluZQogICoKQEAgLTMzLDcgKzM1LDE2IEBACiAgKi8KIHN0YXRp
+YyBpbmxpbmUgYm9vbCBhcHBsZV9nbXV4X3ByZXNlbnQodm9pZCkKIHsKLQlyZXR1cm4gSVNfRU5B
+QkxFRChDT05GSUdfQVBQTEVfR01VWCkgJiYgYWNwaV9kZXZfcHJlc2VudChHTVVYX0FDUElfSElE
+KTsKKwlyZXR1cm4gYWNwaV9kZXZfcHJlc2VudChHTVVYX0FDUElfSElEKTsKIH0KIAorI2Vsc2Ug
+IC8qICFDT05GSUdfQVBQTEVfR01VWCAqLworCitzdGF0aWMgaW5saW5lIGJvb2wgYXBwbGVfZ211
+eF9wcmVzZW50KHZvaWQpCit7CisJcmV0dXJuIGZhbHNlOworfQorCisjZW5kaWYgLyogIUNPTkZJ
+R19BUFBMRV9HTVVYICovCisKICNlbmRpZiAvKiBMSU5VWF9BUFBMRV9HTVVYX0ggKi8KLS0gCjEu
+OC41LjIgKEFwcGxlIEdpdC00OCkKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2ludGVsLWdmeAo=
