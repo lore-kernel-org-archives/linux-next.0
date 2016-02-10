@@ -1,105 +1,54 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160210 build: 2 failures 4 warnings (next-20160210)
-Date: Wed, 10 Feb 2016 09:12:25 +0000
-Message-ID: <E1aTQoy-0005cH-Tr@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160210 build: 2 failures 4 warnings (next-20160210)
+Date: Wed, 10 Feb 2016 09:52:52 +0000
+Message-ID: <20160210095252.GS13270@sirena.org.uk>
+References: <E1aTQoy-0005cH-Tr@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wnBGVoaGQwxWUIo6"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43327 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43381 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752090AbcBJJMe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 04:12:34 -0500
+	with ESMTP id S1752629AbcBJJxG (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 04:53:06 -0500
+Content-Disposition: inline
+In-Reply-To: <E1aTQoy-0005cH-Tr@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160210
-Git describe: next-20160210
-Commit: b613c2bfa3 Add linux-next specific files for 20160210
-
-Build Time: 73 min 31 sec
-
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 2
-Warnings: 4
-Section Mismatches: 1
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-multi_v5_defconfig
-
-Errors:
-
-	arm64-allmodconfig
-../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-
-	arm-multi_v5_defconfig
-../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      0 warnings    1 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  5 ../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-	  1 ../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 4
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 1
-	  1 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
+To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-pm@vger.kernel.org
 
 
+--wnBGVoaGQwxWUIo6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Wed, Feb 10, 2016 at 09:12:25AM +0000, Build bot for Mark Brown wrote:
 
+Today's -next fails to build on non-SMP configurations due to:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 5 errors, 0 warnings, 1 section mismatches
+> 	arm-multi_v5_defconfig
+> ../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
 
-Errors:
-	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
-	../arch/arm64/include/asm/processor.h:183:15: error: expected string literal before 'ARM64_LSE_ATOMIC_INSN'
+caused by 0144fa03ef4606ae (cpufreq: governor: Replace timers with
+utilization update callbacks).  IS_ENABLED() in an if statement doesn't
+do a good job of making things conditional here since the code still has
+to compile cleanly in both cases and there is no definition at all of
+irq_work_queue_on() for !SMP.
 
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
+--wnBGVoaGQwxWUIo6
+Content-Type: application/pgp-signature; name="signature.asc"
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+iQEcBAEBCAAGBQJWuwhyAAoJECTWi3JdVIfQ+sAH/1dAzTF2pTuG9wKtSo6K3aGP
+avVB8jZQA1dbCXLXa+cRH6XBltE1VZzLMr5fGIVo5OHMwSYOaFqk0Us4SVC0K3dJ
++PIlfiYMBwQzoUjCf16DoMFH+xSY4nUOZmGo4TzaD4cfg9Ni+J3Mawo6p5zTXxby
+nE+vGEal6HNk24Z1EepVJUVi3VgUDLobDYzPB+D4W0KQU50lQKcY3D1yT5hjwALA
+ktnVFZfTuiiWyKZy4EqTCsQpCM9UBbyE9UxV/Bp3GA0aZZrITSXgk8bjIJ3a7Dr0
+PCutSJaPf6rJ7M/hZMO+TknEyMqheZ5KT6zOjH9lWZWWE5oLMEe1P1QsF4ZFolY=
+=1RUA
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
+--wnBGVoaGQwxWUIo6--
