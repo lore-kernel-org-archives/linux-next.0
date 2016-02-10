@@ -1,98 +1,39 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Wed, 10 Feb 2016 14:37:00 +0100
-Message-ID: <20160210133700.GZ11240@phenom.ffwll.local>
-References: <20160210122451.55391e43@canb.auug.org.au>
- <20160210084138.GA15392@wunner.de>
- <20160210131741.GA15492@wunner.de>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: next-20160210 build: 2 failures 4 warnings (next-20160210)
+Date: Wed, 10 Feb 2016 15:27:48 +0100
+Message-ID: <CAJZ5v0iamr-b5h=eS1SWo6WMj_NNOqnXoxnC6R03VmtLBG5dEA@mail.gmail.com>
+References: <E1aTQoy-0005cH-Tr@optimist>
+	<20160210095252.GS13270@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160210131741.GA15492@wunner.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, linux-next@vger.kernel.org, Darren Hart <dvhart@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lf0-f53.google.com ([209.85.215.53]:33327 "EHLO
+	mail-lf0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751411AbcBJO1u (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 10 Feb 2016 09:27:50 -0500
+In-Reply-To: <20160210095252.GS13270@sirena.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Viresh Kumar <viresh.kumar@linaro.org>, "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>, kernel-build-reports@lists.linaro.org, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, linux-next@vger.kernel.org, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 
-T24gV2VkLCBGZWIgMTAsIDIwMTYgYXQgMDI6MTc6NDFQTSArMDEwMCwgTHVrYXMgV3VubmVyIHdy
-b3RlOgo+IEhpLAo+IAo+IE9uIFdlZCwgRmViIDEwLCAyMDE2IGF0IDA5OjQxOjM4QU0gKzAxMDAs
-IEx1a2FzIFd1bm5lciB3cm90ZToKPiA+IE9uIFdlZCwgRmViIDEwLCAyMDE2IGF0IDEyOjI0OjUx
-UE0gKzExMDAsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiA+IEhpIGFsbCwKPiA+ID4gCj4g
-PiA+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBi
-dWlsZCAoYXJtCj4gPiA+IG11bHRpX3Y3X2RlZmNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoKPiA+
-ID4gCj4gPiA+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9u
-b3V2ZWF1X2RybS5jOjI1OjA6Cj4gPiA+IGluY2x1ZGUvbGludXgvYXBwbGUtZ211eC5oOiBJbiBm
-dW5jdGlvbiAnYXBwbGVfZ211eF9wcmVzZW50JzoKPiA+ID4gaW5jbHVkZS9saW51eC9hcHBsZS1n
-bXV4Lmg6MzY6NDI6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnYWNw
-aV9kZXZfcHJlc2VudCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4g
-PiA+ICAgcmV0dXJuIElTX0VOQUJMRUQoQ09ORklHX0FQUExFX0dNVVgpICYmIGFjcGlfZGV2X3By
-ZXNlbnQoR01VWF9BQ1BJX0hJRCk7Cj4gPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgIF4KPiA+ID4gCj4gPiA+IENhdXNlZCBieSBjb21taXQKPiA+ID4gCj4gPiA+
-ICAgMjQxMzMwNmMyNTY2ICgiYXBwbGUtZ211eDogQWRkIGhlbHBlciBmb3IgcHJlc2VuY2UgZGV0
-ZWN0IikKPiA+ID4gCj4gPiA+IEkgaGF2ZSB1c2VkIHRoZSBkcm0tbWlzYyB0cmVlIGZyb20gbmV4
-dC0yMDE2MDIwOSBmb3IgdG9kYXkuCj4gPiAKPiA+IFVnaCwgYXBvbG9naWVzLCBJIGRpZG4ndCBo
-YXZlIGEgbm9uLUFDUEkgcGxhdGZvcm0gYXZhaWxhYmxlIHRvIHRlc3QKPiA+IHRoaXMgb24uCj4g
-PiAKPiA+IFNvbHV0aW9uIGlzIHRvIGVpdGhlciBhZGQgdG8gaW5jbHVkZS9saW51eC9hY3BpLmgK
-PiA+IAo+ID4gc3RhdGljIGlubGluZSBib29sIGFjcGlfZGV2X3ByZXNlbnQoY29uc3QgY2hhciAq
-aGlkKQo+ID4gewo+ID4gCXJldHVybiBmYWxzZTsKPiA+IH0KPiA+IAo+ID4gc29tZXdoZXJlIGJl
-bG93Cj4gPiAKPiA+ICNlbHNlCS8qICFDT05GSUdfQUNQSSAqLwo+ID4gCj4gPiBvciBhbHRlcm5h
-dGl2ZWx5IHRvIGFkZCB0byBpbmNsdWRlL2xpbnV4L2FwcGxlLWdtdXguaAo+ID4gCj4gPiBJU19F
-TkFCTEVEKENPTkZJR19BQ1BJKQo+ID4gCj4gPiBpbiBhcHBsZV9nbXV4X3ByZXNlbnQoKS4KPiA+
-IAo+ID4gSSdsbCBjaGVjayB0aGUgb3RoZXIgdXNlcnMgb2YgYWNwaV9kZXZfcHJlc2VudCgpIHRv
-IHNlZSB3aGljaCBvZgo+ID4gdGhlc2UgdHdvIHNvbHV0aW9ucyBpcyBtb3JlIGFwcHJvcHJpYXRl
-IGFuZCB3aWxsIHBvc3QgYSBmaXggc2hvcnRseS4KPiAKPiBUaGUgcGF0Y2ggaW5jbHVkZWQgYmVs
-b3cgZml4ZXMgdGhlIGJ1aWxkIGlmIENPTkZJR19BQ1BJIGlzIG5vdCBzZXQuCj4gCj4gQERhbmll
-bCBWZXR0ZXI6IFdvdWxkIGl0IGJlIHBvc3NpYmxlIHRvIHNxdWFzaCB0aGlzIHdpdGggMjQxMzMw
-NmMyNTY2Cj4gKCJhcHBsZS1nbXV4OiBBZGQgaGVscGVyIGZvciBwcmVzZW5jZSBkZXRlY3QiKSBv
-biB0b3BpYy9kcm0tbWlzYyBzbwo+IGFzIHRvIGF2b2lkIGJ1aWxkIGJyZWFrYWdlIGZvciBhbnlv
-bmUgdHJ5aW5nIHRvIGJpc2VjdCBiZXR3ZWVuIHRoYXQKPiBjb21taXQgYW5kIHRoaXMgZml4Pwo+
-IAo+IEkgY2hlY2tlZCBhbGwgb3RoZXIgdXNlcnMgb2YgYWNwaV9kZXZfcHJlc2VudCgpIGFuZCBh
-bGwgb2YgdGhlbSBhcmUKPiBvbmx5IGNvbXBpbGVkIGlmIENPTkZJR19BQ1BJIGlzIHNldC4gSGVu
-Y2UgSSBvcHRlZCB0byBmaXggdGhpcyBpbgo+IDxsaW51eC9hcHBsZS1nbXV4Lmg+IHJhdGhlciB0
-aGFuIGluIDxsaW51eC9hY3BpLmg+Lgo+IAo+IFRoYW5rcyBhZ2FpbiBTdGVwaGVuIGZvciByZXBv
-cnRpbmcgdGhpcyBhdCBzdWNoIGFuIGVhcmx5IHN0YWdlLAo+IHRob3VnaCBkb3VidGxlc3NseSBp
-dCB3b3VsZCBoYXZlIGJlZW4gYmV0dGVyIGlmIEkgaGFkIHRob3VnaHQgb2YKPiB0aGlzIHBvc3Np
-YmlsaXR5IHdoZW4gcHJlcGFyaW5nIHRoZSBvcmlnaW5hbCBwYXRjaCwgb3IgaWYgSSBoYWQKPiBj
-b21waWxlLXRlc3RlZCB3aXRob3V0IENPTkZJR19BQ1BJLiA6LSgKClNpbmNlICFBQ1BJIGFuZCBl
-bmFibGluZyBBUFBMRV9HTVVYIGlzIGEgYml0IGEgZnJpbmdlIGNvbmZpZyBJIGRvbid0IHRoaW5r
-CnRoaXMgd2lsbCBodXJ0IGJpc2VjdGFiaWxpdHkgYXQgYWxsIG9uIGEgcmVhbCBzeXN0ZW0uIFNv
-IGp1c3QgYXBwbGllZCB0aGlzCm9uZSBvbiB0b3Agb2YgZHJtLW1pc2MuCgpUaGFua3MsIERhbmll
-bAoKPiAKPiBMdWthcwo+IAo+IC0tID44IC0tCj4gU3ViamVjdDogW1BBVENIXSBhcHBsZS1nbXV4
-OiBGaXggYnVpbGQgYnJlYWthZ2UgaWYgIUNPTkZJR19BQ1BJCj4gCj4gVGhlIERSTSBkcml2ZXJz
-IGk5MTUsIG5vdXZlYXUgYW5kIHJhZGVvbiBtYXkgYmUgY29tcGlsZWQgd2l0aAo+IENPTkZJR19B
-Q1BJIG5vdCBzZXQsIGluIHdoaWNoIGNhc2UgYWNwaV9kZXZfcHJlc2VudCgpIGlzIHVuZGVmaW5l
-ZC4KPiAKPiBBZGQgYSBuby1vcCBzdHViIGZvciBhcHBsZV9nbXV4X3ByZXNlbnQoKSB3aGljaCBp
-cyB1c2VkIGlmCj4gQ09ORklHX0FQUExFX0dNVVggaXMgbm90IGVuYWJsZWQgdG8gYXZvaWQgYnVp
-bGQgYnJlYWthZ2UuCj4gKENPTkZJR19BUFBMRV9HTVVYIGRlcGVuZHMgb24gQ09ORklHX0FDUEku
-KQo+IAo+IFJlcG9ydGVkLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5h
-dT4KPiBTaWduZWQtb2ZmLWJ5OiBMdWthcyBXdW5uZXIgPGx1a2FzQHd1bm5lci5kZT4KPiAtLS0K
-PiAgaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4LmggfCAxMyArKysrKysrKysrKystCj4gIDEgZmls
-ZSBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdp
-dCBhL2luY2x1ZGUvbGludXgvYXBwbGUtZ211eC5oIGIvaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4
-LmgKPiBpbmRleCBmZWViYzI4Li5iMmQzMmUwIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvbGludXgv
-YXBwbGUtZ211eC5oCj4gKysrIGIvaW5jbHVkZS9saW51eC9hcHBsZS1nbXV4LmgKPiBAQCAtMjIs
-NiArMjIsOCBAQAo+ICAKPiAgI2RlZmluZSBHTVVYX0FDUElfSElEICJBUFAwMDBCIgo+ICAKPiAr
-I2lmIElTX0VOQUJMRUQoQ09ORklHX0FQUExFX0dNVVgpCj4gKwo+ICAvKioKPiAgICogYXBwbGVf
-Z211eF9wcmVzZW50KCkgLSBkZXRlY3QgaWYgZ211eCBpcyBidWlsdCBpbnRvIHRoZSBtYWNoaW5l
-Cj4gICAqCj4gQEAgLTMzLDcgKzM1LDE2IEBACj4gICAqLwo+ICBzdGF0aWMgaW5saW5lIGJvb2wg
-YXBwbGVfZ211eF9wcmVzZW50KHZvaWQpCj4gIHsKPiAtCXJldHVybiBJU19FTkFCTEVEKENPTkZJ
-R19BUFBMRV9HTVVYKSAmJiBhY3BpX2Rldl9wcmVzZW50KEdNVVhfQUNQSV9ISUQpOwo+ICsJcmV0
-dXJuIGFjcGlfZGV2X3ByZXNlbnQoR01VWF9BQ1BJX0hJRCk7Cj4gIH0KPiAgCj4gKyNlbHNlICAv
-KiAhQ09ORklHX0FQUExFX0dNVVggKi8KPiArCj4gK3N0YXRpYyBpbmxpbmUgYm9vbCBhcHBsZV9n
-bXV4X3ByZXNlbnQodm9pZCkKPiArewo+ICsJcmV0dXJuIGZhbHNlOwo+ICt9Cj4gKwo+ICsjZW5k
-aWYgLyogIUNPTkZJR19BUFBMRV9HTVVYICovCj4gKwo+ICAjZW5kaWYgLyogTElOVVhfQVBQTEVf
-R01VWF9IICovCj4gLS0gCj4gMS44LjUuMiAoQXBwbGUgR2l0LTQ4KQo+IAoKLS0gCkRhbmllbCBW
-ZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZm
-d2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
-aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, Feb 10, 2016 at 10:52 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Feb 10, 2016 at 09:12:25AM +0000, Build bot for Mark Brown wrote:
+>
+> Today's -next fails to build on non-SMP configurations due to:
+>
+>>       arm-multi_v5_defconfig
+>> ../drivers/cpufreq/cpufreq_governor.c:251:3: error: implicit declaration of function 'irq_work_queue_on' [-Werror=implicit-function-declaration]
+>
+> caused by 0144fa03ef4606ae (cpufreq: governor: Replace timers with
+> utilization update callbacks).  IS_ENABLED() in an if statement doesn't
+> do a good job of making things conditional here since the code still has
+> to compile cleanly in both cases and there is no definition at all of
+> irq_work_queue_on() for !SMP.
+
+Thanks for the report!
+
+OK, I'll change it to #ifdef/#else then.
+
+Thanks,
+Rafael
