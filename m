@@ -1,140 +1,102 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160211 build: 1 failures 7 warnings (next-20160211)
-Date: Thu, 11 Feb 2016 08:13:31 +0000
-Message-ID: <E1aTmNX-0007MC-CL@optimist>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: next-20160208 perf build =?utf-8?Q?err?=
+ =?utf-8?Q?or_=22tests=2Fbp=5Fsignal=2Ec=3A106=3A47=3A_error=3A_declaratio?=
+ =?utf-8?Q?n_of_=E2=80=98signal?= =?utf-8?B?4oCZ?= shadows a global
+ declaration [-Werror=shadow]"
+Date: Thu, 11 Feb 2016 19:21:21 -0300
+Message-ID: <20160211222121.GK32168@kernel.org>
+References: <CACKvgLFaZagkvRk1R2Xy0=UbWcfELgLxPbfjhRNZj-Rg4jSz4w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45440 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751505AbcBKINk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 11 Feb 2016 03:13:40 -0500
+Received: from mail.kernel.org ([198.145.29.136]:58106 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751311AbcBKW6p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 11 Feb 2016 17:58:45 -0500
+Content-Disposition: inline
+In-Reply-To: <CACKvgLFaZagkvRk1R2Xy0=UbWcfELgLxPbfjhRNZj-Rg4jSz4w@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Vinson Lee <vlee@freedesktop.org>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>
 
-Tree/Branch: next-20160211
-Git describe: next-20160211
-Commit: 8c8d01f13c Add linux-next specific files for 20160211
+Em Mon, Feb 08, 2016 at 10:28:53AM -0800, Vinson Lee escreveu:
+> Hi.
+>=20
+> I hit this perf build error with next-20160208 with GCC 4.6.
 
-Build Time: 74 min 20 sec
+I try to test on a rhel6 vm from time to time, need to do it using
+docker or something, thanks for the report, but can you please send a
+proper patch, with a:
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+=46ixes: 6a7d550e8b2e ("perf test: Check environment before start real =
+BPF test")
 
-Errors: 11
-Warnings: 7
-Section Mismatches: 1
+Line, signed-off, etc?
 
-Failed defconfigs:
-	arm64-allmodconfig
+Thanks,
 
-Errors:
+- Arnaldo
 
-	arm64-allmodconfig
-ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    2 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 11
-	  1 ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
-Warnings Summary: 7
-	  3 ../drivers/gpu/drm/msm/msm_fbdev.c:65:21: warning: unused variable 'dev' [-Wunused-variable]
-	  2 ../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
-	  2 ../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 1
-	  2 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 11 errors, 3 warnings, 2 section mismatches
-
-Errors:
-	ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_fbdev.c:65:21: warning: unused variable 'dev' [-Wunused-variable]
-	../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_fbdev.c:65:21: warning: unused variable 'dev' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/msm/msm_fbdev.c:65:21: warning: unused variable 'dev' [-Wunused-variable]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
+=20
+>   CC       tests/bp_signal.o
+> tests/bp_signal.c: In function =E2=80=98__event=E2=80=99:
+> tests/bp_signal.c:106:47: error: declaration of =E2=80=98signal=E2=80=
+=99 shadows a
+> global declaration [-Werror=3Dshadow]
+> tests/bp_signal.c: In function =E2=80=98bp_event=E2=80=99:
+> tests/bp_signal.c:144:37: error: declaration of =E2=80=98signal=E2=80=
+=99 shadows a
+> global declaration [-Werror=3Dshadow]
+> tests/bp_signal.c: In function =E2=80=98wp_event=E2=80=99:
+> tests/bp_signal.c:149:37: error: declaration of =E2=80=98signal=E2=80=
+=99 shadows a
+> global declaration [-Werror=3Dshadow]
+>=20
+> The build error is introduced with "perf test: Check environment
+> before start real BPF test".
+>=20
+> commit 6a7d550e8b2eeb380ab85d9bc53571123b98345b
+> Author: Wang Nan <wangnan0@huawei.com>
+> Date:   Mon Jan 25 09:55:53 2016 +0000
+>=20
+>     perf test: Check environment before start real BPF test
+>=20
+>     Copying perf to old kernel system results:
+>=20
+>       # perf test bpf
+>       37: Test BPF filter                                          :
+>       37.1: Test basic BPF filtering                               : =
+=46AILED!
+>       37.2: Test BPF prologue generation                           : =
+Skip
+>=20
+>     However, in case when kernel doesn't support a test case it shoul=
+d
+>     return 'Skip', 'FAILED!' should be reserved for kernel tests for =
+when
+>     the kernel supports a feature that then fails to work as advertis=
+ed.
+>=20
+>     This patch checks environment before real testcase.
+>=20
+>     Signed-off-by: Wang Nan <wangnan0@huawei.com>
+>     Suggested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>     Cc: Alexei Starovoitov <ast@kernel.org>
+>     Cc: Brendan Gregg <brendan.d.gregg@gmail.com>
+>     Cc: Daniel Borkmann <daniel@iogearbox.net>
+>     Cc: He Kuang <hekuang@huawei.com>
+>     Cc: Jiri Olsa <jolsa@kernel.org>
+>     Cc: Li Zefan <lizefan@huawei.com>
+>     Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Peter Zijlstra <peterz@infradead.org>
+>     Cc: Will Deacon <will.deacon@arm.com>
+>     Cc: pi3orama@163.com
+>     Link: http://lkml.kernel.org/r/1453715801-7732-7-git-send-email-w=
+angnan0@huawei.com
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>=20
+> Cheers,
+> Vinson
