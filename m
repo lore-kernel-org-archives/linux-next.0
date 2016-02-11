@@ -1,97 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 11 Feb 2016 07:51:44 +1100
-Message-ID: <20160211075144.28db2f39@canb.auug.org.au>
-References: <20160210165514.412992a5@canb.auug.org.au>
-	<20160210115507.f1521e162a8489c18b02048b@linux-foundation.org>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 11 Feb 2016 11:59:41 +1100
+Message-ID: <20160211115941.701f67b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44579 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56268 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750730AbcBJUvr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 10 Feb 2016 15:51:47 -0500
-In-Reply-To: <20160210115507.f1521e162a8489c18b02048b@linux-foundation.org>
+	id S1751126AbcBKA7n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 10 Feb 2016 19:59:43 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Jiri Kosina <jkosina@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Wragg <david@weave.works>, Jiri Benc <jbenc@redhat.com>
 
-Hi Andrew,
+Hi all,
 
-On Wed, 10 Feb 2016 11:55:07 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 10 Feb 2016 16:55:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Andrew,
-> > 
-> > After merging the akpm-current tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > In file included from arch/x86/include/asm/bug.h:35:0,
-> >                  from include/linux/bug.h:4,
-> >                  from include/linux/thread_info.h:11,
-> >                  from arch/x86/include/asm/preempt.h:6,
-> >                  from include/linux/preempt.h:59,
-> >                  from include/linux/radix-tree.h:25,
-> >                  from kernel/memremap.c:13:
-> > kernel/memremap.c: In function 'devm_memremap_pages_release':
-> > kernel/memremap.c:230:54: error: expected ')' before '__func__'
-> >    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
-> >                                                       ^
-> > include/asm-generic/bug.h:74:69: note: in definition of macro '__WARN_printf'
-> >  #define __WARN_printf(arg...) warn_slowpath_fmt(__FILE__, __LINE__, arg)
-> >                                                                      ^
-> > include/linux/device.h:1312:2: note: in expansion of macro 'WARN'
-> >   WARN(condition, "%s %s: " format,   \
-> >   ^
-> > kernel/memremap.c:230:3: note: in expansion of macro 'dev_WARN'
-> >    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
-> >    ^
-> > include/linux/device.h:1312:18: warning: format '%s' expects a matching 'char *' argument [-Wformat=]
-> >   WARN(condition, "%s %s: " format,   \
-> >                   ^
-> > include/asm-generic/bug.h:74:69: note: in definition of macro '__WARN_printf'
-> >  #define __WARN_printf(arg...) warn_slowpath_fmt(__FILE__, __LINE__, arg)
-> >                                                                      ^
-> > include/linux/device.h:1312:2: note: in expansion of macro 'WARN'
-> >   WARN(condition, "%s %s: " format,   \
-> >   ^
-> > kernel/memremap.c:230:3: note: in expansion of macro 'dev_WARN'
-> >    dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
-> >    ^
-> > 
-> > Probably exposed by commit
-> > 
-> >   27ffb3827ac7 ("mm: CONFIG_NR_ZONES_EXTENDED")
-> > 
-> > originally caused by commit
-> > 
-> >   5c2c2587b132 ("mm, dax, pmem: introduce {get|put}_dev_pagemap() for dax-gup")
-> > 
-> > which was added in v4.5-rc1.
-> > 
-> > I added the below patch for today but then discovered the waiting patch
-> > in the akpm tree ("kernel/memremap.c: add new arg to dev_WARN") which
-> > should be sent to Linus ASAP (and should have appeared much earlier in
-> > the series).  
-> 
-> kernel-memremapc-add-new-arg-to-dev_warn.patch fixes ee49ac85bc24b946
-> ("treewide: let dev_WARN() accept a condition") which is only in
-> linux-next?
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Yes, indeed, I guess I was a bit tired by that point :-(
+  drivers/net/vxlan.c
 
-However, I am not sure I would ever call an API change trivial i.e. I
-wonder what that patch is doing the the trivial tree ...  I guess that
-patch is needed as part of the merge of the trivial tree.  Or the
-trivial tree should be based on v4.5-rc1 not v4.3 (in which case this
-patch belongs as part of ee49ac85bc24b946 (and presumably would have
-been found in testing of the trivial tree alone).
+between commit:
 
-I will put your patch into teh merge of the trivial tree today (so it
-will disappear from the akpm tree).
+  72564b59ffc4 ("vxlan: Relax MTU constraints")
+
+from the net tree and commit:
+
+  1a8496ba4091 ("vxlan: consolidate output route calculation")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/net/vxlan.c
+index a31cd954b308,65f52472a52c..000000000000
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@@ -2395,40 -2316,6 +2321,15 @@@ static int __vxlan_change_mtu(struct ne
+  	return 0;
+  }
+  
+ +static int vxlan_change_mtu(struct net_device *dev, int new_mtu)
+ +{
+ +	struct vxlan_dev *vxlan = netdev_priv(dev);
+ +	struct vxlan_rdst *dst = &vxlan->default_dst;
+ +	struct net_device *lowerdev = __dev_get_by_index(vxlan->net,
+ +							 dst->remote_ifindex);
+ +	return __vxlan_change_mtu(dev, lowerdev, dst, new_mtu, true);
+ +}
+ +
+- static int egress_ipv4_tun_info(struct net_device *dev, struct sk_buff *skb,
+- 				struct ip_tunnel_info *info,
+- 				__be16 sport, __be16 dport)
+- {
+- 	struct vxlan_dev *vxlan = netdev_priv(dev);
+- 	struct rtable *rt;
+- 	struct flowi4 fl4;
+- 
+- 	memset(&fl4, 0, sizeof(fl4));
+- 	fl4.flowi4_tos = RT_TOS(info->key.tos);
+- 	fl4.flowi4_mark = skb->mark;
+- 	fl4.flowi4_proto = IPPROTO_UDP;
+- 	fl4.daddr = info->key.u.ipv4.dst;
+- 
+- 	rt = ip_route_output_key(vxlan->net, &fl4);
+- 	if (IS_ERR(rt))
+- 		return PTR_ERR(rt);
+- 	ip_rt_put(rt);
+- 
+- 	info->key.u.ipv4.src = fl4.saddr;
+- 	info->key.tp_src = sport;
+- 	info->key.tp_dst = dport;
+- 	return 0;
+- }
+- 
+  static int vxlan_fill_metadata_dst(struct net_device *dev, struct sk_buff *skb)
+  {
+  	struct vxlan_dev *vxlan = netdev_priv(dev);
