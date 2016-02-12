@@ -1,34 +1,41 @@
-From: Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Tree for Feb 12
-Date: Fri, 12 Feb 2016 19:57:20 +0530
-Message-ID: <20160212142719.GA31729@sudip-pc>
-References: <20160212162035.1e0260cd@canb.auug.org.au>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: next-20160208 perf build =?utf-8?Q?err?=
+ =?utf-8?Q?or_=22tests=2Fbp=5Fsignal=2Ec=3A106=3A47=3A_error=3A_declaratio?=
+ =?utf-8?Q?n_of_=E2=80=98signal?= =?utf-8?B?4oCZ?= shadows a global
+ declaration [-Werror=shadow]"
+Date: Fri, 12 Feb 2016 18:40:36 -0300
+Message-ID: <20160212214036.GE16005@kernel.org>
+References: <CACKvgLFaZagkvRk1R2Xy0=UbWcfELgLxPbfjhRNZj-Rg4jSz4w@mail.gmail.com>
+ <20160211222121.GK32168@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:35128 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750816AbcBLVkk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 12 Feb 2016 16:40:40 -0500
 Content-Disposition: inline
-In-Reply-To: <20160212162035.1e0260cd-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kees Cook <keescook-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20160211222121.GK32168@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vinson Lee <vlee@freedesktop.org>
+Cc: linux-next@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>
 
-On Fri, Feb 12, 2016 at 04:20:35PM +1100, Stephen Rothwell wrote:
-> Hi all,
+Em Thu, Feb 11, 2016 at 07:21:21PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Mon, Feb 08, 2016 at 10:28:53AM -0800, Vinson Lee escreveu:
+> > I hit this perf build error with next-20160208 with GCC 4.6.
+ 
+> I try to test on a rhel6 vm from time to time, need to do it using
+> docker or something, thanks for the report, but can you please send a
+> proper patch, with a:
 > 
-> Changes since 20160211:
+> Fixes: 6a7d550e8b2e ("perf test: Check environment before start real BPF test")
+> 
+> Line, signed-off, etc?
 
-arm lpc18xx_defconfig build fails with the error:
-./arch/arm/kernel/vmlinux.lds:702: undefined symbol `SECTION_SHIFT'
-referenced in expression
+Do it next time please, I did this time, when testing other changes on
+my rhel6.7 vm, its in my perf/core branch,
 
-bisect leads to:
-64ac2e74f0b2 ("ARM: 8502/1: mm: mark section-aligned portion of rodata NX")
+Thanks,
 
-reverting that patch fixed the build.
-
-build log at:
-https://travis-ci.org/sudipm-mukherjee/parport/jobs/108716281
-
-regards
-sudip
+- arnaldo
