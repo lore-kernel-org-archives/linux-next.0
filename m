@@ -1,59 +1,104 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
  of-devices only using list of compatibles'
-Date: Mon, 15 Feb 2016 18:03:33 +0000
-Message-ID: <20160215180333.GK10826@n2100.arm.linux.org.uk>
+Date: Mon, 15 Feb 2016 10:12:40 -0800
+Message-ID: <56C21518.5030606@roeck-us.net>
 References: <20160214165010.GA3189@roeck-us.net>
- <20160215105909.GH12289@pengutronix.de>
- <56C1F19F.8090100@roeck-us.net>
- <56C20DD6.8050604@arm.com>
+ <20160215105909.GH12289@pengutronix.de> <56C1F19F.8090100@roeck-us.net>
+ <20160215170025.GJ12289@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56C20DD6.8050604@arm.com>
+In-Reply-To: <20160215170025.GJ12289@pengutronix.de>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 15, 2016 at 05:41:42PM +0000, Sudeep Holla wrote:
-> Sorry for missing this earlier, I could reproduce this on my TC2.
-> The issue is with card-detect gpio probing. It's not related to AMBA
-> probing as discussed on the mail thread.
-> 
-> mfd_add_device adds devices with of_node when cell->of_compatible is
-> matched, but the device created is expected to be matched based on name
-> which the patch under discussion clearly breaks.
+On 02/15/2016 09:00 AM, Uwe Kleine-K=F6nig wrote:
+> On Mon, Feb 15, 2016 at 07:41:19AM -0800, Guenter Roeck wrote:
+>> On 02/15/2016 02:59 AM, Uwe Kleine-K=F6nig wrote:
+>>> Hello Guenter,
+>>>
+>>> On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
+>>>> Uwe,
+>>>>
+>>>> Your patch 'driver-core: platform: probe of-devices only using lis=
+t of
+>>>> compatibles' causes the following qemu tests to crash in -next.
+>>>>
+>>>> arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
+>>>> arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
+>>>> arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+>>>> arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+>>>>
+>>>> Crash log:
+>>>>
+>>>> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): erro=
+r -6
+>>>> Please append a correct "root=3D" boot option; here are the availa=
+ble partitions:
+>>>> 1f00          131072 mtdblock0  (driver?)
+>>>> 1f01           32768 mtdblock1  (driver?)
+>>>> Kernel panic - not syncing: VFS: Unable to mount root fs on unknow=
+n-block(0,0)
+>>>
+>>> Can you provide a complete boot log? This might already reveal whic=
+h
+>>> device is failing. It might not be the mmci device but something it
+>>> depends on (clock, bus parent, irq).
+>>>
+>>
+>> Sure, something else may be failing, but why does reverting your pat=
+ch
+>> fix the problem ?
+>
+> Well, my patch made matching of platform devices to platform drivers
+> more strict. Your machine relies on the respective binding though. So=
+ of
+> course reverting my patch "repairs" your machine, but that doesn't
+> necessarily mean that my patch is wrong. Even though I'm convinced in
+> the meantime by Russell that there are false positives it doesn't
+> necessarily imply that your case is such a false positive, too.
+>
+> One example of a combination of driver + device I intended to break w=
+ith
+> my patch was drivers/mtd/nand/mxc_nand.c and devices that got bound t=
+o
+> that by name. The driver does:
+>
+> 	const struct of_device_id *of_id =3D
+> 		of_match_device(mxcnd_dt_ids, host->dev);
+>
+> and doesn't handle of_id being NULL after that. Some people argued (a=
+lso
+> for other drivers in similar situations) that this cannot happen beca=
+use
+> all compatibles had a non-NULL device_id. That is an error that is ea=
+sy
+> to make and so the idea was to just not bind in such a case and safe =
+the
+> user from the surprise.
+>
 
-If I'm understanding you correctly, you're saying that MFD re-adds
-platform devices with the of_node of a new platform device pointing
-to an existing of_node, but expects this new platform device to
-match a _different_ driver?
+I added some debugging on top of your patch, and get:
 
-Sounds like MFD needs fixing.  I've said this before: of_node's must
-_never_ be copied between different device structures, especially
-when they are on the _same_ bus - quite simply because the driver
-core _can_ match using the DT compatible.
+platform basic-mmio-gpio.1.auto: Device node exists [/smb/motherboard/i=
+ofpga@7,00000000/sysreg@00000/sys_led@08], of_driver_match_device() fai=
+led
+platform basic-mmio-gpio.1.auto: platform_match_id() succeeded
+platform basic-mmio-gpio.2.auto: Device node exists [/smb/motherboard/i=
+ofpga@7,00000000/sysreg@00000/sys_mci@48], of_driver_match_device() fai=
+led
+platform basic-mmio-gpio.2.auto: platform_match_id() succeeded
+platform basic-mmio-gpio.3.auto: Device node exists [/smb/motherboard/i=
+ofpga@7,00000000/sysreg@00000/sys_flash@4c], of_driver_match_device() f=
+ailed
+platform basic-mmio-gpio.3.auto: platform_match_id() succeeded
 
-For example... let's say you have a platform device called "1234.foo"
-created by DT with compatible of "example,foo".  You have two platform
-drivers.  One of them matches compatible "example,foo" and the other
-matches against platform devices with a name of "bar".
+So it isn't the mmc driver failing to instantiate directly,
+but (I think) vexpress-sysreg.
 
-The "example,foo" device driver is matched against "1234.foo".  It
-creates a platform device with a name of "bar" and bus ID "bar.0",
-setting the of_node to the same as "1234.foo".
-
-When scanning for a matching driver, if the "example,foo" driver is
-found first, "bar.0" will be matched to this driver, and its probe
-method called.  If it accepts this device, it will repeat its action,
-creating "bar.1".  Repeat until you run out of memory.
-
-If it instead finds the "bar" driver first, this driver will be used
-and everything appears to work correctly.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Guenter
