@@ -1,55 +1,55 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
- of-devices only using list of compatibles'
-Date: Mon, 15 Feb 2016 14:43:44 +0000
-Message-ID: <20160215144344.GF10826@n2100.arm.linux.org.uk>
-References: <20160214165010.GA3189@roeck-us.net>
- <20160215105909.GH12289@pengutronix.de>
- <56C1CE95.6020206@arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160215 build: 3 failures 14 warnings (next-20160215)
+Date: Mon, 15 Feb 2016 14:49:01 +0000
+Message-ID: <20160215144901.GL18988@sirena.org.uk>
+References: <E1aVFDg-00066P-6L@optimist>
+ <20160215121922.GH18988@sirena.org.uk>
+ <20160215132425.GA21048@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iAzLNm1y1mIRgolD"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52370 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753299AbcBOOtL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 09:49:11 -0500
 Content-Disposition: inline
-In-Reply-To: <56C1CE95.6020206@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20160215132425.GA21048@ulmo>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-On Mon, Feb 15, 2016 at 01:11:49PM +0000, Robin Murphy wrote:
-> FWIW the PL180 on my Juno still works fine with this patch picked on top of
-> -rc3, so the issue would seem to be something else - From a quick comparison
-> between the DTs I see a slight difference in compatible strings for the
-> clocks, but the more likely-looking suspect is that the VExpress DT
-> references some GPIOs where the Juno DT doesn't.
 
-Maybe it would be a good idea that Uwe creates a patch which initially
-warns when a DT platform device falls back to matching via the platform
-strings?
+--iAzLNm1y1mIRgolD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's likely that the "basic subsystem" platform drivers are silent when
-they probe, so having notification of a fallback would at least put
-something into the kernel log when that happens - and then later change
-that to be a hard failure (as Uwe is trying to do with his patch.)
+On Mon, Feb 15, 2016 at 02:24:25PM +0100, Thierry Reding wrote:
+> On Mon, Feb 15, 2016 at 12:19:22PM +0000, Mark Brown wrote:
 
-However, I have to bring up another point: is what Uwe is trying to do
-actually the right thing?  The DT platform device code has the ability
-to create standard platform devices from DT, with an of_node, but with
-standard names, and platform data.  It's there for compatibility with
-older systems, and is there to allow systems to be transitioned over.
+> > Presumably some missing select or dependency there...
 
-This patch breaks all that: despite the DT code changing the platform
-device bus_id from the address.nodename format to the standard format
-(thus allowing unconverted platform drivers to match), this patch
-means that because the platform device has a of_node attached, this
-will now fail.
+> I think this is caused by the MSI IRQ domain API not being exported.
+> I've just sent out a couple of patches that I've been carrying in my
+> local tree for a few days now.
 
-Therefore, I think Uwe's patch is just wrong - or, if it's something we
-want, the auxdata table support code needs to _also_ be ripped out of
-the drivers/of/platform.c code, but that then means anyone who wants to
-go through the conversion has a big flag-day change to go through.
+Yeah, that'd do it. =20
 
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+--iAzLNm1y1mIRgolD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWweVSAAoJECTWi3JdVIfQCRAH/R84196vClh2TuwSWYRUaZAx
+kNKH5kE4XSrsB/mRSg5cPnyNe9FDvOrE6vu+fkxYzlJleoaLhRGJpN14HVbpShzq
+JAZ8JnsM0SXDBp7S7ksES7EMoAIm0cZzy8EzxsIBrzmfVDQGot3RuDy0MrsJxWoh
+SlPSIobNnroA4RCqK8XsWfSvLlr+mwHdZIOllSeDA3COdtw5Ltt2+Qof89VYCFV4
+7JAwq3vJakQxiucvjmhoDmgN/QkrDS597w+jWPn4NBLkFc892pORTN6Qrw3cvWjh
+byAdgOO906RPwrbVtEIGx1iuTfA8NBxgoHkJnVSKMdsa+QZlxSe5wvYNptKylc4=
+=6F4m
+-----END PGP SIGNATURE-----
+
+--iAzLNm1y1mIRgolD--
