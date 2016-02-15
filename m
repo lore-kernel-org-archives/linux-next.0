@@ -1,55 +1,61 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
- of-devices only using list of compatibles'
-Date: Mon, 15 Feb 2016 11:59:09 +0100
-Message-ID: <20160215105909.GH12289@pengutronix.de>
-References: <20160214165010.GA3189@roeck-us.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160215 build: 3 failures 14 warnings (next-20160215)
+Date: Mon, 15 Feb 2016 12:19:22 +0000
+Message-ID: <20160215121922.GH18988@sirena.org.uk>
+References: <E1aVFDg-00066P-6L@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="h3LYUU6HlUDSAOzy"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52011 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752780AbcBOMTc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 07:19:32 -0500
 Content-Disposition: inline
-In-Reply-To: <20160214165010.GA3189@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <E1aVFDg-00066P-6L@optimist>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hello Guenter,
 
-On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
-> Uwe,
->=20
-> Your patch 'driver-core: platform: probe of-devices only using list o=
-f
-> compatibles' causes the following qemu tests to crash in -next.
->=20
-> arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
-> arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
-> arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
-> arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
->=20
-> Crash log:
->=20
-> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -=
-6
-> Please append a correct "root=3D" boot option; here are the available=
- partitions:
-> 1f00          131072 mtdblock0  (driver?)
-> 1f01           32768 mtdblock1  (driver?)
-> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-b=
-lock(0,0)
+--h3LYUU6HlUDSAOzy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Can you provide a complete boot log? This might already reveal which
-device is failing. It might not be the mmci device but something it
-depends on (clock, bus parent, irq).
+On Mon, Feb 15, 2016 at 09:13:24AM +0000, Build bot for Mark Brown wrote:
 
-Best regards
-Uwe
+Today's linux-next fails to build an arm64 allmodconfig due to recent
+commits adding generic MSI and GICv3 support:
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+> 	arm64-allmodconfig
+> ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+> ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+
+Presumably some missing select or dependency there...
+
+--h3LYUU6HlUDSAOzy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWwcJIAAoJECTWi3JdVIfQCnsH/i5kG1WaYgJcmQdBtTzYnnh5
+NWh/I2VcxjyES2p7XNBVYPpVUxmS3GX3Uhni+9YkN+yxxUjkaDUGYnBblqxmi8UL
+OjX8bcoPU3mt5m1vWEKnXjscSdSfH5+SPczvx8/d8hg/tl4gdgk5bV5rcfMk9o3/
+/+D+bDlB29jVLoIMlQEocErTA7hBdJqSlfQ7dCo+aMz0xhje40TxcyyTlId9SF0O
+4GAnpJzc3UOMKVNW6OEOeT5WNC92E2lWKti9Qlj6YrBsDrwTrbnSHxGtBVO41OJe
+ctY+p/9wa7LwyOhOMujIsTBJ1NYKfhwFb6/TcujzIv8NNgtLxUJSsdXMkfu1elc=
+=gmed
+-----END PGP SIGNATURE-----
+
+--h3LYUU6HlUDSAOzy--
