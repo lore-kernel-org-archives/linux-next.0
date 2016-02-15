@@ -1,34 +1,55 @@
-From: Jiri Kosina <jikos@kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 15 Feb 2016 11:17:02 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1602151115480.22727@cbobk.fhfr.pm>
-References: <20160210165514.412992a5@canb.auug.org.au> <20160210115507.f1521e162a8489c18b02048b@linux-foundation.org> <20160211075144.28db2f39@canb.auug.org.au>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
+ of-devices only using list of compatibles'
+Date: Mon, 15 Feb 2016 11:59:09 +0100
+Message-ID: <20160215105909.GH12289@pengutronix.de>
+References: <20160214165010.GA3189@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:54709 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751016AbcBOKRH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2016 05:17:07 -0500
-In-Reply-To: <20160211075144.28db2f39@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160214165010.GA3189@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 11 Feb 2016, Stephen Rothwell wrote:
+Hello Guenter,
 
-> Or the trivial tree should be based on v4.5-rc1 not v4.3 (in which case 
-> this patch belongs as part of ee49ac85bc24b946 (and presumably would 
-> have been found in testing of the trivial tree alone).
+On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
+> Uwe,
+>=20
+> Your patch 'driver-core: platform: probe of-devices only using list o=
+f
+> compatibles' causes the following qemu tests to crash in -next.
+>=20
+> arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
+> arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
+> arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+> arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+>=20
+> Crash log:
+>=20
+> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error -=
+6
+> Please append a correct "root=3D" boot option; here are the available=
+ partitions:
+> 1f00          131072 mtdblock0  (driver?)
+> 1f01           32768 mtdblock1  (driver?)
+> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-b=
+lock(0,0)
 
-This was indeed applied to wrong base, my error, sorry for that. I will 
-drop this now from my tree and we'll merge it properly later; best thing 
-would probably be to send it directly to Linus at the very end of merge 
-window.
+Can you provide a complete boot log? This might already reveal which
+device is failing. It might not be the mmci device but something it
+depends on (clock, bus parent, irq).
 
-Thanks for noticing,
+Best regards
+Uwe
 
--- 
-Jiri Kosina
-SUSE Labs
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
