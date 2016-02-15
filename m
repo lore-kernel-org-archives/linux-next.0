@@ -1,160 +1,73 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160215 build: 3 failures 14 warnings (next-20160215)
-Date: Mon, 15 Feb 2016 09:13:24 +0000
-Message-ID: <E1aVFDg-00066P-6L@optimist>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
+ of-devices only using list of compatibles'
+Date: Mon, 15 Feb 2016 10:14:06 +0100
+Message-ID: <20160215091406.GE12289@pengutronix.de>
+References: <20160214165010.GA3189@roeck-us.net>
+ <20160214195501.GA12289@pengutronix.de>
+ <20160214200755.GB10826@n2100.arm.linux.org.uk>
+ <20160215081750.GD12289@pengutronix.de>
+ <20160215085818.GC10826@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51668 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751481AbcBOJNc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 04:13:32 -0500
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:46370 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752241AbcBOJOb (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2016 04:14:31 -0500
+Content-Disposition: inline
+In-Reply-To: <20160215085818.GC10826@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
 
-Tree/Branch: next-20160215
-Git describe: next-20160215
-Commit: 2625f908fc Add linux-next specific files for 20160215
+Hello Russell,
 
-Build Time: 74 min 43 sec
+On Mon, Feb 15, 2016 at 08:58:18AM +0000, Russell King - ARM Linux wrot=
+e:
+> On Mon, Feb 15, 2016 at 09:17:50AM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Sun, Feb 14, 2016 at 08:07:55PM +0000, Russell King - ARM Linux =
+wrote:
+> > > On Sun, Feb 14, 2016 at 08:55:01PM +0100, Uwe Kleine-K=F6nig wrot=
+e:
+> > > > So the unexpected abnormality here is that even though this dev=
+ice is
+> > > > instantiated by dt, the driver doesn't provide any compatibles.
+> > > > Either my expectation is wrong, then 67d02a1bbb33455 should be =
+reverted
+> > >=20
+> > > Your expectation is wrong.  AMBA primecell devices have hardware =
+IDs
+> > > and are matched to their drivers by those IDs.  Just like PCI.
+> >=20
+> > pci devices don't appear in dt, do they? I don't see the connection
+> > between amba devices and platform devices, see my other mail in thi=
+s
+> > thread for some more details.
+>=20
+> They both have hardware IDs, and they are both matched via those hard=
+ware
+> IDs.
 
-Passed:    6 / 9   ( 66.67 %)
-Failed:    3 / 9   ( 33.33 %)
+I changed platform_match which is about matching by dt compatible, acpi
+and/or device name. I don't see how this can affect an amba device give=
+n
+they match to a driver by a hardware id.
 
-Errors: 11
-Warnings: 14
-Section Mismatches: 1
+> Your change has introduced a regression and is therefore wrong.
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm64-defconfig
+I'd like to understand though why and how my commit is wrong to be able
+to fix it instead of getting it reverted.
 
-Errors:
+Best regards
+Uwe
 
-	arm64-allmodconfig
-ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    2 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v7_defconfig
-      7 warnings    0 mismatches  : arm-allmodconfig
-      6 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 11
-	  1 ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	  1 ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
-Warnings Summary: 14
-	  4 ../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	  2 ../net/ipv4/igmp.c:1665:14: warning: unused variable 'net' [-Wunused-variable]
-	  2 ../net/ipv4/igmp.c:1646:14: warning: unused variable 'net' [-Wunused-variable]
-	  2 ../net/ipv4/igmp.c:1319:14: warning: unused variable 'net' [-Wunused-variable]
-	  2 ../net/ipv4/igmp.c:1227:14: warning: unused variable 'net' [-Wunused-variable]
-	  2 ../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
-	  2 ../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/asm-generic/div64.h:224:22: warning: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
-	  1 ../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
-	  1 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-Section Mismatch Summary: 1
-	  2 WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 11 errors, 6 warnings, 2 section mismatches
-
-Errors:
-	ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-	ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-
-Warnings:
-	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
-
-Section Mismatches:
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-	WARNING: drivers/staging/fsl-mc/bus/mc-bus-driver.o(.init.text+0x198): Section mismatch in reference from the function init_module() to the function .exit.text:fsl_mc_allocator_driver_exit()
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../net/ipv4/igmp.c:1227:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1319:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1646:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1665:14: warning: unused variable 'net' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
-	../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/asm-generic/div64.h:224:22: warning: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../net/ipv4/igmp.c:1227:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1319:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1646:14: warning: unused variable 'net' [-Wunused-variable]
-	../net/ipv4/igmp.c:1665:14: warning: unused variable 'net' [-Wunused-variable]
-	../drivers/spi/spi.c:2279:9: warning: format '%i' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../include/linux/kernel.h:754:17: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
