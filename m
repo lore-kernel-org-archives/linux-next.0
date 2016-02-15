@@ -1,70 +1,52 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: Crashes in arm qemu emulations due to 'cpufreq: governor:
- Replace timers with utilization ...'
-Date: Mon, 15 Feb 2016 19:23:17 +0000
-Message-ID: <20160215192316.GO10826@n2100.arm.linux.org.uk>
-References: <20160215170527.GA24453@roeck-us.net>
- <CAJZ5v0gLankSuziQq25qTCyNqeOX43yD9jnJu_XXwbdyajfmKg@mail.gmail.com>
- <56C21DD0.40508@arm.com>
- <CAJZ5v0gfOVyoWeee5jg7NxLFm-xwdA6-sPQV+cJ=NWJOV-wYzg@mail.gmail.com>
- <56C22105.6050900@arm.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] arm64/efi: Make strnlen() available to the EFI namespace
+Date: Mon, 15 Feb 2016 19:27:46 +0000
+Message-ID: <20160215192746.GT6298@arm.com>
+References: <1455563856-1553-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:47713 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751389AbcBOT1l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2016 14:27:41 -0500
 Content-Disposition: inline
-In-Reply-To: <56C22105.6050900@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <1455563856-1553-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Rob Herring <robh@kernel.org>
 
-On Mon, Feb 15, 2016 at 07:03:33PM +0000, Marc Zyngier wrote:
-> On 15/02/16 18:54, Rafael J. Wysocki wrote:
-> > That would explain it, thanks.
-> > 
-> > So it looks like we should always use irq_work_queue() on UP even if
-> > CONFIG_SMP is set, shouldn't we?
+On Mon, Feb 15, 2016 at 08:17:36PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> Something like that, yes. CONFIG_SMP is not an indication of an SMP
-> system anymore (we've even dropped the config option on arm64).
+> Changes introduced in the upstream version of libfdt pulled in by commit
+> 91feabc2e224 ("scripts/dtc: Update to upstream commit b06e55c88b9b") use
+> the strnlen() function, which isn't currently available to the EFI name-
+> space. Add it to the EFI namespace to avoid a linker error.
 > 
-> Hopefully num_possible_cpus() is reliable enough to let you do the right
-> thing...
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  arch/arm64/kernel/image.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/kernel/image.h b/arch/arm64/kernel/image.h
+> index c9c62cab25a4..8a1978f4a555 100644
+> --- a/arch/arm64/kernel/image.h
+> +++ b/arch/arm64/kernel/image.h
+> @@ -96,6 +96,8 @@ __efistub_strcmp		= KALLSYMS_HIDE(__pi_strcmp);
+>  __efistub_strncmp		= KALLSYMS_HIDE(__pi_strncmp);
+>  __efistub___flush_dcache_area	= KALLSYMS_HIDE(__pi___flush_dcache_area);
+>  
+> +__efistub_strnlen		= KALLSYMS_HIDE(strnlen);
 
-CONFIG_SMP just says whether to include support for SMP.  It doesn't
-mandate running on a SMP system. :)
+Shouldn't this refer to __pi_strnlen once we've established that our
+strnlen implementation is position independent? It looks like it is, so
+you just need to s/ENDPROC/ENDPIPROC/ over there to get the symbol
+defined.
 
-I've been looking around the usages of irq_work_queue_on in kernel/
-in -rc4, and some places seem to check for "this CPU":
-
-        /*
-         * It is possible that a restart caused this CPU to be
-         * chosen again. Don't bother with an IPI, just see if we
-         * have more to push.
-         */
-        if (unlikely(cpu == rq->cpu))
-                goto again;
-
-        /* Try the next RT overloaded CPU */
-        irq_work_queue_on(&rt_rq->push_work, cpu);
-
-I'm not sure about tell_cpu_to_push().
-
-It's also called via tick_nohz_full_kick_cpu(), and the core scheduler
-avoids calling this for the current CPU:
-
-        if (tick_nohz_full_cpu(cpu)) {
-                if (cpu != smp_processor_id() ||
-                    tick_nohz_tick_stopped())
-                        tick_nohz_full_kick_cpu(cpu);
-
-I'm not sure about add_nr_running() in kernel/sched/sched.h - I think
-that _could_ be a problem even without Rafael's cpufreq change.
-
-So... the question is what do we do with irq_work_queue_on() in general
-when called on non-SMP systems.
-
--- 
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Will
