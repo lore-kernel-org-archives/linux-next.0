@@ -1,55 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160215 build: 3 failures 14 warnings (next-20160215)
-Date: Mon, 15 Feb 2016 14:49:01 +0000
-Message-ID: <20160215144901.GL18988@sirena.org.uk>
-References: <E1aVFDg-00066P-6L@optimist>
- <20160215121922.GH18988@sirena.org.uk>
- <20160215132425.GA21048@ulmo>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
+ of-devices only using list of compatibles'
+Date: Mon, 15 Feb 2016 07:41:19 -0800
+Message-ID: <56C1F19F.8090100@roeck-us.net>
+References: <20160214165010.GA3189@roeck-us.net>
+ <20160215105909.GH12289@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iAzLNm1y1mIRgolD"
+Content-Type: text/plain; charset=windows-1252;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52370 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753299AbcBOOtL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 09:49:11 -0500
-Content-Disposition: inline
-In-Reply-To: <20160215132425.GA21048@ulmo>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:59302 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751799AbcBOPlV (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 10:41:21 -0500
+In-Reply-To: <20160215105909.GH12289@pengutronix.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
+On 02/15/2016 02:59 AM, Uwe Kleine-K=F6nig wrote:
+> Hello Guenter,
+>
+> On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
+>> Uwe,
+>>
+>> Your patch 'driver-core: platform: probe of-devices only using list =
+of
+>> compatibles' causes the following qemu tests to crash in -next.
+>>
+>> arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
+>> arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
+>> arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+>> arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+>>
+>> Crash log:
+>>
+>> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error =
+-6
+>> Please append a correct "root=3D" boot option; here are the availabl=
+e partitions:
+>> 1f00          131072 mtdblock0  (driver?)
+>> 1f01           32768 mtdblock1  (driver?)
+>> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-=
+block(0,0)
+>
+> Can you provide a complete boot log? This might already reveal which
+> device is failing. It might not be the mmci device but something it
+> depends on (clock, bus parent, irq).
+>
 
---iAzLNm1y1mIRgolD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, something else may be failing, but why does reverting your patch
+fix the problem ?
 
-On Mon, Feb 15, 2016 at 02:24:25PM +0100, Thierry Reding wrote:
-> On Mon, Feb 15, 2016 at 12:19:22PM +0000, Mark Brown wrote:
+Anyway, complete logs are at http://kerneltests.org/builders.
 
-> > Presumably some missing select or dependency there...
+http://kerneltests.org/builders/qemu-arm-next/builds/376/steps/qemubuil=
+dcommand/logs/stdio
 
-> I think this is caused by the MSI IRQ domain API not being exported.
-> I've just sent out a couple of patches that I've been carrying in my
-> local tree for a few days now.
+is the most recent log (next-20120215). Look for the vexpress crashes; =
+the overo
+crash bisected to to 'PM / OPP: Disable OPPs that aren't supported by t=
+he regulator',
+in next-20160212, which I have not fully analyzed yet, and the beagle c=
+rashes
+as well as the 'new' overo crash are brand new.
 
-Yeah, that'd do it. =20
-
---iAzLNm1y1mIRgolD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWweVSAAoJECTWi3JdVIfQCRAH/R84196vClh2TuwSWYRUaZAx
-kNKH5kE4XSrsB/mRSg5cPnyNe9FDvOrE6vu+fkxYzlJleoaLhRGJpN14HVbpShzq
-JAZ8JnsM0SXDBp7S7ksES7EMoAIm0cZzy8EzxsIBrzmfVDQGot3RuDy0MrsJxWoh
-SlPSIobNnroA4RCqK8XsWfSvLlr+mwHdZIOllSeDA3COdtw5Ltt2+Qof89VYCFV4
-7JAwq3vJakQxiucvjmhoDmgN/QkrDS597w+jWPn4NBLkFc892pORTN6Qrw3cvWjh
-byAdgOO906RPwrbVtEIGx1iuTfA8NBxgoHkJnVSKMdsa+QZlxSe5wvYNptKylc4=
-=6F4m
------END PGP SIGNATURE-----
-
---iAzLNm1y1mIRgolD--
+Guenter
