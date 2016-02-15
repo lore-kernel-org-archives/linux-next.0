@@ -1,66 +1,89 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
- of-devices only using list of compatibles'
-Date: Mon, 15 Feb 2016 13:11:49 +0000
-Message-ID: <56C1CE95.6020206@arm.com>
-References: <20160214165010.GA3189@roeck-us.net>
- <20160215105909.GH12289@pengutronix.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: next-20160215 build: 3 failures 14 warnings (next-20160215)
+Date: Mon, 15 Feb 2016 14:24:25 +0100
+Message-ID: <20160215132425.GA21048@ulmo>
+References: <E1aVFDg-00066P-6L@optimist>
+ <20160215121922.GH18988@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="C7zPtVaVf+AK4Oqc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:45214 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751114AbcBONLw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 15 Feb 2016 08:11:52 -0500
-In-Reply-To: <20160215105909.GH12289@pengutronix.de>
+Received: from mail-wm0-f41.google.com ([74.125.82.41]:33467 "EHLO
+	mail-wm0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753240AbcBONY1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 08:24:27 -0500
+Received: by mail-wm0-f41.google.com with SMTP id g62so148980101wme.0
+        for <linux-next@vger.kernel.org>; Mon, 15 Feb 2016 05:24:27 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20160215121922.GH18988@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Guenter Roeck <linux@roeck-us.net>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
 
-On 15/02/16 10:59, Uwe Kleine-K=F6nig wrote:
-> Hello Guenter,
->
-> On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
->> Uwe,
->>
->> Your patch 'driver-core: platform: probe of-devices only using list =
-of
->> compatibles' causes the following qemu tests to crash in -next.
->>
->> arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
->> arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
->> arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
->> arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
->>
->> Crash log:
->>
->> VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error =
--6
->> Please append a correct "root=3D" boot option; here are the availabl=
-e partitions:
->> 1f00          131072 mtdblock0  (driver?)
->> 1f01           32768 mtdblock1  (driver?)
->> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-=
-block(0,0)
->
-> Can you provide a complete boot log? This might already reveal which
-> device is failing. It might not be the mmci device but something it
-> depends on (clock, bus parent, irq).
 
-=46WIW the PL180 on my Juno still works fine with this patch picked on =
-top=20
-of -rc3, so the issue would seem to be something else - From a quick=20
-comparison between the DTs I see a slight difference in compatible=20
-strings for the clocks, but the more likely-looking suspect is that the=
-=20
-VExpress DT references some GPIOs where the Juno DT doesn't.
+--C7zPtVaVf+AK4Oqc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Robin.
+On Mon, Feb 15, 2016 at 12:19:22PM +0000, Mark Brown wrote:
+> On Mon, Feb 15, 2016 at 09:13:24AM +0000, Build bot for Mark Brown wrote:
+>=20
+> Today's linux-next fails to build an arm64 allmodconfig due to recent
+> commits adding generic MSI and GICv3 support:
+>=20
+> > 	arm64-allmodconfig
+> > ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-drive=
+r.ko] undefined!
+> > ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver=
+=2Eko] undefined!
+> > ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] u=
+ndefined!
+> > ERROR: "msi_domain_alloc_irqs" [drivers/staging/fsl-mc/bus/mc-bus-drive=
+r.ko] undefined!
+> > ERROR: "of_msi_get_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko=
+] undefined!
+> > ERROR: "irq_chip_eoi_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.=
+ko] undefined!
+> > ERROR: "msi_domain_set_affinity" [drivers/staging/fsl-mc/bus/mc-bus-dri=
+ver.ko] undefined!
+> > ERROR: "msi_get_domain_info" [drivers/staging/fsl-mc/bus/mc-bus-driver.=
+ko] undefined!
+> > ERROR: "msi_domain_free_irqs" [drivers/staging/fsl-mc/bus/mc-bus-driver=
+=2Eko] undefined!
+> > ERROR: "alloc_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] =
+undefined!
+> > ERROR: "irq_chip_unmask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driv=
+er.ko] undefined!
+>=20
+> Presumably some missing select or dependency there...
 
->
-> Best regards
-> Uwe
->
+I think this is caused by the MSI IRQ domain API not being exported.
+I've just sent out a couple of patches that I've been carrying in my
+local tree for a few days now.
+
+Thierry
+
+--C7zPtVaVf+AK4Oqc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWwdGDAAoJEN0jrNd/PrOhkjYP/1rYW++d8VteGGCAvlVXmksT
+2G+Rg3QmwJpSCGm0CawfuhWNWEYxAjLAvIYquCcu1i5Hj/1d0nlHmLftCqlESbRc
+qy/+OAZLoJVQxO/JFkrbz1MD9K7fofvGy2c7pM7qBfyvvxPu2Yk6X4Zt97UdDFov
+8B9c3QnkijNywwZn+cQDfRgOlYJ9d0c7lkRjHtG+/bYiR1PvGRinsikR2ToQXuWn
+q5h4fI1agALMyN932ErGWwXRrJ7QqmL+l3+uQmDBfE4+cVGpWYzHsUdJ0BoptSYk
+R27lqeuDwkT4rcXRybS6nqYqKODA1MnK8JG38Xfm1Tpw+VyS9XPntlSj5sNVcHwQ
+rPgcwyyKbtuDWeYNJGYODloZdHOM8YNBaZhOVTE5JIyx85nfdj5+nUroHR05xs3/
+sZRyLuDwi3WsLa3A37fq+VakvcOH3T0mSfHJ9qzPlxJvPxnRAPjngTI0CEyFj+E2
+YpJc2839GkcYbatucI6ELJxHrjkT7vgl3KIr8fprVNdzSnexzizzLfF4hwsO2yPr
+S5eVKfdpeOl9DnqkJ9f8wnDT4gLXt+C4AnnivnUgr+B2zkWtMp1E/xB28B1xO1l9
++RaoDzhfNUkEBRl81f9twMXoMC7cmh4wVRgPWUX4NpAWveA8N72us9qmVvuLLuGZ
+oUxnx2VAo1vxkkQnx85z
+=YY3U
+-----END PGP SIGNATURE-----
+
+--C7zPtVaVf+AK4Oqc--
