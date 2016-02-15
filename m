@@ -1,91 +1,89 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: next-20160215 build: 3 failures 14 warnings (next-20160215)
-Date: Mon, 15 Feb 2016 17:53:54 +0100
-Message-ID: <20160215165354.GA25830@ulmo>
-References: <E1aVFDg-00066P-6L@optimist>
- <20160215121922.GH18988@sirena.org.uk>
- <20160215132425.GA21048@ulmo>
- <20160215144901.GL18988@sirena.org.uk>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
+ of-devices only using list of compatibles'
+Date: Mon, 15 Feb 2016 18:00:25 +0100
+Message-ID: <20160215170025.GJ12289@pengutronix.de>
+References: <20160214165010.GA3189@roeck-us.net>
+ <20160215105909.GH12289@pengutronix.de>
+ <56C1F19F.8090100@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:34253 "EHLO
-	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123AbcBOQx5 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 11:53:57 -0500
-Received: by mail-wm0-f45.google.com with SMTP id b205so75456345wmb.1
-        for <linux-next@vger.kernel.org>; Mon, 15 Feb 2016 08:53:57 -0800 (PST)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160215144901.GL18988@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
+In-Reply-To: <56C1F19F.8090100@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-
---bg08WKrSYDhXBjb5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 15, 2016 at 02:49:01PM +0000, Mark Brown wrote:
-> On Mon, Feb 15, 2016 at 02:24:25PM +0100, Thierry Reding wrote:
-> > On Mon, Feb 15, 2016 at 12:19:22PM +0000, Mark Brown wrote:
+On Mon, Feb 15, 2016 at 07:41:19AM -0800, Guenter Roeck wrote:
+> On 02/15/2016 02:59 AM, Uwe Kleine-K=F6nig wrote:
+> >Hello Guenter,
+> >
+> >On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
+> >>Uwe,
+> >>
+> >>Your patch 'driver-core: platform: probe of-devices only using list=
+ of
+> >>compatibles' causes the following qemu tests to crash in -next.
+> >>
+> >>arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
+> >>arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
+> >>arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+> >>arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+> >>
+> >>Crash log:
+> >>
+> >>VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error=
+ -6
+> >>Please append a correct "root=3D" boot option; here are the availab=
+le partitions:
+> >>1f00          131072 mtdblock0  (driver?)
+> >>1f01           32768 mtdblock1  (driver?)
+> >>Kernel panic - not syncing: VFS: Unable to mount root fs on unknown=
+-block(0,0)
+> >
+> >Can you provide a complete boot log? This might already reveal which
+> >device is failing. It might not be the mmci device but something it
+> >depends on (clock, bus parent, irq).
+> >
 >=20
-> > > Presumably some missing select or dependency there...
->=20
-> > I think this is caused by the MSI IRQ domain API not being exported.
-> > I've just sent out a couple of patches that I've been carrying in my
-> > local tree for a few days now.
->=20
-> Yeah, that'd do it. =20
+> Sure, something else may be failing, but why does reverting your patc=
+h
+> fix the problem ?
 
-I just noticed that the build still fails after fixing those up:
+Well, my patch made matching of platform devices to platform drivers
+more strict. Your machine relies on the respective binding though. So o=
+f
+course reverting my patch "repairs" your machine, but that doesn't
+necessarily mean that my patch is wrong. Even though I'm convinced in
+the meantime by Russell that there are false positives it doesn't
+necessarily imply that your case is such a false positive, too.
 
-	./drivers/firmware/efi/libstub/lib.a(lib-fdt_ro.stub.o): In function `__ef=
-istub_fdt_stringlist_count':
-	__efistub_fdt_ro.c:(.init.text+0xe48): undefined reference to `__efistub_s=
-trnlen'
-	__efistub_fdt_ro.c:(.init.text+0xe48): relocation truncated to fit: R_AARC=
-H64_CALL26 against undefined symbol `__efistub_strnlen'
-	./drivers/firmware/efi/libstub/lib.a(lib-fdt_ro.stub.o): In function `__ef=
-istub_fdt_stringlist_search':
-	__efistub_fdt_ro.c:(.init.text+0xf18): undefined reference to `__efistub_s=
-trnlen'
-	__efistub_fdt_ro.c:(.init.text+0xf18): relocation truncated to fit: R_AARC=
-H64_CALL26 against undefined symbol `__efistub_strnlen'
-	./drivers/firmware/efi/libstub/lib.a(lib-fdt_ro.stub.o): In function `__ef=
-istub_fdt_stringlist_get':
-	__efistub_fdt_ro.c:(.init.text+0x1014): undefined reference to `__efistub_=
-strnlen'
-	__efistub_fdt_ro.c:(.init.text+0x1014): relocation truncated to fit: R_AAR=
-CH64_CALL26 against undefined symbol `__efistub_strnlen'
+One example of a combination of driver + device I intended to break wit=
+h
+my patch was drivers/mtd/nand/mxc_nand.c and devices that got bound to
+that by name. The driver does:
 
-That happens on the ARM64 defconfig as well, but I have no idea what's
-going on here.
+	const struct of_device_id *of_id =3D
+		of_match_device(mxcnd_dt_ids, host->dev);
 
-Thierry
+and doesn't handle of_id being NULL after that. Some people argued (als=
+o
+for other drivers in similar situations) that this cannot happen becaus=
+e
+all compatibles had a non-NULL device_id. That is an error that is easy
+to make and so the idea was to just not bind in such a case and safe th=
+e
+user from the surprise.
 
---bg08WKrSYDhXBjb5
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards
+Uwe
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWwgKfAAoJEN0jrNd/PrOhNpoP/jKwhHYy+wuOtVeF0RUiHLWi
-ppSWGhXizLL/PIQpuFHGs0RJDB8aBys40vTU6E7HeVHI4NGVfxsg2dMEMS2xS8H/
-BGUfV4iOCoarUjV9J0p+MAEub3f3ubh3ZALcyz1LrhHgdkHokeoCcK0iaKmRhhZN
-//9xdVPaGSO+SNH9stS7inRba7t3H+0H3V97YS2AJxv96F8Ho+U6j2UUtIfj3R37
-cTFKPEEqHgbgRwcLdIwzaif3/dFqjjpxqdx+iEeC8vlYFNK0foVJemzY+ac/1ea6
-wG2unLLsnIz81CWCMMTbuAo7HGius3wB7lGYpW6vOwy1qDtGJarKFdJ1WthsYcdr
-i4IQse9HsjM0zvH2fxNKdxZsrXnJePyo1aPv/zbIeyMX5jGmqHhRUhwEOv7n2/+H
-PWciIKWktuiShJV8/KgsO8oyogsuovBPLkK8zVwU8TUYfXxC+EDKRCd60j8oyBV8
-IEqoCn744oFxol54GN+gXVVSFGX7dsfl9dc/j/2U36usTtvH6mEclSkofQrPWQ/k
-ri5BwSk7ZcJwbdFyo1qLGKP8xoedErrmENMgQYmNb3R/W/fKk673vpQQG3qEFzkO
-ELoPw6vKV92LYWGlHZeWIUdDuNHCTP39mHWaVcWrLxzFNCHRQrktMM22dITttgK2
-opd1THvpZ/TaHsyv626l
-=w+pA
------END PGP SIGNATURE-----
-
---bg08WKrSYDhXBjb5--
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
