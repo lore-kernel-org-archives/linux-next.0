@@ -1,81 +1,92 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
 Subject: Re: arm qemu test failures due to 'driver-core: platform: probe
  of-devices only using list of compatibles'
-Date: Mon, 15 Feb 2016 16:12:28 +0000
-Message-ID: <20160215161228.GH10826@n2100.arm.linux.org.uk>
+Date: Mon, 15 Feb 2016 17:27:53 +0100
+Message-ID: <20160215162753.GI12289@pengutronix.de>
 References: <20160214165010.GA3189@roeck-us.net>
  <20160215105909.GH12289@pengutronix.de>
- <56C1F19F.8090100@roeck-us.net>
+ <56C1CE95.6020206@arm.com>
+ <20160215144344.GF10826@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.arm.linux.org.uk ([78.32.30.218]:53424 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751079AbcBOQMi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 11:12:38 -0500
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:59753 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751096AbcBOQ2l (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2016 11:28:41 -0500
 Content-Disposition: inline
-In-Reply-To: <56C1F19F.8090100@roeck-us.net>
+In-Reply-To: <20160215144344.GF10826@n2100.arm.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Robin Murphy <robin.murphy@arm.com>, Guenter Roeck <linux@roeck-us.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Feb 15, 2016 at 07:41:19AM -0800, Guenter Roeck wrote:
-> On 02/15/2016 02:59 AM, Uwe Kleine-K=F6nig wrote:
-> >Hello Guenter,
-> >
-> >On Sun, Feb 14, 2016 at 08:50:10AM -0800, Guenter Roeck wrote:
-> >>Uwe,
-> >>
-> >>Your patch 'driver-core: platform: probe of-devices only using list=
- of
-> >>compatibles' causes the following qemu tests to crash in -next.
-> >>
-> >>arm:vexpress-a9:vexpress_defconfig:vexpress-v2p-ca9
-> >>arm:vexpress-a15:vexpress_defconfig:vexpress-v2p-ca15-tc1
-> >>arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
-> >>arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
-> >>
-> >>Crash log:
-> >>
-> >>VFS: Cannot open root device "mmcblk0" or unknown-block(0,0): error=
- -6
-> >>Please append a correct "root=3D" boot option; here are the availab=
-le partitions:
-> >>1f00          131072 mtdblock0  (driver?)
-> >>1f01           32768 mtdblock1  (driver?)
-> >>Kernel panic - not syncing: VFS: Unable to mount root fs on unknown=
--block(0,0)
-> >
-> >Can you provide a complete boot log? This might already reveal which
-> >device is failing. It might not be the mmci device but something it
-> >depends on (clock, bus parent, irq).
-> >
+Hello Russell,
+
+On Mon, Feb 15, 2016 at 02:43:44PM +0000, Russell King - ARM Linux wrot=
+e:
+> On Mon, Feb 15, 2016 at 01:11:49PM +0000, Robin Murphy wrote:
+> > FWIW the PL180 on my Juno still works fine with this patch picked o=
+n top of
+> > -rc3, so the issue would seem to be something else - From a quick c=
+omparison
+> > between the DTs I see a slight difference in compatible strings for=
+ the
+> > clocks, but the more likely-looking suspect is that the VExpress DT
+> > references some GPIOs where the Juno DT doesn't.
 >=20
-> Sure, something else may be failing, but why does reverting your patc=
+> Maybe it would be a good idea that Uwe creates a patch which initiall=
+y
+> warns when a DT platform device falls back to matching via the platfo=
+rm
+> strings?
+>=20
+> It's likely that the "basic subsystem" platform drivers are silent wh=
+en
+> they probe, so having notification of a fallback would at least put
+> something into the kernel log when that happens - and then later chan=
+ge
+> that to be a hard failure (as Uwe is trying to do with his patch.)
+>=20
+> However, I have to bring up another point: is what Uwe is trying to d=
+o
+> actually the right thing?  The DT platform device code has the abilit=
+y
+> to create standard platform devices from DT, with an of_node, but wit=
 h
-> fix the problem ?
+> standard names, and platform data.  It's there for compatibility with
+> older systems, and is there to allow systems to be transitioned over.
 >=20
-> Anyway, complete logs are at http://kerneltests.org/builders.
+> This patch breaks all that: despite the DT code changing the platform
+> device bus_id from the address.nodename format to the standard format
+> (thus allowing unconverted platform drivers to match), this patch
+> means that because the platform device has a of_node attached, this
+> will now fail.
 >=20
-> http://kerneltests.org/builders/qemu-arm-next/builds/376/steps/qemubu=
-ildcommand/logs/stdio
->=20
-> is the most recent log (next-20120215). Look for the vexpress crashes=
-; the overo
-> crash bisected to to 'PM / OPP: Disable OPPs that aren't supported by=
- the regulator',
-> in next-20160212, which I have not fully analyzed yet, and the beagle=
- crashes
-> as well as the 'new' overo crash are brand new.
+> Therefore, I think Uwe's patch is just wrong - or, if it's something =
+we
+> want, the auxdata table support code needs to _also_ be ripped out of
+> the drivers/of/platform.c code, but that then means anyone who wants =
+to
+> go through the conversion has a big flag-day change to go through.
 
-Looking at the vexpress-ca9 one, nothing stands out to me apart from th=
-e
-lack of messages about a MMC driver.  I don't see anything there which
-indicates why that would be.
+That's a valid concern I wasn't aware of when I created the patch.
+
+So maybe just emitting a warning as you suggested is a good idea. And
+additionally only emit it when the driver is dt aware, too.
+
+Greg, can you drop this patch, or do you need a proper changelog for a
+revert? On top of that I'd then create a new patch which is more
+conservative.
+
+Best regards
+Uwe
 
 --=20
-RMK's Patch system: http://www.arm.linux.org.uk/developer/patches/
-=46TTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
