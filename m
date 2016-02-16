@@ -1,61 +1,52 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Crashes in arm qemu emulations due to 'cpufreq: governor: Replace
- timers with utilization ...'
-Date: Mon, 15 Feb 2016 17:38:06 -0800
-Message-ID: <56C27D7E.4060603@roeck-us.net>
-References: <20160215170527.GA24453@roeck-us.net>
- <CAJZ5v0gLankSuziQq25qTCyNqeOX43yD9jnJu_XXwbdyajfmKg@mail.gmail.com>
- <20160215190116.GX19432@atomide.com> <56C229A5.8020901@roeck-us.net>
- <20160215195839.GA19432@atomide.com>
- <CAJZ5v0hzVB0+H4nuCun3mmrES3UQ3+Rs1uz5YGu5sv4G3XU+nQ@mail.gmail.com>
- <20160215213606.GD19432@atomide.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the staging
+ tree
+Date: Tue, 16 Feb 2016 13:55:48 +1100
+Message-ID: <20160216135548.6da63be6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:45970 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726AbcBPBiK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 15 Feb 2016 20:38:10 -0500
-In-Reply-To: <20160215213606.GD19432@atomide.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shraddha Barke <shraddha.6596@gmail.com>, Christoffer Dall <christoffer.dall@linaro.org>, Jason Hu <jia-cheng.hu@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 02/15/2016 01:36 PM, Tony Lindgren wrote:
-> * Rafael J. Wysocki <rafael@kernel.org> [160215 12:39]:
->> On Mon, Feb 15, 2016 at 8:58 PM, Tony Lindgren <tony@atomide.com> wrote:
->>> * Guenter Roeck <linux@roeck-us.net> [160215 11:41]:
->>>> On 02/15/2016 11:01 AM, Tony Lindgren wrote:
->>>>>
->>>>> https://kernelci.org/boot/all/job/next/kernel/next-20160215/
->>>>>
->>>>> The SMP ones seem to fail with some regulator issues?
->>>>>
->>>>
->>>> There is another problem, introduced with 6a0712f6f199e ("PM / OPP: Add
->>>> dev_pm_opp_set_rate()"). The kernelci boot log for next-20160212:omap3-overo-tobi
->>>> and others experience that problem.
->>>>
->>>> Essentially, the code now assumes that a CPU clock always has a voltage
->>>> regulator attached to it, which is not correct. I sent out a patch to fix
->>>> that problem a minute ago.
->>>
->>> Yes that fixed it thanks.
->>
->> Can you please also check if this alternative fix from Viresh works:
->>
->> https://patchwork.kernel.org/patch/8316611/
->
-> Yes that one too seems to fix the issue on SMP systems for
-> me:
->
-> Tested-by: Tony Lindgren <tony@atomide.com>
->
+Hi all,
 
-Same here.
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+  drivers/platform/goldfish/goldfish_pipe.c
 
-Guenter
+between commit:
+
+  1d427da1d7f9 ("Platform: goldfish: goldfish_pipe.c: Add DMA support using managed version")
+
+from the staging tree and commits:
+
+  2f3be88237a3 ("goldfish_pipe: Pin pages to memory while copying and other cleanups")
+  d62f324b0ac8 ("goldfish: Enable ACPI-based enumeration for android pipe")
+
+from the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/platform/goldfish/goldfish_pipe.c
+index 9f6734ce1873,839df4aace76..000000000000
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@@ -57,7 -58,8 +58,9 @@@
+  #include <linux/slab.h>
+  #include <linux/io.h>
+  #include <linux/goldfish.h>
+ +#include <linux/dma-mapping.h>
++ #include <linux/mm.h>
++ #include <linux/acpi.h>
+  
+  /*
+   * IMPORTANT: The following constants must match the ones used and defined
