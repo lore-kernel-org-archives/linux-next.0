@@ -1,52 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the char-misc tree with the staging
  tree
-Date: Tue, 16 Feb 2016 13:55:48 +1100
-Message-ID: <20160216135548.6da63be6@canb.auug.org.au>
+Date: Tue, 16 Feb 2016 14:00:19 +1100
+Message-ID: <20160216140019.540886b6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45180 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752532AbcBPDAW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 15 Feb 2016 22:00:22 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shraddha Barke <shraddha.6596@gmail.com>, Christoffer Dall <christoffer.dall@linaro.org>, Jason Hu <jia-cheng.hu@intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amitoj Kaur Chawla <amitoj1606@gmail.com>, Shraddha Barke <shraddha.6596@gmail.com>
 
 Hi all,
 
 Today's linux-next merge of the char-misc tree got a conflict in:
 
-  drivers/platform/goldfish/goldfish_pipe.c
+  drivers/staging/goldfish/goldfish_nand.c
 
 between commit:
 
-  1d427da1d7f9 ("Platform: goldfish: goldfish_pipe.c: Add DMA support using managed version")
+  814625b539d3 ("staging: goldfish: goldfish_nand: Return correct error code")
 
-from the staging tree and commits:
+from the staging tree and commit:
 
-  2f3be88237a3 ("goldfish_pipe: Pin pages to memory while copying and other cleanups")
-  d62f324b0ac8 ("goldfish: Enable ACPI-based enumeration for android pipe")
+  3e2fbc7feec4 ("Staging: goldfish: goldfish_nand: Add DMA Support using dmam_alloc_coherent")
 
 from the char-misc tree.
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+I fixed it up (the latter incorporated the former) and can carry the
+fix as necessary (no action is required).
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/platform/goldfish/goldfish_pipe.c
-index 9f6734ce1873,839df4aace76..000000000000
---- a/drivers/platform/goldfish/goldfish_pipe.c
-+++ b/drivers/platform/goldfish/goldfish_pipe.c
-@@@ -57,7 -58,8 +58,9 @@@
-  #include <linux/slab.h>
-  #include <linux/io.h>
-  #include <linux/goldfish.h>
- +#include <linux/dma-mapping.h>
-+ #include <linux/mm.h>
-+ #include <linux/acpi.h>
-  
-  /*
-   * IMPORTANT: The following constants must match the ones used and defined
