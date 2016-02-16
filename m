@@ -1,51 +1,50 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Crashes in arm qemu emulations due to 'cpufreq: governor: Replace
- timers with utilization ...'
-Date: Mon, 15 Feb 2016 15:19:57 -0800
-Message-ID: <56C25D1D.5080409@roeck-us.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: Crashes in arm qemu emulations due to 'cpufreq: governor:
+ Replace timers with utilization ...'
+Date: Tue, 16 Feb 2016 06:43:35 +0530
+Message-ID: <20160216011335.GI6334@vireshk-i7>
 References: <20160215170527.GA24453@roeck-us.net>
- <CAFEAcA9Xy2L+edFAdUCpZFiO5NLGyrQPTQ6DgmuScbwEty-nzg@mail.gmail.com>
+ <CAJZ5v0gLankSuziQq25qTCyNqeOX43yD9jnJu_XXwbdyajfmKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAFEAcA9Xy2L+edFAdUCpZFiO5NLGyrQPTQ6DgmuScbwEty-nzg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gLankSuziQq25qTCyNqeOX43yD9jnJu_XXwbdyajfmKg@mail.gmail.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Peter Maydell <peter.maydell@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next@vger.kernel.org, lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>, arm-mail-list <linux-arm-kernel@lists.infradead.org>, linux-pm@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On 02/15/2016 02:29 PM, Peter Maydell wrote:
-> On 15 February 2016 at 17:05, Guenter Roeck <linux@roeck-us.net> wrote:
->> I see crashes in various arm qemu tests due to 'cpufreq: governor: Replace
->> timers with utilization update callbacks' with next-20160215. An example
->> crash log and bisect results are attached below.
->>
->> Please let me know if there is anything I can do to help tracking down
->> the problem.
->>
->> Thanks,
->> Guenter
->>
->> ---
->>
->> Building arm:beagle:multi_v7_defconfig:omap3-beagle ... running ..... failed (crashed)
->> ------------
->> qemu log:
->
-> You're using the QEMU beagle board emulation? Can I ask which
-> QEMU you're using (qemu-linaro?). If the OMAP3 emulation is still
-> actively useful to people I might have another stab at getting
-> it into upstream QEMU some day...
->
+On 15-02-16, 19:41, Rafael J. Wysocki wrote:
+> On Mon, Feb 15, 2016 at 6:05 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > [    1.340000] [<c0958e78>] (__cpufreq_driver_target) from [<c095ca58>] (dbs_check_cpu+0x1ac/0x1e8)
+> > [    1.340000] [<c095ca58>] (dbs_check_cpu) from [<c095cd04>] (cpufreq_governor_dbs+0x1fc/0x608)
+> > [    1.340000] [<c095cd04>] (cpufreq_governor_dbs) from [<c0959c5c>] (__cpufreq_governor+0x1a8/0x204)
+> > [    1.340000] [<c0959c5c>] (__cpufreq_governor) from [<c095a2dc>] (cpufreq_init_policy+0x60/0x8c)
+> > [    1.340000] [<c095a2dc>] (cpufreq_init_policy) from [<c095a5f0>] (cpufreq_online+0x2e8/0x708)
+> > [    1.340000] [<c095a5f0>] (cpufreq_online) from [<c075674c>] (subsys_interface_register+0x80/0xc4)
+> > [    1.340000] [<c075674c>] (subsys_interface_register) from [<c0959764>] (cpufreq_register_driver+0x144/0x1a0)
+> 
+> This is the registration of the cpufreq driver (cpufreq-dt in this case).
+> 
+> It does cpufreq_online()->cpufreq_init_policy()->__cpufreq_governor()->cpufreq_governor_dbs()->dbs_check_cpu().
+> 
+> The only way that can happen is when cpufreq_set_policy() finds that
+> the "old" and the "new" policies use the same governor, so it goes and
+> calls __cpufreq_governor(policy, CPUFREQ_GOV_LIMITS), but I'm not sure
+> how this is possible during the initialization ATM.
+> 
+> Viresh, any ideas?
 
-Yes, I use qemu-linaro for those tests.
+You misread probably.
 
-Is it useful ? Obviously for me, yes. It lets me test images in qemu,
-and I don't need real hardware to run those tests. That means that
-I don't depend on the hardware really working, and I am not hosed
-if the hardware breaks down and I don't have a replacement. Plus,
-of course, I don't need a lab with 90+ pieces of hardware.
+During init, policy->gov is NULL and new_policy->gov is set to the
+default one, probably ondemand/conservative. And in that case, we do:
+- INIT
+- START
+- LIMITS
 
-Guenter
+So above sequence is guaranteed to happen rather.
 
+-- 
+viresh
