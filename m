@@ -1,53 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160217 build: 3 failures 14 warnings (next-20160217)
-Date: Wed, 17 Feb 2016 11:22:25 +0000
-Message-ID: <20160217112225.GM7544@sirena.org.uk>
-References: <E1aVxTQ-0000zq-U4@optimist>
+From: Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Tree for Feb 17
+Date: Wed, 17 Feb 2016 17:22:48 +0530
+Message-ID: <20160217115248.GA4294@sudip-pc>
+References: <20160217163921.42aeff6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DXIF1lRUlMsbZ3S1"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41718 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161157AbcBQLWi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Feb 2016 06:22:38 -0500
-Content-Disposition: inline
-In-Reply-To: <E1aVxTQ-0000zq-U4@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-
---DXIF1lRUlMsbZ3S1
 Content-Type: text/plain; charset=us-ascii
+Return-path: <kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <20160217163921.42aeff6a-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: kernel-testers-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, kernel-testers-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 17, 2016 at 08:28:37AM +0000, Build bot for Mark Brown wrote:
+On Wed, Feb 17, 2016 at 04:39:21PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160216:
 
-> 	arm64-allmodconfig
-> ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-> ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-> ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
+since last few days build of mips cavium_octeon_defconfig is failing
+with the error:
+arch/mips/include/asm/octeon/cvmx.h:60:39: fatal error:
+	asm/octeon/cvmx-ciu3-defs.h: No such file or directory
 
-The fsl-mc code is still breaking the build in -next, can we please drop
-the code or mark the driver as built in only until the MSI symbol
-exports are available?  This is making it difficult to spot other
-errors.
+caused by commit:
+dfb354bef1fa ("MIPS: OCTEON: Add model checking support for cn73xx, cnf75xx and cn78xx")
 
---DXIF1lRUlMsbZ3S1
-Content-Type: application/pgp-signature; name="signature.asc"
+The #include for the header file is added but the header file is not in
+the tree.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWxFfwAAoJECTWi3JdVIfQI1cH/iCNOteHNaJLlhQ8DhCeiNz2
-gZmJePN5jqq0+O7CH0L7uMmU2I5WV9BfJShlds/cNwkF2gS9K5YF3WHC/zcNZ4PD
-QhYaeg3ZKMm3z3edQ8c9b+NDFRVI3pZ5F3bK8oLnBXv8pK4xpVbf3BxbwXvecEo4
-mrCO0mlgvuVtUOWt66dvbaygP/DSsLpsdByPed37f5N/GrQ8N3phF7fAOAKz71Cd
-m5c10x17VmQ5CNaF77aawtbhzWNaxl1IkZxxH8GIs3sTUTMCpguRyDHs7DeQNfwO
-+jBu7eWKnGebgOkPbjAsS5Ejbnf2bT+vPsYIL6kijWcwpsIYO8xWjo3opPSGimw=
-=kWwH
------END PGP SIGNATURE-----
-
---DXIF1lRUlMsbZ3S1--
+regards
+sudip
