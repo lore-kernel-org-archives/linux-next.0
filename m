@@ -1,91 +1,30 @@
-From: Stephan Mueller <smueller@chronox.de>
-Subject: [PATCH] crypto: fix compile errors of XTS
-Date: Wed, 17 Feb 2016 07:00:01 +0100
-Message-ID: <17540790.vcykgraQyO@positron.chronox.de>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: fix compile errors of XTS
+Date: Wed, 17 Feb 2016 07:55:21 +0000
+Message-ID: <20160217075521.GC16041@gondor.apana.org.au>
+References: <17540790.vcykgraQyO@positron.chronox.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.eperm.de ([89.247.134.16]:33972 "EHLO mail.eperm.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756521AbcBQF75 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Feb 2016 00:59:57 -0500
+Received: from helcar.hengli.com.au ([209.40.204.226]:53750 "EHLO
+	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756755AbcBQHze (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 17 Feb 2016 02:55:34 -0500
+Content-Disposition: inline
+In-Reply-To: <17540790.vcykgraQyO@positron.chronox.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: herbert@gondor.apana.org.au
+To: Stephan Mueller <smueller@chronox.de>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, kbuild test robot <fengguang.wu@intel.com>
 
-Commit 28856a9e52c7 missed the addition of the crypto/xts.h include file
-for different architecture-specific AES implementations.
+On Wed, Feb 17, 2016 at 07:00:01AM +0100, Stephan Mueller wrote:
+> Commit 28856a9e52c7 missed the addition of the crypto/xts.h include file
+> for different architecture-specific AES implementations.
+> 
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
 
-Signed-off-by: Stephan Mueller <smueller@chronox.de>
----
- arch/arm/crypto/aes-ce-glue.c      | 1 +
- arch/arm/crypto/aesbs-glue.c       | 1 +
- arch/arm64/crypto/aes-glue.c       | 1 +
- arch/powerpc/crypto/aes-spe-glue.c | 1 +
- arch/s390/crypto/aes_s390.c        | 1 +
- 5 files changed, 5 insertions(+)
-
-diff --git a/arch/arm/crypto/aes-ce-glue.c b/arch/arm/crypto/aes-ce-glue.c
-index 85ff69b..b6961a2 100644
---- a/arch/arm/crypto/aes-ce-glue.c
-+++ b/arch/arm/crypto/aes-ce-glue.c
-@@ -15,6 +15,7 @@
- #include <crypto/ablk_helper.h>
- #include <crypto/algapi.h>
- #include <linux/module.h>
-+#include <crypto/xts.h>
- 
- MODULE_DESCRIPTION("AES-ECB/CBC/CTR/XTS using ARMv8 Crypto Extensions");
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
-diff --git a/arch/arm/crypto/aesbs-glue.c b/arch/arm/crypto/aesbs-glue.c
-index d004bd1..0511a6c 100644
---- a/arch/arm/crypto/aesbs-glue.c
-+++ b/arch/arm/crypto/aesbs-glue.c
-@@ -13,6 +13,7 @@
- #include <crypto/ablk_helper.h>
- #include <crypto/algapi.h>
- #include <linux/module.h>
-+#include <crypto/xts.h>
- 
- #include "aes_glue.h"
- 
-diff --git a/arch/arm64/crypto/aes-glue.c b/arch/arm64/crypto/aes-glue.c
-index c963d75..897ad14 100644
---- a/arch/arm64/crypto/aes-glue.c
-+++ b/arch/arm64/crypto/aes-glue.c
-@@ -15,6 +15,7 @@
- #include <crypto/algapi.h>
- #include <linux/module.h>
- #include <linux/cpufeature.h>
-+#include <crypto/xts.h>
- 
- #include "aes-ce-setkey.h"
- 
-diff --git a/arch/powerpc/crypto/aes-spe-glue.c b/arch/powerpc/crypto/aes-spe-glue.c
-index 1608079..ab11319 100644
---- a/arch/powerpc/crypto/aes-spe-glue.c
-+++ b/arch/powerpc/crypto/aes-spe-glue.c
-@@ -22,6 +22,7 @@
- #include <asm/byteorder.h>
- #include <asm/switch_to.h>
- #include <crypto/algapi.h>
-+#include <crypto/xts.h>
- 
- /*
-  * MAX_BYTES defines the number of bytes that are allowed to be processed
-diff --git a/arch/s390/crypto/aes_s390.c b/arch/s390/crypto/aes_s390.c
-index 3f1a1a4..48e1a2d 100644
---- a/arch/s390/crypto/aes_s390.c
-+++ b/arch/s390/crypto/aes_s390.c
-@@ -27,6 +27,7 @@
- #include <linux/cpufeature.h>
- #include <linux/init.h>
- #include <linux/spinlock.h>
-+#include <crypto/xts.h>
- #include "crypt_s390.h"
- 
- #define AES_KEYLEN_128		1
+Applied.
 -- 
-2.5.0
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
