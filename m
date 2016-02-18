@@ -1,49 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Thu, 18 Feb 2016 12:28:55 +1100
-Message-ID: <20160218122855.55e3f09d@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Thu, 18 Feb 2016 13:10:27 +1100
+Message-ID: <20160218131027.072f4c39@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44264 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030404AbcBRB27 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Feb 2016 20:28:59 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuval Mintz <Yuval.Mintz@qlogic.com>, Ariel Elior <Ariel.Elior@qlogic.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>, Sagi Grimberg <sagig@mellanox.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Jens,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the block tree got a conflict in:
 
-In file included from drivers/net/ethernet/broadcom/bnx2x/bnx2x.h:56:0,
-                 from drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:30:
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c: In function 'bnx2x_dcbx_get_ap_feature':
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:224:11: error: 'DCBX_APP_SF_DEFAULT' undeclared (first use in this function)
-           DCBX_APP_SF_DEFAULT) &&  
-           ^
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.h:120:45: note: in definition of macro 'GET_FLAGS'
- #define GET_FLAGS(flags, bits)  ((flags) & (bits))
-                                             ^
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:224:11: note: each undeclared identifier is reported only once for each function it appears in
-           DCBX_APP_SF_DEFAULT) &&  
-           ^
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.h:120:45: note: in definition of macro 'GET_FLAGS'
- #define GET_FLAGS(flags, bits)  ((flags) & (bits))
-                                             ^
+  drivers/nvme/host/pci.c
 
-Caused by commit
+between commit:
 
-  e5d3a51cefbb ("This adds support for default application priority.")
+  f8e68a7c9af5 ("NVMe: Rate limit nvme IO warnings")
 
-This build is big endian.
+from Linus' tree and commit:
 
-I have used the net-next tree from next-20160217 for today.
+  1b3c47c182aa ("nvme: Log the ctrl device name instead of the underlying pci device name")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/nvme/host/pci.c
+index a128672472ec,fec747917690..000000000000
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@@ -1004,7 -990,7 +995,7 @@@ static void nvme_cancel_queue_ios(struc
+  	if (!blk_mq_request_started(req))
+  		return;
+  
+- 	dev_dbg_ratelimited(nvmeq->q_dmadev,
+ -	dev_warn(nvmeq->dev->ctrl.device,
+++	dev_dbg_ratelimited(nvmeq->dev->ctrl.device,
+  		 "Cancelling I/O %d QID %d\n", req->tag, nvmeq->qid);
+  
+  	status = NVME_SC_ABORT_REQ;
