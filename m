@@ -1,42 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20160217 build: 3 failures 14 warnings (next-20160217)
-Date: Thu, 18 Feb 2016 11:31:42 +1100
-Message-ID: <20160218113142.452fd8a0@canb.auug.org.au>
-References: <E1aVxTQ-0000zq-U4@optimist>
-	<20160217112225.GM7544@sirena.org.uk>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Thu, 18 Feb 2016 12:28:55 +1100
+Message-ID: <20160218122855.55e3f09d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47538 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44264 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161084AbcBRAbo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 17 Feb 2016 19:31:44 -0500
-In-Reply-To: <20160217112225.GM7544@sirena.org.uk>
+	id S1030404AbcBRB27 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 17 Feb 2016 20:28:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: "J. German Rivera" <German.Rivera@freescale.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thierry Reding <thierry.reding@gmail.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yuval Mintz <Yuval.Mintz@qlogic.com>, Ariel Elior <Ariel.Elior@qlogic.com>
 
-Hi Mark,
+Hi all,
 
-On Wed, 17 Feb 2016 11:22:25 +0000 Mark Brown <broonie@kernel.org> wrote:
->
-> On Wed, Feb 17, 2016 at 08:28:37AM +0000, Build bot for Mark Brown wrote:
-> 
-> > 	arm64-allmodconfig
-> > ERROR: "msi_create_irq_domain" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-> > ERROR: "irq_chip_mask_parent" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!
-> > ERROR: "free_msi_entry" [drivers/staging/fsl-mc/bus/mc-bus-driver.ko] undefined!  
-> 
-> The fsl-mc code is still breaking the build in -next, can we please drop
-> the code or mark the driver as built in only until the MSI symbol
-> exports are available?  This is making it difficult to spot other
-> errors.
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I will add a merge fixup patch for the staging tree that makes
-CONFIG_FSL_MC_BUS depend on CONFIG_BROKEN.  Sorry, I should have done
-this when it first came to light.
+In file included from drivers/net/ethernet/broadcom/bnx2x/bnx2x.h:56:0,
+                 from drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:30:
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c: In function 'bnx2x_dcbx_get_ap_feature':
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:224:11: error: 'DCBX_APP_SF_DEFAULT' undeclared (first use in this function)
+           DCBX_APP_SF_DEFAULT) &&  
+           ^
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.h:120:45: note: in definition of macro 'GET_FLAGS'
+ #define GET_FLAGS(flags, bits)  ((flags) & (bits))
+                                             ^
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.c:224:11: note: each undeclared identifier is reported only once for each function it appears in
+           DCBX_APP_SF_DEFAULT) &&  
+           ^
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_dcb.h:120:45: note: in definition of macro 'GET_FLAGS'
+ #define GET_FLAGS(flags, bits)  ((flags) & (bits))
+                                             ^
+
+Caused by commit
+
+  e5d3a51cefbb ("This adds support for default application priority.")
+
+This build is big endian.
+
+I have used the net-next tree from next-20160217 for today.
 
 -- 
 Cheers,
