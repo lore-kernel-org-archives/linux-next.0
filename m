@@ -1,37 +1,78 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
-Date: Fri, 19 Feb 2016 10:08:00 +0200
-Message-ID: <87y4ahp1gf.fsf@kamboji.qca.qualcomm.com>
-References: <20160219101035.44c84f2b@canb.auug.org.au>
+From: Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>
+Subject: Re: [PATCH next] ARM: virt: fix build of hyp-stub
+Date: Fri, 19 Feb 2016 10:18:02 +0000
+Message-ID: <20160219101802.GA4524@e106794-lin.cambridge.arm.com>
+References: <1455838277-11083-1-git-send-email-vincent.stehle@laposte.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:50047 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422756AbcBSIIH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Feb 2016 03:08:07 -0500
-In-Reply-To: <20160219101035.44c84f2b@canb.auug.org.au> (Stephen Rothwell's
-	message of "Fri, 19 Feb 2016 10:10:35 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1455838277-11083-1-git-send-email-vincent.stehle@laposte.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vincent =?utf-8?Q?Stehl=C3=A9?= <vincent.stehle@laposte.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Vincent,
 
-> After merging the wireless-drivers-next tree, today's linux-next build
-> failed the same way as the net-next tree did yesterday (suprise! :-)).
->
-> I have used the version from next-20160218 for today.
+On Fri, Feb 19, 2016 at 12:31:17AM +0100, Vincent Stehl=C3=A9 wrote:
+> Compile hyp-stub explicitly for arm v7-a. This fixes the following bu=
+ild
+> errors:
+>=20
+>   arch/arm/kernel/hyp-stub.S: Assembler messages:
+>   arch/arm/kernel/hyp-stub.S:168: Error: selected processor does not =
+support `ubfx r7,r7,#28,#4' in ARM mode
+>   arch/arm/kernel/hyp-stub.S:176: Error: selected processor does not =
+support `isb' in ARM mode
+>=20
+> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
+> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>=20
+>=20
+> Hi,
+>=20
+> This can be seen with linux next-20160218 and arm e.g. allmodconfig.
 
-Yeah, not a surprise as yesterday I fast forwarded wireless-drivers-next
-to current net-next (at the time). I understood from the discussion in
-the other thread that this commit should fix it:
+Thanks for doing this. I just posted my fix to the patch system, before
+seeing yours (it also requires change in boot/compressed/Makefile -
+hyp-stub is built twice). See the previous discussion about this issue
+here: http://thread.gmane.org/gmane.linux.ports.arm.kernel/479256
 
-376471a7b6e9 bnx2x: Add missing HSI for big-endian machines
+Thanks,
+Jean-Philippe
 
-I now fast forwarded wireless-next-next again and it contains the commit
-so everything should be ok again, I hope :) If not, please let me know.
-
--- 
-Kalle Valo
+>=20
+> Best regards,
+>=20
+> V.
+>=20
+>=20
+>  arch/arm/kernel/Makefile | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+> index 2c5f160..15684c5 100644
+> --- a/arch/arm/kernel/Makefile
+> +++ b/arch/arm/kernel/Makefile
+> @@ -88,6 +88,8 @@ obj-$(CONFIG_DEBUG_LL)	+=3D debug.o
+>  obj-$(CONFIG_EARLY_PRINTK)	+=3D early_printk.o
+> =20
+>  obj-$(CONFIG_ARM_VIRT_EXT)	+=3D hyp-stub.o
+> +AFLAGS_hyp-stub.o		:=3D-Wa,-march=3Darmv7-a
+> +
+>  ifeq ($(CONFIG_ARM_PSCI),y)
+>  obj-$(CONFIG_SMP)		+=3D psci_smp.o
+>  endif
+> --=20
+> 2.7.0
+>=20
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
