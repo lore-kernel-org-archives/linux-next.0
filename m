@@ -1,78 +1,61 @@
-From: Jean-Philippe Brucker <Jean-Philippe.Brucker@arm.com>
-Subject: Re: [PATCH next] ARM: virt: fix build of hyp-stub
-Date: Fri, 19 Feb 2016 10:18:02 +0000
-Message-ID: <20160219101802.GA4524@e106794-lin.cambridge.arm.com>
-References: <1455838277-11083-1-git-send-email-vincent.stehle@laposte.net>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Fri, 19 Feb 2016 16:26:58 +0100
+Message-ID: <CAKv+Gu-roh-fy=UCuL79E++=GmferfAZmDK0+w2XPBby9EzPpg@mail.gmail.com>
+References: <20160219150926.76304938@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1455838277-11083-1-git-send-email-vincent.stehle@laposte.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vincent =?utf-8?Q?Stehl=C3=A9?= <vincent.stehle@laposte.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:35141 "EHLO
+	mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161047AbcBSP06 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 19 Feb 2016 10:26:58 -0500
+Received: by mail-io0-f177.google.com with SMTP id g203so112629777iof.2
+        for <linux-next@vger.kernel.org>; Fri, 19 Feb 2016 07:26:58 -0800 (PST)
+In-Reply-To: <20160219150926.76304938@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>
 
-Hi Vincent,
+On 19 February 2016 at 05:09, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Andrew,
+>
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+>
+>   arch/x86/mm/extable.c
+>
+> between commit:
+>
+>   548acf19234d ("x86/mm: Expand the exception table logic to allow new handling options")
+>
+> from the tip tree and commit:
+>
+>   f1cd2c09ff09 ("x86/extable: use generic search and sort routines")
+>
+> from the akpm-current tree.
+>
+> I couldn't figure out how to fix this up, so I just dropped the
+> akpm-current tree patch.
+>
 
-On Fri, Feb 19, 2016 at 12:31:17AM +0100, Vincent Stehl=C3=A9 wrote:
-> Compile hyp-stub explicitly for arm v7-a. This fixes the following bu=
-ild
-> errors:
->=20
->   arch/arm/kernel/hyp-stub.S: Assembler messages:
->   arch/arm/kernel/hyp-stub.S:168: Error: selected processor does not =
-support `ubfx r7,r7,#28,#4' in ARM mode
->   arch/arm/kernel/hyp-stub.S:176: Error: selected processor does not =
-support `isb' in ARM mode
->=20
-> Signed-off-by: Vincent Stehl=C3=A9 <vincent.stehle@laposte.net>
-> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->=20
->=20
-> Hi,
->=20
-> This can be seen with linux next-20160218 and arm e.g. allmodconfig.
+Hi Andrew,
 
-Thanks for doing this. I just posted my fix to the patch system, before
-seeing yours (it also requires change in boot/compressed/Makefile -
-hyp-stub is built twice). See the previous discussion about this issue
-here: http://thread.gmane.org/gmane.linux.ports.arm.kernel/479256
+Unfortunately, this is not the only problem currently with my extable
+series. The arm64 patch now also conflicts with patches that are
+queued in the arm64 tree.
+
+So could you please drop all six of them for now? I will ask Catalin
+to take the ones that are essential to the arm64 KASLR implementation
+via the arm64 tree, and once that hits mainline, I will rebase and
+resubmit the remaining patches.
+
+extable-add-support-for-relative-extables-to-search-and-sort-routines.patch
+alpha-extable-use-generic-search-and-sort-routines.patch
+s390-extable-use-generic-search-and-sort-routines.patch
+x86-extable-use-generic-search-and-sort-routines.patch
+ia64-extable-use-generic-search-and-sort-routines.patch
+arm64-switch-to-relative-exception-tables.patch
 
 Thanks,
-Jean-Philippe
-
->=20
-> Best regards,
->=20
-> V.
->=20
->=20
->  arch/arm/kernel/Makefile | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
-> index 2c5f160..15684c5 100644
-> --- a/arch/arm/kernel/Makefile
-> +++ b/arch/arm/kernel/Makefile
-> @@ -88,6 +88,8 @@ obj-$(CONFIG_DEBUG_LL)	+=3D debug.o
->  obj-$(CONFIG_EARLY_PRINTK)	+=3D early_printk.o
-> =20
->  obj-$(CONFIG_ARM_VIRT_EXT)	+=3D hyp-stub.o
-> +AFLAGS_hyp-stub.o		:=3D-Wa,-march=3Darmv7-a
-> +
->  ifeq ($(CONFIG_ARM_PSCI),y)
->  obj-$(CONFIG_SMP)		+=3D psci_smp.o
->  endif
-> --=20
-> 2.7.0
->=20
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Ard.
