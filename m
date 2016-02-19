@@ -1,34 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the net tree
-Date: Fri, 19 Feb 2016 10:49:57 +1100
-Message-ID: <20160219104957.0273c75a@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Fri, 19 Feb 2016 15:09:26 +1100
+Message-ID: <20160219150926.76304938@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Insu Yun <wuninsu@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43981 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1424034AbcBSEJ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 18 Feb 2016 23:09:29 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Hi Herbert,
+Hi Andrew,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  net/ipv4/tcp.c
+  arch/x86/mm/extable.c
 
 between commit:
 
-  1eea84b74cd2 ("tcp: correctly crypto_alloc_hash return check")
+  548acf19234d ("x86/mm: Expand the exception table logic to allow new handling options")
 
-from the net tree and commit:
+from the tip tree and commit:
 
-  cf80e0e47e0e ("tcp: Use ahash")
+  f1cd2c09ff09 ("x86/extable: use generic search and sort routines")
 
-from the crypto tree.
+from the akpm-current tree.
 
-I fixed it up (the latter removed the code fixed by the former) and can
-carry the fix as necessary (no action is required).
+I couldn't figure out how to fix this up, so I just dropped the
+akpm-current tree patch.
 
 -- 
 Cheers,
