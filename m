@@ -1,64 +1,56 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20160222 build: 5 failures 9 warnings (next-20160222)
-Date: Mon, 22 Feb 2016 19:08:32 +0900
-Message-ID: <20160222100832.GX18327@sirena.org.uk>
+Date: Mon, 22 Feb 2016 19:19:18 +0900
+Message-ID: <20160222101918.GY18327@sirena.org.uk>
 References: <E1aXlz4-000486-Pb@optimist>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QgTrJPeCZfhZbFCN"
+	protocol="application/pgp-signature"; boundary="57G+vFki3OF1XxbO"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55300 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55340 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753933AbcBVKIt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2016 05:08:49 -0500
+	with ESMTP id S1753993AbcBVKTm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2016 05:19:42 -0500
 Content-Disposition: inline
 In-Reply-To: <E1aXlz4-000486-Pb@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+To: John Fastabend <john.r.fastabend@intel.com>, Jiri Pirko <jiri@mellanox.com>, Jamal Hadi Salim <jhs@mojatatu.com>, "David S. Miller" <davem@davemloft.net>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
---QgTrJPeCZfhZbFCN
+--57G+vFki3OF1XxbO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 On Mon, Feb 22, 2016 at 08:36:46AM +0000, Build bot for Mark Brown wrote:
 
-Today's -next fails to build on arm64 due to:
+Today's -next fails to build an arm allmodconfig due to:
 
-> 	arm64-allnoconfig
-> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
-f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
->=20
-> 	arm64-allmodconfig
-> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
-f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
+> 	arm-allmodconfig
+> ../drivers/net/ethernet/ti/netcp_core.c:1846:31: error: invalid type argument of '->' (have 'struct tc_to_netdev')
+> ../drivers/net/ethernet/ti/netcp_core.c:1851:35: error: invalid type argument of '->' (have 'struct tc_to_netdev')
+> ../drivers/net/ethernet/ti/netcp_core.c:1855:8: error: invalid type argument of '->' (have 'struct tc_to_netdev')
+> ../drivers/net/ethernet/ti/netcp_core.c:1856:28: error: invalid type argument of '->' (have 'struct tc_to_netdev')
+> ../drivers/net/ethernet/ti/netcp_core.c:1857:21: error: invalid type argument of '->' (have 'struct tc_to_netdev')
 
-> 	arm64-defconfig
-> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
-f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
+caused by commit 16e5cc647173a (net: rework setup_tc ndo op to consume
+general tc operand) in the net-next tree which looks to have a missing *
+in the rewrite of the function arguments for that driver.
 
-triggered by the merge of the kvm-arm tree with -next today, it looks
-like changes in that tree and arm64 aren't playing nicely with each
-other (bisect came down to the merge and visual inspection of the
-changes didn't immediately show anything else though the issue is
-obvious in the code).
-
---QgTrJPeCZfhZbFCN
+--57G+vFki3OF1XxbO
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWyt4eAAoJECTWi3JdVIfQXtsH/2EhI2j6fqe7HIFokVg9CAK/
-mDN7wt30fsQU8yGyWwzoEH4KJ0Ok59Nuob5Hmd8jsuGcrP8kAVI1fguJnpaTIVOm
-bgZ3GDFSsOti5YGkEIrYABOXK218FoDErIs6MMJgbr7Wq4RWLAtjLuBwLV1dgwvG
-e218bXNfW2vdVGodYbY+WUmlgDigNJAKh8HtwsyVphTURkCko4PHAOrMZJvFYrlU
-cYrEJom4H0+HmFhocZ+yvKUAcf23Lbs1+jk2uWSWHKfRyxb6Rhye0jGkRbGHN76o
-PKMeXfy9TkNg7kcITJDTL64tAURjdL1LSskjiDPBbMDwdmTWWZVIySstfWmwbu0=
-=wY1O
+iQEcBAEBCAAGBQJWyuClAAoJECTWi3JdVIfQ2CcH/iFCXu1VpkjdxSnMcB3r0Ct5
+axIrxFqR2opXXXKPe4T8axj1PHGGY6/EtQ5NejyhTRrdjRQ7Y1pyJ97i6qU6TFH9
+ocjouak5eknNiQ9pm6eCVGGREo1qiIsbTT1WFKZr23ZtdQHSU5Zzm+oCQAqf6ZAc
+q0gxypnBmQt+4B/hRHmPb0OCLGY9p1WXB4zfXJ174LZ5TYrMKL7fBLSitvRazuTF
+pa3Ne82yHrqDv8Bxx9tpfK7NOloFldG9jCceP7zbjdn57GqNcy+lXoo6BFItEGOt
+fKjAGxG64N//NPQ0obWD+lYSHGfFQYwodpcApXrB6uL2URPJ3XQBy2ximwNgUWk=
+=7c+Q
 -----END PGP SIGNATURE-----
 
---QgTrJPeCZfhZbFCN--
+--57G+vFki3OF1XxbO--
