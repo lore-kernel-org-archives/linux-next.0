@@ -1,46 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the f2fs tree
-Date: Mon, 22 Feb 2016 11:25:47 +1100
-Message-ID: <20160222112547.0725e0d4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Mon, 22 Feb 2016 11:45:55 +1100
+Message-ID: <20160222114555.2dcebd3d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33723 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54017 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752417AbcBVAZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Feb 2016 19:25:49 -0500
+	id S1752434AbcBVAp4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Feb 2016 19:45:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>, Jaegeuk Kim <jaegeuk@kernel.org>
+To: Dave Airlie <airlied@linux.ie>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Herbert,
+Hi Dave,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  fs/crypto/fname.c
-  fs/f2fs/crypto.c
-  fs/f2fs/crypto_fname.c
-  fs/f2fs/crypto_key.c
-  fs/f2fs/f2fs_crypto.h
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:818:6: error: redefinition of 'amdgpu_ttm_tt_affect_userptr'
+ bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+      ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:799:6: note: previous definition of 'amdgpu_ttm_tt_affect_userptr' was here
+ bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+      ^
 
-between commits:
+Caused by a bad git resolution in commit
 
-  a72fe9cddb78 ("fs crypto: add fname.c to support filename encryption")
-  ace7045bd954 ("f2fs crypto: migrate into vfs's crypto engine")
+  971f3e7dd355 ("Merge remote-tracking branch 'drm/drm-next'")
 
-from the f2fs tree and commit:
+I have added the following as a merge fix up patch and can carry it
+as necessary.
 
-  2731a944f651 ("f2fs: Use skcipher")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 22 Feb 2016 11:40:08 +1100
+Subject: [PATCH] drm: fix bad merge of drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
 
-from the crypto tree.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-I fixed it up (the f2fs tree deleted all the f2fs files and created
-fs/crypto/fname.c so I did the same) and can carry the fix as necessary.
-
-Someone should have a good look at these changes and try to come up with
-a better solution.
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index b3e90cd91496..9ccdd189d717 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -815,25 +815,6 @@ bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+ 	return true;
+ }
+ 
+-bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+-				  unsigned long end)
+-{
+-	struct amdgpu_ttm_tt *gtt = (void *)ttm;
+-	unsigned long size;
+-
+-	if (gtt == NULL)
+-		return false;
+-
+-	if (gtt->ttm.ttm.state != tt_bound || !gtt->userptr)
+-		return false;
+-
+-	size = (unsigned long)gtt->ttm.ttm.num_pages * PAGE_SIZE;
+-	if (gtt->userptr > end || gtt->userptr + size <= start)
+-		return false;
+-
+-	return true;
+-}
+-
+ bool amdgpu_ttm_tt_is_readonly(struct ttm_tt *ttm)
+ {
+ 	struct amdgpu_ttm_tt *gtt = (void *)ttm;
+-- 
+2.7.0
 
 -- 
 Cheers,
