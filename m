@@ -1,56 +1,55 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: Re: next-20160222 build: 5 failures 9 warnings (next-20160222)
-Date: Mon, 22 Feb 2016 19:19:18 +0900
-Message-ID: <20160222101918.GY18327@sirena.org.uk>
+Date: Mon, 22 Feb 2016 19:25:42 +0900
+Message-ID: <20160222102542.GZ18327@sirena.org.uk>
 References: <E1aXlz4-000486-Pb@optimist>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="57G+vFki3OF1XxbO"
+	protocol="application/pgp-signature"; boundary="DTbNwtYx2n+Gggn7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55340 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55362 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753993AbcBVKTm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2016 05:19:42 -0500
+	with ESMTP id S1754255AbcBVK0D (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2016 05:26:03 -0500
 Content-Disposition: inline
 In-Reply-To: <E1aXlz4-000486-Pb@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: John Fastabend <john.r.fastabend@intel.com>, Jiri Pirko <jiri@mellanox.com>, Jamal Hadi Salim <jhs@mojatatu.com>, "David S. Miller" <davem@davemloft.net>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
---57G+vFki3OF1XxbO
+--DTbNwtYx2n+Gggn7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 On Mon, Feb 22, 2016 at 08:36:46AM +0000, Build bot for Mark Brown wrote:
 
-Today's -next fails to build an arm allmodconfig due to:
+For the past few days -next has been failing to build an arm
+allmodconfig due to:
 
 > 	arm-allmodconfig
-> ../drivers/net/ethernet/ti/netcp_core.c:1846:31: error: invalid type argument of '->' (have 'struct tc_to_netdev')
-> ../drivers/net/ethernet/ti/netcp_core.c:1851:35: error: invalid type argument of '->' (have 'struct tc_to_netdev')
-> ../drivers/net/ethernet/ti/netcp_core.c:1855:8: error: invalid type argument of '->' (have 'struct tc_to_netdev')
-> ../drivers/net/ethernet/ti/netcp_core.c:1856:28: error: invalid type argument of '->' (have 'struct tc_to_netdev')
-> ../drivers/net/ethernet/ti/netcp_core.c:1857:21: error: invalid type argument of '->' (have 'struct tc_to_netdev')
+> ../arch/arm/kernel/hyp-stub.S:168: Error: selected processor does not support ARM mode `ubfx r7,r7,#28,#4'
+> ../arch/arm/kernel/hyp-stub.S:176: Error: selected processor does not support ARM mode `isb'
 
-caused by commit 16e5cc647173a (net: rework setup_tc ndo op to consume
-general tc operand) in the net-next tree which looks to have a missing *
-in the rewrite of the function arguments for that driver.
+caused by e59941b9b3817c (ARM: 8527/1: virt: enable GICv3 system
+registers) in the ARM tree.  My hot take is that it looks like
+CONFIG_ARM_GIC_V3 needs tighter dependencies so it can't get enabled for
+a v6 system but I could be wrong.
 
---57G+vFki3OF1XxbO
+--DTbNwtYx2n+Gggn7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWyuClAAoJECTWi3JdVIfQ2CcH/iFCXu1VpkjdxSnMcB3r0Ct5
-axIrxFqR2opXXXKPe4T8axj1PHGGY6/EtQ5NejyhTRrdjRQ7Y1pyJ97i6qU6TFH9
-ocjouak5eknNiQ9pm6eCVGGREo1qiIsbTT1WFKZr23ZtdQHSU5Zzm+oCQAqf6ZAc
-q0gxypnBmQt+4B/hRHmPb0OCLGY9p1WXB4zfXJ174LZ5TYrMKL7fBLSitvRazuTF
-pa3Ne82yHrqDv8Bxx9tpfK7NOloFldG9jCceP7zbjdn57GqNcy+lXoo6BFItEGOt
-fKjAGxG64N//NPQ0obWD+lYSHGfFQYwodpcApXrB6uL2URPJ3XQBy2ximwNgUWk=
-=7c+Q
+iQEcBAEBCAAGBQJWyuIkAAoJECTWi3JdVIfQE7EH/1DXSBaFCyRdig/koT7jD3tI
+MzZarPB7cCMczaxfiYGg55HgtM3if4yi7uJaDj5Co9i6d6ZTpikc6QQ7VQvV2cE1
+tPx5hEeOSaNdMO0itfRv2qrj16imZOjvddMD1VgRiwWtr27JTi7vFJNS+mbIgrSk
+yjwmJyCul8aqh/ZKi66FRiAqKVET7sVRM8+5TgzHLjEQXh+eNBofUxUhafdUMPF4
+Glwn4nbQcNBRBwPCt1hhB3P4sRAscU1C9Yrg4JISNMf/DYSh/Qm5gxlA2XDyoaFs
+qPchACEpfZFgvmXQ200skzMGImyoI+LZs73p1zarbvHDZsbdkuptV4NNxliVCXg=
+=oHd1
 -----END PGP SIGNATURE-----
 
---57G+vFki3OF1XxbO--
+--DTbNwtYx2n+Gggn7--
