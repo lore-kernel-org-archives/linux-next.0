@@ -1,81 +1,125 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Mon, 22 Feb 2016 11:45:55 +1100
-Message-ID: <20160222114555.2dcebd3d@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Mon, 22 Feb 2016 13:28:29 +1100
+Message-ID: <20160222132829.2b4cf53e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54017 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54127 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752434AbcBVAp4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Feb 2016 19:45:56 -0500
+	id S1752466AbcBVC2b (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Feb 2016 21:28:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, James Morse <james.morse@arm.com>
 
-Hi Dave,
+Hi all,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:818:6: error: redefinition of 'amdgpu_ttm_tt_affect_userptr'
- bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
-      ^
-drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:799:6: note: previous definition of 'amdgpu_ttm_tt_affect_userptr' was here
- bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
-      ^
+  arch/arm64/include/asm/cpufeature.h
+  arch/arm64/kernel/cpufeature.c
 
-Caused by a bad git resolution in commit
+between commit:
 
-  971f3e7dd355 ("Merge remote-tracking branch 'drm/drm-next'")
+  d5370f754875 ("arm64: prefetch: add alternative pattern for CPUs without a prefetcher")
+  57f4959bad0a ("arm64: kernel: Add support for User Access Override")
+  705441960033 ("arm64: kernel: Don't toggle PAN on systems with UAO")
 
-I have added the following as a merge fix up patch and can carry it
-as necessary.
+from the arm64 tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 22 Feb 2016 11:40:08 +1100
-Subject: [PATCH] drm: fix bad merge of drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+  d0be74f771d5 ("arm64: Add ARM64_HAS_VIRT_HOST_EXTN feature")
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c | 19 -------------------
- 1 file changed, 19 deletions(-)
+from the kvm-arm tree.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-index b3e90cd91496..9ccdd189d717 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
-@@ -815,25 +815,6 @@ bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
- 	return true;
- }
- 
--bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
--				  unsigned long end)
--{
--	struct amdgpu_ttm_tt *gtt = (void *)ttm;
--	unsigned long size;
--
--	if (gtt == NULL)
--		return false;
--
--	if (gtt->ttm.ttm.state != tt_bound || !gtt->userptr)
--		return false;
--
--	size = (unsigned long)gtt->ttm.ttm.num_pages * PAGE_SIZE;
--	if (gtt->userptr > end || gtt->userptr + size <= start)
--		return false;
--
--	return true;
--}
--
- bool amdgpu_ttm_tt_is_readonly(struct ttm_tt *ttm)
- {
- 	struct amdgpu_ttm_tt *gtt = (void *)ttm;
--- 
-2.7.0
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm64/include/asm/cpufeature.h
+index 37a53fc6b384,a5c769b1c65b..000000000000
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@@ -30,11 -30,12 +30,12 @@@
+  #define ARM64_HAS_LSE_ATOMICS			5
+  #define ARM64_WORKAROUND_CAVIUM_23154		6
+  #define ARM64_WORKAROUND_834220			7
+ -/* #define ARM64_HAS_NO_HW_PREFETCH		8 */
+ -/* #define ARM64_HAS_UAO			9 */
+ -/* #define ARM64_ALT_PAN_NOT_UAO		10 */
+ +#define ARM64_HAS_NO_HW_PREFETCH		8
+ +#define ARM64_HAS_UAO				9
+ +#define ARM64_ALT_PAN_NOT_UAO			10
++ #define ARM64_HAS_VIRT_HOST_EXTN		11
+  
+- #define ARM64_NCAPS				11
++ #define ARM64_NCAPS				12
+  
+  #ifndef __ASSEMBLY__
+  
+diff --cc arch/arm64/kernel/cpufeature.c
+index 7566cad9fa1d,ba745199297e..000000000000
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@@ -634,18 -622,11 +635,23 @@@ static bool has_useable_gicv3_cpuif(con
+  	return has_sre;
+  }
+  
+ +static bool has_no_hw_prefetch(const struct arm64_cpu_capabilities *entry)
+ +{
+ +	u32 midr = read_cpuid_id();
+ +	u32 rv_min, rv_max;
+ +
+ +	/* Cavium ThunderX pass 1.x and 2.x */
+ +	rv_min = 0;
+ +	rv_max = (1 << MIDR_VARIANT_SHIFT) | MIDR_REVISION_MASK;
+ +
+ +	return MIDR_IS_CPU_MODEL_RANGE(midr, MIDR_THUNDERX, rv_min, rv_max);
+ +}
+ +
++ static bool runs_at_el2(const struct arm64_cpu_capabilities *entry)
++ {
++ 	return is_kernel_in_hyp_mode();
++ }
++ 
+  static const struct arm64_cpu_capabilities arm64_features[] = {
+  	{
+  		.desc = "GIC system register CPU interface",
+@@@ -677,27 -658,10 +683,32 @@@
+  	},
+  #endif /* CONFIG_AS_LSE && CONFIG_ARM64_LSE_ATOMICS */
+  	{
+ +		.desc = "Software prefetching using PRFM",
+ +		.capability = ARM64_HAS_NO_HW_PREFETCH,
+ +		.matches = has_no_hw_prefetch,
+ +	},
+ +#ifdef CONFIG_ARM64_UAO
+ +	{
+ +		.desc = "User Access Override",
+ +		.capability = ARM64_HAS_UAO,
+ +		.matches = has_cpuid_feature,
+ +		.sys_reg = SYS_ID_AA64MMFR2_EL1,
+ +		.field_pos = ID_AA64MMFR2_UAO_SHIFT,
+ +		.min_field_value = 1,
+ +		.enable = cpu_enable_uao,
+ +	},
+ +#endif /* CONFIG_ARM64_UAO */
+ +#ifdef CONFIG_ARM64_PAN
+ +	{
+ +		.capability = ARM64_ALT_PAN_NOT_UAO,
+ +		.matches = cpufeature_pan_not_uao,
+ +	},
+ +#endif /* CONFIG_ARM64_PAN */
+++	{
++ 		.desc = "Virtualization Host Extensions",
++ 		.capability = ARM64_HAS_VIRT_HOST_EXTN,
++ 		.matches = runs_at_el2,
++ 	},
+  	{},
+  };
+  
