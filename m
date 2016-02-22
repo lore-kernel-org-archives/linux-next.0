@@ -1,37 +1,64 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Mon, 22 Feb 2016 09:26:29 +0000
-Message-ID: <20160222092629.GB24203@e104818-lin.cambridge.arm.com>
-References: <20160222133322.04517906@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160222 build: 5 failures 9 warnings (next-20160222)
+Date: Mon, 22 Feb 2016 19:08:32 +0900
+Message-ID: <20160222100832.GX18327@sirena.org.uk>
+References: <E1aXlz4-000486-Pb@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="QgTrJPeCZfhZbFCN"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55300 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753933AbcBVKIt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 22 Feb 2016 05:08:49 -0500
 Content-Disposition: inline
-In-Reply-To: <20160222133322.04517906@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <E1aXlz4-000486-Pb@optimist>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
 
-On Mon, Feb 22, 2016 at 01:33:22PM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
-> 
->   arch/arm64/kvm/hyp.S
-> 
-> between commit:
-> 
->   a0bf9776cd0b ("arm64: kvm: deal with kernel symbols outside of linear mapping")
-> 
-> from the arm64 tree and commit:
-> 
->   253dcab4c363 ("arm64: KVM: VHE: Patch out use of HVC")
-> 
-> from the kvm-arm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
 
-This looks correct as well. Thanks.
+--QgTrJPeCZfhZbFCN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Catalin
+On Mon, Feb 22, 2016 at 08:36:46AM +0000, Build bot for Mark Brown wrote:
+
+Today's -next fails to build on arm64 due to:
+
+> 	arm64-allnoconfig
+> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
+f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
+>=20
+> 	arm64-allmodconfig
+> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
+f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
+
+> 	arm64-defconfig
+> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration o=
+f function 'kvm_call_hyp' [-Werror=3Dimplicit-function-declaration]
+
+triggered by the merge of the kvm-arm tree with -next today, it looks
+like changes in that tree and arm64 aren't playing nicely with each
+other (bisect came down to the merge and visual inspection of the
+changes didn't immediately show anything else though the issue is
+obvious in the code).
+
+--QgTrJPeCZfhZbFCN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWyt4eAAoJECTWi3JdVIfQXtsH/2EhI2j6fqe7HIFokVg9CAK/
+mDN7wt30fsQU8yGyWwzoEH4KJ0Ok59Nuob5Hmd8jsuGcrP8kAVI1fguJnpaTIVOm
+bgZ3GDFSsOti5YGkEIrYABOXK218FoDErIs6MMJgbr7Wq4RWLAtjLuBwLV1dgwvG
+e218bXNfW2vdVGodYbY+WUmlgDigNJAKh8HtwsyVphTURkCko4PHAOrMZJvFYrlU
+cYrEJom4H0+HmFhocZ+yvKUAcf23Lbs1+jk2uWSWHKfRyxb6Rhye0jGkRbGHN76o
+PKMeXfy9TkNg7kcITJDTL64tAURjdL1LSskjiDPBbMDwdmTWWZVIySstfWmwbu0=
+=wY1O
+-----END PGP SIGNATURE-----
+
+--QgTrJPeCZfhZbFCN--
