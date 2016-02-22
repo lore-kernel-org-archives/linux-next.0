@@ -1,44 +1,47 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: manual merge of the crypto tree with the net tree
-Date: Sat, 20 Feb 2016 08:44:07 +0000
-Message-ID: <20160220084407.GA8095@gondor.apana.org.au>
-References: <20160219104957.0273c75a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the crypto tree with the f2fs tree
+Date: Mon, 22 Feb 2016 11:25:47 +1100
+Message-ID: <20160222112547.0725e0d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:42868 "EHLO
-	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1423122AbcBTIoL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 20 Feb 2016 03:44:11 -0500
-Content-Disposition: inline
-In-Reply-To: <20160219104957.0273c75a@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:33723 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752417AbcBVAZt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Feb 2016 19:25:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Insu Yun <wuninsu@gmail.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Feb 19, 2016 at 10:49:57AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> Today's linux-next merge of the crypto tree got a conflict in:
-> 
->   net/ipv4/tcp.c
-> 
-> between commit:
-> 
->   1eea84b74cd2 ("tcp: correctly crypto_alloc_hash return check")
-> 
-> from the net tree and commit:
-> 
->   cf80e0e47e0e ("tcp: Use ahash")
-> 
-> from the crypto tree.
-> 
-> I fixed it up (the latter removed the code fixed by the former) and can
-> carry the fix as necessary (no action is required).
+Hi Herbert,
 
-Thank you Stephen!
+Today's linux-next merge of the crypto tree got a conflict in:
+
+  fs/crypto/fname.c
+  fs/f2fs/crypto.c
+  fs/f2fs/crypto_fname.c
+  fs/f2fs/crypto_key.c
+  fs/f2fs/f2fs_crypto.h
+
+between commits:
+
+  a72fe9cddb78 ("fs crypto: add fname.c to support filename encryption")
+  ace7045bd954 ("f2fs crypto: migrate into vfs's crypto engine")
+
+from the f2fs tree and commit:
+
+  2731a944f651 ("f2fs: Use skcipher")
+
+from the crypto tree.
+
+I fixed it up (the f2fs tree deleted all the f2fs files and created
+fs/crypto/fname.c so I did the same) and can carry the fix as necessary.
+
+Someone should have a good look at these changes and try to come up with
+a better solution.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell
