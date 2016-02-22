@@ -1,56 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20160222 build: 5 failures 9 warnings (next-20160222)
-Date: Tue, 23 Feb 2016 00:19:04 +1100
-Message-ID: <20160223001904.3ed3e402@canb.auug.org.au>
-References: <E1aXlz4-000486-Pb@optimist> <20160222100832.GX18327@sirena.org.uk>
- <56CAE5E6.7030707@arm.com>
- <20160222115243.GA5779@e106950-lin.cambridge.arm.com>
- <56CAF868.5020406@arm.com>
- <20160222120730.GB5779@e106950-lin.cambridge.arm.com>
- <56CB029F.2060409@arm.com>
+Subject: linux-next: manual merge of the f2fs tree with Linus' tree
+Date: Tue, 23 Feb 2016 10:09:51 +1100
+Message-ID: <20160223100951.4b9a7b73@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <kvmarm-bounces@lists.cs.columbia.edu>
-In-Reply-To: <56CB029F.2060409@arm.com>
-List-Unsubscribe: <https://lists.cs.columbia.edu/mailman/options/kvmarm>,
- <mailto:kvmarm-request@lists.cs.columbia.edu?subject=unsubscribe>
-List-Archive: <https://lists.cs.columbia.edu/pipermail/kvmarm>
-List-Post: <mailto:kvmarm@lists.cs.columbia.edu>
-List-Help: <mailto:kvmarm-request@lists.cs.columbia.edu?subject=help>
-List-Subscribe: <https://lists.cs.columbia.edu/mailman/listinfo/kvmarm>,
- <mailto:kvmarm-request@lists.cs.columbia.edu?subject=subscribe>
-Errors-To: kvmarm-bounces@lists.cs.columbia.edu
-Sender: kvmarm-bounces@lists.cs.columbia.edu
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, kvmarm@lists.cs.columbia.edu, Mark Brown <broonie@kernel.org>, linux-next@vger.kernel.org, Brian Starkey <brian.starkey@arm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51660 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756279AbcBVXJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 22 Feb 2016 18:09:53 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 
-Hi Marc,
+Hi Jaegeuk,
 
-On Mon, 22 Feb 2016 12:44:15 +0000 Marc Zyngier <marc.zyngier@arm.com> wrote:
->
-> On 22/02/16 12:07, Brian Starkey wrote:
-> > On Mon, Feb 22, 2016 at 12:00:40PM +0000, Marc Zyngier wrote:  
-> >> On 22/02/16 11:52, Brian Starkey wrote:  
-> >>>> This will create a new conflict, but will make the resolution 100% 
-> >>>> clear.  
-> >>>
-> >>> I applied this, but arm64 defconfig wouldn't build until I uncommented
-> >>> the '#define kvm_call_hyp(...' line.
-> >>>
-> >>> Is that right?  
-> >>
-> >> This patch is intended as a merge indication so that when you do the
-> >> merge with the arm64 tree, it conflicts and you can resolve it by going
-> >> the right thing (merging the non-comment version of this line).  
-> > 
-> > Right, now I understand "make the resolution 100% clear" - I guess 100%
-> > clear isn't clear enough for me :-(  
-> 
-> It is not meant to be clear to you, but to whoever is actually performing the merge:
+Today's linux-next merge of the f2fs tree got conflicts in:
 
-Excellent, thanks for that - hopefully I will get it right tomorrow.
+  fs/ext4/crypto.c
+  fs/ext4/ext4.h
+  fs/ext4/namei.c
+
+between commits:
+
+  28b4c263961c ("ext4 crypto: revalidate dentry after adding or removing the key")
+  ff978b09f973 ("ext4 crypto: move context consistency check to ext4_file_open()")
+
+from Linus' tree (presumably) bug fixes in v4.5-rc5 and commit:
+
+  e29c55a8d406 ("ext4 crypto: migrate into vfs's crypto engine")
+
+from the f2fs tree.
+
+I do not have enough information to fix this up, so I dropped the last
+commit from the f2fs tree for today.
+
+I *assume* that this has been passed by Ted - I can;t easily tell as
+there are no Acked-by or Reviewed-by tags in the f2fs tree commit.  If
+so, perhaps you could either merge v4.5-rc5 yourself and do the
+resolutions necessary (with nice comments in the merge commit), or give
+me some hints on how to do it.
 
 -- 
 Cheers,
