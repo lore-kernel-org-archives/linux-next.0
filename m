@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Mon, 22 Feb 2016 13:33:22 +1100
-Message-ID: <20160222133322.04517906@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the crypto tree
+Date: Mon, 22 Feb 2016 14:55:25 +1100
+Message-ID: <20160222145525.3d32f803@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35075 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34677 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752557AbcBVCdY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 21 Feb 2016 21:33:24 -0500
+	id S1752526AbcBVDz0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 21 Feb 2016 22:55:26 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Greg KH <greg@kroah.com>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Oleg Drokin <green@linuxhacker.ru>
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  arch/arm64/kvm/hyp.S
+  drivers/staging/lustre/lustre/libcfs/linux/linux-crypto.c
 
 between commit:
 
-  a0bf9776cd0b ("arm64: kvm: deal with kernel symbols outside of linear mapping")
+  6dae10001e84 ("staging: lustre: Use ahash")
 
-from the arm64 tree and commit:
+from the crypto tree and commit:
 
-  253dcab4c363 ("arm64: KVM: VHE: Patch out use of HVC")
+  15d9f5201fc3 ("staging/lustre/libcfs: Adjust NULL comparison codestyle")
+  3e1f3db1b29b ("staging/lustre: Remove space after cast in cfs_crypto_hash_final()")
 
-from the kvm-arm tree.
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,36 +39,64 @@ is required).
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/kvm/hyp.S
-index 870578f84b1c,0689a74e6ba0..000000000000
---- a/arch/arm64/kvm/hyp.S
-+++ b/arch/arm64/kvm/hyp.S
-@@@ -17,10 -17,12 +17,12 @@@
+diff --cc drivers/staging/lustre/lustre/libcfs/linux/linux-crypto.c
+index 94c01aad844b,ec758019bad6..000000000000
+--- a/drivers/staging/lustre/lustre/libcfs/linux/linux-crypto.c
++++ b/drivers/staging/lustre/lustre/libcfs/linux/linux-crypto.c
+@@@ -76,10 -69,10 +76,10 @@@ static int cfs_crypto_hash_alloc(unsign
+  	 * Skip this function for digest, because we use shash logic at
+  	 * cfs_crypto_hash_alloc.
+  	 */
+- 	if (key != NULL)
++ 	if (key)
+ -		err = crypto_hash_setkey(desc->tfm, key, key_len);
+ +		err = crypto_ahash_setkey(tfm, key, key_len);
+  	else if ((*type)->cht_key != 0)
+ -		err = crypto_hash_setkey(desc->tfm,
+ +		err = crypto_ahash_setkey(tfm,
+  					 (unsigned char *)&((*type)->cht_key),
+  					 (*type)->cht_size);
   
-  #include <linux/linkage.h>
+@@@ -110,17 -99,16 +110,17 @@@ int cfs_crypto_hash_digest(unsigned cha
+  	int			err;
+  	const struct cfs_crypto_hash_type	*type;
   
-+ #include <asm/alternative.h>
-  #include <asm/assembler.h>
-+ #include <asm/cpufeature.h>
+- 	if (buf == NULL || buf_len == 0 || hash_len == NULL)
++ 	if (!buf || buf_len == 0 || !hash_len)
+  		return -EINVAL;
   
-  /*
- - * u64 kvm_call_hyp(void *hypfn, ...);
- + * u64 __kvm_call_hyp(void *hypfn, ...);
-   *
-   * This is not really a variadic function in the classic C-way and care must
-   * be taken when calling this to ensure parameters are passed in registers
-@@@ -37,7 -39,12 +39,12 @@@
-   * used to implement __hyp_get_vectors in the same way as in
-   * arch/arm64/kernel/hyp_stub.S.
-   */
- -ENTRY(kvm_call_hyp)
- +ENTRY(__kvm_call_hyp)
-+ alternative_if_not ARM64_HAS_VIRT_HOST_EXTN	
-  	hvc	#0
-  	ret
-+ alternative_else
-+ 	b	__vhe_hyp_call
-+ 	nop
-+ alternative_endif
- -ENDPROC(kvm_call_hyp)
- +ENDPROC(__kvm_call_hyp)
+ -	err = cfs_crypto_hash_alloc(alg_id, &type, &hdesc, key, key_len);
+ +	err = cfs_crypto_hash_alloc(alg_id, &type, &req, key, key_len);
+  	if (err != 0)
+  		return err;
+  
+- 	if (hash == NULL || *hash_len < type->cht_size) {
++ 	if (!hash || *hash_len < type->cht_size) {
+  		*hash_len = type->cht_size;
+ -		crypto_free_hash(hdesc.tfm);
+ +		crypto_free_ahash(crypto_ahash_reqtfm(req));
+ +		ahash_request_free(req);
+  		return -ENOSPC;
+  	}
+  	sg_init_one(&sl, buf, buf_len);
+@@@ -183,15 -172,14 +183,15 @@@ int cfs_crypto_hash_final(struct cfs_cr
+  			  unsigned char *hash, unsigned int *hash_len)
+  {
+  	int     err;
+ -	int     size = crypto_hash_digestsize(((struct hash_desc *)hdesc)->tfm);
+ +	struct ahash_request *req = (void *)hdesc;
+ +	int size = crypto_ahash_digestsize(crypto_ahash_reqtfm(req));
+  
+- 	if (hash_len == NULL) {
++ 	if (!hash_len) {
+ -		crypto_free_hash(((struct hash_desc *)hdesc)->tfm);
+ -		kfree(hdesc);
+ +		crypto_free_ahash(crypto_ahash_reqtfm(req));
+ +		ahash_request_free(req);
+  		return 0;
+  	}
+- 	if (hash == NULL || *hash_len < size) {
++ 	if (!hash || *hash_len < size) {
+  		*hash_len = size;
+  		return -ENOSPC;
+  	}
