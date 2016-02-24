@@ -1,47 +1,49 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: linux-next: Tree for Feb 24
-Date: Wed, 24 Feb 2016 09:37:19 -0500
-Message-ID: <20160224143719.GE7382@kvack.org>
-References: <20160224163414.260db0ec@canb.auug.org.au> <CA+icZUVeY1-HbhQChpC=vwJO7Fk+3d07UFmDxW13vaoVEUTk9g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the renesas tree with the arm-soc tree
+Date: Thu, 25 Feb 2016 09:07:02 +1100
+Message-ID: <20160225090702.6f090bcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-aio@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <CA+icZUVeY1-HbhQChpC=vwJO7Fk+3d07UFmDxW13vaoVEUTk9g@mail.gmail.com>
-Sender: owner-linux-aio@kvack.org
-To: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-aio@kvack.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Simon Horman <horms@verge.net.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 24, 2016 at 07:32:17AM +0100, Sedat Dilek wrote:
-> On Wed, Feb 24, 2016 at 6:34 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Changes since 20160223:
-> >
-> ...
-> > The aio tree still had a build failure so I used the version from
-> > next-20160111.
-> >
-> 
-> Might be good to poke the maintainer as I am seeing this for a long
-> time in Linux-next.
+Hi Simon,
 
-These are architecture code related build failures that arch maintainers 
-need to fix.  Avoiding pulling the tree allows people to ignore the issue, 
-which isn't going to get things fixed.  I provided an example how to 
-implement the 64 bit __get_user() without generating warnings, and it is 
-now up to maintainers to adapt it for their architecture.
+Today's linux-next merge of the renesas tree got a conflict in:
 
-		-ben
+  arch/arm64/configs/defconfig
 
-> - Sedat -
+between commit:
+
+  efdda175c07f ("arm64: defconfig: add spmi and usb related configs")
+
+from the arm-soc tree and commit:
+
+  a9c42f02387c ("arm64: defconfig: Add Renesas R-Car Gen3 USB 2.0 phy driver support")
+
+from the renesas tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
-"Thought is the essence of where you are now."
+Cheers,
+Stephen Rothwell
 
---
-To unsubscribe, send a message with 'unsubscribe linux-aio' in
-the body to majordomo@kvack.org.  For more info on Linux AIO,
-see: http://www.kvack.org/aio/
-Don't email: <a href=mailto:"aart@kvack.org">aart@kvack.org</a>
+diff --cc arch/arm64/configs/defconfig
+index 7fddb2188f5c,eaf738a59927..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -230,7 -213,7 +230,8 @@@ CONFIG_QCOM_SMD_RPM=
+  CONFIG_ARCH_TEGRA_132_SOC=y
+  CONFIG_ARCH_TEGRA_210_SOC=y
+  CONFIG_HISILICON_IRQ_MBIGEN=y
+ +CONFIG_EXTCON_USB_GPIO=y
++ CONFIG_PHY_RCAR_GEN3_USB2=y
+  CONFIG_PHY_XGENE=y
+  CONFIG_EXT2_FS=y
+  CONFIG_EXT3_FS=y
