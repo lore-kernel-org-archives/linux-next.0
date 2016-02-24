@@ -1,66 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mac80211-next tree
-Date: Wed, 24 Feb 2016 11:59:27 +1100
-Message-ID: <20160224115927.3fa9161e@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Wed, 24 Feb 2016 13:38:43 +1100
+Message-ID: <20160224133843.59859796@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47375 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35986 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751370AbcBXA73 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2016 19:59:29 -0500
+	id S1751957AbcBXCip (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 23 Feb 2016 21:38:45 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Hi Johannes,
+Hi all,
 
-After merging the mac80211-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-In file included from include/linux/linkage.h:4:0,
-                 from include/linux/kernel.h:6,
-                 from net/rfkill/core.c:20:
-net/rfkill/core.c: In function 'rfkill_find_type':
-include/linux/compiler.h:501:38: error: call to '__compiletime_assert_647' declared with attribute error: BUILD_BUG_ON failed: !rfkill_types[NUM_RFKILL_TYPES - 1]
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:484:4: note: in definition of macro '__compiletime_assert'
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:501:2: note: in expansion of macro '_compiletime_assert'
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/bug.h:50:37: note: in expansion of macro 'compiletime_assert'
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/bug.h:74:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^
-net/rfkill/core.c:647:2: note: in expansion of macro 'BUILD_BUG_ON'
-  BUILD_BUG_ON(!rfkill_types[NUM_RFKILL_TYPES - 1]);
-  ^
+  arch/arm64/include/asm/kvm_host.h
 
-Caused by commit
+between commit:
 
-  1f86443b4ffe ("net: rfkill: add rfkill_find_type function")
+  a0bf9776cd0b ("arm64: kvm: deal with kernel symbols outside of linear mapping")
 
-Maybe the compiler version matters?  I am using gcc v5.2.0.
+from the arm64 tree and commit:
 
-Though, it seems to be that "!rfkill_types[NUM_RFKILL_TYPES - 1]" is
-not a constant expression since
+  67aaab4cff18 ("arm64: KVM: Move __cpu_init_stage2 after kvm_call_hyp")
 
-static const char *rfkill_types[NUM_RFKILL_TYPES]
+from the kvm-arm tree.
 
-does not stop "rfkill_types[NUM_RFKILL_TYPES - 1]" being modified at
-run time. I think that you might need:
+This was an expected conflict (see the kvm-arm tree commit message.
 
-static const char * const rfkill_types[NUM_RFKILL_TYPES]
-
-I have used the mac80211-next from next-20160223 for today.
+I fixed it up (as expected - see below) and can carry the fix as necessary
+(no action is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm64/include/asm/kvm_host.h
+index e3d67ff8798b,31fe7d6f32de..000000000000
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@@ -343,6 -344,11 +344,11 @@@ void kvm_arm_setup_debug(struct kvm_vcp
+  void kvm_arm_clear_debug(struct kvm_vcpu *vcpu);
+  void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu);
+  
+ -/* #define kvm_call_hyp(f, ...) __kvm_call_hyp(kvm_ksym_ref(f), ##__VA_ARGS__) */
+ +#define kvm_call_hyp(f, ...) __kvm_call_hyp(kvm_ksym_ref(f), ##__VA_ARGS__)
+  
++ static inline void __cpu_init_stage2(void)
++ {
++ 	kvm_call_hyp(__init_stage2_translation);
++ }
++ 
+  #endif /* __ARM64_KVM_HOST_H__ */
