@@ -1,59 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Wed, 24 Feb 2016 13:38:43 +1100
-Message-ID: <20160224133843.59859796@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160222 build: 5 failures 9 warnings (next-20160222)
+Date: Wed, 24 Feb 2016 12:28:42 +0900
+Message-ID: <20160224032842.GK18327@sirena.org.uk>
+References: <E1aXlz4-000486-Pb@optimist>
+ <20160222100832.GX18327@sirena.org.uk>
+ <56CAE5E6.7030707@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kT6E5F7CIExsifM+"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35986 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751957AbcBXCip (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 23 Feb 2016 21:38:45 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59674 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753605AbcBXD2v (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 23 Feb 2016 22:28:51 -0500
+Content-Disposition: inline
+In-Reply-To: <56CAE5E6.7030707@arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
 
-Hi all,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+--kT6E5F7CIExsifM+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  arch/arm64/include/asm/kvm_host.h
+On Mon, Feb 22, 2016 at 10:41:42AM +0000, Marc Zyngier wrote:
+> On 22/02/16 10:08, Mark Brown wrote:
+> > On Mon, Feb 22, 2016 at 08:36:46AM +0000, Build bot for Mark Brown wrote:
 
-between commit:
+> > Today's -next fails to build on arm64 due to:
 
-  a0bf9776cd0b ("arm64: kvm: deal with kernel symbols outside of linear mapping")
+> >> 	arm64-allnoconfig
+> >> ../arch/arm64/include/asm/kvm_host.h:338:2: error: implicit declaration of function 'kvm_call_hyp' [-Werror=implicit-function-declaration]
 
-from the arm64 tree and commit:
+> I'm about to push the following patch on top of the KVM tree:
 
-  67aaab4cff18 ("arm64: KVM: Move __cpu_init_stage2 after kvm_call_hyp")
+> This will create a new conflict, but will make the resolution 100% clear.
 
-from the kvm-arm tree.
+That didn't work out unfortunately, the error is still there today.
 
-This was an expected conflict (see the kvm-arm tree commit message.
+--kT6E5F7CIExsifM+
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I fixed it up (as expected - see below) and can carry the fix as necessary
-(no action is required).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--- 
-Cheers,
-Stephen Rothwell
+iQEcBAEBCAAGBQJWzSNpAAoJECTWi3JdVIfQIeEH+gMMySI7G6JjUMlmRCeDz8NE
+fI8CHfINC+pHhqW2NqiTLMZQ1Lu4Rtpti5IYzSnGvydMxVaFdVjS+YzmJzXc8cPj
+vsOQ96o+CzI5RLyWgHOodscPkJMN3Iegt/PI/J6vRcmwrtcUgzSlmy0Zf1bE5/gU
+e13WIhGyqvtj/csN7PwA1DbeWCY7+i9WRbBYhzb17BIQvQe2WfRC6CSnz0Bmbf/z
+zxqok++n0/nDx94qUjB+/ISB80R4njiy720Li0zUXVI7xNMpMsn2vc57ADPcCkhO
+sduEMvirqMx5/SgohsqE7ix3BSfUFWsI2Jsc1kgrqMiFMmzus5CgNGm6T7PDd7c=
+=7dY0
+-----END PGP SIGNATURE-----
 
-diff --cc arch/arm64/include/asm/kvm_host.h
-index e3d67ff8798b,31fe7d6f32de..000000000000
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@@ -343,6 -344,11 +344,11 @@@ void kvm_arm_setup_debug(struct kvm_vcp
-  void kvm_arm_clear_debug(struct kvm_vcpu *vcpu);
-  void kvm_arm_reset_debug_ptr(struct kvm_vcpu *vcpu);
-  
- -/* #define kvm_call_hyp(f, ...) __kvm_call_hyp(kvm_ksym_ref(f), ##__VA_ARGS__) */
- +#define kvm_call_hyp(f, ...) __kvm_call_hyp(kvm_ksym_ref(f), ##__VA_ARGS__)
-  
-+ static inline void __cpu_init_stage2(void)
-+ {
-+ 	kvm_call_hyp(__init_stage2_translation);
-+ }
-+ 
-  #endif /* __ARM64_KVM_HOST_H__ */
+--kT6E5F7CIExsifM+--
