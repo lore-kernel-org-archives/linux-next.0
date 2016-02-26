@@ -1,44 +1,26 @@
-From: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
-Date: Thu, 25 Feb 2016 23:41:50 -0800
-Message-ID: <56D001BE.2090209@roeck-us.net>
-References: <E1aYsmb-0006qb-76@optimist>
- <20160226030949.GL18327@sirena.org.uk>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: kernel panic on next-20160225
+Date: Fri, 26 Feb 2016 17:05:06 +0900
+Message-ID: <20160226080506.GB509@swordfish>
+References: <56CFF19E.4010003@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160226030949.GL18327-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56CFF19E.4010003@oracle.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: linux-next@vger.kernel.org, "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>, Devel FS Linux <linux-fsdevel@vger.kernel.org>, Linux Kernel mailing list <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+On (02/26/16 14:33), Junxiao Bi wrote:
+> Hi,
+> 
+> The following panic is triggered when run ocfs2 xattr test on
+> linux-next-20160225. Did anybody ever see this?
+> 
 
-On 02/25/2016 07:09 PM, Mark Brown wrote:
-> On Thu, Feb 25, 2016 at 10:04:29AM +0000, Build bot for Mark Brown wrote:
->
-> Today's -next fails to build an arm64 allmodconfig due to:
->
->> 	arm64-allmodconfig
->> ../drivers/watchdog/orion_wdt.c:109:2: error: implicit declaration of function 'atomic_io_modify' [-Werror=implicit-function-declaration]
->
-> also caused by b4f596b19624 (arm64: add mvebu architecture entry) which
-> enables MVBEU on arm64, the commit was present for a little while and
-> the error cropped up but didn't get reported due to other things masking
-> it.  atomic_io_modify() is only available on ARM, I'm unsure if this
-> needs a driver change or if the driver is just specific to older
-> hardware anyway.  The code is only used in the init path accessing what
-> look to be device specific registers so I'm not 100% clear why it
-> specifically needs to be an atomic modify.
->
-Thierry already submitted a patch yesterday to restrict the driver to only
-build on ARM. We can revisit if/when the driver is needed on ARM64.
+perhaps "fs: NULL deref in atime_needs_update"
+http://marc.info/?i=CACT4Y+ae=DQjrTtwSqm1PJ9rsnRAvKiBkRjBqaQH6f6W1dOh2Q@mail.gmail.com
 
-Guenter
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	-ss
