@@ -1,90 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Fri, 26 Feb 2016 12:53:34 +1100
-Message-ID: <20160226125334.5ada867e@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
+Date: Fri, 26 Feb 2016 12:04:11 +0900
+Message-ID: <20160226030411.GK18327@sirena.org.uk>
+References: <E1aYsmb-0006qb-76@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0ZUi7uLaY0HiAqfY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43369 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750789AbcBZBxh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2016 20:53:37 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37788 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750754AbcBZDEX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 25 Feb 2016 22:04:23 -0500
+Content-Disposition: inline
+In-Reply-To: <E1aYsmb-0006qb-76@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+--0ZUi7uLaY0HiAqfY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  drivers/firmware/efi/libstub/arm64-stub.c
+On Thu, Feb 25, 2016 at 10:04:29AM +0000, Build bot for Mark Brown wrote:
 
-between commit:
+Today's -next fails to build an arm64 allmodconfig due to:
 
-  2b5fe07a78a0 ("arm64: efi: invoke EFI_RNG_PROTOCOL to supply KASLR randomness")
+> 	arm64-allmodconfig
+> ../drivers/pci/host/pci-mvebu.c:755:12: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+> ../drivers/pci/host/pci-mvebu.c:855:31: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+> ../drivers/pci/host/pci-mvebu.c:904:16: error: storage size of 'hw' isn't known
+> ../drivers/pci/host/pci-mvebu.c:919:2: error: implicit declaration of function 'pci_common_init_dev' [-Werror=implicit-function-declaration]
+> ../drivers/pci/host/pci-mvebu.c:1282:3: error: implicit declaration of function 'pci_ioremap_io' [-Werror=implicit-function-declaration]
 
-from the arm64 tree and commit:
+caused by b4f596b19624 (arm64: add mvebu architecture entry) which
+enables MVBEU on arm64, the commit was present for a little while and
+the error cropped up but didn't get reported due to other things masking
+it.  This looks like the driver needs modernization and probably ought
+to have a !ARM64 dependency for now.
 
-  42b55734030c ("efi/arm64: Check for h/w support before booting a >4 KB granular kernel")
+--0ZUi7uLaY0HiAqfY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-from the tip tree.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
+iQEcBAEBCAAGBQJWz8CqAAoJECTWi3JdVIfQ+CYH/1aHU4Gr6IE3itZHpHOAUCgk
+sPIYGin6JKQcgN7BeoGctSk/nxFT+072eV05pOCU+S/6nKoD77w9LDX4fm7Q2BEV
+pPpb+d79ZmLInfWzpXkpHAsAOk1RQM8vHUXZb4tGKBO0hLyWSiFoP9PmyeuRF5Ra
+Z3dJ88RNdhz4iwBzLq+qxfIsaMkghQ5Jy+vBvSOnYotDaSkTp7TBI6owWgUxyCby
+rwjGQB4XdAowzf7TCIzfAFzfQEterAuRX3zKgHFMXAsXOqS8dnGPV24c9fmThWPf
+B2ohdwmTZFBxt9W9LeBCJHjMfQMLTWBRMBb0V9UH7VtfCmtIUSWW7tIcFFiVJsI=
+=+Xrs
+-----END PGP SIGNATURE-----
 
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/firmware/efi/libstub/arm64-stub.c
-index e0e6b74fef8f,047fc343665a..000000000000
---- a/drivers/firmware/efi/libstub/arm64-stub.c
-+++ b/drivers/firmware/efi/libstub/arm64-stub.c
-@@@ -12,18 -12,34 +12,38 @@@
-  #include <linux/efi.h>
-  #include <asm/efi.h>
-  #include <asm/sections.h>
-+ #include <asm/sysreg.h>
-  
- +#include "efistub.h"
- +
- +extern bool __nokaslr;
- +
-- efi_status_t __init handle_kernel_image(efi_system_table_t *sys_table_arg,
-- 					unsigned long *image_addr,
-- 					unsigned long *image_size,
-- 					unsigned long *reserve_addr,
-- 					unsigned long *reserve_size,
-- 					unsigned long dram_base,
-- 					efi_loaded_image_t *image)
-+ efi_status_t check_platform_features(efi_system_table_t *sys_table_arg)
-+ {
-+ 	u64 tg;
-+ 
-+ 	/* UEFI mandates support for 4 KB granularity, no need to check */
-+ 	if (IS_ENABLED(CONFIG_ARM64_4K_PAGES))
-+ 		return EFI_SUCCESS;
-+ 
-+ 	tg = (read_cpuid(ID_AA64MMFR0_EL1) >> ID_AA64MMFR0_TGRAN_SHIFT) & 0xf;
-+ 	if (tg != ID_AA64MMFR0_TGRAN_SUPPORTED) {
-+ 		if (IS_ENABLED(CONFIG_ARM64_64K_PAGES))
-+ 			pr_efi_err(sys_table_arg, "This 64 KB granular kernel is not supported by your CPU\n");
-+ 		else
-+ 			pr_efi_err(sys_table_arg, "This 16 KB granular kernel is not supported by your CPU\n");
-+ 		return EFI_UNSUPPORTED;
-+ 	}
-+ 	return EFI_SUCCESS;
-+ }
-+ 
-+ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
-+ 				 unsigned long *image_addr,
-+ 				 unsigned long *image_size,
-+ 				 unsigned long *reserve_addr,
-+ 				 unsigned long *reserve_size,
-+ 				 unsigned long dram_base,
-+ 				 efi_loaded_image_t *image)
-  {
-  	efi_status_t status;
-  	unsigned long kernel_size, kernel_memsize = 0;
+--0ZUi7uLaY0HiAqfY--
