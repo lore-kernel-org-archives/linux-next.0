@@ -1,57 +1,57 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
-Date: Fri, 26 Feb 2016 12:09:49 +0900
-Message-ID: <20160226030949.GL18327@sirena.org.uk>
-References: <E1aYsmb-0006qb-76@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Fri, 26 Feb 2016 16:07:12 +1100
+Message-ID: <20160226160712.754b765c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iG2Rx2SlPBajXMwl"
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <E1aYsmb-0006qb-76@optimist>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:49286 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750869AbcBZFHP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Feb 2016 00:07:15 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, Piotr Kwapulinski <kwapulinski.piotr@gmail.com>
 
+Hi Andrew,
 
---iG2Rx2SlPBajXMwl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-On Thu, Feb 25, 2016 at 10:04:29AM +0000, Build bot for Mark Brown wrote:
+  mm/mprotect.c
 
-Today's -next fails to build an arm64 allmodconfig due to:
+between commit:
 
-> 	arm64-allmodconfig
-> ../drivers/watchdog/orion_wdt.c:109:2: error: implicit declaration of function 'atomic_io_modify' [-Werror=implicit-function-declaration]
+  62b5f7d013fc ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
 
-also caused by b4f596b19624 (arm64: add mvebu architecture entry) which
-enables MVBEU on arm64, the commit was present for a little while and
-the error cropped up but didn't get reported due to other things masking
-it.  atomic_io_modify() is only available on ARM, I'm unsure if this
-needs a driver change or if the driver is just specific to older
-hardware anyway.  The code is only used in the init path accessing what
-look to be device specific registers so I'm not 100% clear why it
-specifically needs to be an atomic modify.
+from the tip tree and commit:
 
---iG2Rx2SlPBajXMwl
-Content-Type: application/pgp-signature; name="signature.asc"
+  aff3915ff831 ("mm/mprotect.c: don't imply PROT_EXEC on non-exec fs")
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+from the akpm-current tree.
 
-iQEcBAEBCAAGBQJWz8H7AAoJECTWi3JdVIfQuEYH/jbNLg6bhEtMonTk+yo5v1fr
-KyXsOk76FJvSl3qQU8SbGLfiDGl1p4Ezvqjll1psfAi/WU41UgEbR1JPhsRb12fa
-q5awXKEzWEfDzYXdp5LxE4x7AlYNb0WlMnLIqGzubyAEUPTwqiqhuOaYyj1HTFdg
-hv7TiI0YfHPMX3GR84SKljFW6bm2z7wK9GfJrY8FukWKoc2Vv8I5f22EvL0OqUPv
-XjtUHhj26cu/WlmWSBfntz8mHVfNn4rwyeRylXrUvP2JjtQwnpP23yY1dzh9VlW3
-+efA8YX3DVL6mMJmyD5MVnLldwgzLEz1cdSXg2FTszsnG2D7jNHh2AOT+Of3IE8=
-=Q5y2
------END PGP SIGNATURE-----
+I fixed it up (I think - see below) and can carry the fix as necessary
+(no action is required).
 
---iG2Rx2SlPBajXMwl--
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/mprotect.c
+index fa37c4cd973a,6ff5dfa65b33..000000000000
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@@ -414,7 -409,11 +411,11 @@@ SYSCALL_DEFINE3(mprotect, unsigned long
+  
+  		/* Here we know that vma->vm_start <= nstart < vma->vm_end. */
+  
++ 		/* Does the application expect PROT_READ to imply PROT_EXEC */
++ 		if (rier && (vma->vm_flags & VM_MAYEXEC))
++ 			prot |= PROT_EXEC;
++ 
+ -		newflags = calc_vm_prot_bits(prot);
+ +		newflags = calc_vm_prot_bits(prot, pkey);
+  		newflags |= (vma->vm_flags & ~(VM_READ | VM_WRITE | VM_EXEC));
+  
+  		/* newflags >> 4 shift VM_MAY% in place of VM_% */
