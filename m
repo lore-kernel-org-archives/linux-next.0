@@ -1,55 +1,254 @@
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
-Date: Fri, 26 Feb 2016 13:37:51 +0300
-Message-ID: <20160226103751.GA86588@black.fi.intel.com>
-References: <E1aYsmb-0006qb-76@optimist>
- <20160226094928.608520d4@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160226 build: 2 failures 44 warnings (next-20160226)
+Date: Fri, 26 Feb 2016 12:00:49 +0000
+Message-ID: <E1aZH4h-0007L2-Vb@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:26870 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751569AbcBZKh5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Feb 2016 05:37:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20160226094928.608520d4@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38884 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185AbcBZMGE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 26 Feb 2016 07:06:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sudeep Holla <sudeep.holla@arm.com>
-Cc: Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, Feb 26, 2016 at 09:49:28AM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 25 Feb 2016 10:04:29 +0000 Build bot for Mark Brown <broonie@kernel.org> wrote:
-> >
-> > 	arm64-allmodconfig
-> > ../arch/arm64/mm/hugetlbpage.c:127:42: error: macro "pte_alloc_map" passed 4 arguments, but takes just 3
-> > ../arch/arm64/mm/hugetlbpage.c:127:9: error: 'pte_alloc_map' undeclared (first use in this function)
-> 
-> Caused by an interaction between commit
-> 
->   b9c9252f278d ("mm: cleanup *pte_alloc* interfaces")
-> 
-> from the akpm-current tree and commit
-> 
->   66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
-> 
-> from Linus' tree (added before v4.5-rc1).
-> 
-> I will add a fix patch today that removes the second argument from the
-> new pte_alloc_map() call added by the latter commit.
+Tree/Branch: next-20160226
+Git describe: next-20160226
+Commit: 4639ea604f Add linux-next specific files for 20160226
 
-Sudeep Holla has posted patch for this.
+Build Time: 137 min 43 sec
 
-http://lkml.kernel.org/r/1456414385-13775-1-git-send-email-sudeep.holla@arm.com
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
-> 
-> Again, grep is your friend ... (yes, I realise that the akpm-current
-> tree patch was probably written against v4.4 (or some such)).
-> -- 
-> Cheers,
-> Stephen Rothwell
+Errors: 7
+Warnings: 44
+Section Mismatches: 0
 
--- 
- Kirill A. Shutemov
+Failed defconfigs:
+	arm64-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/pci/host/pci-mvebu.c:755:12: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+../drivers/pci/host/pci-mvebu.c:855:31: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+../drivers/pci/host/pci-mvebu.c:904:16: error: storage size of 'hw' isn't known
+../drivers/pci/host/pci-mvebu.c:919:2: error: implicit declaration of function 'pci_common_init_dev' [-Werror=implicit-function-declaration]
+../drivers/pci/host/pci-mvebu.c:1282:3: error: implicit declaration of function 'pci_ioremap_io' [-Werror=implicit-function-declaration]
+../drivers/watchdog/orion_wdt.c:109:2: error: implicit declaration of function 'atomic_io_modify' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     74 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+     10 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 7
+	  4 drivers/gpio/Kconfig:34:error: recursive dependency detected!
+	  1 ../drivers/watchdog/orion_wdt.c:109:2: error: implicit declaration of function 'atomic_io_modify' [-Werror=implicit-function-declaration]
+	  1 ../drivers/pci/host/pci-mvebu.c:919:2: error: implicit declaration of function 'pci_common_init_dev' [-Werror=implicit-function-declaration]
+	  1 ../drivers/pci/host/pci-mvebu.c:904:16: error: storage size of 'hw' isn't known
+	  1 ../drivers/pci/host/pci-mvebu.c:855:31: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+	  1 ../drivers/pci/host/pci-mvebu.c:755:12: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+	  1 ../drivers/pci/host/pci-mvebu.c:1282:3: error: implicit declaration of function 'pci_ioremap_io' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 44
+	  7 <stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	  6 ../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	  4 ../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	  2 ../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+	  1 ../mm/debug_page_ref.c:8:21: warning: passing argument 1 of 'trace_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:50:26: warning: passing argument 1 of 'trace_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:43:24: warning: passing argument 1 of 'trace_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:36:28: warning: passing argument 1 of 'trace_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:29:32: warning: passing argument 1 of 'trace_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:22:30: warning: passing argument 1 of 'trace_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:15:21: warning: passing argument 1 of 'trace_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/trace/events/page_ref.h:47:18: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../include/asm-generic/div64.h:224:22: warning: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
+	  1 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/pci/host/pci-mvebu.c:904:16: warning: unused variable 'hw' [-Wunused-variable]
+	  1 ../drivers/pci/host/pci-mvebu.c:841:40: warning: passing argument 1 of 'sys_to_pcie' from incompatible pointer type [-Wincompatible-pointer-types]
+	  1 ../drivers/pci/host/pci-mvebu.c:839:44: warning: 'struct pci_sys_data' declared inside parameter list
+	  1 ../drivers/pci/host/pci-mvebu.c:753:53: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../drivers/pci/host/pci-mvebu.c:753:53: warning: 'struct pci_sys_data' declared inside parameter list
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 6 errors, 74 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pci/host/pci-mvebu.c:755:12: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+	../drivers/pci/host/pci-mvebu.c:855:31: error: dereferencing pointer to incomplete type 'struct pci_sys_data'
+	../drivers/pci/host/pci-mvebu.c:904:16: error: storage size of 'hw' isn't known
+	../drivers/pci/host/pci-mvebu.c:919:2: error: implicit declaration of function 'pci_common_init_dev' [-Werror=implicit-function-declaration]
+	../drivers/pci/host/pci-mvebu.c:1282:3: error: implicit declaration of function 'pci_ioremap_io' [-Werror=implicit-function-declaration]
+	../drivers/watchdog/orion_wdt.c:109:2: error: implicit declaration of function 'atomic_io_modify' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/trace/perf.h:83:35: warning: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:8:21: warning: passing argument 1 of 'trace_page_ref_set' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:15:21: warning: passing argument 1 of 'trace_page_ref_mod' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:22:30: warning: passing argument 1 of 'trace_page_ref_mod_and_test' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:29:32: warning: passing argument 1 of 'trace_page_ref_mod_and_return' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:36:28: warning: passing argument 1 of 'trace_page_ref_mod_unless' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:43:24: warning: passing argument 1 of 'trace_page_ref_freeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../mm/debug_page_ref.c:50:26: warning: passing argument 1 of 'trace_page_ref_unfreeze' from incompatible pointer type [-Wincompatible-pointer-types]
+	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	../include/linux/kern_levels.h:4:18: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+	../drivers/pci/host/pci-mvebu.c:753:53: warning: 'struct pci_sys_data' declared inside parameter list
+	../drivers/pci/host/pci-mvebu.c:753:53: warning: its scope is only this definition or declaration, which is probably not what you want
+	../drivers/pci/host/pci-mvebu.c:839:44: warning: 'struct pci_sys_data' declared inside parameter list
+	../drivers/pci/host/pci-mvebu.c:841:40: warning: passing argument 1 of 'sys_to_pcie' from incompatible pointer type [-Wincompatible-pointer-types]
+	../drivers/pci/host/pci-mvebu.c:904:16: warning: unused variable 'hw' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 2 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	drivers/gpio/Kconfig:34:error: recursive dependency detected!
+	drivers/gpio/Kconfig:34:error: recursive dependency detected!
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/asm-generic/div64.h:224:22: warning: passing argument 1 of '__div64_32' from incompatible pointer type [-Wincompatible-pointer-types]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 2 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	drivers/gpio/Kconfig:34:error: recursive dependency detected!
+	drivers/gpio/Kconfig:34:error: recursive dependency detected!
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
