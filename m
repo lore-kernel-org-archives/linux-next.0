@@ -1,49 +1,55 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
-Date: Fri, 26 Feb 2016 09:21:59 +0100
-Message-ID: <20160226092159.2f7ef3c7@free-electrons.com>
+Date: Fri, 26 Feb 2016 13:37:51 +0300
+Message-ID: <20160226103751.GA86588@black.fi.intel.com>
 References: <E1aYsmb-0006qb-76@optimist>
-	<20160226030949.GL18327@sirena.org.uk>
-	<56D001BE.2090209@roeck-us.net>
+ <20160226094928.608520d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56D001BE.2090209-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:26870 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751569AbcBZKh5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 26 Feb 2016 05:37:57 -0500
+Content-Disposition: inline
+In-Reply-To: <20160226094928.608520d4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Sudeep Holla <sudeep.holla@arm.com>
+Cc: Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
 
-Guenter,
-
-On Thu, 25 Feb 2016 23:41:50 -0800, Guenter Roeck wrote:
-
-> > also caused by b4f596b19624 (arm64: add mvebu architecture entry) which
-> > enables MVBEU on arm64, the commit was present for a little while and
-> > the error cropped up but didn't get reported due to other things masking
-> > it.  atomic_io_modify() is only available on ARM, I'm unsure if this
-> > needs a driver change or if the driver is just specific to older
-> > hardware anyway.  The code is only used in the init path accessing what
-> > look to be device specific registers so I'm not 100% clear why it
-> > specifically needs to be an atomic modify.
+On Fri, Feb 26, 2016 at 09:49:28AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Thu, 25 Feb 2016 10:04:29 +0000 Build bot for Mark Brown <broonie@kernel.org> wrote:
 > >
-> Thierry already submitted a patch yesterday to restrict the driver to only
-> build on ARM. We can revisit if/when the driver is needed on ARM64.
+> > 	arm64-allmodconfig
+> > ../arch/arm64/mm/hugetlbpage.c:127:42: error: macro "pte_alloc_map" passed 4 arguments, but takes just 3
+> > ../arch/arm64/mm/hugetlbpage.c:127:9: error: 'pte_alloc_map' undeclared (first use in this function)
+> 
+> Caused by an interaction between commit
+> 
+>   b9c9252f278d ("mm: cleanup *pte_alloc* interfaces")
+> 
+> from the akpm-current tree and commit
+> 
+>   66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+> 
+> from Linus' tree (added before v4.5-rc1).
+> 
+> I will add a fix patch today that removes the second argument from the
+> new pte_alloc_map() call added by the latter commit.
 
-Ah, good, thanks. It isn't clear yet whether the driver will be needed
-on ARM64 for the Marvell platforms. For Armada 7K/8K, there is a SBSA
-compliant watchdog. For Armada 3700, I have only briefly looked, but it
-seems to be a different IP than the one used on the 32 bits SoCs.
+Sudeep Holla has posted patch for this.
 
-Thanks Thierry for fixing the issue!
+http://lkml.kernel.org/r/1456414385-13775-1-git-send-email-sudeep.holla@arm.com
 
-Thomas
+> 
+> Again, grep is your friend ... (yes, I realise that the akpm-current
+> tree patch was probably written against v4.4 (or some such)).
+> -- 
+> Cheers,
+> Stephen Rothwell
+
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
---
-To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ Kirill A. Shutemov
