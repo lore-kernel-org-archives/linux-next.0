@@ -1,45 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
-Date: Fri, 26 Feb 2016 09:49:28 +1100
-Message-ID: <20160226094928.608520d4@canb.auug.org.au>
-References: <E1aYsmb-0006qb-76@optimist>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 26 Feb 2016 11:13:14 +1100
+Message-ID: <20160226111314.5b94099c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48339 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750850AbcBYWta (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 25 Feb 2016 17:49:30 -0500
-In-Reply-To: <E1aYsmb-0006qb-76@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Build bot for Mark Brown <broonie@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@fb.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-On Thu, 25 Feb 2016 10:04:29 +0000 Build bot for Mark Brown <broonie@kernel.org> wrote:
->
-> 	arm64-allmodconfig
-> ../arch/arm64/mm/hugetlbpage.c:127:42: error: macro "pte_alloc_map" passed 4 arguments, but takes just 3
-> ../arch/arm64/mm/hugetlbpage.c:127:9: error: 'pte_alloc_map' undeclared (first use in this function)
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Caused by an interaction between commit
+  include/uapi/linux/bpf.h
 
-  b9c9252f278d ("mm: cleanup *pte_alloc* interfaces")
+between commit:
 
-from the akpm-current tree and commit
+  2da897e51d7f ("bpf: fix csum setting for bpf_set_tunnel_key")
 
-  66b3923a1a0f ("arm64: hugetlb: add support for PTE contiguous bit")
+from the net tree and commit:
 
-from Linus' tree (added before v4.5-rc1).
+  d5a3b1f69186 ("bpf: introduce BPF_MAP_TYPE_STACK_TRACE")
 
-I will add a fix patch today that removes the second argument from the
-new pte_alloc_map() call added by the latter commit.
+from the net-next tree.
 
-Again, grep is your friend ... (yes, I realise that the akpm-current
-tree patch was probably written against v4.4 (or some such)).
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/uapi/linux/bpf.h
+index 5df4881dea7b,6496f98d3d68..000000000000
+--- a/include/uapi/linux/bpf.h
++++ b/include/uapi/linux/bpf.h
+@@@ -292,9 -321,12 +321,15 @@@ enum bpf_func_id 
+  /* BPF_FUNC_skb_set_tunnel_key and BPF_FUNC_skb_get_tunnel_key flags. */
+  #define BPF_F_TUNINFO_IPV6		(1ULL << 0)
+  
+ +/* BPF_FUNC_skb_set_tunnel_key flags. */
+ +#define BPF_F_ZERO_CSUM_TX		(1ULL << 1)
+ +
++ /* BPF_FUNC_get_stackid flags. */
++ #define BPF_F_SKIP_FIELD_MASK		0xffULL
++ #define BPF_F_USER_STACK		(1ULL << 8)
++ #define BPF_F_FAST_STACK_CMP		(1ULL << 9)
++ #define BPF_F_REUSE_STACKID		(1ULL << 10)
++ 
+  /* user accessible mirror of in-kernel sk_buff.
+   * new fields can only be added to the end of this structure
+   */
