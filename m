@@ -1,39 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Sat, 27 Feb 2016 09:49:48 +1100
-Message-ID: <20160227094948.29d86317@canb.auug.org.au>
-References: <20160226164406.065a1ffc@canb.auug.org.au>
-	<56D0B11E.2050402@linux.intel.com>
-	<20160226133350.911293e1582f07134febdf48@linux-foundation.org>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] x86, pkeys: fix siginfo ABI breakage from new field
+Date: Sat, 27 Feb 2016 12:41:55 +0100
+Message-ID: <20160227114154.GA16200@gmail.com>
+References: <20160226173427.54A6949F@viggo.jf.intel.com>
+ <6C5C3B9B-CAD6-4010-9A3E-AFFF7E13FAE3@zytor.com>
+ <20160227091013.6e0606d1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43505 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754003AbcBZWtv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 26 Feb 2016 17:49:51 -0500
-In-Reply-To: <20160226133350.911293e1582f07134febdf48@linux-foundation.org>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36539 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756185AbcB0LmA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Feb 2016 06:42:00 -0500
+Content-Disposition: inline
+In-Reply-To: <20160227091013.6e0606d1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Helge Deller <deller@gmx.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave@sr71.net>, linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
 
-Hi Andrew,
 
-On Fri, 26 Feb 2016 13:33:50 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> I've moved add-compile-time-check-for-__arch_si_preamble_size.patch to
-> be after linux-next and have added this patch (as
-> add-compile-time-check-for-__arch_si_preamble_size-fix.patch) to be
-> folded into add-compile-time-check-for-__arch_si_preamble_size.patch
-> later on.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi,
 > 
-> So no -tip changes should be needed.
+> On Fri, 26 Feb 2016 09:44:00 -0800 "H. Peter Anvin" <hpa@zytor.com> wrote:
+> >
+> > 
+> > __u64 is okay, "unsigned long" is really messy in the presence of 32-on-64 bit ABIs...
+> 
+> Yeah, but unfortunately, any 64 bit scalar type here will change the
+> alignment of the enclosing unions on (some) 32 bit platforms and thus
+> break the ABI.
 
-But the fix should go into the tip tree since the tip tree patch is not
-correct even without this new build time check.
+Then a different solution has to be found.
 
--- 
-Cheers,
-Stephen Rothwell
+Thanks,
+
+	Ingo
