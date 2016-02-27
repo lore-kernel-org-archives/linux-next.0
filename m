@@ -1,40 +1,45 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] x86, pkeys: fix siginfo ABI breakage from new field
-Date: Sat, 27 Feb 2016 12:41:55 +0100
-Message-ID: <20160227114154.GA16200@gmail.com>
-References: <20160226173427.54A6949F@viggo.jf.intel.com>
- <6C5C3B9B-CAD6-4010-9A3E-AFFF7E13FAE3@zytor.com>
- <20160227091013.6e0606d1@canb.auug.org.au>
+From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: next-20160225 build: 2 failures 44 warnings (next-20160225)
+Date: Sat, 27 Feb 2016 15:40:28 +0100
+Message-ID: <20160227154028.60f2cfca@free-electrons.com>
+References: <E1aYsmb-0006qb-76@optimist>
+	<20160226030949.GL18327@sirena.org.uk>
+	<20160226091410.5dad4306@free-electrons.com>
+	<20160226121220.GO18327@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36539 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756185AbcB0LmA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 27 Feb 2016 06:42:00 -0500
-Content-Disposition: inline
-In-Reply-To: <20160227091013.6e0606d1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave@sr71.net>, linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160226121220.GO18327-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Gregory CLEMENT <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
+Mark,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 26 Feb 2016 21:12:20 +0900, Mark Brown wrote:
 
-> Hi,
+> > Another solution would be to provide an implementation of
+> > atomic_io_modify() on arm64, though that would need the ACK from the
+> > ARM64 maintainers.
 > 
-> On Fri, 26 Feb 2016 09:44:00 -0800 "H. Peter Anvin" <hpa@zytor.com> wrote:
-> >
-> > 
-> > __u64 is okay, "unsigned long" is really messy in the presence of 32-on-64 bit ABIs...
-> 
-> Yeah, but unfortunately, any 64 bit scalar type here will change the
-> alignment of the enclosing unions on (some) 32 bit platforms and thus
-> break the ABI.
+> It also sounds like a more modern solution might be to use syscon for
+> the shared register, but perhaps I'm missing something about how the IP
+> is set up so ICBW.
 
-Then a different solution has to be found.
+I think back when we implemented this, syscon/simple-mfd was
+not available or widely used - I don't really remember. We could indeed
+try to switch to a syscon based solution.
 
 Thanks,
 
-	Ingo
+Thomas
+-- 
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
