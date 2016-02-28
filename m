@@ -1,84 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH v2] signals, pkeys: make si_pkey 32 bits
-Date: Sun, 28 Feb 2016 10:40:19 +1100
-Message-ID: <20160228104019.429defad@canb.auug.org.au>
-References: <20160226173427.54A6949F@viggo.jf.intel.com>
-	<6C5C3B9B-CAD6-4010-9A3E-AFFF7E13FAE3@zytor.com>
-	<20160227091013.6e0606d1@canb.auug.org.au>
-	<20160227114154.GA16200@gmail.com>
-	<56D1F61C.5050308@sr71.net>
-	<9E8119F8-1F37-4084-AE31-34CA6DE8C15E@zytor.com>
-	<20160228102629.0ef4ef4f@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with the arm-soc tree
+Date: Mon, 29 Feb 2016 10:51:57 +1100
+Message-ID: <20160229105157.003bda53@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51098 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45683 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S2992621AbcB0XkW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 27 Feb 2016 18:40:22 -0500
-In-Reply-To: <20160228102629.0ef4ef4f@canb.auug.org.au>
+	id S1751528AbcB1Xv7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Feb 2016 18:51:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>, tglx@linutronix.de, peterz@infradead.org
-Cc: Dave Hansen <dave@sr71.net>, linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, akpm@linux-foundation.org, mingo@elte.hu, linux-next@vger.kernel.org, deller@gmx.de
+To: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jayachandran C <jchandra@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Will Deacon <will.deacon@arm.com>
 
-In order to prevent a change of alignment of the _sifields union in the
-siginfo structure on (some) 32 bit platforms and an ABI breakage, we
-change the type of _pkey to unsigned int.  If more bits are needed in
-the future, a second unsigned int could be added.
+Hi Catalin,
 
-Fixes: cd0ea35ff551 ("signals, pkeys: Notify userspace about protection key faults")
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/ia64/include/uapi/asm/siginfo.h | 2 +-
- arch/mips/include/uapi/asm/siginfo.h | 2 +-
- include/uapi/asm-generic/siginfo.h   | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-diff --git a/arch/ia64/include/uapi/asm/siginfo.h b/arch/ia64/include/uapi/asm/siginfo.h
-index 0151cfab929d..19e7db0c9453 100644
---- a/arch/ia64/include/uapi/asm/siginfo.h
-+++ b/arch/ia64/include/uapi/asm/siginfo.h
-@@ -70,7 +70,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				unsigned int _pkey;
- 			};
- 		} _sigfault;
- 
-diff --git a/arch/mips/include/uapi/asm/siginfo.h b/arch/mips/include/uapi/asm/siginfo.h
-index 6f4edf0d794c..3cc14f4a5936 100644
---- a/arch/mips/include/uapi/asm/siginfo.h
-+++ b/arch/mips/include/uapi/asm/siginfo.h
-@@ -93,7 +93,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				unsigned int _pkey;
- 			};
- 		} _sigfault;
- 
-diff --git a/include/uapi/asm-generic/siginfo.h b/include/uapi/asm-generic/siginfo.h
-index 90384d55225b..f4459dc3d31b 100644
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@ -98,7 +98,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				unsigned int _pkey;
- 			};
- 		} _sigfault;
- 
--- 
-2.7.0
+  arch/arm64/include/asm/cputype.h
+
+between commit:
+
+  9eb8a2cdf65c ("arm64: cputype info for Broadcom Vulcan")
+
+from the arm-soc tree and commit:
+
+  d5370f754875 ("arm64: prefetch: add alternative pattern for CPUs without a prefetcher")
+
+from the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm64/include/asm/cputype.h
+index 3dcecdf3d6ee,b3a83da152a7..000000000000
+--- a/arch/arm64/include/asm/cputype.h
++++ b/arch/arm64/include/asm/cputype.h
+@@@ -76,10 -80,20 +81,22 @@@
+  
+  #define CAVIUM_CPU_PART_THUNDERX	0x0A1
+  
+ +#define BRCM_CPU_PART_VULCAN		0x516
+ +
++ #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
++ #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
++ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
++ 
+  #ifndef __ASSEMBLY__
+  
++ #include <asm/sysreg.h>
++ 
++ #define read_cpuid(reg) ({						\
++ 	u64 __val;							\
++ 	asm("mrs_s	%0, " __stringify(reg) : "=r" (__val));		\
++ 	__val;								\
++ })
++ 
+  /*
+   * The CPU ID never changes at run time, so we might as well tell the
+   * compiler that it's constant.  Use this function to read the CPU ID
