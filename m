@@ -1,36 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the
- wireless-drivers tree
-Date: Mon, 29 Feb 2016 12:56:38 +1100
-Message-ID: <20160229125638.5e6f43b3@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 29 Feb 2016 13:59:46 +1100
+Message-ID: <20160229135946.3d183dd8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42629 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752578AbcB2B4l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Feb 2016 20:56:41 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matti Gottlieb <matti.gottlieb@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Sara Sharon <sara.sharon@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Prosyak <vitaly.prosyak@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Mario Kleiner <mario.kleiner.de@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+  drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
 
 between commit:
 
-  905e36ae172c ("iwlwifi: mvm: Fix paging memory leak")
+  e1d09dc0ccc6 ("drm/amdgpu: Don't hang in amdgpu_flip_work_func on disabled crtc.")
 
-from the wireless-drivers tree and commit:
+from Linus' tree and commit:
 
-  43413a975d06 ("iwlwifi: mvm: support rss queues configuration command")
+  6bd9e877ce53 ("drm/amdgpu: Move MMIO flip out of spinlocked region")
 
-from the net-next tree.
+from the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -39,34 +34,51 @@ is required).
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-index 0ccc697fef76,070e2af05ca2..000000000000
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@@ -107,7 -108,25 +108,25 @@@ static int iwl_send_tx_ant_cfg(struct i
-  				    sizeof(tx_ant_cmd), &tx_ant_cmd);
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index 8297bc319369,2cb53c24dec0..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@@ -72,13 -70,16 +70,16 @@@ static void amdgpu_flip_work_func(struc
+  
+  	struct drm_crtc *crtc = &amdgpuCrtc->base;
+  	unsigned long flags;
+ -	unsigned i;
+ -	int vpos, hpos, stat, min_udelay;
+ +	unsigned i, repcnt = 4;
+ +	int vpos, hpos, stat, min_udelay = 0;
+  	struct drm_vblank_crtc *vblank = &crtc->dev->vblank[work->crtc_id];
+  
+- 	amdgpu_flip_wait_fence(adev, &work->excl);
++ 	if (amdgpu_flip_handle_fence(work, &work->excl))
++ 		return;
++ 
+  	for (i = 0; i < work->shared_count; ++i)
+- 		amdgpu_flip_wait_fence(adev, &work->shared[i]);
++ 		if (amdgpu_flip_handle_fence(work, &work->shared[i]))
++ 			return;
+  
+  	/* We borrow the event spin lock for protecting flip_status */
+  	spin_lock_irqsave(&crtc->dev->event_lock, flags);
+@@@ -123,19 -119,12 +124,19 @@@
+  		spin_lock_irqsave(&crtc->dev->event_lock, flags);
+  	};
+  
+ +	if (!repcnt)
+ +		DRM_DEBUG_DRIVER("Delay problem on crtc %d: min_udelay %d, "
+ +				 "framedur %d, linedur %d, stat %d, vpos %d, "
+ +				 "hpos %d\n", work->crtc_id, min_udelay,
+ +				 vblank->framedur_ns / 1000,
+ +				 vblank->linedur_ns / 1000, stat, vpos, hpos);
+ +
+- 	/* do the flip (mmio) */
+- 	adev->mode_info.funcs->page_flip(adev, work->crtc_id, work->base);
+  	/* set the flip status */
+  	amdgpuCrtc->pflip_status = AMDGPU_FLIP_SUBMITTED;
+- 
+  	spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
++ 
++ 	/* Do the flip (mmio) */
++ 	adev->mode_info.funcs->page_flip(adev, work->crtc_id, work->base);
   }
   
-+ static int iwl_send_rss_cfg_cmd(struct iwl_mvm *mvm)
-+ {
-+ 	int i;
-+ 	struct iwl_rss_config_cmd cmd = {
-+ 		.flags = cpu_to_le32(IWL_RSS_ENABLE),
-+ 		.hash_mask = IWL_RSS_HASH_TYPE_IPV4_TCP |
-+ 			     IWL_RSS_HASH_TYPE_IPV4_PAYLOAD |
-+ 			     IWL_RSS_HASH_TYPE_IPV6_TCP |
-+ 			     IWL_RSS_HASH_TYPE_IPV6_PAYLOAD,
-+ 	};
-+ 
-+ 	for (i = 0; i < ARRAY_SIZE(cmd.indirection_table); i++)
-+ 		cmd.indirection_table[i] = i % mvm->trans->num_rx_queues;
-+ 	memcpy(cmd.secret_key, mvm->secret_key, ARRAY_SIZE(cmd.secret_key));
-+ 
-+ 	return iwl_mvm_send_cmd_pdu(mvm, RSS_CONFIG_CMD, 0, sizeof(cmd), &cmd);
-+ }
-+ 
- -static void iwl_free_fw_paging(struct iwl_mvm *mvm)
- +void iwl_free_fw_paging(struct iwl_mvm *mvm)
-  {
-  	int i;
-  
+  /*
