@@ -1,40 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the target-merge tree with the net-next
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: linux-next: manual merge of the iommu tree with the samsung-krzk
  tree
-Date: Mon, 29 Feb 2016 17:39:11 +1100
-Message-ID: <20160229173911.4fabe3f8@canb.auug.org.au>
+Date: Mon, 29 Feb 2016 08:56:36 +0100
+Message-ID: <20160229075636.GI22747@8bytes.org>
+References: <20160229152055.3af83d1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52742 "EHLO ozlabs.org"
+Received: from 8bytes.org ([81.169.241.247]:53044 "EHLO theia.8bytes.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750845AbcB2GjP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Feb 2016 01:39:15 -0500
+	id S1751978AbcB2H4n (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Feb 2016 02:56:43 -0500
+Content-Disposition: inline
+In-Reply-To: <20160229152055.3af83d1a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hariprasad Shenai <hariprasad@chelsio.com>, Varun Prakash <varun@chelsio.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Yong Wu <yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>
 
-Hi Nicholas,
+Hi Stephen,
 
-Today's linux-next merge of the target-merge tree got a conflict in:
+On Mon, Feb 29, 2016 at 03:20:55PM +1100, Stephen Rothwell wrote:
+> Hi Joerg,
+> 
+> Today's linux-next merge of the iommu tree got a conflict in:
+> 
+>   drivers/memory/Kconfig
+> 
+> between commit:
+> 
+>   78fbb9361ca3 ("memory: Add support for Exynos SROM driver")
+> 
+> from the samsung-krzk tree and commit:
+> 
+>   cc8bbe1a8312 ("memory: mediatek: Add SMI driver")
+> 
+> from the iommu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
 
-  drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h
+Thanks for fixing this (and the other conflict before) up.
 
-between commit:
 
-  ba9cee6aa67d ("cxgb4/iw_cxgb4: TOS support")
 
-from the net-next tree and commit:
-
-  c973e2a3ff1b ("cxgb4: add definitions for iSCSI target ULD")
-
-from the target-merge tree.
-
-I fixed it up (the latter was a superset of the former) and can carry
-the fix as necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell
+	Joerg
