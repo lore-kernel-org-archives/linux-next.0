@@ -1,40 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the mfd tree
-Date: Mon, 29 Feb 2016 14:51:22 +1100
-Message-ID: <20160229145122.71636c6b@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree with the arm-soc tree
+Date: Mon, 29 Feb 2016 15:16:24 +1100
+Message-ID: <20160229151624.338cef0e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52024 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50361 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754359AbcB2Dv2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Feb 2016 22:51:28 -0500
+	id S1754859AbcB2EQ1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Feb 2016 23:16:27 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Joerg Roedel <joro@8bytes.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yong Wu <yong.wu@mediatek.com>, Andrew-CT Chen <andrew-ct.chen@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>
 
-Hi Lee,
+Hi Joerg,
 
-After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the iommu tree got a conflict in:
 
-drivers/regulator/tps65086-regulator.c:194:9: error: implicit declaration of function 'regmap_write_bits' [-Werror=implicit-function-declaration]
-   ret = regmap_write_bits(config->regmap,
-         ^
+  arch/arm64/boot/dts/mediatek/mt8173.dtsi
 
-Caused by commit
+between commit:
 
-  23b92e4cf5fd ("regmap: remove regmap_write_bits()")
+  93e9f5ee1e35 ("dts: arm64: Add EFUSE device node")
 
-from the sound-asoc & regmap trees.
+from the arm-soc tree and commit:
 
-I am not sure why this is suddenly exposed by the mfd tree, but grep
-would have been useful when the regmap tree patch was applied.
+  5ff6b3a6d391 ("dts: mt8173: Add iommu/smi nodes for mt8173")
 
-I have reverted that regmap commit for today.
+from the iommu tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index f4bd3c9182ad,804881181fcc..000000000000
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@@ -277,11 -278,17 +278,22 @@@
+  			reg = <0 0x10200620 0 0x20>;
+  		};
+  
++ 		iommu: iommu@10205000 {
++ 			compatible = "mediatek,mt8173-m4u";
++ 			reg = <0 0x10205000 0 0x1000>;
++ 			interrupts = <GIC_SPI 139 IRQ_TYPE_LEVEL_LOW>;
++ 			clocks = <&infracfg CLK_INFRA_M4U>;
++ 			clock-names = "bclk";
++ 			mediatek,larbs = <&larb0 &larb1 &larb2
++ 					  &larb3 &larb4 &larb5>;
++ 			#iommu-cells = <1>;
++ 		};
++ 
+ +		efuse: efuse@10206000 {
+ +			compatible = "mediatek,mt8173-efuse";
+ +			reg = <0 0x10206000 0 0x1000>;
+ +		};
+ +
+  		apmixedsys: clock-controller@10209000 {
+  			compatible = "mediatek,mt8173-apmixedsys";
+  			reg = <0 0x10209000 0 0x1000>;
