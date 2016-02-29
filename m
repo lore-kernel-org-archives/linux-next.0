@@ -1,100 +1,71 @@
-From: Dave Hansen <dave@sr71.net>
-Subject: [PATCH] [v2] x86, pkeys: fix siginfo ABI breakage from new field
-Date: Mon, 29 Feb 2016 11:49:31 -0800
-Message-ID: <20160229194931.7600FB60@viggo.jf.intel.com>
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: linux-next: Unable to write into a vma if it has been mapped
+ without PROT_READ
+Date: Mon, 29 Feb 2016 23:15:59 +0300
+Message-ID: <20160229201559.GB13188@node.shutemov.name>
+References: <CANaxB-wA_3qh78NUBc2ODqYHyXJLK0O6FRCdWizXBRPpWoBaGQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:37830 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751411AbcB2Ttp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Feb 2016 14:49:45 -0500
+Received: from mail-wm0-f54.google.com ([74.125.82.54]:37835 "EHLO
+	mail-wm0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753634AbcB2UQD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 29 Feb 2016 15:16:03 -0500
+Received: by mail-wm0-f54.google.com with SMTP id p65so5499559wmp.0
+        for <linux-next@vger.kernel.org>; Mon, 29 Feb 2016 12:16:01 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CANaxB-wA_3qh78NUBc2ODqYHyXJLK0O6FRCdWizXBRPpWoBaGQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave@sr71.net>, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
+To: Andrey Wagin <avagin@gmail.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-mm@kvack.org
 
+On Mon, Feb 29, 2016 at 11:11:37AM -0800, Andrey Wagin wrote:
+> Hello Everyone,
+> 
+> I found that now we can't write into a vma if it was mapped without PROT_READ:
+> 
+> mmap(NULL, 4096, PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2ac7eb8000
+> --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_ACCERR, si_addr=0x7f2ac7eb8000} ---
+> +++ killed by SIGSEGV (core dumped) +++
+> Segmentation fault
+> [root@linux-next-test ~]# cat test.c
+> #include <sys/mman.h>
+> #include <stdlib.h>
+> 
+> int main()
+> {
+>     int *p;
+> 
+>     p = mmap(NULL, 4096, PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>     p[0] = 1;
+> 
+>     return 0;
+> }
+> 
+> [root@linux-next-test ~]# uname -a
+> Linux linux-next-test 4.5.0-rc6-next-20160229 #1 SMP Mon Feb 29
+> 17:38:25 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+> 
+> This issue appeared in 4.5.0-rc5-next-20160226.
+> 
+> https://ci.openvz.org/job/CRIU-linux-next/152/console
 
-This responds to the feedback from Ingo that we should be using
-explicitly-sized types.
+Looks like the regression is caused by change in access_error() by commit
+62b5f7d013fc ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+as per next-20160229.
 
---
+		/*
+		 * Assume all accesses require either read or execute
+		 * permissions.  This is not an instruction access, so
+		 * it requires read permissions.
+		 */
+		if (!(vma->vm_flags & VM_READ))
+			return 1;
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+The assumption is false, taking this testcase into account.
 
-Stephen Rothwell reported:
+Dave?
 
-	http://lkml.kernel.org/r/20160226164406.065a1ffc@canb.auug.org.au
-
-that the Memory Protection Keys patches from the tip tree broke
-a build-time check on an ARM build because they changed the ABI
-of siginfo.
-
-A u64 was used for the protection key field in siginfo.  When the
-containing union was aligned, this u64 unioned nicely with the
-two 'void *'s in _addr_bnd.  But, on 32-bit, if the union was
-unaligned, the u64 might grow the size of the union, breaking the
-ABI for subsequent fields.
-
-To fix this, we replace the u64 with an 'unsigned long'.  The long
-is guaranteed to union well with the pointers from _addr_bnd.  It
-is also plenty large enough to store the 16-bit pkey we have today
-on x86.  This also has the advantage that it allows existing 64-bit
-userspace to keep working without modification.
-
-I also shouldn't have been using a u64 in a userspace API to begin
-with.
-
-Fixes: cd0ea35ff551 ("signals, pkeys: Notify userspace about protection key faults")
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@elte.hu>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: Helge Deller <deller@gmx.de>
----
-
- b/arch/ia64/include/uapi/asm/siginfo.h |    2 +-
- b/arch/mips/include/uapi/asm/siginfo.h |    2 +-
- b/include/uapi/asm-generic/siginfo.h   |    2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff -puN include/uapi/asm-generic/siginfo.h~pkeys-101-fix-siginfo include/uapi/asm-generic/siginfo.h
---- a/include/uapi/asm-generic/siginfo.h~pkeys-101-fix-siginfo	2016-02-29 09:22:45.327228965 -0800
-+++ b/include/uapi/asm-generic/siginfo.h	2016-02-29 09:22:45.333229241 -0800
-@@ -98,7 +98,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				__u32 _pkey;
- 			};
- 		} _sigfault;
- 
-diff -puN arch/mips/include/uapi/asm/siginfo.h~pkeys-101-fix-siginfo arch/mips/include/uapi/asm/siginfo.h
---- a/arch/mips/include/uapi/asm/siginfo.h~pkeys-101-fix-siginfo	2016-02-29 09:22:45.330229103 -0800
-+++ b/arch/mips/include/uapi/asm/siginfo.h	2016-02-29 09:22:45.333229241 -0800
-@@ -93,7 +93,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				__u32 _pkey;
- 			};
- 		} _sigfault;
- 
-diff -puN arch/ia64/include/uapi/asm/siginfo.h~pkeys-101-fix-siginfo arch/ia64/include/uapi/asm/siginfo.h
---- a/arch/ia64/include/uapi/asm/siginfo.h~pkeys-101-fix-siginfo	2016-02-29 09:22:45.331229149 -0800
-+++ b/arch/ia64/include/uapi/asm/siginfo.h	2016-02-29 09:22:45.333229241 -0800
-@@ -70,7 +70,7 @@ typedef struct siginfo {
- 					void __user *_upper;
- 				} _addr_bnd;
- 				/* used when si_code=SEGV_PKUERR */
--				u64 _pkey;
-+				__u32 _pkey;
- 			};
- 		} _sigfault;
- 
-_
+-- 
+ Kirill A. Shutemov
