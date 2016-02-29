@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with the arm-soc tree
-Date: Mon, 29 Feb 2016 10:51:57 +1100
-Message-ID: <20160229105157.003bda53@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the
+ wireless-drivers tree
+Date: Mon, 29 Feb 2016 12:56:38 +1100
+Message-ID: <20160229125638.5e6f43b3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45683 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42629 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751528AbcB1Xv7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 28 Feb 2016 18:51:59 -0500
+	id S1752578AbcB2B4l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 28 Feb 2016 20:56:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jayachandran C <jchandra@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Will Deacon <will.deacon@arm.com>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Kalle Valo <kvalo@codeaurora.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matti Gottlieb <matti.gottlieb@intel.com>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Sara Sharon <sara.sharon@intel.com>
 
-Hi Catalin,
+Hi all,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  arch/arm64/include/asm/cputype.h
+  drivers/net/wireless/intel/iwlwifi/mvm/fw.c
 
 between commit:
 
-  9eb8a2cdf65c ("arm64: cputype info for Broadcom Vulcan")
+  905e36ae172c ("iwlwifi: mvm: Fix paging memory leak")
 
-from the arm-soc tree and commit:
+from the wireless-drivers tree and commit:
 
-  d5370f754875 ("arm64: prefetch: add alternative pattern for CPUs without a prefetcher")
+  43413a975d06 ("iwlwifi: mvm: support rss queues configuration command")
 
-from the arm64 tree.
+from the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,30 +39,34 @@ is required).
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/include/asm/cputype.h
-index 3dcecdf3d6ee,b3a83da152a7..000000000000
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@@ -76,10 -80,20 +81,22 @@@
+diff --cc drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+index 0ccc697fef76,070e2af05ca2..000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@@ -107,7 -108,25 +108,25 @@@ static int iwl_send_tx_ant_cfg(struct i
+  				    sizeof(tx_ant_cmd), &tx_ant_cmd);
+  }
   
-  #define CAVIUM_CPU_PART_THUNDERX	0x0A1
++ static int iwl_send_rss_cfg_cmd(struct iwl_mvm *mvm)
++ {
++ 	int i;
++ 	struct iwl_rss_config_cmd cmd = {
++ 		.flags = cpu_to_le32(IWL_RSS_ENABLE),
++ 		.hash_mask = IWL_RSS_HASH_TYPE_IPV4_TCP |
++ 			     IWL_RSS_HASH_TYPE_IPV4_PAYLOAD |
++ 			     IWL_RSS_HASH_TYPE_IPV6_TCP |
++ 			     IWL_RSS_HASH_TYPE_IPV6_PAYLOAD,
++ 	};
++ 
++ 	for (i = 0; i < ARRAY_SIZE(cmd.indirection_table); i++)
++ 		cmd.indirection_table[i] = i % mvm->trans->num_rx_queues;
++ 	memcpy(cmd.secret_key, mvm->secret_key, ARRAY_SIZE(cmd.secret_key));
++ 
++ 	return iwl_mvm_send_cmd_pdu(mvm, RSS_CONFIG_CMD, 0, sizeof(cmd), &cmd);
++ }
++ 
+ -static void iwl_free_fw_paging(struct iwl_mvm *mvm)
+ +void iwl_free_fw_paging(struct iwl_mvm *mvm)
+  {
+  	int i;
   
- +#define BRCM_CPU_PART_VULCAN		0x516
- +
-+ #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
-+ #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
-+ #define MIDR_THUNDERX	MIDR_CPU_MODEL(ARM_CPU_IMP_CAVIUM, CAVIUM_CPU_PART_THUNDERX)
-+ 
-  #ifndef __ASSEMBLY__
-  
-+ #include <asm/sysreg.h>
-+ 
-+ #define read_cpuid(reg) ({						\
-+ 	u64 __val;							\
-+ 	asm("mrs_s	%0, " __stringify(reg) : "=r" (__val));		\
-+ 	__val;								\
-+ })
-+ 
-  /*
-   * The CPU ID never changes at run time, so we might as well tell the
-   * compiler that it's constant.  Use this function to read the CPU ID
