@@ -1,69 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Tue, 1 Mar 2016 11:25:44 +1100
-Message-ID: <20160301112544.02294d99@canb.auug.org.au>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: linux-next: Unable to write into a vma if it has been mapped
+ without PROT_READ
+Date: Mon, 29 Feb 2016 17:00:55 -0800
+Message-ID: <56D4E9C7.4020108@linux.intel.com>
+References: <CANaxB-wA_3qh78NUBc2ODqYHyXJLK0O6FRCdWizXBRPpWoBaGQ@mail.gmail.com>
+ <20160229201559.GB13188@node.shutemov.name>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36794 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750832AbcCAAZs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Feb 2016 19:25:48 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagig@mellanox.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20160229201559.GB13188@node.shutemov.name>
+Sender: owner-linux-mm@kvack.org
+To: "Kirill A. Shutemov" <kirill@shutemov.name>, Andrey Wagin <avagin@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Jens,
+On 02/29/2016 12:15 PM, Kirill A. Shutemov wrote:
+> On Mon, Feb 29, 2016 at 11:11:37AM -0800, Andrey Wagin wrote:
+>> > Hello Everyone,
+>> > 
+>> > I found that now we can't write into a vma if it was mapped without PROT_READ:
+>> > 
+>> > mmap(NULL, 4096, PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f2ac7eb8000
+>> > --- SIGSEGV {si_signo=SIGSEGV, si_code=SEGV_ACCERR, si_addr=0x7f2ac7eb8000} ---
+>> > +++ killed by SIGSEGV (core dumped) +++
+>> > Segmentation fault
+>> > [root@linux-next-test ~]# cat test.c
+>> > #include <sys/mman.h>
+>> > #include <stdlib.h>
+>> > 
+>> > int main()
+>> > {
+>> >     int *p;
+>> > 
+>> >     p = mmap(NULL, 4096, PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+>> >     p[0] = 1;
+>> > 
+>> >     return 0;
+>> > }
+>> > 
+>> > [root@linux-next-test ~]# uname -a
+>> > Linux linux-next-test 4.5.0-rc6-next-20160229 #1 SMP Mon Feb 29
+>> > 17:38:25 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+>> > 
+>> > This issue appeared in 4.5.0-rc5-next-20160226.
+>> > 
+>> > https://ci.openvz.org/job/CRIU-linux-next/152/console
+> Looks like the regression is caused by change in access_error() by commit
+> 62b5f7d013fc ("mm/core, x86/mm/pkeys: Add execute-only protection keys support")
+> as per next-20160229.
+> 
+> 		/*
+> 		 * Assume all accesses require either read or execute
+> 		 * permissions.  This is not an instruction access, so
+> 		 * it requires read permissions.
+> 		 */
+> 		if (!(vma->vm_flags & VM_READ))
+> 			return 1;
+> 
+> The assumption is false, taking this testcase into account.
 
-Today's linux-next merge of the block tree got a conflict in:
+I'm taking a look at it.  I might just be able to remove that check, but
+I need to do a little due diligence with the execute-only support and
+make sure I'm not breaking it.
 
-  drivers/nvme/host/pci.c
+Thanks for reporting this, btw!
 
-between commits:
-
-  7ba7735d039c ("NVMe: Poll device while still active during remove")
-  f8e68a7c9af5 ("NVMe: Rate limit nvme IO warnings")
-
-from Linus' tree and commit:
-
-  1b3c47c182aa ("nvme: Log the ctrl device name instead of the underlying pci device name")
-  9396dec916c0 ("nvme: use a work item to submit async event requests")
-  2d55cd5f511d ("nvme: replace the kthread with a per-device watchdog timer")
-
-from the block tree.
-
-I fixed it up (maybe - see below) and can carry the fix as necessary
-(no action is required).
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/nvme/host/pci.c
-index a128672472ec,d47b08783110..000000000000
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@@ -1004,7 -992,7 +997,7 @@@ static void nvme_cancel_queue_ios(struc
-  	if (!blk_mq_request_started(req))
-  		return;
-  
-- 	dev_dbg_ratelimited(nvmeq->q_dmadev,
- -	dev_warn(nvmeq->dev->ctrl.device,
-++	dev_dbg_ratelimited(nvmeq->dev->ctrl.device,
-  		 "Cancelling I/O %d QID %d\n", req->tag, nvmeq->qid);
-  
-  	status = NVME_SC_ABORT_REQ;
-@@@ -2116,7 -2042,11 +2047,10 @@@ static void nvme_remove(struct pci_dev 
-  {
-  	struct nvme_dev *dev = pci_get_drvdata(pdev);
-  
-+ 	del_timer_sync(&dev->watchdog_timer);
-+ 
-  	pci_set_drvdata(pdev, NULL);
-+ 	flush_work(&dev->async_work);
- -	flush_work(&dev->reset_work);
-  	flush_work(&dev->scan_work);
-  	nvme_remove_namespaces(&dev->ctrl);
-  	nvme_uninit_ctrl(&dev->ctrl);
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
