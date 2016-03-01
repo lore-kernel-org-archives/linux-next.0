@@ -1,34 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the target-merge tree with the
- net-next tree
-Date: Tue, 1 Mar 2016 16:52:41 +1100
-Message-ID: <20160301165241.16dce886@canb.auug.org.au>
-References: <20160229173911.4fabe3f8@canb.auug.org.au>
-	<1456810773.19657.197.camel@haakon3.risingtidesystems.com>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 1 Mar 2016 08:07:50 +0100
+Message-ID: <20160301070750.GA6636@gmail.com>
+References: <20160301122910.74ff0a92@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50834 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750760AbcCAFwn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Mar 2016 00:52:43 -0500
-In-Reply-To: <1456810773.19657.197.camel@haakon3.risingtidesystems.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hariprasad Shenai <hariprasad@chelsio.com>, Varun Prakash <varun@chelsio.com>, target-devel <target-devel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160301122910.74ff0a92@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Nicholas,
 
-On Mon, 29 Feb 2016 21:39:33 -0800 "Nicholas A. Bellinger" <nab@linux-iscsi.org> wrote:
->
-> I'll include a note to Linus in target-pending/for-next-merge PULL
-> request, and will plan to wait until after DaveM's net-next is merged
-> for v4.6-rc0.
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-The order doesn't really matter and Linus is cleverer than I am :-)
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+>   DESCEND  objtool
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/builtin-check.o
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/special.o
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/elf.o
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool.o
+>   MKDIR    /home/sfr/next/x86_64_allmodconfig/tools/objtool/arch/x86/insn/
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/libstring.o
+> elf.c:22:23: fatal error: sys/types.h: No such file or directory
+> compilation terminated.
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/exec-cmd.o
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/help.o
+> builtin-check.c:28:20: fatal error: string.h: No such file or directory
+> compilation terminated.
+> objtool.c:28:19: fatal error: stdio.h: No such file or directory
+> compilation terminated.
+> 
+> and further errors ...
+> 
+> This build is done with a PowerPC hosted cross compiler with no glibc.
 
--- 
-Cheers,
-Stephen Rothwell
+Ugh, what a rare and weird way to build an x86 kernel, and you made linux-next 
+dependent on it?
+
+> I assume that some things here need to be built with HOSTCC?
+
+I suspect that's the culprit. Do you now mandate people to have PowerPC systems as 
+a requirement to merge to linux-next? How are people supposed to be able to test 
+that rare type of build method which does not matter to 99.99% of our kernel 
+testers and users?
+
+Thanks,
+
+	Ingo
