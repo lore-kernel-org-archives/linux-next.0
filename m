@@ -1,40 +1,41 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 1 Mar 2016 10:45:32 +0100
-Message-ID: <20160301094531.GA23893@gmail.com>
-References: <20160301122910.74ff0a92@canb.auug.org.au>
- <20160301070750.GA6636@gmail.com>
- <CA+icZUUM9U4i0mZqyhLyBQApGNWAjx1EBY+C5RybPhO1NL+sGg@mail.gmail.com>
- <F86C52D5-02DB-441D-AC8B-FC5169CAF182@zytor.com>
+From: Dave Hansen <dave@sr71.net>
+Subject: Re: [PATCH] [v3] x86, pkeys: fix siginfo ABI breakage from new field
+Date: Tue, 1 Mar 2016 04:48:36 -0800
+Message-ID: <56D58FA4.7080001@sr71.net>
+References: <20160229221733.DC2C56B7@viggo.jf.intel.com>
+ <20160301074052.GA7201@gmail.com> <20160301080904.GA9644@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:33174 "EHLO
-	mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097AbcCAJpg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 04:45:36 -0500
-Content-Disposition: inline
-In-Reply-To: <F86C52D5-02DB-441D-AC8B-FC5169CAF182@zytor.com>
+Received: from www.sr71.net ([198.145.64.142]:59629 "EHLO blackbird.sr71.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751525AbcCAMsi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2016 07:48:38 -0500
+In-Reply-To: <20160301080904.GA9644@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: sedat.dilek@gmail.com, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, Peter Zijlstra <peterz@infradead.org>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
 
+On 03/01/2016 12:09 AM, Ingo Molnar wrote:
+> Btw., what we should not have used in a modern user ABI are variable size 
+> pointers:
+> 
+>                                 struct {
+>                                         void __user *_lower;
+>                                         void __user *_upper;
+>                                 } _addr_bnd;
+> 
+> we should have used constant size structure elements for that, such as __u64.
+> 
+> Had we done that, the pkeys change would not have been a problem either.
+> 
+> Is it too late to change that, is there any si_code=SEGV_BNDERR usage in 
+> user-space?
 
-* H. Peter Anvin <hpa@zytor.com> wrote:
+Yes, the libmpx code that gcc links in looks for si_code=SEGV_BNDERR
+and, by default, will just just warn about the bounds exception (rather
+than letting the app die.
 
-> That is not the issue here.  The problem is clearly that objtool is a host 
-> program and not compiled with host cc.  So it is a good thing to test even 
-> though it is weird, because it affects real use cases.
-
-Absolutely, it's a real bug that should be fixed. What is counterproductive is 
-that this rare and hard to replicate build modus is now a must-have test for 
-linux-next inclusion.
-
-I already cross-build to 20+ weird, rarely used architectures, slowing down the 
-linux-next merge integration test immensely and wasting quite a bit of 
-electricity. linux-next making it even harder to test for is a step backwards.
-
-Thanks,
-
-	Ingo
+This bit of code will be linked into basically anything using MPX.
