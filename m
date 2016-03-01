@@ -1,57 +1,44 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] [v3] x86, pkeys: fix siginfo ABI breakage from new field
-Date: Tue, 1 Mar 2016 10:39:06 +0100
-Message-ID: <20160301093906.GA10360@gmail.com>
-References: <20160229221733.DC2C56B7@viggo.jf.intel.com>
- <20160301074052.GA7201@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 1 Mar 2016 20:40:01 +1100
+Message-ID: <20160301204001.5594bed3@canb.auug.org.au>
+References: <20160301122910.74ff0a92@canb.auug.org.au>
+	<20160301070750.GA6636@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160301074052.GA7201@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Hansen <dave@sr71.net>
-Cc: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58802 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752076AbcCAJkJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2016 04:40:09 -0500
+In-Reply-To: <20160301070750.GA6636@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
 
+Hi Ingo,
 
-> > A u64 was used for the protection key field in siginfo.  When the
-> > containing union was aligned, this u64 unioned nicely with the
-> > two 'void *'s in _addr_bnd.  But, on 32-bit, if the union was
-> > unaligned, the u64 might grow the size of the union, breaking the
-> > ABI for subsequent fields.
+On Tue, 1 Mar 2016 08:07:50 +0100 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> > This build is done with a PowerPC hosted cross compiler with no glibc.  
+> 
+> Ugh, what a rare and weird way to build an x86 kernel, and you made linux-next 
+> dependent on it?
 
-Btw., I think this explanation is incorrect, the layout of _addr_bnd is 
-irrelevant.
+It is just the fastest hardware I currently have access to (you remember
+who I work for, right? ;-)).  I have always done at least part of the
+linux-next building (daily, or overnight) on PowerPC hardware and this
+is only the 2nd or third time in over 8 years that it has found an
+issue like this.
 
-What happened on some 32-bit platforms is the following: if u64 has a natural 
-alignment of 8 bytes (this is rare, most 32-bit platforms align it to 4 bytes), 
-then the leadup to the _sifields union matters:
+> > I assume that some things here need to be built with HOSTCC?  
+> 
+> I suspect that's the culprit.
 
-typedef struct siginfo {
-        int si_signo;
-        int si_errno;
-        int si_code;
+Good, hopefully it is not too hard to fix.
 
-        union {
-	...
-        } _sifields;
-} __ARCH_SI_ATTRIBUTES siginfo_t;
-
-Note how the first 3 fields give us 12 bytes, so _sifields is not 8 naturally 
-bytes aligned.
-
-Before the _pkey field addition the largest element of _sifields (on 32-bit 
-platforms) was 32 bits. With the u64 added, the minimum alignment requirement 
-increased to 8 bytes on those (rare) 32-bit platforms. Thus GCC padded the space 
-after si_code with 4 extra bytes, and shifted all _sifields offsets by 4 bytes - 
-breaking the ABI of all of those remaining fields.
-
-On 64-bit platforms this problem was hidden due to _sifields already having 
-numerous fields with natural 8 bytes alignment (pointers).
-
-If you agree with this analysis then mind updating the changelog accordingly?
-
-Thanks,
-
-	Ingo
+-- 
+Cheers,
+Stephen Rothwell
