@@ -1,35 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the sunxi tree
-Date: Tue, 1 Mar 2016 15:07:00 +1100
-Message-ID: <20160301150700.650fbd3e@canb.auug.org.au>
+From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Subject: Re: linux-next: manual merge of the target-merge tree with the
+ net-next tree
+Date: Mon, 29 Feb 2016 21:39:33 -0800
+Message-ID: <1456810773.19657.197.camel@haakon3.risingtidesystems.com>
+References: <20160229173911.4fabe3f8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linux-iscsi.org ([67.23.28.174]:34734 "EHLO
+	linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbcCAFjg (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 00:39:36 -0500
+In-Reply-To: <20160229173911.4fabe3f8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hariprasad Shenai <hariprasad@chelsio.com>, Varun Prakash <varun@chelsio.com>, target-devel <target-devel@vger.kernel.org>
 
-Hi all,
+On Mon, 2016-02-29 at 17:39 +1100, Stephen Rothwell wrote:
+> Hi Nicholas,
+> 
+> Today's linux-next merge of the target-merge tree got a conflict in:
+> 
+>   drivers/net/ethernet/chelsio/cxgb4/t4fw_api.h
+> 
+> between commit:
+> 
+>   ba9cee6aa67d ("cxgb4/iw_cxgb4: TOS support")
+> 
+> from the net-next tree and commit:
+> 
+>   c973e2a3ff1b ("cxgb4: add definitions for iSCSI target ULD")
+> 
+> from the target-merge tree.
+> 
+> I fixed it up (the latter was a superset of the former) and can carry
+> the fix as necessary (no action is required).
+> 
 
-Today's linux-next merge of the clk tree got a conflict in:
+Thanks Stephen.
 
-  drivers/clk/sunxi/clk-sun6i-ar100.c
-
-between commit:
-
-  3ca2377b6fed ("clk: sunxi: rewrite sun6i-ar100 using factors clk")
-
-from the sunxi tree and commit:
-
-  36bf2811416c ("clk: sunxi: Use proper type for of_clk_get_parent_count() return value")
-
-from the clk tree.
-
-I fixed it up (the former removed the code updated by the latter) and
-can carry the fix as necessary (no action is required).
-
--- 
-Cheers,
-Stephen Rothwell
+I'll include a note to Linus in target-pending/for-next-merge PULL
+request, and will plan to wait until after DaveM's net-next is merged
+for v4.6-rc0.
