@@ -1,49 +1,114 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] x86, pkeys: fix siginfo ABI breakage from new field
-Date: Tue, 1 Mar 2016 09:54:32 +1100
-Message-ID: <20160301095432.29f247e0@canb.auug.org.au>
-References: <20160226173427.54A6949F@viggo.jf.intel.com>
-	<6C5C3B9B-CAD6-4010-9A3E-AFFF7E13FAE3@zytor.com>
-	<20160227091013.6e0606d1@canb.auug.org.au>
-	<20160227114154.GA16200@gmail.com>
-	<56D1F61C.5050308@sr71.net>
-	<9E8119F8-1F37-4084-AE31-34CA6DE8C15E@zytor.com>
-	<20160228102629.0ef4ef4f@canb.auug.org.au>
-	<20160229080143.GB31950@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Alexandre Bounine <alexandre.bounine@idt.com>
+Subject: [PATCH] rapidio/rio_mport_cdev: fix conflicting DMA configuration options
+Date: Mon, 29 Feb 2016 19:05:36 -0500
+Message-ID: <1456790736-14509-1-git-send-email-alexandre.bounine@idt.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43404 "EHLO ozlabs.org"
+Received: from mxout1.idt.com ([157.165.5.25]:44459 "EHLO mxout1.idt.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751125AbcB2Wyf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 29 Feb 2016 17:54:35 -0500
-In-Reply-To: <20160229080143.GB31950@gmail.com>
+	id S1752610AbcCAAG3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 29 Feb 2016 19:06:29 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Dave Hansen <dave@sr71.net>, linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexandre Bounine <alexandre.bounine@idt.com>, Randy Dunlap <rdunlap@infradead.org>, Matt Porter <mporter@kernel.crashing.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-Hi Ingo,
+Fix to ensure that only CONFIG_RAPIDIO_DMA_ENGINE option is used to control
+DMA code build.
 
-On Mon, 29 Feb 2016 09:01:43 +0100 Ingo Molnar <mingo@kernel.org> wrote:
->
-> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > > u32?  
-> > 
-> > It would have to be __u32, but we already use int and unsigned int
-> > extensively in the siginfo structure (which are both always assumed to
-> > be 32 bits).  So "unsigned int" probably makes most sense.  
-> 
-> No. This whole mishap is an object lesson in why it's a bad idea to ever use ABI 
-> types outside of the __[us][8|16|32|64] space: some of them are 'fine', some of 
-> them (like longs) are not.
+Signed-off-by: Alexandre Bounine <alexandre.bounine@idt.com>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Matt Porter <mporter@kernel.crashing.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org
+---
+ drivers/rapidio/devices/rio_mport_cdev.c |   32 +++++++++++++----------------
+ 1 files changed, 14 insertions(+), 18 deletions(-)
 
-Absolutely. I was just trying to be consistent with the rest of the structure.
-
-Dave has submitted a follow up version which I have Acked.
-
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index e9ec8dd..9faf4d5 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -178,7 +178,7 @@ struct mport_dev {
+ 	struct list_head		portwrites;
+ 	spinlock_t			pw_lock;
+ 	struct list_head	mappings;
+-#ifdef CONFIG_DMA_ENGINE
++#ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 	struct dma_chan *dma_chan;
+ 	struct kref	dma_ref;
+ 	struct completion comp;
+@@ -209,7 +209,7 @@ struct mport_cdev_priv {
+ 	wait_queue_head_t       event_rx_wait;
+ 	spinlock_t              fifo_lock;
+ 	unsigned int            event_mask; /* RIO_DOORBELL, RIO_PORTWRITE */
+-#ifdef CONFIG_DMA_ENGINE
++#ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 	struct dma_chan		*dmach;
+ 	struct list_head	async_list;
+ 	struct list_head	pend_list;
+@@ -532,7 +532,7 @@ static int maint_comptag_set(struct mport_cdev_priv *priv, void __user *arg)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_DMA_ENGINE
++#ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 
+ struct mport_dma_req {
+ 	struct list_head node;
+@@ -1127,19 +1127,6 @@ err_tmo:
+ 	spin_unlock(&priv->req_lock);
+ 	return ret;
+ }
+-#else /* CONFIG_DMA_ENGINE */
+-static int rio_mport_transfer_ioctl(struct file *filp, void *arg)
+-{
+-	return -ENODEV;
+-}
+-
+-static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+-{
+-	return -ENODEV;
+-}
+-#endif /* CONFIG_DMA_ENGINE */
+-
+-#ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 
+ static int rio_mport_create_dma_mapping(struct mport_dev *md, struct file *filp,
+ 			uint64_t size, struct rio_mport_mapping **mapping)
+@@ -1228,6 +1215,16 @@ static int rio_mport_free_dma(struct file *filp, void __user *arg)
+ 	return 0;
+ }
+ #else
++static int rio_mport_transfer_ioctl(struct file *filp, void *arg)
++{
++	return -ENODEV;
++}
++
++static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
++{
++	return -ENODEV;
++}
++
+ static int rio_mport_alloc_dma(struct file *filp, void __user *arg)
+ {
+ 	return -ENODEV;
+@@ -1237,7 +1234,6 @@ static int rio_mport_free_dma(struct file *filp, void __user *arg)
+ {
+ 	return -ENODEV;
+ }
+-
+ #endif /* CONFIG_RAPIDIO_DMA_ENGINE */
+ 
+ /*
+@@ -1956,7 +1952,7 @@ static int mport_cdev_open(struct inode *inode, struct file *filp)
+ 		goto err_fifo;
+ 	}
+ 
+-#ifdef CONFIG_DMA_ENGINE
++#ifdef CONFIG_RAPIDIO_DMA_ENGINE
+ 	INIT_LIST_HEAD(&priv->async_list);
+ 	INIT_LIST_HEAD(&priv->pend_list);
+ 	spin_lock_init(&priv->req_lock);
 -- 
-Cheers,
-Stephen Rothwell
+1.7.8.4
