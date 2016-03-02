@@ -1,65 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the watchdog tree
-Date: Wed, 2 Mar 2016 15:22:30 +1100
-Message-ID: <20160302152230.3f699334@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the tip tree
+Date: Wed, 2 Mar 2016 15:27:57 +1100
+Message-ID: <20160302152757.143b8437@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42502 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41449 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751127AbcCBEWe convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 23:22:34 -0500
+	id S1751127AbcCBE17 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2016 23:27:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
 
 Hi Linus,
 
 Today's linux-next merge of the gpio tree got a conflict in:
 
-  MAINTAINERS
+  tools/Makefile
 
 between commit:
 
-  c36a483d8007 ("watchdog: Add watchdog timer support for the WinSystem=
-s EBC-C384")
+  442f04c34a1a ("objtool: Add tool to perform compile-time stack metadata validation")
 
-from the watchdog tree and commit:
+from the tip tree and commit:
 
-  9c26df9b27b6 ("gpio: Add GPIO support for the WinSystems WS16C48")
+  6d591c46bce0 ("tools/gpio: create GPIO tools")
 
 from the gpio tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
 
---=20
+-- 
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index e3bb7755763a,6ec2be8ff68d..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -11972,12 -11870,12 +11982,18 @@@ M:	David H=C3=A4rdeman <david@har=
-deman.nu
-  S:	Maintained
-  F:	drivers/media/rc/winbond-cir.c
- =20
- +WINSYSTEMS EBC-C384 WATCHDOG DRIVER
- +M:	William Breathitt Gray <vilhelm.gray@gmail.com>
- +L:	linux-watchdog@vger.kernel.org
- +S:	Maintained
- +F:	drivers/watchdog/ebc-c384_wdt.c
- +
-+ WINSYSTEMS WS16C48 GPIO DRIVER
-+ M:	William Breathitt Gray <vilhelm.gray@gmail.com>
-+ L:	linux-gpio@vger.kernel.org
-+ S:	Maintained
-+ F:	drivers/gpio/gpio-ws16c48.c
-+=20
-  WIMAX STACK
-  M:	Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
-  M:	linux-wimax@intel.com
+diff --cc tools/Makefile
+index cc2a37d975d6,f41e7c6ea23e..000000000000
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@@ -54,7 -54,7 +55,7 @@@ acpi: FORC
+  cpupower: FORCE
+  	$(call descend,power/$@)
+  
+- cgroup firewire hv guest spi usb virtio vm net iio objtool: FORCE
+ -cgroup firewire hv guest spi usb virtio vm net iio gpio: FORCE
+++cgroup firewire hv guest spi usb virtio vm net iio objtool gpio: FORCE
+  	$(call descend,$@)
+  
+  liblockdep: FORCE
+@@@ -120,7 -120,7 +121,7 @@@ acpi_clean
+  cpupower_clean:
+  	$(call descend,power/cpupower,clean)
+  
+- cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean objtool_clean:
+ -cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean gpio_clean:
+++cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean objtool_clean gpio_clean:
+  	$(call descend,$(@:_clean=),clean)
+  
+  liblockdep_clean:
+@@@ -157,6 -157,6 +158,6 @@@ clean: acpi_clean cgroup_clean cpupower
+  		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
+  		vm_clean net_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+  		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
+- 		objtool_clean
+ -		gpio_clean
+++		objtool_clean gpio_clean
+  
+  .PHONY: FORCE
