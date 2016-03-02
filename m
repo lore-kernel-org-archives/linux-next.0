@@ -1,35 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the tip tree
-Date: Wed, 2 Mar 2016 15:27:57 +1100
-Message-ID: <20160302152757.143b8437@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Wed, 2 Mar 2016 16:40:36 +1100
+Message-ID: <20160302164036.37dfb79a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41449 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52710 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751127AbcCBE17 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Mar 2016 23:27:59 -0500
+	id S1750851AbcCBFkj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2016 00:40:39 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josh Poimboeuf <jpoimboe@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Vyukov <dvyukov@google.com>, Josh Poimboeuf <jpoimboe@redhat.com>
 
-Hi Linus,
+Hi Andrew,
 
-Today's linux-next merge of the gpio tree got a conflict in:
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
-  tools/Makefile
+  arch/x86/boot/Makefile
+  arch/x86/boot/compressed/Makefile
+  arch/x86/entry/vdso/Makefile
+  arch/x86/kernel/Makefile
+  arch/x86/realmode/rm/Makefile
+  drivers/firmware/efi/libstub/Makefile
 
 between commit:
 
-  442f04c34a1a ("objtool: Add tool to perform compile-time stack metadata validation")
+  c0dd671686b2 ("objtool: Mark non-standard object files and directories")
 
 from the tip tree and commit:
 
-  6d591c46bce0 ("tools/gpio: create GPIO tools")
+  9b1ad289b5e5 ("kernel: add kcov code coverage")
 
-from the gpio tree.
+from the akpm-current tree.
 
 I fixed it up (see below) and can carry the fix as necessary (no action
 is required).
@@ -38,36 +43,114 @@ is required).
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/Makefile
-index cc2a37d975d6,f41e7c6ea23e..000000000000
---- a/tools/Makefile
-+++ b/tools/Makefile
-@@@ -54,7 -54,7 +55,7 @@@ acpi: FORC
-  cpupower: FORCE
-  	$(call descend,power/$@)
+diff --cc arch/x86/boot/Makefile
+index 0bf6749522d9,5f93ca072b21..000000000000
+--- a/arch/x86/boot/Makefile
++++ b/arch/x86/boot/Makefile
+@@@ -9,8 -9,13 +9,14 @@@
+  # Changed by many, many contributors over the years.
+  #
   
-- cgroup firewire hv guest spi usb virtio vm net iio objtool: FORCE
- -cgroup firewire hv guest spi usb virtio vm net iio gpio: FORCE
-++cgroup firewire hv guest spi usb virtio vm net iio objtool gpio: FORCE
-  	$(call descend,$@)
+ -KASAN_SANITIZE := n
+ +KASAN_SANITIZE			:= n
+ +OBJECT_FILES_NON_STANDARD	:= y
++ # Kernel does not boot with kcov instrumentation here.
++ # One of the problems observed was insertion of __sanitizer_cov_trace_pc()
++ # callback into middle of per-cpu data enabling code. Thus the callback observed
++ # inconsistent state and crashed. We are interested mostly in syscall coverage,
++ # so boot code is not interesting anyway.
++ KCOV_INSTRUMENT := n
   
-  liblockdep: FORCE
-@@@ -120,7 -120,7 +121,7 @@@ acpi_clean
-  cpupower_clean:
-  	$(call descend,power/cpupower,clean)
+  # If you want to preset the SVGA mode, uncomment the next line and
+  # set SVGA_MODE to whatever number you want.
+diff --cc arch/x86/boot/compressed/Makefile
+index 5e1d26e09407,ad9e9fa5bb11..000000000000
+--- a/arch/x86/boot/compressed/Makefile
++++ b/arch/x86/boot/compressed/Makefile
+@@@ -16,8 -16,9 +16,10 @@@
+  #	(see scripts/Makefile.lib size_append)
+  #	compressed vmlinux.bin.all + u32 size of vmlinux.bin.all
   
-- cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean objtool_clean:
- -cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean gpio_clean:
-++cgroup_clean hv_clean firewire_clean lguest_clean spi_clean usb_clean virtio_clean vm_clean net_clean iio_clean objtool_clean gpio_clean:
-  	$(call descend,$(@:_clean=),clean)
+ -KASAN_SANITIZE := n
+ +KASAN_SANITIZE			:= n
+ +OBJECT_FILES_NON_STANDARD	:= y
++ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
++ KCOV_INSTRUMENT := n
   
-  liblockdep_clean:
-@@@ -157,6 -157,6 +158,6 @@@ clean: acpi_clean cgroup_clean cpupower
-  		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
-  		vm_clean net_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
-  		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
-- 		objtool_clean
- -		gpio_clean
-++		objtool_clean gpio_clean
+  targets := vmlinux vmlinux.bin vmlinux.bin.gz vmlinux.bin.bz2 vmlinux.bin.lzma \
+  	vmlinux.bin.xz vmlinux.bin.lzo vmlinux.bin.lz4
+diff --cc arch/x86/entry/vdso/Makefile
+index f9fb859c98b9,5a1993905ace..000000000000
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@@ -3,9 -3,10 +3,11 @@@
+  #
   
-  .PHONY: FORCE
+  KBUILD_CFLAGS += $(DISABLE_LTO)
+ -KASAN_SANITIZE := n
+ -UBSAN_SANITIZE := n
+ +KASAN_SANITIZE			:= n
+ +UBSAN_SANITIZE			:= n
+ +OBJECT_FILES_NON_STANDARD	:= y
++ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
++ KCOV_INSTRUMENT := n
+  
+  VDSO64-$(CONFIG_X86_64)		:= y
+  VDSOX32-$(CONFIG_X86_X32_ABI)	:= y
+diff --cc arch/x86/kernel/Makefile
+index d5fb0871aba3,4648960d1c4c..000000000000
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@@ -16,14 -16,14 +16,19 @@@ CFLAGS_REMOVE_ftrace.o = -p
+  CFLAGS_REMOVE_early_printk.o = -pg
+  endif
+  
+ -KASAN_SANITIZE_head$(BITS).o := n
+ -KASAN_SANITIZE_dumpstack.o := n
+ -KASAN_SANITIZE_dumpstack_$(BITS).o := n
+ +KASAN_SANITIZE_head$(BITS).o				:= n
+ +KASAN_SANITIZE_dumpstack.o				:= n
+ +KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
+ +
+ +OBJECT_FILES_NON_STANDARD_head_$(BITS).o		:= y
+ +OBJECT_FILES_NON_STANDARD_relocate_kernel_$(BITS).o	:= y
+ +OBJECT_FILES_NON_STANDARD_mcount_$(BITS).o		:= y
+ +OBJECT_FILES_NON_STANDARD_test_nx.o			:= y
++ # If instrumentation of this dir is enabled, boot hangs during first second.
++ # Probably could be more selective here, but note that files related to irqs,
++ # boot, dumpstack/stacktrace, etc are either non-interesting or can lead to
++ # non-deterministic coverage.
++ KCOV_INSTRUMENT := n
+  
+  CFLAGS_irq.o := -I$(src)/../include/asm/trace
+  
+diff --cc arch/x86/realmode/rm/Makefile
+index 053abe7b0ef7,35129dcdeb71..000000000000
+--- a/arch/x86/realmode/rm/Makefile
++++ b/arch/x86/realmode/rm/Makefile
+@@@ -6,8 -6,9 +6,10 @@@
+  # for more details.
+  #
+  #
+ -KASAN_SANITIZE := n
+ +KASAN_SANITIZE			:= n
+ +OBJECT_FILES_NON_STANDARD	:= y
++ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
++ KCOV_INSTRUMENT := n
+  
+  always := realmode.bin realmode.relocs
+  
+diff --cc drivers/firmware/efi/libstub/Makefile
+index a15841eced4e,37cc9e395edb..000000000000
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@@ -23,7 -23,8 +23,9 @@@ KBUILD_CFLAGS			:= $(cflags-y) -DDISABL
+  GCOV_PROFILE			:= n
+  KASAN_SANITIZE			:= n
+  UBSAN_SANITIZE			:= n
+ +OBJECT_FILES_NON_STANDARD	:= y
++ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
++ KCOV_INSTRUMENT			:= n
+  
+  lib-y				:= efi-stub-helper.o
+  
