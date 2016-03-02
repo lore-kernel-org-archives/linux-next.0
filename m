@@ -1,48 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] objtool: Disable stack validation when CROSS_COMPILE is
- used
-Date: Wed, 2 Mar 2016 13:27:35 +1100
-Message-ID: <20160302132735.37262b34@canb.auug.org.au>
-References: <20160301122910.74ff0a92@canb.auug.org.au>
-	<20160301070750.GA6636@gmail.com>
-	<20160301204001.5594bed3@canb.auug.org.au>
-	<20160301215451.GC4852@treble.redhat.com>
+Subject: linux-next: manual merge of the kvm-ppc-paulus tree with the
+ kvm-arm tree
+Date: Wed, 2 Mar 2016 13:47:14 +1100
+Message-ID: <20160302134714.2629ee08@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160301215451.GC4852@treble.redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33084 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752132AbcCBCrR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 1 Mar 2016 21:47:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Mackerras <paulus@ozlabs.org>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>, Shannon Zhao <shannon.zhao@linaro.org>
 
-Hi Josh,
+Hi Paul,
 
-On Tue, 1 Mar 2016 15:54:51 -0600 Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> Changing it to use the host compiler would probably be an easy fix, but
-> that would expose a harder bug related to endianness.
+Today's linux-next merge of the kvm-ppc-paulus tree got a conflict in:
 
-Just by luck, my PowerPC host is little endian :-)
+  include/uapi/linux/kvm.h
 
-> How about the below workaround patch to disable objtool and warn when
-> CROSS_COMPILE is used?  If anybody complains about lack of cross-compile
-> support later, we could try to fix it then.
+between commits:
 
-This seems reasonable.
+  808e738142e7 ("arm64: KVM: Add a new feature bit for PMUv3")
+  f577f6c2a6a5 ("arm64: KVM: Introduce per-vcpu kvm device controls")
 
-> From a3c65947011a420743f308b698171c4209105d3f Mon Sep 17 00:00:00 2001
-> Message-Id: <a3c65947011a420743f308b698171c4209105d3f.1456868910.git.jpoimboe@redhat.com>
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
-> Date: Tue, 1 Mar 2016 13:35:51 -0600
-> Subject: [PATCH] objtool: Disable stack validation when CROSS_COMPILE is used
+from the kvm-arm tree and commit:
 
-I have applied this to the merge of the tip tree in linux-next today
-and it compiles fine for me.  I will continue applying it until
-something better comes along or it is applied to the tip tree.
+  01d01d69192e ("KVM: PPC: Reserve KVM_CAP_SPAPR_TCE_64 capability number")
 
-Thanks for that.
+from the kvm-ppc-paulus tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/uapi/linux/kvm.h
+index ba098d8ae5fc,b06208b2669c..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -862,8 -850,7 +862,9 @@@ struct kvm_ppc_smmu_info 
+  #define KVM_CAP_IOEVENTFD_ANY_LENGTH 122
+  #define KVM_CAP_HYPERV_SYNIC 123
+  #define KVM_CAP_S390_RI 124
+ -#define KVM_CAP_SPAPR_TCE_64 125
+ +#define KVM_CAP_ARM_PMU_V3 125
+ +#define KVM_CAP_VCPU_ATTRIBUTES 126
+++#define KVM_CAP_SPAPR_TCE_64 127
+  
+  #ifdef KVM_CAP_IRQ_ROUTING
+  
