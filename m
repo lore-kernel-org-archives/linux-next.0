@@ -1,53 +1,52 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the tip tree
-Date: Wed, 2 Mar 2016 14:35:06 +1100
-Message-ID: <20160302143506.5f75d279@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Wed, 2 Mar 2016 13:00:00 +0900
+Message-ID: <20160302040000.GX18327@sirena.org.uk>
+References: <20160229145122.71636c6b@canb.auug.org.au>
+ <87a8mjj8wc.wl%kuninori.morimoto.gx@renesas.com>
+ <878u23j85t.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ImlueIRSpq8lZ71A"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56834 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752356AbcCBDfI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 1 Mar 2016 22:35:08 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51222 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751127AbcCBEAH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 23:00:07 -0500
+Content-Disposition: inline
+In-Reply-To: <878u23j85t.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "J. German Rivera" <German.Rivera@freescale.com>, Qais Yousef <qais.yousef@imgtec.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Greg,
 
-Today's linux-next merge of the staging tree got a conflict in:
+--ImlueIRSpq8lZ71A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  include/linux/irqdomain.h
+On Tue, Mar 01, 2016 at 01:35:58AM +0000, Kuninori Morimoto wrote:
 
-between commit:
+> I noticed that you reborned regmap_write_bits() on your latest tree.
+> I think using/adding regmap_force_update_bits() is good idea IMO.
+> Can I create such patch ?
 
-  29d5c8db26ad ("genirq: Add DOMAIN_BUS_IPI")
+It might make more sense to rename _force_update_bits() to
+_write_bits().
 
-from the tip tree and commit:
+--ImlueIRSpq8lZ71A
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  9b1b282ccd81 ("irqdomain: Added domain bus token DOMAIN_BUS_FSL_MC_MSI")
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-from the staging tree.
+iQEcBAEBCAAGBQJW1mUyAAoJECTWi3JdVIfQ4M8H/3NTJxEkUawVnLq1BL+DJHQQ
+Z5NZH8EhpDLpx210gWL+lsMMgxUy3PJze01i+q7iXTL4jort4mzNbh9YjsMPNdq2
+Xza0mk8gBiPajNqy19C1FJc+WXpePmNzF0I7iVy5I9L4tsPmCJ7SDhOU4LmfOZir
+PLBwH6ILaxPZxEKQl1ZuCoVlt51g0VlwuzrdnCKkKrDpMM+rN0KlV9TylY5nmcZ5
+OLFJl4vXJUzH1DNFU3Meyph86Ub/4/rg7PX1rnTVCmT2883XfDtZm0n3UJKK+uYc
+SGgK65iUXUlSKx5HtNUkIX2kumbG2ZnTSbZZPxUXGE1+YWdINlNFDOIXs3uGRGk=
+=rrfF
+-----END PGP SIGNATURE-----
 
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/irqdomain.h
-index ed48594e96d2,0934d06c8b00..000000000000
---- a/include/linux/irqdomain.h
-+++ b/include/linux/irqdomain.h
-@@@ -74,7 -74,7 +74,8 @@@ enum irq_domain_bus_token 
-  	DOMAIN_BUS_PCI_MSI,
-  	DOMAIN_BUS_PLATFORM_MSI,
-  	DOMAIN_BUS_NEXUS,
- +	DOMAIN_BUS_IPI,
-+ 	DOMAIN_BUS_FSL_MC_MSI,
-  };
-  
-  /**
+--ImlueIRSpq8lZ71A--
