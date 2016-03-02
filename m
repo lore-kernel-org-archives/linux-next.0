@@ -1,56 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] objtool: Disable stack validation when CROSS_COMPILE is
- used
-Date: Thu, 3 Mar 2016 09:21:34 +1100
-Message-ID: <20160303092134.7c750589@canb.auug.org.au>
-References: <20160301122910.74ff0a92@canb.auug.org.au>
-	<20160301070750.GA6636@gmail.com>
-	<20160301204001.5594bed3@canb.auug.org.au>
-	<20160301215451.GC4852@treble.redhat.com>
-	<20160302132735.37262b34@canb.auug.org.au>
-	<20160302211726.GA23501@treble.redhat.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: linux-next: manual merge of the samsung-krzk tree with the omap
+ tree
+Date: Thu, 03 Mar 2016 08:40:52 +0900
+Message-ID: <56D77A04.1090802@samsung.com>
+References: <20160303091631.1ef24e87@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59398 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751594AbcCBWVg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2016 17:21:36 -0500
-In-Reply-To: <20160302211726.GA23501@treble.redhat.com>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46322 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752950AbcCBXlA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2016 18:41:00 -0500
+In-reply-to: <20160303091631.1ef24e87@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
 
-Hi Josh,
-
-On Wed, 2 Mar 2016 15:17:26 -0600 Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> On Wed, Mar 02, 2016 at 01:27:35PM +1100, Stephen Rothwell wrote:
-> > 
-> > On Tue, 1 Mar 2016 15:54:51 -0600 Josh Poimboeuf <jpoimboe@redhat.com> wrote:  
-> > >
-> > > Changing it to use the host compiler would probably be an easy fix, but
-> > > that would expose a harder bug related to endianness.  
-> > 
-> > Just by luck, my PowerPC host is little endian :-)  
+On 03.03.2016 07:16, Stephen Rothwell wrote:
+> Hi Krzysztof,
 > 
-> Aha!  In that case, I think I'll take a different approach and try to
-> add support for CROSS_COMPILE.
+> Today's linux-next merge of the samsung-krzk tree got a conflict in:
 > 
-> We'll need it anyway, later on, when we port objtool to more
-> architectures.
+>   drivers/clk/Kconfig
+> 
+> between commit:
+> 
+>   21330497f303 ("clk: ti: Add support for dm814x ADPLL")
+> 
+> from the omap tree and commit:
+> 
+>   b9e65ebc654d ("clk: Move vendor's Kconfig into CCF menu section")
+> 
+> from the samsung-krzk tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary (no action
+> is required).
+> 
 
-That would be great.  I was discussing this briefly with the powerpc
-maintainer and he expressed some interest.
+Thanks!
 
-> Thanks.  I should have the patch(es) soon.  If/when they get merged,
-> I'll let you know, and then you can drop this one.
+The conflicting commit actually comes from clk tree, merged here as a
+dependency for other patches.
 
-OK, I will keep an eye out - I usually notice when stuff get fixed, but
-a heads up is always helpful.
-
--- 
-Cheers,
-Stephen Rothwell
+Best regards,
+Krzysztof
