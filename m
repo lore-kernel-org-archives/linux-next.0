@@ -1,52 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Wed, 2 Mar 2016 13:00:00 +0900
-Message-ID: <20160302040000.GX18327@sirena.org.uk>
-References: <20160229145122.71636c6b@canb.auug.org.au>
- <87a8mjj8wc.wl%kuninori.morimoto.gx@renesas.com>
- <878u23j85t.wl%kuninori.morimoto.gx@renesas.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the watchdog tree
+Date: Wed, 2 Mar 2016 15:22:30 +1100
+Message-ID: <20160302152230.3f699334@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ImlueIRSpq8lZ71A"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51222 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751127AbcCBEAH (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 23:00:07 -0500
-Content-Disposition: inline
-In-Reply-To: <878u23j85t.wl%kuninori.morimoto.gx@renesas.com>
+Received: from ozlabs.org ([103.22.144.67]:42502 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751127AbcCBEWe convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 1 Mar 2016 23:22:34 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
 
+Hi Linus,
 
---ImlueIRSpq8lZ71A
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Today's linux-next merge of the gpio tree got a conflict in:
 
-On Tue, Mar 01, 2016 at 01:35:58AM +0000, Kuninori Morimoto wrote:
+  MAINTAINERS
 
-> I noticed that you reborned regmap_write_bits() on your latest tree.
-> I think using/adding regmap_force_update_bits() is good idea IMO.
-> Can I create such patch ?
+between commit:
 
-It might make more sense to rename _force_update_bits() to
-_write_bits().
+  c36a483d8007 ("watchdog: Add watchdog timer support for the WinSystem=
+s EBC-C384")
 
---ImlueIRSpq8lZ71A
-Content-Type: application/pgp-signature; name="signature.asc"
+from the watchdog tree and commit:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+  9c26df9b27b6 ("gpio: Add GPIO support for the WinSystems WS16C48")
 
-iQEcBAEBCAAGBQJW1mUyAAoJECTWi3JdVIfQ4M8H/3NTJxEkUawVnLq1BL+DJHQQ
-Z5NZH8EhpDLpx210gWL+lsMMgxUy3PJze01i+q7iXTL4jort4mzNbh9YjsMPNdq2
-Xza0mk8gBiPajNqy19C1FJc+WXpePmNzF0I7iVy5I9L4tsPmCJ7SDhOU4LmfOZir
-PLBwH6ILaxPZxEKQl1ZuCoVlt51g0VlwuzrdnCKkKrDpMM+rN0KlV9TylY5nmcZ5
-OLFJl4vXJUzH1DNFU3Meyph86Ub/4/rg7PX1rnTVCmT2883XfDtZm0n3UJKK+uYc
-SGgK65iUXUlSKx5HtNUkIX2kumbG2ZnTSbZZPxUXGE1+YWdINlNFDOIXs3uGRGk=
-=rrfF
------END PGP SIGNATURE-----
+from the gpio tree.
 
---ImlueIRSpq8lZ71A--
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index e3bb7755763a,6ec2be8ff68d..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -11972,12 -11870,12 +11982,18 @@@ M:	David H=C3=A4rdeman <david@har=
+deman.nu
+  S:	Maintained
+  F:	drivers/media/rc/winbond-cir.c
+ =20
+ +WINSYSTEMS EBC-C384 WATCHDOG DRIVER
+ +M:	William Breathitt Gray <vilhelm.gray@gmail.com>
+ +L:	linux-watchdog@vger.kernel.org
+ +S:	Maintained
+ +F:	drivers/watchdog/ebc-c384_wdt.c
+ +
++ WINSYSTEMS WS16C48 GPIO DRIVER
++ M:	William Breathitt Gray <vilhelm.gray@gmail.com>
++ L:	linux-gpio@vger.kernel.org
++ S:	Maintained
++ F:	drivers/gpio/gpio-ws16c48.c
++=20
+  WIMAX STACK
+  M:	Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+  M:	linux-wimax@intel.com
