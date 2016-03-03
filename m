@@ -1,76 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 3 Mar 2016 11:24:56 +1100
-Message-ID: <20160303112456.15afe12b@canb.auug.org.au>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
+Subject: Re: ext2/3 using ext4 module mkdir IO error on pmem DAX mount
+Date: Wed, 2 Mar 2016 17:28:24 -0700
+Message-ID: <20160303002824.GA31238@linux.intel.com>
+References: <20160302064304.GA15559@dhcp12-144.nay.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42633 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752672AbcCCAY7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 2 Mar 2016 19:24:59 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gal Pressman <galp@mellanox.com>, Matthew Finlay <matt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160302064304.GA15559@dhcp12-144.nay.redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Xiong Zhou <xzhou@redhat.com>, Lokesh Jaliminche <lokesh.jaliminche@gmail.com>, Andreas Dilger <adilger@dilger.ca>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-nvdimm@ml01.01.org, linux-ext4@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Wed, Mar 02, 2016 at 02:43:04PM +0800, Xiong Zhou wrote:
+> Hi,
+> 
+> mkdir failed IO error on pmem DAX ext2/3 fs mount using ext4 module.
+> 
+> This happends only on -next tree, not on Linus' tree,
+> at least from 4.5.0-rc5-next-20160224.
 
-Today's linux-next merge of the net-next tree got conflicts in:
+I was able to reproduce this and bisect it to the following commit:
 
-  drivers/net/ethernet/mellanox/mlx5/core/en.h
+commit 1f2d779fed21 ("ext4: optimize group search for inode allocation")
 
-between commit:
+The fact that DAX was enabled in this failure was a red herring - it fails
+without DAX as well.  The key is just that we're mounting an ext2 formatted
+filesystem using the ext4 module, I think.
 
-  b081da5ee186 ("net/mlx5e: Add rx/tx bytes software counters")
-
-from the net tree and commits:
-
-  89db09eb5979 ("net/mlx5e: Add TX inner packet counters")
-  3c1b5532191d ("net/mlx5e: Move common case counters within sq_stats struct")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary (no action
-is required).
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/mellanox/mlx5/core/en.h
-index 5b1753233c5d,9c0e80e64b43..000000000000
---- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-@@@ -244,9 -256,12 +258,13 @@@ struct mlx5e_rq_stats 
-  
-  static const char sq_stats_strings[][ETH_GSTRING_LEN] = {
-  	"packets",
- +	"bytes",
-  	"tso_packets",
-  	"tso_bytes",
-+ 	"tso_inner_packets",
-+ 	"tso_inner_bytes",
-+ 	"csum_offload_inner",
-+ 	"nop",
-  	"csum_offload_none",
-  	"stopped",
-  	"wake",
-@@@ -254,11 -269,15 +272,16 @@@
-  };
-  
-  struct mlx5e_sq_stats {
-+ 	/* commonly accessed in data path */
-  	u64 packets;
- +	u64 bytes;
-  	u64 tso_packets;
-  	u64 tso_bytes;
-+ 	u64 tso_inner_packets;
-+ 	u64 tso_inner_bytes;
-+ 	u64 csum_offload_inner;
-+ 	u64 nop;
-+ 	/* less likely accessed in data path */
-  	u64 csum_offload_none;
-  	u64 stopped;
-  	u64 wake;
+- Ross
