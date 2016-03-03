@@ -1,47 +1,39 @@
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: [PATCH] tools: Support relative directory path for 'O='
-Date: Thu,  3 Mar 2016 08:53:43 -0600
-Message-ID: <94a078c6c998fac9f01a14f574008bf7dff40191.1457016803.git.jpoimboe@redhat.com>
-References: <20160303143527.GA2348@treble.redhat.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160303143527.GA2348@treble.redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net, Andrew Morton <akpm@linux-foundation.org>, live-patching@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] [v4] x86, pkeys: fix siginfo ABI breakage from new field
+Date: Thu, 3 Mar 2016 16:41:04 +0100
+Message-ID: <20160303154104.GA18424@gmail.com>
+References: <20160301125451.02C7426D@viggo.jf.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:35381 "EHLO
+	mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272AbcCCPlI (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2016 10:41:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20160301125451.02C7426D@viggo.jf.intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Hansen <dave@sr71.net>
+Cc: linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com, sfr@canb.auug.org.au, akpm@linux-foundation.org, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, deller@gmx.de
 
-Running "make O=foo" (with a relative directory path) fails with:
 
-  scripts/Makefile.include:3: *** O=foo does not exist.  Stop.
-  /home/jpoimboe/git/linux/Makefile:1547: recipe for target 'tools/objtool' failed
+* Dave Hansen <dave@sr71.net> wrote:
 
-The tools Makefile gets confused by the relative path and tries to build
-objtool in tools/foo.  Convert the output directory to an absolute path
-before passing it to the tools Makefile.
+> To fix this, we replace the u64 with an '__u32'.  The __u32 is guaranteed to 
+> union well with the pointers from _addr_bnd.  It is also plenty large enough to 
+> store the 16-bit pkey we have today on x86.
 
-Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
----
- Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+The 'union well' sentence is really a leftover from the earlier changelog (the 
+problem was never about interaction between union members) - a better explantion 
+is:
 
-diff --git a/Makefile b/Makefile
-index 3100e74..5b3723c 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1541,11 +1541,11 @@ image_name:
- # Clear a bunch of variables before executing the submake
- tools/: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
- 
- tools/%: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/ $*
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
- 
- # Single targets
- # ---------------------------------------------------------------------------
--- 
-2.4.3
+> To fix this, we replace the u64 with an '__u32'.  The __u32 does not change the 
+> minimum alignment requirements of the structure and it is also plenty large 
+> enough to store the 16-bit pkey we have today on x86.
+
+I fixed this up locally, no need to resend.
+
+Thanks,
+
+	Ingo
