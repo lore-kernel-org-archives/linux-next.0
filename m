@@ -1,46 +1,50 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: unsigned commits in tpmdd tree
-Date: Thu, 3 Mar 2016 12:14:13 +0200
-Message-ID: <20160303101413.GA6003@intel.com>
-References: <20160302074218.7aa0a06b@canb.auug.org.au>
- <20160302142956.GA8341@intel.com>
- <20160303073441.5ba3aa0d@canb.auug.org.au>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Mar 3
+Date: Thu, 3 Mar 2016 16:30:18 +0530
+Message-ID: <20160303105910.GA2652@sudip-pc>
+References: <20160303170926.05390033@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:10336 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751243AbcCCKOQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2016 05:14:16 -0500
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:34174 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754943AbcCCLAa (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2016 06:00:30 -0500
 Content-Disposition: inline
-In-Reply-To: <20160303073441.5ba3aa0d@canb.auug.org.au>
+In-Reply-To: <20160303170926.05390033@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net
 
-On Thu, Mar 03, 2016 at 07:34:41AM +1100, Stephen Rothwell wrote:
-> Hi Jarkko,
+On Thu, Mar 03, 2016 at 05:09:26PM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Wed, 2 Mar 2016 16:29:56 +0200 Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > On Wed, Mar 02, 2016 at 07:42:18AM +1100, Stephen Rothwell wrote:
-> > > Hi Jarkko,
-> > > 
-> > > All the new commits in you tree today have no Signed-off-by from you as
-> > > the committer.  
-> > 
-> > Oops :( This is my mistake. Do you want me to do git reverts and redo
-> > commits?
-> 
-> Reverting doesn't really fix the problem (since eth original commits
-> would still be there), you would have to rebase (maybe onto the same
-> base commit) all the commits and add the Signed-off-by lines.
+> Changes since 20160302:
 
-They are now rebased.
+With next-20160301 and next-20160302 I am having problem in allmodconfig
+build of x86_64. The error being:
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+In file included from builtin-check.c:32:0:
+elf.h:22:18: fatal error: gelf.h: No such file or directory
+compilation terminated.
+In file included from elf.c:30:0:
+elf.h:22:18: fatal error: gelf.h: No such file or directoryIn file
+included from special.h:22:0,
+	                  from special.c:26:
+elf.h:22:18: fatal error: gelf.h: No such file or directory
+compilation terminated.
 
-/Jarkko
+I have intsalled libelf-dev and now make allmodconfig && make -j8 works
+but if I am trying make O=nextbuild allmodconfig && make O=nextbuild -j8
+it again fails with the error:
+scripts/Makefile.include:3: *** O=nextbuild does not exist.  Stop.
+
+But this has been my normal workflow and I do have a valid directory
+called nextbuild.
+
+Am i the only one hitting this error? Do i need to bisect or it is a
+known issue?
+
+regards
+sudip
