@@ -1,45 +1,109 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the samsung-krzk tree with the omap
- tree
-Date: Thu, 3 Mar 2016 08:32:13 -0800
-Message-ID: <20160303163213.GG4469@atomide.com>
-References: <20160303091631.1ef24e87@canb.auug.org.au>
+From: lokesh jaliminche <lokesh.jaliminche@gmail.com>
+Subject: Re: ext2/3 using ext4 module mkdir IO error on pmem DAX mount
+Date: Thu, 3 Mar 2016 22:49:51 +0530
+Message-ID: <CAKJOkCoLEs2cQuS+CeciUY39ErQeOYmkQ_Jj4gHePPTUTMngrA@mail.gmail.com>
+References: <20160302064304.GA15559@dhcp12-144.nay.redhat.com>
+	<20160303002824.GA31238@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:47912 "EHLO muru.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751530AbcCCQcR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 3 Mar 2016 11:32:17 -0500
-Content-Disposition: inline
-In-Reply-To: <20160303091631.1ef24e87@canb.auug.org.au>
+Received: from mail-wm0-f51.google.com ([74.125.82.51]:37715 "EHLO
+	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755097AbcCCRTx (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2016 12:19:53 -0500
+In-Reply-To: <20160303002824.GA31238@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: Ross Zwisler <ross.zwisler@linux.intel.com>
+Cc: Xiong Zhou <xzhou@redhat.com>, Andreas Dilger <adilger@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, linux-nvdimm@ml01.01.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [160302 14:16]:
-> Hi Krzysztof,
-> 
-> Today's linux-next merge of the samsung-krzk tree got a conflict in:
-> 
->   drivers/clk/Kconfig
-> 
-> between commit:
-> 
->   21330497f303 ("clk: ti: Add support for dm814x ADPLL")
-> 
-> from the omap tree and commit:
-> 
->   b9e65ebc654d ("clk: Move vendor's Kconfig into CCF menu section")
-> 
-> from the samsung-krzk tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi,
+   I have tested it locally I am also getting same error but not
+consistently. I have put some debug logs for debugging, as per the logs
+it seems that block_group is not getting initialized properly. I am
+not sure weather this is because of my patch. Need to debug more.
 
-Thanks yes that's correct thanks!
+commands :
+=========
+[root@cli02-ws Desktop]# dd if=/dev/zero of=/mnt/test bs=1024 count=100000
+[root@cli02-ws Desktop]# losetup /dev/loop4 /mnt/test
+[root@cli02-ws Desktop]# mkfs.ext2 /mnt/test
+[root@cli02-ws Desktop]# mount -t ext2 -o loop /mnt/test /mnt/test_ext4
+[root@cli02-ws Desktop]# cd /mnt/test_ext4/
+[root@cli02-ws test_ext4]# mkdir 1
+mkdir: cannot create directory `1': Input/output error
+[root@cli02-ws test_ext4]# mkdir 2
+[root@cli02-ws test_ext4]# mkdir 3
+mkdir: cannot create directory `3': Input/output error
+[root@cli02-ws test_ext4]# mkdir 4
+
+debug_logs :
+=========
+[root@cli02-ws Desktop]# tail -f /var/log/messages 2>&1 | tee faillog
+Mar  3 13:13:27 cli02-ws kernel: [  228.167307] EXT4-fs (loop0):
+mounting ext2 file system using the ext4 subsystem
+Mar  3 13:13:27 cli02-ws kernel: [  228.169634] EXT4-fs (loop0):
+mounted filesystem without journal. Opts: (null)
+Mar  3 13:13:42 cli02-ws kernel: [  243.506280] max_blocks_per_group : 7949
+Mar  3 13:13:42 cli02-ws kernel: [  243.506285] stats.free_clusters  : 7949
+Mar  3 13:13:42 cli02-ws kernel: [  243.506287] inodes_per_group*f   : 1928
+Mar  3 13:13:42 cli02-ws kernel: [  243.506290] stats.free_inodes    : 1928
+Mar  3 13:13:42 cli02-ws kernel: [  243.506292] block_group
+:2103884794 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Mar  3 13:13:42 cli02-ws kernel: [  243.506295] group_count : 13
+Mar  3 13:13:42 cli02-ws kernel: [  243.506298] EXT4-fs error (device
+loop0): ext4_get_group_desc:291: comm mkdir: block_group >=
+groups_count - block_group = 2103884794, groups_count = 13
+Mar  3 13:14:09 cli02-ws kernel: [  270.809734] max_blocks_per_group : 7949
+Mar  3 13:14:09 cli02-ws kernel: [  270.809739] stats.free_clusters  : 1452
+Mar  3 13:14:09 cli02-ws kernel: [  270.809742] inodes_per_group*f   : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809744] stats.free_inodes    : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809747] max_blocks_per_group : 7949
+Mar  3 13:14:09 cli02-ws kernel: [  270.809750] stats.free_clusters  : 7677
+Mar  3 13:14:09 cli02-ws kernel: [  270.809752] inodes_per_group*f   : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809755] stats.free_inodes    : 1917
+Mar  3 13:14:09 cli02-ws kernel: [  270.809757] max_blocks_per_group : 7949
+Mar  3 13:14:09 cli02-ws kernel: [  270.809760] stats.free_clusters  : 7691
+Mar  3 13:14:09 cli02-ws kernel: [  270.809762] inodes_per_group*f   : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809765] stats.free_inodes    : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809767] max_blocks_per_group : 7949
+Mar  3 13:14:09 cli02-ws kernel: [  270.809770] stats.free_clusters  : 7949
+Mar  3 13:14:09 cli02-ws kernel: [  270.809772] inodes_per_group*f   : 1928
+Mar  3 13:14:09 cli02-ws kernel: [  270.809775] stats.free_inodes    : 1928
+Mar  3 13:14:38 cli02-ws kernel: [  299.081995] max_blocks_per_group : 7949
+Mar  3 13:14:38 cli02-ws kernel: [  299.082038] stats.free_clusters  : 7949
+Mar  3 13:14:38 cli02-ws kernel: [  299.082040] inodes_per_group*f   : 1928
+Mar  3 13:14:38 cli02-ws kernel: [  299.082042] stats.free_inodes    : 1928
+Mar  3 13:14:38 cli02-ws kernel: [  299.082045] block_group
+:1066167208<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Mar  3 13:14:38 cli02-ws kernel: [  299.082048] group_count : 13
+Mar  3 13:14:38 cli02-ws kernel: [  299.082051] EXT4-fs error (device
+loop0): ext4_get_group_desc:291: comm mkdir: block_group >=
+groups_count - block_group = 1066167208, groups_count = 13
+Mar  3 13:14:48 cli02-ws kernel: [  309.138432] max_blocks_per_group : 7949
+Mar  3 13:14:48 cli02-ws kernel: [  309.138436] stats.free_clusters  : 7949
+Mar  3 13:14:48 cli02-ws kernel: [  309.138439] inodes_per_group*f   : 1928
+Mar  3 13:14:48 cli02-ws kernel: [  309.138452] stats.free_inodes    : 1928
 
 Regards,
+Lokesh
 
-Tony
+On Thu, Mar 3, 2016 at 5:58 AM, Ross Zwisler
+<ross.zwisler@linux.intel.com> wrote:
+> On Wed, Mar 02, 2016 at 02:43:04PM +0800, Xiong Zhou wrote:
+>> Hi,
+>>
+>> mkdir failed IO error on pmem DAX ext2/3 fs mount using ext4 module.
+>>
+>> This happends only on -next tree, not on Linus' tree,
+>> at least from 4.5.0-rc5-next-20160224.
+>
+> I was able to reproduce this and bisect it to the following commit:
+>
+> commit 1f2d779fed21 ("ext4: optimize group search for inode allocation")
+>
+> The fact that DAX was enabled in this failure was a red herring - it fails
+> without DAX as well.  The key is just that we're mounting an ext2 formatted
+> filesystem using the ext4 module, I think.
+>
+> - Ross
