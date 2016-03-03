@@ -1,109 +1,80 @@
-From: lokesh jaliminche <lokesh.jaliminche@gmail.com>
-Subject: Re: ext2/3 using ext4 module mkdir IO error on pmem DAX mount
-Date: Thu, 3 Mar 2016 22:49:51 +0530
-Message-ID: <CAKJOkCoLEs2cQuS+CeciUY39ErQeOYmkQ_Jj4gHePPTUTMngrA@mail.gmail.com>
-References: <20160302064304.GA15559@dhcp12-144.nay.redhat.com>
-	<20160303002824.GA31238@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: [PATCH] objtool: Warn if libelf is missing
+Date: Thu,  3 Mar 2016 11:39:30 -0600
+Message-ID: <8c27fe00face60f42e888ddb3142c97e45223165.1457026550.git.jpoimboe@redhat.com>
+References: <20160303143527.GA2348@treble.redhat.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f51.google.com ([74.125.82.51]:37715 "EHLO
-	mail-wm0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755097AbcCCRTx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 3 Mar 2016 12:19:53 -0500
-In-Reply-To: <20160303002824.GA31238@linux.intel.com>
+Received: from mx1.redhat.com ([209.132.183.28]:39459 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754309AbcCCRki (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Mar 2016 12:40:38 -0500
+In-Reply-To: <20160303143527.GA2348@treble.redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ross Zwisler <ross.zwisler@linux.intel.com>
-Cc: Xiong Zhou <xzhou@redhat.com>, Andreas Dilger <adilger@dilger.ca>, Theodore Ts'o <tytso@mit.edu>, linux-nvdimm@ml01.01.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux@roeck-us.net, Andrew Morton <akpm@linux-foundation.org>, live-patching@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-Hi,
-   I have tested it locally I am also getting same error but not
-consistently. I have put some debug logs for debugging, as per the logs
-it seems that block_group is not getting initialized properly. I am
-not sure weather this is because of my patch. Need to debug more.
+With CONFIG_STACK_VALIDATION enabled, if the host system doesn't have
+a development version of libelf installed, the build fails with errors
+like:
 
-commands :
-=========
-[root@cli02-ws Desktop]# dd if=/dev/zero of=/mnt/test bs=1024 count=100000
-[root@cli02-ws Desktop]# losetup /dev/loop4 /mnt/test
-[root@cli02-ws Desktop]# mkfs.ext2 /mnt/test
-[root@cli02-ws Desktop]# mount -t ext2 -o loop /mnt/test /mnt/test_ext4
-[root@cli02-ws Desktop]# cd /mnt/test_ext4/
-[root@cli02-ws test_ext4]# mkdir 1
-mkdir: cannot create directory `1': Input/output error
-[root@cli02-ws test_ext4]# mkdir 2
-[root@cli02-ws test_ext4]# mkdir 3
-mkdir: cannot create directory `3': Input/output error
-[root@cli02-ws test_ext4]# mkdir 4
+  elf.h:22:18: fatal error: gelf.h: No such file or directory compilation terminated.
 
-debug_logs :
-=========
-[root@cli02-ws Desktop]# tail -f /var/log/messages 2>&1 | tee faillog
-Mar  3 13:13:27 cli02-ws kernel: [  228.167307] EXT4-fs (loop0):
-mounting ext2 file system using the ext4 subsystem
-Mar  3 13:13:27 cli02-ws kernel: [  228.169634] EXT4-fs (loop0):
-mounted filesystem without journal. Opts: (null)
-Mar  3 13:13:42 cli02-ws kernel: [  243.506280] max_blocks_per_group : 7949
-Mar  3 13:13:42 cli02-ws kernel: [  243.506285] stats.free_clusters  : 7949
-Mar  3 13:13:42 cli02-ws kernel: [  243.506287] inodes_per_group*f   : 1928
-Mar  3 13:13:42 cli02-ws kernel: [  243.506290] stats.free_inodes    : 1928
-Mar  3 13:13:42 cli02-ws kernel: [  243.506292] block_group
-:2103884794 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Mar  3 13:13:42 cli02-ws kernel: [  243.506295] group_count : 13
-Mar  3 13:13:42 cli02-ws kernel: [  243.506298] EXT4-fs error (device
-loop0): ext4_get_group_desc:291: comm mkdir: block_group >=
-groups_count - block_group = 2103884794, groups_count = 13
-Mar  3 13:14:09 cli02-ws kernel: [  270.809734] max_blocks_per_group : 7949
-Mar  3 13:14:09 cli02-ws kernel: [  270.809739] stats.free_clusters  : 1452
-Mar  3 13:14:09 cli02-ws kernel: [  270.809742] inodes_per_group*f   : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809744] stats.free_inodes    : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809747] max_blocks_per_group : 7949
-Mar  3 13:14:09 cli02-ws kernel: [  270.809750] stats.free_clusters  : 7677
-Mar  3 13:14:09 cli02-ws kernel: [  270.809752] inodes_per_group*f   : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809755] stats.free_inodes    : 1917
-Mar  3 13:14:09 cli02-ws kernel: [  270.809757] max_blocks_per_group : 7949
-Mar  3 13:14:09 cli02-ws kernel: [  270.809760] stats.free_clusters  : 7691
-Mar  3 13:14:09 cli02-ws kernel: [  270.809762] inodes_per_group*f   : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809765] stats.free_inodes    : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809767] max_blocks_per_group : 7949
-Mar  3 13:14:09 cli02-ws kernel: [  270.809770] stats.free_clusters  : 7949
-Mar  3 13:14:09 cli02-ws kernel: [  270.809772] inodes_per_group*f   : 1928
-Mar  3 13:14:09 cli02-ws kernel: [  270.809775] stats.free_inodes    : 1928
-Mar  3 13:14:38 cli02-ws kernel: [  299.081995] max_blocks_per_group : 7949
-Mar  3 13:14:38 cli02-ws kernel: [  299.082038] stats.free_clusters  : 7949
-Mar  3 13:14:38 cli02-ws kernel: [  299.082040] inodes_per_group*f   : 1928
-Mar  3 13:14:38 cli02-ws kernel: [  299.082042] stats.free_inodes    : 1928
-Mar  3 13:14:38 cli02-ws kernel: [  299.082045] block_group
-:1066167208<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-Mar  3 13:14:38 cli02-ws kernel: [  299.082048] group_count : 13
-Mar  3 13:14:38 cli02-ws kernel: [  299.082051] EXT4-fs error (device
-loop0): ext4_get_group_desc:291: comm mkdir: block_group >=
-groups_count - block_group = 1066167208, groups_count = 13
-Mar  3 13:14:48 cli02-ws kernel: [  309.138432] max_blocks_per_group : 7949
-Mar  3 13:14:48 cli02-ws kernel: [  309.138436] stats.free_clusters  : 7949
-Mar  3 13:14:48 cli02-ws kernel: [  309.138439] inodes_per_group*f   : 1928
-Mar  3 13:14:48 cli02-ws kernel: [  309.138452] stats.free_inodes    : 1928
+Instead of failing to build, instead just print a warning and disable
+stack validation.
 
-Regards,
-Lokesh
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+---
+Based on tip/master.
 
-On Thu, Mar 3, 2016 at 5:58 AM, Ross Zwisler
-<ross.zwisler@linux.intel.com> wrote:
-> On Wed, Mar 02, 2016 at 02:43:04PM +0800, Xiong Zhou wrote:
->> Hi,
->>
->> mkdir failed IO error on pmem DAX ext2/3 fs mount using ext4 module.
->>
->> This happends only on -next tree, not on Linus' tree,
->> at least from 4.5.0-rc5-next-20160224.
->
-> I was able to reproduce this and bisect it to the following commit:
->
-> commit 1f2d779fed21 ("ext4: optimize group search for inode allocation")
->
-> The fact that DAX was enabled in this failure was a red herring - it fails
-> without DAX as well.  The key is just that we're mounting an ext2 formatted
-> filesystem using the ext4 module, I think.
->
-> - Ross
+ Makefile               | 13 ++++++++++++-
+ scripts/Makefile.build |  2 ++
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 750df29..1fd8328 100644
+--- a/Makefile
++++ b/Makefile
+@@ -998,8 +998,19 @@ prepare0: archprepare FORCE
+ # All the preparing..
+ prepare: prepare0 prepare-objtool
+ 
++ifdef CONFIG_STACK_VALIDATION
++  has_libelf := $(shell echo "int main() {}" | $(HOSTCC) -xc -o /dev/null -lelf - &> /dev/null && echo 1 || echo 0)
++  ifeq ($(has_libelf),1)
++    objtool_target := tools/objtool FORCE
++  else
++    $(warning "Cannot use CONFIG_STACK_VALIDATION, please install libelf-dev or elfutils-libelf-devel")
++    SKIP_STACK_VALIDATION := 1
++    export SKIP_STACK_VALIDATION
++  endif
++endif
++
+ PHONY += prepare-objtool
+-prepare-objtool: $(if $(CONFIG_STACK_VALIDATION), tools/objtool FORCE)
++prepare-objtool: $(objtool_target)
+ 
+ # Generate some files
+ # ---------------------------------------------------------------------------
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 130a452..e1bc190 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -242,6 +242,7 @@ cmd_record_mcount =						\
+ endif
+ 
+ ifdef CONFIG_STACK_VALIDATION
++ifneq ($(SKIP_STACK_VALIDATION),1)
+ 
+ __objtool_obj := $(objtree)/tools/objtool/objtool
+ 
+@@ -260,6 +261,7 @@ objtool_obj = $(if $(patsubst y%,, \
+ 	$(OBJECT_FILES_NON_STANDARD_$(basetarget).o)$(OBJECT_FILES_NON_STANDARD)n), \
+ 	$(__objtool_obj))
+ 
++endif # SKIP_STACK_VALIDATION
+ endif # CONFIG_STACK_VALIDATION
+ 
+ define rule_cc_o_c
+-- 
+2.4.3
