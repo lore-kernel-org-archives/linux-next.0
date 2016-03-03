@@ -1,48 +1,76 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: linux-next: manual merge of the samsung-krzk tree with the omap
- tree
-Date: Thu, 03 Mar 2016 08:40:52 +0900
-Message-ID: <56D77A04.1090802@samsung.com>
-References: <20160303091631.1ef24e87@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 3 Mar 2016 11:24:56 +1100
+Message-ID: <20160303112456.15afe12b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46322 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752950AbcCBXlA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 2 Mar 2016 18:41:00 -0500
-In-reply-to: <20160303091631.1ef24e87@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:42633 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752672AbcCCAY7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 2 Mar 2016 19:24:59 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Tony Lindgren <tony@atomide.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, James Liao <jamesjj.liao@mediatek.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gal Pressman <galp@mellanox.com>, Matthew Finlay <matt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>
 
-On 03.03.2016 07:16, Stephen Rothwell wrote:
-> Hi Krzysztof,
-> 
-> Today's linux-next merge of the samsung-krzk tree got a conflict in:
-> 
->   drivers/clk/Kconfig
-> 
-> between commit:
-> 
->   21330497f303 ("clk: ti: Add support for dm814x ADPLL")
-> 
-> from the omap tree and commit:
-> 
->   b9e65ebc654d ("clk: Move vendor's Kconfig into CCF menu section")
-> 
-> from the samsung-krzk tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
-> 
+Hi all,
 
-Thanks!
+Today's linux-next merge of the net-next tree got conflicts in:
 
-The conflicting commit actually comes from clk tree, merged here as a
-dependency for other patches.
+  drivers/net/ethernet/mellanox/mlx5/core/en.h
 
-Best regards,
-Krzysztof
+between commit:
+
+  b081da5ee186 ("net/mlx5e: Add rx/tx bytes software counters")
+
+from the net tree and commits:
+
+  89db09eb5979 ("net/mlx5e: Add TX inner packet counters")
+  3c1b5532191d ("net/mlx5e: Move common case counters within sq_stats struct")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/en.h
+index 5b1753233c5d,9c0e80e64b43..000000000000
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
+@@@ -244,9 -256,12 +258,13 @@@ struct mlx5e_rq_stats 
+  
+  static const char sq_stats_strings[][ETH_GSTRING_LEN] = {
+  	"packets",
+ +	"bytes",
+  	"tso_packets",
+  	"tso_bytes",
++ 	"tso_inner_packets",
++ 	"tso_inner_bytes",
++ 	"csum_offload_inner",
++ 	"nop",
+  	"csum_offload_none",
+  	"stopped",
+  	"wake",
+@@@ -254,11 -269,15 +272,16 @@@
+  };
+  
+  struct mlx5e_sq_stats {
++ 	/* commonly accessed in data path */
+  	u64 packets;
+ +	u64 bytes;
+  	u64 tso_packets;
+  	u64 tso_bytes;
++ 	u64 tso_inner_packets;
++ 	u64 tso_inner_bytes;
++ 	u64 csum_offload_inner;
++ 	u64 nop;
++ 	/* less likely accessed in data path */
+  	u64 csum_offload_none;
+  	u64 stopped;
+  	u64 wake;
