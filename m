@@ -1,36 +1,38 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 04 Mar 2016 03:17:40 +0100
-Message-ID: <56D8F044.4080004@iogearbox.net>
-References: <20160304130949.47a94ac8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Fri, 4 Mar 2016 13:59:33 +1100
+Message-ID: <20160304135933.0ba93056@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160304130949.47a94ac8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Benc <jbenc@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47389 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750874AbcCDC7g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Mar 2016 21:59:36 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 03/04/2016 03:09 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->
->    drivers/net/vxlan.c
->
-> between commit:
->
->    4024fcf70556 ("vxlan: fix missing options_len update on RX with collect metadata")
->
-> from the net tree and commit:
->
->    3288af0892e3 ("vxlan: move GBP header parsing to a separate function")
->
-> from the net-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi all,
 
-Looks good, thanks!
+After merging the device-mapper tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+drivers/md/dm.c: In function '__split_and_process_non_flush':
+drivers/md/dm.c:1761:6: error: 'ret' undeclared (first use in this function)
+  if (ret < 0)
+      ^
+
+Caused by commit
+
+  f838997d1784 ("dm: return error if bio_integrity_clone() fails in clone_bio()")
+
+That one is a bit annoying ... clearly not build tested :-(
+
+I have used the device-mapper tree from next-20160303 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
