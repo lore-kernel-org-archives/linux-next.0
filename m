@@ -1,81 +1,139 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: ext2/3 using ext4 module mkdir IO error on pmem DAX mount
-Date: Thu, 3 Mar 2016 18:49:04 -0500
-Message-ID: <20160303234904.GF24012@thunk.org>
-References: <20160302064304.GA15559@dhcp12-144.nay.redhat.com>
- <20160303002824.GA31238@linux.intel.com>
- <CAKJOkCoLEs2cQuS+CeciUY39ErQeOYmkQ_Jj4gHePPTUTMngrA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 4 Mar 2016 13:09:49 +1100
+Message-ID: <20160304130949.47a94ac8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAKJOkCoLEs2cQuS+CeciUY39ErQeOYmkQ_Jj4gHePPTUTMngrA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: lokesh jaliminche <lokesh.jaliminche@gmail.com>
-Cc: Ross Zwisler <ross.zwisler@linux.intel.com>, Xiong Zhou <xzhou@redhat.com>, Andreas Dilger <adilger@dilger.ca>, linux-nvdimm@ml01.01.org, linux-ext4 <linux-ext4@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33407 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756219AbcCDCJw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 3 Mar 2016 21:09:52 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Jiri Benc <jbenc@redhat.com>
 
-On Thu, Mar 03, 2016 at 10:49:51PM +0530, lokesh jaliminche wrote:
-> Hi,
->    I have tested it locally I am also getting same error but not
-> consistently. I have put some debug logs for debugging, as per the logs
-> it seems that block_group is not getting initialized properly. I am
-> not sure weather this is because of my patch. Need to debug more.
+Hi all,
 
-I'm quite sure it's your patch, so I'm going to drop it for now.  Note
-that with ext3, we don't have flex_bg's (the flex_bg size is 1).
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Here's a reliable repro:
+  drivers/net/vxlan.c
 
-	kvm-xfstests --no-log -c ext3 generic/003
+between commit:
 
-For more about kvm-xfstests
+  4024fcf70556 ("vxlan: fix missing options_len update on RX with collect metadata")
 
-https://git.kernel.org/cgit/fs/ext2/xfstests-bld.git/tree/quick-start?h=META
+from the net tree and commit:
 
-Output from running this test:
+  3288af0892e3 ("vxlan: move GBP header parsing to a separate function")
 
-BEGIN TEST ext3: Ext4 4k block emulating ext3 Thu Mar  3 18:39:33 EST 2016
-DEVICE: /dev/vdd
-MK2FS OPTIONS: -q -O ^extents,^flex_bg,^uninit_bg,^64bit,^metadata_csum,^huge_file,^dir_nlink,^extra_isize
-MOUNT OPTIONS: -o block_validity,nodelalloc
-FSTYP         -- ext4
-PLATFORM      -- Linux/i686 kvm-xfstests 4.5.0-rc2-00026-g1f2d779
-MKFS_OPTIONS  -- -q -O ^extents,^flex_bg,^uninit_bg,^64bit,^metadata_csum,^huge_file,^dir_nlink,^extra_isize /dev/vdc
-MOUNT_OPTIONS -- -o acl,user_xattr -o block_validity,nodelalloc /dev/vdc /vdc
+from the net-next tree.
 
-generic/003             [18:39:35][   13.096353] run fstests generic/003 at 2016-03-03 18:39:35
-[   14.859764] EXT4-fs error (device vdc): ext4_get_group_desc:288: comm mkdir: block_group >= groups_count - block_group = 850480444, groups_count = 40
-[   16.944808] EXT4-fs (vdc): warning: mounting fs with errors, running e2fsck is recommended
-[   16.956276] EXT4-fs error (device vdc): ext4_get_group_desc:288: comm mkdir: block_group >= groups_count - block_group = 3221700656, groups_count = 40
-[   19.023011] EXT4-fs (vdc): warning: mounting fs with errors, running e2fsck is recommended
-[   22.104702] EXT4-fs (vdc): warning: mounting fs with errors, running e2fsck is recommended
- [18:39:46] - output mismatch (see /results/results-ext3/generic/003.out.bad)
-    --- tests/generic/003.out   2016-02-29 22:18:21.000000000 -0500
-    +++ /results/results-ext3/generic/003.out.bad       2016-03-03 18:39:46.587676694 -0500
-    @@ -1,2 +1,46 @@
-     QA output created by 003
-    +mkdir: cannot create directory '/vdc/dir1': Input/output error
-    +./tests/generic/003: line 93: /vdc/dir1/file1: No such file or directory
-    +stat: cannot stat '/vdc/dir1/file1': No such file or directory
-    +cat: /vdc/dir1/file1: No such file or directory
-    +stat: cannot stat '/vdc/dir1/file1': No such file or directory
-    +ERROR: access time has not been updated after accessing file1 first time
-    ...
-    (Run 'diff -u tests/generic/003.out /results/results-ext3/generic/003.out.bad'  to see the entire diff)
-Ran: generic/003
-Failures: generic/003
-Failed 1 of 1 tests
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
-(In fact a huge number of tests fail using the ext3 configuration, but
-generic/003 is a quick fast test.  Before submitting patches, please
-run at the very least "kvm-xfstests smoke".  Admittedly, for this bug
-the smoke test wouldn't have been enough.  You would have needed
-"kvm-xfstests-g quick", or preferably, "kvm-xfstests -g auto".
-Alternatively, you can use gce-xfstests, which uses Google Compute
-Engine where you can just fire off the tests, and it will send you
-e-mail with the test results.  See
-https://git.kernel.org/cgit/fs/ext2/xfstests-bld.git/tree/kvm-xfstests/README.GCE
-for more information.)
+-- 
+Cheers,
+Stephen Rothwell
 
-							- Ted
+diff --cc drivers/net/vxlan.c
+index 1c32bd104797,775ddb48388d..000000000000
+--- a/drivers/net/vxlan.c
++++ b/drivers/net/vxlan.c
+@@@ -1129,49 -1144,61 +1146,63 @@@ static bool vxlan_remcsum(struct vxlanh
+  {
+  	size_t start, offset, plen;
+  
+- 	if (skb->remcsum_offload)
+- 		return vh;
++ 	if (!(unparsed->vx_flags & VXLAN_HF_RCO) || skb->remcsum_offload)
++ 		goto out;
+  
+- 	start = (data & VXLAN_RCO_MASK) << VXLAN_RCO_SHIFT;
+- 	offset = start + ((data & VXLAN_RCO_UDP) ?
+- 			  offsetof(struct udphdr, check) :
+- 			  offsetof(struct tcphdr, check));
++ 	start = vxlan_rco_start(unparsed->vx_vni);
++ 	offset = start + vxlan_rco_offset(unparsed->vx_vni);
+  
+- 	plen = hdrlen + offset + sizeof(u16);
++ 	plen = sizeof(struct vxlanhdr) + offset + sizeof(u16);
+  
+  	if (!pskb_may_pull(skb, plen))
+- 		return NULL;
++ 		return false;
++ 
++ 	skb_remcsum_process(skb, (void *)(vxlan_hdr(skb) + 1), start, offset,
++ 			    !!(vxflags & VXLAN_F_REMCSUM_NOPARTIAL));
++ out:
++ 	unparsed->vx_flags &= ~VXLAN_HF_RCO;
++ 	unparsed->vx_vni &= VXLAN_VNI_MASK;
++ 	return true;
++ }
++ 
++ static void vxlan_parse_gbp_hdr(struct vxlanhdr *unparsed,
++ 				struct sk_buff *skb, u32 vxflags,
++ 				struct vxlan_metadata *md)
++ {
++ 	struct vxlanhdr_gbp *gbp = (struct vxlanhdr_gbp *)unparsed;
++ 	struct metadata_dst *tun_dst;
+  
+- 	vh = (struct vxlanhdr *)(udp_hdr(skb) + 1);
++ 	if (!(unparsed->vx_flags & VXLAN_HF_GBP))
++ 		goto out;
+  
+- 	skb_remcsum_process(skb, (void *)vh + hdrlen, start, offset,
+- 			    nopartial);
++ 	md->gbp = ntohs(gbp->policy_id);
+  
+- 	return vh;
++ 	tun_dst = (struct metadata_dst *)skb_dst(skb);
+ -	if (tun_dst)
+++	if (tun_dst) {
++ 		tun_dst->u.tun_info.key.tun_flags |= TUNNEL_VXLAN_OPT;
+++		tun_dst->u.tun_info.options_len = sizeof(*md);
+++	}
++ 
++ 	if (gbp->dont_learn)
++ 		md->gbp |= VXLAN_GBP_DONT_LEARN;
++ 
++ 	if (gbp->policy_applied)
++ 		md->gbp |= VXLAN_GBP_POLICY_APPLIED;
++ 
++ 	/* In flow-based mode, GBP is carried in dst_metadata */
++ 	if (!(vxflags & VXLAN_F_COLLECT_METADATA))
++ 		skb->mark = md->gbp;
++ out:
++ 	unparsed->vx_flags &= ~VXLAN_GBP_USED_BITS;
+  }
+  
+- static void vxlan_rcv(struct vxlan_sock *vs, struct sk_buff *skb,
+- 		      struct vxlan_metadata *md, u32 vni,
+- 		      struct metadata_dst *tun_dst)
++ static bool vxlan_set_mac(struct vxlan_dev *vxlan,
++ 			  struct vxlan_sock *vs,
++ 			  struct sk_buff *skb)
+  {
+- 	struct iphdr *oip = NULL;
+- 	struct ipv6hdr *oip6 = NULL;
+- 	struct vxlan_dev *vxlan;
+- 	struct pcpu_sw_netstats *stats;
+  	union vxlan_addr saddr;
+- 	int err = 0;
+- 
+- 	/* For flow based devices, map all packets to VNI 0 */
+- 	if (vs->flags & VXLAN_F_COLLECT_METADATA)
+- 		vni = 0;
+- 
+- 	/* Is this VNI defined? */
+- 	vxlan = vxlan_vs_find_vni(vs, vni);
+- 	if (!vxlan)
+- 		goto drop;
+  
+  	skb_reset_mac_header(skb);
+- 	skb_scrub_packet(skb, !net_eq(vxlan->net, dev_net(vxlan->dev)));
+  	skb->protocol = eth_type_trans(skb, vxlan->dev);
+  	skb_postpull_rcsum(skb, eth_hdr(skb), ETH_HLEN);
+  
