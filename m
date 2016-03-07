@@ -1,29 +1,57 @@
-From: Wim Van Sebroeck <wim@iguana.be>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: linux-next: manual merge of the watchdog tree with the arm-soc tree
-Date: Mon, 7 Mar 2016 19:54:49 +0100
-Message-ID: <20160307185449.GB16667@spo001.leaseweb.nl>
-References: <20160307150402.191ba735@canb.auug.org.au> <CAOesGMjD51rNqd3V8BE6xHkYZQdB8nc_Azppk1U+m8GwrtUv6w@mail.gmail.com>
+Date: Mon, 7 Mar 2016 11:00:34 -0800
+Message-ID: <CAOesGMjrE3g0LBt_bJz8MZFS3REH1G5jC=Jv51V2upJXJo2VYQ@mail.gmail.com>
+References: <20160307150402.191ba735@canb.auug.org.au>
+	<CAOesGMjD51rNqd3V8BE6xHkYZQdB8nc_Azppk1U+m8GwrtUv6w@mail.gmail.com>
+	<56DD71D6.8040406@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMjD51rNqd3V8BE6xHkYZQdB8nc_Azppk1U+m8GwrtUv6w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fu Wei <fu.wei@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Andre Przywara <andre.przywara@arm.com>, Sudeep Holla <sudeep.holla@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yk0-f182.google.com ([209.85.160.182]:35969 "EHLO
+	mail-yk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752082AbcCGTAf (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 7 Mar 2016 14:00:35 -0500
+Received: by mail-yk0-f182.google.com with SMTP id 1so52838970ykg.3
+        for <linux-next@vger.kernel.org>; Mon, 07 Mar 2016 11:00:34 -0800 (PST)
+In-Reply-To: <56DD71D6.8040406@arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fu Wei <fu.wei@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Andre Przywara <andre.przywara@arm.com>
 
-Hi All,
+On Mon, Mar 7, 2016 at 4:19 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> Hi Olof,
+>
+> On 07/03/16 05:41, Olof Johansson wrote:
+>>
+>> Hi Wim,
+>>
+>> It's much easier for us if all DTS changes go in through the arm-soc
+>> trees, to avoid these kind of conflicts. Is this on a branch where you
+>> can easily drop it and we pick it up instead, or is it on a now-stable
+>> branch?
+>>
+>
+> Sorry for that. Since the patch series was still under discussion and
+> v14 was posted 3 days ago, I had not checked with Fu Wei on his plans
+> for DTS changes.
+>
+> Let me know if you want to pick up this single patch directly or want me
+> to send PR for that if Wim drops it from his branch. I might have couple
+> of DTS warning fixes for juno/vexpress(though I need to wait for Rob's
+> acks to them), so I can bundle them together.
 
-> It's much easier for us if all DTS changes go in through the arm-soc
-> trees, to avoid these kind of conflicts. Is this on a branch where you
-> can easily drop it and we pick it up instead, or is it on a now-stable
-> branch?
-> 
-> 
-> -Olof
+We're short on time for -rc7, most material should have been in by
+now. So you might want to send this separately if you think Rob will
+time out.
 
-I can always redo the tree once you picked it up.
+I'm OK with either applying directly or you bundling with other 64-bit
+DTS material. Either way, send to arm@kernel.org and we'll pick it up
+from there.
 
-Kind regards,
-Wim.
+
+Thanks,
+
+
+-Olof
