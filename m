@@ -1,71 +1,107 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the dt-rh tree
-Date: Mon, 7 Mar 2016 18:57:38 +1100
-Message-ID: <20160307185738.59a9d21b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the drm tree
+Date: Mon, 7 Mar 2016 19:14:13 +1100
+Message-ID: <20160307191413.1a2e499a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46471 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752046AbcCGH5k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 7 Mar 2016 02:57:40 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rob,
+Hi Andrew,
 
-After merging the dt-rh tree, today's linux-next build (powerpc allyesconfig)
-produced these warnings:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Warning (unit_address_vs_reg): Node /testcase-data/interrupts/interrupts-extended0 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest100 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest101 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest0 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest1 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest2 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest3 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest5 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest6 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest7 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/test-unittest8 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/i2c-test-bus has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest12 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest13 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest14 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay-node/test-bus/i2c-test-bus/test-unittest14/i2c@0/test-mux-dev has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay0/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay1/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay2/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay3/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay4/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay4/fragment@0/__overlay__/test-unittest4 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay5/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay6/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay7/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay8/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay9/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay10/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay10/fragment@0/__overlay__/test-unittest10 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay10/fragment@0/__overlay__/test-unittest10/test-unittest101 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay11/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay11/fragment@0/__overlay__/test-unittest11 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay11/fragment@0/__overlay__/test-unittest11/test-unittest111 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay12/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay13/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay15/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /testcase-data/overlay15/fragment@0/__overlay__/test-unittest15 has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /testcase-data/overlay15/fragment@0/__overlay__/test-unittest15/i2c@0/test-mux-dev has a reg or ranges property, but no unit name
-Warning (unit_address_vs_reg): Node /__local_fixups__/testcase-data/overlay2/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /__local_fixups__/testcase-data/overlay3/fragment@0 has a unit name, but no reg property
-Warning (unit_address_vs_reg): Node /__local_fixups__/testcase-data/overlay4/fragment@0 has a unit name, but no reg property
+  drivers/gpu/drm/omapdrm/omap_gem.c
 
-Introduced by commit
+between commit:
 
-  fa38a82096a1 ("scripts/dtc: Update to upstream version 53bf130b1cdd")
+  cdb0381d2f19 ("drm/omap: gem: Clean up GEM objects memory flags")
+(and others following)
+
+from the drm tree and commit:
+
+  c45472f906f4 ("dma-mapping: rename dma_*_writecombine() to dma_*_wc()")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/gpu/drm/omapdrm/omap_gem.c
+index cc36a8dc9bd4,359b0d7e8ef7..000000000000
+--- a/drivers/gpu/drm/omapdrm/omap_gem.c
++++ b/drivers/gpu/drm/omapdrm/omap_gem.c
+@@@ -1305,23 -1324,22 +1305,23 @@@ void omap_gem_free_object(struct drm_ge
+  	 */
+  	WARN_ON(omap_obj->paddr_cnt > 0);
+  
+ -	/* don't free externally allocated backing memory */
+ -	if (!(omap_obj->flags & OMAP_BO_EXT_MEM)) {
+ -		if (omap_obj->pages)
+ +	if (omap_obj->pages) {
+ +		if (omap_obj->flags & OMAP_BO_MEM_DMABUF)
+ +			kfree(omap_obj->pages);
+ +		else
+  			omap_gem_detach_pages(obj);
+ +	}
+  
+ -		if (!is_shmem(obj)) {
+ -			dma_free_wc(dev->dev, obj->size, omap_obj->vaddr,
+ -				    omap_obj->paddr);
+ -		} else if (omap_obj->vaddr) {
+ -			vunmap(omap_obj->vaddr);
+ -		}
+ +	if (omap_obj->flags & OMAP_BO_MEM_DMA_API) {
+- 		dma_free_writecombine(dev->dev, obj->size,
+++		dma_free_wc(dev->dev, obj->size,
+ +				omap_obj->vaddr, omap_obj->paddr);
+ +	} else if (omap_obj->vaddr) {
+ +		vunmap(omap_obj->vaddr);
+ +	} else if (obj->import_attach) {
+ +		drm_prime_gem_destroy(obj, omap_obj->sgt);
+  	}
+  
+ -	/* don't free externally allocated syncobj */
+ -	if (!(omap_obj->flags & OMAP_BO_EXT_SYNC))
+ -		kfree(omap_obj->sync);
+ +	kfree(omap_obj->sync);
+  
+  	drm_gem_object_release(obj);
+  
+@@@ -1410,25 -1428,10 +1410,25 @@@ struct drm_gem_object *omap_gem_new(str
+  		mapping_set_gfp_mask(mapping, GFP_USER | __GFP_DMA32);
+  	}
+  
+ +	/* Allocate memory if needed. */
+ +	if (flags & OMAP_BO_MEM_DMA_API) {
+- 		omap_obj->vaddr = dma_alloc_writecombine(dev->dev, size,
+++		omap_obj->vaddr = dma_alloc_wc(dev->dev, size,
+ +							 &omap_obj->paddr,
+ +							 GFP_KERNEL);
+ +		if (!omap_obj->vaddr)
+ +			goto err_release;
+ +	}
+ +
+ +	spin_lock(&priv->list_lock);
+ +	list_add(&omap_obj->mm_list, &priv->obj_list);
+ +	spin_unlock(&priv->list_lock);
+ +
+  	return obj;
+  
+ -fail:
+ -	omap_gem_free_object(obj);
+ +err_release:
+ +	drm_gem_object_release(obj);
+ +err_free:
+ +	kfree(omap_obj);
+  	return NULL;
+  }
+  
