@@ -1,66 +1,253 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: linux-next: manual merge of the watchdog tree with the arm-soc
- tree
-Date: Tue, 8 Mar 2016 10:10:12 +0000
-Message-ID: <56DEA504.5070209@arm.com>
-References: <20160307150402.191ba735@canb.auug.org.au>
- <CAOesGMjD51rNqd3V8BE6xHkYZQdB8nc_Azppk1U+m8GwrtUv6w@mail.gmail.com>
- <56DD71D6.8040406@arm.com>
- <CAOesGMjrE3g0LBt_bJz8MZFS3REH1G5jC=Jv51V2upJXJo2VYQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160308 build: 2 failures 19 warnings (next-20160308)
+Date: Tue, 08 Mar 2016 10:46:38 +0000
+Message-ID: <E1adF9x-0005nO-UF@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:60757 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753525AbcCHKKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2016 05:10:16 -0500
-In-Reply-To: <CAOesGMjrE3g0LBt_bJz8MZFS3REH1G5jC=Jv51V2upJXJo2VYQ@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43500 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932216AbcCHKvw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Mar 2016 05:51:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fu Wei <fu.wei@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Andre Przywara <andre.przywara@arm.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20160308
+Git describe: next-20160308
+Commit: 0c7106b0fa Add linux-next specific files for 20160308
+
+Build Time: 132 min 27 sec
+
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 22
+Warnings: 19
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:8:21: error: passing argument 1 of 'trace_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:15:21: error: passing argument 1 of 'trace_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:22:30: error: passing argument 1 of 'trace_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:29:32: error: passing argument 1 of 'trace_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:36:28: error: passing argument 1 of 'trace_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:43:24: error: passing argument 1 of 'trace_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../mm/debug_page_ref.c:50:26: error: passing argument 1 of 'trace_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+	arm-allmodconfig
+../include/asm-generic/div64.h:224:22: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+     45 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      4 warnings    0 mismatches  : arm-multi_v7_defconfig
+     10 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 22
+	  1 ../mm/debug_page_ref.c:8:21: error: passing argument 1 of 'trace_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:50:26: error: passing argument 1 of 'trace_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:43:24: error: passing argument 1 of 'trace_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:36:28: error: passing argument 1 of 'trace_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:29:32: error: passing argument 1 of 'trace_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:22:30: error: passing argument 1 of 'trace_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../mm/debug_page_ref.c:15:21: error: passing argument 1 of 'trace_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../include/asm-generic/div64.h:224:22: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 19
+	  6 <stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	  6 ../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	  6 ../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	  5 ../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  3 ../sound/soc/codecs/rt5640.c:1892:11: warning: unused variable 'dai_sel' [-Wunused-variable]
+	  2 ../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/trace/events/page_ref.h:47:18: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../include/linux/kern_levels.h:4:18: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 8 has type 'dma_addr_t {aka unsigned int}' [-Wformat=]
+	  1 ../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
+	  1 ../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
 
 
-On 07/03/16 19:00, Olof Johansson wrote:
-> On Mon, Mar 7, 2016 at 4:19 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> Hi Olof,
->>
->> On 07/03/16 05:41, Olof Johansson wrote:
->>>
->>> Hi Wim,
->>>
->>> It's much easier for us if all DTS changes go in through the arm-soc
->>> trees, to avoid these kind of conflicts. Is this on a branch where you
->>> can easily drop it and we pick it up instead, or is it on a now-stable
->>> branch?
->>>
->>
->> Sorry for that. Since the patch series was still under discussion and
->> v14 was posted 3 days ago, I had not checked with Fu Wei on his plans
->> for DTS changes.
->>
->> Let me know if you want to pick up this single patch directly or want me
->> to send PR for that if Wim drops it from his branch. I might have couple
->> of DTS warning fixes for juno/vexpress(though I need to wait for Rob's
->> acks to them), so I can bundle them together.
->
-> We're short on time for -rc7, most material should have been in by
-> now. So you might want to send this separately if you think Rob will
-> time out.
->
+===============================================================================
+Detailed per-defconfig build reports below:
 
-I agree, but the warnings I mentioned got introduced last Friday after
-Rob updated DTC in -next.
 
-> I'm OK with either applying directly or you bundling with other 64-bit
-> DTS material. Either way, send to arm@kernel.org and we'll pick it up
-> from there.
->
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-OK, will do that.
+Warnings:
+	../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
--- 
-Regards,
-Sudeep
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 21 errors, 45 warnings, 0 section mismatches
+
+Errors:
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/trace_events.h:703:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../include/trace/perf.h:83:35: error: passing argument 1 of 'check_trace_callback_type_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:8:21: error: passing argument 1 of 'trace_page_ref_set' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:15:21: error: passing argument 1 of 'trace_page_ref_mod' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:22:30: error: passing argument 1 of 'trace_page_ref_mod_and_test' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:29:32: error: passing argument 1 of 'trace_page_ref_mod_and_return' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:36:28: error: passing argument 1 of 'trace_page_ref_mod_unless' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:43:24: error: passing argument 1 of 'trace_page_ref_freeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../mm/debug_page_ref.c:50:26: error: passing argument 1 of 'trace_page_ref_unfreeze' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings:
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:47:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:54:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:97:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:104:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:111:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:118:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../include/trace/events/page_ref.h:125:18: warning: 'struct page' declared inside parameter list
+	../sound/soc/codecs/rt5640.c:1892:11: warning: unused variable 'dai_sel' [-Wunused-variable]
+	../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../sound/soc/codecs/rt5640.c:1892:11: warning: unused variable 'dai_sel' [-Wunused-variable]
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 10 warnings, 0 section mismatches
+
+Errors:
+	../include/asm-generic/div64.h:224:22: error: passing argument 1 of '__div64_32' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	../sound/soc/codecs/rt5640.c:1892:11: warning: unused variable 'dai_sel' [-Wunused-variable]
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/asm-generic/div64.h:207:28: warning: comparison of distinct pointer types lacks a cast
+	../include/asm-generic/div64.h:220:25: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/platform/goldfish/goldfish_pipe.c:312:3: warning: 'get_user_pages8' is deprecated [-Wdeprecated-declarations]
+	../include/linux/kern_levels.h:4:18: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 8 has type 'dma_addr_t {aka unsigned int}' [-Wformat=]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall madvisev not implemented [-Wcpp]
+	../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/time/timekeeping.c:987:5: warning: 'clock_was_set_seq' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+x86_64-defconfig
