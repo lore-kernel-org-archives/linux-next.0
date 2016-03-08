@@ -1,54 +1,66 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: next-20160307 build: 2 failures 19 warnings (next-20160307)
-Date: Mon, 7 Mar 2016 22:32:01 -0800
-Message-ID: <20160307223201.06f055f4.akpm@linux-foundation.org>
-References: <E1actUq-0008MZ-EF@optimist>
-	<20160308022056.GV18327@sirena.org.uk>
-	<002b01d17903$59b2ae00$0d180a00$@lge.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: linux-next: manual merge of the watchdog tree with the arm-soc
+ tree
+Date: Tue, 8 Mar 2016 10:10:12 +0000
+Message-ID: <56DEA504.5070209@arm.com>
+References: <20160307150402.191ba735@canb.auug.org.au>
+ <CAOesGMjD51rNqd3V8BE6xHkYZQdB8nc_Azppk1U+m8GwrtUv6w@mail.gmail.com>
+ <56DD71D6.8040406@arm.com>
+ <CAOesGMjrE3g0LBt_bJz8MZFS3REH1G5jC=Jv51V2upJXJo2VYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59620 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751534AbcCHGbt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Mar 2016 01:31:49 -0500
-In-Reply-To: <002b01d17903$59b2ae00$0d180a00$@lge.com>
+Received: from foss.arm.com ([217.140.101.70]:60757 "EHLO foss.arm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753525AbcCHKKQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2016 05:10:16 -0500
+In-Reply-To: <CAOesGMjrE3g0LBt_bJz8MZFS3REH1G5jC=Jv51V2upJXJo2VYQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Michal Nazarewicz' <mina86@mina86.com>, 'Steven Rostedt' <rostedt@goodmis.org>, 'Mel Gorman' <mgorman@techsingularity.net>, 'Minchan Kim' <minchan@kernel.org>, 'Sergey Senozhatsky' <sergey.senozhatsky.work@gmail.com>, "'Kirill A. Shutemov'" <kirill.shutemov@linux.intel.com>, 'Catalin Marinas' <catalin.marinas@arm.com>, 'Will Deacon' <will.deacon@arm.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fu Wei <fu.wei@linaro.org>, Guenter Roeck <linux@roeck-us.net>, Andre Przywara <andre.przywara@arm.com>
 
-On Tue, 8 Mar 2016 15:25:46 +0900 "Joonsoo Kim" <iamjoonsoo.kim@lge.com> wrote:
 
-> 
-> 
-> > -----Original Message-----
-> > From: Mark Brown [mailto:broonie@kernel.org]
-> > Sent: Tuesday, March 08, 2016 11:21 AM
-> > To: Andrew Morton; Joonsoo Kim; Michal Nazarewicz; Steven Rostedt; Mel
-> > Gorman; Minchan Kim; Sergey Senozhatsky; Kirill A. Shutemov; Catalin
-> > Marinas; Will Deacon
-> > Cc: kernel-build-reports@lists.linaro.org; linaro-kernel@lists.linaro.org;
-> > linux-next@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> > Subject: Re: next-20160307 build: 2 failures 19 warnings (next-20160307)
-> > 
-> > On Mon, Mar 07, 2016 at 11:38:44AM +0000, Build bot for Mark Brown wrote:
-> > 
-> > For the past week or so an arm64 allmodconfig has failed to build.  I've
-> > not been able to perform a bisect to identify where as I've been
-> > travelling but the errors are below, I suspect they are triggered by
-> > recent changes in the akpm tree adding tracepoints to the page reference
-> > code.
-> 
-> Hello,
-> 
-> It's already reported problem and solved by following patch.
-> 
-> http://ozlabs.org/~akpm/mmots/broken-out/mm-page_ref-add-tracepoint-to-track
-> -down-page-reference-manipulation-fix-3.patch
-> 
-> Once Andrew releases new mmotm and it is applied to linux-next,
-> no error will happen.
 
-Yes, sorry, I have been remiss in cc'ing Stephen on things like this :(
+On 07/03/16 19:00, Olof Johansson wrote:
+> On Mon, Mar 7, 2016 at 4:19 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>> Hi Olof,
+>>
+>> On 07/03/16 05:41, Olof Johansson wrote:
+>>>
+>>> Hi Wim,
+>>>
+>>> It's much easier for us if all DTS changes go in through the arm-soc
+>>> trees, to avoid these kind of conflicts. Is this on a branch where you
+>>> can easily drop it and we pick it up instead, or is it on a now-stable
+>>> branch?
+>>>
+>>
+>> Sorry for that. Since the patch series was still under discussion and
+>> v14 was posted 3 days ago, I had not checked with Fu Wei on his plans
+>> for DTS changes.
+>>
+>> Let me know if you want to pick up this single patch directly or want me
+>> to send PR for that if Wim drops it from his branch. I might have couple
+>> of DTS warning fixes for juno/vexpress(though I need to wait for Rob's
+>> acks to them), so I can bundle them together.
+>
+> We're short on time for -rc7, most material should have been in by
+> now. So you might want to send this separately if you think Rob will
+> time out.
+>
+
+I agree, but the warnings I mentioned got introduced last Friday after
+Rob updated DTC in -next.
+
+> I'm OK with either applying directly or you bundling with other 64-bit
+> DTS material. Either way, send to arm@kernel.org and we'll pick it up
+> from there.
+>
+
+OK, will do that.
+
+-- 
+Regards,
+Sudeep
