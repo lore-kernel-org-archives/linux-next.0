@@ -1,72 +1,38 @@
-From: =?UTF-8?Q?Andr=c3=a9_Przywara?= <andre.przywara@arm.com>
-Subject: Re: linux-next: manual merge of the watchdog tree with the arm-soc
- tree
-Date: Tue, 8 Mar 2016 23:07:35 +0700
-Message-ID: <56DEF8C7.9000409@arm.com>
-References: <20160307150402.191ba735@canb.auug.org.au>
- <56DEF546.9090900@arm.com> <56DEF871.8050102@arm.com>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: manual merge of the crypto tree with the net-next tree
+Date: Tue, 08 Mar 2016 16:48:07 +0000
+Message-ID: <13171.1457455687@warthog.procyon.org.uk>
+References: <20160308165612.54c8dd50@canb.auug.org.au> <20160307131834.70da82d4@canb.auug.org.au> <28626.1457348905@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:34613 "EHLO foss.arm.com"
+Received: from mx1.redhat.com ([209.132.183.28]:43941 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752985AbcCHQNd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 8 Mar 2016 11:13:33 -0500
-In-Reply-To: <56DEF871.8050102@arm.com>
+	id S1753635AbcCHQsL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2016 11:48:11 -0500
+In-Reply-To: <20160308165612.54c8dd50@canb.auug.org.au>
+Content-ID: <13170.1457455687.1@warthog.procyon.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sudeep Holla <sudeep.holla@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wim Van Sebroeck <wim@iguana.be>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fu Wei <fu.wei@linaro.org>, Guenter Roeck <linux@roeck-us.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: dhowells@redhat.com, Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/03/16 23:06, Sudeep Holla wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Sudeep,
+> > What's the best way to deal with this?  Should I take Herbert's
+> > 
+> > 	[PATCH 18/26] rxrpc: Use skcipher
+> > 
+> > patch into my rxrpc tree also and pass it on to Dave?
+> 
+> Linus can deal with it when he merges the latter of the crypto or
+> net-next trees.  It might be worth a mention in the respective pull
+> requests.
 
-> On 08/03/16 15:52, Andr=E9 Przywara wrote:
->> On 07/03/16 11:04, Stephen Rothwell wrote:
->>> Hi Wim,
->>>
->>> Today's linux-next merge of the watchdog tree got a conflict in:
->>>
->>>    arch/arm64/boot/dts/arm/foundation-v8.dts
->>>
->>> between commit:
->>>
->>>    d11a89796678 ("arm64: dts: split Foundation model dts to put the
->>> GIC separately")
->>>
->>> from the arm-soc tree and commit:
->>>
->>>    fe3a97e8ed02 ("ARM64: add SBSA Generic Watchdog device node in
->>> foundation-v8.dts")
->>>
->>> from the watchdog tree.
->>>
->>> I fixed it up (see below) and can carry the fix as necessary (no ac=
-tion
->>> is required).
->>
->> But unfortunately this is the wrong solution. The watchdog DT node
->> belongs into the (newly created) common foundation-v8.dtsi, not into=
- the
->> GICv2-only .dts.
->> So whoever now provides the watchdog patch, can it be rebased on top=
- of
->> the foundation model .dts rework, so that the new node ends up in th=
-e
->> .dtsi file?
->> If this is too much hassle I could also send a fix after -rc1 (as th=
-e
->> breakage is not really critical).
->>
->=20
-> I have rebased it on top of my earlier PR and sending it shortly.
-> I have moved it to dtsi file.
+Do you mean I should take it - or just let Linus merge it?
 
-Thanks, that was quick!
+I tried to apply the rxrpc skcipher patch to net-next, but
+skcipher_request_zero() isn't available there or in any of the patches in the
+series.
 
-Hope that this now does not collide with Fu Wei's fix ;-)
-
-Cheers,
-Andre.
+David
