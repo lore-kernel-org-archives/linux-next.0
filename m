@@ -1,36 +1,46 @@
-From: Christoph Hellwig <hch@infradead.org>
-Subject: Re: linux-next: Tree for Mar 8 (nfsd)
-Date: Tue, 8 Mar 2016 09:02:42 -0800
-Message-ID: <20160308170242.GA25057@infradead.org>
-References: <20160308165122.68ececf7@canb.auug.org.au>
- <56DF0401.6010901@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the net-next
+ tree
+Date: Wed, 9 Mar 2016 08:22:44 +1100
+Message-ID: <20160309082244.621bb27c@canb.auug.org.au>
+References: <20160308165612.54c8dd50@canb.auug.org.au>
+	<20160307131834.70da82d4@canb.auug.org.au>
+	<28626.1457348905@warthog.procyon.org.uk>
+	<13171.1457455687@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:38433 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751775AbcCHRCm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 8 Mar 2016 12:02:42 -0500
-Content-Disposition: inline
-In-Reply-To: <56DF0401.6010901@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:52983 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750765AbcCHVWs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 8 Mar 2016 16:22:48 -0500
+In-Reply-To: <13171.1457455687@warthog.procyon.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, "J. Bruce Fields" <bfields@fieldses.org>, Jeff Layton <jlayton@poochiereds.net>
+To: David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Mar 08, 2016 at 08:55:29AM -0800, Randy Dunlap wrote:
-> On 03/07/16 21:51, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20160307:
-> > 
-> 
-> on x86_64:
-> when CONFIG_BLOCK is not enabled:
-> 
-> ../fs/nfsd/nfs4layouts.c: In function 'nfsd4_setup_layout_type':
-> ../fs/nfsd/nfs4layouts.c:145:39: error: dereferencing pointer to incomplete type
->       sb->s_bdev && sb->s_bdev->bd_disk->fops->pr_ops)
->                                        ^
+Hi David,
 
-My fault, this will need a CONFIG_BLOCK ifdef.  I'll send a fix.
+On Tue, 08 Mar 2016 16:48:07 +0000 David Howells <dhowells@redhat.com> wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > > What's the best way to deal with this?  Should I take Herbert's
+> > > 
+> > > 	[PATCH 18/26] rxrpc: Use skcipher
+> > > 
+> > > patch into my rxrpc tree also and pass it on to Dave?  
+> > 
+> > Linus can deal with it when he merges the latter of the crypto or
+> > net-next trees.  It might be worth a mention in the respective pull
+> > requests.  
+> 
+> Do you mean I should take it - or just let Linus merge it?
+
+Just leave it to Linus.
+
+-- 
+Cheers,
+Stephen Rothwell
