@@ -1,7 +1,7 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the xfs tree with the ext4 tree
-Date: Thu, 10 Mar 2016 10:40:56 +1100
-Message-ID: <20160310104056.78033e72@canb.auug.org.au>
+Date: Thu, 10 Mar 2016 10:41:00 +1100
+Message-ID: <20160310104100.6f906679@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -23,7 +23,7 @@ Hi all,
 
 Today's linux-next merge of the xfs tree got a conflict in:
 
-  fs/ext4/inode.c
+  fs/ext4/ext4.h
 
 between commit:
 
@@ -42,43 +42,33 @@ is required).
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/ext4/inode.c
-index 719accce152a,2b98171a9432..000000000000
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@@ -3285,10 -3161,10 +3285,10 @@@ out
+diff --cc fs/ext4/ext4.h
+index 70b8e0409566,56c12df107ab..000000000000
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@@ -1499,15 -1504,16 +1499,6 @@@ static inline int ext4_valid_inum(struc
+  		 ino <= le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count));
   }
-  #endif
   
-- static void ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
-+ static int ext4_end_io_dio(struct kiocb *iocb, loff_t offset,
-  			    ssize_t size, void *private)
-  {
- -        ext4_io_end_t *io_end = iocb->private;
- +        ext4_io_end_t *io_end = private;
-  
-  	/* if not async direct IO just return */
-  	if (!io_end)
-@@@ -3296,8 -3172,18 +3296,16 @@@
-  
-  	ext_debug("ext4_end_io_dio(): io_end 0x%p "
-  		  "for inode %lu, iocb 0x%p, offset %llu, size %zd\n",
- - 		  iocb->private, io_end->inode->i_ino, iocb, offset,
- -		  size);
- +		  io_end, io_end->inode->i_ino, iocb, offset, size);
-  
- -	iocb->private = NULL;
-+ 	/*
-+ 	 * Error during AIO DIO. We cannot convert unwritten extents as the
-+ 	 * data was not written. Just clear the unwritten flag and drop io_end.
-+ 	 */
-+ 	if (size <= 0) {
-+ 		ext4_clear_io_unwritten_flag(io_end);
-+ 		size = 0;
-+ 	}
-  	io_end->offset = offset;
-  	io_end->size = size;
-  	ext4_put_io_end(io_end);
+- static inline void ext4_set_io_unwritten_flag(struct inode *inode,
+- 					      struct ext4_io_end *io_end)
+ -static inline ext4_io_end_t *ext4_inode_aio(struct inode *inode)
+--{
+- 	if (!(io_end->flag & EXT4_IO_END_UNWRITTEN)) {
+- 		io_end->flag |= EXT4_IO_END_UNWRITTEN;
+- 		atomic_inc(&EXT4_I(inode)->i_unwritten);
+- 	}
+ -	return inode->i_private;
+ -}
+ -
+ -static inline void ext4_inode_aio_set(struct inode *inode, ext4_io_end_t *io)
+ -{
+ -	inode->i_private = io;
+--}
+--
+  /*
+   * Inode dynamic state flags
+   */
 
 _______________________________________________
 xfs mailing list
