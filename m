@@ -1,65 +1,35 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: linux-next: removal of the mips-fixes tree
-Date: Wed, 9 Mar 2016 09:34:21 +0000
-Message-ID: <20160309093421.GR31414@jhogan-linux.le.imgtec.org>
-References: <20160309162035.43c40a2d@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: manual merge of the gpio tree with the mfd tree
+Date: Wed, 9 Mar 2016 17:41:43 +0700
+Message-ID: <CACRpkdZ0X8P71PmbsO_VacoD6RGXJdGaJYqST8uRfaj1=nr-FQ@mail.gmail.com>
+References: <20160309143725.412f97b3@canb.auug.org.au>
+	<20160309053523.GN13692@x1>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JB7KW7Ey7eB5HOHs"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailapp01.imgtec.com ([195.59.15.196]:32236 "EHLO
-	imgpgp01.kl.imgtec.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751742AbcCIJeZ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2016 04:34:25 -0500
-Content-Disposition: inline
-In-Reply-To: <20160309162035.43c40a2d@canb.auug.org.au>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:34226 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752949AbcCIKlp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 9 Mar 2016 05:41:45 -0500
+Received: by mail-oi0-f41.google.com with SMTP id m82so32140904oif.1
+        for <linux-next@vger.kernel.org>; Wed, 09 Mar 2016 02:41:44 -0800 (PST)
+In-Reply-To: <20160309053523.GN13692@x1>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, "Andrew F. Davis" <afd@ti.com>
 
---JB7KW7Ey7eB5HOHs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, Mar 9, 2016 at 12:35 PM, Lee Jones <lee.jones@linaro.org> wrote:
 
-On Wed, Mar 09, 2016 at 04:20:35PM +1100, Stephen Rothwell wrote:
-> Hi James,
->=20
-> I noticed that the mips-fixes tree
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/mips.git branch mi=
-ps-fixes
->=20
-> has not been updated since v3.16-rc5.  I am going to remove it from
-> linux-next tomorrow unless I hear that it may be useful.  It can always
-> be easily added back if it proves useful in the future.
+>> I fixed it up (see below) and can carry the fix as necessary (no action
+>> is required).
+>
+> I sent out a pull-request for this already.
+>
+> Please pull 'ib-mfd-regulator-gpio-4.6' from my tree.
 
-No problem, Thanks for letting me know,
+I merged Lee's immutable branch to the GPIO tree now so the problem
+should be gone tomorrow.
 
-Cheers
-James
-
---JB7KW7Ey7eB5HOHs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJW3+4dAAoJEGwLaZPeOHZ6PNUP/3TgKrBL/4hTuKAwxBAJWJu/
-0b9CjbkPVJVbB8OUX41UbghSyWPMYhLSeHlQBRM1KD2QLH7pE/QRWgB8Y6wq3Dyg
-LvsddV7/jeFSofTyK/lAHwtALa2C+93vY6F3ba8CuKsGB8l7egYX328Bfu7Qz1M4
-/lbeCq1XWZPxDVyuac4DQpUPwjN1w8ARDhkajBxq2Npr0f0EnV78vFdyK2IiQDB9
-kNVQX5jKiyTG0PPWYPENQ7ri2WNyS156lP6KNSmR/KjyPTiOjpjjKKUpelWKbykf
-/o+aX8aje39xQUEHMeqoKVofpRC+YQuhw6Nc1R6SIHEI1Ovhx55n3NqtZrUQLn0P
-I/rkORto1w4cYOR+DV5qBXSRIK6R7U4PMHeXlR/HlVtR3teKB8Za7wr28UWtDzTr
-6CDn5uL8eyR1YCwxVR+oBY5xZinRuT4zmoJnt67+uIhVINWNxItdSUwO5fES195U
-/x8c8jMbkPLJCaVXgIiz6kxl+arGCcWxZQv0WH04qSd+BBygn/RmBHl1vMRTahFl
-KTlifrHl0Dtr9hyzeDUzQjOc6HAmOvchmLsLceNkbTqfXJJjuK1VCWJ55lfYz7qV
-5erx20MTkIFQm9JAizE5O1HSPCTkY6sL8x5XO0OWCcT9qPYOKy9Tbxhe5niOP0wX
-1DjLSzfwxkdqgfBAPJQR
-=bxdS
------END PGP SIGNATURE-----
-
---JB7KW7Ey7eB5HOHs--
+Yours,
+Linus Walleij
