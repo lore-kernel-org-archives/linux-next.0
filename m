@@ -1,40 +1,30 @@
-From: Jiri Kosina <jikos@kernel.org>
-Subject: Re: linux-next: removal of the apm tree
-Date: Wed, 9 Mar 2016 06:24:02 +0100 (CET)
-Message-ID: <alpine.LNX.2.00.1603090623270.3656@cbobk.fhfr.pm>
-References: <20160309161107.2bafcd2d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: removal of the random tree
+Date: Wed, 9 Mar 2016 16:26:12 +1100
+Message-ID: <20160309162612.5495d416@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:55900 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([103.22.144.67]:40060 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750932AbcCIFYM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Mar 2016 00:24:12 -0500
-In-Reply-To: <20160309161107.2bafcd2d@canb.auug.org.au>
+	id S1751063AbcCIF0O (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Mar 2016 00:26:14 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Theodore Ts'o <tytso@mit.edu>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, 9 Mar 2016, Stephen Rothwell wrote:
+Hi Ted,
 
-> Hi Jiri,
-> 
-> I noticed that the apm tree
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/jikos/apm.git branch for-next
-> 
-> has not been updtaed since July 2014.  I am going to remove it from
-> linux-next tomorrow unless I hear that it may be useful.  It can always
-> be easily added back if it proves useful in the future.
+I noticed that the random tree
 
-Stephen,
+  git://git.kernel.org/pub/scm/linux/kernel/git/tytso/random.git branch dev
 
-I agree with the removal. Unsurprisingly, there haven't been that many 
-changes in that area lately :)
-
-Thanks,
+has not been updated since October 2014.  I am going to remove it from
+linux-next tomorrow unless I hear that it may be useful.  It can always
+be easily added back if it proves useful in the future.
 
 -- 
-Jiri Kosina
-SUSE Labs
+Cheers,
+Stephen Rothwell
