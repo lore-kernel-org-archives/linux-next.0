@@ -1,30 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: removal of the mmc tree
-Date: Wed, 9 Mar 2016 16:22:35 +1100
-Message-ID: <20160309162235.678429c9@canb.auug.org.au>
+From: Jiri Kosina <jikos@kernel.org>
+Subject: Re: linux-next: removal of the apm tree
+Date: Wed, 9 Mar 2016 06:24:02 +0100 (CET)
+Message-ID: <alpine.LNX.2.00.1603090623270.3656@cbobk.fhfr.pm>
+References: <20160309161107.2bafcd2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48489 "EHLO ozlabs.org"
+Received: from mx2.suse.de ([195.135.220.15]:55900 "EHLO mx2.suse.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750925AbcCIFWh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 9 Mar 2016 00:22:37 -0500
+	id S1750932AbcCIFYM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 9 Mar 2016 00:24:12 -0500
+In-Reply-To: <20160309161107.2bafcd2d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Ball <chris@printf.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Chris,
+On Wed, 9 Mar 2016, Stephen Rothwell wrote:
 
-I noticed that the mmc tree
+> Hi Jiri,
+> 
+> I noticed that the apm tree
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jikos/apm.git branch for-next
+> 
+> has not been updtaed since July 2014.  I am going to remove it from
+> linux-next tomorrow unless I hear that it may be useful.  It can always
+> be easily added back if it proves useful in the future.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git branch mmc-next
+Stephen,
 
-has not been updated since May 2014.  I am going to remove it from
-linux-next tomorrow unless I hear that it may be useful.  It can always
-be easily added back if it proves useful in the future.
+I agree with the removal. Unsurprisingly, there haven't been that many 
+changes in that area lately :)
+
+Thanks,
 
 -- 
-Cheers,
-Stephen Rothwell
+Jiri Kosina
+SUSE Labs
