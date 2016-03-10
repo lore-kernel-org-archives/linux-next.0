@@ -1,45 +1,60 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Thu, 10 Mar 2016 09:00:25 +0100
-Message-ID: <20160310080025.GA8618@gmail.com>
-References: <20160310162856.3330418f@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160309 build: 1 failures 12 warnings (next-20160309)
+Date: Thu, 10 Mar 2016 15:36:00 +0700
+Message-ID: <20160310083600.GO3898@sirena.org.uk>
+References: <E1adZjx-00089R-1L@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XMHqbYJb993HXwLR"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:36217 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753463AbcCJIAb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2016 03:00:31 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49344 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902AbcCJIgK (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2016 03:36:10 -0500
 Content-Disposition: inline
-In-Reply-To: <20160310162856.3330418f@canb.auug.org.au>
+In-Reply-To: <E1adZjx-00089R-1L@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, Y Vo <yvo@apm.com>, Quan Nguyen <qnguyen@apm.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--XMHqbYJb993HXwLR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Hi Andrew,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in:
-> 
->   drivers/gpu/drm/omapdrm/omap_gem.c
-> 
-> between commit:
-> 
->   f6e45661f9be ("dma, mm/pat: Rename dma_*_writecombine() to dma_*_wc()")
-> 
-> from the tip tree and patch:
-> 
->   "dma-mapping: rename dma_*_writecombine() to dma_*_wc()"
-> 
-> from the akpm tree.
-> 
-> These a basically the same patch, so I dropped the one from the akpm tree.
+On Wed, Mar 09, 2016 at 08:45:09AM +0000, Build bot for Mark Brown wrote:
 
-Andrew, what's your preference for merging it? I can drop it too.
+Yesterday's -next fails to build on an arm64 allmodconfig due to:
 
-Thanks,
+> 	arm64-allmodconfig
+> ERROR: "irq_chip_eoi_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_chip_unmask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_chip_mask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_domain_create_hierarchy" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_chip_set_type_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_domain_alloc_irqs_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_domain_set_hwirq_and_chip" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> ERROR: "irq_domain_reset_irq_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
 
-	Ingo
+I can't immediately see when this went wrong, if it was a recent
+addition to the driver or a change in the IRQ subsystem (these functions
+just aren't exported).  The driver doesn't immediately seem to have been
+changed to support modular builds, it could be a dependency.
+
+--XMHqbYJb993HXwLR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJW4THaAAoJECTWi3JdVIfQ/SQH+gN8hz0DbhlBeMzIM0Mk6qpm
+Ftmd5Ezxu0x5ElKP3QWkimzKNzYLrmNoclI3PO/dgwDQl85VwPpTtUkgZ3W8W6xW
+IKrHPs7vK5ikZ+YAI+m9TOLclUhwynEIx/Qjpc9QW5aeuyJdB1NGFUp7lZwseoA/
+qP5LPwAI8k4Bnj2T3zOcj8wwa37xCog6kNO+6RwTvN7dWOgEfv9xYknPXqnwhydv
+WY/xE6rakaR/Nwsa8Y9n7l5y+hcQB3qsLQmor+WxIeAR2OmhxGXKnHvFxoT4sBIG
+BEJpXtZd5yI0zmXFdzmxDiBGlzpd2egInXNiiCcwreu5NZw8mUPEDHNe14GaXiQ=
+=n8LV
+-----END PGP SIGNATURE-----
+
+--XMHqbYJb993HXwLR--
