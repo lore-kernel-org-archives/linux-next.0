@@ -1,45 +1,55 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: manual merge of the xfs tree with the ext4 tree
-Date: Thu, 10 Mar 2016 10:19:14 +0100
-Message-ID: <20160310091914.GD5026@quack.suse.cz>
-References: <20160310104100.6f906679@canb.auug.org.au>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: next-20160309 build: 1 failures 12 warnings (next-20160309)
+Date: Thu, 10 Mar 2016 17:48:25 +0530
+Message-ID: <56E16611.4080502@nvidia.com>
+References: <E1adZjx-00089R-1L@optimist> <20160310083600.GO3898@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:50227 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935226AbcCJJS4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 10 Mar 2016 04:18:56 -0500
-Content-Disposition: inline
-In-Reply-To: <20160310104100.6f906679@canb.auug.org.au>
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:14940 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133AbcCJMb0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2016 07:31:26 -0500
+In-Reply-To: <20160310083600.GO3898@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+To: Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Y Vo <yvo@apm.com>, Quan Nguyen <qnguyen@apm.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, mbrugger@suse.com
 
-On Thu 10-03-16 10:41:00, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the xfs tree got a conflict in:
-> 
->   fs/ext4/ext4.h
-> 
-> between commit:
-> 
->   109811c20fb8 ("ext4: simplify io_end handling for AIO DIO")
-> 
-> from the ext4 tree and commit:
-> 
->   74c66bcb7eda ("ext4: Fix data exposure after failed AIO DIO")
-> 
-> from the xfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
 
-Thanks! This merge looks correct as well.
+On Thursday 10 March 2016 02:06 PM, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>
+> On Wed, Mar 09, 2016 at 08:45:09AM +0000, Build bot for Mark Brown wrote:
+>
+> Yesterday's -next fails to build on an arm64 allmodconfig due to:
+>
+>> 	arm64-allmodconfig
+>> ERROR: "irq_chip_eoi_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_chip_unmask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_chip_mask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_domain_create_hierarchy" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_chip_set_type_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_domain_alloc_irqs_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_domain_set_hwirq_and_chip" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+>> ERROR: "irq_domain_reset_irq_data" [drivers/gpio/gpio-xgene-sb.ko] undefined!
+> I can't immediately see when this went wrong, if it was a recent
+> addition to the driver or a change in the IRQ subsystem (these functions
+> just aren't exported).  The driver doesn't immediately seem to have been
+> changed to support modular builds, it could be a dependency.
+>
+>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
+I saw the patches for this issue from Matthias:
+https://lkml.org/lkml/2016/3/4/338
+
+
+
+-----------------------------------------------------------------------------------
+This email message is for the sole use of the intended recipient(s) and may contain
+confidential information.  Any unauthorized review, use, disclosure or distribution
+is prohibited.  If you are not the intended recipient, please contact the sender by
+reply email and destroy all copies of the original message.
+-----------------------------------------------------------------------------------
