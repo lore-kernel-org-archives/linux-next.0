@@ -1,64 +1,49 @@
-From: Quan Nguyen <qnguyen@apm.com>
-Subject: Re: next-20160309 build: 1 failures 12 warnings (next-20160309)
-Date: Thu, 10 Mar 2016 19:59:19 +0700
-Message-ID: <CAFopSPRq5SxuD4k4u15qYbKkiCCrDBQf+q0zvL1e18M1wbaaqQ@mail.gmail.com>
-References: <E1adZjx-00089R-1L@optimist>
-	<20160310083600.GO3898@sirena.org.uk>
-	<56E16611.4080502@nvidia.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
+Date: Thu, 10 Mar 2016 12:38:14 -0800
+Message-ID: <20160310123814.3225ce5fb9fdbf8a01c920af@linux-foundation.org>
+References: <20160310162856.3330418f@canb.auug.org.au>
+	<20160310080025.GA8618@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f53.google.com ([209.85.213.53]:34194 "EHLO
-	mail-vk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750924AbcCJM7a (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2016 07:59:30 -0500
-Received: by mail-vk0-f53.google.com with SMTP id e185so93926004vkb.1
-        for <linux-next@vger.kernel.org>; Thu, 10 Mar 2016 04:59:29 -0800 (PST)
-In-Reply-To: <56E16611.4080502@nvidia.com>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56550 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932120AbcCJUiP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 10 Mar 2016 15:38:15 -0500
+In-Reply-To: <20160310080025.GA8618@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Y Vo <yvo@apm.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>
 
-On Thu, Mar 10, 2016 at 7:18 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
-> On Thursday 10 March 2016 02:06 PM, Mark Brown wrote:
->>
->> * PGP Signed by an unknown key
->>
->>
->> On Wed, Mar 09, 2016 at 08:45:09AM +0000, Build bot for Mark Brown wrote:
->>
->> Yesterday's -next fails to build on an arm64 allmodconfig due to:
->>
->>>         arm64-allmodconfig
->>> ERROR: "irq_chip_eoi_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->>> ERROR: "irq_chip_unmask_parent" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>> ERROR: "irq_chip_mask_parent" [drivers/gpio/gpio-xgene-sb.ko] undefined!
->>> ERROR: "irq_domain_create_hierarchy" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>> ERROR: "irq_chip_set_type_parent" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>> ERROR: "irq_domain_alloc_irqs_parent" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>> ERROR: "irq_domain_set_hwirq_and_chip" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>> ERROR: "irq_domain_reset_irq_data" [drivers/gpio/gpio-xgene-sb.ko]
->>> undefined!
->>
->> I can't immediately see when this went wrong, if it was a recent
->> addition to the driver or a change in the IRQ subsystem (these functions
->> just aren't exported).  The driver doesn't immediately seem to have been
->> changed to support modular builds, it could be a dependency.
->>
->>
->
->
-> I saw the patches for this issue from Matthias:
-> https://lkml.org/lkml/2016/3/4/338
->
+On Thu, 10 Mar 2016 09:00:25 +0100 Ingo Molnar <mingo@kernel.org> wrote:
 
-Just FYI, the other patch that proposed to export those functions is
-still pending
-https://lkml.org/lkml/2016/3/7/27
+> 
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Andrew,
+> > 
+> > Today's linux-next merge of the akpm tree got a conflict in:
+> > 
+> >   drivers/gpu/drm/omapdrm/omap_gem.c
+> > 
+> > between commit:
+> > 
+> >   f6e45661f9be ("dma, mm/pat: Rename dma_*_writecombine() to dma_*_wc()")
+> > 
+> > from the tip tree and patch:
+> > 
+> >   "dma-mapping: rename dma_*_writecombine() to dma_*_wc()"
+> > 
+> > from the akpm tree.
+> > 
+> > These a basically the same patch, so I dropped the one from the akpm tree.
+> 
+> Andrew, what's your preference for merging it? I can drop it too.
+> 
+
+I've dropped the -mm copy.  That's what I do in 99.99% of cases.  Which
+means that if the version which was in someone else's -next tree later
+gets lost (happens sometimes), the patch is lost altogether.
