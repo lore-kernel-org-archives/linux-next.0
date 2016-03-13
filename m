@@ -1,42 +1,39 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Date: Fri, 11 Mar 2016 14:51:47 +0100
-Message-ID: <2013252.3GROyIk989@vostro.rjw.lan>
-References: <20160311125746.42e35ea8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Mon, 14 Mar 2016 10:24:17 +1100
+Message-ID: <20160314102417.78e7f319@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:63355 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752917AbcCKNtw (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 11 Mar 2016 08:49:52 -0500
-In-Reply-To: <20160311125746.42e35ea8@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:58481 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752357AbcCMXYU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 13 Mar 2016 19:24:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Coddington <bcodding@redhat.com>, Trond Myklebust <trond.myklebust@primarydata.com>
 
-On Friday, March 11, 2016 12:57:46 PM Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   kernel/sched/sched.h
-> 
-> between commit:
-> 
->   adaf9fcd1369 ("cpufreq: Move scheduler-related code to the sched directory")
-> 
-> from the pm tree and commit:
-> 
->   e9532e69b8d1 ("sched/cputime: Fix steal time accounting vs. CPU hotplug")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary (no action
-> is required).
+Hi Al,
 
-Looks good to me, thanks!
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Rafael
+  fs/nfs/nfs4proc.c
+
+between commit:
+
+  d9dfd8d74168 ("NFSv4: Fix a dentry leak on alias use")
+
+from Linus' tree and commit:
+
+  7635e19a39f6 ("replace d_add_unique() with saner primitive")
+
+from the vfs tree.
+
+I fixed it up (I just used the vfs tree version - thanks for the heads
+up) and can carry the fix as necessary (no action is required).
+
+-- 
+Cheers,
+Stephen Rothwell
