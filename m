@@ -1,45 +1,36 @@
-From: James Morse <james.morse@arm.com>
-Subject: Re: linux-next: Tree for Mar 14
-Date: Mon, 14 Mar 2016 16:51:51 +0000
-Message-ID: <56E6EC27.2090700@arm.com>
-References: <20160314174037.0097df55@canb.auug.org.au> <20160314143729.GA31845@roeck-us.net>
+From: Benjamin LaHaise <bcrl@kvack.org>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Mon, 14 Mar 2016 13:08:07 -0400
+Message-ID: <20160314170807.GJ17923@kvack.org>
+References: <20160112164034.0fe945a7@canb.auug.org.au> <20160115073944.GA24382@infradead.org> <20160115202316.59601869@canb.auug.org.au> <20160115092531.GA3626@infradead.org> <20160115151821.GE6330@kvack.org> <20160116095515.4d8a2e52@canb.auug.org.au> <20160314154915.7d57cc32@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160314143729.GA31845@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kanga.kvack.org ([205.233.56.17]:51784 "EHLO kanga.kvack.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752022AbcCNRII (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2016 13:08:08 -0400
+Content-Disposition: inline
+In-Reply-To: <20160314154915.7d57cc32@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Al Viro <viro@ZenIV.linux.org.uk>
 
-Hi Guenter,
+On Mon, Mar 14, 2016 at 03:49:15PM +1100, Stephen Rothwell wrote:
+> Hi Ben,
 
-On 14/03/16 14:37, Guenter Roeck wrote:
-> To give people an idea what to expect in the merge window, here are my current
-> build and runtime test results. Some of the runtime failures are due to the
-> newly introduced i2c bug, but many (including the arm64 boot failures) have
-> been around for a while.
+...
+> OK, so at this point (just to get rid of the build failure I have done this:
+...
+> Well, you need to negotiate that with the affected architectures.
 
-> Qemu test results:
-> 	total: 96 pass: 69 fail: 27
-> Failed tests:
+I put in a patch to use get_user() for now since the 32 bit architectures 
+don't seem to have any plans for fixing this issue in a predictable 
+timeframe.  There shouldn't be any build failures now -- I've checked ia64, 
+i386 and x86_64.  The merge conflict looks trivial, so I won't touch 
+those pieces for the time being.
 
-> 	arm64:smp:defconfig
-
-This may be due to this qemu bug: http://patchwork.ozlabs.org/patch/585237/
-
-
-> 	arm64:nosmp:defconfig
-
-Since 4b3dc9679cf7 ("arm64: force CONFIG_SMP=y and remove redundant #ifdefs"),
-this may just be testing the smp case again - unless your qemu config is
-different too.
-
-
-> Details are available at http://kerneltests.org/builders.
-
-Thanks - this looks like a mine of information!
-
-
-James
+		-ben
+-- 
+"Thought is the essence of where you are now."
