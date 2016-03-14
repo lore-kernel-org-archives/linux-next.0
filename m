@@ -1,41 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Tue, 15 Mar 2016 07:41:24 +1100
-Message-ID: <20160315074124.2b172e0e@canb.auug.org.au>
-References: <20160112164034.0fe945a7@canb.auug.org.au>
-	<20160115073944.GA24382@infradead.org>
-	<20160115202316.59601869@canb.auug.org.au>
-	<20160115092531.GA3626@infradead.org>
-	<20160115151821.GE6330@kvack.org>
-	<20160116095515.4d8a2e52@canb.auug.org.au>
-	<20160314154915.7d57cc32@canb.auug.org.au>
-	<20160314170807.GJ17923@kvack.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Tree for Mar 14
+Date: Tue, 15 Mar 2016 10:55:08 +1100
+Message-ID: <1457999708.8059.1.camel@ellerman.id.au>
+References: <20160314174037.0097df55@canb.auug.org.au>
+	 <20160314143729.GA31845@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41631 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54276 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750741AbcCNUl1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Mar 2016 16:41:27 -0400
-In-Reply-To: <20160314170807.GJ17923@kvack.org>
+	id S932175AbcCNXzM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2016 19:55:12 -0400
+In-Reply-To: <20160314143729.GA31845@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Benjamin LaHaise <bcrl@kvack.org>
-Cc: Christoph Hellwig <hch@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Al Viro <viro@ZenIV.linux.org.uk>
+To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Scott Wood <oss@buserror.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Ben,
+On Mon, 2016-03-14 at 07:37 -0700, Guenter Roeck wrote:
+> On Mon, Mar 14, 2016 at 05:40:37PM +1100, Stephen Rothwell wrote:
+> 
+> To give people an idea what to expect in the merge window, here are my current
+> build and runtime test results. Some of the runtime failures are due to the
+> newly introduced i2c bug, but many (including the arm64 boot failures) have
+> been around for a while.
+> 
+> Qemu test results:
+> 	total: 96 pass: 69 fail: 27
+> Failed tests:
+...
+> 	powerpc:mpc8544ds:mpc85xx_smp_defconfig
+> 	powerpc:mpc8544ds:mpc85xx_defconfig
+> 	powerpc:smp:ppc64_e5500_defconfig
 
-On Mon, 14 Mar 2016 13:08:07 -0400 Benjamin LaHaise <bcrl@kvack.org> wrote:
->
-> I put in a patch to use get_user() for now since the 32 bit architectures 
-> don't seem to have any plans for fixing this issue in a predictable 
-> timeframe.  There shouldn't be any build failures now -- I've checked ia64, 
-> i386 and x86_64.  The merge conflict looks trivial, so I won't touch 
-> those pieces for the time being.
+These are all an i2c crash, which I assume is the one you mention above.
 
-OK, thanks for the heads up.
+> 	powerpc:nosmp:ppc64_e5500_defconfig
 
--- 
-Cheers,
-Stephen Rothwell
+This seems to be caused by:
+
+  arch/powerpc/sysdev/fsl_rcpm.c:32:2: error: implicit declaration of function 'get_hard_smp_processor_id' [-Werror=implicit-function-declaration]
+
+ie. that driver doesn't build for SMP=n.
+
+cheers
