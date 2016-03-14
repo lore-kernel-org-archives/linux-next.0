@@ -1,134 +1,89 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160314 build: 0 failures 11 warnings (next-20160314)
-Date: Mon, 14 Mar 2016 10:41:55 +0000
-Message-ID: <E1afPwh-0002WF-H7@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58898 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964802AbcCNKmC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 14 Mar 2016 06:42:02 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Mar 14
+Date: Mon, 14 Mar 2016 07:37:29 -0700
+Message-ID: <20160314143729.GA31845@roeck-us.net>
+References: <20160314174037.0097df55@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160314174037.0097df55@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160314
-Git describe: next-20160314
-Commit: 4342eec3c5 Add linux-next specific files for 20160314
+On Mon, Mar 14, 2016 at 05:40:37PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160311:
+> 
+> The vfs tree gained a conflict against Linus' tree. I also applied a
+> patch for a known runtime bug.
+> 
+> The tip tree gained a conflict against the mips tree.
+> 
+> The aio tree still had a build failure so I removed several commits
+> from it.  It also gained a conflict against the vfs tree.
+> 
+> Non-merge commits (relative to Linus' tree): 11202
+>  8646 files changed, 426680 insertions(+), 211740 deletions(-)
+> 
 
-Build Time: 84 min 55 sec
+To give people an idea what to expect in the merge window, here are my current
+build and runtime test results. Some of the runtime failures are due to the
+newly introduced i2c bug, but many (including the arm64 boot failures) have
+been around for a while.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+Build results:
+	total: 145 pass: 131 fail: 14
+Failed builds:
+	arc:defconfig
+	arc:allnoconfig
+	arc:tb10x_defconfig
+	arc:axs103_defconfig
+	arc:nsim_hs_smp_defconfig
+	arc:vdk_hs38_smp_defconfig
+	avr32:defconfig
+	avr32:merisc_defconfig
+	avr32:atngw100mkii_evklcd101_defconfig
+	nios2:3c120_defconfig
+	unicore32:defconfig
+	unicore32:allnoconfig
+	x86_64:allyesconfig
+	x86_64:allmodconfig
 
-Errors: 0
-Warnings: 11
-Section Mismatches: 0
+Qemu test results:
+	total: 96 pass: 69 fail: 27
+Failed tests:
+	arm:imx25-pdk:imx_v4_v5_defconfig:imx25-pdk
+	arm:kzm:imx_v6_v7_defconfig
+	arm:beagle:multi_v7_defconfig:omap3-beagle
+	arm:beaglexm:multi_v7_defconfig:omap3-beagle-xm
+	arm:overo:multi_v7_defconfig:omap3-overo-tobi
+	arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+	arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc702
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc706
+	arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zed
+	arm:smdkc210:multi_v7_defconfig:exynos4210-smdkv310
+	arm:smdkc210:exynos_defconfig:exynos4210-smdkv310
+	arm:beagle:omap2plus_defconfig:omap3-beagle
+	arm:beaglexm:omap2plus_defconfig:omap3-beagle-xm
+	arm:overo:omap2plus_defconfig:omap3-overo-tobi
+	arm:realview-pb-a8:realview_defconfig
+	arm:realview-eb-mpcore:realview-smp_defconfig
+	arm64:smp:defconfig
+	arm64:nosmp:defconfig
+	mips:mips_malta_smp_defconfig
+	mips64:smp:mips_malta64_defconfig
+	mips:mipsel_malta_smp_defconfig
+	mips:mipsel_malta64_smp_defconfig
+	powerpc:mpc8544ds:mpc85xx_defconfig
+	powerpc:mpc8544ds:mpc85xx_smp_defconfig
+	powerpc:nosmp:ppc64_e5500_defconfig
+	powerpc:smp:ppc64_e5500_defconfig
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      7 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     12 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-allnoconfig
-      5 warnings    0 mismatches  : arm64-defconfig
+Details are available at http://kerneltests.org/builders.
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 11
-	 12 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	 12 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  3 ../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1682:2: warning: ignoring return value of 'device_reset', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1682:2: warning: ignoring return value of 'device_reset', declared with attribute warn_unused_result [-Wunused-result]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+Guenter
