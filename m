@@ -1,59 +1,109 @@
-From: Benjamin LaHaise <bcrl@kvack.org>
-Subject: Re: linux-next: manual merge of the aio tree with the vfs tree
-Date: Tue, 15 Mar 2016 09:24:55 -0400
-Message-ID: <20160315132455.GN17923@kvack.org>
-References: <20160314153214.41d7c2fe@canb.auug.org.au> <20160314073523.GA16639@lst.de> <20160314152438.GG17923@kvack.org> <20160315053533.GH17997@ZenIV.linux.org.uk>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Tue, 15 Mar 2016 16:38:51 +0200
+Message-ID: <CAHp75VcjmDsgStAZVA=0EU4nQwCx-s+4kF_CsmSrrZtVpVg1bA@mail.gmail.com>
+References: <20160315174634.6766cd88@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kanga.kvack.org ([205.233.56.17]:60083 "EHLO kanga.kvack.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932449AbcCONY4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2016 09:24:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20160315053533.GH17997@ZenIV.linux.org.uk>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:33037 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932470AbcCOOiw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2016 10:38:52 -0400
+In-Reply-To: <20160315174634.6766cd88@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Benjamin LaHaise <bcrl@kvack.org>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
 
-On Tue, Mar 15, 2016 at 05:35:33AM +0000, Al Viro wrote:
-> On Mon, Mar 14, 2016 at 11:24:38AM -0400, Benjamin LaHaise wrote:
-> > On Mon, Mar 14, 2016 at 08:35:23AM +0100, Christoph Hellwig wrote:
-> > > The aio changes have either been reviewed negatively or not at all.  That 
-> > > tree should be dropped.
-> > 
-> > That isn't solely your decision.  If you have comments, please provide 
-> > constructive feedback, as there are users and use-cases that need this 
-> > kind of functionality.
-> 
-> "This kind of functionality" being what, exactly?  Bypassing code review?
-> It's not that you've made trivial mistakes; everyone does from time to time.
-> But failing to post patches with non-trivial interactions outside of the
-> subsystem you are familiar with (be it on fsdevel or privately to people who
-> work with the areas involved) *AND* failing to recognize that the lack
-> of review might be a problem even after having been explicitly told so...
+On Tue, Mar 15, 2016 at 8:46 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Benjamin,
+>
+> After merging the aio tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
+>
+> fs/built-in.o: In function `aio_thread_op_foo_at':
+> aio.c:(.text+0x4dab4): undefined reference to `__get_user_bad'
+> aio.c:(.text+0x4daec): undefined reference to `__get_user_bad'
 
-I'm not bypassing code review.  The code was sent out back in January, 
-you were cc'd on it and has been waiting for you to provide some feedback 
-on the mailing lists, which you haven't done until yesterday.  Given that 
-review has not occurred, I fully well don't expect this series to be 
-merged until further work is done.
+avr32 seems affected as well and the below solution is not suitable
+(should be much more verbose in asm, I guess).
 
-> For fuck sake, you should know better.  You are not a newbie with a pet set
-> of half-baked patches for his pet application, refering to (unspecified)
-> "users that need this kind of functionality" and getting very surprised when
-> those mean, rude folks on development lists inform them that code review is
-> more than just a good idea.
+>
+> Caused by commit
+>
+>   150a0b4905f1 ("aio: add support for async openat()")
+>
+> despite commit
+>
+>   d2f7a973e11e ("aio: don't use __get_user() for 64 bit values")
+>
+> This is due to a bug in the powerpc __get_user_check() macro (the return
+> value is defined to be "unsigned long" which is only 32 bits on a 32
+> bit platform).
+>
+> I applied the patch below which seems to help (Michael, what do you
+> think?), but given Al's and Christoph's reactions, I am inclined to
+> remove the aio tree from tomorrow and maybe it can be revisited after
+> the merge window.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 15 Mar 2016 16:36:06 +1100
+> Subject: [PATCH] powerpc: fix get_user for 64 bit typs on 32 bit platforms
+>
+> solution borrowed from the x86 uaccess.h
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/include/asm/uaccess.h | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+> index b7c20f0b8fbe..52262b2f37fc 100644
+> --- a/arch/powerpc/include/asm/uaccess.h
+> +++ b/arch/powerpc/include/asm/uaccess.h
+> @@ -261,10 +261,13 @@ do {                                                              \
+>         }                                                       \
+>  } while (0)
+>
+> +#define __inttype(x) \
+> +       __typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
+> +
+>  #define __get_user_nocheck(x, ptr, size)                       \
+>  ({                                                             \
+>         long __gu_err;                                          \
+> -       unsigned long __gu_val;                                 \
+> +       __inttype(*(ptr)) __gu_val;                             \
+>         __typeof__(*(ptr)) __user *__gu_addr = (ptr);   \
+>         __chk_user_ptr(ptr);                                    \
+>         if (!is_kernel_addr((unsigned long)__gu_addr))          \
+> @@ -277,7 +280,7 @@ do {                                                                \
+>  #define __get_user_check(x, ptr, size)                                 \
+>  ({                                                                     \
+>         long __gu_err = -EFAULT;                                        \
+> -       unsigned long  __gu_val = 0;                                    \
+> +       __inttype(*(ptr)) __gu_val = 0;                         \
+>         __typeof__(*(ptr)) __user *__gu_addr = (ptr);           \
+>         might_fault();                                                  \
+>         if (access_ok(VERIFY_READ, __gu_addr, (size)))                  \
+> @@ -289,7 +292,7 @@ do {                                                                \
+>  #define __get_user_nosleep(x, ptr, size)                       \
+>  ({                                                             \
+>         long __gu_err;                                          \
+> -       unsigned long __gu_val;                                 \
+> +       __inttype(*(ptr)) __gu_val;                             \
+>         __typeof__(*(ptr)) __user *__gu_addr = (ptr);   \
+>         __chk_user_ptr(ptr);                                    \
+>         __get_user_size(__gu_val, __gu_addr, (size), __gu_err); \
+> --
+> 2.7.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-No, my comment was based on HCH essentially saying that exposure in 
-linux-next is a bad thing and the tree should be removed.  Quite the 
-opposite -- it's useful in that it lets people see what is going on and 
-lets me know about conflicts with other work.  Removing the tree from 
-linux-next gets rid of those benefits, and that is what I was objecting 
-to.  Fwiw, I don't think someone should have a veto over what goes in 
-linux-next.  People should provide feedback, not a blanket "drop that".
 
-		-ben
+
 -- 
-"Thought is the essence of where you are now."
+With Best Regards,
+Andy Shevchenko
