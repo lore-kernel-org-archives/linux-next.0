@@ -1,97 +1,27 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the aio tree
-Date: Tue, 15 Mar 2016 17:46:34 +1100
-Message-ID: <20160315174634.6766cd88@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: Tree for Mar 14
+Date: Tue, 15 Mar 2016 15:52:04 +0900
+Message-ID: <20160315065204.GG1464@swordfish>
+References: <20160314174037.0097df55@canb.auug.org.au>
+ <20160315003029.GA2126@swordfish>
+ <20160315064318.GA1385@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43881 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754886AbcCOGqu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2016 02:46:50 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Benjamin LaHaise <bcrl@kvack.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160315064318.GA1385@katana>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Benjamin,
+On (03/15/16 07:43), Wolfram Sang wrote:
+> > Hello,
+> > 
+> > I'm seeing a bunch of warnings and errors
+> 
+> I pushed the fix to my for-next branch yesterday. Sorry for the fuzz!
 
-After merging the aio tree, today's linux-next build (powerpc
-ppc44x_defconfig) failed like this:
+no prob, thanks!
 
-fs/built-in.o: In function `aio_thread_op_foo_at':
-aio.c:(.text+0x4dab4): undefined reference to `__get_user_bad'
-aio.c:(.text+0x4daec): undefined reference to `__get_user_bad'
-
-Caused by commit
-
-  150a0b4905f1 ("aio: add support for async openat()")
-
-despite commit
-
-  d2f7a973e11e ("aio: don't use __get_user() for 64 bit values")
-
-This is due to a bug in the powerpc __get_user_check() macro (the return
-value is defined to be "unsigned long" which is only 32 bits on a 32
-bit platform).
-
-I applied the patch below which seems to help (Michael, what do you
-think?), but given Al's and Christoph's reactions, I am inclined to
-remove the aio tree from tomorrow and maybe it can be revisited after
-the merge window.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 15 Mar 2016 16:36:06 +1100
-Subject: [PATCH] powerpc: fix get_user for 64 bit typs on 32 bit platforms
-
-solution borrowed from the x86 uaccess.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/include/asm/uaccess.h | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index b7c20f0b8fbe..52262b2f37fc 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -261,10 +261,13 @@ do {								\
- 	}							\
- } while (0)
- 
-+#define __inttype(x) \
-+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
-+
- #define __get_user_nocheck(x, ptr, size)			\
- ({								\
- 	long __gu_err;						\
--	unsigned long __gu_val;					\
-+	__inttype(*(ptr)) __gu_val;				\
- 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
- 	__chk_user_ptr(ptr);					\
- 	if (!is_kernel_addr((unsigned long)__gu_addr))		\
-@@ -277,7 +280,7 @@ do {								\
- #define __get_user_check(x, ptr, size)					\
- ({									\
- 	long __gu_err = -EFAULT;					\
--	unsigned long  __gu_val = 0;					\
-+	__inttype(*(ptr)) __gu_val = 0;				\
- 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);		\
- 	might_fault();							\
- 	if (access_ok(VERIFY_READ, __gu_addr, (size)))			\
-@@ -289,7 +292,7 @@ do {								\
- #define __get_user_nosleep(x, ptr, size)			\
- ({								\
- 	long __gu_err;						\
--	unsigned long __gu_val;					\
-+	__inttype(*(ptr)) __gu_val;				\
- 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
- 	__chk_user_ptr(ptr);					\
- 	__get_user_size(__gu_val, __gu_addr, (size), __gu_err);	\
--- 
-2.7.0
-
--- 
-Cheers,
-Stephen Rothwell
+	-ss
