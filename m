@@ -1,70 +1,97 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: linux-next: Tree for Mar 14
-Date: Tue, 15 Mar 2016 07:43:19 +0100
-Message-ID: <20160315064318.GA1385@katana>
-References: <20160314174037.0097df55@canb.auug.org.au>
- <20160315003029.GA2126@swordfish>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the aio tree
+Date: Tue, 15 Mar 2016 17:46:34 +1100
+Message-ID: <20160315174634.6766cd88@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/9DWx/yDrRhgMJTb"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160315003029.GA2126@swordfish>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>, Ben Skeggs <bskeggs@redhat.com>, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43881 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754886AbcCOGqu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2016 02:46:50 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Benjamin LaHaise <bcrl@kvack.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>
 
+Hi Benjamin,
 
---/9DWx/yDrRhgMJTb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After merging the aio tree, today's linux-next build (powerpc
+ppc44x_defconfig) failed like this:
 
-On Tue, Mar 15, 2016 at 09:30:29AM +0900, Sergey Senozhatsky wrote:
-> On (03/14/16 17:40), Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Changes since 20160311:
-> >=20
-> > The vfs tree gained a conflict against Linus' tree. I also applied a
-> > patch for a known runtime bug.
-> >=20
-> > The tip tree gained a conflict against the mips tree.
-> >=20
-> > The aio tree still had a build failure so I removed several commits
-> > from it.  It also gained a conflict against the vfs tree.
-> >=20
-> > Non-merge commits (relative to Linus' tree): 11202
-> >  8646 files changed, 426680 insertions(+), 211740 deletions(-)
->=20
->=20
-> Hello,
->=20
-> I'm seeing a bunch of warnings and errors
+fs/built-in.o: In function `aio_thread_op_foo_at':
+aio.c:(.text+0x4dab4): undefined reference to `__get_user_bad'
+aio.c:(.text+0x4daec): undefined reference to `__get_user_bad'
 
-I pushed the fix to my for-next branch yesterday. Sorry for the fuzz!
+Caused by commit
 
+  150a0b4905f1 ("aio: add support for async openat()")
 
---/9DWx/yDrRhgMJTb
-Content-Type: application/pgp-signature; name="signature.asc"
+despite commit
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+  d2f7a973e11e ("aio: don't use __get_user() for 64 bit values")
 
-iQIcBAEBAgAGBQJW568GAAoJEBQN5MwUoCm22dUP/jcyNGZA8CakQMIcvdk2wRAh
-gVP3Z7NyQZ/sCHp+l4g3q2f330AFsZX2iVX5VjHu40NOOcT9PQwVaRQtXlz8EOHz
-bunPppd+qXnnhAP9yQerYnQA/dXRVrjoWeVf5WUfaqWpnutN12IxJm7N9VsM/btu
-r4Zw+S5Kc4T1qYNHQFrkfbGQ/BejVtcslRNo7UJHrVPsqeYER72yyrSxhdZ3qJQe
-uRsfVE9NYvuqR04lwIPrsgGw/xi2PCAdkjTjsUy2+b8N5KdTTuwbbfaCyM9vPBoE
-Ufn0CxEQAe4c0w46R9hDRa2c9z7x0t5cNG12e0RO5LGAOPtmXzb9mCXUrzVfwBND
-TqZd6e8iDvJseE3KrCLrK2wNS5rKIDU29vMNcQ+jc0lcJZMlkvY+pEBfxchH5xbS
-mlh1dRjSTwgmLYWe+3HGUeKHz0/Q1sQk5++NIkxnwopsvGTDjVE6lZAaKdkHOp+3
-s8q7scnIatIguMvXqxjSfMXEiHhI6dZXSd+xz6qKfm276w5hXgGqjy8Eu5/n5Szm
-OWlKMVBHDJGgHFJjYnqpJC5Lx9jzThisyPWB8y4EwLYxYu3qjAFcje5zRRKPz/kJ
-yMEtj++cdvoRU5rf/PBAOOxXu2ixatj0Dg7C0Lg73tJPfntvVDfLdz2piI6swaBL
-AqVnBZ152vR3Z0+LxBoA
-=Tp69
------END PGP SIGNATURE-----
+This is due to a bug in the powerpc __get_user_check() macro (the return
+value is defined to be "unsigned long" which is only 32 bits on a 32
+bit platform).
 
---/9DWx/yDrRhgMJTb--
+I applied the patch below which seems to help (Michael, what do you
+think?), but given Al's and Christoph's reactions, I am inclined to
+remove the aio tree from tomorrow and maybe it can be revisited after
+the merge window.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 15 Mar 2016 16:36:06 +1100
+Subject: [PATCH] powerpc: fix get_user for 64 bit typs on 32 bit platforms
+
+solution borrowed from the x86 uaccess.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/include/asm/uaccess.h | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index b7c20f0b8fbe..52262b2f37fc 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -261,10 +261,13 @@ do {								\
+ 	}							\
+ } while (0)
+ 
++#define __inttype(x) \
++	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
++
+ #define __get_user_nocheck(x, ptr, size)			\
+ ({								\
+ 	long __gu_err;						\
+-	unsigned long __gu_val;					\
++	__inttype(*(ptr)) __gu_val;				\
+ 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
+ 	__chk_user_ptr(ptr);					\
+ 	if (!is_kernel_addr((unsigned long)__gu_addr))		\
+@@ -277,7 +280,7 @@ do {								\
+ #define __get_user_check(x, ptr, size)					\
+ ({									\
+ 	long __gu_err = -EFAULT;					\
+-	unsigned long  __gu_val = 0;					\
++	__inttype(*(ptr)) __gu_val = 0;				\
+ 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);		\
+ 	might_fault();							\
+ 	if (access_ok(VERIFY_READ, __gu_addr, (size)))			\
+@@ -289,7 +292,7 @@ do {								\
+ #define __get_user_nosleep(x, ptr, size)			\
+ ({								\
+ 	long __gu_err;						\
+-	unsigned long __gu_val;					\
++	__inttype(*(ptr)) __gu_val;				\
+ 	__typeof__(*(ptr)) __user *__gu_addr = (ptr);	\
+ 	__chk_user_ptr(ptr);					\
+ 	__get_user_size(__gu_val, __gu_addr, (size), __gu_err);	\
+-- 
+2.7.0
+
+-- 
+Cheers,
+Stephen Rothwell
