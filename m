@@ -1,133 +1,40 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160315 build: 0 failures 10 warnings (next-20160315)
-Date: Tue, 15 Mar 2016 11:41:11 +0000
-Message-ID: <E1afnLb-000712-Mq@optimist>
+From: Benjamin LaHaise <bcrl@kvack.org>
+Subject: Re: linux-next: manual merge of the aio tree with the vfs tree
+Date: Tue, 15 Mar 2016 09:12:44 -0400
+Message-ID: <20160315131244.GM17923@kvack.org>
+References: <20160315150640.02a4db30@canb.auug.org.au> <20160315043448.GE17997@ZenIV.linux.org.uk> <20160315050712.GF17997@ZenIV.linux.org.uk> <20160315051939.GG17997@ZenIV.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [106.187.55.193] ([106.187.55.193]:33446 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-FAIL-FAIL-OK-OK)
-	by vger.kernel.org with ESMTP id S932428AbcCOLlr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 15 Mar 2016 07:41:47 -0400
+Received: from kanga.kvack.org ([205.233.56.17]:60075 "EHLO kanga.kvack.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751615AbcCONMt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2016 09:12:49 -0400
+Content-Disposition: inline
+In-Reply-To: <20160315051939.GG17997@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 
-Tree/Branch: next-20160315
-Git describe: next-20160315
-Commit: 6fdeb67177 Add linux-next specific files for 20160315
+On Tue, Mar 15, 2016 at 05:19:39AM +0000, Al Viro wrote:
+> On Tue, Mar 15, 2016 at 05:07:12AM +0000, Al Viro wrote:
+> 
+> > There *is* a reason for code review.  Or, at least, asking somebody familiar
+> > with the code you are working with whether some assumption you are making
+> > is true or false.  Me, for example, in our conversation regarding earlier parts
+> > of aio.git queue about a week ago.  Or at any other point.
+> 
+> While we are at it, 150a0b49 ("aio: add support for async openat()") is also
+> crap.  fs_struct and files_struct is nowhere near enough.  And yes, I realize
+> that your application probably doesn't step into it.  Which means that these
+> patches are just fine for your private kernel.  _Not_ for mainline.
+> 
+> Reviewed-and-NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Build Time: 87 min 48 sec
+You've had two months to make this comment, so I'm glad you've finally 
+done so.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 10
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      7 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     11 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-allnoconfig
-      5 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 10
-	 12 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	 12 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  3 ../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+		-ben
+-- 
+"Thought is the essence of where you are now."
