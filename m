@@ -1,47 +1,135 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for Mar 14
-Date: Tue, 15 Mar 2016 10:55:08 +1100
-Message-ID: <1457999708.8059.1.camel@ellerman.id.au>
-References: <20160314174037.0097df55@canb.auug.org.au>
-	 <20160314143729.GA31845@roeck-us.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Tue, 15 Mar 2016 11:07:13 +1100
+Message-ID: <20160315110713.49c4846e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54276 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35776 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932175AbcCNXzM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 14 Mar 2016 19:55:12 -0400
-In-Reply-To: <20160314143729.GA31845@roeck-us.net>
+	id S1753917AbcCOAHS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 14 Mar 2016 20:07:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>, Stephen Rothwell <sfr@canb.auug.org.au>, Scott Wood <oss@buserror.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Olof Johansson <olof@lixom.net>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Marcin Wojtas <mw@semihalf.com>
 
-On Mon, 2016-03-14 at 07:37 -0700, Guenter Roeck wrote:
-> On Mon, Mar 14, 2016 at 05:40:37PM +1100, Stephen Rothwell wrote:
-> 
-> To give people an idea what to expect in the merge window, here are my current
-> build and runtime test results. Some of the runtime failures are due to the
-> newly introduced i2c bug, but many (including the arm64 boot failures) have
-> been around for a while.
-> 
-> Qemu test results:
-> 	total: 96 pass: 69 fail: 27
-> Failed tests:
-...
-> 	powerpc:mpc8544ds:mpc85xx_smp_defconfig
-> 	powerpc:mpc8544ds:mpc85xx_defconfig
-> 	powerpc:smp:ppc64_e5500_defconfig
+Hi all,
 
-These are all an i2c crash, which I assume is the one you mention above.
+Today's linux-next merge of the net-next tree got conflicts in:
 
-> 	powerpc:nosmp:ppc64_e5500_defconfig
+  arch/arm/boot/dts/armada-xp-db.dts
+  arch/arm/boot/dts/armada-xp-gp.dts
+  arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
 
-This seems to be caused by:
+between commit:
 
-  arch/powerpc/sysdev/fsl_rcpm.c:32:2: error: implicit declaration of function 'get_hard_smp_processor_id' [-Werror=implicit-function-declaration]
+  d7d5a43c0d16 ("ARM: mvebu: fix overlap of Crypto SRAM with PCIe memory window")
 
-ie. that driver doesn't build for SMP=n.
+from Linus' tree and commits:
 
-cheers
+  9dd7a57e2cbf ("ARM: dts: armada-xp: enable buffer manager support on Armada XP boards")
+  293fdc24fcc9 ("ARM: dts: armada-xp-openblocks-ax3-4: Add BM support")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/boot/dts/armada-xp-db.dts
+index 45813a5526c8,30657302305d..000000000000
+--- a/arch/arm/boot/dts/armada-xp-db.dts
++++ b/arch/arm/boot/dts/armada-xp-db.dts
+@@@ -76,8 -76,9 +76,9 @@@
+  		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+  			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+  			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000
+ -			  MBUS_ID(0x09, 0x09) 0 0 0xf8100000 0x10000
+ -			  MBUS_ID(0x09, 0x05) 0 0 0xf8110000 0x10000
+ +			  MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+- 			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000>;
+++			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000
++ 			  MBUS_ID(0x0c, 0x04) 0 0 0xf1200000 0x100000>;
+  
+  		devbus-bootcs {
+  			status = "okay";
+@@@ -229,34 -242,10 +242,38 @@@
+  					spi-max-frequency = <20000000>;
+  				};
+  			};
+ +
+ +			nand@d0000 {
+ +				status = "okay";
+ +				num-cs = <1>;
+ +				marvell,nand-keep-config;
+ +				marvell,nand-enable-arbiter;
+ +				nand-on-flash-bbt;
+ +
+ +				partitions {
+ +					compatible = "fixed-partitions";
+ +					#address-cells = <1>;
+ +					#size-cells = <1>;
+ +
+ +					partition@0 {
+ +						label = "U-Boot";
+ +						reg = <0 0x800000>;
+ +					};
+ +					partition@800000 {
+ +						label = "Linux";
+ +						reg = <0x800000 0x800000>;
+ +					};
+ +					partition@1000000 {
+ +						label = "Filesystem";
+ +						reg = <0x1000000 0x3f000000>;
+ +
+ +					};
+ +				};
+ +			};
+  		};
++ 
++ 		bm-bppi {
++ 			status = "okay";
++ 		};
+  	};
+  };
+diff --cc arch/arm/boot/dts/armada-xp-gp.dts
+index 5730b875c4f5,a1ded01d0c07..000000000000
+--- a/arch/arm/boot/dts/armada-xp-gp.dts
++++ b/arch/arm/boot/dts/armada-xp-gp.dts
+@@@ -95,8 -95,9 +95,9 @@@
+  		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+  			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+  			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000
+ -			  MBUS_ID(0x09, 0x09) 0 0 0xf8100000 0x10000
+ -			  MBUS_ID(0x09, 0x05) 0 0 0xf8110000 0x10000
+ +			  MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+- 			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000>;
+++			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000
++ 			  MBUS_ID(0x0c, 0x04) 0 0 0xf1200000 0x100000>;
+  
+  		devbus-bootcs {
+  			status = "okay";
+diff --cc arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
+index 853bd392a4fe,3aa29a91c7b8..000000000000
+--- a/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
++++ b/arch/arm/boot/dts/armada-xp-openblocks-ax3-4.dts
+@@@ -65,9 -65,10 +65,10 @@@
+  	soc {
+  		ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xd0000000 0x100000
+  			  MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+ -			  MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x8000000
+ -			  MBUS_ID(0x09, 0x09) 0 0 0xf8100000 0x10000
+ -			  MBUS_ID(0x09, 0x05) 0 0 0xf8110000 0x10000
+ +			  MBUS_ID(0x01, 0x2f) 0 0 0xe8000000 0x8000000
+ +			  MBUS_ID(0x09, 0x09) 0 0 0xf1100000 0x10000
+- 			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000>;
+++			  MBUS_ID(0x09, 0x05) 0 0 0xf1110000 0x10000
++ 			  MBUS_ID(0x0c, 0x04) 0 0 0xd1200000 0x100000>;
+  
+  		devbus-bootcs {
+  			status = "okay";
