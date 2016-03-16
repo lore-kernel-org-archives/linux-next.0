@@ -1,115 +1,51 @@
-From: Maor Gottlieb <maor.linux@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Wed, 16 Mar 2016 16:27:28 +0200
-Message-ID: <CA+WJiLyyAVX41JgVUtPXsupmzBnqMWugZ_BCeO5s+z3Aa1MQYg@mail.gmail.com>
+Date: Wed, 16 Mar 2016 10:18:33 -0700
+Message-ID: <CA+55aFzhYJxCOXER-mhOfJ6=V13Rb5F0LB_3A9n7S_dLkb8f0g@mail.gmail.com>
 References: <20160316115809.61b4478e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:33749 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751498AbcCPRSe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 13:18:34 -0400
 In-Reply-To: <20160316115809.61b4478e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amir Vadai <amir@vadai.me>, Maor Gottlieb <maorg@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, Network Development <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amir Vadai <amir@vadai.me>, Maor Gottlieb <maorg@mellanox.com>
 
-2016-03-16 2:58 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi all,
->
-> Today's linux-next merge of the rdma tree got a conflict in:
->
->   drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
->
-> between commit:
->
->   60ab4584f5bf ("net/mlx5_core: Set flow steering dest only for forward rules")
->
-> from the net-next tree and commit:
->
->   b3638e1a7664 ("net/mlx5_core: Introduce forward to next priority action")
->
-> from the rdma tree.
+On Tue, Mar 15, 2016 at 5:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
 > I fixed it up (see below) and can carry the fix as necessary (no action
 > is required).
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> index e848d708d2b7,bf3446794bd5..000000000000
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> @@@ -73,10 -73,13 +73,13 @@@
->   #define BY_PASS_MIN_LEVEL (KENREL_MIN_LEVEL + MLX5_BY_PASS_NUM_PRIOS +\
->                            LEFTOVERS_MAX_FT)
->
->  -#define KERNEL_MAX_FT 2
->  -#define KERNEL_NUM_PRIOS 1
->  +#define KERNEL_MAX_FT 3
->  +#define KERNEL_NUM_PRIOS 2
->   #define KENREL_MIN_LEVEL 2
->
-> + #define ANCHOR_MAX_FT 1
-> + #define ANCHOR_NUM_PRIOS 1
-> + #define ANCHOR_MIN_LEVEL (BY_PASS_MIN_LEVEL + 1)
->   struct node_caps {
->         size_t  arr_sz;
->         long    *caps;
-> @@@ -360,8 -367,13 +367,13 @@@ static void del_rule(struct fs_node *no
->         memcpy(match_value, fte->val, sizeof(fte->val));
->         fs_get_obj(ft, fg->node.parent);
->         list_del(&rule->node.list);
-> +       if (rule->sw_action == MLX5_FLOW_CONTEXT_ACTION_FWD_NEXT_PRIO) {
-> +               mutex_lock(&rule->dest_attr.ft->lock);
-> +               list_del(&rule->next_ft);
-> +               mutex_unlock(&rule->dest_attr.ft->lock);
-> +       }
->  -      fte->dests_size--;
->  -      if (fte->dests_size) {
->  +      if ((fte->action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) &&
->  +          --fte->dests_size) {
->                 err = mlx5_cmd_update_fte(dev, ft,
->                                           fg->id, fte);
->                 if (err)
-> @@@ -762,9 -835,9 +835,10 @@@ static struct mlx5_flow_rule *alloc_rul
->         if (!rule)
->                 return NULL;
->
-> +       INIT_LIST_HEAD(&rule->next_ft);
->         rule->node.type = FS_TYPE_FLOW_DEST;
->  -      memcpy(&rule->dest_attr, dest, sizeof(*dest));
->  +      if (dest)
->  +              memcpy(&rule->dest_attr, dest, sizeof(*dest));
->
->         return rule;
->   }
-> @@@ -783,12 -856,16 +857,17 @@@ static struct mlx5_flow_rule *add_rule_
->                 return ERR_PTR(-ENOMEM);
->
->         fs_get_obj(ft, fg->node.parent);
-> -       /* Add dest to dests list- added as first element after the head */
-> +       /* Add dest to dests list- we need flow tables to be in the
-> +        * end of the list for forward to next prio rules.
-> +        */
->         tree_init_node(&rule->node, 1, del_rule);
-> -       list_add_tail(&rule->node.list, &fte->node.children);
-> +       if (dest && dest->type != MLX5_FLOW_DESTINATION_TYPE_FLOW_TABLE)
-> +               list_add(&rule->node.list, &fte->node.children);
-> +       else
-> +               list_add_tail(&rule->node.list, &fte->node.children);
->  -      fte->dests_size++;
->  -      if (fte->dests_size == 1)
->  +      if (dest)
->  +              fte->dests_size++;
->  +      if (fte->dests_size == 1 || !dest)
->                 err = mlx5_cmd_create_fte(get_dev(&ft->node),
->                                           ft, fg->id, fte);
->         else
 
-Hi Stephen,
+Side note: can you change this wording for your manual merge script?
+Last merge window (or was it the one before it?) we had confusion with
+people who thought that "no action is required" means "you can just
+ignore this entirely".
 
-I reveiwed your merge and it's fine.
+I want people who have known merge issues to at the very least
+*mention* them to me when they send the pull request, and I also think
+that trees that have merge conflicts that aren't just totally trivial
+should also make sure that they have communicated with each other
+about why the problem happened.
 
-Thanks,
-Maor
+This is *particularly* true for the complete effing disaster that is
+mellanox and rdma-vs-networking.
+
+So please don't say "no action is required". Please make it clear that
+there may not be any further action needed for linux-next itself, but
+that other action may certainly be required.
+
+Because I'm very close to not taking any rdma changes that touch
+networking any more. Ever.
+
+The Mellanox people are on my shit-list until they show that they can
+actually act like responsible people and not just monkeys throwing
+shit at the walls.
+
+"No action required" is simply not true for Mellanox.
+
+                     Linus
