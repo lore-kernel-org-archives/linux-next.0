@@ -1,110 +1,30 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Mar 14 (mips qemu failure bisected)
-Date: Wed, 16 Mar 2016 06:22:10 -0700
-Message-ID: <20160316132210.GA21918@roeck-us.net>
-References: <20160314174037.0097df55@canb.auug.org.au>
- <20160314143729.GA31845@roeck-us.net>
- <20160315052659.GA9320@roeck-us.net>
- <56E884BA.5050103@gmail.com>
- <20160316001713.GA4412@roeck-us.net>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Wed, 16 Mar 2016 14:59:38 +0100
+Message-ID: <4892345.flKnDo9XDS@wuerfel>
+References: <20160315174634.6766cd88@canb.auug.org.au> <15874870.hBfxUomX5V@wuerfel> <CAHp75VcxkBTSKY_bVg3jaUPUtcyxKZ14sbu=uJK403xRmTYbbQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from forward.webhostbox.net ([5.100.155.124]:48072 "EHLO
-	forward.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965315AbcCPNWR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 09:22:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20160316001713.GA4412@roeck-us.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Qais Yousef <qsyousef@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VcxkBTSKY_bVg3jaUPUtcyxKZ14sbu=uJK403xRmTYbbQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Benjamin LaHaise <bcrl@kvack.org>, linux-next <linux-next@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 15, 2016 at 05:17:13PM -0700, Guenter Roeck wrote:
-> On Tue, Mar 15, 2016 at 09:55:06PM +0000, Qais Yousef wrote:
-> > Hi Guenter,
-> > 
-[ ... ]
-> > >
-> > >>Qemu test results:
-> > >>	total: 96 pass: 69 fail: 27
-> > >>Failed tests:
-> > >[ ... ]
-> > >>	mips:mips_malta_smp_defconfig
-> > >I bisected this failure to commit bb11cff327e54 ("MIPS: Make smp CMP, CPS and MT
-> > >use the new generic IPI functions". Bisect log is attached.
-> > 
-> > Thanks for bisecting this. I tested this on a real Malta system but not
-> > qemu. I'll try to reproduce.
-> > 
-> I run the tests with only a single CPU core enabled. Maybe that causes
-> problems with your code ?
+On Wednesday 16 March 2016 13:12:36 Andy Shevchenko wrote:
 > 
-I ran another qemu test (this time on mainline) with "-smp 2", but the only
-difference is that the image now gets stuck even earlier.
-
-Also, I ran another set of bisects, this time with both mips and mips64
-on mainline (after your patch landed), with the same results.
-
-Guenter
-
-> > Can I get qemu run script and the instructions to use it from somewhere?
-> > 
-> Clone https://github.com/groeck/linux-build-test.git.
-> Look in rootfs/*mips* for qemu scripts and root file systems.
-> The SMP tests all fail, so it should not matter which one you pick.
-> I use my own version of qemu, but for mips standard qemu 2.5.0 should
-> work fine (I don't have any mips specific changes in my version).
+> > I've also sent a patch that fixes the link error on ARM and that should
+> > work on all other architectures too.
 > 
-> Hope this helps,
-> Guenter
+> In case of avr32 signalfd_read() fails. Does your patch help with it as well?
 > 
-> > Thanks,
-> > Qais
-> > 
-> > >
-> > >>	mips64:smp:mips_malta64_defconfig
-> > >>	mips:mipsel_malta_smp_defconfig
-> > >>	mips:mipsel_malta64_smp_defconfig
-> > >If necessary I can repeat the bisect for those. Please let me know.
-> > >
-> > >Thanks,
-> > >Guenter
-> > >
-> > >---
-> > >Bisect log:
-> > >
-> > ># bad: [4342eec3c5a2402ca5de3d6e56f541fe1c5171e2] Add linux-next specific files for 20160314
-> > ># good: [f6cede5b49e822ebc41a099fe41ab4989f64e2cb] Linux 4.5-rc7
-> > >git bisect start 'HEAD' 'v4.5-rc7'
-> > ># good: [0525c3e26ec2c43cd509433be3be25210a0154ef] Merge remote-tracking branch 'drm-tegra/drm/tegra/for-next'
-> > >git bisect good 0525c3e26ec2c43cd509433be3be25210a0154ef
-> > ># bad: [385128a1b49762c1b9515c9f6294aeebbc55b956] Merge remote-tracking branch 'usb-chipidea-next/ci-for-usb-next'
-> > >git bisect bad 385128a1b49762c1b9515c9f6294aeebbc55b956
-> > ># good: [dfdb27baab4fc45c9399a991270413d0fb1c694a] Merge remote-tracking branch 'spi/for-next'
-> > >git bisect good dfdb27baab4fc45c9399a991270413d0fb1c694a
-> > ># bad: [e368d7d2a0dce6d6795ead1fc8a09bcca8a4a565] Merge branch 'timers/nohz'
-> > >git bisect bad e368d7d2a0dce6d6795ead1fc8a09bcca8a4a565
-> > ># good: [ced30bc9129777d715057d06fc8dbdfd3b81e94d] Merge tag 'perf-core-for-mingo-20160310' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core
-> > >git bisect good ced30bc9129777d715057d06fc8dbdfd3b81e94d
-> > ># bad: [656a61d4d9cbb8dfc2d007281190b2eccebad522] manual merge of mm/pkeys
-> > >git bisect bad 656a61d4d9cbb8dfc2d007281190b2eccebad522
-> > ># good: [16f7379f2da43f29d9faa2f474745e2705a3f510] Merge branch 'efi/core'
-> > >git bisect good 16f7379f2da43f29d9faa2f474745e2705a3f510
-> > ># bad: [a7fb9a8169be9a55e0cfb98346aece1b51c016fa] Merge branch 'locking/core'
-> > >git bisect bad a7fb9a8169be9a55e0cfb98346aece1b51c016fa
-> > ># good: [2a07870511829977d02609dac6450017b0419ea9] irqchip/mips-gic: Use gic_vpes instead of NR_CPUS
-> > >git bisect good 2a07870511829977d02609dac6450017b0419ea9
-> > ># good: [eaff0e7003cca6c2748b67ead2d4b1a8ad858fc7] locking/pvqspinlock: Move lock stealing count tracking code into pv_queued_spin_steal_lock()
-> > >git bisect good eaff0e7003cca6c2748b67ead2d4b1a8ad858fc7
-> > ># good: [013e379a3094ff2898f8d33cfbff1573d471ee14] tools/lib/lockdep: Fix link creation warning
-> > >git bisect good 013e379a3094ff2898f8d33cfbff1573d471ee14
-> > ># bad: [7eb8c99db26cc6499bfb1eba72dffc4730570752] MIPS: Delete smp-gic.c
-> > >git bisect bad 7eb8c99db26cc6499bfb1eba72dffc4730570752
-> > ># good: [fbde2d7d8290d8c642d591a471356abda2446874] MIPS: Add generic SMP IPI support
-> > >git bisect good fbde2d7d8290d8c642d591a471356abda2446874
-> > ># bad: [bb11cff327e54179c13446c4022ed4ed7d4871c7] MIPS: Make smp CMP, CPS and MT use the new generic IPI functions
-> > >git bisect bad bb11cff327e54179c13446c4022ed4ed7d4871c7
-> > ># first bad commit: [bb11cff327e54179c13446c4022ed4ed7d4871c7] MIPS: Make smp CMP, CPS and MT use the new generic IPI functions
-> > 
+> P.S. Bisecting shows same culprit: 150a0b4905f1 ("aio: add support for
+> async openat()")
+
+I don't know. What is the symptom on avr32? My patch only removes the
+get_user() instances on 64-bit values and replaces them with a
+single copy_from_user() call.
+
+	Arnd
