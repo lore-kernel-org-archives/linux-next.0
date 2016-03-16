@@ -1,123 +1,110 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Mar 14 (mips qemu failure bisected)
-Date: Tue, 15 Mar 2016 17:17:13 -0700
-Message-ID: <20160316001713.GA4412@roeck-us.net>
-References: <20160314174037.0097df55@canb.auug.org.au>
- <20160314143729.GA31845@roeck-us.net>
- <20160315052659.GA9320@roeck-us.net>
- <56E884BA.5050103@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with the net-next tree
+Date: Wed, 16 Mar 2016 11:58:09 +1100
+Message-ID: <20160316115809.61b4478e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from forward.webhostbox.net ([162.251.85.199]:51432 "EHLO
-	forward.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751087AbcCPARS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 15 Mar 2016 20:17:18 -0400
-Content-Disposition: inline
-In-Reply-To: <56E884BA.5050103@gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:53690 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751204AbcCPA6L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 15 Mar 2016 20:58:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Qais Yousef <qsyousef@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Qais Yousef <qais.yousef@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+To: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amir Vadai <amir@vadai.me>, Maor Gottlieb <maorg@mellanox.com>
 
-On Tue, Mar 15, 2016 at 09:55:06PM +0000, Qais Yousef wrote:
-> Hi Guenter,
-> 
-> On 15/03/2016 05:26, Guenter Roeck wrote:
-> >On Mon, Mar 14, 2016 at 07:37:29AM -0700, Guenter Roeck wrote:
-> >>On Mon, Mar 14, 2016 at 05:40:37PM +1100, Stephen Rothwell wrote:
-> >>>Hi all,
-> >>>
-> >>>Changes since 20160311:
-> >>>
-> >>>The vfs tree gained a conflict against Linus' tree. I also applied a
-> >>>patch for a known runtime bug.
-> >>>
-> >>>The tip tree gained a conflict against the mips tree.
-> >>>
-> >>>The aio tree still had a build failure so I removed several commits
-> >>>from it.  It also gained a conflict against the vfs tree.
-> >>>
-> >>>Non-merge commits (relative to Linus' tree): 11202
-> >>>  8646 files changed, 426680 insertions(+), 211740 deletions(-)
-> >>>
-> >>To give people an idea what to expect in the merge window, here are my current
-> >>build and runtime test results. Some of the runtime failures are due to the
-> >>newly introduced i2c bug, but many (including the arm64 boot failures) have
-> >>been around for a while.
-> >>
-> >[ ... ]
-> >
-> >>Qemu test results:
-> >>	total: 96 pass: 69 fail: 27
-> >>Failed tests:
-> >[ ... ]
-> >>	mips:mips_malta_smp_defconfig
-> >I bisected this failure to commit bb11cff327e54 ("MIPS: Make smp CMP, CPS and MT
-> >use the new generic IPI functions". Bisect log is attached.
-> 
-> Thanks for bisecting this. I tested this on a real Malta system but not
-> qemu. I'll try to reproduce.
-> 
-I run the tests with only a single CPU core enabled. Maybe that causes
-problems with your code ?
+Hi all,
 
-> Can I get qemu run script and the instructions to use it from somewhere?
-> 
-Clone https://github.com/groeck/linux-build-test.git.
-Look in rootfs/*mips* for qemu scripts and root file systems.
-The SMP tests all fail, so it should not matter which one you pick.
-I use my own version of qemu, but for mips standard qemu 2.5.0 should
-work fine (I don't have any mips specific changes in my version).
+Today's linux-next merge of the rdma tree got a conflict in:
 
-Hope this helps,
-Guenter
+  drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
 
-> Thanks,
-> Qais
-> 
-> >
-> >>	mips64:smp:mips_malta64_defconfig
-> >>	mips:mipsel_malta_smp_defconfig
-> >>	mips:mipsel_malta64_smp_defconfig
-> >If necessary I can repeat the bisect for those. Please let me know.
-> >
-> >Thanks,
-> >Guenter
-> >
-> >---
-> >Bisect log:
-> >
-> ># bad: [4342eec3c5a2402ca5de3d6e56f541fe1c5171e2] Add linux-next specific files for 20160314
-> ># good: [f6cede5b49e822ebc41a099fe41ab4989f64e2cb] Linux 4.5-rc7
-> >git bisect start 'HEAD' 'v4.5-rc7'
-> ># good: [0525c3e26ec2c43cd509433be3be25210a0154ef] Merge remote-tracking branch 'drm-tegra/drm/tegra/for-next'
-> >git bisect good 0525c3e26ec2c43cd509433be3be25210a0154ef
-> ># bad: [385128a1b49762c1b9515c9f6294aeebbc55b956] Merge remote-tracking branch 'usb-chipidea-next/ci-for-usb-next'
-> >git bisect bad 385128a1b49762c1b9515c9f6294aeebbc55b956
-> ># good: [dfdb27baab4fc45c9399a991270413d0fb1c694a] Merge remote-tracking branch 'spi/for-next'
-> >git bisect good dfdb27baab4fc45c9399a991270413d0fb1c694a
-> ># bad: [e368d7d2a0dce6d6795ead1fc8a09bcca8a4a565] Merge branch 'timers/nohz'
-> >git bisect bad e368d7d2a0dce6d6795ead1fc8a09bcca8a4a565
-> ># good: [ced30bc9129777d715057d06fc8dbdfd3b81e94d] Merge tag 'perf-core-for-mingo-20160310' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/core
-> >git bisect good ced30bc9129777d715057d06fc8dbdfd3b81e94d
-> ># bad: [656a61d4d9cbb8dfc2d007281190b2eccebad522] manual merge of mm/pkeys
-> >git bisect bad 656a61d4d9cbb8dfc2d007281190b2eccebad522
-> ># good: [16f7379f2da43f29d9faa2f474745e2705a3f510] Merge branch 'efi/core'
-> >git bisect good 16f7379f2da43f29d9faa2f474745e2705a3f510
-> ># bad: [a7fb9a8169be9a55e0cfb98346aece1b51c016fa] Merge branch 'locking/core'
-> >git bisect bad a7fb9a8169be9a55e0cfb98346aece1b51c016fa
-> ># good: [2a07870511829977d02609dac6450017b0419ea9] irqchip/mips-gic: Use gic_vpes instead of NR_CPUS
-> >git bisect good 2a07870511829977d02609dac6450017b0419ea9
-> ># good: [eaff0e7003cca6c2748b67ead2d4b1a8ad858fc7] locking/pvqspinlock: Move lock stealing count tracking code into pv_queued_spin_steal_lock()
-> >git bisect good eaff0e7003cca6c2748b67ead2d4b1a8ad858fc7
-> ># good: [013e379a3094ff2898f8d33cfbff1573d471ee14] tools/lib/lockdep: Fix link creation warning
-> >git bisect good 013e379a3094ff2898f8d33cfbff1573d471ee14
-> ># bad: [7eb8c99db26cc6499bfb1eba72dffc4730570752] MIPS: Delete smp-gic.c
-> >git bisect bad 7eb8c99db26cc6499bfb1eba72dffc4730570752
-> ># good: [fbde2d7d8290d8c642d591a471356abda2446874] MIPS: Add generic SMP IPI support
-> >git bisect good fbde2d7d8290d8c642d591a471356abda2446874
-> ># bad: [bb11cff327e54179c13446c4022ed4ed7d4871c7] MIPS: Make smp CMP, CPS and MT use the new generic IPI functions
-> >git bisect bad bb11cff327e54179c13446c4022ed4ed7d4871c7
-> ># first bad commit: [bb11cff327e54179c13446c4022ed4ed7d4871c7] MIPS: Make smp CMP, CPS and MT use the new generic IPI functions
-> 
+between commit:
+
+  60ab4584f5bf ("net/mlx5_core: Set flow steering dest only for forward rules")
+
+from the net-next tree and commit:
+
+  b3638e1a7664 ("net/mlx5_core: Introduce forward to next priority action")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary (no action
+is required).
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+index e848d708d2b7,bf3446794bd5..000000000000
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
+@@@ -73,10 -73,13 +73,13 @@@
+  #define BY_PASS_MIN_LEVEL (KENREL_MIN_LEVEL + MLX5_BY_PASS_NUM_PRIOS +\
+  			   LEFTOVERS_MAX_FT)
+  
+ -#define KERNEL_MAX_FT 2
+ -#define KERNEL_NUM_PRIOS 1
+ +#define KERNEL_MAX_FT 3
+ +#define KERNEL_NUM_PRIOS 2
+  #define KENREL_MIN_LEVEL 2
+  
++ #define ANCHOR_MAX_FT 1
++ #define ANCHOR_NUM_PRIOS 1
++ #define ANCHOR_MIN_LEVEL (BY_PASS_MIN_LEVEL + 1)
+  struct node_caps {
+  	size_t	arr_sz;
+  	long	*caps;
+@@@ -360,8 -367,13 +367,13 @@@ static void del_rule(struct fs_node *no
+  	memcpy(match_value, fte->val, sizeof(fte->val));
+  	fs_get_obj(ft, fg->node.parent);
+  	list_del(&rule->node.list);
++ 	if (rule->sw_action == MLX5_FLOW_CONTEXT_ACTION_FWD_NEXT_PRIO) {
++ 		mutex_lock(&rule->dest_attr.ft->lock);
++ 		list_del(&rule->next_ft);
++ 		mutex_unlock(&rule->dest_attr.ft->lock);
++ 	}
+ -	fte->dests_size--;
+ -	if (fte->dests_size) {
+ +	if ((fte->action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) &&
+ +	    --fte->dests_size) {
+  		err = mlx5_cmd_update_fte(dev, ft,
+  					  fg->id, fte);
+  		if (err)
+@@@ -762,9 -835,9 +835,10 @@@ static struct mlx5_flow_rule *alloc_rul
+  	if (!rule)
+  		return NULL;
+  
++ 	INIT_LIST_HEAD(&rule->next_ft);
+  	rule->node.type = FS_TYPE_FLOW_DEST;
+ -	memcpy(&rule->dest_attr, dest, sizeof(*dest));
+ +	if (dest)
+ +		memcpy(&rule->dest_attr, dest, sizeof(*dest));
+  
+  	return rule;
+  }
+@@@ -783,12 -856,16 +857,17 @@@ static struct mlx5_flow_rule *add_rule_
+  		return ERR_PTR(-ENOMEM);
+  
+  	fs_get_obj(ft, fg->node.parent);
+- 	/* Add dest to dests list- added as first element after the head */
++ 	/* Add dest to dests list- we need flow tables to be in the
++ 	 * end of the list for forward to next prio rules.
++ 	 */
+  	tree_init_node(&rule->node, 1, del_rule);
+- 	list_add_tail(&rule->node.list, &fte->node.children);
++ 	if (dest && dest->type != MLX5_FLOW_DESTINATION_TYPE_FLOW_TABLE)
++ 		list_add(&rule->node.list, &fte->node.children);
++ 	else
++ 		list_add_tail(&rule->node.list, &fte->node.children);
+ -	fte->dests_size++;
+ -	if (fte->dests_size == 1)
+ +	if (dest)
+ +		fte->dests_size++;
+ +	if (fte->dests_size == 1 || !dest)
+  		err = mlx5_cmd_create_fte(get_dev(&ft->node),
+  					  ft, fg->id, fte);
+  	else
