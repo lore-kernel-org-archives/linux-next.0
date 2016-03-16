@@ -1,55 +1,134 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: build failure after merge of the aio tree
-Date: Wed, 16 Mar 2016 13:12:36 +0200
-Message-ID: <CAHp75VcxkBTSKY_bVg3jaUPUtcyxKZ14sbu=uJK403xRmTYbbQ@mail.gmail.com>
-References: <20160315174634.6766cd88@canb.auug.org.au>
-	<20160315161901.GA2713@sudip-laptop>
-	<20160315162228.GP17923@kvack.org>
-	<15874870.hBfxUomX5V@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <15874870.hBfxUomX5V@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linuxppc-dev@lists.ozlabs.org, Benjamin LaHaise <bcrl@kvack.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160316 build: 0 failures 11 warnings (next-20160316)
+Date: Wed, 16 Mar 2016 11:20:59 +0000
+Message-ID: <E1ag9Va-0002S0-TI@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36220 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934465AbcCPLVH (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 07:21:07 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Wed, Mar 16, 2016 at 12:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 15 March 2016 12:22:28 Benjamin LaHaise wrote:
->> On Tue, Mar 15, 2016 at 04:19:02PM +0000, Sudip Mukherjee wrote:
->> > On Tue, Mar 15, 2016 at 05:46:34PM +1100, Stephen Rothwell wrote:
->> > > Hi Benjamin,
->> > >
->> > > After merging the aio tree, today's linux-next build (powerpc
->> > > ppc44x_defconfig) failed like this:
->> > >
->> > > fs/built-in.o: In function `aio_thread_op_foo_at':
->> > > aio.c:(.text+0x4dab4): undefined reference to `__get_user_bad'
->> > > aio.c:(.text+0x4daec): undefined reference to `__get_user_bad'
->> > >
->> > > Caused by commit
->> > >
->> > >   150a0b4905f1 ("aio: add support for async openat()")
->> > >
->> > > despite commit
->> > >
->> > >   d2f7a973e11e ("aio: don't use __get_user() for 64 bit values")
->> > >
+Tree/Branch: next-20160316
+Git describe: next-20160316
+Commit: 8559bac87d Add linux-next specific files for 20160316
 
->> I've removed everything from the aio-next.git tree for now.  Will revisit
->> after the merge window.
+Build Time: 87 min 26 sec
 
-I think it is the best solution right now.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-> I've also sent a patch that fixes the link error on ARM and that should
-> work on all other architectures too.
+Errors: 0
+Warnings: 11
+Section Mismatches: 0
 
-In case of avr32 signalfd_read() fails. Does your patch help with it as well?
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allnoconfig
+      7 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+     12 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      5 warnings    0 mismatches  : arm64-defconfig
 
-P.S. Bisecting shows same culprit: 150a0b4905f1 ("aio: add support for
-async openat()")
+-------------------------------------------------------------------------------
 
--- 
-With Best Regards,
-Andy Shevchenko
+Warnings Summary: 11
+	 12 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	 12 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	  3 ../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
+	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/char/tpm/tpm-chip.c:287:38: warning: passing argument 1 of 'tpm_bios_log_setup' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	../drivers/char/tpm/tpm-chip.c:287:38: warning: passing argument 1 of 'tpm_bios_log_setup' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+x86_64-defconfig
