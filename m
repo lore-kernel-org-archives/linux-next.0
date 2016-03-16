@@ -1,43 +1,55 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Date: Wed, 16 Mar 2016 08:56:50 +0100
-Message-ID: <56E911C2.3060802@suse.cz>
-References: <20160316105851.015ff688@canb.auug.org.au>
- <56E91108.5050105@bmw-carit.de>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: linux-next: build failure after merge of the aio tree
+Date: Wed, 16 Mar 2016 13:12:36 +0200
+Message-ID: <CAHp75VcxkBTSKY_bVg3jaUPUtcyxKZ14sbu=uJK403xRmTYbbQ@mail.gmail.com>
+References: <20160315174634.6766cd88@canb.auug.org.au>
+	<20160315161901.GA2713@sudip-laptop>
+	<20160315162228.GP17923@kvack.org>
+	<15874870.hBfxUomX5V@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:34184 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933203AbcCPH4y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 16 Mar 2016 03:56:54 -0400
-In-Reply-To: <56E91108.5050105@bmw-carit.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Wagner <daniel.wagner@bmw-carit.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <15874870.hBfxUomX5V@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linuxppc-dev@lists.ozlabs.org, Benjamin LaHaise <bcrl@kvack.org>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-On 2016-03-16 08:53, Daniel Wagner wrote:
-> Hi,
-> 
-> On 03/16/2016 12:58 AM, Stephen Rothwell wrote:
->> After merging the kbuild tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> drivers/gpu/drm/gma500/mdfld_dsi_output.c:407:39: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->>   .dpms = /*drm_helper_connector_dpms*/mdfld_dsi_connector_dpms,
->>                                        ^
->>
->> Caused by commit
->>
->>   ea8daa7b9784 ("kbuild: Add option to turn incompatible pointer check into error")
-> 
-> 
-> A fix should be on the way via drm-misc:
+On Wed, Mar 16, 2016 at 12:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tuesday 15 March 2016 12:22:28 Benjamin LaHaise wrote:
+>> On Tue, Mar 15, 2016 at 04:19:02PM +0000, Sudip Mukherjee wrote:
+>> > On Tue, Mar 15, 2016 at 05:46:34PM +1100, Stephen Rothwell wrote:
+>> > > Hi Benjamin,
+>> > >
+>> > > After merging the aio tree, today's linux-next build (powerpc
+>> > > ppc44x_defconfig) failed like this:
+>> > >
+>> > > fs/built-in.o: In function `aio_thread_op_foo_at':
+>> > > aio.c:(.text+0x4dab4): undefined reference to `__get_user_bad'
+>> > > aio.c:(.text+0x4daec): undefined reference to `__get_user_bad'
+>> > >
+>> > > Caused by commit
+>> > >
+>> > >   150a0b4905f1 ("aio: add support for async openat()")
+>> > >
+>> > > despite commit
+>> > >
+>> > >   d2f7a973e11e ("aio: don't use __get_user() for 64 bit values")
+>> > >
 
-Right. Stephen, could you perhaps move the kbuild tree down in your list
-a bit, so that the fixes are present?
+>> I've removed everything from the aio-next.git tree for now.  Will revisit
+>> after the merge window.
 
-Thanks,
-Michal
+I think it is the best solution right now.
+
+> I've also sent a patch that fixes the link error on ARM and that should
+> work on all other architectures too.
+
+In case of avr32 signalfd_read() fails. Does your patch help with it as well?
+
+P.S. Bisecting shows same culprit: 150a0b4905f1 ("aio: add support for
+async openat()")
+
+-- 
+With Best Regards,
+Andy Shevchenko
