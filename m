@@ -1,64 +1,119 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Wed, 16 Mar 2016 10:44:34 -0700
-Message-ID: <CA+55aFyi31eRO6nO1-kz=-kq4XqyyA=VagbsiaO4ZPu1aLmnuA@mail.gmail.com>
-References: <20160316115809.61b4478e@canb.auug.org.au>
-	<CA+55aFzhYJxCOXER-mhOfJ6=V13Rb5F0LB_3A9n7S_dLkb8f0g@mail.gmail.com>
-	<56E99960.5000604@redhat.com>
+From: Doug Ledford <dledford@redhat.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Date: Wed, 16 Mar 2016 15:02:42 -0400
+Message-ID: <56E9ADD2.2050500@redhat.com>
+References: <20160316121538.6d5a773b@canb.auug.org.au>
+ <20160316064953.GA28157@gondor.apana.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="iJ9hE3MvtuFe7Vbxs6CvixLAn9rSaUUmK"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:35354 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755231AbcCPRof (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 13:44:35 -0400
-In-Reply-To: <56E99960.5000604@redhat.com>
+Received: from mx1.redhat.com ([209.132.183.28]:41864 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752216AbcCPTC6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2016 15:02:58 -0400
+In-Reply-To: <20160316064953.GA28157@gondor.apana.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Network Development <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amir Vadai <amir@vadai.me>, Maor Gottlieb <maorg@mellanox.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Faisal Latif <faisal.latif@intel.com>
 
-On Wed, Mar 16, 2016 at 10:35 AM, Doug Ledford <dledford@redhat.com> wrote:
-> On 3/16/2016 1:18 PM, Linus Torvalds wrote:
->> On Tue, Mar 15, 2016 at 5:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>
->>> I fixed it up (see below) and can carry the fix as necessary (no action
->>> is required).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--iJ9hE3MvtuFe7Vbxs6CvixLAn9rSaUUmK
+Content-Type: multipart/mixed; boundary="GceWn92TCvt7OdgJVUL3X6pVXAE5JSXO0"
+From: Doug Ledford <dledford@redhat.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Faisal Latif <faisal.latif@intel.com>
+Message-ID: <56E9ADD2.2050500@redhat.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+References: <20160316121538.6d5a773b@canb.auug.org.au>
+ <20160316064953.GA28157@gondor.apana.org.au>
+In-Reply-To: <20160316064953.GA28157@gondor.apana.org.au>
+
+--GceWn92TCvt7OdgJVUL3X6pVXAE5JSXO0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
+
+On 3/16/2016 2:49 AM, Herbert Xu wrote:
+> On Wed, Mar 16, 2016 at 12:15:38PM +1100, Stephen Rothwell wrote:
+>> Hi Doug,
 >>
->> Side note: can you change this wording for your manual merge script?
->> Last merge window (or was it the one before it?) we had confusion with
->> people who thought that "no action is required" means "you can just
->> ignore this entirely".
->
-> I certainly didn't take it that way regardless of the wording.
+>> After merging the rdma tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> In file included from drivers/infiniband/hw/i40iw/i40iw.h:57:0,
+>>                  from drivers/infiniband/hw/i40iw/i40iw_cm.c:63:
+>> drivers/infiniband/hw/i40iw/i40iw_osdep.h:175:12: warning: 'struct has=
+h_desc' declared inside parameter list
+>>             u32 length, u32 value);
+>>             ^
+>>
+>> And it went downhill badly after that.
+>>
+>> Caused by commit
+>>
+>>   896545098777 ("crypto: hash - Remove crypto_hash interface")
+>>
+>> from the crypto tree interacting with commits
+>>
+>>   786c6adb3a94 ("i40iw: add puda code")
+>>   4e9042e647ff ("i40iw: add hw and utils files")
+>>
+>> (at least) from the rdma tree.
+>>
+>> Its a bit of a pain finding these conflicts now - it would have been
+>> better a few weeks ago.
+>>
+>> For now, all I can do is to use the rdma tree from next-20160315 for
+>> today.
+>>
+>> Herbert, any hints for Doug, Faisal?
+>=20
+> crypto_hash is obsolete.  You should be using shash if your input
+> is completely linear or ahash if you need SG lists.  For an example
+> of how you can do the conversion, have a look at
+>=20
+> commit 69110e3cedbb8aad1c70d91ed58a9f4f0ed9eec6
+> Author: Herbert Xu <herbert@gondor.apana.org.au>
+> Date:   Sun Jan 24 21:19:52 2016 +0800
+>=20
+>     iscsi-target: Use shash and ahash
+>=20
+> Cheers,
+>=20
 
-It was Or Gerlitz. You were cc'd, since it was the whole rdma Mellanox
-mess. I quote from that thread:
+Pending an update from Intel on the i40iw driver, I have pulled it from
+my for-next area.  This should not be a problem with tonight's merge.
 
- "> However, the fact that it got resolved in linux-next is purely
-  > informational. It doesn't "fix" the conflict - it just means that both
-  > sides should have gotten informed about it. That doesn't mean that the
-  > conflict goes away or becomes better.
 
-  That's news to me. When such things happen and caught by Stephen, we
-  are getting an email saying something like
 
-  "Today's linux-next merge of the infiniband tree got a conflict
-  between commit X from net-next tree and commit Y from the infiniband
-  tree. I fixed it up (see below) and can carry the fix as necessary (no
-  action is required)."
+--GceWn92TCvt7OdgJVUL3X6pVXAE5JSXO0--
 
-  Also asked around a bit and got to learn on Stephen using git rerere,
-  so all (no action needed note + seeing git rerere in action...) that
-  leaded me to think that indeed no action is required from our side,
-  but after reading your email (twice, so far), I realized that this was
-  wrong conclusion."
+--iJ9hE3MvtuFe7Vbxs6CvixLAn9rSaUUmK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-So that whole "no action is required" wording very much has caused
-confusion before in the rdma camp.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-Let's fix the wording. I'm indeed hopeful that the rdma camp is now
-keenly aware of the issues, but that doesn't change the fact that the
-wording has been problematic.
+iQIcBAEBCAAGBQJW6a3SAAoJELgmozMOVy/dUNIQAIqkhLMF2f8rFn9nn5xH4V8W
+OlAnLLzxVLr5LUe0jrNkj6mbRaiJwFKN2TIc3LiCNJ1L+U6CakIVcbDLy7O5WUre
+hJujZKgkxSn7yeYl8alkrwC/X3OvLgXhM4I59cNL76PCasrybymYdo2jA59Rnsd/
+yTvV6ALgP2IC3XABqWCT/irTykH+KUkEjEaJoNhheh6z7zz1Yg2qrqiIxEA6ryHY
+BRNVmWH7aFh7MtG0SsbL8nilz5ifDVt5tGfzppqmlbhofFJicEtRsaDicrgedAgy
+ZEZ5y0uznLwXPjw6qwSzW0d388cggXHm85Yn3QBG30v9iAlTop4zBkJh1YtBQCCT
+TNB0xuzr8z/0U7MuqGSVFQnSzVc8yJ2ajzIfslZSr18zcg0y28lJImcxnZ1jyiVV
+eku1/7s9Eo8Rpq2dWpcrxIdXT/SmlxsB89Hy02Co7ZlMUD8CPyarOmImudYp2D+u
+ZEfvtUxEzPUCmV0Ge3lYoFLLxFHwBMhH3Oafrbd7sFfmOVNT85Ca91fXP2BrcSoB
+QI3dStTEiX64TCvxSd77sunGW1QBf/2o5+hGcqLynzKs3O71eA7MwitAH4da3xlE
+2h99+HcXsW+Y3yxLIrx7y6YiQOc+22iYwy8PtDfJOCylwrRYA+DOi15Hz+SOGRBc
+ebWqSbq/0chySS1H3OZW
+=S05P
+-----END PGP SIGNATURE-----
 
-                  Linus
+--iJ9hE3MvtuFe7Vbxs6CvixLAn9rSaUUmK--
