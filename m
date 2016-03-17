@@ -1,7 +1,7 @@
 From: Guenter Roeck <linux@roeck-us.net>
 Subject: Re: linux-next: Tree for Mar 14 (mips qemu failure bisected)
-Date: Wed, 16 Mar 2016 19:10:04 -0700
-Message-ID: <56EA11FC.9000304@roeck-us.net>
+Date: Wed, 16 Mar 2016 19:36:41 -0700
+Message-ID: <56EA1839.8010807@roeck-us.net>
 References: <20160314174037.0097df55@canb.auug.org.au>
  <20160314143729.GA31845@roeck-us.net> <20160315052659.GA9320@roeck-us.net>
  <56E884BA.5050103@gmail.com> <20160316001713.GA4412@roeck-us.net>
@@ -10,16 +10,20 @@ References: <20160314174037.0097df55@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from forward.webhostbox.net ([5.100.155.97]:37237 "EHLO
-	forward.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752508AbcCQCKL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 22:10:11 -0400
+Return-path: <linux-mips-bounce@linux-mips.org>
 In-Reply-To: <56E9DB85.9090405@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
 To: Qais Yousef <qsyousef@gmail.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
+List-Id: linux-next.vger.kernel.org
 
 On 03/16/2016 03:17 PM, Qais Yousef wrote:
 > On 16/03/2016 20:27, Qais Yousef wrote:
@@ -61,30 +65,11 @@ On 03/16/2016 03:17 PM, Qais Yousef wrote:
 >
 > OK I was up and running faster than I thought I would be. Can you confirm that you're hitting a BUG_ON() in mips_smp_ipi_init()?
 >
-
-Most likely, but mips is one of the qemu emulations which simply hang if there is a crash,
-without a log message, and I have not been able to figure out a command line that gives me
-the actual crash log.
-
 > What I see is that BUG_ON() is hit because we couldn't find an ipidomain to allocate the ipis from. The reason of whih is that the qemu malta machine doesn't have a GIC though the config is compiled with GIC on. Also if I remember correctly qemu malta doesn't really support SMP. I think that was the reason I never ran this on qemu.
->
-Idea is to run the SMP build, not really a multi-core machine.
 
-> I'm not sure what's the best way forward here. I can add a check to verify gic_present inside this function and return early. Patch attached.
->
+Turns out MIPS_GIC is auto-selected by MIPS_MALTA, so I can not just unconfigure it.
+Too bad. That means if your patch isn't accepted, I'll have to drop the mips
+SMP build runtime tests, unless you have a better idea.
 
-With your patch I get
-
-WARNING: CPU: 0 PID: 1 at arch/mips/kernel/smp.c:251 mips_smp_ipi_init+0x3c/0x1b0()
-
-and the boot continues.
-
-If Ralf accepts it, feel free to add
-
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-
-though I'll probably adjust my configuration to drop GIC from it (if that is possible).
-
-Thanks a lot for looking into this!
-
+Thanks,
 Guenter
