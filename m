@@ -1,137 +1,107 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160317 build: 0 failures 12 warnings (next-20160317)
-Date: Thu, 17 Mar 2016 09:25:45 +0000
-Message-ID: <E1agUBd-0005bQ-L0@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39100 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932329AbcCQJZ7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2016 05:25:59 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Subject: ARC !THP broken in linux-next (was Re: [PATCH V2] mm/thp/migration:
+ switch from flush_tlb_range to flush_pmd_tlb_range)
+Date: Thu, 17 Mar 2016 15:05:52 +0530
+Message-ID: <56EA7A78.6020308@synopsys.com>
+References: <1455118510-15031-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <1455118510-15031-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+Sender: owner-linux-mm@kvack.org
+To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, akpm@linux-foundation.org, Mel Gorman <mgorman@techsingularity.net>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160317
-Git describe: next-20160317
-Commit: 0a2dc4664f Add linux-next specific files for 20160317
+Hi Aneesh,
 
-Build Time: 85 min 47 sec
+On Wednesday 10 February 2016 09:05 PM, Aneesh Kumar K.V wrote:
+> We remove one instace of flush_tlb_range here. That was added by
+> f714f4f20e59ea6eea264a86b9a51fd51b88fc54 ("mm: numa: call MMU notifiers
+> on THP migration"). But the pmdp_huge_clear_flush_notify should have
+> done the require flush for us. Hence remove the extra flush.
+> 
+> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+linux-next fails for ARC with this - although this is not your fault.
+Back then, per your request I did verify that ARC builds fine with this for
+CONFIG_TRANSPARENT_HUGEPAGE worked. However I failed to check the !THP case which
+is broken.
 
-Errors: 0
-Warnings: 12
-Section Mismatches: 0
+@Andrew could you please add the patch below to mm tree !
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      8 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     13 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-allnoconfig
-      5 warnings    0 mismatches  : arm64-defconfig
+Thx,
+Vineet
 
--------------------------------------------------------------------------------
+------------>
+>From 8e31856c9b154cc152486aa411ee38b4c737c7c3 Mon Sep 17 00:00:00 2001
+From: Vineet Gupta <vgupta@synopsys.com>
+Date: Thu, 17 Mar 2016 15:00:59 +0530
+Subject: [PATCH] ARC: thp: unbork !CONFIG_TRANSPARENT_HUGEPAGE build
 
-Warnings Summary: 12
-	 12 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	 12 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  3 ../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:535:17: warning: unused variable 'p' [-Wunused-variable]
-	  1 arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/sti/sti_crtc.c:54:13: warning: 'sti_crtc_mode_fixup' defined but not used [-Wunused-function]
+linux-next for 4.6-rc1 timeline reported ARC build failures !THP
 
+| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
+[enabled by default]
+| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
+[enabled by default]
+| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
+[enabled by default]
 
+Turns out that commit ("mm/thp/migration: switch from flush_tlb_range
+to flush_pmd_tlb_range") triggered the issue while the problem was in
+ARC code where THP specific helpers were not guarded with #ifdef.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+ arch/arc/include/asm/tlbflush.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arc/include/asm/tlbflush.h b/arch/arc/include/asm/tlbflush.h
+index 1fe9c8c80280..f0d42f1e83f5 100644
+--- a/arch/arc/include/asm/tlbflush.h
++++ b/arch/arc/include/asm/tlbflush.h
+@@ -17,8 +17,10 @@ void local_flush_tlb_page(struct vm_area_struct *vma, unsigned
+long page);
+ void local_flush_tlb_kernel_range(unsigned long start, unsigned long end);
+ void local_flush_tlb_range(struct vm_area_struct *vma,
+ 			   unsigned long start, unsigned long end);
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ void local_flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long start,
+ 			       unsigned long end);
++#endif
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+ #ifndef CONFIG_SMP
+ #define flush_tlb_range(vma, s, e)	local_flush_tlb_range(vma, s, e)
+@@ -26,7 +28,9 @@ void local_flush_pmd_tlb_range(struct vm_area_struct *vma,
+unsigned long start,
+ #define flush_tlb_kernel_range(s, e)	local_flush_tlb_kernel_range(s, e)
+ #define flush_tlb_all()			local_flush_tlb_all()
+ #define flush_tlb_mm(mm)		local_flush_tlb_mm(mm)
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ #define flush_pmd_tlb_range(vma, s, e)	local_flush_pmd_tlb_range(vma, s, e)
++#endif
+ #else
+ extern void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
+ 							 unsigned long end);
+@@ -34,7 +38,8 @@ extern void flush_tlb_page(struct vm_area_struct *vma, unsigned
+long page);
+ extern void flush_tlb_kernel_range(unsigned long start, unsigned long end);
+ extern void flush_tlb_all(void);
+ extern void flush_tlb_mm(struct mm_struct *mm);
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ extern void flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long start,
+unsigned long end);
+-
++#endif
+ #endif /* CONFIG_SMP */
+ #endif
+-- 
+2.5.0
 
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:535:17: warning: unused variable 'p' [-Wunused-variable]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 13 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:535:17: warning: unused variable 'p' [-Wunused-variable]
-	../drivers/gpu/drm/sti/sti_crtc.c:54:13: warning: 'sti_crtc_mode_fixup' defined but not used [-Wunused-function]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/ntb/test/ntb_perf.c:213:10: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/ntb/test/ntb_perf.c:214:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/media/v4l2-core/v4l2-mc.c:37:55: warning: unused variable 'dtv_demod' [-Wunused-variable]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
