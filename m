@@ -1,107 +1,57 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: ARC !THP broken in linux-next (was Re: [PATCH V2] mm/thp/migration:
- switch from flush_tlb_range to flush_pmd_tlb_range)
-Date: Thu, 17 Mar 2016 15:05:52 +0530
-Message-ID: <56EA7A78.6020308@synopsys.com>
-References: <1455118510-15031-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the drm tree
+Date: Thu, 17 Mar 2016 20:39:09 +1100
+Message-ID: <20160317203909.54f020e3@canb.auug.org.au>
+References: <20160317130029.5569b2f4@canb.auug.org.au>
+	<2913254.nLUtoX01AU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1455118510-15031-1-git-send-email-aneesh.kumar@linux.vnet.ibm.com>
-Sender: owner-linux-mm@kvack.org
-To: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>, akpm@linux-foundation.org, Mel Gorman <mgorman@techsingularity.net>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56754 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932832AbcCQJjM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 17 Mar 2016 05:39:12 -0400
+In-Reply-To: <2913254.nLUtoX01AU@wuerfel>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Hansen <dave.hansen@linux.intel.com>
 
-Hi Aneesh,
+Hi Arnd,
 
-On Wednesday 10 February 2016 09:05 PM, Aneesh Kumar K.V wrote:
-> We remove one instace of flush_tlb_range here. That was added by
-> f714f4f20e59ea6eea264a86b9a51fd51b88fc54 ("mm: numa: call MMU notifiers
-> on THP migration"). But the pmdp_huge_clear_flush_notify should have
-> done the require flush for us. Hence remove the extra flush.
+On Thu, 17 Mar 2016 10:00:56 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Your merge looks incorrect to me, and I got a build warning for it:
 > 
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_ttm_tt_get_user_pages':
+> drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:535:17: error: unused variable 'p' [-Werror=unused-variable]
+> 
+> I think the one-line change below is what is needed here, but it's probably
+> best for amdgpu maintainers to take a closer look.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> index 8b9b245fd0c8..ab34190859a8 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> @@ -540,7 +540,7 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages)
+>  		list_add(&guptask.list, &gtt->guptasks);
+>  		spin_unlock(&gtt->guptasklock);
+>  
+> -		r = get_user_pages(userptr, num_pages, write, 0, pages, NULL);
+> +		r = get_user_pages(userptr, num_pages, write, 0, p, NULL);
+>  
+>  		spin_lock(&gtt->guptasklock);
+>  		list_del(&guptask.list);
+> 
 
-linux-next fails for ARC with this - although this is not your fault.
-Back then, per your request I did verify that ARC builds fine with this for
-CONFIG_TRANSPARENT_HUGEPAGE worked. However I failed to check the !THP case which
-is broken.
+Ah, there was another commit to this area (I stopped looking to soon):
 
-@Andrew could you please add the patch below to mm tree !
+  2f568dbd6b94 ("drm/amdgpu: move get_user_pages out of amdgpu_ttm_tt_pin_userptr v6")
 
-Thx,
-Vineet
+Your resolution certainly looks better.  I'll do that tomorrow.
 
------------->
->From 8e31856c9b154cc152486aa411ee38b4c737c7c3 Mon Sep 17 00:00:00 2001
-From: Vineet Gupta <vgupta@synopsys.com>
-Date: Thu, 17 Mar 2016 15:00:59 +0530
-Subject: [PATCH] ARC: thp: unbork !CONFIG_TRANSPARENT_HUGEPAGE build
-
-linux-next for 4.6-rc1 timeline reported ARC build failures !THP
-
-| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
-[enabled by default]
-| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
-[enabled by default]
-| arch/arc/include/asm/tlbflush.h:29:0: warning: "flush_pmd_tlb_range" redefined
-[enabled by default]
-
-Turns out that commit ("mm/thp/migration: switch from flush_tlb_range
-to flush_pmd_tlb_range") triggered the issue while the problem was in
-ARC code where THP specific helpers were not guarded with #ifdef.
-
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
----
- arch/arc/include/asm/tlbflush.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arc/include/asm/tlbflush.h b/arch/arc/include/asm/tlbflush.h
-index 1fe9c8c80280..f0d42f1e83f5 100644
---- a/arch/arc/include/asm/tlbflush.h
-+++ b/arch/arc/include/asm/tlbflush.h
-@@ -17,8 +17,10 @@ void local_flush_tlb_page(struct vm_area_struct *vma, unsigned
-long page);
- void local_flush_tlb_kernel_range(unsigned long start, unsigned long end);
- void local_flush_tlb_range(struct vm_area_struct *vma,
- 			   unsigned long start, unsigned long end);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- void local_flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long start,
- 			       unsigned long end);
-+#endif
-
- #ifndef CONFIG_SMP
- #define flush_tlb_range(vma, s, e)	local_flush_tlb_range(vma, s, e)
-@@ -26,7 +28,9 @@ void local_flush_pmd_tlb_range(struct vm_area_struct *vma,
-unsigned long start,
- #define flush_tlb_kernel_range(s, e)	local_flush_tlb_kernel_range(s, e)
- #define flush_tlb_all()			local_flush_tlb_all()
- #define flush_tlb_mm(mm)		local_flush_tlb_mm(mm)
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- #define flush_pmd_tlb_range(vma, s, e)	local_flush_pmd_tlb_range(vma, s, e)
-+#endif
- #else
- extern void flush_tlb_range(struct vm_area_struct *vma, unsigned long start,
- 							 unsigned long end);
-@@ -34,7 +38,8 @@ extern void flush_tlb_page(struct vm_area_struct *vma, unsigned
-long page);
- extern void flush_tlb_kernel_range(unsigned long start, unsigned long end);
- extern void flush_tlb_all(void);
- extern void flush_tlb_mm(struct mm_struct *mm);
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
- extern void flush_pmd_tlb_range(struct vm_area_struct *vma, unsigned long start,
-unsigned long end);
--
-+#endif
- #endif /* CONFIG_SMP */
- #endif
 -- 
-2.5.0
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Cheers,
+Stephen Rothwell
