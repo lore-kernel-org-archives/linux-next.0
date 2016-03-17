@@ -1,42 +1,62 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: [cocci: new build warnings]: next-20160316 setup_timer.cocci
-Date: Wed, 16 Mar 2016 19:06:16 -0500
-Message-ID: <56E9F4F8.70708@ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Thu, 17 Mar 2016 11:45:16 +1100
+Message-ID: <20160317114516.1af8f0e6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:39303 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934546AbcCQAGa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 16 Mar 2016 20:06:30 -0400
+Received: from ozlabs.org ([103.22.144.67]:52201 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932684AbcCQApU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 16 Mar 2016 20:45:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Vaishali Thakkar <vaishali.thakkar@oracle.com>, Michal Marek <mmarek@suse.com>
-Cc: Julia Lawall <julia.lawall@lip6.fr>, linux-next@vger.kernel.org, cocci@systeme.lip6.fr
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@suse.com>, Ingo Molnar <mingo@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Vincent Abriou <vincent.abriou@st.com>
 
-Hi,
+Hi Dave,
 
-It looks like commit c5eda8fd10c6 ("Coccinelle: Add
-api/setup_timer.cocci") with spatch rev(1.0.4 latest)[1] generates
-warning [2]. I am using spatch from the latest git tree[3]
+Today's linux-next merge of the drm tree got a conflict in:
 
-rule name: parse error:
-  File "./scripts/coccinelle/api/setup_timer.cocci", line 109, column 0,
-charpos = 1939
-  around = '(',
-  whole content = '(context || org || report)@'
+  drivers/gpu/drm/sti/sti_hqvdp.c
 
-[1]
-spatch byte-code version 1.0.4-00203-gdb45d7549bdd compiled with OCaml
-version 4.01.0
-Flags passed to the configure script: [none]
-Python scripting support: yes
-Syntax of regular expresssions: PCRE
+between commit:
 
-[2] http://pastebin.ubuntu.com/15405226/
-[3] https://github.com/coccinelle/coccinelle.git
+  f6e45661f9be ("dma, mm/pat: Rename dma_*_writecombine() to dma_*_wc()")
+
+from Linus' tree and commit:
+
+  52807ae90e76 ("drm/sti: use u32 to store DMA addresses")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Regards,
-Nishanth Menon
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/sti/sti_hqvdp.c
+index 1d3c3d029603,d7c1f427811d..000000000000
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@@ -617,9 -852,9 +852,8 @@@ static void sti_hqvdp_init(struct sti_h
+  
+  	/* Allocate memory for the VDP commands */
+  	size = NB_VDP_CMD * sizeof(struct sti_hqvdp_cmd);
+- 	hqvdp->hqvdp_cmd = dma_alloc_wc(hqvdp->dev, size,
+- 					&hqvdp->hqvdp_cmd_paddr,
+ -	hqvdp->hqvdp_cmd = dma_alloc_writecombine(hqvdp->dev, size,
+ -					 &dma_addr,
+ -					 GFP_KERNEL | GFP_DMA);
+++	hqvdp->hqvdp_cmd = dma_alloc_wc(hqvdp->dev, size, &dma_addr,
+ +					GFP_KERNEL | GFP_DMA);
+  	if (!hqvdp->hqvdp_cmd) {
+  		DRM_ERROR("Failed to allocate memory for VDP cmd\n");
+  		return;
