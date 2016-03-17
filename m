@@ -1,97 +1,70 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Thu, 17 Mar 2016 09:41:19 +0100
-Message-ID: <56EA6DAF.1010007@amd.com>
-References: <20160317154121.1b47aff1@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the tip tree with the drm tree
+Date: Thu, 17 Mar 2016 10:00:56 +0100
+Message-ID: <2913254.nLUtoX01AU@wuerfel>
+References: <20160317130029.5569b2f4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-by2on0061.outbound.protection.outlook.com ([207.46.100.61]:24744
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932234AbcCQI5M (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 17 Mar 2016 04:57:12 -0400
-In-Reply-To: <20160317154121.1b47aff1@canb.auug.org.au>
+Received: from mout.kundenserver.de ([212.227.126.133]:62712 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932796AbcCQJC4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 17 Mar 2016 05:02:56 -0400
+In-Reply-To: <20160317130029.5569b2f4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Dave Hansen <dave.hansen@linux.intel.com>
 
-Hi Stephen,
+On Thursday 17 March 2016 13:00:29 Stephen Rothwell wrote:
+> diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> index 0f42b1a24446,7b82e57aa09c..000000000000
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+> @@@ -532,21 -516,9 +532,20 @@@ int amdgpu_ttm_tt_get_user_pages(struc
+>         do {
+>                 unsigned num_pages = ttm->num_pages - pinned;
+>                 uint64_t userptr = gtt->userptr + pinned * PAGE_SIZE;
+>  -              struct page **pages = ttm->pages + pinned;
+>  +              struct page **p = pages + pinned;
+>  +              struct amdgpu_ttm_gup_task_list guptask;
+>  +
+>  +              guptask.task = current;
+>  +              spin_lock(&gtt->guptasklock);
+>  +              list_add(&guptask.list, &gtt->guptasks);
+>  +              spin_unlock(&gtt->guptasklock);
+>   
+> -               r = get_user_pages(current, current->mm, userptr, num_pages,
+> -                                  write, 0, p, NULL);
+> +               r = get_user_pages(userptr, num_pages, write, 0, pages, NULL);
+>  +
+>  +              spin_lock(&gtt->guptasklock);
+>  +              list_del(&guptask.list);
+>  +              spin_unlock(&gtt->guptasklock);
+>  +
+>                 if (r < 0)
+>                         goto release_pages;
 
-yeah, indeed the release_pages() function is now used in two more files=
-=2E
+Your merge looks incorrect to me, and I got a build warning for it:
 
-Your fix is Reviewed-by: Christian K=F6nig <christian.koenig@amd.com>.
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c: In function 'amdgpu_ttm_tt_get_user_pages':
+drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c:535:17: error: unused variable 'p' [-Werror=unused-variable]
 
-Regards,
-Christian.
+I think the one-line change below is what is needed here, but it's probably
+best for amdgpu maintainers to take a closer look.
 
-Am 17.03.2016 um 05:41 schrieb Stephen Rothwell:
-> Hi Dave,
->
-> After merging the drm tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c: In function 'amdgpu_gem_user=
-ptr_ioctl':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c:321:2: error: implicit declar=
-ation of function 'release_pages' [-Werror=3Dimplicit-function-declarat=
-ion]
->    release_pages(bo->tbo.ttm->pages, bo->tbo.ttm->num_pages, false);
->    ^
-> drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c: In function 'amdgpu_cs_parser=
-_bos':
-> drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c:410:5: error: implicit declara=
-tion of function 'release_pages' [-Werror=3Dimplicit-function-declarati=
-on]
->       release_pages(e->user_pages,
->       ^
->
-> Caused by commit
->
->    2f568dbd6b94 ("drm/amdgpu: move get_user_pages out of amdgpu_ttm_t=
-t_pin_userptr v6")
->
-> Presumably a forgotten include file.
->
-> I added this fix patch for today:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 17 Mar 2016 15:30:49 +1100
-> Subject: [PATCH] drm/amdgpu: release_pages requires linux/pagemap.h
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c  | 1 +
->   drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c | 1 +
->   2 files changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c b/drivers/gpu/drm=
-/amd/amdgpu/amdgpu_cs.c
-> index 4f5ef4149e87..9392e50a7ba4 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
-> @@ -25,6 +25,7 @@
->    *    Jerome Glisse <glisse@freedesktop.org>
->    */
->   #include <linux/list_sort.h>
-> +#include <linux/pagemap.h>
->   #include <drm/drmP.h>
->   #include <drm/amdgpu_drm.h>
->   #include "amdgpu.h"
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c b/drivers/gpu/dr=
-m/amd/amdgpu/amdgpu_gem.c
-> index 1ecdf6c01368..0f2391ec1ed9 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gem.c
-> @@ -26,6 +26,7 @@
->    *          Jerome Glisse
->    */
->   #include <linux/ktime.h>
-> +#include <linux/pagemap.h>
->   #include <drm/drmP.h>
->   #include <drm/amdgpu_drm.h>
->   #include "amdgpu.h"
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+index 8b9b245fd0c8..ab34190859a8 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@ -540,7 +540,7 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages)
+ 		list_add(&guptask.list, &gtt->guptasks);
+ 		spin_unlock(&gtt->guptasklock);
+ 
+-		r = get_user_pages(userptr, num_pages, write, 0, pages, NULL);
++		r = get_user_pages(userptr, num_pages, write, 0, p, NULL);
+ 
+ 		spin_lock(&gtt->guptasklock);
+ 		list_del(&guptask.list);
