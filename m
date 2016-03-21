@@ -1,118 +1,57 @@
-From: Guenter Roeck <private@roeck-us.net>
-Subject: Re: linux-next: Crash in arm_pmu_device_probe() due to 'drivers/perf:
- arm_pmu: make info messages more verbose'
-Date: Fri, 18 Mar 2016 06:30:25 -0700
-Message-ID: <56EC02F1.90903@roeck-us.net>
-References: <56EBA3C3.10907@roeck-us.net> <56EBC7EC.6000907@de.bosch.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ext4 tree with Linus' tree
+Date: Mon, 21 Mar 2016 11:29:28 +1100
+Message-ID: <20160321112928.1be53991@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:49385 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752056AbcCRNa2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 18 Mar 2016 09:30:28 -0400
-In-Reply-To: <56EBC7EC.6000907@de.bosch.com>
+Received: from ozlabs.org ([103.22.144.67]:38720 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751348AbcCUA3c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 20 Mar 2016 20:29:32 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Will Deacon <will.deacon@arm.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin Khlebnikov <koct9i@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>
 
-Hi Dirk,
+Hi Theodore,
 
-On 03/18/2016 02:18 AM, Dirk Behme wrote:
-> Hi Guenter,
->
-> On 18.03.2016 07:44, Guenter Roeck wrote:
->> Hi,
->>
->> I am seeing the attached crash when running a realview-pb-a8 image with
->> realview_defconfig in qemu.
->> bisect wasn't successful, but a commit analysis identified commit
->> 'drivers/perf: arm_pmu: make info
->> messages more verbose' as the culprit. Reverting this commit fixes the
->> problem.
->>
->> The code roughly looks as follows.
->>
->> int arm_pmu_device_probe()
->> {
->>      ...
->>      if (node && ..) {
->>      } else {
->>      }
->>
->>      if (ret) {
->>                  pr_info("%s: failed to probe PMU! Error %i\n",
->>                          node->full_name, ret);
->>                  goto out_free;
->>      }
->>      ....
->> out_free:
->>      pr_info("%s: failed to register PMU devices! Error %i\n",
->>                  node->full_name, ret);
->>      ....
->> }
->>
->> Note that 'node' is dereferenced even though it was previously checked
->> if it is NULL.
->> The configuration I am testing does not use devicetree.
->>
->> Can you use dev_info() instead ?
->
->
-> Does anything like below [1] does work for you?
->
-> If so, could you please share the output? I.e. what it prints in your non-devicetree non-pmu case?
->
-This is what I get:
+Today's linux-next merge of the ext4 tree got a conflict in:
 
-hw perfevents: probing PMU on CPU 0
-armv7-pmu armv7-pmu: failed to probe PMU! Error -6
-armv7-pmu armv7-pmu: failed to register PMU devices! Error -6
+  fs/overlayfs/super.c
 
-Another option might be to use of_node_full_name() (or even better
-both dev_info() and of_node_full_name()).
+between commit:
 
-Not sure though what you are looking for. '/soc/pmu_a53' doesn't
-tell (me) much either, and I am not sure I understand the context
-of the bug description. Why would the kernel try to initialize PMU
-for a CPU which isn't online ? And if it really does, wouldn't it make
-more sense to print CPU number and CPU ID instead of a devicetree
-node name ?
+  b5891cfab08f ("ovl: fix working on distributed fs as lower layer")
 
-Thanks,
-Guenter
+from Linus' tree and commit:
 
-> Best regards
->
-> Dirk
->
-> [1]
->
-> diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-> index 11bacc7..bda3502 100644
-> --- a/drivers/perf/arm_pmu.c
-> +++ b/drivers/perf/arm_pmu.c
-> @@ -1002,8 +1002,7 @@ int arm_pmu_device_probe(struct platform_device *pdev,
->         }
->
->         if (ret) {
-> -               pr_info("%s: failed to probe PMU! Error %i\n",
-> -                       node->full_name, ret);
-> +               dev_info(&pdev->dev, "failed to probe PMU! Error %i\n", ret);
->                 goto out_free;
->         }
->
-> @@ -1023,8 +1022,7 @@ int arm_pmu_device_probe(struct platform_device *pdev,
->  out_destroy:
->         cpu_pmu_destroy(pmu);
->  out_free:
-> -       pr_info("%s: failed to register PMU devices! Error %i\n",
-> -               node->full_name, ret);
-> +       dev_info(&pdev->dev, "failed to register PMU devices! Error %i\n", ret);
->         kfree(pmu);
->         return ret;
->  }
->
->
+  a7f7fb45f728 ("vfs: add file_dentry()")
+
+from the ext4 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/overlayfs/super.c
+index 619ad4b016d2,10dbdc7da69d..000000000000
+--- a/fs/overlayfs/super.c
++++ b/fs/overlayfs/super.c
+@@@ -343,7 -356,7 +358,8 @@@ static const struct dentry_operations o
+  
+  static const struct dentry_operations ovl_reval_dentry_operations = {
+  	.d_release = ovl_dentry_release,
+ +	.d_select_inode = ovl_d_select_inode,
++ 	.d_native_dentry = ovl_d_native_dentry,
+  	.d_revalidate = ovl_dentry_revalidate,
+  	.d_weak_revalidate = ovl_dentry_weak_revalidate,
+  };
