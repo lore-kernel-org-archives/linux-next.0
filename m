@@ -1,35 +1,54 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the rdma tree with the net-next tree
-Date: Wed, 23 Mar 2016 16:23:04 -0700
-Message-ID: <CA+55aFxtX874DwJpE9SDurahJrE1LKLCNZL0qRWW8G26jWBKxw@mail.gmail.com>
-References: <20160316115809.61b4478e@canb.auug.org.au>
-	<CA+55aFzhYJxCOXER-mhOfJ6=V13Rb5F0LB_3A9n7S_dLkb8f0g@mail.gmail.com>
-	<56E99960.5000604@redhat.com>
-	<CA+55aFyi31eRO6nO1-kz=-kq4XqyyA=VagbsiaO4ZPu1aLmnuA@mail.gmail.com>
-	<CAJ3xEMgth+KpQdcGi3Y8s9_0GJrEESCiEU_8uFGWrMOLHwOdHA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the overlayfs tree with the ext4 tree
+Date: Thu, 24 Mar 2016 10:51:52 +1100
+Message-ID: <20160324105152.56d66cca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:37196 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751163AbcCWXXG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 23 Mar 2016 19:23:06 -0400
-In-Reply-To: <CAJ3xEMgth+KpQdcGi3Y8s9_0GJrEESCiEU_8uFGWrMOLHwOdHA@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:47780 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751477AbcCWXv4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 23 Mar 2016 19:51:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Or Gerlitz <gerlitz.or@gmail.com>
-Cc: Doug Ledford <dledford@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Network Development <netdev@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Mar 23, 2016 at 4:04 PM, Or Gerlitz <gerlitz.or@gmail.com> wrote:
->
-> I know there's history here, and in the 4.5 cycle things were much
-> worse, but I still wanted to put things in their more precise place,
-> if you don't mind.
+Hi Miklos,
 
-We'll see how things shape up in the future. Once bitten, twice shy,
-as they say.
+Today's linux-next merge of the overlayfs tree got a conflict in:
 
-Please make sure that Mellanox will not be a pain going forward, and
-everything will be forgiven/forgotten.
+  include/linux/fs.h
+  fs/overlayfs/super.c
+  include/linux/dcache.h
 
-            Linus
+between commit:
+
+  a7f7fb45f728 ("vfs: add file_dentry()")
+
+from the ext4 tree and commit:
+
+  83c2715a73fc ("fs: add file_dentry()")
+
+from the overlayfs tree.
+
+This looks like 2 incompatible versions of the same patch committed to
+2 different trees :-(  Guys you can't work like this.
+
+Either the patch set was not ready and Ted should not have applied it,
+or the new version should not have been added to the overlayfs tree
+(especially now, during the merge window).  If it was meant to be applied
+to more than one tree, it should have been put in a non-rebaing separate
+branch that could be merged by each tree.
+
+I fixed it up (I dropped the overlayfs tree for today) and can carry
+the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
