@@ -1,21 +1,21 @@
-From: "Mrs. Ann " <tyuuiioigh1@jhmdfjhnm.my.vg>
+From: "Mrs. Ann " <tyuuiioigh@jhmdfjhnm.my.vg>
 Subject: Attn My Dear
-Date: Thu, 24 Mar 2016 09:28:40 -0700
-Message-ID: <BY1PR18MB0021BD4FB260734F37B3F0BBA6820@BY1PR18MB0021.namprd18.prod.outlook.com>
+Date: Thu, 24 Mar 2016 09:18:46 -0700
+Message-ID: <BLUPR18MB0131DE5729F3133908F349EF97820@BLUPR18MB0131.namprd18.prod.outlook.com>
 Reply-To: <dhlbenin35@yahoo.in>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-by2hn0252.outbound.protection.outlook.com ([207.46.100.252]:14800
+Received: from mail-by2hn0245.outbound.protection.outlook.com ([207.46.100.245]:57072
 	"EHLO na01-by2-obe.outbound.protection.outlook.com"
 	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751834AbcCXQ3A convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2016 12:29:00 -0400
+	id S1751789AbcCXQeN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2016 12:34:13 -0400
 Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <tyuuiioigh1@jhmdfjhnm.my.vg>
+To: Recipients <tyuuiioigh@jhmdfjhnm.my.vg>
 
 Attn My Dear
 We have finally arranged to deliver your package worth $5.8m USD
