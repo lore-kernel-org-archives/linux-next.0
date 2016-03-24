@@ -1,49 +1,50 @@
-From: "Mrs. Ann " <tyuuiioigh@jhmdfjhnm.my.vg>
-Subject: Attn My Dear
-Date: Thu, 24 Mar 2016 09:18:46 -0700
-Message-ID: <BLUPR18MB0131DE5729F3133908F349EF97820@BLUPR18MB0131.namprd18.prod.outlook.com>
-Reply-To: <dhlbenin35@yahoo.in>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Mar 24 (events/amd/power)
+Date: Thu, 24 Mar 2016 10:05:03 -0700
+Message-ID: <56F41E3F.8000407@infradead.org>
+References: <20160324130941.5931a051@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-by2hn0245.outbound.protection.outlook.com ([207.46.100.245]:57072
-	"EHLO na01-by2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751789AbcCXQeN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2016 12:34:13 -0400
-Content-Description: Mail message body
+Received: from bombadil.infradead.org ([198.137.202.9]:43986 "EHLO
+	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704AbcCXRFL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 24 Mar 2016 13:05:11 -0400
+In-Reply-To: <20160324130941.5931a051@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <tyuuiioigh@jhmdfjhnm.my.vg>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Huang Rui <ray.huang@amd.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, acme@kernel.org
 
-Attn My Dear
-We have finally arranged to deliver your package worth $5.8m USD
-Through (DHL) Company. We were able to accomplish this through the help
-Of IMF director Anderson Morgan and every necessary arrangement has
-Been made successfully.
+On 03/23/16 19:09, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Please do not add any v4.7 related material to your linux-next included
+> trees until after v4.6-rc1 is released.
+> 
+> Changes since 20160323:
+> 
 
-Contact Dr.mark milliams
-Telephone: (+229-99653283)
-Email: (dhlbenin35@yahoo.in)
+on i386:
 
-Contact the (DHL) with your delivery information such as:
+when CONFIG_CPU_SUP_INTEL is not enabled:
 
-(1) Full names ---
-(2) Phone line ---
-(3) Country -----
-(4) Age/sex ------
-(5) Occupation:---
-(6)Home address:--
-
-And also be informed that delivery agent will leave to this country as
-soon as you proceed with (DHL) Company and please ask them how much is they Security Keeping fee to enable the agent live this country by tomorrow morning please I am waiting to hear from you thank you and God bless
-
-Sincerely
-Mrs. Ann Godwin
-
+In file included from ../include/linux/kobject.h:21:0,
+                 from ../include/linux/module.h:17,
+                 from ../arch/x86/events/amd/power.c:13:
+../arch/x86/events/amd/../perf_event.h:660:31: error: 'events_sysfs_show' undeclared here (not in a function)
+  .attr  = __ATTR(_name, 0444, events_sysfs_show, NULL), \
+                               ^
+../include/linux/sysfs.h:103:10: note: in definition of macro '__ATTR'
+  .show = _show,      \
+          ^
+../arch/x86/events/amd/power.c:181:1: note: in expansion of macro 'EVENT_ATTR_STR'
+ EVENT_ATTR_STR(power-pkg, power_pkg, "event=0x01");
+ ^
+../scripts/Makefile.build:291: recipe for target 'arch/x86/events/amd/power.o' failed
 
 
----
-This email has been checked for viruses by Avast antivirus software.
-https://www.avast.com/antivirus
+
+-- 
+~Randy
