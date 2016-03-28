@@ -1,124 +1,76 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160327 build: 0 failures 7 warnings (next-20160327)
-Date: Sun, 27 Mar 2016 14:43:59 +0100
-Message-ID: <E1akAz0-0004S9-W2@optimist>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Mon, 28 Mar 2016 17:44:51 -0300
+Message-ID: <20160328204451.GA3439@redhat.com>
+References: <20160327170618.7713e43c@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44282 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751597AbcC0NoJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 27 Mar 2016 09:44:09 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46896 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754065AbcC1Uoy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 28 Mar 2016 16:44:54 -0400
+Content-Disposition: inline
+In-Reply-To: <20160327170618.7713e43c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20160327
-Git describe: next-20160327
-Commit: a892f4b320 Add linux-next specific files for 20160327
+Em Sun, Mar 27, 2016 at 05:06:18PM +1100, Stephen Rothwell escreveu:
+> Hi all,
+> 
+> After merging the fixes tree, today's linux-next build (perf powerpcle)
+> failed like this:
+> 
+> arch/powerpc/util/header.c:17:1: error: no previous prototype for 'get_cpuid' [-Werror=missing-prototypes]
+>  get_cpuid(char *buffer, size_t sz)
+>  ^
+> arch/powerpc/util/header.c: In function 'get_cpuid':
+> arch/powerpc/util/header.c:24:7: error: implicit declaration of function 'scnprintf' [-Werror=implicit-function-declaration]
+>   nb = scnprintf(buffer, sz, "%lu,%lu$", PVR_VER(pvr), PVR_REV(pvr));
+>        ^
+> arch/powerpc/util/header.c:24:2: error: nested extern declaration of 'scnprintf' [-Werror=nested-externs]
+>   nb = scnprintf(buffer, sz, "%lu,%lu$", PVR_VER(pvr), PVR_REV(pvr));
+>   ^
+> 
+> Caused by commit
+> 
+>   531d2410635c ("perf tools: Do not include stringify.h from the kernel sources")
+> 
+> I added the following fix patch for for today:
 
-Build Time: 87 min 22 sec
+I have the fix and got a docker image with ubuntu cross-compiling to
+ppc64 and ppc64le, will submit the patch now.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      6 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v5_defconfig
-      4 warnings    0 mismatches  : arm-multi_v7_defconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-allnoconfig
-      5 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 7
-	 12 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	 12 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm64/configs/defconfig:218:warning: override: reassigning to symbol MMC_BLOCK_MINORS
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+- Arnaldo
+ 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sun, 27 Mar 2016 14:44:26 +1100
+> Subject: [PATCH] perf tools: we stil need header.h for various things
+> 
+> Fixes:  531d2410635c ("perf tools: Do not include stringify.h from the kernel sources")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  tools/perf/arch/powerpc/util/header.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/tools/perf/arch/powerpc/util/header.c b/tools/perf/arch/powerpc/util/header.c
+> index 6138bdef6e63..8a0191a11f87 100644
+> --- a/tools/perf/arch/powerpc/util/header.c
+> +++ b/tools/perf/arch/powerpc/util/header.c
+> @@ -5,6 +5,8 @@
+>  #include <string.h>
+>  #include <linux/stringify.h>
+>  
+> +#include "../../util/header.h"
+> +
+>  #define mfspr(rn)       ({unsigned long rval; \
+>  			 asm volatile("mfspr %0," __stringify(rn) \
+>  				      : "=r" (rval)); rval; })
+> -- 
+> 2.7.0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
