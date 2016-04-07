@@ -1,43 +1,31 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Thu, 7 Apr 2016 10:48:33 +0200
-Message-ID: <20160407084833.GA2288@gmail.com>
-References: <20160407152603.173426e5@canb.auug.org.au>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Apr 7
+Date: Thu, 07 Apr 2016 16:32:51 +0530
+Message-ID: <57063E5B.2080206@gmail.com>
+References: <20160407152922.73d85ce6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34016 "EHLO
-	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755272AbcDGIsi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Apr 2016 04:48:38 -0400
-Content-Disposition: inline
-In-Reply-To: <20160407152603.173426e5@canb.auug.org.au>
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:35952 "EHLO
+	mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751426AbcDGLC7 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Apr 2016 07:02:59 -0400
+In-Reply-To: <20160407152922.73d85ce6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org
 
-
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
+On Thursday 07 April 2016 10:59 AM, Stephen Rothwell wrote:
 > Hi all,
-> 
-> After merging the tip tree, today's linux-next build (powerpc ppc44x_defconfig)
-> produced this warning:
-> 
-> mm/gup.c: In function 'get_user_pages_fast':
-> mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
->   struct mm_struct *mm = current->mm;
->                     ^
-> 
-> Introduced by commit
-> 
->   dc8cfd957d85 ("mm/gup: Remove the macro overload API migration helpers from the get_user*() APIs")
+>
+> Changes since 20160406:
 
-Indeed - and this only triggers on HAVE_GENERIC_RCU_GUP.
+All the mips builds are failing since last few days.
 
-I've amended the commit.
+My patch at : https://lkml.org/lkml/2016/4/4/236 fixes the build for 
+defconfig and allmodconfig. I have not checked the patch with other builds.
 
-Thanks,
-
-	Ingo
+regards
+sudip
