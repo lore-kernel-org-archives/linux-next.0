@@ -1,137 +1,43 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160407 build: 0 failures 15 warnings (next-20160407)
-Date: Thu, 07 Apr 2016 09:41:11 +0100
-Message-ID: <E1ao5V1-0008Gw-SA@optimist>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Thu, 7 Apr 2016 10:48:33 +0200
+Message-ID: <20160407084833.GA2288@gmail.com>
+References: <20160407152603.173426e5@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49934 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751802AbcDGIlW (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Apr 2016 04:41:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:34016 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755272AbcDGIsi (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Apr 2016 04:48:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20160407152603.173426e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160407
-Git describe: next-20160407
-Commit: 295ef6ab95 Add linux-next specific files for 20160407
-
-Build Time: 86 min 6 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 15
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allnoconfig
-     12 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     12 warnings    0 mismatches  : arm-allmodconfig
-      7 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 15
-	  5 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	  5 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-===============================================================================
-Detailed per-defconfig build reports below:
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (powerpc ppc44x_defconfig)
+> produced this warning:
+> 
+> mm/gup.c: In function 'get_user_pages_fast':
+> mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
+>   struct mm_struct *mm = current->mm;
+>                     ^
+> 
+> Introduced by commit
+> 
+>   dc8cfd957d85 ("mm/gup: Remove the macro overload API migration helpers from the get_user*() APIs")
 
+Indeed - and this only triggers on HAVE_GENERIC_RCU_GUP.
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+I've amended the commit.
 
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
+Thanks,
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+	Ingo
