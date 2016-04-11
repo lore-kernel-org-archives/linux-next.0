@@ -1,99 +1,64 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: next-20160401+: ARM: DRA7: linux-next regression: mm/slab:
- clean-up kmem_cache_node setup
-Date: Mon, 11 Apr 2016 08:15:24 -0500
-Message-ID: <570BA36C.9030600@ti.com>
-References: <570816F8.9070301@ti.com>
- <20160411020203.GA25211@js1304-P5Q-DELUXE>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Mon, 11 Apr 2016 09:57:25 -0700
+Message-ID: <20160411165725.GA3343@kroah.com>
+References: <20160405134927.75b47655@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:47573 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755173AbcDKNQe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Apr 2016 09:16:34 -0400
-In-Reply-To: <20160411020203.GA25211@js1304-P5Q-DELUXE>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:37827 "EHLO
+	out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752686AbcDKQ51 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Apr 2016 12:57:27 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.nyi.internal (Postfix) with ESMTP id 0516920C19
+	for <linux-next@vger.kernel.org>; Mon, 11 Apr 2016 12:57:27 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20160405134927.75b47655@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, Russell King <linux@arm.linux.org.uk>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-On 04/10/2016 09:02 PM, Joonsoo Kim wrote:
-> On Fri, Apr 08, 2016 at 03:39:20PM -0500, Nishanth Menon wrote:
->> Hi,
->>
->> http://marc.info/?l=linux-omap&m=146014314115625&w=2 series works with
->> v4.6-rc2 kernel, however, it fails with linux-next for suspend-to-ram
->> (mem) on BeagleBoard-X15
->>
->> next-20160327 - good
->> next-20160329 - good
->> next-20160330 - Fails to boot - I2C crashes
->> next-20160331-  Fails to boot - USB crashes
->> next-20160401 -> bad
->> next-20160408 -> bad
->>
->> Bisect log of next-20160408 vs v4.6-rc2 ->
->> http://pastebin.ubuntu.com/15697856/
->>
->> # first bad commit: [2b629704a2b6a5b239f23750e5517a9d8c3a4e8c]
->> mm/slab: clean-up kmem_cache_node setup
->>
+On Tue, Apr 05, 2016 at 01:49:27PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Hello,
+> Today's linux-next merge of the staging tree got conflicts in:
 > 
-> I made a mistake on that patch. Could you try to test below one on
-> top of it.
+>   drivers/staging/lustre/lnet/selftest/brw_test.c
+>   drivers/staging/lustre/lustre/include/lu_object.h
+>   drivers/staging/lustre/lustre/lclient/lcommon_cl.c
+>   drivers/staging/lustre/lustre/llite/llite_internal.h
+>   drivers/staging/lustre/lustre/llite/llite_lib.c
+>   drivers/staging/lustre/lustre/llite/llite_mmap.c
+>   drivers/staging/lustre/lustre/llite/rw.c
+>   drivers/staging/lustre/lustre/llite/rw26.c
+>   drivers/staging/lustre/lustre/llite/vvp_io.c
+>   drivers/staging/lustre/lustre/llite/vvp_page.c
+>   drivers/staging/lustre/lustre/obdclass/class_obd.c
+>   drivers/staging/lustre/lustre/obdecho/echo_client.c
+>   drivers/staging/lustre/lustre/osc/lproc_osc.c
+>   drivers/staging/lustre/lustre/osc/osc_cache.c
+>   drivers/staging/lustre/lustre/osc/osc_page.c
+>   drivers/staging/lustre/lustre/osc/osc_request.c
 > 
-> Thanks.
+> between commits:
+> 
+>   09cbfeaf1a5a ("mm, fs: get rid of PAGE_CACHE_* and page_cache_{get,release} macros")
+>   ea1754a08476 ("mm, fs: remove remaining PAGE_CACHE_* and page_cache_{get,release} usage")
+> 
+> from Linus' tree and lots of commits from the staging tree.
+> 
+> I fixed it up (see below the signature) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
+> I also added this merge fix patch:
 
+Thanks for this, it should all now be resolved in my tree.
 
-Thanks for the fix
-http://pastebin.ubuntu.com/15758542/ -> things are back to working now.
-
-> 
-> --------->8----------------
-> From d3af3cc409527e9be6beb62ea395cde67f3c5029 Mon Sep 17 00:00:00 2001
-> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Date: Mon, 11 Apr 2016 10:48:29 +0900
-> Subject: [PATCH] mm/slab: clean-up kmem_cache_node setup-fix
-> 
-> After calling free_block(), we need to re-calculate array_cache's
-> avail counter. Fix it.
-> 
-> And, it's better to free objects in shared array when it is
-> really necessary. Check it before calling free_block().
-> 
-> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-
-please feel free to add:
-
-Tested-by: Nishanth Menon <nm@ti.com>
-
-> ---
->  mm/slab.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/slab.c b/mm/slab.c
-> index fcd5fbb..27cb390 100644
-> --- a/mm/slab.c
-> +++ b/mm/slab.c
-> @@ -927,9 +927,10 @@ static int setup_kmem_cache_node(struct kmem_cache *cachep,
->  
->  	n = get_node(cachep, node);
->  	spin_lock_irq(&n->list_lock);
-> -	if (n->shared) {
-> +	if (n->shared && force_change) {
->  		free_block(cachep, n->shared->entry,
->  				n->shared->avail, node, &list);
-> +		n->shared->avail = 0;
->  	}
->  
->  	if (!n->shared || force_change) {
-> 
-
-
--- 
-Regards,
-Nishanth Menon
+greg k-h
