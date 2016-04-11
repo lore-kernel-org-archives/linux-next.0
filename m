@@ -1,55 +1,99 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: Kernel crash on startup - bisected to commit 3b24d854cb35
-Date: Mon, 11 Apr 2016 15:40:38 +0300
-Message-ID: <87inzoz5bt.fsf@purkki.adurom.net>
-References: <570892F9.9030700@lwfinger.net>
-	<CANn89iJ6sfeNgB4BBmAw5SewqSHe_50+6POLJn=fhTDnNcY6kQ@mail.gmail.com>
-	<570934C9.5020008@lwfinger.net>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: next-20160401+: ARM: DRA7: linux-next regression: mm/slab:
+ clean-up kmem_cache_node setup
+Date: Mon, 11 Apr 2016 08:15:24 -0500
+Message-ID: <570BA36C.9030600@ti.com>
+References: <570816F8.9070301@ti.com>
+ <20160411020203.GA25211@js1304-P5Q-DELUXE>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <570934C9.5020008@lwfinger.net> (Larry Finger's message of "Sat,
-	9 Apr 2016 11:58:49 -0500")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, linux-next <linux-next@vger.kernel.org>, linux-netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-wireless <linux-wireless@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from devils.ext.ti.com ([198.47.26.153]:47573 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755173AbcDKNQe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Apr 2016 09:16:34 -0400
+In-Reply-To: <20160411020203.GA25211@js1304-P5Q-DELUXE>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tony Lindgren <tony@atomide.com>, Russell King <linux@arm.linux.org.uk>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>
 
-Larry Finger <Larry.Finger@lwfinger.net> writes:
+On 04/10/2016 09:02 PM, Joonsoo Kim wrote:
+> On Fri, Apr 08, 2016 at 03:39:20PM -0500, Nishanth Menon wrote:
+>> Hi,
+>>
+>> http://marc.info/?l=linux-omap&m=146014314115625&w=2 series works with
+>> v4.6-rc2 kernel, however, it fails with linux-next for suspend-to-ram
+>> (mem) on BeagleBoard-X15
+>>
+>> next-20160327 - good
+>> next-20160329 - good
+>> next-20160330 - Fails to boot - I2C crashes
+>> next-20160331-  Fails to boot - USB crashes
+>> next-20160401 -> bad
+>> next-20160408 -> bad
+>>
+>> Bisect log of next-20160408 vs v4.6-rc2 ->
+>> http://pastebin.ubuntu.com/15697856/
+>>
+>> # first bad commit: [2b629704a2b6a5b239f23750e5517a9d8c3a4e8c]
+>> mm/slab: clean-up kmem_cache_node setup
+>>
+> 
+> Hello,
+> 
+> I made a mistake on that patch. Could you try to test below one on
+> top of it.
+> 
+> Thanks.
 
->> Can you double check you have this fix ?
->>
->> commit 8501786929de4616b10b8059ad97abd304a7dddf
->> Author: Eric Dumazet <edumazet@google.com>
->> Date:   Wed Apr 6 22:07:34 2016 -0700
->>
->>      tcp/dccp: fix inet_reuseport_add_sock()
->>
->>      David Ahern reported panics in __inet_hash() caused by my recent commit.
->>
->>      The reason is inet_reuseport_add_sock() was still using
->>      sk_nulls_for_each_rcu() instead of sk_for_each_rcu().
->>      SO_REUSEPORT enabled listeners were causing an instant crash.
->>
->>      While chasing this bug, I found that I forgot to clear SOCK_RCU_FREE
->>      flag, as it is inherited from the parent at clone time.
->>
->>      Fixes: 3b24d854cb35 ("tcp/dccp: do not touch listener sk_refcnt
->> under synflood")
->>      Signed-off-by: Eric Dumazet <edumazet@google.com>
->>      Reported-by: David Ahern <dsa@cumulusnetworks.com>
->>      Tested-by: David Ahern <dsa@cumulusnetworks.com>
->>      Signed-off-by: David S. Miller <davem@davemloft.net>
->
-> No, I did not have that patch. After pulling from net-next to get it,
-> my system no longer panics.
->
-> Note to linux-wireless readers. At the moment, a system built from
-> wireless-drivers-next will have this problem.
 
-I'm currently writing a pull request to Dave and once he pulls it I'll
-fast forward wireless-drivers-next to latest net-next. Usually this take
-two days or so.
+Thanks for the fix
+http://pastebin.ubuntu.com/15758542/ -> things are back to working now.
+
+> 
+> --------->8----------------
+> From d3af3cc409527e9be6beb62ea395cde67f3c5029 Mon Sep 17 00:00:00 2001
+> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Date: Mon, 11 Apr 2016 10:48:29 +0900
+> Subject: [PATCH] mm/slab: clean-up kmem_cache_node setup-fix
+> 
+> After calling free_block(), we need to re-calculate array_cache's
+> avail counter. Fix it.
+> 
+> And, it's better to free objects in shared array when it is
+> really necessary. Check it before calling free_block().
+> 
+> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+
+please feel free to add:
+
+Tested-by: Nishanth Menon <nm@ti.com>
+
+> ---
+>  mm/slab.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/slab.c b/mm/slab.c
+> index fcd5fbb..27cb390 100644
+> --- a/mm/slab.c
+> +++ b/mm/slab.c
+> @@ -927,9 +927,10 @@ static int setup_kmem_cache_node(struct kmem_cache *cachep,
+>  
+>  	n = get_node(cachep, node);
+>  	spin_lock_irq(&n->list_lock);
+> -	if (n->shared) {
+> +	if (n->shared && force_change) {
+>  		free_block(cachep, n->shared->entry,
+>  				n->shared->avail, node, &list);
+> +		n->shared->avail = 0;
+>  	}
+>  
+>  	if (!n->shared || force_change) {
+> 
+
 
 -- 
-Kalle Valo
+Regards,
+Nishanth Menon
