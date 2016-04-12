@@ -1,155 +1,74 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160412 build: 1 failures 17 warnings (next-20160412)
-Date: Tue, 12 Apr 2016 08:34:20 +0100
-Message-ID: <E1apsq4-0000En-69@optimist>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: Tree for Apr 4
+Date: Tue, 12 Apr 2016 18:34:08 +0200
+Message-ID: <20160412183408.248092c7@mschwide>
+References: <20160404140951.148c95f6@canb.auug.org.au>
+	<57025C35.6090206@gmail.com>
+	<20160404142635.GF4058@osiris>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34324 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755756AbcDLHea (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Apr 2016 03:34:30 -0400
+Received: from e06smtp09.uk.ibm.com ([195.75.94.105]:60831 "EHLO
+	e06smtp09.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933416AbcDLQee (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Apr 2016 12:34:34 -0400
+Received: from localhost
+	by e06smtp09.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+	Tue, 12 Apr 2016 17:34:32 +0100
+In-Reply-To: <20160404142635.GF4058@osiris>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 
-Tree/Branch: next-20160412
-Git describe: next-20160412
-Commit: e45df7c04b Add linux-next specific files for 20160412
+On Mon, 4 Apr 2016 16:26:35 +0200
+Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
 
-Build Time: 85 min 56 sec
+> On Mon, Apr 04, 2016 at 05:51:09PM +0530, Sudip Mukherjee wrote:
+> > On Monday 04 April 2016 09:39 AM, Stephen Rothwell wrote:
+> > >Hi all,
+> > >
+> > >Changes since 20160401:
+> > 
+> > s390 allmodconfig build fails with the error:
+> > 
+> > arch/s390/crypto/ghash_s390.c:14:24: fatal error: crypt_s390.h: No
+> > such file or directory
+> >  #include "crypt_s390.h"
+> >                       ^
+> > 
+> > build log is at:
+> > https://travis-ci.org/sudipm-mukherjee/parport/jobs/120536718
+> > 
+> > caused by the commit -
+> > ce69a690149c ("s390/crypto: cleanup and move the header with the
+> > cpacf definitions") which removed the file "crypt_s390.h"
+> 
+> Thanks for letting us know!
+> 
+> I just removed that specific patch from the 'features' branch again. It was
+> incomplete since it didn't convert the ghash module at all.
+> 
+> No idea what Martin was thinking when pushing that patch.
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+That is strange. On my local features branch that I use to push to kerne.org
+there is no ghash commit. The last commit is this:
 
-Errors: 1
-Warnings: 17
-Section Mismatches: 0
+commit ce69a690149c7431d05b4679409ab8fa6ad3a09f
+Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Date:   Thu Mar 17 15:22:12 2016 +0100
 
-Failed defconfigs:
-	arm-allmodconfig
+    s390/crypto: cleanup and move the header with the cpacf definitions
 
-Errors:
+which Heiko now removed. My guest right now is that the ghash commit stems
+from another tree merged into linux-next and we simply have an unresolved
+dependency here. I do have an updated ghash patch that includes the correct
+header.
 
-	arm-allmodconfig
-ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
+-- 
+blue skies,
+   Martin.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allnoconfig
-     12 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     14 warnings    0 mismatches  : arm-allmodconfig
-      7 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings Summary: 17
-	  5 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	  5 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../kernel/trace/bpf_trace.c:368:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../kernel/trace/bpf_trace.c:350:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 14 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../kernel/trace/bpf_trace.c:350:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../kernel/trace/bpf_trace.c:368:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../mm/gup.c:1510:20: warning: unused variable 'mm' [-Wunused-variable]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+"Reality continues to ruin my life." - Calvin.
