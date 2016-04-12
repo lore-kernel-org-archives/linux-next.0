@@ -1,74 +1,32 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: Tree for Apr 4
-Date: Tue, 12 Apr 2016 18:34:08 +0200
-Message-ID: <20160412183408.248092c7@mschwide>
-References: <20160404140951.148c95f6@canb.auug.org.au>
-	<57025C35.6090206@gmail.com>
-	<20160404142635.GF4058@osiris>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning in Linus' tree
+Date: Wed, 13 Apr 2016 09:59:10 +1000
+Message-ID: <20160413095910.43ee010b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e06smtp09.uk.ibm.com ([195.75.94.105]:60831 "EHLO
-	e06smtp09.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933416AbcDLQee (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Apr 2016 12:34:34 -0400
-Received: from localhost
-	by e06smtp09.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-	Tue, 12 Apr 2016 17:34:32 +0100
-In-Reply-To: <20160404142635.GF4058@osiris>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 4 Apr 2016 16:26:35 +0200
-Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
+Hi Dave,
 
-> On Mon, Apr 04, 2016 at 05:51:09PM +0530, Sudip Mukherjee wrote:
-> > On Monday 04 April 2016 09:39 AM, Stephen Rothwell wrote:
-> > >Hi all,
-> > >
-> > >Changes since 20160401:
-> > 
-> > s390 allmodconfig build fails with the error:
-> > 
-> > arch/s390/crypto/ghash_s390.c:14:24: fatal error: crypt_s390.h: No
-> > such file or directory
-> >  #include "crypt_s390.h"
-> >                       ^
-> > 
-> > build log is at:
-> > https://travis-ci.org/sudipm-mukherjee/parport/jobs/120536718
-> > 
-> > caused by the commit -
-> > ce69a690149c ("s390/crypto: cleanup and move the header with the
-> > cpacf definitions") which removed the file "crypt_s390.h"
-> 
-> Thanks for letting us know!
-> 
-> I just removed that specific patch from the 'features' branch again. It was
-> incomplete since it didn't convert the ghash module at all.
-> 
-> No idea what Martin was thinking when pushing that patch.
+Staring with Linus' tree, today's (and presumably previous) linux-next
+build (arm multi_v7_defconfig) produced this warning:
 
-That is strange. On my local features branch that I use to push to kerne.org
-there is no ghash commit. The last commit is this:
+drivers/gpu/drm/msm/msm_drv.c: In function 'msm_preclose':
+drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+  struct msm_kms *kms = priv->kms;
+                  ^
 
-commit ce69a690149c7431d05b4679409ab8fa6ad3a09f
-Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Date:   Thu Mar 17 15:22:12 2016 +0100
+Introduced by commit
 
-    s390/crypto: cleanup and move the header with the cpacf definitions
+  4016260ba47a ("rm/msm: fix bug after preclose removal")
 
-which Heiko now removed. My guest right now is that the ghash commit stems
-from another tree merged into linux-next and we simply have an unresolved
-dependency here. I do have an updated ghash patch that includes the correct
-header.
+merged into v4.6-rc2.
 
 -- 
-blue skies,
-   Martin.
-
-"Reality continues to ruin my life." - Calvin.
+Cheers,
+Stephen Rothwell
