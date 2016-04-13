@@ -1,34 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the net-next tree
-Date: Wed, 13 Apr 2016 17:50:28 +1000
-Message-ID: <20160413175028.5d3a4cf2@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: Tree for Apr 4
+Date: Wed, 13 Apr 2016 09:52:35 +0200
+Message-ID: <20160413075235.GB3832@osiris>
+References: <20160404140951.148c95f6@canb.auug.org.au>
+ <57025C35.6090206@gmail.com>
+ <20160404142635.GF4058@osiris>
+ <20160412183408.248092c7@mschwide>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rustad <mark.d.rustad@intel.com>, Jeff Kirsher <jeffrey.t.kirsher@intel.com>, Andrew Bowers <andrewx.bowers@intel.com>, Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from e06smtp11.uk.ibm.com ([195.75.94.107]:51564 "EHLO
+	e06smtp11.uk.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933079AbcDMHwl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Apr 2016 03:52:41 -0400
+Received: from localhost
+	by e06smtp11.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Wed, 13 Apr 2016 08:52:39 +0100
+Content-Disposition: inline
+In-Reply-To: <20160412183408.248092c7@mschwide>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 
-Hi all,
+On Tue, Apr 12, 2016 at 06:34:08PM +0200, Martin Schwidefsky wrote:
+> On Mon, 4 Apr 2016 16:26:35 +0200
+> Heiko Carstens <heiko.carstens@de.ibm.com> wrote:
+> 
+> > On Mon, Apr 04, 2016 at 05:51:09PM +0530, Sudip Mukherjee wrote:
+> > > On Monday 04 April 2016 09:39 AM, Stephen Rothwell wrote:
+> > > >Hi all,
+> > > >
+> > > >Changes since 20160401:
+> > > 
+> > > s390 allmodconfig build fails with the error:
+> > > 
+> > > arch/s390/crypto/ghash_s390.c:14:24: fatal error: crypt_s390.h: No
+> > > such file or directory
+> > >  #include "crypt_s390.h"
+> > >                       ^
+> > > 
+> > > build log is at:
+> > > https://travis-ci.org/sudipm-mukherjee/parport/jobs/120536718
+> > > 
+> > > caused by the commit -
+> > > ce69a690149c ("s390/crypto: cleanup and move the header with the
+> > > cpacf definitions") which removed the file "crypt_s390.h"
+> > 
+> > Thanks for letting us know!
+> > 
+> > I just removed that specific patch from the 'features' branch again. It was
+> > incomplete since it didn't convert the ghash module at all.
+> > 
+> > No idea what Martin was thinking when pushing that patch.
+> 
+> That is strange. On my local features branch that I use to push to kerne.org
+> there is no ghash commit. The last commit is this:
 
-[A report from Mark's buildbot]
+Nobody said there is a ghash commit ;)
 
-After merging the net-next tree, today's linux-next build (arm
-allmodconfig) failed like thisi (this has actually been failing for a
-few days, now):
+> commit ce69a690149c7431d05b4679409ab8fa6ad3a09f
+> Author: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Date:   Thu Mar 17 15:22:12 2016 +0100
+> 
+>     s390/crypto: cleanup and move the header with the cpacf definitions
+> 
+> which Heiko now removed. My guest right now is that the ghash commit stems
+> from another tree merged into linux-next and we simply have an unresolved
+> dependency here. I do have an updated ghash patch that includes the correct
+> header.
 
-ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Caused by commit
-
-  49425dfc7451 ("ixgbe: Add support for x550em_a 10G MAC type")
-
-arm only allows udelay()s up to 2 milliseconds.  This commit
-adds a 5 ms udelay in ixgbe_acquire_swfw_sync_x550em_a() in
-drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c.
-
--- 
-Cheers,
-Stephen Rothwell
+Your patch did not convert/touch arch/s390/crypto/ghash_s390.c which is
+very old code. And you need to do more within that file than just changing
+the include.
