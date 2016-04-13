@@ -1,36 +1,58 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 13 Apr 2016 11:15:13 -0400 (EDT)
-Message-ID: <20160413.111513.295841881765244758.davem@davemloft.net>
-References: <20160413175028.5d3a4cf2@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160413175028.5d3a4cf2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark.d.rustad@intel.com, jeffrey.t.kirsher@intel.com, andrewx.bowers@intel.com, broonie@kernel.org, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 13 Apr 2016 17:50:28 +1000
+Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
+Date: Thu, 14 Apr 2016 09:29:20 +1000
+Message-ID: <20160414092920.41fb4ebe@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47424 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754986AbcDMX3W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Apr 2016 19:29:22 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Romain Perier <romain.perier@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, Maxime Coquelin <maxime.coquelin@st.com>
 
-> After merging the net-next tree, today's linux-next build (arm
-> allmodconfig) failed like thisi (this has actually been failing for a
-> few days, now):
-> 
-> ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-> 
-> Caused by commit
-> 
->   49425dfc7451 ("ixgbe: Add support for x550em_a 10G MAC type")
-> 
-> arm only allows udelay()s up to 2 milliseconds.  This commit
-> adds a 5 ms udelay in ixgbe_acquire_swfw_sync_x550em_a() in
-> drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c.
+Hi all,
 
-Jeff, please have your folks look into this.  Probably just a simple
-conversion to mdelay().
+Today's linux-next merge of the mvebu tree got a conflict in:
 
-Thanks!
+  arch/arm/configs/multi_v7_defconfig
+
+between commit:
+
+  6d54fb8a08a7 ("ARM: multi_v7_defconfig: Enable ST's HW Random Number Generator")
+
+from the arm-soc tree and commit:
+
+  fe767240934f ("ARM: configs: Enabling the new Marvell's cryptographic engine driver for multi_v7_defconfig")
+
+from the mvebu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/configs/multi_v7_defconfig
+index 811b41823baa,392e970b60c7..000000000000
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@@ -837,8 -829,7 +837,9 @@@ CONFIG_LOCKUP_DETECTOR=
+  CONFIG_CRYPTO_DEV_TEGRA_AES=y
+  CONFIG_CPUFREQ_DT=y
+  CONFIG_KEYSTONE_IRQ=y
+ +CONFIG_HW_RANDOM=y
+ +CONFIG_HW_RANDOM_ST=y
++ CONFIG_CRYPTO_DEV_MARVELL_CESA=m
+  CONFIG_CRYPTO_DEV_SUN4I_SS=m
+  CONFIG_CRYPTO_DEV_ROCKCHIP=m
+  CONFIG_ARM_CRYPTO=y
