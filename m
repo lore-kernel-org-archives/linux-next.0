@@ -1,58 +1,32 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [-next] BUG_ON in scsi_target_destroy()
-Date: Thu, 14 Apr 2016 11:07:52 +0900
-Message-ID: <20160414020752.GA516@swordfish>
-References: <20160411090146.GA537@swordfish>
- <2201725.I2to9GCRQJ@c203>
- <1460560474.2322.3.camel@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Thu, 14 Apr 2016 12:14:18 +1000
+Message-ID: <20160414121418.288bd117@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:33206 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010AbcDNCGY (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Apr 2016 22:06:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1460560474.2322.3.camel@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <jejb@linux.vnet.ibm.com>
-Cc: Johannes Thumshirn <jthumshirn@suse.de>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "Ewan D. Milne" <emilne@redhat.com>, Hannes Reinecke <hare@suse.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-next@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Xiong Zhou <jencce.kernel@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
+Hi all,
 
-On (04/13/16 08:14), James Bottomley wrote:
-[..]
-> How about good grief no!  A device with multiple targets will get it's
-> lists screwed with this
-> 
-> The STARGET_REMOVE state you added only applies to the case we're
-> trying to kill a target.  In the natural operation case, which is what
-> everyone else is running into, we will try to remove a running target
-> when it has no more scsi devices left on it.  So the correct patch
-> should be to make the BUG_ON see this:
+After merging the tip tree, today's linux-next build (powerpc64le perf)
+failed like this:
 
-works for me.
-Reported-and-tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+make[3]: *** No rule to make target '/home/sfr/next/perf/arch/x86/include/generated/asm/syscalls_64.c', needed by '/home/sfr/next/perf/util/syscalltbl.o'.  Stop.
 
-	-ss
+(I build in /home/sfr/next/next with objects in /home/sfr/next/perf.)
 
-> James
-> 
-> ---
-> 
-> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-> index 27df7e7..e0a78f5 100644
-> --- a/drivers/scsi/scsi_scan.c
-> +++ b/drivers/scsi/scsi_scan.c
-> @@ -319,8 +319,7 @@ static void scsi_target_destroy(struct scsi_target *starget)
->  	struct Scsi_Host *shost = dev_to_shost(dev->parent);
->  	unsigned long flags;
->  
-> -	BUG_ON(starget->state != STARGET_REMOVE &&
-> -	       starget->state != STARGET_CREATED);
-> +	BUG_ON(starget->state == STARGET_DEL);
->  	starget->state = STARGET_DEL;
->  	transport_destroy_device(dev);
->  	spin_lock_irqsave(shost->host_lock, flags);
-> 
+Presumably caused by commit
+
+  1b700c997500 ("perf tools: Build syscall table .c header from kernel's syscall_64.tbl")
+
+I have reverted that commit for today (which fixes my build problem but
+may not be overall correct).
+
+-- 
+Cheers,
+Stephen Rothwell
