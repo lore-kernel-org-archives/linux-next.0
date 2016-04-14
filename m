@@ -1,58 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mvebu tree with the arm-soc tree
-Date: Thu, 14 Apr 2016 09:29:20 +1000
-Message-ID: <20160414092920.41fb4ebe@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [-next] BUG_ON in scsi_target_destroy()
+Date: Thu, 14 Apr 2016 11:07:52 +0900
+Message-ID: <20160414020752.GA516@swordfish>
+References: <20160411090146.GA537@swordfish>
+ <2201725.I2to9GCRQJ@c203>
+ <1460560474.2322.3.camel@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47424 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754986AbcDMX3W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Apr 2016 19:29:22 -0400
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:33206 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbcDNCGY (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Apr 2016 22:06:24 -0400
+Content-Disposition: inline
+In-Reply-To: <1460560474.2322.3.camel@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, andrew@lunn.ch, gregory.clement@free-electrons.com, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Romain Perier <romain.perier@free-electrons.com>, Lee Jones <lee.jones@linaro.org>, Maxime Coquelin <maxime.coquelin@st.com>
+To: James Bottomley <jejb@linux.vnet.ibm.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "Ewan D. Milne" <emilne@redhat.com>, Hannes Reinecke <hare@suse.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-next@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Xiong Zhou <jencce.kernel@gmail.com>
 
-Hi all,
+Hello,
 
-Today's linux-next merge of the mvebu tree got a conflict in:
+On (04/13/16 08:14), James Bottomley wrote:
+[..]
+> How about good grief no!  A device with multiple targets will get it's
+> lists screwed with this
+> 
+> The STARGET_REMOVE state you added only applies to the case we're
+> trying to kill a target.  In the natural operation case, which is what
+> everyone else is running into, we will try to remove a running target
+> when it has no more scsi devices left on it.  So the correct patch
+> should be to make the BUG_ON see this:
 
-  arch/arm/configs/multi_v7_defconfig
+works for me.
+Reported-and-tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-between commit:
+	-ss
 
-  6d54fb8a08a7 ("ARM: multi_v7_defconfig: Enable ST's HW Random Number Generator")
-
-from the arm-soc tree and commit:
-
-  fe767240934f ("ARM: configs: Enabling the new Marvell's cryptographic engine driver for multi_v7_defconfig")
-
-from the mvebu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm/configs/multi_v7_defconfig
-index 811b41823baa,392e970b60c7..000000000000
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -837,8 -829,7 +837,9 @@@ CONFIG_LOCKUP_DETECTOR=
-  CONFIG_CRYPTO_DEV_TEGRA_AES=y
-  CONFIG_CPUFREQ_DT=y
-  CONFIG_KEYSTONE_IRQ=y
- +CONFIG_HW_RANDOM=y
- +CONFIG_HW_RANDOM_ST=y
-+ CONFIG_CRYPTO_DEV_MARVELL_CESA=m
-  CONFIG_CRYPTO_DEV_SUN4I_SS=m
-  CONFIG_CRYPTO_DEV_ROCKCHIP=m
-  CONFIG_ARM_CRYPTO=y
+> James
+> 
+> ---
+> 
+> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+> index 27df7e7..e0a78f5 100644
+> --- a/drivers/scsi/scsi_scan.c
+> +++ b/drivers/scsi/scsi_scan.c
+> @@ -319,8 +319,7 @@ static void scsi_target_destroy(struct scsi_target *starget)
+>  	struct Scsi_Host *shost = dev_to_shost(dev->parent);
+>  	unsigned long flags;
+>  
+> -	BUG_ON(starget->state != STARGET_REMOVE &&
+> -	       starget->state != STARGET_CREATED);
+> +	BUG_ON(starget->state == STARGET_DEL);
+>  	starget->state = STARGET_DEL;
+>  	transport_destroy_device(dev);
+>  	spin_lock_irqsave(shost->host_lock, flags);
+> 
