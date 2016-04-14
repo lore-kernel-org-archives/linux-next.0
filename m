@@ -1,151 +1,45 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160414 build: 1 failures 16 warnings (next-20160414)
-Date: Thu, 14 Apr 2016 09:06:26 +0100
-Message-ID: <E1aqcIE-0001iJ-Q9@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40896 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753616AbcDNIGf (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Apr 2016 04:06:35 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 14 Apr 2016 09:35:52 -0300
+Message-ID: <20160414123552.GD2439@redhat.com>
+References: <20160414121418.288bd117@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160414121418.288bd117@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160414
-Git describe: next-20160414
-Commit: d0591d2080 Add linux-next specific files for 20160414
+Em Thu, Apr 14, 2016 at 12:14:18PM +1000, Stephen Rothwell escreveu:
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (powerpc64le perf)
+> failed like this:
+> 
+> make[3]: *** No rule to make target '/home/sfr/next/perf/arch/x86/include/generated/asm/syscalls_64.c', needed by '/home/sfr/next/perf/util/syscalltbl.o'.  Stop.
+> 
+> (I build in /home/sfr/next/next with objects in /home/sfr/next/perf.)
 
-Build Time: 86 min 49 sec
+I'll check, should've been caught by a cross compiler build for ppc64le
+I have in place :-\
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+minimal-ubuntu-x-ppc64el: Ok
 
-Errors: 1
-Warnings: 16
-Section Mismatches: 0
+But maybe not, as this requires audit-libs-devel and that is not present
+on that minimal ubuntu x-compiler setup, sigh :-\
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-     11 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     14 warnings    0 mismatches  : arm-allmodconfig
-      6 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings Summary: 16
-	  5 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	  5 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  2 ../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  2 ../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../kernel/trace/bpf_trace.c:368:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../kernel/trace/bpf_trace.c:350:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 14 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings:
-	../kernel/trace/bpf_trace.c:350:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../kernel/trace/bpf_trace.c:368:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/tty/serial/uartlite.c:348:21: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/tty/serial/uartlite.c:354:22: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/regulator/core.c:2514:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+- Arnaldo
+ 
+> Presumably caused by commit
+> 
+>   1b700c997500 ("perf tools: Build syscall table .c header from kernel's syscall_64.tbl")
+> 
+> I have reverted that commit for today (which fixes my build problem but
+> may not be overall correct).
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
