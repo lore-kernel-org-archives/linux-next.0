@@ -1,52 +1,32 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: build warning after merge of the ipvs-next tree
-Date: Fri, 15 Apr 2016 22:38:14 +1000
-Message-ID: <20160415123811.GA16196@verge.net.au>
-References: <20160415105748.5b8754fc@canb.auug.org.au>
- <20160415095607.GC1561@salvia>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [-next] BUG_ON in scsi_target_destroy()
+Date: Fri, 15 Apr 2016 16:55:55 -0400
+Message-ID: <yq1inzipp5w.fsf@sermon.lab.mkp.net>
+References: <20160411090146.GA537@swordfish> <2201725.I2to9GCRQJ@c203>
+	<1460560474.2322.3.camel@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:50366 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751304AbcDOMiQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Apr 2016 08:38:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20160415095607.GC1561@salvia>
+Received: from userp1040.oracle.com ([156.151.31.81]:28615 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751440AbcDOU41 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Apr 2016 16:56:27 -0400
+In-Reply-To: <1460560474.2322.3.camel@linux.vnet.ibm.com> (James Bottomley's
+	message of "Wed, 13 Apr 2016 08:14:34 -0700")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: James Bottomley <jejb@linux.vnet.ibm.com>
+Cc: Johannes Thumshirn <jthumshirn@suse.de>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "Ewan D. Milne" <emilne@redhat.com>, Hannes Reinecke <hare@suse.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-next@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Xiong Zhou <jencce.kernel@gmail.com>
 
-On Fri, Apr 15, 2016 at 11:56:07AM +0200, Pablo Neira Ayuso wrote:
-> On Fri, Apr 15, 2016 at 10:57:48AM +1000, Stephen Rothwell wrote:
-> > Hi Simon,
-> > 
-> > After merging the ipvs-next tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > net/netfilter/nf_conntrack_netlink.c:529:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
-> >  static size_t ctnetlink_proto_size(const struct nf_conn *ct)
-> >                ^
-> > net/netfilter/nf_conntrack_netlink.c:546:15: warning: 'ctnetlink_acct_size' defined but not used [-Wunused-function]
-> >  static size_t ctnetlink_acct_size(const struct nf_conn *ct)
-> >                ^
-> > net/netfilter/nf_conntrack_netlink.c:556:12: warning: 'ctnetlink_secctx_size' defined but not used [-Wunused-function]
-> >  static int ctnetlink_secctx_size(const struct nf_conn *ct)
-> >             ^
-> > net/netfilter/nf_conntrack_netlink.c:572:15: warning: 'ctnetlink_timestamp_size' defined but not used [-Wunused-function]
-> >  static size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
-> >                ^
-> > Introduced by commit
-> > 
-> >   4054ff45454a ("netfilter: ctnetlink: remove unnecessary inlining")
-> > 
-> > This build does not set CONFIG_NF_CONNTRACK_EVENTS or
-> > CONFIG_NETFILTER_NETLINK_GLUE_CT.
-> 
-> This is my fault, will fix this asap. Thanks for reporting.
+>>>>> "James" == James Bottomley <jejb@linux.vnet.ibm.com> writes:
 
-Pablo,
+James> The STARGET_REMOVE state you added only applies to the case we're
+James> trying to kill a target.  In the natural operation case, which is
+James> what everyone else is running into, we will try to remove a
+James> running target when it has no more scsi devices left on it.  So
+James> the correct patch should be to make the BUG_ON see this:
 
-can you let me know when it is fixed in nf-next so I can rebase ipvs-next
-accordingly?
+Commit amended.
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
