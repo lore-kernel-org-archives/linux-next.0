@@ -1,45 +1,67 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Sun, 17 Apr 2016 11:47:20 +0200
-Message-ID: <4480650.3kf9R6iZAS@wuerfel>
-References: <20160413175028.5d3a4cf2@canb.auug.org.au> <20160413.111513.295841881765244758.davem@davemloft.net>
+From: Jiri Olsa <jolsa@redhat.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Sun, 17 Apr 2016 14:12:07 +0200
+Message-ID: <20160417121207.GC31336@krava.brq.redhat.com>
+References: <20160414121418.288bd117@canb.auug.org.au>
+ <20160415211542.GF2439@redhat.com>
+ <20160415212831.GT9056@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:57658 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400AbcDQJru (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Apr 2016 05:47:50 -0400
-In-Reply-To: <20160413.111513.295841881765244758.davem@davemloft.net>
+Received: from mx1.redhat.com ([209.132.183.28]:35264 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751474AbcDQMMM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 17 Apr 2016 08:12:12 -0400
+Content-Disposition: inline
+In-Reply-To: <20160415212831.GT9056@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, andrewx.bowers@intel.com, linaro-kernel@lists.linaro.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, jeffrey.t.kirsher@intel.com, mark.d.rustad@intel.com
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wednesday 13 April 2016 11:15:13 David Miller wrote:
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 13 Apr 2016 17:50:28 +1000
+On Fri, Apr 15, 2016 at 06:28:31PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Apr 15, 2016 at 06:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Thu, Apr 14, 2016 at 12:14:18PM +1000, Stephen Rothwell escreveu:
+> > > Hi all,
+> > > 
+> > > After merging the tip tree, today's linux-next build (powerpc64le perf)
+> > > failed like this:
+> > > 
+> > > make[3]: *** No rule to make target '/home/sfr/next/perf/arch/x86/include/generated/asm/syscalls_64.c', needed by '/home/sfr/next/perf/util/syscalltbl.o'.  Stop.
+> > > 
+> > > (I build in /home/sfr/next/next with objects in /home/sfr/next/perf.)
+> > > 
+> > > Presumably caused by commit
+> > > 
+> > >   1b700c997500 ("perf tools: Build syscall table .c header from kernel's syscall_64.tbl")
+> > > 
+> > > I have reverted that commit for today (which fixes my build problem but
+> > > may not be overall correct).
+> > 
+> > Right, I'm trying to figure out how to bet fix that, one way would be to
+> > do:
 > 
-> > After merging the net-next tree, today's linux-next build (arm
-> > allmodconfig) failed like thisi (this has actually been failing for a
-> > few days, now):
-> > 
-> > ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-> > 
-> > Caused by commit
-> > 
-> >   49425dfc7451 ("ixgbe: Add support for x550em_a 10G MAC type")
-> > 
-> > arm only allows udelay()s up to 2 milliseconds.  This commit
-> > adds a 5 ms udelay in ixgbe_acquire_swfw_sync_x550em_a() in
-> > drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c.
+> Jiri, I think this is enough, i.e. I think we make sure, just like the
+> kernel, that the archheaders target in tools/perf/arch/*/Makefile is
+> called before doing all the other build, no?
 > 
-> Jeff, please have your folks look into this.  Probably just a simple
-> conversion to mdelay().
+> I.e. when we get to build syscalltbl.o the syscalls_64.c file will be
+> built already, limited testing seems to agree with this :-)
 > 
+> - Arnaldo
+>  
+> > diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+> > index 85a9ab62e23f..7fc4ac304ed6 100644
+> > --- a/tools/perf/util/Build
+> > +++ b/tools/perf/util/Build
+> > @@ -150,7 +150,7 @@ CFLAGS_libstring.o     += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ET
+> >  CFLAGS_hweight.o       += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
+> >  CFLAGS_parse-events.o  += -Wno-redundant-decls
+> >  
+> > -$(OUTPUT)util/syscalltbl.o: util/syscalltbl.c arch/x86/entry/syscalls/syscall_64.tbl $(OUTPUT)arch/x86/include/generated/asm/syscalls_64.c FORCE
+> > +$(OUTPUT)util/syscalltbl.o: util/syscalltbl.c FORCE
 
-I sent a patch, pretty sure we can use msleep() here rather than
-a wasteful mdelay().
+yep, having arch specific target in generic Build file is wrong
+I'll have ppc64le available later today, I'll check on that
 
-	Arnd
+jirka
