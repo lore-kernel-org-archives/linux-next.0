@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the regulator tree
-Date: Mon, 18 Apr 2016 13:43:51 +1000
-Message-ID: <20160418134351.087823c5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Mon, 18 Apr 2016 14:10:02 +1000
+Message-ID: <20160418141002.5a1632a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59122 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750975AbcDREKL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Apr 2016 00:10:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Linus,
 
-After merging the regulator tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the gpio tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/gpu/drm/msm/dsi/dsi_host.c: In function 'dsi_regulator_init':
-drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-   if (regulator_can_change_voltage(s[i].consumer)) {
-   ^
+drivers/gpio/gpio-f7188x.c: In function 'f7188x_gpio_set_single_ended':
+drivers/gpio/gpio-f7188x.c:331:26: error: implicit declaration of function 'gpio_data_mode' [-Werror=implicit-function-declaration]
+  superio_outb(sio->addr, gpio_data_mode(bank->regbase), data);
+                          ^
 
-and several more ...
+Caused by commit
 
-Introduced by commit
+  f90c6bdb690b ("gpio: f7188x: use the new open drain callback")
 
-  6a0028b3dd67 ("regulator: Deprecate regulator_can_change_voltage()")
-
-In the future, please fix up all the current users of an interface
-*before* marking it deprecated.  All these extra warnings just muddy the
-"real" warnings ...
+I have used the gpio tree from next-20160415 for today.
 
 -- 
 Cheers,
