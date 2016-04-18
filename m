@@ -1,58 +1,36 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build warning after merge of the regulator tree
-Date: Mon, 18 Apr 2016 10:15:23 +0100
-Message-ID: <20160418091523.GJ3217@sirena.org.uk>
-References: <20160418134351.087823c5@canb.auug.org.au>
+From: <verifelaw@gmx.com>
+Subject: IMPORTANT MAIL TO YOU
+Date: Mon, 18 Apr 2016 13:09:41 +0200
+Message-ID: <613fad89-f8e9-4340-bd2b-935a5631973f__4732.03685037351$1460977892$gmane$org@GSCADMINS22.gsc.org.uk>
+Reply-To: <lawrencetyman@gmx.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8jNwmpfkpox/fiJK"
+Content-Type: text/plain; charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50672 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751420AbcDRJPe (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Apr 2016 05:15:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20160418134351.087823c5@canb.auug.org.au>
+Received: from mail-db3hn0248.outbound.protection.outlook.com ([157.55.234.248]:41114
+	"EHLO emea01-db3-obe.outbound.protection.outlook.com"
+	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752661AbcDRLKX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Apr 2016 07:10:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+I am Capt. Lawrence Tyman, an officer in US Army,and also a West Point
+Graduate, serving in the Military with the 82nd Air Borne Division
+Peace keeping force deployed from Afganistan to Syria.  
+We were moved to Syria from Iraq as the last batch just left,and i
+really need your help in assisting me with the safe keeping of 1 military
+trunk box contain funds amount of $10.2M which i secured on a raiding we carried out in 
+January in one of the chief Syrian IsIs base which i headed the squard as the 
+Captain.  With every possible arrangement to lift this box out, is intended to arrive 
+Belgium from there a diplomat will deliver it to your designated location
+I hope you can be trusted? You will be rewarded handsomely if you could help
+me secure the funds until I conclude my service here in 3 month to meet you while we can 
+plan head to head on a good and profitable business or company i can invest my funds in your country.
+If you can be trusted and willing to support me in securing this safely kindly indicate 
+by Letting me know this (1) Your name (2) Your address (3) Age (4) Occupation and 
+i will explain further when i get a response from you
+kindly contact me in this my private email address below: lawrencetyman@gmx.com
 
---8jNwmpfkpox/fiJK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Apr 18, 2016 at 01:43:51PM +1000, Stephen Rothwell wrote:
-
-> In the future, please fix up all the current users of an interface
-> *before* marking it deprecated.  All these extra warnings just muddy the
-> "real" warnings ...
-
-Ideally but sadly all the issues are in the graphics stack and while
-they seem relatively responsive to build issues there seems to be some
-strange way of working there which means that getting changes integrated
-or responses when issues like this come up has always been extremely
-difficult and unfortunately cut'n'paste also seems to be quite common
-(most of these look like they came from one place) so something to try
-to at least give people pause for thought when they introduce new
-issues seems sensible.
-
-I really wish I could figure out what's going on there.
-
---8jNwmpfkpox/fiJK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXFKWqAAoJECTWi3JdVIfQyLYH/3iQ9OgT2l/FyyaOyxj/3IVo
-tqiKoW21D60zB3tylTsNYar0wDSEBAK/HNcJi3xo8osve3jRaZ2ef86nrmfUwRto
-eVYOEak4rZy776lhSBqW6ylKNpPIxLG2mXIIlSChHybSrzvYJ0Cfc4f/zwuwgrYU
-nEemCEcFA+0LzrxFPVKpukFNb7IsIwx3nMWKUuHiK/qXnOkyXo+fp15TweLj4gRy
-YjRRvLM8C2hjo2Kozo0Y7TlnitFtIj/bFB4XTBZ6nzfTw2lV3IvHBhhEHyHSPV4U
-Kq1NB23DevWe+Qg+Kgs4RmJ5tNa+gbXEiP/PM2M1SkuolSRHiRJCcwqb+4+nT6s=
-=Jg/1
------END PGP SIGNATURE-----
-
---8jNwmpfkpox/fiJK--
+Regards,
+Capt. Lawrence Tyman
