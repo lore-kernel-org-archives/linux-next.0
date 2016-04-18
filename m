@@ -1,36 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Mon, 18 Apr 2016 14:10:02 +1000
-Message-ID: <20160418141002.5a1632a5@canb.auug.org.au>
+Subject: linux-next: manual merge of the livepatching tree with Linus' tree
+Date: Mon, 18 Apr 2016 14:23:23 +1000
+Message-ID: <20160418142323.26fa9ae1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59122 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56960 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750975AbcDREKL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Apr 2016 00:10:11 -0400
+	id S1750727AbcDREX0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Apr 2016 00:23:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Jiri Kosina <jikos@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Li Zhang <zhlcindy@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Hi Linus,
+Hi Jiri,
 
-After merging the gpio tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the livepatching tree got a conflict in:
 
-drivers/gpio/gpio-f7188x.c: In function 'f7188x_gpio_set_single_ended':
-drivers/gpio/gpio-f7188x.c:331:26: error: implicit declaration of function 'gpio_data_mode' [-Werror=implicit-function-declaration]
-  superio_outb(sio->addr, gpio_data_mode(bank->regbase), data);
-                          ^
+  arch/powerpc/Kconfig
 
-Caused by commit
+between commit:
 
-  f90c6bdb690b ("gpio: f7188x: use the new open drain callback")
+  7f2bd0063342 ("powerpc/mm: enable page parallel initialisation")
 
-I have used the gpio tree from next-20160415 for today.
+from Linus' tree and commit:
+
+  85baa095497f ("powerpc/livepatch: Add live patching support on ppc64le")
+
+from the livepatching tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+Maybe the selects under config PPC should be sorted ...
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/powerpc/Kconfig
+index fbebde0771c8,944a79a2768f..000000000000
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@@ -159,7 -159,7 +159,8 @@@ config PP
+  	select ARCH_HAS_DEVMEM_IS_ALLOWED
+  	select HAVE_ARCH_SECCOMP_FILTER
+  	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ +	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
++ 	select HAVE_LIVEPATCH if HAVE_DYNAMIC_FTRACE_WITH_REGS
+  
+  config GENERIC_CSUM
+  	def_bool CPU_LITTLE_ENDIAN
