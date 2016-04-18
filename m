@@ -1,49 +1,111 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Sun, 17 Apr 2016 18:38:51 -0700
-Message-ID: <1460943531.10638.99.camel@edumazet-glaptop3.roam.corp.google.com>
-References: <20160418113116.6f7f8740@canb.auug.org.au>
+From: Xiong Zhou <jencce.kernel@gmail.com>
+Subject: Re: binary execution from DAX mount hang since next-20160407
+Date: Mon, 18 Apr 2016 10:50:08 +0800
+Message-ID: <CADJHv_ts7_Qu8oZ=kCbYPOR7NzbMFJxze31b9EdFj9gqWrRhEA@mail.gmail.com>
+References: <CADJHv_sawA8SXviUX6My5MKeqWMLbWLG=DrM7RCgrjkjGj2f5Q@mail.gmail.com>
+	<alpine.LSU.2.11.1604150104350.5801@eggly.anvils>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:36279 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750997AbcDRBjC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 17 Apr 2016 21:39:02 -0400
-In-Reply-To: <20160418113116.6f7f8740@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Craig Gallek <kraig@google.com>, Eric Dumazet <edumazet@google.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <alpine.LSU.2.11.1604150104350.5801@eggly.anvils>
+Sender: owner-linux-mm@kvack.org
+To: Hugh Dickins <hughd@google.com>
+Cc: Linux-Next <linux-next@vger.kernel.org>, linux-nvdimm@lists.01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, linux-mm@kvack.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2016-04-18 at 11:31 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   net/ipv4/udp.c
-> 
-> between commit:
-> 
->   d894ba18d4e4 ("soreuseport: fix ordering for mixed v4/v6 sockets")
-> 
-> from the net tree and commit:
-> 
->   ca065d0cf80f ("udp: no longer use SLAB_DESTROY_BY_RCU")
-> 
-> from the net-next tree.
-> 
-> I tried to fixed it up (see below).  Unfortunately,
-> hlist_add_tail_rcu() does not exist.  So instead I have reverted commit
-> d894ba18d4e4 ("soreuseport: fix ordering for mixed v4/v6 sockets") for
-> today.
+On Fri, Apr 15, 2016 at 4:38 PM, Hugh Dickins <hughd@google.com> wrote:
+> On Fri, 15 Apr 2016, Xiong Zhou wrote:
+>
+>> Hi, all
+>>
+>> Since tag next-20160407 in linux-next repo, executing binary
+>> from/in DAX mount hangs.
+>>
+>> It does not hang if mount without dax option.
+>> It hangs with both xfs and ext4.
+>> It does not hang if execute from a -t tmpfs mount.
+>> It does not hang on next-20160406 and still hangs on 0414 tree.
+>>
+>> # ps -axjf
+>> ...
+>> S+       0   0:00  |       \_ sh -x thl.sh
+>> R+       0  42:33  |           \_ [hl]
+>> ..
+>> # cat thl.sh
+>> mkfs.ext4 /dev/pmem0
+>> mount -o dax /dev/pmem0 /daxmnt
+>> cp hl /daxmnt
+>> /daxmnt/hl
+>> # cat hl.c
+>> void main()
+>> {
+>>         printf("ok\n");
+>> }
+>> # cc hl.c -o hl
+>>
+>> Bisecting commits between 0406 and 0407 tag, points to this:
+>>
+>> d7c7d56ca61aec18e5e0cb3a64e50073c42195f7 is the first bad commit
+>> commit d7c7d56ca61aec18e5e0cb3a64e50073c42195f7
+>> Author: Hugh Dickins <hughd@google.com>
+>> Date:   Thu Apr 7 14:00:12 2016 +1000
+>>
+>>     huge tmpfs: avoid premature exposure of new pagetable
+>>
+>> Bisect log and config are attatched.
+>
+> Excellent and very helpful bug report: thank you very much for taking
+> the trouble to make such a good report.
+>
+> I see why this happens now: I've not been paying enough attention
+> to the DAX changes.
+>
+> The fix requires a repositioning of where I allocate the new page
+> table: which is a change we knew we had to make for other reasons,
+> but it did not appear to be a high priority compared with other things
+> - until your bug report showing that I have broken DAX rather badly.
+>
+> In return for your excellent bug report, I can immediately offer
+> the most shameful patch I have ever posted: which has the virtue of
+> simplicity, and will work so long as you have plenty of free memory;
+> but might deadlock if it has to go into page reclaim (or maybe not:
+> perhaps the DAXness would leave it as merely a lockdep violation).
+>
+> Maybe not so much worse than the current hang, but still shameful:
+> I'm appending it here just in case you're in a hurry to see your "ok"
+> program working on DAX; but I think I'd better rearrange priorities
+> and try to provide a proper fix as soon as possible.
 
-Hi Stephen
+No hurry, :)  Take your time.
 
-Craig warned that this would happen indeed, and provided a net-next
-patch, to help David with this conflict.
+>
+> Never-to-be-Signed-off-by: an anonymous hacker
+>
+> --- 4.6-rc2-mm1/mm/memory.c     2016-04-10 10:12:06.167769232 -0700
+> +++ linux/mm/memory.c   2016-04-15 00:54:06.427085026 -0700
+> @@ -2874,7 +2874,7 @@ static int __do_fault(struct vm_area_str
+>                 ret = VM_FAULT_HWPOISON;
+>                 goto err;
+>         }
+> -
+> + out:
+>         /*
+>          * Use pte_alloc instead of pte_alloc_map, because we can't
+>          * run pte_offset_map on the pmd, if an huge pmd could
+> @@ -2892,7 +2892,7 @@ static int __do_fault(struct vm_area_str
+>                 ret = VM_FAULT_NOPAGE;
+>                 goto err;
+>         }
+> - out:
+> +
+>         *page = vmf.page;
+>         return ret;
+>  err:
 
-https://patchwork.ozlabs.org/patch/611093/
+Yes, "ok" is printed ok!
 
-Thanks
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
