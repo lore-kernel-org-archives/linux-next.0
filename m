@@ -1,60 +1,57 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: build warning after merge of the ipvs-next tree
-Date: Tue, 19 Apr 2016 13:44:16 +1000
-Message-ID: <20160419034412.GA8968@verge.net.au>
-References: <20160415105748.5b8754fc@canb.auug.org.au>
- <20160415095607.GC1561@salvia>
- <20160415123811.GA16196@verge.net.au>
- <20160418090921.GB2807@salvia>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Runtime warning due to commit 'ARM: OMAP: Catch callers of revision
+ information prior to it being populated' in -next
+Date: Mon, 18 Apr 2016 21:37:00 -0700
+Message-ID: <5715B5EC.2040000@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:38464 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750720AbcDSEDm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2016 00:03:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20160418090921.GB2807@salvia>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:45390 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750717AbcDSEg4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2016 00:36:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
 
-On Mon, Apr 18, 2016 at 11:09:21AM +0200, Pablo Neira Ayuso wrote:
-> On Fri, Apr 15, 2016 at 10:38:14PM +1000, Simon Horman wrote:
-> > On Fri, Apr 15, 2016 at 11:56:07AM +0200, Pablo Neira Ayuso wrote:
-> > > On Fri, Apr 15, 2016 at 10:57:48AM +1000, Stephen Rothwell wrote:
-> > > > Hi Simon,
-> > > > 
-> > > > After merging the ipvs-next tree, today's linux-next build (powerpc
-> > > > ppc64_defconfig) produced this warning:
-> > > > 
-> > > > net/netfilter/nf_conntrack_netlink.c:529:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
-> > > >  static size_t ctnetlink_proto_size(const struct nf_conn *ct)
-> > > >                ^
-> > > > net/netfilter/nf_conntrack_netlink.c:546:15: warning: 'ctnetlink_acct_size' defined but not used [-Wunused-function]
-> > > >  static size_t ctnetlink_acct_size(const struct nf_conn *ct)
-> > > >                ^
-> > > > net/netfilter/nf_conntrack_netlink.c:556:12: warning: 'ctnetlink_secctx_size' defined but not used [-Wunused-function]
-> > > >  static int ctnetlink_secctx_size(const struct nf_conn *ct)
-> > > >             ^
-> > > > net/netfilter/nf_conntrack_netlink.c:572:15: warning: 'ctnetlink_timestamp_size' defined but not used [-Wunused-function]
-> > > >  static size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
-> > > >                ^
-> > > > Introduced by commit
-> > > > 
-> > > >   4054ff45454a ("netfilter: ctnetlink: remove unnecessary inlining")
-> > > > 
-> > > > This build does not set CONFIG_NF_CONNTRACK_EVENTS or
-> > > > CONFIG_NETFILTER_NETLINK_GLUE_CT.
-> > > 
-> > > This is my fault, will fix this asap. Thanks for reporting.
-> > 
-> > Pablo,
-> > 
-> > can you let me know when it is fixed in nf-next so I can rebase ipvs-next
-> > accordingly?
-> 
-> No need to rebase, will push an incremental fix for this.
+Hi,
 
-Thanks, understood.
+commit 'ARM: OMAP: Catch callers of revision information prior to it
+being populated' results in a runtime warning on various non-OMAP
+architectures. I have seen it with the following qemu tests.
+
+arm:vexpress-a9:multi_v7_defconfig:vexpress-v2p-ca9
+arm:vexpress-a15:multi_v7_defconfig:vexpress-v2p-ca15-tc1
+arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc702
+arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zc706
+arm:xilinx-zynq-a9:multi_v7_defconfig:zynq-zed
+arm:midway:multi_v7_defconfig:ecx-2000
+arm:smdkc210:multi_v7_defconfig:exynos4210-smdkv310
+
+It is also reported by kernelci.org in at least one boot test for imx6q-cm-fx6.
+
+The warning is as follows.
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at arch/arm/mach-omap2/id.c:49 omap_rev+0x3c/0x50
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc2-next-20160411 #1
+Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[<c030f970>] (unwind_backtrace) from [<c030b094>] (show_stack+0x10/0x14)
+[<c030b094>] (show_stack) from [<c0585424>] (dump_stack+0x84/0xa4)
+[<c0585424>] (dump_stack) from [<c0341774>] (__warn+0xd4/0x100)
+[<c0341774>] (__warn) from [<c03417c0>] (warn_slowpath_null+0x20/0x28)
+[<c03417c0>] (warn_slowpath_null) from [<c0324024>] (omap_rev+0x3c/0x50)
+[<c0324024>] (omap_rev) from [<c1114a18>] (__omap4_sar_ram_init+0x8/0x88)
+[<c1114a18>] (__omap4_sar_ram_init) from [<c0301e5c>] (do_one_initcall+0x3c/0x16c)
+[<c0301e5c>] (do_one_initcall) from [<c1100ccc>] (kernel_init_freeable+0x70/0x1ec)
+[<c1100ccc>] (kernel_init_freeable) from [<c0b495e4>] (kernel_init+0x8/0x110)
+[<c0b495e4>] (kernel_init) from [<c0307f78>] (ret_from_fork+0x14/0x3c)
+---[ end trace cb88537fdc8fa200 ]---
+
+Please have a look.
+
+Thanks,
+Guenter
