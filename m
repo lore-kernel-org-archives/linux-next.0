@@ -1,56 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Tue, 19 Apr 2016 12:59:38 +1000
-Message-ID: <20160419125938.4e482ad3@canb.auug.org.au>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: linux-next: build warning after merge of the ipvs-next tree
+Date: Tue, 19 Apr 2016 13:44:16 +1000
+Message-ID: <20160419034412.GA8968@verge.net.au>
+References: <20160415105748.5b8754fc@canb.auug.org.au>
+ <20160415095607.GC1561@salvia>
+ <20160415123811.GA16196@verge.net.au>
+ <20160418090921.GB2807@salvia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Borislav Petkov <bp@suse.de>, Joe Perches <joe@perches.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:38464 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750720AbcDSEDm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Apr 2016 00:03:42 -0400
+Content-Disposition: inline
+In-Reply-To: <20160418090921.GB2807@salvia>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Mon, Apr 18, 2016 at 11:09:21AM +0200, Pablo Neira Ayuso wrote:
+> On Fri, Apr 15, 2016 at 10:38:14PM +1000, Simon Horman wrote:
+> > On Fri, Apr 15, 2016 at 11:56:07AM +0200, Pablo Neira Ayuso wrote:
+> > > On Fri, Apr 15, 2016 at 10:57:48AM +1000, Stephen Rothwell wrote:
+> > > > Hi Simon,
+> > > > 
+> > > > After merging the ipvs-next tree, today's linux-next build (powerpc
+> > > > ppc64_defconfig) produced this warning:
+> > > > 
+> > > > net/netfilter/nf_conntrack_netlink.c:529:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
+> > > >  static size_t ctnetlink_proto_size(const struct nf_conn *ct)
+> > > >                ^
+> > > > net/netfilter/nf_conntrack_netlink.c:546:15: warning: 'ctnetlink_acct_size' defined but not used [-Wunused-function]
+> > > >  static size_t ctnetlink_acct_size(const struct nf_conn *ct)
+> > > >                ^
+> > > > net/netfilter/nf_conntrack_netlink.c:556:12: warning: 'ctnetlink_secctx_size' defined but not used [-Wunused-function]
+> > > >  static int ctnetlink_secctx_size(const struct nf_conn *ct)
+> > > >             ^
+> > > > net/netfilter/nf_conntrack_netlink.c:572:15: warning: 'ctnetlink_timestamp_size' defined but not used [-Wunused-function]
+> > > >  static size_t ctnetlink_timestamp_size(const struct nf_conn *ct)
+> > > >                ^
+> > > > Introduced by commit
+> > > > 
+> > > >   4054ff45454a ("netfilter: ctnetlink: remove unnecessary inlining")
+> > > > 
+> > > > This build does not set CONFIG_NF_CONNTRACK_EVENTS or
+> > > > CONFIG_NETFILTER_NETLINK_GLUE_CT.
+> > > 
+> > > This is my fault, will fix this asap. Thanks for reporting.
+> > 
+> > Pablo,
+> > 
+> > can you let me know when it is fixed in nf-next so I can rebase ipvs-next
+> > accordingly?
+> 
+> No need to rebase, will push an incremental fix for this.
 
-Today's linux-next merge of the tip tree got a conflict in:
-
-  drivers/cpufreq/longhaul.c
-
-between commit:
-
-  b49c22a6ca36 ("cpufreq: Convert printk(KERN_<LEVEL> to pr_<level>")
-
-from the pm tree and commit:
-
-  93984fbd4e33 ("x86/cpufeature: Replace cpu_has_apic with boot_cpu_has() usage")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/cpufreq/longhaul.c
-index beae5cf5c62c,247bfa8eaddb..000000000000
---- a/drivers/cpufreq/longhaul.c
-+++ b/drivers/cpufreq/longhaul.c
-@@@ -932,8 -945,9 +932,8 @@@ static int __init longhaul_init(void
-  	}
-  #endif
-  #ifdef CONFIG_X86_IO_APIC
-- 	if (cpu_has_apic) {
-+ 	if (boot_cpu_has(X86_FEATURE_APIC)) {
- -		printk(KERN_ERR PFX "APIC detected. Longhaul is currently "
- -				"broken in this configuration.\n");
- +		pr_err("APIC detected. Longhaul is currently broken in this configuration.\n");
-  		return -ENODEV;
-  	}
-  #endif
+Thanks, understood.
