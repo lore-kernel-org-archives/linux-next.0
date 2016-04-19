@@ -1,79 +1,50 @@
-From: Jiri Olsa <jolsa@redhat.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Mon, 18 Apr 2016 15:28:56 +0200
-Message-ID: <20160418132856.GA17126@krava.brq.redhat.com>
-References: <20160414121418.288bd117@canb.auug.org.au>
- <20160415211542.GF2439@redhat.com>
- <20160415212831.GT9056@kernel.org>
- <20160417121207.GC31336@krava.brq.redhat.com>
- <20160417130405.GD31336@krava.brq.redhat.com>
- <20160418132402.GA3677@kernel.org>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: manual merge of the livepatching tree with the
+ powerpc tree
+Date: Tue, 19 Apr 2016 11:56:19 +1000
+Message-ID: <1461030979.25103.4.camel@ellerman.id.au>
+References: <20160418142749.3a5910c6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:59231 "EHLO mx1.redhat.com"
+Received: from ozlabs.org ([103.22.144.67]:52627 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751671AbcDRN3A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Apr 2016 09:29:00 -0400
-Content-Disposition: inline
-In-Reply-To: <20160418132402.GA3677@kernel.org>
+	id S1751091AbcDSB4W (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Apr 2016 21:56:22 -0400
+In-Reply-To: <20160418142749.3a5910c6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>, Jiri Olsa <jolsa@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jiri Kosina <jikos@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Axtens <dja@axtens.net>
 
-On Mon, Apr 18, 2016 at 10:24:02AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Sun, Apr 17, 2016 at 03:04:05PM +0200, Jiri Olsa escreveu:
-> > On Sun, Apr 17, 2016 at 02:12:07PM +0200, Jiri Olsa wrote:
-> > > On Fri, Apr 15, 2016 at 06:28:31PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > Em Fri, Apr 15, 2016 at 06:15:42PM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > > > Em Thu, Apr 14, 2016 at 12:14:18PM +1000, Stephen Rothwell escreveu:
-> > > > > > Hi all,
-> > > > > > 
-> > > > > > After merging the tip tree, today's linux-next build (powerpc64le perf)
-> > > > > > failed like this:
-> > > > > > 
-> > > > > > make[3]: *** No rule to make target '/home/sfr/next/perf/arch/x86/include/generated/asm/syscalls_64.c', needed by '/home/sfr/next/perf/util/syscalltbl.o'.  Stop.
-> > > > > > 
-> > > > > > (I build in /home/sfr/next/next with objects in /home/sfr/next/perf.)
-> > > > > > 
-> > > > > > Presumably caused by commit
-> > > > > > 
-> > > > > >   1b700c997500 ("perf tools: Build syscall table .c header from kernel's syscall_64.tbl")
-> > > > > > 
-> > > > > > I have reverted that commit for today (which fixes my build problem but
-> > > > > > may not be overall correct).
-> > > > > 
-> > > > > Right, I'm trying to figure out how to bet fix that, one way would be to
-> > > > > do:
-> > > > 
-> > > > Jiri, I think this is enough, i.e. I think we make sure, just like the
-> > > > kernel, that the archheaders target in tools/perf/arch/*/Makefile is
-> > > > called before doing all the other build, no?
-> > > > 
-> > > > I.e. when we get to build syscalltbl.o the syscalls_64.c file will be
-> > > > built already, limited testing seems to agree with this :-)
-> > > > 
-> > > > - Arnaldo
-> > > >  
-> > > > > diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-> > > > > index 85a9ab62e23f..7fc4ac304ed6 100644
-> > > > > --- a/tools/perf/util/Build
-> > > > > +++ b/tools/perf/util/Build
-> > > > > @@ -150,7 +150,7 @@ CFLAGS_libstring.o     += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ET
-> > > > >  CFLAGS_hweight.o       += -Wno-unused-parameter -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
-> > > > >  CFLAGS_parse-events.o  += -Wno-redundant-decls
-> > > > >  
-> > > > > -$(OUTPUT)util/syscalltbl.o: util/syscalltbl.c arch/x86/entry/syscalls/syscall_64.tbl $(OUTPUT)arch/x86/include/generated/asm/syscalls_64.c FORCE
-> > > > > +$(OUTPUT)util/syscalltbl.o: util/syscalltbl.c FORCE
-> > > 
-> > > yep, having arch specific target in generic Build file is wrong
-> > > I'll have ppc64le available later today, I'll check on that
-> > 
-> > it looks ok, you can also now remove the whole syscalltbl.o override
+On Mon, 2016-04-18 at 14:27 +1000, Stephen Rothwell wrote:
+> Hi Jiri,
 > 
-> Ok, so I'll add this and your Tested-by, ok?
+> Today's linux-next merge of the livepatching tree got a conflict in:
+> 
+>   arch/powerpc/kernel/process.c
+> 
+> between commit:
+> 
+>   7f92bc569455 ("powerpc: sparse: Include headers for __weak symbols")
+> 
+> from the powerpc tree and commit:
+> 
+>   5d31a96e6c01 ("powerpc/livepatch: Add livepatch stack to struct thread_info")
+> 
+> from the livepatching tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-ook ;-)
+Thanks.
 
-jirka
+This should go away tomorrow because then my next will have the topic branch
+merged.
+
+cheers
