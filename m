@@ -1,108 +1,159 @@
-From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: next-20160401+: ARM: DRA7: linux-next regression: mm/slab:
- clean-up kmem_cache_node setup
-Date: Wed, 20 Apr 2016 16:49:00 +0900
-Message-ID: <20160420074900.GA7071@js1304-P5Q-DELUXE>
-References: <570816F8.9070301@ti.com>
- <20160411020203.GA25211@js1304-P5Q-DELUXE>
- <570B8E0D.7020203@nvidia.com>
- <57172BAD.5050200@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160420 build: 2 failures 16 warnings (next-20160420)
+Date: Wed, 20 Apr 2016 09:43:11 +0100
+Message-ID: <E1asnj4-0004aD-LH@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEAMRELO11.lge.com ([156.147.23.51]:33711 "EHLO
-	lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932631AbcDTHpq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Apr 2016 03:45:46 -0400
-Content-Disposition: inline
-In-Reply-To: <57172BAD.5050200@nvidia.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56386 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932445AbcDTInU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Apr 2016 04:43:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jon Hunter <jonathanh@nvidia.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nishanth Menon <nm@ti.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, lkml <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Ccing Stephen.
+Tree/Branch: next-20160420
+Git describe: next-20160420
+Commit: 356ed29496 Add linux-next specific files for 20160420
 
-On Wed, Apr 20, 2016 at 08:11:41AM +0100, Jon Hunter wrote:
-> Hi Joonsoo,
-> 
-> On 11/04/16 12:44, Jon Hunter wrote:
-> > On 11/04/16 03:02, Joonsoo Kim wrote:
-> >> On Fri, Apr 08, 2016 at 03:39:20PM -0500, Nishanth Menon wrote:
-> >>> Hi,
-> >>>
-> >>> http://marc.info/?l=linux-omap&m=146014314115625&w=2 series works with
-> >>> v4.6-rc2 kernel, however, it fails with linux-next for suspend-to-ram
-> >>> (mem) on BeagleBoard-X15
-> >>>
-> >>> next-20160327 - good
-> >>> next-20160329 - good
-> >>> next-20160330 - Fails to boot - I2C crashes
-> >>> next-20160331-  Fails to boot - USB crashes
-> >>> next-20160401 -> bad
-> >>> next-20160408 -> bad
-> >>>
-> >>> Bisect log of next-20160408 vs v4.6-rc2 ->
-> >>> http://pastebin.ubuntu.com/15697856/
-> >>>
-> >>> # first bad commit: [2b629704a2b6a5b239f23750e5517a9d8c3a4e8c]
-> >>> mm/slab: clean-up kmem_cache_node setup
-> >>>
-> >>
-> >> Hello,
-> >>
-> >> I made a mistake on that patch. Could you try to test below one on
-> >> top of it.
-> >>
-> >> Thanks.
-> >>
-> >> --------->8----------------
-> >> From d3af3cc409527e9be6beb62ea395cde67f3c5029 Mon Sep 17 00:00:00 2001
-> >> From: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >> Date: Mon, 11 Apr 2016 10:48:29 +0900
-> >> Subject: [PATCH] mm/slab: clean-up kmem_cache_node setup-fix
-> >>
-> >> After calling free_block(), we need to re-calculate array_cache's
-> >> avail counter. Fix it.
-> >>
-> >> And, it's better to free objects in shared array when it is
-> >> really necessary. Check it before calling free_block().
-> >>
-> >> Signed-off-by: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> >> ---
-> >>  mm/slab.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/mm/slab.c b/mm/slab.c
-> >> index fcd5fbb..27cb390 100644
-> >> --- a/mm/slab.c
-> >> +++ b/mm/slab.c
-> >> @@ -927,9 +927,10 @@ static int setup_kmem_cache_node(struct kmem_cache *cachep,
-> >>  
-> >>  	n = get_node(cachep, node);
-> >>  	spin_lock_irq(&n->list_lock);
-> >> -	if (n->shared) {
-> >> +	if (n->shared && force_change) {
-> >>  		free_block(cachep, n->shared->entry,
-> >>  				n->shared->avail, node, &list);
-> >> +		n->shared->avail = 0;
-> >>  	}
-> >>  
-> >>  	if (!n->shared || force_change) {
-> > 
-> > This also fixes a regression on -next for Tegra that was bisected down
-> > to the same culprit. So ...
-> > 
-> > Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> This fix still doesn't appear to have made it into -next and this has
-> been broken now for nearly 3 weeks. Any chance we can get this into -next?
+Build Time: 109 min 11 sec
 
-Sorry about that.
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
-Hello, Stephen.
+Errors: 1
+Warnings: 16
+Section Mismatches: 0
 
-It seems that Andrew is busy now. I guess he will be back soon but
-could you merge this fix to the next tree directly?
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-Thanks.
+Errors:
+
+	arm64-allmodconfig
+../sound/soc/mediatek/mt8173-rt5650.c:236:9: error: implicit declaration of function 'snd_soc_get_dai_name' [-Werror=implicit-function-declaration]
+
+	arm-allmodconfig
+../sound/soc/mediatek/mt8173-rt5650.c:236:9: error: implicit declaration of function 'snd_soc_get_dai_name' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allnoconfig
+      7 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+      4 warnings    0 mismatches  : x86_64-defconfig
+     10 warnings    0 mismatches  : arm-allmodconfig
+      6 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ../sound/soc/mediatek/mt8173-rt5650.c:236:9: error: implicit declaration of function 'snd_soc_get_dai_name' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 16
+	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  5 ../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  4 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	  4 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../net/netfilter/nf_conntrack_netlink.c:572:15: warning: 'ctnetlink_timestamp_size' defined but not used [-Wunused-function]
+	  1 ../net/netfilter/nf_conntrack_netlink.c:556:12: warning: 'ctnetlink_secctx_size' defined but not used [-Wunused-function]
+	  1 ../net/netfilter/nf_conntrack_netlink.c:546:15: warning: 'ctnetlink_acct_size' defined but not used [-Wunused-function]
+	  1 ../net/netfilter/nf_conntrack_netlink.c:529:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 7 warnings, 0 section mismatches
+
+Errors:
+	../sound/soc/mediatek/mt8173-rt5650.c:236:9: error: implicit declaration of function 'snd_soc_get_dai_name' [-Werror=implicit-function-declaration]
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../net/netfilter/nf_conntrack_netlink.c:529:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
+	../net/netfilter/nf_conntrack_netlink.c:546:15: warning: 'ctnetlink_acct_size' defined but not used [-Wunused-function]
+	../net/netfilter/nf_conntrack_netlink.c:556:12: warning: 'ctnetlink_secctx_size' defined but not used [-Wunused-function]
+	../net/netfilter/nf_conntrack_netlink.c:572:15: warning: 'ctnetlink_timestamp_size' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 10 warnings, 0 section mismatches
+
+Errors:
+	../sound/soc/mediatek/mt8173-rt5650.c:236:9: error: implicit declaration of function 'snd_soc_get_dai_name' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
+	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm-allnoconfig
