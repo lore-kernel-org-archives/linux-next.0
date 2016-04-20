@@ -1,87 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb-gadget tree with the
- usb-gadget-fixes tree
-Date: Wed, 20 Apr 2016 13:28:02 +1000
-Message-ID: <20160420132802.681072b1@canb.auug.org.au>
+From: "=?utf-8?B?6ZmI5Y2O5omN?=" <chenhc@lemote.com>
+Subject: Re:next: fuloong2e qemu boot failure due to 'MIPS: Loongson: AddLoongson-3A R2 basic support'
+Date: Wed, 20 Apr 2016 11:37:57 +0800
+Message-ID: <tencent_5BBD94596E55516D1B4FED5F@qq.com>
+References: <20160420025454.GA17200@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56661 "EHLO ozlabs.org"
+Received: from smtpbg65.qq.com ([103.7.28.233]:30296 "EHLO smtpbg65.qq.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932120AbcDTD2G (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Apr 2016 23:28:06 -0400
+	id S1753332AbcDTDiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Apr 2016 23:38:14 -0400
+In-Reply-To: <20160420025454.GA17200@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Felipe Balbi <balbi@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Du, Changbin" <changbin.du@intel.com>
+To: =?utf-8?B?R3VlbnRlciBSb2Vjaw==?= <linux@roeck-us.net>
+Cc: =?utf-8?B?UmFsZiBCYWVjaGxl?= <ralf@linux-mips.org>, =?utf-8?B?bGludXgtbWlwcw==?= <linux-mips@linux-mips.org>, =?utf-8?B?bGludXgtbmV4dA==?= <linux-next@vger.kernel.org>, =?utf-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>
 
-Hi Felipe,
-
-Today's linux-next merge of the usb-gadget tree got a conflict in:
-
-  drivers/usb/dwc3/debugfs.c
-
-between commit:
-
-  e6bdf8195b4a ("usb: dwc3: fix memory leak of dwc->regset")
-
-from the usb-gadget-fixes tree and commit:
-
-  4e9f311833a9 ("usb: dwc3: make dwc3_debugfs_init return value be void")
-
-from the usb-gadget tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/usb/dwc3/debugfs.c
-index cebf9e38b60a,6c14f653dc9b..000000000000
---- a/drivers/usb/dwc3/debugfs.c
-+++ b/drivers/usb/dwc3/debugfs.c
-@@@ -661,29 -956,16 +956,14 @@@ void dwc3_debugfs_init(struct dwc3 *dwc
-  			IS_ENABLED(CONFIG_USB_DWC3_GADGET)) {
-  		file = debugfs_create_file("testmode", S_IRUGO | S_IWUSR, root,
-  				dwc, &dwc3_testmode_fops);
-- 		if (!file) {
-- 			ret = -ENOMEM;
-- 			goto err2;
-- 		}
-- 
-- 		file = debugfs_create_file("link_state", S_IRUGO | S_IWUSR, root,
-- 				dwc, &dwc3_link_state_fops);
-- 		if (!file) {
-- 			ret = -ENOMEM;
-- 			goto err2;
-- 		}
-- 	}
- -		if (!file)
- -			dev_dbg(dwc->dev, "Can't create debugfs testmode\n");
-  
-- 	return 0;
-+ 		file = debugfs_create_file("link_state", S_IRUGO | S_IWUSR,
-+ 				root, dwc, &dwc3_link_state_fops);
-+ 		if (!file)
-+ 			dev_dbg(dwc->dev, "Can't create debugfs link_state\n");
-  
-- err2:
-- 	kfree(dwc->regset);
-- 
-- err1:
-- 	debugfs_remove_recursive(root);
-- 
-- err0:
-- 	return ret;
-+ 		dwc3_debugfs_create_endpoint_dirs(dwc, root);
-+ 	}
-  }
-  
-  void dwc3_debugfs_exit(struct dwc3 *dwc)
+SGksDQoNCkNvdWxkIHlvdSBwbGVhc2UgcmVtb3ZlIHRoZSBsaW5lICIjZGVmaW5lIGNwdV9o
+d3JlbmFfaW1wbF9iaXRzICAgIDB4YzAwMDAwMDAiIGluIGFyY2gvbWlwcy9pbmNsdWRlL2Fz
+bS9tYWNoLWxvb25nc29uNjQvY3B1LWZlYXR1cmUtb3ZlcnJpZGVzLmggYW5kIHRyeSBhZ2Fp
+bj9UaGFua3MuDQoNCkh1YWNhaQ0KIA0KLS0tLS0tLS0tLS0tLS0tLS0tIE9yaWdpbmFsIC0t
+LS0tLS0tLS0tLS0tLS0tLQ0KRnJvbTogICJHdWVudGVyIFJvZWNrIjxsaW51eEByb2Vjay11
+cy5uZXQ+Ow0KRGF0ZTogIFdlZCwgQXByIDIwLCAyMDE2IDEwOjU0IEFNDQpUbzogICJIdWFj
+YWkgQ2hlbiI8Y2hlbmhjQGxlbW90ZS5jb20+Ow0KQ2M6ICAiUmFsZiBCYWVjaGxlIjxyYWxm
+QGxpbnV4LW1pcHMub3JnPjsgImxpbnV4LW1pcHMiPGxpbnV4LW1pcHNAbGludXgtbWlwcy5v
+cmc+OyAibGludXgtbmV4dCI8bGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc+OyAibGludXgt
+a2VybmVsIjxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsNClN1YmplY3Q6ICBuZXh0
+OiBmdWxvb25nMmUgcWVtdSBib290IGZhaWx1cmUgZHVlIHRvICdNSVBTOiBMb29uZ3Nvbjog
+QWRkTG9vbmdzb24tM0EgUjIgYmFzaWMgc3VwcG9ydCcNCiANCkhpLA0KDQpxZW11IGZhaWxz
+IHRvIGJvb3QgaW4gLW5leHQgZm9yIG1hY2hpbmUgZnVsb25nMmUgd2l0aCBjb25maWd1cmF0
+aW9uDQpmdWxvb25nMmVfZGVmY29uZmlnLiBCaXNlY3QgcG9pbnRzIHRvIGNvbW1pdCAnTUlQ
+UzogTG9vbmdzb246IEFkZA0KTG9vbmdzb24tM0EgUjIgYmFzaWMgc3VwcG9ydCcuIHFlbXUg
+aGFuZ3MgaW4gYm9vdCwgYWZ0ZXIgZGlzcGxheWluZyANCiJJbm9kZS1jYWNoZSBoYXNoIHRh
+YmxlIGVudHJpZXM6IDE2Mzg0IChvcmRlcjogMywgMTMxMDcyIGJ5dGVzKSIuDQoNCkJpc2Vj
+dCBsb2cgaXMgYXR0YWNoZWQuDQoNCkd1ZW50ZXINCg0KLS0tDQojIGJhZDogWzFiZDdhMjA4
+MWQyYzdiMDk2Zjc1YWE5MzQ2NThlNDA0Y2NhYmE1ZmRdIEFkZCBsaW51eC1uZXh0IHNwZWNp
+ZmljIGZpbGVzIGZvciAyMDE2MDQxOA0KIyBnb29kOiBbYmYxNjIwMDY4OTExOGQxOWRlMWI4
+ZDJhM2MzMTRmYzIxZjVkYzdiYl0gTGludXggNC42LXJjMw0KZ2l0IGJpc2VjdCBzdGFydCAn
+SEVBRCcgJ3Y0LjYtcmMzJw0KIyBiYWQ6IFs0OTNhYzkyZmY2NWVjNGM0Y2Q0YzQzODcwZTc3
+ODc2MGEwMTI5NTFkXSBNZXJnZSByZW1vdGUtdHJhY2tpbmcgYnJhbmNoICdpcHZzLW5leHQv
+bWFzdGVyJw0KZ2l0IGJpc2VjdCBiYWQgNDkzYWM5MmZmNjVlYzRjNGNkNGM0Mzg3MGU3Nzg3
+NjBhMDEyOTUxZA0KIyBiYWQ6IFsyMGNhM2FlOWM1MTdlZWU5YjJmMWJkMGZiMmEwNmUyZDE0
+MTUzNzkyXSBNZXJnZSByZW1vdGUtdHJhY2tpbmcgYnJhbmNoICdidHJmcy1rZGF2ZS9mb3It
+bmV4dCcNCmdpdCBiaXNlY3QgYmFkIDIwY2EzYWU5YzUxN2VlZTliMmYxYmQwZmIyYTA2ZTJk
+MTQxNTM3OTINCiMgZ29vZDogW2M0NTRlNjVmYjlhZGUxMWQwZjg0NzE4ZDA2YTY4ODhlMmM5
+MjgwNGRdIE1lcmdlIHJlbW90ZS10cmFja2luZyBicmFuY2ggJ29tYXAvZm9yLW5leHQnDQpn
+aXQgYmlzZWN0IGdvb2QgYzQ1NGU2NWZiOWFkZTExZDBmODQ3MThkMDZhNjg4OGUyYzkyODA0
+ZA0KIyBnb29kOiBbNmY1YzcwZmI5YjRmYzA1MzQxNTdiZmE0MGNlYTliNDAyZTZmMjUwNl0g
+TWVyZ2UgcmVtb3RlLXRyYWNraW5nIGJyYW5jaCAnbWljcm9ibGF6ZS9uZXh0Jw0KZ2l0IGJp
+c2VjdCBnb29kIDZmNWM3MGZiOWI0ZmMwNTM0MTU3YmZhNDBjZWE5YjQwMmU2ZjI1MDYNCiMg
+YmFkOiBbN2YwNTNjZDY4ZmQxNDI0M2M4ZjIwMmI0MDg2ZDdkZDc1YzQwOWU2Zl0gTUlQUzog
+TG9vbmdzb24tMzogSW50cm9kdWNlIENPTkZJR19MT09OR1NPTjNfRU5IQU5DRU1FTlQNCmdp
+dCBiaXNlY3QgYmFkIDdmMDUzY2Q2OGZkMTQyNDNjOGYyMDJiNDA4NmQ3ZGQ3NWM0MDllNmYN
+CiMgZ29vZDogW2U5YWFjZGQ3ZjBiNjZjNGFjZTE3ZTU5NTBjNDhlN2NjNjFhMjUzYzhdIE1J
+UFM6IEFsbG93IFJJWEkgdG8gYmUgdXNlZCBvbiBub24tUjIgb3IgUjYgY29yZXMNCmdpdCBi
+aXNlY3QgZ29vZCBlOWFhY2RkN2YwYjY2YzRhY2UxN2U1OTUwYzQ4ZTdjYzYxYTI1M2M4DQoj
+IGdvb2Q6IFtkMWU4YjlhOGRjNmM3ZmE5YWRkNWRmYTcwODNlMDM1Y2UwMzdlNTZkXSBNQUlO
+VEFJTkVSUzogYWRkIExvb25nc29uMSBhcmNoaXRlY3R1cmUgZW50cnkNCmdpdCBiaXNlY3Qg
+Z29vZCBkMWU4YjlhOGRjNmM3ZmE5YWRkNWRmYTcwODNlMDM1Y2UwMzdlNTZkDQojIGdvb2Q6
+IFsxM2ZmNjI3NWJiMzg5YzM2NjkwODJkM2VmODQ4MzU5MmEzMWViMGVhXSBNSVBTOiBGaXgg
+c2lnaW5mby5oIHRvIHVzZSBzdHJpY3QgcG9zaXggdHlwZXMNCmdpdCBiaXNlY3QgZ29vZCAx
+M2ZmNjI3NWJiMzg5YzM2NjkwODJkM2VmODQ4MzU5MmEzMWViMGVhDQojIGdvb2Q6IFs2NmU3
+NGJkZDUxZTYxNzAyM2ZhMmU3OWE4MDdiNzA0ZmIzZWVkOGFhXSBNSVBTOiBFbmFibGUgcHRy
+YWNlIGh3IHdhdGNocG9pbnRzIG9uIE1JUFMgUjYNCmdpdCBiaXNlY3QgZ29vZCA2NmU3NGJk
+ZDUxZTYxNzAyM2ZhMmU3OWE4MDdiNzA0ZmIzZWVkOGFhDQojIGdvb2Q6IFtmN2NhYmMyZGFj
+OGFkZjU5ODZkYmM3MDA1ODRiYzNiOGZlNDkzZDRkXSBNSVBTOiBMb29uZ3Nvbi0zOiBBZGp1
+c3QgaXJxIGRpc3BhdGNoIHRvIHNwZWVkdXAgcHJvY2Vzc2luZw0KZ2l0IGJpc2VjdCBnb29k
+IGY3Y2FiYzJkYWM4YWRmNTk4NmRiYzcwMDU4NGJjM2I4ZmU0OTNkNGQNCiMgYmFkOiBbNDk3
+OGM4NDc3ZTk2ZmI5ZTlkODcwZDhmNDIzMjhkY2FiZjFhNjVlOV0gTUlQUzogTG9vbmdzb24t
+MzogU2V0IGNhY2hlIGZsdXNoIGhhbmRsZXJzIHRvIGNhY2hlX25vb3ANCmdpdCBiaXNlY3Qg
+YmFkIDQ5NzhjODQ3N2U5NmZiOWU5ZDg3MGQ4ZjQyMzI4ZGNhYmYxYTY1ZTkNCiMgYmFkOiBb
+MDRhMzU5MjJjMWRhYzFiNDg2NGI4YjM2NmEzNzQ3NGU5ZTUxZDhjMF0gTUlQUzogTG9vbmdz
+b246IEFkZCBMb29uZ3Nvbi0zQSBSMiBiYXNpYyBzdXBwb3J0DQpnaXQgYmlzZWN0IGJhZCAw
+NGEzNTkyMmMxZGFjMWI0ODY0YjhiMzY2YTM3NDc0ZTllNTFkOGMwDQojIGZpcnN0IGJhZCBj
+b21taXQ6IFswNGEzNTkyMmMxZGFjMWI0ODY0YjhiMzY2YTM3NDc0ZTllNTFkOGMwXSBNSVBT
+OiBMb29uZ3NvbjogQWRkIExvb25nc29uLTNBIFIyIGJhc2ljIHN1cHBvcnQ=
