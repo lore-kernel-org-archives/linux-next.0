@@ -1,61 +1,61 @@
-From: Hugh Dickins <hughd@google.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 21 Apr 2016 02:46:17 -0700 (PDT)
-Message-ID: <alpine.LSU.2.11.1604210227050.5287@eggly.anvils>
-References: <20160421160016.3221533d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Inclusion in linux-next
+Date: Fri, 22 Apr 2016 08:03:51 +1000
+Message-ID: <20160422080351.791b3f46@canb.auug.org.au>
+References: <20160420093251.GX6349@leon.nu>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qk0-f182.google.com ([209.85.220.182]:36053 "EHLO
-	mail-qk0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751571AbcDUJq0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Apr 2016 05:46:26 -0400
-Received: by mail-qk0-f182.google.com with SMTP id x7so23459993qkd.3
-        for <linux-next@vger.kernel.org>; Thu, 21 Apr 2016 02:46:26 -0700 (PDT)
-In-Reply-To: <20160421160016.3221533d@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:58103 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751302AbcDUWDy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 21 Apr 2016 18:03:54 -0400
+In-Reply-To: <20160420093251.GX6349@leon.nu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>
+To: Leon Romanovsky <leon@kernel.org>, linux-next@vger.kernel.org
+Cc: Doug Ledford <dledford@redhat.com>
 
-On Thu, 21 Apr 2016, Stephen Rothwell wrote:
+Hi Leon,
 
-> Hi Andrew,
+On Wed, 20 Apr 2016 12:32:51 +0300 Leon Romanovsky <leon@kernel.org> wrote:
+>
+> I would like to add my tree [1] in linux-next automatic tree merge.
+> What do I need to do for it? Do I need to prepare/send anything?
 > 
-> After merging the akpm-current tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> I thought about two branches for inclusion, but would be glad to hear
+> your opinion if it is right thing to do and maybe I need only one.
 > 
-> mm/built-in.o: In function `handle_mm_fault':
-> frame_vector.c:(.text+0x29628): undefined reference to `do_huge_pmd_anonymous_page'
+> My goal is to create clean tree from different topic branches.
 > 
-> (Ignore the "frame_vector.c" above it is obviously incorrect.)
+> Branches:
+> * rdma-next - this branch will serve as a main for next (not RCs fixes) pull requests. No rebase.
+> * testing/rdma-next - this branch will serve as a testing branch for topic
+> 			merges and different companies quals. Rebased.
 > 
-> Probably caused by commit
-> 
->   747220c26dd0 ("huge tmpfs: add shmem_pmd_fault()")
-> 
-> [Andrew: I added this patch from Hugh today ... see other emails]
+> [1] git://git.kernel.org/pub/scm/linux/kernel/git/leon/linux-rdma.git
 
-Many thanks for trying to include those...
+Included from today.  I have called them rdma-leon and rdma-leon-test.
 
-> 
-> The condition protecting the call to do_huge_pmd_anonymous_page()
-> in __handle_mm_fault() has becom more complicated and so the call
-> has presumably no longer been removed by the compiler for the
-> !CONFIG_TRANSPARENT_HUGEPAGE case.
-> 
-> I have reverted that commit for today.
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-... and sorry for wasting your time again, with unfamiliar optimizer
-failures.  Best ignore patches from me, until I've got into cross-
-compiling with your environment.  Not this week.
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
 
-Reverting just that shmem_pmd_fault() commit does leave linux-next
-with lots of huge tmpfs patches in, but unable to do huge mappings
-of tmpfs (but the DAX COW support that I'd broken restored).
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-Not worth rushing you another build fix to enable it: Andrew will be
-reverting the whole series from his tree in the coming days, to make
-way for some zone/node changes from Mel which it was obstructing.
-
-Hugh
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
