@@ -1,135 +1,76 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 22 (adjust_autoksyms.sh)
-Date: Fri, 22 Apr 2016 15:55:11 -0700
-Message-ID: <571AABCF.4050609@infradead.org>
-References: <20160422153503.24aa389e@canb.auug.org.au>
- <571A56C4.7030907@infradead.org>
- <alpine.LFD.2.20.1604221345340.27452@knanqh.ubzr>
- <571A6BCE.9040904@infradead.org>
- <alpine.LFD.2.20.1604221423300.27452@knanqh.ubzr>
- <alpine.LFD.2.20.1604221542270.27452@knanqh.ubzr>
+From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 22 Apr 2016 16:20:43 -0700
+Message-ID: <1461367243.3018.42.camel@intel.com>
+References: <20160413175028.5d3a4cf2@canb.auug.org.au>
+	 <20160413.111513.295841881765244758.davem@davemloft.net>
+	 <20160422092017.GY3217@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.20.1604221542270.27452@knanqh.ubzr>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild <linux-kbuild@vger.kernel.org>, Michal Marek <mmarek@suse.cz>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-lHjQNpBqXycFjvz0Tr57"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160422092017.GY3217@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark.d.rustad@intel.com, andrewx.bowers@intel.com, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
 List-Id: linux-next.vger.kernel.org
 
-On 04/22/16 12:44, Nicolas Pitre wrote:
-> On Fri, 22 Apr 2016, Nicolas Pitre wrote:
-> 
->> On Fri, 22 Apr 2016, Randy Dunlap wrote:
->>
->>> Yes, this patch helps, but I think there is still a problem.
->>> I think that trim needs to be done after CONFIG_BUILD_DOCSRC and possibly
->>> after CONFIG_SAMPLES are built.
->>
->> The later is already taken care of with commit dd92478a15.
->>
->>> At least CONFIG_BUILD_DOCSRC seems to
->>> cause this error:
->>>
->>> Setup is 16508 bytes (padded to 16896 bytes).
->>> System is 6125 kB
->>> CRC 8aa70f94
->>> Kernel: arch/x86/boot/bzImage is ready  (#9)
->>> ERROR: "cn_del_callback" [Documentation/connector/cn_test.ko] undefined!
->>> ERROR: "cn_add_callback" [Documentation/connector/cn_test.ko] undefined!
->>> ERROR: "cn_netlink_send" [Documentation/connector/cn_test.ko] undefined!
->>> ../scripts/Makefile.modpost:91: recipe for target '__modpost' failed
->>> make[2]: *** [__modpost] Error 1
->>
->> This one is indeed a problem.
-> 
-> Please try the following:
 
-Yes, this works.  Thanks.
+--=-lHjQNpBqXycFjvz0Tr57
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+On Fri, 2016-04-22 at 10:20 +0100, Mark Brown wrote:
+> On Wed, Apr 13, 2016 at 11:15:13AM -0400, David Miller wrote:
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+>=20
+> > > After merging the net-next tree, today's linux-next build (arm
+> > > allmodconfig) failed like thisi (this has actually been failing
+> for a
+> > > few days, now):
+>=20
+> > > ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko]
+> undefined!
+>=20
+> > > Caused by commit
+>=20
+> > >=C2=A0=C2=A0 49425dfc7451 ("ixgbe: Add support for x550em_a 10G MAC ty=
+pe")
+>=20
+> > > arm only allows udelay()s up to 2 milliseconds.=C2=A0 This commit
+> > > adds a 5 ms udelay in ixgbe_acquire_swfw_sync_x550em_a() in
+> > > drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c.
+>=20
+> > Jeff, please have your folks look into this.=C2=A0 Probably just a
+> simple
+> > conversion to mdelay().
+>=20
+> This is still present, it's been breaking ARM allmodconfig builds for
+> about two weeks now.
 
+Interesting that no one spoke up until just a week ago. =C2=A0I have a fix
+and I ready to push it to David Miller.
+--=-lHjQNpBqXycFjvz0Tr57
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-> ----- >8
-> Subject: [PATCH] kbuild: better abstract vmlinux sequential prerequisites
-> 
-> When CONFIG_TRIM_UNUSED_KSYMS=y and CONFIG_BUILD_DOCSRC=y it is possible
-> to get the following error:
-> 
-> ERROR: "cn_del_callback" [Documentation/connector/cn_test.ko] undefined!
-> ERROR: "cn_add_callback" [Documentation/connector/cn_test.ko] undefined!
-> ERROR: "cn_netlink_send" [Documentation/connector/cn_test.ko] undefined!
-> ../scripts/Makefile.modpost:91: recipe for target '__modpost' failed
-> 
-> It is not sufficient to do "vmlinux-dirs += Documentation" as this also
-> depends on the headers_check target, and all of this needs to be done
-> before adjust_autoksyms.sh is executed.
-> 
-> Let's sort this out by gathering those sequential prerequisites in a make
-> target of their own, separate from the vmlinux target. And by doing so,
-> the special autoksyms_recursive target is no longer needed.
-> 
-> Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> 
-> diff --git a/Makefile b/Makefile
-> index e9ad498238..3f1eb6a1bf 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -926,17 +926,11 @@ export KBUILD_ALLDIRS := $(sort $(filter-out arch/%,$(vmlinux-alldirs)) arch Doc
->  
->  vmlinux-deps := $(KBUILD_LDS) $(KBUILD_VMLINUX_INIT) $(KBUILD_VMLINUX_MAIN)
->  
-> -# Final link of vmlinux
-> -      cmd_link-vmlinux = $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
-> -quiet_cmd_link-vmlinux = LINK    $@
-> -
-> -# Include targets which we want to
-> -# execute if the rest of the kernel build went well.
-> -vmlinux: scripts/link-vmlinux.sh $(vmlinux-deps) FORCE
-> -ifdef CONFIG_TRIM_UNUSED_KSYMS
-> -	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
-> -	  "$(MAKE) KBUILD_MODULES=1 -f $(srctree)/Makefile autoksyms_recursive"
-> -endif
-> +# Include targets which we want to execute sequentially if the rest of the
-> +# kernel build went well. If CONFIG_TRIM_UNUSED_KSYMS is set, this might be
-> +# evaluated more than once.
-> +PHONY += vmlinux_prereq
-> +vmlinux_prereq: $(vmlinux-deps) FORCE
->  ifdef CONFIG_HEADERS_CHECK
->  	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
->  endif
-> @@ -946,17 +940,22 @@ endif
->  ifdef CONFIG_GDB_SCRIPTS
->  	$(Q)ln -fsn `cd $(srctree) && /bin/pwd`/scripts/gdb/vmlinux-gdb.py
->  endif
-> -	+$(call if_changed,link-vmlinux)
-> -
-> -autoksyms_recursive: $(vmlinux-deps)
-> +ifdef CONFIG_TRIM_UNUSED_KSYMS
->  	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh \
-> -	  "$(MAKE) KBUILD_MODULES=1 -f $(srctree)/Makefile autoksyms_recursive"
-> -PHONY += autoksyms_recursive
-> +	  "$(MAKE) KBUILD_MODULES=1 -f $(srctree)/Makefile vmlinux_prereq"
-> +endif
->  
->  # standalone target for easier testing
->  include/generated/autoksyms.h: FORCE
->  	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/adjust_autoksyms.sh true
->  
-> +# Final link of vmlinux
-> +      cmd_link-vmlinux = $(CONFIG_SHELL) $< $(LD) $(LDFLAGS) $(LDFLAGS_vmlinux)
-> +quiet_cmd_link-vmlinux = LINK    $@
-> +
-> +vmlinux: scripts/link-vmlinux.sh vmlinux_prereq FORCE
-> +	+$(call if_changed,link-vmlinux)
-> +
->  # Build samples along the rest of the kernel
->  ifdef CONFIG_SAMPLES
->  vmlinux-dirs += samples
-> --
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAABCgAGBQJXGrHMAAoJEOVv75VaS+3OLnwP/2bIB4v7GVm6EO1DRvAcFBIy
+uNRAmRB+7vDX2Wl3AoaimDU7QJuVESFusiDn5hv4667q9YKbW4M17f5QiICqyZqO
+Xxh+enmerP/sbRfiJxtrGFOGJmiWdPXqAV01ezaAMDb2YgQDJ7m2CxCWhzPc4W28
+Zy9eEYGi2V/UlLDXgCYefHRw9lwM+PMa76hnF5Ume/PgKncfxl9a1Xfzx6e8glI0
+5cI6LHPPT49DW0QRP8zy29AHJ/f0+PsA8sOjaDg8L+TtSNcbHl+BVEGcpN9jyYJN
+zKpWwFOJrzXnUcp6rovzD3/xuughTbK55so3D1Hv68/s4Nba2za+PVQiTOkZnBex
+TAuxXBNoYZcnxGi7Eqsxt3PL7HUR3iRqrfV7udoj/+IkJZ8RUssh2e3VX5n53nyq
+pRC2m4P8P8v8k96ZwpK3TzQLYeNbxrt/m3kIXRw7FYzY11YS6Bv2U+xD5PPyXM27
+qz/Uufy70EV6+MPa0nDX3cy955kOjN2hhpOzl6TaRcUgH35xNf3gBmSXvucwY0On
+wek3WTCgNKOclpVGpKUdjHF6dBNj01WkqA7+fmy6XgL5yTDqiSRP2x4ZC3dkUr6y
+tKw6FdL6oclbix5E8WAj12W2plwOCGkueS8lUu7X2G5LclUJJvQqli9BCGJ93ULo
+X7hX8MITWWZNskl6K9oW
+=x5pR
+-----END PGP SIGNATURE-----
 
--- 
-~Randy
+--=-lHjQNpBqXycFjvz0Tr57--
