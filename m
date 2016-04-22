@@ -1,147 +1,81 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160422 build: 1 failures 14 warnings (next-20160422)
-Date: Fri, 22 Apr 2016 09:37:17 +0100
-Message-ID: <E1atWaT-0005n4-M0@optimist>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 22 Apr 2016 10:40:11 +0200
+Message-ID: <1461314411.4047.16.camel@pengutronix.de>
+References: <20160422120323.24689708@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33672 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172AbcDVIh2 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Apr 2016 04:37:28 -0400
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:59839 "EHLO
+	metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751039AbcDVIkS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Apr 2016 04:40:18 -0400
+In-Reply-To: <20160422120323.24689708@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jyri Sarha <jsarha@ti.com>
 
-Tree/Branch: next-20160422
-Git describe: next-20160422
-Commit: 73442f7bec Add linux-next specific files for 20160422
+Am Freitag, den 22.04.2016, 12:03 +1000 schrieb Stephen Rothwell:
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/linux/notifier.h:13:0,
+>                  from include/linux/memory_hotplug.h:6,
+>                  from include/linux/mmzone.h:744,
+>                  from include/linux/gfp.h:5,
+>                  from include/linux/kmod.h:22,
+>                  from include/linux/module.h:13,
+>                  from sound/soc/codecs/hdmi-codec.c:15:
+> sound/soc/codecs/hdmi-codec.c: In function 'hdmi_eld_ctl_get':
+> sound/soc/codecs/hdmi-codec.c:68:17: error: 'struct hdmi_codec_priv' has no member named 'eld_lock'
+>   mutex_lock(&hcp->eld_lock);
+>                  ^
+> include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
+>  #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+>                                             ^
+> sound/soc/codecs/hdmi-codec.c:70:19: error: 'struct hdmi_codec_priv' has no member named 'eld_lock'
+>   mutex_unlock(&hcp->eld_lock);
+>                    ^
+> 
+> Caused by commit
+> 
+>   81151cfb6bfe ("ASoC: hdmi-codec: Add ELD control")
+> 
+> I have used the sound-asoc tree from next-20160421 for today.
 
-Build Time: 87 min 22 sec
+Sorry, the mutex_lock slipped through when reordering the patches.
+That should be part of the "Use HDMI notifications to add jack support"
+patch instead.
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+regards
+Philipp
 
-Errors: 1
-Warnings: 14
-Section Mismatches: 0
+--------8<--------
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH] fixup! ASoC: hdmi-codec: Add ELD control
 
-Failed defconfigs:
-	arm-allmodconfig
+---
+ sound/soc/codecs/hdmi-codec.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Errors:
-
-	arm-allmodconfig
-ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-     10 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-     12 warnings    0 mismatches  : arm-allmodconfig
-      6 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings Summary: 14
-	  5 <stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	  5 <stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/rcar-du/rcar_du_drv.c:300:24: warning: unused variable 'connector' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1325:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/rcar-du/rcar_du_drv.c:300:24: warning: unused variable 'connector' [-Wunused-variable]
-	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/rcar-du/rcar_du_drv.c:300:24: warning: unused variable 'connector' [-Wunused-variable]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 12 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko] undefined!
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/rcar-du/rcar_du_drv.c:300:24: warning: unused variable 'connector' [-Wunused-variable]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1325:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
-	../drivers/regulator/core.c:2512:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	<stdin>:1310:2: warning: #warning syscall preadv2 not implemented [-Wcpp]
-	<stdin>:1313:2: warning: #warning syscall pwritev2 not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+diff --git a/sound/soc/codecs/hdmi-codec.c b/sound/soc/codecs/hdmi-codec.c
+index c78333b..8e36e88 100644
+--- a/sound/soc/codecs/hdmi-codec.c
++++ b/sound/soc/codecs/hdmi-codec.c
+@@ -65,9 +65,7 @@ static int hdmi_eld_ctl_get(struct snd_kcontrol *kcontrol,
+ 	struct snd_soc_component *component = snd_kcontrol_chip(kcontrol);
+ 	struct hdmi_codec_priv *hcp = snd_soc_component_get_drvdata(component);
+ 
+-	mutex_lock(&hcp->eld_lock);
+ 	memcpy(ucontrol->value.bytes.data, hcp->eld, sizeof(hcp->eld));
+-	mutex_unlock(&hcp->eld_lock);
+ 
+ 	return 0;
+ }
+-- 
+2.8.0.rc3
