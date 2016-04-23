@@ -1,76 +1,84 @@
-From: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 22 Apr 2016 16:20:43 -0700
-Message-ID: <1461367243.3018.42.camel@intel.com>
-References: <20160413175028.5d3a4cf2@canb.auug.org.au>
-	 <20160413.111513.295841881765244758.davem@davemloft.net>
-	 <20160422092017.GY3217@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-lHjQNpBqXycFjvz0Tr57"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160422092017.GY3217@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark.d.rustad@intel.com, andrewx.bowers@intel.com, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
-List-Id: linux-next.vger.kernel.org
+From: Yang Shi <yang.shi@linaro.org>
+Subject: [linux-next PATCH] sched: cgroup: enable interrupt before calling threadgroup_change_begin
+Date: Fri, 22 Apr 2016 20:56:28 -0700
+Message-ID: <1461383788-15102-1-git-send-email-yang.shi@linaro.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f172.google.com ([209.85.192.172]:32990 "EHLO
+	mail-pf0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757AbcDWEWX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Apr 2016 00:22:23 -0400
+Received: by mail-pf0-f172.google.com with SMTP id 184so47588672pff.0
+        for <linux-next@vger.kernel.org>; Fri, 22 Apr 2016 21:22:23 -0700 (PDT)
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: tj@kernel.org, mingo@redhat.com, peterz@infradead.org, lizefan@huawei.com
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linaro-kernel@lists.linaro.org, yang.shi@linaro.org
 
+When kernel oops happens in some kernel thread, i.e. kcompactd in the test,
+the below bug might be triggered by the oops handler:
 
---=-lHjQNpBqXycFjvz0Tr57
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+BUG: sleeping function called from invalid context at include/linux/sched.h:2858
+in_atomic(): 0, irqs_disabled(): 1, pid: 110, name: kcompactd0
+CPU: 6 PID: 110 Comm: kcompactd0 Tainted: G      D         4.6.0-rc4-next-20160420 #4
+Hardware name: Intel Corporation S5520HC/S5520HC, BIOS S5500.86B.01.10.0025.030220091519 03/02/2009
+ 0000000000000000 ffff88036173f9e8 ffffffff8152666f 0000000000000000
+ ffff880361732680 ffff88036173fa08 ffffffff81088b13 ffffffff81ee3372
+ 0000000000000b2a ffff88036173fa30 ffffffff81088bd9 ffff880361732680
+Call Trace:
+ [<ffffffff8152666f>] dump_stack+0x67/0x98
+ [<ffffffff81088b13>] ___might_sleep+0x123/0x1a0
+ [<ffffffff81088bd9>] __might_sleep+0x49/0x80
+ [<ffffffff810706b4>] exit_signals+0x24/0x130
+ [<ffffffff81063cc4>] do_exit+0xc4/0xca0
+ [<ffffffff810201d9>] oops_end+0x89/0xc0
+ [<ffffffff810518c4>] no_context+0x144/0x390
+ [<ffffffff81542f17>] ? debug_smp_processor_id+0x17/0x20
+ [<ffffffff81051c1d>] __bad_area_nosemaphore+0x10d/0x230
+ [<ffffffff811769e9>] ? free_hot_cold_page_list+0x49/0xd0
+ [<ffffffff81051d54>] bad_area_nosemaphore+0x14/0x20
+ [<ffffffff81051f97>] __do_page_fault+0x237/0x570
+ [<ffffffff810522f9>] do_page_fault+0x29/0x80
+ [<ffffffff81be7b22>] page_fault+0x22/0x30
+ [<ffffffff8119d2f8>] ? release_freepages+0x18/0xa0
+ [<ffffffff8119f13d>] compact_zone+0x55d/0x9f0
+ [<ffffffff81196239>] ? fragmentation_index+0x19/0x70
+ [<ffffffff8119f92f>] kcompactd_do_work+0x10f/0x230
+ [<ffffffff8119fae0>] kcompactd+0x90/0x1e0
+ [<ffffffff810a3a40>] ? wait_woken+0xa0/0xa0
+ [<ffffffff8119fa50>] ? kcompactd_do_work+0x230/0x230
+ [<ffffffff810801ed>] kthread+0xdd/0x100
+ [<ffffffff81be5ee2>] ret_from_fork+0x22/0x40
+ [<ffffffff81080110>] ? kthread_create_on_node+0x180/0x180
 
-On Fri, 2016-04-22 at 10:20 +0100, Mark Brown wrote:
-> On Wed, Apr 13, 2016 at 11:15:13AM -0400, David Miller wrote:
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
->=20
-> > > After merging the net-next tree, today's linux-next build (arm
-> > > allmodconfig) failed like thisi (this has actually been failing
-> for a
-> > > few days, now):
->=20
-> > > ERROR: "__bad_udelay" [drivers/net/ethernet/intel/ixgbe/ixgbe.ko]
-> undefined!
->=20
-> > > Caused by commit
->=20
-> > >=C2=A0=C2=A0 49425dfc7451 ("ixgbe: Add support for x550em_a 10G MAC ty=
-pe")
->=20
-> > > arm only allows udelay()s up to 2 milliseconds.=C2=A0 This commit
-> > > adds a 5 ms udelay in ixgbe_acquire_swfw_sync_x550em_a() in
-> > > drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c.
->=20
-> > Jeff, please have your folks look into this.=C2=A0 Probably just a
-> simple
-> > conversion to mdelay().
->=20
-> This is still present, it's been breaking ARM allmodconfig builds for
-> about two weeks now.
+Since the code path may be called in interrupt disabled context, so
+the might_sleep in threadgroup_change_begin() may be triggered.
 
-Interesting that no one spoke up until just a week ago. =C2=A0I have a fix
-and I ready to push it to David Miller.
---=-lHjQNpBqXycFjvz0Tr57
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+Before calling exit_signals(), it already checked if it is in hard IRQ handler,
+so it sounds safe to reenable interrupt at that point.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Yang Shi <yang.shi@linaro.org>
+---
+ kernel/exit.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-iQIcBAABCgAGBQJXGrHMAAoJEOVv75VaS+3OLnwP/2bIB4v7GVm6EO1DRvAcFBIy
-uNRAmRB+7vDX2Wl3AoaimDU7QJuVESFusiDn5hv4667q9YKbW4M17f5QiICqyZqO
-Xxh+enmerP/sbRfiJxtrGFOGJmiWdPXqAV01ezaAMDb2YgQDJ7m2CxCWhzPc4W28
-Zy9eEYGi2V/UlLDXgCYefHRw9lwM+PMa76hnF5Ume/PgKncfxl9a1Xfzx6e8glI0
-5cI6LHPPT49DW0QRP8zy29AHJ/f0+PsA8sOjaDg8L+TtSNcbHl+BVEGcpN9jyYJN
-zKpWwFOJrzXnUcp6rovzD3/xuughTbK55so3D1Hv68/s4Nba2za+PVQiTOkZnBex
-TAuxXBNoYZcnxGi7Eqsxt3PL7HUR3iRqrfV7udoj/+IkJZ8RUssh2e3VX5n53nyq
-pRC2m4P8P8v8k96ZwpK3TzQLYeNbxrt/m3kIXRw7FYzY11YS6Bv2U+xD5PPyXM27
-qz/Uufy70EV6+MPa0nDX3cy955kOjN2hhpOzl6TaRcUgH35xNf3gBmSXvucwY0On
-wek3WTCgNKOclpVGpKUdjHF6dBNj01WkqA7+fmy6XgL5yTDqiSRP2x4ZC3dkUr6y
-tKw6FdL6oclbix5E8WAj12W2plwOCGkueS8lUu7X2G5LclUJJvQqli9BCGJ93ULo
-X7hX8MITWWZNskl6K9oW
-=x5pR
------END PGP SIGNATURE-----
-
---=-lHjQNpBqXycFjvz0Tr57--
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 9e6e135..c6f8e37 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -679,6 +679,14 @@ void do_exit(long code)
+ 	validate_creds_for_do_exit(tsk);
+ 
+ 	/*
++	 * It is possible to get here with interrupt disabled when fault
++	 * happens in kernel thread. Enable interrupt to make threadgroup
++	 * happy.
++	 */
++	if (irqs_disabled())
++		local_irq_enable();
++
++	/*
+ 	 * We're taking recursive faults here in do_exit. Safest is to just
+ 	 * leave this task alone and wait for reboot.
+ 	 */
+-- 
+2.0.2
