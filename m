@@ -1,30 +1,46 @@
-From: "Robert William" <johnsonowen@mynet.com>
-Subject: Attention
-Date: Sat, 23 Apr 2016 17:01:18 +0200 (CEST)
-Message-ID: <ea-mime-571b8e3e-ab9e-bb5b260@webmail.numericable.fr>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: qemu:beagle no longer booting with omap2plus_defconfig in -next
+Date: Sat, 23 Apr 2016 10:53:06 -0700
+Message-ID: <571BB682.1010806@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp1.tech.numericable.fr ([82.216.111.37]:51108 "EHLO
-	smtp1.tech.numericable.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751959AbcDWRtZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Apr 2016 13:49:25 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:37693 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751959AbcDWRxJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 23 Apr 2016 13:53:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dan.aragona@gmail.com
+To: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>, Brian Norris <computersforpeace@gmail.com>Boris Brezillon <boris.brezillon@free-electrons.com>, Tony Lindgren <tony@atomide.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
+Hi,
 
+since next-20160421, I get the following error and hang when trying to boot
+an omap2plus_defconfig image with qemu, machine 'beagle' and omap3-beagle.dtb.
+multi_v7_defconfig still works, as does machine 'beaglexm' with omap3-beagle-xm.dtb
+and omap2plus_defconfig. This is with Linaro's version of qemu.
 
+nand: timeout while waiting for chip to become ready
 
-We finally sent you the first payment today, due to the restriction, we are limited to send $5,000, therefore, you will be receiving the same on daily basis until we finish sending all $2.5 Million. Below is the information:
+The message repeats until the test times out.
 
+Bisect points to "Merge remote-tracking branch 'nand/nand/next'" as the offending
+commit. However, the nand/nand/next branch itself is fine, as is the merge just
+prior to the nand/nand/next merge ("Merge remote-tracking branch 'l2-mtd/master'").
 
-Sender's name: Nathan Nussbaum
-MTCN # 1594687129
-Text question: in god
-Answer: we trust
+After some digging, I found that reverting commit "mtd: nand: omap2: Implement
+NAND ready using gpiolib" fixes the problem. What I don't know, though, is why
+the problem is only seen with omap2plus_defconfig, but not with multi_v7_defconfig,
+and why it is only seen with beagle/omap3-beagle.dtb but not with
+beaglexm/omap3-beagle-xm.dtb.
 
+The 'rb-gpios' property is only defined in omap3-beagle.dts, but not in
+omap3-beagle-xm.dts, which may be part of the explanation. That still doesn't
+explain, though, why multi_v7_defconfig still works, but not omap2plus_defconfig.
 
+Any ideas, anyone ?
 
-but you can not pick it up because you need to re-activate your payment file therefore, contact office director Mr. Robert William on +22999081119, his email: normalservicer@gmail.com 
+Thanks,
+Guenter
