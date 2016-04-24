@@ -1,30 +1,64 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: qemu:beagle no longer booting with omap2plus_defconfig in -next
-Date: Sun, 24 Apr 2016 21:28:31 +0200
-Message-ID: <20160424212831.3c44d72e@bbrezillon>
-References: <571BB682.1010806@roeck-us.net>
-	<20160423214617.4d0905d2@bbrezillon>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Sun, 24 Apr 2016 23:59:38 +0100
+Message-ID: <20160424225938.GJ3217@sirena.org.uk>
+References: <20160413175028.5d3a4cf2@canb.auug.org.au>
+ <20160413.111513.295841881765244758.davem@davemloft.net>
+ <20160422092017.GY3217@sirena.org.uk>
+ <1461367243.3018.42.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160423214617.4d0905d2@bbrezillon>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Roger Quadros <rogerq@ti.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Brian Norris <computersforpeace@gmail.com>, Tony Lindgren <tony@atomide.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="pqRbAPYjtlk7lrMB"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39990 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752106AbcDXW7w (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Apr 2016 18:59:52 -0400
+Content-Disposition: inline
+In-Reply-To: <1461367243.3018.42.camel@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark.d.rustad@intel.com, andrewx.bowers@intel.com, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
 
-On Sat, 23 Apr 2016 21:46:17 +0200
-Boris Brezillon <boris.brezillon@free-electrons.com> wrote:
-> 
-> And the other question I have for Roger is, do you see a reason why the
-> rb-gpio mode would not work?
-> 
 
-Forget that one, this bug appeared to be caused by partial emulation of
-the GPMC block in qemu.
+--pqRbAPYjtlk7lrMB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+On Fri, Apr 22, 2016 at 04:20:43PM -0700, Jeff Kirsher wrote:
+> On Fri, 2016-04-22 at 10:20 +0100, Mark Brown wrote:
+
+> > > Jeff, please have your folks look into this.=A0 Probably just a
+> > simple
+> > > conversion to mdelay().
+
+> > This is still present, it's been breaking ARM allmodconfig builds for
+> > about two weeks now.
+
+> Interesting that no one spoke up until just a week ago. =A0I have a fix
+> and I ready to push it to David Miller.
+
+Like Stephen said it had been there for a couple of days already at the
+time it was reported; I happened to be busy at the time it came up so
+wasn't looking at the build reports myself.  If you've got a fix please
+get it submitted ASAP, having common test configurations broken for any
+length of time does get disruptive.
+
+--pqRbAPYjtlk7lrMB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXHU/ZAAoJECTWi3JdVIfQfewH/3uIlJ0iJUahHVBtiLkBRJZy
+9bbXqvLOdaO6jyy7bRfTLm8pAWbJv8qILGZoUNHhmXfjHsEFgQqJM4Y/ckPul5OX
+IbL2vcW8Ja8r6GtDvTMUE8wK43UUSKdgxDv8JLTYbJHl822WJ3uvmEQW8TCCLOvK
+XYAccWam7eLYuSRASjh4vh3CSLOeq30ltwpXewW8eKJmpBR0hVGnc2MW8r9twMsd
+i9GYJCbDW9X9J3JTE+ZeoVypKEoF2DgE5wfKdbu+4aHpfK5jjax8ToDblmhul5iw
+L4yAiZBSdL+tc8sUQ0/jSJrAdGNl0g4g7R8fSS2XII7OJ9uDh7ZypF/vVycIM4Y=
+=QF0H
+-----END PGP SIGNATURE-----
+
+--pqRbAPYjtlk7lrMB--
