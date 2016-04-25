@@ -1,64 +1,83 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Sun, 24 Apr 2016 23:59:38 +0100
-Message-ID: <20160424225938.GJ3217@sirena.org.uk>
-References: <20160413175028.5d3a4cf2@canb.auug.org.au>
- <20160413.111513.295841881765244758.davem@davemloft.net>
- <20160422092017.GY3217@sirena.org.uk>
- <1461367243.3018.42.camel@intel.com>
+From: "Shi, Yang" <yang.shi@linaro.org>
+Subject: Re: [linux-next PATCH] sched: cgroup: enable interrupt before calling
+ threadgroup_change_begin
+Date: Mon, 25 Apr 2016 10:35:45 -0700
+Message-ID: <571E5571.7050106@linaro.org>
+References: <1461383788-15102-1-git-send-email-yang.shi@linaro.org>
+ <20160423091447.GA3430@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pqRbAPYjtlk7lrMB"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39990 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752106AbcDXW7w (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Apr 2016 18:59:52 -0400
-Content-Disposition: inline
-In-Reply-To: <1461367243.3018.42.camel@intel.com>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:36555 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932872AbcDYRfq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Apr 2016 13:35:46 -0400
+Received: by mail-pa0-f45.google.com with SMTP id bt5so13535043pac.3
+        for <linux-next@vger.kernel.org>; Mon, 25 Apr 2016 10:35:46 -0700 (PDT)
+In-Reply-To: <20160423091447.GA3430@twins.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Cc: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mark.d.rustad@intel.com, andrewx.bowers@intel.com, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tj@kernel.org, mingo@redhat.com, lizefan@huawei.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linaro-kernel@lists.linaro.org
 
+On 4/23/2016 2:14 AM, Peter Zijlstra wrote:
+> On Fri, Apr 22, 2016 at 08:56:28PM -0700, Yang Shi wrote:
+>> When kernel oops happens in some kernel thread, i.e. kcompactd in the test,
+>> the below bug might be triggered by the oops handler:
+>
+> What are you trying to fix? You already oopsed the thing is wrecked.
 
---pqRbAPYjtlk7lrMB
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Actually, I ran into the below kernel BUG:
 
-On Fri, Apr 22, 2016 at 04:20:43PM -0700, Jeff Kirsher wrote:
-> On Fri, 2016-04-22 at 10:20 +0100, Mark Brown wrote:
+BUG: unable to handle kernel NULL pointer dereference at           (null)
+IP: [<ffffffff8119d2f8>] release_freepages+0x18/0xa0
+PGD 0
+Oops: 0000 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 6 PID: 110 Comm: kcompactd0 Not tainted 4.6.0-rc4-next-20160420 #4
+Hardware name: Intel Corporation S5520HC/S5520HC, BIOS 
+S5500.86B.01.10.0025.030220091519 03/02/2009
+task: ffff880361732680 ti: ffff88036173c000 task.ti: ffff88036173c000
+RIP: 0010:[<ffffffff8119d2f8>]  [<ffffffff8119d2f8>] 
+release_freepages+0x18/0xa0
+RSP: 0018:ffff88036173fcf8  EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff88036ffde7c0 RCX: 0000000000000009
+RDX: 0000000000001bf1 RSI: 000000000000000f RDI: ffff88036173fdd0
+RBP: ffff88036173fd20 R08: 0000000000000007 R09: 0000160000000000
+R10: ffff88036ffde7c0 R11: 0000000000000000 R12: 0000000000000000
+R13: ffff88036173fdd0 R14: ffff88036173fdc0 R15: ffff88036173fdb0
+FS:  0000000000000000(0000) GS:ffff880363cc0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000002206000 CR4: 00000000000006e0
+Stack:
+  ffff88036ffde7c0 0000000000000000 0000000000001a00 ffff88036173fdc0
+  ffff88036173fdb0 ffff88036173fda0 ffffffff8119f13d ffffffff81196239
+  0000000000000000 ffff880361732680 0000000000000001 0000000000100000
+Call Trace:
+  [<ffffffff8119f13d>] compact_zone+0x55d/0x9f0
+  [<ffffffff81196239>] ? fragmentation_index+0x19/0x70
+  [<ffffffff8119f92f>] kcompactd_do_work+0x10f/0x230
+  [<ffffffff8119fae0>] kcompactd+0x90/0x1e0
+  [<ffffffff810a3a40>] ? wait_woken+0xa0/0xa0
+  [<ffffffff8119fa50>] ? kcompactd_do_work+0x230/0x230
+  [<ffffffff810801ed>] kthread+0xdd/0x100
+  [<ffffffff81be5ee2>] ret_from_fork+0x22/0x40
+  [<ffffffff81080110>] ? kthread_create_on_node+0x180/0x180
+Code: c1 fa 06 31 f6 e8 a9 9b fd ff eb 98 0f 1f 80 00 00 00 00 66 66 66 
+66 90 55 48 89 e5 41 57 41 56 41 55 49 89 fd 41 54 53 48 8b 07 <48> 8b 
+10 48 8d 78 e0 49 39 c5 4c 8d 62 e0 74 70 49 be 00 00 00
+RIP  [<ffffffff8119d2f8>] release_freepages+0x18/0xa0
+  RSP <ffff88036173fcf8>
+CR2: 0000000000000000
+---[ end trace 2e96d09e0ba6342f ]---
 
-> > > Jeff, please have your folks look into this.=A0 Probably just a
-> > simple
-> > > conversion to mdelay().
+Then the "schedule in atomic context" bug is triggered which cause the 
+system hang. But, the system is still alive without the "schedule in 
+atomic context" bug. The previous null pointer deference issue doesn't 
+bring the system down other than killing the compactd kthread.
 
-> > This is still present, it's been breaking ARM allmodconfig builds for
-> > about two weeks now.
+Thanks,
+Yang
 
-> Interesting that no one spoke up until just a week ago. =A0I have a fix
-> and I ready to push it to David Miller.
-
-Like Stephen said it had been there for a couple of days already at the
-time it was reported; I happened to be busy at the time it came up so
-wasn't looking at the build reports myself.  If you've got a fix please
-get it submitted ASAP, having common test configurations broken for any
-length of time does get disruptive.
-
---pqRbAPYjtlk7lrMB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXHU/ZAAoJECTWi3JdVIfQfewH/3uIlJ0iJUahHVBtiLkBRJZy
-9bbXqvLOdaO6jyy7bRfTLm8pAWbJv8qILGZoUNHhmXfjHsEFgQqJM4Y/ckPul5OX
-IbL2vcW8Ja8r6GtDvTMUE8wK43UUSKdgxDv8JLTYbJHl822WJ3uvmEQW8TCCLOvK
-XYAccWam7eLYuSRASjh4vh3CSLOeq30ltwpXewW8eKJmpBR0hVGnc2MW8r9twMsd
-i9GYJCbDW9X9J3JTE+ZeoVypKEoF2DgE5wfKdbu+4aHpfK5jjax8ToDblmhul5iw
-L4yAiZBSdL+tc8sUQ0/jSJrAdGNl0g4g7R8fSS2XII7OJ9uDh7ZypF/vVycIM4Y=
-=QF0H
------END PGP SIGNATURE-----
-
---pqRbAPYjtlk7lrMB--
+>
