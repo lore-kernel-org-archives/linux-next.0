@@ -1,37 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Tue, 26 Apr 2016 13:38:12 +1000
-Message-ID: <20160426133812.366dc031@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the arm64 tree
+Date: Tue, 26 Apr 2016 15:00:41 +1000
+Message-ID: <20160426150041.4d86d498@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36667 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751060AbcDZDiO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 25 Apr 2016 23:38:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Michal Marek <mmarek@suse.cz>, Randy Dunlap <rdunlap@infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Daney <david.daney@cavium.com>, Will Deacon <will.deacon@arm.com>, Shannon Zhao <shannon.zhao@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Nicolas,
+Hi all,
 
-After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the xen-tip tree got a conflict in:
 
-ERROR: ".blk_queue_write_cache" [drivers/block/virtio_blk.ko] undefined!
-ERROR: ".blk_queue_write_cache" [drivers/block/ps3disk.ko] undefined!
-ERROR: ".blk_queue_write_cache" [drivers/block/nbd.ko] undefined!
+  arch/arm64/kernel/setup.c
 
-Caused by commit
+between commit:
 
-  089095b8eef9 ("kbuild: better abstract vmlinux sequential prerequisites")
+  3194ac6e66cc ("arm64: Move unflatten_device_tree() call earlier.")
 
-from the kbuild-pite tree.
+from the arm64 tree and commit:
 
-I have reverted that commit for today.
+  3915fea959b6 ("ARM: XEN: Move xen_early_init() before efi_init()")
+
+from the xen-tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm64/kernel/setup.c
+index 65f515949baa,7cf992fe6684..000000000000
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@@ -277,13 -336,13 +278,11 @@@ void __init setup_arch(char **cmdline_p
+  
+  	early_ioremap_reset();
+  
+ -	if (acpi_disabled) {
+ -		unflatten_device_tree();
+ +	if (acpi_disabled)
+  		psci_dt_init();
+ -	} else {
+ +	else
+  		psci_acpi_init();
+ -	}
+  
+- 	xen_early_init();
+- 
+  	cpu_read_bootcpu_ops();
+  	smp_init_cpus();
+  	smp_build_mpidr_hash();
