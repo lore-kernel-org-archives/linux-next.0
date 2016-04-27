@@ -1,59 +1,63 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Wed, 27 Apr 2016 09:46:37 -0400 (EDT)
-Message-ID: <alpine.LFD.2.20.1604270946050.5091@knanqh.ubzr>
-References: <20160426133812.366dc031@canb.auug.org.au> <571F6D59.8040402@suse.cz> <v3THaCMkCzylcv3TJavAje@videotron.ca> <alpine.LFD.2.20.1604261037410.5091@knanqh.ubzr> <20160427011825.06c64502@canb.auug.org.au> <alpine.LFD.2.20.1604261603310.5091@knanqh.ubzr>
- <57208010.7030505@suse.cz>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: next-20160427 build: 1 failures 15 warnings (next-20160427)
+Date: Wed, 27 Apr 2016 16:48:04 +0200
+Message-ID: <20160427144802.GA4176@ulmo.ba.sec>
+References: <E1avM7P-0002LM-3R@optimist>
+ <20160427122438.GK3217@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57208010.7030505@suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Randy Dunlap <rdunlap@infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160427122438.GK3217-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 27 Apr 2016, Michal Marek wrote:
+--Qxx1br4bt0+wmkIi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 2016-04-26 22:48, Nicolas Pitre wrote:
-> > On Wed, 27 Apr 2016, Stephen Rothwell wrote:
-> > 
-> >> Hi Nicolas,
-> >>
-> >> On Tue, 26 Apr 2016 10:40:57 -0400 (EDT) Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> >>>
-> >>> If you can reproduce this build failure, could you try a make mrproper 
-> >>> and attempt it again?  I, too, would like to find an explanation and a 
-> >>> way to reproduce.
-> >>
-> >> I reset my build tree to commit 9d67df654092 ("Merge remote-tracking
-> >> branch 'block/for-next'") and the build failed with:
-> >>
-> >> ERROR: ".local_clock" [drivers/vhost/vhost_net.ko] undefined!
-> >> ERROR: ".local_clock" [drivers/misc/cxl/cxl.ko] undefined!
-> >>
-> >> :-(
-> >>
-> >> So I did a "make mrproper" and did the build again.
-> >>
-> >> That built correctly.
-> >>
-> > [...]
-> > 
-> > OK!  After digging and diffing through 750 megabytes of make debug logs 
-> > I finally found the explanation.  The if_changed directive is useless 
-> > against phony targets.
-> > 
-> > @Stephen: could you replace the revert with the patch below in your tree?
-> > 
-> > @Michal: could you fold the patch below into commit 2441e78b19 in your tree?
-> 
-> I prefer not to overwrite the topic branches unless necessary and I
-> wanted to credit Stephen, so I committed your patch with a fabricated
-> commit message and your signoff (since you wanted to fold it into a
-> patch that you had already signed off).
+On Wed, Apr 27, 2016 at 01:24:38PM +0100, Mark Brown wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Wed, Apr 27, 2016 at 10:50:51AM +0100, Build bot for Mark Brown wrote:
+>=20
+> Today's next fails to build an arm64 allmodconfig due to:
+>=20
+> > 	arm64-allmodconfig
+> > ../drivers/phy/tegra/xusb-tegra210.c:1721:3: error: label 'out' used bu=
+t not defined
+>=20
+> caused by 44f5d38eaa21d (phy: tegra: Add Tegra210 support).
 
-Fine with me.
+Yes, I just realized this now as well. I pushed a fix to Tegra's
+for-next, so this should be fixed in tomorrow's linux-next.
 
+Sorry for this.
+Thierry
 
-Nicolas
+--Qxx1br4bt0+wmkIi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXINEeAAoJEN0jrNd/PrOhtSIQAMMF6Co9755PX2n2ERXH/YBm
+dW6f5WAlUSkjO6OKfgz+jn9HuI6l/2TJuIX9faNkg8T3Ub/gGd4tGH2+gTzWMhiE
+2jyfEE4JchfGcrMBPhMH1ccpg12OFNAoS3/i0zMem4lCy57cdMDLxRlo3b001Dzv
+M2RhGKNI0buqpyokUnLkLn2R1dmuynQwC1BxVhHER+NuxQqKFnMO93mas/E+2lpV
+RbW0oez4bk6S+pjE9wHpN5RobBv534M9l6hKLLH6v0Ae976I9MOgcC8cgc15QEjd
+kM/xCUvkn5w3drlDr1FSCUSp3Cd+KFuS7YrAg7ZzifUb/er+osaF9XSauidZwm9O
+H9DB1/FbaWHODH9sXMERYEKYClNiT/ncnBvl+9kwo+zOWeqlCoeVo0bTA3XrAz8U
+dqC8kcd9Ew0bbKj6S56L5r5HPFH7TEK8Cl5QxuYhmebdQM7W7AiVC7Mkda1raAK0
+iOquZZkR8p1oW8hFTiKPnrWeIAHxCW/0824H8vyS+peGjyYrFFvVRPxgpBo5jXd/
+SMEFqQ1lpX8Ug7wKdVNJZKaznui9AW0gdp5lpoIw9Iw/priSastylS9I4pw3ZhxN
+nOLdCTodn2zB6xy1Y2ILOz8fu7vX71mDyC9DaShjoYtP6kZsaVpLvU/aMrjwf2vN
+ekNxp5HJPSNUQxRopVYx
+=YzX7
+-----END PGP SIGNATURE-----
+
+--Qxx1br4bt0+wmkIi--
