@@ -1,50 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160427 build: 1 failures 15 warnings (next-20160427)
-Date: Wed, 27 Apr 2016 13:24:38 +0100
-Message-ID: <20160427122438.GK3217@sirena.org.uk>
-References: <E1avM7P-0002LM-3R@optimist>
+From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+Subject: Re: linux-next: manual merge of the staging tree with the staging.current tree
+Date: Wed, 27 Apr 2016 13:37:35 +0100
+Message-ID: <E2CBCFEF-B21C-4B81-8DA8-25F3A1824440@jic23.retrosnub.co.uk>
+References: <20160427145400.7bf1e6bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0ZgrbDZlPgfR0nDk"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48674 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752762AbcD0MYv (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Apr 2016 08:24:51 -0400
-Content-Disposition: inline
-In-Reply-To: <E1avM7P-0002LM-3R@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Kishon Vijay Abraham I <kishon@ti.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160427145400.7bf1e6bb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregor Boirie <gregor.boirie@parrot.com>, Jonathan Cameron <jic23@kernel.org>, Richard Leitner <dev@g0hl1n.net>
+List-Id: linux-next.vger.kernel.org
 
 
---0ZgrbDZlPgfR0nDk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Apr 27, 2016 at 10:50:51AM +0100, Build bot for Mark Brown wrote:
+On 27 April 2016 05:54:00 BST, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>Hi Greg,
+>
+>Today's linux-next merge of the staging tree got a conflict in:
+>
+>  drivers/iio/magnetometer/ak8975.c
+>
+>between commit:
+>
+>  05be8d4101d9 ("iio: ak8975: fix maybe-uninitialized warning")
+>
+>from the staging.current tree and commit:
+>
+>  97eacb9166f4 ("iio:ak8975: add mounting matrix support")
+>
+>from the staging tree.
+>
+>I fixed it up (see below) and can carry the fix as necessary. This
+>is now fixed as far as linux-next is concerned, but any non trivial
+>conflicts should be mentioned to your upstream maintainer when your
+>tree
+>is submitted for merging.  You may also want to consider cooperating
+>with the maintainer of the conflicting tree to minimise any
+>particularly
+>complex conflicts.
 
-Today's next fails to build an arm64 allmodconfig due to:
+Hi Stephen,
 
-> 	arm64-allmodconfig
-> ../drivers/phy/tegra/xusb-tegra210.c:1721:3: error: label 'out' used but not defined
+Sorry, I clearly failed to check my own trees didn't clash before sending the pull to Greg.
 
-caused by 44f5d38eaa21d (phy: tegra: Add Tegra210 support).
+Fix looks good, thanks
 
---0ZgrbDZlPgfR0nDk
-Content-Type: application/pgp-signature; name="signature.asc"
+Jonathan
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXIK+EAAoJECTWi3JdVIfQvyUH/jwLinmAn6TXhQx+GLL8Q/98
-HLvtWqboXwtKCMSq7yhMTWFp+gEuaB+SQe/I7xIC6hAjfs07dj4xf+EbMkOR4VjP
-UzJi9dNLiXiKyKcdlRIUSfSY+NyGJI/TvUckxlkrVWcsmYlmOgfetlIJYhs8mUBr
-/XE8IOvcUjoDGYrDX3aLgn6aLBiXOdAZa7jNaHbpVfLAwAFUpEUTxqDDSithuYC2
-RZ0Kw8epZP5Cu/kqhWGKmiIALu2zbm7IJBcTUZ5p0ERbNYSmqOOoiQCobRkXPjRH
-LoDlWnTPjDMNFy2W1u6vrOFp2XfkmwGITjRIaixTu0R8gD2Xzz7R52GK8tIjwac=
-=mZbC
------END PGP SIGNATURE-----
-
---0ZgrbDZlPgfR0nDk--
+-- 
+Sent from my Android device with K-9 Mail. Please excuse my brevity.
