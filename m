@@ -1,98 +1,122 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tpmdd tree
-Date: Thu, 28 Apr 2016 12:02:24 +0300
-Message-ID: <1461834144.3482.4.camel@linux.intel.com>
-References: <20160428153232.0d6eb076@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160428153232.0d6eb076@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Ricard <christophe.ricard@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160428 build: 0 failures 15 warnings (next-20160428)
+Date: Thu, 28 Apr 2016 10:30:58 +0100
+Message-ID: <E1aviHi-0003Sw-Ip@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52734 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753544AbcD1JbJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Apr 2016 05:31:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, 2016-04-28 at 15:32 +1000, Stephen Rothwell wrote:
-> Hi Jarkko,
->=20
-> After merging the tpmdd tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> In file included from /home/sfr/next/next/include/linux/rcupdate.h:38=
-:0,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/idr.h:18,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/kernfs.h:14,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/sysfs.h:15,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/kobject.h:21,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/device.h:17,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
-/dma-mapping.h:6,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/drivers/char/=
-tpm/tpm_ibmvtpm.c:18:
-> /home/sfr/next/next/drivers/char/tpm/tpm_ibmvtpm.c: In function 'tpm_=
-ibmvtpm_probe':
-> /home/sfr/next/next/include/linux/spinlock.h:295:1: error: expected '=
-;' before 'do'
-> =C2=A0do {=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
-> =C2=A0^
-> /home/sfr/next/next/drivers/char/tpm/tpm_ibmvtpm.c:632:2: note: in ex=
-pansion of macro
-> 'spin_lock_init'
-> =C2=A0 spin_lock_init(&ibmvtpm->rtce_lock);
-> =C2=A0 ^
->=20
-> Caused by commit
->=20
-> =C2=A0 28157164b056 ("tpm: Remove useless priv field in struct tpm_ve=
-ndor_specific")
->=20
-> A ';' was missed.
->=20
-> I added the following patch for today.
+Tree/Branch: next-20160428
+Git describe: next-20160428
+Commit: 86137b6241 Add linux-next specific files for 20160428
 
-Sorry about this and thank you.
+Build Time: 88 min 36 sec
 
-/Jarkko
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 28 Apr 2016 15:27:17 +1000
-> Subject: [PATCH] tpm: fix for typo in tpm/tpm_ibmvtpm.c
->=20
-> Fixes: 28157164b056 ("tpm: Remove useless priv field in struct tpm_ve=
-ndor_specific")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
-> =C2=A0drivers/char/tpm/tpm_ibmvtpm.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ib=
-mvtpm.c
-> index 6b22826f0e11..946025a7413b 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -627,7 +627,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_=
-dev,
-> =C2=A0
-> =C2=A0	crq_q->index =3D 0;
-> =C2=A0
-> -	dev_set_drvdata(&chip->dev, ibmvtpm)
-> +	dev_set_drvdata(&chip->dev, ibmvtpm);
-> =C2=A0
-> =C2=A0	spin_lock_init(&ibmvtpm->rtce_lock);
-> =C2=A0
-> --=C2=A0
-> 2.7.0
->=20
+Errors: 0
+Warnings: 15
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      9 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+     12 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 15
+	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  2 ../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1304:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
+
+Warnings:
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
+	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1304:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
