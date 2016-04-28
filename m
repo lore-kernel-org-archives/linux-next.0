@@ -1,61 +1,98 @@
-From: Jani Nikula <jani.nikula@intel.com>
-Subject: Re: linux-next: build failure after merge of the drm
-	tree
-Date: Thu, 28 Apr 2016 11:11:00 +0300
-Message-ID: <87k2jii25n.fsf@intel.com>
-References: <20160428115745.55890c80@canb.auug.org.au>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the tpmdd tree
+Date: Thu, 28 Apr 2016 12:02:24 +0300
+Message-ID: <1461834144.3482.4.camel@linux.intel.com>
+References: <20160428153232.0d6eb076@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20160428115745.55890c80@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160428153232.0d6eb076@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Ricard <christophe.ricard@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1LCAyOCBBcHIgMjAxNiwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcu
-YXU+IHdyb3RlOgo+IEhpIERhdmUsCj4KPiBBZnRlciBtZXJnaW5nIHRoZSBkcm0gdHJlZSwgdG9k
-YXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQgYWxsbW9kY29uZmlnKQo+IGZhaWxlZCBsaWtl
-IHRoaXM6Cj4KPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kZGkuYzogSW4gZnVuY3Rpb24g
-J2ludGVsX3ByZXBhcmVfZGRpX2J1ZmZlcic6Cj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-ZGRpLmM6NDQ3OjE1OiBlcnJvcjogJ3N0cnVjdCBkcm1faTkxNV9wcml2YXRlJyBoYXMgbm8gbWVt
-YmVyIG5hbWVkICdlZHBfbG93X3Zzd2luZycKPiAgICBpZiAoZGV2X3ByaXYtPmVkcF9sb3dfdnN3
-aW5nKSB7Cj4gICAgICAgICAgICAgICAgXgo+Cj4gQ2F1c2VkIGJ5IGNvbW1pdAo+Cj4gICAwNjQx
-MWYwOGIzZjMgKCJkcm0vaTkxNTogbW92ZSBlZHAgbG93IHZzd2luZyBjb25maWcgdG8gdmJ0IGRh
-dGEiKQo+Cj4gaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKPgo+ICAgOTkyZTdhNDFmOWZjICgiZHJt
-L2k5MTU6IEZpeCBlRFAgbG93IHZzd2luZyBmb3IgQnJvYWR3ZWxsIikKPgo+IGZyb20gdGhlIGRy
-bS1pbnRlbC1maXhlcyB0cmVlLgo+Cj4gSSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4
-dXAgcGF0Y2ggKHdoaWNoIGlzIHN1Z2dlc3RlZCBieSB0aGUgInYzOgo+IENoYW5nZSBkZXZfcHJp
-di0+ZWRwX2xvd192c3dpbmcgdG8gdXNlIGRldl9wcml2LT52YnQuZWRwLmxvd192c3dpbmciCj4g
-Y29tbWVudCBpbiB0aGUgZHJtLWludGVsLWZpeGVzIHRyZWUgcGF0Y2gsIGJ1dCBjbGVhcmx5IGNv
-dWxkIG5vdCBiZQo+IGRvbmUgdGhlcmUpLgo+Cj4gRnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2Zy
-QGNhbmIuYXV1Zy5vcmcuYXU+Cj4gRGF0ZTogVGh1LCAyOCBBcHIgMjAxNiAxMTo1MzozNiArMTAw
-MAo+IFN1YmplY3Q6IFtQQVRDSF0gZHJtL2k5MTU6IGZpeCB1cCBmb3IgZWRwX2xvd192c3dpbmcg
-Y2hhbmdlCj4KPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVn
-Lm9yZy5hdT4KCkZXSVcsCgpSZXZpZXdlZC1ieTogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGlu
-dGVsLmNvbT4KCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2RkaS5jIHwgMiAr
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKPgo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kZGkuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9pOTE1L2ludGVsX2RkaS5jCj4gaW5kZXggNjA4MGI1NDgxOTg0Li5lMzA0ODU3YmE0MDUg
-MTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGRpLmMKPiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kZGkuYwo+IEBAIC00NDQsNyArNDQ0LDcgQEAgdm9p
-ZCBpbnRlbF9wcmVwYXJlX2RkaV9idWZmZXIoc3RydWN0IGludGVsX2VuY29kZXIgKmVuY29kZXIp
-Cj4gIAkJZGRpX3RyYW5zbGF0aW9uc19mZGkgPSBiZHdfZGRpX3RyYW5zbGF0aW9uc19mZGk7Cj4g
-IAkJZGRpX3RyYW5zbGF0aW9uc19kcCA9IGJkd19kZGlfdHJhbnNsYXRpb25zX2RwOwo+ICAKPiAt
-CQlpZiAoZGV2X3ByaXYtPmVkcF9sb3dfdnN3aW5nKSB7Cj4gKwkJaWYgKGRldl9wcml2LT52YnQu
-ZWRwLmxvd192c3dpbmcpIHsKPiAgCQkJZGRpX3RyYW5zbGF0aW9uc19lZHAgPSBiZHdfZGRpX3Ry
-YW5zbGF0aW9uc19lZHA7Cj4gIAkJCW5fZWRwX2VudHJpZXMgPSBBUlJBWV9TSVpFKGJkd19kZGlf
-dHJhbnNsYXRpb25zX2VkcCk7Cj4gIAkJfSBlbHNlIHsKPiAtLSAKPiAyLjcuMAoKLS0gCkphbmkg
-TmlrdWxhLCBJbnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0
-CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+On Thu, 2016-04-28 at 15:32 +1000, Stephen Rothwell wrote:
+> Hi Jarkko,
+>=20
+> After merging the tpmdd tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>=20
+> In file included from /home/sfr/next/next/include/linux/rcupdate.h:38=
+:0,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/idr.h:18,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/kernfs.h:14,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/sysfs.h:15,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/kobject.h:21,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/device.h:17,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/include/linux=
+/dma-mapping.h:6,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0from /home/sfr/next/next/drivers/char/=
+tpm/tpm_ibmvtpm.c:18:
+> /home/sfr/next/next/drivers/char/tpm/tpm_ibmvtpm.c: In function 'tpm_=
+ibmvtpm_probe':
+> /home/sfr/next/next/include/linux/spinlock.h:295:1: error: expected '=
+;' before 'do'
+> =C2=A0do {=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0\
+> =C2=A0^
+> /home/sfr/next/next/drivers/char/tpm/tpm_ibmvtpm.c:632:2: note: in ex=
+pansion of macro
+> 'spin_lock_init'
+> =C2=A0 spin_lock_init(&ibmvtpm->rtce_lock);
+> =C2=A0 ^
+>=20
+> Caused by commit
+>=20
+> =C2=A0 28157164b056 ("tpm: Remove useless priv field in struct tpm_ve=
+ndor_specific")
+>=20
+> A ';' was missed.
+>=20
+> I added the following patch for today.
+
+Sorry about this and thank you.
+
+/Jarkko
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 28 Apr 2016 15:27:17 +1000
+> Subject: [PATCH] tpm: fix for typo in tpm/tpm_ibmvtpm.c
+>=20
+> Fixes: 28157164b056 ("tpm: Remove useless priv field in struct tpm_ve=
+ndor_specific")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+> =C2=A0drivers/char/tpm/tpm_ibmvtpm.c | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ib=
+mvtpm.c
+> index 6b22826f0e11..946025a7413b 100644
+> --- a/drivers/char/tpm/tpm_ibmvtpm.c
+> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
+> @@ -627,7 +627,7 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_=
+dev,
+> =C2=A0
+> =C2=A0	crq_q->index =3D 0;
+> =C2=A0
+> -	dev_set_drvdata(&chip->dev, ibmvtpm)
+> +	dev_set_drvdata(&chip->dev, ibmvtpm);
+> =C2=A0
+> =C2=A0	spin_lock_init(&ibmvtpm->rtce_lock);
+> =C2=A0
+> --=C2=A0
+> 2.7.0
+>=20
