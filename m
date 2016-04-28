@@ -1,122 +1,57 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160428 build: 0 failures 15 warnings (next-20160428)
-Date: Thu, 28 Apr 2016 10:30:58 +0100
-Message-ID: <E1aviHi-0003Sw-Ip@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Fri, 29 Apr 2016 09:59:58 +1000
+Message-ID: <20160429095958.007976da@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52734 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753544AbcD1JbJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Apr 2016 05:31:09 -0400
+Received: from ozlabs.org ([103.22.144.67]:60966 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752135AbcD2AAB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Apr 2016 20:00:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, AKASHI Takahiro <takahiro.akashi@linaro.org>, Will Deacon <will.deacon@arm.com>
 
-Tree/Branch: next-20160428
-Git describe: next-20160428
-Commit: 86137b6241 Add linux-next specific files for 20160428
+Hi Catalin,
 
-Build Time: 88 min 36 sec
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+  arch/arm/kvm/arm.c
 
-Errors: 0
-Warnings: 15
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      9 warnings    0 mismatches  : arm64-allmodconfig
-      5 warnings    0 mismatches  : arm-multi_v7_defconfig
-     12 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      3 warnings    0 mismatches  : arm64-defconfig
+  06a71a24bae5 ("arm64: KVM: unregister notifiers in hyp mode teardown path")
 
--------------------------------------------------------------------------------
+from Linus' tree and commit:
 
-Warnings Summary: 15
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	  3 ../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  2 ../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
-	  2 ../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1304:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+  67f691976662 ("arm64: kvm: allows kvm cpu hotplug")
 
+from the arm64 tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Cheers,
+Stephen Rothwell
 
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c:237:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/gpu/drm/msm/msm_drv.c:468:18: warning: unused variable 'kms' [-Wunused-variable]
-	../drivers/gpu/drm/msm/dsi/dsi_host.c:329:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/msm/dsi/phy/dsi_phy.c:181:3: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/net/ethernet/mellanox/mlx5/core/en_main.c:1304:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/pinctrl/sh-pfc/core.c:603:17: warning: unused variable 'pfc' [-Wunused-variable]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+diff --cc arch/arm/kvm/arm.c
+index dded1b763c16,1687e1450c3a..000000000000
+--- a/arch/arm/kvm/arm.c
++++ b/arch/arm/kvm/arm.c
+@@@ -1198,8 -1226,6 +1233,7 @@@ static void teardown_hyp_mode(void
+  	free_hyp_pgds();
+  	for_each_possible_cpu(cpu)
+  		free_page(per_cpu(kvm_arm_hyp_stack_page, cpu));
+- 	unregister_cpu_notifier(&hyp_init_cpu_nb);
+ +	hyp_cpu_pm_exit();
+  }
+  
+  static int init_vhe_mode(void)
