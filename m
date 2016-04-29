@@ -1,35 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Fri, 29 Apr 2016 14:20:20 +1000
-Message-ID: <20160429142020.4499e185@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tile
+ tree
+Date: Fri, 29 Apr 2016 16:08:15 +1000
+Message-ID: <20160429160815.2ab2ec87@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45968 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49943 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750736AbcD2EUZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 29 Apr 2016 00:20:25 -0400
+	id S1752656AbcD2GIR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 29 Apr 2016 02:08:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shannon Zhao <shannon.zhao@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Chris Metcalf <cmetcalf@ezchip.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  drivers/firmware/efi/arm-runtime.c
+  arch/tile/Kconfig
 
 between commit:
 
-  14c43be60166 ("efi/arm*: Drop writable mapping of the UEFI System table")
+  4ef00aa30a3f ("tile: sort the "select" lines in the TILE/TILEGX configs")
 
-from the tip tree and commit:
+from the tile tree and commits:
 
-  21c8dfaa2327 ("Xen: EFI: Parse DT parameters for Xen specific UEFI")
+  628b7a1e7049 ("exit_thread: remove empty bodies")
+  803ae84888bb ("printk/nmi: generic solution for safe printk in NMI")
 
-from the xen-tip tree.
+from the akpm-current tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,60 +44,42 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/firmware/efi/arm-runtime.c
-index 17ccf0a8787a,ac609b9f0b99..000000000000
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@@ -109,24 -90,41 +110,30 @@@ static int __init arm_enable_runtime_se
-  
-  	pr_info("Remapping and enabling EFI services.\n");
-  
- -	mapsize = memmap.map_end - memmap.map;
- -	memmap.map = (__force void *)ioremap_cache(memmap.phys_map,
- -						   mapsize);
- -	if (!memmap.map) {
- -		pr_err("Failed to remap EFI memory map\n");
- -		return -ENOMEM;
- -	}
- -	memmap.map_end = memmap.map + mapsize;
- -	efi.memmap = &memmap;
- +	mapsize = efi.memmap.map_end - efi.memmap.map;
-  
- -	efi.systab = (__force void *)ioremap_cache(efi_system_table,
- -						   sizeof(efi_system_table_t));
- -	if (!efi.systab) {
- -		pr_err("Failed to remap EFI System Table\n");
- +	efi.memmap.map = memremap(efi.memmap.phys_map, mapsize, MEMREMAP_WB);
- +	if (!efi.memmap.map) {
- +		pr_err("Failed to remap EFI memory map\n");
-  		return -ENOMEM;
-  	}
- -	set_bit(EFI_SYSTEM_TABLES, &efi.flags);
- +	efi.memmap.map_end = efi.memmap.map + mapsize;
-  
-- 	if (!efi_virtmap_init()) {
-- 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
-- 		return -ENOMEM;
-+ 	if (IS_ENABLED(CONFIG_XEN_EFI) && efi_enabled(EFI_PARAVIRT)) {
-+ 		/* Set up runtime services function pointers for Xen Dom0 */
-+ 		xen_efi_runtime_setup();
-+ 	} else {
-+ 		if (!efi_virtmap_init()) {
- -			pr_err("No UEFI virtual mapping was installed -- runtime services will not be available\n");
-++			pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
-+ 			return -ENOMEM;
-+ 		}
-+ 
-+ 		/* Set up runtime services function pointers */
-+ 		efi_native_runtime_setup();
-  	}
-  
-- 	/* Set up runtime services function pointers */
-- 	efi_native_runtime_setup();
-  	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-  
- -	efi.runtime_version = efi.systab->hdr.revision;
+diff --cc arch/tile/Kconfig
+index c3bbb295bc4a,76989b878f3c..000000000000
+--- a/arch/tile/Kconfig
++++ b/arch/tile/Kconfig
+@@@ -18,21 -35,17 +18,23 @@@ config TIL
+  	select GENERIC_STRNCPY_FROM_USER
+  	select GENERIC_STRNLEN_USER
+  	select HAVE_ARCH_SECCOMP_FILTER
  -
-  	return 0;
-  }
-  early_initcall(arm_enable_runtime_services);
+ -# FIXME: investigate whether we need/want these options.
+ -#	select HAVE_IOREMAP_PROT
+ -#	select HAVE_OPTPROBES
+ -#	select HAVE_REGS_AND_STACK_ACCESS_API
+ -#	select HAVE_HW_BREAKPOINT
+ -#	select PERF_EVENTS
+ -#	select HAVE_USER_RETURN_NOTIFIER
+ -#	config NO_BOOTMEM
+ -#	config ARCH_SUPPORTS_DEBUG_PAGEALLOC
+ -#	config HUGETLB_PAGE_SIZE_VARIABLE
+ +	select HAVE_ARCH_TRACEHOOK
+ +	select HAVE_CONTEXT_TRACKING
+ +	select HAVE_DEBUG_BUGVERBOSE
+ +	select HAVE_DEBUG_KMEMLEAK
+ +	select HAVE_DEBUG_STACKOVERFLOW
+ +	select HAVE_DMA_API_DEBUG
+++	select HAVE_EXIT_THREAD
+ +	select HAVE_KVM if !TILEGX
+++	select HAVE_NMI if USE_PMC
+ +	select HAVE_PERF_EVENTS
+ +	select HAVE_SYSCALL_TRACEPOINTS
+ +	select MODULES_USE_ELF_RELA
+ +	select SYSCTL_EXCEPTION_TRACE
+ +	select SYS_HYPERVISOR
+ +	select USER_STACKTRACE_SUPPORT
+ +	select USE_PMC if PERF_EVENTS
+ +	select VIRT_TO_BUS
+  
+  config MMU
+  	def_bool y
