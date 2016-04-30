@@ -1,74 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Sat, 30 Apr 2016 15:52:34 +1000
-Message-ID: <20160430155234.292dcb4a@canb.auug.org.au>
-References: <20160429164543.039df436@canb.auug.org.au>
-	<20160429133219.bhu3picl6jwxdedj@treble>
-	<20160429140342.ygb477u36ajmcoax@treble>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the gpio tree
+Date: Sat, 30 Apr 2016 13:20:43 +0200
+Message-ID: <CACRpkdY+nF-2qVvCZU5o7iRMYm2y7kbddBOguZdraFDwaY36jw@mail.gmail.com>
+References: <20160427160646.486aa3fa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35669 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751357AbcD3Fwj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sat, 30 Apr 2016 01:52:39 -0400
-In-Reply-To: <20160429140342.ygb477u36ajmcoax@treble>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:35233 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751615AbcD3LUo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 30 Apr 2016 07:20:44 -0400
+Received: by mail-ob0-f173.google.com with SMTP id n10so59455127obb.2
+        for <linux-next@vger.kernel.org>; Sat, 30 Apr 2016 04:20:44 -0700 (PDT)
+In-Reply-To: <20160427160646.486aa3fa@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Quinn Tran <quinn.tran@qlogic.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jiri Slaby <jslaby@suse.cz>
 
-Hi Josh,
+On Wed, Apr 27, 2016 at 8:06 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Fri, 29 Apr 2016 09:03:42 -0500 Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 >
-> On Fri, Apr 29, 2016 at 08:32:19AM -0500, Josh Poimboeuf wrote:
-> > On Fri, Apr 29, 2016 at 04:45:43PM +1000, Stephen Rothwell wrote:  
-> > > Hi Andrew,
-> > > 
-> > > After merging the akpm-current tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > > 
-> > > drivers/scsi/ipr.c: In function 'ipr_show_device_id':
-> > > drivers/scsi/ipr.c:4462:34: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'long unsigned int' [-Wformat=]
-> > >    len = snprintf(buf, PAGE_SIZE, "0x%llx\n", be64_to_cpu(res->dev_id));
-> > >                                   ^
-> > > 
-> > > Lots and lots like this :-(
-> > > 
-> > > Probably introduced by commit
-> > > 
-> > >   eef17fb79096 ("byteswap: try to avoid __builtin_constant_p gcc bug")
-> > > 
-> > > I guess __builtin_bswap64() has type "unsigned long int" :-(  
-> > 
-> > Hm, I suppose this is cross-compiled on a powerpc host?
-> > 
-> > We probably need to add a (__u64) cast to the return value of
-> > __builtin_bswap64(), like:
-> > 
-> > diff --git a/include/uapi/linux/swab.h b/include/uapi/linux/swab.h
-> > index de56fd5..d737804 100644
-> > --- a/include/uapi/linux/swab.h
-> > +++ b/include/uapi/linux/swab.h
-> > @@ -123,7 +123,7 @@ static inline __attribute_const__ __u32 __fswahb32(__u32 val)
-> >   * @x: value to byteswap
-> >   */
-> >  #ifdef __HAVE_BUILTIN_BSWAP64__
-> > -#define __swab64(x) __builtin_bswap64((__u64)(x))
-> > +#define __swab64(x) (__u64)__builtin_bswap64((__u64)(x))
-> >  #else
-> >  #define __swab64(x)				\
-> >  	(__builtin_constant_p((__u64)(x)) ?	\  
-> 
-> 
-> Never mind about cross-compiling on powerpc, this has nothing to do with
-> that.  But the above patch does seem to fix it.
+>   arch/cris/Kconfig
+>
+> between commit:
+>
+>   f518abf00d50 ("cris: do away with ARCH_REQUIRE_GPIOLIB")
+>
+> from the gpio tree and commit:
+>
+>   11eaeaeaa756 ("exit_thread: remove empty bodies")
+>
+> from the akpm-current tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Thanks.  I have added Andrew's tidied up version to linux-next to
-replace the revert.
+Thanks!
 
--- 
-Cheers,
-Stephen Rothwell
+> This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+Hm I have the ACK of the CRIS maintainer on the patch to the
+GPIO tree, is the left hand not aware what the right hand is doing :D
+
+Anyway: this conflict looks very trivial so I believe Torvalds will
+deal with it without problems.
+
+Yours,
+Linus Walleij
