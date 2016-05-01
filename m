@@ -1,57 +1,83 @@
-From: Shannon Zhao <shannon.zhao@linaro.org>
-Subject: Re: efi_enabled(EFI_PARAVIRT) use
-Date: Sun, 1 May 2016 22:36:51 +0800
-Message-ID: <57261483.10500@linaro.org>
-References: <20160429142020.4499e185@canb.auug.org.au>
- <20160429063936.GA28320@gmail.com>
- <alpine.DEB.2.10.1604291123260.3312@sstabellini-ThinkPad-X260>
- <20160429143931.GG2839@codeblueprint.co.uk>
- <CAKv+Gu_k45_r0mke6ELb3Pi05BnJiEMqweJRfsy7S55FzCpF7Q@mail.gmail.com>
- <5724BDD2.5020600@linaro.org> <20160430204420.GM2839@codeblueprint.co.uk>
- <572576E2.7060508@linaro.org> <20160501132620.GT2839@codeblueprint.co.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with Linus' tree
+Date: Mon, 2 May 2016 09:50:25 +1000
+Message-ID: <20160502095025.562161dd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:35005 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751111AbcEAOhD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 May 2016 10:37:03 -0400
-Received: by mail-pa0-f41.google.com with SMTP id iv1so64137599pac.2
-        for <linux-next@vger.kernel.org>; Sun, 01 May 2016 07:37:02 -0700 (PDT)
-In-Reply-To: <20160501132620.GT2839@codeblueprint.co.uk>
+Received: from ozlabs.org ([103.22.144.67]:46298 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750909AbcEAXua (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 May 2016 19:50:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>, Stefano Stabellini <sstabellini@kernel.org>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>, "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
 
-On 2016=E5=B9=B405=E6=9C=8801=E6=97=A5 21:26, Matt Fleming wrote:
-> On Sun, 01 May, at 11:24:18AM, Shannon Zhao wrote:
->> Because the UEFI params for Dom0 are located under /hypervisor/uefi =
-node
->> instead of /chosen. So it needs to check whether it's a Dom0 then se=
-arch
->> and parse different node with different params arrays.
-> =20
-> Why can't you search both nodes?=20
-Before searching, it needs to decide which uefi params array should be
-passed to of_scan_flat_dt().
+Hi all,
 
-> Would you ever expect to see both for
-> a Dom0 kernel?
->=20
->> So it still needs add another check to firstly parse the fdt to see =
-if
->> there is "xen,uefi-system-table" under /hypervisor/uefi node, right?=
- I
->> think it's a bit redundant compared with xen_initial_domain().
->=20
-> Sometimes you really do need to check xen_initial_domain(), but I do
-> not think this is such a case. And if we can get by without adding
-> that check, the code will be better for it.
->=20
-So is there any other way you suggest?
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-Thanks,
---=20
-Shannon
+  arch/powerpc/kernel/prom.c
+
+between commits:
+
+  beff82374b25 ("powerpc: Update cpu_user_features2 in scan_features()")
+  4705e02498d6 ("powerpc: Update TM user feature bits in scan_features()")
+
+from Linus' tree and commit:
+
+  5ddd6bb5968e ("powerpc/mm/radix: Use firmware feature to enable Radix MMU")
+
+from the powerpc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/powerpc/kernel/prom.c
+index a15fe1d4e84a,d924cd60fc8e..000000000000
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@@ -153,20 -153,20 +154,21 @@@ static struct ibm_pa_feature 
+  	unsigned char	pabit;		/* bit number (big-endian) */
+  	unsigned char	invert;		/* if 1, pa bit set => clear feature */
+  } ibm_pa_features[] __initdata = {
+ -	{0, 0, PPC_FEATURE_HAS_MMU,	0, 0, 0},
+ -	{0, 0, PPC_FEATURE_HAS_FPU,	0, 1, 0},
+ -	{CPU_FTR_CTRL, 0, 0,		0, 3, 0},
+ -	{CPU_FTR_NOEXECUTE, 0, 0,	0, 6, 0},
+ -	{CPU_FTR_NODSISRALIGN, 0, 0,	1, 1, 1},
+ -	{0, MMU_FTR_CI_LARGE_PAGE, 0,	1, 2, 0},
+ -	{CPU_FTR_REAL_LE, PPC_FEATURE_TRUE_LE, 5, 0, 0},
+ +	{0, 0, PPC_FEATURE_HAS_MMU, 0,		0, 0, 0},
+ +	{0, 0, PPC_FEATURE_HAS_FPU, 0,		0, 1, 0},
+ +	{CPU_FTR_CTRL, 0, 0, 0,			0, 3, 0},
+ +	{CPU_FTR_NOEXECUTE, 0, 0, 0,		0, 6, 0},
+ +	{CPU_FTR_NODSISRALIGN, 0, 0, 0,		1, 1, 1},
+ +	{0, MMU_FTR_CI_LARGE_PAGE, 0, 0,		1, 2, 0},
+ +	{CPU_FTR_REAL_LE, 0, PPC_FEATURE_TRUE_LE, 0, 5, 0, 0},
+  	/*
+ -	 * If the kernel doesn't support TM (ie. CONFIG_PPC_TRANSACTIONAL_MEM=n),
+ -	 * we don't want to turn on CPU_FTR_TM here, so we use CPU_FTR_TM_COMP
+ -	 * which is 0 if the kernel doesn't support TM.
+ +	 * If the kernel doesn't support TM (ie CONFIG_PPC_TRANSACTIONAL_MEM=n),
+ +	 * we don't want to turn on TM here, so we use the *_COMP versions
+ +	 * which are 0 if the kernel doesn't support TM.
+  	 */
+ -	{CPU_FTR_TM_COMP, 0, 0,		22, 0, 0},
+ -	{0, MMU_FTR_RADIX, 0,		40, 0, 0},
+ +	{CPU_FTR_TM_COMP, 0, 0,
+ +	 PPC_FEATURE2_HTM_COMP|PPC_FEATURE2_HTM_NOSC_COMP, 22, 0, 0},
+++	{0, MMU_FTR_RADIX, 0, 0,		40, 0, 0},
+  };
+  
+  static void __init scan_features(unsigned long node, const unsigned char *ftrs,
