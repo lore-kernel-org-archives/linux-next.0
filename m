@@ -1,73 +1,118 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Date: Mon, 2 May 2016 07:40:47 -0400
-Message-ID: <20160502113726.GA22131@sophia>
-References: <20160502154258.312e00b7@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160502 build: 1 failures 10 warnings (next-20160502)
+Date: Mon, 02 May 2016 12:52:30 +0100
+Message-ID: <E1axCOs-0001TX-Fg@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f175.google.com ([209.85.161.175]:36159 "EHLO
-	mail-yw0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753465AbcEBLkz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 07:40:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20160502154258.312e00b7@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41454 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753546AbcEBLwl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 07:52:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, May 02, 2016 at 03:42:58PM +1000, Stephen Rothwell wrote:
->Hi Greg,
->
->After merging the driver-core tree, today's linux-next build (x86_64
->allmodconfig) failed like this:
->
->In file included from include/uapi/linux/stddef.h:1:0,
->                 from include/linux/stddef.h:4,
->                 from include/uapi/linux/posix_types.h:4,
->                 from include/uapi/linux/types.h:13,
->                 from include/linux/types.h:5,
->                 from include/linux/list.h:4,
->                 from include/linux/module.h:9,
->                 from arch/x86/mm/extable.c:1:
->arch/x86/mm/extable.c: In function 'fixup_exception':
->arch/x86/mm/extable.c:102:15: error: implicit declaration of function 'SEGMENT_IS_PNP_CODE' [-Werror=implicit-function-declaration]
->  if (unlikely(SEGMENT_IS_PNP_CODE(regs->cs))) {
->               ^
->drivers/pnp/pnpbios/bioscalls.c:106:34: error: 'PNP_TS1' und
->eclared (first use in this function)
->   Q2_SET_SEL(smp_processor_id(), PNP_TS1, ts1_base, ts1_size);
->                                  ^
->drivers/pnp/pnpbios/bioscalls.c:108:34: error: 'PNP_TS2' undeclared (first use in this function)
->   Q2_SET_SEL(smp_processor_id(), PNP_TS2, ts2_base, ts2_size);
->                                  ^
->drivers/pnp/pnpbios/bioscalls.c:133:13: error: 'PNP_CS32' undeclared (first use in this function)
->         "i"(PNP_CS32), "i"(0)
->             ^
->
->and on ...
->
->Somehow caused by commit
->
->  8ac0fba2da41 ("isa: Decouple X86_32 dependency from the ISA Kconfig option")
->
->I don't easily see why it causes the problem, but reverting it makes the
->build work.  I also cannot rule out interaction with some other tree.
->
->I have reverted that commit for today.
->
->-- 
->Cheers,
->Stephen Rothwell
+Tree/Branch: next-20160502
+Git describe: next-20160502
+Commit: 48a57362e4 Add linux-next specific files for 20160502
 
-The PnP errors are due to an overly broad Kconfig dependency list, and
-are resolved with the following patch:
-<https://lkml.org/lkml/2016/5/1/100>. This patch should be applied first
-to prevent the PnP build for X86_64, when the X86_32 dependency is
-decoupled from the ISA Kconfig option in this current patch.
+Build Time: 88 min 34 sec
 
-See <https://lkml.org/lkml/2016/4/11/421> for the history behind these
-two patches.
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
 
-William Breathitt Gray
+Errors: 1
+Warnings: 10
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      8 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+Warnings Summary: 10
+	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 8 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+Warnings:
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
