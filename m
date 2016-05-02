@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Mon, 2 May 2016 10:43:20 +1000
-Message-ID: <20160502104320.1433bc62@canb.auug.org.au>
+Date: Mon, 2 May 2016 10:49:10 +1000
+Message-ID: <20160502104910.4452ab9e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54991 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51909 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751398AbcEBAnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 1 May 2016 20:43:23 -0400
+	id S1752507AbcEBAtN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 May 2016 20:49:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>
@@ -19,15 +19,15 @@ Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/ecryptfs/mmap.c
+  fs/nfs/dir.c
 
 between commit:
 
   09cbfeaf1a5a ("mm, fs: get rid of PAGE_CACHE_* and page_cache_{get,release} macros")
 
-from Linus' tree and commits:
+from Linus' tree and commit:
 
-  ce23e6401334 ("->getxattr(): pass dentry and inode as separate arguments")
+  586cf0326586 ("nfs: switch to ->iterate_shared()")
   7d2dbb9faf05 ("fixups for PAGE_CACHE_SIZE/page_cache_release-induced conflicts")
 
 from the vfs tree.
@@ -39,8 +39,6 @@ concerned, but any non trivial conflicts should be mentioned to your
 upstream maintainer when your tree is submitted for merging.  You may
 also want to consider cooperating with the maintainer of the conflicting
 tree to minimise any particularly complex conflicts.
-
-
 
 -- 
 Cheers,
