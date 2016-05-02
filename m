@@ -1,118 +1,71 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160502 build: 1 failures 10 warnings (next-20160502)
-Date: Mon, 02 May 2016 12:52:30 +0100
-Message-ID: <E1axCOs-0001TX-Fg@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 2   [WARNING: at fs/dcache.c]
+Date: Mon, 2 May 2016 22:07:45 +1000
+Message-ID: <20160502220745.44c4bd91@canb.auug.org.au>
+References: <20160502184018.502e9e7c@canb.auug.org.au>
+	<20160502101524.GA417@swordfish>
+	<20160502103352.x4thudsnc3jhexzo@mguzik>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41454 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753546AbcEBLwl (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 07:52:41 -0400
+Received: from ozlabs.org ([103.22.144.67]:60122 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752126AbcEBMHs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2016 08:07:48 -0400
+In-Reply-To: <20160502103352.x4thudsnc3jhexzo@mguzik>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Mateusz Guzik <mguzik@redhat.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <mszeredi@redhat.com>
 
-Tree/Branch: next-20160502
-Git describe: next-20160502
-Commit: 48a57362e4 Add linux-next specific files for 20160502
+Hi Mateusz,
 
-Build Time: 88 min 34 sec
+On Mon, 2 May 2016 12:33:54 +0200 Mateusz Guzik <mguzik@redhat.com> wrote:
+>
+> On Mon, May 02, 2016 at 07:15:24PM +0900, Sergey Senozhatsky wrote:
+> > On (05/02/16 18:40), Stephen Rothwell wrote:  
+> > > Hi all,
+> > > 
+> > > Changes since 20160429  
+> > 
+> > Hello,
+> > 
+> > [    0.368791] ------------[ cut here ]------------
+> > [    0.368850] WARNING: CPU: 0 PID: 1 at fs/dcache.c:1688 d_set_d_op+0x5e/0xcc
+> > [    0.368911] Modules linked in:
+> > [    0.369002] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.6.0-rc6-next-20160502-dbg-00005-gf58c9da-dirty #404
+> > [    0.369161]  0000000000000000 ffff880133067908 ffffffff811b8202 0000000000000000
+> > [    0.369371]  0000000000000000 ffff880133067948 ffffffff81039365 00000698e5dffe26
+> > [    0.369580]  ffff880132c090c0 ffffffff81613680 ffff880132c040a0 ffff880132c08000
+> > [    0.369791] Call Trace:
+> > [    0.369846]  [<ffffffff811b8202>] dump_stack+0x4d/0x63
+> > [    0.369904]  [<ffffffff81039365>] __warn+0xb8/0xd3
+> > [    0.369962]  [<ffffffff810393e6>] warn_slowpath_null+0x18/0x1a
+> > [    0.370021]  [<ffffffff811012f6>] d_set_d_op+0x5e/0xcc
+> > [    0.370079]  [<ffffffff8110d887>] simple_lookup+0x2e/0x45  
+> 
+> The issue is that 2 macros have the same value:
+> 
+> #define DCACHE_OP_REAL                  0x08000000
+> 
+> #define DCACHE_PAR_LOOKUP               0x08000000 /* being looked up
+> (with parent locked shared) */
+> 
+> Verified with switching one to 0x10000000 and the warning went away.
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+This comes from a bad automatic merge resolution between commit
 
-Errors: 1
-Warnings: 10
-Section Mismatches: 0
+  d101a125954e ("fs: add file_dentry()")
 
-Failed defconfigs:
-	arm-allmodconfig
+from Linus' tree (introduced before v4.5-rc3) and commit
 
-Errors:
+  340450a54573 ("beginning of transition to parallel lookups - marking in-lookup dentries")
 
-	arm-allmodconfig
-../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+from the vfs tree.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm64-defconfig
+I will fix this up in tomorrow's tree (unless Al beats me to it).
 
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
-
-Warnings Summary: 10
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 8 warnings, 0 section mismatches
-
-Errors:
-	../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
-
-Warnings:
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
+-- 
+Cheers,
+Stephen Rothwell
