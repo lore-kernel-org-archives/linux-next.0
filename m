@@ -1,33 +1,93 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Mon, 2 May 2016 02:23:51 +0100
-Message-ID: <20160502012350.GK25498@ZenIV.linux.org.uk>
-References: <20160502105943.72202e80@canb.auug.org.au>
- <20160502010838.GJ25498@ZenIV.linux.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 2 May 2016 11:25:27 +1000
+Message-ID: <20160502112527.095e2998@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:39636 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398AbcEBBXy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 1 May 2016 21:23:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20160502010838.GJ25498@ZenIV.linux.org.uk>
+Received: from ozlabs.org ([103.22.144.67]:39428 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751398AbcEBBZ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 1 May 2016 21:25:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Abhi Das <adas@redhat.com>
 
-On Mon, May 02, 2016 at 02:08:39AM +0100, Al Viro wrote:
+Hi Al,
 
-> Should use lookup_one_len_unlocked(), actually.  lookup_hash() is
-> a microoptimization, losing a lot more on excessive i_mutex contention.
-> Either variant works, though.
+After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-PS: if anybody has a better name for lookup_one_len_unlocked(), I'll gladly
-rename it; the thing hadn't been in the kernel for too long and the name is
-somewhat confusing.  It's an equivalent of
-	inode_lock()
-	lookup_one_len()
-	inode_unlock()
-except that it avoids taking the lock when it's not needed.
+In file included from include/linux/notifier.h:13:0,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:744,
+                 from include/linux/gfp.h:5,
+                 from include/linux/slab.h:14,
+                 from fs/gfs2/file.c:10:
+fs/gfs2/file.c: In function 'gfs2_file_splice_read':
+fs/gfs2/file.c:963:19: error: 'struct inode' has no member named 'i_mutex'
+  mutex_lock(&inode->i_mutex);
+                   ^
+include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^
+fs/gfs2/file.c:967:22: error: 'struct inode' has no member named 'i_mutex'
+   mutex_unlock(&inode->i_mutex);   
+                      ^
+fs/gfs2/file.c:972:21: error: 'struct inode' has no member named 'i_mutex'
+  mutex_unlock(&inode->i_mutex);
+                     ^
+
+Caused by commit
+
+  ad10a307a918 ("parallel lookups: actual switch to rwsem")
+
+interacting with commit
+
+  611526756a3d ("gfs2: Use gfs2 wrapper to sync inode before calling generic_file_splice_read()")
+
+from the gfs2 tree.
+
+I applied the following merge fix patch for today (thanks Al):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 2 May 2016 11:17:40 +1000
+Subject: [PATCH] gfs2: fix up for i_mutex -> i_rwsem change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/gfs2/file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 3f27ab291029..76e205455503 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -960,16 +960,16 @@ static ssize_t gfs2_file_splice_read(struct file *in, loff_t *ppos,
+ 	struct gfs2_holder gh;
+ 	int ret;
+ 
+-	mutex_lock(&inode->i_mutex);
++	inode_lock(inode);
+ 
+ 	ret = gfs2_glock_nq_init(ip->i_gl, LM_ST_SHARED, 0, &gh);
+ 	if (ret) {
+-		mutex_unlock(&inode->i_mutex);
++		inode_unlock(inode);
+ 		return ret;
+ 	}
+ 
+ 	gfs2_glock_dq_uninit(&gh);
+-	mutex_unlock(&inode->i_mutex);
++	inode_unlock(inode);
+ 
+ 	return generic_file_splice_read(in, ppos, pipe, len, flags);
+ }
+-- 
+2.7.0
+
+-- 
+Cheers,
+Stephen Rothwell
