@@ -1,94 +1,148 @@
 From: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 02 May 2016 16:47:10 +0530
-Message-ID: <87h9egzp3d.fsf@skywalker.in.ibm.com>
-References: <20160502183234.1dad8115@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the powerpc tree
+Date: Mon, 02 May 2016 16:47:27 +0530
+Message-ID: <87eg9kzp2w.fsf@skywalker.in.ibm.com>
+References: <20160502172015.0914d9ec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from e23smtp04.au.ibm.com ([202.81.31.146]:43035 "EHLO
-	e23smtp04.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753619AbcEBLSP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 07:18:15 -0400
+Received: from e23smtp03.au.ibm.com ([202.81.31.145]:45154 "EHLO
+	e23smtp03.au.ibm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753598AbcEBLSl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 07:18:41 -0400
 Received: from localhost
-	by e23smtp04.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	by e23smtp03.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
 	for <linux-next@vger.kernel.org> from <aneesh.kumar@linux.vnet.ibm.com>;
-	Mon, 2 May 2016 21:18:12 +1000
-In-Reply-To: <20160502183234.1dad8115@canb.auug.org.au>
+	Mon, 2 May 2016 21:18:38 +1000
+In-Reply-To: <20160502172015.0914d9ec@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ebru Akagunduz <ebru.akagunduz@gmail.com>, Rik van Riel <riel@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>
 
 Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
 > Hi Andrew,
 >
-> After merging the akpm-current tree, today's linux-next build (powerpc
-> allyesconfig and pseries_le_defconfig) failed like this:
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 >
-> In file included from include/linux/mm.h:394:0,
->                  from mm/huge_memory.c:10:
-> include/linux/huge_mm.h:53:22: error: initializer element is not constant
->  #define HPAGE_PMD_NR (1<<HPAGE_PMD_ORDER)
->                       ^
-> mm/huge_memory.c:104:62: note: in expansion of macro 'HPAGE_PMD_NR'
->  static unsigned int khugepaged_max_ptes_swap __read_mostly = HPAGE_PMD_NR/8;
->                                                               ^
+>   arch/powerpc/include/asm/book3s/64/pgtable.h
 >
-> Caused by commit
+> between commit:
 >
->   6d34b9749be2 ("mm: make optimistic check for swapin readahead")
+>   dbaba7a16b7b ("powerpc/mm: THP is only available on hash64 as of now")
 >
-> interacting with commit
+> from the powerpc tree and commit:
 >
->   dd1842a2a448 ("powerpc/mm: Make page table size a variable")
+>   383b50a4e356 ("arch: fix has_transparent_hugepage()")
 >
-> from the powerpc tree.
+> from the akpm-current tree.
 >
-> I applied this fix patch for today (hopefully this is still initialised
-> early enough):
+> I fixed it up (see below - the code moved) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 >
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 2 May 2016 18:25:42 +1000
-> Subject: [PATCH] mm: make optimistic check for swapin readahead fix
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
 
-Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+looks good.
 
-> ---
->  mm/huge_memory.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f0cd9dbc1157..6aabfa166b6d 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -101,7 +101,7 @@ static DECLARE_WAIT_QUEUE_HEAD(khugepaged_wait);
->   * fault.
->   */
->  static unsigned int khugepaged_max_ptes_none __read_mostly;
-> -static unsigned int khugepaged_max_ptes_swap __read_mostly = HPAGE_PMD_NR/8;
-> +static unsigned int khugepaged_max_ptes_swap __read_mostly;
->  static unsigned long allocstall;
->
->  static int khugepaged(void *none);
-> @@ -703,6 +703,7 @@ static int __init hugepage_init(void)
->
->  	khugepaged_pages_to_scan = HPAGE_PMD_NR * 8;
->  	khugepaged_max_ptes_none = HPAGE_PMD_NR - 1;
-> +	khugepaged_max_ptes_swap = HPAGE_PMD_NR / 8;
->  	/*
->  	 * hugepages can't be allocated by the buddy allocator
->  	 */
-> -- 
-> 2.7.0
->
->
->
->
 > -- 
 > Cheers,
 > Stephen Rothwell
+>
+> diff --cc arch/powerpc/include/asm/book3s/64/pgtable.h
+> index 48dc76c13094,8fe6f6b48aa5..000000000000
+> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
+> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
+> @@@ -820,86 -265,9 +820,87 @@@ static inline int pmd_protnone(pmd_t pm
+>   #define __HAVE_ARCH_PMD_WRITE
+>   #define pmd_write(pmd)		pte_write(pmd_pte(pmd))
+>   
+>  +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>  +extern pmd_t pfn_pmd(unsigned long pfn, pgprot_t pgprot);
+>  +extern pmd_t mk_pmd(struct page *page, pgprot_t pgprot);
+>  +extern pmd_t pmd_modify(pmd_t pmd, pgprot_t newprot);
+>  +extern void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+>  +		       pmd_t *pmdp, pmd_t pmd);
+>  +extern void update_mmu_cache_pmd(struct vm_area_struct *vma, unsigned long addr,
+>  +				 pmd_t *pmd);
+>  +extern int hash__has_transparent_hugepage(void);
+> ++#define has_transparent_hugepage has_transparent_hugepage
+>  +static inline int has_transparent_hugepage(void)
+>  +{
+>  +	if (radix_enabled())
+>  +		return radix__has_transparent_hugepage();
+>  +	return hash__has_transparent_hugepage();
+>  +}
+>  +
+>  +static inline unsigned long
+>  +pmd_hugepage_update(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp,
+>  +		    unsigned long clr, unsigned long set)
+>  +{
+>  +	if (radix_enabled())
+>  +		return radix__pmd_hugepage_update(mm, addr, pmdp, clr, set);
+>  +	return hash__pmd_hugepage_update(mm, addr, pmdp, clr, set);
+>  +}
+>  +
+>  +static inline int pmd_large(pmd_t pmd)
+>  +{
+>  +	return !!(pmd_val(pmd) & _PAGE_PTE);
+>  +}
+>  +
+>  +static inline pmd_t pmd_mknotpresent(pmd_t pmd)
+>  +{
+>  +	return __pmd(pmd_val(pmd) & ~_PAGE_PRESENT);
+>  +}
+>  +/*
+>  + * For radix we should always find H_PAGE_HASHPTE zero. Hence
+>  + * the below will work for radix too
+>  + */
+>  +static inline int __pmdp_test_and_clear_young(struct mm_struct *mm,
+>  +					      unsigned long addr, pmd_t *pmdp)
+>  +{
+>  +	unsigned long old;
+>  +
+>  +	if ((pmd_val(*pmdp) & (_PAGE_ACCESSED | H_PAGE_HASHPTE)) == 0)
+>  +		return 0;
+>  +	old = pmd_hugepage_update(mm, addr, pmdp, _PAGE_ACCESSED, 0);
+>  +	return ((old & _PAGE_ACCESSED) != 0);
+>  +}
+>  +
+>  +#define __HAVE_ARCH_PMDP_SET_WRPROTECT
+>  +static inline void pmdp_set_wrprotect(struct mm_struct *mm, unsigned long addr,
+>  +				      pmd_t *pmdp)
+>  +{
+>  +
+>  +	if ((pmd_val(*pmdp) & _PAGE_WRITE) == 0)
+>  +		return;
+>  +
+>  +	pmd_hugepage_update(mm, addr, pmdp, _PAGE_WRITE, 0);
+>  +}
+>  +
+>  +static inline int pmd_trans_huge(pmd_t pmd)
+>  +{
+>  +	if (radix_enabled())
+>  +		return radix__pmd_trans_huge(pmd);
+>  +	return hash__pmd_trans_huge(pmd);
+>  +}
+>  +
+>  +#define __HAVE_ARCH_PMD_SAME
+>  +static inline int pmd_same(pmd_t pmd_a, pmd_t pmd_b)
+>  +{
+>  +	if (radix_enabled())
+>  +		return radix__pmd_same(pmd_a, pmd_b);
+>  +	return hash__pmd_same(pmd_a, pmd_b);
+>  +}
+>  +
+>   static inline pmd_t pmd_mkhuge(pmd_t pmd)
+>   {
+>  -	return __pmd(pmd_val(pmd) | (_PAGE_PTE | _PAGE_THP_HUGE));
+>  +	if (radix_enabled())
+>  +		return radix__pmd_mkhuge(pmd);
+>  +	return hash__pmd_mkhuge(pmd);
+>   }
+>   
+>   #define __HAVE_ARCH_PMDP_SET_ACCESS_FLAGS
