@@ -1,55 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the mips tree
-Date: Mon, 2 May 2016 08:28:15 -0700
-Message-ID: <20160502152815.GB27283@kroah.com>
-References: <20160502155201.306e1cef@canb.auug.org.au>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the tpmdd tree
+Date: Mon, 2 May 2016 19:26:46 +0300
+Message-ID: <20160502162646.GA4264@intel.com>
+References: <20160428153232.0d6eb076@canb.auug.org.au>
+ <1461834144.3482.4.camel@linux.intel.com>
+ <20160501231222.42557edf@canb.auug.org.au>
+ <20160502111036.GA9585@intel.com>
+ <20160502221927.6568ac39@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:33276 "EHLO
-	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752211AbcEBP2S (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 2 May 2016 11:28:18 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-	by mailout.nyi.internal (Postfix) with ESMTP id F321020502
-	for <linux-next@vger.kernel.org>; Mon,  2 May 2016 11:28:17 -0400 (EDT)
+Received: from mga03.intel.com ([134.134.136.65]:19696 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754416AbcEBQ0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 2 May 2016 12:26:51 -0400
 Content-Disposition: inline
-In-Reply-To: <20160502155201.306e1cef@canb.auug.org.au>
+In-Reply-To: <20160502221927.6568ac39@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrei Pistirica <andrei.pistirica@microchip.com>, Joshua Henderson <joshua.henderson@microchip.com>, Vladimir Murzin <vladimir.murzin@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Ricard <christophe.ricard@gmail.com>
 
-On Mon, May 02, 2016 at 03:52:01PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Mon, May 02, 2016 at 10:19:27PM +1000, Stephen Rothwell wrote:
+> Hi Jarkko,
 > 
-> Today's linux-next merge of the tty tree got a conflict in:
+> On Mon, 2 May 2016 14:10:36 +0300 Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > I applied the fix and merged it.
 > 
->   drivers/tty/serial/Makefile
->   include/uapi/linux/serial_core.h
-> 
-> between commit:
-> 
->   a484a06f7cb1 ("serial: pic32_uart: Add PIC32 UART driver")
-> 
-> from the mips tree and commit:
-> 
->   041f031def33 ("serial: mps2-uart: add MPS2 UART driver")
-> 
-> from the tty tree.
-> 
-> I fixed it up (see below - I assume the numbers in
-> uapi/linux/serial_core.h are meant to be unique?)
+> Unfortunately, you seem to have turned the leading whitespace from a
+> TAB to spaces :-(
 
-Yes they are, thanks.  It's a horrid old api :(
+Fixed. Sorry. I also did cross-compilation for PPC to make sure that
+this works. I'll take PPC compilation as part of my testing procedure
+from now on in order to prevent this problem from happening again
+in the first place.
 
-> and can carry the fix
-> as necessary. This is now fixed as far as linux-next is concerned, but
-> any non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Fix looks good to me, thanks.
-
-greg k-h
+/Jarkko
