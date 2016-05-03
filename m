@@ -1,69 +1,122 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the regulator tree
-Date: Tue, 3 May 2016 14:18:43 +0200
-Message-ID: <20160503121843.GA18517@ulmo.ba.sec>
-References: <20160503182509.42658c4f@canb.auug.org.au>
- <20160503110343.GM6292@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160503 build: 1 failures 12 warnings (next-20160503)
+Date: Tue, 03 May 2016 13:53:18 +0100
+Message-ID: <E1axZpG-000664-AK@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:38258 "EHLO
-	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932252AbcECMSr (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2016 08:18:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20160503110343.GM6292@sirena.org.uk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44672 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932687AbcECMx1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2016 08:53:27 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20160503
+Git describe: next-20160503
+Commit: 5158ed11c7 Add linux-next specific files for 20160503
+
+Build Time: 88 min 56 sec
+
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
+
+Errors: 1
+Warnings: 12
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      9 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+Warnings Summary: 12
+	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../include/uapi/linux/swab.h:126:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	  1 ../include/uapi/linux/byteorder/big_endian.h:30:52: warning: passing argument 1 of '__fswab64' makes integer from pointer without a cast [-Wint-conversion]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
 
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 03, 2016 at 12:03:43PM +0100, Mark Brown wrote:
-> On Tue, May 03, 2016 at 06:25:09PM +1000, Stephen Rothwell wrote:
->=20
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
->=20
-> Please send me a pull request for the regulator commits you've added.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-I had to reshuffle things a little, but I've new sent out a pull request
-for a stable branch that contains the one regulator patch on top of the
-shared dependency branch that adds the new struct pwm_args.
 
-Let me know if you need anything else.
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
 
-Thierry
+Warnings:
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/uapi/linux/byteorder/big_endian.h:30:52: warning: passing argument 1 of '__fswab64' makes integer from pointer without a cast [-Wint-conversion]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
 
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
 
-iQIcBAABCAAGBQJXKJcgAAoJEN0jrNd/PrOh+r0QAJzUaXzqc69HYuloJqNqSqLD
-+zBrfUr1DK17zJrLe91jEl3kHqoMlaq3bSGr+b1hixdAs9K/wSxNh1OVJiFfuaAf
-yd/xHC5Sc1sEXLX26UPi5YXgxqMJof9xDyKIJCnWIzHw+Ypj9SzD99VtA1a51GXK
-Day977m63VPMrJ0gLayAdRyWWur/aj/1+KIKiNf2640b0PqO2s5ZTQdTYzZ7fAUq
-FcTm4ZPZyGwWKQzKmeSgWtw5A+RM1e0dkxL2ahBErabgiL3oV3TqamE+GlmMmVmf
-UpYlvv89pg+//ovXvG9suO6+3kNSSY6sMBrusx9nd9GJIvm4Z3b1ujsAZmSoLUsm
-xam+qi5JlwRYyRPfzrKC6H3ATyjITncnT+Em/ihi6uheW8nLxYFSOj4A08bxcgx5
-JXpImy1fVIGuRFP5+coEHPC4f5M8CtUGlrB8d9XfpJmoIqgpqwXwQzd8DKpUjAvc
-BDn+Ipd9AGxMZQ3SZyEU8nVRxBzfZkf2Vl2+PWHPInF/yaJg8XbM15y/Q1GwlQyn
-hPjlzDiZJn1Q0Dqnsnw6jO4o9VFkZv5rTvhQZZWz3jnCRgt62MQJzFSXmUvU6dm7
-/Rh+bKK9lRgD6jBDRBoVoHu3AGmfTdikntzMRGGfvhO5d/3p1ZbVVOU/AcoXVmmK
-XtJHiQnOn/oV2SXb12KZ
-=vLOV
------END PGP SIGNATURE-----
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 9 warnings, 0 section mismatches
 
---7AUc2qLy4jB3hD7Z--
+Errors:
+	../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+
+Warnings:
+	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/linux/cpumask.h:550:25: warning: passing argument 2 of 'dev_pm_opp_set_sharing_cpus' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../include/uapi/linux/swab.h:126:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
