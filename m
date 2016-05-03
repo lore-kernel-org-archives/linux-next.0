@@ -1,66 +1,129 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the drm-intel
- tree
-Date: Tue, 3 May 2016 09:54:55 +0200
-Message-ID: <20160503075455.GZ14148@phenom.ffwll.local>
-References: <20160503132412.30a61b5c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pwm tree with the regulator tree
+Date: Tue, 3 May 2016 18:25:09 +1000
+Message-ID: <20160503182509.42658c4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160503132412.30a61b5c@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBNYXkgMDMsIDIwMTYgYXQgMDE6MjQ6MTJQTSArMTAwMCwgU3RlcGhlbiBSb3Rod2Vs
-bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBk
-cm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvZHJtL2k5
-MTUvaW50ZWxfZGlzcGxheS5jCj4gCj4gYmV0d2VlbiBjb21taXRzOgo+IAo+ICAgZjdlNTgzOGJi
-MzdkICgiZHJtL2k5MTU6IFNpbXBsaWZ5IHJlc2V0X2NvdW50ZXIgaGFuZGxpbmcgZHVyaW5nIGF0
-b21pYyBtb2Rlc2V0dGluZyIpCj4gCj4gZnJvbSB0aGUgZHJtLWludGVsIHRyZWUgYW5kIGNvbW1p
-dDoKPiAKPiAgIDgxMDcyYmZkMTNmMiAoImRybS9pOTE1OiBSZW5hbWUgYXN5bmMgdG8gbm9uYmxv
-Y2suIikKPiAKPiBmcm9tIHRoZSBkcm0tbWlzYyB0cmVlLgo+IAo+IEkgZml4ZWQgaXQgdXAgKHNl
-ZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwo+IGlzIG5v
-dyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRy
-aXZpYWwKPiBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1h
-aW50YWluZXIgd2hlbiB5b3VyIHRyZWUKPiBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3Ug
-bWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZwo+IHdpdGggdGhlIG1haW50YWlu
-ZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+
-IGNvbXBsZXggY29uZmxpY3RzLgoKUmV2aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52
-ZXR0ZXJAZmZ3bGwuY2g+CgpJIGtpbmRhIHdvbmRlciB3aGV0aGVyIHRoZXJlJ3Mgc29tZSB3YXkg
-d2UgY291bGQgc2hhcmUgdGhlc2UgY29uZmxpY3QKcmVzb2x1dGlvbnMgYW1vbmcgdmFyaW91cyB0
-cmVlcy4gQXQgbGVhc3Qgb25lIHJlYWxseSB2YWx1YWJsZSBwYXJ0IG9mCmRvaW5nIG15IG93biBk
-cm0taW50ZWwtbmlnaHRseSBpbnRlZ3JhdGlvbiB0cmVlIGlzIHRoYXQgSSBjYW4gc29hayBtZXJn
-ZXMKZm9yIGEgZmV3IGRheXMgYmVmb3JlIEkgYmFrZSB0aGVtIGluIGZvciBldGVybml0eSAuLi4K
-ClRvcGljIGZvciBLUyBJIGd1ZXNzPwoKQ2hlZXJzLCBEYW5pZWwKCj4gCj4gLS0gCj4gQ2hlZXJz
-LAo+IFN0ZXBoZW4gUm90aHdlbGwKPiAKPiBkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2k5MTUv
-aW50ZWxfZGlzcGxheS5jCj4gaW5kZXggZmY2MDI0MWIxZjc2LDVkMjliODM4ZDhkNy4uMDAwMDAw
-MDAwMDAwCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jCj4gKysr
-IGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jCj4gQEBAIC0xMzQ2Miw5IC0x
-MzQxNCwxMiArMTM0NjIsOSBAQEAgc3RhdGljIGludCBpbnRlbF9hdG9taWNfcHJlcGFyZV9jb21t
-aXQoCj4gICAJCXJldHVybiByZXQ7Cj4gICAKPiAgIAlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9w
-cmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsKPiAgLQlpZiAoIXJldCAmJiAhbm9uYmxvY2sgJiYg
-IWk5MTVfcmVzZXRfaW5fcHJvZ3Jlc3MoJmRldl9wcml2LT5ncHVfZXJyb3IpKSB7Cj4gIC0JCXUz
-MiByZXNldF9jb3VudGVyOwo+ICAtCj4gIC0JCXJlc2V0X2NvdW50ZXIgPSBhdG9taWNfcmVhZCgm
-ZGV2X3ByaXYtPmdwdV9lcnJvci5yZXNldF9jb3VudGVyKTsKPiAgLQkJbXV0ZXhfdW5sb2NrKCZk
-ZXYtPnN0cnVjdF9tdXRleCk7Cj4gICsJbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7
-Cj4gICAKPiAtIAlpZiAoIXJldCAmJiAhYXN5bmMpIHsKPiArKwlpZiAoIXJldCAmJiAhbm9uYmxv
-Y2spIHsKPiAgIAkJZm9yX2VhY2hfcGxhbmVfaW5fc3RhdGUoc3RhdGUsIHBsYW5lLCBwbGFuZV9z
-dGF0ZSwgaSkgewo+ICAgCQkJc3RydWN0IGludGVsX3BsYW5lX3N0YXRlICppbnRlbF9wbGFuZV9z
-dGF0ZSA9Cj4gICAJCQkJdG9faW50ZWxfcGxhbmVfc3RhdGUocGxhbmVfc3RhdGUpOwoKLS0gCkRh
-bmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9i
-bG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+Hi Thierry,
+
+Today's linux-next merge of the pwm tree got a conflict in:
+
+  drivers/regulator/pwm-regulator.c
+
+between commit:
+
+  fd786fb0276a ("regulator: pwm: Try to avoid voltage error in duty cycle calculation")
+
+from the regulator tree and commit:
+
+  f137b90ba6cd ("regulator: pwm: Use pwm_get_args() where appropriate")
+
+from the pwm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/regulator/pwm-regulator.c
+index 8e928f23279b,ffdb895ace0a..000000000000
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@@ -63,14 -63,14 +63,14 @@@ static int pwm_regulator_set_voltage_se
+  	int dutycycle;
+  	int ret;
+  
+- 	pwm_reg_period = pwm_get_period(drvdata->pwm);
++ 	pwm_get_args(drvdata->pwm, &pargs);
+  
+- 	dutycycle = (pwm_reg_period *
++ 	dutycycle = (pargs.period *
+  		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
+  
+- 	ret = pwm_config(drvdata->pwm, dutycycle, pwm_reg_period);
++ 	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
+  	if (ret) {
+ -		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ +		dev_err(&rdev->dev, "Failed to configure PWM: %d\n", ret);
+  		return ret;
+  	}
+  
+@@@ -126,35 -138,17 +126,36 @@@ static int pwm_regulator_set_voltage(st
+  {
+  	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
+  	unsigned int ramp_delay = rdev->constraints->ramp_delay;
+- 	unsigned int period = pwm_get_period(drvdata->pwm);
++ 	struct pwm_args pargs;
+ -	int duty_cycle;
+ +	unsigned int req_diff = min_uV - rdev->constraints->min_uV;
+ +	unsigned int diff;
+ +	unsigned int duty_pulse;
+ +	u64 req_period;
+ +	u32 rem;
+  	int ret;
+  
++ 	pwm_get_args(drvdata->pwm, &pargs);
+ -	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
+ +	diff = rdev->constraints->max_uV - rdev->constraints->min_uV;
+ +
+ +	/* First try to find out if we get the iduty cycle time which is
+ +	 * factor of PWM period time. If (request_diff_to_min * pwm_period)
+ +	 * is perfect divided by voltage_range_diff then it is possible to
+ +	 * get duty cycle time which is factor of PWM period. This will help
+ +	 * to get output voltage nearer to requested value as there is no
+ +	 * calculation loss.
+ +	 */
+- 	req_period = req_diff * period;
+++	req_period = req_diff * pargs.period;
+ +	div_u64_rem(req_period, diff, &rem);
+ +	if (!rem) {
+ +		do_div(req_period, diff);
+ +		duty_pulse = (unsigned int)req_period;
+ +	} else {
+- 		duty_pulse = (period / 100) * ((req_diff * 100) / diff);
+++		duty_pulse = (pargs.period / 100) * ((req_diff * 100) / diff);
+ +	}
+  
+- 	ret = pwm_config(drvdata->pwm, duty_pulse, period);
+ -	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
+ -			 pargs.period);
+++	ret = pwm_config(drvdata->pwm, duty_pulse, pargs.period);
+  	if (ret) {
+ -		dev_err(&rdev->dev, "Failed to configure PWM\n");
+ +		dev_err(&rdev->dev, "Failed to configure PWM: %d\n", ret);
+  		return ret;
+  	}
+  
+@@@ -284,11 -279,16 +285,17 @@@ static int pwm_regulator_probe(struct p
+  
+  	drvdata->pwm = devm_pwm_get(&pdev->dev, NULL);
+  	if (IS_ERR(drvdata->pwm)) {
+ -		dev_err(&pdev->dev, "Failed to get PWM\n");
+ -		return PTR_ERR(drvdata->pwm);
+ +		ret = PTR_ERR(drvdata->pwm);
+ +		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
+ +		return ret;
+  	}
+  
++ 	/*
++ 	 * FIXME: pwm_apply_args() should be removed when switching to the
++ 	 * atomic PWM API.
++ 	 */
++ 	pwm_apply_args(drvdata->pwm);
++ 
+  	regulator = devm_regulator_register(&pdev->dev,
+  					    &drvdata->desc, &config);
+  	if (IS_ERR(regulator)) {
