@@ -1,37 +1,49 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20160503 build: 1 failures 12 warnings (next-20160503)
-Date: Tue, 03 May 2016 17:02:39 +0200
-Message-ID: <2280495.M9rYajvqUJ@wuerfel>
-References: <E1axZpG-000664-AK@optimist> <20160503141723.GR6292@sirena.org.uk>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
+Date: Tue, 3 May 2016 11:19:54 -0700
+Message-ID: <20160503181954.GC7819@kroah.com>
+References: <20160503164422.78369452@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:54411 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933477AbcECPDS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2016 11:03:18 -0400
-In-Reply-To: <20160503141723.GR6292@sirena.org.uk>
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:47830 "EHLO
+	out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934429AbcECST5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2016 14:19:57 -0400
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailout.nyi.internal (Postfix) with ESMTP id D97D420A3D
+	for <linux-next@vger.kernel.org>; Tue,  3 May 2016 14:19:55 -0400 (EDT)
+Content-Disposition: inline
+In-Reply-To: <20160503164422.78369452@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linaro-kernel@lists.linaro.org
-Cc: Mark Brown <broonie@kernel.org>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Ray Jui <ray.jui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, "John L. Hammond" <john.hammond@intel.com>
 
-On Tuesday 03 May 2016 15:17:23 Mark Brown wrote:
-> On Tue, May 03, 2016 at 01:53:18PM +0100, Build bot for Mark Brown wrote:
+On Tue, May 03, 2016 at 04:44:22PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> Today's -next fails to build an ARM allmodconfig due to:
+> Today's linux-next merge of the staging tree got a conflict in:
 > 
-> >       arm-allmodconfig
-> > ../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)
+>   drivers/staging/lustre/lustre/llite/rw26.c
 > 
-> caused by b5aa1006e4a93 (pinctrl: ns2: add pinmux driver support for
-> Broadcom NS2 SoC) - presumably just a missing dependency.
+> between commit:
 > 
+>   c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
+> 
+> from the vfs tree and commit:
+> 
+>   8c7b0e1a6747 ("staging/lustre/llite: rename ccc_object to vvp_object")
+> 
+> from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-No, the function got renamed in another patch. I already prepared a fix
-yesterday, but haven't gotten around to submit the patches for the last
-two days, I'll try to send it out today, but it might end up being
-tomorrow, or Linus could fix this one himself first.
+Looks good, thanks.
 
-	Arnd
+greg k-h
