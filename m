@@ -1,58 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Tue, 3 May 2016 16:44:22 +1000
-Message-ID: <20160503164422.78369452@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: manual merge of the drm-misc tree with the drm-intel
+ tree
+Date: Tue, 3 May 2016 09:54:55 +0200
+Message-ID: <20160503075455.GZ14148@phenom.ffwll.local>
+References: <20160503132412.30a61b5c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49048 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750732AbcECGoZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 3 May 2016 02:44:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, "John L. Hammond" <john.hammond@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20160503132412.30a61b5c@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
-
-Today's linux-next merge of the staging tree got a conflict in:
-
-  drivers/staging/lustre/lustre/llite/rw26.c
-
-between commit:
-
-  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
-
-from the vfs tree and commit:
-
-  8c7b0e1a6747 ("staging/lustre/llite: rename ccc_object to vvp_object")
-
-from the staging tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/staging/lustre/lustre/llite/rw26.c
-index 0c3459c1a518,93411896aef0..000000000000
---- a/drivers/staging/lustre/lustre/llite/rw26.c
-+++ b/drivers/staging/lustre/lustre/llite/rw26.c
-@@@ -364,8 -351,7 +350,8 @@@ static ssize_t ll_direct_IO_26(struct k
-  	struct cl_io *io;
-  	struct file *file = iocb->ki_filp;
-  	struct inode *inode = file->f_mapping->host;
-- 	struct ccc_object *obj = cl_inode2ccc(inode);
-+ 	struct vvp_object *obj = cl_inode2vvp(inode);
- +	loff_t file_offset = iocb->ki_pos;
-  	ssize_t count = iov_iter_count(iter);
-  	ssize_t tot_bytes = 0, result = 0;
-  	struct ll_inode_info *lli = ll_i2info(inode);
+T24gVHVlLCBNYXkgMDMsIDIwMTYgYXQgMDE6MjQ6MTJQTSArMTAwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBk
+cm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvZHJtL2k5
+MTUvaW50ZWxfZGlzcGxheS5jCj4gCj4gYmV0d2VlbiBjb21taXRzOgo+IAo+ICAgZjdlNTgzOGJi
+MzdkICgiZHJtL2k5MTU6IFNpbXBsaWZ5IHJlc2V0X2NvdW50ZXIgaGFuZGxpbmcgZHVyaW5nIGF0
+b21pYyBtb2Rlc2V0dGluZyIpCj4gCj4gZnJvbSB0aGUgZHJtLWludGVsIHRyZWUgYW5kIGNvbW1p
+dDoKPiAKPiAgIDgxMDcyYmZkMTNmMiAoImRybS9pOTE1OiBSZW5hbWUgYXN5bmMgdG8gbm9uYmxv
+Y2suIikKPiAKPiBmcm9tIHRoZSBkcm0tbWlzYyB0cmVlLgo+IAo+IEkgZml4ZWQgaXQgdXAgKHNl
+ZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwo+IGlzIG5v
+dyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRy
+aXZpYWwKPiBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1h
+aW50YWluZXIgd2hlbiB5b3VyIHRyZWUKPiBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3Ug
+bWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZwo+IHdpdGggdGhlIG1haW50YWlu
+ZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+
+IGNvbXBsZXggY29uZmxpY3RzLgoKUmV2aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52
+ZXR0ZXJAZmZ3bGwuY2g+CgpJIGtpbmRhIHdvbmRlciB3aGV0aGVyIHRoZXJlJ3Mgc29tZSB3YXkg
+d2UgY291bGQgc2hhcmUgdGhlc2UgY29uZmxpY3QKcmVzb2x1dGlvbnMgYW1vbmcgdmFyaW91cyB0
+cmVlcy4gQXQgbGVhc3Qgb25lIHJlYWxseSB2YWx1YWJsZSBwYXJ0IG9mCmRvaW5nIG15IG93biBk
+cm0taW50ZWwtbmlnaHRseSBpbnRlZ3JhdGlvbiB0cmVlIGlzIHRoYXQgSSBjYW4gc29hayBtZXJn
+ZXMKZm9yIGEgZmV3IGRheXMgYmVmb3JlIEkgYmFrZSB0aGVtIGluIGZvciBldGVybml0eSAuLi4K
+ClRvcGljIGZvciBLUyBJIGd1ZXNzPwoKQ2hlZXJzLCBEYW5pZWwKCj4gCj4gLS0gCj4gQ2hlZXJz
+LAo+IFN0ZXBoZW4gUm90aHdlbGwKPiAKPiBkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2k5MTUv
+aW50ZWxfZGlzcGxheS5jCj4gaW5kZXggZmY2MDI0MWIxZjc2LDVkMjliODM4ZDhkNy4uMDAwMDAw
+MDAwMDAwCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jCj4gKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jCj4gQEBAIC0xMzQ2Miw5IC0x
+MzQxNCwxMiArMTM0NjIsOSBAQEAgc3RhdGljIGludCBpbnRlbF9hdG9taWNfcHJlcGFyZV9jb21t
+aXQoCj4gICAJCXJldHVybiByZXQ7Cj4gICAKPiAgIAlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9w
+cmVwYXJlX3BsYW5lcyhkZXYsIHN0YXRlKTsKPiAgLQlpZiAoIXJldCAmJiAhbm9uYmxvY2sgJiYg
+IWk5MTVfcmVzZXRfaW5fcHJvZ3Jlc3MoJmRldl9wcml2LT5ncHVfZXJyb3IpKSB7Cj4gIC0JCXUz
+MiByZXNldF9jb3VudGVyOwo+ICAtCj4gIC0JCXJlc2V0X2NvdW50ZXIgPSBhdG9taWNfcmVhZCgm
+ZGV2X3ByaXYtPmdwdV9lcnJvci5yZXNldF9jb3VudGVyKTsKPiAgLQkJbXV0ZXhfdW5sb2NrKCZk
+ZXYtPnN0cnVjdF9tdXRleCk7Cj4gICsJbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7
+Cj4gICAKPiAtIAlpZiAoIXJldCAmJiAhYXN5bmMpIHsKPiArKwlpZiAoIXJldCAmJiAhbm9uYmxv
+Y2spIHsKPiAgIAkJZm9yX2VhY2hfcGxhbmVfaW5fc3RhdGUoc3RhdGUsIHBsYW5lLCBwbGFuZV9z
+dGF0ZSwgaSkgewo+ICAgCQkJc3RydWN0IGludGVsX3BsYW5lX3N0YXRlICppbnRlbF9wbGFuZV9z
+dGF0ZSA9Cj4gICAJCQkJdG9faW50ZWxfcGxhbmVfc3RhdGUocGxhbmVfc3RhdGUpOwoKLS0gCkRh
+bmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9i
+bG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
