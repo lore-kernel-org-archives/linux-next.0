@@ -1,43 +1,61 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the tpmdd tree
-Date: Mon, 2 May 2016 19:26:46 +0300
-Message-ID: <20160502162646.GA4264@intel.com>
-References: <20160428153232.0d6eb076@canb.auug.org.au>
- <1461834144.3482.4.camel@linux.intel.com>
- <20160501231222.42557edf@canb.auug.org.au>
- <20160502111036.GA9585@intel.com>
- <20160502221927.6568ac39@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the f2fs tree
+Date: Tue, 3 May 2016 11:41:19 +1000
+Message-ID: <20160503114119.521192fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga03.intel.com ([134.134.136.65]:19696 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754416AbcEBQ0v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 2 May 2016 12:26:51 -0400
-Content-Disposition: inline
-In-Reply-To: <20160502221927.6568ac39@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Ricard <christophe.ricard@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, May 02, 2016 at 10:19:27PM +1000, Stephen Rothwell wrote:
-> Hi Jarkko,
-> 
-> On Mon, 2 May 2016 14:10:36 +0300 Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > I applied the fix and merged it.
-> 
-> Unfortunately, you seem to have turned the leading whitespace from a
-> TAB to spaces :-(
+Hi Al,
 
-Fixed. Sorry. I also did cross-compilation for PPC to make sure that
-this works. I'll take PPC compilation as part of my testing procedure
-from now on in order to prevent this problem from happening again
-in the first place.
+Today's linux-next merge of the vfs tree got a conflict in:
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+  fs/f2fs/data.c
 
-/Jarkko
+between commit:
+
+  6bfc49197eba ("f2fs: issue cache flush on direct IO")
+
+from the f2fs tree and commit:
+
+  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/f2fs/data.c
+index 38ce5d6f8583,a4c5da5bfe1e..000000000000
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@@ -1687,13 -1672,9 +1687,13 @@@ static ssize_t f2fs_direct_IO(struct ki
+  
+  	trace_f2fs_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+  
+- 	err = blockdev_direct_IO(iocb, inode, iter, offset, get_data_block_dio);
++ 	err = blockdev_direct_IO(iocb, inode, iter, get_data_block_dio);
+ -	if (err < 0 && iov_iter_rw(iter) == WRITE)
+ -		f2fs_write_failed(mapping, offset + count);
+ +	if (iov_iter_rw(iter) == WRITE) {
+ +		if (err > 0)
+ +			set_inode_flag(F2FS_I(inode), FI_UPDATE_WRITE);
+ +		else if (err < 0)
+ +			f2fs_write_failed(mapping, offset + count);
+ +	}
+  
+  	trace_f2fs_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), err);
+  
