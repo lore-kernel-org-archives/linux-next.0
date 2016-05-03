@@ -1,129 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pwm tree with the regulator tree
-Date: Tue, 3 May 2016 18:25:09 +1000
-Message-ID: <20160503182509.42658c4f@canb.auug.org.au>
+From: Shannon Zhao <zhaoshenglong@huawei.com>
+Subject: Re: [Xen-devel] efi_enabled(EFI_PARAVIRT) use
+Date: Tue, 3 May 2016 17:13:52 +0800
+Message-ID: <57286BD0.2000809@huawei.com>
+References: <20160429142020.4499e185@canb.auug.org.au> <20160429063936.GA28320@gmail.com> <alpine.DEB.2.10.1604291123260.3312@sstabellini-ThinkPad-X260> <20160429143931.GG2839@codeblueprint.co.uk> <CAKv+Gu_k45_r0mke6ELb3Pi05BnJiEMqweJRfsy7S55FzCpF7Q@mail.gmail.com> <5724BDD2.5020600@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Laxman Dewangan <ldewangan@nvidia.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from szxga03-in.huawei.com ([119.145.14.66]:30438 "EHLO
+	szxga03-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751419AbcECJPk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 3 May 2016 05:15:40 -0400
+In-Reply-To: <5724BDD2.5020600@linaro.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shannon Zhao <shannon.zhao@linaro.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jeremy Fitzhardinge <jeremy@goop.org>, Stefano Stabellini <sstabellini@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Stefano Stabellini <stefano.stabellini@eu.citrix.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, Borislav Petkov <bp@alien8.de>, linux-next@vger.kernel.org, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 
-Hi Thierry,
 
-Today's linux-next merge of the pwm tree got a conflict in:
 
-  drivers/regulator/pwm-regulator.c
+On 2016/4/30 22:14, Shannon Zhao wrote:
+>> I already proposed when this patch was first under review to make the
+>> > arm_enable_runtime_services() function bail early without error if the
+>> > EFI_RUNTIME_SERVICES flag is already set, and the xen code could set
+>> > that bit as well when it installs its paravirtualized alternatives. I
+>> > don't remember exactly why that was shot down, though, but I think it
+>> > is the only reason this code introduces references to EFI_PARAVIRT in
+>> > the first place.
+>> > 
+> Yes, in this patch we could set EFI_RUNTIME_SERVICES flag in
+> fdt_find_hyper_node instead of setting EFI_PARAVIRT flag, and then bail
+> out early in arm_enable_runtime_services() as you said. Then call
+> xen_efi_runtime_setup() in xen_guest_init().
 
-between commit:
+Hi Ard,
 
-  fd786fb0276a ("regulator: pwm: Try to avoid voltage error in duty cycle calculation")
+If it sets EFI_RUNTIME_SERVICES flag in fdt_find_hyper_node and in
+arm_enable_runtime_services() it checks whether it's a Dom0 through
+xen_init_domain() and the EFI_RUNTIME_SERVICES flag is set, then call
+xen_efi_runtime_setup(). Is it ok?
 
-from the regulator tree and commit:
-
-  f137b90ba6cd ("regulator: pwm: Use pwm_get_args() where appropriate")
-
-from the pwm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+Thanks,
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/regulator/pwm-regulator.c
-index 8e928f23279b,ffdb895ace0a..000000000000
---- a/drivers/regulator/pwm-regulator.c
-+++ b/drivers/regulator/pwm-regulator.c
-@@@ -63,14 -63,14 +63,14 @@@ static int pwm_regulator_set_voltage_se
-  	int dutycycle;
-  	int ret;
-  
-- 	pwm_reg_period = pwm_get_period(drvdata->pwm);
-+ 	pwm_get_args(drvdata->pwm, &pargs);
-  
-- 	dutycycle = (pwm_reg_period *
-+ 	dutycycle = (pargs.period *
-  		    drvdata->duty_cycle_table[selector].dutycycle) / 100;
-  
-- 	ret = pwm_config(drvdata->pwm, dutycycle, pwm_reg_period);
-+ 	ret = pwm_config(drvdata->pwm, dutycycle, pargs.period);
-  	if (ret) {
- -		dev_err(&rdev->dev, "Failed to configure PWM\n");
- +		dev_err(&rdev->dev, "Failed to configure PWM: %d\n", ret);
-  		return ret;
-  	}
-  
-@@@ -126,35 -138,17 +126,36 @@@ static int pwm_regulator_set_voltage(st
-  {
-  	struct pwm_regulator_data *drvdata = rdev_get_drvdata(rdev);
-  	unsigned int ramp_delay = rdev->constraints->ramp_delay;
-- 	unsigned int period = pwm_get_period(drvdata->pwm);
-+ 	struct pwm_args pargs;
- -	int duty_cycle;
- +	unsigned int req_diff = min_uV - rdev->constraints->min_uV;
- +	unsigned int diff;
- +	unsigned int duty_pulse;
- +	u64 req_period;
- +	u32 rem;
-  	int ret;
-  
-+ 	pwm_get_args(drvdata->pwm, &pargs);
- -	duty_cycle = pwm_voltage_to_duty_cycle_percentage(rdev, min_uV);
- +	diff = rdev->constraints->max_uV - rdev->constraints->min_uV;
- +
- +	/* First try to find out if we get the iduty cycle time which is
- +	 * factor of PWM period time. If (request_diff_to_min * pwm_period)
- +	 * is perfect divided by voltage_range_diff then it is possible to
- +	 * get duty cycle time which is factor of PWM period. This will help
- +	 * to get output voltage nearer to requested value as there is no
- +	 * calculation loss.
- +	 */
-- 	req_period = req_diff * period;
-++	req_period = req_diff * pargs.period;
- +	div_u64_rem(req_period, diff, &rem);
- +	if (!rem) {
- +		do_div(req_period, diff);
- +		duty_pulse = (unsigned int)req_period;
- +	} else {
-- 		duty_pulse = (period / 100) * ((req_diff * 100) / diff);
-++		duty_pulse = (pargs.period / 100) * ((req_diff * 100) / diff);
- +	}
-  
-- 	ret = pwm_config(drvdata->pwm, duty_pulse, period);
- -	ret = pwm_config(drvdata->pwm, (pargs.period / 100) * duty_cycle,
- -			 pargs.period);
-++	ret = pwm_config(drvdata->pwm, duty_pulse, pargs.period);
-  	if (ret) {
- -		dev_err(&rdev->dev, "Failed to configure PWM\n");
- +		dev_err(&rdev->dev, "Failed to configure PWM: %d\n", ret);
-  		return ret;
-  	}
-  
-@@@ -284,11 -279,16 +285,17 @@@ static int pwm_regulator_probe(struct p
-  
-  	drvdata->pwm = devm_pwm_get(&pdev->dev, NULL);
-  	if (IS_ERR(drvdata->pwm)) {
- -		dev_err(&pdev->dev, "Failed to get PWM\n");
- -		return PTR_ERR(drvdata->pwm);
- +		ret = PTR_ERR(drvdata->pwm);
- +		dev_err(&pdev->dev, "Failed to get PWM: %d\n", ret);
- +		return ret;
-  	}
-  
-+ 	/*
-+ 	 * FIXME: pwm_apply_args() should be removed when switching to the
-+ 	 * atomic PWM API.
-+ 	 */
-+ 	pwm_apply_args(drvdata->pwm);
-+ 
-  	regulator = devm_regulator_register(&pdev->dev,
-  					    &drvdata->desc, &config);
-  	if (IS_ERR(regulator)) {
+Shannon
