@@ -1,31 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 5 May 2016 10:30:26 +1000
-Message-ID: <20160505103026.55a46ff8@canb.auug.org.au>
+Subject: linux-next: manual merge of the borntraeger tree with the kvms390
+ tree
+Date: Thu, 5 May 2016 14:23:22 +1000
+Message-ID: <20160505142322.1b519280@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kangjie Lu <kangjielu@gmail.com>, Nicolas Dichtel <nicolas.dichtel@6wind.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51878 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750905AbcEEEXZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 5 May 2016 00:23:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Yarygin <yarygin@linux.vnet.ibm.com>
 
-Hi all,
+Hi Christian,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the borntraeger tree got a conflict in:
 
-  net/core/rtnetlink.c
+  arch/s390/kvm/kvm-s390.c
 
 between commit:
 
-  5f8e44741f9f ("net: fix infoleak in rtnetlink")
+  be7c9d7ba9e4 ("KVM: s390: Populate mask of non-hypervisor managed facility bits")
 
-from the net tree and commit:
+from the kvms390 tree and commit:
 
-  270cb4d05b29 ("rtnl: align nlattr properly when needed")
+  5c14ad932491 ("KVM: halt_polling: provide a way to qualify wakeups during poll")
 
-from the net-next tree.
+from the borntraeger tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,34 +43,30 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc net/core/rtnetlink.c
-index 65763c29f845,d471f097c739..000000000000
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@@ -1180,17 -1173,15 +1173,17 @@@ static noinline_for_stack int rtnl_fill
+diff --cc arch/s390/kvm/kvm-s390.c
+index c597201a5ca9,009a10e00e80..000000000000
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@@ -2985,17 -2972,13 +2986,22 @@@ void kvm_arch_commit_memory_region(stru
+  	return;
+  }
   
-  static int rtnl_fill_link_ifmap(struct sk_buff *skb, struct net_device *dev)
+ +static inline unsigned long nonhyp_mask(int i)
+ +{
+ +	unsigned int nonhyp_fai = (sclp.hmfai << i * 2) >> 30;
+ +
+ +	return 0x0000ffffffffffffUL >> (nonhyp_fai << 4);
+ +}
+ +
++ void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu)
++ {
++ 	vcpu->valid_wakeup = false;
++ }
++ 
+  static int __init kvm_s390_init(void)
   {
- -	struct rtnl_link_ifmap map = {
- -		.mem_start   = dev->mem_start,
- -		.mem_end     = dev->mem_end,
- -		.base_addr   = dev->base_addr,
- -		.irq         = dev->irq,
- -		.dma         = dev->dma,
- -		.port        = dev->if_port,
- -	};
- +	struct rtnl_link_ifmap map;
+ +	int i;
  +
- +	memset(&map, 0, sizeof(map));
- +	map.mem_start   = dev->mem_start;
- +	map.mem_end     = dev->mem_end;
- +	map.base_addr   = dev->base_addr;
- +	map.irq         = dev->irq;
- +	map.dma         = dev->dma;
- +	map.port        = dev->if_port;
- +
-- 	if (nla_put(skb, IFLA_MAP, sizeof(map), &map))
-+ 	if (nla_put_64bit(skb, IFLA_MAP, sizeof(map), &map, IFLA_PAD))
-  		return -EMSGSIZE;
-  
-  	return 0;
+  	if (!sclp.has_sief2) {
+  		pr_info("SIE not available\n");
+  		return -ENODEV;
