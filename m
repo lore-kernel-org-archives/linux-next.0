@@ -1,191 +1,67 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 5 May 2016 22:44:29 -0700
-Message-ID: <20160505224429.3b8f3837bcb0281932cfe03f@linux-foundation.org>
+Date: Fri, 6 May 2016 16:09:16 +1000
+Message-ID: <20160506160916.3192f615@canb.auug.org.au>
 References: <20160506145810.04a319d3@canb.auug.org.au>
+	<20160505224429.3b8f3837bcb0281932cfe03f@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38942 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751028AbcEFFoa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2016 01:44:30 -0400
-In-Reply-To: <20160506145810.04a319d3@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:60078 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751054AbcEFGJT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 6 May 2016 02:09:19 -0400
+In-Reply-To: <20160505224429.3b8f3837bcb0281932cfe03f@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 
-On Fri, 6 May 2016 14:58:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Andrew,
 
-> Hi Andrew,
+On Thu, 5 May 2016 22:44:29 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> On Fri, 6 May 2016 14:58:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> After merging the akpm-current tree, today's linux-next build (and a
-> few earlier ones) (powerpc allnoconfig (and many others)) failed like
-> this:
+> > After merging the akpm-current tree, today's linux-next build (and a
+> > few earlier ones) (powerpc allnoconfig (and many others)) failed like
+> > this:
+> > 
+> > lib/vsprintf.c:160:2: error: initializer element is not constant
+> > lib/vsprintf.c:160:2: error: (near initialization for 'decpair[0]')
+> > lib/vsprintf.c:160:2: error: initializer element is not constant
+> > lib/vsprintf.c:160:2: error: (near initialization for 'decpair[1]')
+> > lib/vsprintf.c:160:2: error: initializer element is not constant
+> > lib/vsprintf.c:160:2: error: (near initialization for 'decpair[2]')
+> > lib/vsprintf.c:160:2: error: initializer element is not constant
+> > lib/vsprintf.c:160:2: error: (near initialization for 'decpair[3]')
+> > lib/vsprintf.c:160:2: error: initializer element is not constant
+> > 
+> > and more ... basically any big endian build of code using __swabxx
+> > or cpu_to_lexx in initailisers (in the above case cpu_to_le16()).
+> > 
+> > Caused (presumably) by commit
+> > 
+> >   eeee46ed3cda ("byteswap: try to avoid __builtin_constant_p gcc bug")
+> > 
+> > This is a buyild using gcc 4.6.3.
+> > 
+> > I have revreted that commit for today to see if it fixes the overnight
+> > builds.  
 > 
-> lib/vsprintf.c:160:2: error: initializer element is not constant
-> lib/vsprintf.c:160:2: error: (near initialization for 'decpair[0]')
-> lib/vsprintf.c:160:2: error: initializer element is not constant
-> lib/vsprintf.c:160:2: error: (near initialization for 'decpair[1]')
-> lib/vsprintf.c:160:2: error: initializer element is not constant
-> lib/vsprintf.c:160:2: error: (near initialization for 'decpair[2]')
-> lib/vsprintf.c:160:2: error: initializer element is not constant
-> lib/vsprintf.c:160:2: error: (near initialization for 'decpair[3]')
-> lib/vsprintf.c:160:2: error: initializer element is not constant
-> 
-> and more ... basically any big endian build of code using __swabxx
-> or cpu_to_lexx in initailisers (in the above case cpu_to_le16()).
-> 
-> Caused (presumably) by commit
-> 
->   eeee46ed3cda ("byteswap: try to avoid __builtin_constant_p gcc bug")
-> 
-> This is a buyild using gcc 4.6.3.
-> 
-> I have revreted that commit for today to see if it fixes the overnight
-> builds.
+> hm, it works for me.  powerpc allnoconfig, after setting CONFIG_PPC64=y.
 
-hm, it works for me.  powerpc allnoconfig, after setting CONFIG_PPC64=y.
+Interesting ...  mine also works with gcc 5.2.0. I do 32 and 64 bit
+allnoconfig powerpc builds before I release linux-next and they work,
+but the 32 bit one fails overnight when gcc 4.6.3 is used :-( (we don't
+do a 64 bit allnoconfig overnight as it requires playing with the
+generated .config).  Basically all the powerpc builds were failing with
+gcc 4.6.3 since next-20160502.
 
-With this:
+The overnight powerpc allnoconfig build has just succeeded for today's
+linux-next.
 
-
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: byteswap: try to avoid __builtin_constant_p gcc bug
-
-This is another attempt to avoid a regression in wwn_to_u64() after that
-started using get_unaligned_be64(), which in turn ran into a bug on
-gcc-4.9 through 6.1.
-
-The regression got introduced due to the combination of two separate
-workarounds (e3bde9568d99 ("include/linux/unaligned: force inlining of
-byteswap operations") and ef3fb2422ffe ("scsi: fc: use get/put_unaligned64
-for wwn access")) that each try to sidestep distinct problems with gcc
-behavior (code growth and increased stack usage).  Unfortunately after
-both have been applied, a more serious gcc bug has been uncovered, leading
-to incorrect object code that discards part of a function and causes
-undefined behavior.
-
-As part of this problem is how __builtin_constant_p gets evaluated on an
-argument passed by reference into an inline function, this avoids the use
-of __builtin_constant_p() for all architectures that set
-CONFIG_ARCH_USE_BUILTIN_BSWAP.  Most architectures do not set
-ARCH_SUPPORTS_OPTIMIZED_INLINING, which means they probably do not suffer
-from the problem in the qla2xxx driver, but they might still run into it
-elsewhere.
-
-Both of the original workarounds were only merged in the 4.6 kernel, and
-the bug that is fixed by this patch should only appear if both are there,
-so we probably don't need to backport the fix.  On the other hand, it
-works by simplifying the code path and should not have any negative
-effects.
-
-[arnd@arndb.de: fix older gcc warnings]
-  (http://lkml.kernel.org/r/12243652.bxSxEgjgfk@wuerfel)
-Link: https://lkml.org/lkml/headers/2016/4/12/1103
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66122
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70232
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70646
-Fixes: e3bde9568d99 ("include/linux/unaligned: force inlining of byteswap operations")
-Fixes: ef3fb2422ffe ("scsi: fc: use get/put_unaligned64 for wwn access")
-Link: http://lkml.kernel.org/r/1780465.XdtPJpi8Tt@wuerfel
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reviewed-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Tested-by: Josh Poimboeuf <jpoimboe@redhat.com> # on gcc-5.3
-Tested-by: Quinn Tran <quinn.tran@qlogic.com>
-Cc: Martin Jambor <mjambor@suse.cz>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Thomas Graf <tgraf@suug.ch>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Himanshu Madhani <himanshu.madhani@qlogic.com>
-Cc: Jan Hubicka <hubicka@ucw.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- include/uapi/linux/swab.h |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
-diff -puN include/uapi/linux/swab.h~byteswap-try-to-avoid-__builtin_constant_p-gcc-bug-v2 include/uapi/linux/swab.h
---- a/include/uapi/linux/swab.h~byteswap-try-to-avoid-__builtin_constant_p-gcc-bug-v2
-+++ a/include/uapi/linux/swab.h
-@@ -45,9 +45,7 @@
- 
- static inline __attribute_const__ __u16 __fswab16(__u16 val)
- {
--#ifdef __HAVE_BUILTIN_BSWAP16__
--	return __builtin_bswap16(val);
--#elif defined (__arch_swab16)
-+#if defined (__arch_swab16)
- 	return __arch_swab16(val);
- #else
- 	return ___constant_swab16(val);
-@@ -56,9 +54,7 @@ static inline __attribute_const__ __u16
- 
- static inline __attribute_const__ __u32 __fswab32(__u32 val)
- {
--#ifdef __HAVE_BUILTIN_BSWAP32__
--	return __builtin_bswap32(val);
--#elif defined(__arch_swab32)
-+#if defined(__arch_swab32)
- 	return __arch_swab32(val);
- #else
- 	return ___constant_swab32(val);
-@@ -67,9 +63,7 @@ static inline __attribute_const__ __u32
- 
- static inline __attribute_const__ __u64 __fswab64(__u64 val)
- {
--#ifdef __HAVE_BUILTIN_BSWAP64__
--	return __builtin_bswap64(val);
--#elif defined (__arch_swab64)
-+#if defined (__arch_swab64)
- 	return __arch_swab64(val);
- #elif defined(__SWAB_64_THRU_32__)
- 	__u32 h = val >> 32;
-@@ -102,28 +96,40 @@ static inline __attribute_const__ __u32
-  * __swab16 - return a byteswapped 16-bit value
-  * @x: value to byteswap
-  */
-+#ifdef __HAVE_BUILTIN_BSWAP16__
-+#define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-+#else
- #define __swab16(x)				\
- 	(__builtin_constant_p((__u16)(x)) ?	\
- 	___constant_swab16(x) :			\
- 	__fswab16(x))
-+#endif
- 
- /**
-  * __swab32 - return a byteswapped 32-bit value
-  * @x: value to byteswap
-  */
-+#ifdef __HAVE_BUILTIN_BSWAP32__
-+#define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-+#else
- #define __swab32(x)				\
- 	(__builtin_constant_p((__u32)(x)) ?	\
- 	___constant_swab32(x) :			\
- 	__fswab32(x))
-+#endif
- 
- /**
-  * __swab64 - return a byteswapped 64-bit value
-  * @x: value to byteswap
-  */
-+#ifdef __HAVE_BUILTIN_BSWAP64__
-+#define __swab64(x) (__u64)__builtin_bswap64((__u64)(x))
-+#else
- #define __swab64(x)				\
- 	(__builtin_constant_p((__u64)(x)) ?	\
- 	___constant_swab64(x) :			\
- 	__fswab64(x))
-+#endif
- 
- /**
-  * __swahw32 - return a word-swapped 32-bit value
-_
+-- 
+Cheers,
+Stephen Rothwell
