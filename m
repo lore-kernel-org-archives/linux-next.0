@@ -1,19 +1,29 @@
-From: "Fidelity Mortgage Loan" <helen.ablanque@icto.dost.gov.ph>
-Subject: Fast loans
-Date: Fri, 06 May 2016 11:36:58 -0700
-Message-ID: <20160506183706.23FF663AA8D6@ne-mta2.liham.gov.phl>
-Reply-To: ifdml@mail.com
+From: "Acct. Dept. Bank Of China" <jslee@infonetg.com>
+Subject: STRICTLY CONFIDENTIAL.
+Date: Sat, 7 May 2016 01:22:27 -0500
+Message-ID: <201605070609.u47698OI002826__47549.9245607809$1462602656$gmane$org@infonetg.com>
+Reply-To: <zhu.shumin@yahoo.com.hk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain;
+	charset="Windows-1251"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ne-mail1.gov.ph ([202.90.153.11]:45329 "EHLO ne-mail1.gov.ph"
+Received: from mail.infonetg.com ([1.224.163.43]:40180 "EHLO infonetg.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758152AbcEFTfG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 6 May 2016 15:35:06 -0400
-Content-Description: Mail message body
+	id S1751275AbcEGGaS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sat, 7 May 2016 02:30:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <helen.ablanque@icto.dost.gov.ph>
 
-Loan Offer at 3%, Feel Free to REPLY back to us for more info
+I have important transaction for you as next of kin to claim US$8.37m  email me at   zhu.shumin@yahoo.com.hk   so i can send you more details
+
+Thanks
+
+Mr.Zhu Shumin
+
+(Security Code 00746igit)
+= = = = = = = = = = = = =
+
+
+
+                 Move to inbox
