@@ -1,53 +1,33 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: next-20160503 build: 1 failures 12 warnings (next-20160503)
-Date: Mon, 09 May 2016 13:17:19 +0200
-Message-ID: <4516208.OQ3mKD6WuY@wuerfel>
-References: <E1axZpG-000664-AK@optimist> <2280495.M9rYajvqUJ@wuerfel>
- <20160509205315.631e0c68@canb.auug.org.au>
+Date: Mon, 9 May 2016 15:12:51 +0200
+Message-ID: <CACRpkdbuJym-7tSMo1gXyWvGCRvvuor8EeCK2bm6=Kb20vTxNA@mail.gmail.com>
+References: <E1axZpG-000664-AK@optimist>
+	<20160503141723.GR6292@sirena.org.uk>
+	<2280495.M9rYajvqUJ@wuerfel>
+	<20160509205315.631e0c68@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:33110 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751364AbcEINMw (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 9 May 2016 09:12:52 -0400
+Received: by mail-oi0-f41.google.com with SMTP id v145so209004081oie.0
+        for <linux-next@vger.kernel.org>; Mon, 09 May 2016 06:12:52 -0700 (PDT)
 In-Reply-To: <20160509205315.631e0c68@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Mark Brown <broonie@kernel.org>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, linux-next@vger.kernel.org, Ray Jui <ray.jui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Linaro Kernel Mailman List <linaro-kernel@lists.linaro.org>, Mark Brown <broonie@kernel.org>, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, Ray Jui <ray.jui@broadcom.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>
 
-On Monday 09 May 2016 20:53:15 Stephen Rothwell wrote:
-> Hi Arnd and all,
-> 
-> On Tue, 03 May 2016 17:02:39 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Tuesday 03 May 2016 15:17:23 Mark Brown wrote:
-> > > On Tue, May 03, 2016 at 01:53:18PM +0100, Build bot for Mark Brown wrote:
-> > > 
-> > > Today's -next fails to build an ARM allmodconfig due to:
-> > >   
-> > > >       arm-allmodconfig
-> > > > ../drivers/pinctrl/bcm/pinctrl-ns2-mux.c:540:17: error: 'pinctrl_utils_dt_free_map' undeclared here (not in a function)  
-> > > 
-> > > caused by b5aa1006e4a93 (pinctrl: ns2: add pinmux driver support for
-> > > Broadcom NS2 SoC) - presumably just a missing dependency.
-> > >   
-> > 
-> > No, the function got renamed in another patch. I already prepared a fix
-> > yesterday, but haven't gotten around to submit the patches for the last
-> > two days, I'll try to send it out today, but it might end up being
-> > tomorrow, or Linus could fix this one himself first.
-> 
+On Mon, May 9, 2016 at 12:53 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 > Can we, please, get this fixed ... less than a week to the merge window
 > opening ...
 
-Linus Walleij just picked up the patch I sent last week into the pinctrl tree,
-so it should be fine in tomorrow's linux-next.
+Mark poked me with a sharp stick, the patch is applied!
+Sorry for missing this.
 
-	Arnd
+Yours,
+Linus Walleij
