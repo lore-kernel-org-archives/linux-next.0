@@ -1,88 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] compiler-gcc: require gcc 4.8 for powerpc
- __builtin_bswap16()
-Date: Mon, 9 May 2016 10:59:27 +1000
-Message-ID: <20160509105927.68dfa6d2@canb.auug.org.au>
-References: <20160506145810.04a319d3@canb.auug.org.au>
-	<20160505224429.3b8f3837bcb0281932cfe03f@linux-foundation.org>
-	<20160506160916.3192f615@canb.auug.org.au>
-	<1462517712.8044.2.camel@ellerman.id.au>
-	<20160506142225.rtp2swmdgfzucfjl@treble>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 9 May 2016 11:27:26 +1000
+Message-ID: <20160509112726.072ba66d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43782 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750878AbcEIA73 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 8 May 2016 20:59:29 -0400
-In-Reply-To: <20160506142225.rtp2swmdgfzucfjl@treble>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sonny Jiang <sonny.jiang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Arindam Nath <arindam.nath@amd.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Josh,
+Hi Dave,
 
-On Fri, 6 May 2016 09:22:25 -0500 Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->
-> I've also seen no problems on powerpc with 4.4 and 4.8.  I suspect it's
-> specific to gcc 4.6.  Stephen, can you confirm this patch fixes it?
+Today's linux-next merge of the drm tree got a conflict in:
 
-That will obviously fix the problem for us (since it will effectively
-restore the code to what it was before the other commit for our gcc
-4.6.3 builds and we have not seen it in other builds).  I will add this
-patch to linux-next today.
+  drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 
-And since "byteswap: try to avoid __builtin_constant_p gcc bug" is not
-in Linus' tree, hopefully we can have this fix applied soon.
+between commit:
 
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
-> Subject: [PATCH] compiler-gcc: require gcc 4.8 for powerpc __builtin_bswap16()
-> 
-> gcc support for __builtin_bswap16() was supposedly added for powerpc in
-> gcc 4.6, and was then later added for other architectures in gcc 4.8.
-> 
-> However, Stephen Rothwell reported that attempting to use it on powerpc
-> in gcc 4.6 fails with:
-> 
->   lib/vsprintf.c:160:2: error: initializer element is not constant
->   lib/vsprintf.c:160:2: error: (near initialization for 'decpair[0]')
->   lib/vsprintf.c:160:2: error: initializer element is not constant
->   lib/vsprintf.c:160:2: error: (near initialization for 'decpair[1]')
->   lib/vsprintf.c:160:2: error: initializer element is not constant
->   lib/vsprintf.c:160:2: error: (near initialization for 'decpair[2]')
->   lib/vsprintf.c:160:2: error: initializer element is not constant
->   lib/vsprintf.c:160:2: error: (near initialization for 'decpair[3]')
->   lib/vsprintf.c:160:2: error: initializer element is not constant
-> 
-> I'm not entirely sure what those errors mean, but I don't see them on
-> gcc 4.8.  So let's consider gcc 4.8 to be the official starting point
-> for __builtin_bswap16().
-> 
-> Fixes: 7322dd755e7d ("byteswap: try to avoid __builtin_constant_p gcc bug")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-> ---
->  include/linux/compiler-gcc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index eeae401..3d5202e 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -246,7 +246,7 @@
->  #define __HAVE_BUILTIN_BSWAP32__
->  #define __HAVE_BUILTIN_BSWAP64__
->  #endif
-> -#if GCC_VERSION >= 40800 || (defined(__powerpc__) && GCC_VERSION >= 40600)
-> +#if GCC_VERSION >= 40800
->  #define __HAVE_BUILTIN_BSWAP16__
->  #endif
->  #endif /* CONFIG_ARCH_USE_BUILTIN_BSWAP */
-> -- 
-> 2.4.11
+  562e2689baeb ("amdgpu/uvd: add uvd fw version for amdgpu")
+
+from Linus' tree and commit:
+
+  c036554170fc ("drm/amdgpu: handle more than 10 UVD sessions (v2)")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+index 871018c634e0,db86012deb67..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@@ -158,11 -171,19 +171,22 @@@ int amdgpu_uvd_sw_init(struct amdgpu_de
+  	DRM_INFO("Found UVD firmware Version: %hu.%hu Family ID: %hu\n",
+  		version_major, version_minor, family_id);
+  
+ +	adev->uvd.fw_version = ((version_major << 24) | (version_minor << 16) |
+ +				(family_id << 8));
+ +
++ 	/*
++ 	 * Limit the number of UVD handles depending on microcode major
++ 	 * and minor versions. The firmware version which has 40 UVD
++ 	 * instances support is 1.80. So all subsequent versions should
++ 	 * also have the same support.
++ 	 */
++ 	if ((version_major > 0x01) ||
++ 	    ((version_major == 0x01) && (version_minor >= 0x50)))
++ 		adev->uvd.max_handles = AMDGPU_MAX_UVD_HANDLES;
++ 
+  	bo_size = AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8)
+- 		 +  AMDGPU_UVD_STACK_SIZE + AMDGPU_UVD_HEAP_SIZE;
++ 		  +  AMDGPU_UVD_STACK_SIZE + AMDGPU_UVD_HEAP_SIZE
++ 		  +  AMDGPU_UVD_SESSION_SIZE * adev->uvd.max_handles;
+  	r = amdgpu_bo_create(adev, bo_size, PAGE_SIZE, true,
+  			     AMDGPU_GEM_DOMAIN_VRAM,
+  			     AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED,
