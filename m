@@ -1,98 +1,118 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the arm-soc tree
-Date: Tue, 10 May 2016 10:18:45 +1000
-Message-ID: <20160510101845.380ff1b2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Tue, 10 May 2016 11:29:05 +1000
+Message-ID: <20160510112905.5bffcad8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <andy.gross@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@sonymobile.com>, Andy Gross <andy.gross@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  include/linux/soc/qcom/smd.h
+net/qrtr/smd.c:106:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .callback = qcom_smd_qrtr_callback,
+              ^
+net/qrtr/smd.c:106:14: note: (near initialization for 'qcom_smd_qrtr_driver.callback')
 
-between commit:
+Caused by commit
+
+  bdabad3e363d ("net: Add Qualcomm IPC router")
+
+interacting with commit
 
   b853cb9628bf ("soc: qcom: smd: Make callback pass channel reference")
 
-from the arm-soc tree and commit:
+from the arm-soc tree.
 
-  43315f31adc2 ("soc: qcom: smd: Introduce compile stubs")
+I added the following merge fix patch (and it turned out I needed the
+new stubs).
 
-from the net-next tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 10 May 2016 11:14:06 +1000
+Subject: [PATCH] soc: qcom: smd: fix for Qualcomm IPC router and callback API
+ change
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/soc/qcom/smd.h | 9 +++++++++
+ net/qrtr/smd.c               | 9 ++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-I wasn't sure if the new functions introduced by b853cb9628bf also
-needed compile stubs.
+diff --git a/include/linux/soc/qcom/smd.h b/include/linux/soc/qcom/smd.h
+index 086e36d76be9..fbebbfc82ed3 100644
+--- a/include/linux/soc/qcom/smd.h
++++ b/include/linux/soc/qcom/smd.h
+@@ -70,6 +70,15 @@ static inline void qcom_smd_driver_unregister(struct qcom_smd_driver *drv)
+ 	WARN_ON(1);
+ }
+ 
++static inline void *qcom_smd_get_drvdata(struct qcom_smd_channel *channel)
++{
++	return NULL;
++}
++
++static inline void qcom_smd_set_drvdata(struct qcom_smd_channel *channel, void *data)
++{
++}
++
+ static inline int qcom_smd_send(struct qcom_smd_channel *channel,
+ 				const void *data, int len)
+ {
+diff --git a/net/qrtr/smd.c b/net/qrtr/smd.c
+index 84ebce73aa23..0d11132b3370 100644
+--- a/net/qrtr/smd.c
++++ b/net/qrtr/smd.c
+@@ -21,13 +21,14 @@
+ struct qrtr_smd_dev {
+ 	struct qrtr_endpoint ep;
+ 	struct qcom_smd_channel *channel;
++	struct device *dev;
+ };
+ 
+ /* from smd to qrtr */
+-static int qcom_smd_qrtr_callback(struct qcom_smd_device *sdev,
++static int qcom_smd_qrtr_callback(struct qcom_smd_channel *channel,
+ 				  const void *data, size_t len)
+ {
+-	struct qrtr_smd_dev *qdev = dev_get_drvdata(&sdev->dev);
++	struct qrtr_smd_dev *qdev = qcom_smd_get_drvdata(channel);
+ 	int rc;
+ 
+ 	if (!qdev)
+@@ -35,7 +36,7 @@ static int qcom_smd_qrtr_callback(struct qcom_smd_device *sdev,
+ 
+ 	rc = qrtr_endpoint_post(&qdev->ep, data, len);
+ 	if (rc == -EINVAL) {
+-		dev_err(&sdev->dev, "invalid ipcrouter packet\n");
++		dev_err(qdev->dev, "invalid ipcrouter packet\n");
+ 		/* return 0 to let smd drop the packet */
+ 		rc = 0;
+ 	}
+@@ -73,12 +74,14 @@ static int qcom_smd_qrtr_probe(struct qcom_smd_device *sdev)
+ 		return -ENOMEM;
+ 
+ 	qdev->channel = sdev->channel;
++	qdev->dev = &sdev->dev;
+ 	qdev->ep.xmit = qcom_smd_qrtr_send;
+ 
+ 	rc = qrtr_endpoint_register(&qdev->ep, QRTR_EP_NID_AUTO);
+ 	if (rc)
+ 		return rc;
+ 
++	qcom_smd_set_drvdata(sdev->channel, qdev);
+ 	dev_set_drvdata(&sdev->dev, qdev);
+ 
+ 	dev_dbg(&sdev->dev, "Qualcomm SMD QRTR driver probed\n");
+-- 
+2.7.0
+
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/linux/soc/qcom/smd.h
-index cb2f81559bc0,46a984f5e3a3..000000000000
---- a/include/linux/soc/qcom/smd.h
-+++ b/include/linux/soc/qcom/smd.h
-@@@ -44,23 -42,42 +44,49 @@@ struct qcom_smd_driver 
-  
-  	int (*probe)(struct qcom_smd_device *dev);
-  	void (*remove)(struct qcom_smd_device *dev);
- -	int (*callback)(struct qcom_smd_device *, const void *, size_t);
- +	qcom_smd_cb_t callback;
-  };
-  
-+ #if IS_ENABLED(CONFIG_QCOM_SMD)
-+ 
-  int qcom_smd_driver_register(struct qcom_smd_driver *drv);
-  void qcom_smd_driver_unregister(struct qcom_smd_driver *drv);
-  
- +void *qcom_smd_get_drvdata(struct qcom_smd_channel *channel);
- +void qcom_smd_set_drvdata(struct qcom_smd_channel *channel, void *data);
- +
-+ int qcom_smd_send(struct qcom_smd_channel *channel, const void *data, int len);
-+ 
-+ #else
-+ 
-+ static inline int qcom_smd_driver_register(struct qcom_smd_driver *drv)
-+ {
-+ 	return -ENXIO;
-+ }
-+ 
-+ static inline void qcom_smd_driver_unregister(struct qcom_smd_driver *drv)
-+ {
-+ 	/* This shouldn't be possible */
-+ 	WARN_ON(1);
-+ }
-+ 
-+ static inline int qcom_smd_send(struct qcom_smd_channel *channel,
-+ 				const void *data, int len)
-+ {
-+ 	/* This shouldn't be possible */
-+ 	WARN_ON(1);
-+ 	return -ENXIO;
-+ }
-+ 
-+ #endif
-+ 
-  #define module_qcom_smd_driver(__smd_driver) \
-  	module_driver(__smd_driver, qcom_smd_driver_register, \
-  		      qcom_smd_driver_unregister)
-  
-- int qcom_smd_send(struct qcom_smd_channel *channel, const void *data, int len);
-  
- +struct qcom_smd_channel *qcom_smd_open_channel(struct qcom_smd_channel *channel,
- +					       const char *name,
- +					       qcom_smd_cb_t cb);
- +
-  #endif
