@@ -1,67 +1,44 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 10 May 2016 11:39:34 -0700
-Message-ID: <20160510183934.GJ1256@tuxbot>
-References: <20160510112905.5bffcad8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
+Date: Wed, 11 May 2016 09:20:49 +1000
+Message-ID: <20160511092049.4d61264d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:34399 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750955AbcEJSji (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2016 14:39:38 -0400
-Received: by mail-pa0-f53.google.com with SMTP id r5so8584874pag.1
-        for <linux-next@vger.kernel.org>; Tue, 10 May 2016 11:39:38 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20160510112905.5bffcad8@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:50914 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751406AbcEJXUw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 10 May 2016 19:20:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Andy Gross <andy.gross@linaro.org>
-Cc: netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon 09 May 18:29 PDT 2016, Stephen Rothwell wrote:
+Hi Al,
 
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> net/qrtr/smd.c:106:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .callback = qcom_smd_qrtr_callback,
->               ^
-> net/qrtr/smd.c:106:14: note: (near initialization for 'qcom_smd_qrtr_driver.callback')
-> 
-> Caused by commit
-> 
->   bdabad3e363d ("net: Add Qualcomm IPC router")
-> 
-> interacting with commit
-> 
->   b853cb9628bf ("soc: qcom: smd: Make callback pass channel reference")
-> 
-> from the arm-soc tree.
-> 
-> I added the following merge fix patch (and it turned out I needed the
-> new stubs).
-> 
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Sorry for not spotting this issue earlier, I missed Andy's second pull
-request towards arm-soc and thought the SMD changes missed this cycle.
+  fs/overlayfs/super.c
 
+between commit:
 
-Your patch looks good, but I'm not sure how we should approach the merge
-window; Andy can't pick the patch because he doesn't have the qrtr code
-and David doesn't have the SMD patches coming through Andy.
+  420598d5bf9c ("ovl: ignore permissions on underlying lookup")
 
-FWIW, Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+from the overlayfs tree and commit:
 
+  b9e1d435fdf4 ("ovl_lookup_real(): use lookup_one_len_unlocked()")
 
-I assume we could have the QRTR go through Andy and arm-soc, with
-David's approval and this fix squashed in. But we're running rather late
-in this cycle, perhaps we should just back the QRTR patches out and I
-can respin and resend them after the merge window (for v4.8 instead)?
+from the vfs tree.
 
-Suggestions are welcome.
+I fixed it up (I abitrarily chose the overlayfs version (using
+lookup_hash() instead of lookup_one_len_unlocked())) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
-Regards,
-Bjorn
+-- 
+Cheers,
+Stephen Rothwell
