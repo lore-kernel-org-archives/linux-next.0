@@ -1,146 +1,67 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160510 build: 0 failures 17 warnings (next-20160510)
-Date: Tue, 10 May 2016 10:46:03 +0100
-Message-ID: <E1b04Es-0005tP-Tx@optimist>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Tue, 10 May 2016 11:39:34 -0700
+Message-ID: <20160510183934.GJ1256@tuxbot>
+References: <20160510112905.5bffcad8@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39772 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbcEJJqM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2016 05:46:12 -0400
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:34399 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750955AbcEJSji (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 10 May 2016 14:39:38 -0400
+Received: by mail-pa0-f53.google.com with SMTP id r5so8584874pag.1
+        for <linux-next@vger.kernel.org>; Tue, 10 May 2016 11:39:38 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20160510112905.5bffcad8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Andy Gross <andy.gross@linaro.org>
+Cc: netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20160510
-Git describe: next-20160510
-Commit: 416636ba56 Add linux-next specific files for 20160510
+On Mon 09 May 18:29 PDT 2016, Stephen Rothwell wrote:
 
-Build Time: 89 min 10 sec
+> Hi all,
+> 
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> net/qrtr/smd.c:106:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .callback = qcom_smd_qrtr_callback,
+>               ^
+> net/qrtr/smd.c:106:14: note: (near initialization for 'qcom_smd_qrtr_driver.callback')
+> 
+> Caused by commit
+> 
+>   bdabad3e363d ("net: Add Qualcomm IPC router")
+> 
+> interacting with commit
+> 
+>   b853cb9628bf ("soc: qcom: smd: Make callback pass channel reference")
+> 
+> from the arm-soc tree.
+> 
+> I added the following merge fix patch (and it turned out I needed the
+> new stubs).
+> 
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 17
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-     11 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      3 warnings    0 mismatches  : arm-multi_v7_defconfig
-      2 warnings    0 mismatches  : x86_64-defconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      4 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 17
-	  6 ../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-	  1 ../net/netfilter/nf_conntrack_core.c:633:33: warning: 'ctinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+Sorry for not spotting this issue earlier, I missed Andy's second pull
+request towards arm-soc and thought the SMD changes missed this cycle.
 
 
+Your patch looks good, but I'm not sure how we should approach the merge
+window; Andy can't pick the patch because he doesn't have the qrtr code
+and David doesn't have the SMD patches coming through Andy.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+FWIW, Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+I assume we could have the QRTR go through Andy and arm-soc, with
+David's approval and this fix squashed in. But we're running rather late
+in this cycle, perhaps we should just back the QRTR patches out and I
+can respin and resend them after the merge window (for v4.8 instead)?
 
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Suggestions are welcome.
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../net/netfilter/nf_conntrack_core.c:633:33: warning: 'ctinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../lib/lz4/lz4hc_compress.c:514:1: warning: the frame size of 1472 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/mtd/chips/cfi_cmdset_0020.c:651:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/cgroup.c:1634:15: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
+Regards,
+Bjorn
