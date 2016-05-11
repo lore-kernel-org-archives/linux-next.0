@@ -1,37 +1,64 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: suspect commits in the vfs tree
-Date: Wed, 11 May 2016 23:23:31 +0100
-Message-ID: <20160511222331.GQ2694@ZenIV.linux.org.uk>
-References: <20160512073153.4132026e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 12 May 2016 09:56:21 +1000
+Message-ID: <20160512095621.61519433@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:33478 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751617AbcEKWXg (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 11 May 2016 18:23:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20160512073153.4132026e@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:33639 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751324AbcEKX4Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 May 2016 19:56:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Benc <jbenc@redhat.com>
 
-On Thu, May 12, 2016 at 07:31:53AM +1000, Stephen Rothwell wrote:
-> Hi Al,
-> 
-> I noticed these commits in today's vfs tree:
-> 
-> 38b78a5f1858 ovl: ignore permissions on underlying lookup
-> 3c9fe8cdff1b vfs: add lookup_hash() helper
-> 9409e22acdfc vfs: rename: check backing inode being equal
-> 54d5ca871e72 vfs: add vfs_select_inode() helper
-> 
-> They are all committed by you , but have no Signed-off-by from you.
-> 
-> These commits are also in the overlayfs tree (since that has been rebased
-> on top of them).
+Hi all,
 
-That's a branch from Miklos with a fixup folded into the first of four;
-I didn't want to bother with extra roundtrip and folded the fixup in-place.
-Hadn't noticed the lack of S-o-b until after I'd pushed, TBH...
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  net/ipv4/ip_gre.c
+
+between commit:
+
+  e271c7b4420d ("gre: do not keep the GRE header around in collect medata mode")
+
+from the net tree and commit:
+
+  244a797bdcf1 ("gre: move iptunnel_pull_header down to ipgre_rcv")
+
+from the net-next tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/ip_gre.c
+index 4cc84212cce1,2b267e71ebf5..4d1030739efa
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@@ -398,10 -272,11 +272,14 @@@ static int __ipgre_rcv(struct sk_buff *
+  				  iph->saddr, iph->daddr, tpi->key);
+  
+  	if (tunnel) {
++ 		if (__iptunnel_pull_header(skb, hdr_len, tpi->proto,
++ 					   raw_proto, false) < 0)
++ 			goto drop;
++ 
+ -		skb_pop_mac_header(skb);
+ +		if (tunnel->dev->type != ARPHRD_NONE)
+ +			skb_pop_mac_header(skb);
+ +		else
+ +			skb_reset_mac_header(skb);
+  		if (tunnel->collect_md) {
+  			__be16 flags;
+  			__be64 tun_id;
