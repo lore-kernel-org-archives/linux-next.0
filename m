@@ -1,130 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 11 May 2016 11:07:02 +1000
-Message-ID: <20160511110702.7ed8b139@canb.auug.org.au>
+Subject: linux-next: manual merge of the dt-rh tree with the iommu tree
+Date: Wed, 11 May 2016 12:20:37 +1000
+Message-ID: <20160511122037.43cd3db8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43139 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751049AbcEKBHF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 10 May 2016 21:07:05 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ramesh Babu <ramesh.babu@intel.com>, Senthilnathan Veppur <senthilnathanx.veppur@intel.com>, Vinod Koul <vinod.koul@intel.com>, Mengdong Lin <mengdong.lin@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>, Joerg Roedel <joro@8bytes.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>, Robin Murphy <robin.murphy@arm.com>, Will Deacon <will.deacon@arm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Rob,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the dt-rh tree got a conflict in:
 
-sound/soc/intel/boards/bxt_rt298.c:257:3: error: unknown field 'be_id' specified in initializer
-   .be_id = 0,
-   ^
-sound/soc/intel/boards/bxt_rt298.c:274:3: error: unknown field 'be_id' specified in initializer
-   .be_id = 1,
-   ^
-sound/soc/intel/boards/bxt_rt298.c:274:12: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
-   .be_id = 1,
-            ^
-sound/soc/intel/boards/bxt_rt298.c:274:12: note: (near initialization for 'broxton_rt298_dais[7].stream_name')
-sound/soc/intel/boards/bxt_rt298.c:285:3: error: unknown field 'be_id' specified in initializer
-   .be_id = 3,
-   ^
-sound/soc/intel/boards/bxt_rt298.c:285:12: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
-   .be_id = 3,
-            ^
-sound/soc/intel/boards/bxt_rt298.c:285:12: note: (near initialization for 'broxton_rt298_dais[8].stream_name')
-sound/soc/intel/boards/bxt_rt298.c:296:3: error: unknown field 'be_id' specified in initializer 
-   .be_id = 4,
-   ^
-sound/soc/intel/boards/bxt_rt298.c:296:12: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
-   .be_id = 4,
-            ^
-sound/soc/intel/boards/bxt_rt298.c:296:12: note: (near initialization for 'broxton_rt298_dais[9].stream_name')
-sound/soc/intel/boards/bxt_rt298.c:307:3: error: unknown field 'be_id' specified in initializer 
-   .be_id = 5,
-   ^
-sound/soc/intel/boards/bxt_rt298.c:307:12: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
-   .be_id = 5,
-            ^
+  drivers/iommu/arm-smmu.c
 
-Caused by commit
+between commit:
 
-  76016322ec56 ("ASoC: Intel: Add Broxton-P machine driver")
+  d54663573131 ("iommu/arm-smmu: Use per-domain page sizes.")
 
-interacting with commit
+from the iommu tree and commit:
 
-  2f0ad49104cb ("ASoC: Change DAI link's be_id to a generic id")
+  cb6c27bb0912 ("iommu/arm-smmu: Make use of phandle iterators in device-tree parsing")
 
-I applied the following fix patch that should have happened in the
-merge commit
+from the dt-rh tree.
 
-  8554363b9f0f ("Merge remote-tracking branches 'asoc/topic/dai-link', 'asoc/topic/davinci', 'asoc/topic/dwc' and 'asoc/topic/es8328' into asoc-next")
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 11 May 2016 11:03:25 +1000
-Subject: [PATCH] ASoC: Intel: fix up for DAI link's be_id change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- sound/soc/intel/boards/bxt_rt298.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/intel/boards/bxt_rt298.c b/sound/soc/intel/boards/bxt_rt298.c
-index 1b845ff779f3..f4787515c0ed 100644
---- a/sound/soc/intel/boards/bxt_rt298.c
-+++ b/sound/soc/intel/boards/bxt_rt298.c
-@@ -254,7 +254,7 @@ static struct snd_soc_dai_link broxton_rt298_dais[] = {
- 	{
- 		/* SSP5 - Codec */
- 		.name = "SSP5-Codec",
--		.be_id = 0,
-+		.id = 0,
- 		.cpu_dai_name = "SSP5 Pin",
- 		.platform_name = "0000:00:0e.0",
- 		.no_pcm = 1,
-@@ -271,7 +271,7 @@ static struct snd_soc_dai_link broxton_rt298_dais[] = {
- 	},
- 	{
- 		.name = "dmic01",
--		.be_id = 1,
-+		.id = 1,
- 		.cpu_dai_name = "DMIC01 Pin",
- 		.codec_name = "dmic-codec",
- 		.codec_dai_name = "dmic-hifi",
-@@ -282,7 +282,7 @@ static struct snd_soc_dai_link broxton_rt298_dais[] = {
- 	},
- 	{
- 		.name = "iDisp1",
--		.be_id = 3,
-+		.id = 3,
- 		.cpu_dai_name = "iDisp1 Pin",
- 		.codec_name = "ehdaudio0D2",
- 		.codec_dai_name = "intel-hdmi-hifi1",
-@@ -293,7 +293,7 @@ static struct snd_soc_dai_link broxton_rt298_dais[] = {
- 	},
- 	{
- 		.name = "iDisp2",
--		.be_id = 4,
-+		.id = 4,
- 		.cpu_dai_name = "iDisp2 Pin",
- 		.codec_name = "ehdaudio0D2",
- 		.codec_dai_name = "intel-hdmi-hifi2",
-@@ -304,7 +304,7 @@ static struct snd_soc_dai_link broxton_rt298_dais[] = {
- 	},
- 	{
- 		.name = "iDisp3",
--		.be_id = 5,
-+		.id = 5,
- 		.cpu_dai_name = "iDisp3 Pin",
- 		.codec_name = "ehdaudio0D2",
- 		.codec_dai_name = "intel-hdmi-hifi3",
--- 
-2.7.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/iommu/arm-smmu.c
+index 0360919a5737,a1c965cdcfad..000000000000
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@@ -397,6 -357,14 +397,12 @@@ struct arm_smmu_domain 
+  	struct iommu_domain		domain;
+  };
+  
++ struct arm_smmu_phandle_args {
++ 	struct device_node *np;
++ 	int args_count;
++ 	uint32_t args[MAX_MASTER_STREAMIDS];
++ };
++ 
+ -static struct iommu_ops arm_smmu_ops;
+ -
+  static DEFINE_SPINLOCK(arm_smmu_devices_lock);
+  static LIST_HEAD(arm_smmu_devices);
+  
+@@@ -1950,11 -1829,14 +1969,14 @@@ static int arm_smmu_device_dt_probe(str
+  
+  		i++;
+  	}
++ 
+  	dev_notice(dev, "registered %d master devices\n", i);
+  
++ 	kfree(masterspec);
++ 
+  	parse_driver_options(smmu);
+  
+ -	if (smmu->version > ARM_SMMU_V1 &&
+ +	if (smmu->version == ARM_SMMU_V2 &&
+  	    smmu->num_context_banks != smmu->num_context_irqs) {
+  		dev_err(dev,
+  			"found only %d context interrupt(s) but %d required\n",
