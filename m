@@ -1,102 +1,143 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Thu, 12 May 2016 12:00:59 +1000
-Message-ID: <20160512120059.61f526a6@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Thu, 12 May 2016 12:54:06 +1000
+Message-ID: <20160512125406.076ff089@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58057 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43869 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751605AbcELCBB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 11 May 2016 22:01:01 -0400
+	id S1751530AbcELCyJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 11 May 2016 22:54:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Will Deacon <will.deacon@arm.com>, Jon Hunter <jonathanh@nvidia.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Julien Grall <julien.grall@arm.com>, Christoffer Dall <christoffer.dall@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Marc Zyngier <marc.zyngier@arm.com>
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+Today's linux-next merge of the kvm tree got a conflict in:
 
   drivers/irqchip/irq-gic.c
 
-between commit:
-
-  25fc11aead38 ("irqchip/gic: Restore CPU interface checking")
-
-from the arm64 tree and commit:
+between commits:
 
   dc9722cc57eb ("irqchip/gic: Return an error if GIC initialisation fails")
   f673b9b5cb54 ("irqchip/gic: Store GIC configuration parameters")
+  d6490461a102 ("irqchip/gic: Add helper functions for GIC setup and teardown")
 
-from the tip tree.
+from the tip tree and commits:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  bafa9193d00c ("irqchip/gic-v2: Gather ACPI specific data in a single structure")
+  502d6df11ae3 ("irqchip/gic-v2: Parse and export virtual GIC information")
+
+from the kvm tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
 diff --cc drivers/irqchip/irq-gic.c
-index 095bb5b5c3f2,113e2d02c812..000000000000
+index 1de20e14a721,3f1d9fd3a462..000000000000
 --- a/drivers/irqchip/irq-gic.c
 +++ b/drivers/irqchip/irq-gic.c
-@@@ -489,8 -486,9 +486,10 @@@ static int gic_cpu_init(struct gic_chip
-  		/*
-  		 * Get what the GIC says our CPU mask is.
-  		 */
-- 		BUG_ON(cpu >= NR_GIC_CPU_IF);
-+ 		if (WARN_ON(cpu >= NR_GIC_CPU_IF))
-+ 			return -EINVAL;
+@@@ -1248,30 -1191,29 +1250,53 @@@ static bool gic_check_eoimode(struct de
+  	return true;
+  }
+  
+ +static int gic_of_setup(struct gic_chip_data *gic, struct device_node *node)
+ +{
+ +	if (!gic || !node)
+ +		return -EINVAL;
+ +
+ +	gic->raw_dist_base = of_iomap(node, 0);
+ +	if (WARN(!gic->raw_dist_base, "unable to map gic dist registers\n"))
+ +		goto error;
+ +
+ +	gic->raw_cpu_base = of_iomap(node, 1);
+ +	if (WARN(!gic->raw_cpu_base, "unable to map gic cpu registers\n"))
+ +		goto error;
+ +
+ +	if (of_property_read_u32(node, "cpu-offset", &gic->percpu_offset))
+ +		gic->percpu_offset = 0;
+ +
+ +	return 0;
+ +
+ +error:
+ +	gic_teardown(gic);
+ +
+ +	return -ENOMEM;
+ +}
+ +
++ static void __init gic_of_setup_kvm_info(struct device_node *node)
++ {
++ 	int ret;
++ 	struct resource *vctrl_res = &gic_v2_kvm_info.vctrl;
++ 	struct resource *vcpu_res = &gic_v2_kvm_info.vcpu;
 + 
- +		gic_check_cpu_features();
-  		cpu_mask = gic_get_cpumask(gic);
-  		gic_cpu_map[cpu] = cpu_mask;
-  
-@@@ -1012,24 -1029,28 +1030,26 @@@ static const struct irq_domain_ops gic_
-  	.unmap = gic_irq_domain_unmap,
-  };
-  
-- static void __init __gic_init_bases(unsigned int gic_nr, int irq_start,
-- 			   void __iomem *dist_base, void __iomem *cpu_base,
-- 			   u32 percpu_offset, struct fwnode_handle *handle)
-+ static int __init __gic_init_bases(struct gic_chip_data *gic, int irq_start,
-+ 				   struct fwnode_handle *handle)
++ 	gic_v2_kvm_info.type = GIC_V2;
++ 
++ 	gic_v2_kvm_info.maint_irq = irq_of_parse_and_map(node, 0);
++ 	if (!gic_v2_kvm_info.maint_irq)
++ 		return;
++ 
++ 	ret = of_address_to_resource(node, 2, vctrl_res);
++ 	if (ret)
++ 		return;
++ 
++ 	ret = of_address_to_resource(node, 3, vcpu_res);
++ 	if (ret)
++ 		return;
++ 
++ 	gic_set_kvm_info(&gic_v2_kvm_info);
++ }
++ 
+  int __init
+  gic_of_init(struct device_node *node, struct device_node *parent)
   {
-  	irq_hw_number_t hwirq_base;
-- 	struct gic_chip_data *gic;
-- 	int gic_irqs, irq_base, i;
-- 
-- 	BUG_ON(gic_nr >= CONFIG_ARM_GIC_MAX_NR);
-+ 	int gic_irqs, irq_base, i, ret;
+@@@ -1294,17 -1235,18 +1319,19 @@@
+  	 * Disable split EOI/Deactivate if either HYP is not available
+  	 * or the CPU interface is too small.
+  	 */
+ -	if (gic_cnt == 0 && !gic_check_eoimode(node, &cpu_base))
+ +	if (gic_cnt == 0 && !gic_check_eoimode(node, &gic->raw_cpu_base))
+  		static_key_slow_dec(&supports_deactivate);
   
-- 	gic = &gic_data[gic_nr];
-+ 	if (WARN_ON(!gic || gic->domain))
-+ 		return -EINVAL;
+ -	if (of_property_read_u32(node, "cpu-offset", &percpu_offset))
+ -		percpu_offset = 0;
+ +	ret = __gic_init_bases(gic, -1, &node->fwnode);
+ +	if (ret) {
+ +		gic_teardown(gic);
+ +		return ret;
+ +	}
   
- -	gic_check_cpu_features();
- -
-  	/* Initialize irq_chip */
-- 	if (static_key_true(&supports_deactivate) && gic_nr == 0) {
-- 		gic->chip = gic_eoimode1_chip;
-+ 	gic->chip = gic_chip;
-+ 
-+ 	if (static_key_true(&supports_deactivate) && gic == &gic_data[0]) {
-+ 		gic->chip.irq_mask = gic_eoimode1_mask_irq;
-+ 		gic->chip.irq_eoi = gic_eoimode1_eoi_irq;
-+ 		gic->chip.irq_set_vcpu_affinity = gic_irq_set_vcpu_affinity;
-+ 		gic->chip.name = kasprintf(GFP_KERNEL, "GICv2");
-  	} else {
-- 		gic->chip = gic_chip;
-- 		gic->chip.name = kasprintf(GFP_KERNEL, "GIC-%d", gic_nr);
-+ 		gic->chip.name = kasprintf(GFP_KERNEL, "GIC-%d",
-+ 					   (int)(gic - &gic_data[0]));
+- 	if (!gic_cnt)
+ -	__gic_init_bases(gic_cnt, -1, dist_base, cpu_base, percpu_offset,
+ -			 &node->fwnode);
++ 	if (!gic_cnt) {
+  		gic_init_physaddr(node);
++ 		gic_of_setup_kvm_info(node);
++ 	}
+  
+  	if (parent) {
+  		irq = irq_of_parse_and_map(node, 0);
+@@@ -1401,8 -1391,8 +1476,8 @@@ static int __init gic_v2_acpi_init(stru
+  		return -EINVAL;
   	}
   
-  #ifdef CONFIG_SMP
+- 	gic->raw_cpu_base = ioremap(cpu_phy_base, ACPI_GIC_CPU_IF_MEM_SIZE);
+ -	cpu_base = ioremap(acpi_data.cpu_phys_base, ACPI_GIC_CPU_IF_MEM_SIZE);
+ -	if (!cpu_base) {
+++	gic->raw_cpu_base = ioremap(acpi_data.cpu_phys_base, ACPI_GIC_CPU_IF_MEM_SIZE);
+ +	if (!gic->raw_cpu_base) {
+  		pr_err("Unable to map GICC registers\n");
+  		return -ENOMEM;
+  	}
