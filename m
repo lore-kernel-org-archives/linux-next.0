@@ -1,170 +1,59 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: next: fuloong2e qemu boot failure due to 'MIPS: Loongson:
- AddLoongson-3A R2 basic support'
-Date: Fri, 13 May 2016 06:42:53 -0700
-Message-ID: <5735D9DD.1030408@roeck-us.net>
-References: <20160420025454.GA17200@roeck-us.net>
- <tencent_5BBD94596E55516D1B4FED5F@qq.com> <5717090E.2050004@roeck-us.net>
- <CAAhV-H6Br2r0yMX2+2gCqjY=+LxSh4Pf9pwvZhDu4MYx5b_jZQ@mail.gmail.com>
- <57354E33.8080905@roeck-us.net>
- <CAAhV-H6s4EmFOqrGFR2YSDV4nyPX_hZDzQ8kt6bYBqDMGNWDJw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] x86/rwsem: Save and restore all callee-clobbered regs in
+ 32-bit ____down_write()
+Date: Fri, 13 May 2016 10:03:26 -0700
+Message-ID: <CA+55aFwEruUyTVrR28SL4DQAY3zVEdXw9iKKf6L_S1Z_kHfxow@mail.gmail.com>
+References: <57348665.3050301@roeck-us.net>
+	<20160512135131.GA7803@pd.tnic>
+	<20160512144657.GA14245@pd.tnic>
+	<20160512172938.GB14245@pd.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:42641 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752480AbcEMNm6 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2016 09:42:58 -0400
-In-Reply-To: <CAAhV-H6s4EmFOqrGFR2YSDV4nyPX_hZDzQ8kt6bYBqDMGNWDJw@mail.gmail.com>
+Received: from mail-io0-f193.google.com ([209.85.223.193]:34901 "EHLO
+	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751739AbcEMRD1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2016 13:03:27 -0400
+In-Reply-To: <20160512172938.GB14245@pd.tnic>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Huacai Chen <chenhc@lemote.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips <linux-mips@linux-mips.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+To: Borislav Petkov <bp@suse.de>
+Cc: Guenter Roeck <linux@roeck-us.net>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 05/12/2016 10:49 PM, Huacai Chen wrote:
-> I'll send a patch, but it seems be ignored by maintainer.
-> https://patchwork.linux-mips.org/patch/13136/
->
+On Thu, May 12, 2016 at 10:29 AM, Borislav Petkov <bp@suse.de> wrote:
+> Anyway, here's an actual patch with a commit message. Guenter, can you
+> give it a run please?
 
-It is marked as accepted, so it should be in Ralf's queue.
+I think the commit message is misleading.
 
-Thanks,
-Guenter
+> ____down_write() calls a function to handle the slow path when the lock
+> is contended. But in order to be able to call a C function, one has to
+> stash all callee-clobbered registers. The 32-bit path saves only %ecx
+> for a reason unknown to me.
 
-> Huacai
->
-> On Fri, May 13, 2016 at 11:46 AM, Guenter Roeck <linux@roeck-us.net> =
-wrote:
->> On 04/19/2016 10:41 PM, Huacai Chen wrote:
->>>
->>> This is a kernel bug, I'll send a patch.
->>>
->>
->> Did you ever send a patch to fix this problem ? It is still broken i=
-n
->> next-20160512.
->>
->> Guenter
->>
->>
->>> Huacai
->>>
->>> On Wed, Apr 20, 2016 at 12:43 PM, Guenter Roeck <linux@roeck-us.net=
->
->>> wrote:
->>>>
->>>> On 04/19/2016 08:37 PM, =E9=99=88=E5=8D=8E=E6=89=8D wrote:
->>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> Could you please remove the line "#define cpu_hwrena_impl_bits
->>>>> 0xc0000000" in
->>>>> arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h
->>>>> and try again?Thanks.
->>>>>
->>>>
->>>> That fixes the problem.
->>>>
->>>> Does this need to be addressed in qemu or in the Linux kernel ?
->>>>
->>>> Thanks,
->>>> Guenter
->>>>
->>>>
->>>>> Huacai
->>>>>
->>>>> ------------------ Original ------------------
->>>>> From:  "Guenter Roeck"<linux@roeck-us.net>;
->>>>> Date:  Wed, Apr 20, 2016 10:54 AM
->>>>> To:  "Huacai Chen"<chenhc@lemote.com>;
->>>>> Cc:  "Ralf Baechle"<ralf@linux-mips.org>;
->>>>> "linux-mips"<linux-mips@linux-mips.org>;
->>>>> "linux-next"<linux-next@vger.kernel.org>;
->>>>> "linux-kernel"<linux-kernel@vger.kernel.org>;
->>>>> Subject:  next: fuloong2e qemu boot failure due to 'MIPS: Loongso=
-n:
->>>>> AddLoongson-3A R2 basic support'
->>>>>
->>>>> Hi,
->>>>>
->>>>> qemu fails to boot in -next for machine fulong2e with configurati=
-on
->>>>> fuloong2e_defconfig. Bisect points to commit 'MIPS: Loongson: Add
->>>>> Loongson-3A R2 basic support'. qemu hangs in boot, after displayi=
-ng
->>>>> "Inode-cache hash table entries: 16384 (order: 3, 131072 bytes)".
->>>>>
->>>>> Bisect log is attached.
->>>>>
->>>>> Guenter
->>>>>
->>>>> ---
->>>>> # bad: [1bd7a2081d2c7b096f75aa934658e404ccaba5fd] Add linux-next
->>>>> specific
->>>>> files for 20160418
->>>>> # good: [bf16200689118d19de1b8d2a3c314fc21f5dc7bb] Linux 4.6-rc3
->>>>> git bisect start 'HEAD' 'v4.6-rc3'
->>>>> # bad: [493ac92ff65ec4c4cd4c43870e778760a012951d] Merge remote-tr=
-acking
->>>>> branch 'ipvs-next/master'
->>>>> git bisect bad 493ac92ff65ec4c4cd4c43870e778760a012951d
->>>>> # bad: [20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792] Merge remote-tr=
-acking
->>>>> branch 'btrfs-kdave/for-next'
->>>>> git bisect bad 20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792
->>>>> # good: [c454e65fb9ade11d0f84718d06a6888e2c92804d] Merge remote-t=
-racking
->>>>> branch 'omap/for-next'
->>>>> git bisect good c454e65fb9ade11d0f84718d06a6888e2c92804d
->>>>> # good: [6f5c70fb9b4fc0534157bfa40cea9b402e6f2506] Merge remote-t=
-racking
->>>>> branch 'microblaze/next'
->>>>> git bisect good 6f5c70fb9b4fc0534157bfa40cea9b402e6f2506
->>>>> # bad: [7f053cd68fd14243c8f202b4086d7dd75c409e6f] MIPS: Loongson-=
-3:
->>>>> Introduce CONFIG_LOONGSON3_ENHANCEMENT
->>>>> git bisect bad 7f053cd68fd14243c8f202b4086d7dd75c409e6f
->>>>> # good: [e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8] MIPS: Allow RI=
-XI to
->>>>> be
->>>>> used on non-R2 or R6 cores
->>>>> git bisect good e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8
->>>>> # good: [d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d] MAINTAINERS: a=
-dd
->>>>> Loongson1 architecture entry
->>>>> git bisect good d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d
->>>>> # good: [13ff6275bb389c3669082d3ef8483592a31eb0ea] MIPS: Fix sigi=
-nfo.h
->>>>> to
->>>>> use strict posix types
->>>>> git bisect good 13ff6275bb389c3669082d3ef8483592a31eb0ea
->>>>> # good: [66e74bdd51e617023fa2e79a807b704fb3eed8aa] MIPS: Enable p=
-trace
->>>>> hw
->>>>> watchpoints on MIPS R6
->>>>> git bisect good 66e74bdd51e617023fa2e79a807b704fb3eed8aa
->>>>> # good: [f7cabc2dac8adf5986dbc700584bc3b8fe493d4d] MIPS: Loongson=
--3:
->>>>> Adjust irq dispatch to speedup processing
->>>>> git bisect good f7cabc2dac8adf5986dbc700584bc3b8fe493d4d
->>>>> # bad: [4978c8477e96fb9e9d870d8f42328dcabf1a65e9] MIPS: Loongson-=
-3: Set
->>>>> cache flush handlers to cache_noop
->>>>> git bisect bad 4978c8477e96fb9e9d870d8f42328dcabf1a65e9
->>>>> # bad: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MIPS: Loongson:=
- Add
->>>>> Loongson-3A R2 basic support
->>>>> git bisect bad 04a35922c1dac1b4864b8b366a37474e9e51d8c0
->>>>> # first bad commit: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MI=
-PS:
->>>>> Loongson: Add Loongson-3A R2 basic support
->>>>>
->>>>
->>>>
->>>
->>
->>
->
+Why claim that it's unknown? You know exactly what the reason was:
+
+> the useless dependency on edx was removed and this caused the following
+> splat:
+
+The dependency on %edx was clearly exactly because the calling
+convention for the slow-path was that %eax and %edx were clobbered,
+and %edx was used as a temporary, so clobbering it had no downside.
+
+So it wasn't useless, it was explicit, and commit 71c01930b42e was just broken.
+
+I think your fix is wrong. Your fix adds the pointless push/pop that
+doesn't help any, since you might as well just force the temporary
+back to %edx.
+
+The correct fix is to revert the broken commit.
+
+If commit 71c01930b42e had actually generated better code, that would
+be different. But it doesn't. So as it is, this is all just worse than
+it used to be, and I don't see the point of "fixing" things by making
+them worse.
+
+Revert back to the old "use %edx as a temporary", together with a
+comment so that this doesn't happen again.
+
+                     Linus
