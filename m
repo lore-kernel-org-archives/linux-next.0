@@ -1,112 +1,75 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] x86/rwsem: Save and restore all callee-clobbered regs in
- 32-bit ____down_write()
-Date: Thu, 12 May 2016 19:49:42 -0700
-Message-ID: <573540C6.20505@roeck-us.net>
-References: <57348665.3050301@roeck-us.net> <20160512135131.GA7803@pd.tnic>
- <20160512144657.GA14245@pd.tnic> <20160512172938.GB14245@pd.tnic>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Fri, 13 May 2016 13:15:38 +1000
+Message-ID: <20160513131538.7094341d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:46772 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751882AbcEMCuG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 12 May 2016 22:50:06 -0400
-In-Reply-To: <20160512172938.GB14245@pd.tnic>
+Received: from ozlabs.org ([103.22.144.67]:38957 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750979AbcEMDPq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 12 May 2016 23:15:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Leon Romanovsky <leon@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin <dmitry.eremin@intel.com>, Li Dongyang <dongyang.li@anu.edu.au>, James Simmons <jsimmons@infradead.org>, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>
 
-On 05/12/2016 10:29 AM, Borislav Petkov wrote:
-> Anyway, here's an actual patch with a commit message. Guenter, can you
-> give it a run please?
->
-> It does fix the issue here with your .config but I'd appreciate a
-> confirmation.
->
-> Thanks.
->
-> ---
-> From: Borislav Petkov <bp@suse.de>
->
-> ____down_write() calls a function to handle the slow path when the lock
-> is contended. But in order to be able to call a C function, one has to
-> stash all callee-clobbered registers. The 32-bit path saves only %ecx
-> for a reason unknown to me. However, after
->
->    71c01930b42e ("locking/rwsem, x86: Clean up ____down_write()")
->
-> the useless dependency on edx was removed and this caused the following
-> splat:
->
->    BUG: unable to handle kernel NULL pointer dereference at 00000015
->    IP: [<c185e094>] down_write+0x24/0x30
->    *pde = 00000000
->    Oops: 0002 [#1] PREEMPT SMP
->    Modules linked in:
->    CPU: 0 PID: 1 Comm: swapper/0 Tainted: G S      W       4.6.0-rc7-next-20160511-yocto-standard #1
->    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.7.5-20140531_083030-gandalf 04/01/2014
->    task: f4d00000 ti: f4d08000 task.ti: f4d08000
->    EIP: 0060:[<c185e094>] EFLAGS: 00210282 CPU: 0
->    EIP is at down_write+0x24/0x30
->    EAX: f4d00000 EBX: f4f6d600 ECX: ffff0001 EDX: 00000001
->    ESI: 00000168 EDI: c1c2eb68 EBP: f4d09ef4 ESP: f4d09eec
->     DS: 007b ES: 007b FS: 00d8 GS: 0000 SS: 0068
->    CR0: 80050033 CR2: 00000015 CR3: 01ccb000 CR4: 000406d0
->
-> This happens because gcc decided to stash the pointer to @sem in edx (it
-> is not used in the inline asm anymore, thus free):
->
->    movl    %eax, %edx      # sem, sem
->
->    lock;   xadd      %ecx,(%eax)   # tmp91, sem
->    test ...
->
->    call call_rwsem_down_write_failed
->
->    mov    %eax,0x14(%edx)
->
-> *before* the slow path happens and if we hit it on 32-bit, it can
-> clobber edx and we're staring at garbage value at deref time.
->
-> The simple fix is to save/restore edx too, around the slow path. We
-> don't need to stash eax because it is used in the slow path as the @sem
-> arg.
->
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: x86@kernel.org
-> Signed-off-by: Borislav Petkov <bp@suse.de>
+Hi Greg,
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Guenter
+drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1706:9: 
+error: too few arguments to function 'ib_map_mr_sg'
+     n = ib_map_mr_sg(mr, tx->tx_frags,
+         ^
+In file included from /home/sfr/next/next/include/rdma/ib_addr.h:47:0,
+                 from /home/sfr/next/next/include/rdma/rdma_cm.h:39,
+                 from /home/sfr/next/next/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:63,
+                 from /home/sfr/next/next/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:43:
+/home/sfr/next/next/include/rdma/ib_verbs.h:3147:5: note: declared here
+ int ib_map_mr_sg(struct ib_mr *mr, struct scatterlist *sg, int sg_nents,
+     ^
 
-> ---
->   arch/x86/lib/rwsem.S | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/lib/rwsem.S b/arch/x86/lib/rwsem.S
-> index a37462a23546..02240807e97a 100644
-> --- a/arch/x86/lib/rwsem.S
-> +++ b/arch/x86/lib/rwsem.S
-> @@ -33,10 +33,12 @@
->    * value or just clobbered..
->    */
->
-> -#define save_common_regs \
-> -	pushl %ecx
-> +#define save_common_regs	\
-> +	pushl %ecx;		\
-> +	pushl %edx
->
-> -#define restore_common_regs \
-> +#define restore_common_regs	\
-> +	popl %edx;		\
->   	popl %ecx
->
->   	/* Avoid uglifying the argument copying x86-64 needs to do. */
->
+Caused by commit
+
+  80e05b34f882 ("staging: lustre: o2iblnd: Add Fast Reg memory registration support")
+
+interacting with commits
+
+  aa42d65b5e20 ("IB/core: allow passing mapping an offset into the SG in ib_map_mr_sg")
+  f0cf99be3251 ("IB/core: Enhance ib_map_mr_sg()")
+
+from the rdma-leon-test tree.
+
+I added the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 May 2016 13:10:47 +1000
+Subject: [PATCH] staging: lustre: o2iblnd: fix for ib_map_mr_sg() API changes
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
+index d99b4fac0c39..6c59f2ff2220 100644
+--- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
++++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
+@@ -1704,7 +1704,7 @@ int kiblnd_fmr_pool_map(kib_fmr_poolset_t *fps, kib_tx_t *tx,
+ 				}
+ 
+ 				n = ib_map_mr_sg(mr, tx->tx_frags,
+-						 tx->tx_nfrags, PAGE_SIZE);
++						 tx->tx_nfrags, NULL, PAGE_SIZE);
+ 				if (unlikely(n != tx->tx_nfrags)) {
+ 					CERROR("Failed to map mr %d/%d elements\n",
+ 					       n, tx->tx_nfrags);
+-- 
+2.7.0
+
+-- 
+Cheers,
+Stephen Rothwell
