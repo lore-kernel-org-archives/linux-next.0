@@ -1,53 +1,70 @@
-From: Borislav Petkov <bp@suse.de>
-Subject: Re: [PATCH] x86/rwsem: Save and restore all callee-clobbered regs in
- 32-bit ____down_write()
-Date: Fri, 13 May 2016 19:19:15 +0200
-Message-ID: <20160513171915.GG17996@pd.tnic>
-References: <57348665.3050301@roeck-us.net>
- <20160512135131.GA7803@pd.tnic>
- <20160512144657.GA14245@pd.tnic>
- <20160512172938.GB14245@pd.tnic>
- <CA+55aFwEruUyTVrR28SL4DQAY3zVEdXw9iKKf6L_S1Z_kHfxow@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 13 May 2016 23:01:11 +0200
+Message-ID: <2606282.lG9qK7uBW0@wuerfel>
+References: <20160510112905.5bffcad8@canb.auug.org.au> <20160510183934.GJ1256@tuxbot>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:50065 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751312AbcEMRTd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 13 May 2016 13:19:33 -0400
-Content-Disposition: inline
-In-Reply-To: <CA+55aFwEruUyTVrR28SL4DQAY3zVEdXw9iKKf6L_S1Z_kHfxow@mail.gmail.com>
+Received: from mout.kundenserver.de ([212.227.126.133]:60705 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751969AbcEMVB4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2016 17:01:56 -0400
+In-Reply-To: <20160510183934.GJ1256@tuxbot>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Andy Gross <andy.gross@linaro.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-On Fri, May 13, 2016 at 10:03:26AM -0700, Linus Torvalds wrote:
-> I think your fix is wrong. Your fix adds the pointless push/pop that
-> doesn't help any, since you might as well just force the temporary
-> back to %edx.
+On Tuesday 10 May 2016 11:39:34 Bjorn Andersson wrote:
+> On Mon 09 May 18:29 PDT 2016, Stephen Rothwell wrote:
+> 
+> > Hi all,
+> > 
+> > After merging the net-next tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > net/qrtr/smd.c:106:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> >   .callback = qcom_smd_qrtr_callback,
+> >               ^
+> > net/qrtr/smd.c:106:14: note: (near initialization for 'qcom_smd_qrtr_driver.callback')
+> > 
+> > Caused by commit
+> > 
+> >   bdabad3e363d ("net: Add Qualcomm IPC router")
+> > 
+> > interacting with commit
+> > 
+> >   b853cb9628bf ("soc: qcom: smd: Make callback pass channel reference")
+> > 
+> > from the arm-soc tree.
+> > 
+> > I added the following merge fix patch (and it turned out I needed the
+> > new stubs).
+> > 
+> 
+> Sorry for not spotting this issue earlier, I missed Andy's second pull
+> request towards arm-soc and thought the SMD changes missed this cycle.
+> 
+> 
+> Your patch looks good, but I'm not sure how we should approach the merge
+> window; Andy can't pick the patch because he doesn't have the qrtr code
+> and David doesn't have the SMD patches coming through Andy.
+> 
+> FWIW, Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> 
+> 
+> I assume we could have the QRTR go through Andy and arm-soc, with
+> David's approval and this fix squashed in. But we're running rather late
+> in this cycle, perhaps we should just back the QRTR patches out and I
+> can respin and resend them after the merge window (for v4.8 instead)?
 
-But if we do this, then everything using the slow path
-call_rwsem_down_write_failed et al, which then calls
-{save,restore}_common_regs, would have to remember to use %edx as
-temporary because {save,restore}_common_regs won't protect it and gcc
-might clobber it.
+I'd suggest you do a merge of next-next with the qcom/soc-2 branch that
+we have in arm-soc and resolve the conflict in the merge, then send
+a pull request with the merge to davem.
 
-OTOH, the 64-bit versions {save,restore}_common_regs don't stash away
-%rdx either so I guess that mechanism was supposed to not save the ABI
-return registers rAX and rDX.
+Alternatively, in case Linus merges net-next before we get that fix
+in, I could send Stephen's fix to Linus along with the pull requests.
 
-The only thing that needs to be corrected then is the misleading commen=
-t
-above the 32-bit version "... Save the C-clobbered registers (%eax, %ed=
-x
-and %ecx) .." - the 64-bit version comment is correct AFAICT.
-
---=20
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Nort=
-on, HRB 21284 (AG N=C3=BCrnberg)
---=20
+	Arnd
