@@ -1,75 +1,133 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the staging tree
-Date: Fri, 13 May 2016 13:15:38 +1000
-Message-ID: <20160513131538.7094341d@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: next: fuloong2e qemu boot failure due to 'MIPS: Loongson:
+ AddLoongson-3A R2 basic support'
+Date: Thu, 12 May 2016 20:46:59 -0700
+Message-ID: <57354E33.8080905@roeck-us.net>
+References: <20160420025454.GA17200@roeck-us.net>
+ <tencent_5BBD94596E55516D1B4FED5F@qq.com> <5717090E.2050004@roeck-us.net>
+ <CAAhV-H6Br2r0yMX2+2gCqjY=+LxSh4Pf9pwvZhDu4MYx5b_jZQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38957 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750979AbcEMDPq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 12 May 2016 23:15:46 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Leon Romanovsky <leon@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin <dmitry.eremin@intel.com>, Li Dongyang <dongyang.li@anu.edu.au>, James Simmons <jsimmons@infradead.org>, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAhV-H6Br2r0yMX2+2gCqjY=+LxSh4Pf9pwvZhDu4MYx5b_jZQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips <linux-mips@linux-mips.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+On 04/19/2016 10:41 PM, Huacai Chen wrote:
+> This is a kernel bug, I'll send a patch.
+>
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Did you ever send a patch to fix this problem ? It is still broken in n=
+ext-20160512.
 
-drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:1706:9: 
-error: too few arguments to function 'ib_map_mr_sg'
-     n = ib_map_mr_sg(mr, tx->tx_frags,
-         ^
-In file included from /home/sfr/next/next/include/rdma/ib_addr.h:47:0,
-                 from /home/sfr/next/next/include/rdma/rdma_cm.h:39,
-                 from /home/sfr/next/next/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h:63,
-                 from /home/sfr/next/next/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:43:
-/home/sfr/next/next/include/rdma/ib_verbs.h:3147:5: note: declared here
- int ib_map_mr_sg(struct ib_mr *mr, struct scatterlist *sg, int sg_nents,
-     ^
+Guenter
 
-Caused by commit
-
-  80e05b34f882 ("staging: lustre: o2iblnd: Add Fast Reg memory registration support")
-
-interacting with commits
-
-  aa42d65b5e20 ("IB/core: allow passing mapping an offset into the SG in ib_map_mr_sg")
-  f0cf99be3251 ("IB/core: Enhance ib_map_mr_sg()")
-
-from the rdma-leon-test tree.
-
-I added the following merge fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 13 May 2016 13:10:47 +1000
-Subject: [PATCH] staging: lustre: o2iblnd: fix for ib_map_mr_sg() API changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-index d99b4fac0c39..6c59f2ff2220 100644
---- a/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-+++ b/drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c
-@@ -1704,7 +1704,7 @@ int kiblnd_fmr_pool_map(kib_fmr_poolset_t *fps, kib_tx_t *tx,
- 				}
- 
- 				n = ib_map_mr_sg(mr, tx->tx_frags,
--						 tx->tx_nfrags, PAGE_SIZE);
-+						 tx->tx_nfrags, NULL, PAGE_SIZE);
- 				if (unlikely(n != tx->tx_nfrags)) {
- 					CERROR("Failed to map mr %d/%d elements\n",
- 					       n, tx->tx_nfrags);
--- 
-2.7.0
-
--- 
-Cheers,
-Stephen Rothwell
+> Huacai
+>
+> On Wed, Apr 20, 2016 at 12:43 PM, Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>> On 04/19/2016 08:37 PM, =E9=99=88=E5=8D=8E=E6=89=8D wrote:
+>>>
+>>> Hi,
+>>>
+>>> Could you please remove the line "#define cpu_hwrena_impl_bits
+>>> 0xc0000000" in arch/mips/include/asm/mach-loongson64/cpu-feature-ov=
+errides.h
+>>> and try again?Thanks.
+>>>
+>>
+>> That fixes the problem.
+>>
+>> Does this need to be addressed in qemu or in the Linux kernel ?
+>>
+>> Thanks,
+>> Guenter
+>>
+>>
+>>> Huacai
+>>>
+>>> ------------------ Original ------------------
+>>> From:  "Guenter Roeck"<linux@roeck-us.net>;
+>>> Date:  Wed, Apr 20, 2016 10:54 AM
+>>> To:  "Huacai Chen"<chenhc@lemote.com>;
+>>> Cc:  "Ralf Baechle"<ralf@linux-mips.org>;
+>>> "linux-mips"<linux-mips@linux-mips.org>;
+>>> "linux-next"<linux-next@vger.kernel.org>;
+>>> "linux-kernel"<linux-kernel@vger.kernel.org>;
+>>> Subject:  next: fuloong2e qemu boot failure due to 'MIPS: Loongson:
+>>> AddLoongson-3A R2 basic support'
+>>>
+>>> Hi,
+>>>
+>>> qemu fails to boot in -next for machine fulong2e with configuration
+>>> fuloong2e_defconfig. Bisect points to commit 'MIPS: Loongson: Add
+>>> Loongson-3A R2 basic support'. qemu hangs in boot, after displaying
+>>> "Inode-cache hash table entries: 16384 (order: 3, 131072 bytes)".
+>>>
+>>> Bisect log is attached.
+>>>
+>>> Guenter
+>>>
+>>> ---
+>>> # bad: [1bd7a2081d2c7b096f75aa934658e404ccaba5fd] Add linux-next sp=
+ecific
+>>> files for 20160418
+>>> # good: [bf16200689118d19de1b8d2a3c314fc21f5dc7bb] Linux 4.6-rc3
+>>> git bisect start 'HEAD' 'v4.6-rc3'
+>>> # bad: [493ac92ff65ec4c4cd4c43870e778760a012951d] Merge remote-trac=
+king
+>>> branch 'ipvs-next/master'
+>>> git bisect bad 493ac92ff65ec4c4cd4c43870e778760a012951d
+>>> # bad: [20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792] Merge remote-trac=
+king
+>>> branch 'btrfs-kdave/for-next'
+>>> git bisect bad 20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792
+>>> # good: [c454e65fb9ade11d0f84718d06a6888e2c92804d] Merge remote-tra=
+cking
+>>> branch 'omap/for-next'
+>>> git bisect good c454e65fb9ade11d0f84718d06a6888e2c92804d
+>>> # good: [6f5c70fb9b4fc0534157bfa40cea9b402e6f2506] Merge remote-tra=
+cking
+>>> branch 'microblaze/next'
+>>> git bisect good 6f5c70fb9b4fc0534157bfa40cea9b402e6f2506
+>>> # bad: [7f053cd68fd14243c8f202b4086d7dd75c409e6f] MIPS: Loongson-3:
+>>> Introduce CONFIG_LOONGSON3_ENHANCEMENT
+>>> git bisect bad 7f053cd68fd14243c8f202b4086d7dd75c409e6f
+>>> # good: [e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8] MIPS: Allow RIXI=
+ to be
+>>> used on non-R2 or R6 cores
+>>> git bisect good e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8
+>>> # good: [d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d] MAINTAINERS: add
+>>> Loongson1 architecture entry
+>>> git bisect good d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d
+>>> # good: [13ff6275bb389c3669082d3ef8483592a31eb0ea] MIPS: Fix siginf=
+o.h to
+>>> use strict posix types
+>>> git bisect good 13ff6275bb389c3669082d3ef8483592a31eb0ea
+>>> # good: [66e74bdd51e617023fa2e79a807b704fb3eed8aa] MIPS: Enable ptr=
+ace hw
+>>> watchpoints on MIPS R6
+>>> git bisect good 66e74bdd51e617023fa2e79a807b704fb3eed8aa
+>>> # good: [f7cabc2dac8adf5986dbc700584bc3b8fe493d4d] MIPS: Loongson-3=
+:
+>>> Adjust irq dispatch to speedup processing
+>>> git bisect good f7cabc2dac8adf5986dbc700584bc3b8fe493d4d
+>>> # bad: [4978c8477e96fb9e9d870d8f42328dcabf1a65e9] MIPS: Loongson-3:=
+ Set
+>>> cache flush handlers to cache_noop
+>>> git bisect bad 4978c8477e96fb9e9d870d8f42328dcabf1a65e9
+>>> # bad: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MIPS: Loongson: A=
+dd
+>>> Loongson-3A R2 basic support
+>>> git bisect bad 04a35922c1dac1b4864b8b366a37474e9e51d8c0
+>>> # first bad commit: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MIPS=
+:
+>>> Loongson: Add Loongson-3A R2 basic support
+>>>
+>>
+>>
+>
