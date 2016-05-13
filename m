@@ -1,140 +1,170 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160513 build: 0 failures 18 warnings (next-20160513)
-Date: Fri, 13 May 2016 09:38:47 +0100
-Message-ID: <E1b18cR-0000Wm-1x@optimist>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: next: fuloong2e qemu boot failure due to 'MIPS: Loongson:
+ AddLoongson-3A R2 basic support'
+Date: Fri, 13 May 2016 06:42:53 -0700
+Message-ID: <5735D9DD.1030408@roeck-us.net>
+References: <20160420025454.GA17200@roeck-us.net>
+ <tencent_5BBD94596E55516D1B4FED5F@qq.com> <5717090E.2050004@roeck-us.net>
+ <CAAhV-H6Br2r0yMX2+2gCqjY=+LxSh4Pf9pwvZhDu4MYx5b_jZQ@mail.gmail.com>
+ <57354E33.8080905@roeck-us.net>
+ <CAAhV-H6s4EmFOqrGFR2YSDV4nyPX_hZDzQ8kt6bYBqDMGNWDJw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50252 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752301AbcEMIjA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2016 04:39:00 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:42641 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752480AbcEMNm6 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 13 May 2016 09:42:58 -0400
+In-Reply-To: <CAAhV-H6s4EmFOqrGFR2YSDV4nyPX_hZDzQ8kt6bYBqDMGNWDJw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Huacai Chen <chenhc@lemote.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>, linux-mips <linux-mips@linux-mips.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20160513
-Git describe: next-20160513
-Commit: 7fd1a8676b Add linux-next specific files for 20160513
+On 05/12/2016 10:49 PM, Huacai Chen wrote:
+> I'll send a patch, but it seems be ignored by maintainer.
+> https://patchwork.linux-mips.org/patch/13136/
+>
 
-Build Time: 78 min 23 sec
+It is marked as accepted, so it should be in Ralf's queue.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+Thanks,
+Guenter
 
-Errors: 0
-Warnings: 18
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-     15 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      3 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 18
-	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-	  2 ../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 15 warnings, 0 section mismatches
-
-Warnings:
-	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/acpi/video.h:74:12: warning: 'acpi_video_get_levels' defined but not used [-Wunused-function]
-	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-defconfig
+> Huacai
+>
+> On Fri, May 13, 2016 at 11:46 AM, Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>> On 04/19/2016 10:41 PM, Huacai Chen wrote:
+>>>
+>>> This is a kernel bug, I'll send a patch.
+>>>
+>>
+>> Did you ever send a patch to fix this problem ? It is still broken i=
+n
+>> next-20160512.
+>>
+>> Guenter
+>>
+>>
+>>> Huacai
+>>>
+>>> On Wed, Apr 20, 2016 at 12:43 PM, Guenter Roeck <linux@roeck-us.net=
+>
+>>> wrote:
+>>>>
+>>>> On 04/19/2016 08:37 PM, =E9=99=88=E5=8D=8E=E6=89=8D wrote:
+>>>>>
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> Could you please remove the line "#define cpu_hwrena_impl_bits
+>>>>> 0xc0000000" in
+>>>>> arch/mips/include/asm/mach-loongson64/cpu-feature-overrides.h
+>>>>> and try again?Thanks.
+>>>>>
+>>>>
+>>>> That fixes the problem.
+>>>>
+>>>> Does this need to be addressed in qemu or in the Linux kernel ?
+>>>>
+>>>> Thanks,
+>>>> Guenter
+>>>>
+>>>>
+>>>>> Huacai
+>>>>>
+>>>>> ------------------ Original ------------------
+>>>>> From:  "Guenter Roeck"<linux@roeck-us.net>;
+>>>>> Date:  Wed, Apr 20, 2016 10:54 AM
+>>>>> To:  "Huacai Chen"<chenhc@lemote.com>;
+>>>>> Cc:  "Ralf Baechle"<ralf@linux-mips.org>;
+>>>>> "linux-mips"<linux-mips@linux-mips.org>;
+>>>>> "linux-next"<linux-next@vger.kernel.org>;
+>>>>> "linux-kernel"<linux-kernel@vger.kernel.org>;
+>>>>> Subject:  next: fuloong2e qemu boot failure due to 'MIPS: Loongso=
+n:
+>>>>> AddLoongson-3A R2 basic support'
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> qemu fails to boot in -next for machine fulong2e with configurati=
+on
+>>>>> fuloong2e_defconfig. Bisect points to commit 'MIPS: Loongson: Add
+>>>>> Loongson-3A R2 basic support'. qemu hangs in boot, after displayi=
+ng
+>>>>> "Inode-cache hash table entries: 16384 (order: 3, 131072 bytes)".
+>>>>>
+>>>>> Bisect log is attached.
+>>>>>
+>>>>> Guenter
+>>>>>
+>>>>> ---
+>>>>> # bad: [1bd7a2081d2c7b096f75aa934658e404ccaba5fd] Add linux-next
+>>>>> specific
+>>>>> files for 20160418
+>>>>> # good: [bf16200689118d19de1b8d2a3c314fc21f5dc7bb] Linux 4.6-rc3
+>>>>> git bisect start 'HEAD' 'v4.6-rc3'
+>>>>> # bad: [493ac92ff65ec4c4cd4c43870e778760a012951d] Merge remote-tr=
+acking
+>>>>> branch 'ipvs-next/master'
+>>>>> git bisect bad 493ac92ff65ec4c4cd4c43870e778760a012951d
+>>>>> # bad: [20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792] Merge remote-tr=
+acking
+>>>>> branch 'btrfs-kdave/for-next'
+>>>>> git bisect bad 20ca3ae9c517eee9b2f1bd0fb2a06e2d14153792
+>>>>> # good: [c454e65fb9ade11d0f84718d06a6888e2c92804d] Merge remote-t=
+racking
+>>>>> branch 'omap/for-next'
+>>>>> git bisect good c454e65fb9ade11d0f84718d06a6888e2c92804d
+>>>>> # good: [6f5c70fb9b4fc0534157bfa40cea9b402e6f2506] Merge remote-t=
+racking
+>>>>> branch 'microblaze/next'
+>>>>> git bisect good 6f5c70fb9b4fc0534157bfa40cea9b402e6f2506
+>>>>> # bad: [7f053cd68fd14243c8f202b4086d7dd75c409e6f] MIPS: Loongson-=
+3:
+>>>>> Introduce CONFIG_LOONGSON3_ENHANCEMENT
+>>>>> git bisect bad 7f053cd68fd14243c8f202b4086d7dd75c409e6f
+>>>>> # good: [e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8] MIPS: Allow RI=
+XI to
+>>>>> be
+>>>>> used on non-R2 or R6 cores
+>>>>> git bisect good e9aacdd7f0b66c4ace17e5950c48e7cc61a253c8
+>>>>> # good: [d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d] MAINTAINERS: a=
+dd
+>>>>> Loongson1 architecture entry
+>>>>> git bisect good d1e8b9a8dc6c7fa9add5dfa7083e035ce037e56d
+>>>>> # good: [13ff6275bb389c3669082d3ef8483592a31eb0ea] MIPS: Fix sigi=
+nfo.h
+>>>>> to
+>>>>> use strict posix types
+>>>>> git bisect good 13ff6275bb389c3669082d3ef8483592a31eb0ea
+>>>>> # good: [66e74bdd51e617023fa2e79a807b704fb3eed8aa] MIPS: Enable p=
+trace
+>>>>> hw
+>>>>> watchpoints on MIPS R6
+>>>>> git bisect good 66e74bdd51e617023fa2e79a807b704fb3eed8aa
+>>>>> # good: [f7cabc2dac8adf5986dbc700584bc3b8fe493d4d] MIPS: Loongson=
+-3:
+>>>>> Adjust irq dispatch to speedup processing
+>>>>> git bisect good f7cabc2dac8adf5986dbc700584bc3b8fe493d4d
+>>>>> # bad: [4978c8477e96fb9e9d870d8f42328dcabf1a65e9] MIPS: Loongson-=
+3: Set
+>>>>> cache flush handlers to cache_noop
+>>>>> git bisect bad 4978c8477e96fb9e9d870d8f42328dcabf1a65e9
+>>>>> # bad: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MIPS: Loongson:=
+ Add
+>>>>> Loongson-3A R2 basic support
+>>>>> git bisect bad 04a35922c1dac1b4864b8b366a37474e9e51d8c0
+>>>>> # first bad commit: [04a35922c1dac1b4864b8b366a37474e9e51d8c0] MI=
+PS:
+>>>>> Loongson: Add Loongson-3A R2 basic support
+>>>>>
+>>>>
+>>>>
+>>>
+>>
+>>
+>
