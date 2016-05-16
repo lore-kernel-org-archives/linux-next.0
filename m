@@ -1,27 +1,140 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 16
-Date: Mon, 16 May 2016 14:58:20 +1000
-Message-ID: <20160516145820.6eb5e38a@canb.auug.org.au>
-References: <20160516145614.2a06989b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160516 build: 0 failures 18 warnings (next-20160516)
+Date: Mon, 16 May 2016 08:55:30 +0100
+Message-ID: <E1b2DNC-0004Q4-JN@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40681 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750726AbcEPE6W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2016 00:58:22 -0400
-In-Reply-To: <20160516145614.2a06989b@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57432 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753267AbcEPHzl (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 May 2016 03:55:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi all,
+Tree/Branch: next-20160516
+Git describe: next-20160516
+Commit: e280fff4db Add linux-next specific files for 20160516
 
-I forgot to say:  Please do not add any v4.8 destined material to your
-linux-next included branches until after v4.7-rc1 has been released.
+Build Time: 79 min 58 sec
 
--- 
-Cheers,
-Stephen Rothwell
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
+
+Errors: 0
+Warnings: 18
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+     14 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      7 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 18
+	  5 ../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  5 ../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../sound/soc/codecs/hdac_hdmi.c:1721:16: warning: unused variable 'timeout' [-Wunused-variable]
+	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+	  2 ../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
+
+Warnings:
+	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../sound/soc/codecs/hdac_hdmi.c:1721:16: warning: unused variable 'timeout' [-Wunused-variable]
+	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	../sound/soc/codecs/hdac_hdmi.c:1721:16: warning: unused variable 'timeout' [-Wunused-variable]
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1183:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi4.c:117:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:134:2: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/regulator/core.c:2536:1: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../include/linux/export.h:63:25: warning: 'regulator_can_change_voltage' is deprecated [-Wdeprecated-declarations]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-defconfig
