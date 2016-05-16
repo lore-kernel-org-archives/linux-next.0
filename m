@@ -1,56 +1,55 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: linux-next: manual merge of the f2fs tree with the ext4 tree
-Date: Mon, 16 May 2016 15:22:41 -0700
-Message-ID: <20160516222241.GA40269@jaegeuk.gateway>
+Date: Mon, 16 May 2016 19:55:39 -0400
+Message-ID: <20160516235539.GR7799@thunk.org>
 References: <20160509093646.68d7cf57@canb.auug.org.au>
  <20160509171503.GA810@jaegeuk.gateway>
  <20160516213028.GO7799@thunk.org>
+ <20160516222241.GA40269@jaegeuk.gateway>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:41937 "EHLO mail.kernel.org"
+Received: from imap.thunk.org ([74.207.234.97]:60124 "EHLO imap.thunk.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750934AbcEPWWp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2016 18:22:45 -0400
+	id S1750792AbcEPXzs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 May 2016 19:55:48 -0400
 Content-Disposition: inline
-In-Reply-To: <20160516213028.GO7799@thunk.org>
+In-Reply-To: <20160516222241.GA40269@jaegeuk.gateway>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daeho Jeong <daeho.jeong@samsung.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daeho Jeong <daeho.jeong@samsung.com>
 
-On Mon, May 16, 2016 at 05:30:28PM -0400, Theodore Ts'o wrote:
-> On Mon, May 09, 2016 at 10:15:03AM -0700, Jaegeuk Kim wrote:
-> > Hi Stephen,
-> > 
-> > Thank you for the notice.
-> > I've been waiting for a comment about the below patch targeted to v4.7 from Ted.
-> > Meanwhile, I intended to prepare -next for that patch in advance.
-> > Surely, once I get a sense that I need to consider v4.8, I'll drop this patch
-> > for -next right away.
+On Mon, May 16, 2016 at 03:22:41PM -0700, Jaegeuk Kim wrote:
+> > Sorry, I just ran out of time to try to verify that the patch wouldn't
+> > break anything, and given that we're going to need to wait for
+> > "fscrypto/f2fs: allow fs-specific key prefix for fs encryption" to go
+> > upstream.
 > 
-> Yeah, I think it would be better for me to take the ext4 "migrate into
-> vfs's crypto engine" patch, and at this point, for 4.8.
+> Agreed. IIUC, let me push the fscrypto/f2fs patch to v4.7 first?
 
-Fair enough.
+Right --- that's in linux-next already, right?  And currently it's a
+combined fscrypto/f2fs patch, which is why I suspect letting it go
+into v4.7 first makes sense.  I'll make sure the ext4 move to
+fs/crypto will be one of the first development patches for 4.8 (modulo
+any urgent bug fixes that need to go into 4.7 final first).
 
-> Sorry, I just ran out of time to try to verify that the patch wouldn't
-> break anything, and given that we're going to need to wait for
-> "fscrypto/f2fs: allow fs-specific key prefix for fs encryption" to go
-> upstream.
+> I have no planned patch right now, and of course, it must have no problem for
+> you to treat with further patches.
+> Also, let me take a look at any missing part again, regarding to your concerns.
 
-Agreed. IIUC, let me push the fscrypto/f2fs patch to v4.7 first?
+I'm sure there may be some missing pieces around using file system
+level crypto for the desktop / server use case.  Some of them are in
+how we handle removable thumb drives, for example.
 
-> Do you have any other planned changes for the fscrypto tree planned
-> for 4.8.  If not, then perhaps it will be easier if I take the pen for
-> any changes needed for fs/crypto, and moving forward, we probably need
-> to find ways to make changes where commits specific for fs/crypto
-> should be isolated from ext4 or f2fs changes, and as much as possible
-> to be backwards compatible so that as we add new features to
-> fs/crypto, we don't need to synchronize changes across multiple file
-> systems.
+There are definitely some missing pieces about how to handle removable
+SD cards for Android, as well, including some kernel-side patches that
+are currently living in the unstable portion of the ext4 patch queue.
+We never got the design, implementation and kernel<->userspace API's
+fully baked, so that's not going upstream any time soon, but all of
+this means that we will need to figure out what's the best way to
+develop, test, and push fs/crypto changes in the long term.  This may
+mean a new git tree with shared maintenance, as one way that we could
+do things.
 
-I have no planned patch right now, and of course, it must have no problem for
-you to treat with further patches.
-Also, let me take a look at any missing part again, regarding to your concerns.
-
-Thanks,
+       		       	       	       	     - Ted
