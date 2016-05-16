@@ -1,46 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-drivers-next tree with the
- net-next tree
-Date: Mon, 16 May 2016 10:16:06 +1000
-Message-ID: <20160516101606.751f9613@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the spi tree
+Date: Mon, 16 May 2016 12:08:31 +1000
+Message-ID: <20160516120831.375203a1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41001 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752246AbcEPAQJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 15 May 2016 20:16:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stefan Roese <sr@denx.de>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Kalle,
+Hi Mark,
 
-Today's linux-next merge of the wireless-drivers-next tree got a
-conflict in:
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  drivers/net/wireless/intel/iwlwifi/mvm/tx.c
+drivers/spi/spi-orion.c: In function 'orion_spi_write_read':
+drivers/spi/spi-orion.c:407:3: error: implicit declaration of function 'writesl' [-Werror=implicit-function-declaration]
+   writesl(orion_spi->direct_access[cs].vaddr, xfer->tx_buf, cnt);
+   ^
+drivers/spi/spi-orion.c:411:4: error: implicit declaration of function 'writesb' [-Werror=implicit-function-declaration]
+    writesb(orion_spi->direct_access[cs].vaddr, &buf[cnt],
+    ^
 
-between commit:
+Caused by commit
 
-  909b27f70643 ("Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net")
+  dbf24b7c0d94 ("spi: orion: Add direct access mode")
 
-from the net-next tree and commit:
-
-  a525d0eab17d ("Merge tag 'iwlwifi-for-kalle-2016-05-04' of git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-fixes")
-
-from the wireless-drivers-next tree.
-
-I fixed it up (I think that the net-next tree merge lost the changes
-to iwl_mvm_set_tx_cmd() associated with commit 5c08b0f5026f ("iwlwifi:
-mvm: don't override the rate with the AMSDU len")) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+I have merged the version fof the spi tree from next-20160513 for today.
 
 -- 
 Cheers,
