@@ -1,93 +1,67 @@
-From: "Coelho, Luciano" <luciano.coelho@intel.com>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with
- the net-next tree
-Date: Mon, 16 May 2016 13:37:55 +0000
-Message-ID: <1463405875.25219.98.camel@intel.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the net-next tree
+Date: Mon, 16 May 2016 16:58:17 +0300
+Message-ID: <87shxi85qe.fsf@kamboji.qca.qualcomm.com>
 References: <20160516101606.751f9613@canb.auug.org.au>
-	 <871t529mik.fsf@kamboji.qca.qualcomm.com>
+	<871t529mik.fsf@kamboji.qca.qualcomm.com>
+	<1463405875.25219.98.camel@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:29898 "EHLO mga04.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752704AbcEPNh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2016 09:37:58 -0400
-In-Reply-To: <871t529mik.fsf@kamboji.qca.qualcomm.com>
-Content-Language: en-US
-Content-ID: <77528AFF24B12D49927A78A6AD57B127@intel.com>
+Received: from smtp.codeaurora.org ([198.145.29.96]:38312 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753410AbcEPN6X (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 16 May 2016 09:58:23 -0400
+In-Reply-To: <1463405875.25219.98.camel@intel.com> (Luciano Coelho's message
+	of "Mon, 16 May 2016 13:37:55 +0000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: "Coelho, Luciano" <luciano.coelho@intel.com>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, emmanuel.grumbach@intel.com
 
-SGkgS2FsbGUsDQoNCk9uIE1vbiwgMjAxNi0wNS0xNiBhdCAxNjoxMCArMDMwMCwgS2FsbGUgVmFs
-byB3cm90ZToNCj4gKEFkZGluZyBMdWNhIGFuZCBsaW51eC13aXJlbGVzcykNCj4gDQo+IFN0ZXBo
-ZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cml0ZXM6DQo+IA0KPiA+IA0KPiA+
-IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgd2lyZWxlc3MtZHJpdmVycy1uZXh0IHRy
-ZWUgZ290IGENCj4gPiBjb25mbGljdCBpbjoNCj4gPiANCj4gPiDCoCBkcml2ZXJzL25ldC93aXJl
-bGVzcy9pbnRlbC9pd2x3aWZpL212bS90eC5jDQo+ID4gDQo+ID4gYmV0d2VlbiBjb21taXQ6DQo+
-ID4gDQo+ID4gwqAgOTA5YjI3ZjcwNjQzICgiTWVyZ2UNCj4gPiBnaXQ6Ly9naXQua2VybmVsLm9y
-Zy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvZGF2ZW0vbmV0IikNCj4gPiANCj4gPiBmcm9tIHRo
-ZSBuZXQtbmV4dCB0cmVlIGFuZCBjb21taXQ6DQo+ID4gDQo+ID4gwqAgYTUyNWQwZWFiMTdkICgi
-TWVyZ2UgdGFnICdpd2x3aWZpLWZvci1rYWxsZS0yMDE2LTA1LTA0JyBvZg0KPiA+IGdpdDovL2dp
-dC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9pd2x3aWZpL2l3bHdpZmktDQo+
-ID4gZml4ZXMiKQ0KPiA+IA0KPiA+IGZyb20gdGhlIHdpcmVsZXNzLWRyaXZlcnMtbmV4dCB0cmVl
-Lg0KPiA+IA0KPiA+IEkgZml4ZWQgaXQgdXAgKEkgdGhpbmsgdGhhdCB0aGUgbmV0LW5leHQgdHJl
-ZSBtZXJnZSBsb3N0IHRoZQ0KPiA+IGNoYW5nZXMNCj4gPiB0byBpd2xfbXZtX3NldF90eF9jbWQo
-KSBhc3NvY2lhdGVkIHdpdGggY29tbWl0IDVjMDhiMGY1MDI2Zg0KPiA+ICgiaXdsd2lmaToNCj4g
-PiBtdm06IGRvbid0IG92ZXJyaWRlIHRoZSByYXRlIHdpdGggdGhlIEFNU0RVIGxlbiIpKSBhbmQg
-Y2FuIGNhcnJ5DQo+ID4gdGhlDQo+ID4gZml4IGFzIG5lY2Vzc2FyeS4NCj4gSG1tLCBJJ20gc3Rh
-cnRpbmcgdG8gc3VzcGVjdCBzb21ldGhpbmcgaXMgd3JvbmcuIEkgZGlkIGEgdGVzdCBtZXJnZQ0K
-PiBvZg0KPiBuZXQtbmV4dCBhbmQgd2lyZWxlc3MtZHJpdmVycy1uZXh0IGFuZCBnb3QgdGhpcyBh
-cyBhIGRpZmYgYWZ0ZXIgdGhlDQo+IG1lcmdlOg0KPiANCj4gLS0tIGEvZHJpdmVycy9uZXQvd2ly
-ZWxlc3MvaW50ZWwvaXdsd2lmaS9tdm0vdHguYw0KPiArKysgYi9kcml2ZXJzL25ldC93aXJlbGVz
-cy9pbnRlbC9pd2x3aWZpL212bS90eC5jDQo+IEBAIC0yMTEsNyArMjExLDYgQEAgdm9pZCBpd2xf
-bXZtX3NldF90eF9jbWQoc3RydWN0IGl3bF9tdm0gKm12bSwNCj4gc3RydWN0IHNrX2J1ZmYgKnNr
-YiwNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgc3Ry
-dWN0IGl3bF90eF9jbWQgKnR4X2NtZCwNCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgc3RydWN0IGllZWU4MDIxMV90eF9pbmZvICppbmZvLCB1OCBzdGFf
-aWQpDQo+IMKgew0KPiAtwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgaWVlZTgwMjExX3R4X2luZm8gKnNr
-Yl9pbmZvID0gSUVFRTgwMjExX1NLQl9DQihza2IpOw0KPiDCoMKgwqDCoMKgwqDCoMKgc3RydWN0
-IGllZWU4MDIxMV9oZHIgKmhkciA9ICh2b2lkICopc2tiLT5kYXRhOw0KPiDCoMKgwqDCoMKgwqDC
-oMKgX19sZTE2IGZjID0gaGRyLT5mcmFtZV9jb250cm9sOw0KPiDCoMKgwqDCoMKgwqDCoMKgdTMy
-IHR4X2ZsYWdzID0gbGUzMl90b19jcHUodHhfY21kLT50eF9mbGFncyk7DQo+IEBAIC0yOTUsNyAr
-Mjk0LDcgQEAgdm9pZCBpd2xfbXZtX3NldF90eF9jbWQoc3RydWN0IGl3bF9tdm0gKm12bSwNCj4g
-c3RydWN0IHNrX2J1ZmYgKnNrYiwNCj4gwqDCoMKgwqDCoMKgwqDCoHR4X2NtZC0+dHhfZmxhZ3Mg
-PSBjcHVfdG9fbGUzMih0eF9mbGFncyk7DQo+IMKgwqDCoMKgwqDCoMKgwqAvKiBUb3RhbCAjIGJ5
-dGVzIHRvIGJlIHRyYW5zbWl0dGVkICovDQo+IMKgwqDCoMKgwqDCoMKgwqB0eF9jbWQtPmxlbiA9
-IGNwdV90b19sZTE2KCh1MTYpc2tiLT5sZW4gKw0KPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgKHVpbnRwdHJfdClza2JfaW5mby0+ZHJpdmVyX2RhdGFbMF0pOw0KPiArwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgKHVpbnRwdHJfdClpbmZvLT5kcml2ZXJfZGF0YVswXSk7DQo+
-IMKgwqDCoMKgwqDCoMKgwqB0eF9jbWQtPmxpZmVfdGltZSA9IGNwdV90b19sZTMyKFRYX0NNRF9M
-SUZFX1RJTUVfSU5GSU5JVEUpOw0KPiDCoMKgwqDCoMKgwqDCoMKgdHhfY21kLT5zdGFfaWQgPSBz
-dGFfaWQ7DQo+IA0KPiBCdXQgY29tbWl0IDVjMDhiMGY1MDI2ZiAoIml3bHdpZmk6IG12bTogZG9u
-J3Qgb3ZlcnJpZGUgdGhlIHJhdGUgd2l0aA0KPiB0aGUNCj4gQU1TRFUgbGVuIikgc3BlY2lmaWNh
-bGx5IGFkZGVkIHNrYl9pbmZvIHZhcmlhYmxlIHRvIHRoYXQgZnVuY3Rpb246DQo+IA0KPiBAQCAt
-MTA1LDYgKzEwNSw3IEBAIHZvaWQgaXdsX212bV9zZXRfdHhfY21kKHN0cnVjdCBpd2xfbXZtICpt
-dm0sDQo+IHN0cnVjdCBza19idWZmICpza2IsDQo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN0cnVjdCBpd2xfdHhfY21kICp0eF9jbWQsDQo+IMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHN0cnVjdCBpZWVlODAy
-MTFfdHhfaW5mbyAqaW5mbywgdTggc3RhX2lkKQ0KPiDCoHsNCj4gK8KgwqDCoMKgwqDCoMKgc3Ry
-dWN0IGllZWU4MDIxMV90eF9pbmZvICpza2JfaW5mbyA9IElFRUU4MDIxMV9TS0JfQ0Ioc2tiKTsN
-Cj4gwqDCoMKgwqDCoMKgwqDCoHN0cnVjdCBpZWVlODAyMTFfaGRyICpoZHIgPSAodm9pZCAqKXNr
-Yi0+ZGF0YTsNCj4gwqDCoMKgwqDCoMKgwqDCoF9fbGUxNiBmYyA9IGhkci0+ZnJhbWVfY29udHJv
-bDsNCj4gwqDCoMKgwqDCoMKgwqDCoHUzMiB0eF9mbGFncyA9IGxlMzJfdG9fY3B1KHR4X2NtZC0+
-dHhfZmxhZ3MpOw0KPiBAQCAtMTg1LDcgKzE4Niw3IEBAIHZvaWQgaXdsX212bV9zZXRfdHhfY21k
-KHN0cnVjdCBpd2xfbXZtICptdm0sDQo+IHN0cnVjdCBza19idWZmICpza2IsDQo+IMKgwqDCoMKg
-wqDCoMKgwqB0eF9jbWQtPnR4X2ZsYWdzID0gY3B1X3RvX2xlMzIodHhfZmxhZ3MpOw0KPiDCoMKg
-wqDCoMKgwqDCoMKgLyogVG90YWwgIyBieXRlcyB0byBiZSB0cmFuc21pdHRlZCAqLw0KPiDCoMKg
-wqDCoMKgwqDCoMKgdHhfY21kLT5sZW4gPSBjcHVfdG9fbGUxNigodTE2KXNrYi0+bGVuICsNCj4g
-LcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCh1aW50cHRyX3QpaW5mby0+ZHJpdmVyX2Rh
-dGFbMF0pOw0KPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgKHVpbnRwdHJfdClza2Jf
-aW5mby0+ZHJpdmVyX2RhdGFbMF0pOw0KPiDCoMKgwqDCoMKgwqDCoMKgdHhfY21kLT5uZXh0X2Zy
-YW1lX2xlbiA9IDA7DQo+IMKgwqDCoMKgwqDCoMKgwqB0eF9jbWQtPmxpZmVfdGltZSA9IGNwdV90
-b19sZTMyKFRYX0NNRF9MSUZFX1RJTUVfSU5GSU5JVEUpOw0KPiDCoMKgwqDCoMKgwqDCoMKgdHhf
-Y21kLT5zdGFfaWQgPSBzdGFfaWQ7DQo+IA0KPiBJIHdhc24ndCBleHBlY3RpbmcgdGhhdCBza2Jf
-aW5mbyB2YXJpYWJsZSBpcyByZW1vdmVkLiBEbyB3ZSBub3cgaGF2ZQ0KPiBtZXJnZSBkYW1hZ2Ug
-c29tZXdoZXJlPyBMdWNhLCB3aGF0IGRvIHlvdSB0aGluaz8NCg0KQXMgd2UgZGlzY3Vzc2VkIG9u
-IElSQywgaXQgc2VlbXMgdG8gbWUgdGhhdCB0aGVyZSB3YXMgYSBtZXJnZSBkYW1hZ2UNCndoZW4g
-RGF2ZSBtZXJnZWQgbmV0LmdpdCBpbnRvIG5ldC1uZXh0LmdpdCAoYXMgeW91IG1vc3RseSBmb3Vu
-ZCBvdXQgOykuDQoNCkknbSBub3Qgc3VyZSBob3cgdG8gc29sdmUgdGhhdCwgYnV0IEknbSBzdXJl
-IHlvdSBhbmQgRGF2ZSBjYW4gZmlndXJlDQpzb21ldGhpbmcgb3V0LiA6KSBQbGVhc2UgbGV0IG1l
-IGtub3cgaWYgeW91IG5lZWQgYW55IGhlbHAgd2l0aCBpdC4NCg0KLS0NCkNoZWVycywNCkx1Y2Eu
+"Coelho, Luciano" <luciano.coelho@intel.com> writes:
+
+(dropping damaged diffs etc, adding Emmanuel as the author of
+5c08b0f5026f ("iwlwifi: mvm: don't override the rate with the AMSDU
+len"))
+
+>> I wasn't expecting that skb_info variable is removed. Do we now have
+>> merge damage somewhere? Luca, what do you think?
+>
+> As we discussed on IRC, it seems to me that there was a merge damage
+> when Dave merged net.git into net-next.git (as you mostly found out ;).
+>
+> I'm not sure how to solve that, but I'm sure you and Dave can figure
+> something out. :) Please let me know if you need any help with it.
+
+Yeah, I guess in net-next.git Dave assumed that 'info == skb_info' is
+always valid in iwl_mvm_set_tx_cmd(), but I don't that's the case. So I
+think the end case, after a merge, should look like this:
+
+void iwl_mvm_set_tx_cmd(struct iwl_mvm *mvm, struct sk_buff *skb,
+			struct iwl_tx_cmd *tx_cmd,
+			struct ieee80211_tx_info *info, u8 sta_id)
+{
+	struct ieee80211_tx_info *skb_info = IEEE80211_SKB_CB(skb);
+	struct ieee80211_hdr *hdr = (void *)skb->data;
+	__le16 fc = hdr->frame_control;
+	u32 tx_flags = le32_to_cpu(tx_cmd->tx_flags);
+	u32 len = skb->len + FCS_LEN;
+	u8 ac;
+
+[...]
+
+	tx_cmd->tx_flags = cpu_to_le32(tx_flags);
+	/* Total # bytes to be transmitted */
+	tx_cmd->len = cpu_to_le16((u16)skb->len +
+		(uintptr_t)skb_info->driver_data[0]);
+	tx_cmd->life_time = cpu_to_le32(TX_CMD_LIFE_TIME_INFINITE);
+	tx_cmd->sta_id = sta_id;
+
+I'm going to propose this to Dave in my pending pull request[1]. But I
+would appreciate if someone else would double check this.
+
+[1] https://patchwork.ozlabs.org/patch/621953/
+
+-- 
+Kalle Valo
