@@ -1,53 +1,29 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the arm64
- tree
-Date: Tue, 17 May 2016 15:49:05 +0200
-Message-ID: <573B2151.5010907@iogearbox.net>
-References: <20160517102441.0cfbc192@canb.auug.org.au> <CAMuHMdX8oW2M8Rr_LUHNSi9PMyEoNOdsp4MrN5z3SySjfahFmw@mail.gmail.com> <573AC462.7070809@iogearbox.net> <20160517133834.GF23555@e104818-lin.cambridge.arm.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: QRTR merge conflict resolution
+Date: Tue, 17 May 2016 14:11:54 -0400 (EDT)
+Message-ID: <20160517.141154.1511755950068252376.davem@davemloft.net>
+References: <20160510183934.GJ1256@tuxbot>
+	<2606282.lG9qK7uBW0@wuerfel>
+	<20160513221909.GC1256@tuxbot>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www62.your-server.de ([213.133.104.62]:42133 "EHLO
-	www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792AbcEQNtO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2016 09:49:14 -0400
-In-Reply-To: <20160517133834.GF23555@e104818-lin.cambridge.arm.com>
+Received: from shards.monkeyblade.net ([149.20.54.216]:49192 "EHLO
+	shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751179AbcEQSL4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 17 May 2016 14:11:56 -0400
+In-Reply-To: <20160513221909.GC1256@tuxbot>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yang Shi <yang.shi@linaro.org>, Will Deacon <will.deacon@arm.com>
+To: bjorn.andersson@linaro.org
+Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, sfr@canb.auug.org.au, andy.gross@linaro.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, olof@lixom.net
 
-On 05/17/2016 03:38 PM, Catalin Marinas wrote:
-> On Tue, May 17, 2016 at 09:12:34AM +0200, Daniel Borkmann wrote:
->> On 05/17/2016 09:03 AM, Geert Uytterhoeven wrote:
->> [...]
->>> Someone's not gonna be happy with commit 6077776b5908 ("bpf: split
->>> HAVE_BPF_JIT into cBPF and eBPF variant") breaking the sort order again...
->>
->> Wasn't aware of that. Maybe I'm missing something, but there appears
->> to be no throughout consistent ordering ...
->>
->> [...]
->>          select HAVE_PERF_REGS
->>          select HAVE_PERF_USER_STACK_DUMP
->>          select HAVE_RCU_TABLE_FREE
->>          select HAVE_SYSCALL_TRACEPOINTS
->>          select IOMMU_DMA if IOMMU_SUPPORT
->>          select IRQ_DOMAIN
->>          select IRQ_FORCED_THREADING
->> [...]
->>          select RTC_LIB
->>          select SPARSE_IRQ
->>          select SYSCTL_EXCEPTION_TRACE
->>          select HAVE_CONTEXT_TRACKING
->>          select HAVE_ARM_SMCCC
->> [...]
->
-> We keep fixing them as we merge other stuff. For example, latest
-> mainline has commit 8ee708792e1c ("arm64: Kconfig: remove redundant
-> HAVE_ARCH_TRANSPARENT_HUGEPAGE definition") which also fixes up the
-> Kconfig order.
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Date: Fri, 13 May 2016 15:19:09 -0700
 
-Understood, thanks for the clarification (and sorry for the sort order
-issue).
+> I have prepared the merge of net-next and the conflicting tag from the
+> Qualcomm SOC, please include this in your pull towards Linus to avoid
+> the merge conflict.
+
+Pulled, thanks.
