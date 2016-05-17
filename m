@@ -1,55 +1,195 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Re: linux-next: manual merge of the f2fs tree with the ext4 tree
-Date: Mon, 16 May 2016 19:55:39 -0400
-Message-ID: <20160516235539.GR7799@thunk.org>
-References: <20160509093646.68d7cf57@canb.auug.org.au>
- <20160509171503.GA810@jaegeuk.gateway>
- <20160516213028.GO7799@thunk.org>
- <20160516222241.GA40269@jaegeuk.gateway>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext4 tree
+Date: Tue, 17 May 2016 10:23:55 +1000
+Message-ID: <20160517102355.4be4af45@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from imap.thunk.org ([74.207.234.97]:60124 "EHLO imap.thunk.org"
+Received: from ozlabs.org ([103.22.144.67]:38253 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750792AbcEPXzs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 16 May 2016 19:55:48 -0400
-Content-Disposition: inline
-In-Reply-To: <20160516222241.GA40269@jaegeuk.gateway>
+	id S1750934AbcEQAYA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 16 May 2016 20:24:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daeho Jeong <daeho.jeong@samsung.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>
 
-On Mon, May 16, 2016 at 03:22:41PM -0700, Jaegeuk Kim wrote:
-> > Sorry, I just ran out of time to try to verify that the patch wouldn't
-> > break anything, and given that we're going to need to wait for
-> > "fscrypto/f2fs: allow fs-specific key prefix for fs encryption" to go
-> > upstream.
-> 
-> Agreed. IIUC, let me push the fscrypto/f2fs patch to v4.7 first?
+Hi all,
 
-Right --- that's in linux-next already, right?  And currently it's a
-combined fscrypto/f2fs patch, which is why I suspect letting it go
-into v4.7 first makes sense.  I'll make sure the ext4 move to
-fs/crypto will be one of the first development patches for 4.8 (modulo
-any urgent bug fixes that need to go into 4.7 final first).
+Today's linux-next merge of the vfs tree got conflicts in:
 
-> I have no planned patch right now, and of course, it must have no problem for
-> you to treat with further patches.
-> Also, let me take a look at any missing part again, regarding to your concerns.
+  fs/ext4/ext4.h
+  fs/ext4/indirect.c
+  fs/ext4/inode.c
 
-I'm sure there may be some missing pieces around using file system
-level crypto for the desktop / server use case.  Some of them are in
-how we handle removable thumb drives, for example.
+between commit:
 
-There are definitely some missing pieces about how to handle removable
-SD cards for Android, as well, including some kernel-side patches that
-are currently living in the unstable portion of the ext4 patch queue.
-We never got the design, implementation and kernel<->userspace API's
-fully baked, so that's not going upstream any time soon, but all of
-this means that we will need to figure out what's the best way to
-develop, test, and push fs/crypto changes in the long term.  This may
-mean a new git tree with shared maintenance, as one way that we could
-do things.
+  914f82a32d02 ("ext4: refactor direct IO code")
 
-       		       	       	       	     - Ted
+from the ext4 tree and commit:
+
+  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
+
+from the vfs tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ext4/ext4.h
+index b84aa1ca480a,72f4c9e00e97..000000000000
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+diff --cc fs/ext4/indirect.c
+index bc15c2c17633,627b7e8f9ef3..000000000000
+--- a/fs/ext4/indirect.c
++++ b/fs/ext4/indirect.c
+diff --cc fs/ext4/inode.c
+index f9ab1e8cc416,79b298d397b4..000000000000
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@@ -3327,13 -3334,12 +3327,13 @@@ static int ext4_end_io_dio(struct kioc
+   * if the machine crashes during the write.
+   *
+   */
+- static ssize_t ext4_direct_IO_write(struct kiocb *iocb, struct iov_iter *iter,
+- 				    loff_t offset)
+ -static ssize_t ext4_ext_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+++static ssize_t ext4_direct_IO_write(struct kiocb *iocb, struct iov_iter *iter)
+  {
+  	struct file *file = iocb->ki_filp;
+  	struct inode *inode = file->f_mapping->host;
+ +	struct ext4_inode_info *ei = EXT4_I(inode);
+  	ssize_t ret;
++ 	loff_t offset = iocb->ki_pos;
+  	size_t count = iov_iter_count(iter);
+  	int overwrite = 0;
+  	get_block_t *get_block_func = NULL;
+@@@ -3423,12 -3399,12 +3423,12 @@@
+  #ifdef CONFIG_EXT4_FS_ENCRYPTION
+  	BUG_ON(ext4_encrypted_inode(inode) && S_ISREG(inode->i_mode));
+  #endif
+ -	if (IS_DAX(inode))
+ +	if (IS_DAX(inode)) {
+- 		ret = dax_do_io(iocb, inode, iter, offset, get_block_func,
++ 		ret = dax_do_io(iocb, inode, iter, get_block_func,
+  				ext4_end_io_dio, dio_flags);
+ -	else
+ +	} else
+  		ret = __blockdev_direct_IO(iocb, inode,
+- 					   inode->i_sb->s_bdev, iter, offset,
++ 					   inode->i_sb->s_bdev, iter,
+  					   get_block_func,
+  					   ext4_end_io_dio, NULL, dio_flags);
+  
+@@@ -3451,82 -3428,6 +3451,82 @@@
+  	if (overwrite)
+  		inode_lock(inode);
+  
+ +	if (ret < 0 && final_size > inode->i_size)
+ +		ext4_truncate_failed_write(inode);
+ +
+ +	/* Handle extending of i_size after direct IO write */
+ +	if (orphan) {
+ +		int err;
+ +
+ +		/* Credits for sb + inode write */
+ +		handle = ext4_journal_start(inode, EXT4_HT_INODE, 2);
+ +		if (IS_ERR(handle)) {
+ +			/* This is really bad luck. We've written the data
+ +			 * but cannot extend i_size. Bail out and pretend
+ +			 * the write failed... */
+ +			ret = PTR_ERR(handle);
+ +			if (inode->i_nlink)
+ +				ext4_orphan_del(NULL, inode);
+ +
+ +			goto out;
+ +		}
+ +		if (inode->i_nlink)
+ +			ext4_orphan_del(handle, inode);
+ +		if (ret > 0) {
+ +			loff_t end = offset + ret;
+ +			if (end > inode->i_size) {
+ +				ei->i_disksize = end;
+ +				i_size_write(inode, end);
+ +				/*
+ +				 * We're going to return a positive `ret'
+ +				 * here due to non-zero-length I/O, so there's
+ +				 * no way of reporting error returns from
+ +				 * ext4_mark_inode_dirty() to userspace.  So
+ +				 * ignore it.
+ +				 */
+ +				ext4_mark_inode_dirty(handle, inode);
+ +			}
+ +		}
+ +		err = ext4_journal_stop(handle);
+ +		if (ret == 0)
+ +			ret = err;
+ +	}
+ +out:
+ +	return ret;
+ +}
+ +
+- static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter,
+- 				   loff_t offset)
+++static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
+ +{
+ +	int unlocked = 0;
+ +	struct inode *inode = iocb->ki_filp->f_mapping->host;
+++	loff_t offset = iocb->ki_pos;
+ +	ssize_t ret;
+ +
+ +	if (ext4_should_dioread_nolock(inode)) {
+ +		/*
+ +		 * Nolock dioread optimization may be dynamically disabled
+ +		 * via ext4_inode_block_unlocked_dio(). Check inode's state
+ +		 * while holding extra i_dio_count ref.
+ +		 */
+ +		inode_dio_begin(inode);
+ +		smp_mb();
+ +		if (unlikely(ext4_test_inode_state(inode,
+ +						    EXT4_STATE_DIOREAD_LOCK)))
+ +			inode_dio_end(inode);
+ +		else
+ +			unlocked = 1;
+ +	}
+ +	if (IS_DAX(inode)) {
+- 		ret = dax_do_io(iocb, inode, iter, offset, ext4_dio_get_block,
+++		ret = dax_do_io(iocb, inode, iter, ext4_dio_get_block,
+ +				NULL, unlocked ? 0 : DIO_LOCKING);
+ +	} else {
+ +		ret = __blockdev_direct_IO(iocb, inode, inode->i_sb->s_bdev,
+- 					   iter, offset, ext4_dio_get_block,
+++					   iter, ext4_dio_get_block,
+ +					   NULL, NULL,
+ +					   unlocked ? 0 : DIO_LOCKING);
+ +	}
+ +	if (unlocked)
+ +		inode_dio_end(inode);
+  	return ret;
+  }
+  
+@@@ -3554,10 -3455,10 +3554,10 @@@ static ssize_t ext4_direct_IO(struct ki
+  		return 0;
+  
+  	trace_ext4_direct_IO_enter(inode, offset, count, iov_iter_rw(iter));
+ -	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+ -		ret = ext4_ext_direct_IO(iocb, iter);
+ +	if (iov_iter_rw(iter) == READ)
+- 		ret = ext4_direct_IO_read(iocb, iter, offset);
+++		ret = ext4_direct_IO_read(iocb, iter);
+  	else
+- 		ret = ext4_direct_IO_write(iocb, iter, offset);
+ -		ret = ext4_ind_direct_IO(iocb, iter);
+++		ret = ext4_direct_IO_write(iocb, iter);
+  	trace_ext4_direct_IO_exit(inode, offset, count, iov_iter_rw(iter), ret);
+  	return ret;
+  }
