@@ -1,33 +1,30 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the arm64
- tree
-Date: Tue, 17 May 2016 08:05:11 +0200
-Message-ID: <573AB497.2020301@iogearbox.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: manual merge of the net-next tree with the arm64 tree
+Date: Tue, 17 May 2016 09:03:04 +0200
+Message-ID: <CAMuHMdX8oW2M8Rr_LUHNSi9PMyEoNOdsp4MrN5z3SySjfahFmw@mail.gmail.com>
 References: <20160517102441.0cfbc192@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20160517102441.0cfbc192@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yang Shi <yang.shi@linaro.org>, Will Deacon <will.deacon@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Yang Shi <yang.shi@linaro.org>, Will Deacon <will.deacon@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On 05/17/2016 02:24 AM, Stephen Rothwell wrote:
-> Hi all,
+On Tue, May 17, 2016 at 2:24 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
 > Today's linux-next merge of the net-next tree got a conflict in:
 >
->    arch/arm64/Kconfig
+>   arch/arm64/Kconfig
 >
 > between commit:
 >
->    8ee708792e1c ("arm64: Kconfig: remove redundant HAVE_ARCH_TRANSPARENT_HUGEPAGE definition")
+>   8ee708792e1c ("arm64: Kconfig: remove redundant HAVE_ARCH_TRANSPARENT_HUGEPAGE definition")
 >
 > from the arm64 tree and commit:
 >
->    6077776b5908 ("bpf: split HAVE_BPF_JIT into cBPF and eBPF variant")
+>   6077776b5908 ("bpf: split HAVE_BPF_JIT into cBPF and eBPF variant")
 >
 > from the net-next tree.
 >
@@ -37,5 +34,30 @@ On 05/17/2016 02:24 AM, Stephen Rothwell wrote:
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc arch/arm64/Kconfig
+> index 8845c0d100d7,e6761ea2feec..000000000000
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@@ -59,9 -58,7 +59,9 @@@ config ARM6
+>         select HAVE_ARCH_MMAP_RND_COMPAT_BITS if COMPAT
+>         select HAVE_ARCH_SECCOMP_FILTER
+>         select HAVE_ARCH_TRACEHOOK
+>  +      select HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>  +      select HAVE_ARM_SMCCC
+> -       select HAVE_BPF_JIT
+> +       select HAVE_EBPF_JIT
+>         select HAVE_C_RECORDMCOUNT
+>         select HAVE_CC_STACKPROTECTOR
+>         select HAVE_CMPXCHG_DOUBLE
 
-Diff looks good, thanks!
+Someone's not gonna be happy with commit 6077776b5908 ("bpf: split
+HAVE_BPF_JIT into cBPF and eBPF variant") breaking the sort order again...
+
+Gr{oetje,eeting}s,
+
+                        Geert
