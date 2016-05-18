@@ -1,79 +1,63 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: Linux-next parallel cp workload hang
-Date: Wed, 18 May 2016 19:54:09 +1000
-Message-ID: <20160518095409.GX26977@dastard>
-References: <20160518014615.GA5302@ZX.nay.redhat.com>
- <20160518055634.GW26977@dastard>
- <20160518083150.GB6551@dhcp12-144.nay.redhat.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160518 build: 2 failures 20 warnings (next-20160518)
+Date: Wed, 18 May 2016 11:15:59 +0100
+Message-ID: <20160518101559.GJ8104@sirena.org.uk>
+References: <E1b2vXq-0003Ij-Ek@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yhze8HlyfmXt1APY"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:59946 "EHLO
-	ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751583AbcERJyO (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2016 05:54:14 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40608 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751169AbcERKQd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 06:16:33 -0400
 Content-Disposition: inline
-In-Reply-To: <20160518083150.GB6551@dhcp12-144.nay.redhat.com>
+In-Reply-To: <E1b2vXq-0003Ij-Ek@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Xiong Zhou <xzhou@redhat.com>
-Cc: linux-next@vger.kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, Dave Airlie <airlied@redhat.com>, Jie Qiu <jie.qiu@mediatek.com>, CK Hu <ck.hu@mediatek.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On Wed, May 18, 2016 at 04:31:50PM +0800, Xiong Zhou wrote:
-> Hi,
-> 
-> On Wed, May 18, 2016 at 03:56:34PM +1000, Dave Chinner wrote:
-> > On Wed, May 18, 2016 at 09:46:15AM +0800, Xiong Zhou wrote:
-> > > Hi,
-> > > 
-> > > Parallel cp workload (xfstests generic/273) hangs like blow.
-> > > It's reproducible with a small chance, less the 1/100 i think.
-> > > 
-> > > Have hit this in linux-next 20160504 0506 0510 trees, testing on
-> > > xfs with loop or block device. Ext4 survived several rounds
-> > > of testing.
-> > > 
-> > > Linux next 20160510 tree hangs within 500 rounds testing several
-> > > times. The same tree with vfs parallel lookup patchset reverted
-> > > survived 900 rounds testing. Reverted commits are attached.  > 
-> > What hardware?
-> 
-> A HP prototype host.
 
-description? cpus, memory, etc? I want to have some idea of what
-hardware I need to reproduce this...
+--yhze8HlyfmXt1APY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-xfs_info from the scratch filesystem would also be handy.
+On Wed, May 18, 2016 at 08:05:26AM +0100, Build bot for Mark Brown wrote:
 
-> > Can you reproduce this with CONFIG_XFS_DEBUG=y set? if you can, and
-> > it doesn't trigger any warnings or asserts, can you then try to
-> > reproduce it while tracing the following events:
-> > 
-> > 	xfs_buf_lock
-> > 	xfs_buf_lock_done
-> > 	xfs_buf_trylock
-> > 	xfs_buf_unlock
-> > 
-> > So we might be able to see if there's an unexpected buffer
-> > locking/state pattern occurring when the hang occurs?
-> 
-> Yes, i've reproduced this with both CONFIG_XFS_DEBUG=y and the tracers
-> on. There are some trace output after hang for a while.
+Today's -next fails to build arm and arm64 allmodconfigs fail to build
+due to:
 
-I'm not actually interested in the trace after the hang - I'm
-interested in what happened leading up to the hang. The output
-you've given me tell me that the directory block at offset is locked
-but nothing in the trace tells me what locked it.
+> 	arm64-allmodconfig
+> 	arm-allmodconfig
+> ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument =
+1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=3Dinco=
+mpatible-pointer-types]
+> ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments=
+ to function 'drm_gem_object_lookup'
+> ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument=
+ 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=3Dinc=
+ompatible-pointer-types]
+> ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many argument=
+s to function 'drm_gem_object_lookup'
 
-Can I suggest using trace-cmd to record the events, then when the
-test hangs kill the check process so that trace-cmd terminates and
-gathers the events. Then dump the report to a text file and attach
-that?
+Apparently triggered by 8ad0bd84f98607 (drm: Remove unused drm_device
+=66rom drm_gem_object_lookup()) which didn't update the Mediatek drivers.
 
-Cheers,
+--yhze8HlyfmXt1APY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXPEDdAAoJECTWi3JdVIfQZx8H/3Fm/TemCxvP+vlFEWUb3jfp
+FJNKR3py9usTVYx49LM4/Aj6Hjg6bOruv0U8FUE6H9oJkrIEwBOyenrPCbkUNO6y
+akHUwYDc5HWekuSjtV45xgfoXWomqbz3Exr3+shFIGehlCHogq+5n+CzqA23qTta
+mK+5w1PzCA/jcTRj3X/znLwaCqjuzqeQeLkhNfsUVO5ajmds9OYKmxckLwA22EQr
+4OOfLbL6l3ZX3y89sq7vAhm0XRL6omkxbJMTcVhN8fWE3TAn49BLTO7UQmsuNbBq
+oclkuCV5Dprqd7j8lT4/4CNjSxAHOzYlNpOFzuJkDqhfaax6E44mZAPekoel55Y=
+=/nmb
+-----END PGP SIGNATURE-----
+
+--yhze8HlyfmXt1APY--
