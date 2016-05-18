@@ -1,72 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the dax-misc
- tree
-Date: Wed, 18 May 2016 13:57:30 +1000
-Message-ID: <20160518135730.292f0577@canb.auug.org.au>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: Re: QRTR merge conflict resolution
+Date: Tue, 17 May 2016 21:09:43 -0700
+Message-ID: <20160518040943.GO1256@tuxbot>
+References: <20160510183934.GJ1256@tuxbot>
+ <2606282.lG9qK7uBW0@wuerfel>
+ <20160513221909.GC1256@tuxbot>
+ <20160517.141154.1511755950068252376.davem@davemloft.net>
+ <20160518104320.23ae8557@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38188 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751517AbcERD5d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 17 May 2016 23:57:33 -0400
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:36630 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750979AbcEREJr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 00:09:47 -0400
+Received: by mail-pa0-f49.google.com with SMTP id bt5so13284535pac.3
+        for <linux-next@vger.kernel.org>; Tue, 17 May 2016 21:09:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20160518104320.23ae8557@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, "Verma, Vishal L" <vishal.l.verma@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Toshi Kani <toshi.kani@hpe.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, arnd@arndb.de, linux-arm-kernel@lists.infradead.org, andy.gross@linaro.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, olof@lixom.net
 
-Hi Andrew,
+On Tue 17 May 17:43 PDT 2016, Stephen Rothwell wrote:
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+> Hi David,
+> 
+> On Tue, 17 May 2016 14:11:54 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
+> >
+> > From: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > Date: Fri, 13 May 2016 15:19:09 -0700
+> > 
+> > > I have prepared the merge of net-next and the conflicting tag from the
+> > > Qualcomm SOC, please include this in your pull towards Linus to avoid
+> > > the merge conflict.  
+> > 
+> > Pulled, thanks.
+> 
+> Except in the merge resolution, the 2 new functions added to
+> include/linux/soc/qcom/smd.h (qcom_smd_get_drvdata and
+> qcom_smd_set_drvdata) were not marked "static inline" :-(
+> 
 
-  include/linux/dax.h
+How silly of me to miss that, sorry about that.
 
-between commit:
+I didn't spot this in my compile testing either, because this is the
+only driver in the tree including that file that doesn't depend on
+QCOM_SMD.
 
-  ecdb4bf9e327 ("dax: export a low-level __dax_zero_page_range helper")
+As there is no immediate problem with moving forward I suggest that I'll
+fix this, through arm-soc, once the code has landed.
 
-from the dax-misc tree and commit:
-
-  29d44f6759f6 ("dax: add dax_get_unmapped_area for pmd mappings")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/dax.h
-index 7743e51f826c,184b1714900c..000000000000
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@@ -14,19 -17,15 +14,22 @@@ int __dax_fault(struct vm_area_struct *
-  
-  #ifdef CONFIG_FS_DAX
-  struct page *read_dax_sector(struct block_device *bdev, sector_t n);
- +int __dax_zero_page_range(struct block_device *bdev, sector_t sector,
- +		unsigned int offset, unsigned int length);
-+ unsigned long dax_get_unmapped_area(struct file *filp, unsigned long addr,
-+ 		unsigned long len, unsigned long pgoff, unsigned long flags);
-  #else
-  static inline struct page *read_dax_sector(struct block_device *bdev,
-  		sector_t n)
-  {
-  	return ERR_PTR(-ENXIO);
-  }
- +static inline int __dax_zero_page_range(struct block_device *bdev,
- +		sector_t sector, unsigned int offset, unsigned int length)
- +{
- +	return -ENXIO;
- +}
-+ #define dax_get_unmapped_area	NULL
-  #endif
-  
-  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+Regards,
+Bjorn
