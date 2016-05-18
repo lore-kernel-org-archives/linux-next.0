@@ -1,63 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
+From: Chris Wilson <chris@chris-wilson.co.uk>
 Subject: Re: next-20160518 build: 2 failures 20 warnings (next-20160518)
-Date: Wed, 18 May 2016 11:15:59 +0100
-Message-ID: <20160518101559.GJ8104@sirena.org.uk>
-References: <E1b2vXq-0003Ij-Ek@optimist>
+Date: Wed, 18 May 2016 11:23:57 +0100
+Message-ID: <20160518102357.GG30479@nuc-i3427.alporthouse.com>
+References: <E1b2vXq-0003Ij-Ek@optimist> <20160518101559.GJ8104@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yhze8HlyfmXt1APY"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40608 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169AbcERKQd (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 06:16:33 -0400
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <E1b2vXq-0003Ij-Ek@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Chris Wilson <chris@chris-wilson.co.uk>, Dave Airlie <airlied@redhat.com>, Jie Qiu <jie.qiu@mediatek.com>, CK Hu <ck.hu@mediatek.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <20160518101559.GJ8104@sirena.org.uk>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linaro-kernel@lists.linaro.org, Jie Qiu <jie.qiu@mediatek.com>, kernel-build-reports@lists.linaro.org, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, Dave Airlie <airlied@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-
---yhze8HlyfmXt1APY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 18, 2016 at 08:05:26AM +0100, Build bot for Mark Brown wrote:
-
-Today's -next fails to build arm and arm64 allmodconfigs fail to build
-due to:
-
-> 	arm64-allmodconfig
-> 	arm-allmodconfig
-> ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument =
-1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=3Dinco=
-mpatible-pointer-types]
-> ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments=
- to function 'drm_gem_object_lookup'
-> ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument=
- 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=3Dinc=
-ompatible-pointer-types]
-> ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many argument=
-s to function 'drm_gem_object_lookup'
-
-Apparently triggered by 8ad0bd84f98607 (drm: Remove unused drm_device
-=66rom drm_gem_object_lookup()) which didn't update the Mediatek drivers.
-
---yhze8HlyfmXt1APY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXPEDdAAoJECTWi3JdVIfQZx8H/3Fm/TemCxvP+vlFEWUb3jfp
-FJNKR3py9usTVYx49LM4/Aj6Hjg6bOruv0U8FUE6H9oJkrIEwBOyenrPCbkUNO6y
-akHUwYDc5HWekuSjtV45xgfoXWomqbz3Exr3+shFIGehlCHogq+5n+CzqA23qTta
-mK+5w1PzCA/jcTRj3X/znLwaCqjuzqeQeLkhNfsUVO5ajmds9OYKmxckLwA22EQr
-4OOfLbL6l3ZX3y89sq7vAhm0XRL6omkxbJMTcVhN8fWE3TAn49BLTO7UQmsuNbBq
-oclkuCV5Dprqd7j8lT4/4CNjSxAHOzYlNpOFzuJkDqhfaax6E44mZAPekoel55Y=
-=/nmb
------END PGP SIGNATURE-----
-
---yhze8HlyfmXt1APY--
+T24gV2VkLCBNYXkgMTgsIDIwMTYgYXQgMTE6MTU6NTlBTSArMDEwMCwgTWFyayBCcm93biB3cm90
+ZToKPiBPbiBXZWQsIE1heSAxOCwgMjAxNiBhdCAwODowNToyNkFNICswMTAwLCBCdWlsZCBib3Qg
+Zm9yIE1hcmsgQnJvd24gd3JvdGU6Cj4gCj4gVG9kYXkncyAtbmV4dCBmYWlscyB0byBidWlsZCBh
+cm0gYW5kIGFybTY0IGFsbG1vZGNvbmZpZ3MgZmFpbCB0byBidWlsZAo+IGR1ZSB0bzoKPiAKPiA+
+IAlhcm02NC1hbGxtb2Rjb25maWcKPiA+IAlhcm0tYWxsbW9kY29uZmlnCj4gPiAuLi9kcml2ZXJz
+L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9mYi5jOjE0MTozMDogZXJyb3I6IHBhc3NpbmcgYXJn
+dW1lbnQgMSBvZiAnZHJtX2dlbV9vYmplY3RfbG9va3VwJyBmcm9tIGluY29tcGF0aWJsZSBwb2lu
+dGVyIHR5cGUgWy1XZXJyb3I9aW5jb21wYXRpYmxlLXBvaW50ZXItdHlwZXNdCj4gPiAuLi9kcml2
+ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9mYi5jOjE0MTo4OiBlcnJvcjogdG9vIG1hbnkg
+YXJndW1lbnRzIHRvIGZ1bmN0aW9uICdkcm1fZ2VtX29iamVjdF9sb29rdXAnCj4gPiAuLi9kcml2
+ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9nZW0uYzoxNDI6MzA6IGVycm9yOiBwYXNzaW5n
+IGFyZ3VtZW50IDEgb2YgJ2RybV9nZW1fb2JqZWN0X2xvb2t1cCcgZnJvbSBpbmNvbXBhdGlibGUg
+cG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzXQo+ID4gLi4v
+ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZ2VtLmM6MTQyOjg6IGVycm9yOiB0b28g
+bWFueSBhcmd1bWVudHMgdG8gZnVuY3Rpb24gJ2RybV9nZW1fb2JqZWN0X2xvb2t1cCcKPiAKPiBB
+cHBhcmVudGx5IHRyaWdnZXJlZCBieSA4YWQwYmQ4NGY5ODYwNyAoZHJtOiBSZW1vdmUgdW51c2Vk
+IGRybV9kZXZpY2UKPiBmcm9tIGRybV9nZW1fb2JqZWN0X2xvb2t1cCgpKSB3aGljaCBkaWRuJ3Qg
+dXBkYXRlIHRoZSBNZWRpYXRlayBkcml2ZXJzLgoKSSdtIHByZXR0eSBzdXJlIHRoZXkgZGlkbid0
+IGV4aXN0IHdoZW4gSSB3cm90ZSB0aGUgcGF0Y2ghCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL21lZGlhdGVrL210a19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
+ZHJtX2ZiLmMKaW5kZXggMzNkMzBjMTlmMzVmLi4xNDdkZjg1Mzk5YWIgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2ZiLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
+L21lZGlhdGVrL210a19kcm1fZmIuYwpAQCAtMTM4LDcgKzEzOCw3IEBAIHN0cnVjdCBkcm1fZnJh
+bWVidWZmZXIgKm10a19kcm1fbW9kZV9mYl9jcmVhdGUoc3RydWN0IGRybV9kZXZpY2UgKmRldiwK
+ICAgICAgICBpZiAoZHJtX2Zvcm1hdF9udW1fcGxhbmVzKGNtZC0+cGl4ZWxfZm9ybWF0KSAhPSAx
+KQogICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVJTlZBTCk7CiAKLSAgICAgICBnZW0g
+PSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZGV2LCBmaWxlLCBjbWQtPmhhbmRsZXNbMF0pOworICAg
+ICAgIGdlbSA9IGRybV9nZW1fb2JqZWN0X2xvb2t1cChmaWxlLCBjbWQtPmhhbmRsZXNbMF0pOwog
+ICAgICAgIGlmICghZ2VtKQogICAgICAgICAgICAgICAgcmV0dXJuIEVSUl9QVFIoLUVOT0VOVCk7
+CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2dlbS5jIGIv
+ZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZ2VtLmMKaW5kZXggYTc3M2JmYWVhOTEz
+Li5mYTJlYzBjZDAwZTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtf
+ZHJtX2dlbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2dlbS5jCkBA
+IC0xMzksNyArMTM5LDcgQEAgaW50IG10a19kcm1fZ2VtX2R1bWJfbWFwX29mZnNldChzdHJ1Y3Qg
+ZHJtX2ZpbGUgKmZpbGVfcHJpdiwKICAgICAgICBzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKm9iajsK
+ICAgICAgICBpbnQgcmV0OwogCi0gICAgICAgb2JqID0gZHJtX2dlbV9vYmplY3RfbG9va3VwKGRl
+diwgZmlsZV9wcml2LCBoYW5kbGUpOworICAgICAgIG9iaiA9IGRybV9nZW1fb2JqZWN0X2xvb2t1
+cChmaWxlX3ByaXYsIGhhbmRsZSk7CiAgICAgICAgaWYgKCFvYmopIHsKICAgICAgICAgICAgICAg
+IERSTV9FUlJPUigiZmFpbGVkIHRvIGxvb2t1cCBnZW0gb2JqZWN0LlxuIik7CiAgICAgICAgICAg
+ICAgICByZXR1cm4gLUVJTlZBTDsKCi1DaHJpcwoKLS0gCkNocmlzIFdpbHNvbiwgSW50ZWwgT3Bl
+biBTb3VyY2UgVGVjaG5vbG9neSBDZW50cmUKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
