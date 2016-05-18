@@ -1,127 +1,192 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Crashes in -next due to 'phy: add support for a reset-gpio
- specification'
-Date: Tue, 17 May 2016 23:52:34 -0700
-Message-ID: <573C1132.8080000@roeck-us.net>
-References: <573BF177.6090507@roeck-us.net> <573BF731.4090002@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160518 build: 2 failures 20 warnings (next-20160518)
+Date: Wed, 18 May 2016 08:05:26 +0100
+Message-ID: <E1b2vXq-0003Ij-Ek@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:53932 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750912AbcERGwh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 02:52:37 -0400
-In-Reply-To: <573BF731.4090002@gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40196 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752145AbcERHKk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 03:10:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Florian Fainelli <f.fainelli@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>, Network Development <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 05/17/2016 10:01 PM, Florian Fainelli wrote:
-> Le 17/05/2016 21:37, Guenter Roeck a =C3=A9crit :
->> Hi,
->>
->> my xtensa qemu tests crash in -next as follows.
->>
->> [ ... ]
->>
->> [    9.366256] libphy: ethoc-mdio: probed
->> [    9.367389]  (null): could not attach to PHY
->> [    9.368555]  (null): failed to probe MDIO bus
->> [    9.371540] Unable to handle kernel paging request at virtual add=
-ress
->> 0000001c
->> [    9.371540]  pc =3D d0320926, ra =3D 903209d1
->> [    9.375358] Oops: sig: 11 [#1]
->> [    9.376081] PREEMPT
->> [    9.377080] CPU: 0 PID: 1 Comm: swapper Not tainted
->> 4.6.0-next-20160517 #1
->> [    9.378397] task: d7c2c000 ti: d7c30000 task.ti: d7c30000
->> [    9.379394] a00: 903209d1 d7c31bd0 d7fb5810 00000001 00000000
->> 00000000 d7f45c00 d7c31bd0
->> [    9.382298] a08: 00000000 00000000 00000000 00000000 00060100
->> d04b0c10 d7f45dfc d7c31bb0
->> [    9.385732] pc: d0320926, ps: 00060110, depc: 00000018, excvaddr:
->> 0000001c
->> [    9.387061] lbeg: d0322e35, lend: d0322e57 lcount: 00000000, sar:
->> 00000011
->> [    9.388173]
->> Stack: d7c31be0 00060700 d7f45c00 d7c31bd0 9021d509 d7c31c30 d7f45c0=
-0
->> 00000000
->>         d0485dcc d0485dcc d7fb5810 d7c2c000 00000000 d7c31c30 d7f45c=
-00
->> d025befc
->>         d0485dcc d7c30000 d7f45c34 d7c31bf0 9021c985 d7c31c50 d7f45c=
-00
->> d7f45c34
->> [    9.396652] Call Trace:
->> [    9.397469]  [<d021d4d9>] __device_release_driver+0x7d/0x98
->> [    9.398869]  [<d021d509>] device_release_driver+0x15/0x20
->> [    9.400247]  [<d021c985>] bus_remove_device+0xc1/0xd4
->> [    9.401569]  [<d021a935>] device_del+0x109/0x15c
->> [    9.402794]  [<d025c3f9>] phy_mdio_device_remove+0xd/0x18
->> [    9.404124]  [<d025d264>] mdiobus_unregister+0x40/0x5c
->> [    9.405444]  [<d025ff44>] ethoc_probe+0x534/0x5b8
->> [    9.406742]  [<d021e2e0>] platform_drv_probe+0x28/0x48
->> [    9.408122]  [<d021d1e5>] driver_probe_device+0x101/0x234
->> [    9.409499]  [<d021d395>] __driver_attach+0x7d/0x98
->> [    9.410809]  [<d021bd80>] bus_for_each_dev+0x30/0x5c
->> [    9.412104]  [<d021cdf0>] driver_attach+0x14/0x18
->> [    9.413385]  [<d021ca61>] bus_add_driver+0xc9/0x198
->> [    9.414686]  [<d021d7d4>] driver_register+0x70/0xa0
->> [    9.416001]  [<d021e2b4>] __platform_driver_register+0x24/0x28
->> [    9.417463]  [<d04a1d34>] ethoc_driver_init+0x10/0x14
->> [    9.418824]  [<d00032c8>] do_one_initcall+0x80/0x1ac
->> [    9.420083]  [<d049386d>] kernel_init_freeable+0x131/0x198
->> [    9.421504]  [<d03236e8>] kernel_init+0xc/0xb0
->> [    9.422693]  [<d000482c>] ret_from_kernel_thread+0x8/0xc
->>
->> Bisect points to commit da47b4572056 ("phy: add support for a reset-=
-gpio
->> specification").
->> Bisect log is attached. Reverting the patch fixes the problem.
->
-> Aside from what you pointed out, this patch was still in dicussion wh=
-en
-> it got merged, since we got a concurrent patch from Sergei which trie=
-s
-> to deal with the same kind of problem.
->
-> Do you mind sending a revert, or I can do that first thing in the mor=
-ning.
->
->>
->> I think there may be a number of problems, all of them exposed by th=
-e patch
->> but really separate.
->>
->> GPIOLIB is not configured in my test case, meaning gpiod_get_optiona=
-l()
->> returns -ENOSYS, and phy_probe() thus returns an error. Question her=
-e is if
->> it is really appropriate for the XXX_optional() gpiolib functions to=
- return
->> an error if GPIOLIB is not configured. Either case, result is that p=
-retty
->> much all phy registrations will now fail if GPIOLIB is not configure=
-d.
->>
+Tree/Branch: next-20160518
+Git describe: next-20160518
+Commit: 621a2a0fb6 Add linux-next specific files for 20160518
 
-Coincidentally, turns out that Uwe had objected to having gpiod_get_opt=
-ional()
-return NULL if GPIOLIB is not configured [1], meaning gpiod_get_optiona=
-l()
-and friends are intentionally not really optional, and the patch breaks
-non-GPIOLIB configurations for good.
+Build Time: 68 min 57 sec
 
-With that in mind, I agree, the patch should be reverted. It would be g=
-reat if
-you can do it; too late for me tonight.
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
-Guenter
+Errors: 4
+Warnings: 20
+Section Mismatches: 0
 
----
-[1] https://patchwork.ozlabs.org/patch/441801/
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments to function 'drm_gem_object_lookup'
+../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many arguments to function 'drm_gem_object_lookup'
+
+	arm-allmodconfig
+../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments to function 'drm_gem_object_lookup'
+../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many arguments to function 'drm_gem_object_lookup'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+     18 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      4 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+      9 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 4
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many arguments to function 'drm_gem_object_lookup'
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments to function 'drm_gem_object_lookup'
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 20
+	  6 ../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+	  6 ../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  3 ../drivers/gpu/drm/nouveau/nv50_display.c:1308:21: warning: unused variable 'dev' [-Wunused-variable]
+	  3 ../drivers/gpu/drm/nouveau/nouveau_gem.c:371:21: warning: unused variable 'dev' [-Wunused-variable]
+	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+	  2 ../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	  2 ../drivers/gpu/drm/radeon/radeon_cs.c:77:21: warning: unused variable 'ddev' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	  2 ../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/gpu/drm/armada/armada_crtc.c:900:21: warning: unused variable 'dev' [-Wunused-variable]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 4 errors, 18 warnings, 0 section mismatches
+
+Errors:
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments to function 'drm_gem_object_lookup'
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many arguments to function 'drm_gem_object_lookup'
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/radeon/radeon_cs.c:77:21: warning: unused variable 'ddev' [-Wunused-variable]
+	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/nouveau/nouveau_gem.c:371:21: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/gpu/drm/nouveau/nv50_display.c:1308:21: warning: unused variable 'dev' [-Wunused-variable]
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+	../drivers/gpu/drm/nouveau/nouveau_gem.c:371:21: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/gpu/drm/nouveau/nv50_display.c:1308:21: warning: unused variable 'dev' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 4 errors, 9 warnings, 0 section mismatches
+
+Errors:
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:8: error: too many arguments to function 'drm_gem_object_lookup'
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:30: error: passing argument 1 of 'drm_gem_object_lookup' from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:8: error: too many arguments to function 'drm_gem_object_lookup'
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+	../drivers/gpu/drm/armada/armada_crtc.c:900:21: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/gpu/drm/mediatek/mtk_drm_fb.c:141:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/mediatek/mtk_drm_gem.c:142:35: warning: passing argument 2 of 'drm_gem_object_lookup' makes integer from pointer without a cast [-Wint-conversion]
+	../drivers/gpu/drm/radeon/radeon_cs.c:77:21: warning: unused variable 'ddev' [-Wunused-variable]
+	../drivers/gpu/drm/nouveau/nouveau_gem.c:371:21: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/gpu/drm/nouveau/nv50_display.c:1308:21: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../fs/block_dev.c:1244:13: warning: 'blkdev_dax_capable' defined but not used [-Wunused-function]
+	../fs/ext4/inode.c:3502:9: warning: unused variable 'offset' [-Wunused-variable]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
