@@ -1,78 +1,57 @@
-From: Weston Andros Adamson <dros@primarydata.com>
-Subject: Re: linux-next: manual merge of the nfs tree with Linus' tree
-Date: Thu, 19 May 2016 01:18:52 +0000
-Message-ID: <92AE96EB-7EFB-4C89-B0BD-46F4B9B70A3D@primarydata.com>
-References: <20160519104036.3f1ac7cf@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Date: Thu, 19 May 2016 11:45:48 +1000
+Message-ID: <20160519114548.3524ac02@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from us-smtp-delivery-194.mimecast.com ([63.128.21.194]:40603 "EHLO
-	us-smtp-delivery-194.mimecast.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751297AbcESBeO convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2016 21:34:14 -0400
-In-Reply-To: <20160519104036.3f1ac7cf@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <66B8EC1521BF0847848C27807B991CEF@namprd11.prod.outlook.com>
+Received: from ozlabs.org ([103.22.144.67]:42009 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752342AbcESBpz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 May 2016 21:45:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hch <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Matan Barak <matanb@mellanox.com>, Amir Vadai <amirva@mellanox.com>, "David S. Miller" <davem@davemloft.net>
 
+Hi Doug,
 
-> On May 18, 2016, at 8:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Hi Trond,
->=20
-> Today's linux-next merge of the nfs tree got a conflict in:
->=20
->  fs/nfs/direct.c
->=20
-> between commit:
->=20
->  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_=
-IO")
->=20
-> from Linus' tree and commit:
->=20
->  ed3743a6d4f3 ("nfs: add debug to directio "good_bytes" counting")
->=20
-> from the nfs tree.
+Today's linux-next merge of the rdma tree got a conflict in:
 
-The merge of the nfs tree=92s commit looks good to me.
+  include/linux/mlx5/driver.h
 
--dros
+between commit:
 
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your t=
-ree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particula=
-rly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc fs/nfs/direct.c
-> index 741a92c470bb,7f03163b5364..000000000000
-> --- a/fs/nfs/direct.c
-> +++ b/fs/nfs/direct.c
-> @@@ -591,8 -596,8 +594,8 @@@ ssize_t nfs_file_direct_read(struct kio
->  		goto out_unlock;
->=20
->  	dreq->inode =3D inode;
-> - 	dreq->bytes_left =3D count;
-> + 	dreq->bytes_left =3D dreq->max_count =3D count;
-> -	dreq->io_start =3D pos;
-> +	dreq->io_start =3D iocb->ki_pos;
->  	dreq->ctx =3D get_nfs_open_context(nfs_file_open_context(iocb->ki_f=
-ilp));
->  	l_ctx =3D nfs_get_lock_context(dreq->ctx);
->  	if (IS_ERR(l_ctx)) {
->=20
+  43a335e055bb ("net/mlx5_core: Flow counters infrastructure")
+
+from Linus' tree and commit:
+
+  94c6825e0ff7 ("net/mlx5_core: Use tasklet for user-space CQ completion events")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/mlx5/driver.h
+index 07b504f7eb84,5a41f9003941..000000000000
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@@ -41,7 -41,7 +41,8 @@@
+  #include <linux/slab.h>
+  #include <linux/vmalloc.h>
+  #include <linux/radix-tree.h>
+ +#include <linux/workqueue.h>
++ #include <linux/interrupt.h>
+  
+  #include <linux/mlx5/device.h>
+  #include <linux/mlx5/doorbell.h>
