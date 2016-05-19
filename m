@@ -1,112 +1,54 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160519 build: 0 failures 12 warnings (next-20160519)
-Date: Thu, 19 May 2016 14:55:06 +0100
-Message-ID: <E1b3OPp-00041z-3b@optimist>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: Crash in -next due to 'drivers/of: Fix depth when unflattening devicetree'
+Date: Thu, 19 May 2016 09:47:38 -0500
+Message-ID: <CAL_Jsq+g2T66Q7tMJq7iHncHPSk=MUfqz=zDG7-a3KtH==NLmA@mail.gmail.com>
+References: <20160519031112.GA12007@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46622 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932202AbcESNzQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 09:55:16 -0400
+Received: from mail.kernel.org ([198.145.29.136]:38854 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754321AbcESOsB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2016 10:48:01 -0400
+In-Reply-To: <20160519031112.GA12007@roeck-us.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Rhyland Klein <rklein@nvidia.com>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20160519
-Git describe: next-20160519
-Commit: 3c60f7e28e Add linux-next specific files for 20160519
+On Wed, May 18, 2016 at 10:11 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> Hi,
+>
+> some of my ppc qemu tests crash with the following log message.
+>
+> VFS: Cannot open root device "hda" or unknown-block(0,0): error -6
+> Please append a correct "root=" boot option; here are the available partitions:
+> 0100            4096 ram0  (driver?)
+> 0101            4096 ram1  (driver?)
+> 0102            4096 ram2  (driver?)
+> 0103            4096 ram3  (driver?)
+> 0104            4096 ram4  (driver?)
+> 0105            4096 ram5  (driver?)
+> 0106            4096 ram6  (driver?)
+> 0107            4096 ram7  (driver?)
+> 0108            4096 ram8  (driver?)
+> 0109            4096 ram9  (driver?)
+> 010a            4096 ram10  (driver?)
+> 010b            4096 ram11  (driver?)
+> 010c            4096 ram12  (driver?)
+> 010d            4096 ram13  (driver?)
+> 010e            4096 ram14  (driver?)
+> 010f            4096 ram15  (driver?)
+> 1600            8383 hdc  driver: ide-gd
+> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+>
+> A complete boot log is available at
+> http://kerneltests.org/builders/qemu-ppc-next/builds/408/steps/qemubuildcommand/logs/stdio
+>
+> Bisect points to commit 'drivers/of: Fix depth when unflattening devicetree'.
+> Reverting this commit fixes the problem. Bisect log is attached.
 
-Build Time: 172 min 22 sec
+I've pushed out a fix this morning with an updated version of that
+patch [1]. Please test.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 12
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-     11 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 12
-	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-	  2 ../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v7_defconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Rob
