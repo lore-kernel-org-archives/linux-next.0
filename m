@@ -1,99 +1,51 @@
-From: Anna Schumaker <Anna.Schumaker@netapp.com>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Thu, 19 May 2016 13:30:07 -0400
-Message-ID: <372afe19-6003-7935-5d3e-295397d08530@Netapp.com>
-References: <20160519105847.2b05c81f@canb.auug.org.au>
- <CAABAsM4xcQzxzjW8mDw=uQ14yZRhLmt92CSkCwSMSqJXX1iLSw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] scsi: ultrastor.c depends on ISA_DMA_API
+Date: Thu, 19 May 2016 10:57:31 -0700
+Message-ID: <573DFE8B.2070808@infradead.org>
+References: <20160519164501.4cc8bc4f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx143.netapp.com ([216.240.21.24]:5380 "EHLO mx143.netapp.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753433AbcESRai (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2016 13:30:38 -0400
-In-Reply-To: <CAABAsM4xcQzxzjW8mDw=uQ14yZRhLmt92CSkCwSMSqJXX1iLSw@mail.gmail.com>
+Received: from merlin.infradead.org ([205.233.59.134]:39352 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646AbcESR5k (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 13:57:40 -0400
+In-Reply-To: <20160519164501.4cc8bc4f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Trond Myklebust <trond.myklebust@fys.uio.no>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Linus <torvalds@linux-foundation.org>
+To: linux-kernel@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, vilhelm.gray@gmail.com
 
-On 05/19/2016 08:06 AM, Trond Myklebust wrote:
-> Thanks Stephen!
-> 
-> Anna will be managing pushing the NFS client changes to Linus during
-> this merge window, so I'm assuming she will include this and your
-> other fixup in her pull request.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-Yep!  I'll make sure it's in there.
+Fix build when CONFIG_ISA_DMA_API is not enabled. Fixes these
+build errors (on x86_64):
 
-Anna
+../drivers/scsi/ultrastor.c: In function 'ultrastor_14f_detect':
+../drivers/scsi/ultrastor.c:519:5: error: implicit declaration of function 'request_dma' [-Werror=implicit-function-declaration]
+     if (config.dma_channel && request_dma(config.dma_channel,"Ultrastor")) {
+     ^
+../drivers/scsi/ultrastor.c: In function 'ultrastor_release':
+../drivers/scsi/ultrastor.c:658:3: error: implicit declaration of function 'free_dma' [-Werror=implicit-function-declaration]
+   free_dma(shost->dma_channel);
+   ^
 
-> 
-> Cheers
->   Trond
-> 
-> On Wed, May 18, 2016 at 8:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi Trond,
->>
->> After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
->> failed like this:
->>
->> In file included from include/linux/fs.h:19:0,
->>                  from fs/nfs/nfs42proc.c:4:
->> fs/nfs/nfs42proc.c: In function 'nfs42_proc_copy':
->> fs/nfs/nfs42proc.c:212:30: error: 'struct inode' has no member named 'i_mutex'
->>    mutex_lock(&file_inode(dst)->i_mutex);
->>                               ^
->> include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
->>  #define mutex_lock(lock) mutex_lock_nested(lock, 0)
->>                                             ^
->> fs/nfs/nfs42proc.c:215:32: error: 'struct inode' has no member named 'i_mutex'
->>    mutex_unlock(&file_inode(dst)->i_mutex);
->>                                 ^
->>
->> Caused by commit
->>
->>   2e72448b07dc ("NFS: Add COPY nfs operation")
->>
->> interacting with commit
->>
->>   9902af79c01a ("parallel lookups: actual switch to rwsem")
->>
->> from Linus' tree.
->>
->> I applied the following merge fix patch - you will need to send this to
->> Linus when you ask him to merge your tree.
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Thu, 19 May 2016 10:50:26 +1000
->> Subject: [PATCH] nfs: fix for i_mutex to i_rwsem change
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  fs/nfs/nfs42proc.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
->> index 20c44d1209dc..aa03ed09ba06 100644
->> --- a/fs/nfs/nfs42proc.c
->> +++ b/fs/nfs/nfs42proc.c
->> @@ -209,10 +209,10 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
->>         dst_exception.state = dst_lock->open_context->state;
->>
->>         do {
->> -               mutex_lock(&file_inode(dst)->i_mutex);
->> +               inode_lock(file_inode(dst));
->>                 err = _nfs42_proc_copy(src, pos_src, src_lock,
->>                                        dst, pos_dst, dst_lock, count);
->> -               mutex_unlock(&file_inode(dst)->i_mutex);
->> +               inode_unlock(file_inode(dst));
->>
->>                 if (err == -ENOTSUPP) {
->>                         err = -EOPNOTSUPP;
->> --
->> 2.7.0
->>
->> --
->> Cheers,
->> Stephen Rothwell
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+ drivers/scsi/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Found in linux-next but also applies to mainline.
+
+--- linux-next-20160519.orig/drivers/scsi/Kconfig
++++ linux-next-20160519/drivers/scsi/Kconfig
+@@ -1433,7 +1433,7 @@ config SCSI_U14_34F_MAX_TAGS
+ 
+ config SCSI_ULTRASTOR
+ 	tristate "UltraStor SCSI support"
+-	depends on X86 && ISA && SCSI
++	depends on X86 && ISA && SCSI && ISA_DMA_API
+ 	---help---
+ 	  This is support for the UltraStor 14F, 24F and 34F SCSI-2 host
+ 	  adapter family.  This driver is explained in section 3.12 of the
