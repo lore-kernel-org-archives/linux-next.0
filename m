@@ -1,43 +1,91 @@
-From: David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the security tree
-Date: Thu, 19 May 2016 11:11:49 +0100
-Message-ID: <12307.1463652709@warthog.procyon.org.uk>
-References: <20160519140120.23b345a1@canb.auug.org.au>
+From: Trond Myklebust <trond.myklebust@fys.uio.no>
+Subject: Re: linux-next: build failure after merge of the nfs tree
+Date: Thu, 19 May 2016 08:06:24 -0400
+Message-ID: <CAABAsM4xcQzxzjW8mDw=uQ14yZRhLmt92CSkCwSMSqJXX1iLSw@mail.gmail.com>
+References: <20160519105847.2b05c81f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160519140120.23b345a1-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Content-ID: <12306.1463652709.1-S6HVgzuS8uM4Awkfq6JHfwNdhmdF6hFW@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sachin Prabhu <sprabhu-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:34793 "EHLO
+	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754430AbcESMG0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 08:06:26 -0400
+In-Reply-To: <20160519105847.2b05c81f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <Anna.Schumaker@netapp.com>, Al Viro <viro@zeniv.linux.org.uk>, Linus <torvalds@linux-foundation.org>
 
-Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+Thanks Stephen!
 
-> From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-> Date: Thu, 19 May 2016 13:45:10 +1000
-> Subject: [PATCH] cifs: fix for keyringalloc() API change
-> 
-> Signed-off-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Anna will be managing pushing the NFS client changes to Linus during
+this merge window, so I'm assuming she will include this and your
+other fixup in her pull request.
+
+Cheers
+  Trond
+
+On Wed, May 18, 2016 at 8:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Trond,
+>
+> After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> In file included from include/linux/fs.h:19:0,
+>                  from fs/nfs/nfs42proc.c:4:
+> fs/nfs/nfs42proc.c: In function 'nfs42_proc_copy':
+> fs/nfs/nfs42proc.c:212:30: error: 'struct inode' has no member named 'i_mutex'
+>    mutex_lock(&file_inode(dst)->i_mutex);
+>                               ^
+> include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
+>  #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+>                                             ^
+> fs/nfs/nfs42proc.c:215:32: error: 'struct inode' has no member named 'i_mutex'
+>    mutex_unlock(&file_inode(dst)->i_mutex);
+>                                 ^
+>
+> Caused by commit
+>
+>   2e72448b07dc ("NFS: Add COPY nfs operation")
+>
+> interacting with commit
+>
+>   9902af79c01a ("parallel lookups: actual switch to rwsem")
+>
+> from Linus' tree.
+>
+> I applied the following merge fix patch - you will need to send this to
+> Linus when you ask him to merge your tree.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 19 May 2016 10:50:26 +1000
+> Subject: [PATCH] nfs: fix for i_mutex to i_rwsem change
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  fs/cifs/cifs_spnego.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
-> index 248ab431930c..9ef0dfcb2f95 100644
-> --- a/fs/cifs/cifs_spnego.c
-> +++ b/fs/cifs/cifs_spnego.c
-> @@ -207,7 +207,7 @@ init_cifs_spnego(void)
->  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
->  				(KEY_POS_ALL & ~KEY_POS_SETATTR) |
->  				KEY_USR_VIEW | KEY_USR_READ,
-> -				KEY_ALLOC_NOT_IN_QUOTA, NULL);
-> +				KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
->  	if (IS_ERR(keyring)) {
->  		ret = PTR_ERR(keyring);
->  		goto failed_put_cred;
-
-This looks correct.
-
-David
+>  fs/nfs/nfs42proc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+> index 20c44d1209dc..aa03ed09ba06 100644
+> --- a/fs/nfs/nfs42proc.c
+> +++ b/fs/nfs/nfs42proc.c
+> @@ -209,10 +209,10 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+>         dst_exception.state = dst_lock->open_context->state;
+>
+>         do {
+> -               mutex_lock(&file_inode(dst)->i_mutex);
+> +               inode_lock(file_inode(dst));
+>                 err = _nfs42_proc_copy(src, pos_src, src_lock,
+>                                        dst, pos_dst, dst_lock, count);
+> -               mutex_unlock(&file_inode(dst)->i_mutex);
+> +               inode_unlock(file_inode(dst));
+>
+>                 if (err == -ENOTSUPP) {
+>                         err = -EOPNOTSUPP;
+> --
+> 2.7.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
