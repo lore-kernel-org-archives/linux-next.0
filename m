@@ -1,72 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the security tree
-Date: Thu, 19 May 2016 14:01:20 +1000
-Message-ID: <20160519140120.23b345a1@canb.auug.org.au>
+From: Xiong Zhou <xzhou@redhat.com>
+Subject: Re: Linux-next parallel cp workload hang
+Date: Thu, 19 May 2016 14:22:48 +0800
+Message-ID: <20160519062248.GB7295@ZX.nay.redhat.com>
+References: <20160518014615.GA5302@ZX.nay.redhat.com>
+ <20160518055634.GW26977@dastard>
+ <20160518083150.GB6551@dhcp12-144.nay.redhat.com>
+ <20160518095409.GX26977@dastard>
+ <20160518114617.GC6551@dhcp12-144.nay.redhat.com>
+ <20160518141726.GY26977@dastard>
+ <20160518230231.GA26977@dastard>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160518230231.GA26977@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Morris <jmorris@namei.org>, Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Prabhu <sprabhu@redhat.com>, David Howells <dhowells@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Xiong Zhou <xzhou@redhat.com>, linux-next@vger.kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi James,
+On Thu, May 19, 2016 at 09:02:31AM +1000, Dave Chinner wrote:
+> On Thu, May 19, 2016 at 12:17:26AM +1000, Dave Chinner wrote:
+> > Patch below should fix the deadlock.
+> 
+> The test has been running for several hours without failure using
+> this patch, so I'd say this fixes the problem...
 
-After merging the security tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Yes, the same for me.
 
-fs/cifs/cifs_spnego.c: In function 'init_cifs_spnego':
-fs/cifs/cifs_spnego.c:206:12: error: too few arguments to function 'keyring_alloc'
-  keyring = keyring_alloc(".cifs_spnego",
-            ^
-In file included from include/linux/cred.h:17:0,
-                 from include/linux/sched.h:56,
-                 from include/linux/kasan.h:4,
-                 from include/linux/slab.h:118,
-                 from fs/cifs/cifs_spnego.c:23:
-include/linux/key.h:302:20: note: declared here
- extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid,
-                    ^
+Thanks.
 
-Caused by commit
+Xiong
 
-  5b82c5cbcfe4 ("cifs: Create dedicated keyring for spnego operations")
-
-from the cifs tree interacting with commit
-
-  5ac7eace2d00 ("KEYS: Add a facility to restrict new links into a keyring")
-
-from the security tree.
-
-I added the following merge fix patch (and someone will have to let
-Linus know):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 19 May 2016 13:45:10 +1000
-Subject: [PATCH] cifs: fix for keyringalloc() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/cifs/cifs_spnego.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
-index 248ab431930c..9ef0dfcb2f95 100644
---- a/fs/cifs/cifs_spnego.c
-+++ b/fs/cifs/cifs_spnego.c
-@@ -207,7 +207,7 @@ init_cifs_spnego(void)
- 				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
- 				(KEY_POS_ALL & ~KEY_POS_SETATTR) |
- 				KEY_USR_VIEW | KEY_USR_READ,
--				KEY_ALLOC_NOT_IN_QUOTA, NULL);
-+				KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
- 	if (IS_ERR(keyring)) {
- 		ret = PTR_ERR(keyring);
- 		goto failed_put_cred;
--- 
-2.7.0
-
--- 
-Cheers,
-Stephen Rothwell
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
