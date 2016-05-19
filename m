@@ -1,59 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nfs tree with Linus' tree
-Date: Thu, 19 May 2016 10:40:36 +1000
-Message-ID: <20160519104036.3f1ac7cf@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nfs tree
+Date: Thu, 19 May 2016 10:58:47 +1000
+Message-ID: <20160519105847.2b05c81f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42864 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36659 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750736AbcESAkm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2016 20:40:42 -0400
+	id S1751142AbcESA6w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 May 2016 20:58:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Weston Andros Adamson <dros@primarydata.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <Anna.Schumaker@netapp.com>, Al Viro <viro@zeniv.linux.org.uk>, Linus <torvalds@linux-foundation.org>
 
 Hi Trond,
 
-Today's linux-next merge of the nfs tree got a conflict in:
+After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  fs/nfs/direct.c
+In file included from include/linux/fs.h:19:0,
+                 from fs/nfs/nfs42proc.c:4:
+fs/nfs/nfs42proc.c: In function 'nfs42_proc_copy':
+fs/nfs/nfs42proc.c:212:30: error: 'struct inode' has no member named 'i_mutex'
+   mutex_lock(&file_inode(dst)->i_mutex);
+                              ^
+include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
+ #define mutex_lock(lock) mutex_lock_nested(lock, 0)
+                                            ^
+fs/nfs/nfs42proc.c:215:32: error: 'struct inode' has no member named 'i_mutex'
+   mutex_unlock(&file_inode(dst)->i_mutex);
+                                ^   
 
-between commit:
+Caused by commit
 
-  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
+  2e72448b07dc ("NFS: Add COPY nfs operation")
 
-from Linus' tree and commit:
+interacting with commit
 
-  ed3743a6d4f3 ("nfs: add debug to directio "good_bytes" counting")
+  9902af79c01a ("parallel lookups: actual switch to rwsem")
 
-from the nfs tree.
+from Linus' tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I applied the following merge fix patch - you will need to send this to
+Linus when you ask him to merge your tree.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 19 May 2016 10:50:26 +1000
+Subject: [PATCH] nfs: fix for i_mutex to i_rwsem change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/nfs/nfs42proc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
+index 20c44d1209dc..aa03ed09ba06 100644
+--- a/fs/nfs/nfs42proc.c
++++ b/fs/nfs/nfs42proc.c
+@@ -209,10 +209,10 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
+ 	dst_exception.state = dst_lock->open_context->state;
+ 
+ 	do {
+-		mutex_lock(&file_inode(dst)->i_mutex);
++		inode_lock(file_inode(dst));
+ 		err = _nfs42_proc_copy(src, pos_src, src_lock,
+ 				       dst, pos_dst, dst_lock, count);
+-		mutex_unlock(&file_inode(dst)->i_mutex);
++		inode_unlock(file_inode(dst));
+ 
+ 		if (err == -ENOTSUPP) {
+ 			err = -EOPNOTSUPP;
+-- 
+2.7.0
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/nfs/direct.c
-index 741a92c470bb,7f03163b5364..000000000000
---- a/fs/nfs/direct.c
-+++ b/fs/nfs/direct.c
-@@@ -591,8 -596,8 +594,8 @@@ ssize_t nfs_file_direct_read(struct kio
-  		goto out_unlock;
-  
-  	dreq->inode = inode;
-- 	dreq->bytes_left = count;
-+ 	dreq->bytes_left = dreq->max_count = count;
- -	dreq->io_start = pos;
- +	dreq->io_start = iocb->ki_pos;
-  	dreq->ctx = get_nfs_open_context(nfs_file_open_context(iocb->ki_filp));
-  	l_ctx = nfs_get_lock_context(dreq->ctx);
-  	if (IS_ERR(l_ctx)) {
