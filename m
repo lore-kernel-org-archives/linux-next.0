@@ -1,64 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma tree with the nfs tree
-Date: Thu, 19 May 2016 11:53:57 +1000
-Message-ID: <20160519115357.23f7e19d@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Wed, 18 May 2016 21:02:09 -0500
+Message-ID: <CAH2r5msJhov7j9sAH3YxJUaED3JATsZmraAzQAzV1ZteiGMsCQ@mail.gmail.com>
+References: <20160519111702.752921f8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38656 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753491AbcESByB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2016 21:54:01 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:35534 "EHLO
+	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751660AbcESCC3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 22:02:29 -0400
+In-Reply-To: <20160519111702.752921f8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>, Trond Myklebust <trond.myklebust@fys.uio.no>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Bart Van Assche <bart.vanassche@sandisk.com>, Chuck Lever <chuck.lever@oracle.com>, Anna Schumaker <Anna.Schumaker@Netapp.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
 
-Hi Doug,
+As noted below, it is easier to remove the obsolete comments and I
+just pushed the following trivial patch to cifs-2.6.git for-next to do
+that.
 
-Today's linux-next merge of the rdma tree got a conflict in:
+https://git.samba.org/?p=sfrench/cifs-2.6.git;a=commit;h=fea17ae8ac1c8c44b2fd1c02ae2e15b847d327d1
 
-  net/sunrpc/xprtrdma/frwr_ops.c
 
-between commit:
 
-  55fdfce101a0 ("xprtrdma: Rename rpcrdma_frwr::sg and sg_nents")
+On Wed, May 18, 2016 at 8:17 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Al,
+>
+> Today's linux-next merge of the vfs tree got a conflict in:
+>
+>   fs/cifs/cifsfs.c
+>
+> between commit:
+>
+>   a9ae008f407b ("cifs: Switch to generic xattr handlers")
+>
+> from Linus' tree and commit:
+>
+>   51085a1f913a ("cifs: use C99 syntax for inode_operations initializer")
+>
+> from the vfs tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> Al: the c99 fixup is not really necessary as the line is commented out
+> and you didn't fix the one in the line above ... a better fix might be
+> to delete both those lines?
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc fs/cifs/cifsfs.c
+> index 67f622df0858,586d4eadd49e..000000000000
+> --- a/fs/cifs/cifsfs.c
+> +++ b/fs/cifs/cifsfs.c
+> @@@ -917,11 -919,13 +917,11 @@@ const struct inode_operations cifs_syml
+>         .permission = cifs_permission,
+>         /* BB add the following two eventually */
+>         /* revalidate: cifs_revalidate,
+> -          setattr:    cifs_notify_change, *//* BB do we need notify change */
+> +       .setattr = cifs_notify_change, *//* BB do we need notify change */
+>  -#ifdef CONFIG_CIFS_XATTR
+>  -      .setxattr = cifs_setxattr,
+>  -      .getxattr = cifs_getxattr,
+>  +      .setxattr = generic_setxattr,
+>  +      .getxattr = generic_getxattr,
+>         .listxattr = cifs_listxattr,
+>  -      .removexattr = cifs_removexattr,
+>  -#endif
+>  +      .removexattr = generic_removexattr,
+>   };
+>
+>   static int cifs_clone_file_range(struct file *src_file, loff_t off,
 
-from the nfs tree and commits:
 
-  ff2ba9936591 ("IB/core: Add passing an offset into the SG to ib_map_mr_sg")
-  9aa8b3217ed3 ("IB/core: Enhance ib_map_mr_sg()")
-
-from the rdma tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 -- 
-Cheers,
-Stephen Rothwell
+Thanks,
 
-diff --cc net/sunrpc/xprtrdma/frwr_ops.c
-index a192b91ad67e,94c3fa910b85..000000000000
---- a/net/sunrpc/xprtrdma/frwr_ops.c
-+++ b/net/sunrpc/xprtrdma/frwr_ops.c
-@@@ -450,10 -421,10 +450,10 @@@ frwr_op_map(struct rpcrdma_xprt *r_xprt
-  		return -ENOMEM;
-  	}
-  
-- 	n = ib_map_mr_sg(mr, frmr->fr_sg, frmr->fr_nents, PAGE_SIZE);
- -	n = ib_map_mr_sg(mr, frmr->sg, frmr->sg_nents, NULL, PAGE_SIZE);
- -	if (unlikely(n != frmr->sg_nents)) {
-++	n = ib_map_mr_sg(mr, frmr->fr_sg, frmr->fr_nents, NULL, PAGE_SIZE);
- +	if (unlikely(n != frmr->fr_nents)) {
-  		pr_err("RPC:       %s: failed to map mr %p (%u/%u)\n",
- -		       __func__, frmr->fr_mr, n, frmr->sg_nents);
- +		       __func__, frmr->fr_mr, n, frmr->fr_nents);
-  		rc = n < 0 ? n : -EINVAL;
-  		goto out_senderr;
-  	}
+Steve
