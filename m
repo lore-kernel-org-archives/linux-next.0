@@ -1,58 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the ext4 tree
-Date: Thu, 19 May 2016 11:26:11 +1000
-Message-ID: <20160519112611.56d6ff64@canb.auug.org.au>
-References: <20160517102355.4be4af45@canb.auug.org.au>
-	<3539720.FHqN9VOtTL@wuerfel>
+From: Weston Andros Adamson <dros@primarydata.com>
+Subject: Re: linux-next: manual merge of the nfs tree with Linus' tree
+Date: Thu, 19 May 2016 01:18:52 +0000
+Message-ID: <92AE96EB-7EFB-4C89-B0BD-46F4B9B70A3D@primarydata.com>
+References: <20160519104036.3f1ac7cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52196 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752035AbcESB0Q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 18 May 2016 21:26:16 -0400
-In-Reply-To: <3539720.FHqN9VOtTL@wuerfel>
+Received: from us-smtp-delivery-194.mimecast.com ([63.128.21.194]:40603 "EHLO
+	us-smtp-delivery-194.mimecast.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751297AbcESBeO convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 18 May 2016 21:34:14 -0400
+In-Reply-To: <20160519104036.3f1ac7cf@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <66B8EC1521BF0847848C27807B991CEF@namprd11.prod.outlook.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Trond Myklebust <trond.myklebust@fys.uio.no>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, hch <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Anna Schumaker <Anna.Schumaker@Netapp.com>
 
-Hi Arnd,
 
-On Wed, 18 May 2016 16:25:39 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->
-> I'm getting a warning here because the 'offset' variable is no longer
-> used, I've fixed it up on my test box like this:
+> On May 18, 2016, at 8:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Hi Trond,
+>=20
+> Today's linux-next merge of the nfs tree got a conflict in:
+>=20
+>  fs/nfs/direct.c
+>=20
+> between commit:
+>=20
+>  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_=
+IO")
+>=20
+> from Linus' tree and commit:
+>=20
+>  ed3743a6d4f3 ("nfs: add debug to directio "good_bytes" counting")
+>=20
+> from the nfs tree.
 
-Thanks.  I have applied that to linux-next today and fixed up the merge
-fix patch from tomorrow.
+The merge of the nfs tree=92s commit looks good to me.
 
-> commit 21fffc41b151a6146981487a3fee974e33c7005e
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Tue May 17 13:23:39 2016 +0200
-> 
->     ext4: fix linux-next mismerge
->     
->     fs/ext4/inode.c: In function 'ext4_direct_IO_read':
->     fs/ext4/inode.c:3502:9: error: unused variable 'offset' [-Werror=unused-variable]
->       loff_t offset = iocb->ki_pos;
->     
->     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index cd72f208c405..f7140ca66e3b 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -3499,7 +3499,6 @@ static ssize_t ext4_direct_IO_read(struct kiocb *iocb, struct iov_iter *iter)
->  {
->  	int unlocked = 0;
->  	struct inode *inode = iocb->ki_filp->f_mapping->host;
-> -	loff_t offset = iocb->ki_pos;
->  	ssize_t ret;
->  
->  	if (ext4_should_dioread_nolock(inode)) {
+-dros
 
--- 
-Cheers,
-Stephen Rothwell
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your t=
+ree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particula=
+rly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc fs/nfs/direct.c
+> index 741a92c470bb,7f03163b5364..000000000000
+> --- a/fs/nfs/direct.c
+> +++ b/fs/nfs/direct.c
+> @@@ -591,8 -596,8 +594,8 @@@ ssize_t nfs_file_direct_read(struct kio
+>  		goto out_unlock;
+>=20
+>  	dreq->inode =3D inode;
+> - 	dreq->bytes_left =3D count;
+> + 	dreq->bytes_left =3D dreq->max_count =3D count;
+> -	dreq->io_start =3D pos;
+> +	dreq->io_start =3D iocb->ki_pos;
+>  	dreq->ctx =3D get_nfs_open_context(nfs_file_open_context(iocb->ki_f=
+ilp));
+>  	l_ctx =3D nfs_get_lock_context(dreq->ctx);
+>  	if (IS_ERR(l_ctx)) {
+>=20
