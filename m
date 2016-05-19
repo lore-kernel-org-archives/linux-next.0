@@ -1,38 +1,80 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH] scsi: ultrastor.c depends on ISA_DMA_API
-Date: Thu, 19 May 2016 15:14:00 -0400
-Message-ID: <20160519191400.GA16573@sophia>
-References: <20160519164501.4cc8bc4f@canb.auug.org.au>
- <573DFE8B.2070808@infradead.org>
- <20160519185335.GA18253@sophia>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the security tree
+Date: Fri, 20 May 2016 09:14:47 +1000
+Message-ID: <20160520091447.1cba4885@canb.auug.org.au>
+References: <20160519140120.23b345a1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f174.google.com ([209.85.161.174]:35814 "EHLO
-	mail-yw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297AbcESTOI (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 15:14:08 -0400
-Content-Disposition: inline
-In-Reply-To: <20160519185335.GA18253@sophia>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-kernel@vger.kernel.org, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160519140120.23b345a1-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: James Morris <jmorris-gx6/JNMH7DfYtjvyW6yDsg@public.gmane.org>, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sachin Prabhu <sprabhu-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Howells <dhowells-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, May 19, 2016 at 02:53:35PM -0400, William Breathitt Gray wrote:
->Although request_dma and free_dma are conditionally dependent on
->CONFIG_ISA_DMA_API inside the arch/x86/include/asm/dma.h file, they are
->defined inside the kernel/dma.c file which depends on
->CONFIG_GENERIC_ISA_DMA in order to build on X86. Therefore,
->GENERIC_ISA_DMA should be in the depends line for SCSI_ULTRASTOR instead
->of ISA_DMA_API.
+Hi Steve,
+
+On Thu, 19 May 2016 14:01:20 +1000 Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
 >
->William Breathitt Gray
+> After merging the security tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> fs/cifs/cifs_spnego.c: In function 'init_cifs_spnego':
+> fs/cifs/cifs_spnego.c:206:12: error: too few arguments to function 'keyring_alloc'
+>   keyring = keyring_alloc(".cifs_spnego",
+>             ^
+> In file included from include/linux/cred.h:17:0,
+>                  from include/linux/sched.h:56,
+>                  from include/linux/kasan.h:4,
+>                  from include/linux/slab.h:118,
+>                  from fs/cifs/cifs_spnego.c:23:
+> include/linux/key.h:302:20: note: declared here
+>  extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid,
+>                     ^
+> 
+> Caused by commit
+> 
+>   5b82c5cbcfe4 ("cifs: Create dedicated keyring for spnego operations")
+> 
+> from the cifs tree interacting with commit
+> 
+>   5ac7eace2d00 ("KEYS: Add a facility to restrict new links into a keyring")
+> 
+> from the security tree.
+> 
+> I added the following merge fix patch (and someone will have to let
+> Linus know):
+> 
+> From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+> Date: Thu, 19 May 2016 13:45:10 +1000
+> Subject: [PATCH] cifs: fix for keyringalloc() API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+> ---
+>  fs/cifs/cifs_spnego.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
+> index 248ab431930c..9ef0dfcb2f95 100644
+> --- a/fs/cifs/cifs_spnego.c
+> +++ b/fs/cifs/cifs_spnego.c
+> @@ -207,7 +207,7 @@ init_cifs_spnego(void)
+>  				GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
+>  				(KEY_POS_ALL & ~KEY_POS_SETATTR) |
+>  				KEY_USR_VIEW | KEY_USR_READ,
+> -				KEY_ALLOC_NOT_IN_QUOTA, NULL);
+> +				KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
+>  	if (IS_ERR(keyring)) {
+>  		ret = PTR_ERR(keyring);
+>  		goto failed_put_cred;
+> -- 
+> 2.7.0
 
-My apologies, I was too quick to send and didn't realize
-CONFIG_GENERIC_ISA_DMA is "def_bool y" in X86. In that case, ISA_DMA_API
-should suffice; thus the line becomes:
+The security tree has now been merged into Linus' tree, so this build
+breakage occurs when I merge the cifs tree.  So you will need to tell
+Linus about this needed fixup when he merges the cifs tree.
 
-    depends X86 && SCSI && ISA_DMA_API
-
-William Breathitt Gray
+-- 
+Cheers,
+Stephen Rothwell
