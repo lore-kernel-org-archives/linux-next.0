@@ -1,86 +1,91 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Wed, 18 May 2016 21:02:09 -0500
-Message-ID: <CAH2r5msJhov7j9sAH3YxJUaED3JATsZmraAzQAzV1ZteiGMsCQ@mail.gmail.com>
-References: <20160519111702.752921f8@canb.auug.org.au>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Crash in -next due to 'drivers/of: Fix depth when unflattening
+ devicetree'
+Date: Wed, 18 May 2016 20:11:12 -0700
+Message-ID: <20160519031112.GA12007@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35534 "EHLO
-	mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbcESCC3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 22:02:29 -0400
-In-Reply-To: <20160519111702.752921f8@canb.auug.org.au>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:39900 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751941AbcESDLU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 18 May 2016 23:11:20 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
 
-As noted below, it is easier to remove the obsolete comments and I
-just pushed the following trivial patch to cifs-2.6.git for-next to do
-that.
+Hi,
 
-https://git.samba.org/?p=sfrench/cifs-2.6.git;a=commit;h=fea17ae8ac1c8c44b2fd1c02ae2e15b847d327d1
+some of my ppc qemu tests crash with the following log message.
 
+VFS: Cannot open root device "hda" or unknown-block(0,0): error -6
+Please append a correct "root=" boot option; here are the available partitions:
+0100            4096 ram0  (driver?)
+0101            4096 ram1  (driver?)
+0102            4096 ram2  (driver?)
+0103            4096 ram3  (driver?)
+0104            4096 ram4  (driver?)
+0105            4096 ram5  (driver?)
+0106            4096 ram6  (driver?)
+0107            4096 ram7  (driver?)
+0108            4096 ram8  (driver?)
+0109            4096 ram9  (driver?)
+010a            4096 ram10  (driver?)
+010b            4096 ram11  (driver?)
+010c            4096 ram12  (driver?)
+010d            4096 ram13  (driver?)
+010e            4096 ram14  (driver?)
+010f            4096 ram15  (driver?)
+1600            8383 hdc  driver: ide-gd
+Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
 
+A complete boot log is available at
+http://kerneltests.org/builders/qemu-ppc-next/builds/408/steps/qemubuildcommand/logs/stdio
 
-On Wed, May 18, 2016 at 8:17 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Al,
->
-> Today's linux-next merge of the vfs tree got a conflict in:
->
->   fs/cifs/cifsfs.c
->
-> between commit:
->
->   a9ae008f407b ("cifs: Switch to generic xattr handlers")
->
-> from Linus' tree and commit:
->
->   51085a1f913a ("cifs: use C99 syntax for inode_operations initializer")
->
-> from the vfs tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> Al: the c99 fixup is not really necessary as the line is commented out
-> and you didn't fix the one in the line above ... a better fix might be
-> to delete both those lines?
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc fs/cifs/cifsfs.c
-> index 67f622df0858,586d4eadd49e..000000000000
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@@ -917,11 -919,13 +917,11 @@@ const struct inode_operations cifs_syml
->         .permission = cifs_permission,
->         /* BB add the following two eventually */
->         /* revalidate: cifs_revalidate,
-> -          setattr:    cifs_notify_change, *//* BB do we need notify change */
-> +       .setattr = cifs_notify_change, *//* BB do we need notify change */
->  -#ifdef CONFIG_CIFS_XATTR
->  -      .setxattr = cifs_setxattr,
->  -      .getxattr = cifs_getxattr,
->  +      .setxattr = generic_setxattr,
->  +      .getxattr = generic_getxattr,
->         .listxattr = cifs_listxattr,
->  -      .removexattr = cifs_removexattr,
->  -#endif
->  +      .removexattr = generic_removexattr,
->   };
->
->   static int cifs_clone_file_range(struct file *src_file, loff_t off,
+Bisect points to commit 'drivers/of: Fix depth when unflattening devicetree'.
+Reverting this commit fixes the problem. Bisect log is attached.
 
+The scripts and root file system used for the test are available at
+https://github.com/groeck/linux-build-test/tree/master/rootfs/ppc
 
+Failing tests are 
 
--- 
-Thanks,
+powerpc:mac99:nosmp:ppc_book3s_defconfig
+powerpc:g3beige:nosmp:ppc_book3s_defconfig
+powerpc:mac99:smp:ppc_book3s_defconfig
 
-Steve
+Guenter
+
+---
+# bad: [1af872fb6cfb3c701d8819466a4672f85c3f17a3] dcssblk: fix the direct_access prototype to add 'size'
+# good: [2dcd0af568b0cf583645c8a317dd12e344b1c72a] Linux 4.6
+git bisect start 'HEAD' 'v4.6'
+# good: [586cf328ff7e7c0c32f89d6f2063c81143802c01] Merge remote-tracking branch 'net-next/master'
+git bisect good 586cf328ff7e7c0c32f89d6f2063c81143802c01
+# bad: [69bf2b19c358d937a3f40c07a08bc73476d43c02] Merge remote-tracking branch 'tty/tty-next'
+git bisect bad 69bf2b19c358d937a3f40c07a08bc73476d43c02
+# good: [c81e18989b12bdb70a056b05b94620eefd2aed7b] Merge remote-tracking branch 'drm/drm-next'
+git bisect good c81e18989b12bdb70a056b05b94620eefd2aed7b
+# good: [4668e9adc5722b6fdf887d0bc70e9f5998507689] Merge remote-tracking branch 'vfio/next'
+git bisect good 4668e9adc5722b6fdf887d0bc70e9f5998507689
+# bad: [8ab5e17d29971673f08ce9cabfa6170e2f56fe07] Merge remote-tracking branch 'ftrace/for-next'
+git bisect bad 8ab5e17d29971673f08ce9cabfa6170e2f56fe07
+# bad: [a792d9ada26755882a5ea1e958bc582fe6f2d7bc] Merge remote-tracking branch 'dt-rh/for-next'
+git bisect bad a792d9ada26755882a5ea1e958bc582fe6f2d7bc
+# good: [03da37387a3aa07e45d077043f48e7dc29206b62] Merge remote-tracking branch 'trivial/for-next'
+git bisect good 03da37387a3aa07e45d077043f48e7dc29206b62
+# good: [8f97c2814b5448d91a3c67081f7d978c097feabe] Documentation: dt: interrupt-controller: fix spelling mistakes
+git bisect good 8f97c2814b5448d91a3c67081f7d978c097feabe
+# good: [947c82cbf01c9c6012cb96e385b5f6d6d1e1decb] drivers/of: Rename unflatten_dt_node()
+git bisect good 947c82cbf01c9c6012cb96e385b5f6d6d1e1decb
+# bad: [047eb65024c00807ff8f0407580f088b23cf908e] of/unittest: Remove unnecessary module.h header inclusion
+git bisect bad 047eb65024c00807ff8f0407580f088b23cf908e
+# good: [bb91f923d176578257aed682047653cc33148413] drivers/of: Export of_detach_node()
+git bisect good bb91f923d176578257aed682047653cc33148413
+# bad: [ac78f9bdcf3836cafcd114a76a9473380a3faef5] drivers/of: Fix depth when unflattening devicetree
+git bisect bad ac78f9bdcf3836cafcd114a76a9473380a3faef5
+# good: [b9c43856f21d97ffdfdd642acf2eb0b52d3b1555] of: dynamic: changeset prop-update revert fix
+git bisect good b9c43856f21d97ffdfdd642acf2eb0b52d3b1555
+# first bad commit: [ac78f9bdcf3836cafcd114a76a9473380a3faef5] drivers/of: Fix depth when unflattening devicetree
