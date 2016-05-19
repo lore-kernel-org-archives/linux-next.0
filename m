@@ -1,91 +1,112 @@
-From: Trond Myklebust <trond.myklebust@fys.uio.no>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Thu, 19 May 2016 08:06:24 -0400
-Message-ID: <CAABAsM4xcQzxzjW8mDw=uQ14yZRhLmt92CSkCwSMSqJXX1iLSw@mail.gmail.com>
-References: <20160519105847.2b05c81f@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160519 build: 0 failures 12 warnings (next-20160519)
+Date: Thu, 19 May 2016 14:55:06 +0100
+Message-ID: <E1b3OPp-00041z-3b@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:34793 "EHLO
-	mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754430AbcESMG0 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 08:06:26 -0400
-In-Reply-To: <20160519105847.2b05c81f@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46622 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932202AbcESNzQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 09:55:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna Schumaker <Anna.Schumaker@netapp.com>, Al Viro <viro@zeniv.linux.org.uk>, Linus <torvalds@linux-foundation.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Thanks Stephen!
+Tree/Branch: next-20160519
+Git describe: next-20160519
+Commit: 3c60f7e28e Add linux-next specific files for 20160519
 
-Anna will be managing pushing the NFS client changes to Linus during
-this merge window, so I'm assuming she will include this and your
-other fixup in her pull request.
+Build Time: 172 min 22 sec
 
-Cheers
-  Trond
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-On Wed, May 18, 2016 at 8:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Trond,
->
-> After merging the nfs tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> In file included from include/linux/fs.h:19:0,
->                  from fs/nfs/nfs42proc.c:4:
-> fs/nfs/nfs42proc.c: In function 'nfs42_proc_copy':
-> fs/nfs/nfs42proc.c:212:30: error: 'struct inode' has no member named 'i_mutex'
->    mutex_lock(&file_inode(dst)->i_mutex);
->                               ^
-> include/linux/mutex.h:146:44: note: in definition of macro 'mutex_lock'
->  #define mutex_lock(lock) mutex_lock_nested(lock, 0)
->                                             ^
-> fs/nfs/nfs42proc.c:215:32: error: 'struct inode' has no member named 'i_mutex'
->    mutex_unlock(&file_inode(dst)->i_mutex);
->                                 ^
->
-> Caused by commit
->
->   2e72448b07dc ("NFS: Add COPY nfs operation")
->
-> interacting with commit
->
->   9902af79c01a ("parallel lookups: actual switch to rwsem")
->
-> from Linus' tree.
->
-> I applied the following merge fix patch - you will need to send this to
-> Linus when you ask him to merge your tree.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 19 May 2016 10:50:26 +1000
-> Subject: [PATCH] nfs: fix for i_mutex to i_rwsem change
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/nfs/nfs42proc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/nfs/nfs42proc.c b/fs/nfs/nfs42proc.c
-> index 20c44d1209dc..aa03ed09ba06 100644
-> --- a/fs/nfs/nfs42proc.c
-> +++ b/fs/nfs/nfs42proc.c
-> @@ -209,10 +209,10 @@ ssize_t nfs42_proc_copy(struct file *src, loff_t pos_src,
->         dst_exception.state = dst_lock->open_context->state;
->
->         do {
-> -               mutex_lock(&file_inode(dst)->i_mutex);
-> +               inode_lock(file_inode(dst));
->                 err = _nfs42_proc_copy(src, pos_src, src_lock,
->                                        dst, pos_dst, dst_lock, count);
-> -               mutex_unlock(&file_inode(dst)->i_mutex);
-> +               inode_unlock(file_inode(dst));
->
->                 if (err == -ENOTSUPP) {
->                         err = -EOPNOTSUPP;
-> --
-> 2.7.0
->
-> --
-> Cheers,
-> Stephen Rothwell
+Errors: 0
+Warnings: 12
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+     11 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 12
+	  3 ../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+	  2 ../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	  1 ../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
+
+Warnings:
+	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/soc/nps/common.h:148:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/soc/nps/common.h:162:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1062:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1074:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/soc/mediatek/mtk-pmic-wrap.c:1086:16: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/pinctrl/stm32/pinctrl-stm32.c:797:17: warning: too many arguments for format [-Wformat-extra-args]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page_alloc.c:3658:5: warning: 'compact_result' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v7_defconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
