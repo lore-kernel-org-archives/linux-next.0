@@ -1,31 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2016-05-19-19-59 uploaded
-Date: Fri, 20 May 2016 13:27:30 +1000
-Message-ID: <20160520132730.0022f233@canb.auug.org.au>
-References: <573e7da6.pLi6U/36fnX6Drn0%akpm@linux-foundation.org>
+Subject: linux-next: build warnings after merge of the net tree
+Date: Fri, 20 May 2016 13:33:30 +1000
+Message-ID: <20160520133330.12a1aa65@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34651 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753852AbcETD1d (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2016 23:27:33 -0400
-In-Reply-To: <573e7da6.pLi6U/36fnX6Drn0%akpm@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heinrich Schuchardt <xypron.glpk@gmx.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Hi all,
 
-On Thu, 19 May 2016 19:59:50 -0700 akpm@linux-foundation.org wrote:
->
-> The mm-of-the-moment snapshot 2016-05-19-19-59 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
+After merging the net tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
 
-This one looks much better, thanks.
+drivers/net/usb/pegasus.c: In function 'read_bulk_callback':
+drivers/net/usb/pegasus.c:475:1: warning: label 'goon' defined but not used [-Wunused-label]
+ goon:
+ ^
+drivers/net/usb/pegasus.c:446:8: warning: unused variable 'pkt_len' [-Wunused-variable]
+  __u16 pkt_len;
+        ^
+drivers/net/usb/pegasus.c:445:6: warning: unused variable 'buf' [-Wunused-variable]
+  u8 *buf = urb->transfer_buffer;
+      ^
+drivers/net/usb/pegasus.c:443:17: warning: unused variable 'count' [-Wunused-variable]
+  int rx_status, count = urb->actual_length;
+                 ^
+
+Introduced by commit
+
+  e00be9e4d0ff ("net: pegasus: remove dead coding")
+
+
 
 -- 
 Cheers,
