@@ -1,96 +1,76 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: build failure after merge of the security tree
-Date: Thu, 19 May 2016 22:07:10 -0500
-Message-ID: <CAH2r5mvJdYUFtQBkWqLQvOKSNUdK8YSGDRfpowiEffN9iTO3EQ@mail.gmail.com>
-References: <20160519140120.23b345a1@canb.auug.org.au> <20160520091447.1cba4885@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dax-misc tree with Linus' tree
+Date: Fri, 20 May 2016 13:26:07 +1000
+Message-ID: <20160520132607.39e902ef@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f178.google.com ([209.85.223.178]:34132 "EHLO
-	mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753710AbcETDHa (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 19 May 2016 23:07:30 -0400
-In-Reply-To: <20160520091447.1cba4885@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:59734 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754035AbcETD0K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 19 May 2016 23:26:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sachin Prabhu <sprabhu@redhat.com>, David Howells <dhowells@redhat.com>
+To: "Verma, Vishal L" <vishal.l.verma@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Ross Zwisler <ross.zwisler@linux.intel.com>
 
-I fixed the build break (and some trivial compile warnings) due to the
-change to the format of keyring_alloc and repushed the *"cifs: Create
-dedicated keyring for spnego operations" patch to cifs-2.6.git
-for-next
+Hi all,
 
-On Thu, May 19, 2016 at 6:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Steve,
->
-> On Thu, 19 May 2016 14:01:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the security tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> fs/cifs/cifs_spnego.c: In function 'init_cifs_spnego':
->> fs/cifs/cifs_spnego.c:206:12: error: too few arguments to function 'keyring_alloc'
->>   keyring = keyring_alloc(".cifs_spnego",
->>             ^
->> In file included from include/linux/cred.h:17:0,
->>                  from include/linux/sched.h:56,
->>                  from include/linux/kasan.h:4,
->>                  from include/linux/slab.h:118,
->>                  from fs/cifs/cifs_spnego.c:23:
->> include/linux/key.h:302:20: note: declared here
->>  extern struct key *keyring_alloc(const char *description, kuid_t uid, kgid_t gid,
->>                     ^
->>
->> Caused by commit
->>
->>   5b82c5cbcfe4 ("cifs: Create dedicated keyring for spnego operations")
->>
->> from the cifs tree interacting with commit
->>
->>   5ac7eace2d00 ("KEYS: Add a facility to restrict new links into a keyring")
->>
->> from the security tree.
->>
->> I added the following merge fix patch (and someone will have to let
->> Linus know):
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Thu, 19 May 2016 13:45:10 +1000
->> Subject: [PATCH] cifs: fix for keyringalloc() API change
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  fs/cifs/cifs_spnego.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/cifs/cifs_spnego.c b/fs/cifs/cifs_spnego.c
->> index 248ab431930c..9ef0dfcb2f95 100644
->> --- a/fs/cifs/cifs_spnego.c
->> +++ b/fs/cifs/cifs_spnego.c
->> @@ -207,7 +207,7 @@ init_cifs_spnego(void)
->>                               GLOBAL_ROOT_UID, GLOBAL_ROOT_GID, cred,
->>                               (KEY_POS_ALL & ~KEY_POS_SETATTR) |
->>                               KEY_USR_VIEW | KEY_USR_READ,
->> -                             KEY_ALLOC_NOT_IN_QUOTA, NULL);
->> +                             KEY_ALLOC_NOT_IN_QUOTA, NULL, NULL);
->>       if (IS_ERR(keyring)) {
->>               ret = PTR_ERR(keyring);
->>               goto failed_put_cred;
->> --
->> 2.7.0
->
-> The security tree has now been merged into Linus' tree, so this build
-> breakage occurs when I merge the cifs tree.  So you will need to tell
-> Linus about this needed fixup when he merges the cifs tree.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Today's linux-next merge of the dax-misc tree got a conflict in:
 
+  include/linux/dax.h
 
+between commit:
+
+  c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
+
+from Linus' tree and commit:
+
+  e804315dd0f5 ("dax: Define DAX lock bit for radix tree exceptional entry")
+
+from the dax-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Thanks,
+Cheers,
+Stephen Rothwell
 
-Steve
+diff --cc include/linux/dax.h
+index 982a6c4a62f3,7bf12277c006..000000000000
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@@ -3,17 -3,21 +3,21 @@@
+  
+  #include <linux/fs.h>
+  #include <linux/mm.h>
++ #include <linux/radix-tree.h>
+  #include <asm/pgtable.h>
+  
++ /* We use lowest available exceptional entry bit for locking */
++ #define RADIX_DAX_ENTRY_LOCK (1 << RADIX_TREE_EXCEPTIONAL_SHIFT)
++ 
+ -ssize_t dax_do_io(struct kiocb *, struct inode *, struct iov_iter *, loff_t,
+ +ssize_t dax_do_io(struct kiocb *, struct inode *, struct iov_iter *,
+  		  get_block_t, dio_iodone_t, int flags);
+- int dax_clear_sectors(struct block_device *bdev, sector_t _sector, long _size);
+  int dax_zero_page_range(struct inode *, loff_t from, unsigned len, get_block_t);
+  int dax_truncate_page(struct inode *, loff_t from, get_block_t);
+- int dax_fault(struct vm_area_struct *, struct vm_fault *, get_block_t,
+- 		dax_iodone_t);
+- int __dax_fault(struct vm_area_struct *, struct vm_fault *, get_block_t,
+- 		dax_iodone_t);
++ int dax_fault(struct vm_area_struct *, struct vm_fault *, get_block_t);
++ int __dax_fault(struct vm_area_struct *, struct vm_fault *, get_block_t);
++ int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
++ void dax_wake_mapping_entry_waiter(struct address_space *mapping,
++ 				   pgoff_t index, bool wake_all);
+  
+  #ifdef CONFIG_FS_DAX
+  struct page *read_dax_sector(struct block_device *bdev, sector_t n);
