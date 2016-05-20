@@ -1,62 +1,157 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: Crash in -next due to 'drivers/of: Fix depth when unflattening
- devicetree'
-Date: Fri, 20 May 2016 02:17:57 -0700
-Message-ID: <573ED645.2010304@roeck-us.net>
-References: <20160519031112.GA12007@roeck-us.net>
- <CAL_Jsq+g2T66Q7tMJq7iHncHPSk=MUfqz=zDG7-a3KtH==NLmA@mail.gmail.com>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: mmotm 2016-05-19-19-59 uploaded
+Date: Fri, 20 May 2016 12:31:47 +0200
+Message-ID: <20160520103147.GB1732@quack2.suse.cz>
+References: <573e7da6.pLi6U/36fnX6Drn0%akpm@linux-foundation.org>
+ <20160520051417.GA6808@bbox>
+ <20160520053628.GB6808@bbox>
+ <20160519223926.c2a6c169287c048ee78ec151@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:35157 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755553AbcETJSK (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 20 May 2016 05:18:10 -0400
-In-Reply-To: <CAL_Jsq+g2T66Q7tMJq7iHncHPSk=MUfqz=zDG7-a3KtH==NLmA@mail.gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:41058 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752930AbcETKbw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 20 May 2016 06:31:52 -0400
+Content-Disposition: inline
+In-Reply-To: <20160519223926.c2a6c169287c048ee78ec151@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Rhyland Klein <rklein@nvidia.com>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Minchan Kim <minchan@kernel.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org, jack@suse.cz, "Verma, Vishal L" <vishal.l.verma@intel.com>
 
-On 05/19/2016 07:47 AM, Rob Herring wrote:
-> On Wed, May 18, 2016 at 10:11 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->> Hi,
->>
->> some of my ppc qemu tests crash with the following log message.
->>
->> VFS: Cannot open root device "hda" or unknown-block(0,0): error -6
->> Please append a correct "root=" boot option; here are the available partitions:
->> 0100            4096 ram0  (driver?)
->> 0101            4096 ram1  (driver?)
->> 0102            4096 ram2  (driver?)
->> 0103            4096 ram3  (driver?)
->> 0104            4096 ram4  (driver?)
->> 0105            4096 ram5  (driver?)
->> 0106            4096 ram6  (driver?)
->> 0107            4096 ram7  (driver?)
->> 0108            4096 ram8  (driver?)
->> 0109            4096 ram9  (driver?)
->> 010a            4096 ram10  (driver?)
->> 010b            4096 ram11  (driver?)
->> 010c            4096 ram12  (driver?)
->> 010d            4096 ram13  (driver?)
->> 010e            4096 ram14  (driver?)
->> 010f            4096 ram15  (driver?)
->> 1600            8383 hdc  driver: ide-gd
->> Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
->>
->> A complete boot log is available at
->> http://kerneltests.org/builders/qemu-ppc-next/builds/408/steps/qemubuildcommand/logs/stdio
->>
->> Bisect points to commit 'drivers/of: Fix depth when unflattening devicetree'.
->> Reverting this commit fixes the problem. Bisect log is attached.
->
-> I've pushed out a fix this morning with an updated version of that
-> patch [1]. Please test.
->
+On Thu 19-05-16 22:39:26, Andrew Morton wrote:
+> 
+> Someone stuck a load of for-4.8 stuff into -next during the merge
+> window.  It had better be for 4.8 anyway - it is super-late.
+> 
+> I intend to simply ignore it and merge the for-4.7 material.
 
-The problem is no longer seen in next-20160520.
+I think it was Vishal's tree (CCed) and the conflict is just a trivial
+context one. So you can merge whatever you have without concern.
 
-Thanks,
-Guenter
+								Honza
+
+> On Fri, 20 May 2016 14:36:28 +0900 Minchan Kim <minchan@kernel.org> wrote:
+> 
+> > Ccing Jan,
+> > 
+> > dax: Remove complete_unwritten argument
+> > 
+> > On Fri, May 20, 2016 at 02:14:17PM +0900, Minchan Kim wrote:
+> > > On Thu, May 19, 2016 at 07:59:50PM -0700, akpm@linux-foundation.org wrote:
+> > > > The mm-of-the-moment snapshot 2016-05-19-19-59 has been uploaded to
+> > > > 
+> > > >    http://www.ozlabs.org/~akpm/mmotm/
+> > > > 
+> > > > mmotm-readme.txt says
+> > > > 
+> > > > README for mm-of-the-moment:
+> > > > 
+> > > > http://www.ozlabs.org/~akpm/mmotm/
+> > > > 
+> > > > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > > > more than once a week.
+> > > > 
+> > > > You will need quilt to apply these patches to the latest Linus release (4.x
+> > > > or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> > > > http://ozlabs.org/~akpm/mmotm/series
+> > > > 
+> > > > The file broken-out.tar.gz contains two datestamp files: .DATE and
+> > > > .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> > > > followed by the base kernel version against which this patch series is to
+> > > > be applied.
+> > > > 
+> > > > This tree is partially included in linux-next.  To see which patches are
+> > > > included in linux-next, consult the `series' file.  Only the patches
+> > > > within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> > > > linux-next.
+> > > > 
+> > > > A git tree which contains the memory management portion of this tree is
+> > > > maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> > > > by Michal Hocko.  It contains the patches which are between the
+> > > > "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> > > > file, http://www.ozlabs.org/~akpm/mmotm/series.
+> > > > 
+> > > > 
+> > > > A full copy of the full kernel tree with the linux-next and mmotm patches
+> > > > already applied is available through git within an hour of the mmotm
+> > > > release.  Individual mmotm releases are tagged.  The master branch always
+> > > > points to the latest release, so it's constantly rebasing.
+> > > > 
+> > > > http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+> > > > 
+> > > > To develop on top of mmotm git:
+> > > > 
+> > > >   $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> > > >   $ git remote update mmotm
+> > > >   $ git checkout -b topic mmotm/master
+> > > >   <make changes, commit>
+> > > >   $ git send-email mmotm/master.. [...]
+> > > > 
+> > > > To rebase a branch with older patches to a new mmotm release:
+> > > > 
+> > > >   $ git remote update mmotm
+> > > >   $ git rebase --onto mmotm/master <topic base> topic
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+> > > > contains daily snapshots of the -mm tree.  It is updated more frequently
+> > > > than mmotm, and is untested.
+> > > > 
+> > > > A git copy of this tree is available at
+> > > > 
+> > > > 	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+> > > > 
+> > > > and use of this tree is similar to
+> > > > http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+> > > > 
+> > > 
+> > > In first build, I got this.
+> > > 
+> > > In file included from mm/filemap.c:14:0:
+> > > include/linux/dax.h:14:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:16:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:39:5: error: unknown type name ___dax_iodone_t___
+> > >      dax_iodone_t di)
+> > >      ^
+> > > In file included from mm/vmscan.c:49:0:
+> > > include/linux/dax.h:14:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:16:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:39:5: error: unknown type name ___dax_iodone_t___
+> > >      dax_iodone_t di)
+> > >      ^
+> > > In file included from mm/truncate.c:12:0:
+> > > include/linux/dax.h:14:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:16:3: error: unknown type name ___dax_iodone_t___
+> > >    dax_iodone_t);
+> > >    ^
+> > > include/linux/dax.h:39:5: error: unknown type name ___dax_iodone_t___
+> > >      dax_iodone_t di)
+> > >      ^
+> > > make[1]: *** [mm/truncate.o] Error 1
+> > > make[1]: *** Waiting for unfinished jobs....
+> > > make[1]: *** [mm/filemap.o] Error 1
+> > > make[1]: *** [mm/vmscan.o] Error 1
+> > > make: *** [mm/] Error 2
+> > > 
+> > > --
+> > > To unsubscribe, send a message with 'unsubscribe linux-mm' in
+> > > the body to majordomo@kvack.org.  For more info on Linux MM,
+> > > see: http://www.linux-mm.org/ .
+> > > Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
