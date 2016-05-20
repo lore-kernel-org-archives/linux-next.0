@@ -1,61 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with Linus' tree
-Date: Fri, 20 May 2016 12:31:51 +1000
-Message-ID: <20160520123151.0c8a7c47@canb.auug.org.au>
+Subject: Re: mmotm 2016-05-19-18-01 uploaded
+Date: Fri, 20 May 2016 12:37:15 +1000
+Message-ID: <20160520123715.191726f5@canb.auug.org.au>
+References: <573e6218.YQH2A+YBUHmPqyvU%akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54727 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753349AbcETCbx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 19 May 2016 22:31:53 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrei Pistirica <andrei.pistirica@microchip.com>, Ralf Baechle <ralf@linux-mips.org>, Vladimir Murzin <vladimir.murzin@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <573e6218.YQH2A+YBUHmPqyvU%akpm@linux-foundation.org>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi Andrew,
 
-Today's linux-next merge of the tty tree got a conflict in:
+On Thu, 19 May 2016 18:02:16 -0700 akpm@linux-foundation.org wrote:
+>
+> The mm-of-the-moment snapshot 2016-05-19-18-01 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+	.
+	.
+>   mm-page_alloc-defer-debugging-checks-of-pages-allocated-from-the-pcp.patch
+>   mm-page_alloc-dont-duplicate-code-in-free_pcp_prepare.patch
+>   mm-page_alloc-uninline-the-bad-page-part-of-check_new_page.patch
+>   mm-page_alloc-restore-the-original-nodemask-if-the-fast-path-allocation-failed.patch
 
-  include/uapi/linux/serial_core.h
-
-between commits:
-
-  157b9394709e ("serial: pic32_uart: Add PIC32 UART driver")
-  07b75260ebc2 ("Merge branch 'upstream' of git://git.linux-mips.org/pub/scm/ralf/upstream-linus")
-
-from Linus' tree and commit:
-
-  041f031def33 ("serial: mps2-uart: add MPS2 UART driver")
-
-from the tty tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Is that all there is?  No linux-next patch?
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/uapi/linux/serial_core.h
-index 24da334af7f1,9aef04c5f7bc..000000000000
---- a/include/uapi/linux/serial_core.h
-+++ b/include/uapi/linux/serial_core.h
-@@@ -264,7 -264,7 +264,10 @@@
-  /* MVEBU UART */
-  #define PORT_MVEBU	114
-  
- +/* Microchip PIC32 UART */
- +#define PORT_PIC32	115
- +
-+ /* MPS2 UART */
- -#define PORT_MPS2UART	115
-++#define PORT_MPS2UART	116
-+ 
-  #endif /* _UAPILINUX_SERIAL_CORE_H */
