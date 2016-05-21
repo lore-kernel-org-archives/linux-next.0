@@ -1,44 +1,19 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with Linus' tree
-Date: Fri, 20 May 2016 20:26:47 -0700
-Message-ID: <20160521032647.GA6509@kroah.com>
-References: <20160520123151.0c8a7c47@canb.auug.org.au>
+From: "Fidelity Mortgage Loan" <lc.arvesu@philrice.gov.ph>
+Subject: Quick loans
+Date: Sat, 21 May 2016 23:28:18 +0100
+Message-ID: <20160521222831.15A5477A151@mail.philrice.gov.ph>
+Reply-To: ficad@mail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160520123151.0c8a7c47@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrei Pistirica <andrei.pistirica@microchip.com>, Ralf Baechle <ralf@linux-mips.org>, Vladimir Murzin <vladimir.murzin@arm.com>, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from host.30.static.philrice.gov.ph ([122.3.235.125]:55202 "EHLO
+	mail.philrice.gov.ph" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+	with ESMTP id S1751551AbcEUWzM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 21 May 2016 18:55:12 -0400
+Content-Description: Mail message body
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Recipients <lc.arvesu@philrice.gov.ph>
 
-On Fri, May 20, 2016 at 12:31:51PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in:
-> 
->   include/uapi/linux/serial_core.h
-> 
-> between commits:
-> 
->   157b9394709e ("serial: pic32_uart: Add PIC32 UART driver")
->   07b75260ebc2 ("Merge branch 'upstream' of git://git.linux-mips.org/pub/scm/ralf/upstream-linus")
-> 
-> from Linus' tree and commit:
-> 
->   041f031def33 ("serial: mps2-uart: add MPS2 UART driver")
-> 
-> from the tty tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-Thanks for this, I've warned Linus to watch out for this when he merges
-my tree into his.
-
-greg k-h
+Loan Offer at 3%, Feel Free to REPLY back to us for more info
