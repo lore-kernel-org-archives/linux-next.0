@@ -1,41 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 23
-Date: Mon, 23 May 2016 20:47:07 +1000
-Message-ID: <20160523204707.6c3a867b@canb.auug.org.au>
-References: <20160523144741.077ffa84@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: master build: 0 failures 5 warnings (v4.6-11843-g0d55b1d)
+Date: Mon, 23 May 2016 14:41:46 +0100
+Message-ID: <E1b4q77-0002DV-Dh@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54317 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751924AbcEWKrM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 23 May 2016 06:47:12 -0400
-In-Reply-To: <20160523144741.077ffa84@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59074 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752550AbcEWNl4 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2016 09:41:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi all,
+Tree/Branch: master
+Git describe: v4.6-11843-g0d55b1d
+Commit: 0d55b1de25 Add linux-next specific files for 20160523
 
-On Mon, 23 May 2016 14:47:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Please do not add any v4.8 destined material to your linux-next included
-> branches until after v4.7-rc1 has been released.
-> 
-> Changes since 20160520:
-> 
-> The drm-intel tree gained a build failure so I used the version from
-> next-20160520.
-> 
-> Non-merge commits (relative to Linus' tree): 2283
->  1939 files changed, 140199 insertions(+), 39283 deletions(-)
+Build Time: 79 min 44 sec
 
-I screwed the release up, but have now reuploaded next-20160523 to kernel.org.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-Sorry about that.
+Errors: 0
+Warnings: 5
+Section Mismatches: 0
 
--- 
-Cheers,
-Stephen Rothwell
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 5
+	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
