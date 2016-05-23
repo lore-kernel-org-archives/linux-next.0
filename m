@@ -1,72 +1,60 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: master build: 0 failures 5 warnings (v4.6-11843-g0d55b1d)
-Date: Mon, 23 May 2016 14:41:46 +0100
-Message-ID: <E1b4q77-0002DV-Dh@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59074 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752550AbcEWNl4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 23 May 2016 09:41:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: [PATCH 0/4] Allow ISA-style drivers on modern systems
+Date: Mon, 23 May 2016 10:58:17 -0400
+Message-ID: <cover.1464014576.git.vilhelm.gray@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org, akpm@linux-foundation.org
+Cc: x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, William Breathitt Gray <vilhelm.gray@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: master
-Git describe: v4.6-11843-g0d55b1d
-Commit: 0d55b1de25 Add linux-next specific files for 20160523
+Several modern devices, such as PC/104 cards, are expected to run on
+modern systems via an ISA bus interface. Since ISA is a legacy interface
+for most modern architectures, ISA support should remain disabled in
+general. Support for ISA-style drivers should be enabled on a per driver
+basis.
 
-Build Time: 79 min 44 sec
+To allow ISA-style drivers on modern systems, this patchset introduces
+the ISA_BUS_API and ISA_BUS Kconfig options. The X86 ISA bus driver will
+now build conditionally on the ISA_BUS_API Kconfig option, which
+defaults to the legacy ISA Kconfig option. The ISA_BUS Kconfig option
+allows the ISA_BUS_API Kconfig option to be selected on architectures
+which do not enable ISA (e.g. X86_64).
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+For now, the ISA_BUS Kconfig option is only be available on X86
+architectures. Support for other architectures may be added as required.
 
-Errors: 0
-Warnings: 5
-Section Mismatches: 0
+An earlier attempt to allow the ISA bus driver to build for X86_64 took
+an inappropriate approach resulting in legacy ISA drivers becoming
+enabled unconditionally on untested and unsupported architectures.
+Commit 51e68d055cba ("x86 isa: add back X86_32 dependency on
+CONFIG_ISA"), added to restrict the ISA bus driver to only X86_32,
+causes several drivers intended for X86_64 to be restricted to X86_32 as
+well.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+This patchset replaces the ISA Kconfig option dependency of several
+drivers to ISA_BUS_API, so that they may build for X86_64 as intended.
+The respective drivers are as follows:
+    * ACCES 104-IDIO-16 GPIO driver
+    * ACCES 104-IDI-48 GPIO driver
+    * ACCES 104-DIO-48E GPIO driver
+    * Apex Embedded Systems STX104 DAC driver
+    * WinSystems EBC-C384 watchdog timer driver
+    * WinSystems WS16C48 GPIO driver
 
--------------------------------------------------------------------------------
+William Breathitt Gray (4):
+  isa: Allow ISA-style drivers on modern systems
+  gpio: Allow PC/104 devices on X86_64
+  iio: stx104: Allow build for X86_64
+  watchdog: ebc-c384_wdt: Allow build for X86_64
 
-Warnings Summary: 5
-	  2 ../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+ arch/x86/Kconfig         | 13 +++++++++++++
+ drivers/base/Makefile    |  2 +-
+ drivers/gpio/Kconfig     |  8 ++++----
+ drivers/iio/dac/Kconfig  |  2 +-
+ drivers/watchdog/Kconfig |  2 +-
+ 5 files changed, 20 insertions(+), 7 deletions(-)
 
+-- 
+2.7.3
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/xen/balloon.c:154:13: warning: 'release_memory_resource' declared 'static' but never defined [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
