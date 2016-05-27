@@ -1,158 +1,111 @@
-From: Xiong Zhou <xzhou@redhat.com>
-Subject: linux-next memleak after IO on dax mountpoint
-Date: Fri, 27 May 2016 16:46:17 +0800
-Message-ID: <20160527084617.GD2933@dhcp12-144.nay.redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160527 build: 0 failures 5 warnings (next-20160527)
+Date: Fri, 27 May 2016 09:47:41 +0100
+Message-ID: <E1b6DQi-0001tu-FT@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:45004 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932456AbcE0IqU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 27 May 2016 04:46:20 -0400
-Content-Disposition: inline
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44468 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932456AbcE0Irt (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2016 04:47:49 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, axboe@fb.com, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi,
+Tree/Branch: next-20160527
+Git describe: next-20160527
+Commit: b5631e1f2c Add linux-next specific files for 20160527
 
-Reporting an oom/memleak issue in linux-next tree:
+Build Time: 153 min 6 sec
 
-#Description:
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-dbench invokes oom-killer, make host unavaiable.
+Errors: 0
+Warnings: 5
+Section Mismatches: 0
 
-dbench was doing IO on nvdimm device mounted fs with dax mount option.
-It happens on both xfs and ext4 filesystems.
-It does not happen testing without dax mountoption.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-Seems like memleak keep happening untill system run out of memory. On
-good kernels, memory get freed after every dbench run.
+-------------------------------------------------------------------------------
 
-#Hardware
-lscpu
-Architecture:          x86_64
-CPU op-mode(s):        32-bit, 64-bit
-Byte Order:            Little Endian
-CPU(s):                48
-On-line CPU(s) list:   0-47
-Thread(s) per core:    2
-Core(s) per socket:    12
-Socket(s):             2
-NUMA node(s):          2
-Vendor ID:             GenuineIntel
-CPU family:            6
-Model:                 63
-Model name:            Intel(R) Xeon(R) CPU E5-2690 v3 @ 2.60GHz
-Stepping:              2
-CPU MHz:               2596.781
-BogoMIPS:              5200.05
-Virtualization:        VT-x
-L1d cache:             32K
-L1i cache:             32K
-L2 cache:              256K
-L3 cache:              30720K
-NUMA node0 CPU(s):     0-11,24-35
-NUMA node1 CPU(s):     12-23,36-47
-
-free -g
-              total        used        free      shared  buff/cache   available
-Mem:             31           0          30           0           0          30
-Swap:             9           0           9
-
-#Version:
-Since next-20150517 tree, till latest 0526 tree.
-0516 tree survives testing.
-dbench version 4.00 - Copyright Andrew Tridgell 1999-2004
-
-#How reproducible:
-always
-
-#Reproduce steps:
-Repeating fstests[1] generic/241, 30 times, which maybe is relative
-to system total ram.
-
-#bisect info
-
-Bisect point to this commit:
-
-commit d6cab70166b5bf2cbeec0c566e51725c793e3aed
-Merge: cb9553d 661806a
-Author: Stephen Rothwell <sfr@canb.auug.org.au>
-Date:   Tue May 17 11:18:34 2016 +1000
-
-    Merge remote-tracking branch 'block/for-next'
-
-which is forwarding to this:
-
-commit 661806a319890962aaa839dc1dbf7ea356aa6b92
-Merge: 1335822 b3a834b
-Author: Jens Axboe <axboe@fb.com>
-Date:   Mon May 16 09:55:01 2016 -0600
-
-    Merge branch 'for-4.7/core' into for-next
+Warnings Summary: 5
+	  8 ../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
-On top of 0517 tree, reset --hard to commit cb9553d passed testing,
-while reset --hard to commit d6cab70 reproduced issue.
+
+===============================================================================
+Detailed per-defconfig build reports below:
 
 
-Still working on to id which commit in this merge causes this issuer,
-i noticed that lots of merge were going on there....
-Meminfo, config, oom msg, bisect log are attached.
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-Thanks,
-Xiong
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-[1] http://oss.sgi.com/cgi-bin/gitweb.cgi?p=xfs/cmds/xfstests.git
-# Additional info
-meminfo after running generic/241 7~8 rounds:
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
 
------- bad --------------
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-[root@host linux]# free
-              total        used        free      shared  buff/cache   available
-Mem:       32807280      422756    25782116        9456     6602408    26044756
-Swap:      10485756           0    10485756
-[root@host linux]# free -g
-              total        used        free      shared  buff/cache   available
-Mem:             31           0          24           0           6          24
-Swap:             9           0           9
-[root@host linux]# git log --oneline -1
-d6cab70 Merge remote-tracking branch 'block/for-next'
-[root@host linux]# echo 1 > /proc/sys/vm/drop_caches 
-[root@host linux]# echo 2 > /proc/sys/vm/drop_caches 
-[root@host linux]# echo 3 > /proc/sys/vm/drop_caches 
-[root@host linux]# free -g
-              total        used        free      shared  buff/cache   available
-Mem:             31           0          23           0           6          23
-Swap:             9           0           9
-[root@host linux]# free
-              total        used        free      shared  buff/cache   available
-Mem:       32807280      419576    25050868        9456     7336836    24938336
-Swap:      10485756           0    10485756
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
--------- good ------------
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-[root@host linux]# free
-              total        used        free      shared  buff/cache   available
-Mem:       32807280      421316    30425892        9464     1960072    31884116
-Swap:      10485756           0    10485756
-[root@host linux]# free -g
-              total        used        free      shared  buff/cache   available
-Mem:             31           0          29           0           1          30
-Swap:             9           0           9
-[root@host linux]# echo 1 > /proc/sys/vm/drop_caches 
-[root@host linux]# echo 2 > /proc/sys/vm/drop_caches 
-[root@host linux]# echo 3 > /proc/sys/vm/drop_caches 
-[root@host linux]# free -g
-              total        used        free      shared  buff/cache   available
-Mem:             31           0          30           0           0          30
-Swap:             9           0           9
-[root@host linux]# free
-              total        used        free      shared  buff/cache   available
-Mem:       32807280      410820    32070196        9464      326264    31946400
-Swap:      10485756           0    10485756
-[root@host linux]# git log --oneline -1
-cb9553d Merge remote-tracking branch 'input/next'
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-allnoconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
