@@ -1,111 +1,115 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160527 build: 0 failures 5 warnings (next-20160527)
-Date: Fri, 27 May 2016 09:47:41 +0100
-Message-ID: <E1b6DQi-0001tu-FT@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44468 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932456AbcE0Irt (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2016 04:47:49 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v4 1/4] isa: Allow ISA-style drivers on modern systems
+Date: Fri, 27 May 2016 11:12:19 -0700
+Message-ID: <20160527181219.GA19472@roeck-us.net>
+References: <cover.1464049539.git.vilhelm.gray@gmail.com>
+ <4cc7af2b90cdff1c9e680fb2c2cd81882c6695d2.1464049539.git.vilhelm.gray@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4cc7af2b90cdff1c9e680fb2c2cd81882c6695d2.1464049539.git.vilhelm.gray@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: William Breathitt Gray <vilhelm.gray@gmail.com>
+Cc: gregkh@linuxfoundation.org, akpm@linux-foundation.org, x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, sfr@canb.auug.org.au, Linus Torvalds <torvalds@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160527
-Git describe: next-20160527
-Commit: b5631e1f2c Add linux-next specific files for 20160527
+On Mon, May 23, 2016 at 08:30:44PM -0400, William Breathitt Gray wrote:
+> Several modern devices, such as PC/104 cards, are expected to run on
+> modern systems via an ISA bus interface. Since ISA is a legacy interface
+> for most modern architectures, ISA support should remain disabled in
+> general. Support for ISA-style drivers should be enabled on a per driver
+> basis.
+> 
+> To allow ISA-style drivers on modern systems, this patch introduces the
+> ISA_BUS_API and ISA_BUS Kconfig options. The ISA bus driver will now
+> build conditionally on the ISA_BUS_API Kconfig option, which defaults to
+> the legacy ISA Kconfig option. The ISA_BUS Kconfig option allows the
+> ISA_BUS_API Kconfig option to be selected on architectures which do not
+> enable ISA (e.g. X86_64).
+> 
+> The ISA_BUS Kconfig option is currently only implemented for X86
+> architectures. Other architectures may have their own ISA_BUS Kconfig
+> options added as required.
+> 
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
 
-Build Time: 153 min 6 sec
+FWIW, looks good to me.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
-Errors: 0
-Warnings: 5
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 5
-	  8 ../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/gfs2/dir.c:802:9: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/gfs2/dir.c:1021:8: warning: 'leaf_no' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/reiserfs/ibalance.c:1156:2: warning: 'new_insert_key' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-allnoconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+> ---
+>  arch/Kconfig          | 3 +++
+>  arch/x86/Kconfig      | 9 +++++++++
+>  drivers/base/Makefile | 2 +-
+>  include/linux/isa.h   | 2 +-
+>  4 files changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index b16e74e..9d9942f 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -598,6 +598,9 @@ config HAVE_STACK_VALIDATION
+>  	  Architecture supports the 'objtool check' host tool command, which
+>  	  performs compile-time stack metadata validation.
+>  
+> +config ISA_BUS_API
+> +	def_bool ISA
+> +
+>  #
+>  # ABI hall of shame
+>  #
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 0a7b885..d9a94da 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -2439,6 +2439,15 @@ config PCI_CNB20LE_QUIRK
+>  
+>  source "drivers/pci/Kconfig"
+>  
+> +config ISA_BUS
+> +	bool "ISA-style bus support on modern systems" if EXPERT
+> +	select ISA_BUS_API
+> +	help
+> +	  Enables ISA-style drivers on modern systems. This is necessary to
+> +	  support PC/104 devices on X86_64 platforms.
+> +
+> +	  If unsure, say N.
+> +
+>  # x86_64 have no ISA slots, but can have ISA-style DMA.
+>  config ISA_DMA_API
+>  	bool "ISA-style DMA support" if (X86_64 && EXPERT)
+> diff --git a/drivers/base/Makefile b/drivers/base/Makefile
+> index 6b2a84e..2609ba2 100644
+> --- a/drivers/base/Makefile
+> +++ b/drivers/base/Makefile
+> @@ -10,7 +10,7 @@ obj-$(CONFIG_DMA_CMA) += dma-contiguous.o
+>  obj-y			+= power/
+>  obj-$(CONFIG_HAS_DMA)	+= dma-mapping.o
+>  obj-$(CONFIG_HAVE_GENERIC_DMA_COHERENT) += dma-coherent.o
+> -obj-$(CONFIG_ISA)	+= isa.o
+> +obj-$(CONFIG_ISA_BUS_API)	+= isa.o
+>  obj-$(CONFIG_FW_LOADER)	+= firmware_class.o
+>  obj-$(CONFIG_NUMA)	+= node.o
+>  obj-$(CONFIG_MEMORY_HOTPLUG_SPARSE) += memory.o
+> diff --git a/include/linux/isa.h b/include/linux/isa.h
+> index 5ab8528..384ab9b 100644
+> --- a/include/linux/isa.h
+> +++ b/include/linux/isa.h
+> @@ -22,7 +22,7 @@ struct isa_driver {
+>  
+>  #define to_isa_driver(x) container_of((x), struct isa_driver, driver)
+>  
+> -#ifdef CONFIG_ISA
+> +#ifdef CONFIG_ISA_BUS_API
+>  int isa_register_driver(struct isa_driver *, unsigned int);
+>  void isa_unregister_driver(struct isa_driver *);
+>  #else
+> -- 
+> 2.7.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
