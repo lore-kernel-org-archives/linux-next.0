@@ -1,52 +1,77 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 4/4] watchdog: ebc-c384_wdt: Allow build for X86_64
-Date: Fri, 27 May 2016 11:21:51 -0700
-Message-ID: <20160527182151.GA24035@roeck-us.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Fri, 27 May 2016 12:53:15 -0700
+Message-ID: <20160527125315.236cb2957320aea0641dc6d5@linux-foundation.org>
+References: <20160527130710.04d4d859@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: gregkh@linuxfoundation.org, akpm@linux-foundation.org, x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, sfr@canb.auug.org.au, Wim Van Sebroeck <wim@iguana.be>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43847 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753205AbcE0TxQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 27 May 2016 15:53:16 -0400
+In-Reply-To: <20160527130710.04d4d859@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>
 
-On Mon, May 23, 2016 at 08:31:19PM -0400, William Breathitt Gray wrote:
-> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
-> drivers may be built for X86_64 architectures. This patch changes the
-> ISA Kconfig option dependency of the WinSystems EBC-C384 watchdog timer
-> driver to ISA_BUS_API, thus allowing it to build for X86_64 as it is
-> expected to.
+On Fri, 27 May 2016 13:07:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi Andrew,
 > 
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Wim Van Sebroeck <wim@iguana.be>
-> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> ---
->  drivers/watchdog/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
 > 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index b54f26c..3938e2d 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -746,7 +746,7 @@ config ALIM7101_WDT
->  
->  config EBC_C384_WDT
->  	tristate "WinSystems EBC-C384 Watchdog Timer"
-> -	depends on X86 && ISA
-> +	depends on ISA_BUS_API
-
-Assuming the dropped dependency on X86 is intentional:
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
->  	select WATCHDOG_CORE
->  	help
->  	  Enables watchdog timer support for the watchdog timer on the
-> -- 
-> 2.7.3
+> mm/oom_kill.c: In function '__oom_reap_task':
+> mm/oom_kill.c:537:2: warning: 'mm' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   mmput_async(mm);
+>   ^
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Introduced by commit
+> 
+>   df1e2f56632d ("oom_reaper: close race with exiting task")
+> 
+> This is real - the first "goto unlock_oom" is before "mm" has been
+> assigned.
+
+Yup, thanks.
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: oom_reaper-close-race-with-exiting-task-fix
+
+fix use of unused `mm', Per Stephen
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ mm/oom_kill.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff -puN mm/oom_kill.c~oom_reaper-close-race-with-exiting-task-fix mm/oom_kill.c
+--- a/mm/oom_kill.c~oom_reaper-close-race-with-exiting-task-fix
++++ a/mm/oom_kill.c
+@@ -443,7 +443,7 @@ static bool __oom_reap_task(struct task_
+ {
+ 	struct mmu_gather tlb;
+ 	struct vm_area_struct *vma;
+-	struct mm_struct *mm;
++	struct mm_struct *mm = NULL;
+ 	struct task_struct *p;
+ 	struct zap_details details = {.check_swap_entries = true,
+ 				      .ignore_dirty = true};
+@@ -534,7 +534,8 @@ unlock_oom:
+ 	 * different context because we shouldn't risk we get stuck there and
+ 	 * put the oom_reaper out of the way.
+ 	 */
+-	mmput_async(mm);
++	if (mm)
++		mmput_async(mm);
+ 	return ret;
+ }
+ 
+_
