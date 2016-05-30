@@ -1,48 +1,130 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v5 1/4] isa: Allow ISA-style drivers on modern systems
-Date: Sat, 28 May 2016 12:35:08 -0700
-Message-ID: <CA+55aFxOzwKE8jJCWuZHCvUAdjRHZJmaJwMroXP3XYH2q3wynw@mail.gmail.com>
-References: <cover.1464380034.git.vilhelm.gray@gmail.com>
-	<eb31f2d10c9cc199d69eca2fe16cf31b9417c5ef.1464380034.git.vilhelm.gray@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: stats (Was: Linux 4.7-rc1)
+Date: Mon, 30 May 2016 10:46:48 +1000
+Message-ID: <20160530104648.49081367@canb.auug.org.au>
+References: <CA+55aFzJn7PzgmzwSH4w8qYspTr9BvjAPn5dQMdbJssri-4BDg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:32785 "EHLO
-	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750742AbcE1TfJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 28 May 2016 15:35:09 -0400
-In-Reply-To: <eb31f2d10c9cc199d69eca2fe16cf31b9417c5ef.1464380034.git.vilhelm.gray@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, the arch/x86 maintainers <x86@kernel.org>, linux-next <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, linux-iio@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFzJn7PzgmzwSH4w8qYspTr9BvjAPn5dQMdbJssri-4BDg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, May 27, 2016 at 3:08 PM, William Breathitt Gray
-<vilhelm.gray@gmail.com> wrote:
-> Several modern devices, such as PC/104 cards, are expected to run on
-> modern systems via an ISA bus interface. Since ISA is a legacy interface
-> for most modern architectures, ISA support should remain disabled in
-> general. Support for ISA-style drivers should be enabled on a per driver
-> basis.
->
-> To allow ISA-style drivers on modern systems, this patch introduces the
-> ISA_BUS_API and ISA_BUS Kconfig options. The ISA bus driver will now
-> build conditionally on the ISA_BUS_API Kconfig option, which defaults to
-> the legacy ISA Kconfig option. The ISA_BUS Kconfig option allows the
-> ISA_BUS_API Kconfig option to be selected on architectures which do not
-> enable ISA (e.g. X86_64).
->
-> The ISA_BUS Kconfig option is currently only implemented for X86
-> architectures. Other architectures may have their own ISA_BUS Kconfig
-> options added as required.
->
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Hi all,
 
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+I have been a bit remiss in publishing these stats and maybe that has
+lead to the current lower result for commits in linux-next before the
+merge window opened ...
 
-This version seems fine and safe. I didn't see the other patches in
-the series (not cc'd to me), but at least this one would seem to do
-the right thing and expose part of the ISA code without causing other
-architectures to possibly lose it.
+As usual, the executive friendly graph is at
+http://neuling.org/linux-next-size.html :-)
 
-              Linus
+(No merge commits counted, next-20160516 was the first linux-next after
+the merge window opened.)
+
+Commits in v4.7-rc1 (relative to v4.6):            10707
+Commits in next-20160516:                          10067
+Commits with the same SHA1:                         9073
+Commits with the same patch_id:                      497 (1)
+Commits with the same subject line:                   64 (1)
+
+(1) not counting those in the lines above.
+
+So commits in -rc1 that were in next-20160516:      9634 89%
+
+Some breakdown of the list of extra commits (relative to next-20160516)
+in -rc1:
+
+Top ten first word of commit summary:
+
+    171 drm
+     73 kvm
+     67 ib
+     49 mips
+     47 net
+     38 libceph
+     34 perf
+     30 ceph
+     29 mm
+     22 xfs
+
+Top ten authors:
+
+     44 bskeggs@redhat.com
+     40 idryomov@gmail.com
+     30 zyan@redhat.com
+     29 andre.przywara@arm.com
+     22 emil.l.velikov@gmail.com
+     22 andrea.gelmini@gelma.net
+     21 chuck.lever@oracle.com
+     19 jack@suse.cz
+     16 tom@herbertland.com
+     16 jlayton@poochiereds.net
+
+Top ten commiters:
+
+    142 davem@davemloft.net
+     82 dledford@redhat.com
+     72 torvalds@linux-foundation.org
+     71 idryomov@gmail.com
+     61 anna.schumaker@netapp.com
+     59 christoffer.dall@linaro.org
+     59 alexander.deucher@amd.com
+     58 ralf@linux-mips.org
+     51 bskeggs@redhat.com
+     31 acme@redhat.com
+
+There are also 435 commits in next-20160516 that didn't make it into
+v4.7-rc1.
+
+Top ten first word of commit summary:
+
+     57 tpm
+     39 coresight
+     32 rdma
+     27 lightnvm
+     23 ib
+     19 arm
+     17 btrfs
+     14 mm
+     13 asoc
+      9 xen
+
+Top ten authors:
+
+     34 mathieu.poirier@linaro.org
+     34 christophe.ricard@gmail.com
+     28 akpm@linux-foundation.org
+     26 paulmck@linux.vnet.ibm.com
+     16 mustafa.ismail@intel.com
+     15 shannon.zhao@linaro.org
+     15 m@bjorling.me
+     15 jbacik@fb.com
+     13 dean.luick@intel.com
+     11 arnd@arndb.de
+
+Some of Andrew's patches are fixes for other patches in his tree (and
+have been merged into those).
+
+Top ten commiters:
+
+     82 sfr@canb.auug.org.au
+     59 jarkko.sakkinen@linux.intel.com
+     55 leon@kernel.org
+     40 mathieu.poirier@linaro.org
+     32 paulmck@linux.vnet.ibm.com
+     28 m@bjorling.me
+     16 steven@ubuntu-virtualbox.(none)
+     15 sstabellini@kernel.org
+     15 dsterba@suse.com
+     13 broonie@kernel.org
+
+Those commits by me are from the quilt series (mainly Andrew's mmotm
+tree).
+
+-- 
+Cheers,
+Stephen Rothwell
