@@ -1,75 +1,40 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: linux-next: Tree for May 30
-Date: Mon, 30 May 2016 19:34:01 +0530
-Message-ID: <574C4851.9090201@gmail.com>
-References: <20160530132225.4d297678@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with
+	Linus' tree
+Date: Tue, 31 May 2016 11:00:19 +1000
+Message-ID: <20160531110019.0758ead7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f68.google.com ([209.85.220.68]:35079 "EHLO
-	mail-pa0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933000AbcE3SeP (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 30 May 2016 14:34:15 -0400
-In-Reply-To: <20160530132225.4d297678@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@codeaurora.org>, QCA ath9k Development <ath9k-devel@qca.qualcomm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, ath9k-devel@lists.ath9k.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Monday 30 May 2016 08:52 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> Changes since 20160527:
-
-Hi All,
-I have just built and booted with next-20160530 and my dmesg is full of 
-warnings from ath9k. Last kernel tested was v4.6 and there was no 
-problem with that.
-
-The traces are like:
-Call Trace:
-  [<ffffffff813b8ddc>] dump_stack+0x63/0x87
-  [<ffffffff8107a331>] __warn+0xd1/0xf0
-  [<ffffffff8107a41d>] warn_slowpath_null+0x1d/0x20
-  [<ffffffffc095801f>] ath9k_hw_gpio_request+0x6f/0x320 [ath9k_hw]
-  [<ffffffffc095ac24>] ath9k_hw_reset+0xfe4/0x12e0 [ath9k_hw]
-  [<ffffffffc03d45d4>] ath_reset_internal+0x104/0x1f0 [ath9k]
-  [<ffffffffc03d46fd>] ath_reset+0x3d/0x60 [ath9k]
-  [<ffffffffc03dd1c6>] ath_chanctx_set_channel+0x1b6/0x300 [ath9k]
-  [<ffffffffc03d36b6>] ath9k_config+0xc6/0x1f0 [ath9k]
-  [<ffffffff817d6e92>] ? mutex_lock+0x12/0x2f
-  [<ffffffffc05a7923>] ieee80211_hw_config+0x63/0x350 [mac80211]
-  [<ffffffffc05b3041>] ieee80211_scan_work+0x161/0x480 [mac80211]
-  [<ffffffff81093183>] process_one_work+0x153/0x3f0
-  [<ffffffff8109393b>] worker_thread+0x12b/0x4b0
-  [<ffffffff81093810>] ? rescuer_thread+0x340/0x340
-  [<ffffffff81099129>] kthread+0xc9/0xe0
-  [<ffffffff817d8f1f>] ret_from_fork+0x1f/0x40
-  [<ffffffff81099060>] ? kthread_park+0x60/0x60
----[ end trace 27eb5094a52869ea ]---
-
-Call Trace:
-  [<ffffffff813b8ddc>] dump_stack+0x63/0x87
-  [<ffffffff8107a331>] __warn+0xd1/0xf0
-  [<ffffffff8107a41d>] warn_slowpath_null+0x1d/0x20
-  [<ffffffffc0956b19>] ath9k_hw_gpio_get+0x1a9/0x1b0 [ath9k_hw]
-  [<ffffffffc03d03e4>] ath9k_rfkill_poll_state+0x34/0x60 [ath9k]
-  [<ffffffffc05c4b53>] ieee80211_rfkill_poll+0x33/0x40 [mac80211]
-  [<ffffffffc049d65a>] cfg80211_rfkill_poll+0x2a/0xc0 [cfg80211]
-  [<ffffffff817c5514>] rfkill_poll+0x24/0x50
-  [<ffffffff81093183>] process_one_work+0x153/0x3f0
-  [<ffffffff8109393b>] worker_thread+0x12b/0x4b0
-  [<ffffffff81093810>] ? rescuer_thread+0x340/0x340
-  [<ffffffff81099129>] kthread+0xc9/0xe0
-  [<ffffffff817d8f1f>] ret_from_fork+0x1f/0x40
-  [<ffffffff81099060>] ? kthread_park+0x60/0x60
----[ end trace 27eb5094a5286a3d ]---
-
-
-If it is a known problem then great.. else i can debug and see what the 
-problem is. There are only few patches added for GPIO, so should not be 
-a problem to find out what is causing the error.
-
-Regards
-Sudip
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0taW50ZWwgdHJlZSBn
+b3QgYSBjb25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW0uYwoKYmV0
+d2VlbiBjb21taXQ6CgogIDVmYmQwNDE4ZWVmMiAoImRybS9pOTE1OiBSZS1lbmFibGUgR0dUVCBl
+YXJsaWVyIGR1cmluZyByZXN1bWUgb24gcHJlLWdlbjYgcGxhdGZvcm1zIikKKHdoaWNoIGFsc28g
+ZXhpc3RzIGluIHRoZSBkcm0taW50ZWwgdHJlZSBhcyBjb21taXQgYWM4NDBhZTUzNTczKQoKZnJv
+bSBMaW51cycgdHJlZSBhbmQgY29tbWl0OgoKICBkMjAwY2RhNmJkOWYgKCJkcm0vaTkxNTogUmVt
+b3ZlIGVhcmx5IGwzLXJlbWFwIikKCmZyb20gdGhlIGRybS1pbnRlbCB0cmVlLgoKSSBmaXhlZCBp
+dCB1cCAoSSB1c2VkIHRoZSBkcm0taW50ZWwgdHJlZSB2ZXJzaW9uKSBhbmQgY2FuIGNhcnJ5IHRo
+ZSBmaXgKYXMgbmVjZXNzYXJ5LiBUaGlzIGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4
+dCBpcyBjb25jZXJuZWQsIGJ1dAphbnkgbm9uIHRyaXZpYWwgY29uZmxpY3RzIHNob3VsZCBiZSBt
+ZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyCndoZW4geW91ciB0cmVlIGlzIHN1
+Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyCmNvb3Bl
+cmF0aW5nIHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWlu
+aW1pc2UgYW55CnBhcnRpY3VsYXJseSBjb21wbGV4IGNvbmZsaWN0cy4KCi0tIApDaGVlcnMsClN0
+ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwt
+Z2Z4Cg==
