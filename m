@@ -1,53 +1,107 @@
-From: William Breathitt Gray <vilhelm.gray@gmail.com>
-Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Tue, 31 May 2016 07:23:06 -0400
-Message-ID: <20160531112251.GA5674@sophia>
-References: <cover.1464380034.git.vilhelm.gray@gmail.com>
- <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
- <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] ASoC: arizona: Add data structure for voice trigger notifier
+Date: Tue, 31 May 2016 12:44:17 +0100
+Message-ID: <1464695057-11723-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:37956 "EHLO
+	mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751418AbcEaLo1 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 31 May 2016 07:44:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: broonie@kernel.org
+Cc: lgirdwood@gmail.com, alsa-devel@alsa-project.org, linux-next@vger.kernel.org, arnd@arndb.de, sfr@canb.auug.org.au
 
-On Tue, May 31, 2016 at 10:41:49AM +0200, Linus Walleij wrote:
->On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
-><vilhelm.gray@gmail.com> wrote:
->
->> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
->> drivers may be built for X86_64 architectures. This patch changes the
->> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
->> allowing them to build for X86_64 as they are expected to.
->>
->> Cc: Alexandre Courbot <gnurou@gmail.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
->
->Acked-by: Linus Walleij <linus.walleij@linaro.org>
->
->Or should I apply this directly to the GPIO tree?
->
->Yours,
->Linus Walleij
+64-bit builds would generate a warning when we passed the core number as
+a pointer through the notifier data:
 
-Greg K-H,
+sound/soc/codecs/cs47l24.c:1091:13: warning: cast to pointer from
+integer of different size [-Wint-to-pointer-cast]
+             (void *)i);
 
-Would you be able to pick up this entire patchset via driver-core; I
-figure that tree is the most appropriate to receive any core ISA bus
-driver changes (unless you see a more fitting path to take).
+Rather than just fix this up with more casting add a data structure that
+holds information for the notifier chain. This will make it easier to
+add additional information in the future as well.
 
-If possible, I'd like this patchset to find its way into one of the
-coming release candidates in order to resolve the regression mentioned
-in the cover letter: as of 4.7-rc1, the drivers which switched to
-utilize the ISA bus driver are now restricted to X86_32 despite being
-allowed in X86_64 in the 4.6 release.
+Fixes: 7baa7e2490e1 ("ASoC: arizona: Add event notification on voice trigger events")
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ sound/soc/codecs/arizona.h | 4 ++++
+ sound/soc/codecs/cs47l24.c | 7 +++++--
+ sound/soc/codecs/wm5110.c  | 7 +++++--
+ 3 files changed, 14 insertions(+), 4 deletions(-)
 
-Thanks,
-
-William Breathitt Gray
+diff --git a/sound/soc/codecs/arizona.h b/sound/soc/codecs/arizona.h
+index ef38413..2caf4d0 100644
+--- a/sound/soc/codecs/arizona.h
++++ b/sound/soc/codecs/arizona.h
+@@ -98,6 +98,10 @@ struct arizona_priv {
+ 	bool dvfs_cached;
+ };
+ 
++struct arizona_voice_trigger_info {
++	int core;
++};
++
+ #define ARIZONA_NUM_MIXER_INPUTS 104
+ 
+ extern const unsigned int arizona_mixer_tlv[];
+diff --git a/sound/soc/codecs/cs47l24.c b/sound/soc/codecs/cs47l24.c
+index b4d05cf..954a4f5 100644
+--- a/sound/soc/codecs/cs47l24.c
++++ b/sound/soc/codecs/cs47l24.c
+@@ -1078,6 +1078,7 @@ static irqreturn_t cs47l24_adsp2_irq(int irq, void *data)
+ {
+ 	struct cs47l24_priv *priv = data;
+ 	struct arizona *arizona = priv->core.arizona;
++	struct arizona_voice_trigger_info info;
+ 	int serviced = 0;
+ 	int i, ret;
+ 
+@@ -1085,10 +1086,12 @@ static irqreturn_t cs47l24_adsp2_irq(int irq, void *data)
+ 		ret = wm_adsp_compr_handle_irq(&priv->core.adsp[i]);
+ 		if (ret != -ENODEV)
+ 			serviced++;
+-		if (ret == WM_ADSP_COMPR_VOICE_TRIGGER)
++		if (ret == WM_ADSP_COMPR_VOICE_TRIGGER) {
++			info.core = i;
+ 			arizona_call_notifiers(arizona,
+ 					       ARIZONA_NOTIFY_VOICE_TRIGGER,
+-					       (void *)i);
++					       &info);
++		}
+ 	}
+ 
+ 	if (!serviced) {
+diff --git a/sound/soc/codecs/wm5110.c b/sound/soc/codecs/wm5110.c
+index f1b3294..3b8db83 100644
+--- a/sound/soc/codecs/wm5110.c
++++ b/sound/soc/codecs/wm5110.c
+@@ -2233,6 +2233,7 @@ static irqreturn_t wm5110_adsp2_irq(int irq, void *data)
+ {
+ 	struct wm5110_priv *priv = data;
+ 	struct arizona *arizona = priv->core.arizona;
++	struct arizona_voice_trigger_info info;
+ 	int serviced = 0;
+ 	int i, ret;
+ 
+@@ -2240,10 +2241,12 @@ static irqreturn_t wm5110_adsp2_irq(int irq, void *data)
+ 		ret = wm_adsp_compr_handle_irq(&priv->core.adsp[i]);
+ 		if (ret != -ENODEV)
+ 			serviced++;
+-		if (ret == WM_ADSP_COMPR_VOICE_TRIGGER)
++		if (ret == WM_ADSP_COMPR_VOICE_TRIGGER) {
++			info.core = i;
+ 			arizona_call_notifiers(arizona,
+ 					       ARIZONA_NOTIFY_VOICE_TRIGGER,
+-					       (void *)i);
++					       &info);
++		}
+ 	}
+ 
+ 	if (!serviced) {
+-- 
+2.1.4
