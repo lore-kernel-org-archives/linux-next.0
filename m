@@ -1,32 +1,53 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20160531 build: 0 failures 3 warnings (next-20160531)
-Date: Tue, 31 May 2016 12:44:30 +0200
-Message-ID: <6205928.96cQKykR0D@wuerfel>
-References: <E1b7d6Z-0007G5-AH@optimist>
+From: William Breathitt Gray <vilhelm.gray@gmail.com>
+Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
+Date: Tue, 31 May 2016 07:23:06 -0400
+Message-ID: <20160531112251.GA5674@sophia>
+References: <cover.1464380034.git.vilhelm.gray@gmail.com>
+ <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
+ <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.134]:53923 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750783AbcEaKoL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 31 May 2016 06:44:11 -0400
-In-Reply-To: <E1b7d6Z-0007G5-AH@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org
-Cc: Build bot for Mark Brown <broonie@kernel.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-watchdog@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Guenter Roeck <linux@roeck-us.net>, Alexandre Courbot <gnurou@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tuesday, May 31, 2016 7:24:43 AM CEST Build bot for Mark Brown wrote:
+On Tue, May 31, 2016 at 10:41:49AM +0200, Linus Walleij wrote:
+>On Sat, May 28, 2016 at 12:08 AM, William Breathitt Gray
+><vilhelm.gray@gmail.com> wrote:
+>
+>> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
+>> drivers may be built for X86_64 architectures. This patch changes the
+>> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
+>> allowing them to build for X86_64 as they are expected to.
+>>
+>> Cc: Alexandre Courbot <gnurou@gmail.com>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+>> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
+>
+>Acked-by: Linus Walleij <linus.walleij@linaro.org>
+>
+>Or should I apply this directly to the GPIO tree?
+>
+>Yours,
+>Linus Walleij
 
-> -------------------------------------------------------------------------------
-> arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-> 
-> Warnings:
-> 	../sound/soc/codecs/cs47l24.c:1091:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> 	../sound/soc/codecs/wm5110.c:2246:13: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+Greg K-H,
 
-These got introduced by 7baa7e2490e1 ("ASoC: arizona: Add event notification
-on voice trigger events").
+Would you be able to pick up this entire patchset via driver-core; I
+figure that tree is the most appropriate to receive any core ISA bus
+driver changes (unless you see a more fitting path to take).
 
-	Arnd
+If possible, I'd like this patchset to find its way into one of the
+coming release candidates in order to resolve the regression mentioned
+in the cover letter: as of 4.7-rc1, the drivers which switched to
+utilize the ISA bus driver are now restricted to X86_32 despite being
+allowed in X86_64 in the 4.6 release.
+
+Thanks,
+
+William Breathitt Gray
