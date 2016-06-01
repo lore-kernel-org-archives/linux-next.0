@@ -1,61 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160601 build: 0 failures 1 warnings (next-20160601)
-Date: Wed, 01 Jun 2016 07:28:35 +0100
-Message-ID: <E1b7zdq-000666-IA@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60134 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750697AbcFAG2o (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2016 02:28:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: "Pan, Miaoqing" <miaoqing@qti.qualcomm.com>
+Subject: Re: ath9k gpio request
+Date: Wed, 1 Jun 2016 06:54:01 +0000
+Message-ID: <1464764036580.70506@qti.qualcomm.com>
+References: <20160530132225.4d297678@canb.auug.org.au>
+	<574C4851.9090201@gmail.com>
+ <87fusy3cqx.fsf_-_@kamboji.qca.qualcomm.com>,<574D3EAA.3060102@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <574D3EAA.3060102@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Kalle Valo <kvalo@codeaurora.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, ath9k-devel <ath9k-devel@qualcomm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Miaoqing Pan <miaoqing@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160601
-Git describe: next-20160601
-Commit: e98f2ba416 Add linux-next specific files for 20160601
+which chip ?  And what's the GPIO number ?
 
-Build Time: 98 min 20 sec
+Thanks,
+Miaoqing
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+________________________________________
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Sent: Tuesday, May 31, 2016 3:35 PM
+To: Kalle Valo
+Cc: Stephen Rothwell; ath9k-devel; linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-wireless@vger.kernel.org; ath9k-devel@lists.ath9k.org; netdev@vger.kernel.org; Miaoqing Pan
+Subject: Re: ath9k gpio request
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+On Tuesday 31 May 2016 01:01 PM, Kalle Valo wrote:
+> (Changing subject to a more descriptive one, was "Re: linux-next: Tree
+> for May 30")
+>
+> Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
+>
+>> Hi All,
+>> I have just built and booted with next-20160530 and my dmesg is full
+>> of warnings from ath9k. Last kernel tested was v4.6 and there was no
+>> problem with that.
+>>
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
+<snip>
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+> The traces look incomplete to me, is there anything more before the
+> "Call Trace:" line? Full unedited logs are usually the best.
 
-Warnings:
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
+sure, its attached. those two warnings are recursively going on and
+there is nothing else left in dmesg to see what started it.
 
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Regards
+Sudip
