@@ -1,49 +1,83 @@
-From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: ath9k gpio request
-Date: Thu, 02 Jun 2016 17:09:16 +0530
-Message-ID: <57501AE4.7080104@gmail.com>
-References: <20160530132225.4d297678@canb.auug.org.au>	<574C4851.9090201@gmail.com> <87fusy3cqx.fsf_-_@kamboji.qca.qualcomm.com>,<574D3EAA.3060102@gmail.com> <1464764036580.70506@qti.qualcomm.com> <574EC331.1080901@gmail.com>,<574ED297.4080004@gmail.com> <1464854569880.79341@qti.qualcomm.com>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build failure after merge of the pstore tree
+Date: Thu, 2 Jun 2016 11:14:59 -0700
+Message-ID: <CAGXu5jJgP6rgf5wYftAvNn-AGidjcxkS0KBO=6qZTi99Q3Kx1A@mail.gmail.com>
+References: <20160602102556.722ad0cf@canb.auug.org.au> <20160602140307.506b98ba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464854569880.79341@qti.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Pan, Miaoqing" <miaoqing@qti.qualcomm.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, ath9k-devel <ath9k-devel@qca.qualcomm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Miaoqing Pan <miaoqing@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f50.google.com ([74.125.82.50]:37338 "EHLO
+	mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932188AbcFBSPF (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Jun 2016 14:15:05 -0400
+Received: by mail-wm0-f50.google.com with SMTP id z87so79865393wmh.0
+        for <linux-next@vger.kernel.org>; Thu, 02 Jun 2016 11:15:04 -0700 (PDT)
+In-Reply-To: <20160602140307.506b98ba@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Geliang Tang <geliangtang@163.com>
 
-On Thursday 02 June 2016 01:32 PM, Pan, Miaoqing wrote:
-> Seems there are something wrong in the datasheet,  try
+Thanks! All callers should be fixed now.
+
+-Kees
+
+On Wed, Jun 1, 2016 at 9:03 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
 >
-> --- a/drivers/net/wireless/ath/ath9k/reg.h
-> +++ b/drivers/net/wireless/ath/ath9k/reg.h
-> @@ -1122,8 +1122,8 @@ enum {
->   #define AR9300_NUM_GPIO                          16
->   #define AR9330_NUM_GPIO                                 16
->   #define AR9340_NUM_GPIO                                 23
-> -#define AR9462_NUM_GPIO                                 10
-> -#define AR9485_NUM_GPIO                                 12
-> +#define AR9462_NUM_GPIO                                 14
-> +#define AR9485_NUM_GPIO                                 11
->   #define AR9531_NUM_GPIO                                 18
->   #define AR9550_NUM_GPIO                                 24
->   #define AR9561_NUM_GPIO                                 23
-> @@ -1139,8 +1139,8 @@ enum {
->   #define AR9300_GPIO_MASK                        0x0000F4FF
->   #define AR9330_GPIO_MASK                        0x0000F4FF
->   #define AR9340_GPIO_MASK                        0x0000000F
-> -#define AR9462_GPIO_MASK                        0x000003FF
-> -#define AR9485_GPIO_MASK                        0x00000FFF
-> +#define AR9462_GPIO_MASK                        0x00003FFF
-> +#define AR9485_GPIO_MASK                        0x000007FF
->   #define AR9531_GPIO_MASK                        0x0000000F
->   #define AR9550_GPIO_MASK                        0x0000000F
->   #define AR9561_GPIO_MASK                        0x0000000F
+> On Thu, 2 Jun 2016 10:25:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the pstore tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/acpi/apei/erst.c:943:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>   .read  = erst_reader,
+>>            ^
+>
+> This also affected arch/powerpc/kernel/nvram_64.c:
+>
+> arch/powerpc/kernel/nvram_64.c:563:10: error: initialization
+>  from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .read = nvram_pstore_read,
+>           ^
+>
+> So I added this patch as well:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 2 Jun 2016 13:58:25 +1000
+> Subject: [PATCH] pstore: update arch/powerpc/kernel/nvram_64.c for struct pstore_info change
+>
+> Fixes: d8aaf3511a13 ("pstore: add lzo/lz4 compression support")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/kernel/nvram_64.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/powerpc/kernel/nvram_64.c b/arch/powerpc/kernel/nvram_64.c
+> index 856f9a7944cd..5ad2579e2cdc 100644
+> --- a/arch/powerpc/kernel/nvram_64.c
+> +++ b/arch/powerpc/kernel/nvram_64.c
+> @@ -444,7 +444,8 @@ static int nvram_pstore_write(enum pstore_type_id type,
+>   */
+>  static ssize_t nvram_pstore_read(u64 *id, enum pstore_type_id *type,
+>                                 int *count, struct timespec *time, char **buf,
+> -                               bool *compressed, struct pstore_info *psi)
+> +                               bool *compressed, ssize_t *ecc_notice_size,
+> +                               struct pstore_info *psi)
+>  {
+>         struct oops_log_info *oops_hdr;
+>         unsigned int err_type, id_no, size = 0;
+> --
+> 2.8.1
+>
+> I guess I don't really know if there is further fixes necessary, these
+> patches just fix up the build.
+> --
+> Cheers,
+> Stephen Rothwell
 
-solves the problem.
 
-Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
-Regards
-Sudip
+-- 
+Kees Cook
+Chrome OS & Brillo Security
