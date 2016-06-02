@@ -1,72 +1,88 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pstore tree
-Date: Thu, 2 Jun 2016 10:25:56 +1000
-Message-ID: <20160602102556.722ad0cf@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: [linux-next: Tree for Jun 1] __khugepaged_exit
+ rwsem_down_write_failed lockup
+Date: Thu, 2 Jun 2016 10:48:35 +0900
+Message-ID: <20160602014835.GA635@swordfish>
+References: <20160601131122.7dbb0a65@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38053 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750822AbcFBAZ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2016 20:25:59 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36633 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751846AbcFBBur (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 1 Jun 2016 21:50:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20160601131122.7dbb0a65@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geliang Tang <geliangtang@163.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kees,
+On (06/01/16 13:11), Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160531:
+> 
+> My fixes tree contains:
+> 
+>   of: silence warnings due to max() usage
+> 
+> The arm tree gained a conflict against Linus' tree.
+> 
+> Non-merge commits (relative to Linus' tree): 1100
+>  936 files changed, 38159 insertions(+), 17475 deletions(-)
 
-After merging the pstore tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Hello,
 
-drivers/acpi/apei/erst.c:943:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .read  = erst_reader,
-           ^
+the cc1 process ended up in DN state during kernel -j4 compilation.
 
-Caused by commit
+...
+[ 2856.323052] INFO: task cc1:4582 blocked for more than 21 seconds.
+[ 2856.323055]       Not tainted 4.7.0-rc1-next-20160601-dbg-00012-g52c180e-dirty #453
+[ 2856.323056] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 2856.323059] cc1             D ffff880057e9fd78     0  4582   4575 0x00000000
+[ 2856.323062]  ffff880057e9fd78 ffff880057e08000 ffff880057e9fd90 ffff880057ea0000
+[ 2856.323065]  ffff88005dc3dc68 ffffffff00000001 ffff880057e09500 ffff88005dc3dc80
+[ 2856.323067]  ffff880057e9fd90 ffffffff81441e33 ffff88005dc3dc68 ffff880057e9fe00
+[ 2856.323068] Call Trace:
+[ 2856.323074]  [<ffffffff81441e33>] schedule+0x83/0x98
+[ 2856.323077]  [<ffffffff81443d9b>] rwsem_down_write_failed+0x18e/0x1d3
+[ 2856.323080]  [<ffffffff810a87cf>] ? unlock_page+0x2b/0x2d
+[ 2856.323083]  [<ffffffff811bdb77>] call_rwsem_down_write_failed+0x17/0x30
+[ 2856.323084]  [<ffffffff811bdb77>] ? call_rwsem_down_write_failed+0x17/0x30
+[ 2856.323086]  [<ffffffff81443630>] down_write+0x1f/0x2e
+[ 2856.323089]  [<ffffffff810ea4f3>] __khugepaged_exit+0x104/0x11a
+[ 2856.323091]  [<ffffffff8103702a>] mmput+0x29/0xc5
+[ 2856.323093]  [<ffffffff8103bbd8>] do_exit+0x34c/0x894
+[ 2856.323095]  [<ffffffff8102f9e0>] ? __do_page_fault+0x2f7/0x399
+[ 2856.323097]  [<ffffffff8103c188>] do_group_exit+0x3c/0x98
+[ 2856.323099]  [<ffffffff8103c1f3>] SyS_exit_group+0xf/0xf
+[ 2856.323101]  [<ffffffff81444cdb>] entry_SYSCALL_64_fastpath+0x13/0x8f
 
-  d8aaf3511a13 ("pstore: add lzo/lz4 compression support")
+[ 2877.322853] INFO: task cc1:4582 blocked for more than 21 seconds.
+[ 2877.322858]       Not tainted 4.7.0-rc1-next-20160601-dbg-00012-g52c180e-dirty #453
+[ 2877.322858] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 2877.322861] cc1             D ffff880057e9fd78     0  4582   4575 0x00000000
+[ 2877.322865]  ffff880057e9fd78 ffff880057e08000 ffff880057e9fd90 ffff880057ea0000
+[ 2877.322867]  ffff88005dc3dc68 ffffffff00000001 ffff880057e09500 ffff88005dc3dc80
+[ 2877.322867]  ffff880057e9fd90 ffffffff81441e33 ffff88005dc3dc68 ffff880057e9fe00
+[ 2877.322870] Call Trace:
+[ 2877.322875]  [<ffffffff81441e33>] schedule+0x83/0x98
+[ 2877.322878]  [<ffffffff81443d9b>] rwsem_down_write_failed+0x18e/0x1d3
+[ 2877.322881]  [<ffffffff810a87cf>] ? unlock_page+0x2b/0x2d
+[ 2877.322884]  [<ffffffff811bdb77>] call_rwsem_down_write_failed+0x17/0x30
+[ 2877.322885]  [<ffffffff811bdb77>] ? call_rwsem_down_write_failed+0x17/0x30
+[ 2877.322887]  [<ffffffff81443630>] down_write+0x1f/0x2e
+[ 2877.322890]  [<ffffffff810ea4f3>] __khugepaged_exit+0x104/0x11a
+[ 2877.322892]  [<ffffffff8103702a>] mmput+0x29/0xc5
+[ 2877.322894]  [<ffffffff8103bbd8>] do_exit+0x34c/0x894
+[ 2877.322896]  [<ffffffff8102f9e0>] ? __do_page_fault+0x2f7/0x399
+[ 2877.322898]  [<ffffffff8103c188>] do_group_exit+0x3c/0x98
+[ 2877.322900]  [<ffffffff8103c1f3>] SyS_exit_group+0xf/0xf
+[ 2877.322902]  [<ffffffff81444cdb>] entry_SYSCALL_64_fastpath+0x13/0x8f
+...
 
-I added this patch for today:
+ps aux | grep cc1
+ss        4582  0.0  0.0      0     0 pts/23   DN+  10:10   0:01 [cc1]
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 2 Jun 2016 10:20:27 +1000
-Subject: [PATCH] pstore: update acpi/apei/erst.c for struct pstore_info change
-
-Fixes: d8aaf3511a13 ("pstore: add lzo/lz4 compression support")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/acpi/apei/erst.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
-index 006c3894c6ea..3024edf43a92 100644
---- a/drivers/acpi/apei/erst.c
-+++ b/drivers/acpi/apei/erst.c
-@@ -927,7 +927,8 @@ static int erst_open_pstore(struct pstore_info *psi);
- static int erst_close_pstore(struct pstore_info *psi);
- static ssize_t erst_reader(u64 *id, enum pstore_type_id *type, int *count,
- 			   struct timespec *time, char **buf,
--			   bool *compressed, struct pstore_info *psi);
-+			   bool *compressed, ssize_t *ecc_notice_size,
-+			   struct pstore_info *psi);
- static int erst_writer(enum pstore_type_id type, enum kmsg_dump_reason reason,
- 		       u64 *id, unsigned int part, int count, bool compressed,
- 		       size_t size, struct pstore_info *psi);
-@@ -987,7 +988,8 @@ static int erst_close_pstore(struct pstore_info *psi)
- 
- static ssize_t erst_reader(u64 *id, enum pstore_type_id *type, int *count,
- 			   struct timespec *time, char **buf,
--			   bool *compressed, struct pstore_info *psi)
-+			   bool *compressed, ssize_t *ecc_notice_size,
-+			   struct pstore_info *psi)
- {
- 	int rc;
- 	ssize_t len = 0;
--- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+	-ss
