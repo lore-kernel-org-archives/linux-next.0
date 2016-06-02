@@ -1,99 +1,85 @@
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
- rwsem_down_write_failed lockup
-Date: Thu, 2 Jun 2016 15:24:05 +0200
-Message-ID: <0c47a3a0-5530-b257-1c1f-28ed44ba97e6@suse.cz>
-References: <20160601131122.7dbb0a65@canb.auug.org.au>
- <20160602014835.GA635@swordfish>
+From: David Drysdale <drysdale@google.com>
+Subject: Re: linux-next memleak after IO on dax mountpoint
+Date: Thu, 2 Jun 2016 16:22:37 +0100
+Message-ID: <CAHse=S-H_yMhZKNmMZpb41M+o+2tMRyxiUG9wQoemewBXXYTPw@mail.gmail.com>
+References: <20160527084617.GD2933@dhcp12-144.nay.redhat.com> <20160528040554.GA23685@dhcp12-144.nay.redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20160602014835.GA635@swordfish>
-Sender: owner-linux-mm@kvack.org
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Ebru Akagunduz <ebru.akagunduz@gmail.com>
-Cc: Michal Hocko <mhocko@kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rik van Riel <riel@redhat.com>, Andrea Arcangeli <aarcange@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160528040554.GA23685@dhcp12-144.nay.redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Xiong Zhou <xzhou@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, axboe@fb.com, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-[+CC's]
-
-On 06/02/2016 03:48 AM, Sergey Senozhatsky wrote:
-> On (06/01/16 13:11), Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20160531:
->>
->> My fixes tree contains:
->>
->>   of: silence warnings due to max() usage
->>
->> The arm tree gained a conflict against Linus' tree.
->>
->> Non-merge commits (relative to Linus' tree): 1100
->>  936 files changed, 38159 insertions(+), 17475 deletions(-)
->
-> Hello,
->
-> the cc1 process ended up in DN state during kernel -j4 compilation.
->
+On Sat, May 28, 2016 at 5:05 AM, Xiong Zhou <xzhou@redhat.com> wrote:
+> On Fri, May 27, 2016 at 04:46:17PM +0800, Xiong Zhou wrote:
 > ...
-> [ 2856.323052] INFO: task cc1:4582 blocked for more than 21 seconds.
-> [ 2856.323055]       Not tainted 4.7.0-rc1-next-20160601-dbg-00012-g52c180e-dirty #453
-> [ 2856.323056] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [ 2856.323059] cc1             D ffff880057e9fd78     0  4582   4575 0x00000000
-> [ 2856.323062]  ffff880057e9fd78 ffff880057e08000 ffff880057e9fd90 ffff880057ea0000
-> [ 2856.323065]  ffff88005dc3dc68 ffffffff00000001 ffff880057e09500 ffff88005dc3dc80
-> [ 2856.323067]  ffff880057e9fd90 ffffffff81441e33 ffff88005dc3dc68 ffff880057e9fe00
-> [ 2856.323068] Call Trace:
-> [ 2856.323074]  [<ffffffff81441e33>] schedule+0x83/0x98
-> [ 2856.323077]  [<ffffffff81443d9b>] rwsem_down_write_failed+0x18e/0x1d3
-> [ 2856.323080]  [<ffffffff810a87cf>] ? unlock_page+0x2b/0x2d
-> [ 2856.323083]  [<ffffffff811bdb77>] call_rwsem_down_write_failed+0x17/0x30
-> [ 2856.323084]  [<ffffffff811bdb77>] ? call_rwsem_down_write_failed+0x17/0x30
-> [ 2856.323086]  [<ffffffff81443630>] down_write+0x1f/0x2e
-> [ 2856.323089]  [<ffffffff810ea4f3>] __khugepaged_exit+0x104/0x11a
-> [ 2856.323091]  [<ffffffff8103702a>] mmput+0x29/0xc5
-> [ 2856.323093]  [<ffffffff8103bbd8>] do_exit+0x34c/0x894
-> [ 2856.323095]  [<ffffffff8102f9e0>] ? __do_page_fault+0x2f7/0x399
-> [ 2856.323097]  [<ffffffff8103c188>] do_group_exit+0x3c/0x98
-> [ 2856.323099]  [<ffffffff8103c1f3>] SyS_exit_group+0xf/0xf
-> [ 2856.323101]  [<ffffffff81444cdb>] entry_SYSCALL_64_fastpath+0x13/0x8f
+>> Still working on to id which commit in this merge causes this issuer=
+,
 >
-> [ 2877.322853] INFO: task cc1:4582 blocked for more than 21 seconds.
-> [ 2877.322858]       Not tainted 4.7.0-rc1-next-20160601-dbg-00012-g52c180e-dirty #453
-> [ 2877.322858] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [ 2877.322861] cc1             D ffff880057e9fd78     0  4582   4575 0x00000000
-> [ 2877.322865]  ffff880057e9fd78 ffff880057e08000 ffff880057e9fd90 ffff880057ea0000
-> [ 2877.322867]  ffff88005dc3dc68 ffffffff00000001 ffff880057e09500 ffff88005dc3dc80
-> [ 2877.322867]  ffff880057e9fd90 ffffffff81441e33 ffff88005dc3dc68 ffff880057e9fe00
-> [ 2877.322870] Call Trace:
-> [ 2877.322875]  [<ffffffff81441e33>] schedule+0x83/0x98
-> [ 2877.322878]  [<ffffffff81443d9b>] rwsem_down_write_failed+0x18e/0x1d3
-> [ 2877.322881]  [<ffffffff810a87cf>] ? unlock_page+0x2b/0x2d
-> [ 2877.322884]  [<ffffffff811bdb77>] call_rwsem_down_write_failed+0x17/0x30
-> [ 2877.322885]  [<ffffffff811bdb77>] ? call_rwsem_down_write_failed+0x17/0x30
-> [ 2877.322887]  [<ffffffff81443630>] down_write+0x1f/0x2e
-> [ 2877.322890]  [<ffffffff810ea4f3>] __khugepaged_exit+0x104/0x11a
-> [ 2877.322892]  [<ffffffff8103702a>] mmput+0x29/0xc5
-> [ 2877.322894]  [<ffffffff8103bbd8>] do_exit+0x34c/0x894
-> [ 2877.322896]  [<ffffffff8102f9e0>] ? __do_page_fault+0x2f7/0x399
-> [ 2877.322898]  [<ffffffff8103c188>] do_group_exit+0x3c/0x98
-> [ 2877.322900]  [<ffffffff8103c1f3>] SyS_exit_group+0xf/0xf
-> [ 2877.322902]  [<ffffffff81444cdb>] entry_SYSCALL_64_fastpath+0x13/0x8f
+> Narrowed down to:
+>
+> 37e5823 block: add offset in blk_add_request_payload()
+> e048948 blk-mq: Export tagset iter function
+> 58b4560 nvme: add helper nvme_map_len()
+> 03b5929 nvme: rewrite discard support
+> 8093f7c nvme: add helper nvme_setup_cmd()
+> 21f033f NVMe: Skip async events for degraded controllers
+> 82b4552 nvme: Use blk-mq helper for IO termination
+> 93e9d8e block: add ability to flag write back caching on a device
+> 519a7e1 dm: switch to using blk_queue_write_cache()
+> bb8d261 nvme: introduce a controller state machine
+> 92911a5 nvme: tighten up state check for namespace scanning
+> 5955be2 nvme: move namespace scanning to core
+> f866fc4 nvme: move AER handling to common code
+> 0bf77e9 nvme: switch to RCU freeing the namespace
+> 9082e87 block: remove struct bio_batch
 
-I think it's this patch:
+=46WIW, I'm also seeing kmemleak report a leak with v4.7-rc1, in
+a different scenario (just normal desktop use).  Not done much
+digging so far, but this commit (9082e87bf) looks like it might be
+relevant -- lots of the following:
 
-http://ozlabs.org/~akpm/mmots/broken-out/mm-thp-make-swapin-readahead-under-down_read-of-mmap_sem.patch
+unreferenced object 0xffff8800c288e900 (size 256):
+  comm "dconf-service", pid 1461, jiffies 4294895636 (age 48.028s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 c0 a4 c0 c6 00 88 ff ff  ................
+    02 20 00 20 00 00 00 00 11 00 00 00 00 00 00 00  . . ............
+  backtrace:
+    [<ffffffff81955228>] kmemleak_alloc+0x28/0x50
+    [<ffffffff81268bdc>] kmem_cache_alloc+0xfc/0x360
+    [<ffffffff81203275>] mempool_alloc_slab+0x15/0x20
+    [<ffffffff812030de>] mempool_alloc+0x6e/0x170
+    [<ffffffff815014e8>] bio_alloc_bioset+0xb8/0x230
+    [<ffffffff81514174>] next_bio+0x24/0x50
+    [<ffffffff815145ef>] blkdev_issue_zeroout+0xdf/0x1d0
+    [<ffffffff8132ce79>] ext4_issue_zeroout+0x39/0x50
+    [<ffffffff81357abf>] ext4_ext_zeroout+0x2f/0x40
+    [<ffffffff8135ece0>] ext4_ext_map_blocks+0x1870/0x2190
+    [<ffffffff8132cfa1>] ext4_map_blocks+0x111/0x620
+    [<ffffffff81330dc8>] ext4_writepages+0x7c8/0x10a0
+    [<ffffffff81211851>] do_writepages+0x21/0x30
+    [<ffffffff812012ba>] __filemap_fdatawrite_range+0xaa/0xf0
+    [<ffffffff812013fd>] filemap_write_and_wait_range+0x2d/0x70
+    [<ffffffff81326f6d>] ext4_sync_file+0x18d/0x500
 
-Some parts of the code in collapse_huge_page() that were under 
-down_write(mmap_sem) are under down_read() after the patch. But there's 
-"goto out" which continues via "goto out_up_write" which does 
-up_write(mmap_sem) so there's an imbalance. One path seems to go via 
-both up_read() and up_write(). I can imagine this can cause a stuck 
-down_write() among other things?
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> 38f2525 block: add __blkdev_issue_discard
+> 57aac2f lightnvm: fix "warning: =E2=80=98ret=E2=80=99 may be used uni=
+nitialized"
+> ecfb40c lightnvm: handle submit_io failure
+> 1145e63 lightnvm: implement nvm_submit_ppa_list
+> 22e8c97 lightnvm: move block fold outside of get_bb_tbl()
+> 7f7c5d0 lightnvm: avoid memory leak when lun_map kcalloc fails
+> 5136061 lightnvm: introduce nvm_for_each_lun_ppa() macro
+> e11903f lightnvm: refactor device ops->get_bb_tbl()
+> 5ebc7d9 lightnvm: make nvm_set_rqd_ppalist() aware of vblks
+> a63d5cf lightnvm: move responsibility for bad blk mgmt to target
+> 00ee6cc lightnvm: refactor set_bb_tbl for accepting ppa list
+> 003fad3 lightnvm: enable metadata to be sent to device
+> 04a8aa1 lightnvm: expose gennvm_mark_blk to targets
+>
+>
+> These commits can not be reverted cleanly.
