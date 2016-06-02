@@ -1,56 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH v2] pstore: add lzo/lz4 compression support
-Date: Thu, 2 Jun 2016 09:10:40 +1000
-Message-ID: <20160602091040.3892599b@canb.auug.org.au>
-References: <CAGXu5jJJ+VN7g6w8G-Sgi-5a9ATnARZrbbwheKLc4chZzBFaJQ@mail.gmail.com>
-	<ebfd596d5cb01997420a49ed20571bc254c14ac0.1455803858.git.geliangtang@163.com>
-	<CAGXu5jKSf5Jw5sNjniQz9aSres4kG3X3Ypj_e8V5MThLz7+nJQ@mail.gmail.com>
-	<20160430022637.GA8702@localhost.localdomain>
-	<CAGXu5jLnH+RQbBzLsDhEKN+__UZnonYD85x8966cxHtEC2G2uw@mail.gmail.com>
-	<3908561D78D1C84285E8C5FCA982C28F3A0BAF44@ORSMSX114.amr.corp.intel.com>
-	<CAGXu5jKJi62_o+rPprKkaNGeEGOerVH9x2apPBZ8q4uRttKZDw@mail.gmail.com>
+Subject: linux-next: build failure after merge of the pstore tree
+Date: Thu, 2 Jun 2016 10:25:56 +1000
+Message-ID: <20160602102556.722ad0cf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41797 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38053 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750914AbcFAXKm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 1 Jun 2016 19:10:42 -0400
-In-Reply-To: <CAGXu5jKJi62_o+rPprKkaNGeEGOerVH9x2apPBZ8q4uRttKZDw@mail.gmail.com>
+	id S1750822AbcFBAZ7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 1 Jun 2016 20:25:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Kees Cook <keescook@chromium.org>
-Cc: Tony Luck <tony.luck@intel.com>, linux-next@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geliang Tang <geliangtang@163.com>
 
 Hi Kees,
 
-On Tue, 31 May 2016 12:44:04 -0700 Kees Cook <keescook@chromium.org> wrote:
->
-> Can you please add my pstore tree to -next? I'm taking over from Tony Luck.
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git#for-next/pstore
+After merging the pstore tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Added from today.
+drivers/acpi/apei/erst.c:943:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .read  = erst_reader,
+           ^
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Caused by commit
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+  d8aaf3511a13 ("pstore: add lzo/lz4 compression support")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 2 Jun 2016 10:20:27 +1000
+Subject: [PATCH] pstore: update acpi/apei/erst.c for struct pstore_info change
+
+Fixes: d8aaf3511a13 ("pstore: add lzo/lz4 compression support")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/acpi/apei/erst.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/acpi/apei/erst.c b/drivers/acpi/apei/erst.c
+index 006c3894c6ea..3024edf43a92 100644
+--- a/drivers/acpi/apei/erst.c
++++ b/drivers/acpi/apei/erst.c
+@@ -927,7 +927,8 @@ static int erst_open_pstore(struct pstore_info *psi);
+ static int erst_close_pstore(struct pstore_info *psi);
+ static ssize_t erst_reader(u64 *id, enum pstore_type_id *type, int *count,
+ 			   struct timespec *time, char **buf,
+-			   bool *compressed, struct pstore_info *psi);
++			   bool *compressed, ssize_t *ecc_notice_size,
++			   struct pstore_info *psi);
+ static int erst_writer(enum pstore_type_id type, enum kmsg_dump_reason reason,
+ 		       u64 *id, unsigned int part, int count, bool compressed,
+ 		       size_t size, struct pstore_info *psi);
+@@ -987,7 +988,8 @@ static int erst_close_pstore(struct pstore_info *psi)
+ 
+ static ssize_t erst_reader(u64 *id, enum pstore_type_id *type, int *count,
+ 			   struct timespec *time, char **buf,
+-			   bool *compressed, struct pstore_info *psi)
++			   bool *compressed, ssize_t *ecc_notice_size,
++			   struct pstore_info *psi)
+ {
+ 	int rc;
+ 	ssize_t len = 0;
+-- 
+2.8.1
 
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell
