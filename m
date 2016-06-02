@@ -1,80 +1,63 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: next-20160602 build: 0 failures 2 warnings (next-20160602)
-Date: Thu, 2 Jun 2016 11:08:08 +0100
-Message-ID: <20160602100808.GD23566@e106497-lin.cambridge.arm.com>
-References: <E1b8PEc-0000qk-Ol@optimist>
- <7858362.3LIbrZdxpY@wuerfel>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
+ rwsem_down_write_failed lockup
+Date: Thu, 2 Jun 2016 21:08:57 +0900
+Message-ID: <20160602120857.GA704@swordfish>
+References: <20160601131122.7dbb0a65@canb.auug.org.au>
+ <20160602014835.GA635@swordfish>
+ <20160602092113.GH1995@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:43815 "EHLO foss.arm.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932078AbcFBKIL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 2 Jun 2016 06:08:11 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34788 "EHLO
+	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750929AbcFBMJE (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 2 Jun 2016 08:09:04 -0400
 Content-Disposition: inline
-In-Reply-To: <7858362.3LIbrZdxpY@wuerfel>
+In-Reply-To: <20160602092113.GH1995@dhcp22.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linaro-kernel@lists.linaro.org, Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>
 
-On Thu, Jun 02, 2016 at 11:58:24AM +0200, Arnd Bergmann wrote:
-> On Thursday, June 2, 2016 10:48:15 AM CEST Build bot for Mark Brown w=
-rote:
-> > Tree/Branch: next-20160602
-> > Git describe: next-20160602
-> > Commit: ce425f36d1 Add linux-next specific files for 20160602
-> >=20
-> > Build Time: 141 min 21 sec
-> >=20
-> > Passed:    9 / 9   (100.00 %)
-> > Failed:    0 / 9   (  0.00 %)
-> >=20
-> > Errors: 0
-> > Warnings: 2
-> > Section Mismatches: 0
-> >=20
-> > -------------------------------------------------------------------=
-------------
-> > defconfigs with issues (other than build errors):
-> >       2 warnings    0 mismatches  : arm64-allmodconfig
-> >       1 warnings    0 mismatches  : arm-allmodconfig
-> >=20
-> > -------------------------------------------------------------------=
-------------
-> >=20
-> > Warnings Summary: 2
-> > 	  2 ../drivers/gpu/drm/arm/hdlcd_crtc.c:185:28: warning: unused va=
-riable 'hdlcd' [-Wunused-variable]
->=20
-> This was introduced today by 1e5e10b59403 ("drm: hdlcd: Cleanup the a=
-tomic plane operations").
-> Liviu, can you fix it up?
+Hello Michal,
 
-Yes, I have a fix in my local tree, I'll push it to the public tree soo=
-n, will be picked up by the next -next rebuild.
+On (06/02/16 11:21), Michal Hocko wrote:
+[..]
+> > [ 2856.323052] INFO: task cc1:4582 blocked for more than 21 seconds.
+> > [ 2856.323055]       Not tainted 4.7.0-rc1-next-20160601-dbg-00012-g52c180e-dirty #453
+> > [ 2856.323056] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > [ 2856.323059] cc1             D ffff880057e9fd78     0  4582   4575 0x00000000
+> > [ 2856.323062]  ffff880057e9fd78 ffff880057e08000 ffff880057e9fd90 ffff880057ea0000
+> > [ 2856.323065]  ffff88005dc3dc68 ffffffff00000001 ffff880057e09500 ffff88005dc3dc80
+> > [ 2856.323067]  ffff880057e9fd90 ffffffff81441e33 ffff88005dc3dc68 ffff880057e9fe00
+> > [ 2856.323068] Call Trace:
+> > [ 2856.323074]  [<ffffffff81441e33>] schedule+0x83/0x98
+> > [ 2856.323077]  [<ffffffff81443d9b>] rwsem_down_write_failed+0x18e/0x1d3
+> > [ 2856.323080]  [<ffffffff810a87cf>] ? unlock_page+0x2b/0x2d
+> > [ 2856.323083]  [<ffffffff811bdb77>] call_rwsem_down_write_failed+0x17/0x30
+> > [ 2856.323084]  [<ffffffff811bdb77>] ? call_rwsem_down_write_failed+0x17/0x30
+> > [ 2856.323086]  [<ffffffff81443630>] down_write+0x1f/0x2e
+> > [ 2856.323089]  [<ffffffff810ea4f3>] __khugepaged_exit+0x104/0x11a
+> > [ 2856.323091]  [<ffffffff8103702a>] mmput+0x29/0xc5
+> > [ 2856.323093]  [<ffffffff8103bbd8>] do_exit+0x34c/0x894
+> > [ 2856.323095]  [<ffffffff8102f9e0>] ? __do_page_fault+0x2f7/0x399
+> > [ 2856.323097]  [<ffffffff8103c188>] do_group_exit+0x3c/0x98
+> > [ 2856.323099]  [<ffffffff8103c1f3>] SyS_exit_group+0xf/0xf
+> > [ 2856.323101]  [<ffffffff81444cdb>] entry_SYSCALL_64_fastpath+0x13/0x8f
+> 
+> down_write in the exit path is certainly not nice. It is hard to tell
+> who is blocking the mmap_sem but it is clear that __khugepaged_exit
+> waits for the khugepaged to release its mmap_sem. Do you hapen to have a
+> trace of khugepaged? Note that the lock holder might be another writer
+> which just hasn't pinned mm_users so khugepaged might be blocked on read
+> lock as well. Or khugepaged might be just stuck somewhere...
 
-Best regards,
-Liviu
+sorry, no. this is all I have. the kernel was compiled with almost no
+debugging functionality enabled (no lockdep, no lock debug, nothing)
+for zram performance testing purposes.
 
->=20
-> > 	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data'=
- may be used uninitialized in this function [-Wmaybe-uninitialized]
->=20
-> I sent a patch on Monday, but Greg has been busy working on his stabl=
-e kernels,
-> I'm sure he'll get to it.
->=20
-> 	Arnd
->=20
+I'll try to reproduce the problem; and give your patch some testing.
+thanks.
 
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    =C2=AF\_(=E3=83=84)_/=C2=AF
+	-ss
