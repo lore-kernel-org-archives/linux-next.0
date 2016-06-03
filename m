@@ -1,73 +1,69 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
- rwsem_down_write_failed lockup
-Date: Fri, 3 Jun 2016 12:05:05 +0200
-Message-ID: <20160603100505.GE20676@dhcp22.suse.cz>
-References: <20160601131122.7dbb0a65@canb.auug.org.au>
- <20160602014835.GA635@swordfish>
- <20160602092113.GH1995@dhcp22.suse.cz>
- <20160603071551.GA453@swordfish>
- <20160603072536.GB20676@dhcp22.suse.cz>
- <20160603084347.GA502@swordfish>
- <20160603095549.GD20676@dhcp22.suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160603095549.GD20676@dhcp22.suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>
+From: Ebru Akagunduz <ebru.akagunduz@gmail.com>
+Subject: [PATCH] mm, thp: fix locking inconsistency in collapse_huge_page
+Date: Fri,  3 Jun 2016 15:28:04 +0300
+Message-ID: <1464956884-4644-1-git-send-email-ebru.akagunduz@gmail.com>
+References: <0c47a3a0-5530-b257-1c1f-28ed44ba97e6@suse.cz>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <0c47a3a0-5530-b257-1c1f-28ed44ba97e6@suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: vbabka@suse.cz, sergey.senozhatsky.work@gmail.com, mhocko@kernel.org, kirill.shutemov@linux.intel.com, sfr@canb.auug.org.au, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, riel@redhat.com, aarcange@redhat.com, Ebru Akagunduz <ebru.akagunduz@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri 03-06-16 11:55:49, Michal Hocko wrote:
-> On Fri 03-06-16 17:43:47, Sergey Senozhatsky wrote:
-> > On (06/03/16 09:25), Michal Hocko wrote:
-> > > > it's quite hard to trigger the bug (somehow), so I can't
-> > > > follow up with more information as of now.
-> > 
-> > either I did something very silly fixing up the patch, or the
-> > patch may be causing general protection faults on my system.
-> > 
-> > RIP collect_mm_slot() + 0x42/0x84
-> > 	khugepaged
-> 
-> So is this really collect_mm_slot called directly from khugepaged or is
-> some inlining going on there?
-> 
-> > 	prepare_to_wait_event
-> > 	maybe_pmd_mkwrite
-> > 	kthread
-> > 	_raw_sin_unlock_irq
-> > 	ret_from_fork
-> > 	kthread_create_on_node
-> > 
-> > collect_mm_slot() + 0x42/0x84 is
-> 
-> I guess that the problem is that I have missed that __khugepaged_exit
-> doesn't clear the cached khugepaged_scan.mm_slot. Does the following on
-> top fixes that?
+After creating revalidate vma function, locking inconsistency occured
+due to directing the code path to wrong label. This patch directs
+to correct label and fix the inconsistency.
 
-That wouldn't be sufficient after a closer look. We need to do the same
-from khugepaged_scan_mm_slot when atomic_inc_not_zero fails. So I guess
-it would be better to stick it into collect_mm_slot.
+Related commit that caused inconsistency:
+http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=da4360877094368f6dfe75bbe804b0f0a5d575b0
 
-Thanks for your testing!
+Signed-off-by: Ebru Akagunduz <ebru.akagunduz@gmail.com>
 ---
+ mm/huge_memory.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 6574c62ca4a3..0432581fb87c 100644
+index 292cedd..8043d91 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -2011,6 +2011,9 @@ static void collect_mm_slot(struct mm_slot *mm_slot)
- 		/* khugepaged_mm_lock actually not necessary for the below */
- 		free_mm_slot(mm_slot);
- 		mmdrop(mm);
-+
-+		if (khugepaged_scan.mm_slot == mm_slot)
-+			khugepaged_scan.mm_slot = NULL;
+@@ -2493,13 +2493,18 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 	curr_allocstall = sum_vm_event(ALLOCSTALL);
+ 	down_read(&mm->mmap_sem);
+ 	result = hugepage_vma_revalidate(mm, vma, address);
+-	if (result)
+-		goto out;
++	if (result) {
++		mem_cgroup_cancel_charge(new_page, memcg, true);
++		up_read(&mm->mmap_sem);
++		goto out_nolock;
++	}
+ 
+ 	pmd = mm_find_pmd(mm, address);
+ 	if (!pmd) {
+ 		result = SCAN_PMD_NULL;
+-		goto out;
++		mem_cgroup_cancel_charge(new_page, memcg, true);
++		up_read(&mm->mmap_sem);
++		goto out_nolock;
  	}
- }
+ 
+ 	/*
+@@ -2513,8 +2518,9 @@ static void collapse_huge_page(struct mm_struct *mm,
+ 		 * label out. Continuing to collapse causes inconsistency.
+ 		 */
+ 		if (!__collapse_huge_page_swapin(mm, vma, address, pmd)) {
++			mem_cgroup_cancel_charge(new_page, memcg, true);
+ 			up_read(&mm->mmap_sem);
+-			goto out;
++			goto out_nolock;
+ 		}
+ 	}
  
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
