@@ -1,75 +1,64 @@
-From: "Pan, Miaoqing" <miaoqing@qti.qualcomm.com>
-Subject: Re: ath9k gpio request
-Date: Fri, 3 Jun 2016 05:49:06 +0000
-Message-ID: <1464932944074.85131@qti.qualcomm.com>
-References: <20160530132225.4d297678@canb.auug.org.au>
-	<574C4851.9090201@gmail.com>	<87fusy3cqx.fsf_-_@kamboji.qca.qualcomm.com>
-	<574D3EAA.3060102@gmail.com> <1464764036580.70506@qti.qualcomm.com>
-	<574EC331.1080901@gmail.com> <574ED297.4080004@gmail.com>
-	<1464854569880.79341@qti.qualcomm.com>
- <57501AE4.7080104@gmail.com>,<8760tqn8fc.fsf@purkki.adurom.net>
+From: Xiong Zhou <xzhou@redhat.com>
+Subject: Re: linux-next/linux memleak after IO on dax mountpoint
+Date: Fri, 3 Jun 2016 14:35:14 +0800
+Message-ID: <20160603063514.GA16231@dhcp12-144.nay.redhat.com>
+References: <20160527084617.GD2933@dhcp12-144.nay.redhat.com>
+ <20160528040554.GA23685@dhcp12-144.nay.redhat.com>
+ <CAHse=S-H_yMhZKNmMZpb41M+o+2tMRyxiUG9wQoemewBXXYTPw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:60576 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750816AbcFCFtN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2016 01:49:13 -0400
-In-Reply-To: <8760tqn8fc.fsf@purkki.adurom.net>
-Content-Language: en-US
+Received: from mx1.redhat.com ([209.132.183.28]:35660 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751138AbcFCGfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 3 Jun 2016 02:35:18 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHse=S-H_yMhZKNmMZpb41M+o+2tMRyxiUG9wQoemewBXXYTPw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, ath9k-devel <ath9k-devel@qualcomm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Miaoqing Pan <miaoqing@codeaurora.org>
+To: David Drysdale <drysdale@google.com>, hch@lst.de
+Cc: Xiong Zhou <xzhou@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, axboe@fb.com, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Done, https://patchwork.kernel.org/patch/9151847/.
+On Thu, Jun 02, 2016 at 04:22:37PM +0100, David Drysdale wrote:
+> On Sat, May 28, 2016 at 5:05 AM, Xiong Zhou <xzhou@redhat.com> wrote:
+> > On Fri, May 27, 2016 at 04:46:17PM +0800, Xiong Zhou wrote:
+> > ...
+> >> Still working on to id which commit in this merge causes this issuer,
+> >
+> > Narrowed down to:
+> >
+> > 37e5823 block: add offset in blk_add_request_payload()
+...
+> > 0bf77e9 nvme: switch to RCU freeing the namespace
+> > 9082e87 block: remove struct bio_batch
+> 
+> FWIW, I'm also seeing kmemleak report a leak with v4.7-rc1, in
+> a different scenario (just normal desktop use).  Not done much
+> digging so far, but this commit (9082e87bf) looks like it might be
+> relevant
+
+<snip..>
+
+Thanks for the tip, accelerated my searching in the block merge.
+
+On top of v4.7-rc1 , in order to revert this commit cleanly:
+
+	9082e87 block: remove struct bio_batch
+
+, have to revert these two:
+
+	bbd848e0f block: reinstate early return of -EOPNOTSUPP from blkdev_issue_discard
+	38f2525 block: add __blkdev_issue_discard
+
+, then have to revert these two dependances:
+
+202bae5 dm thin: unroll issue_discard() to create longer discard bio chains
+3dba53a9 dm thin: use __blkdev_issue_discard for async discard support
+
+With all these five commits reverted, NO memleak happens.
+
+Reverting other four commits while not reverting 9082e87, memleak
+happens.
 
 Thanks,
-Miaoqing
-________________________________________
-From: Kalle Valo <kvalo@codeaurora.org>
-Sent: Friday, June 3, 2016 1:33 PM
-To: Pan, Miaoqing
-Cc: Sudip Mukherjee; Stephen Rothwell; ath9k-devel; linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; linux-wireless@vger.kernel.org; ath9k-devel@lists.ath9k.org; netdev@vger.kernel.org; Miaoqing Pan
-Subject: Re: ath9k gpio request
-
-Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
-
-> On Thursday 02 June 2016 01:32 PM, Pan, Miaoqing wrote:
->> Seems there are something wrong in the datasheet,  try
->>
->> --- a/drivers/net/wireless/ath/ath9k/reg.h
->> +++ b/drivers/net/wireless/ath/ath9k/reg.h
->> @@ -1122,8 +1122,8 @@ enum {
->>   #define AR9300_NUM_GPIO                          16
->>   #define AR9330_NUM_GPIO                                 16
->>   #define AR9340_NUM_GPIO                                 23
->> -#define AR9462_NUM_GPIO                                 10
->> -#define AR9485_NUM_GPIO                                 12
->> +#define AR9462_NUM_GPIO                                 14
->> +#define AR9485_NUM_GPIO                                 11
->>   #define AR9531_NUM_GPIO                                 18
->>   #define AR9550_NUM_GPIO                                 24
->>   #define AR9561_NUM_GPIO                                 23
->> @@ -1139,8 +1139,8 @@ enum {
->>   #define AR9300_GPIO_MASK                        0x0000F4FF
->>   #define AR9330_GPIO_MASK                        0x0000F4FF
->>   #define AR9340_GPIO_MASK                        0x0000000F
->> -#define AR9462_GPIO_MASK                        0x000003FF
->> -#define AR9485_GPIO_MASK                        0x00000FFF
->> +#define AR9462_GPIO_MASK                        0x00003FFF
->> +#define AR9485_GPIO_MASK                        0x000007FF
->>   #define AR9531_GPIO_MASK                        0x0000000F
->>   #define AR9550_GPIO_MASK                        0x0000000F
->>   #define AR9561_GPIO_MASK                        0x0000000F
->
-> solves the problem.
->
-> Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
-
-Great, thanks for testing everyone. Miaoqing, please send a proper patch
-ASAP and I'll push it to 4.7.
-
---
-Kalle Valo
+Xiong
