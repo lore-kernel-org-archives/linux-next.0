@@ -1,61 +1,59 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
- rwsem_down_write_failed lockup
-Date: Fri, 3 Jun 2016 13:14:19 +0900
-Message-ID: <20160603041351.GA10882@swordfish>
-References: <20160601131122.7dbb0a65@canb.auug.org.au>
- <20160602014835.GA635@swordfish>
- <0c47a3a0-5530-b257-1c1f-28ed44ba97e6@suse.cz>
- <20160602185856.GA3854@debian>
- <20160603010036.GA464@swordfish>
- <20160603012919.GB464@swordfish>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: ath9k gpio request
+Date: Fri, 03 Jun 2016 08:33:11 +0300
+Message-ID: <8760tqn8fc.fsf@purkki.adurom.net>
+References: <20160530132225.4d297678@canb.auug.org.au>
+	<574C4851.9090201@gmail.com>
+	<87fusy3cqx.fsf_-_@kamboji.qca.qualcomm.com>
+	<574D3EAA.3060102@gmail.com> <1464764036580.70506@qti.qualcomm.com>
+	<574EC331.1080901@gmail.com> <574ED297.4080004@gmail.com>
+	<1464854569880.79341@qti.qualcomm.com> <57501AE4.7080104@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34367 "EHLO
-	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750748AbcFCEP3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2016 00:15:29 -0400
-Content-Disposition: inline
-In-Reply-To: <20160603012919.GB464@swordfish>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Ebru Akagunduz <ebru.akagunduz@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, Michal Hocko <mhocko@kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrea Arcangeli <aarcange@redhat.com>, Rik van Riel <riel@redhat.com>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57501AE4.7080104@gmail.com> (Sudip Mukherjee's message of "Thu,
+	02 Jun 2016 17:09:16 +0530")
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Pan, Miaoqing" <miaoqing@qti.qualcomm.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, ath9k-devel <ath9k-devel@qca.qualcomm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel@lists.ath9k.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Miaoqing Pan <miaoqing@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
-On (06/03/16 10:29), Sergey Senozhatsky wrote:
-> > 	if (allocstall == curr_allocstall && swap != 0) {
-> > 		if (!__collapse_huge_page_swapin(mm, vma, address, pmd)) {
-> > 			{
-> > 			:	if (ret & VM_FAULT_RETRY) {
-> > 			:		down_read(&mm->mmap_sem);
-> > 			:		^^^^^^^^^
-> 
-> oh... it's in a loop
-> 
-> 		for (_address = address; _address < address + HPAGE_PMD_NR*PAGE_SIZE;
-> 						pte++, _address += PAGE_SIZE) {
-> 			ret = do_swap_page()
-> 			if (ret & VM_FAULT_RETRY) {
-> 				down_read(&mm->mmap_sem);
-> 				^^^^^^^^^
-> 				...
-> 			}
-> 		}
-> 
-> so there can be multiple sem->count++ in __collapse_huge_page_swapin(),
-> and you don't know how many sem->count-- you need to do later? is this
-> correct or am I hallucinating?
+Sudip Mukherjee <sudipm.mukherjee@gmail.com> writes:
 
-No, I was wrong, sorry for the noise.
+> On Thursday 02 June 2016 01:32 PM, Pan, Miaoqing wrote:
+>> Seems there are something wrong in the datasheet,  try
+>>
+>> --- a/drivers/net/wireless/ath/ath9k/reg.h
+>> +++ b/drivers/net/wireless/ath/ath9k/reg.h
+>> @@ -1122,8 +1122,8 @@ enum {
+>>   #define AR9300_NUM_GPIO                          16
+>>   #define AR9330_NUM_GPIO                                 16
+>>   #define AR9340_NUM_GPIO                                 23
+>> -#define AR9462_NUM_GPIO                                 10
+>> -#define AR9485_NUM_GPIO                                 12
+>> +#define AR9462_NUM_GPIO                                 14
+>> +#define AR9485_NUM_GPIO                                 11
+>>   #define AR9531_NUM_GPIO                                 18
+>>   #define AR9550_NUM_GPIO                                 24
+>>   #define AR9561_NUM_GPIO                                 23
+>> @@ -1139,8 +1139,8 @@ enum {
+>>   #define AR9300_GPIO_MASK                        0x0000F4FF
+>>   #define AR9330_GPIO_MASK                        0x0000F4FF
+>>   #define AR9340_GPIO_MASK                        0x0000000F
+>> -#define AR9462_GPIO_MASK                        0x000003FF
+>> -#define AR9485_GPIO_MASK                        0x00000FFF
+>> +#define AR9462_GPIO_MASK                        0x00003FFF
+>> +#define AR9485_GPIO_MASK                        0x000007FF
+>>   #define AR9531_GPIO_MASK                        0x0000000F
+>>   #define AR9550_GPIO_MASK                        0x0000000F
+>>   #define AR9561_GPIO_MASK                        0x0000000F
+>
+> solves the problem.
+>
+> Tested-by: Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
 
-it's getting unlocked in
+Great, thanks for testing everyone. Miaoqing, please send a proper patch
+ASAP and I'll push it to 4.7.
 
-__collapse_huge_page_swapin()
-	do_swap_page()
-		lock_page_or_retry()
-			if (flags & FAULT_FLAG_ALLOW_RETRY)
-				up_read(&mm->mmap_sem);
-	return VM_FAULT_RETRY
-
-	-ss
+-- 
+Kalle Valo
