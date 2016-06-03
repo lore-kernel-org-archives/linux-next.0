@@ -1,64 +1,66 @@
-From: Xiong Zhou <xzhou@redhat.com>
-Subject: Re: linux-next/linux memleak after IO on dax mountpoint
-Date: Fri, 3 Jun 2016 14:35:14 +0800
-Message-ID: <20160603063514.GA16231@dhcp12-144.nay.redhat.com>
-References: <20160527084617.GD2933@dhcp12-144.nay.redhat.com>
- <20160528040554.GA23685@dhcp12-144.nay.redhat.com>
- <CAHse=S-H_yMhZKNmMZpb41M+o+2tMRyxiUG9wQoemewBXXYTPw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160603 build: 0 failures 2 warnings (next-20160603)
+Date: Fri, 03 Jun 2016 07:55:06 +0100
+Message-ID: <E1b8j0b-0004pD-Ui@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:35660 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751138AbcFCGfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 3 Jun 2016 02:35:18 -0400
-Content-Disposition: inline
-In-Reply-To: <CAHse=S-H_yMhZKNmMZpb41M+o+2tMRyxiUG9wQoemewBXXYTPw@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37136 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751377AbcFCGzM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 3 Jun 2016 02:55:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Drysdale <drysdale@google.com>, hch@lst.de
-Cc: Xiong Zhou <xzhou@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, axboe@fb.com, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Jun 02, 2016 at 04:22:37PM +0100, David Drysdale wrote:
-> On Sat, May 28, 2016 at 5:05 AM, Xiong Zhou <xzhou@redhat.com> wrote:
-> > On Fri, May 27, 2016 at 04:46:17PM +0800, Xiong Zhou wrote:
-> > ...
-> >> Still working on to id which commit in this merge causes this issuer,
-> >
-> > Narrowed down to:
-> >
-> > 37e5823 block: add offset in blk_add_request_payload()
-...
-> > 0bf77e9 nvme: switch to RCU freeing the namespace
-> > 9082e87 block: remove struct bio_batch
-> 
-> FWIW, I'm also seeing kmemleak report a leak with v4.7-rc1, in
-> a different scenario (just normal desktop use).  Not done much
-> digging so far, but this commit (9082e87bf) looks like it might be
-> relevant
+Tree/Branch: next-20160603
+Git describe: next-20160603
+Commit: 64289ca05e Add linux-next specific files for 20160603
 
-<snip..>
+Build Time: 79 min 41 sec
 
-Thanks for the tip, accelerated my searching in the block merge.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-On top of v4.7-rc1 , in order to revert this commit cleanly:
+Errors: 0
+Warnings: 2
+Section Mismatches: 0
 
-	9082e87 block: remove struct bio_batch
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
 
-, have to revert these two:
+-------------------------------------------------------------------------------
 
-	bbd848e0f block: reinstate early return of -EOPNOTSUPP from blkdev_issue_discard
-	38f2525 block: add __blkdev_issue_discard
+Warnings Summary: 2
+	  2 ../drivers/dma-buf/sync_file.c:85:53: warning: format '%d' expects argument of type 'int', but argument 6 has type 'u64 {aka long long unsigned int}' [-Wformat=]
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-, then have to revert these two dependances:
 
-202bae5 dm thin: unroll issue_discard() to create longer discard bio chains
-3dba53a9 dm thin: use __blkdev_issue_discard for async discard support
 
-With all these five commits reverted, NO memleak happens.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-Reverting other four commits while not reverting 9082e87, memleak
-happens.
 
-Thanks,
-Xiong
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/dma-buf/sync_file.c:85:53: warning: format '%d' expects argument of type 'int', but argument 6 has type 'u64 {aka long long unsigned int}' [-Wformat=]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/dma-buf/sync_file.c:85:53: warning: format '%d' expects argument of type 'int', but argument 6 has type 'u64 {aka long long unsigned int}' [-Wformat=]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
