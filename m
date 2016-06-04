@@ -1,73 +1,51 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v2 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Sat, 4 Jun 2016 09:14:08 +0200
-Message-ID: <20160604071408.GA22045@amd>
-References: <cover.1464029828.git.vilhelm.gray@gmail.com>
- <d7320150373a0a04ba44b12c5c56d92370853316.1464029828.git.vilhelm.gray@gmail.com>
- <20160603205703.GC11253@amd>
- <20160603211244.GA6831@sophia>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
+ rwsem_down_write_failed lockup
+Date: Sat, 4 Jun 2016 16:51:14 +0900
+Message-ID: <20160604075114.GA21108@swordfish>
+References: <20160602014835.GA635@swordfish>
+ <20160602092113.GH1995@dhcp22.suse.cz>
+ <20160603071551.GA453@swordfish>
+ <20160603072536.GB20676@dhcp22.suse.cz>
+ <20160603084347.GA502@swordfish>
+ <20160603095549.GD20676@dhcp22.suse.cz>
+ <20160603100505.GE20676@dhcp22.suse.cz>
+ <20160603133813.GA578@swordfish>
+ <20160603134509.GI20676@dhcp22.suse.cz>
+ <20160603134934.GJ20676@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35476 "EHLO
+	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750761AbcFDHvS (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 4 Jun 2016 03:51:18 -0400
 Content-Disposition: inline
-In-Reply-To: <20160603211244.GA6831@sophia>
-Sender: linux-gpio-owner@vger.kernel.org
-To: William Breathitt Gray <vilhelm.gray@gmail.com>
-Cc: gregkh@linuxfoundation.org, akpm@linux-foundation.org, x86@kernel.org, linux-next@vger.kernel.org, linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20160603134934.GJ20676@dhcp22.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Andrea Arcangeli <aarcange@redhat.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri 2016-06-03 17:12:44, William Breathitt Gray wrote:
-> On Fri, Jun 03, 2016 at 10:57:03PM +0200, Pavel Machek wrote:
-> >Hi!
-> >
-> >> With the introduction of the ISA_BUS_API Kconfig option, ISA-style
-> >> drivers may be built for X86_64 architectures. This patch changes the
-> >> ISA Kconfig option dependency of the PC/104 drivers to ISA_BUS_API, thus
-> >> allowing them to build for X86_64 as they are expected to.
-> >> 
-> >> Cc: Guenter Roeck <linux@roeck-us.net>
-> >> Cc: Linus Walleij <linus.walleij@linaro.org>
-> >> Signed-off-by: William Breathitt Gray <vilhelm.gray@gmail.com>
-> >> ---
-> >>  drivers/gpio/Kconfig | 8 ++++----
-> >>  1 file changed, 4 insertions(+), 4 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> >> index 48da857..dc6da77 100644
-> >> --- a/drivers/gpio/Kconfig
-> >> +++ b/drivers/gpio/Kconfig
-> >> @@ -530,7 +530,7 @@ menu "Port-mapped I/O GPIO drivers"
-> >>  
-> >>  config GPIO_104_DIO_48E
-> >>  	tristate "ACCES 104-DIO-48E GPIO support"
-> >> -	depends on ISA
-> >> +	depends on ISA_BUS_API
-> >>  	select GPIOLIB_IRQCHIP
-> >>  	help
-> >>  	  Enables GPIO support for the ACCES 104-DIO-48E series
-> >
-> >Should we do "depends on PC104" here, because that is what it really
-> >means, and have PC104 enabled when ISA_BUS_API is enabled or something
-> >like that?
+Hello,
+
+On (06/03/16 15:49), Michal Hocko wrote:
+> __khugepaged_exit is called during the final __mmput and it employs a
+> complex synchronization dances to make sure it doesn't race with the
+> khugepaged which might be scanning this mm at the same time. This is
+> all caused by the fact that khugepaged doesn't pin mm_users. Things
+> would simplify considerably if we simply check the mm at
+> khugepaged_scan_mm_slot and if mm_users was already 0 then we know it
+> is dead and we can unhash the mm_slot and move on to another one. This
+> will also guarantee that __khugepaged_exit cannot race with khugepaged
+> and so we can free up the slot if it is still hashed.
 > 
-> Since the functionality remains the same, I'm a bit indifferent to that
-> change; as long as the driver builds for systems in which it's intended
-> to be used, I'm satisfied.
-> 
-> Differentiating between PC/104 and ISA may be a pointless endeavor
-> though since both buses appear the same to software. But if it is better
-> to differentiate between devices as such, then I see little harm in
-> adding a PC104 Kconfig option which follows the ISA_BUS_API Kconfig
-> option.
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-Well, they are same to the software, but not at the hardware. If I
-have a development board that has PC104 (but not isa), I'd like to see
-prompts for PC104 extensions, not for isa. If PC105 comes out, still
-ISA compatible, I will want to see prompts for PC104 boards or PC105
-boards, but not neccessarily both...
+with this patch and
+http://ozlabs.org/~akpm/mmotm/broken-out/mm-thp-make-swapin-readahead-under-down_read-of-mmap_sem-fix-2.patch
 
-Best regards,
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+I saw no problems during my tests (well, may be didn't test hard
+enough).
+
+	-ss
