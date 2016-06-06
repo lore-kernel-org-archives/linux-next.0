@@ -1,48 +1,31 @@
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [PATCH] mm, thp: fix locking inconsistency in collapse_huge_page
-Date: Mon, 6 Jun 2016 15:05:19 +0200
-Message-ID: <12918dcd-a695-c6f4-e06f-69141c5f357f@suse.cz>
-References: <0c47a3a0-5530-b257-1c1f-28ed44ba97e6@suse.cz>
- <1464956884-4644-1-git-send-email-ebru.akagunduz@gmail.com>
+From: Mark Salter <msalter@redhat.com>
+Subject: Re: linux-next: error fetching the c6x tree
+Date: Mon, 06 Jun 2016 16:09:15 -0400
+Message-ID: <1465243755.3561.10.camel@redhat.com>
+References: <20160606001849.7b5577e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1464956884-4644-1-git-send-email-ebru.akagunduz@gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Ebru Akagunduz <ebru.akagunduz@gmail.com>, akpm@linux-foundation.org
-Cc: sergey.senozhatsky.work@gmail.com, mhocko@kernel.org, kirill.shutemov@linux.intel.com, sfr@canb.auug.org.au, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, riel@redhat.com, aarcange@redhat.com
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:59604 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752123AbcFFUJR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jun 2016 16:09:17 -0400
+In-Reply-To: <20160606001849.7b5577e9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 06/03/2016 02:28 PM, Ebru Akagunduz wrote:
-> After creating revalidate vma function, locking inconsistency occured
-> due to directing the code path to wrong label. This patch directs
-> to correct label and fix the inconsistency.
->
-> Related commit that caused inconsistency:
-> http://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/?id=da4360877094368f6dfe75bbe804b0f0a5d575b0
->
-> Signed-off-by: Ebru Akagunduz <ebru.akagunduz@gmail.com>
+On Mon, 2016-06-06 at 00:18 +1000, Stephen Rothwell wrote:
+> Hi Mark,
+> 
+> Fetching the c6x tree has produced this error for the past few days:
+> 
+> fatal: Could not read from remote repository.
+> 
+> Please make sure you have the correct access rights
+> and the repository exists.
+> 
 
-I think this does fix the inconsistency, thanks.
-
-But looking at collapse_huge_page() as of latest -next, I wonder if 
-there's another problem:
-
-pmd = mm_find_pmd(mm, address);
-...
-up_read(&mm->mmap_sem);
-down_write(&mm->mmap_sem);
-hugepage_vma_revalidate(mm, address);
-...
-pte = pte_offset_map(pmd, address);
-
-What guarantees that 'pmd' is still valid?
-
-Vlastimil
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Thanks. TI is investigating...
