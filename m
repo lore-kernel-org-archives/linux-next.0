@@ -1,61 +1,70 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 6 (mm/slub.c)
-Date: Tue, 7 Jun 2016 14:37:32 -0700
-Message-ID: <57573E9C.1040604@infradead.org>
-References: <20160606142058.44b82e38@canb.auug.org.au>
- <57565789.9050508@infradead.org>
- <20160607131242.fac39cbade676df24d70edaa@linux-foundation.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: linux-next: build warning after merge of the mmc-uh tree
+Date: Tue, 7 Jun 2016 23:42:09 +0200
+Message-ID: <CAPDyKFrfv-35p_7S4XvsmN2NNcw=GfHZCE9ojtXEfijy1eSi5A@mail.gmail.com>
+References: <20160606113848.534cbdf7@canb.auug.org.au> <374e7cf7-fd34-45a7-db34-0d9337833fac@rock-chips.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:57020 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932155AbcFGVhi (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 17:37:38 -0400
-In-Reply-To: <20160607131242.fac39cbade676df24d70edaa@linux-foundation.org>
+Received: from mail-wm0-f53.google.com ([74.125.82.53]:38878 "EHLO
+	mail-wm0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932326AbcFGVmM (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 17:42:12 -0400
+Received: by mail-wm0-f53.google.com with SMTP id m124so131907128wme.1
+        for <linux-next@vger.kernel.org>; Tue, 07 Jun 2016 14:42:11 -0700 (PDT)
+In-Reply-To: <374e7cf7-fd34-45a7-db34-0d9337833fac@rock-chips.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>, Thomas Garnier <thgarnie@google.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 06/07/16 13:12, Andrew Morton wrote:
-> On Mon, 6 Jun 2016 22:11:37 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
->> On 06/05/16 21:20, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20160603:
->>>
+On 6 June 2016 at 03:51, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+> Hi Stephen,
+>
+> On 2016/6/6 9:38, Stephen Rothwell wrote:
 >>
->> on i386:
+>> Hi Ulf,
 >>
->> mm/built-in.o: In function `init_cache_random_seq':
->> slub.c:(.text+0x76921): undefined reference to `cache_random_seq_create'
->> mm/built-in.o: In function `__kmem_cache_release':
->> (.text+0x80525): undefined reference to `cache_random_seq_destroy'
-> 
-> Yup.  This, I guess...
-> 
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: mm-slub-freelist-randomization-fix
-> 
-> freelist_randomize(), cache_random_seq_create() and
-> cache_random_seq_destroy() should not be inside CONFIG_SLABINFO.
-> 
-> Cc: Christoph Lameter <cl@linux.com>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Pekka Enberg <penberg@kernel.org>
-> Cc: Thomas Garnier <thgarnie@google.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
+>> After merging the mmc-uh tree, today's linux-next build (x86_64
+>> allmodconfig) produced this warning:
+>>
+>> In file included from include/linux/err.h:4:0,
+>>                  from drivers/mmc/core/mmc.c:13:
+>> drivers/mmc/core/mmc.c: In function 'mmc_select_hs400es':
+>> include/linux/err.h:21:49: warning: cast to pointer from integer of
+>> different size [-Wint-to-pointer-cast]
+>>  #define IS_ERR_VALUE(x) unlikely((unsigned long)(void *)(x) >= (unsigned
+>> long)-MAX_ERRNO)
+>>                                                  ^
+>> include/linux/compiler.h:170:42: note: in definition of macro 'unlikely'
+>>  # define unlikely(x) __builtin_expect(!!(x), 0)
+>>                                           ^
+>> drivers/mmc/core/mmc.c:1244:6: note: in expansion of macro 'IS_ERR_VALUE'
+>>   if (IS_ERR_VALUE(err))
+>>       ^
+>
+>
+> Yup, sorry for this noise. Arnd had removed a lot of IS_ERR_VALUE
+> abuses, but I forgot to amend this one.
+>
+>
+> Hi Ulf,
+>
+> Should I come up with a new fix or you could manually amend it from
+> "IS_ERR_VALUE(err)" to "err < 0"? :)
+>
+>>
+>> Introduced by commit
+>>
+>>   8141f0ace818 ("mmc: core: implement enhanced strobe support")
+>>
+>> I think error values now must be "long".
+>>
 
-Yes, thanks.
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Thanks for reporting and fixing!
 
--- 
-~Randy
+I have amended the commit above and published the change on my next branch.
+
+Kind regards
+Uffe
