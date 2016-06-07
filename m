@@ -1,35 +1,47 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: linux-next: error fetching the c6x tree
-Date: Tue, 07 Jun 2016 12:16:21 -0400
-Message-ID: <1465316181.3561.15.camel@redhat.com>
-References: <20160606001849.7b5577e9@canb.auug.org.au>
-	 <1465243755.3561.10.camel@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:42440 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1161025AbcFGQQY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 7 Jun 2016 12:16:24 -0400
-In-Reply-To: <1465243755.3561.10.camel@redhat.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Shaun Tancheff <shaun@tancheff.com>
+Subject: [PATCH] Fix reported kmemleak
+Date: Tue,  7 Jun 2016 11:23:30 -0500
+Message-ID: <1465316612-9649-1-git-send-email-shaun@tancheff.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-block@vger.kernel.org
+Cc: Shaun Tancheff <shaun@tancheff.com>, Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, David Drysdale <drysdale@google.com>, Xiong Zhou <xzhou@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, Larry Finger <Larry.Finger@lwfinger.net>, Catalin Marinas <catalin.marinas@arm.com>, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>, bart.vanassche@sandisk.com
+List-Id: linux-next.vger.kernel.org
 
-On Mon, 2016-06-06 at 16:09 -0400, Mark Salter wrote:
-> On Mon, 2016-06-06 at 00:18 +1000, Stephen Rothwell wrote:
-> > 
-> > Hi Mark,
-> > 
-> > Fetching the c6x tree has produced this error for the past few days:
-> > 
-> > fatal: Could not read from remote repository.
-> > 
-> > Please make sure you have the correct access rights
-> > and the repository exists.
-> > 
-> Thanks. TI is investigating...
+This fixes a memory leak reported by a few people in 4.7-rc1
 
-It has been fixed, now.
+kmemleak report after 9082e87bfbf8 ("block: remove struct bio_batch")
+
+This patch just formalizes the one in this discussion here:
+https://lkml.kernel.org/r/20160606112620.GA29910@e104818-lin.cambridge.arm.com
+
+The same issue appears here:
+https://lkml.kernel.org/r/20160607102651.GA6480@dhcp12-144.nay.redhat.com
+
+Patch is also available at:
+
+https://github.com/stancheff/linux.git
+branch: v4.7-rc2+bio_put
+
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk
+cc: David Drysdale <drysdale@google.com>
+Cc: Xiong Zhou <xzhou@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
+Cc: linux-nvdimm@ml01.01.org
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+Cc: Jens Axboe <axboe@fb.com>,
+Cc: bart.vanassche@sandisk.com
+
+Shaun Tancheff (1):
+  Missing bio_put following submit_bio_wait
+
+ block/blk-lib.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+-- 
+2.8.1
