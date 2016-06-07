@@ -1,38 +1,165 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH] Missing bio_put following submit_bio_wait
-Date: Tue, 7 Jun 2016 10:48:15 -0600
-Message-ID: <5756FACF.8030202@kernel.dk>
-References: <1465316612-9649-1-git-send-email-shaun@tancheff.com>
- <1465317133-13266-1-git-send-email-shaun@tancheff.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: Tree for Jun 6 (mm/slub.c)
+Date: Tue, 7 Jun 2016 13:12:42 -0700
+Message-ID: <20160607131242.fac39cbade676df24d70edaa@linux-foundation.org>
+References: <20160606142058.44b82e38@canb.auug.org.au>
+	<57565789.9050508@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f48.google.com ([209.85.214.48]:38646 "EHLO
-	mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161503AbcFGQsS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 12:48:18 -0400
-Received: by mail-it0-f48.google.com with SMTP id h190so20100637ith.1
-        for <linux-next@vger.kernel.org>; Tue, 07 Jun 2016 09:48:18 -0700 (PDT)
-In-Reply-To: <1465317133-13266-1-git-send-email-shaun@tancheff.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Shaun Tancheff <shaun@tancheff.com>, linux-block@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>, David Drysdale <drysdale@google.com>, Xiong Zhou <xzhou@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, Larry Finger <Larry.Finger@lwfinger.net>, Catalin Marinas <catalin.marinas@arm.com>, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>, bart.vanassche@sandisk.com, Shaun Tancheff <shaun.tancheff@seagate.com>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <57565789.9050508@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>, Thomas Garnier <thgarnie@google.com>
+List-Id: linux-next.vger.kernel.org
 
-On 06/07/2016 10:32 AM, Shaun Tancheff wrote:
-> submit_bio_wait() gives the caller an opportunity to examine
-> struct bio and so expects the caller to issue the put_bio()
->
-> This fixes a memory leak reported by a few people in 4.7-rc2
-> kmemleak report after 9082e87bfbf8 ("block: remove struct bio_batch")
->
-> Signed-off-by: Shaun Tancheff <shaun.tancheff@seagate.com>
-> Tested-by: Catalin Marinas <catalin.marinas@arm.com>
-> Tested-by: Larry Finger@lwfinger.net
-> Tested-by: David Drysdale <drysdale@google.com>
+On Mon, 6 Jun 2016 22:11:37 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Thanks, applied.
+> On 06/05/16 21:20, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20160603:
+> > 
+> 
+> on i386:
+> 
+> mm/built-in.o: In function `init_cache_random_seq':
+> slub.c:(.text+0x76921): undefined reference to `cache_random_seq_create'
+> mm/built-in.o: In function `__kmem_cache_release':
+> (.text+0x80525): undefined reference to `cache_random_seq_destroy'
 
--- 
-Jens Axboe
+Yup.  This, I guess...
+
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm-slub-freelist-randomization-fix
+
+freelist_randomize(), cache_random_seq_create() and
+cache_random_seq_destroy() should not be inside CONFIG_SLABINFO.
+
+Cc: Christoph Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: Thomas Garnier <thgarnie@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+--- a/mm/slab_common.c~mm-reorganize-slab-freelist-randomization-fix
++++ a/mm/slab_common.c
+@@ -1030,6 +1030,53 @@ void *kmalloc_order_trace(size_t size, g
+ EXPORT_SYMBOL(kmalloc_order_trace);
+ #endif
+ 
++#ifdef CONFIG_SLAB_FREELIST_RANDOM
++/* Randomize a generic freelist */
++static void freelist_randomize(struct rnd_state *state, unsigned int *list,
++			size_t count)
++{
++	size_t i;
++	unsigned int rand;
++
++	for (i = 0; i < count; i++)
++		list[i] = i;
++
++	/* Fisher-Yates shuffle */
++	for (i = count - 1; i > 0; i--) {
++		rand = prandom_u32_state(state);
++		rand %= (i + 1);
++		swap(list[i], list[rand]);
++	}
++}
++
++/* Create a random sequence per cache */
++int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count,
++				    gfp_t gfp)
++{
++	struct rnd_state state;
++
++	if (count < 2 || cachep->random_seq)
++		return 0;
++
++	cachep->random_seq = kcalloc(count, sizeof(unsigned int), gfp);
++	if (!cachep->random_seq)
++		return -ENOMEM;
++
++	/* Get best entropy at this stage of boot */
++	prandom_seed_state(&state, get_random_long());
++
++	freelist_randomize(&state, cachep->random_seq, count);
++	return 0;
++}
++
++/* Destroy the per-cache random freelist sequence */
++void cache_random_seq_destroy(struct kmem_cache *cachep)
++{
++	kfree(cachep->random_seq);
++	cachep->random_seq = NULL;
++}
++#endif /* CONFIG_SLAB_FREELIST_RANDOM */
++
+ #ifdef CONFIG_SLABINFO
+ 
+ #ifdef CONFIG_SLAB
+@@ -1142,53 +1189,6 @@ int memcg_slab_show(struct seq_file *m,
+ }
+ #endif
+ 
+-#ifdef CONFIG_SLAB_FREELIST_RANDOM
+-/* Randomize a generic freelist */
+-static void freelist_randomize(struct rnd_state *state, unsigned int *list,
+-			size_t count)
+-{
+-	size_t i;
+-	unsigned int rand;
+-
+-	for (i = 0; i < count; i++)
+-		list[i] = i;
+-
+-	/* Fisher-Yates shuffle */
+-	for (i = count - 1; i > 0; i--) {
+-		rand = prandom_u32_state(state);
+-		rand %= (i + 1);
+-		swap(list[i], list[rand]);
+-	}
+-}
+-
+-/* Create a random sequence per cache */
+-int cache_random_seq_create(struct kmem_cache *cachep, unsigned int count,
+-				    gfp_t gfp)
+-{
+-	struct rnd_state state;
+-
+-	if (count < 2 || cachep->random_seq)
+-		return 0;
+-
+-	cachep->random_seq = kcalloc(count, sizeof(unsigned int), gfp);
+-	if (!cachep->random_seq)
+-		return -ENOMEM;
+-
+-	/* Get best entropy at this stage of boot */
+-	prandom_seed_state(&state, get_random_long());
+-
+-	freelist_randomize(&state, cachep->random_seq, count);
+-	return 0;
+-}
+-
+-/* Destroy the per-cache random freelist sequence */
+-void cache_random_seq_destroy(struct kmem_cache *cachep)
+-{
+-	kfree(cachep->random_seq);
+-	cachep->random_seq = NULL;
+-}
+-#endif /* CONFIG_SLAB_FREELIST_RANDOM */
+-
+ /*
+  * slabinfo_op - iterator that generates /proc/slabinfo
+  *
+_
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
