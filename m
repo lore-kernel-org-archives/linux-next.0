@@ -1,52 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 6 (mm/slub.c)
-Date: Wed, 8 Jun 2016 09:31:57 +1000
-Message-ID: <20160608093157.51225c43@canb.auug.org.au>
-References: <20160606142058.44b82e38@canb.auug.org.au>
-	<57565789.9050508@infradead.org>
-	<20160607131242.fac39cbade676df24d70edaa@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20160607131242.fac39cbade676df24d70edaa@linux-foundation.org>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux MM <linux-mm@kvack.org>, Thomas Garnier <thgarnie@google.com>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: [PATCH] i2c: remove __init from i2c_register_board_info()
+Date: Tue,  7 Jun 2016 16:52:27 -0700
+Message-ID: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: wsa@the-dreams.de
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+As of next-20160607 with allyesconfig we get this linker failure:
 
-On Tue, 7 Jun 2016 13:12:42 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Mon, 6 Jun 2016 22:11:37 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
-> 
-> > On 06/05/16 21:20, Stephen Rothwell wrote:  
-> > > Hi all,
-> > > 
-> > > Changes since 20160603:
-> > >   
-> > 
-> > on i386:
-> > 
-> > mm/built-in.o: In function `init_cache_random_seq':
-> > slub.c:(.text+0x76921): undefined reference to `cache_random_seq_create'
-> > mm/built-in.o: In function `__kmem_cache_release':
-> > (.text+0x80525): undefined reference to `cache_random_seq_destroy'  
-> 
-> Yup.  This, I guess...
-> 
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: mm-slub-freelist-randomization-fix
+  MODPOST vmlinux.o
+WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
+the function intel_scu_devices_create() to the function
+.init.text:i2c_register_board_info()
 
-Applied to linux-next today.
+This is caused by the fact that intel_scu_devices_create() calls
+i2c_register_board_info() and intel_scu_devices_create() is not
+annotated with __init. This typically involves manual code
+inspection and if one is certain this is correct we would
+just peg intel_scu_devices_create() with a __ref annotation.
 
+In this case this would be wrong though as the
+intel_scu_devices_create() call is exported, and used in
+the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
+The issue is that even though builtin_pci_driver(ipc_driver)
+is used this just exposes the probe routine, which can occur
+at any point in time if this bus supports hotplug. A race
+can happen between kernel_init_freeable() that calls the init
+calls (in this case registeres the intel_scu_ipc.c driver, and
+later free_initmem(), which would free the i2c_register_board_info().
+If a probe happens later in boot i2c_register_board_info() would
+not be present and we should get a page fault.
+
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
+ drivers/i2c/i2c-boardinfo.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/i2c-boardinfo.c b/drivers/i2c/i2c-boardinfo.c
+index e33022e..77b1589 100644
+--- a/drivers/i2c/i2c-boardinfo.c
++++ b/drivers/i2c/i2c-boardinfo.c
+@@ -56,7 +56,7 @@ EXPORT_SYMBOL_GPL(__i2c_first_dynamic_bus_num);
+  * The board info passed can safely be __initdata, but be careful of embedded
+  * pointers (for platform_data, functions, etc) since that won't be copied.
+  */
+-int __init
++int
+ i2c_register_board_info(int busnum,
+ 	struct i2c_board_info const *info, unsigned len)
+ {
 -- 
-Cheers,
-Stephen Rothwell
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+2.8.1
