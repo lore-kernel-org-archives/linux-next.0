@@ -1,77 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with
-	Linus' tree
-Date: Tue, 7 Jun 2016 11:32:20 +1000
-Message-ID: <20160607113220.5a5018b9@canb.auug.org.au>
+Subject: linux-next: manual merge of the clockevents tree with the arm-soc
+ tree
+Date: Tue, 7 Jun 2016 12:56:20 +1000
+Message-ID: <20160607125620.22fd45c5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-kernel@vger.kernel.org, Sumit Semwal <sumit.semwal@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47224 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751126AbcFGC4X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 6 Jun 2016 22:56:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBEb2N1bWVudGF0aW9uL0RvY0Jvb2svZGV2aWNlLWRyaXZlcnMu
-dG1wbAoKYmV0d2VlbiBjb21taXQ6CgogIGVhZTE3NjBmYzgzOCAoImRvYzogdXBkYXRlL2ZpeHVw
-IGRtYS1idWYgcmVsYXRlZCBEb2NCb29rIikKCmZyb20gTGludXMnIHRyZWUgYW5kIGNvbW1pdDoK
-CiAgZGRhYzRiNWE2YzA4ICgiRG9jdW1lbnRhdGlvbjogYWRkIGZlbmNlLWFycmF5IHRvIGtlcm5l
-bCBEb2NCb29rIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUg
-YmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMgbm93IGZp
-eGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24gdHJpdmlh
-bApjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWlu
-ZXIgd2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNv
-IHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUg
-Y29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBsZXggY29u
-ZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIERvY3VtZW50
-YXRpb24vRG9jQm9vay9kZXZpY2UtZHJpdmVycy50bXBsCmluZGV4IDhjNjg3NjhlYmVlNSw1NzQ0
-ZWM3ZDJkMzAuLjAwMDAwMDAwMDAwMAotLS0gYS9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZGV2aWNl
-LWRyaXZlcnMudG1wbAorKysgYi9Eb2N1bWVudGF0aW9uL0RvY0Jvb2svZGV2aWNlLWRyaXZlcnMu
-dG1wbApAQEAgLTEyOCw0NCAtMTI4LDE4ICsxMjgsNDYgQEBAIFghRWRyaXZlcnMvYmFzZS9pbnRl
-cmZhY2UuCiAgIUVkcml2ZXJzL2Jhc2UvcGxhdGZvcm0uYwogICFFZHJpdmVycy9iYXNlL2J1cy5j
-CiAgICAgICA8L3NlY3QxPgogLSAgICAgPHNlY3QxPjx0aXRsZT5EZXZpY2UgRHJpdmVycyBETUEg
-TWFuYWdlbWVudDwvdGl0bGU+CiArICAgICA8c2VjdDE+CiArICAgICAgIDx0aXRsZT5CdWZmZXIg
-U2hhcmluZyBhbmQgU3luY2hyb25pemF0aW9uPC90aXRsZT4KICsgICAgICAgPHBhcmE+CiArICAg
-ICAgICAgVGhlIGRtYS1idWYgc3Vic3lzdGVtIHByb3ZpZGVzIHRoZSBmcmFtZXdvcmsgZm9yIHNo
-YXJpbmcgYnVmZmVycwogKyAgICAgICAgIGZvciBoYXJkd2FyZSAoRE1BKSBhY2Nlc3MgYWNyb3Nz
-IG11bHRpcGxlIGRldmljZSBkcml2ZXJzIGFuZAogKyAgICAgICAgIHN1YnN5c3RlbXMsIGFuZCBm
-b3Igc3luY2hyb25pemluZyBhc3luY2hyb25vdXMgaGFyZHdhcmUgYWNjZXNzLgogKyAgICAgICA8
-L3BhcmE+CiArICAgICAgIDxwYXJhPgogKyAgICAgICAgIFRoaXMgaXMgdXNlZCwgZm9yIGV4YW1w
-bGUsIGJ5IGRybSAicHJpbWUiIG11bHRpLUdQVSBzdXBwb3J0LCBidXQKICsgICAgICAgICBpcyBv
-ZiBjb3Vyc2Ugbm90IGxpbWl0ZWQgdG8gR1BVIHVzZSBjYXNlcy4KICsgICAgICAgPC9wYXJhPgog
-KyAgICAgICA8cGFyYT4KICsgICAgICAgICBUaGUgdGhyZWUgbWFpbiBjb21wb25lbnRzIG9mIHRo
-aXMgYXJlOiAoMSkgZG1hLWJ1ZiwgcmVwcmVzZW50aW5nCiArICAgICAgICAgYSBzZ190YWJsZSBh
-bmQgZXhwb3NlZCB0byB1c2Vyc3BhY2UgYXMgYSBmaWxlIGRlc2NyaXB0b3IgdG8gYWxsb3cKICsg
-ICAgICAgICBwYXNzaW5nIGJldHdlZW4gZGV2aWNlcywgKDIpIGZlbmNlLCB3aGljaCBwcm92aWRl
-cyBhIG1lY2hhbmlzbQogKyAgICAgICAgIHRvIHNpZ25hbCB3aGVuIG9uZSBkZXZpY2UgYXMgZmlu
-aXNoZWQgYWNjZXNzLCBhbmQgKDMpIHJlc2VydmF0aW9uLAogKyAgICAgICAgIHdoaWNoIG1hbmFn
-ZXMgdGhlIHNoYXJlZCBvciBleGNsdXNpdmUgZmVuY2UocykgYXNzb2NpYXRlZCB3aXRoCiArICAg
-ICAgICAgdGhlIGJ1ZmZlci4KICsgICAgICAgPC9wYXJhPgogKyAgICAgICA8c2VjdDI+PHRpdGxl
-PmRtYS1idWY8L3RpdGxlPgogICFFZHJpdmVycy9kbWEtYnVmL2RtYS1idWYuYwogKyFJaW5jbHVk
-ZS9saW51eC9kbWEtYnVmLmgKICsgICAgICAgPC9zZWN0Mj4KICsgICAgICAgPHNlY3QyPjx0aXRs
-ZT5yZXNlcnZhdGlvbjwvdGl0bGU+CiArIVBkcml2ZXJzL2RtYS1idWYvcmVzZXJ2YXRpb24uYyBS
-ZXNlcnZhdGlvbiBPYmplY3QgT3ZlcnZpZXcKICshRWRyaXZlcnMvZG1hLWJ1Zi9yZXNlcnZhdGlv
-bi5jCiArIUlpbmNsdWRlL2xpbnV4L3Jlc2VydmF0aW9uLmgKICsgICAgICAgPC9zZWN0Mj4KICsg
-ICAgICAgPHNlY3QyPjx0aXRsZT5mZW5jZTwvdGl0bGU+CiAgIUVkcml2ZXJzL2RtYS1idWYvZmVu
-Y2UuYwogLSFFZHJpdmVycy9kbWEtYnVmL3NlcW5vLWZlbmNlLmMKIC0hRWRyaXZlcnMvZG1hLWJ1
-Zi9mZW5jZS1hcnJheS5jCiAgIUlpbmNsdWRlL2xpbnV4L2ZlbmNlLmgKICshRWRyaXZlcnMvZG1h
-LWJ1Zi9zZXFuby1mZW5jZS5jCiAgIUlpbmNsdWRlL2xpbnV4L3NlcW5vLWZlbmNlLmgKKyshRWRy
-aXZlcnMvZG1hLWJ1Zi9mZW5jZS1hcnJheS5jCisgIUlpbmNsdWRlL2xpbnV4L2ZlbmNlLWFycmF5
-LmgKIC0hRWRyaXZlcnMvZG1hLWJ1Zi9yZXNlcnZhdGlvbi5jCiAtIUlpbmNsdWRlL2xpbnV4L3Jl
-c2VydmF0aW9uLmgKICAhRWRyaXZlcnMvZG1hLWJ1Zi9zeW5jX2ZpbGUuYwogICFJaW5jbHVkZS9s
-aW51eC9zeW5jX2ZpbGUuaAogKyAgICAgICA8L3NlY3QyPgogKyAgICAgPC9zZWN0MT4KICsgICAg
-IDxzZWN0MT48dGl0bGU+RGV2aWNlIERyaXZlcnMgRE1BIE1hbmFnZW1lbnQ8L3RpdGxlPgogICFF
-ZHJpdmVycy9iYXNlL2RtYS1jb2hlcmVudC5jCiAgIUVkcml2ZXJzL2Jhc2UvZG1hLW1hcHBpbmcu
-YwogICAgICAgPC9zZWN0MT4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50
-ZWwtZ2Z4Cg==
+Hi Daniel,
+
+Today's linux-next merge of the clockevents tree got conflicts in:
+
+  arch/arm/Kconfig
+  arch/arm/mach-mxs/Kconfig
+
+between commit:
+
+  5c34a4e89c74 ("ARM: do away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB")
+
+from the arm-soc tree and commits:
+
+  db01e25865a3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
+  b37b0e101e59 ("clocksource/drivers/mxs: Add the COMPILE_TEST option")
+
+from the clockevents tree.
+
+Please keep select lines ordered if they appear to be already.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/Kconfig
+index a0af11b90236,0c1f5468a8e7..000000000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -354,8 -354,8 +354,8 @@@ config ARM_SINGLE_ARMV7
+  
+  config ARCH_CLPS711X
+  	bool "Cirrus Logic CLPS711x/EP721x/EP731x-based"
+ -	select ARCH_REQUIRE_GPIOLIB
+  	select AUTO_ZRELADDR
+- 	select CLKSRC_MMIO
+++	select CLPS711X_TIMER
+  	select COMMON_CLK
+  	select CPU_ARM720T
+  	select GENERIC_CLOCKEVENTS
+diff --cc arch/arm/mach-mxs/Kconfig
+index 5d9e5fce7937,68a3a9ec605d..000000000000
+--- a/arch/arm/mach-mxs/Kconfig
++++ b/arch/arm/mach-mxs/Kconfig
+@@@ -15,8 -15,8 +15,8 @@@ config SOC_IMX2
+  config ARCH_MXS
+  	bool "Freescale MXS (i.MX23, i.MX28) support"
+  	depends on ARCH_MULTI_V5
+- 	select CLKSRC_MMIO
+ -	select ARCH_REQUIRE_GPIOLIB
+ +	select GPIOLIB
++ 	select MXS_TIMER
+  	select PINCTRL
+  	select SOC_BUS
+  	select SOC_IMX23
