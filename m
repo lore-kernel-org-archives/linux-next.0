@@ -1,40 +1,41 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] media: s5p-mfc: fix compilation issue on archs other than ARM
- (32bit)
-Date: Tue, 07 Jun 2016 13:32:16 +0200
-Message-ID: <1465299136-8596-1-git-send-email-m.szyprowski@samsung.com>
-References: <20160607105823.GT7510@sirena.org.uk>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:56190 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103AbcFGLcb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 07:32:31 -0400
-In-reply-to: <20160607105823.GT7510@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Javier Martinez Canillas <javier@osg.samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Mark Brown <broonie@kernel.org>, linaro-kernel@lists.linaro.org
+From: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: ath9k gpio request
+Date: Tue, 07 Jun 2016 14:43:59 +0300
+Message-ID: <87ziqxns00.fsf@kamboji.qca.qualcomm.com>
+References: <20160530132225.4d297678@canb.auug.org.au>
+	<574C4851.9090201@gmail.com>
+	<87fusy3cqx.fsf_-_@kamboji.qca.qualcomm.com>
+	<574D3EAA.3060102@gmail.com> <1464764036580.70506@qti.qualcomm.com>
+	<574EC331.1080901@gmail.com> <574ED297.4080004@gmail.com>
+	<1464854569880.79341@qti.qualcomm.com> <57501AE4.7080104@gmail.com>
+	<8760tqn8fc.fsf@purkki.adurom.net>
+	<1464932944074.85131@qti.qualcomm.com>
+	<87d1nxt3y9.fsf@kamboji.qca.qualcomm.com> <57546409.70506@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57546409.70506-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> (Sudip Mukherjee's message of "Sun, 05
+	Jun 2016 23:10:25 +0530")
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "Pan, Miaoqing" <miaoqing-Rm6X0d1/PG5y9aJCnZT0Uw@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, ath9k-devel <ath9k-devel-zC7DfRvBq/JWk0Htik3J/w@public.gmane.org>, "linux-next@vger.kernel.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-wireless@vger.kernel.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ath9k-devel@lists.ath9k.org" <ath9k-devel-xDcbHBWguxHbcTqmT+pZeQ@public.gmane.org>, "netdev@vger.kernel.org" <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Miaoqing Pan <miaoqing-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-This patch fixes build break caused by lack of dma-iommu API on ARM64
-(this API is specific to ARM 32bit architecture).
+Sudip Mukherjee <sudipm.mukherjee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> Sudip, could you also test patch 9151847, please? You can download the
+>> patch from the patchwork link above.
+>
+> This is also ok. Please add my
+> Tested-by: Sudip Mukherjee <sudip.mukherjee-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+>
+> and maybe a Reported-by tag is also appropriate in this case.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-index 5d1d1c2..6962132 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h
-@@ -14,7 +14,7 @@
- #define S5P_MFC_IOMMU_DMA_BASE	0x20000000lu
- #define S5P_MFC_IOMMU_DMA_SIZE	SZ_256M
- 
--#ifdef CONFIG_EXYNOS_IOMMU
-+#if defined(CONFIG_EXYNOS_IOMMU) && defined(CONFIG_ARM_DMA_USE_IOMMU)
- 
- #include <asm/dma-iommu.h>
- 
+Yeah, I add those. Thanks Sudip.
+
 -- 
-1.9.2
+Kalle Valo
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
