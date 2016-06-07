@@ -1,63 +1,180 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
- rwsem_down_write_failed lockup
-Date: Tue, 7 Jun 2016 09:34:28 +0200
-Message-ID: <20160607073427.GC12305@dhcp22.suse.cz>
-References: <20160601131122.7dbb0a65@canb.auug.org.au>
- <20160602014835.GA635@swordfish>
- <20160602092113.GH1995@dhcp22.suse.cz>
- <20160602120857.GA704@swordfish>
- <20160602122109.GM1995@dhcp22.suse.cz>
- <20160603135154.GD29930@redhat.com>
- <20160603144600.GK20676@dhcp22.suse.cz>
- <20160603151001.GG29930@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160607 build: 2 failures 9 warnings (next-20160607)
+Date: Tue, 07 Jun 2016 08:35:02 +0100
+Message-ID: <E1bABXS-0001YX-Cz@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35891 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810AbcFGHeb (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 03:34:31 -0400
-Content-Disposition: inline
-In-Reply-To: <20160603151001.GG29930@redhat.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46870 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750893AbcFGHkN (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 7 Jun 2016 03:40:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri 03-06-16 17:10:01, Andrea Arcangeli wrote:
-> Hello Michal,
-> 
-> CC'ed Hugh,
-> 
-> On Fri, Jun 03, 2016 at 04:46:00PM +0200, Michal Hocko wrote:
-> > What do you think about the external dependencies mentioned above. Do
-> > you think this is a sufficient argument wrt. occasional higher
-> > latencies?
-> 
-> It's a tradeoff and both latencies would be short and uncommon so it's
-> hard to tell.
-> 
-> There's also mmput_async for paths that may care about mmput
-> latencies. Exit itself cannot use it, it's mostly for people taking
-> the mm_users pin that may not want to wait for mmput to run. It also
-> shouldn't happen that often, it's a slow path.
-> 
-> The whole model inherited from KSM is to deliberately depend only on
-> the mmap_sem + test_exit + mm_count, and never on mm_users, which to
-> me in principle doesn't sound bad.
+Tree/Branch: next-20160607
+Git describe: next-20160607
+Commit: 7b95734f90 Add linux-next specific files for 20160607
 
-I do agree that this model is quite clever (albeit convoluted). It just
-assumes that all other mmap_sem users are behaving the same. Now most
-in-kernel users will do get_task_mm() and then lock mmap_sem, but I
-haven't checked all of them and it is quite possible that some of those
-would like to optimize in a similar way and only increment mm_count.
-I might be too pessimistic about the out of mm code but I would feel
-much better if the exit path didn't depend on them.
+Build Time: 68 min 13 sec
 
-Anyway, if the current model sounds better I will definitely not insist
-on my patch. It is more of an idea for simplification than a fix for
-anything I have seen happening in the real life.
--- 
-Michal Hocko
-SUSE Labs
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 2
+Warnings: 9
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h:19:27: fatal error: asm/dma-iommu.h: No such file or directory
+
+	arm-allmodconfig
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+     72 warnings    0 mismatches  : arm-allmodconfig
+      4 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  3 ../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	  1 ../drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h:19:27: fatal error: asm/dma-iommu.h: No such file or directory
+
+Warnings Summary: 9
+	 66 ../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	  2 ../include/linux/err.h:21:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	  2 ../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	  2 ../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/gpu/drm/omapdrm/dss/hdmi5.c:123:6: warning: unused variable 'r' [-Wunused-variable]
+	  1 ../drivers/gpu/drm/omapdrm/dss/dsi.c:1170:6: warning: unused variable 'r' [-Wunused-variable]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../drivers/media/platform/s5p-mfc/s5p_mfc_iommu.h:19:27: fatal error: asm/dma-iommu.h: No such file or directory
+
+Warnings:
+	../include/linux/err.h:21:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 3 errors, 72 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+
+Warnings:
+	../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../drivers/gpu/drm/omapdrm/dss/dsi.c:1170:6: warning: unused variable 'r' [-Wunused-variable]
+	../drivers/gpu/drm/omapdrm/dss/hdmi5.c:123:6: warning: unused variable 'r' [-Wunused-variable]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	../include/linux/err.h:21:49: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
