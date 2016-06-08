@@ -1,55 +1,44 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH] i2c: remove __init from i2c_register_board_info()
-Date: Tue,  7 Jun 2016 16:52:27 -0700
-Message-ID: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: wsa@the-dreams.de
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 8 Jun 2016 11:17:05 +1000
+Message-ID: <20160608111705.2f196767@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36457 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754524AbcFHBRI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 7 Jun 2016 21:17:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WANG Cong <xiyou.wangcong@gmail.com>, Jamal Hadi Salim <jhs@mojatatu.com>
 
-As of next-20160607 with allyesconfig we get this linker failure:
+Hi all,
 
-  MODPOST vmlinux.o
-WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
-the function intel_scu_devices_create() to the function
-.init.text:i2c_register_board_info()
+Today's linux-next merge of the net-next tree got a conflict in:
 
-This is caused by the fact that intel_scu_devices_create() calls
-i2c_register_board_info() and intel_scu_devices_create() is not
-annotated with __init. This typically involves manual code
-inspection and if one is certain this is correct we would
-just peg intel_scu_devices_create() with a __ref annotation.
+  net/sched/act_police.c
 
-In this case this would be wrong though as the
-intel_scu_devices_create() call is exported, and used in
-the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
-The issue is that even though builtin_pci_driver(ipc_driver)
-is used this just exposes the probe routine, which can occur
-at any point in time if this bus supports hotplug. A race
-can happen between kernel_init_freeable() that calls the init
-calls (in this case registeres the intel_scu_ipc.c driver, and
-later free_initmem(), which would free the i2c_register_board_info().
-If a probe happens later in boot i2c_register_board_info() would
-not be present and we should get a page fault.
+between commit:
 
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- drivers/i2c/i2c-boardinfo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  53eb440f4ada ("net sched actions: introduce timestamp for firsttime use")
 
-diff --git a/drivers/i2c/i2c-boardinfo.c b/drivers/i2c/i2c-boardinfo.c
-index e33022e..77b1589 100644
---- a/drivers/i2c/i2c-boardinfo.c
-+++ b/drivers/i2c/i2c-boardinfo.c
-@@ -56,7 +56,7 @@ EXPORT_SYMBOL_GPL(__i2c_first_dynamic_bus_num);
-  * The board info passed can safely be __initdata, but be careful of embedded
-  * pointers (for platform_data, functions, etc) since that won't be copied.
-  */
--int __init
-+int
- i2c_register_board_info(int busnum,
- 	struct i2c_board_info const *info, unsigned len)
- {
+from the net tree and commit:
+
+  a03e6fe56971 ("act_police: fix a crash during removal")
+
+from the net-next tree.
+
+I fixed it up (I think that the firstuse zero initialisation has become
+redundant, so I just removed it) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
-2.8.1
+Cheers,
+Stephen Rothwell
