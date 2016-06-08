@@ -1,69 +1,127 @@
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: Re: [linux-next: Tree for Jun 1] __khugepaged_exit
- rwsem_down_write_failed lockup
-Date: Wed, 8 Jun 2016 10:19:03 +0200
-Message-ID: <f136aef3-95c8-4394-3626-cd5bb4d04fbd@suse.cz>
-References: <20160601131122.7dbb0a65@canb.auug.org.au>
- <20160602014835.GA635@swordfish> <20160602092113.GH1995@dhcp22.suse.cz>
- <20160602120857.GA704@swordfish> <20160602122109.GM1995@dhcp22.suse.cz>
- <20160603135154.GD29930@redhat.com> <20160603144600.GK20676@dhcp22.suse.cz>
- <20160603151001.GG29930@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20160603151001.GG29930@redhat.com>
-Sender: owner-linux-mm@kvack.org
-To: Andrea Arcangeli <aarcange@redhat.com>, Michal Hocko <mhocko@kernel.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>
-List-Id: linux-next.vger.kernel.org
+From: Prasun Maiti <prasunmaiti87@gmail.com>
+Subject: [PATCH] Add .set_antenna callback in ath6kl driver to remove wireless core warns
+Date: Wed,  8 Jun 2016 16:21:07 +0530
+Message-ID: <1465383067-19612-1-git-send-email-prasunmaiti87@gmail.com>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pa0-f65.google.com ([209.85.220.65]:33546 "EHLO
+	mail-pa0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752400AbcFHKvX (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 8 Jun 2016 06:51:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linux Kernel <linux-kernel@vger.kernel.org>, Rusty Russell <rusty@rustcorp.com.au>
+Cc: Linux Next <linux-next@vger.kernel.org>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Kernel <prasunmaii87@gmail.com>
 
-On 06/03/2016 05:10 PM, Andrea Arcangeli wrote:
-> Hello Michal,
->
-> CC'ed Hugh,
->
-> On Fri, Jun 03, 2016 at 04:46:00PM +0200, Michal Hocko wrote:
->> What do you think about the external dependencies mentioned above. Do
->> you think this is a sufficient argument wrt. occasional higher
->> latencies?
->
-> It's a tradeoff and both latencies would be short and uncommon so it's
-> hard to tell.
+Since add more warnings for inconsistent ops in cfg80211, the wireless
+core warns if a driver implements a cfg80211 callback but doesn't
+implements the inverse operation. The ath6kl driver implements a cfg80211
+.get_antenna operation handler but doesn't have the inverse .set_antenna
+callback. So, it makes warning.
 
-Shouldn't it be possible to do a mmput() before the hugepage allocation, 
-and then again mmget_not_zero()? That way it's no longer a tradeoff?
+To remove this warning, add .set_antenna callback in ath6kl driver and
+also send a cmd to firmware with it's values.
 
-> There's also mmput_async for paths that may care about mmput
-> latencies. Exit itself cannot use it, it's mostly for people taking
-> the mm_users pin that may not want to wait for mmput to run. It also
-> shouldn't happen that often, it's a slow path.
->
-> The whole model inherited from KSM is to deliberately depend only on
-> the mmap_sem + test_exit + mm_count, and never on mm_users, which to
-> me in principle doesn't sound bad. I consider KSM version a
-> "finegrined" implementation but I never thought it would be a problem
-> to wait a bit in exit() in case the slow path hits. I thought it was
-> more of a problem if exit() runs, the parent then start a new task but
-> the memory wasn't freed yet.
->
-> So I would suggest Hugh to share his view on the down_write/up_write
-> that may temporarily block mmput (until the next test_exit bailout
-> point) vs higher latency in reaching exit_mmap for a real exit(2) that
-> would happen with the proposed change.
->
-> Thanks!
-> Andrea
->
-> --
-> To unsubscribe, send a message with 'unsubscribe linux-mm' in
-> the body to majordomo@kvack.org.  For more info on Linux MM,
-> see: http://www.linux-mm.org/ .
-> Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
->
+Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+---
+ drivers/net/wireless/ath/ath6kl/cfg80211.c | 24 ++++++++++++++++++++++++
+ drivers/net/wireless/ath/ath6kl/wmi.c      | 18 ++++++++++++++++++
+ drivers/net/wireless/ath/ath6kl/wmi.h      |  6 ++++++
+ 3 files changed, 48 insertions(+)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+index 4e11ba0..0d51228 100644
+--- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
++++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+@@ -3231,6 +3231,29 @@ static int ath6kl_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
+ 					wait, buf, len, no_cck);
+ }
+ 
++static int ath6kl_set_antenna(struct wiphy *wiphy,
++				u32 tx_ant, u32 rx_ant)
++{
++	struct ath6kl *ar = wiphy_priv(wiphy);
++	struct ath6kl_vif *vif = NULL;
++
++	vif = ath6kl_vif_first(ar);
++	if (!vif)
++		return -EIO;
++
++	if (!ath6kl_cfg80211_ready(vif))
++		return -EIO;
++
++	if (!tx_ant || !rx_ant)
++		return -EINVAL;
++
++	ar->hw.tx_ant = tx_ant;
++	ar->hw.rx_ant = rx_ant;
++
++	return ath6kl_wmi_set_antenna(ar->wmi, vif->fw_vif_idx,
++			tx_ant, rx_ant);
++}
++
+ static int ath6kl_get_antenna(struct wiphy *wiphy,
+ 			      u32 *tx_ant, u32 *rx_ant)
+ {
+@@ -3456,6 +3479,7 @@ static struct cfg80211_ops ath6kl_cfg80211_ops = {
+ 	.cancel_remain_on_channel = ath6kl_cancel_remain_on_channel,
+ 	.mgmt_tx = ath6kl_mgmt_tx,
+ 	.mgmt_frame_register = ath6kl_mgmt_frame_register,
++	.set_antenna = ath6kl_set_antenna,
+ 	.get_antenna = ath6kl_get_antenna,
+ 	.sched_scan_start = ath6kl_cfg80211_sscan_start,
+ 	.sched_scan_stop = ath6kl_cfg80211_sscan_stop,
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.c b/drivers/net/wireless/ath/ath6kl/wmi.c
+index 631c3a0..300ccc6 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.c
++++ b/drivers/net/wireless/ath/ath6kl/wmi.c
+@@ -1605,6 +1605,24 @@ static int ath6kl_wmi_txe_notify_event_rx(struct wmi *wmi, u8 *datap, int len,
+ 	return 0;
+ }
+ 
++int ath6kl_wmi_set_antenna(struct wmi *wmi, u8 idx,
++			      u32 tx_ant, u32 rx_ant)
++{
++	struct sk_buff *skb;
++	struct wmi_txe_notify_cmd *cmd;
++
++	skb = ath6kl_wmi_get_new_buf(sizeof(*cmd));
++	if (!skb)
++		return -ENOMEM;
++
++	cmd = (struct wmi_set_antenna_cmd *) skb->data;
++	cmd->tx_ant = cpu_to_le32(tx_ant);
++	cmd->rx_ant = cpu_to_le32(rx_ant);
++
++	return ath6kl_wmi_cmd_send(wmi, idx, skb, WMI_SET_ANTENNA_CMDID,
++			NO_SYNC_WMIFLAG);
++}
++
+ int ath6kl_wmi_set_txe_notify(struct wmi *wmi, u8 idx,
+ 			      u32 rate, u32 pkts, u32 intvl)
+ {
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.h b/drivers/net/wireless/ath/ath6kl/wmi.h
+index 3af464a..f2e65b3 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.h
++++ b/drivers/net/wireless/ath/ath6kl/wmi.h
+@@ -642,6 +642,7 @@ enum wmi_cmd_id {
+ 	WMI_SET_RECOVERY_TEST_PARAMETER_CMDID, /*0xf094*/
+ 
+ 	WMI_ENABLE_SCHED_SCAN_CMDID,
++	WMI_SET_ANTENNA_CMDID,
+ };
+ 
+ enum wmi_mgmt_frame_type {
+@@ -2312,6 +2313,11 @@ struct wmi_ap_set_apsd_cmd {
+ 	u8 enable;
+ } __packed;
+ 
++struct wmi_set_antenna_cmd {
++	__le32 tx_ant;
++	__le32 rx_ant;
++} __packed;
++
+ enum wmi_ap_apsd_buffered_traffic_flags {
+ 	WMI_AP_APSD_NO_DELIVERY_FRAMES =  0x1,
+ };
+-- 
+1.9.1
