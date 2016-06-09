@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the slave-dma tree
-Date: Thu, 9 Jun 2016 11:18:30 +1000
-Message-ID: <20160609111830.652cb495@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the kbuild tree
+Date: Thu, 9 Jun 2016 12:22:58 +1000
+Message-ID: <20160609122258.1c2068f0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58857 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1423920AbcFIBSd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 8 Jun 2016 21:18:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kedareswara rao Appana <appana.durga.rao@xilinx.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emese Revfy <re.emese@gmail.com>, Kees Cook <keescook@chromium.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Vinod,
+Hi Michal,
 
-After merging the slave-dma tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the kbuild tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-drivers/dma/xilinx/xilinx_vdma.c: In function 'xilinx_dma_prep_dma_cyclic':
-drivers/dma/xilinx/xilinx_vdma.c:1808:23: warning: 'segment' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   segment->hw.control |= XILINX_DMA_BD_SOP;
+Cyclomatic Complexity 1 scripts/mod/devicetable-offsets.c:main
+Cyclomatic Complexity 1 kernel/bounds.c:foo
+Cyclomatic Complexity 1 arch/x86/kernel/asm-offsets_64.c:main
+Cyclomatic Complexity 1 arch/x86/kernel/asm-offsets.c:common
+Cyclomatic Complexity 5 arch/x86/ia32/audit.c:ia32_classify_syscall
 
-Introduced by commit
+and so on (many, many of these - about 635,000 :-()
 
-  92d794dfb699 ("dmaengine: vdma: Add support for cyclic dma mode")
+Introduced (presumably) by commits
 
-I am not sure if this is tecnically a problem, but gcc certainly cannot
-tell.
+  6b90bd4ba40b ("GCC plugin infrastructure")
+  0dae776c6bf3 ("Add Cyclomatic complexity GCC plugin")
+
+I have disabled CONFIG_GCC_PLUGIN_CYC_COMPLEXITY (by making it depend
+on CONFIG_BROKEN) until it is not enabled by default.
 
 -- 
 Cheers,
