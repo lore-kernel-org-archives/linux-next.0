@@ -1,70 +1,32 @@
-From: "Valo, Kalle" <kvalo@qca.qualcomm.com>
-Subject: Re: [PATCH] Add .set_antenna callback in ath6kl driver to fix
- wireless core warns
-Date: Thu, 9 Jun 2016 07:08:42 +0000
-Message-ID: <87ziquomff.fsf@qca.qualcomm.com>
-References: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
-	<1465450591-23543-1-git-send-email-prasunmaiti87@gmail.com>
+From: Michal Marek <mmarek@suse.cz>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Thu, 9 Jun 2016 12:57:16 +0200
+Message-ID: <57594B8C.8020006@suse.cz>
+References: <20160609122258.1c2068f0@canb.auug.org.au>
+ <CAGXu5jLxN65Z-+Miiju3VcOK7fpWKqAQY6hn6u5KTZm_NP54kQ@mail.gmail.com>
+ <20160609140505.3e336ba3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:25002 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672AbcFIHIv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 03:08:51 -0400
-In-Reply-To: <1465450591-23543-1-git-send-email-prasunmaiti87@gmail.com>
-	(Prasun Maiti's message of "Thu, 9 Jun 2016 11:06:31 +0530")
-Content-Language: en-US
-Content-ID: <A071290285120049A9E14649AB45B1E8@qualcomm.com>
+Received: from mx2.suse.de ([195.135.220.15]:44334 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752255AbcFIK5V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2016 06:57:21 -0400
+In-Reply-To: <20160609140505.3e336ba3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Prasun Maiti <prasunmaiti87@gmail.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, "ath6kl@lists.infradead.org" <ath6kl@lists.infradead.org>, Linux Next <linux-next@vger.kernel.org>, Linux Wireless <linux-wireless@vger.kernel.org>, Prasun Maiti <prasunmaii87@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@chromium.org>
+Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
 
-Prasun Maiti <prasunmaiti87@gmail.com> writes:
+Dne 9.6.2016 v 06:05 Stephen Rothwell napsal(a):
+> On Wed, 8 Jun 2016 19:56:38 -0700 Kees Cook <keescook@chromium.org> wrote:
+>> Ah, yes, that should default to off. We'll get a fix landed ASAP.
+> 
+> Note that this was an allmodconfig build.  The default is 'n', but
+> allmodconfig will turn it on (as will allyesconfig).
 
-> Since add more warnings for inconsistent ops in cfg80211, the wireless
-> core warns if a driver implements a cfg80211 callback but doesn't
-> implements the inverse operation. The ath6kl driver implements a cfg80211
-> .get_antenna operation handler but doesn't have the inverse .set_antenna
-> callback. So, it makes warning.
->
-> To remove this warning, add .set_antenna callback in ath6kl driver which
-> is unimplemented.
->
-> Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+I guess we should make GCC_PLUGINS depend on !COMPILE_TEST. Actually I
+thought this was already the case, but it is not.
 
-[...]
-
-> --- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> +++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-> @@ -3231,6 +3231,16 @@ static int ath6kl_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
->  					wait, buf, len, no_cck);
->  }
->  
-> +static int ath6kl_set_antenna(struct wiphy *wiphy,
-> +				u32 tx_ant, u32 rx_ant)
-> +{
-> +	/*
-> +	 * Note: This callback should be implement when firmware support this
-> +	 * command.
-> +	 */
-> +	return 0;
-> +}
-> +
->  static int ath6kl_get_antenna(struct wiphy *wiphy,
->  			      u32 *tx_ant, u32 *rx_ant)
->  {
-> @@ -3456,6 +3466,7 @@ static struct cfg80211_ops ath6kl_cfg80211_ops = {
->  	.cancel_remain_on_channel = ath6kl_cancel_remain_on_channel,
->  	.mgmt_tx = ath6kl_mgmt_tx,
->  	.mgmt_frame_register = ath6kl_mgmt_frame_register,
-> +	.set_antenna = ath6kl_set_antenna,
-
-Now we are claiming that ath6kl supports set antenna command but it
-actually doesn't do anything, I don't like that. I would rather look at
-why cfg80211 issues the warning and is it really necessary.
-
--- 
-Kalle Valo
+Michal
