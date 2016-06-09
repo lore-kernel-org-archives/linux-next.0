@@ -1,93 +1,68 @@
-From: Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] Add .set_antenna callback in ath6kl driver to remove
- wireless core warns
-Date: Thu, 9 Jun 2016 10:34:12 +0530
-Message-ID: <CAEO8o4kxbFm5sGk0FBUAYDsjmvMW7pwO1b4=E7sLyrYeqXT00A@mail.gmail.com>
-References: <1465388474-20503-1-git-send-email-prasunmaiti87@gmail.com>
- <87wplzkbd9.fsf@kamboji.qca.qualcomm.com> <CAEO8o4=DnEfXQAnAOxugC9TngbhvgV9DXz0HOVHNLk0B2fAXQA@mail.gmail.com>
- <87porrkaax.fsf@kamboji.qca.qualcomm.com> <CAEO8o4kD7MU09o+xOwPLn-PAgcuMExQ0MbNWgqv0fOs61rG8Xw@mail.gmail.com>
- <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the tip tree
+Date: Thu, 9 Jun 2016 15:14:41 +1000
+Message-ID: <20160609151441.7b4ff455@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Valo, Kalle" <kvalo-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "ath6kl-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <ath6kl-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33404 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1946275AbcFIFOn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 9 Jun 2016 01:14:43 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Julian,
+Hi Paul,
 
-It was an assumption on my part that the firmware supports a SET
-function. I realize it was premature to do so. I am sending another
-patch to convert the ath6kl_set_antenna() to a NO-OP. This will take
-care of the kernel warning, but would not fire any commands to
-firmware. I hope this solution is acceptable.
+Today's linux-next merge of the rcu tree got a conflict in:
 
-Thanks,
-Prasun
+  kernel/rcu/tree.c
 
-On Thu, Jun 9, 2016 at 5:35 AM, Julian Calaby <julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Prasun,
->
-> On Thu, Jun 9, 2016 at 1:20 AM, Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> I am not sure it works fine. Like ath6kl driver send another cmd to
->> firmare, I have just filled up the cmd buffer with "tx_ant", and
->> "rx_ant" values, then use "ath6kl_wmi_cmd_send()" api to send the cmd
->> buffer to firmware.
->> I have resend the patch as there are some errors in the previous patch.
->> Let me know if any modifications are needed?
->
-> Let me ask the question in another way: how do you know that the
-> command WMI_SET_ANTENNA_CMDID exists, has that number, takes arguments
-> in that format and works?
->
-> Thanks,
->
-> Julian Calaby
->
->
->> On Wed, Jun 8, 2016 at 8:16 PM, Valo, Kalle <kvalo-A+ZNKFmMK5xy9aJCnZT0Uw@public.gmane.org> wrote:
->>> Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->>>
->>>> No. I did not any test for that case.
->>>> This driver create a new wiphy for use with cfg80211 through
->>>> "wiphy_new_nm" api, but in this api, I found that more warnings for
->>>> inconsistent ops are added there. e.g; "WARN_ON(ops->set_antenna &&
->>>> !ops->get_antenna);"
->>>> So, warning comes during creation of a new wiphy. That's why It is needed.
->>>
->>> I'm confused. Are you really saying that you added a new firmware
->>> command (WMI_SET_ANTENNA_CMDID) to ath6kl but you didn't test it in any
->>> way? How do you know that it works then?
->>>
->>> --
->>> Kalle Valo
->>
->>
->>
->> --
->> Thanks,
->> Prasun
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> Julian Calaby
->
-> Email: julian.calaby-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-> Profile: http://www.google.com/profiles/julian.calaby/
+between commit:
 
+  6428671bae97 ("locking/mutex: Optimize mutex_trylock() fast-path")
 
+from the tip tree and commit:
+
+  3991b105efd5 ("rcu: Move expedited code from tree.c to tree_exp.h")
+
+from the rcu tree.
+
+I fixed it up (I used tree.c from the rcu tree and then applied the
+following fic up patch) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging.  You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 9 Jun 2016 15:01:10 +1000
+Subject: [PATCH] rcu: merge fix for kernel/rcu/tree_exp.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/rcu/tree_exp.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index d400434af6b2..6d86ab6ec2c9 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -253,7 +253,6 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
+ 	if (ULONG_CMP_LT(READ_ONCE(rnp->exp_seq_rq), s) &&
+ 	    (rnp == rnp_root ||
+ 	     ULONG_CMP_LT(READ_ONCE(rnp_root->exp_seq_rq), s)) &&
+-	    !mutex_is_locked(&rsp->exp_mutex) &&
+ 	    mutex_trylock(&rsp->exp_mutex))
+ 		goto fastpath;
+ 
+-- 
+2.8.1
 
 -- 
-Thanks,
-Prasun
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers,
+Stephen Rothwell
