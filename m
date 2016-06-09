@@ -1,77 +1,39 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: fix build warnings in <linux/compaction.h>
-Date: Thu, 9 Jun 2016 15:27:16 -0700
-Message-ID: <20160609152716.1093ada2f52bbcc426e6ddb6@linux-foundation.org>
-References: <5759A1F9.2070302@infradead.org>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: linux-next: build failure after merge of the amlogic tree
+Date: Thu, 09 Jun 2016 15:43:48 -0700
+Message-ID: <7hziquc7a3.fsf@baylibre.com>
+References: <20160606095559.67cf4f00@canb.auug.org.au>
+	<CAOi56cVQPutG1ZBw16=HWBAVdbV+i2VL4vDRdc_23qVT+MEL+A@mail.gmail.com>
+	<20160606140231.394f5db7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <5759A1F9.2070302@infradead.org>
-Sender: owner-linux-mm@kvack.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux MM <linux-mm@kvack.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Minchan Kim <minchan@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f169.google.com ([209.85.192.169]:36742 "EHLO
+	mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751917AbcFIWnu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 18:43:50 -0400
+Received: by mail-pf0-f169.google.com with SMTP id t190so17017337pfb.3
+        for <linux-next@vger.kernel.org>; Thu, 09 Jun 2016 15:43:50 -0700 (PDT)
+In-Reply-To: <20160606140231.394f5db7@canb.auug.org.au> (Stephen Rothwell's
+	message of "Mon, 6 Jun 2016 14:02:31 +1000")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>
 
-On Thu, 9 Jun 2016 10:06:01 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> From: Randy Dunlap <rdunlap@infradead.org>
-> 
-> Fix build warnings when struct node is not defined:
-> 
-> In file included from ../include/linux/balloon_compaction.h:48:0,
->                  from ../mm/balloon_compaction.c:11:
-> ../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list [enabled by default]
->  static inline int compaction_register_node(struct node *node)
-> ../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
-> ../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list [enabled by default]
->  static inline void compaction_unregister_node(struct node *node)
-> 
-> ...
+> Hi Kevin,
 >
-> --- linux-next-20160609.orig/include/linux/compaction.h
-> +++ linux-next-20160609/include/linux/compaction.h
-> @@ -233,6 +233,7 @@ extern int compaction_register_node(stru
->  extern void compaction_unregister_node(struct node *node);
->  
->  #else
-> +struct node;
->  
->  static inline int compaction_register_node(struct node *node)
->  {
+> On Sun, 5 Jun 2016 20:40:28 -0700 Kevin Hilman <khilman@baylibre.com> wrote:
+>>
+>> Not forgotten, but merged through Philip's reset tree, which I thought
+>> was already in linux-next.  Sorry about that.
+>
+> It may well be, but we dislike implicit dependencies between trees ...
+> it makes the merge order matter :-(  What you should have is a common
+> non-rebasing branch that both trees merge.
 
-Well compaction.h has no #includes at all and obviously depends on its
-including file(s) to bring in the definitions which it needs.
+Yup, I'll work this out with Philipp.
 
-So if we want to keep that (odd) model then we should fix
-mm-balloon-use-general-non-lru-movable-page-feature.patch thusly:
-
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm-balloon-use-general-non-lru-movable-page-feature-fix
-
-compaction.h requires that the includer first include node.h
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Gioh Kim <gi-oh.kim@profitbricks.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
---- a/include/linux/balloon_compaction.h~mm-balloon-use-general-non-lru-movable-page-feature-fix
-+++ a/include/linux/balloon_compaction.h
-@@ -45,6 +45,7 @@
- #define _LINUX_BALLOON_COMPACTION_H
- #include <linux/pagemap.h>
- #include <linux/page-flags.h>
-+#include <linux/node.h>
- #include <linux/compaction.h>
- #include <linux/gfp.h>
- #include <linux/err.h>
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Kevin
