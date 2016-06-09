@@ -1,32 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the device-mapper tree with the
- block tree
-Date: Thu, 9 Jun 2016 14:02:53 +1000
-Message-ID: <20160609140253.183a1428@canb.auug.org.au>
-References: <20160609135932.39c8ddd7@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Thu, 9 Jun 2016 14:05:05 +1000
+Message-ID: <20160609140505.3e336ba3@canb.auug.org.au>
+References: <20160609122258.1c2068f0@canb.auug.org.au>
+	<CAGXu5jLxN65Z-+Miiju3VcOK7fpWKqAQY6hn6u5KTZm_NP54kQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34236 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbcFIECz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2016 00:02:55 -0400
-In-Reply-To: <20160609135932.39c8ddd7@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jLxN65Z-+Miiju3VcOK7fpWKqAQY6hn6u5KTZm_NP54kQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Michal Marek <mmarek@suse.cz>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Kees,
 
-On Thu, 9 Jun 2016 13:59:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, 8 Jun 2016 19:56:38 -0700 Kees Cook <keescook@chromium.org> wrote:
 >
->   50d14ab0130a ("dm: move request-based code out to dm-rq.[hc]")
+> Congratulations on having the gcc plugin development headers
+> successfully installed! ;)
 
-By the way, resolving these conflicts would have been easier if this
-commit had been split into "move with no changes" followed by "small
-changes" commits.
+Thanks :-)
+
+> Ah, yes, that should default to off. We'll get a fix landed ASAP.
+
+Note that this was an allmodconfig build.  The default is 'n', but
+allmodconfig will turn it on (as will allyesconfig).
 
 -- 
 Cheers,
