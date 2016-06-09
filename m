@@ -1,61 +1,41 @@
-From: Prasun Maiti <prasunmaiti87@gmail.com>
-Subject: [PATCH] Add .set_antenna callback in ath6kl driver to fix wireless core warns
-Date: Thu,  9 Jun 2016 11:06:31 +0530
-Message-ID: <1465450591-23543-1-git-send-email-prasunmaiti87@gmail.com>
-References: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:36288 "EHLO
-	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161701AbcFIFgk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 01:36:40 -0400
-In-Reply-To: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@qca.qualcomm.com>
-Cc: "ath6kl@lists.infradead.org" <ath6kl@lists.infradead.org>, Linux Next <linux-next@vger.kernel.org>, Linux Wireless <linux-wireless@vger.kernel.org>, Prasun Maiti <prasunmaii87@gmail.com>
+From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+Subject: RE: linux-next: build warning after merge of the slave-dma tree
+Date: Thu, 9 Jun 2016 06:04:03 +0000
+Message-ID: <C246CAC1457055469EF09E3A7AC4E11A4A5B5325@XAP-PVEXMBX01.xlnx.xilinx.com>
+References: <20160609111830.652cb495@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160609111830.652cb495@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Vinod Koul <vinod.koul@intel.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Since add more warnings for inconsistent ops in cfg80211, the wireless
-core warns if a driver implements a cfg80211 callback but doesn't
-implements the inverse operation. The ath6kl driver implements a cfg80211
-.get_antenna operation handler but doesn't have the inverse .set_antenna
-callback. So, it makes warning.
+Hi Stephen Rothwell,
 
-To remove this warning, add .set_antenna callback in ath6kl driver which
-is unimplemented.
 
-Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
----
- drivers/net/wireless/ath/ath6kl/cfg80211.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+> Hi Vinod,
+> 
+> After merging the slave-dma tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/dma/xilinx/xilinx_vdma.c: In function 'xilinx_dma_prep_dma_cyclic':
+> drivers/dma/xilinx/xilinx_vdma.c:1808:23: warning: 'segment' may be used
+> uninitialized in this function [-Wmaybe-uninitialized]
+>    segment->hw.control |= XILINX_DMA_BD_SOP;
 
-diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-index 4e11ba0..e638296 100644
---- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
-+++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
-@@ -3231,6 +3231,16 @@ static int ath6kl_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
- 					wait, buf, len, no_cck);
- }
- 
-+static int ath6kl_set_antenna(struct wiphy *wiphy,
-+				u32 tx_ant, u32 rx_ant)
-+{
-+	/*
-+	 * Note: This callback should be implement when firmware support this
-+	 * command.
-+	 */
-+	return 0;
-+}
-+
- static int ath6kl_get_antenna(struct wiphy *wiphy,
- 			      u32 *tx_ant, u32 *rx_ant)
- {
-@@ -3456,6 +3466,7 @@ static struct cfg80211_ops ath6kl_cfg80211_ops = {
- 	.cancel_remain_on_channel = ath6kl_cancel_remain_on_channel,
- 	.mgmt_tx = ath6kl_mgmt_tx,
- 	.mgmt_frame_register = ath6kl_mgmt_frame_register,
-+	.set_antenna = ath6kl_set_antenna,
- 	.get_antenna = ath6kl_get_antenna,
- 	.sched_scan_start = ath6kl_cfg80211_sscan_start,
- 	.sched_scan_stop = ath6kl_cfg80211_sscan_stop,
--- 
-1.9.1
+Thanks for reporting the issue.
+I have fixed it and sent the patch...
+
+> 
+> Introduced by commit
+> 
+>   92d794dfb699 ("dmaengine: vdma: Add support for cyclic dma mode")
+> 
+> I am not sure if this is tecnically a problem, but gcc certainly cannot tell.
+
+Thanks,
+Kedar.
