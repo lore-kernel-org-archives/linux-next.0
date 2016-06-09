@@ -1,68 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Date: Thu, 9 Jun 2016 15:14:41 +1000
-Message-ID: <20160609151441.7b4ff455@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Prasun Maiti <prasunmaiti87@gmail.com>
+Subject: [PATCH] Add .set_antenna callback in ath6kl driver to fix wireless core warns
+Date: Thu,  9 Jun 2016 11:06:31 +0530
+Message-ID: <1465450591-23543-1-git-send-email-prasunmaiti87@gmail.com>
+References: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33404 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1946275AbcFIFOn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 9 Jun 2016 01:14:43 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36288 "EHLO
+	mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161701AbcFIFgk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 01:36:40 -0400
+In-Reply-To: <CAGRGNgV4sL2TypkR+zsaDHN26KCF0kjtWPsi9y9D_JkGpvWrUw@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@qca.qualcomm.com>
+Cc: "ath6kl@lists.infradead.org" <ath6kl@lists.infradead.org>, Linux Next <linux-next@vger.kernel.org>, Linux Wireless <linux-wireless@vger.kernel.org>, Prasun Maiti <prasunmaii87@gmail.com>
 
-Hi Paul,
+Since add more warnings for inconsistent ops in cfg80211, the wireless
+core warns if a driver implements a cfg80211 callback but doesn't
+implements the inverse operation. The ath6kl driver implements a cfg80211
+.get_antenna operation handler but doesn't have the inverse .set_antenna
+callback. So, it makes warning.
 
-Today's linux-next merge of the rcu tree got a conflict in:
+To remove this warning, add .set_antenna callback in ath6kl driver which
+is unimplemented.
 
-  kernel/rcu/tree.c
-
-between commit:
-
-  6428671bae97 ("locking/mutex: Optimize mutex_trylock() fast-path")
-
-from the tip tree and commit:
-
-  3991b105efd5 ("rcu: Move expedited code from tree.c to tree_exp.h")
-
-from the rcu tree.
-
-I fixed it up (I used tree.c from the rcu tree and then applied the
-following fic up patch) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 9 Jun 2016 15:01:10 +1000
-Subject: [PATCH] rcu: merge fix for kernel/rcu/tree_exp.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
 ---
- kernel/rcu/tree_exp.h | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/net/wireless/ath/ath6kl/cfg80211.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index d400434af6b2..6d86ab6ec2c9 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -253,7 +253,6 @@ static bool exp_funnel_lock(struct rcu_state *rsp, unsigned long s)
- 	if (ULONG_CMP_LT(READ_ONCE(rnp->exp_seq_rq), s) &&
- 	    (rnp == rnp_root ||
- 	     ULONG_CMP_LT(READ_ONCE(rnp_root->exp_seq_rq), s)) &&
--	    !mutex_is_locked(&rsp->exp_mutex) &&
- 	    mutex_trylock(&rsp->exp_mutex))
- 		goto fastpath;
+diff --git a/drivers/net/wireless/ath/ath6kl/cfg80211.c b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+index 4e11ba0..e638296 100644
+--- a/drivers/net/wireless/ath/ath6kl/cfg80211.c
++++ b/drivers/net/wireless/ath/ath6kl/cfg80211.c
+@@ -3231,6 +3231,16 @@ static int ath6kl_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
+ 					wait, buf, len, no_cck);
+ }
  
++static int ath6kl_set_antenna(struct wiphy *wiphy,
++				u32 tx_ant, u32 rx_ant)
++{
++	/*
++	 * Note: This callback should be implement when firmware support this
++	 * command.
++	 */
++	return 0;
++}
++
+ static int ath6kl_get_antenna(struct wiphy *wiphy,
+ 			      u32 *tx_ant, u32 *rx_ant)
+ {
+@@ -3456,6 +3466,7 @@ static struct cfg80211_ops ath6kl_cfg80211_ops = {
+ 	.cancel_remain_on_channel = ath6kl_cancel_remain_on_channel,
+ 	.mgmt_tx = ath6kl_mgmt_tx,
+ 	.mgmt_frame_register = ath6kl_mgmt_frame_register,
++	.set_antenna = ath6kl_set_antenna,
+ 	.get_antenna = ath6kl_get_antenna,
+ 	.sched_scan_start = ath6kl_cfg80211_sscan_start,
+ 	.sched_scan_stop = ath6kl_cfg80211_sscan_stop,
 -- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+1.9.1
