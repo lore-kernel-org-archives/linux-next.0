@@ -1,44 +1,46 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Thu, 9 Jun 2016 10:58:27 -0700
-Message-ID: <CAGXu5jL8T+sAOXFNUn6j8S+yAWeWrN5OS+C8oRVb6xta1+=k4g@mail.gmail.com>
-References: <20160609122258.1c2068f0@canb.auug.org.au> <CAGXu5jLxN65Z-+Miiju3VcOK7fpWKqAQY6hn6u5KTZm_NP54kQ@mail.gmail.com>
- <20160609140505.3e336ba3@canb.auug.org.au> <57594B8C.8020006@suse.cz> <20160609193736.db48229a82b9fad7de1562d9@gmail.com>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Jun 9
+Date: Thu, 09 Jun 2016 23:06:41 +0100
+Message-ID: <5759E871.3040706@gmail.com>
+References: <20160609163408.37fb77b9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160609193736.db48229a82b9fad7de1562d9@gmail.com>
+In-Reply-To: <20160609163408.37fb77b9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Emese Revfy <re.emese@gmail.com>
-Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Emese Revfy <re.emese@gmail.com>, kernel-hardening@lists.openwall.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 9, 2016 at 10:37 AM, Emese Revfy <re.emese@gmail.com> wrote:
-> On Thu, 9 Jun 2016 12:57:16 +0200
-> Michal Marek <mmarek@suse.cz> wrote:
+On Thursday 09 June 2016 07:34 AM, Stephen Rothwell wrote:
+> Hi all,
 >
->> Dne 9.6.2016 v 06:05 Stephen Rothwell napsal(a):
->> > On Wed, 8 Jun 2016 19:56:38 -0700 Kees Cook <keescook@chromium.org> wrote:
->> >> Ah, yes, that should default to off. We'll get a fix landed ASAP.
->> >
->> > Note that this was an allmodconfig build.  The default is 'n', but
->> > allmodconfig will turn it on (as will allyesconfig).
->>
->> I guess we should make GCC_PLUGINS depend on !COMPILE_TEST. Actually I
->> thought this was already the case, but it is not.
+> News: there will be no linux-next releases on Friday (tomorrow) or
+> Monday, so the next release will be next-20160614 on Tuesday.
 >
-> Is it really necessary to disable all gcc plugins or would it be enough
-> to disable only the cyc_complexity plugin?
+> Changes since 20160608:
 
-I think disabling (depend on !COMPILE_TEST) plugins that have
-non-actionable output make sense. For example, in the future, things
-like constify or initify may produce warnings that are "real" in the
-sense that they have detected situations that should be fixed in the
-code. In a perfect world, we would include those fixes ahead of the
-new plugin to keep Stephen from going crazy. :)
+While trying to build x86_64 allmodconfig I am getting:
+++ dirname ../scripts/gcc-plugin.sh
++ srctree=../scripts
+++ gcc -print-file-name=plugin
++ gccplugins_dir=plugin
+++ g++ -E -x c++ - -o /dev/null -I../scripts/gcc-plugins -Iplugin/include
++ plugincc='In file included from <stdin>:1:0:
+../scripts/gcc-plugins/gcc-common.h:4:22: fatal error: bversion.h: No 
+such file or directory
+  #include "bversion.h"
+                       ^
+compilation terminated.'
++ '[' 1 -ne 0 ']'
++ exit 1
 
--Kees
+build log is at:
+https://travis-ci.org/sudipm-mukherjee/parport/jobs/136350824
 
--- 
-Kees Cook
-Chrome OS & Brillo Security
+Looks like 6b90bd4ba40b ("GCC plugin infrastructure") is the problem.
+
+
+Regards
+Sudip
