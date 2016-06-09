@@ -1,68 +1,77 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: Tree for Jun 9
-Date: Thu, 9 Jun 2016 15:14:50 -0700
-Message-ID: <CAGXu5jJbzUueFvrBJvP3qhprKQ95fZqfgo08VvyG5HETL0a4Sw@mail.gmail.com>
-References: <20160609163408.37fb77b9@canb.auug.org.au> <5759E871.3040706@gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] mm: fix build warnings in <linux/compaction.h>
+Date: Thu, 9 Jun 2016 15:27:16 -0700
+Message-ID: <20160609152716.1093ada2f52bbcc426e6ddb6@linux-foundation.org>
+References: <5759A1F9.2070302@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:38072 "EHLO
-	mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410AbcFIWOx (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 18:14:53 -0400
-Received: by mail-wm0-f47.google.com with SMTP id m124so78471114wme.1
-        for <linux-next@vger.kernel.org>; Thu, 09 Jun 2016 15:14:52 -0700 (PDT)
-In-Reply-To: <5759E871.3040706@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>, "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <5759A1F9.2070302@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux MM <linux-mm@kvack.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Minchan Kim <minchan@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 9, 2016 at 3:06 PM, Sudip Mukherjee
-<sudipm.mukherjee@gmail.com> wrote:
-> On Thursday 09 June 2016 07:34 AM, Stephen Rothwell wrote:
->>
->> Hi all,
->>
->> News: there will be no linux-next releases on Friday (tomorrow) or
->> Monday, so the next release will be next-20160614 on Tuesday.
->>
->> Changes since 20160608:
+On Thu, 9 Jun 2016 10:06:01 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build warnings when struct node is not defined:
+> 
+> In file included from ../include/linux/balloon_compaction.h:48:0,
+>                  from ../mm/balloon_compaction.c:11:
+> ../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list [enabled by default]
+>  static inline int compaction_register_node(struct node *node)
+> ../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+> ../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list [enabled by default]
+>  static inline void compaction_unregister_node(struct node *node)
+> 
+> ...
 >
->
-> While trying to build x86_64 allmodconfig I am getting:
-> ++ dirname ../scripts/gcc-plugin.sh
-> + srctree=../scripts
-> ++ gcc -print-file-name=plugin
-> + gccplugins_dir=plugin
-> ++ g++ -E -x c++ - -o /dev/null -I../scripts/gcc-plugins -Iplugin/include
-> + plugincc='In file included from <stdin>:1:0:
-> ../scripts/gcc-plugins/gcc-common.h:4:22: fatal error: bversion.h: No such
-> file or directory
->  #include "bversion.h"
->                       ^
-> compilation terminated.'
-> + '[' 1 -ne 0 ']'
-> + exit 1
->
-> build log is at:
-> https://travis-ci.org/sudipm-mukherjee/parport/jobs/136350824
->
-> Looks like 6b90bd4ba40b ("GCC plugin infrastructure") is the problem.
+> --- linux-next-20160609.orig/include/linux/compaction.h
+> +++ linux-next-20160609/include/linux/compaction.h
+> @@ -233,6 +233,7 @@ extern int compaction_register_node(stru
+>  extern void compaction_unregister_node(struct node *node);
+>  
+>  #else
+> +struct node;
+>  
+>  static inline int compaction_register_node(struct node *node)
+>  {
 
-Hi, yes, if you want to be testing the GCC plugins, you'll need the
-gcc plugin headers installed. On Debian and Ubuntu, they can be found
-like this:
+Well compaction.h has no #includes at all and obviously depends on its
+including file(s) to bring in the definitions which it needs.
 
-$ apt-cache search gcc | grep plugin-dev
-gcc-5-plugin-dev - Files for GNU GCC plugin development.
-gcc-4.7-plugin-dev - Files for GNU GCC plugin development.
-gcc-4.8-plugin-dev - Files for GNU GCC plugin development.
-gcc-4.9-plugin-dev - Files for GNU GCC plugin development.
+So if we want to keep that (odd) model then we should fix
+mm-balloon-use-general-non-lru-movable-page-feature.patch thusly:
 
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: mm-balloon-use-general-non-lru-movable-page-feature-fix
 
--Kees
+compaction.h requires that the includer first include node.h
 
--- 
-Kees Cook
-Chrome OS & Brillo Security
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Gioh Kim <gi-oh.kim@profitbricks.com>
+Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rafael Aquini <aquini@redhat.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+--- a/include/linux/balloon_compaction.h~mm-balloon-use-general-non-lru-movable-page-feature-fix
++++ a/include/linux/balloon_compaction.h
+@@ -45,6 +45,7 @@
+ #define _LINUX_BALLOON_COMPACTION_H
+ #include <linux/pagemap.h>
+ #include <linux/page-flags.h>
++#include <linux/node.h>
+ #include <linux/compaction.h>
+ #include <linux/gfp.h>
+ #include <linux/err.h>
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
