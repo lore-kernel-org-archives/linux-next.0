@@ -1,39 +1,75 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: build failure after merge of the amlogic tree
-Date: Thu, 09 Jun 2016 15:43:48 -0700
-Message-ID: <7hziquc7a3.fsf@baylibre.com>
-References: <20160606095559.67cf4f00@canb.auug.org.au>
-	<CAOi56cVQPutG1ZBw16=HWBAVdbV+i2VL4vDRdc_23qVT+MEL+A@mail.gmail.com>
-	<20160606140231.394f5db7@canb.auug.org.au>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: [PATCH] mm: fix build warnings in <linux/compaction.h>
+Date: Fri, 10 Jun 2016 08:31:43 +0900
+Message-ID: <20160609233143.GC29779@bbox>
+References: <5759A1F9.2070302@infradead.org>
+ <20160609152716.1093ada2f52bbcc426e6ddb6@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:36742 "EHLO
-	mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751917AbcFIWnu (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 18:43:50 -0400
-Received: by mail-pf0-f169.google.com with SMTP id t190so17017337pfb.3
-        for <linux-next@vger.kernel.org>; Thu, 09 Jun 2016 15:43:50 -0700 (PDT)
-In-Reply-To: <20160606140231.394f5db7@canb.auug.org.au> (Stephen Rothwell's
-	message of "Mon, 6 Jun 2016 14:02:31 +1000")
+Received: from LGEAMRELO11.lge.com ([156.147.23.51]:47568 "EHLO
+	lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751419AbcFIXah (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 9 Jun 2016 19:30:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20160609152716.1093ada2f52bbcc426e6ddb6@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Linux MM <linux-mm@kvack.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Andrew,
 
-> Hi Kevin,
->
-> On Sun, 5 Jun 2016 20:40:28 -0700 Kevin Hilman <khilman@baylibre.com> wrote:
->>
->> Not forgotten, but merged through Philip's reset tree, which I thought
->> was already in linux-next.  Sorry about that.
->
-> It may well be, but we dislike implicit dependencies between trees ...
-> it makes the merge order matter :-(  What you should have is a common
-> non-rebasing branch that both trees merge.
+On Thu, Jun 09, 2016 at 03:27:16PM -0700, Andrew Morton wrote:
+> On Thu, 9 Jun 2016 10:06:01 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> 
+> > From: Randy Dunlap <rdunlap@infradead.org>
+> > 
+> > Fix build warnings when struct node is not defined:
+> > 
+> > In file included from ../include/linux/balloon_compaction.h:48:0,
+> >                  from ../mm/balloon_compaction.c:11:
+> > ../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list [enabled by default]
+> >  static inline int compaction_register_node(struct node *node)
+> > ../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+> > ../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list [enabled by default]
+> >  static inline void compaction_unregister_node(struct node *node)
+> > 
+> > ...
+> >
+> > --- linux-next-20160609.orig/include/linux/compaction.h
+> > +++ linux-next-20160609/include/linux/compaction.h
+> > @@ -233,6 +233,7 @@ extern int compaction_register_node(stru
+> >  extern void compaction_unregister_node(struct node *node);
+> >  
+> >  #else
+> > +struct node;
+> >  
+> >  static inline int compaction_register_node(struct node *node)
+> >  {
+> 
+> Well compaction.h has no #includes at all and obviously depends on its
+> including file(s) to bring in the definitions which it needs.
+> 
+> So if we want to keep that (odd) model then we should fix
+> mm-balloon-use-general-non-lru-movable-page-feature.patch thusly:
 
-Yup, I'll work this out with Philipp.
+How about fixing such odd model in this chance?
+Otherwise, every non-lru page migration driver should include
+both compaction.h and node.h which is weired to me. :(
 
-Kevin
+I think there are two ways.
+
+1. compaction.h include node.h directly so user of compaction.h don't
+need to take care about node.h
+
+2. Randy's fix
+
+I looked up who use compaction_[un]register_node and found it's used
+only drivers/base/node.c which already include node.h so no problem.
+
+1) I believe it's rare those functions to be needed by other files.
+2) Those functions works if CONFIG_NUMA as well as CONFIG_COMPACTION
+which is rare configuration for many not-server system.
+
+So, I prefer Randy's fix.
