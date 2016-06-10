@@ -1,39 +1,39 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: manual merge of the device-mapper tree with the
- block tree
-Date: Fri, 10 Jun 2016 13:01:59 -0400
-Message-ID: <20160610170159.GA29366@redhat.com>
-References: <20160609135932.39c8ddd7@canb.auug.org.au>
- <20160609140253.183a1428@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [mmots-2016-06-09-16-49] sleeping function called from
+ slab_alloc()
+Date: Fri, 10 Jun 2016 14:59:16 -0700
+Message-ID: <20160610145916.d071635d6462e4d837959e45@linux-foundation.org>
+References: <20160610061139.GA374@swordfish>
+	<20160610095048.GA655@swordfish>
+	<477de582bf99ba64be662a42bf023b54@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47852 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750888AbcFJRCC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 10 Jun 2016 13:02:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20160609140253.183a1428@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53866 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752116AbcFJV7S (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 10 Jun 2016 17:59:18 -0400
+In-Reply-To: <477de582bf99ba64be662a42bf023b54@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alasdair G Kergon <agk@redhat.com>, Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: mhocko <mhocko@suse.de>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Christoph Lameter <cl@linux.com>, Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, linux-kernel-owner@vger.kernel.org
 
-On Thu, Jun 09 2016 at 12:02am -0400,
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 10 Jun 2016 11:55:54 +0200 mhocko <mhocko@suse.de> wrote:
 
-> Hi all,
+> On 2016-06-10 11:50, Sergey Senozhatsky wrote:
+> > Hello,
+> > 
+> > forked from http://marc.info/?l=linux-mm&m=146553910928716&w=2
+> > 
+> > new_slab()->BUG->die()->exit_signals() can be called from atomic
+> > context: local IRQs disabled in slab_alloc().
 > 
-> On Thu, 9 Jun 2016 13:59:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >   50d14ab0130a ("dm: move request-based code out to dm-rq.[hc]")
-> 
-> By the way, resolving these conflicts would have been easier if this
-> commit had been split into "move with no changes" followed by "small
-> changes" commits.
+> I have sent a patch to drop the BUG() from that path today. It
+> is just too aggressive way to react to a non-critical bug.
+> See 
+> http://lkml.kernel.org/r/1465548200-11384-2-git-send-email-mhocko@kernel.org
 
-Yeap, I understand.  I've folded your fix into the appropriate commit
-and rebased DM's for-next (and dm-4.8) ontop of block's for-4.8/core.
-
-Thanks,
-Mike
+Doesn't this simply mean that Sergey's workload will blurt a pr_warn()
+rather than a BUG()?  That still needs fixing.  Confused.
