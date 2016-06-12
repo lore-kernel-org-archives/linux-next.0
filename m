@@ -1,63 +1,111 @@
-From: Xiong Zhou <xzhou@redhat.com>
-Subject: Re: [PATCH] Fix reported kmemleak
-Date: Sun, 12 Jun 2016 18:29:02 +0800
-Message-ID: <20160612102902.GA16418@dhcp12-144.nay.redhat.com>
-References: <1465316612-9649-1-git-send-email-shaun@tancheff.com>
+From: Emese Revfy <re.emese@gmail.com>
+Subject: Re: [PATCH] gcc-plugins: disable under COMPILE_TEST
+Date: Mon, 13 Jun 2016 00:12:44 +0200
+Message-ID: <20160613001244.b4b3c675d59e3ad3d8d656a4@gmail.com>
+References: <20160611161212.GA29370@www.outflux.net>
+	<20160611162926.GL12567@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:54974 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751420AbcFLK3K (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 12 Jun 2016 06:29:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1465316612-9649-1-git-send-email-shaun@tancheff.com>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:36120 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932426AbcFLWF5 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 12 Jun 2016 18:05:57 -0400
+In-Reply-To: <20160611162926.GL12567@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shaun Tancheff <shaun@tancheff.com>
-Cc: linux-block@vger.kernel.org, Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, David Drysdale <drysdale@google.com>, Xiong Zhou <xzhou@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-nvdimm@ml01.01.org, Larry Finger <Larry.Finger@lwfinger.net>, Catalin Marinas <catalin.marinas@arm.com>, LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@fb.com>, bart.vanassche@sandisk.com
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Kees Cook <keescook@chromium.org>, Michal Marek <mmarek@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux-Next <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
 
-Hi,
+On Sat, 11 Jun 2016 12:29:26 -0400
+Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
 
-On Tue, Jun 07, 2016 at 11:23:30AM -0500, Shaun Tancheff wrote:
-> This fixes a memory leak reported by a few people in 4.7-rc1
+> [[PATCH] gcc-plugins: disable under COMPILE_TEST] On 11/06/2016 (Sat 09:12) Kees Cook wrote:
 > 
-> kmemleak report after 9082e87bfbf8 ("block: remove struct bio_batch")
+> > Since adding the gcc plugin development headers is required for the
+> > gcc plugin support, we should ease into this new kernel build dependency
+> > more slowly. For now, disable the gcc plugins under COMPILE_TEST so that
+> > all*config builds will skip it.
 > 
-> This patch just formalizes the one in this discussion here:
-> https://lkml.kernel.org/r/20160606112620.GA29910@e104818-lin.cambridge.arm.com
-> 
-> The same issue appears here:
-> https://lkml.kernel.org/r/20160607102651.GA6480@dhcp12-144.nay.redhat.com
-> 
-> Patch is also available at:
-> 
-> https://github.com/stancheff/linux.git
-> branch: v4.7-rc2+bio_put
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: axboe@kernel.dk
-> cc: David Drysdale <drysdale@google.com>
-> Cc: Xiong Zhou <xzhou@redhat.com>
+> Wouldn't it be better to test compile a one line program that tries to
+> source the header(s) and then react accordingly?
 
-Thanks for the information!
+The scripts/gcc-plugin.sh script does exactly that.
+ 
+> Then at least you would get the test coverage from people who have the
+> headers installed who are doing all[yes|mod]config.  This "for now"
+> solution doesn't really have a path forward other than assuming all
+> distros install the plugin headers sometime in the future.
+> 
+> Either way, this is an improvement over the current situation, so thanks
+> for that.
 
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: linux-next@vger.kernel.org
-> Cc: linux-nvdimm@ml01.01.org
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Larry Finger <Larry.Finger@lwfinger.net>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: LKML <linux-kernel@vger.kernel.org>,
-> Cc: Jens Axboe <axboe@fb.com>,
-> Cc: bart.vanassche@sandisk.com
-> 
-> Shaun Tancheff (1):
->   Missing bio_put following submit_bio_wait
-> 
->  block/blk-lib.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> -- 
-> 2.8.1
-> 
+If it is not too late I think this patch would be better:
+
+
+When there is no gcc plugin support then don't compile the plugins
+(but still print a warning). This allows building allyes/allmod configs
+until the gcc plugin headers get installed.
+    
+Signed-off-by: Emese Revfy <re.emese@gmail.com>
+---
+ Makefile                     | 6 +++---
+ scripts/Makefile.gcc-plugins | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index a49c075..715210c 100644
+--- a/Makefile
++++ b/Makefile
+@@ -623,15 +623,15 @@ endif
+ # Tell gcc to never replace conditional load with a non-conditional one
+ KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
+ 
++include scripts/Makefile.gcc-plugins
++
+ PHONY += gcc-plugins
+ gcc-plugins: scripts_basic
+-ifdef CONFIG_GCC_PLUGINS
++ifneq ($(GCC_PLUGINS_CFLAGS),)
+ 	$(Q)$(MAKE) $(build)=scripts/gcc-plugins
+ endif
+ 	@:
+ 
+-include scripts/Makefile.gcc-plugins
+-
+ ifdef CONFIG_READABLE_ASM
+ # Disable optimizations that make assembler listings hard to read.
+ # reorder blocks reorders the control in the function
+diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
+index c7372cb..2f101ea 100644
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -21,6 +21,7 @@ ifdef CONFIG_GCC_PLUGINS
+         CFLAGS_KCOV := $(SANCOV_PLUGIN)
+       else
+         $(warning warning: cannot use CONFIG_KCOV: -fsanitize-coverage=trace-pc is not supported by compiler)
++        CFLAGS_KCOV =
+       endif
+     endif
+   endif
+@@ -37,13 +38,12 @@ ifdef CONFIG_GCC_PLUGINS
+       else
+         $(warning warning: your gcc version does not support plugins, you should upgrade it to gcc 4.5 at least)
+       endif
++      GCC_PLUGINS_CFLAGS =
+     endif
+-  else
+-    # SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
+-    GCC_PLUGINS_CFLAGS := $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGINS_CFLAGS))
+   endif
+ 
+-  KBUILD_CFLAGS += $(GCC_PLUGINS_CFLAGS)
++  # SANCOV_PLUGIN can be only in CFLAGS_KCOV because avoid duplication.
++  KBUILD_CFLAGS += $(filter-out $(SANCOV_PLUGIN), $(GCC_PLUGINS_CFLAGS))
+   GCC_PLUGIN := $(gcc-plugin-y)
+ 
+ endif
+
+--
+2.8.1
