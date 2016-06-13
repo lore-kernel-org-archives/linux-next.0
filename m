@@ -1,85 +1,50 @@
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Subject: Re: [PATCH] gcc-plugins: disable under COMPILE_TEST
-Date: Mon, 13 Jun 2016 10:40:11 +0200
-Message-ID: <CA+icZUW-OZMh2foyiQK=0NfakwbiFHTkouMjptgokKTFLZQFQQ@mail.gmail.com>
-References: <20160611161212.GA29370@www.outflux.net>
-Reply-To: sedat.dilek@gmail.com
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [mmots-2016-06-09-16-49] sleeping function called from
+ slab_alloc()
+Date: Mon, 13 Jun 2016 12:47:34 +0200
+Message-ID: <20160613104733.GA6518@dhcp22.suse.cz>
+References: <20160610061139.GA374@swordfish>
+ <20160610095048.GA655@swordfish>
+ <477de582bf99ba64be662a42bf023b54@suse.de>
+ <20160610145916.d071635d6462e4d837959e45@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160611161212.GA29370@www.outflux.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Michal Marek <mmarek@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Emese Revfy <re.emese@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, kernel-hardening@lists.openwall.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:34735 "EHLO
+	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965363AbcFMKrh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Jun 2016 06:47:37 -0400
+Content-Disposition: inline
+In-Reply-To: <20160610145916.d071635d6462e4d837959e45@linux-foundation.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Christoph Lameter <cl@linux.com>, Vlastimil Babka <vbabka@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, linux-kernel-owner@vger.kernel.org
 
-On Sat, Jun 11, 2016 at 6:12 PM, Kees Cook <keescook@chromium.org> wrote:
-> Since adding the gcc plugin development headers is required for the
-> gcc plugin support, we should ease into this new kernel build dependency
-> more slowly. For now, disable the gcc plugins under COMPILE_TEST so that
-> all*config builds will skip it.
->
+On Fri 10-06-16 14:59:16, Andrew Morton wrote:
+> On Fri, 10 Jun 2016 11:55:54 +0200 mhocko <mhocko@suse.de> wrote:
+> 
+> > On 2016-06-10 11:50, Sergey Senozhatsky wrote:
+> > > Hello,
+> > > 
+> > > forked from http://marc.info/?l=linux-mm&m=146553910928716&w=2
+> > > 
+> > > new_slab()->BUG->die()->exit_signals() can be called from atomic
+> > > context: local IRQs disabled in slab_alloc().
+> > 
+> > I have sent a patch to drop the BUG() from that path today. It
+> > is just too aggressive way to react to a non-critical bug.
+> > See 
+> > http://lkml.kernel.org/r/1465548200-11384-2-git-send-email-mhocko@kernel.org
+> 
+> Doesn't this simply mean that Sergey's workload will blurt a pr_warn()
+> rather than a BUG()?  That still needs fixing.  Confused.
 
-[ This might be a bit off-topic - Feel free to answer ]
+Yes that should be fixed by
+http://lkml.kernel.org/r/20160610074223.GC32285@dhcp22.suse.cz
 
-Hi,
+which prevents from using a wrong GFP...
 
-I want to try that new "GCC-plugin" feature.
-Do you have a Git repo for "easy-testing"?
-
-Does the kernel's build-system check for installed "gcc-plugin
-development headers"?
-Which GCC versions support "gcc-plugin" feature?
-I am here on Ubuntu/precise AMD64 and have gcc-4.6.4 and gcc-4.9.2.
-
-[ Optional ]
-What about the topic and support for "LLVM/Clang and hardening" of the
-Linux-kernel?
-
-Regards,
-- Sedat -
-
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> ---
->  arch/Kconfig      | 1 +
->  lib/Kconfig.debug | 4 ++--
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 83aa2a3c470d..3f06d678b1d7 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -366,6 +366,7 @@ config HAVE_GCC_PLUGINS
->  menuconfig GCC_PLUGINS
->         bool "GCC plugins"
->         depends on HAVE_GCC_PLUGINS
-> +       depends on !COMPILE_TEST
->         help
->           GCC plugins are loadable modules that provide extra features to the
->           compiler. They are useful for runtime instrumentation and static analysis.
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index d40833b9b7f4..0f9981999a27 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -713,8 +713,8 @@ config KCOV
->         bool "Code coverage for fuzzing"
->         depends on ARCH_HAS_KCOV
->         select DEBUG_FS
-> -       select GCC_PLUGINS
-> -       select GCC_PLUGIN_SANCOV
-> +       select GCC_PLUGINS if !COMPILE_TEST
-> +       select GCC_PLUGIN_SANCOV if !COMPILE_TEST
->         help
->           KCOV exposes kernel code coverage information in a form suitable
->           for coverage-guided fuzzing (randomized testing).
-> --
-> 2.7.4
->
->
-> --
-> Kees Cook
-> Chrome OS & Brillo Security
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Michal Hocko
+SUSE Labs
