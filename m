@@ -1,50 +1,42 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [mmots-2016-06-09-16-49] sleeping function called from
- slab_alloc()
-Date: Mon, 13 Jun 2016 12:47:34 +0200
-Message-ID: <20160613104733.GA6518@dhcp22.suse.cz>
-References: <20160610061139.GA374@swordfish>
- <20160610095048.GA655@swordfish>
- <477de582bf99ba64be662a42bf023b54@suse.de>
- <20160610145916.d071635d6462e4d837959e45@linux-foundation.org>
+From: "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
+Subject: Re: [PATCH] gcc-plugins: disable under COMPILE_TEST
+Date: Mon, 13 Jun 2016 14:32:31 -0400
+Message-ID: <7102975e-88a5-3555-21e1-f07d595bc235@gmail.com>
+References: <20160611161212.GA29370@www.outflux.net>
+ <20160611162926.GL12567@windriver.com>
+ <20160613001244.b4b3c675d59e3ad3d8d656a4@gmail.com>
+ <CAGXu5jJ_+azG6H0tB7W0mJTUzXp18Y7qN7dx7EEKng+0nO-dig@mail.gmail.com>
+ <20160613021831.9a79c5c82d1511e572023ed6@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:34735 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965363AbcFMKrh (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Jun 2016 06:47:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20160610145916.d071635d6462e4d837959e45@linux-foundation.org>
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36169 "EHLO
+	mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751920AbcFMSck (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 13 Jun 2016 14:32:40 -0400
+In-Reply-To: <20160613021831.9a79c5c82d1511e572023ed6@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Christoph Lameter <cl@linux.com>, Vlastimil Babka <vbabka@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, linux-kernel-owner@vger.kernel.org
+To: Emese Revfy <re.emese@gmail.com>, Kees Cook <keescook@chromium.org>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Michal Marek <mmarek@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
 
-On Fri 10-06-16 14:59:16, Andrew Morton wrote:
-> On Fri, 10 Jun 2016 11:55:54 +0200 mhocko <mhocko@suse.de> wrote:
-> 
-> > On 2016-06-10 11:50, Sergey Senozhatsky wrote:
-> > > Hello,
-> > > 
-> > > forked from http://marc.info/?l=linux-mm&m=146553910928716&w=2
-> > > 
-> > > new_slab()->BUG->die()->exit_signals() can be called from atomic
-> > > context: local IRQs disabled in slab_alloc().
-> > 
-> > I have sent a patch to drop the BUG() from that path today. It
-> > is just too aggressive way to react to a non-critical bug.
-> > See 
-> > http://lkml.kernel.org/r/1465548200-11384-2-git-send-email-mhocko@kernel.org
-> 
-> Doesn't this simply mean that Sergey's workload will blurt a pr_warn()
-> rather than a BUG()?  That still needs fixing.  Confused.
-
-Yes that should be fixed by
-http://lkml.kernel.org/r/20160610074223.GC32285@dhcp22.suse.cz
-
-which prevents from using a wrong GFP...
-
--- 
-Michal Hocko
-SUSE Labs
+On 2016-06-12 20:18, Emese Revfy wrote:
+> On Sun, 12 Jun 2016 15:25:39 -0700
+> Kees Cook <keescook@chromium.org> wrote:
+>
+>> I don't like this because it means if someone specifically selects
+>> some plugins in their .config, and the headers are missing, the kernel
+>> will successfully compile. For many plugins, this results in a kernel
+>> that lacks the requested security features, and that I really do not
+>> want to have happening. I'm okay leaving these disabled for compile
+>> tests for now. We can revisit this once more distros have plugins
+>> enabled by default.
+>
+> You are right. Your patch is safer.
+>
+Why not make it so that if COMPILE_TEST is enabled, the build warns if 
+it can't find the headers, otherwise it fails?  That way, people who are 
+doing all*config builds but don't have the headers will still get some 
+build coverage, and the people who are enabling it as a security feature 
+will still get build failures.
