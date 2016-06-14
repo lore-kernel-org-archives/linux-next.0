@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the md tree with the block tree
-Date: Tue, 14 Jun 2016 13:52:19 +1000
-Message-ID: <20160614135219.5c4879a6@canb.auug.org.au>
+Date: Tue, 14 Jun 2016 13:52:51 +1000
+Message-ID: <20160614135251.3b67f1f9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52757 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41900 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933011AbcFNDwX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jun 2016 23:52:23 -0400
+	id S933011AbcFNDwy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jun 2016 23:52:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
@@ -19,16 +19,15 @@ Hi Shaohua,
 
 Today's linux-next merge of the md tree got a conflict in:
 
-  drivers/md/raid10.c
+  drivers/md/raid1.c
 
 between commit:
 
   796a5cf083c2 ("md: use bio op accessors")
 
-from the block tree and commits:
+from the block tree and commit:
 
-  f90145f317ef ("md/raid10: add rcu protection to rdev access in raid10_sync_request."
-  d094d6860b66 ("md/raid10: add rcu protection to rdev access during reshape.")
+  707a6a420ccf ("md/raid1: add rcu protection to rdev in fix_read_error")
 
 from the md tree.
 
@@ -43,86 +42,39 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/md/raid10.c
-index 26ae74fd0d01,8ee5d96e6a2d..000000000000
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@@ -3063,10 -3092,10 +3091,10 @@@ static sector_t raid10_sync_request(str
-  					biolist = bio;
-  					bio->bi_private = r10_bio;
-  					bio->bi_end_io = end_sync_write;
- -					bio->bi_rw = WRITE;
- +					bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
-  					bio->bi_iter.bi_sector = to_addr
-- 						+ rdev->data_offset;
-- 					bio->bi_bdev = rdev->bdev;
-+ 						+ mrdev->data_offset;
-+ 					bio->bi_bdev = mrdev->bdev;
-  					atomic_inc(&r10_bio->remaining);
-  				} else
-  					r10_bio->devs[1].bio->bi_end_io = NULL;
-@@@ -3092,10 -3120,10 +3119,10 @@@
-  				biolist = bio;
-  				bio->bi_private = r10_bio;
-  				bio->bi_end_io = end_sync_write;
- -				bio->bi_rw = WRITE;
- +				bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
-  				bio->bi_iter.bi_sector = to_addr +
-- 					rdev->data_offset;
-- 				bio->bi_bdev = rdev->bdev;
-+ 					mreplace->data_offset;
-+ 				bio->bi_bdev = mreplace->bdev;
-  				atomic_inc(&r10_bio->remaining);
-  				break;
-  			}
-@@@ -3212,16 -3251,18 +3250,18 @@@
-  			biolist = bio;
-  			bio->bi_private = r10_bio;
-  			bio->bi_end_io = end_sync_read;
- -			bio->bi_rw = READ;
- +			bio_set_op_attrs(bio, REQ_OP_READ, 0);
-- 			bio->bi_iter.bi_sector = sector +
-- 				conf->mirrors[d].rdev->data_offset;
-- 			bio->bi_bdev = conf->mirrors[d].rdev->bdev;
-+ 			bio->bi_iter.bi_sector = sector + rdev->data_offset;
-+ 			bio->bi_bdev = rdev->bdev;
-  			count++;
-  
-- 			if (conf->mirrors[d].replacement == NULL ||
-- 			    test_bit(Faulty,
-- 				     &conf->mirrors[d].replacement->flags))
-+ 			rdev = rcu_dereference(conf->mirrors[d].replacement);
-+ 			if (rdev == NULL || test_bit(Faulty, &rdev->flags)) {
+diff --cc drivers/md/raid1.c
+index 41d9c31da3b3,5027ef4752ac..000000000000
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@@ -2086,15 -2069,20 +2067,21 @@@ static void fix_read_error(struct r1con
+  			     (!test_bit(Faulty, &rdev->flags) &&
+  			      rdev->recovery_offset >= sect + s)) &&
+  			    is_badblock(rdev, sect, s,
+- 					&first_bad, &bad_sectors) == 0 &&
+- 			    sync_page_io(rdev, sect, s<<9,
+- 					 conf->tmppage, REQ_OP_READ, 0, false))
+- 				success = 1;
+- 			else {
+- 				d++;
+- 				if (d == conf->raid_disks * 2)
+- 					d = 0;
+- 			}
++ 					&first_bad, &bad_sectors) == 0) {
++ 				atomic_inc(&rdev->nr_pending);
 + 				rcu_read_unlock();
-  				continue;
-+ 			}
-+ 			atomic_inc(&rdev->nr_pending);
-+ 			rcu_read_unlock();
++ 				if (sync_page_io(rdev, sect, s<<9,
+ -						 conf->tmppage, READ, false))
+++						 conf->tmppage, REQ_OP_READ, 0,
+++						 false))
++ 					success = 1;
++ 				rdev_dec_pending(rdev, mddev);
++ 				if (success)
++ 					break;
++ 			} else
++ 				rcu_read_unlock();
++ 			d++;
++ 			if (d == conf->raid_disks * 2)
++ 				d = 0;
+  		} while (!success && d != read_disk);
   
-  			/* Need to set up for writing to the replacement */
-  			bio = r10_bio->devs[i].repl_bio;
-@@@ -3234,10 -3274,9 +3273,9 @@@
-  			biolist = bio;
-  			bio->bi_private = r10_bio;
-  			bio->bi_end_io = end_sync_write;
- -			bio->bi_rw = WRITE;
- +			bio_set_op_attrs(bio, REQ_OP_WRITE, 0);
-- 			bio->bi_iter.bi_sector = sector +
-- 				conf->mirrors[d].replacement->data_offset;
-- 			bio->bi_bdev = conf->mirrors[d].replacement->bdev;
-+ 			bio->bi_iter.bi_sector = sector + rdev->data_offset;
-+ 			bio->bi_bdev = rdev->bdev;
-  			count++;
-  		}
-  
-@@@ -4521,7 -4569,9 +4568,9 @@@ static int handle_reshape_read_error(st
-  					       addr,
-  					       s << 9,
-  					       bvec[idx].bv_page,
- -					       READ, false);
- +					       REQ_OP_READ, 0, false);
-+ 			rdev_dec_pending(rdev, mddev);
-+ 			rcu_read_lock();
-  			if (success)
-  				break;
-  		failed:
+  		if (!success) {
