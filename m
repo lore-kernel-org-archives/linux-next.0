@@ -1,29 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the btrfs tree
-Date: Tue, 14 Jun 2016 12:44:51 +1000
-Message-ID: <20160614124451.25bbe808@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Tue, 14 Jun 2016 12:44:55 +1000
+Message-ID: <20160614124455.297833ee@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, David Sterba <dsterba@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Christie <mchristi@redhat.com>, Liu Bo <bo.li.liu@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43723 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932797AbcFNCo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 13 Jun 2016 22:44:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shaun Tancheff <shaun@tancheff.com>, Mike Christie <mchristi@redhat.com>
 
 Hi Jens,
 
 Today's linux-next merge of the block tree got a conflict in:
 
-  fs/btrfs/extent_io.c
+  block/blk-lib.c
 
 between commit:
 
-  f338d193e1c5 ("Btrfs: fix eb memory leak due to readpage failure")
+  05bd92dddc59 ("block: missing bio_put following submit_bio_wait")
 
-from the btrfs tree and commit:
+from the FIXME tree and commit:
 
-  1f7ad75b13b5 ("btrfs: have submit_one_bio users use bio op accessors")
+  4e49ea4a3d27 ("block/fs/drivers: remove rw argument from submit_bio")
 
 from the block tree.
 
@@ -38,28 +42,55 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/btrfs/extent_io.c
-index b8ecc6af4531,4f8bace0fd1b..000000000000
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@@ -5253,18 -5225,9 +5251,18 @@@ int read_extent_buffer_pages(struct ext
-  			err = __extent_read_full_page(tree, page,
-  						      get_extent, &bio,
-  						      mirror_num, &bio_flags,
-- 						      READ | REQ_META);
-+ 						      REQ_META);
- -			if (err)
- +			if (err) {
-  				ret = err;
- +				/*
- +				 * We use &bio in above __extent_read_full_page,
- +				 * so we ensure that if it returns error, the
- +				 * current page fails to add itself to bio.
- +				 *
- +				 * We must dec io_pages by ourselves.
- +				 */
- +				atomic_dec(&eb->io_pages);
- +			}
-  		} else {
-  			unlock_page(page);
+diff --cc block/blk-lib.c
+index 9e29dc351695,78626c2fde33..000000000000
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@@ -103,17 -111,13 +111,14 @@@ int blkdev_issue_discard(struct block_d
+  	struct blk_plug plug;
+  	int ret;
+  
+- 	if (flags & BLKDEV_DISCARD_SECURE)
+- 		type |= REQ_SECURE;
+- 
+  	blk_start_plug(&plug);
+- 	ret = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, type,
++ 	ret = __blkdev_issue_discard(bdev, sector, nr_sects, gfp_mask, flags,
+  			&bio);
+  	if (!ret && bio) {
+- 		ret = submit_bio_wait(type, bio);
++ 		ret = submit_bio_wait(bio);
+  		if (ret == -EOPNOTSUPP)
+  			ret = 0;
+ +		bio_put(bio);
+  	}
+  	blk_finish_plug(&plug);
+  
+@@@ -166,10 -171,8 +172,10 @@@ int blkdev_issue_write_same(struct bloc
   		}
+  	}
+  
+ -	if (bio)
+ +	if (bio) {
+- 		ret = submit_bio_wait(REQ_WRITE | REQ_WRITE_SAME, bio);
++ 		ret = submit_bio_wait(bio);
+ +		bio_put(bio);
+ +	}
+  	return ret != -EOPNOTSUPP ? ret : 0;
+  }
+  EXPORT_SYMBOL(blkdev_issue_write_same);
+@@@ -209,11 -212,8 +215,11 @@@ static int __blkdev_issue_zeroout(struc
+  		}
+  	}
+  
+ -	if (bio)
+ -		return submit_bio_wait(bio);
+ +	if (bio) {
+- 		ret = submit_bio_wait(WRITE, bio);
+++		ret = submit_bio_wait(bio);
+ +		bio_put(bio);
+ +		return ret;
+ +	}
+  	return 0;
+  }
+  
