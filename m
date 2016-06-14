@@ -1,63 +1,70 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: manual merge of the kvms390 tree with the s390 tree
-Date: Tue, 14 Jun 2016 06:52:52 +0200
-Message-ID: <20160614045252.GA3754@osiris>
-References: <20160614145117.54eba7ec@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Tue, 14 Jun 2016 15:04:22 +1000
+Message-ID: <20160614150422.66d652de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160614145117.54eba7ec@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janosch Frank <frankja@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47403 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751213AbcFNFEZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jun 2016 01:04:25 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Crestez Dan Leonard <leonard.crestez@intel.com>, Jonathan Cameron <jic23@kernel.org>
 
-On Tue, Jun 14, 2016 at 02:51:17PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvms390 tree got a conflict in:
-> 
->   arch/s390/hypfs/hypfs_diag.c
-> 
-> between commit:
-> 
->   6c22c9863760 ("s390: avoid extable collisions")
-> 
-> from the s390 tree and commit:
-> 
->   e65f30e0cb29 ("s390: hypfs: Move diag implementation and data definitions")
-> 
-> from the kvms390 tree.
-> 
-> I fixed it up (using the kvms390 version and then adding the following
-> patch) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 14 Jun 2016 14:47:33 +1000
-> Subject: [PATCH] s390: merge fix up for __diag204 move
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/s390/kernel/diag.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kernel/diag.c b/arch/s390/kernel/diag.c
-> index a44faf4a0454..2289d6f8bec0 100644
-> --- a/arch/s390/kernel/diag.c
-> +++ b/arch/s390/kernel/diag.c
-> @@ -169,7 +169,7 @@ static inline int __diag204(unsigned long subcode, unsigned long size, void *add
-> 
->  	asm volatile(
->  		"	diag	%2,%0,0x204\n"
-> -		"0:\n"
-> +		"0:	nopr	%%r7\n"
->  		EX_TABLE(0b,0b)
->  		: "+d" (_subcode), "+d" (_size) : "d" (addr) : "memory");
->  	if (_subcode)
+Hi Greg,
 
-The patch looks good. Thank you!
+Today's linux-next merge of the staging tree got a conflict in:
+
+  drivers/iio/industrialio-trigger.c
+
+between commit:
+
+  995438233579 ("iio: Fix error handling in iio_trigger_attach_poll_func")
+
+from the staging.current tree and commit:
+
+  ef2d71d6b7fb ("iio: triggers: Make trigger ops structure explicitly non optional.")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/iio/industrialio-trigger.c
+index 0c52dfe64977,672911293987..000000000000
+--- a/drivers/iio/industrialio-trigger.c
++++ b/drivers/iio/industrialio-trigger.c
+@@@ -220,14 -217,15 +223,14 @@@ static int iio_trigger_attach_poll_func
+  	ret = request_threaded_irq(pf->irq, pf->h, pf->thread,
+  				   pf->type, pf->name,
+  				   pf);
+ -	if (ret < 0) {
+ -		module_put(pf->indio_dev->info->driver_module);
+ -		return ret;
+ -	}
+ +	if (ret < 0)
+ +		goto out_put_irq;
+  
+ +	/* Enable trigger in driver */
+- 	if (trig->ops && trig->ops->set_trigger_state && notinuse) {
++ 	if (trig->ops->set_trigger_state && notinuse) {
+  		ret = trig->ops->set_trigger_state(trig, true);
+  		if (ret < 0)
+ -			module_put(pf->indio_dev->info->driver_module);
+ +			goto out_free_irq;
+  	}
+  
+  	return ret;
