@@ -1,80 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the md tree with the block tree
-Date: Tue, 14 Jun 2016 13:52:51 +1000
-Message-ID: <20160614135251.3b67f1f9@canb.auug.org.au>
+Subject: Re: linux-next: duplicate patches in the kspp and kbuild trees
+Date: Tue, 14 Jun 2016 14:32:03 +1000
+Message-ID: <20160614143203.220d0722@canb.auug.org.au>
+References: <20160614094019.14fac372@canb.auug.org.au>
+	<CAGXu5jLh7gXMcdU=F0qWc1S61YX-QmfQHpUfb+sxkQLUXu1Hqw@mail.gmail.com>
+	<CAGXu5jJK25pMi1kG2vUfWkZkDBxCVeLUVs61a=m8qmHDTjPg9g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41900 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46089 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933011AbcFNDwy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 13 Jun 2016 23:52:54 -0400
+	id S1750805AbcFNEcF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jun 2016 00:32:05 -0400
+In-Reply-To: <CAGXu5jJK25pMi1kG2vUfWkZkDBxCVeLUVs61a=m8qmHDTjPg9g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Christie <mchristi@redhat.com>, NeilBrown <neilb@suse.com>
+To: Kees Cook <keescook@google.com>
+Cc: Michal Marek <mmarek@suse.cz>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
 
-Hi Shaohua,
+Hi Kees,
 
-Today's linux-next merge of the md tree got a conflict in:
+On Mon, 13 Jun 2016 16:57:15 -0700 Kees Cook <keescook@google.com> wrote:
+>
+> On Mon, Jun 13, 2016 at 4:53 PM, Kees Cook <keescook@google.com> wrote:
+> >
+> > Strange, I pulled these directly from linux-next. Michal had an
+> > auto-responder saying he was going to be out-of-office, so I wanted to
+> > make sure the !COMPILE_TEST fix got in.
+> >
+> > Sounds like I should merge the kbuild tree, rather than cherry-picking
+> > from linux-next? I will adjust.  
 
-  drivers/md/raid1.c
+Cherry-picking produces new commits (with new SHA1s etc), while merging
+(or rebasing on top of the other versions) will have the same commits
+(not just patches).
 
-between commit:
+Having the same commits means that they never produce conflicts after
+further changes to the same files (unless both sides of the merge make
+further changes to the same files).
 
-  796a5cf083c2 ("md: use bio op accessors")
+> I've done this merge correctly now and pushed a forced update on the kspp tree.
 
-from the block tree and commit:
-
-  707a6a420ccf ("md/raid1: add rcu protection to rdev in fix_read_error")
-
-from the md tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks for that.  Now you just have to hope that Michal never rebases
+that part of his tree from under you.  (Michal: hint! :-))
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/md/raid1.c
-index 41d9c31da3b3,5027ef4752ac..000000000000
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@@ -2086,15 -2069,20 +2067,21 @@@ static void fix_read_error(struct r1con
-  			     (!test_bit(Faulty, &rdev->flags) &&
-  			      rdev->recovery_offset >= sect + s)) &&
-  			    is_badblock(rdev, sect, s,
-- 					&first_bad, &bad_sectors) == 0 &&
-- 			    sync_page_io(rdev, sect, s<<9,
-- 					 conf->tmppage, REQ_OP_READ, 0, false))
-- 				success = 1;
-- 			else {
-- 				d++;
-- 				if (d == conf->raid_disks * 2)
-- 					d = 0;
-- 			}
-+ 					&first_bad, &bad_sectors) == 0) {
-+ 				atomic_inc(&rdev->nr_pending);
-+ 				rcu_read_unlock();
-+ 				if (sync_page_io(rdev, sect, s<<9,
- -						 conf->tmppage, READ, false))
-++						 conf->tmppage, REQ_OP_READ, 0,
-++						 false))
-+ 					success = 1;
-+ 				rdev_dec_pending(rdev, mddev);
-+ 				if (success)
-+ 					break;
-+ 			} else
-+ 				rcu_read_unlock();
-+ 			d++;
-+ 			if (d == conf->raid_disks * 2)
-+ 				d = 0;
-  		} while (!success && d != read_disk);
-  
-  		if (!success) {
