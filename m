@@ -1,43 +1,51 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: duplicate patches in the kspp and kbuild trees
-Date: Tue, 14 Jun 2016 09:39:43 -0700
-Message-ID: <CAGXu5jJO1v0SKt58TPjW2P8ZibW+1=iCV9pmmnM4bvj1NoQRXg@mail.gmail.com>
-References: <20160614094019.14fac372@canb.auug.org.au> <CAGXu5jLh7gXMcdU=F0qWc1S61YX-QmfQHpUfb+sxkQLUXu1Hqw@mail.gmail.com>
- <CAGXu5jJK25pMi1kG2vUfWkZkDBxCVeLUVs61a=m8qmHDTjPg9g@mail.gmail.com>
- <20160614143203.220d0722@canb.auug.org.au> <57600036.8040900@suse.cz> <20160615001311.13db4b92@canb.auug.org.au>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH] i2c: remove __init from i2c_register_board_info()
+Date: Wed, 15 Jun 2016 00:18:07 +0200
+Message-ID: <20160614221807.GH11948@wotan.suse.de>
+References: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:36838 "EHLO
-	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751388AbcFNQjq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Jun 2016 12:39:46 -0400
-Received: by mail-wm0-f45.google.com with SMTP id n184so129856524wmn.1
-        for <linux-next@vger.kernel.org>; Tue, 14 Jun 2016 09:39:45 -0700 (PDT)
-In-Reply-To: <20160615001311.13db4b92@canb.auug.org.au>
+Received: from mx2.suse.de ([195.135.220.15]:42134 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751113AbcFNWSK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 14 Jun 2016 18:18:10 -0400
+Content-Disposition: inline
+In-Reply-To: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michal Marek <mmarek@suse.cz>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
+Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org, mcgrof@kernel.org
 
-On Tue, Jun 14, 2016 at 7:13 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Michal,
->
-> On Tue, 14 Jun 2016 15:01:42 +0200 Michal Marek <mmarek@suse.cz> wrote:
->>
->> I won't :). Kees, are you going to keep the patch in your tree and send
->> it to Linus once kbuild is in? Or shall I take it (which would
->> temporarily result in another duplication...).
->
-> Or Kees could send you a pull request ...
+On Tue, Jun 07, 2016 at 04:52:27PM -0700, Luis R. Rodriguez wrote:
+> As of next-20160607 with allyesconfig we get this linker failure:
+> 
+>   MODPOST vmlinux.o
+> WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
+> the function intel_scu_devices_create() to the function
+> .init.text:i2c_register_board_info()
+> 
+> This is caused by the fact that intel_scu_devices_create() calls
+> i2c_register_board_info() and intel_scu_devices_create() is not
+> annotated with __init. This typically involves manual code
+> inspection and if one is certain this is correct we would
+> just peg intel_scu_devices_create() with a __ref annotation.
+> 
+> In this case this would be wrong though as the
+> intel_scu_devices_create() call is exported, and used in
+> the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
+> The issue is that even though builtin_pci_driver(ipc_driver)
+> is used this just exposes the probe routine, which can occur
+> at any point in time if this bus supports hotplug. A race
+> can happen between kernel_init_freeable() that calls the init
+> calls (in this case registeres the intel_scu_ipc.c driver, and
+> later free_initmem(), which would free the i2c_register_board_info().
+> If a probe happens later in boot i2c_register_board_info() would
+> not be present and we should get a page fault.
+> 
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-My head hurts. :) How about this: since a pull request would (I think)
-end up pulling the other unrelated kspp patches, how about you take
-the patch into kbuild, and once it's there, I'll just remove it from
-my tree (since it's on top).
+I don't see this merged yet on linux-next and this is still an issue.
 
--Kees
+ *Poke*
 
--- 
-Kees Cook
-Chrome OS & Brillo Security
+  Luis
