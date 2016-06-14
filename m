@@ -1,84 +1,193 @@
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-Subject: Re: linux-next: manual merge of the kvms390 tree with the s390 tree
-Date: Tue, 14 Jun 2016 10:45:48 +0200
-Message-ID: <575FC43C.7000306@de.ibm.com>
-References: <20160614145117.54eba7ec@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160614 build: 1 failures 11 warnings (next-20160614)
+Date: Tue, 14 Jun 2016 13:08:00 +0100
+Message-ID: <E1bCn8S-0000wU-Qn@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49524 "EHLO
-	mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751661AbcFNIp4 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jun 2016 04:45:56 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-	by mx0b-001b2d01.pphosted.com (8.16.0.11/8.16.0.11) with SMTP id u5E8iljT125271
-	for <linux-next@vger.kernel.org>; Tue, 14 Jun 2016 04:45:55 -0400
-Received: from e19.ny.us.ibm.com (e19.ny.us.ibm.com [129.33.205.209])
-	by mx0b-001b2d01.pphosted.com with ESMTP id 23gc8x0v4d-1
-	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-	for <linux-next@vger.kernel.org>; Tue, 14 Jun 2016 04:45:55 -0400
-Received: from localhost
-	by e19.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <borntraeger@de.ibm.com>;
-	Tue, 14 Jun 2016 04:45:54 -0400
-In-Reply-To: <20160614145117.54eba7ec@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36966 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140AbcFNMNO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 14 Jun 2016 08:13:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janosch Frank <frankja@linux.vnet.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 06/14/2016 06:51 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvms390 tree got a conflict in:
-> 
->   arch/s390/hypfs/hypfs_diag.c
-> 
-> between commit:
-> 
->   6c22c9863760 ("s390: avoid extable collisions")
-> 
-> from the s390 tree and commit:
-> 
->   e65f30e0cb29 ("s390: hypfs: Move diag implementation and data definitions")
-> 
-> from the kvms390 tree.
-> 
-> I fixed it up (using the kvms390 version and then adding the following
-> patch) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 14 Jun 2016 14:47:33 +1000
-> Subject: [PATCH] s390: merge fix up for __diag204 move
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/s390/kernel/diag.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/kernel/diag.c b/arch/s390/kernel/diag.c
-> index a44faf4a0454..2289d6f8bec0 100644
-> --- a/arch/s390/kernel/diag.c
-> +++ b/arch/s390/kernel/diag.c
-> @@ -169,7 +169,7 @@ static inline int __diag204(unsigned long subcode, unsigned long size, void *add
-> 
->  	asm volatile(
->  		"	diag	%2,%0,0x204\n"
-> -		"0:\n"
-> +		"0:	nopr	%%r7\n"
->  		EX_TABLE(0b,0b)
->  		: "+d" (_subcode), "+d" (_size) : "d" (addr) : "memory");
->  	if (_subcode)
-> 
+Tree/Branch: next-20160614
+Git describe: next-20160614
+Commit: 81e615f6c6 Add linux-next specific files for 20160614
+
+Build Time: 138 min 40 sec
+
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
+
+Errors: 1
+Warnings: 11
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v7_defconfig
+     75 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      4 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  3 ../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+
+Warnings Summary: 11
+	 66 ../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	  4 ../drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: warning: unused variable 'num_parents' [-Wunused-variable]
+	  3 ../drivers/net/phy/mdio-mux.c:188:3: warning: 'parent_bus_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  3 ../arch/arm/include/asm/pgtable.h:262:15: warning: 'entry' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	  2 ../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	  2 ../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	  2 ../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/of.h:1002:20: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
-Yes, thanks. This conflict (and the other preexisting one) will move soon to Paolos KVM tree
-as I plan to submit my first pull request soon.
 
-Christian 
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: warning: unused variable 'num_parents' [-Wunused-variable]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/net/phy/mdio-mux.c:188:3: warning: 'parent_bus_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/include/asm/pgtable.h:262:15: warning: 'entry' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: warning: unused variable 'num_parents' [-Wunused-variable]
+	../drivers/net/phy/mdio-mux.c:188:3: warning: 'parent_bus_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 3 errors, 75 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+
+Warnings:
+	../arch/arm/include/asm/pgtable.h:262:15: warning: 'entry' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	../drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: warning: unused variable 'num_parents' [-Wunused-variable]
+	../include/linux/of.h:1002:20: warning: comparison of distinct pointer types lacks a cast
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/net/phy/mdio-mux.c:188:3: warning: 'parent_bus_node' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/include/asm/pgtable.h:262:15: warning: 'entry' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/compaction.h:237:51: warning: 'struct node' declared inside parameter list
+	../include/linux/compaction.h:237:51: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/linux/compaction.h:242:54: warning: 'struct node' declared inside parameter list
+	../drivers/clk/sunxi/clk-sun4i-tcon-ch1.c:82:6: warning: unused variable 'num_parents' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+x86_64-defconfig
