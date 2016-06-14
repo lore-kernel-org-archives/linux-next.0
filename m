@@ -1,66 +1,40 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] gcc-plugins: disable under COMPILE_TEST
-Date: Tue, 14 Jun 2016 12:01:38 +1000
-Message-ID: <1465869698.18900.2.camel@ellerman.id.au>
-References: <20160611161212.GA29370@www.outflux.net>
-	 <20160611162926.GL12567@windriver.com>
-	 <20160613001244.b4b3c675d59e3ad3d8d656a4@gmail.com>
-	 <CAGXu5jJ_+azG6H0tB7W0mJTUzXp18Y7qN7dx7EEKng+0nO-dig@mail.gmail.com>
-	 <20160613021831.9a79c5c82d1511e572023ed6@gmail.com>
-	 <7102975e-88a5-3555-21e1-f07d595bc235@gmail.com>
-	 <CAGXu5jLYYg8QdWy0nMLLV4e4=xz7G2U7CBQjsAd5Q5PfZd48ng@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the
+ drm-intel-fixes tree
+Date: Tue, 14 Jun 2016 12:10:06 +1000
+Message-ID: <20160614121006.43eec824@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGXu5jLYYg8QdWy0nMLLV4e4=xz7G2U7CBQjsAd5Q5PfZd48ng@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>, "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
-Cc: Emese Revfy <re.emese@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Michal Marek <mmarek@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, "kernel-hardening@lists.openwall.com" <kernel-hardening@lists.openwall.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2016-06-13 at 13:11 -0700, Kees Cook wrote:
-> On Mon, Jun 13, 2016 at 11:32 AM, Austin S. Hemmelgarn
-> <ahferroin7@gmail.com> wrote:
-> > On 2016-06-12 20:18, Emese Revfy wrote:
-> > > 
-> > > On Sun, 12 Jun 2016 15:25:39 -0700
-> > > Kees Cook <keescook@chromium.org> wrote:
-> > > 
-> > > > I don't like this because it means if someone specifically selects
-> > > > some plugins in their .config, and the headers are missing, the kernel
-> > > > will successfully compile. For many plugins, this results in a kernel
-> > > > that lacks the requested security features, and that I really do not
-> > > > want to have happening. I'm okay leaving these disabled for compile
-> > > > tests for now. We can revisit this once more distros have plugins
-> > > > enabled by default.
-> > > 
-> > > You are right. Your patch is safer.
-> > > 
-> > Why not make it so that if COMPILE_TEST is enabled, the build warns if it
-> > can't find the headers, otherwise it fails?  That way, people who are doing
-> > all*config builds but don't have the headers will still get some build
-> > coverage, and the people who are enabling it as a security feature will
-> > still get build failures.
-> 
-> I don't see a clear way to do this, but if you can find a way to make
-> that happen, please send a patch! :)
-
-Another option is to make the top-level option negative, that way when it's
-enabled by allmod/yes the plugins are turned off.
-
-So eg. you would have:
-
-config DISABLE_GCC_PLUGINS
-	bool "Disable building GCC plugins"
-	default y
-	...
-	
-This makes all the problems with allmod/yes go away, and means you always honor
-the users intent - when DISABLE_GCC_PLUGINS=n you can fail the build if you
-can't build the plugins.
-
-The downside is the logic's a bit awkward, ie. to enable the plugins you have to
-disable the option which disables them.
-
-cheers
+SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
+Y29uZmxpY3QgaW46CgogIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2Rpc3BsYXkuYwoKYmV0
+d2VlbiBjb21taXQ6CgogIGE1YWFjNWFiODc2YSAoImRybS9pOTE1OiBDaGVjayBWQlQgZm9yIHBv
+cnQgcHJlc2VuY2UgaW4gYWRkaXRpb24gdG8gdGhlIHN0cmFwIG9uIFZMVi9DSFYiKQoKZnJvbSB0
+aGUgZHJtLWludGVsLWZpeGVzIHRyZWUgYW5kIGNvbW1pdDoKCiAgNDU3YzUyZDg3ZTVkICgiZHJt
+L2k5MTU6IE9ubHkgaWdub3JlIGVEUCBwb3J0cyB0aGF0IGFyZSBjb25uZWN0ZWQiKQoJKHdoaWNo
+IGlzIGFsc28gaW4gdGhlIGRybS1pbnRlbC1maXhlcyB0cmVlKQoKZnJvbSB0aGUgZHJtIHRyZWUu
+CgpJIGZpeGVkIGl0IHVwIChJIHVzZWQgdGhlIHZlcnNpb24gZm9ybSB0aGUgZHJtLWludGVsLWZp
+eGVzIHRyZWUpIGFuZApjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMgaXMgbm93
+IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0CmlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24gdHJp
+dmlhbCBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyCnVwc3RyZWFtIG1haW50
+YWluZXIgd2hlbiB5b3VyIHRyZWUgaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heQph
+bHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcgd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0
+aGUgY29uZmxpY3RpbmcKdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5IGNvbXBsZXgg
+Y29uZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0Cklu
+dGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
