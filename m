@@ -1,57 +1,52 @@
-From: Liviu Dudau <Liviu.Dudau@arm.com>
-Subject: Re: Mali DP tree for linux-next
-Date: Wed, 15 Jun 2016 17:15:15 +0100
-Message-ID: <20160615161515.GE9711@e106497-lin.cambridge.arm.com>
-References: <20151223143022.GY960@e106497-lin.cambridge.arm.com>
- <20160615150304.GD9711@e106497-lin.cambridge.arm.com>
- <20160615152102.GH1338@phenom.ffwll.local>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 15 Jun 2016 23:12:38 +0200
+Message-ID: <1466025158.28441.16.camel@tiscali.nl>
+References: <20160506145810.04a319d3@canb.auug.org.au>
+	 <20160505224429.3b8f3837bcb0281932cfe03f@linux-foundation.org>
+	 <1465983212.9515.35.camel@tiscali.nl>
+	 <20160615140311.l2s7pkxuvybskcbc@treble>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160615152102.GH1338@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from lb2-smtp-cloud6.xs4all.net ([194.109.24.28]:42122 "EHLO
+	lb2-smtp-cloud6.xs4all.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932235AbcFOVMo (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jun 2016 17:12:44 -0400
+In-Reply-To: <20160615140311.l2s7pkxuvybskcbc@treble>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gV2VkLCBKdW4gMTUsIDIwMTYgYXQgMDU6MjE6MDJQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBXZWQsIEp1biAxNSwgMjAxNiBhdCAwNDowMzowNFBNICswMTAwLCBMaXZpdSBE
-dWRhdSB3cm90ZToKPiA+IEhpIFN0ZXBoZW4sCj4gPiAKPiA+IEkgd291bGQgbGlrZSB0byBhZGQg
-dGhlIE1hbGkgRFAgRFJNIGRyaXZlciB0cmVlIHRvIGxpbnV4LW5leHQuIEknbSBwbGFubmluZwo+
-ID4gdG8gc2VuZCBhIHB1bGwgcmVxdWVzdCBmb3IgaW5jbHVzaW9uIGludG8gdjQuOCBhbmQgSSBo
-b3BlIHRoYXQgZ2V0dGluZyBhCj4gPiB3aWRlciBleHBvc3VyZSBmb3IgYSBmZXcgd2Vla3MgaXMg
-YmVuZWZpY2lhbC4KPiA+IAo+ID4gUGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIGdpdCB0cmVlOgo+
-ID4gCj4gPiAgICBnaXQ6Ly9saW51eC1hcm0ub3JnL2xpbnV4LWxkIGZvci11cHN0cmVhbS9tYWxp
-LWRwCj4gPiAKPiA+IEl0IGlzIGJhc2VkIG9uIGRybS1pbnRlbC90b3BpYy9kcm0tbWlzYyB0cmVl
-LCB3aXRoIHRoZSB0b3BpYy9kcm0tbWlzYy0yMDE2LTA2LTE0IHRhZy4KPiAKPiB0YmgganVzdCBz
-ZW5kIERhdmUgYSBwdWxsIHJlcXVlc3QuIEl0IGxvb2tzIHByZXR0eSBuaWNlLCBhbmQgaW5jbHVz
-aW9uIGluCj4gZHJtLW5leHQgaXMgZXZlbiBiZXR0ZXIgdGhhbiBsaW51eC1uZXh0IGZvciBoYW5k
-bGluZyBhbnkga2luZHMgb2YKPiBjb25mbGljdHMuIEFuZCBtb3N0IG9mIHRoZSBkcml2ZXIgdHJl
-ZXMgYXJlbid0IHJlYWxseSBhY3RpdmUgZm9yIG1vcmUgdGhhbgo+IDEgbWVyZ2Ugd2luZG93IGl0
-IHNlZW1zLgoKSSBjYW4gZG8gdGhhdCwgb2YgY291cnNlLiBXYXNuJ3Qgc3VyZSBpZiBEYXZlIGlz
-IHdpbGxpbmcgdG8gcHVsbCBzdHVmZiB0aGF0IGhhc24ndApiZWVuIGZpcmUgcHJvb2ZlZCBpbiBs
-aW51eC1uZXh0LgoKQXMgZm9yIGRyaXZlciB0cmVlcywgbXkgSERMQ0Qgb25lIHNlZXMgcmVndWxh
-ciBhY3Rpdml0eSA7KQoKU3RlcGhlbiwKCkkgd2lsbCBzZW5kIGEgcHVsbCByZXF1ZXN0IHRvIERh
-dmlkIEFpcmxpZSBhcyB3ZWxsLCBidXQgd2UgcGxhbiB0byB1c2UgdGhpcyB0cmVlIGluIHRoZQpm
-dXR1cmUgZm9yIG1vcmUgZGV2ZWxvcG1lbnRzIG9mIHRoZSBkcml2ZXIgc28gSSB3b3VsZCBhcHBy
-ZWNpYXRlIGlmIHlvdSBhZGQgaXQgdG8geW91cgpyb2FzdGVyIG9mIHRyZWVzLgoKQmVzdCByZWdh
-cmRzLApMaXZpdQoKCj4gLURhbmllbAo+IC0tIAo+IERhbmllbCBWZXR0ZXIKPiBTb2Z0d2FyZSBF
-bmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KPiBodHRwOi8vYmxvZy5mZndsbC5jaAo+IF9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAoKLS0gCj09PT09
-PT09PT09PT09PT09PT09CnwgSSB3b3VsZCBsaWtlIHRvIHwKfCBmaXggdGhlIHdvcmxkLCAgfAp8
-IGJ1dCB0aGV5J3JlIG5vdCB8CnwgZ2l2aW5nIG1lIHRoZSAgIHwKIFwgc291cmNlIGNvZGUhICAv
-CiAgLS0tLS0tLS0tLS0tLS0tCiAgICDCr1xfKOODhClfL8KvCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Josh,
+
+On wo, 2016-06-15 at 09:03 -0500, Josh Poimboeuf wrote:
+> I agree it looks like a false positive, though the code is a bit
+> convoluted, so I'm not surprised that gcc might get confused.
+
+Agree.
+
+> How about initializing opt to 0?
+
+I'm unconvinced. Especially since this only shows up in 64 bits builds.
+
+> --- a/net/netfilter/ipvs/ip_vs_sync.c
+> +++ b/net/netfilter/ipvs/ip_vs_sync.c
+
+>  static inline int ip_vs_proc_sync_conn(struct netns_ipvs *ipvs, __u8
+
+> -	struct ip_vs_sync_conn_options opt;
+> +	struct ip_vs_sync_conn_options opt = {0};
+
+You forgot to append
+                                                  /* I give up */
+
+here. More common would be to use
+                                                  /* silence GCC */
+Thanks,
+
+
+Paul Bolle
