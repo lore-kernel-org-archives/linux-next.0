@@ -1,51 +1,74 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [PATCH] i2c: remove __init from i2c_register_board_info()
-Date: Wed, 15 Jun 2016 00:18:07 +0200
-Message-ID: <20160614221807.GH11948@wotan.suse.de>
-References: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Wed, 15 Jun 2016 15:23:18 +1000
+Message-ID: <20160615152318.164b1ebd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:42134 "EHLO mx2.suse.de"
+Received: from ozlabs.org ([103.22.144.67]:36266 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751113AbcFNWSK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 14 Jun 2016 18:18:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+	id S1750801AbcFOFXU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 15 Jun 2016 01:23:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-Cc: wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org, mcgrof@kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manfred Spraul <manfred@colorfullife.com>
 
-On Tue, Jun 07, 2016 at 04:52:27PM -0700, Luis R. Rodriguez wrote:
-> As of next-20160607 with allyesconfig we get this linker failure:
-> 
->   MODPOST vmlinux.o
-> WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
-> the function intel_scu_devices_create() to the function
-> .init.text:i2c_register_board_info()
-> 
-> This is caused by the fact that intel_scu_devices_create() calls
-> i2c_register_board_info() and intel_scu_devices_create() is not
-> annotated with __init. This typically involves manual code
-> inspection and if one is certain this is correct we would
-> just peg intel_scu_devices_create() with a __ref annotation.
-> 
-> In this case this would be wrong though as the
-> intel_scu_devices_create() call is exported, and used in
-> the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
-> The issue is that even though builtin_pci_driver(ipc_driver)
-> is used this just exposes the probe routine, which can occur
-> at any point in time if this bus supports hotplug. A race
-> can happen between kernel_init_freeable() that calls the init
-> calls (in this case registeres the intel_scu_ipc.c driver, and
-> later free_initmem(), which would free the i2c_register_board_info().
-> If a probe happens later in boot i2c_register_board_info() would
-> not be present and we should get a page fault.
-> 
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+Hi Andrew,
 
-I don't see this merged yet on linux-next and this is still an issue.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
- *Poke*
+  ipc/sem.c
 
-  Luis
+between commit:
+
+  33ac279677dc ("locking/barriers: Introduce smp_acquire__after_ctrl_dep()")
+
+from the tip tree and commit:
+
+  a1c58ea067cb ("ipc/sem.c: Fix complex_count vs. simple op race")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc ipc/sem.c
+index ae72b3cddc8d,11d9e605a619..000000000000
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@@ -260,13 -267,20 +267,10 @@@ static void sem_rcu_free(struct rcu_hea
+  }
+  
+  /*
+-  * Wait until all currently ongoing simple ops have completed.
+ - * spin_unlock_wait() and !spin_is_locked() are not memory barriers, they
+ - * are only control barriers.
+ - * The code must pair with spin_unlock(&sem->lock) or
+ - * spin_unlock(&sem_perm.lock), thus just the control barrier is insufficient.
+ - *
+ - * smp_rmb() is sufficient, as writes cannot pass the control barrier.
+ - */
+ -#define ipc_smp_acquire__after_spin_is_unlocked()	smp_rmb()
+ -
+ -/*
++  * Enter the mode suitable for non-simple operations:
+   * Caller must own sem_perm.lock.
+-  * New simple ops cannot start, because simple ops first check
+-  * that sem_perm.lock is free.
+-  * that a) sem_perm.lock is free and b) complex_count is 0.
+   */
+- static void sem_wait_array(struct sem_array *sma)
++ static void complexmode_enter(struct sem_array *sma)
+  {
+  	int i;
+  	struct sem *sem;
