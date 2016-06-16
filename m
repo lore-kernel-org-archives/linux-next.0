@@ -1,51 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Mali DP tree for linux-next
-Date: Thu, 16 Jun 2016 09:37:00 +1000
-Message-ID: <20160616093700.26f5b117@canb.auug.org.au>
-References: <20151223143022.GY960@e106497-lin.cambridge.arm.com>
- <20160615150304.GD9711@e106497-lin.cambridge.arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160615150304.GD9711@e106497-lin.cambridge.arm.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Liviu Dudau <Liviu.Dudau@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Prasun Maiti <prasunmaiti87@gmail.com>
+Subject: [PATCH] mwifiex: Fixed endianness for event TLV type TLV_BTCOEX_WL_SCANTIME
+Date: Thu, 16 Jun 2016 09:49:30 +0530
+Message-ID: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>
+Cc: Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-SGkgTGl2aXUsCgpPbiBXZWQsIDE1IEp1biAyMDE2IDE2OjAzOjA0ICswMTAwIExpdml1IER1ZGF1
-IDxMaXZpdS5EdWRhdUBhcm0uY29tPiB3cm90ZToKPgo+IEkgd291bGQgbGlrZSB0byBhZGQgdGhl
-IE1hbGkgRFAgRFJNIGRyaXZlciB0cmVlIHRvIGxpbnV4LW5leHQuIEknbSBwbGFubmluZwo+IHRv
-IHNlbmQgYSBwdWxsIHJlcXVlc3QgZm9yIGluY2x1c2lvbiBpbnRvIHY0LjggYW5kIEkgaG9wZSB0
-aGF0IGdldHRpbmcgYQo+IHdpZGVyIGV4cG9zdXJlIGZvciBhIGZldyB3ZWVrcyBpcyBiZW5lZmlj
-aWFsLgo+IAo+IFBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyBnaXQgdHJlZToKPiAKPiAgICBnaXQ6
-Ly9saW51eC1hcm0ub3JnL2xpbnV4LWxkIGZvci11cHN0cmVhbS9tYWxpLWRwCj4gCj4gSXQgaXMg
-YmFzZWQgb24gZHJtLWludGVsL3RvcGljL2RybS1taXNjIHRyZWUsIHdpdGggdGhlIHRvcGljL2Ry
-bS1taXNjLTIwMTYtMDYtMTQgdGFnLgoKQWRkZWQgZnJvbSB0b2RheS4KClRoYW5rcyBmb3IgYWRk
-aW5nIHlvdXIgc3Vic3lzdGVtIHRyZWUgYXMgYSBwYXJ0aWNpcGFudCBvZiBsaW51eC1uZXh0LiAg
-QXMKeW91IG1heSBrbm93LCB0aGlzIGlzIG5vdCBhIGp1ZGdlbWVudCBvZiB5b3VyIGNvZGUuICBU
-aGUgcHVycG9zZSBvZgpsaW51eC1uZXh0IGlzIGZvciBpbnRlZ3JhdGlvbiB0ZXN0aW5nIGFuZCB0
-byBsb3dlciB0aGUgaW1wYWN0IG9mCmNvbmZsaWN0cyBiZXR3ZWVuIHN1YnN5c3RlbXMgaW4gdGhl
-IG5leHQgbWVyZ2Ugd2luZG93LiAKCllvdSB3aWxsIG5lZWQgdG8gZW5zdXJlIHRoYXQgdGhlIHBh
-dGNoZXMvY29tbWl0cyBpbiB5b3VyIHRyZWUvc2VyaWVzIGhhdmUKYmVlbjoKICAgICAqIHN1Ym1p
-dHRlZCB1bmRlciBHUEwgdjIgKG9yIGxhdGVyKSBhbmQgaW5jbHVkZSB0aGUgQ29udHJpYnV0b3In
-cwogICAgICAgIFNpZ25lZC1vZmYtYnksCiAgICAgKiBwb3N0ZWQgdG8gdGhlIHJlbGV2YW50IG1h
-aWxpbmcgbGlzdCwKICAgICAqIHJldmlld2VkIGJ5IHlvdSAob3IgYW5vdGhlciBtYWludGFpbmVy
-IG9mIHlvdXIgc3Vic3lzdGVtIHRyZWUpLAogICAgICogc3VjY2Vzc2Z1bGx5IHVuaXQgdGVzdGVk
-LCBhbmQgCiAgICAgKiBkZXN0aW5lZCBmb3IgdGhlIGN1cnJlbnQgb3IgbmV4dCBMaW51eCBtZXJn
-ZSB3aW5kb3cuCgpCYXNpY2FsbHksIHRoaXMgc2hvdWxkIGJlIGp1c3Qgd2hhdCB5b3Ugd291bGQg
-c2VuZCB0byBMaW51cyAob3IgYXNrIGhpbQp0byBmZXRjaCkuICBJdCBpcyBhbGxvd2VkIHRvIGJl
-IHJlYmFzZWQgaWYgeW91IGRlZW0gaXQgbmVjZXNzYXJ5LgoKLS0gCkNoZWVycywKU3RlcGhlbiBS
-b3Rod2VsbCAKc2ZyQGNhbmIuYXV1Zy5vcmcuYXUKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+The two members min_scan_time and max_scan_time of structure
+"mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
+are assigned directtly from firmware without endian conversion handling.
+So, wrong datas will get saved in big-endian systems.
+
+This patch converts the values into cpu's byte order before assigning them
+into the local members.
+
+Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+---
+ drivers/net/wireless/marvell/mwifiex/sta_event.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+index 0104108..7dff452 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+@@ -474,8 +474,8 @@ void mwifiex_bt_coex_wlan_param_update_event(struct mwifiex_private *priv,
+ 			scantlv =
+ 			    (struct mwifiex_ie_types_btcoex_scan_time *)tlv;
+ 			adapter->coex_scan = scantlv->coex_scan;
+-			adapter->coex_min_scan_time = scantlv->min_scan_time;
+-			adapter->coex_max_scan_time = scantlv->max_scan_time;
++			adapter->coex_min_scan_time = le16_to_cpu(scantlv->min_scan_time);
++			adapter->coex_max_scan_time = le16_to_cpu(scantlv->max_scan_time);
+ 			break;
+ 
+ 		default:
+-- 
+1.9.1
