@@ -1,40 +1,69 @@
-From: Prasun Maiti <prasunmaiti87@gmail.com>
-Subject: [PATCH] mwifiex: Fixed endianness for event TLV type TLV_BTCOEX_WL_SCANTIME
-Date: Thu, 16 Jun 2016 09:49:30 +0530
-Message-ID: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the net-next tree
+Date: Thu, 16 Jun 2016 14:19:57 +1000
+Message-ID: <20160616141957.4d7582a7@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>
-Cc: Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-The two members min_scan_time and max_scan_time of structure
-"mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
-are assigned directtly from firmware without endian conversion handling.
-So, wrong datas will get saved in big-endian systems.
+Hi Michael,
 
-This patch converts the values into cpu's byte order before assigning them
-into the local members.
+Today's linux-next merge of the vhost tree got a conflict in:
 
-Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
----
- drivers/net/wireless/marvell/mwifiex/sta_event.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  tools/virtio/ringtest/Makefile
 
-diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-index 0104108..7dff452 100644
---- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
-+++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-@@ -474,8 +474,8 @@ void mwifiex_bt_coex_wlan_param_update_event(struct mwifiex_private *priv,
- 			scantlv =
- 			    (struct mwifiex_ie_types_btcoex_scan_time *)tlv;
- 			adapter->coex_scan = scantlv->coex_scan;
--			adapter->coex_min_scan_time = scantlv->min_scan_time;
--			adapter->coex_max_scan_time = scantlv->max_scan_time;
-+			adapter->coex_min_scan_time = le16_to_cpu(scantlv->min_scan_time);
-+			adapter->coex_max_scan_time = le16_to_cpu(scantlv->max_scan_time);
- 			break;
- 
- 		default:
+between commit:
+
+  9fb6bc5b4a78 ("ptr_ring: ring test")
+
+from the net-next tree and commit:
+
+  139ab4d4e68b ("tools/virtio: add noring tool")
+
+from the vhost tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
-1.9.1
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/virtio/ringtest/Makefile
+index 50e086c6a7b6,6173adae9f08..000000000000
+--- a/tools/virtio/ringtest/Makefile
++++ b/tools/virtio/ringtest/Makefile
+@@@ -1,6 -1,6 +1,6 @@@
+  all:
+  
+- all: ring virtio_ring_0_9 virtio_ring_poll virtio_ring_inorder ptr_ring
+ -all: ring virtio_ring_0_9 virtio_ring_poll virtio_ring_inorder noring
+++all: ring virtio_ring_0_9 virtio_ring_poll virtio_ring_inorder ptr_ring noring
+  
+  CFLAGS += -Wall
+  CFLAGS += -pthread -O2 -ggdb
+@@@ -16,13 -15,13 +16,15 @@@ ring: ring.o main.
+  virtio_ring_0_9: virtio_ring_0_9.o main.o
+  virtio_ring_poll: virtio_ring_poll.o main.o
+  virtio_ring_inorder: virtio_ring_inorder.o main.o
+ +ptr_ring: ptr_ring.o main.o
++ noring: noring.o main.o
+  clean:
+  	-rm main.o
+  	-rm ring.o ring
+  	-rm virtio_ring_0_9.o virtio_ring_0_9
+  	-rm virtio_ring_poll.o virtio_ring_poll
+  	-rm virtio_ring_inorder.o virtio_ring_inorder
+ +	-rm ptr_ring.o ptr_ring
++ 	-rm noring.o noring
+  
+  .PHONY: all clean
