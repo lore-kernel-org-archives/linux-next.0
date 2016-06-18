@@ -1,65 +1,49 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH v5 2/4] gpio: Allow PC/104 devices on X86_64
-Date: Fri, 17 Jun 2016 20:47:31 -0700
-Message-ID: <20160618034731.GA1815@kroah.com>
-References: <cover.1464380034.git.vilhelm.gray@gmail.com>
- <61880bededb77bbc3ea3422e48ce717d2a2ff489.1464380034.git.vilhelm.gray@gmail.com>
- <CACRpkdaOzZ1DvEUKtomBU=GH1kYfjKJjUfM-=45PhdzZA=dPgg@mail.gmail.com>
- <20160531112251.GA5674@sophia>
- <20160531152541.GB13304@kroah.com>
- <057d8c0b-074c-609a-35da-5a01f07b6d31@leemhuis.info>
- <20160618023607.GA7390@kroah.com>
- <20160618024959.GA4702@sophia>
- <20160618031810.GA29160@kroah.com>
- <20160618033812.GA20596@sophia>
+From: Manfred Spraul <manfred@colorfullife.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Sat, 18 Jun 2016 21:39:26 +0200
+Message-ID: <6107746f-e1b2-7de3-549f-1e422163c345@colorfullife.com>
+References: <20160615152318.164b1ebd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160618033812.GA20596@sophia>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: William Breathitt Gray <vilhelm.gray-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thorsten Leemhuis <regressions-rCxcAJFjeRkk+I/owrrOrA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, x86-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, "linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, sasha.levin-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org, xiaolong.ye-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f46.google.com ([74.125.82.46]:34765 "EHLO
+	mail-wm0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813AbcFRTjc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sat, 18 Jun 2016 15:39:32 -0400
+Received: by mail-wm0-f46.google.com with SMTP id 187so29387wmz.1
+        for <linux-next@vger.kernel.org>; Sat, 18 Jun 2016 12:39:31 -0700 (PDT)
+In-Reply-To: <20160615152318.164b1ebd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Jun 17, 2016 at 11:39:04PM -0400, William Breathitt Gray wrote:
-> On Fri, Jun 17, 2016 at 08:18:10PM -0700, Greg KH wrote:
-> >On Fri, Jun 17, 2016 at 10:49:59PM -0400, William Breathitt Gray wrote:
-> >> The PC/104 drivers were changed to utilize the ISA bus driver as part of
-> >> the original patchset which attempted to decouple the X86_32 dependency
-> >> from the ISA Kconfig option; these drivers were updated with the
-> >> intention of building on X86_64 in addition to X86_32.
-> >> 
-> >> However, the respective patches were merged without the decoupling
-> >> changes (since decoupling was the wrong approach), resulting in an
-> >> unintentional regression: the PC/104 drivers are now restricted to
-> >> X86_32 due to the ISA Kconfig option dependency, while they were capable
-> >> of building for X86_64 in previous kernel versions.
-> >> 
-> >> This patchset should fix this regression by introducing the ISA_BUS_API
-> >> Kconfig option, and the respective Kconfig dependency changes for the
-> >> drivers, in order to allow them to build for both X86_64 and X86_32 as
-> >> originally capable.
-> >
-> >Ah, ok, that makes more sense, thanks.  I'll go queue these up now.
-> >
-> >greg k-h
-> 
-> Greg K-H,
-> 
-> Please also consider picking up the following two patches which fix bugs
-> discovered during the ISA bus driver utilization conversion:
-> 
->   1. https://patchwork.kernel.org/patch/9046831/
->   2. https://patchwork.kernel.org/patch/9074641/
-> 
-> The second patch in particular fixes a kernel BUG which prevents some
-> drivers that call isa_register_driver from being built-in. This was
-> first reported by Sasha Levin (https://lkml.org/lkml/2016/5/11/719), and
-> the patch was later tested by Ye Xiaolong
-> (https://lkml.org/lkml/2016/5/31/164).
+Hi,
 
-Now queued up, thanks for the prompt, they were still setting in my
-queue.
+On 06/15/2016 07:23 AM, Stephen Rothwell wrote:
+> Hi Andrew,
+>
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+>
+>    ipc/sem.c
+>
+> between commit:
+>
+>    33ac279677dc ("locking/barriers: Introduce smp_acquire__after_ctrl_dep()")
+>
+> from the tip tree and commit:
+>
+>    a1c58ea067cb ("ipc/sem.c: Fix complex_count vs. simple op race")
+>
+> from the akpm-current tree.
+Just in case, I have created a rediff of my patch against -tip.
+And the patch with hysteresis would be ready as well.
 
-greg k-h
+I will send both patches.
+
+More testers would be welcome, I can only test it on my laptop.
+
+--
+     Manfred
