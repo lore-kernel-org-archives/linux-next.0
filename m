@@ -1,75 +1,49 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: remove __init from i2c_register_board_info()
-Date: Sun, 19 Jun 2016 14:15:38 +0200
-Message-ID: <20160619121538.GB3072@tetsubishi>
-References: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+From: Jonathan Cameron <jic23@kernel.org>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Sun, 19 Jun 2016 21:17:34 +0100
+Message-ID: <68e8846e-a7e8-12f2-8ed5-a045c56317b2@kernel.org>
+References: <20160614150422.66d652de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
-Sender: linux-i2c-owner@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:39872 "EHLO
+	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751292AbcFSURh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 19 Jun 2016 16:17:37 -0400
+In-Reply-To: <20160614150422.66d652de@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Crestez Dan Leonard <leonard.crestez@intel.com>
 
+On 14/06/16 06:04, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   drivers/iio/industrialio-trigger.c
+> 
+> between commit:
+> 
+>   995438233579 ("iio: Fix error handling in iio_trigger_attach_poll_func")
+> 
+> from the staging.current tree and commit:
+> 
+>   ef2d71d6b7fb ("iio: triggers: Make trigger ops structure explicitly non optional.")
+> 
+> from the staging tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+Thanks Stephen,
 
---s/l3CgOIzMHHjg/5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks great.
 
-On Tue, Jun 07, 2016 at 04:52:27PM -0700, Luis R. Rodriguez wrote:
-> As of next-20160607 with allyesconfig we get this linker failure:
->=20
->   MODPOST vmlinux.o
-> WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
-> the function intel_scu_devices_create() to the function
-> .init.text:i2c_register_board_info()
->=20
-> This is caused by the fact that intel_scu_devices_create() calls
-> i2c_register_board_info() and intel_scu_devices_create() is not
-> annotated with __init. This typically involves manual code
-> inspection and if one is certain this is correct we would
-> just peg intel_scu_devices_create() with a __ref annotation.
->=20
-> In this case this would be wrong though as the
-> intel_scu_devices_create() call is exported, and used in
-> the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
-> The issue is that even though builtin_pci_driver(ipc_driver)
-> is used this just exposes the probe routine, which can occur
-> at any point in time if this bus supports hotplug. A race
-> can happen between kernel_init_freeable() that calls the init
-> calls (in this case registeres the intel_scu_ipc.c driver, and
-> later free_initmem(), which would free the i2c_register_board_info().
-> If a probe happens later in boot i2c_register_board_info() would
-> not be present and we should get a page fault.
->=20
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-
-Applied to for-current, thanks! Do you think this should go to stable?
-
-
---s/l3CgOIzMHHjg/5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXZozqAAoJEBQN5MwUoCm27GQP/1ttY6h657MGQP3p/fCdW2Nx
-rdJqm5kzPgcRzSHKBk0mNHfRLUm3UUl1mIp6wv/rtjlspA45iy46KsmTqmzpy9nn
-PCaLP31WurjuR5zFECl5fOy5vr2p1e4myADKWMIaWPfpR0AbqHz1sDAd92ouns3i
-kni+8K6Q9BkUW3JvvCICyeoD6URQoSx14G/gwHbPGhANaj181n7NCsRh5nHyxNGp
-6+jjvaa2HFSI3PRhcvaTVXeLxFNn5PUCbVZOKHpPePRYf+wJjpRCopOLptiXA2Zd
-E4b/qTFgL8Gxg4G1GWCmdHIq+kUrm1j0/ofqXeFwsd/6SmJlURjm438B/BXojC7P
-bEiDxfxkOyQh4EhM1VFrOuY21wbdkHFd5Z8iSwIlXoIw/NwD1ifIty2i4fpgViG4
-Yhj4/bHXp9bSX2AY3g0UfeB+jKo58Uhlmf0FOaLhZvQy7IMGSw2ZMMoO5X9yurQW
-GyddvKZbGqK0DzuHCo9wp59TQBfOWDbQ7SisCKrAAiQKfLxZDU/XuBck4Ik7OvT1
-hsng6Toj3bG8FQpT/A84Dd6Rz7Zy3u1QI6qjCZK5qx3n28CGn0bj1IzkXN3CAvOB
-gafLfvADmWgYDmVq5/WuUJapMlOcm+9+C98HGu3S+gF9RJ3KXZW0L9WHtiZYv0F5
-DiQ3h4UuoBkdXXsEXKD3
-=sbUQ
------END PGP SIGNATURE-----
-
---s/l3CgOIzMHHjg/5--
+Jonathan
