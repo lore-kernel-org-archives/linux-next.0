@@ -1,206 +1,75 @@
-From: Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 2/2] ipc/sem: sem_lock with hysteresis
-Date: Sat, 18 Jun 2016 22:02:22 +0200
-Message-ID: <1466280142-19741-2-git-send-email-manfred@colorfullife.com>
-References: <20160615152318.164b1ebd@canb.auug.org.au>
- <1466280142-19741-1-git-send-email-manfred@colorfullife.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1466280142-19741-1-git-send-email-manfred@colorfullife.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, 1vier1@web.de, Davidlohr Bueso <dave@stgolabs.net>, felixh@informatik.uni-bremen.de, Manfred Spraul <manfred@colorfullife.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: remove __init from i2c_register_board_info()
+Date: Sun, 19 Jun 2016 14:15:38 +0200
+Message-ID: <20160619121538.GB3072@tetsubishi>
+References: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-sysv sem has two lock modes: One with per-semaphore locks, one lock mode
-with a single big lock for the whole array.
-When switching from the per-semaphore locks to the big lock, all
-per-semaphore locks must be scanned for ongoing operations.
 
-The patch adds a hysteresis for switching from the big lock to the per
-semaphore locks. This reduces how often the per-semaphore locks must
-be scanned.
+--s/l3CgOIzMHHjg/5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Passed stress testing with sem-scalebench.
+On Tue, Jun 07, 2016 at 04:52:27PM -0700, Luis R. Rodriguez wrote:
+> As of next-20160607 with allyesconfig we get this linker failure:
+>=20
+>   MODPOST vmlinux.o
+> WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
+> the function intel_scu_devices_create() to the function
+> .init.text:i2c_register_board_info()
+>=20
+> This is caused by the fact that intel_scu_devices_create() calls
+> i2c_register_board_info() and intel_scu_devices_create() is not
+> annotated with __init. This typically involves manual code
+> inspection and if one is certain this is correct we would
+> just peg intel_scu_devices_create() with a __ref annotation.
+>=20
+> In this case this would be wrong though as the
+> intel_scu_devices_create() call is exported, and used in
+> the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
+> The issue is that even though builtin_pci_driver(ipc_driver)
+> is used this just exposes the probe routine, which can occur
+> at any point in time if this bus supports hotplug. A race
+> can happen between kernel_init_freeable() that calls the init
+> calls (in this case registeres the intel_scu_ipc.c driver, and
+> later free_initmem(), which would free the i2c_register_board_info().
+> If a probe happens later in boot i2c_register_board_info() would
+> not be present and we should get a page fault.
+>=20
+> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 
-Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+Applied to for-current, thanks! Do you think this should go to stable?
 
----
- include/linux/sem.h |  2 +-
- ipc/sem.c           | 91 ++++++++++++++++++++++++++++-------------------------
- 2 files changed, 49 insertions(+), 44 deletions(-)
 
-diff --git a/include/linux/sem.h b/include/linux/sem.h
-index d0efd6e..6fb3227 100644
---- a/include/linux/sem.h
-+++ b/include/linux/sem.h
-@@ -21,7 +21,7 @@ struct sem_array {
- 	struct list_head	list_id;	/* undo requests on this array */
- 	int			sem_nsems;	/* no. of semaphores in array */
- 	int			complex_count;	/* pending complex operations */
--	bool			complex_mode;	/* no parallel simple ops */
-+	int			complex_mode;	/* >0: no parallel simple ops */
- };
- 
- #ifdef CONFIG_SYSVIPC
-diff --git a/ipc/sem.c b/ipc/sem.c
-index 11d9e60..1f43fb8 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -161,6 +161,13 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it);
- #define SEMOPM_FAST	64  /* ~ 372 bytes on stack */
- 
- /*
-+ * Switching from the mode suitable for simple ops
-+ * to the mode for complex ops is costly. Therefore:
-+ * use some hysteresis
-+ */
-+#define COMPLEX_MODE_ENTER 10
-+
-+/*
-  * Locking:
-  * a) global sem_lock() for read/write
-  *	sem_undo.id_next,
-@@ -279,17 +286,25 @@ static void sem_rcu_free(struct rcu_head *head)
- /*
-  * Enter the mode suitable for non-simple operations:
-  * Caller must own sem_perm.lock.
-+ * Note:
-+ * There is no leave complex mode function. Leaving
-+ * happens in sem_lock, with some hysteresis.
-  */
- static void complexmode_enter(struct sem_array *sma)
- {
- 	int i;
- 	struct sem *sem;
- 
--	if (sma->complex_mode)  {
--		/* We are already in complex_mode. Nothing to do */
-+	if (sma->complex_mode > 0)  {
-+		/*
-+		 * We are already in complex_mode.
-+		 * Nothing to do, just increase
-+		 * counter until we return to simple mode
-+		 */
-+		WRITE_ONCE(sma->complex_mode, COMPLEX_MODE_ENTER);
- 		return;
- 	}
--	WRITE_ONCE(sma->complex_mode, true);
-+	WRITE_ONCE(sma->complex_mode, COMPLEX_MODE_ENTER);
- 
- 	/* We need a full barrier:
- 	 * The write to complex_mode must be visible
-@@ -305,29 +320,6 @@ static void complexmode_enter(struct sem_array *sma)
- }
- 
- /*
-- * Try to leave the mode that disallows simple operations:
-- * Caller must own sem_perm.lock.
-- */
--static void complexmode_tryleave(struct sem_array *sma)
--{
--	if (sma->complex_count)  {
--		/* Complex ops are sleeping.
--		 * We must stay in complex mode
--		 */
--		return;
--	}
--	/*
--	 * Immediately after setting complex_mode to false,
--	 * a simple op can start. Thus: all memory writes
--	 * performed by the current operation must be visible
--	 * before we set complex_mode to false.
--	 */
--	smp_wmb();
--
--	WRITE_ONCE(sma->complex_mode, false);
--}
--
--/*
-  * If the request contains only one semaphore operation, and there are
-  * no complex transactions pending, lock only the semaphore involved.
-  * Otherwise, lock the entire semaphore array, since we either have
-@@ -383,27 +375,42 @@ static inline int sem_lock(struct sem_array *sma, struct sembuf *sops,
- 	ipc_lock_object(&sma->sem_perm);
- 
- 	if (sma->complex_count == 0) {
--		/* False alarm:
--		 * There is no complex operation, thus we can switch
--		 * back to the fast path.
--		 */
--		spin_lock(&sem->lock);
--		ipc_unlock_object(&sma->sem_perm);
--		return sops->sem_num;
--	} else {
--		/* Not a false alarm, thus complete the sequence for a
--		 * full lock.
-+		/*
-+		 * Check if fast path is possible:
-+		 * There is no complex operation, check hysteresis
-+		 * If 0, switch back to the fast path.
- 		 */
--		complexmode_enter(sma);
--		return -1;
-+		if (sma->complex_mode > 0) {
-+			/* Note:
-+			 * Immediately after setting complex_mode to 0,
-+			 * a simple op could start.
-+			 * The data it would access was written by the
-+			 * previous owner of sem->sem_perm.lock, i.e
-+			 * a release and an acquire memory barrier ago.
-+			 * No need for another barrier.
-+			 */
-+			WRITE_ONCE(sma->complex_mode, sma->complex_mode-1);
-+		}
-+		if (sma->complex_mode == 0) {
-+			spin_lock(&sem->lock);
-+			ipc_unlock_object(&sma->sem_perm);
-+			return sops->sem_num;
-+		}
- 	}
-+	/*
-+	 * Not a false alarm, full lock is required.
-+	 * Since we are already in complex_mode (either because of waiting
-+	 * complex ops or due to hysteresis), there is not need for a
-+	 * complexmode_enter().
-+	 */
-+	WARN_ON(sma->complex_mode == 0);
-+	return -1;
- }
- 
- static inline void sem_unlock(struct sem_array *sma, int locknum)
- {
- 	if (locknum == -1) {
- 		unmerge_queues(sma);
--		complexmode_tryleave(sma);
- 		ipc_unlock_object(&sma->sem_perm);
- 	} else {
- 		struct sem *sem = sma->sem_base + locknum;
-@@ -555,7 +562,7 @@ static int newary(struct ipc_namespace *ns, struct ipc_params *params)
- 	}
- 
- 	sma->complex_count = 0;
--	sma->complex_mode = true; /* dropped by sem_unlock below */
-+	WRITE_ONCE(sma->complex_mode, COMPLEX_MODE_ENTER);
- 	INIT_LIST_HEAD(&sma->pending_alter);
- 	INIT_LIST_HEAD(&sma->pending_const);
- 	INIT_LIST_HEAD(&sma->list_id);
-@@ -2212,7 +2219,7 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it)
- 	 * The proc interface isn't aware of sem_lock(), it calls
- 	 * ipc_lock_object() directly (in sysvipc_find_ipc).
- 	 * In order to stay compatible with sem_lock(), we must
--	 * enter / leave complex_mode.
-+	 * enter complex_mode.
- 	 */
- 	complexmode_enter(sma);
- 
-@@ -2231,8 +2238,6 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it)
- 		   sem_otime,
- 		   sma->sem_ctime);
- 
--	complexmode_tryleave(sma);
--
- 	return 0;
- }
- #endif
--- 
-2.5.5
+--s/l3CgOIzMHHjg/5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXZozqAAoJEBQN5MwUoCm27GQP/1ttY6h657MGQP3p/fCdW2Nx
+rdJqm5kzPgcRzSHKBk0mNHfRLUm3UUl1mIp6wv/rtjlspA45iy46KsmTqmzpy9nn
+PCaLP31WurjuR5zFECl5fOy5vr2p1e4myADKWMIaWPfpR0AbqHz1sDAd92ouns3i
+kni+8K6Q9BkUW3JvvCICyeoD6URQoSx14G/gwHbPGhANaj181n7NCsRh5nHyxNGp
+6+jjvaa2HFSI3PRhcvaTVXeLxFNn5PUCbVZOKHpPePRYf+wJjpRCopOLptiXA2Zd
+E4b/qTFgL8Gxg4G1GWCmdHIq+kUrm1j0/ofqXeFwsd/6SmJlURjm438B/BXojC7P
+bEiDxfxkOyQh4EhM1VFrOuY21wbdkHFd5Z8iSwIlXoIw/NwD1ifIty2i4fpgViG4
+Yhj4/bHXp9bSX2AY3g0UfeB+jKo58Uhlmf0FOaLhZvQy7IMGSw2ZMMoO5X9yurQW
+GyddvKZbGqK0DzuHCo9wp59TQBfOWDbQ7SisCKrAAiQKfLxZDU/XuBck4Ik7OvT1
+hsng6Toj3bG8FQpT/A84Dd6Rz7Zy3u1QI6qjCZK5qx3n28CGn0bj1IzkXN3CAvOB
+gafLfvADmWgYDmVq5/WuUJapMlOcm+9+C98HGu3S+gF9RJ3KXZW0L9WHtiZYv0F5
+DiQ3h4UuoBkdXXsEXKD3
+=sbUQ
+-----END PGP SIGNATURE-----
+
+--s/l3CgOIzMHHjg/5--
