@@ -1,87 +1,51 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: manual merge of the tpmdd tree with Linus' tree
-Date: Mon, 20 Jun 2016 17:33:50 +0300
-Message-ID: <20160620143350.GA7982@intel.com>
-References: <20160620131345.1d6f64bd@canb.auug.org.au>
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: Re: [PATCH] i2c: remove __init from i2c_register_board_info()
+Date: Mon, 20 Jun 2016 17:12:12 +0200
+Message-ID: <20160620151212.GA25646@wotan.suse.de>
+References: <1465343547-19974-1-git-send-email-mcgrof@kernel.org>
+ <20160619121538.GB3072@tetsubishi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:38995 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752432AbcFTOhR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 20 Jun 2016 10:37:17 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160620131345.1d6f64bd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Rob Herring <robh@kernel.org>, Christophe Ricard <christophe.ricard@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>
+In-Reply-To: <20160619121538.GB3072@tetsubishi>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, feng.tang@intel.com, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 20, 2016 at 01:13:45PM +1000, Stephen Rothwell wrote:
-> Hi Jarkko,
+On Sun, Jun 19, 2016 at 02:15:38PM +0200, Wolfram Sang wrote:
+> On Tue, Jun 07, 2016 at 04:52:27PM -0700, Luis R. Rodriguez wrote:
+> > As of next-20160607 with allyesconfig we get this linker failure:
+> > 
+> >   MODPOST vmlinux.o
+> > WARNING: vmlinux.o(.text+0x21bc0d): Section mismatch in reference from
+> > the function intel_scu_devices_create() to the function
+> > .init.text:i2c_register_board_info()
+> > 
+> > This is caused by the fact that intel_scu_devices_create() calls
+> > i2c_register_board_info() and intel_scu_devices_create() is not
+> > annotated with __init. This typically involves manual code
+> > inspection and if one is certain this is correct we would
+> > just peg intel_scu_devices_create() with a __ref annotation.
+> > 
+> > In this case this would be wrong though as the
+> > intel_scu_devices_create() call is exported, and used in
+> > the ipc_probe() on drivers/platform/x86/intel_scu_ipc.c.
+> > The issue is that even though builtin_pci_driver(ipc_driver)
+> > is used this just exposes the probe routine, which can occur
+> > at any point in time if this bus supports hotplug. A race
+> > can happen between kernel_init_freeable() that calls the init
+> > calls (in this case registeres the intel_scu_ipc.c driver, and
+> > later free_initmem(), which would free the i2c_register_board_info().
+> > If a probe happens later in boot i2c_register_board_info() would
+> > not be present and we should get a page fault.
+> > 
+> > Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 > 
-> Today's linux-next merge of the tpmdd tree got a conflict in:
-> 
->   Documentation/devicetree/bindings/vendor-prefixes.txt
-> 
-> between commit:
-> 
->   7aa5d38cfb77 ("of: Add Inforce Computing to vendor prefix list")
->   3eefa7e8cc85 ("dt-bindings: Add vendor prefix for TechNexion")
-> 
-> from Linus' tree and commits:
-> 
->   45a33961f81a ("devicetree: Add infineon to vendor-prefix.txt")
->   3a34e75f6a91 ("devicetree: Add Trusted Computing Group to vendor-prefix.txt")
-> 
-> from the tpmdd tree.
-> 
-> BTW: commit 3a34e75f6a91 added the new entry out of alphabetical order.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> Applied to for-current, thanks! Do you think this should go to stable?
 
-Got you, thanks.
+Its a theoretical race, but a real one, but does fix allyesconfig builds.
+Up to you.
 
-> -- 
-> Cheers,
-> Stephen Rothwell
-
-/Jarkko
-
-> 
-> diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-> index d2bce2239769,717bae92e28a..000000000000
-> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-> @@@ -125,10 -111,9 +125,11 @@@ hp	Hewlett Packar
->   i2se	I2SE GmbH
->   ibm	International Business Machines (IBM)
->   idt	Integrated Device Technologies, Inc.
->  +ifi	Ingenieurburo Fur Ic-Technologie (I/F/I)
->   iom	Iomega Corporation
->   img	Imagination Technologies Ltd.
-> + infineon Infineon Technologies
->  +inforce	Inforce Computing
->   ingenic	Ingenic Semiconductor
->   innolux	Innolux Corporation
->   intel	Intel Corporation
-> @@@ -251,12 -227,10 +252,13 @@@ st	STMicroelectronic
->   startek	Startek
->   ste	ST-Ericsson
->   stericsson	ST-Ericsson
->  +syna	Synaptics Inc.
->   synology	Synology, Inc.
->  +SUNW	Sun Microsystems, Inc
->   tbs	TBS Technologies
->  -tcl	Toby Churchill Ltd.
-> + tcg	Trusted Computing Group
->  +tcl	Toby Churchill Ltd.
->  +technexion	TechNexion
->   technologic	Technologic Systems
->   thine	THine Electronics, Inc.
->   ti	Texas Instruments
+  Luis
