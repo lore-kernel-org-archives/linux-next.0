@@ -1,46 +1,194 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: manual merge of the iommu tree with the arm tree
-Date: Mon, 20 Jun 2016 09:02:59 +0100
-Message-ID: <20160620080259.GJ22276@flint.armlinux.org.uk>
-References: <20160620132009.4e2c0e32@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160620 build: 2 failures 9 warnings (next-20160620)
+Date: Mon, 20 Jun 2016 11:17:20 +0100
+Message-ID: <E1bEwGe-0004DR-4p@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:33378 "EHLO
-	pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbcFTIDR (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jun 2016 04:03:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20160620132009.4e2c0e32@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52930 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932130AbcFTLAz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 20 Jun 2016 07:00:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Joerg Roedel <joro@8bytes.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Jun 20, 2016 at 01:20:09PM +1000, Stephen Rothwell wrote:
-> Hi Joerg,
-> 
-> Today's linux-next merge of the iommu tree got a conflict in:
-> 
->   drivers/iommu/mtk_iommu.c
-> 
-> between commit:
-> 
->   d267804c8457 ("iommu: convert DT component matching to component_match_add_release()")
-> 
-> from the arm tree and commit:
-> 
->   da4d6e6d3b3e ("iommu/mediatek: Convert DT component matching to component_match_add_release()")
-> 
-> from the iommu tree.
+Tree/Branch: next-20160620
+Git describe: next-20160620
+Commit: 6ab97590a2 Add linux-next specific files for 20160620
 
-This looks like it's going to end up being broken.  I self-NACK'd my v2
-patch series was, and it looks like the v2 patch was picked up instead
-of v1.
+Build Time: 87 min 20 sec
 
-It's also part of a _three_ patch series, where the _second two_ patches
-depend on the _first_ patch.  Such series can't be split up.
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+Errors: 2
+Warnings: 9
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/iommu/mtk_iommu.c:27:32: fatal error: linux/of_component.h: No such file or directory
+
+	arm-allmodconfig
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+../drivers/iommu/mtk_iommu.c:27:32: fatal error: linux/of_component.h: No such file or directory
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      8 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v7_defconfig
+     72 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  3 ../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	  2 ../drivers/iommu/mtk_iommu.c:27:32: fatal error: linux/of_component.h: No such file or directory
+
+Warnings Summary: 9
+	 66 ../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	  4 ../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	  4 ../drivers/pci/host/pci-host-common.c:88:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	  4 ../drivers/pci/host/pci-host-common.c:108:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 8 warnings, 0 section mismatches
+
+Errors:
+	../drivers/iommu/mtk_iommu.c:27:32: fatal error: linux/of_component.h: No such file or directory
+
+Warnings:
+	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/pci/host/pci-host-common.c:88:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:108:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/pci/host/pci-host-common.c:88:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:108:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 4 errors, 72 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
+	../drivers/iommu/mtk_iommu.c:27:32: fatal error: linux/of_component.h: No such file or directory
+
+Warnings:
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/pci/host/pci-host-common.c:88:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:108:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/ks7010/ks7010_config.c:263:8: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/pci/host/pci-host-common.c:88:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/pci/host/pci-host-common.c:108:9: warning: return makes pointer from integer without a cast [-Wint-conversion]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
