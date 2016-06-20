@@ -1,31 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the f2fs tree
-Date: Mon, 20 Jun 2016 12:37:29 +1000
-Message-ID: <20160620123729.45323ce6@canb.auug.org.au>
+Subject: linux-next: manual merge of the tpmdd tree with Linus' tree
+Date: Mon, 20 Jun 2016 13:13:45 +1000
+Message-ID: <20160620131345.1d6f64bd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41647 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751579AbcFTDNs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jun 2016 23:13:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Rob Herring <robh@kernel.org>, Christophe Ricard <christophe.ricard@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>
 
-Hi Jens,
+Hi Jarkko,
 
-Today's linux-next merge of the block tree got a conflict in:
+Today's linux-next merge of the tpmdd tree got a conflict in:
 
-  fs/f2fs/data.c
+  Documentation/devicetree/bindings/vendor-prefixes.txt
 
 between commit:
 
-  6d63ed97a1f2 ("f2fs: detect host-managed SMR by feature flag")
+  7aa5d38cfb77 ("of: Add Inforce Computing to vendor prefix list")
+  3eefa7e8cc85 ("dt-bindings: Add vendor prefix for TechNexion")
 
-from the f2fs tree and commit:
+from Linus' tree and commits:
 
-  04d328defd06 ("f2fs: use bio op accessors")
+  45a33961f81a ("devicetree: Add infineon to vendor-prefix.txt")
+  3a34e75f6a91 ("devicetree: Add Trusted Computing Group to vendor-prefix.txt")
 
-from the block tree.
+from the tpmdd tree.
+
+BTW: commit 3a34e75f6a91 added the new entry out of alphabetical order.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,85 +46,34 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/f2fs/data.c
-index ba4963f51bee,8769e8349dff..000000000000
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@@ -97,16 -97,11 +97,16 @@@ static struct bio *__bio_alloc(struct f
-  	return bio;
-  }
-  
-- static inline void __submit_bio(struct f2fs_sb_info *sbi, int rw,
-- 			struct bio *bio, enum page_type type)
- -static inline void __submit_bio(struct f2fs_sb_info *sbi, struct bio *bio)
-++static inline void __submit_bio(struct f2fs_sb_info *sbi, struct bio *bio,
-++				enum page_type type)
-  {
-- 	if (!is_read_io(rw)) {
- -	if (!is_read_io(bio_op(bio)))
-++	if (!is_read_io(bio_op(bio))) {
-  		atomic_inc(&sbi->nr_wb_bios);
- +		if (f2fs_sb_mounted_hmsmr(sbi->sb) &&
- +			current->plug && (type == DATA || type == NODE))
- +			blk_finish_plug(current->plug);
- +	}
-- 	submit_bio(rw, bio);
-+ 	submit_bio(bio);
-  }
-  
-  static void __submit_merged_bio(struct f2fs_bio_info *io)
-@@@ -121,7 -116,9 +121,9 @@@
-  	else
-  		trace_f2fs_submit_write_bio(io->sbi->sb, fio, io->bio);
-  
-- 	__submit_bio(io->sbi, fio->rw, io->bio, fio->type);
-+ 	bio_set_op_attrs(io->bio, fio->op, fio->op_flags);
-+ 
- -	__submit_bio(io->sbi, io->bio);
-++	__submit_bio(io->sbi, io->bio, fio->type);
-  	io->bio = NULL;
-  }
-  
-@@@ -238,8 -237,10 +242,10 @@@ int f2fs_submit_page_bio(struct f2fs_io
-  		bio_put(bio);
-  		return -EFAULT;
-  	}
-+ 	bio->bi_rw = fio->op_flags;
-+ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
-  
-- 	__submit_bio(fio->sbi, fio->rw, bio, fio->type);
- -	__submit_bio(fio->sbi, bio);
-++	__submit_bio(fio->sbi, bio, fio->type);
-  	return 0;
-  }
-  
-@@@ -1044,7 -1057,7 +1051,7 @@@ got_it
-  		 */
-  		if (bio && (last_block_in_bio != block_nr - 1)) {
-  submit_and_realloc:
-- 			__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
- -			__submit_bio(F2FS_I_SB(inode), bio);
-++			__submit_bio(F2FS_I_SB(inode), bio, DATA);
-  			bio = NULL;
-  		}
-  		if (bio == NULL) {
-@@@ -1087,7 -1101,7 +1095,7 @@@ set_error_page
-  		goto next_page;
-  confused:
-  		if (bio) {
-- 			__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
- -			__submit_bio(F2FS_I_SB(inode), bio);
-++			__submit_bio(F2FS_I_SB(inode), bio, DATA);
-  			bio = NULL;
-  		}
-  		unlock_page(page);
-@@@ -1097,7 -1111,7 +1105,7 @@@ next_page
-  	}
-  	BUG_ON(pages && !list_empty(pages));
-  	if (bio)
-- 		__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
- -		__submit_bio(F2FS_I_SB(inode), bio);
-++		__submit_bio(F2FS_I_SB(inode), bio, DATA);
-  	return 0;
-  }
-  
+diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+index d2bce2239769,717bae92e28a..000000000000
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@@ -125,10 -111,9 +125,11 @@@ hp	Hewlett Packar
+  i2se	I2SE GmbH
+  ibm	International Business Machines (IBM)
+  idt	Integrated Device Technologies, Inc.
+ +ifi	Ingenieurburo Fur Ic-Technologie (I/F/I)
+  iom	Iomega Corporation
+  img	Imagination Technologies Ltd.
++ infineon Infineon Technologies
+ +inforce	Inforce Computing
+  ingenic	Ingenic Semiconductor
+  innolux	Innolux Corporation
+  intel	Intel Corporation
+@@@ -251,12 -227,10 +252,13 @@@ st	STMicroelectronic
+  startek	Startek
+  ste	ST-Ericsson
+  stericsson	ST-Ericsson
+ +syna	Synaptics Inc.
+  synology	Synology, Inc.
+ +SUNW	Sun Microsystems, Inc
+  tbs	TBS Technologies
+ -tcl	Toby Churchill Ltd.
++ tcg	Trusted Computing Group
+ +tcl	Toby Churchill Ltd.
+ +technexion	TechNexion
+  technologic	Technologic Systems
+  thine	THine Electronics, Inc.
+  ti	Texas Instruments
