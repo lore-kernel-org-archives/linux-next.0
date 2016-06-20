@@ -1,79 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tpmdd tree with Linus' tree
-Date: Mon, 20 Jun 2016 13:13:45 +1000
-Message-ID: <20160620131345.1d6f64bd@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree with the arm tree
+Date: Mon, 20 Jun 2016 13:20:09 +1000
+Message-ID: <20160620132009.4e2c0e32@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41647 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42661 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751579AbcFTDNs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 19 Jun 2016 23:13:48 -0400
+	id S1752068AbcFTDU7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 19 Jun 2016 23:20:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Rob Herring <robh@kernel.org>, Christophe Ricard <christophe.ricard@gmail.com>, Fabio Estevam <fabio.estevam@nxp.com>
+To: Joerg Roedel <joro@8bytes.org>, Russell King <rmk@armlinux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Jarkko,
+Hi Joerg,
 
-Today's linux-next merge of the tpmdd tree got a conflict in:
+Today's linux-next merge of the iommu tree got a conflict in:
 
-  Documentation/devicetree/bindings/vendor-prefixes.txt
+  drivers/iommu/mtk_iommu.c
 
 between commit:
 
-  7aa5d38cfb77 ("of: Add Inforce Computing to vendor prefix list")
-  3eefa7e8cc85 ("dt-bindings: Add vendor prefix for TechNexion")
+  d267804c8457 ("iommu: convert DT component matching to component_match_add_release()")
 
-from Linus' tree and commits:
+from the arm tree and commit:
 
-  45a33961f81a ("devicetree: Add infineon to vendor-prefix.txt")
-  3a34e75f6a91 ("devicetree: Add Trusted Computing Group to vendor-prefix.txt")
+  da4d6e6d3b3e ("iommu/mediatek: Convert DT component matching to component_match_add_release()")
 
-from the tpmdd tree.
+from the iommu tree.
 
-BTW: commit 3a34e75f6a91 added the new entry out of alphabetical order.
+These are clearly 2 versions of the same patch.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I assumed that tha iommu tree version was newer and used
+that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index d2bce2239769,717bae92e28a..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -125,10 -111,9 +125,11 @@@ hp	Hewlett Packar
-  i2se	I2SE GmbH
-  ibm	International Business Machines (IBM)
-  idt	Integrated Device Technologies, Inc.
- +ifi	Ingenieurburo Fur Ic-Technologie (I/F/I)
-  iom	Iomega Corporation
-  img	Imagination Technologies Ltd.
-+ infineon Infineon Technologies
- +inforce	Inforce Computing
-  ingenic	Ingenic Semiconductor
-  innolux	Innolux Corporation
-  intel	Intel Corporation
-@@@ -251,12 -227,10 +252,13 @@@ st	STMicroelectronic
-  startek	Startek
-  ste	ST-Ericsson
-  stericsson	ST-Ericsson
- +syna	Synaptics Inc.
-  synology	Synology, Inc.
- +SUNW	Sun Microsystems, Inc
-  tbs	TBS Technologies
- -tcl	Toby Churchill Ltd.
-+ tcg	Trusted Computing Group
- +tcl	Toby Churchill Ltd.
- +technexion	TechNexion
-  technologic	Technologic Systems
-  thine	THine Electronics, Inc.
-  ti	Texas Instruments
