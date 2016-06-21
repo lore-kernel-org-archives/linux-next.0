@@ -1,44 +1,66 @@
-From: Davidlohr Bueso <dave@stgolabs.net>
-Subject: Re: [PATCH 2/2] ipc/sem: sem_lock with hysteresis
-Date: Tue, 21 Jun 2016 13:29:02 -0700
-Message-ID: <20160621202902.GB3790@linux-80c1.suse>
-References: <20160615152318.164b1ebd@canb.auug.org.au>
- <1466280142-19741-1-git-send-email-manfred@colorfullife.com>
- <1466280142-19741-2-git-send-email-manfred@colorfullife.com>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Tue, 21 Jun 2016 20:50:48 +0200
+Message-ID: <20160621185048.GR30909@twins.programming.kicks-ass.net>
+References: <f43656af-050c-82b3-e10d-66be072be320@mellanox.com>
+ <20160621124247.GM30921@twins.programming.kicks-ass.net>
+ <5ed77f4c-44eb-ca02-1373-e878d3dea31e@mellanox.com>
+ <20160621140408.GE3704@worktop>
+ <20160621141435.GB7381@worktop>
+ <94270f5c-1a28-f9d7-2b5a-eb874dc35398@mellanox.com>
+ <20160621170607.GQ30154@twins.programming.kicks-ass.net>
+ <20160621172918.GS30927@twins.programming.kicks-ass.net>
+ <20160621182844.GT30927@twins.programming.kicks-ass.net>
+ <ff97cde6-44e2-e25d-7bd2-78dbf344fc7b@mellanox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:34012 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751260AbcFUU3p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jun 2016 16:29:45 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46359 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951AbcFUUkp (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Jun 2016 16:40:45 -0400
 Content-Disposition: inline
-In-Reply-To: <1466280142-19741-2-git-send-email-manfred@colorfullife.com>
+In-Reply-To: <ff97cde6-44e2-e25d-7bd2-78dbf344fc7b@mellanox.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Manfred Spraul <manfred@colorfullife.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, 1vier1@web.de, felixh@informatik.uni-bremen.de
+To: Chris Metcalf <cmetcalf@mellanox.com>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 
-On Sat, 18 Jun 2016, Manfred Spraul wrote:
+On Tue, Jun 21, 2016 at 02:36:34PM -0400, Chris Metcalf wrote:
+> On 6/21/2016 2:28 PM, Peter Zijlstra wrote:
 
->sysv sem has two lock modes: One with per-semaphore locks, one lock mode
->with a single big lock for the whole array.
->When switching from the per-semaphore locks to the big lock, all
->per-semaphore locks must be scanned for ongoing operations.
->
->The patch adds a hysteresis for switching from the big lock to the per
->semaphore locks. This reduces how often the per-semaphore locks must
->be scanned.
+> >I had to s/__atomic_fetch/__atomic32_fetch/ to avoid a namespace clash
+> >with the builtin C11 atomic primitives.
+> >
+> >You want me to rename them all to regain consistent naming?
+> 
+> Yes, it's probably the right thing to do.  All the internal routines with "atomic32"
+> or "atomic64" I assume you mean?
 
-Isn't this very arbitrary depending on the workload? Ie the other way around:
-when we have a lot more simple ops going on not so good. While I'm more worried
-about combinations that could cause enough complex ops to always delay taking
-the finer grained lock, this change also obviously makes simple ops more expensive
-on newly created segments.
+Yep, after this patch we have a few __atomic_ and a few __atomic32_,
+which is rather unbecoming. Lemme go convert them all to __atomic32_.
 
-In general I don't trust magic numbers much. What sort of numbers have you seen
-with this patch? Is this a real concern (particularly because a lot of the sem->lock
-work was because real world workloads were doing a lot more simple ops afaicr)?
+> So what's your build process for the cross tools, by the way?  I'm assuming
+> you're not doing a total bootstrap cross-tool build since you'd need minimal
+> kernel headers (linux/errno.h or whatever) in that case.  I assume you're using
+> the host headers to build the cross tool?
+> 
+> So I'm a little confused how the other kernel headers are working out for you,
+> e.g. <arch/icache.h> is referenced when building the tilegx libgcc.
 
-Thanks,
-Davidlohr
+I've no idea; I use this thing:
+
+  git://git.infradead.org/users/segher/buildall.git
+
+Although I've got some local modifications, none are to the actual
+toolchain building part (although I suppose I should send segher a
+patch).
+
+I have binutils-gdb.git and gcc.bit checkouts and point the buildall
+config to that (both are on latest stable branches binutils-2_26-branch
+and gcc-6-branch resp.). And I point the kernel path to my current
+hacked up tree.
+
+I don't really rebuild the entire toolchains often, mostly only when I
+really need a new GCC or its getting really old (like I used 5.3.0 for a
+long while).
