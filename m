@@ -1,46 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the net-next tree with the arm-soc tree
-Date: Tue, 21 Jun 2016 10:56:21 +0200
-Message-ID: <4384645.F021K1OoaK@wuerfel>
-References: <20160621111839.34936836@canb.auug.org.au>
+From: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Tue, 21 Jun 2016 09:55:15 +0100
+Message-ID: <20160621085515.GA2888@sudip-tp>
+References: <20160621154638.1169904b@canb.auug.org.au>
+ <5768E650.2080506@gmail.com>
+ <20160621075828.GL30154@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20160621111839.34936836@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Florian Fainelli <f.fainelli@gmail.com>, Pramod Kumar <pramod.kumar@broadcom.com>, linux-kernel@vger.kernel.org, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, linux-next@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:35883 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752027AbcFUIz3 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Jun 2016 04:55:29 -0400
+Content-Disposition: inline
+In-Reply-To: <20160621075828.GL30154@twins.programming.kicks-ass.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 
-On Tuesday, June 21, 2016 11:18:39 AM CEST Stephen Rothwell wrote:
-> Today's linux-next merge of the net-next tree got conflicts in:
+On Tue, Jun 21, 2016 at 09:58:28AM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 21, 2016 at 08:01:36AM +0100, Sudip Mukherjee wrote:
 > 
->   arch/arm64/boot/dts/broadcom/ns2-svk.dts
->   arch/arm64/boot/dts/broadcom/ns2.dtsi
+> > tilepro defconfig is failing while doing "make prepare" and bisect shows the
+> > first bad commit as:
+> > 
+> > 1af5de9af138 ("locking/atomic, arch/tile: Implement
+> > atomic{,64}_fetch_{add,sub,and,or,xor}()")
+> > 
+> > You can find today's build log at:
+> > https://travis-ci.org/sudipm-mukherjee/parport/jobs/139112570
+> > 
+> > Please do let me know if i can help in any way to debug/solve this.
 > 
-> between commits:
-> 
->   97b1504a30b3 ("arm64: dts: enable pinctrl for Broadcom NS2 SoC")
->   5dcc9c7618df ("arm64: dts: NS2: Add CCI-400 PMU support")
-> 
-> from the arm-soc tree and commit:
-> 
->   5f1a067bfa0a ("dt: mdio-mux: Add mdio multiplexer driver node")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> I cannot reproduce, I tried both tip/master (which carries the patch you
+> fingered) and next/master.
 
-Looks good to me, thanks!
+Thats strange.
+The log I gave is for next-20160621.
+BTW, I am using gcc-5.3.0
 
-I don't see a good way to resolve the conflict before the merge window,
-but it's simple enough that we can just send it this way and let
-Linus handle it.
-
-	Arnd
+regards
+sudip
