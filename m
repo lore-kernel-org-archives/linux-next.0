@@ -1,34 +1,42 @@
-From: Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Query] mwifiex: few observations to reduce number of endian conversions
-Date: Tue, 21 Jun 2016 16:15:06 +0530
-Message-ID: <CAEO8o4ncA+_e61b0g+TyxCZHGaKqXQKZkwDR4CCfH_mhMYLkGQ@mail.gmail.com>
-References: <CAEO8o4=aLbrwHka8X2h-YUCeuKoWzU0q7JWLuuaYsRW=69q_DQ@mail.gmail.com>
- <ee79492a163d4b9baef75e28c7a93791@SC-EXCH04.marvell.com>
+From: Chris Metcalf <cmetcalf@mellanox.com>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Tue, 21 Jun 2016 08:08:29 -0400
+Message-ID: <f43656af-050c-82b3-e10d-66be072be320@mellanox.com>
+References: <20160621154638.1169904b@canb.auug.org.au>
+ <5768E650.2080506@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ee79492a163d4b9baef75e28c7a93791-uAViF8V/CPOq90oVIqnETxL4W9x8LtSr@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-Cc: Nishant Sarmukadam <nishants-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, WiFi Mailing List <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5768E650.2080506@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, "Peter Zijlstra (Intel)" <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Amitkumar,
-
-
-On Tue, Jun 21, 2016 at 3:47 PM, Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org> wrote:
-
-> I agree with your observations. We'll prepare a cleanup patch to address this.
+On 6/21/2016 3:01 AM, Sudip Mukherjee wrote:
+> On Tuesday 21 June 2016 06:46 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20160620:
 >
-> Regards,
-> Amitkumar
+> tilepro defconfig is failing while doing "make prepare" and bisect shows the first bad commit as:
+>
+> 1af5de9af138 ("locking/atomic, arch/tile: Implement atomic{,64}_fetch_{add,sub,and,or,xor}()")
+>
+> You can find today's build log at:
+> https://travis-ci.org/sudipm-mukherjee/parport/jobs/139112570
 
-I have already made some changes. I will send you a patch for this.
+On inspection, I note that the arch/tile/include/atomic_32.h header has
+
+ATOMIC64_OP(and)
+ATOMIC64_OP(or)
+ATOMIC64_OP(xor)
+
+but these should be ATOMIC64_OPS, plural.
+
+Peter, what toolchain were you using for tilepro build testing?  You need to have a tilepro toolchain (not tilegx) and build with ARCH=tilepro.
 
 -- 
-Thanks,
-Prasun
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Chris Metcalf, Mellanox Technologies
+http://www.mellanox.com
