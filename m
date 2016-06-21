@@ -1,171 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160621 build: 1 failures 6 warnings (next-20160621)
-Date: Tue, 21 Jun 2016 09:39:31 +0100
-Message-ID: <E1bFHDX-0004eq-Af@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55326 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751536AbcFUIjm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 21 Jun 2016 04:39:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Tue, 21 Jun 2016 09:58:28 +0200
+Message-ID: <20160621075828.GL30154@twins.programming.kicks-ass.net>
+References: <20160621154638.1169904b@canb.auug.org.au>
+ <5768E650.2080506@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5768E650.2080506@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160621
-Git describe: next-20160621
-Commit: 10698aa18a Add linux-next specific files for 20160621
+On Tue, Jun 21, 2016 at 08:01:36AM +0100, Sudip Mukherjee wrote:
 
-Build Time: 85 min 0 sec
+> tilepro defconfig is failing while doing "make prepare" and bisect shows the
+> first bad commit as:
+> 
+> 1af5de9af138 ("locking/atomic, arch/tile: Implement
+> atomic{,64}_fetch_{add,sub,and,or,xor}()")
+> 
+> You can find today's build log at:
+> https://travis-ci.org/sudipm-mukherjee/parport/jobs/139112570
+> 
+> Please do let me know if i can help in any way to debug/solve this.
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
+I cannot reproduce, I tried both tip/master (which carries the patch you
+fingered) and next/master.
 
-Errors: 1
-Warnings: 6
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-     69 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  3 ../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-
-Warnings Summary: 6
-	 66 ../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	  4 ../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+My tilepro build ends in a vmlinux with just a single warning.
 
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 3 errors, 69 warnings, 0 section mismatches
-
-Errors:
-	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:243:38: error: impossible constraint in 'asm'
-
-Warnings:
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:243:38: warning: asm operand 0 probably doesn't match constraints
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/pci/host/pci-host-common.c:93:10: warning: return makes pointer from integer without a cast [-Wint-conversion]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
+root@ivb-ep:/usr/src/linux-2.6# rm -rf tile-defconfig/ tile-tilepro_defconfig/
+root@ivb-ep:/usr/src/linux-2.6# ./build-arch-defconfig.sh tilepro
+make[1]: Entering directory `/usr/src/linux-2.6/tile-tilepro_defconfig'
+  HOSTCC  scripts/basic/fixdep
+  GEN     ./Makefile
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+#
+# configuration written to .config
+#
+make[1]: Leaving directory `/usr/src/linux-2.6/tile-tilepro_defconfig'
+../arch/tile/lib/cacheflush.c: In function 'finv_buffer_remote':
+../arch/tile/lib/cacheflush.c:146:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
+ #pragma unroll 8
+ 
+root@ivb-ep:/usr/src/linux-2.6# ls -la tile-tilepro_defconfig/vmlinux
+vmlinux    vmlinux.o  
