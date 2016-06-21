@@ -1,44 +1,34 @@
-From: Amitkumar Karwar <akarwar@marvell.com>
-Subject: RE: [Query] mwifiex: few observations to reduce number of endian
- conversions
-Date: Tue, 21 Jun 2016 10:17:42 +0000
-Message-ID: <ee79492a163d4b9baef75e28c7a93791@SC-EXCH04.marvell.com>
+From: Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Query] mwifiex: few observations to reduce number of endian conversions
+Date: Tue, 21 Jun 2016 16:15:06 +0530
+Message-ID: <CAEO8o4ncA+_e61b0g+TyxCZHGaKqXQKZkwDR4CCfH_mhMYLkGQ@mail.gmail.com>
 References: <CAEO8o4=aLbrwHka8X2h-YUCeuKoWzU0q7JWLuuaYsRW=69q_DQ@mail.gmail.com>
+ <ee79492a163d4b9baef75e28c7a93791@SC-EXCH04.marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-0016f401.pphosted.com ([67.231.148.174]:34657 "EHLO
-	mx0a-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750931AbcFUKSN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jun 2016 06:18:13 -0400
-In-Reply-To: <CAEO8o4=aLbrwHka8X2h-YUCeuKoWzU0q7JWLuuaYsRW=69q_DQ@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Prasun Maiti <prasunmaiti87@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, WiFi Mailing List <linux-wireless@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ee79492a163d4b9baef75e28c7a93791-uAViF8V/CPOq90oVIqnETxL4W9x8LtSr@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Cc: Nishant Sarmukadam <nishants-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, WiFi Mailing List <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-SGkgUHJhc3VuLA0KDQo+IEZyb206IFByYXN1biBNYWl0aSBbbWFpbHRvOnByYXN1bm1haXRpODdA
-Z21haWwuY29tXQ0KPiBTZW50OiBGcmlkYXksIEp1bmUgMTcsIDIwMTYgNjo0MiBQTQ0KPiBUbzog
-QW1pdGt1bWFyIEthcndhcjsgTmlzaGFudCBTYXJtdWthZGFtDQo+IENjOiBMaW51eCBLZXJuZWw7
-IExpbnV4IE5leHQ7IFdpRmkgTWFpbGluZyBMaXN0OyBKb2hhbm5lcyBCZXJnDQo+IFN1YmplY3Q6
-IFtRdWVyeV0gbXdpZmlleDogZmV3IG9ic2VydmF0aW9ucyB0byByZWR1Y2UgbnVtYmVyIG9mIGVu
-ZGlhbg0KPiBjb252ZXJzaW9ucw0KPiANCj4gSGkgQW1pdGt1bWFyLA0KPiANCj4gSSBoYXZlIHR3
-byBvYnNlcnZhdGlvbnM6DQo+IA0KPiAxLiBJIGhhdmUgZm91bmQgdGhhdCBpbiB0aGUgY29tbWFu
-ZCByZXNwb25zZSBwYXRoIGZvciBob3N0IGNvbW1hbmQNCj4gIkhvc3RDbWRfQ01EXzgwMl8xMV9F
-RVBST01fQUNDRVNTIiwgYSAiMCIgdmFsdWUgaGFzIGJlZW4gZW5kaWFuDQo+IGNvbnZlcnRlZC4g
-SXQgY2FuIG9ubHkgYmUgYSBzYWZlIGZ1dHVyaXN0aWMgYXBwcm9hY2ggZm9yIGFueSBub24temVy
-bw0KPiB2YWx1ZSB0aGVyZSBob3dldmVyISBPdGhlcndpc2UsIHRoZSBlbmRpYW4gY29udmVyc2lv
-biBjYW4gYmUgcmVtb3ZlZC4NCj4gDQo+IDIuIEZvciBtdWx0aXBsZSBIb3N0IENvbW1hbmRzIChl
-LmcgSG9zdENtZF9DTURfODAyXzExX0VFUFJPTV9BQ0NFU1MNCj4gZXRjLikgImNwdV90b19sZVgi
-LWNvbnZlcnRlZCB2YWx1ZXMgYXJlIHNhdmVkIHRvIGRyaXZlci4gU28gImxlWF90b19jcHUiDQo+
-IGNvbnZlcnNpb24gaXMgcmVxdWlyZWQgdG9vIG1hbnkgdGltZXMgYWZ0ZXJ3YXJkcyBpbiBkcml2
-ZXIuDQo+IE9uIHRoZSBjb250cmFyeSwgd2UgY2FuIHNhdmUgdGhlIHZhbHVlcyB0byBkcml2ZXIg
-d2l0aG91dCBhbnkNCj4gY29udmVyc2lvbiwgYW5kIG9ubHkgY29tbWFuZCBidWZmZXIocykgYXJl
-IHByZXBhcmVkIHdpdGggZW5kaWFuDQo+IGNvbnZlcnRlZCB2YWx1ZXMuIEluIHRoaXMgd2F5IHdl
-IGNhbiBnYWluIHNvbWUgZWZmaWNpZW5jeSBbY29kZSBzaXplIC8NCj4gdGltZV0gYnkgcmVkdWNp
-bmcgdGhlIG51bWJlciBvZiBlbmRpYW4gY29udmVyc2lvbiBjb25zaWRlcmFibHkuDQo+IA0KDQpJ
-IGFncmVlIHdpdGggeW91ciBvYnNlcnZhdGlvbnMuIFdlJ2xsIHByZXBhcmUgYSBjbGVhbnVwIHBh
-dGNoIHRvIGFkZHJlc3MgdGhpcy4NCg0KUmVnYXJkcywNCkFtaXRrdW1hcg0K
+Hi Amitkumar,
+
+
+On Tue, Jun 21, 2016 at 3:47 PM, Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org> wrote:
+
+> I agree with your observations. We'll prepare a cleanup patch to address this.
+>
+> Regards,
+> Amitkumar
+
+I have already made some changes. I will send you a patch for this.
+
+-- 
+Thanks,
+Prasun
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
