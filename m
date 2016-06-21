@@ -1,94 +1,50 @@
-From: kbuild test robot <lkp@intel.com>
-Subject: Re: [PATCH] mwifiex: Reduce endian conversion for REG Host Commands
-Date: Wed, 22 Jun 2016 00:41:04 +0800
-Message-ID: <201606220027.euqOehrM%fengguang.wu@intel.com>
-References: <1466519967-15555-1-git-send-email-prasunmaiti87@gmail.com>
+From: Chris Metcalf <cmetcalf@mellanox.com>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Tue, 21 Jun 2016 11:26:19 -0400
+Message-ID: <94270f5c-1a28-f9d7-2b5a-eb874dc35398@mellanox.com>
+References: <20160621154638.1169904b@canb.auug.org.au>
+ <5768E650.2080506@gmail.com>
+ <f43656af-050c-82b3-e10d-66be072be320@mellanox.com>
+ <20160621124247.GM30921@twins.programming.kicks-ass.net>
+ <5ed77f4c-44eb-ca02-1373-e878d3dea31e@mellanox.com>
+ <20160621140408.GE3704@worktop> <20160621141435.GB7381@worktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:7342 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751811AbcFUQlo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 21 Jun 2016 12:41:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1466519967-15555-1-git-send-email-prasunmaiti87@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Prasun Maiti <prasunmaiti87@gmail.com>
-Cc: kbuild-all@01.org, Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160621141435.GB7381@worktop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On 6/21/2016 10:14 AM, Peter Zijlstra wrote:
+> On Tue, Jun 21, 2016 at 04:04:08PM +0200, Peter Zijlstra wrote:
+>>> I'm not sure who builds the toolchains, but tilepro is in upstream gcc/binutils/etc
+>>> so should be easy enough to include.  There's also a cross-toolchain for x64 I put
+>>> up a while ago [1] that you could grab if you wanted to try it.
+>> I usually build my own set -- and just did. But tilepro was not
+>> included. Lemme go do so.
+> binutils-2_26-branch builds for tilepro-linux
+> gcc-6-branch does _not_ build for tilepro-linux
 
-[auto build test WARNING on wireless-drivers-next/master]
-[also build test WARNING on v4.7-rc4 next-20160621]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+I figured I would take a stab at diagnosing this myself, and it looks like the
+toolchain build assumes that the kernel headers have already been installed
+and therefore we have <asm/unistd.h> available.  This actually seems like
+a reasonable prerequisite for building the toolchain.  I'm guessing you
+don't?  Should you?  Or perhaps the compiler shouldn't make that assumption?
+This has been true since gcc 4.x when tilepro support was first added.
 
-url:    https://github.com/0day-ci/linux/commits/Prasun-Maiti/mwifiex-Reduce-endian-conversion-for-REG-Host-Commands/20160621-224149
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers-next.git master
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+In any case if you replace the #include <asm/unistd.h> with
 
+#define __NR_FAST_cmpxchg    -1
+#define __NR_FAST_atomic_update    -2
+#define __NR_FAST_cmpxchg64    -3
 
-sparse warnings: (new ones prefixed by >>)
+that should also probably fix it, though I haven't tested it.  It probably
+wouldn't be crazy to just put those #defines directly in tilepro's atomic.h,
+since it's not like those fast system call numbers will ever change.
 
-   include/linux/compiler.h:232:8: sparse: attribute 'no_sanitize_address': unknown attribute
->> drivers/net/wireless/marvell/mwifiex/sta_ioctl.c:1339:17: sparse: incompatible types in comparison expression (different base types)
-   In file included from include/linux/list.h:8:0,
-                    from include/linux/wait.h:6,
-                    from drivers/net/wireless/marvell/mwifiex/decl.h:26,
-                    from drivers/net/wireless/marvell/mwifiex/sta_ioctl.c:20:
-   drivers/net/wireless/marvell/mwifiex/sta_ioctl.c: In function 'mwifiex_eeprom_read':
-   include/linux/kernel.h:742:17: warning: comparison of distinct pointer types lacks a cast
-     (void) (&_min1 == &_min2);  \
-                    ^
-   drivers/net/wireless/marvell/mwifiex/sta_ioctl.c:1339:34: note: in expansion of macro 'min'
-      memcpy(value, rd_eeprom.value, min(MAX_EEPROM_DATA,
-                                     ^~~
---
-   include/linux/compiler.h:232:8: sparse: attribute 'no_sanitize_address': unknown attribute
->> drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c:820:25: sparse: incompatible types in comparison expression (different base types)
-   In file included from include/linux/list.h:8:0,
-                    from include/linux/wait.h:6,
-                    from drivers/net/wireless/marvell/mwifiex/decl.h:26,
-                    from drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c:20:
-   drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c: In function 'mwifiex_ret_reg_access':
-   include/linux/kernel.h:742:17: warning: comparison of distinct pointer types lacks a cast
-     (void) (&_min1 == &_min2);  \
-                    ^
-   drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c:821:6: note: in expansion of macro 'min'
-         min(MAX_EEPROM_DATA, eeprom->byte_count));
-         ^~~
-
-vim +1339 drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
-
-  1323	 */
-  1324	int
-  1325	mwifiex_eeprom_read(struct mwifiex_private *priv, u16 offset, u16 bytes,
-  1326			    u8 *value)
-  1327	{
-  1328		int ret;
-  1329		struct mwifiex_ds_read_eeprom rd_eeprom;
-  1330	
-  1331		rd_eeprom.offset =  offset;
-  1332		rd_eeprom.byte_count = bytes;
-  1333	
-  1334		/* Send request to firmware */
-  1335		ret = mwifiex_send_cmd(priv, HostCmd_CMD_802_11_EEPROM_ACCESS,
-  1336				       HostCmd_ACT_GEN_GET, 0, &rd_eeprom, true);
-  1337	
-  1338		if (!ret)
-> 1339			memcpy(value, rd_eeprom.value, min(MAX_EEPROM_DATA,
-  1340						rd_eeprom.byte_count));
-  1341		return ret;
-  1342	}
-  1343	
-  1344	/*
-  1345	 * This function sets a generic IE. In addition to generic IE, it can
-  1346	 * also handle WPA, WPA2 and WAPI IEs.
-  1347	 */
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+-- 
+Chris Metcalf, Mellanox Technologies
+http://www.mellanox.com
