@@ -1,53 +1,46 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for Jun 21
-Date: Tue, 21 Jun 2016 09:58:28 +0200
-Message-ID: <20160621075828.GL30154@twins.programming.kicks-ass.net>
-References: <20160621154638.1169904b@canb.auug.org.au>
- <5768E650.2080506@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the net-next tree with the arm-soc tree
+Date: Tue, 21 Jun 2016 10:56:21 +0200
+Message-ID: <4384645.F021K1OoaK@wuerfel>
+References: <20160621111839.34936836@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5768E650.2080506@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, Chris Metcalf <cmetcalf@mellanox.com>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20160621111839.34936836@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Olof Johansson <olof@lixom.net>, Florian Fainelli <f.fainelli@gmail.com>, Pramod Kumar <pramod.kumar@broadcom.com>, linux-kernel@vger.kernel.org, Yendapally Reddy Dhananjaya Reddy <yendapally.reddy@broadcom.com>, linux-next@vger.kernel.org, Jon Mason <jon.mason@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 21, 2016 at 08:01:36AM +0100, Sudip Mukherjee wrote:
-
-> tilepro defconfig is failing while doing "make prepare" and bisect shows the
-> first bad commit as:
+On Tuesday, June 21, 2016 11:18:39 AM CEST Stephen Rothwell wrote:
+> Today's linux-next merge of the net-next tree got conflicts in:
 > 
-> 1af5de9af138 ("locking/atomic, arch/tile: Implement
-> atomic{,64}_fetch_{add,sub,and,or,xor}()")
+>   arch/arm64/boot/dts/broadcom/ns2-svk.dts
+>   arch/arm64/boot/dts/broadcom/ns2.dtsi
 > 
-> You can find today's build log at:
-> https://travis-ci.org/sudipm-mukherjee/parport/jobs/139112570
+> between commits:
 > 
-> Please do let me know if i can help in any way to debug/solve this.
+>   97b1504a30b3 ("arm64: dts: enable pinctrl for Broadcom NS2 SoC")
+>   5dcc9c7618df ("arm64: dts: NS2: Add CCI-400 PMU support")
+> 
+> from the arm-soc tree and commit:
+> 
+>   5f1a067bfa0a ("dt: mdio-mux: Add mdio multiplexer driver node")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I cannot reproduce, I tried both tip/master (which carries the patch you
-fingered) and next/master.
+Looks good to me, thanks!
 
-My tilepro build ends in a vmlinux with just a single warning.
+I don't see a good way to resolve the conflict before the merge window,
+but it's simple enough that we can just send it this way and let
+Linus handle it.
 
-
-root@ivb-ep:/usr/src/linux-2.6# rm -rf tile-defconfig/ tile-tilepro_defconfig/
-root@ivb-ep:/usr/src/linux-2.6# ./build-arch-defconfig.sh tilepro
-make[1]: Entering directory `/usr/src/linux-2.6/tile-tilepro_defconfig'
-  HOSTCC  scripts/basic/fixdep
-  GEN     ./Makefile
-  HOSTCC  scripts/kconfig/conf.o
-  HOSTCC  scripts/kconfig/zconf.tab.o
-  HOSTLD  scripts/kconfig/conf
-#
-# configuration written to .config
-#
-make[1]: Leaving directory `/usr/src/linux-2.6/tile-tilepro_defconfig'
-../arch/tile/lib/cacheflush.c: In function 'finv_buffer_remote':
-../arch/tile/lib/cacheflush.c:146:0: warning: ignoring #pragma unroll  [-Wunknown-pragmas]
- #pragma unroll 8
- 
-root@ivb-ep:/usr/src/linux-2.6# ls -la tile-tilepro_defconfig/vmlinux
-vmlinux    vmlinux.o  
+	Arnd
