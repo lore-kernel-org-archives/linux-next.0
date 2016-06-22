@@ -1,71 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with the arm tree
-Date: Wed, 22 Jun 2016 11:47:04 +1000
-Message-ID: <20160622114704.5b0c97eb@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm64
+ tree
+Date: Wed, 22 Jun 2016 14:54:15 +1000
+Message-ID: <20160622145415.2a005cdb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <rmk@armlinux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45739 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750824AbcFVEyg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jun 2016 00:54:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9kcnYuYwoKYmV0d2Vl
-biBjb21taXQ6CgogIDA2Mjk5M2IxNWU4ZSAoImRybTogY29udmVydCBEVCBjb21wb25lbnQgbWF0
-Y2hpbmcgdG8gY29tcG9uZW50X21hdGNoX2FkZF9yZWxlYXNlKCkiKQoKZnJvbSB0aGUgYXJtIHRy
-ZWUgYW5kIGNvbW1pdDoKCiAgODQ2MDFkYmRlYTM2ICgiZHJtOiBzdGk6IHJld29yayBpbml0IHNl
-cXVlbmNlIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUgYmVs
-b3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMgbm93IGZpeGVk
-IGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24gdHJpdmlhbApj
-b25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIg
-d2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdh
-bnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29u
-ZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBsZXggY29uZmxp
-Y3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1
-L2RybS9zdGkvc3RpX2Rydi5jCmluZGV4IDhhYmI1N2E5NDY1MSw5NmJkM2QwOGIyZDQuLjAwMDAw
-MDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9kcnYuYworKysgYi9kcml2ZXJz
-L2dwdS9kcm0vc3RpL3N0aV9kcnYuYwpAQEAgLTM0MCwxNCAtMzIwLDc5ICszMjAsODQgQEBAIHN0
-YXRpYyBpbnQgY29tcGFyZV9vZihzdHJ1Y3QgZGV2aWNlICpkZQogIAlyZXR1cm4gZGV2LT5vZl9u
-b2RlID09IGRhdGE7CiAgfQogIAogK3N0YXRpYyB2b2lkIHJlbGVhc2Vfb2Yoc3RydWN0IGRldmlj
-ZSAqZGV2LCB2b2lkICpkYXRhKQogK3sKICsJb2Zfbm9kZV9wdXQoZGF0YSk7CiArfQogKworIHN0
-YXRpYyBpbnQgc3RpX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRkZXYpCisgeworIAlzdHJ1Y3Qg
-c3RpX3ByaXZhdGUgKnByaXZhdGU7CisgCisgCXByaXZhdGUgPSBremFsbG9jKHNpemVvZigqcHJp
-dmF0ZSksIEdGUF9LRVJORUwpOworIAlpZiAoIXByaXZhdGUpCisgCQlyZXR1cm4gLUVOT01FTTsK
-KyAKKyAJZGRldi0+ZGV2X3ByaXZhdGUgPSAodm9pZCAqKXByaXZhdGU7CisgCWRldl9zZXRfZHJ2
-ZGF0YShkZGV2LT5kZXYsIGRkZXYpOworIAlwcml2YXRlLT5kcm1fZGV2ID0gZGRldjsKKyAKKyAJ
-bXV0ZXhfaW5pdCgmcHJpdmF0ZS0+Y29tbWl0LmxvY2spOworIAlJTklUX1dPUksoJnByaXZhdGUt
-PmNvbW1pdC53b3JrLCBzdGlfYXRvbWljX3dvcmspOworIAorIAlkcm1fbW9kZV9jb25maWdfaW5p
-dChkZGV2KTsKKyAKKyAJc3RpX21vZGVfY29uZmlnX2luaXQoZGRldik7CisgCisgCWRybV9rbXNf
-aGVscGVyX3BvbGxfaW5pdChkZGV2KTsKKyAKKyAJcmV0dXJuIDA7CisgfQorIAorIHN0YXRpYyB2
-b2lkIHN0aV9jbGVhbnVwKHN0cnVjdCBkcm1fZGV2aWNlICpkZGV2KQorIHsKKyAJc3RydWN0IHN0
-aV9wcml2YXRlICpwcml2YXRlID0gZGRldi0+ZGV2X3ByaXZhdGU7CisgCisgCWlmIChwcml2YXRl
-LT5mYmRldikgeworIAkJZHJtX2ZiZGV2X2NtYV9maW5pKHByaXZhdGUtPmZiZGV2KTsKKyAJCXBy
-aXZhdGUtPmZiZGV2ID0gTlVMTDsKKyAJfQorIAorIAlkcm1fa21zX2hlbHBlcl9wb2xsX2Zpbmko
-ZGRldik7CisgCWRybV92YmxhbmtfY2xlYW51cChkZGV2KTsKKyAJa2ZyZWUocHJpdmF0ZSk7Cisg
-CWRkZXYtPmRldl9wcml2YXRlID0gTlVMTDsKKyB9CisgCiAgc3RhdGljIGludCBzdGlfYmluZChz
-dHJ1Y3QgZGV2aWNlICpkZXYpCiAgewotIAlyZXR1cm4gZHJtX3BsYXRmb3JtX2luaXQoJnN0aV9k
-cml2ZXIsIHRvX3BsYXRmb3JtX2RldmljZShkZXYpKTsKKyAJc3RydWN0IGRybV9kZXZpY2UgKmRk
-ZXY7CisgCWludCByZXQ7CisgCisgCWRkZXYgPSBkcm1fZGV2X2FsbG9jKCZzdGlfZHJpdmVyLCBk
-ZXYpOworIAlpZiAoIWRkZXYpCisgCQlyZXR1cm4gLUVOT01FTTsKKyAKKyAJZGRldi0+cGxhdGZv
-cm1kZXYgPSB0b19wbGF0Zm9ybV9kZXZpY2UoZGV2KTsKKyAKKyAJcmV0ID0gc3RpX2luaXQoZGRl
-dik7CisgCWlmIChyZXQpCisgCQlnb3RvIGVycl9kcm1fZGV2X3VucmVmOworIAorIAlyZXQgPSBj
-b21wb25lbnRfYmluZF9hbGwoZGRldi0+ZGV2LCBkZGV2KTsKKyAJaWYgKHJldCkKKyAJCWdvdG8g
-ZXJyX2NsZWFudXA7CisgCisgCXJldCA9IGRybV9kZXZfcmVnaXN0ZXIoZGRldiwgMCk7CisgCWlm
-IChyZXQpCisgCQlnb3RvIGVycl9yZWdpc3RlcjsKKyAKKyAJZHJtX21vZGVfY29uZmlnX3Jlc2V0
-KGRkZXYpOworIAorIAlyZXR1cm4gMDsKKyAKKyBlcnJfcmVnaXN0ZXI6CisgCWRybV9tb2RlX2Nv
-bmZpZ19jbGVhbnVwKGRkZXYpOworIGVycl9jbGVhbnVwOgorIAlzdGlfY2xlYW51cChkZGV2KTsK
-KyBlcnJfZHJtX2Rldl91bnJlZjoKKyAJZHJtX2Rldl91bnJlZihkZGV2KTsKKyAJcmV0dXJuIHJl
-dDsKICB9CiAgCiAgc3RhdGljIHZvaWQgc3RpX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYpCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Andrew,
+
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  arch/arm64/mm/dma-mapping.c
+
+between commit:
+
+  b67a8b29df7e ("arm64: mm: only initialize swiotlb when necessary")
+
+from the arm64 tree and commit:
+
+  29af59a63ef1 ("arm64: dma-mapping: constify attrs passed to internal functions")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/mm/dma-mapping.c
+index 46a4157adc17,0ef620a34c4e..000000000000
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@@ -30,9 -29,7 +30,9 @@@
+  
+  #include <asm/cacheflush.h>
+  
+ +static int swiotlb __read_mostly;
+ +
+- static pgprot_t __get_dma_pgprot(struct dma_attrs *attrs, pgprot_t prot,
++ static pgprot_t __get_dma_pgprot(const struct dma_attrs *attrs, pgprot_t prot,
+  				 bool coherent)
+  {
+  	if (!coherent || dma_get_attr(DMA_ATTR_WRITE_COMBINE, attrs))
