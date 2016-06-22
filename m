@@ -1,51 +1,56 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: build warnings after merge of the kspp tree
-Date: Wed, 22 Jun 2016 10:39:30 -0700
-Message-ID: <CAGXu5jLkJ8jm=MKhzA+e53dLzWLMqcsKJjiuoLxj0_uz0oC7Tg@mail.gmail.com>
-References: <20160622151442.5684f922@canb.auug.org.au>
+From: Chris Metcalf <cmetcalf@mellanox.com>
+Subject: Re: linux-next: Tree for Jun 21
+Date: Wed, 22 Jun 2016 16:40:39 -0400
+Message-ID: <a4b8b020-abe0-0e81-c0e5-d8b99aec84fe@mellanox.com>
+References: <f43656af-050c-82b3-e10d-66be072be320@mellanox.com>
+ <20160621124247.GM30921@twins.programming.kicks-ass.net>
+ <5ed77f4c-44eb-ca02-1373-e878d3dea31e@mellanox.com>
+ <20160621140408.GE3704@worktop> <20160621141435.GB7381@worktop>
+ <94270f5c-1a28-f9d7-2b5a-eb874dc35398@mellanox.com>
+ <20160621170607.GQ30154@twins.programming.kicks-ass.net>
+ <20160621172918.GS30927@twins.programming.kicks-ass.net>
+ <20160621182844.GT30927@twins.programming.kicks-ass.net>
+ <ff97cde6-44e2-e25d-7bd2-78dbf344fc7b@mellanox.com>
+ <20160622091649.GB30154@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160622151442.5684f922@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <20160622091649.GB30154@twins.programming.kicks-ass.net>
+Sender: linux-arch-owner@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 21, 2016 at 10:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Kees,
+On 6/22/2016 5:16 AM, Peter Zijlstra wrote:
+> On Tue, Jun 21, 2016 at 02:36:34PM -0400, Chris Metcalf wrote:
+>> >On 6/21/2016 2:28 PM, Peter Zijlstra wrote:
+>>> > >On Tue, Jun 21, 2016 at 07:29:18PM +0200, Peter Zijlstra wrote:
+>>> > >
+>>>>> > >>>OK, I seem to have a tilepro-linux-gcc-6.1.1 build done. Lets see if I
+>>>>> > >>>can build me a kernel with it.
+>>> > >The below, much larger than desired, patch seems to make it go again.
+>>> > >
+>>> > >I had to s/__atomic_fetch/__atomic32_fetch/ to avoid a namespace clash
+>>> > >with the builtin C11 atomic primitives.
+>>> > >
+>>> > >You want me to rename them all to regain consistent naming?
+>> >
+>> >Yes, it's probably the right thing to do.  All the internal routines with "atomic32"
+>> >or "atomic64" I assume you mean?
+> Something like so then?
 >
-> After merging the kspp tree, today's linux-next build (i386 defconfig)
-> produced these warning:
->
-> x86_64-linux-gcc: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
->
-> (over 2000 of these)
->
-> Introduced (maybe) by commit
->
->   e2135c84d5d2 ("kbuild: no gcc-plugins during cc-option tests")
+> ---
+>   arch/tile/include/asm/atomic_32.h |   24 ++++++++++++------------
+>   arch/tile/include/asm/futex.h     |   14 +++++++-------
+>   arch/tile/lib/atomic_32.c         |   16 ++++++++--------
+>   arch/tile/lib/atomic_asm_32.S     |   21 +++++++++++++--------
+>   4 files changed, 40 insertions(+), 35 deletions(-)
 
-This is fixed now in the kspp tree; sorry for the noise. If anyone
-wants to manual fix this up for i386 builds:
+Yes, that looks good.  Thanks!
 
-index 2da7f8eed1d7..f585766989c2 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -109,7 +109,7 @@ as-instr = $(call try-run,\
-        printf "%b\n" "$(1)" | $(CC) $(KBUILD_AFLAGS) -c -x assembler
--o "$$TMP" -,$(2),$(3))
-
- # Do not attempt to build with gcc plugins during cc-option tests.
--CC_OPTION_CFLAGS := $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
-+CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
-
- # cc-option
- # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
-
-
--Kees
+Acked-by: Chris Metcalf <cmetcalf@mellanox.com>
 
 -- 
-Kees Cook
-Chrome OS & Brillo Security
+Chris Metcalf, Mellanox Technologies
+http://www.mellanox.com
