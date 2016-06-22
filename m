@@ -1,157 +1,63 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160622 build: 2 failures 5 warnings (next-20160622)
-Date: Wed, 22 Jun 2016 09:28:52 +0100
-Message-ID: <E1bFdWm-0001yi-4u@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58640 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315AbcFVI3Y (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 04:29:24 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Russell King <rmk@armlinux.org.uk>
+Subject: Re: linux-next: manual merge of the drm-misc tree with
+	the arm tree
+Date: Wed, 22 Jun 2016 09:43:36 +0100
+Message-ID: <20160622084336.GN22276@flint.armlinux.org.uk>
+References: <20160622114704.5b0c97eb@canb.auug.org.au>
+ <CAKMK7uFDQPdUinsDQaFxCW31k5T9qXoiNkzQ-CuqYQPPbz99pA@mail.gmail.com>
+ <20160622082110.GM22276@flint.armlinux.org.uk>
+ <20160622082336.GN23520@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20160622082336.GN23520@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160622
-Git describe: next-20160622
-Commit: a37b237f49 Add linux-next specific files for 20160622
-
-Build Time: 74 min 20 sec
-
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 1
-Warnings: 5
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-     68 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  3 ../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
-Warnings Summary: 5
-	 66 ../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 3 errors, 68 warnings, 0 section mismatches
-
-Errors:
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
-Warnings:
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
+T24gV2VkLCBKdW4gMjIsIDIwMTYgYXQgMTA6MjM6MzZBTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiBPbiBXZWQsIEp1biAyMiwgMjAxNiBhdCAwOToyMToxMUFNICswMTAwLCBSdXNzZWxs
+IEtpbmcgd3JvdGU6Cj4gPiBPbiBXZWQsIEp1biAyMiwgMjAxNiBhdCAwOTozMToxOEFNICswMjAw
+LCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4gPiBPbiBXZWQsIEp1biAyMiwgMjAxNiBhdCAzOjQ3
+IEFNLCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gPiA+
+ID4gSGkgYWxsLAo+ID4gPiA+Cj4gPiA+ID4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRo
+ZSBkcm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+ID4gPiA+Cj4gPiA+ID4gICBkcml2
+ZXJzL2dwdS9kcm0vc3RpL3N0aV9kcnYuYwo+ID4gPiA+Cj4gPiA+ID4gYmV0d2VlbiBjb21taXQ6
+Cj4gPiA+ID4KPiA+ID4gPiAgIDA2Mjk5M2IxNWU4ZSAoImRybTogY29udmVydCBEVCBjb21wb25l
+bnQgbWF0Y2hpbmcgdG8gY29tcG9uZW50X21hdGNoX2FkZF9yZWxlYXNlKCkiKQo+ID4gPiAKPiA+
+ID4gV2h5IGRpZCB0aGF0IG9uZSBlbmQgdXAgaW4gdGhlIGFybSB0cmVlPyBTaG91bGQgaXQgZ28g
+aW4gdGhyb3VnaAo+ID4gPiBkcm0tbWlzYyBpbnN0ZWFkPwo+ID4gCj4gPiBNaW5lIGlzIHBhcnQg
+b2YgYSB0aHJlZSBwYXJ0IHBhdGNoIHNlcmllcyB3aGljaCBpcyBwYXJ0IG9mIHRoZSBjb21wb25l
+bnQKPiA+IGhlbHBlciB1cGRhdGVzICh3aGljaCBJJ20gdGhlIGF1dGhvciBhbmQgbWFpbnRhaW5l
+ciBvZikuCj4gPiAKPiA+IFRoZW4gc29tZW9uZSBjYW1lIHVwIHdpdGggYW4gYWx0ZXJuYXRpdmUg
+d2F5IG9mIHNvbWUgb2YgcGFydCBvZiBpdC4KPiA+IAo+ID4gWW91IGNhbid0IG1lcmdlIHRoZSBh
+Ym92ZSBEUk0gcGFydCwgYmVjYXVzZSB0aGF0IG1lYW5zIHlvdSBhbHNvIG5lZWQgdG8KPiA+IG1l
+cmdlIHBhdGNoIDEsIHdoaWNoIGlzIGNvcmUgY29tcG9uZW50IHN0dWZmLgo+IAo+IE1ha2VzIHNl
+bnNlLCBidXQgZ2VuZXJhbGx5IGluIHRoYXQgY2FzZSBJIGFzayBEYXZlIGZvciBhbiBleHBsaWNp
+dCBhY2sgZm9yCj4gbWVyZ2luZyB0aHJvdWdoIGFub3RoZXIgdHJlZSB0byBhdm9pZCBjb25mdXNp
+b24uIExhY2sgb2YgdGhhdCBpcyB3aHkgSQo+IGFza2VkLgoKSXQgZ290IHBvc3RlZCB0byB0aGUg
+YXBwcm9wcmlhdGUgbWFpbGluZyBsaXN0cyB3aXRoIENDcywgaW5jbHVkaW5nIERhdmlkLgpKdXN0
+IHRocmVlIHBlb3BsZSByZXNwb25kZWQuCgpPbmUgb2YgdGhlIHJlc3BvbnNlcyB3YXMgdGhhdCBw
+ZW9wbGUgZGlkbid0IGxpa2UgdGhlIGR1cGxpY2F0aW9uLiAgSQpwb3N0ZWQgdjIgdGhlIHNhbWUg
+ZGF5LCB0aGUgRFQgcGVvcGxlIGRpZG4ndCBsaWtlIHRoZSBmaWxlIGxvY2F0aW9uLCBzbwpJIHdl
+bnQgYmFjayB0byB2MS4gIFRoYXQgdGhlbiBzcGFya2VkIHNvbWVvbmUgdG8gc3RhcnQgd29ya2lu
+ZyBfYWdhaW5zdF8KbWUsIGNsZWFuaW5nIHVwIHRoZSBleGlzdGluZyBkdXBsaWNhdGlvbiwgYW5k
+IGFja25vd2xlZGdpbmcgdGhhdCBpdCdsbApjYXVzZSBfbWVfIHByb2JsZW1zLgoKU28sIGFzIGl0
+IHdhcyBkb25lIG1hbGljaW91c2x5IGFuZCBpbnRlbnRpb25hbGx5IHRvIGdpdmUgdGhlc2UgcG9y
+YmxlbXMsCkknbSBub3QgYnVkZ2luZyBvbiB0aGlzLiAgU29ycnkuCgpUaGVyZSBhcmUgdGltZXMg
+d2hlbiB3b3JraW5nIG9uIHRoZSBrZXJuZWwgaXMgbm90IHZlcnkgbmljZS4gIFRoaXMgaXMgb25l
+Cm9mIHRoZW0uCgotLSAKUnVzc2VsbCBLaW5nCkFSTSBhcmNoaXRlY3R1cmUgTGludXggS2VybmVs
+IG1haW50YWluZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4
+Cg==
