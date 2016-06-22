@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the arm64
+Subject: linux-next: manual merge of the akpm-current tree with the kspp
  tree
-Date: Wed, 22 Jun 2016 14:54:15 +1000
-Message-ID: <20160622145415.2a005cdb@canb.auug.org.au>
+Date: Wed, 22 Jun 2016 14:58:16 +1000
+Message-ID: <20160622145816.6451b896@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45739 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42848 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750824AbcFVEyg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 22 Jun 2016 00:54:36 -0400
+	id S1750748AbcFVFAe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 22 Jun 2016 01:00:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emese Revfy <re.emese@gmail.com>, Vladimir Davydov <vdavydov@virtuozzo.com>
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/arm64/mm/dma-mapping.c
+  mm/page_alloc.c
 
 between commit:
 
-  b67a8b29df7e ("arm64: mm: only initialize swiotlb when necessary")
+  0df42965deb7 ("latent_entropy: Add the extra_latent_entropy kernel parameter")
 
-from the arm64 tree and commit:
+from the kspp tree and commit:
 
-  29af59a63ef1 ("arm64: dma-mapping: constify attrs passed to internal functions")
+  6f4f5445297d ("mm: charge/uncharge kmemcg from generic page allocator paths")
 
 from the akpm-current tree.
 
@@ -43,18 +43,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/mm/dma-mapping.c
-index 46a4157adc17,0ef620a34c4e..000000000000
---- a/arch/arm64/mm/dma-mapping.c
-+++ b/arch/arm64/mm/dma-mapping.c
-@@@ -30,9 -29,7 +30,9 @@@
+diff --cc mm/page_alloc.c
+index 02c7a0e6e66a,180f5afc5a1f..000000000000
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@@ -63,7 -63,7 +63,8 @@@
+  #include <linux/sched/rt.h>
+  #include <linux/page_owner.h>
+  #include <linux/kthread.h>
+ +#include <linux/random.h>
++ #include <linux/memcontrol.h>
   
-  #include <asm/cacheflush.h>
-  
- +static int swiotlb __read_mostly;
- +
-- static pgprot_t __get_dma_pgprot(struct dma_attrs *attrs, pgprot_t prot,
-+ static pgprot_t __get_dma_pgprot(const struct dma_attrs *attrs, pgprot_t prot,
-  				 bool coherent)
-  {
-  	if (!coherent || dma_get_attr(DMA_ATTR_WRITE_COMBINE, attrs))
+  #include <asm/sections.h>
+  #include <asm/tlbflush.h>
