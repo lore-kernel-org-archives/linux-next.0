@@ -1,36 +1,41 @@
-From: Prasun Maiti <prasunmaiti87@gmail.com>
-Subject: Re: [PATCH] mwifiex: Reduce endian conversion for REG Host Commands
-Date: Wed, 22 Jun 2016 17:45:07 +0530
-Message-ID: <CAEO8o4k=2vwtYfQjJb_oKGNFcOpMDD9LSsniwJi6m74wncgZgg@mail.gmail.com>
-References: <201606220027.euqOehrM%fengguang.wu@intel.com> <1466591125-32128-1-git-send-email-prasunmaiti87@gmail.com>
- <87eg7ph4xo.fsf@kamboji.qca.qualcomm.com>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: build warnings after merge of the kspp tree
+Date: Wed, 22 Jun 2016 10:10:13 -0700
+Message-ID: <CAGXu5jJe5G5N9BJeB3dr0hKF+A0NOLT5OjQDOpMwko4fHr4OwA@mail.gmail.com>
+References: <20160622151442.5684f922@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34463 "EHLO
-	mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752313AbcFVMRC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 08:17:02 -0400
-In-Reply-To: <87eg7ph4xo.fsf@kamboji.qca.qualcomm.com>
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:35881 "EHLO
+	mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752257AbcFVRKQ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 13:10:16 -0400
+Received: by mail-wm0-f43.google.com with SMTP id f126so96070482wma.1
+        for <linux-next@vger.kernel.org>; Wed, 22 Jun 2016 10:10:15 -0700 (PDT)
+In-Reply-To: <20160622151442.5684f922@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
 
-> If you send a new version of the patch mark it as [PATCH v2] and always
-> include a change log so that people don't need to guess what has
-> changed:
+On Tue, Jun 21, 2016 at 10:14 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
 >
-> http://kernelnewbies.org/FirstKernelPatch#head-5c81b3c517a1d0bbc24f92594cb734e155fcbbcb
+> After merging the kspp tree, today's linux-next build (i386 defconfig)
+> produced these warning:
 >
-> So now you should send a v3 and include a changelog.
+> x86_64-linux-gcc: warning: '-mcpu=' is deprecated; use '-mtune=' or '-march=' instead
+>
+> (over 2000 of these)
+>
+> Introduced (maybe) by commit
+>
+>   e2135c84d5d2 ("kbuild: no gcc-plugins during cc-option tests")
 
-Hi Kalle Valo,
+I will investigate.
 
-In PATCH v3, the whole changes remains? Or only it contains last
-modification on PATCH v2 ?
-Please let me know about it.
+-Kees
 
 -- 
-Thanks,
-Prasun
+Kees Cook
+Chrome OS & Brillo Security
