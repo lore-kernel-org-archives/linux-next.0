@@ -1,44 +1,157 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: manual merge of the drm-misc tree with
-	the arm tree
-Date: Wed, 22 Jun 2016 09:21:11 +0100
-Message-ID: <20160622082110.GM22276@flint.armlinux.org.uk>
-References: <20160622114704.5b0c97eb@canb.auug.org.au>
- <CAKMK7uFDQPdUinsDQaFxCW31k5T9qXoiNkzQ-CuqYQPPbz99pA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uFDQPdUinsDQaFxCW31k5T9qXoiNkzQ-CuqYQPPbz99pA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, intel-gfx <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next <linux-next@vger.kernel.org>, Benjamin Gaignard <benjamin.gaignard@linaro.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160622 build: 2 failures 5 warnings (next-20160622)
+Date: Wed, 22 Jun 2016 09:28:52 +0100
+Message-ID: <E1bFdWm-0001yi-4u@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58640 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315AbcFVI3Y (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 04:29:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-T24gV2VkLCBKdW4gMjIsIDIwMTYgYXQgMDk6MzE6MThBTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBXZWQsIEp1biAyMiwgMjAxNiBhdCAzOjQ3IEFNLCBTdGVwaGVuIFJvdGh3ZWxs
-IDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gPiBIaSBhbGwsCj4gPgo+ID4gVG9kYXkn
-cyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdvdCBhIGNvbmZsaWN0IGlu
-Ogo+ID4KPiA+ICAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfZHJ2LmMKPiA+Cj4gPiBiZXR3ZWVu
-IGNvbW1pdDoKPiA+Cj4gPiAgIDA2Mjk5M2IxNWU4ZSAoImRybTogY29udmVydCBEVCBjb21wb25l
-bnQgbWF0Y2hpbmcgdG8gY29tcG9uZW50X21hdGNoX2FkZF9yZWxlYXNlKCkiKQo+IAo+IFdoeSBk
-aWQgdGhhdCBvbmUgZW5kIHVwIGluIHRoZSBhcm0gdHJlZT8gU2hvdWxkIGl0IGdvIGluIHRocm91
-Z2gKPiBkcm0tbWlzYyBpbnN0ZWFkPwoKTWluZSBpcyBwYXJ0IG9mIGEgdGhyZWUgcGFydCBwYXRj
-aCBzZXJpZXMgd2hpY2ggaXMgcGFydCBvZiB0aGUgY29tcG9uZW50CmhlbHBlciB1cGRhdGVzICh3
-aGljaCBJJ20gdGhlIGF1dGhvciBhbmQgbWFpbnRhaW5lciBvZikuCgpUaGVuIHNvbWVvbmUgY2Ft
-ZSB1cCB3aXRoIGFuIGFsdGVybmF0aXZlIHdheSBvZiBzb21lIG9mIHBhcnQgb2YgaXQuCgpZb3Ug
-Y2FuJ3QgbWVyZ2UgdGhlIGFib3ZlIERSTSBwYXJ0LCBiZWNhdXNlIHRoYXQgbWVhbnMgeW91IGFs
-c28gbmVlZCB0bwptZXJnZSBwYXRjaCAxLCB3aGljaCBpcyBjb3JlIGNvbXBvbmVudCBzdHVmZi4K
-Ci0tIApSdXNzZWxsIEtpbmcKQVJNIGFyY2hpdGVjdHVyZSBMaW51eCBLZXJuZWwgbWFpbnRhaW5l
-cgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1n
-ZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Tree/Branch: next-20160622
+Git describe: next-20160622
+Commit: a37b237f49 Add linux-next specific files for 20160622
+
+Build Time: 74 min 20 sec
+
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 1
+Warnings: 5
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm64-allmodconfig
+     68 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  3 ../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+Warnings Summary: 5
+	 66 ../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/adc/ad7606_spi.c:24:18: warning: 'data' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 3 errors, 68 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+Warnings:
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
