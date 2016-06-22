@@ -1,227 +1,240 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: Tree for Jun 21
-Date: Wed, 22 Jun 2016 11:16:49 +0200
-Message-ID: <20160622091649.GB30154@twins.programming.kicks-ass.net>
-References: <f43656af-050c-82b3-e10d-66be072be320@mellanox.com>
- <20160621124247.GM30921@twins.programming.kicks-ass.net>
- <5ed77f4c-44eb-ca02-1373-e878d3dea31e@mellanox.com>
- <20160621140408.GE3704@worktop>
- <20160621141435.GB7381@worktop>
- <94270f5c-1a28-f9d7-2b5a-eb874dc35398@mellanox.com>
- <20160621170607.GQ30154@twins.programming.kicks-ass.net>
- <20160621172918.GS30927@twins.programming.kicks-ass.net>
- <20160621182844.GT30927@twins.programming.kicks-ass.net>
- <ff97cde6-44e2-e25d-7bd2-78dbf344fc7b@mellanox.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Prasun Maiti <prasunmaiti87@gmail.com>
+Subject: [PATCH] mwifiex: Reduce endian conversion for REG Host Commands
+Date: Wed, 22 Jun 2016 15:55:25 +0530
+Message-ID: <1466591125-32128-1-git-send-email-prasunmaiti87@gmail.com>
+References: <201606220027.euqOehrM%fengguang.wu@intel.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:47146 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750770AbcFVJT3 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 05:19:29 -0400
-Content-Disposition: inline
-In-Reply-To: <ff97cde6-44e2-e25d-7bd2-78dbf344fc7b@mellanox.com>
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:35883 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751262AbcFVK2r (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 22 Jun 2016 06:28:47 -0400
+In-Reply-To: <201606220027.euqOehrM%fengguang.wu@intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Chris Metcalf <cmetcalf@mellanox.com>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>
 
-On Tue, Jun 21, 2016 at 02:36:34PM -0400, Chris Metcalf wrote:
-> On 6/21/2016 2:28 PM, Peter Zijlstra wrote:
-> >On Tue, Jun 21, 2016 at 07:29:18PM +0200, Peter Zijlstra wrote:
-> >
-> >>>OK, I seem to have a tilepro-linux-gcc-6.1.1 build done. Lets see if I
-> >>>can build me a kernel with it.
-> >The below, much larger than desired, patch seems to make it go again.
-> >
-> >I had to s/__atomic_fetch/__atomic32_fetch/ to avoid a namespace clash
-> >with the builtin C11 atomic primitives.
-> >
-> >You want me to rename them all to regain consistent naming?
-> 
-> Yes, it's probably the right thing to do.  All the internal routines with "atomic32"
-> or "atomic64" I assume you mean?
+For multiple REG Host Commands (e.g HostCmd_CMD_802_11_EEPROM_ACCESS,
+HostCmd_CMD_MAC_REG_ACCESS etc.) "cpu_to_leX"-converted values are
+saved to driver. So, "leX_to_cpu" conversion is required too many
+times afterwards in driver.
 
-Something like so then?
+This patch reduces the endian: conversion without saving "cpu_to_leX"
+converted values in driver. This will convert endianness in prepare
+command and command response path.
 
+Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
 ---
- arch/tile/include/asm/atomic_32.h |   24 ++++++++++++------------
- arch/tile/include/asm/futex.h     |   14 +++++++-------
- arch/tile/lib/atomic_32.c         |   16 ++++++++--------
- arch/tile/lib/atomic_asm_32.S     |   21 +++++++++++++--------
- 4 files changed, 40 insertions(+), 35 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/sta_cmd.c     | 28 +++++++---------
+ drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c | 37 +++++++++++-----------
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c   | 21 ++++++------
+ 3 files changed, 41 insertions(+), 45 deletions(-)
 
-diff --git a/arch/tile/include/asm/atomic_32.h b/arch/tile/include/asm/atomic_32.h
-index da8eb4e..a937742 100644
---- a/arch/tile/include/asm/atomic_32.h
-+++ b/arch/tile/include/asm/atomic_32.h
-@@ -143,15 +143,15 @@ static inline void atomic64_##op(long long i, atomic64_t *v)	\
- {								\
- 	_atomic64_fetch_##op(&v->counter, i);			\
- }								\
--static inline void atomic64_##op(long long i, atomic64_t *v)	\
-+static inline long long atomic64_fetch_##op(long long i, atomic64_t *v)	\
- {								\
- 	smp_mb();						\
- 	return _atomic64_fetch_##op(&v->counter, i);		\
- }
- 
--ATOMIC64_OP(and)
--ATOMIC64_OP(or)
--ATOMIC64_OP(xor)
-+ATOMIC64_OPS(and)
-+ATOMIC64_OPS(or)
-+ATOMIC64_OPS(xor)
- 
- #undef ATOMIC64_OPS
- 
-@@ -266,16 +266,16 @@ struct __get_user {
- 	unsigned long val;
- 	int err;
- };
--extern struct __get_user __atomic_cmpxchg(volatile int *p,
-+extern struct __get_user __atomic32_cmpxchg(volatile int *p,
- 					  int *lock, int o, int n);
--extern struct __get_user __atomic_xchg(volatile int *p, int *lock, int n);
--extern struct __get_user __atomic_xchg_add(volatile int *p, int *lock, int n);
--extern struct __get_user __atomic_xchg_add_unless(volatile int *p,
-+extern struct __get_user __atomic32_xchg(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_xchg_add(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_xchg_add_unless(volatile int *p,
- 						  int *lock, int o, int n);
--extern struct __get_user __atomic_fetch_or(volatile int *p, int *lock, int n);
--extern struct __get_user __atomic_fetch_and(volatile int *p, int *lock, int n);
--extern struct __get_user __atomic_fetch_andn(volatile int *p, int *lock, int n);
--extern struct __get_user __atomic_fetch_xor(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_fetch_or(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_fetch_and(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_fetch_andn(volatile int *p, int *lock, int n);
-+extern struct __get_user __atomic32_fetch_xor(volatile int *p, int *lock, int n);
- extern long long __atomic64_cmpxchg(volatile long long *p, int *lock,
- 					long long o, long long n);
- extern long long __atomic64_xchg(volatile long long *p, int *lock, long long n);
-diff --git a/arch/tile/include/asm/futex.h b/arch/tile/include/asm/futex.h
-index 1a6ef1b..e64a1b7 100644
---- a/arch/tile/include/asm/futex.h
-+++ b/arch/tile/include/asm/futex.h
-@@ -80,16 +80,16 @@
- 		ret = gu.err;						\
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+index e436574..9df02ba 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+@@ -1130,9 +1130,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+ 		cmd->size = cpu_to_le16(sizeof(*mac_reg) + S_DS_GEN);
+ 		mac_reg = &cmd->params.mac_reg;
+ 		mac_reg->action = cpu_to_le16(cmd_action);
+-		mac_reg->offset =
+-			cpu_to_le16((u16) le32_to_cpu(reg_rw->offset));
+-		mac_reg->value = reg_rw->value;
++		mac_reg->offset = cpu_to_le16((u16) reg_rw->offset);
++		mac_reg->value = cpu_to_le32(reg_rw->value);
+ 		break;
  	}
- 
--#define __futex_set() __futex_call(__atomic_xchg)
--#define __futex_add() __futex_call(__atomic_xchg_add)
--#define __futex_or() __futex_call(__atomic_or)
--#define __futex_andn() __futex_call(__atomic_andn)
--#define __futex_xor() __futex_call(__atomic_xor)
-+#define __futex_set() __futex_call(__atomic32_xchg)
-+#define __futex_add() __futex_call(__atomic32_xchg_add)
-+#define __futex_or() __futex_call(__atomic32_fetch_or)
-+#define __futex_andn() __futex_call(__atomic32_fetch_andn)
-+#define __futex_xor() __futex_call(__atomic32_fetch_xor)
- 
- #define __futex_cmpxchg()						\
- 	{								\
--		struct __get_user gu = __atomic_cmpxchg((u32 __force *)uaddr, \
--							lock, oldval, oparg); \
-+		struct __get_user gu = __atomic32_cmpxchg((u32 __force *)uaddr, \
-+							  lock, oldval, oparg); \
- 		val = gu.val;						\
- 		ret = gu.err;						\
+ 	case HostCmd_CMD_BBP_REG_ACCESS:
+@@ -1142,9 +1141,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+ 		cmd->size = cpu_to_le16(sizeof(*bbp_reg) + S_DS_GEN);
+ 		bbp_reg = &cmd->params.bbp_reg;
+ 		bbp_reg->action = cpu_to_le16(cmd_action);
+-		bbp_reg->offset =
+-			cpu_to_le16((u16) le32_to_cpu(reg_rw->offset));
+-		bbp_reg->value = (u8) le32_to_cpu(reg_rw->value);
++		bbp_reg->offset = cpu_to_le16((u16) reg_rw->offset);
++		bbp_reg->value = (u8) reg_rw->value;
+ 		break;
  	}
-diff --git a/arch/tile/lib/atomic_32.c b/arch/tile/lib/atomic_32.c
-index 5b6bd93..f812880 100644
---- a/arch/tile/lib/atomic_32.c
-+++ b/arch/tile/lib/atomic_32.c
-@@ -61,13 +61,13 @@ static inline int *__atomic_setup(volatile void *v)
- 
- int _atomic_xchg(int *v, int n)
+ 	case HostCmd_CMD_RF_REG_ACCESS:
+@@ -1154,8 +1152,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+ 		cmd->size = cpu_to_le16(sizeof(*rf_reg) + S_DS_GEN);
+ 		rf_reg = &cmd->params.rf_reg;
+ 		rf_reg->action = cpu_to_le16(cmd_action);
+-		rf_reg->offset = cpu_to_le16((u16) le32_to_cpu(reg_rw->offset));
+-		rf_reg->value = (u8) le32_to_cpu(reg_rw->value);
++		rf_reg->offset = cpu_to_le16((u16) reg_rw->offset);
++		rf_reg->value = (u8) reg_rw->value;
+ 		break;
+ 	}
+ 	case HostCmd_CMD_PMIC_REG_ACCESS:
+@@ -1165,9 +1163,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+ 		cmd->size = cpu_to_le16(sizeof(*pmic_reg) + S_DS_GEN);
+ 		pmic_reg = &cmd->params.pmic_reg;
+ 		pmic_reg->action = cpu_to_le16(cmd_action);
+-		pmic_reg->offset =
+-				cpu_to_le16((u16) le32_to_cpu(reg_rw->offset));
+-		pmic_reg->value = (u8) le32_to_cpu(reg_rw->value);
++		pmic_reg->offset = cpu_to_le16((u16) reg_rw->offset);
++		pmic_reg->value = (u8) reg_rw->value;
+ 		break;
+ 	}
+ 	case HostCmd_CMD_CAU_REG_ACCESS:
+@@ -1177,9 +1174,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+ 		cmd->size = cpu_to_le16(sizeof(*cau_reg) + S_DS_GEN);
+ 		cau_reg = &cmd->params.rf_reg;
+ 		cau_reg->action = cpu_to_le16(cmd_action);
+-		cau_reg->offset =
+-				cpu_to_le16((u16) le32_to_cpu(reg_rw->offset));
+-		cau_reg->value = (u8) le32_to_cpu(reg_rw->value);
++		cau_reg->offset = cpu_to_le16((u16) reg_rw->offset);
++		cau_reg->value = (u8) reg_rw->value;
+ 		break;
+ 	}
+ 	case HostCmd_CMD_802_11_EEPROM_ACCESS:
+@@ -1190,8 +1186,8 @@ static int mwifiex_cmd_reg_access(struct host_cmd_ds_command *cmd,
+
+ 		cmd->size = cpu_to_le16(sizeof(*cmd_eeprom) + S_DS_GEN);
+ 		cmd_eeprom->action = cpu_to_le16(cmd_action);
+-		cmd_eeprom->offset = rd_eeprom->offset;
+-		cmd_eeprom->byte_count = rd_eeprom->byte_count;
++		cmd_eeprom->offset = cpu_to_le16(rd_eeprom->offset);
++		cmd_eeprom->byte_count = cpu_to_le16(rd_eeprom->byte_count);
+ 		cmd_eeprom->value = 0;
+ 		break;
+ 	}
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+index d18c797..1832511 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmdresp.c
+@@ -781,45 +781,44 @@ static int mwifiex_ret_reg_access(u16 type, struct host_cmd_ds_command *resp,
+ 	switch (type) {
+ 	case HostCmd_CMD_MAC_REG_ACCESS:
+ 		r.mac = &resp->params.mac_reg;
+-		reg_rw->offset = cpu_to_le32((u32) le16_to_cpu(r.mac->offset));
+-		reg_rw->value = r.mac->value;
++		reg_rw->offset = (u32) le16_to_cpu(r.mac->offset);
++		reg_rw->value = le32_to_cpu(r.mac->value);
+ 		break;
+ 	case HostCmd_CMD_BBP_REG_ACCESS:
+ 		r.bbp = &resp->params.bbp_reg;
+-		reg_rw->offset = cpu_to_le32((u32) le16_to_cpu(r.bbp->offset));
+-		reg_rw->value = cpu_to_le32((u32) r.bbp->value);
++		reg_rw->offset = (u32) le16_to_cpu(r.bbp->offset);
++		reg_rw->value = (u32) r.bbp->value;
+ 		break;
+
+ 	case HostCmd_CMD_RF_REG_ACCESS:
+ 		r.rf = &resp->params.rf_reg;
+-		reg_rw->offset = cpu_to_le32((u32) le16_to_cpu(r.rf->offset));
+-		reg_rw->value = cpu_to_le32((u32) r.bbp->value);
++		reg_rw->offset = (u32) le16_to_cpu(r.rf->offset);
++		reg_rw->value = (u32) r.bbp->value;
+ 		break;
+ 	case HostCmd_CMD_PMIC_REG_ACCESS:
+ 		r.pmic = &resp->params.pmic_reg;
+-		reg_rw->offset = cpu_to_le32((u32) le16_to_cpu(r.pmic->offset));
+-		reg_rw->value = cpu_to_le32((u32) r.pmic->value);
++		reg_rw->offset = (u32) le16_to_cpu(r.pmic->offset);
++		reg_rw->value = (u32) r.pmic->value;
+ 		break;
+ 	case HostCmd_CMD_CAU_REG_ACCESS:
+ 		r.rf = &resp->params.rf_reg;
+-		reg_rw->offset = cpu_to_le32((u32) le16_to_cpu(r.rf->offset));
+-		reg_rw->value = cpu_to_le32((u32) r.rf->value);
++		reg_rw->offset = (u32) le16_to_cpu(r.rf->offset);
++		reg_rw->value = (u32) r.rf->value;
+ 		break;
+ 	case HostCmd_CMD_802_11_EEPROM_ACCESS:
+ 		r.eeprom = &resp->params.eeprom;
+-		pr_debug("info: EEPROM read len=%x\n", r.eeprom->byte_count);
+-		if (le16_to_cpu(eeprom->byte_count) <
+-		    le16_to_cpu(r.eeprom->byte_count)) {
+-			eeprom->byte_count = cpu_to_le16(0);
++		pr_debug("info: EEPROM read len=%x\n",
++				le16_to_cpu(r.eeprom->byte_count));
++		if (eeprom->byte_count < le16_to_cpu(r.eeprom->byte_count)) {
++			eeprom->byte_count = 0;
+ 			pr_debug("info: EEPROM read length is too big\n");
+ 			return -1;
+ 		}
+-		eeprom->offset = r.eeprom->offset;
+-		eeprom->byte_count = r.eeprom->byte_count;
+-		if (le16_to_cpu(eeprom->byte_count) > 0)
++		eeprom->offset = le16_to_cpu(r.eeprom->offset);
++		eeprom->byte_count = le16_to_cpu(r.eeprom->byte_count);
++		if (eeprom->byte_count > 0)
+ 			memcpy(&eeprom->value, &r.eeprom->value,
+-			       le16_to_cpu(r.eeprom->byte_count));
+-
++			       min((u16)MAX_EEPROM_DATA, eeprom->byte_count));
+ 		break;
+ 	default:
+ 		return -1;
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index 8e08626..6dab5ca 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -1247,7 +1247,7 @@ static int mwifiex_reg_mem_ioctl_reg_rw(struct mwifiex_private *priv,
  {
--	return __atomic_xchg(v, __atomic_setup(v), n).val;
-+	return __atomic32_xchg(v, __atomic_setup(v), n).val;
- }
- EXPORT_SYMBOL(_atomic_xchg);
- 
- int _atomic_xchg_add(int *v, int i)
+ 	u16 cmd_no;
+
+-	switch (le32_to_cpu(reg_rw->type)) {
++	switch (reg_rw->type) {
+ 	case MWIFIEX_REG_MAC:
+ 		cmd_no = HostCmd_CMD_MAC_REG_ACCESS;
+ 		break;
+@@ -1282,9 +1282,9 @@ mwifiex_reg_write(struct mwifiex_private *priv, u32 reg_type,
  {
--	return __atomic_xchg_add(v, __atomic_setup(v), i).val;
-+	return __atomic32_xchg_add(v, __atomic_setup(v), i).val;
+ 	struct mwifiex_ds_reg_rw reg_rw;
+
+-	reg_rw.type = cpu_to_le32(reg_type);
+-	reg_rw.offset = cpu_to_le32(reg_offset);
+-	reg_rw.value = cpu_to_le32(reg_value);
++	reg_rw.type = reg_type;
++	reg_rw.offset = reg_offset;
++	reg_rw.value = reg_value;
+
+ 	return mwifiex_reg_mem_ioctl_reg_rw(priv, &reg_rw, HostCmd_ACT_GEN_SET);
  }
- EXPORT_SYMBOL(_atomic_xchg_add);
- 
-@@ -78,37 +78,37 @@ int _atomic_xchg_add_unless(int *v, int a, int u)
- 	 * to use the first argument consistently as the "old value"
- 	 * in the assembly, as is done for _atomic_cmpxchg().
- 	 */
--	return __atomic_xchg_add_unless(v, __atomic_setup(v), u, a).val;
-+	return __atomic32_xchg_add_unless(v, __atomic_setup(v), u, a).val;
+@@ -1302,14 +1302,14 @@ mwifiex_reg_read(struct mwifiex_private *priv, u32 reg_type,
+ 	int ret;
+ 	struct mwifiex_ds_reg_rw reg_rw;
+
+-	reg_rw.type = cpu_to_le32(reg_type);
+-	reg_rw.offset = cpu_to_le32(reg_offset);
++	reg_rw.type = reg_type;
++	reg_rw.offset = reg_offset;
+ 	ret = mwifiex_reg_mem_ioctl_reg_rw(priv, &reg_rw, HostCmd_ACT_GEN_GET);
+
+ 	if (ret)
+ 		goto done;
+
+-	*value = le32_to_cpu(reg_rw.value);
++	*value = reg_rw.value;
+
+ done:
+ 	return ret;
+@@ -1328,15 +1328,16 @@ mwifiex_eeprom_read(struct mwifiex_private *priv, u16 offset, u16 bytes,
+ 	int ret;
+ 	struct mwifiex_ds_read_eeprom rd_eeprom;
+
+-	rd_eeprom.offset = cpu_to_le16((u16) offset);
+-	rd_eeprom.byte_count = cpu_to_le16((u16) bytes);
++	rd_eeprom.offset =  offset;
++	rd_eeprom.byte_count = bytes;
+
+ 	/* Send request to firmware */
+ 	ret = mwifiex_send_cmd(priv, HostCmd_CMD_802_11_EEPROM_ACCESS,
+ 			       HostCmd_ACT_GEN_GET, 0, &rd_eeprom, true);
+
+ 	if (!ret)
+-		memcpy(value, rd_eeprom.value, MAX_EEPROM_DATA);
++		memcpy(value, rd_eeprom.value, min((u16)MAX_EEPROM_DATA,
++		       rd_eeprom.byte_count));
+ 	return ret;
  }
- EXPORT_SYMBOL(_atomic_xchg_add_unless);
- 
- int _atomic_cmpxchg(int *v, int o, int n)
- {
--	return __atomic_cmpxchg(v, __atomic_setup(v), o, n).val;
-+	return __atomic32_cmpxchg(v, __atomic_setup(v), o, n).val;
- }
- EXPORT_SYMBOL(_atomic_cmpxchg);
- 
- unsigned long _atomic_fetch_or(volatile unsigned long *p, unsigned long mask)
- {
--	return __atomic_fetch_or((int *)p, __atomic_setup(p), mask).val;
-+	return __atomic32_fetch_or((int *)p, __atomic_setup(p), mask).val;
- }
- EXPORT_SYMBOL(_atomic_fetch_or);
- 
- unsigned long _atomic_fetch_and(volatile unsigned long *p, unsigned long mask)
- {
--	return __atomic_fetch_and((int *)p, __atomic_setup(p), mask).val;
-+	return __atomic32_fetch_and((int *)p, __atomic_setup(p), mask).val;
- }
- EXPORT_SYMBOL(_atomic_fetch_and);
- 
- unsigned long _atomic_fetch_andn(volatile unsigned long *p, unsigned long mask)
- {
--	return __atomic_fetch_andn((int *)p, __atomic_setup(p), mask).val;
-+	return __atomic32_fetch_andn((int *)p, __atomic_setup(p), mask).val;
- }
- EXPORT_SYMBOL(_atomic_fetch_andn);
- 
- unsigned long _atomic_fetch_xor(volatile unsigned long *p, unsigned long mask)
- {
--	return __atomic_fetch_xor((int *)p, __atomic_setup(p), mask).val;
-+	return __atomic32_fetch_xor((int *)p, __atomic_setup(p), mask).val;
- }
- EXPORT_SYMBOL(_atomic_fetch_xor);
- 
-diff --git a/arch/tile/lib/atomic_asm_32.S b/arch/tile/lib/atomic_asm_32.S
-index 507abdd..1a70e6c 100644
---- a/arch/tile/lib/atomic_asm_32.S
-+++ b/arch/tile/lib/atomic_asm_32.S
-@@ -172,15 +172,20 @@ STD_ENTRY_SECTION(__atomic\name, .text.atomic)
- 	.endif
- 	.endm
- 
--atomic_op _cmpxchg, 32, "seq r26, r22, r2; { bbns r26, 3f; move r24, r3 }"
--atomic_op _xchg, 32, "move r24, r2"
--atomic_op _xchg_add, 32, "add r24, r22, r2"
--atomic_op _xchg_add_unless, 32, \
-+
-+/*
-+ * Use __atomic32 prefix to avoid collisions with GCC builtin __atomic functions.
-+ */
-+
-+atomic_op 32_cmpxchg, 32, "seq r26, r22, r2; { bbns r26, 3f; move r24, r3 }"
-+atomic_op 32_xchg, 32, "move r24, r2"
-+atomic_op 32_xchg_add, 32, "add r24, r22, r2"
-+atomic_op 32_xchg_add_unless, 32, \
- 	"sne r26, r22, r2; { bbns r26, 3f; add r24, r22, r3 }"
--atomic_op _fetch_or, 32, "or r24, r22, r2"
--atomic_op _fetch_and, 32, "and r24, r22, r2"
--atomic_op _fetch_andn, 32, "nor r2, r2, zero; and r24, r22, r2"
--atomic_op _fetch_xor, 32, "xor r24, r22, r2"
-+atomic_op 32_fetch_or, 32, "or r24, r22, r2"
-+atomic_op 32_fetch_and, 32, "and r24, r22, r2"
-+atomic_op 32_fetch_andn, 32, "nor r2, r2, zero; and r24, r22, r2"
-+atomic_op 32_fetch_xor, 32, "xor r24, r22, r2"
- 
- atomic_op 64_cmpxchg, 64, "{ seq r26, r22, r2; seq r27, r23, r3 }; \
- 	{ bbns r26, 3f; move r24, r4 }; { bbns r27, 3f; move r25, r5 }"
+
+--
+1.9.1
