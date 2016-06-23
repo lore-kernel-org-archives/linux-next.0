@@ -1,18 +1,12 @@
 From: Prasun Maiti <prasunmaiti87@gmail.com>
 Subject: [PATCH v3] mwifiex: Reduce endian conversion for REG Host Commands
-Date: Thu, 23 Jun 2016 10:51:53 +0530
-Message-ID: <1466659313-12919-1-git-send-email-prasunmaiti87@gmail.com>
-References: <87eg7ph4xo.fsf@kamboji.qca.qualcomm.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35280 "EHLO
-	mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750971AbcFWFWJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jun 2016 01:22:09 -0400
-In-Reply-To: <87eg7ph4xo.fsf@kamboji.qca.qualcomm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Date: Thu, 23 Jun 2016 10:59:13 +0530
+Message-ID: <1466659753-13146-1-git-send-email-prasunmaiti87@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Amitkumar Karwar <akarwar@marvell.com>
 Cc: Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>
+List-Id: linux-next.vger.kernel.org
 
 For multiple REG Host Commands (e.g HostCmd_CMD_802_11_EEPROM_ACCESS,
 HostCmd_CMD_MAC_REG_ACCESS etc.) "cpu_to_leX"-converted values are
