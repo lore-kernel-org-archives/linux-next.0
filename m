@@ -1,72 +1,69 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Date: Thu, 23 Jun 2016 11:48:49 -0500
-Message-ID: <20160623164848.GE17987@localhost>
-References: <20160623115154.62730f7f@canb.auug.org.au>
+From: Manfred Spraul <manfred@colorfullife.com>
+Subject: Re: [PATCH 1/2] ipc/sem.c: Fix complex_count vs. simple op race
+Date: Thu, 23 Jun 2016 20:55:06 +0200
+Message-ID: <c484baa7-f34d-03b5-c5b9-ad922b1f5a58@colorfullife.com>
+References: <20160615152318.164b1ebd@canb.auug.org.au>
+ <1466280142-19741-1-git-send-email-manfred@colorfullife.com>
+ <20160620160456.a07982236e08d6d6be4cd442@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:46918 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751155AbcFWQsx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Jun 2016 12:48:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20160623115154.62730f7f@canb.auug.org.au>
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35077 "EHLO
+	mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863AbcFWSzJ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 23 Jun 2016 14:55:09 -0400
+Received: by mail-wm0-f65.google.com with SMTP id a66so13262288wme.2
+        for <linux-next@vger.kernel.org>; Thu, 23 Jun 2016 11:55:09 -0700 (PDT)
+In-Reply-To: <20160620160456.a07982236e08d6d6be4cd442@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, 1vier1@web.de, Davidlohr Bueso <dave@stgolabs.net>, felixh@informatik.uni-bremen.de, stable@vger.kernel.org
 
-On Thu, Jun 23, 2016 at 11:51:54AM +1000, Stephen Rothwell wrote:
-> Hi Bjorn,
-> 
-> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_remove':
-> drivers/misc/genwqe/card_base.c:1155:6: warning: unused variable 'bars' [-Wunused-variable]
->   int bars;
->       ^
-> drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_setup':
-> drivers/misc/genwqe/card_base.c:1143:2: warning: 'bars' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   pci_release_selected_regions(pci_dev, bars);
->   ^
-> 
-> Introduced by commit
-> 
->   370b01694826 ("GenWQE: Use pci_(request|release)_mem_regions")
+On 06/21/2016 01:04 AM, Andrew Morton wrote:
+> On Sat, 18 Jun 2016 22:02:21 +0200 Manfred Spraul <manfred@colorfullife.com> wrote:
+>
+>> Commit 6d07b68ce16a ("ipc/sem.c: optimize sem_lock()") introduced a race:
+>>
+>> sem_lock has a fast path that allows parallel simple operations.
+>> There are two reasons why a simple operation cannot run in parallel:
+>> - a non-simple operations is ongoing (sma->sem_perm.lock held)
+>> - a complex operation is sleeping (sma->complex_count != 0)
+>>
+>> As both facts are stored independently, a thread can bypass the current
+>> checks by sleeping in the right positions. See below for more details
+>> (or kernel bugzilla 105651).
+>>
+>> The patch fixes that by creating one variable (complex_mode)
+>> that tracks both reasons why parallel operations are not possible.
+>>
+>> The patch also updates stale documentation regarding the locking.
+>>
+>> With regards to stable kernels:
+>> The patch is required for all kernels that include the commit 6d07b68ce16a
+>> ("ipc/sem.c: optimize sem_lock()") (3.10?)
+> I've had this in -mm (and -next) since January 4, without issues.  I
+> put it on hold because Davidlohr expressed concern about performance
+> regressions.
+I had several ideas how to fix it. The initial ideas probably had 
+performance issue.
 
-Thanks, Stephen.  I made the following edits, which should resolve these
-warnings.  Johannes, let me know if they look right to you.
+The current one doesn't have any issues. It just took longer than 
+expected to test it.
+> Your [2/2] should prevent those regressions (yes?) so I assume that any
+> kernel which has [1/2] really should have [2/2] as well.  But without
+> any quantitative information, this is all mad guesswork.
+>
+> What to do?
+[2/2] is an improvement, it handles one case better than the current code.
+If you want:
+3.10 improved scalability, but it introduced a performance regression 
+for one use case.
+[with 3.10, simple ops got parallel, but complex ops had to perform a 
+"for_each_sem() {spin_unlock_wait()}"]
+The patch fixes that.
 
 
-diff --git a/drivers/misc/genwqe/card_base.c b/drivers/misc/genwqe/card_base.c
-index cb398be..a70b853 100644
---- a/drivers/misc/genwqe/card_base.c
-+++ b/drivers/misc/genwqe/card_base.c
-@@ -1067,7 +1067,7 @@ static int genwqe_health_check_stop(struct genwqe_dev *cd)
-  */
- static int genwqe_pci_setup(struct genwqe_dev *cd)
- {
--	int err, bars;
-+	int err;
- 	struct pci_dev *pci_dev = cd->pci_dev;
- 
- 	err = pci_enable_device_mem(pci_dev);
-@@ -1140,7 +1140,7 @@ static int genwqe_pci_setup(struct genwqe_dev *cd)
-  out_iounmap:
- 	pci_iounmap(pci_dev, cd->mmio);
-  out_release_resources:
--	pci_release_selected_regions(pci_dev, bars);
-+	pci_release_mem_regions(pci_dev);
-  err_disable_device:
- 	pci_disable_device(pci_dev);
-  err_out:
-@@ -1152,7 +1152,6 @@ static int genwqe_pci_setup(struct genwqe_dev *cd)
-  */
- static void genwqe_pci_remove(struct genwqe_dev *cd)
- {
--	int bars;
- 	struct pci_dev *pci_dev = cd->pci_dev;
- 
- 	if (cd->mmio)
+--
+     Manfred
