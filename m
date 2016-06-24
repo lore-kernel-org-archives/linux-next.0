@@ -1,36 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 24 Jun 2016 11:24:43 +1000
-Message-ID: <20160624112443.3ab82788@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the btrfs-kdave
+ tree
+Date: Fri, 24 Jun 2016 12:34:53 +1000
+Message-ID: <20160624123453.275141ba@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59212 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35540 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750847AbcFXBYr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 23 Jun 2016 21:24:47 -0400
+	id S1751249AbcFXCe4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 23 Jun 2016 22:34:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Packham <chris.packham@alliedtelesis.co.nz>, David Ahern <dsa@cumulusnetworks.com>
+To: Jens Axboe <axboe@kernel.dk>, David Sterba <dsterba@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>, Mike Christie <mchristi@redhat.com>
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the block tree got a conflict in:
 
-  drivers/net/vrf.c
+  fs/btrfs/compression.c
 
 between commit:
 
-  52fe705b493d ("net: vrf: replace hard tab with space in assignment")
+  edf0e062aa6f ("Btrfs: fix BUG_ON in btrfs_submit_compressed_write")
 
-from the net tree and commits:
+from the btrfs-kdave tree and commit:
 
-  671cd19ade97 ("net: vrf: ipv4 support for local traffic to local addresses")
-  625b47b50732 ("net: vrf: ipv6 support for local traffic to local addresses")
+  81a75f6781de ("btrfs: use bio fields for op and flags")
 
-from the net-next tree.
+from the block tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,59 +43,35 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/vrf.c
-index 8bd8c7e1ee87,b3762822b653..000000000000
---- a/drivers/net/vrf.c
-+++ b/drivers/net/vrf.c
-@@@ -304,8 -437,26 +437,26 @@@ static int vrf_rt6_create(struct net_de
-  	dst_hold(&rt6->dst);
+diff --cc fs/btrfs/compression.c
+index 7a4d9c81aa2a,cefedabf0a92..000000000000
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@@ -401,11 -402,8 +402,11 @@@ int btrfs_submit_compressed_write(struc
+  				BUG_ON(ret); /* -ENOMEM */
+  			}
   
-  	rt6->rt6i_table = rt6i_table;
- -	rt6->dst.output	= vrf_output6;
- +	rt6->dst.output = vrf_output6;
-+ 
-+ 	/* create a dst for local routing - packets sent locally
-+ 	 * to local address via the VRF device as a loopback
-+ 	 */
-+ 	rt6_local = ip6_dst_alloc(net, dev, flags);
-+ 	if (!rt6_local) {
-+ 		dst_release(&rt6->dst);
-+ 		goto out;
-+ 	}
-+ 
-+ 	dst_hold(&rt6_local->dst);
-+ 
-+ 	rt6_local->rt6i_idev  = in6_dev_get(dev);
-+ 	rt6_local->rt6i_flags = RTF_UP | RTF_NONEXTHOP | RTF_LOCAL;
-+ 	rt6_local->rt6i_table = rt6i_table;
-+ 	rt6_local->dst.input  = ip6_input;
-+ 
-  	rcu_assign_pointer(vrf->rt6, rt6);
-+ 	rcu_assign_pointer(vrf->rt6_local, rt6_local);
+- 			ret = btrfs_map_bio(root, WRITE, bio, 0, 1);
++ 			ret = btrfs_map_bio(root, bio, 0, 1);
+ -			BUG_ON(ret); /* -ENOMEM */
+ +			if (ret) {
+ +				bio->bi_error = ret;
+ +				bio_endio(bio);
+ +			}
   
-  	rc = 0;
-  out:
-@@@ -403,10 -576,22 +576,22 @@@ static int vrf_rtable_create(struct net
-  	if (!rth)
-  		return -ENOMEM;
+  			bio_put(bio);
   
-+ 	/* create a dst for local ingress routing - packets sent locally
-+ 	 * to local address via the VRF device as a loopback
-+ 	 */
-+ 	rth_local = rt_dst_alloc(dev, RTCF_LOCAL, RTN_LOCAL, 1, 1, 0);
-+ 	if (!rth_local) {
-+ 		dst_release(&rth->dst);
-+ 		return -ENOMEM;
-+ 	}
-+ 
- -	rth->dst.output	= vrf_output;
- +	rth->dst.output = vrf_output;
-  	rth->rt_table_id = vrf->tb_id;
+@@@ -434,11 -433,8 +436,11 @@@
+  		BUG_ON(ret); /* -ENOMEM */
+  	}
   
-+ 	rth_local->rt_table_id = vrf->tb_id;
-+ 
-  	rcu_assign_pointer(vrf->rth, rth);
-+ 	rcu_assign_pointer(vrf->rth_local, rth_local);
+- 	ret = btrfs_map_bio(root, WRITE, bio, 0, 1);
++ 	ret = btrfs_map_bio(root, bio, 0, 1);
+ -	BUG_ON(ret); /* -ENOMEM */
+ +	if (ret) {
+ +		bio->bi_error = ret;
+ +		bio_endio(bio);
+ +	}
   
+  	bio_put(bio);
   	return 0;
-  }
