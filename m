@@ -1,158 +1,47 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160624 build: 2 failures 4 warnings (next-20160624)
-Date: Fri, 24 Jun 2016 12:49:52 +0100
-Message-ID: <E1bGPcN-0002My-2x@optimist>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Date: Fri, 24 Jun 2016 21:33:29 +0800
+Message-ID: <20160624133329.GE21111@gondor.apana.org.au>
+References: <20160624162022.0f9c265a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36858 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241AbcFXLuA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2016 07:50:00 -0400
+Received: from helcar.hengli.com.au ([209.40.204.226]:60861 "EHLO
+	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751317AbcFXNdk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2016 09:33:40 -0400
+Content-Disposition: inline
+In-Reply-To: <20160624162022.0f9c265a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Salvatore Benedetto <salvatore.benedetto@intel.com>
 
-Tree/Branch: next-20160624
-Git describe: next-20160624
-Commit: 2cf991dfda Add linux-next specific files for 20160624
+On Fri, Jun 24, 2016 at 04:20:22PM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> After merging the crypto tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> net/built-in.o: In function `.ecdh_shared_secret':
+> (.text+0x4ad8d0): multiple definition of `.ecdh_shared_secret'
+> crypto/built-in.o:(.text+0x113f0): first defined here
+> net/built-in.o:(.opd+0x430e0): multiple definition of `ecdh_shared_secret'
+> crypto/built-in.o:(.opd+0x1d40): first defined here
+> 
+> Caused by commit
+> 
+>   3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
+> 
+> The other definition is in net/bluetooth/ecc.c
+> 
+> I added the following patch for today (probably a better name could
+> be chosen):
 
-Build Time: 119 min 23 sec
-
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 1
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allmodconfig
-     68 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  3 ../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
-Warnings Summary: 4
-	 66 ../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 3 errors, 68 warnings, 0 section mismatches
-
-Errors:
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
-
-Warnings:
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
-	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+I think the intention is that net/bluetooth/ecc.c will be deleted
+in favour of the implementation in crypto.  But for now I have
+applied your patch so we can progress.  Thanks Stephen.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
