@@ -1,59 +1,158 @@
-From: Johannes Thumshirn <jthumshirn@suse.de>
-Subject: Re: linux-next: build warning after merge of the pci tree
-Date: Fri, 24 Jun 2016 10:07:55 +0200
-Message-ID: <20160624080755.wjqvaunta3vsdp7i@c203.arch.suse.de>
-References: <20160623115154.62730f7f@canb.auug.org.au>
- <20160623164848.GE17987@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160624 build: 2 failures 4 warnings (next-20160624)
+Date: Fri, 24 Jun 2016 12:49:52 +0100
+Message-ID: <E1bGPcN-0002My-2x@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:56359 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751010AbcFXIIC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Jun 2016 04:08:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20160623164848.GE17987@localhost>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36858 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751241AbcFXLuA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2016 07:50:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Jun 23, 2016 at 11:48:49AM -0500, Bjorn Helgaas wrote:
-> On Thu, Jun 23, 2016 at 11:51:54AM +1000, Stephen Rothwell wrote:
-> > Hi Bjorn,
-> >=20
-> > After merging the pci tree, today's linux-next build (x86_64 allmod=
-config)
-> > produced this warning:
-> >=20
-> > drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_remove':
-> > drivers/misc/genwqe/card_base.c:1155:6: warning: unused variable 'b=
-ars' [-Wunused-variable]
-> >   int bars;
-> >       ^
-> > drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_setup':
-> > drivers/misc/genwqe/card_base.c:1143:2: warning: 'bars' may be used=
- uninitialized in this function [-Wmaybe-uninitialized]
-> >   pci_release_selected_regions(pci_dev, bars);
-> >   ^
-> >=20
-> > Introduced by commit
-> >=20
-> >   370b01694826 ("GenWQE: Use pci_(request|release)_mem_regions")
->=20
-> Thanks, Stephen.  I made the following edits, which should resolve th=
-ese
-> warnings.  Johannes, let me know if they look right to you.
->=20
+Tree/Branch: next-20160624
+Git describe: next-20160624
+Commit: 2cf991dfda Add linux-next specific files for 20160624
 
-Looks good, thanks.
-	Johannes
+Build Time: 119 min 23 sec
 
---=20
-Johannes Thumshirn                                          Storage
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
-GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=FCrnberg)
-Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 1
+Warnings: 4
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+     68 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  3 ../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+Warnings Summary: 4
+	 66 ../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	  2 ../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 3 errors, 68 warnings, 0 section mismatches
+
+Errors:
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+	../include/linux/compiler-gcc.h:248:38: error: impossible constraint in 'asm'
+
+Warnings:
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../include/linux/compiler-gcc.h:248:38: warning: asm operand 0 probably doesn't match constraints
+	../net/rxrpc/peer_object.c:57:15: warning: 'p' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
