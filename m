@@ -1,90 +1,112 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: manual merge of the audit tree with the security tree
-Date: Fri, 24 Jun 2016 07:41:31 +0200
-Message-ID: <20160624054131.GA3940@osiris>
-References: <20160623141814.5512ffd1@canb.auug.org.au>
- <20160623060113.GA3866@osiris>
- <CAHC9VhRFyy8-z6y+sA2VSgrfJH0ZeuEt+-f-sJJaLpPTsxxzSg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Fri, 24 Jun 2016 16:20:22 +1000
+Message-ID: <20160624162022.0f9c265a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48432 "EHLO
-	mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751241AbcFXFlk (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Fri, 24 Jun 2016 01:41:40 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-	by mx0b-001b2d01.pphosted.com (8.16.0.11/8.16.0.11) with SMTP id u5O5Ycrk027596
-	for <linux-next@vger.kernel.org>; Fri, 24 Jun 2016 01:41:40 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-	by mx0b-001b2d01.pphosted.com with ESMTP id 23ruex5jcd-1
-	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-	for <linux-next@vger.kernel.org>; Fri, 24 Jun 2016 01:41:40 -0400
-Received: from localhost
-	by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Fri, 24 Jun 2016 06:41:38 +0100
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRFyy8-z6y+sA2VSgrfJH0ZeuEt+-f-sJJaLpPTsxxzSg@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:41471 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750891AbcFXGUZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jun 2016 02:20:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Salvatore Benedetto <salvatore.benedetto@intel.com>
 
-On Thu, Jun 23, 2016 at 12:14:11PM -0400, Paul Moore wrote:
-> On Thu, Jun 23, 2016 at 2:01 AM, Heiko Carstens
-> <heiko.carstens@de.ibm.com> wrote:
-> > On Thu, Jun 23, 2016 at 02:18:14PM +1000, Stephen Rothwell wrote:
-> >> Hi Paul,
-> >>
-> >> Today's linux-next merge of the audit tree got a conflict in:
-> >>
-> >>   arch/s390/kernel/ptrace.c
-> >>
-> >> between commit:
-> >>
-> >>   0208b9445bc0 ("s390/ptrace: run seccomp after ptrace")
-> >>
-> >> from the security tree and commit:
-> >>
-> >>   bba696c2c083 ("s390: ensure that syscall arguments are properly masked on s390")
-> >>
-> >> from the audit tree.
-> >
-> > Hmm, I haven't seen that commit, therefore I'm just commenting on the
-> > result ;)
-> 
-> It was sent to the linux-audit and linux-s390 mailing lists yesterday
-> with a follow up comment that I was going to add it to the audit#next
-> branch and if anyone had any objections to let me know.
-> 
-> * https://www.redhat.com/archives/linux-audit/2016-June/msg00051.html
+Hi Herbert,
 
-Yes, I missed that, sorry!
+After merging the crypto tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-> >> +     audit_syscall_entry(regs->gprs[2], regs->orig_gpr2 & mask,
-> >> +                         regs->gprs[3] & mask, regs->gprs[4] & mask,
-> >> +                         regs->gprs[5] & mask);
-> >
-> > With these masks it is more correct, however these are still not the values
-> > used by the system call itself. This would be still incorrect for
-> > e.g. compat pointers (31 bit on s390).
-> >
-> > So it seems like audit_syscall_entry should be called after all sign, zero
-> > and masking has been done?
-> 
-> For someone not familiar with s390, compat or not, where would you
-> suggest we place the audit_syscall_entry() call?
+net/built-in.o: In function `.ecdh_shared_secret':
+(.text+0x4ad8d0): multiple definition of `.ecdh_shared_secret'
+crypto/built-in.o:(.text+0x113f0): first defined here
+net/built-in.o:(.opd+0x430e0): multiple definition of `ecdh_shared_secret'
+crypto/built-in.o:(.opd+0x1d40): first defined here
 
-I was thinking of a more generic solution for all architectures: for
-example setting a new TIF flag within do_syscall_trace_enter which
-indicates that audit_syscall_entry needs be called and then add a
-conditional call to the SYSCALL_DEFINE and COMPAT_SYSCALL_DEFINE macros.
+Caused by commit
 
-That way audit_syscall_entry would always receive already properly sign and
-zero extended system call parameters. At the downside this would increase
-the kernel text size by probably ~370 conditional branches and add two more
-instructions on the system call hot path.
+  3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
 
-But that's something that could be done independently from your patch,
-which already improves the current situation.
+The other definition is in net/bluetooth/ecc.c
+
+I added the following patch for today (probably a better name could
+be chosen):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 24 Jun 2016 16:13:37 +1000
+Subject: [PATCH] crypto: make ecdh_shared_secret unique
+
+There is another ecdh_shared_secret in net/bluetooth/ecc.c
+
+Fixes: 3c4b23901a0c ("crypto: ecdh - Add ECDH software support")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ crypto/ecc.c  | 2 +-
+ crypto/ecc.h  | 6 +++---
+ crypto/ecdh.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 9aedec6bbe72..414c78a9c214 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -966,7 +966,7 @@ out:
+ 	return ret;
+ }
+ 
+-int ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
++int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		       const u8 *private_key, unsigned int private_key_len,
+ 		       const u8 *public_key, unsigned int public_key_len,
+ 		       u8 *secret, unsigned int secret_len)
+diff --git a/crypto/ecc.h b/crypto/ecc.h
+index b5db4b989f3c..663d598c7406 100644
+--- a/crypto/ecc.h
++++ b/crypto/ecc.h
+@@ -60,7 +60,7 @@ int ecdh_make_pub_key(const unsigned int curve_id, unsigned int ndigits,
+ 		      u8 *public_key, unsigned int public_key_len);
+ 
+ /**
+- * ecdh_shared_secret() - Compute a shared secret
++ * crypto_ecdh_shared_secret() - Compute a shared secret
+  *
+  * @curve_id:		id representing the curve to use
+  * @private_key:	private key of part A
+@@ -70,13 +70,13 @@ int ecdh_make_pub_key(const unsigned int curve_id, unsigned int ndigits,
+  * @secret:		buffer for storing the calculated shared secret
+  * @secret_len:		length of the secret buffer
+  *
+- * Note: It is recommended that you hash the result of ecdh_shared_secret
++ * Note: It is recommended that you hash the result of crypto_ecdh_shared_secret
+  * before using it for symmetric encryption or HMAC.
+  *
+  * Returns 0 if the shared secret was generated successfully, a negative value
+  * if an error occurred.
+  */
+-int ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
++int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		       const u8 *private_key, unsigned int private_key_len,
+ 		       const u8 *public_key, unsigned int public_key_len,
+ 		       u8 *secret, unsigned int secret_len);
+diff --git a/crypto/ecdh.c b/crypto/ecdh.c
+index d3a9eeca4b32..3de289806d67 100644
+--- a/crypto/ecdh.c
++++ b/crypto/ecdh.c
+@@ -79,7 +79,7 @@ static int ecdh_compute_value(struct kpp_request *req)
+ 		if (copied != 2 * nbytes)
+ 			return -EINVAL;
+ 
+-		ret = ecdh_shared_secret(ctx->curve_id, ctx->ndigits,
++		ret = crypto_ecdh_shared_secret(ctx->curve_id, ctx->ndigits,
+ 					 (const u8 *)ctx->private_key, nbytes,
+ 					 (const u8 *)ctx->public_key, 2 * nbytes,
+ 					 (u8 *)ctx->shared_secret, nbytes);
+-- 
+2.8.1
+
+-- 
+Cheers,
+Stephen Rothwell
