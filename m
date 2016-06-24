@@ -1,58 +1,59 @@
-From: Prasun Maiti <prasunmaiti87@gmail.com>
-Subject: Re: [PATCH] mwifiex: Fixed endianness for event TLV type TLV_BTCOEX_WL_SCANTIME
-Date: Fri, 24 Jun 2016 12:26:56 +0530
-Message-ID: <CAEO8o4=k2y4RBDFJ8RH9RF1xobWKW-zZobRFvrn8Hp8MB=L9AA@mail.gmail.com>
-References: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+From: Johannes Thumshirn <jthumshirn@suse.de>
+Subject: Re: linux-next: build warning after merge of the pci tree
+Date: Fri, 24 Jun 2016 10:07:55 +0200
+Message-ID: <20160624080755.wjqvaunta3vsdp7i@c203.arch.suse.de>
+References: <20160623115154.62730f7f@canb.auug.org.au>
+ <20160623164848.GE17987@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36677 "EHLO
-	mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750853AbcFXG45 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 24 Jun 2016 02:56:57 -0400
-In-Reply-To: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+Received: from mx2.suse.de ([195.135.220.15]:56359 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751010AbcFXIIC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jun 2016 04:08:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20160623164848.GE17987@localhost>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Jun 16, 2016 at 9:49 AM, Prasun Maiti <prasunmaiti87@gmail.com> wrote:
-> The two members min_scan_time and max_scan_time of structure
-> "mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
-> are assigned directtly from firmware without endian conversion handling.
-> So, wrong datas will get saved in big-endian systems.
->
-> This patch converts the values into cpu's byte order before assigning them
-> into the local members.
->
-> Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
-> ---
->  drivers/net/wireless/marvell/mwifiex/sta_event.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-> index 0104108..7dff452 100644
-> --- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
-> +++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
-> @@ -474,8 +474,8 @@ void mwifiex_bt_coex_wlan_param_update_event(struct mwifiex_private *priv,
->                         scantlv =
->                             (struct mwifiex_ie_types_btcoex_scan_time *)tlv;
->                         adapter->coex_scan = scantlv->coex_scan;
-> -                       adapter->coex_min_scan_time = scantlv->min_scan_time;
-> -                       adapter->coex_max_scan_time = scantlv->max_scan_time;
-> +                       adapter->coex_min_scan_time = le16_to_cpu(scantlv->min_scan_time);
-> +                       adapter->coex_max_scan_time = le16_to_cpu(scantlv->max_scan_time);
->                         break;
->
->                 default:
-> --
-> 1.9.1
->
+On Thu, Jun 23, 2016 at 11:48:49AM -0500, Bjorn Helgaas wrote:
+> On Thu, Jun 23, 2016 at 11:51:54AM +1000, Stephen Rothwell wrote:
+> > Hi Bjorn,
+> >=20
+> > After merging the pci tree, today's linux-next build (x86_64 allmod=
+config)
+> > produced this warning:
+> >=20
+> > drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_remove':
+> > drivers/misc/genwqe/card_base.c:1155:6: warning: unused variable 'b=
+ars' [-Wunused-variable]
+> >   int bars;
+> >       ^
+> > drivers/misc/genwqe/card_base.c: In function 'genwqe_pci_setup':
+> > drivers/misc/genwqe/card_base.c:1143:2: warning: 'bars' may be used=
+ uninitialized in this function [-Wmaybe-uninitialized]
+> >   pci_release_selected_regions(pci_dev, bars);
+> >   ^
+> >=20
+> > Introduced by commit
+> >=20
+> >   370b01694826 ("GenWQE: Use pci_(request|release)_mem_regions")
+>=20
+> Thanks, Stephen.  I made the following edits, which should resolve th=
+ese
+> warnings.  Johannes, let me know if they look right to you.
+>=20
 
-Hi Amitkumar,
+Looks good, thanks.
+	Johannes
 
-Please let me know your opinion about this patch.
-
--- 
-Thanks,
-Prasun
+--=20
+Johannes Thumshirn                                          Storage
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg
+GF: Felix Imend=F6rffer, Jane Smithard, Graham Norton
+HRB 21284 (AG N=FCrnberg)
+Key fingerprint =3D EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
