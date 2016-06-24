@@ -1,69 +1,90 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with Linus' tree
-Date: Fri, 24 Jun 2016 14:41:25 +1000
-Message-ID: <20160624144125.78cc4e25@canb.auug.org.au>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: Re: linux-next: manual merge of the audit tree with the security tree
+Date: Fri, 24 Jun 2016 07:41:31 +0200
+Message-ID: <20160624054131.GA3940@osiris>
+References: <20160623141814.5512ffd1@canb.auug.org.au>
+ <20160623060113.GA3866@osiris>
+ <CAHC9VhRFyy8-z6y+sA2VSgrfJH0ZeuEt+-f-sJJaLpPTsxxzSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>, Linus <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48432 "EHLO
+	mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751241AbcFXFlk (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Fri, 24 Jun 2016 01:41:40 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+	by mx0b-001b2d01.pphosted.com (8.16.0.11/8.16.0.11) with SMTP id u5O5Ycrk027596
+	for <linux-next@vger.kernel.org>; Fri, 24 Jun 2016 01:41:40 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+	by mx0b-001b2d01.pphosted.com with ESMTP id 23ruex5jcd-1
+	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+	for <linux-next@vger.kernel.org>; Fri, 24 Jun 2016 01:41:40 -0400
+Received: from localhost
+	by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+	Fri, 24 Jun 2016 06:41:38 +0100
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRFyy8-z6y+sA2VSgrfJH0ZeuEt+-f-sJJaLpPTsxxzSg@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-Hi Eric,
+On Thu, Jun 23, 2016 at 12:14:11PM -0400, Paul Moore wrote:
+> On Thu, Jun 23, 2016 at 2:01 AM, Heiko Carstens
+> <heiko.carstens@de.ibm.com> wrote:
+> > On Thu, Jun 23, 2016 at 02:18:14PM +1000, Stephen Rothwell wrote:
+> >> Hi Paul,
+> >>
+> >> Today's linux-next merge of the audit tree got a conflict in:
+> >>
+> >>   arch/s390/kernel/ptrace.c
+> >>
+> >> between commit:
+> >>
+> >>   0208b9445bc0 ("s390/ptrace: run seccomp after ptrace")
+> >>
+> >> from the security tree and commit:
+> >>
+> >>   bba696c2c083 ("s390: ensure that syscall arguments are properly masked on s390")
+> >>
+> >> from the audit tree.
+> >
+> > Hmm, I haven't seen that commit, therefore I'm just commenting on the
+> > result ;)
+> 
+> It was sent to the linux-audit and linux-s390 mailing lists yesterday
+> with a follow up comment that I was going to add it to the audit#next
+> branch and if anyone had any objections to let me know.
+> 
+> * https://www.redhat.com/archives/linux-audit/2016-June/msg00051.html
 
-Today's linux-next merge of the userns tree got a conflict in:
+Yes, I missed that, sorry!
 
-  fs/proc/root.c
+> >> +     audit_syscall_entry(regs->gprs[2], regs->orig_gpr2 & mask,
+> >> +                         regs->gprs[3] & mask, regs->gprs[4] & mask,
+> >> +                         regs->gprs[5] & mask);
+> >
+> > With these masks it is more correct, however these are still not the values
+> > used by the system call itself. This would be still incorrect for
+> > e.g. compat pointers (31 bit on s390).
+> >
+> > So it seems like audit_syscall_entry should be called after all sign, zero
+> > and masking has been done?
+> 
+> For someone not familiar with s390, compat or not, where would you
+> suggest we place the audit_syscall_entry() call?
 
-between commit:
+I was thinking of a more generic solution for all architectures: for
+example setting a new TIF flag within do_syscall_trace_enter which
+indicates that audit_syscall_entry needs be called and then add a
+conditional call to the SYSCALL_DEFINE and COMPAT_SYSCALL_DEFINE macros.
 
-  e54ad7f1ee26 ("proc: prevent stacking filesystems on top")
+That way audit_syscall_entry would always receive already properly sign and
+zero extended system call parameters. At the downside this would increase
+the kernel text size by probably ~370 conditional branches and add two more
+instructions on the system call hot path.
 
-from Linus' tree and commit:
-
-  e94591d0d90c ("proc: Convert proc_mount to use mount_ns")
-
-from the userns tree.
-
-I fixed it up (I used the userns version of this file and added the
-following patch) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 24 Jun 2016 14:27:47 +1000
-Subject: [PATCH] proc: fixup for "prevent stacking filesystems on top"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/proc/inode.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index a5b2c33745b7..6b1843e78bd7 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -463,6 +463,13 @@ int proc_fill_super(struct super_block *s, void *data, int silent)
- 	struct inode *root_inode;
- 	int ret;
- 
-+	/*
-+	 * procfs isn't actually a stacking filesystem; however, there is
-+	 * too much magic going on inside it to permit stacking things on
-+	 * top of it
-+	 */
-+	s->s_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
-+
- 	if (!proc_parse_options(data, ns))
- 		return -EINVAL;
- 
--- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+But that's something that could be done independently from your patch,
+which already improves the current situation.
