@@ -1,48 +1,26 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH -next] gpu: i915: fix build errors when ACPI is not enabled
-Date: Sat, 25 Jun 2016 10:58:56 -0700
-Message-ID: <576EC660.3000806@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: lots of repeated patches in the tpmdd tree
+Date: Mon, 27 Jun 2016 09:36:46 +1000
+Message-ID: <20160627093646.58390c59@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:57485 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751349AbcFYR66 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 25 Jun 2016 13:58:58 -0400
+Received: from ozlabs.org ([103.22.144.67]:44503 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751459AbcFZXgu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Jun 2016 19:36:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: Daniel Vetter <daniel.vetter@intel.com>, Jani Nikula <jani.nikula@linux.intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+Hi Jarkko,
 
-Fix build errors when ACPI is not enabled by adding function stubs:
+I noticed that a large number of the patches in the tpmdd tree appear
+twice (and some three times).  They appear to have been rebased on top
+of the security tree before being remerged.  Please clean this all up.
 
-../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_suspend':
-../drivers/gpu/drm/i915/i915_drv.c:635:2: error: implicit declaration of function 'intel_opregion_unregister' [-Werror=implicit-function-declaration]
-  intel_opregion_unregister(dev_priv);
-../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_resume':
-../drivers/gpu/drm/i915/i915_drv.c:798:2: error: implicit declaration of function 'intel_opregion_register' [-Werror=implicit-function-declaration]
-  intel_opregion_register(dev_priv);
-
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc:	Daniel Vetter <daniel.vetter@intel.com>
-Cc:	Jani Nikula <jani.nikula@linux.intel.com>
-Cc:	intel-gfx@lists.freedesktop.org
-Cc:	dri-devel@lists.freedesktop.org
----
- drivers/gpu/drm/i915/i915_drv.h |    2 ++
- 1 file changed, 2 insertions(+)
-
---- linux-next-20160624.orig/drivers/gpu/drm/i915/i915_drv.h
-+++ linux-next-20160624/drivers/gpu/drm/i915/i915_drv.h
-@@ -3694,6 +3694,8 @@ extern int intel_opregion_notify_adapter
- extern int intel_opregion_get_panel_type(struct drm_i915_private *dev_priv);
- #else
- static inline int intel_opregion_setup(struct drm_i915_private *dev) { return 0; }
-+static inline void intel_opregion_register(struct drm_i915_private *dev_priv) { }
-+static inline void intel_opregion_unregister(struct drm_i915_private *dev_priv) { }
- static inline void intel_opregion_init(struct drm_i915_private *dev) { }
- static inline void intel_opregion_fini(struct drm_i915_private *dev) { }
- static inline void intel_opregion_asle_intr(struct drm_i915_private *dev_priv)
+-- 
+Cheers,
+Stephen Rothwell
