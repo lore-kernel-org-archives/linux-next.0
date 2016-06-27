@@ -1,58 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-ppc-paulus tree with the
- powerpc tree
-Date: Mon, 27 Jun 2016 14:23:52 +1000
-Message-ID: <20160627142352.2c1ae65b@canb.auug.org.au>
+From: Eric Dumazet <eric.dumazet@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 27 Jun 2016 06:52:29 +0200
+Message-ID: <1467003149.6850.142.camel@edumazet-glaptop3.roam.corp.google.com>
+References: <20160627114623.2c985be5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45136 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751629AbcF0EXz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jun 2016 00:23:55 -0400
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:33921 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750884AbcF0Ewe (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jun 2016 00:52:34 -0400
+In-Reply-To: <20160627114623.2c985be5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Mackerras <paulus@ozlabs.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Daniel Axtens <dja@axtens.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>
 
-Hi Paul,
+On Mon, 2016-06-27 at 11:46 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   net/sched/sch_netem.c
+> 
+> between commit:
+> 
+>   21de12ee5568 ("netem: fix a use after free")
+> 
+> from the net tree and commit:
+> 
+>   520ac30f4551 ("net_sched: drop packets after root qdisc lock is released")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-Today's linux-next merge of the kvm-ppc-paulus tree got a conflict in:
+Looks good, although the 'use after free' does not happen anymore on
+net-next since we defer skb freeing.
 
-  arch/powerpc/kernel/traps.c
+I spotted the bug in stable tree when cooking the net-next patch
+actually ;)
 
-between commit:
-
-  42f5b4cacd78 ("powerpc: Introduce asm-prototypes.h")
-
-from the powerpc tree and commit:
-
-  fd7bacbca47a ("KVM: PPC: Book3S HV: Fix TB corruption in guest exit path on HMI interrupt")
-
-from the kvm-ppc-paulus tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/powerpc/kernel/traps.c
-index f7e2f2e318bd,9ec95daccad9..000000000000
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@@ -60,7 -60,7 +60,8 @@@
-  #include <asm/switch_to.h>
-  #include <asm/tm.h>
-  #include <asm/debug.h>
- +#include <asm/asm-prototypes.h>
-+ #include <asm/hmi.h>
-  #include <sysdev/fsl_pci.h>
-  
-  #if defined(CONFIG_DEBUGGER) || defined(CONFIG_KEXEC)
+Thanks.
