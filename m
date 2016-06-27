@@ -1,58 +1,44 @@
-From: Trond Myklebust <trondmy@gmail.com>
-Subject: Re: linux-next: build failure after merge of the nfs tree
-Date: Mon, 27 Jun 2016 11:44:45 -0400
-Message-ID: <12838D4D-17A4-4D7B-B7C7-702D5DDB888E@gmail.com>
-References: <20160627105839.763d6d22@canb.auug.org.au>
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: manual merge of the jc_docs tree with the drm tree
+Date: Mon, 27 Jun 2016 09:48:48 -0600
+Message-ID: <20160627094848.3ea53331@lwn.net>
+References: <20160627133124.4e3e8dfd@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35091 "EHLO
-	mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751872AbcF0PpC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 27 Jun 2016 11:45:02 -0400
-In-Reply-To: <20160627105839.763d6d22@canb.auug.org.au>
+Received: from tex.lwn.net ([70.33.254.29]:33274 "EHLO vena.lwn.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751742AbcF0Psu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jun 2016 11:48:50 -0400
+In-Reply-To: <20160627133124.4e3e8dfd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: List Linux Next Mailing <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
+Cc: Dave Airlie <airlied@linux.ie>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
+On Mon, 27 Jun 2016 13:31:24 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Jun 26, 2016, at 20:58, Stephen Rothwell <sfr@canb.auug.org.au> wr=
-ote:
->=20
-> Hi Trond,
->=20
-> After merging the nfs tree, today's linux-next build (x86_64 allmodco=
-nfig)
-> failed like this:
->=20
-> fs/nfs/pnfs_nfs.c: In function 'pnfs_nfs_generic_sync':
-> fs/nfs/pnfs_nfs.c:947:8: error: too few arguments to function 'nfs_co=
-mmit_inode'
-> ret =3D nfs_commit_inode(inode);
->       ^
-> In file included from fs/nfs/pnfs_nfs.c:10:0:
-> include/linux/nfs_fs.h:509:13: note: declared here
-> extern int  nfs_commit_inode(struct inode *, int);
->            ^
->=20
-> Caused by commit
->=20
-> 292cc573fce6 ("pNFS: Files and flexfiles always need to commit before=
- layoutcommit")
->=20
-> I have used the nsf tree from next-20160624 for today
->=20
+> Today's linux-next merge of the jc_docs tree got a conflict in:
+> 
+>   Documentation/index.rst
+> 
+> between commit:
+> 
+>   cb597fcea5c2 ("Documentation/gpu: add new gpu.rst converted from DocBook gpu.tmpl")
+> 
+> from the drm tree and commit:
+> 
+>   17defc282fe6 ("Documentation: add meta-documentation for Sphinx and kernel-doc")
+> 
+> from the jc_docs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. 
 
-Hi Stephen,
+Sigh, I fear that index.rst could become a bit of a conflict magnet, at
+least in the near future as documents are being added.
 
-My apologies: That was a last minute typo when amending a commit. I=E2=80=
-=99ve fixed the code in today=E2=80=99s linux-next branch.
+The fix is obviously correct, thanks.
 
-Cheers
- Trond--
-To unsubscribe from this list: send the line "unsubscribe linux-next" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+jon
