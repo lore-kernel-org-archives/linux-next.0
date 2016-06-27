@@ -1,26 +1,45 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Can you add the binfmt_misc tree to linux-next?
-Date: Mon, 27 Jun 2016 09:16:38 -0700
-Message-ID: <1467044198.2264.19.camel@HansenPartnership.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
+Date: Mon, 27 Jun 2016 11:15:25 -0700
+Message-ID: <57716D3D.4070302@infradead.org>
+References: <20160627163939.20e454d5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, Linux Containers <containers@lists.linux-foundation.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20160627163939.20e454d5@canb.auug.org.au>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Since I'd effectively become binfmt_misc maintainer when these patches
-get merged on the last person to touch it owns it principle, it makes
-sense to begin now more formally.  The tree is at
+On 06/26/16 23:39, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160624:
+> 
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/binfmt_misc.git for-next
+on i386, when CONFIG_OF is not enabled ...
+but OF_GPIO is enabled due to this in drivers/gpio/Kconfig:
 
-It currently contains four patches adding the container emulation
-infrastructure from the persistent-handlers branch.
+config OF_GPIO
+	def_bool y
+	depends on OF || COMPILE_TEST
 
-Thanks,
+(above from commit 1e4a80640338924b9f9fd7a121ac31d08134410a
+from Alexander Stein <alexanders83@web.de>)
 
-James
 
+../drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:381:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
+../drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
+../drivers/pinctrl/bcm/pinctrl-nsp-gpio.c:365:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
+
+because that function is only present when CONFIG_OF is enabled.
+
+
+Also, why does that commit (1e4a80640338924b9f9fd7a121ac31d08134410a)
+not have any other S-O-B lines in it?  like whoever merged it?
+
+
+-- 
+~Randy
