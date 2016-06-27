@@ -1,31 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the jc_docs tree with the drm tree
-Date: Mon, 27 Jun 2016 13:31:24 +1000
-Message-ID: <20160627133124.4e3e8dfd@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the arm-soc
+ tree
+Date: Mon, 27 Jun 2016 13:42:52 +1000
+Message-ID: <20160627134252.7478785f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56310 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751609AbcF0Dmz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 26 Jun 2016 23:42:55 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Brand <chris.brand@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Hi Jonathan,
+Hi Rob,
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-  Documentation/index.rst
+  arch/arm/mach-bcm/board_bcm21664.c
 
 between commit:
 
-  cb597fcea5c2 ("Documentation/gpu: add new gpu.rst converted from DocBook gpu.tmpl")
+  406c8f6c9954 ("ARM: bcm21664: Remove reset code")
 
-from the drm tree and commit:
+from the arm-soc tree and commit:
 
-  17defc282fe6 ("Documentation: add meta-documentation for Sphinx and kernel-doc")
+  850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
 
-from the jc_docs tree.
+from the devicetree tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,18 +43,64 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc Documentation/index.rst
-index dacc77b43c29,f92854f01773..000000000000
---- a/Documentation/index.rst
-+++ b/Documentation/index.rst
-@@@ -13,8 -13,8 +13,10 @@@ Contents
-  .. toctree::
-     :maxdepth: 2
+diff --cc arch/arm/mach-bcm/board_bcm21664.c
+index 65b3db06e57a,0d7034c57334..000000000000
+--- a/arch/arm/mach-bcm/board_bcm21664.c
++++ b/arch/arm/mach-bcm/board_bcm21664.c
+@@@ -11,15 -11,54 +11,12 @@@
+   * GNU General Public License for more details.
+   */
   
-+    kernel-documentation
-+ 
- +   gpu/index
- +
-  Indices and tables
-  ==================
+- #include <linux/of_platform.h>
+ -#include <linux/of_address.h>
+ -#include <linux/io.h>
+--
+  #include <asm/mach/arch.h>
+  
+  #include "kona_l2_cache.h"
+  
+ -#define RSTMGR_DT_STRING		"brcm,bcm21664-resetmgr"
+ -
+ -#define RSTMGR_REG_WR_ACCESS_OFFSET	0
+ -#define RSTMGR_REG_CHIP_SOFT_RST_OFFSET	4
+ -
+ -#define RSTMGR_WR_PASSWORD		0xa5a5
+ -#define RSTMGR_WR_PASSWORD_SHIFT	8
+ -#define RSTMGR_WR_ACCESS_ENABLE		1
+ -
+ -static void bcm21664_restart(enum reboot_mode mode, const char *cmd)
+ -{
+ -	void __iomem *base;
+ -	struct device_node *resetmgr;
+ -
+ -	resetmgr = of_find_compatible_node(NULL, NULL, RSTMGR_DT_STRING);
+ -	if (!resetmgr) {
+ -		pr_emerg("Couldn't find " RSTMGR_DT_STRING "\n");
+ -		return;
+ -	}
+ -	base = of_iomap(resetmgr, 0);
+ -	if (!base) {
+ -		pr_emerg("Couldn't map " RSTMGR_DT_STRING "\n");
+ -		return;
+ -	}
+ -
+ -	/*
+ -	 * A soft reset is triggered by writing a 0 to bit 0 of the soft reset
+ -	 * register. To write to that register we must first write the password
+ -	 * and the enable bit in the write access enable register.
+ -	 */
+ -	writel((RSTMGR_WR_PASSWORD << RSTMGR_WR_PASSWORD_SHIFT) |
+ -		RSTMGR_WR_ACCESS_ENABLE,
+ -		base + RSTMGR_REG_WR_ACCESS_OFFSET);
+ -	writel(0, base + RSTMGR_REG_CHIP_SOFT_RST_OFFSET);
+ -
+ -	/* Wait for reset */
+ -	while (1);
+ -}
+ -
+  static void __init bcm21664_init(void)
+  {
+- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+  	kona_l2_cache_init();
+  }
   
