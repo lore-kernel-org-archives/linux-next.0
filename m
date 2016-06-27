@@ -1,36 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the arm-soc
- tree
-Date: Mon, 27 Jun 2016 13:42:52 +1000
-Message-ID: <20160627134252.7478785f@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc-paulus tree with the
+ powerpc tree
+Date: Mon, 27 Jun 2016 14:23:52 +1000
+Message-ID: <20160627142352.2c1ae65b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56310 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45136 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751609AbcF0Dmz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 26 Jun 2016 23:42:55 -0400
+	id S1751629AbcF0EXz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jun 2016 00:23:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Brand <chris.brand@broadcom.com>, Florian Fainelli <f.fainelli@gmail.com>, Kefeng Wang <wangkefeng.wang@huawei.com>
+To: Paul Mackerras <paulus@ozlabs.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Daniel Axtens <dja@axtens.net>
 
-Hi Rob,
+Hi Paul,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+Today's linux-next merge of the kvm-ppc-paulus tree got a conflict in:
 
-  arch/arm/mach-bcm/board_bcm21664.c
+  arch/powerpc/kernel/traps.c
 
 between commit:
 
-  406c8f6c9954 ("ARM: bcm21664: Remove reset code")
+  42f5b4cacd78 ("powerpc: Introduce asm-prototypes.h")
 
-from the arm-soc tree and commit:
+from the powerpc tree and commit:
 
-  850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
+  fd7bacbca47a ("KVM: PPC: Book3S HV: Fix TB corruption in guest exit path on HMI interrupt")
 
-from the devicetree tree.
+from the kvm-ppc-paulus tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,64 +43,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/mach-bcm/board_bcm21664.c
-index 65b3db06e57a,0d7034c57334..000000000000
---- a/arch/arm/mach-bcm/board_bcm21664.c
-+++ b/arch/arm/mach-bcm/board_bcm21664.c
-@@@ -11,15 -11,54 +11,12 @@@
-   * GNU General Public License for more details.
-   */
+diff --cc arch/powerpc/kernel/traps.c
+index f7e2f2e318bd,9ec95daccad9..000000000000
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@@ -60,7 -60,7 +60,8 @@@
+  #include <asm/switch_to.h>
+  #include <asm/tm.h>
+  #include <asm/debug.h>
+ +#include <asm/asm-prototypes.h>
++ #include <asm/hmi.h>
+  #include <sysdev/fsl_pci.h>
   
-- #include <linux/of_platform.h>
- -#include <linux/of_address.h>
- -#include <linux/io.h>
---
-  #include <asm/mach/arch.h>
-  
-  #include "kona_l2_cache.h"
-  
- -#define RSTMGR_DT_STRING		"brcm,bcm21664-resetmgr"
- -
- -#define RSTMGR_REG_WR_ACCESS_OFFSET	0
- -#define RSTMGR_REG_CHIP_SOFT_RST_OFFSET	4
- -
- -#define RSTMGR_WR_PASSWORD		0xa5a5
- -#define RSTMGR_WR_PASSWORD_SHIFT	8
- -#define RSTMGR_WR_ACCESS_ENABLE		1
- -
- -static void bcm21664_restart(enum reboot_mode mode, const char *cmd)
- -{
- -	void __iomem *base;
- -	struct device_node *resetmgr;
- -
- -	resetmgr = of_find_compatible_node(NULL, NULL, RSTMGR_DT_STRING);
- -	if (!resetmgr) {
- -		pr_emerg("Couldn't find " RSTMGR_DT_STRING "\n");
- -		return;
- -	}
- -	base = of_iomap(resetmgr, 0);
- -	if (!base) {
- -		pr_emerg("Couldn't map " RSTMGR_DT_STRING "\n");
- -		return;
- -	}
- -
- -	/*
- -	 * A soft reset is triggered by writing a 0 to bit 0 of the soft reset
- -	 * register. To write to that register we must first write the password
- -	 * and the enable bit in the write access enable register.
- -	 */
- -	writel((RSTMGR_WR_PASSWORD << RSTMGR_WR_PASSWORD_SHIFT) |
- -		RSTMGR_WR_ACCESS_ENABLE,
- -		base + RSTMGR_REG_WR_ACCESS_OFFSET);
- -	writel(0, base + RSTMGR_REG_CHIP_SOFT_RST_OFFSET);
- -
- -	/* Wait for reset */
- -	while (1);
- -}
- -
-  static void __init bcm21664_init(void)
-  {
-- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-  	kona_l2_cache_init();
-  }
-  
+  #if defined(CONFIG_DEBUGGER) || defined(CONFIG_KEXEC)
