@@ -1,94 +1,110 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
-Date: Tue, 28 Jun 2016 10:37:52 +0200
-Message-ID: <3990550.tEk9cGVQPW@wuerfel>
-References: <20160627163939.20e454d5@canb.auug.org.au> <735717690.oeI6DkomRc@wuerfel> <2044946.aGLaEK2W6I@ws-stein>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <2044946.aGLaEK2W6I@ws-stein>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Alexander Stein <alexanders83@web.de>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "Linus Walleij (linus.walleij@linaro.org)" <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160628 build: 2 failures 4 warnings (next-20160628)
+Date: Tue, 28 Jun 2016 10:36:22 +0100
+Message-ID: <E1bHpRN-0007bj-Vt@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49730 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752156AbcF1Jgc (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jun 2016 05:36:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tuesday, June 28, 2016 9:00:47 AM CEST Alexander Stein wrote:
-> On Monday 27 June 2016 23:36:29, Arnd Bergmann wrote:
-> > On Monday, June 27, 2016 11:15:25 AM CEST Randy Dunlap wrote:
-> > > On 06/26/16 23:39, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > 
-> > > > Changes since 20160624:
-> > > on i386, when CONFIG_OF is not enabled ...
-> > > but OF_GPIO is enabled due to this in drivers/gpio/Kconfig:
-> > > 
-> > > config OF_GPIO
-> > > 
-> > >         def_bool y
-> > >         depends on OF || COMPILE_TEST
-> > > 
-> > > (above from commit 1e4a80640338924b9f9fd7a121ac31d08134410a
-> > > from Alexander Stein <alexanders83@web.de>)
-> > > 
-> > > 
-> > > ../drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:381:20: error:
-> > > 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
-> > > ../drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error:
-> > > 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a
-> > > function) ../drivers/pinctrl/bcm/pinctrl-nsp-gpio.c:365:20: error:
-> > > 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
-> > > 
-> > > because that function is only present when CONFIG_OF is enabled.
-> > > 
-> > > 
-> > > Also, why does that commit (1e4a80640338924b9f9fd7a121ac31d08134410a)
-> > > not have any other S-O-B lines in it?  like whoever merged it?
-> > 
-> > (adding Linus Walleij and Alexander Stein to Cc)
-> > 
-> > Unfortunately, the changelog also doesn't say what triggered that
-> > change. I guess there was a driver that did 'select OF_GPIO'
-> > and had a dependency on COMPILE_TEST, though I don't see any
-> > driver doing that in linux-next.
-> 
-> It was the first change of the changes done in my branch 
-> https://github.com/AlexanderStein/linux/tree/gpio-compile-test
->  in order to compile test as much gpio drivers as possible. Yet, pinctrl 
-> drivers were out of my scope.
+Tree/Branch: next-20160628
+Git describe: next-20160628
+Commit: 6f2a161b14 Add linux-next specific files for 20160628
 
-I see
+Build Time: 77 min 58 sec
 
-> > I think the commit should just be reverted, it clearly breaks
-> > stuff, and whatever needs it can be fixed in a better way.
-> 
-> Why not depend PINCTRL_IPROC_GPIO on CONFIG_OF as Randy stated 
-> pinconf_generic_dt_node_to_map_pin and friends are only present if CONFIG_OF 
-> is enabled. Depending on OF_GPIO only is enough under the assumption a) you 
-> made below.
-> Also what about providing dummy implementation for those missing function in 
-> case CONFIG_OF is disabled, my preference as more code can be compile tested.
->
-> > Specifically, we have three ways that the OF_GPIO symbol
-> > is used:
-> > 
-> > a) it is implicitly enabled when both GPIOLIB and OF are turned on
-> 
-> or if COMPILE_TEST is enabled
-> 
-> I think a problem in this and possibly other cases is that COMPILE_TEST 
-> loosens the Kconfig dependencies to some degree. How to proceed? Allow compile 
-> testing drivers only if some optional settings are enabled?
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
 
-I think we can start by reverting your patch: for compile-testing we can
-always enable CONFIG_OF these days, which will also turn on OF_GPIO.
+Errors: 5
+Warnings: 4
+Section Mismatches: 0
 
-Compile-testing drivers that need OF_GPIO while OF is disabled makes
-no sense to me, it's not a configuration that anybody can ever use
-and it adds no build coverage.
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-I think we should also drop all 'select OF_GPIO' statements, AFAICT
-we have just proven that they are all redundant because they would
-have otherwise broken things. This should be a separate cleanup patch.
+Errors:
 
-	Arnd
+	arm64-allmodconfig
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+	arm-allmodconfig
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 5
+	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 4
+	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 5 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings:
+	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings:
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
