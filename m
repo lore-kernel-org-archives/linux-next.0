@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the imx-mxs tree
-Date: Tue, 28 Jun 2016 11:27:11 +1000
-Message-ID: <20160628112711.5dc3b529@canb.auug.org.au>
+Subject: linux-next: manual merge of the iommu tree with the arm tree
+Date: Tue, 28 Jun 2016 13:13:10 +1000
+Message-ID: <20160628131310.5bf6ebd6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48770 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58284 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752065AbcF1B1O (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 27 Jun 2016 21:27:14 -0400
+	id S1751882AbcF1DNO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 27 Jun 2016 23:13:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>, Fugang Duan <fugang.duan@nxp.com>
+To: Joerg Roedel <joro@8bytes.org>, Russell King <rmk@armlinux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Honghui Zhang <honghui.zhang@mediatek.com>
 
-Hi all,
+Hi Joerg,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the iommu tree got a conflict in:
 
-  drivers/net/ethernet/freescale/fec.h
+  drivers/iommu/mtk_iommu.c
 
 between commit:
 
-  293809055656 ("ARM: imx6: disable deeper idle states when FEC is active w/o HW workaround")
+  d267804c8457 ("iommu: convert DT component matching to component_match_add_release()")
 
-from the imx-mxs tree and commit:
+from the arm tree and commit:
 
-  ff7566b8d71f ("net: fec: add interrupt coalesc quirk flag")
+  9ca340c98c0d ("iommu/mediatek: move the common struct into header file")
 
-from the net-next tree.
+from the iommu tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,19 +42,38 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/freescale/fec.h
-index dc71a88e9c55,92fd5c0bf4df..000000000000
---- a/drivers/net/ethernet/freescale/fec.h
-+++ b/drivers/net/ethernet/freescale/fec.h
-@@@ -442,8 -442,8 +442,10 @@@ struct bufdesc_ex 
-  #define FEC_QUIRK_SINGLE_MDIO		(1 << 11)
-  /* Controller supports RACC register */
-  #define FEC_QUIRK_HAS_RACC		(1 << 12)
- +/* Interrupt doesn't wake CPU from deep idle */
- +#define FEC_QUIRK_ERR006687		(1 << 13)
-+ /* Controller supports interrupt coalesc */
- -#define FEC_QUIRK_HAS_COALESCE		(1 << 13)
-++#define FEC_QUIRK_HAS_COALESCE		(1 << 14)
+diff --cc drivers/iommu/mtk_iommu.c
+index c036df1c49ca,b12c12d74c33..000000000000
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@@ -552,30 -524,6 +524,11 @@@ static int mtk_iommu_hw_init(const stru
+  	return 0;
+  }
   
-  struct bufdesc_prop {
-  	int qid;
+- static int compare_of(struct device *dev, void *data)
+- {
+- 	return dev->of_node == data;
+- }
+- 
+ +static void release_of(struct device *dev, void *data)
+ +{
+ +	of_node_put(data);
+ +}
+ +
+- static int mtk_iommu_bind(struct device *dev)
+- {
+- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
+- 
+- 	return component_bind_all(dev, &data->smi_imu);
+- }
+- 
+- static void mtk_iommu_unbind(struct device *dev)
+- {
+- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
+- 
+- 	component_unbind_all(dev, &data->smi_imu);
+- }
+- 
+  static const struct component_master_ops mtk_iommu_com_ops = {
+  	.bind		= mtk_iommu_bind,
+  	.unbind		= mtk_iommu_unbind,
