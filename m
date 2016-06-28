@@ -1,49 +1,68 @@
-From: Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH] drm/i915: fix build errors when ACPI is not enabled
-Date: Tue, 28 Jun 2016 14:07:19 +0300
-Message-ID: <878txpshaw.fsf@intel.com>
-References: <576EC660.3000806@infradead.org> <1467028399-9965-1-git-send-email-jani.nikula@intel.com> <20160628080604.GC25424@nuc-i3427.alporthouse.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
+Subject: Re: [PATCH 2/2] ipc/sem: sem_lock with hysteresis
+Date: Tue, 28 Jun 2016 10:54:50 -0700
+Message-ID: <20160628175450.GA19886@linux-80c1.suse>
+References: <20160615152318.164b1ebd@canb.auug.org.au>
+ <1466280142-19741-1-git-send-email-manfred@colorfullife.com>
+ <1466280142-19741-2-git-send-email-manfred@colorfullife.com>
+ <20160621202902.GB3790@linux-80c1.suse>
+ <fb23c7da-52a3-5e90-6c45-10e33d80417b@colorfullife.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160628080604.GC25424@nuc-i3427.alporthouse.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Randy Dunlap <rdunlap@infradead.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, drm-intel-fixes@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:35772 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751977AbcF1RzF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 28 Jun 2016 13:55:05 -0400
+Content-Disposition: inline
+In-Reply-To: <fb23c7da-52a3-5e90-6c45-10e33d80417b@colorfullife.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Manfred Spraul <manfred@colorfullife.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, 1vier1@web.de, felixh@informatik.uni-bremen.de
 
-On Tue, 28 Jun 2016, Chris Wilson <chris@chris-wilson.co.uk> wrote:
-> On Mon, Jun 27, 2016 at 02:53:19PM +0300, Jani Nikula wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->> 
->> Fix build errors when ACPI is not enabled by adding function stubs:
->> 
->> ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_suspend':
->> ../drivers/gpu/drm/i915/i915_drv.c:635:2: error: implicit declaration of function 'intel_opregion_unregister' [-Werror=implicit-function-declaration]
->>   intel_opregion_unregister(dev_priv);
->> ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_resume':
->> ../drivers/gpu/drm/i915/i915_drv.c:798:2: error: implicit declaration of function 'intel_opregion_register' [-Werror=implicit-function-declaration]
->>   intel_opregion_register(dev_priv);
->> 
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Daniel Vetter <daniel.vetter@intel.com>
->> Cc: Jani Nikula <jani.nikula@linux.intel.com>
->> Cc: intel-gfx@lists.freedesktop.org
->> Cc: dri-devel@lists.freedesktop.org
->> Fixes: 03d92e4779b8 ("drm/i915/opregion: Rename init/fini functions to register/unregister")
->> Cc: drm-intel-fixes@lists.freedesktop.org
->> Cc: Chris Wilson <chris@chris-wilson.co.uk>
->> [Jani: dropped the stale init/fini declarations]
->> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
-> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-> -Chris
+On Sat, 25 Jun 2016, Manfred Spraul wrote:
 
-Pushed to drm-intel-next-queued, thanks for the patch and review.
+>- Only simple ops: patch has no impact (the first 10 semops do not matter)
 
-BR,
-Jani.
+Agreed.
 
+>- sleeping complex ops: patch has no impact, we are always in complex mode
+>- not sleeping complex ops: depends on the size of the array.
+>With a 4.000 semaphore array, I see an improvement of factor 20.
+>
+>There is obviously one case where the patch causes a slowdown:
+>- complex op, then 11 simple ops, then repeat.
 
+Yeah, you reset the counter to COMPLEX_MODE_ENTER every time we do a
+complexmode_enter(), so if you have interleaving of complex and simple
+ops you could end up always taking the big lock. This is my main concern
+and not an unusual scenario at all.
 
--- 
-Jani Nikula, Intel Open Source Technology Center
+I wonder if we could be a bit less aggressive if already in complex_mode
+and do something like:
+
+if (sma->complex_mode > 0) {
+   WRITE_ONCE(sma->complex_mode, min(complex_mode + 1, COMPLEX_MODE_ENTER));
+   return;
+}
+
+and still be constrained by COMPLEX_MODE_ENTER... of course that has its own
+additional overhead, albeit less contention on the big lock :/
+
+>
+>Perhaps: set COMPLEX_MODE_ENTER to 1 or 2, then allow to configure it
+>from user space.
+
+Nah, I don't think it's a good idea to expose such internals to userspace.
+
+>Or do not merge the patch and wait until someone come with a profile
+>that shows complexmode_enter().
+
+Testing/benchmarking this patch is on my todo list mainly because I'm lacking
+a decent box to test it on. But I'm not conformable having this one without
+any numbers for say at least a rdbms benchmark. I'm very eager to add the
+first patch (complex_mode) once the nits are settled, as it fixes a real bug.
+
+Thanks,
+Davidlohr
