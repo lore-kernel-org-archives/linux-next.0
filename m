@@ -1,110 +1,49 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160628 build: 2 failures 4 warnings (next-20160628)
-Date: Tue, 28 Jun 2016 10:36:22 +0100
-Message-ID: <E1bHpRN-0007bj-Vt@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49730 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752156AbcF1Jgc (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 28 Jun 2016 05:36:32 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH] drm/i915: fix build errors when ACPI is not enabled
+Date: Tue, 28 Jun 2016 14:07:19 +0300
+Message-ID: <878txpshaw.fsf@intel.com>
+References: <576EC660.3000806@infradead.org> <1467028399-9965-1-git-send-email-jani.nikula@intel.com> <20160628080604.GC25424@nuc-i3427.alporthouse.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160628080604.GC25424@nuc-i3427.alporthouse.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Randy Dunlap <rdunlap@infradead.org>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Daniel Vetter <daniel.vetter@intel.com>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, drm-intel-fixes@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160628
-Git describe: next-20160628
-Commit: 6f2a161b14 Add linux-next specific files for 20160628
+On Tue, 28 Jun 2016, Chris Wilson <chris@chris-wilson.co.uk> wrote:
+> On Mon, Jun 27, 2016 at 02:53:19PM +0300, Jani Nikula wrote:
+>> From: Randy Dunlap <rdunlap@infradead.org>
+>> 
+>> Fix build errors when ACPI is not enabled by adding function stubs:
+>> 
+>> ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_suspend':
+>> ../drivers/gpu/drm/i915/i915_drv.c:635:2: error: implicit declaration of function 'intel_opregion_unregister' [-Werror=implicit-function-declaration]
+>>   intel_opregion_unregister(dev_priv);
+>> ../drivers/gpu/drm/i915/i915_drv.c: In function 'i915_drm_resume':
+>> ../drivers/gpu/drm/i915/i915_drv.c:798:2: error: implicit declaration of function 'intel_opregion_register' [-Werror=implicit-function-declaration]
+>>   intel_opregion_register(dev_priv);
+>> 
+>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>> Cc: Daniel Vetter <daniel.vetter@intel.com>
+>> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+>> Cc: intel-gfx@lists.freedesktop.org
+>> Cc: dri-devel@lists.freedesktop.org
+>> Fixes: 03d92e4779b8 ("drm/i915/opregion: Rename init/fini functions to register/unregister")
+>> Cc: drm-intel-fixes@lists.freedesktop.org
+>> Cc: Chris Wilson <chris@chris-wilson.co.uk>
+>> [Jani: dropped the stale init/fini declarations]
+>> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+> Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+> -Chris
 
-Build Time: 77 min 58 sec
+Pushed to drm-intel-next-queued, thanks for the patch and review.
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 5
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-	arm-allmodconfig
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  2 ../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings Summary: 4
-	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+BR,
+Jani.
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 5 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings:
-	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1653:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1654:19: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1655:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1656:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/mediatek/mtk_hdmi.c:1657:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings:
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
+-- 
+Jani Nikula, Intel Open Source Technology Center
