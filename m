@@ -1,60 +1,89 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the imx-mxs
- tree
-Date: Wed, 29 Jun 2016 13:47:53 +1000
-Message-ID: <20160629134753.2e340783@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the s390 tree
+Date: Wed, 29 Jun 2016 14:36:58 +1000
+Message-ID: <20160629143658.204b8d07@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58930 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752450AbcF2Drz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 28 Jun 2016 23:47:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>, Alexander Shiyan <shc_work@mail.ru>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janosch Frank <frankja@linux.vnet.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rob,
+Hi all,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-  arch/arm/mach-imx/mach-imx51.c
+  arch/s390/hypfs/hypfs_diag.c
 
 between commit:
 
-  463f90fa8a12 ("ARM: i.MX: Disable supervisor protect for i.MX51")
+  e030c1125eab ("s390/hypfs: use basic block for diag inline assembly")
 
-from the imx-mxs tree and commit:
+from the s390 tree and commit:
 
-  850bea2335e4 ("arm: Remove unnecessary of_platform_populate with default match table")
+  e65f30e0cb29 ("s390: hypfs: Move diag implementation and data definitions")
 
-from the devicetree tree.
+from the kvm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (my fixup patch now looks like below) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 14 Jun 2016 14:47:33 +1000
+Subject: [PATCH] s390: merge fix up for __diag204 move
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/s390/kernel/diag.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/arch/s390/kernel/diag.c b/arch/s390/kernel/diag.c
+index a44faf4a0454..a97354c8c667 100644
+--- a/arch/s390/kernel/diag.c
++++ b/arch/s390/kernel/diag.c
+@@ -162,25 +162,27 @@ int diag14(unsigned long rx, unsigned long ry1, unsigned long subcode)
+ }
+ EXPORT_SYMBOL(diag14);
+ 
+-static inline int __diag204(unsigned long subcode, unsigned long size, void *addr)
++static inline int __diag204(unsigned long *subcode, unsigned long size, void *addr)
+ {
+-	register unsigned long _subcode asm("0") = subcode;
++	register unsigned long _subcode asm("0") = *subcode;
+ 	register unsigned long _size asm("1") = size;
+ 
+ 	asm volatile(
+ 		"	diag	%2,%0,0x204\n"
+-		"0:\n"
++		"0:	nopr	%%r7\n"
+ 		EX_TABLE(0b,0b)
+ 		: "+d" (_subcode), "+d" (_size) : "d" (addr) : "memory");
+-	if (_subcode)
+-		return -1;
++	*subcode = _subcode;
+ 	return _size;
+ }
+ 
+ int diag204(unsigned long subcode, unsigned long size, void *addr)
+ {
+ 	diag_stat_inc(DIAG_STAT_X204);
+-	return __diag204(subcode, size, addr);
++	size = __diag204(&subcode, size, addr);
++	if (subcode)
++		return -1;
++	return size;
+ }
+ EXPORT_SYMBOL(diag204);
+ 
+-- 
+2.8.1
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/arm/mach-imx/mach-imx51.c
-index 0d9049825f0e,ec64de611d90..000000000000
---- a/arch/arm/mach-imx/mach-imx51.c
-+++ b/arch/arm/mach-imx/mach-imx51.c
-@@@ -52,10 -52,6 +52,8 @@@ static void __init imx51_dt_init(void
-  {
-  	imx51_ipu_mipi_setup();
-  	imx_src_init();
- +
-- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-- 
- +	imx_aips_allow_unprivileged_access("fsl,imx51-aipstz");
-  }
-  
-  static void __init imx51_init_late(void)
