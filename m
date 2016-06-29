@@ -1,65 +1,58 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the s390 tree
-Date: Wed, 29 Jun 2016 07:47:50 +0200
-Message-ID: <20160629054750.GA3458@osiris>
-References: <20160629143658.204b8d07@canb.auug.org.au>
+From: Alexander Stein <alexanders83@web.de>
+Subject: Re: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
+Date: Wed, 29 Jun 2016 07:54:29 +0200
+Message-ID: <7003426.R6hER1qrYx@ws-stein>
+References: <20160627163939.20e454d5@canb.auug.org.au> <2044946.aGLaEK2W6I@ws-stein> <3990550.tEk9cGVQPW@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39960 "EHLO
-	mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750790AbcF2Fr7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jun 2016 01:47:59 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.16.0.11/8.16.0.11) with SMTP id u5T5i1B5009295
-	for <linux-next@vger.kernel.org>; Wed, 29 Jun 2016 01:47:58 -0400
-Received: from e06smtp16.uk.ibm.com (e06smtp16.uk.ibm.com [195.75.94.112])
-	by mx0a-001b2d01.pphosted.com with ESMTP id 23v09p63aj-1
-	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-	for <linux-next@vger.kernel.org>; Wed, 29 Jun 2016 01:47:58 -0400
-Received: from localhost
-	by e06smtp16.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-	for <linux-next@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-	Wed, 29 Jun 2016 06:47:56 +0100
-Content-Disposition: inline
-In-Reply-To: <20160629143658.204b8d07@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Janosch Frank <frankja@linux.vnet.ibm.com>, Christian Borntraeger <borntraeger@de.ibm.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <3990550.tEk9cGVQPW@wuerfel>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "Linus Walleij (linus.walleij@linaro.org)" <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 29, 2016 at 02:36:58PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Tuesday 28 June 2016, 10:37:52 wrote Arnd Bergmann:
+> > > I think the commit should just be reverted, it clearly breaks
+> > > stuff, and whatever needs it can be fixed in a better way.
+> > 
+> > Why not depend PINCTRL_IPROC_GPIO on CONFIG_OF as Randy stated 
+> > pinconf_generic_dt_node_to_map_pin and friends are only present if 
+CONFIG_OF 
+> > is enabled. Depending on OF_GPIO only is enough under the assumption a) 
+you 
+> > made below.
+> > Also what about providing dummy implementation for those missing function 
+in 
+> > case CONFIG_OF is disabled, my preference as more code can be compile 
+tested.
+> >
+> > > Specifically, we have three ways that the OF_GPIO symbol
+> > > is used:
+> > > 
+> > > a) it is implicitly enabled when both GPIOLIB and OF are turned on
+> > 
+> > or if COMPILE_TEST is enabled
+> > 
+> > I think a problem in this and possibly other cases is that COMPILE_TEST 
+> > loosens the Kconfig dependencies to some degree. How to proceed? Allow 
+compile 
+> > testing drivers only if some optional settings are enabled?
 > 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/s390/hypfs/hypfs_diag.c
-> 
-> between commit:
-> 
->   e030c1125eab ("s390/hypfs: use basic block for diag inline assembly")
-> 
-> from the s390 tree and commit:
-> 
->   e65f30e0cb29 ("s390: hypfs: Move diag implementation and data definitions")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (my fixup patch now looks like below) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.  You may also want
-> to consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 14 Jun 2016 14:47:33 +1000
-> Subject: [PATCH] s390: merge fix up for __diag204 move
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/s390/kernel/diag.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
+> I think we can start by reverting your patch: for compile-testing we can
+> always enable CONFIG_OF these days, which will also turn on OF_GPIO.
 
-The fix looks good. Thanks!
+My intention was to compile test (device tree) drivers also without CONFIG_OF 
+which is disabled by defconfig default on arch/x86/configs/*
+
+> Compile-testing drivers that need OF_GPIO while OF is disabled makes
+> no sense to me, it's not a configuration that anybody can ever use
+> and it adds no build coverage.
+
+That seems sensible. If we can agree that anyone who wants to compile test 
+drivers has to enable CONFIG_OF even it is not needed for the current 
+configuration.
+
+Best regards,
+Alexander
