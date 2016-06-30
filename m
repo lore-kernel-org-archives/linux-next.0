@@ -1,60 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Thu, 30 Jun 2016 11:01:46 +1000
-Message-ID: <20160630110146.6becc338@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the lightnvm tree
+Date: Thu, 30 Jun 2016 12:56:35 +1000
+Message-ID: <20160630125635.008b33b6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52956 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59256 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751450AbcF3BJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 29 Jun 2016 21:09:37 -0400
+	id S1751450AbcF3C4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jun 2016 22:56:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+To: Matias =?UTF-8?B?QmrDuHJsaW5n?= <m@bjorling.me>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Matias,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the lightnvm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/net/phy/fixed_phy.c
+ERROR: "nvm_alloc_dev" [drivers/nvme/host/nvme-core.ko] undefined!
+ERROR: "nvm_alloc_dev" [drivers/block/null_blk.ko] undefined!
 
-between commit:
+Caused by commit
 
-  69fc58a57e56 ("net: phy: Manage fixed PHY address space using IDA")
+  3daf1adc80a8 ("lightnvm: let drivers control the lifetime of nvm_dev")
 
-from Linus' tree and commit:
-
-  bf7afb29d545 ("phy: improve safety of fixed-phy MII register reading")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the lightnvm tree from next-20160629 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/phy/fixed_phy.c
-index 9ec7f7353434,b376ada83598..000000000000
---- a/drivers/net/phy/fixed_phy.c
-+++ b/drivers/net/phy/fixed_phy.c
-@@@ -23,9 -23,9 +23,10 @@@
-  #include <linux/slab.h>
-  #include <linux/of.h>
-  #include <linux/gpio.h>
-+ #include <linux/seqlock.h>
- +#include <linux/idr.h>
-  
-- #define MII_REGS_NUM 29
-+ #include "swphy.h"
-  
-  struct fixed_mdio_bus {
-  	struct mii_bus *mii_bus;
