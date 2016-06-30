@@ -1,57 +1,63 @@
-From: Amitkumar Karwar <akarwar@marvell.com>
-Subject: RE: [PATCH] mwifiex: Fixed endianness for event TLV type
- TLV_BTCOEX_WL_SCANTIME
-Date: Thu, 30 Jun 2016 07:35:15 +0000
-Message-ID: <10cf2879532349d29143ecbac3b459b7@SC-EXCH04.marvell.com>
-References: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
- <CAEO8o4=k2y4RBDFJ8RH9RF1xobWKW-zZobRFvrn8Hp8MB=L9AA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Prasun Maiti <prasunmaiti87@gmail.com>
+Subject: [PATCH v2] mwifiex: Fix endianness for event TLV type TLV_BTCOEX_WL_SCANTIME
+Date: Thu, 30 Jun 2016 14:01:23 +0530
+Message-ID: <1467275483-24091-1-git-send-email-prasunmaiti87@gmail.com>
+References: <10cf2879532349d29143ecbac3b459b7@SC-EXCH04.marvell.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAEO8o4=k2y4RBDFJ8RH9RF1xobWKW-zZobRFvrn8Hp8MB=L9AA@mail.gmail.com>
-Content-Language: en-US
+In-Reply-To: <10cf2879532349d29143ecbac3b459b7@SC-EXCH04.marvell.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Prasun Maiti <prasunmaiti87@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Kalle Valo <kvalo@codeaurora.org>
-Cc: Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Amitkumar Karwar <akarwar@marvell.com>
+Cc: Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kalle Valo <kvalo@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
-SGkgUHJhc3VuLA0KDQo+IEZyb206IFByYXN1biBNYWl0aSBbbWFpbHRvOnByYXN1bm1haXRpODdA
-Z21haWwuY29tXQ0KPiBTZW50OiBGcmlkYXksIEp1bmUgMjQsIDIwMTYgMTI6MjcgUE0NCj4gVG86
-IEFtaXRrdW1hciBLYXJ3YXI7IE5pc2hhbnQgU2FybXVrYWRhbTsgS2FsbGUgVmFsbw0KPiBDYzog
-TGludXggV2lyZWxlc3M7IExpbnV4IE5leHQ7IExpbnV4IEtlcm5lbA0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIXSBtd2lmaWV4OiBGaXhlZCBlbmRpYW5uZXNzIGZvciBldmVudCBUTFYgdHlwZQ0KPiBU
-TFZfQlRDT0VYX1dMX1NDQU5USU1FDQo+IA0KPiBPbiBUaHUsIEp1biAxNiwgMjAxNiBhdCA5OjQ5
-IEFNLCBQcmFzdW4gTWFpdGkgPHByYXN1bm1haXRpODdAZ21haWwuY29tPg0KPiB3cm90ZToNCj4g
-PiBUaGUgdHdvIG1lbWJlcnMgbWluX3NjYW5fdGltZSBhbmQgbWF4X3NjYW5fdGltZSBvZiBzdHJ1
-Y3R1cmUNCj4gPiAibXdpZmlleF9pZV90eXBlc19idGNvZXhfc2Nhbl90aW1lIiBhcmUgb2YgdHdv
-IGJ5dGVzIGVhY2guIFRoZSB2YWx1ZXMNCj4gPiBhcmUgYXNzaWduZWQgZGlyZWN0dGx5IGZyb20g
-ZmlybXdhcmUgd2l0aG91dCBlbmRpYW4gY29udmVyc2lvbg0KPiBoYW5kbGluZy4NCj4gPiBTbywg
-d3JvbmcgZGF0YXMgd2lsbCBnZXQgc2F2ZWQgaW4gYmlnLWVuZGlhbiBzeXN0ZW1zLg0KPiA+DQo+
-ID4gVGhpcyBwYXRjaCBjb252ZXJ0cyB0aGUgdmFsdWVzIGludG8gY3B1J3MgYnl0ZSBvcmRlciBi
-ZWZvcmUgYXNzaWduaW5nDQo+ID4gdGhlbSBpbnRvIHRoZSBsb2NhbCBtZW1iZXJzLg0KPiA+DQo+
-ID4gU2lnbmVkLW9mZi1ieTogUHJhc3VuIE1haXRpIDxwcmFzdW5tYWl0aTg3QGdtYWlsLmNvbT4N
-Cj4gPiAtLS0NCj4gPiAgZHJpdmVycy9uZXQvd2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L3N0YV9l
-dmVudC5jIHwgNCArKy0tDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIg
-ZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3Mv
-bWFydmVsbC9td2lmaWV4L3N0YV9ldmVudC5jDQo+ID4gYi9kcml2ZXJzL25ldC93aXJlbGVzcy9t
-YXJ2ZWxsL213aWZpZXgvc3RhX2V2ZW50LmMNCj4gPiBpbmRleCAwMTA0MTA4Li43ZGZmNDUyIDEw
-MDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC9zdGFf
-ZXZlbnQuYw0KPiA+ICsrKyBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC9z
-dGFfZXZlbnQuYw0KPiA+IEBAIC00NzQsOCArNDc0LDggQEAgdm9pZA0KPiBtd2lmaWV4X2J0X2Nv
-ZXhfd2xhbl9wYXJhbV91cGRhdGVfZXZlbnQoc3RydWN0IG13aWZpZXhfcHJpdmF0ZSAqcHJpdiwN
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBzY2FudGx2ID0NCj4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgKHN0cnVjdCBtd2lmaWV4X2llX3R5cGVzX2J0Y29leF9zY2FuX3RpbWUN
-Cj4gKil0bHY7DQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgYWRhcHRlci0+Y29leF9zY2Fu
-ID0gc2NhbnRsdi0+Y29leF9zY2FuOw0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIGFkYXB0
-ZXItPmNvZXhfbWluX3NjYW5fdGltZSA9IHNjYW50bHYtDQo+ID5taW5fc2Nhbl90aW1lOw0KPiA+
-IC0gICAgICAgICAgICAgICAgICAgICAgIGFkYXB0ZXItPmNvZXhfbWF4X3NjYW5fdGltZSA9IHNj
-YW50bHYtDQo+ID5tYXhfc2Nhbl90aW1lOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGFk
-YXB0ZXItPmNvZXhfbWluX3NjYW5fdGltZSA9DQo+IGxlMTZfdG9fY3B1KHNjYW50bHYtPm1pbl9z
-Y2FuX3RpbWUpOw0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIGFkYXB0ZXItPmNvZXhfbWF4
-X3NjYW5fdGltZSA9DQo+ID4gKyBsZTE2X3RvX2NwdShzY2FudGx2LT5tYXhfc2Nhbl90aW1lKTsN
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBicmVhazsNCj4gPg0KPiA+ICAgICAgICAgICAg
-ICAgICBkZWZhdWx0Og0KPiA+IC0tDQo+ID4gMS45LjENCj4gPg0KDQpBbG9uZyB3aXRoIHRoaXMg
-Y2hhbmdlLCB5b3UgbmVlZCB0byBkZWZpbmUgdGhlc2UgZWxlbWVudHMgYXMgX19sZTE2IGluIHNj
-YW5fdGx2IHN0cnVjdHVyZS4gRW5zdXJlIHRoYXQgc3BhcnNlIGNvbXBpbGF0aW9uIGlzIHBhc3Nl
-ZCB3aXRoIHlvdXIgZmluYWwgcGF0Y2guDQoNClJlZ2FyZHMsDQpBbWl0a3VtYXINCg==
+The two members min_scan_time and max_scan_time of structure
+"mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
+are assigned directtly from firmware without endian conversion handling.
+So, wrong datas will get saved in big-endian systems.
+
+This patch converts the values into cpu's byte order before assigning them
+into the local members.
+
+Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+---
+Changes in v2:
+	- Fixed the following sparse compilation warnings:
+	* sta_event.c:477:55: warning: cast to restricted __le16
+	* sta_event.c:478:55: warning: cast to restricted __le16
+
+ drivers/net/wireless/marvell/mwifiex/fw.h        | 4 ++--
+ drivers/net/wireless/marvell/mwifiex/sta_event.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
+index 8e4145a..03d3edf 100644
+--- a/drivers/net/wireless/marvell/mwifiex/fw.h
++++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+@@ -1958,8 +1958,8 @@ struct mwifiex_ie_types_btcoex_scan_time {
+ 	struct mwifiex_ie_types_header header;
+ 	u8 coex_scan;
+ 	u8 reserved;
+-	u16 min_scan_time;
+-	u16 max_scan_time;
++	__le16 min_scan_time;
++	__le16 max_scan_time;
+ } __packed;
+
+ struct mwifiex_ie_types_btcoex_aggr_win_size {
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_event.c b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+index 0104108..7dff452 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_event.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_event.c
+@@ -474,8 +474,8 @@ void mwifiex_bt_coex_wlan_param_update_event(struct mwifiex_private *priv,
+ 			scantlv =
+ 			    (struct mwifiex_ie_types_btcoex_scan_time *)tlv;
+ 			adapter->coex_scan = scantlv->coex_scan;
+-			adapter->coex_min_scan_time = scantlv->min_scan_time;
+-			adapter->coex_max_scan_time = scantlv->max_scan_time;
++			adapter->coex_min_scan_time = le16_to_cpu(scantlv->min_scan_time);
++			adapter->coex_max_scan_time = le16_to_cpu(scantlv->max_scan_time);
+ 			break;
+
+ 		default:
+--
+1.9.1
