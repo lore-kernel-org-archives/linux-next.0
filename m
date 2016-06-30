@@ -1,36 +1,60 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: mwifiex: Fixed endianness for event TLV type
- TLV_BTCOEX_WL_SCANTIME
-Date: Wed, 29 Jun 2016 15:52:59 +0000 (UTC)
-Message-ID: <20160629155259.08DB1613A4@smtp.codeaurora.org>
-References: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 30 Jun 2016 11:01:46 +1000
+Message-ID: <20160630110146.6becc338@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:40090 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752318AbcF2PyA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 29 Jun 2016 11:54:00 -0400
-In-Reply-To: <1466050770-21789-1-git-send-email-prasunmaiti87@gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:52956 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751450AbcF3BJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 29 Jun 2016 21:09:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Prasun Maiti <prasunmaiti87@gmail.com>
-Cc: Amitkumar Karwar <akarwar@marvell.com>, Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 
-Prasun Maiti <prasunmaiti87@gmail.com> wrote:
-> The two members min_scan_time and max_scan_time of structure
-> "mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
-> are assigned directtly from firmware without endian conversion handling.
-> So, wrong datas will get saved in big-endian systems.
-> 
-> This patch converts the values into cpu's byte order before assigning them
-> into the local members.
-> 
-> Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+Hi all,
 
-I would like to see Reviewed-by from someone else before I apply this.
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  drivers/net/phy/fixed_phy.c
+
+between commit:
+
+  69fc58a57e56 ("net: phy: Manage fixed PHY address space using IDA")
+
+from Linus' tree and commit:
+
+  bf7afb29d545 ("phy: improve safety of fixed-phy MII register reading")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9179811/
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/phy/fixed_phy.c
+index 9ec7f7353434,b376ada83598..000000000000
+--- a/drivers/net/phy/fixed_phy.c
++++ b/drivers/net/phy/fixed_phy.c
+@@@ -23,9 -23,9 +23,10 @@@
+  #include <linux/slab.h>
+  #include <linux/of.h>
+  #include <linux/gpio.h>
++ #include <linux/seqlock.h>
+ +#include <linux/idr.h>
+  
+- #define MII_REGS_NUM 29
++ #include "swphy.h"
+  
+  struct fixed_mdio_bus {
+  	struct mii_bus *mii_bus;
