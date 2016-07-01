@@ -1,53 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add the freevxfs tree to linux-next
-Date: Fri, 1 Jul 2016 09:36:03 +1000
-Message-ID: <20160701093603.2d94cb81@canb.auug.org.au>
-References: <20160630090918.GA8701@lst.de>
+Subject: linux-next: manual merge of the pci tree with the tegra tree
+Date: Fri, 1 Jul 2016 11:09:08 +1000
+Message-ID: <20160701110908.02f45e0a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47843 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751536AbcF3Xi0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 30 Jun 2016 19:38:26 -0400
-In-Reply-To: <20160630090918.GA8701@lst.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Christoph,
+Hi Bjorn,
 
-On Thu, 30 Jun 2016 11:09:18 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> the good old freevxfs driver finally got some updates again,
-> can you please add
-> 
->     git://git.infradead.org/users/hch/freevxfs.git for-next
-> 
-> to linux-next?
+Today's linux-next merge of the pci tree got a conflict in:
 
-Added from today.
+  drivers/pci/host/pci-tegra.c
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+between commit:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+  e8a64f7a44be ("PCI: tegra: Use pci_remap_iospace()")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+from the tegra tree and commit:
+
+  a73253d223df ("PCI: tegra: Request host bridge window resources with core function")
+
+from the pci tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell
+
+diff --cc drivers/pci/host/pci-tegra.c
+index 7689f448ff92,6e6ef0d3d739..000000000000
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@@ -620,17 -626,7 +619,7 @@@ static int tegra_pcie_setup(int nr, str
+  	if (err < 0)
+  		return err;
+  
+- 	err = devm_request_resource(pcie->dev, &ioport_resource, &pcie->pio);
+- 	if (err < 0)
+- 		return err;
+- 
+- 	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->mem);
+- 	if (err < 0)
+- 		return err;
+- 
+- 	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->prefetch);
+- 	if (err)
+- 		return err;
+ -	pci_ioremap_io(pcie->pio.start, pcie->io.start);
+++	pci_remap_iospace(&pcie->pio, pcie->io.start);
+  
+  	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
+  	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
