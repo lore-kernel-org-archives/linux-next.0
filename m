@@ -1,108 +1,89 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160701 build: 2 failures 5 warnings (next-20160701)
-Date: Fri, 01 Jul 2016 10:00:09 +0100
-Message-ID: <E1bIuIz-00085X-RP@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33036 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751900AbcGAJAS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 1 Jul 2016 05:00:18 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Krzysztof =?UTF-8?Q?B=C5=82aszkowski?= <kb@sysmikro.com.pl>
+Subject: Re: Please add the freevxfs tree to linux-next
+Date: Fri, 01 Jul 2016 11:36:18 +0200
+Message-ID: <1467365778.13525.28.camel@linux-q3cb.site>
+References: <20160630090918.GA8701@lst.de>
+	 <20160701093603.2d94cb81@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-fsdevel-owner@vger.kernel.org>
+In-Reply-To: <20160701093603.2d94cb81@canb.auug.org.au>
+Sender: linux-fsdevel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160701
-Git describe: next-20160701
-Commit: d936b5e461 Add linux-next specific files for 20160701
+Hi Stephen, Christoph,
 
-Build Time: 75 min 3 sec
+On Fri, 2016-07-01 at 09:36 +1000, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> On Thu, 30 Jun 2016 11:09:18 +0200 Christoph Hellwig <hch@lst.de> wrote:
+> >
+> > the good old freevxfs driver finally got some updates again,
+> > can you please add
+> > 
+> >     git://git.infradead.org/users/hch/freevxfs.git for-next
+> > 
+> > to linux-next?
+> 
+> Added from today.
+> 
+> Thanks for adding your subsystem tree as a participant of linux-next.  As
+> you may know, this is not a judgement of your code.  The purpose of
+> linux-next is for integration testing and to lower the impact of
+> conflicts between subsystems in the next merge window. 
+> 
+> You will need to ensure that the patches/commits in your tree/series have
+> been:
+>      * submitted under GPL v2 (or later) and include the Contributor's
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
+I didn't say it explicitly but all changes I have made were voluntary
+thus feel free to apply GPL v2 or that one which you think that fits
+better.
+Moreover I didn't add to original code any proprietary, confidential IP.
+It seems that various web links to vxfs internals are no longer valid
+nowadays. (I was not able to find any technical documentation on vxfs
+design on the web)
 
-Errors: 2
-Warnings: 5
-Section Mismatches: 0
+I was lucky in that I gave blind try and it turned out that filesystem
+on-disk structures defined already in the original source matched image
+of HP-UX's vxfs. The important difference was on-disk endianess. I also
+fixed several things which should have been fixed long time ago.
+No doubt, I'm the only one who noticed them before others.
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+>         Signed-off-by,
+>      * posted to the relevant mailing list,
+>      * reviewed by you (or another maintainer of your subsystem tree),
+>      * successfully unit tested, and 
 
-Errors:
+I reckon that I verified correctness of bi-endian vxfs implementation to
+the extent it was possible. I own logic analyzer which is built on top
+of HP mainframe and runs HP-UX 10.20 thus I was able to do backup of its
+system disk and then give a try to Linux vxfs.
 
-	arm-allmodconfig
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:2: error: implicit declaration of function 'mtk_handle_irq' [-Werror=implicit-function-declaration]
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:25: error: subscripted value is neither array nor pointer nor vector
+The tests are based on reading files and comparing cksums with these
+evaluated under HP-UX. More precisely cksums of cksums sorted according
+to file names are compared. So the tests utilize various directories
+which differ in amount of files. E.g. "man" directory holds abt 2900
+rather short files while other directories have several tenths or
+hundreds of large and mid-large files.
+As current Linux vxfs supports only RO no more advanced tests are
+possible although I wouldn't mind to design R/W part. Unfortunately I
+have no technical documentation for vxfs except current Linux vxfs code.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+I can't verify if SCO Unixware works and original vxfs module was meant
+for. However I put effort on making SCO Unixware and HP-UX (pa-risc
+version) working both.
+I believe this effort is successful because of induction.
 
--------------------------------------------------------------------------------
+>      * destined for the current or next Linux merge window.
+> 
+> Basically, this should be just what you would send to Linus (or ask him
+> to fetch).  It is allowed to be rebased if you deem it necessary.
+> 
 
-Errors summary: 2
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:2: error: implicit declaration of function 'mtk_handle_irq' [-Werror=implicit-function-declaration]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:25: error: subscripted value is neither array nor pointer nor vector
+-- 
+Krzysztof Blaszkowski
 
-Warnings Summary: 5
-	  5 ../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:743:17: warning: comparison of distinct pointer types lacks a cast
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:2: error: implicit declaration of function 'mtk_handle_irq' [-Werror=implicit-function-declaration]
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:25: error: subscripted value is neither array nor pointer nor vector
-
-Warnings:
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
