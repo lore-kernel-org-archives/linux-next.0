@@ -1,149 +1,81 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160704 build: 2 failures 7 warnings (next-20160704)
-Date: Mon, 04 Jul 2016 12:50:46 +0100
-Message-ID: <E1bK2Ok-0002jU-NX@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160704 build: 2 failures 7 warnings (next-20160704)
+Date: Mon, 4 Jul 2016 14:35:25 +0200
+Message-ID: <20160704123525.GA6247@sirena.org.uk>
+References: <E1bK2Ok-0002jU-NX@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="uQKdfr6GvE2xHbL0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40666 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40752 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753170AbcGDLu7 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jul 2016 07:50:59 -0400
+	with ESMTP id S1753675AbcGDMfu (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jul 2016 08:35:50 -0400
+Content-Disposition: inline
+In-Reply-To: <E1bK2Ok-0002jU-NX@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160704
-Git describe: next-20160704
-Commit: b2677d15eb Add linux-next specific files for 20160704
-
-Build Time: 74 min 51 sec
-
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
-
-Errors: 4
-Warnings: 7
-Section Mismatches: 11
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/gpu/drm/sti/sti_hdmi.c:1250:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/sti/sti_hdmi.c:1251:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/sti/sti_hdmi.c:1252:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-../drivers/gpu/drm/sti/sti_hdmi.c:1253:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    8 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      7 warnings    3 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 4
-	  1 ../drivers/gpu/drm/sti/sti_hdmi.c:1253:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  1 ../drivers/gpu/drm/sti/sti_hdmi.c:1252:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  1 ../drivers/gpu/drm/sti/sti_hdmi.c:1251:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	  1 ../drivers/gpu/drm/sti/sti_hdmi.c:1250:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings Summary: 7
-	  5 ../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-
-Section Mismatch Summary: 11
-	  1 WARNING: vmlinux.o(.text+0x1dda2c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: vmlinux.o(.text+0x1dda24): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/libftrace.o(.text+0x8eec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/libftrace.o(.text+0x8ee4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/libftrace.o(.text+0x6784): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/built-in.o(.text+0x90ec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/built-in.o(.text+0x90e4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/trace/built-in.o(.text+0x6974): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/built-in.o(.text+0x17fc2c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/built-in.o(.text+0x17fc24): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	  1 WARNING: kernel/built-in.o(.text+0x117ffc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+To: Arnaud Pouliquen <arnaud.pouliquen@st.com>, David Airlie <airlied@linux.ie>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org
 
 
+--uQKdfr6GvE2xHbL0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Mon, Jul 04, 2016 at 12:50:46PM +0100, Build bot for Mark Brown wrote:
 
+Today's -next fails to build an ARM allmodconfig due to:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 1 warnings, 8 section mismatches
+> 	arm-allmodconfig
+> ../drivers/gpu/drm/sti/sti_hdmi.c:1250:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> ../drivers/gpu/drm/sti/sti_hdmi.c:1251:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> ../drivers/gpu/drm/sti/sti_hdmi.c:1252:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+> ../drivers/gpu/drm/sti/sti_hdmi.c:1253:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
 
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
+due to adding new code which doesn't take account of the recent API
+change in the HDMI CODEC.  There's another change already in DRM for
+which the expectation was that the API change and an update Arnd posted
+would be pulled over so I guess the same approach makes sense here:
 
-Section Mismatches:
-	WARNING: kernel/trace/libftrace.o(.text+0x8ee4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/trace/libftrace.o(.text+0x8eec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/trace/built-in.o(.text+0x90e4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/trace/built-in.o(.text+0x90ec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/built-in.o(.text+0x17fc24): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/built-in.o(.text+0x17fc2c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: vmlinux.o(.text+0x1dda24): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: vmlinux.o(.text+0x1dda2c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
+are available in the git repository at:
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 4 errors, 7 warnings, 3 section mismatches
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git tags/asoc-hdmi-codec-pdata
 
-Errors:
-	../drivers/gpu/drm/sti/sti_hdmi.c:1250:15: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/sti/sti_hdmi.c:1251:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/sti/sti_hdmi.c:1252:18: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-	../drivers/gpu/drm/sti/sti_hdmi.c:1253:13: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+for you to fetch changes up to efc9194bcff84666832c6493bafa92029ac6634c:
 
-Warnings:
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  ASoC: hdmi-codec: callback function will be called with private data (2016-06-27 18:53:15 +0100)
 
-Section Mismatches:
-	WARNING: kernel/trace/libftrace.o(.text+0x6784): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/trace/built-in.o(.text+0x6974): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
-	WARNING: kernel/built-in.o(.text+0x117ffc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+----------------------------------------------------------------
+ASoC: Add private data for HDMI CODEC callbacks
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+Allow the HDMI CODECs to get private data passed in in callbacks.
 
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
+----------------------------------------------------------------
+Kuninori Morimoto (1):
+      ASoC: hdmi-codec: callback function will be called with private data
 
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+ include/sound/hdmi-codec.h    | 13 ++++++++-----
+ sound/soc/codecs/hdmi-codec.c | 15 ++++++++-------
+ 2 files changed, 16 insertions(+), 12 deletions(-)
 
-Warnings:
-	../drivers/usb/host/xhci-ring.c:753:4: warning: 'ep_ring' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
+--uQKdfr6GvE2xHbL0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Passed with no errors, warnings or mismatches:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-x86_64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+iQEcBAEBCAAGBQJXelgIAAoJECTWi3JdVIfQXfoH/ilVcR5S3zq96A07sSSyEyls
+t09rNPtbXxbSkqL1bXbtURJTVaOthGo0mKOk12GFy/vW2qcjd1eJ92zSvGlT1Lo0
+vZ0+Bpwj+TmI7BJMULr+l153oLBRvG3zwCurLPgfiw2AXksHEvySs26frG4tP8de
+tCSjWANF/T1OCC6AtuFC90yI6NDBu6g0BmDMEXkCBoj1JbMRKL4sRdIQ2xpM/3QX
+1Dk6bpY7N4WrC687R5FIhnnA6rThMPdjR+qXIM6VDMHoVv+wJlaMnbGFn/bKT9CD
+JMnpEsFJx3IkJkyHYtt6pJ19E+um9qge/LjBprI6g7Qd68QH6eRfu8mNpTsBD/o=
+=TNtp
+-----END PGP SIGNATURE-----
+
+--uQKdfr6GvE2xHbL0--
