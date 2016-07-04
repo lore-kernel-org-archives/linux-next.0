@@ -1,63 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the kspp tree
-Date: Mon, 4 Jul 2016 15:48:13 +1000
-Message-ID: <20160704154813.71fe892c@canb.auug.org.au>
+From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
+Subject: Re: linux-next: build failure after merge of the lightnvm tree
+Date: Mon, 4 Jul 2016 09:06:08 +0200
+Message-ID: <577A0AE0.3040506@bjorling.me>
+References: <20160630125635.008b33b6@canb.auug.org.au>
+ <20160704143153.57dacf1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org, Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:37035 "EHLO
+	mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751323AbcGDHGL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 4 Jul 2016 03:06:11 -0400
+Received: by mail-wm0-f52.google.com with SMTP id a66so102099291wme.0
+        for <linux-next@vger.kernel.org>; Mon, 04 Jul 2016 00:06:11 -0700 (PDT)
+In-Reply-To: <20160704143153.57dacf1e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On 07/04/2016 06:31 AM, Stephen Rothwell wrote:
+> Hi Matias,
+>
+> On Thu, 30 Jun 2016 12:56:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the lightnvm tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> ERROR: "nvm_alloc_dev" [drivers/nvme/host/nvme-core.ko] undefined!
+>> ERROR: "nvm_alloc_dev" [drivers/block/null_blk.ko] undefined!
+>>
+>> Caused by commit
+>>
+>>    3daf1adc80a8 ("lightnvm: let drivers control the lifetime of nvm_dev")
+>>
+>> I have used the lightnvm tree from next-20160629 for today.
+>
+> I am still getting this error.
+>
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Hi Stephen,
 
-  arch/x86/kvm/vmx.c
-
-between commit:
-
-  255303026193 ("x86: apply more __ro_after_init and const")
-
-from the kspp tree and commit:
-
-  c45dcc71b794 ("KVM: VMX: enable guest access to LMCE related MSRs")
-
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/vmx.c
-index 9faec9dc5476,85e2f0a882ca..000000000000
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@@ -10905,7 -11123,17 +11127,17 @@@ out
-  	return ret;
-  }
-  
-+ static void vmx_setup_mce(struct kvm_vcpu *vcpu)
-+ {
-+ 	if (vcpu->arch.mcg_cap & MCG_LMCE_P)
-+ 		to_vmx(vcpu)->msr_ia32_feature_control_valid_bits |=
-+ 			FEATURE_CONTROL_LMCE;
-+ 	else
-+ 		to_vmx(vcpu)->msr_ia32_feature_control_valid_bits &=
-+ 			~FEATURE_CONTROL_LMCE;
-+ }
-+ 
- -static struct kvm_x86_ops vmx_x86_ops = {
- +static struct kvm_x86_ops vmx_x86_ops __ro_after_init = {
-  	.cpu_has_kvm_support = cpu_has_kvm_support,
-  	.disabled_by_bios = vmx_disabled_by_bios,
-  	.hardware_setup = hardware_setup,
+Sorry for the delay. The patch is removed for now.
