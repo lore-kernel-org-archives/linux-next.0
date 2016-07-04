@@ -1,36 +1,40 @@
-From: John Crispin <john@phrozen.org>
-Subject: Re: next-20160701 build: 2 failures 5 warnings (next-20160701)
-Date: Fri, 1 Jul 2016 19:46:56 +0200
-Message-ID: <ba71c80f-e01e-8ae0-f99d-6ea32c7c1341@phrozen.org>
-References: <E1bIuIz-00085X-RP@optimist> <20160701171557.GB6247@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the thermal-soc tree with the thermal
+ tree
+Date: Mon, 4 Jul 2016 12:55:22 +1000
+Message-ID: <20160704125522.011806af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20160701171557.GB6247@sirena.org.uk>
-Sender: netdev-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, "David S. Miller" <davem@davemloft.net>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Sascha Hauer <s.hauer@pengutronix.de>
 List-Id: linux-next.vger.kernel.org
 
+Hi Eduardo,
 
+Today's linux-next merge of the thermal-soc tree got conflicts in:
 
-On 01/07/2016 19:15, Mark Brown wrote:
-> On Fri, Jul 01, 2016 at 10:00:09AM +0100, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build am ARM allmodconfig due to:
-> 
->> 	arm-allmodconfig
->> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:2: error: implicit declaration of function 'mtk_handle_irq' [-Werror=implicit-function-declaration]
->> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1300:25: error: subscripted value is neither array nor pointer nor vector
-> 
-> due to the recent changes to the interrupt handling code, the function
-> has been split into rx and tx functions but the NET_POLL_CONTROLLER code
-> hasn't been updated.
-> 
+  drivers/thermal/thermal_core.c
+  drivers/thermal/thermal_helpers.c
+  drivers/thermal/thermal_sysfs.c
 
-Hi Mark,
+between commits from the thermal tree and the same (or similar) patches
+from the thermal-soc tree.
 
-i'll look into this first thing in the morning.
+It looks like a the patches have been slightly changed when applied to the
+thermal tree and then more commist have been applied to the thermal-soc
+tree, so there are a few conflicts generated.   Please fix up these trees.
 
-	John
+I fixed it up (I used what seemed the appropriate versions - which may
+or may not be the right ones) and can carry the fixes as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
