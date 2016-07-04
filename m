@@ -1,31 +1,31 @@
 From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
 Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 4 Jul 2016 14:33:49 +0300
-Message-ID: <CALzJLG-BeQgXsxEWeAvROQGtsr2J2DnPFzUjLB66vL35u_VEcw@mail.gmail.com>
-References: <20160704130217.79de2ba1@canb.auug.org.au>
+Date: Mon, 4 Jul 2016 14:34:15 +0300
+Message-ID: <CALzJLG_pXO4pbRdgOe912OGhR-HAUBcTEA9AhChsikSaSSO0Lg@mail.gmail.com>
+References: <20160704130722.735f94c9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20160704130217.79de2ba1@canb.auug.org.au>
+In-Reply-To: <20160704130722.735f94c9@canb.auug.org.au>
 Sender: netdev-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Linux Netdev List <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Gil Rockah <gilr@mellanox.com>, Achiad Shochat <achiad@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
+Cc: David Miller <davem@davemloft.net>, Linux Netdev List <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Yevgeny Petrilin <yevgenyp@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jul 4, 2016 at 6:02 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Jul 4, 2016 at 6:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi all,
 >
 > Today's linux-next merge of the net-next tree got a conflict in:
 >
->   drivers/net/ethernet/mellanox/mlx5/core/en.h
+>   drivers/net/ethernet/mellanox/mlx5/core/en_main.c
 >
 > between commit:
 >
->   6cd392a082de ("net/mlx5e: Handle RQ flush in error cases")
+>   29429f3300a3 ("net/mlx5e: Timeout if SQ doesn't flush during close")
 >
 > from the net tree and commit:
 >
->   cb3c7fd4f839 ("net/mlx5e: Support adaptive RX coalescing")
+>   507f0c817f7a ("net/mlx5e: Add TXQ set max rate support")
 >
 > from the net-next tree.
 >
@@ -40,51 +40,54 @@ On Mon, Jul 4, 2016 at 6:02 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Cheers,
 > Stephen Rothwell
 >
-> diff --cc drivers/net/ethernet/mellanox/mlx5/core/en.h
-> index 943b1bd434bf,00643a116492..000000000000
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
-> @@@ -143,10 -146,32 +146,31 @@@ struct mlx5e_umr_wqe
->         struct mlx5_wqe_data_seg       data;
+> diff --cc drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> index 7a0dca29c642,96ec53a6a595..000000000000
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@@ -39,16 -39,10 +39,17 @@@
+>   #include "eswitch.h"
+>   #include "vxlan.h"
+>
+>  +enum {
+>  +      MLX5_EN_QP_FLUSH_TIMEOUT_MS     = 5000,
+>  +      MLX5_EN_QP_FLUSH_MSLEEP_QUANT   = 20,
+>  +      MLX5_EN_QP_FLUSH_MAX_ITER       = MLX5_EN_QP_FLUSH_TIMEOUT_MS /
+>  +                                        MLX5_EN_QP_FLUSH_MSLEEP_QUANT,
+>  +};
+>  +
+>   struct mlx5e_rq_param {
+> -       u32                        rqc[MLX5_ST_SZ_DW(rqc)];
+> -       struct mlx5_wq_param       wq;
+> +       u32                     rqc[MLX5_ST_SZ_DW(rqc)];
+> +       struct mlx5_wq_param    wq;
+> +       bool                    am_enabled;
 >   };
 >
-> + static const char mlx5e_priv_flags[][ETH_GSTRING_LEN] = {
-> +       "rx_cqe_moder",
-> + };
-> +
-> + enum mlx5e_priv_flag {
-> +       MLX5E_PFLAG_RX_CQE_BASED_MODER = (1 << 0),
-> + };
-> +
-> + #define MLX5E_SET_PRIV_FLAG(priv, pflag, enable)    \
-> +       do {                                        \
-> +               if (enable)                         \
-> +                       priv->pflags |= pflag;      \
-> +               else                                \
-> +                       priv->pflags &= ~pflag;     \
-> +       } while (0)
-> +
->   #ifdef CONFIG_MLX5_CORE_EN_DCB
->   #define MLX5E_MAX_BW_ALLOC 100 /* Max percentage of BW allocation */
->  -#define MLX5E_MIN_BW_ALLOC 1   /* Min percentage of BW allocation */
->   #endif
+>   struct mlx5e_sq_param {
+> @@@ -574,8 -543,9 +582,10 @@@ static void mlx5e_close_rq(struct mlx5e
+>         /* avoid destroying rq before mlx5e_poll_rx_cq() is done with it */
+>         napi_synchronize(&rq->channel->napi);
 >
-> + struct mlx5e_cq_moder {
-> +       u16 usec;
-> +       u16 pkts;
-> + };
+> +       cancel_work_sync(&rq->am.work);
 > +
->   struct mlx5e_params {
->         u8  log_sq_size;
->         u8  rq_wq_type;
-> @@@ -190,7 -215,7 +214,8 @@@ struct mlx5e_tstamp
->   enum {
->         MLX5E_RQ_STATE_POST_WQES_ENABLE,
->         MLX5E_RQ_STATE_UMR_WQE_IN_PROGRESS,
->  +      MLX5E_RQ_STATE_FLUSH_TIMEOUT,
-> +       MLX5E_RQ_STATE_AM,
->   };
+>         mlx5e_disable_rq(rq);
+>  +      mlx5e_free_rx_descs(rq);
+>         mlx5e_destroy_rq(rq);
+>   }
 >
+> @@@ -835,19 -810,12 +853,19 @@@ static void mlx5e_close_sq(struct mlx5e
+>                 if (mlx5e_sq_has_room_for(sq, 1))
+>                         mlx5e_send_nop(sq, true);
+>
+>  -              mlx5e_modify_sq(sq, MLX5_SQC_STATE_RDY, MLX5_SQC_STATE_ERR,
+>  -                              false, 0);
+>  +              err = mlx5e_modify_sq(sq, MLX5_SQC_STATE_RDY,
+> -                                     MLX5_SQC_STATE_ERR);
+> ++                                    MLX5_SQC_STATE_ERR, false, 0);
+>  +              if (err)
+>  +                      set_bit(MLX5E_SQ_STATE_TX_TIMEOUT, &sq->state);
+>         }
+
 
 Thanks Stephen, the fixup looks good.
 
