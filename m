@@ -1,40 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the lightnvm tree
-Date: Mon, 4 Jul 2016 14:31:53 +1000
-Message-ID: <20160704143153.57dacf1e@canb.auug.org.au>
-References: <20160630125635.008b33b6@canb.auug.org.au>
+From: Jason Wang <jasowang@redhat.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Mon, 4 Jul 2016 13:19:37 +0800
+Message-ID: <5779F1E9.9070505@redhat.com>
+References: <20160704131552.22b44d58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59776 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:39734 "EHLO mx1.redhat.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751683AbcGDEb4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 4 Jul 2016 00:31:56 -0400
-In-Reply-To: <20160630125635.008b33b6@canb.auug.org.au>
+	id S1751246AbcGDFTn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 4 Jul 2016 01:19:43 -0400
+In-Reply-To: <20160704131552.22b44d58@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matias =?UTF-8?B?QmrDuHJsaW5n?= <m@bjorling.me>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Matias,
 
-On Thu, 30 Jun 2016 12:56:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+On 2016=E5=B9=B407=E6=9C=8804=E6=97=A5 11:15, Stephen Rothwell wrote:
+> Hi all,
 >
-> After merging the lightnvm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "nvm_alloc_dev" [drivers/nvme/host/nvme-core.ko] undefined!
-> ERROR: "nvm_alloc_dev" [drivers/block/null_blk.ko] undefined!
-> 
-> Caused by commit
-> 
->   3daf1adc80a8 ("lightnvm: let drivers control the lifetime of nvm_dev")
-> 
-> I have used the lightnvm tree from next-20160629 for today.
+> After merging the net-next tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>
+> drivers/net/tun.c: In function 'tun_do_read.part.5':
+> /home/sfr/next/next/drivers/net/tun.c:1491:6: warning: 'err' may be u=
+sed uninitialized in this function [-Wmaybe-uninitialized]
+>    int err;
+>        ^
+>
+> Introduced by commit
+>
+>    1576d9860599 ("tun: switch to use skb array for tx")
+>
+> I can't easily see if this is a false positive.
+>
 
-I am still getting this error.
-
--- 
-Cheers,
-Stephen Rothwell
+Thanks for the reporting, will post a fix.
