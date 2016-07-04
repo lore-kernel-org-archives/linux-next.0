@@ -1,60 +1,95 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Tree for Jun 27 (pinctrl && !CONFIG_OF)
-Date: Mon, 4 Jul 2016 11:46:55 +0200
-Message-ID: <CACRpkdb2a=7QhW5A7yucC-DPo4NmNNcd3NcOznVtk0+8XMtbHA@mail.gmail.com>
-References: <20160627163939.20e454d5@canb.auug.org.au> <57716D3D.4070302@infradead.org>
+From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 4 Jul 2016 14:33:49 +0300
+Message-ID: <CALzJLG-BeQgXsxEWeAvROQGtsr2J2DnPFzUjLB66vL35u_VEcw@mail.gmail.com>
+References: <20160704130217.79de2ba1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <57716D3D.4070302@infradead.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linus Torvalds <torvalds@linux-foundation.org>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20160704130217.79de2ba1@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Linux Netdev List <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Gil Rockah <gilr@mellanox.com>, Achiad Shochat <achiad@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 27, 2016 at 8:15 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+On Mon, Jul 4, 2016 at 6:02 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>
+>   drivers/net/ethernet/mellanox/mlx5/core/en.h
+>
+> between commit:
+>
+>   6cd392a082de ("net/mlx5e: Handle RQ flush in error cases")
+>
+> from the net tree and commit:
+>
+>   cb3c7fd4f839 ("net/mlx5e: Support adaptive RX coalescing")
+>
+> from the net-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/net/ethernet/mellanox/mlx5/core/en.h
+> index 943b1bd434bf,00643a116492..000000000000
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en.h
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en.h
+> @@@ -143,10 -146,32 +146,31 @@@ struct mlx5e_umr_wqe
+>         struct mlx5_wqe_data_seg       data;
+>   };
+>
+> + static const char mlx5e_priv_flags[][ETH_GSTRING_LEN] = {
+> +       "rx_cqe_moder",
+> + };
+> +
+> + enum mlx5e_priv_flag {
+> +       MLX5E_PFLAG_RX_CQE_BASED_MODER = (1 << 0),
+> + };
+> +
+> + #define MLX5E_SET_PRIV_FLAG(priv, pflag, enable)    \
+> +       do {                                        \
+> +               if (enable)                         \
+> +                       priv->pflags |= pflag;      \
+> +               else                                \
+> +                       priv->pflags &= ~pflag;     \
+> +       } while (0)
+> +
+>   #ifdef CONFIG_MLX5_CORE_EN_DCB
+>   #define MLX5E_MAX_BW_ALLOC 100 /* Max percentage of BW allocation */
+>  -#define MLX5E_MIN_BW_ALLOC 1   /* Min percentage of BW allocation */
+>   #endif
+>
+> + struct mlx5e_cq_moder {
+> +       u16 usec;
+> +       u16 pkts;
+> + };
+> +
+>   struct mlx5e_params {
+>         u8  log_sq_size;
+>         u8  rq_wq_type;
+> @@@ -190,7 -215,7 +214,8 @@@ struct mlx5e_tstamp
+>   enum {
+>         MLX5E_RQ_STATE_POST_WQES_ENABLE,
+>         MLX5E_RQ_STATE_UMR_WQE_IN_PROGRESS,
+>  +      MLX5E_RQ_STATE_FLUSH_TIMEOUT,
+> +       MLX5E_RQ_STATE_AM,
+>   };
+>
 
-> On 06/26/16 23:39, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20160624:
->>
->
-> on i386, when CONFIG_OF is not enabled ...
-> but OF_GPIO is enabled due to this in drivers/gpio/Kconfig:
->
-> config OF_GPIO
->         def_bool y
->         depends on OF || COMPILE_TEST
->
-> (above from commit 1e4a80640338924b9f9fd7a121ac31d08134410a
-> from Alexander Stein <alexanders83@web.de>)
->
->
-> ../drivers/pinctrl/bcm/pinctrl-iproc-gpio.c:381:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
-> ../drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
-> ../drivers/pinctrl/bcm/pinctrl-nsp-gpio.c:365:20: error: 'pinconf_generic_dt_node_to_map_pin' undeclared here (not in a function)
->
-> because that function is only present when CONFIG_OF is enabled.
->
->
-> Also, why does that commit (1e4a80640338924b9f9fd7a121ac31d08134410a)
-> not have any other S-O-B lines in it?  like whoever merged it?
+Thanks Stephen, the fixup looks good.
 
-I merged it I think, Alex made a long series enabling compile
-testing and I started to cherry-pick the first commits to let
-them trickle in.
+I already notified Dave on those issues and how to fix, see mail
+thread "Mellanox 100G mlx5 resiliency and xmit path fixes"
 
-I was worried about it because some of the patches caused
-severe build problems on some archs.
-
-It's a  bit tricky to know what to do here: we want compile
-coverage to get proper testing, when we turn it on we get regressions,
-so trying to improve things make things break and it becomes a
-vicious circle of trouble. I don't know what the biggest pain is ...
-
-I don't really see the conclusion of this discussion thread, whether
-I should revert the patch or not? For fixes or next?
-
-Yours,
-Linus Walleij
+Thanks,
+Saeed.
