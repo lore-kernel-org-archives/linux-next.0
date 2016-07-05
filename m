@@ -1,77 +1,34 @@
-From: Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: Re: [PATCH, RESEND] staging: emxx_udc: allow modular build
-Date: Tue, 05 Jul 2016 13:06:02 +0300
-Message-ID: <87h9c4l7qt.fsf@linux.intel.com>
-References: <E1bKMRb-0005l2-N2@optimist> <20160705095242.GP6247@sirena.org.uk> <4551753.qTqdp3sOje@wuerfel>
+From: Nicholas Mc Guire <der.herr@hofr.at>
+Subject: process question - linux-next conflicts
+Date: Tue, 5 Jul 2016 13:01:24 +0000
+Message-ID: <20160705130124.GA18622@osadl.at>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:18406 "EHLO mga02.intel.com"
+Received: from mail.osadl.at ([92.243.35.153]:42861 "EHLO mail.osadl.at"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752448AbcGEKGv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 5 Jul 2016 06:06:51 -0400
-In-Reply-To: <4551753.qTqdp3sOje@wuerfel>
+	id S1755123AbcGENKo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jul 2016 09:10:44 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org
-Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Magnus Damm <damm+renesas@opensource.se>, Simon Horman <horms+renesas@verge.net.au>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org
-
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+To: linux-next@vger.kernel.org
 
 
-Hi,
+HI !
 
-Arnd Bergmann <arnd@arndb.de> writes:
-> A change to the usb gadget core allowed certain API functions to be
-> part of a loadable module, which breaks having emxx_udc built-in:
->
-> drivers/staging/built-in.o: In function `nbu2ss_drv_probe':
-> (.text+0x2428): undefined reference to `usb_ep_set_maxpacket_limit'
->
-> The original patch already fixed tons of other cases that have the
-> added dependency but apparently missed this one that now appears
-> in an ARM allmodconfig build.
->
-> This patch makes the symbol "tristate", which lets the Kconfig
-> dependency tracking handle it correctly. To make the module
-> actually usable, I also revert 0af61e66ee16 ("drivers/staging:
-> make emxx_udc.c explicitly non-modular"), which Paul Gortmaker
-> added after noticing that the Kconfig symbol was 'bool'.
-> Compared to the original version however, I leave out the
-> '__exit' annotation on the remove callback, as Paul pointed
-> out that this was incorrect.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 5a8d651a2bde ("usb: gadget: move gadget API functions to udc-core")
+ linux-next daily tree mails include information on conflicts like=20
 
-Sorry guys, I didn't know we had UDC drivers sitting in staging.
+ "The drm-misc tree gained a conflict against Linus' tree."
 
-Acked-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+ and if one looks at these email-reported conflicts they are quite
+ inffrequent, e.g. March 2016 range from 0-5 with a mean of about 1.5,
+ but the plots on http://neuling.org/linux-next-size.html for=20
+ conflicts show significantly higher numbers, again March 2016
+ range between aprox. 10 and 75 with a mean of aprox. 40 - so I=B4m=20
+ mixing up something here - are the plots refereing to different=20
+ conflicts or am I just interpreting the e-mail notes incorectly ?
 
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBCAAGBQJXe4aKAAoJEIaOsuA1yqREwEIP/RxvD7AbI34Ghfj4hnVNDdxX
-UeR6aPT9Xn8GKohNebowqsVfa02bMZCBcMTCNCU1vmvfQMydTGed1/s22xTcIELe
-x1ZatXUL+4ULLzXlK/Z8chqpekItz6lJc467g1OjQvC8US4eaQ9OwFPFlxLxhnfP
-dU0VEK9K8XShJntj2PYwh6rsBFpWqaKJIgbjx9krxuqOCzTLjtXIvdJGTRHu7nej
-rBEAvEcWN8Lz2t2R++kxhLZ67iHBrzZgjdMAlvzp7wzLy3CZh1MiPw04AZi4Fv6Z
-wwIF3VtW34HY18MKmmORzxnWKYvFnnBlVRJCVf0x8zrycTyDCM/nesuXJQZa5KxO
-SgoQu0HvMZz+PlL3VEPpRW/7mbqDqp25ZJNOIJwj/msmAfGDsSUlw5vsvZmBPJmt
-TafQ30iu6rbrYfvl+WSGwzS4pt5wZFDlhwU0HXLWEhR6xNkKhSFMEhDGm8Dk038w
-GUbakFMcibKPru+H3DRKbAwISsuP81V6a5Nbtn5wjbZSFyt+n7LUITwcD30lrfLx
-rh2x6zbgl4Vcg1JB7GI++XvrflPOtTYq6a/OFIbrZ3h/wnrlScFn1aDmuOIWzgBa
-lC4iHWgqhJbpIrpxh8GwmmnIb0PtWH5FIXaH7WFRXxitMxDQox3xuyPUmpS1koUq
-9puafnW0zlRilVH0Jd4d
-=bAuy
------END PGP SIGNATURE-----
---=-=-=--
+thx!
+hofrat
