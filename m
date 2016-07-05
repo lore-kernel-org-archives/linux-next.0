@@ -1,52 +1,107 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip
- tree (from the drm-intel tree)
-Date: Tue, 5 Jul 2016 10:25:12 +0200
-Message-ID: <20160705082512.GX30921@twins.programming.kicks-ass.net>
-References: <20160705135303.6a1bc80a@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160705135303.6a1bc80a@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Paul McKenney <paulmck@linux.vnet.ibm.com>, Ingo Molnar <mingo@elte.hu>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160705 build: 2 failures 6 warnings (next-20160705)
+Date: Tue, 05 Jul 2016 10:15:03 +0100
+Message-ID: <E1bKMRb-0005l2-N2@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44378 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754341AbcGEJPO (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 5 Jul 2016 05:15:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-T24gVHVlLCBKdWwgMDUsIDIwMTYgYXQgMDE6NTM6MDNQTSArMTAwMCwgU3RlcGhlbiBSb3Rod2Vs
-bCB3cm90ZToKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW0uYyBi
-L2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtLmMKPiBpbmRleCBkMzUwMmMwNjAzZTUuLjFm
-OTFmMTg3YjJhOCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbS5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW0uYwo+IEBAIC0zMjkwLDcgKzMy
-OTAsNyBAQCBpOTE1X2dlbV9yZXRpcmVfd29ya19oYW5kbGVyKHN0cnVjdCB3b3JrX3N0cnVjdCAq
-d29yaykKPiAgCSAqIFdlIGRvIG5vdCBuZWVkIHRvIGRvIHRoaXMgdGVzdCB1bmRlciBsb2NraW5n
-IGFzIGluIHRoZSB3b3JzdC1jYXNlCj4gIAkgKiB3ZSBxdWV1ZSB0aGUgcmV0aXJlIHdvcmtlciBv
-bmNlIHRvbyBvZnRlbi4KPiAgCSAqLwo+IC0JaWYgKGxvY2tsZXNzX2RlcmVmZXJlbmNlKGRldl9w
-cml2LT5ndC5hd2FrZSkpCj4gKwlpZiAoLypsb2NrbGVzc19kZXJlZmVyZW5jZSovKGRldl9wcml2
-LT5ndC5hd2FrZSkpCj4gIAkJcXVldWVfZGVsYXllZF93b3JrKGRldl9wcml2LT53cSwKPiAgCQkJ
-CSAgICZkZXZfcHJpdi0+Z3QucmV0aXJlX3dvcmssCj4gIAkJCQkgICByb3VuZF9qaWZmaWVzX3Vw
-X3JlbGF0aXZlKEhaKSk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVf
-aXJxLmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5jCj4gaW5kZXggZjZkZThkZDU2
-N2EyLi4yYzE5MjY0MTg2OTEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkx
-NV9pcnEuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfaXJxLmMKPiBAQCAtMzA5
-NSw3ICszMDk1LDcgQEAgc3RhdGljIHZvaWQgaTkxNV9oYW5nY2hlY2tfZWxhcHNlZChzdHJ1Y3Qg
-d29ya19zdHJ1Y3QgKndvcmspCj4gIAlpZiAoIWk5MTUuZW5hYmxlX2hhbmdjaGVjaykKPiAgCQly
-ZXR1cm47Cj4gIAo+IC0JaWYgKCFsb2NrbGVzc19kZXJlZmVyZW5jZShkZXZfcHJpdi0+Z3QuYXdh
-a2UpKQo+ICsJaWYgKCEvKmxvY2tsZXNzX2RlcmVmZXJlbmNlKi8oZGV2X3ByaXYtPmd0LmF3YWtl
-KSkKPiAgCQlyZXR1cm47Cj4gIAo+ICAJLyogQXMgZW5hYmxpbmcgdGhlIEdQVSByZXF1aXJlcyBm
-YWlybHkgZXh0ZW5zaXZlIG1taW8gYWNjZXNzLAoKUmlnaHQsIG5laXRoZXIgY2FzZSBhcHBlYXJz
-IHRvIGluY2x1ZGUgYSBkYXRhIGRlcGVuZGVuY3kgYW5kIHRodXMKbG9ja2xlc3NfZGVyZWZlcmVu
-Y2UoKSBzZWVtcyBtaXNndWlkZWQuCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9pbnRlbC1nZngK
+Tree/Branch: next-20160705
+Git describe: next-20160705
+Commit: 5786869c1b Add linux-next specific files for 20160705
+
+Build Time: 75 min 0 sec
+
+Passed:    7 / 9   ( 77.78 %)
+Failed:    2 / 9   ( 22.22 %)
+
+Errors: 0
+Warnings: 6
+Section Mismatches: 12
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      0 warnings    8 mismatches  : arm64-allmodconfig
+      6 warnings    4 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 6
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
+	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
+	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+
+Section Mismatch Summary: 12
+	  1 WARNING: vmlinux.o(.text+0x1ddacc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: vmlinux.o(.text+0x1ddac4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: vmlinux.o(.text+0x18486c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/libftrace.o(.text+0x8eec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/libftrace.o(.text+0x8ee4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/libftrace.o(.text+0x6784): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/built-in.o(.text+0x90ec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/built-in.o(.text+0x90e4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/trace/built-in.o(.text+0x6974): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/built-in.o(.text+0x17fccc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/built-in.o(.text+0x17fcc4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	  1 WARNING: kernel/built-in.o(.text+0x118074): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 0 errors, 0 warnings, 8 section mismatches
+
+Section Mismatches:
+	WARNING: kernel/trace/libftrace.o(.text+0x8ee4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/trace/libftrace.o(.text+0x8eec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/trace/built-in.o(.text+0x90e4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/trace/built-in.o(.text+0x90ec): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/built-in.o(.text+0x17fcc4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/built-in.o(.text+0x17fccc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: vmlinux.o(.text+0x1ddac4): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: vmlinux.o(.text+0x1ddacc): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 0 errors, 6 warnings, 4 section mismatches
+
+Warnings:
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
+	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
+	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+Section Mismatches:
+	WARNING: kernel/trace/libftrace.o(.text+0x6784): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/trace/built-in.o(.text+0x6974): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: kernel/built-in.o(.text+0x118074): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+	WARNING: vmlinux.o(.text+0x18486c): Section mismatch in reference from the function ftrace_init_tracefs() to the (unknown reference) .init.data:(unknown)
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
