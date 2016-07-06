@@ -1,39 +1,75 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: build warnings after merge of the ftrace tree
-Date: Tue, 5 Jul 2016 15:29:09 -0400
-Message-ID: <20160705152909.726348af@gandalf.local.home>
-References: <20160704154207.159b102a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 6 Jul 2016 11:32:28 +1000
+Message-ID: <20160706113228.114c942c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160704154207.159b102a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37814 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750840AbcGFBcc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 5 Jul 2016 21:32:32 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hayeswang <hayeswang@realtek.com>
 
-On Mon, 4 Jul 2016 15:42:07 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi all,
 
-> Hi Steven,
-> 
-> After merging the ftrace tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-I'm currently running the patch I posted previously and if all goes
-well will have that patch added to my ftrace-next repo tonight.
-Fengguang Wu's bot caught this, but I was working on something else.
-Over the weekend I was wondering why I haven't pushed my repo yet (I
-forgot about this), and pushed my branch.
+  drivers/net/usb/r8152.c
 
-So this doesn't happen again, I added:
+between commit:
 
- # CONFIG_SECTION_MISMATCH_WARN_ONLY is not set
+  2609af19362d ("r8152: fix runtime function for RTL8152")
 
-to one of the configs I use for testing, as my tests didn't die when
-a mismatch was added and caught.
+from the net tree and commit:
 
--- Steve
+  a028a9e003f2 ("r8152: move the settings of PHY to a work queue")
 
-Link: http://lkml.kernel.org/r/20160704102139.19cbc0d9@gandalf.local.home
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/usb/r8152.c
+index 0da72d39b4f9,24d367280ecf..000000000000
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@@ -624,7 -624,7 +624,8 @@@ struct r8152 
+  		int (*eee_get)(struct r8152 *, struct ethtool_eee *);
+  		int (*eee_set)(struct r8152 *, struct ethtool_eee *);
+  		bool (*in_nway)(struct r8152 *);
+ +		void (*autosuspend_en)(struct r8152 *tp, bool enable);
++ 		void (*hw_phy_cfg)(struct r8152 *);
+  	} rtl_ops;
+  
+  	int intr_interval;
+@@@ -4156,7 -4157,7 +4176,8 @@@ static int rtl_ops_init(struct r8152 *t
+  		ops->eee_get		= r8152_get_eee;
+  		ops->eee_set		= r8152_set_eee;
+  		ops->in_nway		= rtl8152_in_nway;
+ +		ops->autosuspend_en	= rtl_runtime_suspend_enable;
++ 		ops->hw_phy_cfg		= r8152b_hw_phy_cfg;
+  		break;
+  
+  	case RTL_VER_03:
+@@@ -4172,7 -4173,7 +4193,8 @@@
+  		ops->eee_get		= r8153_get_eee;
+  		ops->eee_set		= r8153_set_eee;
+  		ops->in_nway		= rtl8153_in_nway;
+ +		ops->autosuspend_en	= rtl8153_runtime_enable;
++ 		ops->hw_phy_cfg		= r8153_hw_phy_cfg;
+  		break;
+  
+  	default:
