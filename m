@@ -1,84 +1,73 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160707 build: 1 failures 6 warnings (next-20160707)
-Date: Thu, 07 Jul 2016 10:23:56 +0100
-Message-ID: <E1bL5XI-0004Z9-EP@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52278 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752147AbcGGJYG (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 7 Jul 2016 05:24:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160707
-Git describe: next-20160707
-Commit: aa74f15f1a Add linux-next specific files for 20160707
-
-Build Time: 75 min 15 sec
-
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
-
-Errors: 1
-Warnings: 6
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/gpu/drm/rockchip/rockchip_drm_drv.c:17:27: fatal error: asm/dma-iommu.h: No such file or directory
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../drivers/gpu/drm/rockchip/rockchip_drm_drv.c:17:27: fatal error: asm/dma-iommu.h: No such file or directory
-
-Warnings Summary: 6
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160707 build: 1 failures 6 warnings (next-20160707)
+Date: Thu, 7 Jul 2016 14:22:19 +0200
+Message-ID: <20160707122219.GO6247@sirena.org.uk>
+References: <E1bL5XI-0004Z9-EP@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0116884259=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <E1bL5XI-0004Z9-EP@optimist>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Yao <mark.yao@rock-chips.com>, David Airlie <airlied@linux.ie>, Heiko Stuebner <heiko@sntech.de>, Simon Xue <xxm@rock-chips.com>, Shunqian Zheng <zhengsq@rock-chips.com>, Tomasz Figa <tfiga@chromium.org>, Joerg Roedel <jroedel@suse.de>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-next.vger.kernel.org
 
 
+--===============0116884259==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ClpMRN7ztK9mBQjN"
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
 
+--ClpMRN7ztK9mBQjN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+On Thu, Jul 07, 2016 at 10:23:56AM +0100, Build bot for Mark Brown wrote:
 
-Errors:
-	../drivers/gpu/drm/rockchip/rockchip_drm_drv.c:17:27: fatal error: asm/dma-iommu.h: No such file or directory
+Today's -next fails to build an arm64 allmodconfig due to:
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+> 	arm64-allmodconfig
+> ../drivers/gpu/drm/rockchip/rockchip_drm_drv.c:17:27: fatal error: asm/dma-iommu.h: No such file or directory
 
-Warnings:
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1817:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1822:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/polaris10_hwmgr.c:1824:4: warning: this decimal constant is unsigned only in ISO C90
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
--------------------------------------------------------------------------------
+triggered by c51f43a9c171ea (iommu/rockchip: Enable Rockchip IOMMU on
+ARM64) which enables the Rockchip IOMMU driver on ARM64 which lacks the
+above header.  Either the use of the header needs to be removed or an
+explicit ARM64 dependency added at the DRM level.
 
-Passed with no errors, warnings or mismatches:
+--ClpMRN7ztK9mBQjN
+Content-Type: application/pgp-signature; name="signature.asc"
 
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXfkk9AAoJECTWi3JdVIfQNYsH/inRnDZXj2z6JBkqHOhAx3P0
+jkEA11zb/bS1zyUA/SbTvE4Te/MQRgdBXHnbqAiFRttp43ZJ2po+PDdxB94Yyly6
+JUsdaGJaHpwoBE7kq1X8MU2MgbUIaxOUNfYhuDr5KLkVenPCb8+oySWP2xkj4XqG
+TZ3Pvdu4I6VFqCg0/9lZcmSKvmCILCsOf+16mXwidH1L2MDaxcwOJ3REiExGB+uU
+9tK9//6R+DPh3pN0QiRDlqS3fUJqhUEpfBdghWgcNiQ3xCb2YVXP/jJLQNhvPosL
+6XPqSh6N+UuL4C9u92PiO36K9TT/wQTpDoLx9B58qf/Du0ILwpXylvSTXceoB3Y=
+=Ejdu
+-----END PGP SIGNATURE-----
+
+--ClpMRN7ztK9mBQjN--
+
+--===============0116884259==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0116884259==--
