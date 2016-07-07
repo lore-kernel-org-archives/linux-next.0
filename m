@@ -1,67 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clockevents tree with the arm-soc
- tree
-Date: Thu, 7 Jul 2016 14:12:26 +1000
-Message-ID: <20160707141226.2b9c1e15@canb.auug.org.au>
+From: "Coelho, Luciano" <luciano.coelho@intel.com>
+Subject: Re: linux-next: manual merge of the mac80211-next tree with the
+ wireless-drivers-next tree
+Date: Thu, 7 Jul 2016 05:49:09 +0000
+Message-ID: <1467870546.25088.43.camel@intel.com>
+References: <20160707115628.7fdac327@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mga03.intel.com ([134.134.136.65]:28494 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750844AbcGGFtT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 7 Jul 2016 01:49:19 -0400
+In-Reply-To: <20160707115628.7fdac327@canb.auug.org.au>
+Content-Language: en-US
+Content-ID: <9ED47F929AC4A54789CD8C06EDC43FA0@intel.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "kvalo@codeaurora.org" <kvalo@codeaurora.org>, "johannes@sipsolutions.net" <johannes@sipsolutions.net>
+Cc: "Krauss, Assaf" <assaf.krauss@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "huxm@marvell.com" <huxm@marvell.com>, "Stern, Avraham" <avraham.stern@intel.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "Spinadel, David" <david.spinadel@intel.com>, "akarwar@marvell.com" <akarwar@marvell.com>
 
-Hi Daniel,
-
-Today's linux-next merge of the clockevents tree got a conflict in:
-
-  arch/arm/Kconfig
-
-between commit:
-
-  c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
-
-from the arm-soc tree and commit:
-
-  250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
-
-from the clockevents tree.
-
-I fixed it up (I used the arm-soc version of this file and then added
-the following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 7 Jul 2016 13:59:06 +1000
-Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/mach-clps711x/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
-index 3b56197ccfd0..dc7c6edeab39 100644
---- a/arch/arm/mach-clps711x/Kconfig
-+++ b/arch/arm/mach-clps711x/Kconfig
-@@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
- 	depends on ARCH_MULTI_V4T
- 	select ARCH_REQUIRE_GPIOLIB
- 	select AUTO_ZRELADDR
--	select CLKSRC_MMIO
- 	select CLKSRC_OF
-+	select CLPS711X_TIMER
- 	select COMMON_CLK
- 	select CPU_ARM720T
- 	select GENERIC_CLOCKEVENTS
--- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+T24gVGh1LCAyMDE2LTA3LTA3IGF0IDExOjU2ICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3Rl
+Og0KPiBIaSBKb2hhbm5lcywNCj4gDQo+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUg
+bWFjODAyMTEtbmV4dCB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOg0KPiANCj4gwqAgZHJpdmVycy9u
+ZXQvd2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L2NtZGV2dC5jDQo+IA0KPiBiZXR3ZWVuIGNvbW1p
+dDoNCj4gDQo+IMKgIGE5Yzc5MGJhMjNlYiAoIm13aWZpZXg6IGZhY3RvciBvdXQgbXdpZmlleF9j
+YW5jZWxfc2NhbiIpDQo+IA0KPiBmcm9tIHRoZSB3aXJlbGVzcy1kcml2ZXJzLW5leHQgdHJlZSBh
+bmQgY29tbWl0Og0KPiANCj4gwqAgMWQ3NjI1MGJkMzRhICgibmw4MDIxMTogc3VwcG9ydCBiZWFj
+b24gcmVwb3J0IHNjYW5uaW5nIikNCj4gDQo+IGZyb20gdGhlIG1hYzgwMjExLW5leHQgdHJlZS4N
+Cj4gDQo+IEkgZml4ZWQgaXQgdXAgKEkgdXNlZCB0aGUgd2lyZWxlc3MtZHJpdmVycy1uZXh0IHRy
+ZWUgdmVyc2lvbiBvZiB0aGlzDQo+IGZpbGUNCj4gYW5kIHRoZW4gYWRkZWQgdGhlIGZvbGxvd2lu
+ZyBtZXJnZSBmaXggcGF0Y2gpIGFuZCBjYW4gY2FycnkgdGhlIGZpeA0KPiBhcw0KPiBuZWNlc3Nh
+cnkuIFRoaXMgaXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwg
+YnV0DQo+IGFueQ0KPiBub24gdHJpdmlhbCBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0
+byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXINCj4gd2hlbiB5b3VyIHRyZWUgaXMgc3VibWl0dGVk
+IGZvciBtZXJnaW5nLsKgwqBZb3UgbWF5IGFsc28gd2FudCB0bw0KPiBjb25zaWRlcg0KPiBjb29w
+ZXJhdGluZyB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1p
+bmltaXNlDQo+IGFueQ0KPiBwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGljdHMuDQo+IA0KPiBG
+cm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4NCj4gRGF0ZTogVGh1
+LCA3IEp1bCAyMDE2IDExOjUxOjM1ICsxMDAwDQo+IFN1YmplY3Q6IFtQQVRDSF0gbXdpZmlleDog
+Zml4dXAgZm9yICJubDgwMjExOiBzdXBwb3J0IGJlYWNvbiByZXBvcnQNCj4gc2Nhbm5pbmciDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5h
+dT4NCj4gLS0tDQo+IMKgZHJpdmVycy9uZXQvd2lyZWxlc3MvbWFydmVsbC9td2lmaWV4L3NjYW4u
+YyB8IDYgKysrKystDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
+dGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwv
+bXdpZmlleC9zY2FuLmMNCj4gYi9kcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213aWZpZXgv
+c2Nhbi5jDQo+IGluZGV4IDRkMjFjYTk3NDRjMS4uZWQzZGUwNzU0YTA4IDEwMDY0NA0KPiAtLS0g
+YS9kcml2ZXJzL25ldC93aXJlbGVzcy9tYXJ2ZWxsL213aWZpZXgvc2Nhbi5jDQo+ICsrKyBiL2Ry
+aXZlcnMvbmV0L3dpcmVsZXNzL21hcnZlbGwvbXdpZmlleC9zY2FuLmMNCj4gQEAgLTIwMjYsOSAr
+MjAyNiwxMyBAQCB2b2lkIG13aWZpZXhfY2FuY2VsX3NjYW4oc3RydWN0DQo+IG13aWZpZXhfYWRh
+cHRlciAqYWRhcHRlcikNCj4gwqAJCQlpZiAoIXByaXYpDQo+IMKgCQkJCWNvbnRpbnVlOw0KPiDC
+oAkJCWlmIChwcml2LT5zY2FuX3JlcXVlc3QpIHsNCj4gKwkJCQlzdHJ1Y3QgY2ZnODAyMTFfc2Nh
+bl9pbmZvIGluZm8gPSB7DQo+ICsJCQkJCS5hYm9ydGVkID0gdHJ1ZSwNCj4gKwkJCQl9Ow0KPiAr
+DQo+IMKgCQkJCW13aWZpZXhfZGJnKGFkYXB0ZXIsIElORk8sDQo+IMKgCQkJCQnCoMKgwqDCoCJp
+bmZvOiBhYm9ydGluZw0KPiBzY2FuXG4iKTsNCj4gLQkJCQljZmc4MDIxMV9zY2FuX2RvbmUocHJp
+di0NCj4gPnNjYW5fcmVxdWVzdCwgMSk7DQo+ICsJCQkJY2ZnODAyMTFfc2Nhbl9kb25lKHByaXYt
+DQo+ID5zY2FuX3JlcXVlc3QsICZpbmZvKTsNCj4gwqAJCQkJcHJpdi0+c2Nhbl9yZXF1ZXN0ID0g
+TlVMTDsNCj4gwqAJCQl9DQo+IMKgCQl9DQoNClRoZSBmaXggbG9va3MgZ29vZCB0byBtZS4gwqBU
+aGFua3MhDQoNCi0tDQpMdWNhLg==
