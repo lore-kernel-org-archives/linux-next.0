@@ -1,34 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the mac80211-next tree with the
- wireless-drivers-next tree
-Date: Fri, 8 Jul 2016 10:34:47 +1000
-Message-ID: <20160708103447.74f6dc26@canb.auug.org.au>
-References: <20160707115628.7fdac327@canb.auug.org.au>
-	<874m812zv3.fsf@kamboji.qca.qualcomm.com>
+Subject: linux-next: build warning after merge of the wireless-drivers-next
+ tree
+Date: Fri, 8 Jul 2016 11:32:14 +1000
+Message-ID: <20160708113214.7f371cb3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48466 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753187AbcGHAev (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 7 Jul 2016 20:34:51 -0400
-In-Reply-To: <874m812zv3.fsf@kamboji.qca.qualcomm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Avraham Stern <avraham.stern@intel.com>, David Spinadel <david.spinadel@intel.com>, Assaf Krauss <assaf.krauss@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Amitkumar Karwar <akarwar@marvell.com>, linux-wireless@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org, David Miller <davem@davemloft.net>, netdev@vger.kernel.org, Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>, Avraham Stern <avraham.stern@intel.com>, David Spinadel <david.spinadel@intel.com>, Assaf Krauss <assaf.krauss@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Kalle,
+Hi all,
 
-On Thu, 07 Jul 2016 19:10:24 +0300 Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Stephen, if it's not too much trouble for you it would be good to CC
-> linux-wireless on wireless related problems. Not everyone follow lkml
-> (or linux-next).
+After merging the wireless-drivers-next tree, today's linux-next build
+(arm multi_v7_defconfig, x86_64 allmodconfig) produced this warning:
 
-I have added linux-wireless@vger.kernel.org as a contact for the
-wireless-drivers and wireless-drivers-next trees.
+drivers/net/wireless/marvell/mwifiex/scan.c: In function 'mwifiex_cancel_scan':
+drivers/net/wireless/marvell/mwifiex/scan.c:2031:44: warning: passing argument 2 of 'cfg80211_scan_done' makes pointer from integer without a cast [-Wint-conversion]
+     cfg80211_scan_done(priv->scan_request, 1);
+                                            ^
+In file included from include/net/mac80211.h:23:0,
+                 from drivers/net/wireless/marvell/mwifiex/decl.h:30,
+                 from drivers/net/wireless/marvell/mwifiex/scan.c:20:
+include/net/cfg80211.h:4104:6: note: expected 'struct cfg80211_scan_info *' but argument is of type 'int'
+ void cfg80211_scan_done(struct cfg80211_scan_request *request,
+      ^
+
+Introduced by commit
+
+  a9c790ba23eb ("mwifiex: factor out mwifiex_cancel_scan")
+
+interacting with commit
+
+  1d76250bd34a ("nl80211: support beacon report scanning")
+
+from the net-next (and mac80211-next) tree.
+
+This will need some merge fix patch ... please send me or Dave one.
 
 -- 
 Cheers,
