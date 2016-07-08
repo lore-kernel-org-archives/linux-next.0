@@ -1,43 +1,68 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: manual merge of the block tree with Linus' tree
-Date: Fri, 8 Jul 2016 10:11:30 -0400
-Message-ID: <20160708141130.GF22329@char.us.oracle.com>
-References: <20160708130750.1ef2ffc9@canb.auug.org.au>
- <20160708141429.05d542cd@canb.auug.org.au>
+From: Amitkumar Karwar <akarwar@marvell.com>
+Subject: RE: [PATCH v4] mwifiex: Reduce endian conversion for REG Host
+ Commands
+Date: Fri, 8 Jul 2016 14:32:31 +0000
+Message-ID: <edd221ee06dd4f9c8ecec45de67de35b@SC-EXCH04.marvell.com>
+References: <39f33dff10344e53b0fbbc9681f90b33@SC-EXCH04.marvell.com>
+	<1467022402-23990-1-git-send-email-prasunmaiti87@gmail.com>
+	<8e1cc4765b4242a4a48f86abddbe40fc@SC-EXCH04.marvell.com>
+ <877fcw1c51.fsf@kamboji.qca.qualcomm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:21810 "EHLO
-	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754911AbcGHOLq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2016 10:11:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20160708141429.05d542cd@canb.auug.org.au>
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:15151 "EHLO
+	mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754881AbcGHOcl convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Jul 2016 10:32:41 -0400
+In-Reply-To: <877fcw1c51.fsf@kamboji.qca.qualcomm.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <bob.liu@oracle.com>, Mike Christie <mchristi@redhat.com>, Christoph Hellwig <hch@lst.de>
+To: Kalle Valo <kvalo@codeaurora.org>
+Cc: Prasun Maiti <prasunmaiti87@gmail.com>, Nishant Sarmukadam <nishants@marvell.com>, Linux Wireless <linux-wireless@vger.kernel.org>, Linux Next <linux-next@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-On Fri, Jul 08, 2016 at 02:14:29PM +1000, Stephen Rothwell wrote:
-> Hi all,
+> From: linux-wireless-owner@vger.kernel.org [mailto:linux-wireless-
+> owner@vger.kernel.org] On Behalf Of Kalle Valo
+> Sent: Friday, July 08, 2016 7:10 PM
+> To: Amitkumar Karwar
+> Cc: Prasun Maiti; Nishant Sarmukadam; Linux Wireless; Linux Next; Linux
+> Kernel
+> Subject: Re: [PATCH v4] mwifiex: Reduce endian conversion for REG Host
+> Commands
 > 
-> On Fri, 8 Jul 2016 13:07:50 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> >  +			 * Get the bios in the request so we can re-queue them.
-> >  +			 */
-> > - 			if (shadow[j].request->cmd_flags &
-> > - 					(REQ_FLUSH | REQ_FUA | REQ_DISCARD | REQ_SECURE)) {
-> > ++			if (req_op(shadow[j].request) == REQ_OP_FLUSH ||
-> > ++			    req_op(shadow[j].request) == REQ_OP_DISCARD ||
-> > ++			    req_op(shadow[j].request) == REQ_OP_SECURE_ERASE ||
-> > ++			    shadow[j].request->cmd_flags & REQ_FUA)) {
->                                                                   ^
-> That is an extra ')' which I have now removed.
-
-Stephen,
-
-Thanks as always for doing this!
+> Amitkumar Karwar <akarwar@marvell.com> writes:
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+> >> From: Prasun Maiti [mailto:prasunmaiti87@gmail.com]
+> >> Sent: Monday, June 27, 2016 3:43 PM
+> >> To: Amitkumar Karwar
+> >> Cc: Nishant Sarmukadam; Linux Wireless; Linux Next; Linux Kernel;
+> >> Kalle Valo
+> >> Subject: [PATCH v4] mwifiex: Reduce endian conversion for REG Host
+> >> Commands
+> >>
+> >> For multiple REG Host Commands (e.g HostCmd_CMD_802_11_EEPROM_ACCESS,
+> >> HostCmd_CMD_MAC_REG_ACCESS etc.) "cpu_to_leX"-converted values are
+> >> saved to driver. So, "leX_to_cpu" conversion is required too many
+> >> times afterwards in driver.
+> >>
+> >> This patch reduces the endian: conversion without saving "cpu_to_leX"
+> >> converted values in driver. This will convert endianness in prepare
+> >> command and command response path.
+> >>
+> >> Signed-off-by: Prasun Maiti <prasunmaiti87@gmail.com>
+> 
+> [deleted almost 300 lines of unnecessary quotes]
+> 
+> > Any specific reason for dropping this patch?
+> > I can see the status as "Deferred" on patchwork.
+> 
+> It's not dropped, "Deferred" means that the patch was postponed for some
+> reason and I need to look at the patch more carefully. In this case I
+> did it because I was hoping to see an Acked-by from you.
+
+Thanks for clarification. I will ack the patch.
+
+Regards,
+Amitkumar
