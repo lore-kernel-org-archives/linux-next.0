@@ -1,35 +1,74 @@
-From: =?UTF-8?Q?Matias_Bj=c3=b8rling?= <m@bjorling.me>
-Subject: Re: linux-next: please clean up the lightnvm tree
-Date: Fri, 8 Jul 2016 06:30:59 +0200
-Message-ID: <577F2C83.4060704@bjorling.me>
-References: <20160708142251.650e3756@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with Linus' tree
+Date: Fri, 8 Jul 2016 16:13:13 +1000
+Message-ID: <20160708161313.796f341a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lf0-f48.google.com ([209.85.215.48]:36562 "EHLO
-	mail-lf0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858AbcGHEbE (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2016 00:31:04 -0400
-Received: by mail-lf0-f48.google.com with SMTP id q132so23751998lfe.3
-        for <linux-next@vger.kernel.org>; Thu, 07 Jul 2016 21:31:02 -0700 (PDT)
-In-Reply-To: <20160708142251.650e3756@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:42062 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751442AbcGHGNQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 8 Jul 2016 02:13:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>, "J. Bruce Fields" <bfields@redhat.com>
 
-On 07/08/2016 06:22 AM, Stephen Rothwell wrote:
-> Hi Matias,
->
-> I noticed that the commits in the lightnvm tree have been applied
-> to the block tree as a series of patches (i.e. effectively rebased).
-> Could you please remove all the duplicate patches from the lightnvm tree
-> (which I think is the whole tree, curretly) before they start causing
-> merge conflicts for me.
->
-> One way to do this would be to rebase your tree on top of the block tree.
->
+Hi Eric,
 
-Thanks Stephen. Updated the for-next. I will make sure they are taken 
-off if applied directly to the block tree in the future.
+Today's linux-next merge of the userns tree got a conflict in:
+
+  fs/posix_acl.c
+
+between commit:
+
+  485e71e8fb63 ("posix_acl: Add set_posix_acl")
+
+from Linus' tree and commit:
+
+  0d4d717f2583 ("vfs: Verify acls are valid within superblock's s_user_ns.")
+
+from the userns tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/posix_acl.c
+index edc452c2a563,647c28180675..000000000000
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@@ -833,24 -839,6 +833,24 @@@ set_posix_acl(struct inode *inode, int 
+  	if (!inode_owner_or_capable(inode))
+  		return -EPERM;
+  
+ +	if (acl) {
+- 		int ret = posix_acl_valid(acl);
+++		int ret = posix_acl_valid(inode->i_sb->s_user_ns, acl);
+ +		if (ret)
+ +			return ret;
+ +	}
+ +	return inode->i_op->set_acl(inode, acl, type);
+ +}
+ +EXPORT_SYMBOL(set_posix_acl);
+ +
+ +static int
+ +posix_acl_xattr_set(const struct xattr_handler *handler,
+ +		    struct dentry *unused, struct inode *inode,
+ +		    const char *name, const void *value,
+ +		    size_t size, int flags)
+ +{
+ +	struct posix_acl *acl = NULL;
+ +	int ret;
+ +
+  	if (value) {
+  		acl = posix_acl_from_xattr(&init_user_ns, value, size);
+  		if (IS_ERR(acl))
