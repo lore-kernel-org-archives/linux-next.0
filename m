@@ -1,74 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with Linus' tree
-Date: Fri, 8 Jul 2016 16:13:13 +1000
-Message-ID: <20160708161313.796f341a@canb.auug.org.au>
+Subject: Re: linux-next: please clean up the lightnvm tree
+Date: Fri, 8 Jul 2016 16:23:27 +1000
+Message-ID: <20160708162327.50f0ba2e@canb.auug.org.au>
+References: <20160708142251.650e3756@canb.auug.org.au>
+	<577F2C83.4060704@bjorling.me>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42062 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38744 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751442AbcGHGNQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 8 Jul 2016 02:13:16 -0400
+	id S1753503AbcGHGYy convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2016 02:24:54 -0400
+In-Reply-To: <577F2C83.4060704@bjorling.me>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>, "J. Bruce Fields" <bfields@redhat.com>
+To: Matias =?UTF-8?B?QmrDuHJsaW5n?= <m@bjorling.me>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
 
-Hi Eric,
+Hi Matias,
 
-Today's linux-next merge of the userns tree got a conflict in:
+On Fri, 8 Jul 2016 06:30:59 +0200 Matias Bj=C3=B8rling <m@bjorling.me> =
+wrote:
+>
+> Thanks Stephen. Updated the for-next. I will make sure they are taken=
+=20
+> off if applied directly to the block tree in the future.
 
-  fs/posix_acl.c
+Tnanks.
 
-between commit:
-
-  485e71e8fb63 ("posix_acl: Add set_posix_acl")
-
-from Linus' tree and commit:
-
-  0d4d717f2583 ("vfs: Verify acls are valid within superblock's s_user_ns.")
-
-from the userns tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
+--=20
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/posix_acl.c
-index edc452c2a563,647c28180675..000000000000
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@@ -833,24 -839,6 +833,24 @@@ set_posix_acl(struct inode *inode, int 
-  	if (!inode_owner_or_capable(inode))
-  		return -EPERM;
-  
- +	if (acl) {
-- 		int ret = posix_acl_valid(acl);
-++		int ret = posix_acl_valid(inode->i_sb->s_user_ns, acl);
- +		if (ret)
- +			return ret;
- +	}
- +	return inode->i_op->set_acl(inode, acl, type);
- +}
- +EXPORT_SYMBOL(set_posix_acl);
- +
- +static int
- +posix_acl_xattr_set(const struct xattr_handler *handler,
- +		    struct dentry *unused, struct inode *inode,
- +		    const char *name, const void *value,
- +		    size_t size, int flags)
- +{
- +	struct posix_acl *acl = NULL;
- +	int ret;
- +
-  	if (value) {
-  		acl = posix_acl_from_xattr(&init_user_ns, value, size);
-  		if (IS_ERR(acl))
