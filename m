@@ -1,40 +1,43 @@
-From: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [v2] mwifiex: Fix endianness for event TLV type
- TLV_BTCOEX_WL_SCANTIME
-Date: Fri,  8 Jul 2016 13:47:03 +0000 (UTC)
-Message-ID: <20160708134703.E88D061154@smtp.codeaurora.org>
-References: <1467275483-24091-1-git-send-email-prasunmaiti87@gmail.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: linux-next: manual merge of the block tree with Linus' tree
+Date: Fri, 8 Jul 2016 10:11:30 -0400
+Message-ID: <20160708141130.GF22329@char.us.oracle.com>
+References: <20160708130750.1ef2ffc9@canb.auug.org.au>
+ <20160708141429.05d542cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467275483-24091-1-git-send-email-prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Nishant Sarmukadam <nishants-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Linux Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from aserp1040.oracle.com ([141.146.126.69]:21810 "EHLO
+	aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754911AbcGHOLq (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 8 Jul 2016 10:11:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20160708141429.05d542cd@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bob Liu <bob.liu@oracle.com>, Mike Christie <mchristi@redhat.com>, Christoph Hellwig <hch@lst.de>
 
-Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> The two members min_scan_time and max_scan_time of structure
-> "mwifiex_ie_types_btcoex_scan_time" are of two bytes each. The values
-> are assigned directtly from firmware without endian conversion handling.
-> So, wrong datas will get saved in big-endian systems.
+On Fri, Jul 08, 2016 at 02:14:29PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> This patch converts the values into cpu's byte order before assigning them
-> into the local members.
+> On Fri, 8 Jul 2016 13:07:50 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> >  +			 * Get the bios in the request so we can re-queue them.
+> >  +			 */
+> > - 			if (shadow[j].request->cmd_flags &
+> > - 					(REQ_FLUSH | REQ_FUA | REQ_DISCARD | REQ_SECURE)) {
+> > ++			if (req_op(shadow[j].request) == REQ_OP_FLUSH ||
+> > ++			    req_op(shadow[j].request) == REQ_OP_DISCARD ||
+> > ++			    req_op(shadow[j].request) == REQ_OP_SECURE_ERASE ||
+> > ++			    shadow[j].request->cmd_flags & REQ_FUA)) {
+>                                                                   ^
+> That is an extra ')' which I have now removed.
+
+Stephen,
+
+Thanks as always for doing this!
 > 
-> Signed-off-by: Prasun Maiti <prasunmaiti87-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Acked-by: Amitkumar Karwar <akarwar-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-
-Thanks, 1 patch applied to wireless-drivers-next.git:
-
-c18b104dd249 mwifiex: Fix endianness for event TLV type TLV_BTCOEX_WL_SCANTIME
-
--- 
-Sent by pwcli
-https://patchwork.kernel.org/patch/9206939/
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> -- 
+> Cheers,
+> Stephen Rothwell
