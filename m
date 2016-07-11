@@ -1,44 +1,36 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the net-next tree
-Date: Mon, 11 Jul 2016 11:03:24 +0300
-Message-ID: <87vb0czjn7.fsf@kamboji.qca.qualcomm.com>
-References: <20160711120614.0cdca5fa@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rtc tree
+Date: Mon, 11 Jul 2016 18:12:08 +1000
+Message-ID: <20160711181208.2d60493a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160711120614.0cdca5fa@canb.auug.org.au> (Stephen Rothwell's
-	message of "Mon, 11 Jul 2016 12:06:14 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Avraham Stern <avraham.stern@intel.com>, Johannes Berg <johannes.berg@intel.com>, Assaf Krauss <assaf.krauss@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <uwe@kleine-koenig.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Alexandre,
 
-> Today's linux-next merge of the wireless-drivers-next tree got a
-> conflict in:
->
->   drivers/net/wireless/intel/iwlwifi/mvm/scan.c
->
-> between commit:
->
->   7947d3e075cd ("mac80211: Add support for beacon report radio measurement")
->
-> from the net-next tree and commit:
->
->   69e046423ad7 ("iwlwifi: mvm: change scan timeout to a delayed work")
->
-> from the wireless-drivers-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+After merging the rtc tree, today's linux-next build (x86 64_allmodconfig)
+produced this warning:
 
-Thanks. I'm planning to submit a pull request to Dave tomorrow and I'll
-include instruction how to solve these mac80211 API conflicts.
+drivers/rtc/rtc-isl12057.c: In function 'isl12057_rtc_read_alarm':
+drivers/rtc/rtc-isl12057.c:249:26: warning: unused variable 'alarm_secs' [-Wunused-variable]
+  unsigned long rtc_secs, alarm_secs;
+                          ^
+drivers/rtc/rtc-isl12057.c:249:16: warning: unused variable 'rtc_secs' [-Wunused-variable]
+  unsigned long rtc_secs, alarm_secs;
+                ^
+drivers/rtc/rtc-isl12057.c:248:18: warning: unused variable 'rtc_tm' [-Wunused-variable]
+  struct rtc_time rtc_tm, *alarm_tm = &alarm->time;
+                  ^
+
+Introduced by commit
+
+  4e30a585a343 ("rtc: isl12057: let the rtc core interpret the partial alarm")
 
 -- 
-Kalle Valo
+Cheers,
+Stephen Rothwell
