@@ -1,56 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Mon, 11 Jul 2016 10:14:06 +1000
-Message-ID: <20160711101406.66a5c148@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Mon, 11 Jul 2016 11:46:53 +1000
+Message-ID: <20160711114653.066355ae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51602 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755498AbcGKBq4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 10 Jul 2016 21:46:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-Hi Catalin,
+Hi Rafael,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  arch/arm64/mm/fault.c
+ERROR: "configfs_unregister_subsystem" [samples/configfs/configfs_sample.ko] undefined!
+ERROR: "configfs_register_subsystem" [samples/configfs/configfs_sample.ko] undefined!
+ERROR: "config_group_init" [samples/configfs/configfs_sample.ko] undefined!
+ERROR: "config_item_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
+ERROR: "config_group_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
+ERROR: "configfs_undepend_item" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
+ERROR: "config_item_put" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
+ERROR: "config_item_init_type_name" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
 
-between commit:
+... and many more ...
 
-  e19a6ee2460b ("arm64: kernel: Save and restore UAO and addr_limit on exception entry")
+Presumably (maybe?) caused by commit
 
-from Linus' tree and commit:
+  0bf54fcd9504 ("ACPI: add support for configfs")
 
-  541ec870ef31 ("arm64: kill ESR_LNX_EXEC")
+though it is not obvious why this should be a problem.
 
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+I have used the version of the pm tree from next-20160708 for today.
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/arm64/mm/fault.c
-index b1166d1e5955,fc5a34a72c6d..000000000000
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@@ -279,9 -282,8 +282,9 @@@ static int __kprobes do_page_fault(unsi
-  		mm_flags |= FAULT_FLAG_WRITE;
-  	}
-  
-- 	if (permission_fault(esr) && (addr < USER_DS)) {
-+ 	if (is_permission_fault(esr) && (addr < USER_DS)) {
- -		if (get_fs() == KERNEL_DS)
- +		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
- +		if (regs->orig_addr_limit == KERNEL_DS)
-  			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
-  
-  		if (!search_exception_tables(regs->pc))
