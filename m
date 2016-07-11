@@ -1,72 +1,56 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: linux-next: Tree for Jul 8
-Date: Sat, 9 Jul 2016 14:24:46 -0700
-Message-ID: <20160709212446.GA3340@roeck-us.net>
-References: <20160708180338.6863303a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Mon, 11 Jul 2016 10:14:06 +1000
+Message-ID: <20160711101406.66a5c148@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:39579 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752892AbcGIVYy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 9 Jul 2016 17:24:54 -0400
-Content-Disposition: inline
-In-Reply-To: <20160708180338.6863303a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Morse <james.morse@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jul 08, 2016 at 06:03:38PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20160707:
-> 
-> New trees: netfilter and netfilter-next
-> 
-> The drm-msm tree gained a conflict against the arm tree.
-> 
-> The block tree gained conflicts against Linus' and the btrfs-kdave trees.
-> 
-> The userns tree gained a conflict against Linus' tree.
-> 
-> Non-merge commits (relative to Linus' tree): 7460
->  6931 files changed, 350754 insertions(+), 147233 deletions(-)
-> 
+Hi Catalin,
 
-Build results:
-	total: 148 pass: 136 fail: 12
-Failed builds:
-	arc:defconfig
-	arc:allnoconfig
-	arc:tb10x_defconfig
-	arc:axs103_defconfig
-	arc:nsim_hs_smp_defconfig
-	arc:vdk_hs38_smp_defconfig
-	arm:allmodconfig
-	arm64:allmodconfig
-	hexagon:defconfig
-	hexagon:allnoconfig
-	mips:ath79_defconfig
-	mips:malta_defconfig
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-Qemu test results:
-	total: 107 pass: 95 fail: 12
-Failed tests:
-	arm64:smp:defconfig
-	arm64:nosmp:defconfig
-	mips:malta_defconfig:nosmp
-	mips:malta_defconfig:smp
-	mips64:malta_defconfig:nosmp
-	mips64:malta_defconfig:smp
-	mipsel:malta_defconfig:nosmp
-	mipsel:malta_defconfig:smp
-	mipsel64:malta_defconfig:nosmp
-	mipsel64:malta_defconfig:smp
-	xtensa:dc233c:ml605:generic_kc705_defconfig
-	xtensa:dc233c:kc705:generic_kc705_defconfig
+  arch/arm64/mm/fault.c
 
-Details are available at http://kerneltests.org/builders.
+between commit:
 
-Thanks,
-Guenter
+  e19a6ee2460b ("arm64: kernel: Save and restore UAO and addr_limit on exception entry")
+
+from Linus' tree and commit:
+
+  541ec870ef31 ("arm64: kill ESR_LNX_EXEC")
+
+from the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/mm/fault.c
+index b1166d1e5955,fc5a34a72c6d..000000000000
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@@ -279,9 -282,8 +282,9 @@@ static int __kprobes do_page_fault(unsi
+  		mm_flags |= FAULT_FLAG_WRITE;
+  	}
+  
+- 	if (permission_fault(esr) && (addr < USER_DS)) {
++ 	if (is_permission_fault(esr) && (addr < USER_DS)) {
+ -		if (get_fs() == KERNEL_DS)
+ +		/* regs->orig_addr_limit may be 0 if we entered from EL0 */
+ +		if (regs->orig_addr_limit == KERNEL_DS)
+  			die("Accessing user space memory with fs=KERNEL_DS", regs, esr);
+  
+  		if (!search_exception_tables(regs->pc))
