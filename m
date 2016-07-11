@@ -1,81 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the clockevents tree with the
- arm-soc tree
-Date: Mon, 11 Jul 2016 15:28:12 +1000
-Message-ID: <20160711152812.3efd7047@canb.auug.org.au>
-References: <20160707141226.2b9c1e15@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Mon, 11 Jul 2016 15:29:55 +1000
+Message-ID: <20160711152955.535c88a7@canb.auug.org.au>
+References: <20160711114653.066355ae@canb.auug.org.au>
+	<20160711044817.GE14693@lahna.fi.intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43356 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41315 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933514AbcGKF2R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jul 2016 01:28:17 -0400
-In-Reply-To: <20160707141226.2b9c1e15@canb.auug.org.au>
+	id S1750835AbcGKF35 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jul 2016 01:29:57 -0400
+In-Reply-To: <20160711044817.GE14693@lahna.fi.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
 
-Hi all,
+Hi Mika,
 
-On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 11 Jul 2016 07:48:17 +0300 Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
 >
-> Today's linux-next merge of the clockevents tree got a conflict in:
-> 
->   arch/arm/Kconfig
-> 
-> between commit:
-> 
->   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
-> 
-> from the arm-soc tree and commit:
-> 
->   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
-> 
-> from the clockevents tree.
-> 
-> I fixed it up (I used the arm-soc version of this file and then added
-> the following merge fix patch) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 7 Jul 2016 13:59:06 +1000
-> Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/arm/mach-clps711x/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
-> index 3b56197ccfd0..dc7c6edeab39 100644
-> --- a/arch/arm/mach-clps711x/Kconfig
-> +++ b/arch/arm/mach-clps711x/Kconfig
-> @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
->  	depends on ARCH_MULTI_V4T
->  	select ARCH_REQUIRE_GPIOLIB
->  	select AUTO_ZRELADDR
-> -	select CLKSRC_MMIO
->  	select CLKSRC_OF
-> +	select CLPS711X_TIMER
->  	select COMMON_CLK
->  	select CPU_ARM720T
->  	select GENERIC_CLOCKEVENTS
-> -- 
-> 2.8.1
+> Looks like it is the module name (configfs.o) that confuses modpost or
+> linker. The below patch fixes it for me.
 
-This merge fix is now applicable to the merge between the arm-soc tree
-and the tip tree.
-
-Also, the clockevents tree needs to be cleaned up as all its commits
-have been added to the tip tree as different commits (but the same
-patches) :-(
+That makes sense.  Thanks.
 
 -- 
 Cheers,
