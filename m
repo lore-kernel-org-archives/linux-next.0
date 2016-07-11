@@ -1,58 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the kspp tree
-Date: Mon, 11 Jul 2016 15:11:00 +1000
-Message-ID: <20160711151100.02c0b012@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the clockevents tree with the
+ arm-soc tree
+Date: Mon, 11 Jul 2016 15:28:12 +1000
+Message-ID: <20160711152812.3efd7047@canb.auug.org.au>
+References: <20160707141226.2b9c1e15@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57919 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43356 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751078AbcGKFLD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jul 2016 01:11:03 -0400
+	id S933514AbcGKF2R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jul 2016 01:28:17 -0400
+In-Reply-To: <20160707141226.2b9c1e15@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the clockevents tree got a conflict in:
+> 
+>   arch/arm/Kconfig
+> 
+> between commit:
+> 
+>   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
+> 
+> from the arm-soc tree and commit:
+> 
+>   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
+> 
+> from the clockevents tree.
+> 
+> I fixed it up (I used the arm-soc version of this file and then added
+> the following merge fix patch) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 7 Jul 2016 13:59:06 +1000
+> Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm/mach-clps711x/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
+> index 3b56197ccfd0..dc7c6edeab39 100644
+> --- a/arch/arm/mach-clps711x/Kconfig
+> +++ b/arch/arm/mach-clps711x/Kconfig
+> @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
+>  	depends on ARCH_MULTI_V4T
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select AUTO_ZRELADDR
+> -	select CLKSRC_MMIO
+>  	select CLKSRC_OF
+> +	select CLPS711X_TIMER
+>  	select COMMON_CLK
+>  	select CPU_ARM720T
+>  	select GENERIC_CLOCKEVENTS
+> -- 
+> 2.8.1
 
-  arch/x86/kernel/x86_init.c
+This merge fix is now applicable to the merge between the arm-soc tree
+and the tip tree.
 
-between commit:
-
-  255303026193 ("x86: apply more __ro_after_init and const")
-
-from the kspp tree and commit:
-
-  1bf8915ae515 ("x86/tsc: Enumerate SKL cpu_khz and tsc_khz via CPUID")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Also, the clockevents tree needs to be cleaned up as all its commits
+have been added to the tip tree as different commits (but the same
+patches) :-(
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/x86/kernel/x86_init.c
-index 111b838db7fe,58b459296e13..000000000000
---- a/arch/x86/kernel/x86_init.c
-+++ b/arch/x86/kernel/x86_init.c
-@@@ -91,7 -91,8 +91,8 @@@ struct x86_cpuinit_ops x86_cpuinit = 
-  static void default_nmi_init(void) { };
-  static int default_i8042_detect(void) { return 1; };
-  
- -struct x86_platform_ops x86_platform = {
- +struct x86_platform_ops x86_platform __ro_after_init = {
-+ 	.calibrate_cpu			= native_calibrate_cpu,
-  	.calibrate_tsc			= native_calibrate_tsc,
-  	.get_wallclock			= mach_get_cmos_time,
-  	.set_wallclock			= mach_set_rtc_mmss,
