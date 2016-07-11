@@ -1,89 +1,202 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the pm tree
-Date: Mon, 11 Jul 2016 07:48:17 +0300
-Message-ID: <20160711044817.GE14693@lahna.fi.intel.com>
-References: <20160711114653.066355ae@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the f2fs tree
+Date: Mon, 11 Jul 2016 14:52:23 +1000
+Message-ID: <20160711145223.5ad4ac24@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:4141 "EHLO mga09.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:58104 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750729AbcGKEs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jul 2016 00:48:26 -0400
-Content-Disposition: inline
-In-Reply-To: <20160711114653.066355ae@canb.auug.org.au>
+	id S1750839AbcGKEwZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jul 2016 00:52:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>
+To: Jens Axboe <axboe@kernel.dk>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Christie <mchristi@redhat.com>
 
-On Mon, Jul 11, 2016 at 11:46:53AM +1000, Stephen Rothwell wrote:
-> Hi Rafael,
-> 
-> After merging the pm tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> ERROR: "configfs_unregister_subsystem" [samples/configfs/configfs_sample.ko] undefined!
-> ERROR: "configfs_register_subsystem" [samples/configfs/configfs_sample.ko] undefined!
-> ERROR: "config_group_init" [samples/configfs/configfs_sample.ko] undefined!
-> ERROR: "config_item_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
-> ERROR: "config_group_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
-> ERROR: "configfs_undepend_item" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
-> ERROR: "config_item_put" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
-> ERROR: "config_item_init_type_name" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
-> 
-> ... and many more ...
-> 
-> Presumably (maybe?) caused by commit
-> 
->   0bf54fcd9504 ("ACPI: add support for configfs")
-> 
-> though it is not obvious why this should be a problem.
+Hi Jens,
 
-Looks like it is the module name (configfs.o) that confuses modpost or
-linker. The below patch fixes it for me.
+Today's linux-next merge of the block tree got a conflict in:
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: [PATCH] ACPI: Rename configfs.c to acpi_configfs.c to prevent link error
+  fs/f2fs/data.c
 
-If we compile ACPI configfs.c as module it will confuse the linker as it
-hides symbols from the actual configfs:
+between commits:
 
-Kernel: arch/x86/boot/bzImage is ready  (#1236)
-  MODPOST 5739 modules
-ERROR: "configfs_unregister_subsystem" [samples/configfs/configfs_sample.ko] undefined!
-ERROR: "configfs_register_subsystem" [samples/configfs/configfs_sample.ko] undefined!
-ERROR: "config_group_init" [samples/configfs/configfs_sample.ko] undefined!
-ERROR: "config_item_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
-ERROR: "config_group_init_type_name" [samples/configfs/configfs_sample.ko] undefined!
-ERROR: "configfs_undepend_item" [fs/ocfs2/cluster/ocfs2_nodemanager.ko] undefined!
-...
+  19a5f5e2ef37 ("f2fs: drop any block plugging")
+  52763a4b7a21 ("f2fs: detect host-managed SMR by feature flag")
+  78682f794479 ("f2fs: fix to avoid reading out encrypted data in page cache")
 
-Prevent these by renaming the file to acpi_configfs.c instead.
+from the f2fs tree and commits:
 
-Reported-by: Scott Lawson <scott.lawson@intel.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/acpi/Makefile                        | 2 +-
- drivers/acpi/{configfs.c => acpi_configfs.c} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename drivers/acpi/{configfs.c => acpi_configfs.c} (100%)
+  4e49ea4a3d27 ("block/fs/drivers: remove rw argument from submit_bio")
+  04d328defd06 ("f2fs: use bio op accessors")
 
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 1dc2173ad8d0..f72a83df1cf3 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -99,6 +99,6 @@ obj-$(CONFIG_ACPI_EXTLOG)	+= acpi_extlog.o
- obj-$(CONFIG_PMIC_OPREGION)	+= pmic/intel_pmic.o
- obj-$(CONFIG_CRC_PMIC_OPREGION) += pmic/intel_pmic_crc.o
- obj-$(CONFIG_XPOWER_PMIC_OPREGION) += pmic/intel_pmic_xpower.o
--obj-$(CONFIG_ACPI_CONFIGFS)	+= configfs.o
-+obj-$(CONFIG_ACPI_CONFIGFS)	+= acpi_configfs.o
- 
- video-objs			+= acpi_video.o video_detect.o
-diff --git a/drivers/acpi/configfs.c b/drivers/acpi/acpi_configfs.c
-similarity index 100%
-rename from drivers/acpi/configfs.c
-rename to drivers/acpi/acpi_configfs.c
+from the block tree.
+
+I fixed it up (see below - I am not confident of these fixups, so
+please check and let me know if anything else is needed) and can carry
+the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
 -- 
-2.8.1
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/f2fs/data.c
+index 20b30162e7b4,8769e8349dff..000000000000
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@@ -100,16 -97,11 +100,16 @@@ static struct bio *__bio_alloc(struct f
+  	return bio;
+  }
+  
+- static inline void __submit_bio(struct f2fs_sb_info *sbi, int rw,
+- 			struct bio *bio, enum page_type type)
+ -static inline void __submit_bio(struct f2fs_sb_info *sbi, struct bio *bio)
+++static inline void __submit_bio(struct f2fs_sb_info *sbi, struct bio *bio,
+++				enum page_type type)
+  {
+- 	if (!is_read_io(rw)) {
+ -	if (!is_read_io(bio_op(bio)))
+++	if (!is_read_io(bio_op(bio))) {
+  		atomic_inc(&sbi->nr_wb_bios);
+ +		if (f2fs_sb_mounted_hmsmr(sbi->sb) &&
+ +			current->plug && (type == DATA || type == NODE))
+ +			blk_finish_plug(current->plug);
+ +	}
+- 	submit_bio(rw, bio);
++ 	submit_bio(bio);
+  }
+  
+  static void __submit_merged_bio(struct f2fs_bio_info *io)
+@@@ -124,7 -116,9 +124,9 @@@
+  	else
+  		trace_f2fs_submit_write_bio(io->sbi->sb, fio, io->bio);
+  
+- 	__submit_bio(io->sbi, fio->rw, io->bio, fio->type);
++ 	bio_set_op_attrs(io->bio, fio->op, fio->op_flags);
++ 
+ -	__submit_bio(io->sbi, io->bio);
+++	__submit_bio(io->sbi, io->bio, fio->type);
+  	io->bio = NULL;
+  }
+  
+@@@ -241,8 -237,10 +245,10 @@@ int f2fs_submit_page_bio(struct f2fs_io
+  		bio_put(bio);
+  		return -EFAULT;
+  	}
++ 	bio->bi_rw = fio->op_flags;
++ 	bio_set_op_attrs(bio, fio->op, fio->op_flags);
+  
+- 	__submit_bio(fio->sbi, fio->rw, bio, fio->type);
+ -	__submit_bio(fio->sbi, bio);
+++	__submit_bio(fio->sbi, bio, fio->type);
+  	return 0;
+  }
+  
+@@@ -1080,13 -1057,36 +1087,14 @@@ got_it
+  		 */
+  		if (bio && (last_block_in_bio != block_nr - 1)) {
+  submit_and_realloc:
+- 			__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
+ -			__submit_bio(F2FS_I_SB(inode), bio);
+++			__submit_bio(F2FS_I_SB(inode), bio, DATA);
+  			bio = NULL;
+  		}
+  		if (bio == NULL) {
+ -			struct fscrypt_ctx *ctx = NULL;
+ -
+ -			if (f2fs_encrypted_inode(inode) &&
+ -					S_ISREG(inode->i_mode)) {
+ -
+ -				ctx = fscrypt_get_ctx(inode, GFP_NOFS);
+ -				if (IS_ERR(ctx))
+ -					goto set_error_page;
+ -
+ -				/* wait the page to be moved by cleaning */
+ -				f2fs_wait_on_encrypted_page_writeback(
+ -						F2FS_I_SB(inode), block_nr);
+ -			}
+ -
+ -			bio = bio_alloc(GFP_KERNEL,
+ -				min_t(int, nr_pages, BIO_MAX_PAGES));
+ -			if (!bio) {
+ -				if (ctx)
+ -					fscrypt_release_ctx(ctx);
+ +			bio = f2fs_grab_bio(inode, block_nr, nr_pages);
+ +			if (IS_ERR(bio))
+  				goto set_error_page;
+ -			}
+ -			bio->bi_bdev = bdev;
+ -			bio->bi_iter.bi_sector = SECTOR_FROM_BLOCK(block_nr);
+ -			bio->bi_end_io = f2fs_read_end_io;
+ -			bio->bi_private = ctx;
++ 			bio_set_op_attrs(bio, REQ_OP_READ, 0);
+  		}
+  
+  		if (bio_add_page(bio, page, blocksize, 0) < blocksize)
+@@@ -1101,7 -1101,7 +1109,7 @@@ set_error_page
+  		goto next_page;
+  confused:
+  		if (bio) {
+- 			__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
+ -			__submit_bio(F2FS_I_SB(inode), bio);
+++			__submit_bio(F2FS_I_SB(inode), bio, DATA);
+  			bio = NULL;
+  		}
+  		unlock_page(page);
+@@@ -1111,7 -1111,7 +1119,7 @@@ next_page
+  	}
+  	BUG_ON(pages && !list_empty(pages));
+  	if (bio)
+- 		__submit_bio(F2FS_I_SB(inode), READ, bio, DATA);
+ -		__submit_bio(F2FS_I_SB(inode), bio);
+++		__submit_bio(F2FS_I_SB(inode), bio, DATA);
+  	return 0;
+  }
+  
+@@@ -1636,23 -1667,25 +1645,24 @@@ repeat
+  	if (blkaddr == NEW_ADDR) {
+  		zero_user_segment(page, 0, PAGE_SIZE);
+  	} else {
+ -		struct f2fs_io_info fio = {
+ -			.sbi = sbi,
+ -			.type = DATA,
+ -			.op = REQ_OP_READ,
+ -			.op_flags = READ_SYNC,
+ -			.old_blkaddr = blkaddr,
+ -			.new_blkaddr = blkaddr,
+ -			.page = page,
+ -			.encrypted_page = NULL,
+ -		};
+ -		err = f2fs_submit_page_bio(&fio);
+ -		if (err)
+ +		struct bio *bio;
+ +
+ +		bio = f2fs_grab_bio(inode, blkaddr, 1);
+ +		if (IS_ERR(bio)) {
+ +			err = PTR_ERR(bio);
+  			goto fail;
+ +		}
+++		bio_set_op_attrs(bio, REQ_OP_READ, READ_SYNC);
+  
+ -		lock_page(page);
+ -		if (unlikely(!PageUptodate(page))) {
+ -			err = -EIO;
+ +		if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ +			bio_put(bio);
+ +			err = -EFAULT;
+  			goto fail;
+  		}
+ +
+- 		__submit_bio(sbi, READ_SYNC, bio, DATA);
+++		__submit_bio(sbi, bio, DATA);
+ +
+ +		lock_page(page);
+  		if (unlikely(page->mapping != mapping)) {
+  			f2fs_put_page(page, 1);
+  			goto repeat;
