@@ -1,61 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nvdimm tree with the block tree
-Date: Mon, 11 Jul 2016 17:59:03 +1000
-Message-ID: <20160711175903.2624fe5a@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the net-next tree
+Date: Mon, 11 Jul 2016 11:03:24 +0300
+Message-ID: <87vb0czjn7.fsf@kamboji.qca.qualcomm.com>
+References: <20160711120614.0cdca5fa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49900 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933573AbcGKH7H (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 11 Jul 2016 03:59:07 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160711120614.0cdca5fa@canb.auug.org.au> (Stephen Rothwell's
+	message of "Mon, 11 Jul 2016 12:06:14 +1000")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Avraham Stern <avraham.stern@intel.com>, Johannes Berg <johannes.berg@intel.com>, Assaf Krauss <assaf.krauss@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dan,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Today's linux-next merge of the nvdimm tree got a conflict in:
+> Today's linux-next merge of the wireless-drivers-next tree got a
+> conflict in:
+>
+>   drivers/net/wireless/intel/iwlwifi/mvm/scan.c
+>
+> between commit:
+>
+>   7947d3e075cd ("mac80211: Add support for beacon report radio measurement")
+>
+> from the net-next tree and commit:
+>
+>   69e046423ad7 ("iwlwifi: mvm: change scan timeout to a delayed work")
+>
+> from the wireless-drivers-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-  drivers/nvdimm/pmem.c
-
-between commit:
-
-  0d52c756a665 ("block: convert to device_add_disk()")
-
-from the block tree and commit:
-
-  f02716db951c ("libnvdimm: use devm_add_action_or_reset()")
-
-from the nvdimm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks. I'm planning to submit a pull request to Dave tomorrow and I'll
+include instruction how to solve these mac80211 API conflicts.
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/nvdimm/pmem.c
-index 066e07d9330f,b6fcb97a601c..000000000000
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@@ -303,7 -286,11 +285,11 @@@ static int pmem_attach_disk(struct devi
-  		return -ENOMEM;
-  	nvdimm_badblocks_populate(to_nd_region(dev->parent), &pmem->bb, res);
-  	disk->bb = &pmem->bb;
- -	add_disk(disk);
- +	device_add_disk(dev, disk);
-+ 
-+ 	if (devm_add_action_or_reset(dev, pmem_release_disk, disk))
-+ 		return -ENOMEM;
-+ 
-  	revalidate_disk(disk);
-  
-  	return 0;
+Kalle Valo
