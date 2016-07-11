@@ -1,54 +1,61 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the kspp tree
-Date: Mon, 11 Jul 2016 09:13:07 +0200
-Message-ID: <20160711071307.GB6835@gmail.com>
-References: <20160711151100.02c0b012@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with the block tree
+Date: Mon, 11 Jul 2016 17:59:03 +1000
+Message-ID: <20160711175903.2624fe5a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:36253 "EHLO
-	mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757503AbcGKHNM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 11 Jul 2016 03:13:12 -0400
-Content-Disposition: inline
-In-Reply-To: <20160711151100.02c0b012@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:49900 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933573AbcGKH7H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 11 Jul 2016 03:59:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Kees Cook <keescook@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Len Brown <len.brown@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Hi Dan,
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   arch/x86/kernel/x86_init.c
-> 
-> between commit:
-> 
->   255303026193 ("x86: apply more __ro_after_init and const")
-> 
-> from the kspp tree and commit:
+  drivers/nvdimm/pmem.c
 
-Kees, did you plan to submit this patch (and any other pending x86 patches) to the 
-x86 tree?
+between commit:
 
-> 
->   1bf8915ae515 ("x86/tsc: Enumerate SKL cpu_khz and tsc_khz via CPUID")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+  0d52c756a665 ("block: convert to device_add_disk()")
 
-Looks good to me!
+from the block tree and commit:
 
-Thanks,
+  f02716db951c ("libnvdimm: use devm_add_action_or_reset()")
 
-	Ingo
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/nvdimm/pmem.c
+index 066e07d9330f,b6fcb97a601c..000000000000
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@@ -303,7 -286,11 +285,11 @@@ static int pmem_attach_disk(struct devi
+  		return -ENOMEM;
+  	nvdimm_badblocks_populate(to_nd_region(dev->parent), &pmem->bb, res);
+  	disk->bb = &pmem->bb;
+ -	add_disk(disk);
+ +	device_add_disk(dev, disk);
++ 
++ 	if (devm_add_action_or_reset(dev, pmem_release_disk, disk))
++ 		return -ENOMEM;
++ 
+  	revalidate_disk(disk);
+  
+  	return 0;
