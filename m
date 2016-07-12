@@ -1,78 +1,43 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160712 build: 0 failures 7 warnings (next-20160712)
-Date: Tue, 12 Jul 2016 11:17:18 +0100
-Message-ID: <E1bMukf-0001XL-KM@optimist>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the pm tree
+Date: Tue, 12 Jul 2016 14:14:21 +0200
+Message-ID: <2723893.NgNEmdq9TU@vostro.rjw.lan>
+References: <20160712140926.49958101@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39118 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751208AbcGLKR1 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 12 Jul 2016 06:17:27 -0400
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:52958 "HELO
+	cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1750760AbcGLMJh (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jul 2016 08:09:37 -0400
+In-Reply-To: <20160712140926.49958101@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Shannon Zhao <shannon.zhao@linaro.org>
 
-Tree/Branch: next-20160712
-Git describe: next-20160712
-Commit: 355d5fc3c5 Add linux-next specific files for 20160712
+On Tuesday, July 12, 2016 02:09:26 PM Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the xen-tip tree got a conflict in:
+> 
+>   drivers/acpi/scan.c
+> 
+> between commit:
+> 
+>   68bdb6773289 ("ACPI: add support for ACPI reconfiguration notifiers")
+> 
+> from the pm tree and commit:
+> 
+>   c8ac8b6fb495 ("Xen: ACPI: Hide UART used by Xen")
+> 
+> from the xen-tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-Build Time: 143 min 12 sec
+Looks good to me, thanks Stehpen!
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 7
-	  1 arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/media/platform/mtk-vcodec/venc_vpu_if.c:40:30: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/media/platform/mtk-vcodec/mtk_vcodec_util.h:40:12: warning: format '%lx' expects argument of type 'long unsigned int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/media/platform/mtk-vcodec/mtk_vcodec_util.h:40:12: warning: format '%lx' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
-	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
-	../drivers/media/platform/mtk-vcodec/mtk_vcodec_util.h:40:12: warning: format '%lx' expects argument of type 'long unsigned int', but argument 7 has type 'size_t {aka unsigned int}' [-Wformat=]
-	../drivers/media/platform/mtk-vcodec/mtk_vcodec_util.h:40:12: warning: format '%lx' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
-	../drivers/media/platform/mtk-vcodec/venc_vpu_if.c:40:30: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Best,
+Rafael
