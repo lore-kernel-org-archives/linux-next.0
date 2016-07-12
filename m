@@ -1,32 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tegra tree with the samsung-krzk
- tree
-Date: Tue, 12 Jul 2016 09:59:57 +1000
-Message-ID: <20160712095957.45b82b26@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the pm tree
+Date: Tue, 12 Jul 2016 14:09:26 +1000
+Message-ID: <20160712140926.49958101@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>, Colin Cross <ccross@android.com>, Olof Johansson <olof@lixom.net>, Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41541 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750739AbcGLEJa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 12 Jul 2016 00:09:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Shannon Zhao <shannon.zhao@linaro.org>
 
 Hi all,
 
-Today's linux-next merge of the tegra tree got a conflict in:
+Today's linux-next merge of the xen-tip tree got a conflict in:
 
-  arch/arm64/configs/defconfig
+  drivers/acpi/scan.c
 
 between commit:
 
-  426f754be0bc ("arm64: defconfig: Enable more IP blocks for Exynos7 and Exynos5433")
+  68bdb6773289 ("ACPI: add support for ACPI reconfiguration notifiers")
 
-from the samsung-krzk tree and commit:
+from the pm tree and commit:
 
-  10a7b37b5b96 ("arm64: Update default configuration")
+  c8ac8b6fb495 ("Xen: ACPI: Hide UART used by Xen")
 
-from the tegra tree.
+from the xen-tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -39,73 +42,29 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index 2651febaa7b8,1cf5730976b5..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -191,11 -184,10 +192,12 @@@ CONFIG_SPI_ORION=
-  CONFIG_SPI_PL022=y
-  CONFIG_SPI_QUP=y
-  CONFIG_SPI_SPIDEV=m
- +CONFIG_SPI_S3C64XX=y
-  CONFIG_SPMI=y
-  CONFIG_PINCTRL_SINGLE=y
-+ CONFIG_PINCTRL_MAX77620=y
-  CONFIG_PINCTRL_MSM8916=y
- +CONFIG_PINCTRL_MSM8996=y
-  CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
-  CONFIG_GPIO_SYSFS=y
-  CONFIG_GPIO_DWAPB=y
-@@@ -213,14 -208,17 +219,19 @@@ CONFIG_THERMAL_EMULATION=
-  CONFIG_EXYNOS_THERMAL=y
-  CONFIG_WATCHDOG=y
-  CONFIG_RENESAS_WDT=y
- +CONFIG_S3C2410_WATCHDOG=y
-+ CONFIG_MFD_MAX77620=y
-  CONFIG_MFD_SPMI_PMIC=y
-  CONFIG_MFD_SEC_CORE=y
-  CONFIG_MFD_HI655X_PMIC=y
-  CONFIG_REGULATOR=y
-+ CONFIG_MFD_CROS_EC=y
-+ CONFIG_MFD_CROS_EC_I2C=y
-  CONFIG_REGULATOR_FIXED_VOLTAGE=y
- +CONFIG_REGULATOR_GPIO=y
-  CONFIG_REGULATOR_HI655X=y
-+ CONFIG_REGULATOR_MAX77620=y
-+ CONFIG_REGULATOR_PWM=y
-  CONFIG_REGULATOR_QCOM_SMD_RPM=y
-  CONFIG_REGULATOR_QCOM_SPMI=y
-  CONFIG_REGULATOR_S2MPS11=y
-@@@ -240,7 -243,7 +257,8 @@@ CONFIG_USB=
-  CONFIG_USB_OTG=y
-  CONFIG_USB_XHCI_HCD=y
-  CONFIG_USB_XHCI_RCAR=y
-+ CONFIG_USB_XHCI_TEGRA=y
- +CONFIG_USB_EHCI_EXYNOS=y
-  CONFIG_USB_EHCI_HCD=y
-  CONFIG_USB_EHCI_MSM=y
-  CONFIG_USB_EHCI_HCD_PLATFORM=y
-@@@ -285,8 -286,8 +304,9 @@@ CONFIG_RTC_DRV_DS3232=
-  CONFIG_RTC_DRV_EFI=y
-  CONFIG_RTC_DRV_PL031=y
-  CONFIG_RTC_DRV_SUN6I=y
-+ CONFIG_RTC_DRV_TEGRA=y
-  CONFIG_RTC_DRV_XGENE=y
- +CONFIG_RTC_DRV_S3C=y
-  CONFIG_DMADEVICES=y
-  CONFIG_PL330_DMA=y
-  CONFIG_TEGRA20_APB_DMA=y
-@@@ -321,12 -322,9 +343,13 @@@ CONFIG_COMMON_RESET_HI6220=
-  CONFIG_PHY_RCAR_GEN3_USB2=y
-  CONFIG_PHY_HI6220_USB=y
-  CONFIG_PHY_XGENE=y
-+ CONFIG_PHY_TEGRA_XUSB=y
-  CONFIG_ARM_SCPI_PROTOCOL=y
-  CONFIG_ACPI=y
- +CONFIG_IIO=y
- +CONFIG_EXYNOS_ADC=y
- +CONFIG_PWM=y
- +CONFIG_PWM_SAMSUNG=y
-  CONFIG_EXT2_FS=y
-  CONFIG_EXT3_FS=y
-  CONFIG_FANOTIFY=y
+diff --cc drivers/acpi/scan.c
+index 405056b95b05,cfc73fecaba4..000000000000
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@@ -1925,8 -1961,19 +1970,21 @@@ static int acpi_bus_scan_fixed(void
+  	return result < 0 ? result : 0;
+  }
+  
++ static void __init acpi_get_spcr_uart_addr(void)
++ {
++ 	acpi_status status;
++ 	struct acpi_table_spcr *spcr_ptr;
++ 
++ 	status = acpi_get_table(ACPI_SIG_SPCR, 0,
++ 				(struct acpi_table_header **)&spcr_ptr);
++ 	if (ACPI_SUCCESS(status))
++ 		spcr_uart_addr = spcr_ptr->serial_port.address;
++ 	else
++ 		printk(KERN_WARNING PREFIX "STAO table present, but SPCR is missing\n");
++ }
++ 
+ +static bool acpi_scan_initialized;
+ +
+  int __init acpi_scan_init(void)
+  {
+  	int result;
