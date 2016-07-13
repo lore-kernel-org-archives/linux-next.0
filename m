@@ -1,58 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the v4l-dvb tree
-Date: Wed, 13 Jul 2016 12:25:14 +1000
-Message-ID: <20160713122514.5689c628@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the arm tree
+Date: Wed, 13 Jul 2016 12:35:24 +1000
+Message-ID: <20160713123524.09ec2d83@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44029 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750974AbcGMCZW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 12 Jul 2016 22:25:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <rmk@armlinux.org.uk>
+Cc: Peter Chen <peter.chen@nxp.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
-
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/media/platform/omap/omap_voutdef.h
-
-between commit:
-
-  77430f0396af ("[media] omap_vout: use control framework")
-
-from the v4l-dvb tree and commit:
-
-  781a162244a2 ("[media] omap_vout: Switch to use the video/omapfb_dss.h header file")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/media/platform/omap/omap_voutdef.h
-index 49de1475e473,94b5d65afb19..000000000000
---- a/drivers/media/platform/omap/omap_voutdef.h
-+++ b/drivers/media/platform/omap/omap_voutdef.h
-@@@ -11,8 -11,7 +11,8 @@@
-  #ifndef OMAP_VOUTDEF_H
-  #define OMAP_VOUTDEF_H
-  
- +#include <media/v4l2-ctrls.h>
-- #include <video/omapdss.h>
-+ #include <video/omapfb_dss.h>
-  #include <video/omapvrfb.h>
-  
-  #define YUYV_BPP        2
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
+X2Rydi5jCgpiZXR3ZWVuIGNvbW1pdDoKCiAgMDYyOTkzYjE1ZThlICgiZHJtOiBjb252ZXJ0IERU
+IGNvbXBvbmVudCBtYXRjaGluZyB0byBjb21wb25lbnRfbWF0Y2hfYWRkX3JlbGVhc2UoKSIpCgpm
+cm9tIHRoZSBhcm0gdHJlZSBhbmQgY29tbWl0OgoKICA2ZDVmYTI4YzEzYjkgKCJncHU6IGRybTog
+cm9ja2NoaXBfZHJtX2RydjogYWRkIG1pc3Npbmcgb2Zfbm9kZV9wdXQgYWZ0ZXIgY2FsbGluZyBv
+Zl9wYXJzZV9waGFuZGxlIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVw
+IChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMg
+bm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24g
+dHJpdmlhbApjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1h
+aW50YWluZXIgd2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1h
+eSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBv
+ZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBs
+ZXggY29uZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIGRy
+aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKaW5kZXggN2ZkMjBjMGUx
+ZmM4LGYwYmQxZWU4YjEyOC4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2Nr
+Y2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
+Y2tjaGlwX2RybV9kcnYuYwpAQEAgLTQzOCw5IC00MzMsOCArNDM4LDEwIEBAQCBzdGF0aWMgaW50
+IHJvY2tjaGlwX2RybV9wbGF0Zm9ybV9wcm9iZSgKICAJCQlpc19zdXBwb3J0X2lvbW11ID0gZmFs
+c2U7CiAgCQl9CiAgCisgCQlvZl9ub2RlX3B1dChpb21tdSk7CiAtCQljb21wb25lbnRfbWF0Y2hf
+YWRkKGRldiwgJm1hdGNoLCBjb21wYXJlX29mLCBwb3J0LT5wYXJlbnQpOwogKwkJb2Zfbm9kZV9n
+ZXQocG9ydC0+cGFyZW50KTsKICsJCWNvbXBvbmVudF9tYXRjaF9hZGRfcmVsZWFzZShkZXYsICZt
+YXRjaCwgcmVsZWFzZV9vZiwKICsJCQkJCSAgICBjb21wYXJlX29mLCBwb3J0LT5wYXJlbnQpOwog
+IAkJb2Zfbm9kZV9wdXQocG9ydCk7CiAgCX0KICAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
