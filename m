@@ -1,48 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with the arm tree
-Date: Wed, 13 Jul 2016 12:35:24 +1000
-Message-ID: <20160713123524.09ec2d83@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the block
+ tree
+Date: Wed, 13 Jul 2016 16:14:48 +1000
+Message-ID: <20160713161448.7cedd072@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, Russell King <rmk@armlinux.org.uk>
-Cc: Peter Chen <peter.chen@nxp.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.com>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
-X2Rydi5jCgpiZXR3ZWVuIGNvbW1pdDoKCiAgMDYyOTkzYjE1ZThlICgiZHJtOiBjb252ZXJ0IERU
-IGNvbXBvbmVudCBtYXRjaGluZyB0byBjb21wb25lbnRfbWF0Y2hfYWRkX3JlbGVhc2UoKSIpCgpm
-cm9tIHRoZSBhcm0gdHJlZSBhbmQgY29tbWl0OgoKICA2ZDVmYTI4YzEzYjkgKCJncHU6IGRybTog
-cm9ja2NoaXBfZHJtX2RydjogYWRkIG1pc3Npbmcgb2Zfbm9kZV9wdXQgYWZ0ZXIgY2FsbGluZyBv
-Zl9wYXJzZV9waGFuZGxlIikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUuCgpJIGZpeGVkIGl0IHVw
-IChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMg
-bm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24g
-dHJpdmlhbApjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1h
-aW50YWluZXIgd2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1h
-eSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBv
-ZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBs
-ZXggY29uZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIGRy
-aXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKaW5kZXggN2ZkMjBjMGUx
-ZmM4LGYwYmQxZWU4YjEyOC4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2Nr
-Y2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
-Y2tjaGlwX2RybV9kcnYuYwpAQEAgLTQzOCw5IC00MzMsOCArNDM4LDEwIEBAQCBzdGF0aWMgaW50
-IHJvY2tjaGlwX2RybV9wbGF0Zm9ybV9wcm9iZSgKICAJCQlpc19zdXBwb3J0X2lvbW11ID0gZmFs
-c2U7CiAgCQl9CiAgCisgCQlvZl9ub2RlX3B1dChpb21tdSk7CiAtCQljb21wb25lbnRfbWF0Y2hf
-YWRkKGRldiwgJm1hdGNoLCBjb21wYXJlX29mLCBwb3J0LT5wYXJlbnQpOwogKwkJb2Zfbm9kZV9n
-ZXQocG9ydC0+cGFyZW50KTsKICsJCWNvbXBvbmVudF9tYXRjaF9hZGRfcmVsZWFzZShkZXYsICZt
-YXRjaCwgcmVsZWFzZV9vZiwKICsJCQkJCSAgICBjb21wYXJlX29mLCBwb3J0LT5wYXJlbnQpOwog
-IAkJb2Zfbm9kZV9wdXQocG9ydCk7CiAgCX0KICAKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Andrew,
+
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  drivers/nvme/host/core.c
+
+between commit:
+
+  f80ec966c19b ("nvme: Limit command retries")
+
+from the block tree and commit:
+
+  8cc07e463b0c ("NVMe: don't allocate unused nvme_major")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/nvme/host/core.c
+index 86a0c661e74c,3dc259e7bf2a..000000000000
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@@ -48,14 -47,6 +48,11 @@@ unsigned char shutdown_timeout = 5
+  module_param(shutdown_timeout, byte, 0644);
+  MODULE_PARM_DESC(shutdown_timeout, "timeout in seconds for controller shutdown");
+  
+ +unsigned int nvme_max_retries = 5;
+ +module_param_named(max_retries, nvme_max_retries, uint, 0644);
+ +MODULE_PARM_DESC(max_retries, "max number of retries a command may have");
+ +EXPORT_SYMBOL_GPL(nvme_max_retries);
+ +
+- static int nvme_major;
+- module_param(nvme_major, int, 0);
+- 
+  static int nvme_char_major;
+  module_param(nvme_char_major, int, 0);
+  
