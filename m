@@ -1,70 +1,82 @@
-From: Jiri Kosina <jikos@kernel.org>
-Subject: Re: linux-next: please clean up the hid tree
-Date: Wed, 13 Jul 2016 11:21:36 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1607131111340.24757@cbobk.fhfr.pm>
-References: <20160713092809.566559b5@canb.auug.org.au> <20160713112001.641f6bf1@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160713 build: 0 failures 6 warnings (next-20160713)
+Date: Wed, 13 Jul 2016 10:52:08 +0100
+Message-ID: <E1bNGpr-0001Rg-VR@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:43542 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753085AbcGMJVn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 13 Jul 2016 05:21:43 -0400
-In-Reply-To: <20160713112001.641f6bf1@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41778 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbcGMJwR (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 13 Jul 2016 05:52:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Wed, 13 Jul 2016, Stephen Rothwell wrote:
+Tree/Branch: next-20160713
+Git describe: next-20160713
+Commit: 8a7b0fc7ad Add linux-next specific files for 20160713
 
-> Hi Jiri,
-> 
-> The hid tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git#for-next)
-> seems to be based on v3.19 and constists of a large number of merges
-> (of stuff that is now in Linus' tree) and ends with one particulary
-> large revert (of a merge).
+Build Time: 88 min 27 sec
 
-Hi Stephen,
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-I try to keep the tree completely non-rebasing, as people are actually 
-using it for development. But for-next is a bit special in this respect, 
-and if there is a branch that could potentially be considered for 
-ocasional rebasing, it's probably for-next one.
+Errors: 0
+Warnings: 6
+Section Mismatches: 0
 
-OTOH, what issues exactly are the extra merges causing for you please?
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-On Wed, 13 Jul 2016, Stephen Rothwell wrote:
+-------------------------------------------------------------------------------
 
-> On Wed, 13 Jul 2016 09:28:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > The hid tree
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid.git#for-next)
-> > seems to be based on v3.19 and constists of a large number of merges
-> > (of stuff that is now in Linus' tree) and ends with one particulary
-> > large revert (of a merge).
-> 
-> What I forgot to say is that that last revert creates lots of conflicts
-> when I merge your tree:
-> 
-> CONFLICT (content): Merge conflict in sound/pci/hda/patch_realtek.c
-> CONFLICT (content): Merge conflict in mm/shmem.c
-> CONFLICT (content): Merge conflict in fs/dcache.c
-> CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/powerplay/inc/smu74_discrete.h
-> CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/powerplay/hwmgr/polaris10_hwmgr.h
-> CONFLICT (content): Merge conflict in drivers/gpu/drm/amd/powerplay/hwmgr/polaris10_hwmgr.c
-> CONFLICT (content): Merge conflict in arch/powerpc/Kconfig
-> CONFLICT (content): Merge conflict in arch/arm/mach-omap2/omap-smp.c
-> CONFLICT (content): Merge conflict in Makefile
-> 
-> So I have just dropped the hid tree until it is cleaned up.
+Warnings Summary: 6
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+	  1 ../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
 
-Ok, this is pretty odd. I'll look into what happened, it'll be resolved in 
-a couple minutes, so please start pulling for-next again.
 
-Thanks,
 
--- 
-Jiri Kosina
-SUSE Labs
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
