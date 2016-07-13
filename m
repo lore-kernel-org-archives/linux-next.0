@@ -1,46 +1,49 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the block
- tree
-Date: Wed, 13 Jul 2016 09:31:08 -0700
-Message-ID: <57866CCC.20707@kernel.dk>
-References: <20160713161448.7cedd072@canb.auug.org.au>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: linux-next: Tree for Jul 13 (net/core/devlink with Tracing)
+Date: Wed, 13 Jul 2016 15:42:20 -0400
+Message-ID: <20160713154220.75b3896a@gandalf.local.home>
+References: <20160713164731.79532dda@canb.auug.org.au>
+	<e2a29ece-79cb-6892-2e53-0b05d4ef781d@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160713161448.7cedd072@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, NeilBrown <neilb@suse.com>, Keith Busch <keith.busch@intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtprelay0129.hostedemail.com ([216.40.44.129]:44319 "EHLO
+	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750912AbcGMTma (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 13 Jul 2016 15:42:30 -0400
+In-Reply-To: <e2a29ece-79cb-6892-2e53-0b05d4ef781d@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Jiri Pirko <jiri@resnulli.us>
 
-On 07/12/2016 11:14 PM, Stephen Rothwell wrote:
-> Hi Andrew,
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
->
->    drivers/nvme/host/core.c
->
-> between commit:
->
->    f80ec966c19b ("nvme: Limit command retries")
->
-> from the block tree and commit:
->
->    8cc07e463b0c ("NVMe: don't allocate unused nvme_major")
->
-> from the akpm-current tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Wed, 13 Jul 2016 08:12:16 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Usually I'm not that picky with trivial stuff going through other trees, 
-but with the amount of churn we have in NVMe, it really should go 
-through the block tree.
+> On 07/12/16 23:47, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20160712:
+> >   
+> 
+> on x86_64:
+> (full randconfig file is attached)
+> 
+> 
+>   CC      net/core/devlink.o
+> In file included from ../include/trace/define_trace.h:95:0,
+>                  from ../include/trace/events/devlink.h:51,
+>                  from ../net/core/devlink.c:30:
+> ../include/trace/events/devlink.h: In function 'trace_event_get_offsets_devlink_hwmsg':
+> ../include/trace/events/devlink.h:25:51: error: dereferencing pointer to incomplete type
+>    __string(owner_name, devlink->dev->driver->owner->name)
 
--- 
-Jens Axboe
+[snip the rest]
+
+When I remove all references to the owner_name (and that crazy
+dereferencing above), it compiles fine. There must be something funky
+with that devlink->dev->driver->owner->name part.
+
+-- Steve
