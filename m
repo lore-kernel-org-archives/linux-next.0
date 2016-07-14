@@ -1,48 +1,79 @@
-From: David Hildenbrand <dahi@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the s390 tree
-Date: Thu, 14 Jul 2016 08:58:13 +0200
-Message-ID: <20160714085813.71e0931c@thinkpad-w530>
-References: <20160714140334.7009275f@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <kvm-owner@vger.kernel.org>
-In-Reply-To: <20160714140334.7009275f@canb.auug.org.au>
-Sender: kvm-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160714 build: 0 failures 6 warnings (next-20160714)
+Date: Thu, 14 Jul 2016 10:19:51 +0100
+Message-ID: <E1bNcoB-00031J-9a@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44532 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751010AbcGNJUA (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 14 Jul 2016 05:20:00 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/s390/mm/gmap.c
-> 
-> between commit:
-> 
->   f04540298440 ("s390/mm: fix gmap tlb flush issues")
-> 
-> from the s390 tree and commit:
-> 
->   6ea427bbbd40 ("s390/mm: add reference counter to gmap structure")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (I just assumed that the update to gmap_free is no longer
-> needed) and can carry the fix as necessary. This is now fixed as far as
-> linux-next is concerned, but any non trivial conflicts should be mentioned
-> to your upstream maintainer when your tree is submitted for merging.
-> You may also want to consider cooperating with the maintainer of the
-> conflicting tree to minimise any particularly complex conflicts.
-> 
+Tree/Branch: next-20160714
+Git describe: next-20160714
+Commit: fd8d43a58d Add linux-next specific files for 20160714
 
-Yes, the tlb flush will be done in gmap_remove() instead of in gmap_free(),
-which is also fixed by commit f04540298440. Unfortunately, that stable fix was
-inevitable and collided with the already submitted patches for nested
-virtualization.
+Build Time: 85 min 59 sec
 
-Thanks for fixing that up, looks good to me.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-David
+Errors: 0
+Warnings: 6
+Section Mismatches: 0
 
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 6
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+	  1 ../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: 'struct device_node' declared inside parameter list
+	../arch/arm/mach-s3c64xx/common.h:28:2: warning: its scope is only this definition or declaration, which is probably not what you want
+	../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
