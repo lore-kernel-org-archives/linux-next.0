@@ -1,86 +1,102 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
-Date: Fri, 15 Jul 2016 14:59:49 +0200
-Message-ID: <2196027.ndrBocBl2R@vostro.rjw.lan>
-References: <20160715121723.0f21f148@canb.auug.org.au> <2993186.kRkeiY7GfT@vostro.rjw.lan> <20160715123253.GB2620@tetsubishi>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2202492.lesdHG4iUM"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160715123253.GB2620@tetsubishi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160715 build: 0 failures 14 warnings (next-20160715)
+Date: Fri, 15 Jul 2016 14:32:47 +0100
+Message-ID: <E1bO3EV-0000rU-8S@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48456 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758AbcGONdC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jul 2016 09:33:02 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20160715
+Git describe: next-20160715
+Commit: 084458fea6 Add linux-next specific files for 20160715
+
+Build Time: 86 min 39 sec
+
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
+
+Errors: 0
+Warnings: 14
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     10 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      4 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 14
+	  3 ../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+	  1 ../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/misc/lkdtm_usercopy.c:54:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/misc/lkdtm_core.c:97:22: warning: 'jp_shrink_inactive_list' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:89:13: warning: 'jp_ll_rw_block' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:83:13: warning: 'jp_tasklet_action' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:75:20: warning: 'jp_handle_irq_event' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:68:21: warning: 'jp_do_irq' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:340:16: warning: 'lkdtm_debugfs_entry' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:114:12: warning: 'jp_scsi_dispatch_cmd' defined but not used [-Wunused-function]
+	  1 ../drivers/misc/lkdtm_core.c:106:12: warning: 'jp_hrtimer_start' defined but not used [-Wunused-function]
 
 
---nextPart2202492.lesdHG4iUM
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
 
-On Friday, July 15, 2016 09:32:54 PM Wolfram Sang wrote:
-> On Fri, Jul 15, 2016 at 02:19:28PM +0200, Rafael J. Wysocki wrote:
-> > On Friday, July 15, 2016 12:28:53 PM Stephen Rothwell wrote:
-> > > Hi all,
-> > > 
-> > > On Fri, 15 Jul 2016 12:17:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > I fixed it up (I think, but it needs more work - see below) and can
-> > > 
-> > > For a start, it generates this warning, now:
-> > > 
-> > > drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
-> > > static acpi_status i2c_acpi_add_device(acpi_handle handle, u32 level,
-> > >                    ^
-> > 
-> > OK, thanks for the heads-up.
-> 
-> Yes, thanks!
-> 
-> > 
-> > Wolfram, what about if I exposed my "acpi-tables" branch for you to pull?
-> > 
-> > You could resolve this in your tree then.
-> 
-> I can pull it in, sure. For the fixup, I'd like a commitment from one of
-> the ACPI experts (Jarkko, Mika, Andy), though. Otherwise I'd need to
-> revert given that we are quite late in the cycle already.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-The branch is here:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-tables
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
 
-The top-most commit is:
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:340:16: warning: 'lkdtm_debugfs_entry' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:68:21: warning: 'jp_do_irq' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:75:20: warning: 'jp_handle_irq_event' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:83:13: warning: 'jp_tasklet_action' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:89:13: warning: 'jp_ll_rw_block' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:97:22: warning: 'jp_shrink_inactive_list' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:106:12: warning: 'jp_hrtimer_start' defined but not used [-Wunused-function]
+	../drivers/misc/lkdtm_core.c:114:12: warning: 'jp_scsi_dispatch_cmd' defined but not used [-Wunused-function]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-fafe5306f201 ACPI: Rename configfs.c to acpi_configfs.c to prevent link error
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-I won't rebase this branch going forward, so it is safe to pull.
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
 
-Please let me know how I can help with the conflict resolution.
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
 
-Thanks,
-Rafael
+Warnings:
+	../include/trace/events/devlink.h:42:12: warning: format '%lu' expects argument of type 'long unsigned int', but argument 10 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../drivers/misc/lkdtm_usercopy.c:54:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
 
---nextPart2202492.lesdHG4iUM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Warnings:
+	arch/arm64/configs/defconfig:352:warning: override: reassigning to symbol PWM
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
 
-iQIcBAABCAAGBQJXiN5LAAoJEILEb/54YlRxYV4P/0ZlHq4/E0YLiJx6G8+dAKVu
-O+f5b8ujzt3f+Am3ibVcwW5NMzS9iFDoTXAn6YeSJY2KiSTdlz7+8uCNJhdVebUM
-4Xp+JlClw8zsD3h3UfP2orxO1muqbWITErYvj/wK2RFCGlgYIXysnqMurPI4mUsF
-JHqGxR2iM8qPC+9e97/M6WW/vLMyrYLO5hhgrY/Xo9NIlCGZEDOrvEGMaXFvw3nW
-XMomVPp0isvlYmz01JlG08LdZXPCeAF0X4tTEUTmlHqD0BrOO9NfWNy682o0dnSr
-yVq+eNX847y8doV+SpWUl3m/t2uMIlCl0WVIUiJyKKG9/jssFLfjyVijR+op8fe2
-EU3X8xNE+AsRFwLeB1Sllyn6wBwP23uXXxT8T89onwc27PRlABdk/52I42CyrMnu
-xE20bB/2raoY/2BcGlBJc4ZBfoGNsmQevhWHak5yTxeOxMJigbeHQLisTkS2h4Bq
-1LkrwksXpZpbhrRC28GczpIUUOND6WRfXmpTF2ib/oW9tkHfgZUpxrWAbBVPdkg4
-ECFDk0wIDx36Npndmsfr8CKxhJNB/W87w84dGqIu0B+8YXmi9HM6yjPcpZEnsera
-+VObVqmFfPymalQPeCMLk3t6UN5rfGHKlHRyW62IkncmzCs9aws8AU7OBWYtCGxV
-iimjALXi06yQAVJff3uv
-=BTmt
------END PGP SIGNATURE-----
+Passed with no errors, warnings or mismatches:
 
---nextPart2202492.lesdHG4iUM--
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
