@@ -1,49 +1,101 @@
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
- luto-misc tree
-Date: Fri, 15 Jul 2016 13:28:00 -0300
-Message-ID: <20160715162800.GE2523@redhat.com>
-References: <20160715170654.0b09a8bc@canb.auug.org.au>
- <20160715072243.GP30154@twins.programming.kicks-ass.net>
- <20160715073119.GR30927@twins.programming.kicks-ass.net>
- <20160715150903.GA2523@redhat.com>
- <20160715152436.GB2523@redhat.com>
- <20160715154326.GC2523@redhat.com>
- <20160715154930.GC3115@twins.programming.kicks-ass.net>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: manual merge of the clockevents tree with the arm-soc
+ tree
+Date: Fri, 15 Jul 2016 19:06:57 +0200
+Message-ID: <57891831.2080806@linaro.org>
+References: <20160707141226.2b9c1e15@canb.auug.org.au>
+ <20160711152812.3efd7047@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160715154930.GC3115@twins.programming.kicks-ass.net>
+In-Reply-To: <20160711152812.3efd7047@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andy Lutomirski <luto@amacapital.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>
 List-Id: linux-next.vger.kernel.org
 
-Em Fri, Jul 15, 2016 at 05:49:30PM +0200, Peter Zijlstra escreveu:
-> On Fri, Jul 15, 2016 at 12:43:26PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Ok, same results, it works, queuing this one, ack?
-> 
-> Sure. Although I'm still somewhat puzzled by the duplicated effort of
-> __BITS_PER_LONG and BITS_PER_LONG.
+On 07/11/2016 07:28 AM, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org=
+=2Eau> wrote:
+>>
+>> Today's linux-next merge of the clockevents tree got a conflict in:
+>>
+>>   arch/arm/Kconfig
+>>
+>> between commit:
+>>
+>>   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
+>>
+>> from the arm-soc tree and commit:
+>>
+>>   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST=
+ option")
+>>
+>> from the clockevents tree.
+>>
+>> I fixed it up (I used the arm-soc version of this file and then adde=
+d
+>> the following merge fix patch) and can carry the fix as necessary. T=
+his
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your =
+tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particul=
+arly
+>> complex conflicts.
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Thu, 7 Jul 2016 13:59:06 +1000
+>> Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps=
+711x: Switch to MULTIPLATFORM"
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  arch/arm/mach-clps711x/Kconfig | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x=
+/Kconfig
+>> index 3b56197ccfd0..dc7c6edeab39 100644
+>> --- a/arch/arm/mach-clps711x/Kconfig
+>> +++ b/arch/arm/mach-clps711x/Kconfig
+>> @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
+>>  	depends on ARCH_MULTI_V4T
+>>  	select ARCH_REQUIRE_GPIOLIB
+>>  	select AUTO_ZRELADDR
+>> -	select CLKSRC_MMIO
+>>  	select CLKSRC_OF
+>> +	select CLPS711X_TIMER
+>>  	select COMMON_CLK
+>>  	select CPU_ARM720T
+>>  	select GENERIC_CLOCKEVENTS
+>> --=20
+>> 2.8.1
+>=20
+> This merge fix is now applicable to the merge between the arm-soc tre=
+e
+> and the tip tree.
+>=20
+> Also, the clockevents tree needs to be cleaned up as all its commits
+> have been added to the tip tree as different commits (but the s
+> patches) :-(
 
-Well, I also can't think of something to justify that, would have to dig
-deeper to figure out why that duplication was introduced.
+I synced the branch with tip/timers/core, no more conflict should happe=
+n.
 
-Thanks, will queue this one up and be done with it. For the moment. :-)
+Thanks.
 
-- Arnaldo
- 
-> > commit a08cc3e6f7bb965672a3ff60f98d0dbbc5334ee7
-> > Author: Peter Zijlstra <peterz@infradead.org>
-> > Date:   Fri Jul 15 12:38:18 2016 -0300
-> > 
-> >     tools: Simplify BITS_PER_LONG define
-> >     
-> >     Do it using (__CHAR_BIT__ * __SIZEOF_LONG__), simpler, works everywhere,
-> >     reduces the complexity by ditching CONFIG_64BIT, that was being
-> >     synthesized from yet another set of defines, which proved fragile,
-> >     breaking the build on linux-next for no obvious reasons.
-> 
-> If you ever do need to introduce CONFIG_64BIT, __LP64__ seems like the
-> right symbol to use for it.
+  -- Daniel
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
