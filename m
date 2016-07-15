@@ -1,72 +1,107 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Fri, 15 Jul 2016 13:40:52 +1000
-Message-ID: <20160715134052.030a8c15@canb.auug.org.au>
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Subject: Re: linux-next: build failure after merge of the drm tree
+Date: Fri, 15 Jul 2016 06:32:45 +0200
+Message-ID: <CA+icZUUM8ZwmffjthXGGMXQ-wSFizGs9Yc10ihKyKqgTyvg9vg@mail.gmail.com>
+References: <20160715134052.030a8c15@canb.auug.org.au>
+Reply-To: sedat.dilek@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:34473 "EHLO
+	mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750764AbcGOEcr (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 15 Jul 2016 00:32:47 -0400
+In-Reply-To: <20160715134052.030a8c15@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
 
-SGkgRGF2ZSwKCkFmdGVyIG1lcmdpbmcgdGhlIGRybSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
-YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCmZhaWxlZCBsaWtlIHRoaXM6CgpJbiBmaWxlIGlu
-Y2x1ZGVkIGZyb20gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYzozNDowOgpk
-cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jOiBJbiBmdW5jdGlvbiAnaW50ZWxf
-b3ByZWdpb25fZ2V0X3BhbmVsX3R5cGUnOgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJl
-Z2lvbi5jOjEwNDI6MTc6IGVycm9yOiAnZGV2JyB1bmRlY2xhcmVkIChmaXJzdCB1c2UgaW4gdGhp
-cyBmdW5jdGlvbikKICBpZiAoSVNfU0tZTEFLRShkZXYpKSB7CiAgICAgICAgICAgICAgICAgXgpk
-cml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Rydi5oOjI2MDM6NDM6IG5vdGU6IGluIGRlZmluaXRp
-b24gb2YgbWFjcm8gJ19fSTkxNV9fJwogIGlmIChfX2J1aWx0aW5fdHlwZXNfY29tcGF0aWJsZV9w
-KHR5cGVvZigqcCksIHN0cnVjdCBkcm1faTkxNV9wcml2YXRlKSkgXAogICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Ry
-di5oOjI2NzA6MjY6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnSU5URUxfSU5GTycKICNk
-ZWZpbmUgSVNfU0tZTEFLRShkZXYpIChJTlRFTF9JTkZPKGRldiktPmlzX3NreWxha2UpCiAgICAg
-ICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lv
-bi5jOjEwNDI6Njogbm90ZTogaW4gZXhwYW5zaW9uIG9mIG1hY3JvICdJU19TS1lMQUtFJwogIGlm
-IChJU19TS1lMQUtFKGRldikpIHsKICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9v
-cHJlZ2lvbi5jOjEwNDI6MTc6IG5vdGU6IGVhY2ggdW5kZWNsYXJlZCBpZGVudGlmaWVyIGlzIHJl
-cG9ydGVkIG9ubHkgb25jZSBmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluCiAgaWYgKElT
-X1NLWUxBS0UoZGV2KSkgewogICAgICAgICAgICAgICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUv
-aTkxNV9kcnYuaDoyNjAzOjQzOiBub3RlOiBpbiBkZWZpbml0aW9uIG9mIG1hY3JvICdfX0k5MTVf
-XycKICBpZiAoX19idWlsdGluX3R5cGVzX2NvbXBhdGlibGVfcCh0eXBlb2YoKnApLCBzdHJ1Y3Qg
-ZHJtX2k5MTVfcHJpdmF0ZSkpIFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9kcnYuaDoyNjcwOjI2OiBub3RlOiBp
-biBleHBhbnNpb24gb2YgbWFjcm8gJ0lOVEVMX0lORk8nCiAjZGVmaW5lIElTX1NLWUxBS0UoZGV2
-KSAoSU5URUxfSU5GTyhkZXYpLT5pc19za3lsYWtlKQogICAgICAgICAgICAgICAgICAgICAgICAg
-IF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYzoxMDQyOjY6IG5vdGU6IGlu
-IGV4cGFuc2lvbiBvZiBtYWNybyAnSVNfU0tZTEFLRScKICBpZiAoSVNfU0tZTEFLRShkZXYpKSB7
-CiAgICAgIF4KCkNhdXNlZCBieSBjb21taXQKCiAgNmY5ZjRiN2EyY2Y3ICgiZHJtL2k5MTUvb3By
-ZWdpb246IENvbnZlcnQgdG8gdXNpbmcgbmF0aXZlIGRybV9pOTE1X3ByaXZhdGUiKQoKaW50ZXJh
-Y3Rpbmcgd2l0aCBjb21taXQKCiAgYWVkZGRhMDZjMWE3ICgiZHJtL2k5MTU6IElnbm9yZSBwYW5l
-bCB0eXBlIGZyb20gT3BSZWdpb24gb24gU0tMIikKCmZyb20gdGhlIGRybS1pbnRlbC1maXhlcyB0
-cmVlLgoKSSBhcHBsaWVkIHRoaXMgbWVyZ2UgZml4IHBhdGNoOgoKRnJvbTogU3RlcGhlbiBSb3Ro
-d2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CkRhdGU6IEZyaSwgMTUgSnVsIDIwMTYgMTM6MzQ6
-MDUgKzEwMDAKU3ViamVjdDogW1BBVENIXSBkcm0vaTkxNS9vcHJlZ2lvbjogZml4IHVwIGZvciBh
-cmd1bWVudCBjaGFuZ2UKClNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5i
-LmF1dWcub3JnLmF1PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX29wcmVnaW9uLmMg
-fCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYwppbmRleCAyMWYxOTY0MWUzM2UuLmRjZGIz
-NDZiNTk2YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24u
-YworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jCkBAIC0xMDM5LDcg
-KzEwMzksNyBAQCBpbnRlbF9vcHJlZ2lvbl9nZXRfcGFuZWxfdHlwZShzdHJ1Y3QgZHJtX2k5MTVf
-cHJpdmF0ZSAqZGV2X3ByaXYpCiAJICogdnN3aW5nIGluc3RlYWQuIExvdyB2c3dpbmcgcmVzdWx0
-cyBpbiBzb21lIGRpc3BsYXkgZmxpY2tlcnMsIHNvCiAJICogbGV0J3Mgc2ltcGx5IGlnbm9yZSB0
-aGUgT3BSZWdpb24gcGFuZWwgdHlwZSBvbiBTS0wgZm9yIG5vdy4KIAkgKi8KLQlpZiAoSVNfU0tZ
-TEFLRShkZXYpKSB7CisJaWYgKElTX1NLWUxBS0UoZGV2X3ByaXYpKSB7CiAJCURSTV9ERUJVR19L
-TVMoIklnbm9yaW5nIE9wUmVnaW9uIHBhbmVsIHR5cGUgKCVkKVxuIiwgcmV0IC0gMSk7CiAJCXJl
-dHVybiAtRU5PREVWOwogCX0KLS0gCjIuOC4xCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxs
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 7/15/16, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dave,
+>
+> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+>
+> In file included from drivers/gpu/drm/i915/intel_opregion.c:34:0:
+> drivers/gpu/drm/i915/intel_opregion.c: In function
+> 'intel_opregion_get_panel_type':
+> drivers/gpu/drm/i915/intel_opregion.c:1042:17: error: 'dev' undeclared
+> (first use in this function)
+>   if (IS_SKYLAKE(dev)) {
+>                  ^
+> drivers/gpu/drm/i915/i915_drv.h:2603:43: note: in definition of macro
+> '__I915__'
+>   if (__builtin_types_compatible_p(typeof(*p), struct drm_i915_private)) \
+>                                            ^
+> drivers/gpu/drm/i915/i915_drv.h:2670:26: note: in expansion of macro
+> 'INTEL_INFO'
+>  #define IS_SKYLAKE(dev) (INTEL_INFO(dev)->is_skylake)
+>                           ^
+> drivers/gpu/drm/i915/intel_opregion.c:1042:6: note: in expansion of macro
+> 'IS_SKYLAKE'
+>   if (IS_SKYLAKE(dev)) {
+>       ^
+> drivers/gpu/drm/i915/intel_opregion.c:1042:17: note: each undeclared
+> identifier is reported only once for each function it appears in
+>   if (IS_SKYLAKE(dev)) {
+>                  ^
+> drivers/gpu/drm/i915/i915_drv.h:2603:43: note: in definition of macro
+> '__I915__'
+>   if (__builtin_types_compatible_p(typeof(*p), struct drm_i915_private)) \
+>                                            ^
+> drivers/gpu/drm/i915/i915_drv.h:2670:26: note: in expansion of macro
+> 'INTEL_INFO'
+>  #define IS_SKYLAKE(dev) (INTEL_INFO(dev)->is_skylake)
+>                           ^
+> drivers/gpu/drm/i915/intel_opregion.c:1042:6: note: in expansion of macro
+> 'IS_SKYLAKE'
+>   if (IS_SKYLAKE(dev)) {
+>       ^
+>
+> Caused by commit
+>
+>   6f9f4b7a2cf7 ("drm/i915/opregion: Convert to using native
+> drm_i915_private")
+>
+> interacting with commit
+>
+>   aeddda06c1a7 ("drm/i915: Ignore panel type from OpRegion on SKL")
+>
+> from the drm-intel-fixes tree.
+>
+> I applied this merge fix patch:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 15 Jul 2016 13:34:05 +1000
+> Subject: [PATCH] drm/i915/opregion: fix up for argument change
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/i915/intel_opregion.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/intel_opregion.c
+> b/drivers/gpu/drm/i915/intel_opregion.c
+> index 21f19641e33e..dcdb346b596c 100644
+> --- a/drivers/gpu/drm/i915/intel_opregion.c
+> +++ b/drivers/gpu/drm/i915/intel_opregion.c
+> @@ -1039,7 +1039,7 @@ intel_opregion_get_panel_type(struct drm_i915_private
+> *dev_priv)
+>  	 * vswing instead. Low vswing results in some display flickers, so
+>  	 * let's simply ignore the OpRegion panel type on SKL for now.
+>  	 */
+> -	if (IS_SKYLAKE(dev)) {
+> +	if (IS_SKYLAKE(dev_priv)) {
+>  		DRM_DEBUG_KMS("Ignoring OpRegion panel type (%d)\n", ret - 1);
+>  		return -ENODEV;
+>  	}
+> --
+> 2.8.1
+>
+
+I fell over the same issue when testing drm-intel-nightly and sent a patch.
+
+- Sedat -
+
+https://lists.freedesktop.org/archives/intel-gfx/2016-July/100691.html
