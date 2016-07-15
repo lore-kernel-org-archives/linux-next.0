@@ -1,30 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
-Date: Fri, 15 Jul 2016 12:28:53 +1000
-Message-ID: <20160715122853.2474113b@canb.auug.org.au>
-References: <20160715121723.0f21f148@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Fri, 15 Jul 2016 13:40:52 +1000
+Message-ID: <20160715134052.030a8c15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160715121723.0f21f148@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
-
-On Fri, 15 Jul 2016 12:17:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> I fixed it up (I think, but it needs more work - see below) and can
-
-For a start, it generates this warning, now:
-
-drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
-static acpi_status i2c_acpi_add_device(acpi_handle handle, u32 level,
-                   ^
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgRGF2ZSwKCkFmdGVyIG1lcmdpbmcgdGhlIGRybSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCmZhaWxlZCBsaWtlIHRoaXM6CgpJbiBmaWxlIGlu
+Y2x1ZGVkIGZyb20gZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYzozNDowOgpk
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jOiBJbiBmdW5jdGlvbiAnaW50ZWxf
+b3ByZWdpb25fZ2V0X3BhbmVsX3R5cGUnOgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJl
+Z2lvbi5jOjEwNDI6MTc6IGVycm9yOiAnZGV2JyB1bmRlY2xhcmVkIChmaXJzdCB1c2UgaW4gdGhp
+cyBmdW5jdGlvbikKICBpZiAoSVNfU0tZTEFLRShkZXYpKSB7CiAgICAgICAgICAgICAgICAgXgpk
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Rydi5oOjI2MDM6NDM6IG5vdGU6IGluIGRlZmluaXRp
+b24gb2YgbWFjcm8gJ19fSTkxNV9fJwogIGlmIChfX2J1aWx0aW5fdHlwZXNfY29tcGF0aWJsZV9w
+KHR5cGVvZigqcCksIHN0cnVjdCBkcm1faTkxNV9wcml2YXRlKSkgXAogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2Ry
+di5oOjI2NzA6MjY6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnSU5URUxfSU5GTycKICNk
+ZWZpbmUgSVNfU0tZTEFLRShkZXYpIChJTlRFTF9JTkZPKGRldiktPmlzX3NreWxha2UpCiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lv
+bi5jOjEwNDI6Njogbm90ZTogaW4gZXhwYW5zaW9uIG9mIG1hY3JvICdJU19TS1lMQUtFJwogIGlm
+IChJU19TS1lMQUtFKGRldikpIHsKICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9v
+cHJlZ2lvbi5jOjEwNDI6MTc6IG5vdGU6IGVhY2ggdW5kZWNsYXJlZCBpZGVudGlmaWVyIGlzIHJl
+cG9ydGVkIG9ubHkgb25jZSBmb3IgZWFjaCBmdW5jdGlvbiBpdCBhcHBlYXJzIGluCiAgaWYgKElT
+X1NLWUxBS0UoZGV2KSkgewogICAgICAgICAgICAgICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUv
+aTkxNV9kcnYuaDoyNjAzOjQzOiBub3RlOiBpbiBkZWZpbml0aW9uIG9mIG1hY3JvICdfX0k5MTVf
+XycKICBpZiAoX19idWlsdGluX3R5cGVzX2NvbXBhdGlibGVfcCh0eXBlb2YoKnApLCBzdHJ1Y3Qg
+ZHJtX2k5MTVfcHJpdmF0ZSkpIFwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9kcnYuaDoyNjcwOjI2OiBub3RlOiBp
+biBleHBhbnNpb24gb2YgbWFjcm8gJ0lOVEVMX0lORk8nCiAjZGVmaW5lIElTX1NLWUxBS0UoZGV2
+KSAoSU5URUxfSU5GTyhkZXYpLT5pc19za3lsYWtlKQogICAgICAgICAgICAgICAgICAgICAgICAg
+IF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYzoxMDQyOjY6IG5vdGU6IGlu
+IGV4cGFuc2lvbiBvZiBtYWNybyAnSVNfU0tZTEFLRScKICBpZiAoSVNfU0tZTEFLRShkZXYpKSB7
+CiAgICAgIF4KCkNhdXNlZCBieSBjb21taXQKCiAgNmY5ZjRiN2EyY2Y3ICgiZHJtL2k5MTUvb3By
+ZWdpb246IENvbnZlcnQgdG8gdXNpbmcgbmF0aXZlIGRybV9pOTE1X3ByaXZhdGUiKQoKaW50ZXJh
+Y3Rpbmcgd2l0aCBjb21taXQKCiAgYWVkZGRhMDZjMWE3ICgiZHJtL2k5MTU6IElnbm9yZSBwYW5l
+bCB0eXBlIGZyb20gT3BSZWdpb24gb24gU0tMIikKCmZyb20gdGhlIGRybS1pbnRlbC1maXhlcyB0
+cmVlLgoKSSBhcHBsaWVkIHRoaXMgbWVyZ2UgZml4IHBhdGNoOgoKRnJvbTogU3RlcGhlbiBSb3Ro
+d2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CkRhdGU6IEZyaSwgMTUgSnVsIDIwMTYgMTM6MzQ6
+MDUgKzEwMDAKU3ViamVjdDogW1BBVENIXSBkcm0vaTkxNS9vcHJlZ2lvbjogZml4IHVwIGZvciBh
+cmd1bWVudCBjaGFuZ2UKClNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5i
+LmF1dWcub3JnLmF1PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX29wcmVnaW9uLmMg
+fCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24uYwppbmRleCAyMWYxOTY0MWUzM2UuLmRjZGIz
+NDZiNTk2YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfb3ByZWdpb24u
+YworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9vcHJlZ2lvbi5jCkBAIC0xMDM5LDcg
+KzEwMzksNyBAQCBpbnRlbF9vcHJlZ2lvbl9nZXRfcGFuZWxfdHlwZShzdHJ1Y3QgZHJtX2k5MTVf
+cHJpdmF0ZSAqZGV2X3ByaXYpCiAJICogdnN3aW5nIGluc3RlYWQuIExvdyB2c3dpbmcgcmVzdWx0
+cyBpbiBzb21lIGRpc3BsYXkgZmxpY2tlcnMsIHNvCiAJICogbGV0J3Mgc2ltcGx5IGlnbm9yZSB0
+aGUgT3BSZWdpb24gcGFuZWwgdHlwZSBvbiBTS0wgZm9yIG5vdy4KIAkgKi8KLQlpZiAoSVNfU0tZ
+TEFLRShkZXYpKSB7CisJaWYgKElTX1NLWUxBS0UoZGV2X3ByaXYpKSB7CiAJCURSTV9ERUJVR19L
+TVMoIklnbm9yaW5nIE9wUmVnaW9uIHBhbmVsIHR5cGUgKCVkKVxuIiwgcmV0IC0gMSk7CiAJCXJl
+dHVybiAtRU5PREVWOwogCX0KLS0gCjIuOC4xCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxs
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
