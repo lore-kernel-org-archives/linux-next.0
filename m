@@ -1,81 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the luto-misc tree
-Date: Fri, 15 Jul 2016 17:06:54 +1000
-Message-ID: <20160715170654.0b09a8bc@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: build failure after merge of the luto-misc tree
+Date: Fri, 15 Jul 2016 09:22:43 +0200
+Message-ID: <20160715072243.GP30154@twins.programming.kicks-ass.net>
+References: <20160715170654.0b09a8bc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47827 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752503AbcGOHG6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Fri, 15 Jul 2016 03:06:58 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andy Lutomirski <luto@amacapital.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160715170654.0b09a8bc@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andy Lutomirski <luto@amacapital.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andy,
+On Fri, Jul 15, 2016 at 05:06:54PM +1000, Stephen Rothwell wrote:
+> interacting with commit
+> 
+>   2a00f026a15d ("tools: Fix up BITS_PER_LONG setting")
+> 
+> from the tip tree.
 
-After merging the luto-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Yuck.. that thing is horrid :/
 
-In file included from arch/x86/include/uapi/asm/bitsperlong.h:10:0,
-                 from include/uapi/asm-generic/int-ll64.h:11,
-                 from include/uapi/asm-generic/types.h:6,  
-                 from arch/x86/include/uapi/asm/types.h:4,
-                 from tools/include/linux/types.h:9,
-                 from include/uapi/linux/elf.h:4,
-                 from arch/x86/entry/vdso/vdso2c.c:66:
-tools/include/asm-generic/bitsperlong.h:32:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
- #error Inconsistent word size. Check asm/bitsperlong.h
-  ^
+What's wrong with so?
 
-Caused by commit
+And if you really want to retain CONFIG_64BIT (because other headers
+might want it, and they currently do not) then do something like:
 
-  6436d4c1a83c ("x86/vdso: Fail the build if the vdso image has no dynamic section")
+#ifdef __LP64__
+#define CONFIG_64BIT
+#else
+#define CONFIG_32BIT
+#endif
 
-interacting with commit
+All GCC versions I checked have __CHAR_BIT__ and __SIZEOF_LONG__.
 
-  2a00f026a15d ("tools: Fix up BITS_PER_LONG setting")
+(and I checked most everything from 4.4 - 6.1)
 
-from the tip tree.
-
-I am not sure why 6436d4c1a83c does this ... maybe it just causes
-arch/x86/entry/vdso/vdso2c.c to be rebuilt?
-
-I applied this partial revert of the latter commit:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 15 Jul 2016 16:58:25 +1000
-Subject: [PATCH] tools: partial revert of 2a00f026a15d "tools: Fix up
- BITS_PER_LONG setting"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- tools/include/asm-generic/bitsperlong.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/tools/include/asm-generic/bitsperlong.h b/tools/include/asm-generic/bitsperlong.h
-index cfd661c6fc17..cb047bd03b69 100644
+index cfd661c6fc17..4b4c91b0f042 100644
 --- a/tools/include/asm-generic/bitsperlong.h
 +++ b/tools/include/asm-generic/bitsperlong.h
-@@ -28,7 +28,11 @@
- #define BITS_PER_LONG 32
- #endif /* CONFIG_64BIT */
+@@ -3,37 +3,6 @@
  
+ #include <uapi/asm-generic/bitsperlong.h>
+ 
+-/*
+- * In the kernel, where this file comes from, we can rely on CONFIG_64BIT,
+- * here we have to make amends with what the various compilers provides us
+- * to figure out if we're on a 64-bit machine...
+- */
+-#ifdef __SIZEOF_LONG__
+-# if __SIZEOF_LONG__ == 8
+-#  define CONFIG_64BIT
+-# endif
+-#else
+-# ifdef __WORDSIZE
+-#  if __WORDSIZE == 64
+-#   define CONFIG_64BIT
+-#  endif
+-# else
+-#  error Failed to determine BITS_PER_LONG value
+-# endif
+-#endif
+-
+-#ifdef CONFIG_64BIT
+-#define BITS_PER_LONG 64
+-#else
+-#define BITS_PER_LONG 32
+-#endif /* CONFIG_64BIT */
+-
 -#if BITS_PER_LONG != __BITS_PER_LONG
-+/*
-+ * FIXME: The check currently breaks x86-64 build, so it's
-+ * temporarily disabled. Please fix x86-64 and reenable
-+ */
-+#if 0 && BITS_PER_LONG != __BITS_PER_LONG
- #error Inconsistent word size. Check asm/bitsperlong.h
- #endif
+-#error Inconsistent word size. Check asm/bitsperlong.h
+-#endif
+-
+-#ifndef BITS_PER_LONG_LONG
+-#define BITS_PER_LONG_LONG 64
+-#endif
++#define BITS_PER_LONG (__CHAR_BIT__ * __SIZEOF_LONG__)
  
--- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+ #endif /* __ASM_GENERIC_BITS_PER_LONG */
