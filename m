@@ -1,43 +1,82 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kspp tree with the powerpc tree
-Date: Mon, 18 Jul 2016 22:19:49 +1000
-Message-ID: <20160718221949.620fba2c@canb.auug.org.au>
-References: <20160718130315.314f8a77@canb.auug.org.au>
-	<871t2rb496.fsf@@concordia.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160718 build: 0 failures 4 warnings (next-20160718)
+Date: Mon, 18 Jul 2016 13:21:19 +0100
+Message-ID: <E1bP7Xz-0001EV-Nn@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53426 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751557AbcGRMTw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2016 08:19:52 -0400
-In-Reply-To: <871t2rb496.fsf@@concordia.ellerman.id.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57868 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751516AbcGRMVZ (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 18 Jul 2016 08:21:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Kees Cook <keescook@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>, "oss@buserror.net" <oss@buserror.net>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Michael,
+Tree/Branch: next-20160718
+Git describe: next-20160718
+Commit: 7dd90b17d1 Add linux-next specific files for 20160718
 
-On Mon, 18 Jul 2016 21:00:05 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> 
-> > from the powerpc tree and commit:  
-> 
-> Actually that's in Scott's tree.
+Build Time: 86 min 40 sec
 
-Oops, sorry.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-> > Michael: time to sort these selects?  
-> 
-> Yeah I was thinking that the other day. Not sure when is a good time though.
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
 
-Just after -rc1, before you open the powerpc tree up again so most of
-the powerpc patches can be based after it.  Also a good time to update
-the config files if necessary.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
--- 
-Cheers,
-Stephen Rothwell
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  3 ../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
