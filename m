@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with the powerpc tree
-Date: Mon, 18 Jul 2016 13:03:15 +1000
-Message-ID: <20160718130315.314f8a77@canb.auug.org.au>
+Subject: linux-next: manual merge of the device-mapper tree with the block
+ tree
+Date: Mon, 18 Jul 2016 14:09:35 +1000
+Message-ID: <20160718140935.75ac0fcc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44598 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40477 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751062AbcGRDDR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Sun, 17 Jul 2016 23:03:17 -0400
+	id S1750709AbcGREJh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2016 00:09:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>, Christoph Hellwig <hch@lst.de>
 
-Hi Kees,
+Hi all,
 
-Today's linux-next merge of the kspp tree got a conflict in:
+Today's linux-next merge of the device-mapper tree got a conflict in:
 
-  arch/powerpc/Kconfig
+  include/linux/blkdev.h
 
 between commit:
 
-  c223c90386bc ("powerpc32: provide VIRT_CPU_ACCOUNTING")
+  288dab8a35a0 ("block: add a separate operation type for secure erase")
 
-from the powerpc tree and commit:
+from the block tree and commit:
 
-  006d998dda94 ("powerpc/uaccess: Enable hardened usercopy")
+  ff6bbdd8ef75 ("block: add QUEUE_FLAG_DAX for devices to advertise their DAX support")
 
-from the kspp tree.
+from the device-mapper tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,21 +39,23 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-Michael: time to sort these selects?
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/Kconfig
-index fcfe5332416f,b7a18b2604be..000000000000
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@@ -165,7 -164,7 +165,8 @@@ config PP
-  	select ARCH_HAS_UBSAN_SANITIZE_ALL
-  	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
-  	select HAVE_LIVEPATCH if HAVE_DYNAMIC_FTRACE_WITH_REGS
- +	select HAVE_VIRT_CPU_ACCOUNTING
-+ 	select HAVE_ARCH_HARDENED_USERCOPY
+diff --cc include/linux/blkdev.h
+index 9ae49ccaac95,1493ab3a537f..000000000000
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@@ -592,8 -593,9 +593,9 @@@ static inline void queue_flag_clear(uns
+  #define blk_queue_stackable(q)	\
+  	test_bit(QUEUE_FLAG_STACKABLE, &(q)->queue_flags)
+  #define blk_queue_discard(q)	test_bit(QUEUE_FLAG_DISCARD, &(q)->queue_flags)
+ -#define blk_queue_secdiscard(q)	(blk_queue_discard(q) && \
+ -	test_bit(QUEUE_FLAG_SECDISCARD, &(q)->queue_flags))
+ +#define blk_queue_secure_erase(q) \
+ +	(test_bit(QUEUE_FLAG_SECERASE, &(q)->queue_flags))
++ #define blk_queue_dax(q)	test_bit(QUEUE_FLAG_DAX, &(q)->queue_flags)
   
-  config GENERIC_CSUM
-  	def_bool CPU_LITTLE_ENDIAN
+  #define blk_noretry_request(rq) \
+  	((rq)->cmd_flags & (REQ_FAILFAST_DEV|REQ_FAILFAST_TRANSPORT| \
