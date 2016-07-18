@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Date: Mon, 18 Jul 2016 15:26:28 +1000
-Message-ID: <20160718152628.312b3e43@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the powerpc tree
+Date: Mon, 18 Jul 2016 15:54:18 +1000
+Message-ID: <20160718155418.2ca9a858@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57732 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55774 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750857AbcGRF0b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2016 01:26:31 -0400
+	id S1751034AbcGRFyU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 18 Jul 2016 01:54:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>, Paul Mackerras <paulus@ozlabs.org>
 
-Hi Paul,
+Hi all,
 
-Today's linux-next merge of the rcu tree got a conflict in:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-  kernel/rcu/tree.c
+  arch/powerpc/kernel/exceptions-64s.S
 
 between commit:
 
-  4df8374254ea ("rcu: Convert rcutree to hotplug state machine")
+  9baaef0a22c8 ("powerpc/irq: Add support for HV virtualization interrupts")
 
-from the tip tree and commit:
+from the powerpc tree and commit:
 
-  2a84cde733b0 ("rcu: Exact CPU-online tracking for RCU")
+  fd7bacbca47a ("KVM: PPC: Book3S HV: Fix TB corruption in guest exit path on HMI interrupt")
 
-from the rcu tree.
+from the kvm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,103 +42,38 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/rcu/tree.c
-index e5164deb51e1,5663d1e899d3..000000000000
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@@ -3812,54 -3809,34 +3809,80 @@@ int rcutree_prepare_cpu(unsigned int cp
+diff --cc arch/powerpc/kernel/exceptions-64s.S
+index 6200e4925d26,0eba47e074b9..000000000000
+--- a/arch/powerpc/kernel/exceptions-64s.S
++++ b/arch/powerpc/kernel/exceptions-64s.S
+@@@ -669,8 -680,8 +669,10 @@@ _GLOBAL(__replay_interrupt
+  BEGIN_FTR_SECTION
+  	cmpwi	r3,0xe80
+  	beq	h_doorbell_common
+ +	cmpwi	r3,0xea0
+ +	beq	h_virt_irq_common
++ 	cmpwi	r3,0xe60
++ 	beq	hmi_exception_common
+  FTR_SECTION_ELSE
+  	cmpwi	r3,0xa00
+  	beq	doorbell_super_common
+@@@ -1161,18 -1172,9 +1163,18 @@@ fwnmi_data_area
+  	. = 0x8000
+  #endif /* defined(CONFIG_PPC_PSERIES) || defined(CONFIG_PPC_POWERNV) */
   
-  	for_each_rcu_flavor(rsp)
-  		rcu_init_percpu_data(cpu, rsp);
+ +	STD_EXCEPTION_COMMON(0xf60, facility_unavailable, facility_unavailable_exception)
+ +	STD_EXCEPTION_COMMON(0xf80, hv_facility_unavailable, facility_unavailable_exception)
  +
- +	rcu_prepare_kthreads(cpu);
- +	rcu_spawn_all_nocb_kthreads(cpu);
+ +#ifdef CONFIG_CBE_RAS
+ +	STD_EXCEPTION_COMMON(0x1200, cbe_system_error, cbe_system_error_exception)
+ +	STD_EXCEPTION_COMMON(0x1600, cbe_maintenance, cbe_maintenance_exception)
+ +	STD_EXCEPTION_COMMON(0x1800, cbe_thermal, cbe_thermal_exception)
+ +#endif /* CONFIG_CBE_RAS */
  +
- +	return 0;
- +}
- +
- +static void rcutree_affinity_setting(unsigned int cpu, int outgoing)
- +{
- +	struct rcu_data *rdp = per_cpu_ptr(rcu_state_p->rda, cpu);
- +
- +	rcu_boost_kthread_setaffinity(rdp->mynode, outgoing);
- +}
- +
- +int rcutree_online_cpu(unsigned int cpu)
- +{
- +	sync_sched_exp_online_cleanup(cpu);
- +	rcutree_affinity_setting(cpu, -1);
- +	return 0;
- +}
- +
- +int rcutree_offline_cpu(unsigned int cpu)
- +{
- +	rcutree_affinity_setting(cpu, cpu);
- +	return 0;
- +}
- +
- +
- +int rcutree_dying_cpu(unsigned int cpu)
- +{
- +	struct rcu_state *rsp;
- +
- +	for_each_rcu_flavor(rsp)
- +		rcu_cleanup_dying_cpu(rsp);
- +	return 0;
- +}
- +
- +int rcutree_dead_cpu(unsigned int cpu)
- +{
- +	struct rcu_state *rsp;
- +
- +	for_each_rcu_flavor(rsp) {
- +		rcu_cleanup_dead_cpu(cpu, rsp);
- +		do_nocb_deferred_wakeup(per_cpu_ptr(rsp->rda, cpu));
- +	}
- +	return 0;
-  }
-  
-+ /*
-+  * Mark the specified CPU as being online so that subsequent grace periods
-+  * (both expedited and normal) will wait on it.  Note that this means that
-+  * incoming CPUs are not allowed to use RCU read-side critical sections
-+  * until this function is called.  Failing to observe this restriction
-+  * will result in lockdep splats.
-+  */
-+ void rcu_cpu_starting(unsigned int cpu)
-+ {
-+ 	unsigned long flags;
-+ 	unsigned long mask;
-+ 	struct rcu_data *rdp;
-+ 	struct rcu_node *rnp;
-+ 	struct rcu_state *rsp;
-+ 
-+ 	for_each_rcu_flavor(rsp) {
-+ 		rdp = this_cpu_ptr(rsp->rda);
-+ 		rnp = rdp->mynode;
-+ 		mask = rdp->grpmask;
-+ 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
-+ 		rnp->qsmaskinitnext |= mask;
-+ 		rnp->expmaskinitnext |= mask;
-+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-+ 	}
-+ }
-+ 
-  #ifdef CONFIG_HOTPLUG_CPU
-  /*
-   * The CPU is exiting the idle loop into the arch_cpu_idle_dead()
-@@@ -4208,9 -4231,12 +4231,11 @@@ void __init rcu_init(void
-  	 * this is called early in boot, before either interrupts
-  	 * or the scheduler are operational.
-  	 */
- -	cpu_notifier(rcu_cpu_notify, 0);
-  	pm_notifier(rcu_pm_notify, 0);
-- 	for_each_online_cpu(cpu)
-+ 	for_each_online_cpu(cpu) {
- -		rcu_cpu_notify(NULL, CPU_UP_PREPARE, (void *)(long)cpu);
- +		rcutree_prepare_cpu(cpu);
-+ 		rcu_cpu_starting(cpu);
-+ 	}
-  }
-  
-  #include "tree_exp.h"
+  	.globl hmi_exception_early
+  hmi_exception_early:
+- 	EXCEPTION_PROLOG_1(PACA_EXGEN, NOTEST, 0xe60)
++ 	EXCEPTION_PROLOG_1(PACA_EXGEN, KVMTEST, 0xe62)
+  	mr	r10,r1			/* Save r1			*/
+  	ld	r1,PACAEMERGSP(r13)	/* Use emergency stack		*/
+  	subi	r1,r1,INT_FRAME_SIZE	/* alloc stack frame		*/
