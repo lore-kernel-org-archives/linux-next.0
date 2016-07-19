@@ -1,74 +1,85 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next
- tree
-Date: Tue, 19 Jul 2016 09:11:11 +0200
-Message-ID: <CACna6ry6QgrbUoHuJacmr1EhHZyrwqsXfr51gENvY-0zM9L+3Q@mail.gmail.com>
-References: <20160719160831.79c0303f@canb.auug.org.au> <8760s2w369.fsf@kamboji.qca.qualcomm.com>
- <CACna6rxVFD1MpAEYP_Zd4W8CvgnxSQpa0wJs83jwDJ5v11gZ=Q@mail.gmail.com> <871t2qw1cz.fsf@kamboji.qca.qualcomm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <871t2qw1cz.fsf-HodKDYzPHsUD5k0oWYwrnHL1okKdlPRT@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160719 build: 0 failures 4 warnings (next-20160719)
+Date: Tue, 19 Jul 2016 10:51:35 +0100
+Message-ID: <E1bPRgd-0004CY-8w@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60706 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752593AbcGSJvm (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jul 2016 05:51:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 19 July 2016 at 09:09, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
-> Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
->
->> On 19 July 2016 at 08:30, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
->>> Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> writes:
->>>
->>>> After merging the wireless-drivers-next tree, today's linux-next b=
-uild
->>>> (powerpc allyesconfig) failed like this:
->>>>
->>>> drivers/mtd/devices/bcm47xxsflash.c: In function 'bcm47xxsflash_bc=
-ma_probe':
->>>> drivers/mtd/devices/bcm47xxsflash.c:299:17: error: implicit declar=
-ation of function 'ioremap_cache' [-Werror=3Dimplicit-function-declarat=
-ion]
->>>>   b47s->window =3D ioremap_cache(res->start, resource_size(res));
->>>>                  ^
->>>> drivers/mtd/devices/bcm47xxsflash.c:299:15: warning: assignment ma=
-kes pointer from integer without a cast [-Wint-conversion]
->>>>   b47s->window =3D ioremap_cache(res->start, resource_size(res));
->>>>                ^
->>>>
->>>> Caused by commit
->>>>
->>>>   57d8f7dd2132 ("bcma: allow enabling serial flash support on non-=
-MIPS SoCs")
->>>>
->>>> I have reverted that commit for today.
->>>
->>> Thanks, kbuild bot also notified about this.
->>>
->>> Rafa=C5=82, as the merge window is getting really close I would lik=
-e to
->>> revert this for now and we can reapply it once we the problem is fu=
-lly
->>> solved. And we can use my pending branch for build testing the patc=
-h
->>> with kbuild bot. What do you think?
->>
->> The simplest fix sounds pretty much as simple as the revert.
->
-> The problem is that I don't have much time, I need to send the pull
-> request to Dave within next few days. The fix might create other
-> problems so I'm not enthusiastic about iterating with this patch at t=
-he
-> moment. I think it can wait for 4.9.
+Tree/Branch: next-20160719
+Git describe: next-20160719
+Commit: d55b4726cc Add linux-next specific files for 20160719
 
-I sent a patch seconds ago, you may just take a look at it. If you
-still prefer to revert my commit, go ahead.
+Build Time: 86 min 50 sec
 
---=20
-Rafa=C5=82
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireles=
-s" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
+
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  3 ../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
