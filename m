@@ -1,95 +1,168 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
-Date: Tue, 19 Jul 2016 04:41:52 +0200
-Message-ID: <2565257.LbcJLfl1sl@vostro.rjw.lan>
-References: <20160715121723.0f21f148@canb.auug.org.au> <2196027.ndrBocBl2R@vostro.rjw.lan> <20160717181448.GC1814@katana>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
+Date: Mon, 18 Jul 2016 20:00:45 -0700
+Message-ID: <20160719030045.GR7094@linux.vnet.ibm.com>
+References: <20160718152628.312b3e43@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3147126.euzTHokrIU"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:52344 "HELO
-	cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1752152AbcGSChH (ORCPT
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49197 "EHLO
+	mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752187AbcGSDAd (ORCPT
 	<rfc822;linux-next@vger.kernel.org>);
-	Mon, 18 Jul 2016 22:37:07 -0400
-In-Reply-To: <20160717181448.GC1814@katana>
+	Mon, 18 Jul 2016 23:00:33 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.16.0.11/8.16.0.11) with SMTP id u6J2wfAg128198
+	for <linux-next@vger.kernel.org>; Mon, 18 Jul 2016 23:00:32 -0400
+Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
+	by mx0a-001b2d01.pphosted.com with ESMTP id 2495r91cph-1
+	(version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+	for <linux-next@vger.kernel.org>; Mon, 18 Jul 2016 23:00:32 -0400
+Received: from localhost
+	by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+	for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+	Mon, 18 Jul 2016 23:00:30 -0400
+Content-Disposition: inline
+In-Reply-To: <20160718152628.312b3e43@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anna-Maria Gleixner <anna-maria@linutronix.de>
 
-
---nextPart3147126.euzTHokrIU
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-
-On Sunday, July 17, 2016 08:14:48 PM Wolfram Sang wrote:
+On Mon, Jul 18, 2016 at 03:26:28PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
 > 
-> > > > > > I fixed it up (I think, but it needs more work - see below) and can
-> > > > > 
-> > > > > For a start, it generates this warning, now:
-> > > > > 
-> > > > > drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
-> > > > > static acpi_status i2c_acpi_add_device(acpi_handle handle, u32 level,
-> > > > >                    ^
-> > > > 
-> > > > OK, thanks for the heads-up.
-> > > 
-> > > Yes, thanks!
-> > > 
-> > > > 
-> > > > Wolfram, what about if I exposed my "acpi-tables" branch for you to pull?
-> > > > 
-> > > > You could resolve this in your tree then.
-> > > 
-> > > I can pull it in, sure. For the fixup, I'd like a commitment from one of
-> > > the ACPI experts (Jarkko, Mika, Andy), though. Otherwise I'd need to
-> > > revert given that we are quite late in the cycle already.
-> > 
-> > The branch is here:
-> > 
-> >  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-tables
-> > 
-> > The top-most commit is:
-> > 
-> > fafe5306f201 ACPI: Rename configfs.c to acpi_configfs.c to prevent link error
-> > 
-> > I won't rebase this branch going forward, so it is safe to pull.
-> > 
-> > Please let me know how I can help with the conflict resolution.
+> Today's linux-next merge of the rcu tree got a conflict in:
 > 
-> Well, not knowing much about ACPI, I just need the conflict resolution
-> for my latest i2c/for-next and your above branch. If you want to do it,
-> fine with me. But maybe Jarkko will be back to office on Monday, too.
+>   kernel/rcu/tree.c
+> 
+> between commit:
+> 
+>   4df8374254ea ("rcu: Convert rcutree to hotplug state machine")
+> 
+> from the tip tree and commit:
+> 
+>   2a84cde733b0 ("rcu: Exact CPU-online tracking for RCU")
+> 
+> from the rcu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Unfortunately, I don't see how these branches can be merged in a sensible
-way without adding too much new code into the merge itself.
+Ah, that is in -tip now?  Easier to test, then!
 
-Something needs to be dropped and then rebased and applied again.
+Thank you, the patch looks good at first glance, but will beat it up
+a bit.
 
-Thanks,
-Rafael
+							Thanx, Paul
 
---nextPart3147126.euzTHokrIU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAABCAAGBQJXjZN2AAoJEILEb/54YlRxl14P+QE0tEn0W3Vm6AR+KHANpw6r
-167wRwBiAVO5uvlJu1+tN8EYfOvps6hmv2LWZ+N2AqFxsXssoDf78aDQmVcCjWiU
-sYtw7HZWj6zzoYTKTbtgitfaVgRO3oN5UkcxuKX15K/J4hT4xb62Z5fgieu5471G
-Nos/Gtl/LF9xgdkk953ekn5d5cwSIbqjbev//hzrgBTGeu0NTeIuZrfQgz/QSUA7
-VrAru37ZjvV3qjGQQtiJN1vtwTbTFsIEA2OA8mRX/gXlKjDIo11UhKo84/eLYoTP
-CkIsToHcc0xhxRRbvZmr8ioxcMpYHcWBYs8FU8EySrs7Qq+n8c04rGu/cLjoJO5n
-aHEGXJTyNqjHAlwChaW5fAG7bSmrIQqvKm6K+98uIuMkgeM5V9lc6qPgG7NanY/R
-LJIRmESh7B+YCV57hRR9VA09Zm8+aZtecRn35z7qMqOOMUcL+FnSVCVJeEHRN4SR
-laRHMJcGREalacGnavHjjM0oBJYAljEsNAWWuifeKUijd5K0bD8XQuj+nVx1IACr
-LOvVF9uS8h1vp/BJlnZC69mu5pud5lnaS0X+zmWZeNEpi488WUHY6iSAtNp1gQ2T
-pk2NGl4teehkO20D74+C108uQwpeqUm/e8bh9cHuDBsv15WGKLYgRdfB3l7Bb9Ob
-8Kb9LINMRRCV46ZWbDae
-=HC5D
------END PGP SIGNATURE-----
-
---nextPart3147126.euzTHokrIU--
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc kernel/rcu/tree.c
+> index e5164deb51e1,5663d1e899d3..000000000000
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@@ -3812,54 -3809,34 +3809,80 @@@ int rcutree_prepare_cpu(unsigned int cp
+>   
+>   	for_each_rcu_flavor(rsp)
+>   		rcu_init_percpu_data(cpu, rsp);
+>  +
+>  +	rcu_prepare_kthreads(cpu);
+>  +	rcu_spawn_all_nocb_kthreads(cpu);
+>  +
+>  +	return 0;
+>  +}
+>  +
+>  +static void rcutree_affinity_setting(unsigned int cpu, int outgoing)
+>  +{
+>  +	struct rcu_data *rdp = per_cpu_ptr(rcu_state_p->rda, cpu);
+>  +
+>  +	rcu_boost_kthread_setaffinity(rdp->mynode, outgoing);
+>  +}
+>  +
+>  +int rcutree_online_cpu(unsigned int cpu)
+>  +{
+>  +	sync_sched_exp_online_cleanup(cpu);
+>  +	rcutree_affinity_setting(cpu, -1);
+>  +	return 0;
+>  +}
+>  +
+>  +int rcutree_offline_cpu(unsigned int cpu)
+>  +{
+>  +	rcutree_affinity_setting(cpu, cpu);
+>  +	return 0;
+>  +}
+>  +
+>  +
+>  +int rcutree_dying_cpu(unsigned int cpu)
+>  +{
+>  +	struct rcu_state *rsp;
+>  +
+>  +	for_each_rcu_flavor(rsp)
+>  +		rcu_cleanup_dying_cpu(rsp);
+>  +	return 0;
+>  +}
+>  +
+>  +int rcutree_dead_cpu(unsigned int cpu)
+>  +{
+>  +	struct rcu_state *rsp;
+>  +
+>  +	for_each_rcu_flavor(rsp) {
+>  +		rcu_cleanup_dead_cpu(cpu, rsp);
+>  +		do_nocb_deferred_wakeup(per_cpu_ptr(rsp->rda, cpu));
+>  +	}
+>  +	return 0;
+>   }
+>   
+> + /*
+> +  * Mark the specified CPU as being online so that subsequent grace periods
+> +  * (both expedited and normal) will wait on it.  Note that this means that
+> +  * incoming CPUs are not allowed to use RCU read-side critical sections
+> +  * until this function is called.  Failing to observe this restriction
+> +  * will result in lockdep splats.
+> +  */
+> + void rcu_cpu_starting(unsigned int cpu)
+> + {
+> + 	unsigned long flags;
+> + 	unsigned long mask;
+> + 	struct rcu_data *rdp;
+> + 	struct rcu_node *rnp;
+> + 	struct rcu_state *rsp;
+> + 
+> + 	for_each_rcu_flavor(rsp) {
+> + 		rdp = this_cpu_ptr(rsp->rda);
+> + 		rnp = rdp->mynode;
+> + 		mask = rdp->grpmask;
+> + 		raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> + 		rnp->qsmaskinitnext |= mask;
+> + 		rnp->expmaskinitnext |= mask;
+> + 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> + 	}
+> + }
+> + 
+>   #ifdef CONFIG_HOTPLUG_CPU
+>   /*
+>    * The CPU is exiting the idle loop into the arch_cpu_idle_dead()
+> @@@ -4208,9 -4231,12 +4231,11 @@@ void __init rcu_init(void
+>   	 * this is called early in boot, before either interrupts
+>   	 * or the scheduler are operational.
+>   	 */
+>  -	cpu_notifier(rcu_cpu_notify, 0);
+>   	pm_notifier(rcu_pm_notify, 0);
+> - 	for_each_online_cpu(cpu)
+> + 	for_each_online_cpu(cpu) {
+>  -		rcu_cpu_notify(NULL, CPU_UP_PREPARE, (void *)(long)cpu);
+>  +		rcutree_prepare_cpu(cpu);
+> + 		rcu_cpu_starting(cpu);
+> + 	}
+>   }
+>   
+>   #include "tree_exp.h"
+> 
