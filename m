@@ -1,85 +1,73 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160719 build: 0 failures 4 warnings (next-20160719)
-Date: Tue, 19 Jul 2016 10:51:35 +0100
-Message-ID: <E1bPRgd-0004CY-8w@optimist>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
+Date: Tue, 19 Jul 2016 14:55:08 +0200
+Message-ID: <2710890.mOpJ0mpNYq@vostro.rjw.lan>
+References: <20160715121723.0f21f148@canb.auug.org.au> <2565257.LbcJLfl1sl@vostro.rjw.lan> <20160719034806.GA1640@katana>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart2512384.mcK8ytl6Fi"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60706 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752593AbcGSJvm (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 19 Jul 2016 05:51:42 -0400
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:55014 "HELO
+	cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1752922AbcGSMuW (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jul 2016 08:50:22 -0400
+In-Reply-To: <20160719034806.GA1640@katana>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160719
-Git describe: next-20160719
-Commit: d55b4726cc Add linux-next specific files for 20160719
-
-Build Time: 86 min 50 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 4
-	  3 ../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Octavian Purdila <octavian.purdila@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
 
+--nextPart2512384.mcK8ytl6Fi
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Tuesday, July 19, 2016 05:48:07 AM Wolfram Sang wrote:
+> 
+> > > Well, not knowing much about ACPI, I just need the conflict resolution
+> > > for my latest i2c/for-next and your above branch. If you want to do it,
+> > > fine with me. But maybe Jarkko will be back to office on Monday, too.
+> > 
+> > Unfortunately, I don't see how these branches can be merged in a sensible
+> > way without adding too much new code into the merge itself.
+> > 
+> > Something needs to be dropped and then rebased and applied again.
+> 
+> Okay, I'll drop the I2C parts. Next to the core parts which I will drop,
+> there was also a driver patch making use of the core changes for which I
+> requested some updates. Since those did not happen yet (Jarkko on
+> holiday?), the core patches alone are not important anyhow.
 
+Thanks a lot!
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+> Thanks for looking into it!
 
-Warnings:
-	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+No problem.
 
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+Thanks,
+Rafael
 
-Warnings:
-	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
+--nextPart2512384.mcK8ytl6Fi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-Warnings:
-	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+iQIcBAABCAAGBQJXjiMxAAoJEILEb/54YlRx/goQAJregX3vOEjUPgXZxJXGF3CC
+V4zDb8mEyo1EUsgvMSuiJvdo88ExdX3c3Ddkd6kedchHGENtudTUf11kpmT9Dhpj
+8DpnNXGcAJFq3e6hM/w5mzIWkJeyLkDjPxT6f3yGd0YE7QCY450SWVL6RfANazfU
+uectcEUX/ZJ+avLhPeggBYWyxbnuFRdLdaKukNV/axy652pWK9G/tDZaMhjbpmUA
+f1pTAUfs1Yf/Cpsun2nwVme796bsKmFwjBJUC36Y6swkgWkT8KuOq3jYEg/jraJf
+9OMidb5IOIOT4TN7ggxSmpTCf55voOA0JCLKAemj8x443hZZlq+MLuyAQCWKNV8/
+F8t0frX/naCTCgghKhibzpfgIdCnLX2w000HVial+xYVHSsQvEP5huflBsbfZeZU
+Z1E4pTckY1RFWabmBA9JkytIMxh+L0BnzDL7rvvuWf2J9W1HcqvHjEhMnZTteMVx
+jMuP61fZ/21y+mI6uW6EuGMybE1TVHoQl+XcRTGFJ9uIeefuY7+19pcxaO53l5MH
+rLDuaR/xjZB++gdLk1MX/UwgBdaPvQLkM3fEK7akIhRNFYzHZCAwN8ngTvZCKYeB
+2Nr7/CUrwJwD36YReG60m1k241+LMQCLENzPwy7B5Pl8AseDWlXkXBDc9b1xT4Ym
+CnfTcxPww4sWuPIrjaH3
+=POGd
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/i2c/i2c-core.c:269:20: warning: 'i2c_acpi_add_device' defined but not used [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+--nextPart2512384.mcK8ytl6Fi--
