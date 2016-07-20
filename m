@@ -1,35 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvms390 tree with the kvm-arm tree
-Date: Wed, 20 Jul 2016 15:34:37 +1000
-Message-ID: <20160720153437.7cddb065@canb.auug.org.au>
+Subject: linux-next: manual merge of the cgroup tree with the net-next tree
+Date: Wed, 20 Jul 2016 16:11:36 +1000
+Message-ID: <20160720161136.3e3cc89a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58679 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752267AbcGTFej (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jul 2016 01:34:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Hildenbrand <dahi@linux.vnet.ibm.com>, Andre Przywara <andre.przywara@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Tejun,
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
+Today's linux-next merge of the cgroup tree got a conflict in:
 
-  include/uapi/linux/kvm.h
+  kernel/cgroup.c
 
 between commit:
 
-  2b8ddd9337ee ("KVM: Extend struct kvm_msi to hold a 32-bit device ID")
+  1f3fe7ebf613 ("cgroup: Add cgroup_get_from_fd")
 
-from the kvm-arm tree and commit:
+from the net-next tree and commit:
 
-  6502a34cfd66 ("KVM: s390: allow user space to handle instr 0x0000")
+  55094f575358 ("cgroup: remove duplicated include from cgroup.c")
 
-from the kvms390 tree.
+from the cgroup tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,17 +38,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/linux/kvm.h
-index 84d9e5f8ab4b,70941f4ab6d8..000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -867,7 -867,7 +867,8 @@@ struct kvm_ppc_smmu_info 
-  #define KVM_CAP_VCPU_ATTRIBUTES 127
-  #define KVM_CAP_MAX_VCPU_ID 128
-  #define KVM_CAP_X2APIC_API 129
- -#define KVM_CAP_S390_USER_INSTR0 130
- +#define KVM_CAP_MSI_DEVID 130
-++#define KVM_CAP_S390_USER_INSTR0 131
+diff --cc kernel/cgroup.c
+index 50787cd61da2,cb7cc54e2716..000000000000
+--- a/kernel/cgroup.c
++++ b/kernel/cgroup.c
+@@@ -61,8 -61,6 +61,7 @@@
+  #include <linux/cpuset.h>
+  #include <linux/proc_ns.h>
+  #include <linux/nsproxy.h>
+- #include <linux/proc_ns.h>
+ +#include <linux/file.h>
+  #include <net/sock.h>
   
-  #ifdef KVM_CAP_IRQ_ROUTING
-  
+  /*
