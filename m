@@ -1,42 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 20 Jul 2016 12:10:18 +1000
-Message-ID: <20160720121018.4b84b4cc@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the wireless-drivers-next
+ tree
+Date: Wed, 20 Jul 2016 12:25:03 +1000
+Message-ID: <20160720122503.09a46d7b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41431 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57041 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752066AbcGTCKU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2016 22:10:20 -0400
+	id S1752190AbcGTCZG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jul 2016 22:25:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Willem de Bruijn <willemb@google.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eyal Reizer <eyalr@ti.com>
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the wireless-drivers-next tree, today's linux-next build
+(x86_64 allmodconfig) produced this warning:
 
-  net/sctp/input.c
+drivers/net/wireless/ti/wlcore/spi.c: In function 'wlcore_probe_of':
+drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-Wunused-variable]
+  int ret;
+      ^
 
-between commit:
+Introduced by commit
 
-  c74bfbdba0e8 ("sctp: load transport header after sk_filter")
-
-from the net tree and commit:
-
-  3acb50c18d8d ("sctp: delay as much as possible skb_linearize")
-
-from the net-next tree.
-
-I fixed it up (I just used the net-next version) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but
-any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+  01efe65aba65 ("wlcore: spi: add wl18xx support")
 
 -- 
 Cheers,
