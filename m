@@ -1,43 +1,35 @@
-From: "Reizer, Eyal" <eyalr@ti.com>
-Subject: RE: linux-next: build warning after merge of the
- wireless-drivers-next tree
-Date: Wed, 20 Jul 2016 06:18:00 +0000
-Message-ID: <8665E2433BC68541A24DFFCA87B70F5B3616184A@DFRE01.ent.ti.com>
-References: <20160720122503.09a46d7b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Wed, 20 Jul 2016 17:46:34 +1000
+Message-ID: <20160720174634.53bad636@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:39105 "EHLO comal.ext.ti.com"
+Received: from ozlabs.org ([103.22.144.67]:38895 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751204AbcGTGSJ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2016 02:18:09 -0400
-In-Reply-To: <20160720122503.09a46d7b@canb.auug.org.au>
-Content-Language: en-US
+	id S1751580AbcGTHqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2016 03:46:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>
 
-Hi Stephen,
+Hi all,
 
-> 
-> After merging the wireless-drivers-next tree, today's linux-next build
-> (x86_64 allmodconfig) produced this warning:
-> 
-> drivers/net/wireless/ti/wlcore/spi.c: In function 'wlcore_probe_of':
-> drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-
-> Wunused-variable]
->   int ret;
->       ^
-> 
-> Introduced by commit
-> 
->   01efe65aba65 ("wlcore: spi: add wl18xx support")
-> 
-Of course you are right. It is indeed redundant now.
-Don't know how I have missed it. Don't remember seeing a warning from the tool chain I have used.
-Anyway ,will submit an amended patch soon.
+After merging the dax-misc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Best Regards,
-Eyal
+drivers/crypto/vmx/aesp8-ppc.S: Assembler messages:
+drivers/crypto/vmx/aesp8-ppc.S:2036: Error: symbol `.aes_p8_xts_decrypt' is already defined
+
+Caused by commit
+
+  11c6e16ee13a ("crypto: vmx - Adding asm subroutines for XTS")
+
+I have reverted that commit (and commit c07f5d3da643 ("crypto: vmx -
+Adding support for XTS")) for today.
+
+-- 
+Cheers,
+Stephen Rothwell
