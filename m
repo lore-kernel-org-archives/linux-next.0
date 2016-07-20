@@ -1,58 +1,49 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
-Date: Wed, 20 Jul 2016 21:31:48 +0300
-Message-ID: <87shv4qhyj.fsf@kamboji.qca.qualcomm.com>
-References: <20160719160831.79c0303f@canb.auug.org.au>
-	<8760s2w369.fsf@kamboji.qca.qualcomm.com>
-	<CACna6rxVFD1MpAEYP_Zd4W8CvgnxSQpa0wJs83jwDJ5v11gZ=Q@mail.gmail.com>
-	<871t2qw1cz.fsf@kamboji.qca.qualcomm.com>
-	<CACna6ry6QgrbUoHuJacmr1EhHZyrwqsXfr51gENvY-0zM9L+3Q@mail.gmail.com>
-	<87h9blvhxg.fsf@kamboji.qca.qualcomm.com>
-	<20160719183913.GA88186@google.com>
+From: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
+Date: Wed, 20 Jul 2016 21:41:49 +0300
+Message-ID: <87oa5sqhhu.fsf@kamboji.qca.qualcomm.com>
+References: <20160720122503.09a46d7b@canb.auug.org.au>
+	<8665E2433BC68541A24DFFCA87B70F5B3616184A@DFRE01.ent.ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160719183913.GA88186@google.com> (Brian Norris's message of
-	"Tue, 19 Jul 2016 11:39:13 -0700")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8665E2433BC68541A24DFFCA87B70F5B3616184A-1tpBd5JUCm6IQmiDNMet8wC/G2K4zDHf@public.gmane.org>
+	(Eyal Reizer's message of "Wed, 20 Jul 2016 06:18:00 +0000")
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Reizer, Eyal" <eyalr-l0cyMroinI0@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless@vger.kernel.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next@vger.kernel.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Brian Norris <computersforpeace@gmail.com> writes:
+"Reizer, Eyal" <eyalr-l0cyMroinI0@public.gmane.org> writes:
 
-> Just to head this off, since I noticed it...
+>> After merging the wireless-drivers-next tree, today's linux-next build
+>> (x86_64 allmodconfig) produced this warning:
+>> 
+>> drivers/net/wireless/ti/wlcore/spi.c: In function 'wlcore_probe_of':
+>> drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-
+>> Wunused-variable]
+>>   int ret;
+>>       ^
+>> 
+>> Introduced by commit
+>> 
+>>   01efe65aba65 ("wlcore: spi: add wl18xx support")
 >
-> On Tue, Jul 19, 2016 at 05:08:59PM +0300, Kalle Valo wrote:
->> Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> writes:
->> > I sent a patch seconds ago, you may just take a look at it. If you
->> > still prefer to revert my commit, go ahead.
->>=20
->> Ok, let's try your fix. We still have few days. I applied the patch[=
-1]
->> to the pending branch this morning and if I don't see any errors I a=
-pply
->> it later tonight and hopefully it will be in tomorrow's linux-next
->> build. Thanks for the quick fix, very much appreciated.
->>=20
->> [1] "mtd: add arch dependency for MTD_BCM47XXSFLASH symbol"
->>     https://patchwork.kernel.org/patch/9236053/
->
-> I applied a trivial change to this same Kconfig entry:
->
-> Subject: mtd: update description of MTD_BCM47XXSFLASH symbol
-> http://git.infradead.org/l2-mtd.git/commitdiff/0a526341fee054c1e2b9f0=
-e4b2b424ae81707d4c
->
-> It's a trivial conflict, so should we just let Linus work it out? I c=
-an
-> note it my MTD pull request, if wireless lands first.
+> Of course you are right. It is indeed redundant now. Don't know how I
+>have missed it. Don't remember seeing a warning from the tool chain I
+>have used. Anyway ,will submit an amended patch soon.
+ 
+I didn't notice it either as I didn't have CONFIG_WLCORE_SPI enabled.
+But what's odd is that kbuild didn't report anything, it's usually quite
+good to catch warnings like this.
 
-Sounds good to me. Do note that Linus doesn't pull wireless-drivers-nex=
-t
-directly, it goes through net-next. But I'll let Dave also know about
-this when I send him the pull request.
+Anyway, I have pushed the fix to wireless-drivers-next:
 
---=20
+cb6a11518850 wlcore: spi: fix build warning caused by redundant variable
+
+-- 
 Kalle Valo
+--
+To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
