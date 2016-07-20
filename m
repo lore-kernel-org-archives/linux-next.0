@@ -1,100 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
- luto-misc tree
-Date: Wed, 20 Jul 2016 09:53:33 +1000
-Message-ID: <20160720095333.3034531c@canb.auug.org.au>
-References: <20160715154326.GC2523@redhat.com>
-	<20160718151845.4de6e274@canb.auug.org.au>
-	<CALCETrWqdi=7hsXTx=WKf-=He-9GP-WNLXppijeZgcoZDCq=bg@mail.gmail.com>
-	<20160718203634.GF2207@kernel.org>
-	<20160719082235.42aec856@canb.auug.org.au>
-	<20160718234132.GI2207@kernel.org>
-	<20160719102629.0a12a1a1@canb.auug.org.au>
-	<20160719003906.GJ2207@kernel.org>
-	<20160719132608.1aa2692a@canb.auug.org.au>
-	<20160719125443.GL2207@kernel.org>
-	<20160719174551.GM2207@kernel.org>
-	<20160720092157.7cd8de65@canb.auug.org.au>
+Subject: linux-next: manual merge of the fsl tree with the arm-soc tree
+Date: Wed, 20 Jul 2016 10:45:01 +1000
+Message-ID: <20160720104501.02bd5a2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59332 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49842 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752033AbcGSXxg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2016 19:53:36 -0400
-In-Reply-To: <20160720092157.7cd8de65@canb.auug.org.au>
+	id S1752718AbcGTApF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 19 Jul 2016 20:45:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Scott Wood <scottwood@freescale.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yangbo Lu <yangbo.lu@nxp.com>, Florian Fainelli <f.fainelli@gmail.com>
 
-Hi Arnaldo,
+Hi Scott,
 
-On Wed, 20 Jul 2016 09:21:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Tue, 19 Jul 2016 14:45:51 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> >
-> > No such luck, everything works as expected, objtool doesn't even get
-> > compiled, likely it doesn't support powerpc binaries so it isn't built:  
-> 
-> right.
-> 
-> > Probably it got the local definition of bitsperlong.h, i.e. the size on the host build
-> > and then comparing it against the one for the target host...
-> > 
-> > Anyway, can you try the patch below to see what value is landing on __BITS_PER_LONG?
-> > 
-> > diff --git a/tools/include/asm-generic/bitsperlong.h b/tools/include/asm-generic/bitsperlong.h
-> > index 45eca517efb3..c8f971e0d6a1 100644
-> > --- a/tools/include/asm-generic/bitsperlong.h
-> > +++ b/tools/include/asm-generic/bitsperlong.h
-> > @@ -10,6 +10,9 @@
-> >  #endif
-> >  
-> >  #if BITS_PER_LONG != __BITS_PER_LONG
-> > +#include <linux/stringify.h>
-> > +#pragma message "BITS_PER_LONG=" __stringify(BITS_PER_LONG)
-> > +#pragma message "__BITS_PER_LONG=" __stringify(__BITS_PER_LONG)
-> >  #error Inconsistent word size. Check asm/bitsperlong.h
-> >  #endif  
-> 
-> I added those three lines to the file (just in yesterday's linux-next
-> was easiest) and got this:
-> 
-> /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:14:9: note: #pragma message: BITS_PER_LONG=(8 * 8)
->  #pragma message "BITS_PER_LONG=" __stringify(BITS_PER_LONG)
->          ^
-> /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:15:9: note: #pragma message: __BITS_PER_LONG=32
->  #pragma message "__BITS_PER_LONG=" __stringify(__BITS_PER_LONG)
->          ^
-> 
-> (a few times, of course)
+Today's linux-next merge of the fsl tree got a conflict in:
 
-So I applied this:
+  drivers/soc/Kconfig
 
-diff --git a/tools/arch/x86/include/uapi/asm/bitsperlong.h b/tools/arch/x86/include/uapi/asm/bitsperlong.h
-index 6e23c543cd80..fd299f5468cb 100644
---- a/tools/arch/x86/include/uapi/asm/bitsperlong.h
-+++ b/tools/arch/x86/include/uapi/asm/bitsperlong.h
-@@ -4,6 +4,12 @@
- #if defined(__x86_64__) && !defined(__ILP32__)
- # define __BITS_PER_LONG 64
- #else
-+#ifndef __x86_64__
-+#pragma message "__x86_64__ is not defined"
-+#endif
-+#ifdef __ILP32__
-+#pragma message "__ILP32__ is defined"
-+#endif
- # define __BITS_PER_LONG 32
- #endif
+between commit:
 
-and got this:
+  34642650e5bc ("soc: Move brcmstb to bcm/brcmstb")
 
-/home/sfr/next/next/tools/arch/x86/include/uapi/asm/bitsperlong.h:8:9: note: #pragma message: __x86_64__ is not defined
- #pragma message "__x86_64__ is not defined"
+from the arm-soc tree and commit:
+
+  82117b4a8897 ("soc: fsl: add GUTS driver for QorIQ platforms")
+
+from the fsl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/soc/Kconfig
+index fe42a2fdf351,7106463f118e..000000000000
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@@ -1,7 -1,8 +1,7 @@@
+  menu "SOC (System On Chip) specific Drivers"
+  
+  source "drivers/soc/bcm/Kconfig"
+- source "drivers/soc/fsl/qe/Kconfig"
+ -source "drivers/soc/brcmstb/Kconfig"
++ source "drivers/soc/fsl/Kconfig"
+  source "drivers/soc/mediatek/Kconfig"
+  source "drivers/soc/qcom/Kconfig"
+  source "drivers/soc/rockchip/Kconfig"
