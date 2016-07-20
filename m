@@ -1,53 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the cgroup tree with the net-next tree
-Date: Wed, 20 Jul 2016 16:11:36 +1000
-Message-ID: <20160720161136.3e3cc89a@canb.auug.org.au>
+From: "Reizer, Eyal" <eyalr@ti.com>
+Subject: RE: linux-next: build warning after merge of the
+ wireless-drivers-next tree
+Date: Wed, 20 Jul 2016 06:18:00 +0000
+Message-ID: <8665E2433BC68541A24DFFCA87B70F5B3616184A@DFRE01.ent.ti.com>
+References: <20160720122503.09a46d7b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from comal.ext.ti.com ([198.47.26.152]:39105 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751204AbcGTGSJ convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2016 02:18:09 -0400
+In-Reply-To: <20160720122503.09a46d7b@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@codeaurora.org>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi Tejun,
+Hi Stephen,
 
-Today's linux-next merge of the cgroup tree got a conflict in:
+> 
+> After merging the wireless-drivers-next tree, today's linux-next build
+> (x86_64 allmodconfig) produced this warning:
+> 
+> drivers/net/wireless/ti/wlcore/spi.c: In function 'wlcore_probe_of':
+> drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-
+> Wunused-variable]
+>   int ret;
+>       ^
+> 
+> Introduced by commit
+> 
+>   01efe65aba65 ("wlcore: spi: add wl18xx support")
+> 
+Of course you are right. It is indeed redundant now.
+Don't know how I have missed it. Don't remember seeing a warning from the tool chain I have used.
+Anyway ,will submit an amended patch soon.
 
-  kernel/cgroup.c
-
-between commit:
-
-  1f3fe7ebf613 ("cgroup: Add cgroup_get_from_fd")
-
-from the net-next tree and commit:
-
-  55094f575358 ("cgroup: remove duplicated include from cgroup.c")
-
-from the cgroup tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/cgroup.c
-index 50787cd61da2,cb7cc54e2716..000000000000
---- a/kernel/cgroup.c
-+++ b/kernel/cgroup.c
-@@@ -61,8 -61,6 +61,7 @@@
-  #include <linux/cpuset.h>
-  #include <linux/proc_ns.h>
-  #include <linux/nsproxy.h>
-- #include <linux/proc_ns.h>
- +#include <linux/file.h>
-  #include <net/sock.h>
-  
-  /*
+Best Regards,
+Eyal
