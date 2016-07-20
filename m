@@ -1,62 +1,58 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Wed, 20 Jul 2016 22:32:50 +0800
-Message-ID: <20160720143250.GA3323@gondor.apana.org.au>
-References: <20160720174634.53bad636@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: build failure after merge of the wireless-drivers-next tree
+Date: Wed, 20 Jul 2016 21:31:48 +0300
+Message-ID: <87shv4qhyj.fsf@kamboji.qca.qualcomm.com>
+References: <20160719160831.79c0303f@canb.auug.org.au>
+	<8760s2w369.fsf@kamboji.qca.qualcomm.com>
+	<CACna6rxVFD1MpAEYP_Zd4W8CvgnxSQpa0wJs83jwDJ5v11gZ=Q@mail.gmail.com>
+	<871t2qw1cz.fsf@kamboji.qca.qualcomm.com>
+	<CACna6ry6QgrbUoHuJacmr1EhHZyrwqsXfr51gENvY-0zM9L+3Q@mail.gmail.com>
+	<87h9blvhxg.fsf@kamboji.qca.qualcomm.com>
+	<20160719183913.GA88186@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:35820 "EHLO
-	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753986AbcGTOdB (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2016 10:33:01 -0400
-Content-Disposition: inline
-In-Reply-To: <20160720174634.53bad636@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160719183913.GA88186@google.com> (Brian Norris's message of
+	"Tue, 19 Jul 2016 11:39:13 -0700")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: =?utf-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <zajec5@gmail.com>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jul 20, 2016 at 05:46:34PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the dax-misc tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> drivers/crypto/vmx/aesp8-ppc.S: Assembler messages:
-> drivers/crypto/vmx/aesp8-ppc.S:2036: Error: symbol `.aes_p8_xts_decrypt' is already defined
-> 
-> Caused by commit
-> 
->   11c6e16ee13a ("crypto: vmx - Adding asm subroutines for XTS")
-> 
-> I have reverted that commit (and commit c07f5d3da643 ("crypto: vmx -
-> Adding support for XTS")) for today.
+Brian Norris <computersforpeace@gmail.com> writes:
 
-Thanks Stephen.  I think this patch should fix it.
+> Just to head this off, since I noticed it...
+>
+> On Tue, Jul 19, 2016 at 05:08:59PM +0300, Kalle Valo wrote:
+>> Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com> writes:
+>> > I sent a patch seconds ago, you may just take a look at it. If you
+>> > still prefer to revert my commit, go ahead.
+>>=20
+>> Ok, let's try your fix. We still have few days. I applied the patch[=
+1]
+>> to the pending branch this morning and if I don't see any errors I a=
+pply
+>> it later tonight and hopefully it will be in tomorrow's linux-next
+>> build. Thanks for the quick fix, very much appreciated.
+>>=20
+>> [1] "mtd: add arch dependency for MTD_BCM47XXSFLASH symbol"
+>>     https://patchwork.kernel.org/patch/9236053/
+>
+> I applied a trivial change to this same Kconfig entry:
+>
+> Subject: mtd: update description of MTD_BCM47XXSFLASH symbol
+> http://git.infradead.org/l2-mtd.git/commitdiff/0a526341fee054c1e2b9f0=
+e4b2b424ae81707d4c
+>
+> It's a trivial conflict, so should we just let Linus work it out? I c=
+an
+> note it my MTD pull request, if wireless lands first.
 
----8<---
-Subject: crypto: vmx - Fix aes_p8_xts_decrypt build failure
+Sounds good to me. Do note that Linus doesn't pull wireless-drivers-nex=
+t
+directly, it goes through net-next. But I'll let Dave also know about
+this when I send him the pull request.
 
-We use _GLOBAL so there is no need to do the manual alignment,
-in fact it causes a build failure.
-
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-
-diff --git a/drivers/crypto/vmx/aesp8-ppc.pl b/drivers/crypto/vmx/aesp8-ppc.pl
-index 813ffcc..0b4a293 100644
---- a/drivers/crypto/vmx/aesp8-ppc.pl
-+++ b/drivers/crypto/vmx/aesp8-ppc.pl
-@@ -2125,8 +2125,6 @@ Lxts_enc_ret:
- .size	.${prefix}_xts_encrypt,.-.${prefix}_xts_encrypt
- 
- .globl	.${prefix}_xts_decrypt
--.align	5
--.${prefix}_xts_decrypt:
- 	mr		$inp,r3				# reassign
- 	li		r3,-1
- 	${UCMP}i	$len,16
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--=20
+Kalle Valo
