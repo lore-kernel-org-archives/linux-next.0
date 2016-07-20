@@ -1,49 +1,42 @@
-From: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
-Date: Wed, 20 Jul 2016 21:41:49 +0300
-Message-ID: <87oa5sqhhu.fsf@kamboji.qca.qualcomm.com>
-References: <20160720122503.09a46d7b@canb.auug.org.au>
-	<8665E2433BC68541A24DFFCA87B70F5B3616184A@DFRE01.ent.ti.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
+ luto-misc tree
+Date: Thu, 21 Jul 2016 09:29:50 +1000
+Message-ID: <20160721092950.0047531e@canb.auug.org.au>
+References: <20160718203634.GF2207@kernel.org>
+	<20160719082235.42aec856@canb.auug.org.au>
+	<20160718234132.GI2207@kernel.org>
+	<20160719102629.0a12a1a1@canb.auug.org.au>
+	<20160719003906.GJ2207@kernel.org>
+	<20160719132608.1aa2692a@canb.auug.org.au>
+	<20160719125443.GL2207@kernel.org>
+	<20160719174551.GM2207@kernel.org>
+	<20160720092157.7cd8de65@canb.auug.org.au>
+	<20160720095333.3034531c@canb.auug.org.au>
+	<20160720025202.GB18962@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8665E2433BC68541A24DFFCA87B70F5B3616184A-1tpBd5JUCm6IQmiDNMet8wC/G2K4zDHf@public.gmane.org>
-	(Eyal Reizer's message of "Wed, 20 Jul 2016 06:18:00 +0000")
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Reizer, Eyal" <eyalr-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, "linux-wireless@vger.kernel.org" <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-next@vger.kernel.org" <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34248 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751493AbcGTX3w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2016 19:29:52 -0400
+In-Reply-To: <20160720025202.GB18962@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-"Reizer, Eyal" <eyalr-l0cyMroinI0@public.gmane.org> writes:
+Hi Arnaldo,
 
->> After merging the wireless-drivers-next tree, today's linux-next build
->> (x86_64 allmodconfig) produced this warning:
->> 
->> drivers/net/wireless/ti/wlcore/spi.c: In function 'wlcore_probe_of':
->> drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-
->> Wunused-variable]
->>   int ret;
->>       ^
->> 
->> Introduced by commit
->> 
->>   01efe65aba65 ("wlcore: spi: add wl18xx support")
+On Tue, 19 Jul 2016 23:52:02 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 >
-> Of course you are right. It is indeed redundant now. Don't know how I
->have missed it. Don't remember seeing a warning from the tool chain I
->have used. Anyway ,will submit an amended patch soon.
- 
-I didn't notice it either as I didn't have CONFIG_WLCORE_SPI enabled.
-But what's odd is that kbuild didn't report anything, it's usually quite
-good to catch warnings like this.
+> Humm, it seems that the compiler used is not the cross one, but the
+> native, check if, say, __powerpc__ is defined.
 
-Anyway, I have pushed the fix to wireless-drivers-next:
-
-cb6a11518850 wlcore: spi: fix build warning caused by redundant variable
+Yes, __powerpc__ is defined (unsuprisingly).
 
 -- 
-Kalle Valo
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Cheers,
+Stephen Rothwell
