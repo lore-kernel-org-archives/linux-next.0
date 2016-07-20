@@ -1,74 +1,62 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160720 build: 0 failures 4 warnings (next-20160720)
-Date: Wed, 20 Jul 2016 12:22:13 +0100
-Message-ID: <E1bPpZs-0005xG-RG@optimist>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Date: Wed, 20 Jul 2016 22:32:50 +0800
+Message-ID: <20160720143250.GA3323@gondor.apana.org.au>
+References: <20160720174634.53bad636@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36266 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752356AbcGTLWV (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2016 07:22:21 -0400
+Received: from helcar.hengli.com.au ([209.40.204.226]:35820 "EHLO
+	helcar.hengli.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753986AbcGTOdB (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 20 Jul 2016 10:33:01 -0400
+Content-Disposition: inline
+In-Reply-To: <20160720174634.53bad636@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paulo Flabiano Smorigo <pfsmorigo@linux.vnet.ibm.com>, "Leonidas S. Barbosa" <leosilva@linux.vnet.ibm.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 
-Tree/Branch: next-20160720
-Git describe: next-20160720
-Commit: 25026d11e4 Add linux-next specific files for 20160720
+On Wed, Jul 20, 2016 at 05:46:34PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the dax-misc tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/crypto/vmx/aesp8-ppc.S: Assembler messages:
+> drivers/crypto/vmx/aesp8-ppc.S:2036: Error: symbol `.aes_p8_xts_decrypt' is already defined
+> 
+> Caused by commit
+> 
+>   11c6e16ee13a ("crypto: vmx - Adding asm subroutines for XTS")
+> 
+> I have reverted that commit (and commit c07f5d3da643 ("crypto: vmx -
+> Adding support for XTS")) for today.
 
-Build Time: 87 min 31 sec
+Thanks Stephen.  I think this patch should fix it.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+---8<---
+Subject: crypto: vmx - Fix aes_p8_xts_decrypt build failure
 
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
+We use _GLOBAL so there is no need to do the manual alignment,
+in fact it causes a build failure.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 4
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	../drivers/net/wireless/ti/wlcore/spi.c:457:6: warning: unused variable 'ret' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+diff --git a/drivers/crypto/vmx/aesp8-ppc.pl b/drivers/crypto/vmx/aesp8-ppc.pl
+index 813ffcc..0b4a293 100644
+--- a/drivers/crypto/vmx/aesp8-ppc.pl
++++ b/drivers/crypto/vmx/aesp8-ppc.pl
+@@ -2125,8 +2125,6 @@ Lxts_enc_ret:
+ .size	.${prefix}_xts_encrypt,.-.${prefix}_xts_encrypt
+ 
+ .globl	.${prefix}_xts_decrypt
+-.align	5
+-.${prefix}_xts_decrypt:
+ 	mr		$inp,r3				# reassign
+ 	li		r3,-1
+ 	${UCMP}i	$len,16
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
