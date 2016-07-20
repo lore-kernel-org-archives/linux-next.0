@@ -1,60 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the l2-mtd tree with the
- wireless-drivers-next tree
-Date: Wed, 20 Jul 2016 12:31:33 +1000
-Message-ID: <20160720123133.44dab209@canb.auug.org.au>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
+ luto-misc tree
+Date: Tue, 19 Jul 2016 23:52:02 -0300
+Message-ID: <20160720025202.GB18962@kernel.org>
+References: <20160718203634.GF2207@kernel.org>
+ <20160719082235.42aec856@canb.auug.org.au>
+ <20160718234132.GI2207@kernel.org>
+ <20160719102629.0a12a1a1@canb.auug.org.au>
+ <20160719003906.GJ2207@kernel.org>
+ <20160719132608.1aa2692a@canb.auug.org.au>
+ <20160719125443.GL2207@kernel.org>
+ <20160719174551.GM2207@kernel.org>
+ <20160720092157.7cd8de65@canb.auug.org.au>
+ <20160720095333.3034531c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43988 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752321AbcGTCbg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 19 Jul 2016 22:31:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Brian Norris <computersforpeace@gmail.com>, Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160720095333.3034531c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Brian,
+Em Wed, Jul 20, 2016 at 09:53:33AM +1000, Stephen Rothwell escreveu:
+> On Wed, 20 Jul 2016 09:21:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > On Tue, 19 Jul 2016 14:45:51 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > >  #if BITS_PER_LONG != __BITS_PER_LONG
+> > > +#include <linux/stringify.h>
+> > > +#pragma message "BITS_PER_LONG=" __stringify(BITS_PER_LONG)
+> > > +#pragma message "__BITS_PER_LONG=" __stringify(__BITS_PER_LONG)
+> > >  #error Inconsistent word size. Check asm/bitsperlong.h
+> > >  #endif  
 
-Today's linux-next merge of the l2-mtd tree got a conflict in:
+> > I added those three lines to the file (just in yesterday's linux-next
+> > was easiest) and got this:
 
-  drivers/mtd/devices/Kconfig
+> > /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:14:9: note: #pragma message: BITS_PER_LONG=(8 * 8)
+> >  #pragma message "BITS_PER_LONG=" __stringify(BITS_PER_LONG)
 
-between commit:
+> > /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:15:9: note: #pragma message: __BITS_PER_LONG=32
+> >  #pragma message "__BITS_PER_LONG=" __stringify(__BITS_PER_LONG)
 
-  efacc699139e ("mtd: add arch dependency for MTD_BCM47XXSFLASH symbol")
+> > (a few times, of course)
+ 
+> So I applied this:
+ 
+> +++ b/tools/arch/x86/include/uapi/asm/bitsperlong.h
+> @@ -4,6 +4,12 @@
+>  #if defined(__x86_64__) && !defined(__ILP32__)
+>  # define __BITS_PER_LONG 64
+>  #else
+> +#ifndef __x86_64__
+> +#pragma message "__x86_64__ is not defined"
+> +#endif
+> +#ifdef __ILP32__
+> +#pragma message "__ILP32__ is defined"
+> +#endif
+>  # define __BITS_PER_LONG 32
+>  #endif
+ 
+> and got this:
+ 
+> /home/sfr/next/next/tools/arch/x86/include/uapi/asm/bitsperlong.h:8:9: note: #pragma message: __x86_64__ is not defined
+>  #pragma message "__x86_64__ is not defined"
 
-from the wireless-drivers-next tree and commit:
+Humm, it seems that the compiler used is not the cross one, but the
+native, check if, say, __powerpc__ is defined.
 
-  0a526341fee0 ("mtd: update description of MTD_BCM47XXSFLASH symbol")
-
-from the l2-mtd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/mtd/devices/Kconfig
-index 64a248556d29,bf8238fb2e12..000000000000
---- a/drivers/mtd/devices/Kconfig
-+++ b/drivers/mtd/devices/Kconfig
-@@@ -113,8 -113,8 +113,8 @@@ config MTD_SST25
-  	  if you want to specify device partitioning.
-  
-  config MTD_BCM47XXSFLASH
-- 	tristate "R/O support for serial flash on BCMA bus"
-+ 	tristate "Support for serial flash on BCMA bus"
- -	depends on BCMA_SFLASH
- +	depends on BCMA_SFLASH && (MIPS || ARM)
-  	help
-  	  BCMA bus can have various flash memories attached, they are
-  	  registered by bcma as platform devices. This enables driver for
+- Arnaldo
