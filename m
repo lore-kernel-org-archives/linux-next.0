@@ -1,69 +1,46 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
- luto-misc tree
-Date: Thu, 21 Jul 2016 10:12:48 -0300
-Message-ID: <20160721131248.GH18962@kernel.org>
-References: <20160718234132.GI2207@kernel.org>
- <20160719102629.0a12a1a1@canb.auug.org.au>
- <20160719003906.GJ2207@kernel.org>
- <20160719132608.1aa2692a@canb.auug.org.au>
- <20160719125443.GL2207@kernel.org>
- <20160719174551.GM2207@kernel.org>
- <20160720092157.7cd8de65@canb.auug.org.au>
- <20160720095333.3034531c@canb.auug.org.au>
- <20160720025202.GB18962@kernel.org>
- <20160721092950.0047531e@canb.auug.org.au>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the libata tree
+Date: Thu, 21 Jul 2016 10:44:59 -0400
+Message-ID: <20160721144459.GA22680@htj.duckdns.org>
+References: <20160721152603.4cf94e55@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33780 "EHLO
+	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752718AbcGUOpC (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2016 10:45:02 -0400
 Content-Disposition: inline
-In-Reply-To: <20160721092950.0047531e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20160721152603.4cf94e55@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>
 
-Em Thu, Jul 21, 2016 at 09:29:50AM +1000, Stephen Rothwell escreveu:
-> Hi Arnaldo,
+Hello, Stephen.
+
+On Thu, Jul 21, 2016 at 03:26:03PM +1000, Stephen Rothwell wrote:
+> Hi Tejun,
 > 
-> On Tue, 19 Jul 2016 23:52:02 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> >
-> > Humm, it seems that the compiler used is not the cross one, but the
-> > native, check if, say, __powerpc__ is defined.
+> After merging the libata tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warning:
 > 
-> Yes, __powerpc__ is defined (unsuprisingly).
+> drivers/ata/libata-scsi.c: In function 'ata_mselect_caching':
+> drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+>     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
+>                             ^
+> drivers/ata/libata-scsi.c: In function 'ata_mselect_control':
+> drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+>     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
+>                             ^
+> 
+> Introduced by commit
+> 
+>   9b7844a8c34a ("libata-scsi: fix read-only bits checking in ata_mselect_*()")
 
-Maybe this one?
+Already reverted the patch.  Sorry about that.
 
-diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-index 1f75b0a046cc..3500fcf7bd47 100644
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -1,10 +1,14 @@
- include ../scripts/Makefile.include
- 
-+HOSTARCH=$(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-+                                -e s/sun4u/sparc64/ \
-+                                -e s/arm.*/arm/ -e s/sa110/arm/ \
-+                                -e s/s390x/s390/ -e s/parisc64/parisc/ \
-+                                -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-+                                -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ )
-+
- ifndef ($(ARCH))
--ARCH ?= $(shell uname -m)
--ifeq ($(ARCH),x86_64)
--ARCH := x86
--endif
-+ARCH ?= $(HOSTARCH)
- endif
- 
- # always use the host compiler
-@@ -26,7 +30,7 @@ OBJTOOL_IN := $(OBJTOOL)-in.o
- 
- all: $(OBJTOOL)
- 
--INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/uapi
-+INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi
- CFLAGS   += -Wall -Werror $(EXTRA_WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
- LDFLAGS  += -lelf $(LIBSUBCMD)
- 
+Thanks.
+
+-- 
+tejun
