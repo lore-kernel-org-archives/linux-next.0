@@ -1,28 +1,80 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 21 (gpu/virtio)
-Date: Thu, 21 Jul 2016 09:21:44 -0700
-Message-ID: <eae4bce5-3624-7ef7-f6b8-ca2c3caad2d0@infradead.org>
-References: <20160721165631.6508756a@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160721165631.6508756a@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org
+From: tom.ty89@gmail.com
+Subject: [PATCH resend 1/5] libata-scsi: minor cleanup in ata_mselect_*()
+Date: Fri, 22 Jul 2016 02:41:50 +0800
+Message-ID: <af84a796696f2f366d330595d1a818e8daeb86d8.1469126217.git.tom.ty89@gmail.com>
+Return-path: <linux-ide-owner@vger.kernel.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: tj@kernel.org, hare@suse.de, sergei.shtylyov@cogentembedded.com, arnd@arndb.de
+Cc: sfr@canb.auug.org.au, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 07/20/16 23:56, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20160720:
-> 
+From: Tom Yan <tom.ty89@gmail.com>
 
-on x86_64, when CONFIG_FB is not enabled:
+1. Removed a repeated bit masking in ata_mselect_control()
+2. Moved `wce`/`d_sense` assignment below the page validity checks
+3. Added/Removed empty lines where appropriate
 
-ERROR: "remove_conflicting_framebuffers" [drivers/gpu/drm/virtio/virtio-gpu.ko] undefined!
+Signed-off-by: Tom Yan <tom.ty89@gmail.com>
 
-
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 2bdb5da..eb5e8ff 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -3618,7 +3618,6 @@ static int ata_mselect_caching(struct ata_queued_cmd *qc,
+ 	 * The first two bytes of def_cache_mpage are a header, so offsets
+ 	 * in mpage are off by 2 compared to buf.  Same for len.
+ 	 */
+-
+ 	if (len != CACHE_MPAGE_LEN - 2) {
+ 		if (len < CACHE_MPAGE_LEN - 2)
+ 			*fp = len;
+@@ -3627,8 +3626,6 @@ static int ata_mselect_caching(struct ata_queued_cmd *qc,
+ 		return -EINVAL;
+ 	}
+ 
+-	wce = buf[0] & (1 << 2);
+-
+ 	/*
+ 	 * Check that read-only bits are not modified.
+ 	 */
+@@ -3642,6 +3639,8 @@ static int ata_mselect_caching(struct ata_queued_cmd *qc,
+ 		}
+ 	}
+ 
++	wce = buf[0] & (1 << 2);
++
+ 	tf->flags |= ATA_TFLAG_DEVICE | ATA_TFLAG_ISADDR;
+ 	tf->protocol = ATA_PROT_NODATA;
+ 	tf->nsect = 0;
+@@ -3674,7 +3673,6 @@ static int ata_mselect_control(struct ata_queued_cmd *qc,
+ 	 * The first two bytes of def_control_mpage are a header, so offsets
+ 	 * in mpage are off by 2 compared to buf.  Same for len.
+ 	 */
+-
+ 	if (len != CONTROL_MPAGE_LEN - 2) {
+ 		if (len < CONTROL_MPAGE_LEN - 2)
+ 			*fp = len;
+@@ -3683,8 +3681,6 @@ static int ata_mselect_control(struct ata_queued_cmd *qc,
+ 		return -EINVAL;
+ 	}
+ 
+-	d_sense = buf[0] & (1 << 2);
+-
+ 	/*
+ 	 * Check that read-only bits are not modified.
+ 	 */
+@@ -3697,7 +3693,10 @@ static int ata_mselect_control(struct ata_queued_cmd *qc,
+ 			return -EINVAL;
+ 		}
+ 	}
+-	if (d_sense & (1 << 2))
++
++	d_sense = buf[0] & (1 << 2);
++
++	if (d_sense)
+ 		dev->flags |= ATA_DFLAG_D_SENSE;
+ 	else
+ 		dev->flags &= ~ATA_DFLAG_D_SENSE;
 -- 
-~Randy
+2.9.0
+
