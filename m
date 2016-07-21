@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 21 Jul 2016 11:41:53 +1000
-Message-ID: <20160721114153.2d8fa30f@canb.auug.org.au>
+Subject: linux-next: manual merge of the kspp tree with the arm64 tree
+Date: Thu, 21 Jul 2016 12:34:26 +1000
+Message-ID: <20160721123426.3648a307@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40684 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37667 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753219AbcGUBl4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jul 2016 21:41:56 -0400
+	id S1752484AbcGUCeb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2016 22:34:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eugenia Emantayev <eugenia@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>, Brenden Blanco <bblanco@plumgrid.com>
+To: Kees Cook <keescook@google.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yang Shi <yang.shi@linaro.org>
 
-Hi all,
+Hi Kees,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the kspp tree got a conflict in:
 
-  drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+  arch/arm64/include/asm/uaccess.h
 
 between commit:
 
-  ec25bc04ed8e ("net/mlx4_en: Add resilience in low memory systems")
+  bffe1baff5d5 ("arm64: kasan: instrument user memory access API")
 
-from the net tree and commit:
+from the arm64 tree and commit:
 
-  9ecc2d86171a ("net/mlx4_en: add xdp forwarding and data write support")
+  aac380fe78b1 ("arm64/uaccess: Enable hardened usercopy")
 
-from the net-next tree.
+from the kspp tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,55 +42,51 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-index 44cf16d01f42,f32e272c83dd..000000000000
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@@ -1730,28 -1722,32 +1729,35 @@@ static int mlx4_en_set_channels(struct 
-  	    !channel->tx_count || !channel->rx_count)
-  		return -EINVAL;
+diff --cc arch/arm64/include/asm/uaccess.h
+index 5e834d10b291,c3d445b42351..000000000000
+--- a/arch/arm64/include/asm/uaccess.h
++++ b/arch/arm64/include/asm/uaccess.h
+@@@ -264,33 -276,32 +264,38 @@@ extern unsigned long __must_check __cle
   
-+ 	if (channel->tx_count * MLX4_EN_NUM_UP <= priv->xdp_ring_num) {
-+ 		en_err(priv, "Minimum %d tx channels required with XDP on\n",
-+ 		       priv->xdp_ring_num / MLX4_EN_NUM_UP + 1);
-+ 		return -EINVAL;
+  static inline unsigned long __must_check __copy_from_user(void *to, const void __user *from, unsigned long n)
+  {
+ +	kasan_check_write(to, n);
+- 	return  __arch_copy_from_user(to, from, n);
++ 	check_object_size(to, n, false);
++ 	return __arch_copy_from_user(to, from, n);
+  }
+  
+  static inline unsigned long __must_check __copy_to_user(void __user *to, const void *from, unsigned long n)
+  {
+ +	kasan_check_read(from, n);
+- 	return  __arch_copy_to_user(to, from, n);
++ 	check_object_size(from, n, true);
++ 	return __arch_copy_to_user(to, from, n);
+  }
+  
+  static inline unsigned long __must_check copy_from_user(void *to, const void __user *from, unsigned long n)
+  {
+ +	kasan_check_write(to, n);
+ +
+- 	if (access_ok(VERIFY_READ, from, n))
++ 	if (access_ok(VERIFY_READ, from, n)) {
++ 		check_object_size(to, n, false);
+  		n = __arch_copy_from_user(to, from, n);
+- 	else /* security hole - plug it */
++ 	} else /* security hole - plug it */
+  		memset(to, 0, n);
+  	return n;
+  }
+  
+  static inline unsigned long __must_check copy_to_user(void __user *to, const void *from, unsigned long n)
+  {
+ +	kasan_check_read(from, n);
+ +
+- 	if (access_ok(VERIFY_WRITE, to, n))
++ 	if (access_ok(VERIFY_WRITE, to, n)) {
++ 		check_object_size(from, n, true);
+  		n = __arch_copy_to_user(to, from, n);
 + 	}
-+ 
- +	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
- +	if (!tmp)
- +		return -ENOMEM;
- +
-  	mutex_lock(&mdev->state_lock);
- +	memcpy(&new_prof, priv->prof, sizeof(struct mlx4_en_port_profile));
- +	new_prof.num_tx_rings_p_up = channel->tx_count;
- +	new_prof.tx_ring_num = channel->tx_count * MLX4_EN_NUM_UP;
- +	new_prof.rx_ring_num = channel->rx_count;
- +
- +	err = mlx4_en_try_alloc_resources(priv, tmp, &new_prof);
- +	if (err)
- +		goto out;
- +
-  	if (priv->port_up) {
-  		port_up = 1;
-  		mlx4_en_stop_port(dev, 1);
-  	}
+  	return n;
+  }
   
- -	mlx4_en_free_resources(priv);
- -
- -	priv->num_tx_rings_p_up = channel->tx_count;
- -	priv->tx_ring_num = channel->tx_count * MLX4_EN_NUM_UP;
- -	priv->rx_ring_num = channel->rx_count;
- -
- -	err = mlx4_en_alloc_resources(priv);
- -	if (err) {
- -		en_err(priv, "Failed reallocating port resources\n");
- -		goto out;
- -	}
- +	mlx4_en_safe_replace_resources(priv, tmp);
-  
-- 	netif_set_real_num_tx_queues(dev, priv->tx_ring_num);
-+ 	netif_set_real_num_tx_queues(dev, priv->tx_ring_num -
-+ 							priv->xdp_ring_num);
-  	netif_set_real_num_rx_queues(dev, priv->rx_ring_num);
-  
-  	if (dev->num_tc)
