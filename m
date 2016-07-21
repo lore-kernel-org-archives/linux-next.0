@@ -1,116 +1,69 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160721 build: 1 failures 5 warnings (next-20160721)
-Date: Thu, 21 Jul 2016 10:58:19 +0100
-Message-ID: <E1bQAkF-0005dF-5H@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40688 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751822AbcGUJ62 (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2016 05:58:28 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
+ luto-misc tree
+Date: Thu, 21 Jul 2016 10:12:48 -0300
+Message-ID: <20160721131248.GH18962@kernel.org>
+References: <20160718234132.GI2207@kernel.org>
+ <20160719102629.0a12a1a1@canb.auug.org.au>
+ <20160719003906.GJ2207@kernel.org>
+ <20160719132608.1aa2692a@canb.auug.org.au>
+ <20160719125443.GL2207@kernel.org>
+ <20160719174551.GM2207@kernel.org>
+ <20160720092157.7cd8de65@canb.auug.org.au>
+ <20160720095333.3034531c@canb.auug.org.au>
+ <20160720025202.GB18962@kernel.org>
+ <20160721092950.0047531e@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160721092950.0047531e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160721
-Git describe: next-20160721
-Commit: 58d3615615 Add linux-next specific files for 20160721
+Em Thu, Jul 21, 2016 at 09:29:50AM +1000, Stephen Rothwell escreveu:
+> Hi Arnaldo,
+> 
+> On Tue, 19 Jul 2016 23:52:02 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> >
+> > Humm, it seems that the compiler used is not the cross one, but the
+> > native, check if, say, __powerpc__ is defined.
+> 
+> Yes, __powerpc__ is defined (unsuprisingly).
 
-Build Time: 86 min 40 sec
+Maybe this one?
 
-Passed:    8 / 9   ( 88.89 %)
-Failed:    1 / 9   ( 11.11 %)
-
-Errors: 1
-Warnings: 5
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      2 warnings    0 mismatches  : x86_64-defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
-
-Warnings Summary: 5
-	  6 ../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  6 ../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 5 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
+diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+index 1f75b0a046cc..3500fcf7bd47 100644
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -1,10 +1,14 @@
+ include ../scripts/Makefile.include
+ 
++HOSTARCH=$(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
++                                -e s/sun4u/sparc64/ \
++                                -e s/arm.*/arm/ -e s/sa110/arm/ \
++                                -e s/s390x/s390/ -e s/parisc64/parisc/ \
++                                -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
++                                -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ )
++
+ ifndef ($(ARCH))
+-ARCH ?= $(shell uname -m)
+-ifeq ($(ARCH),x86_64)
+-ARCH := x86
+-endif
++ARCH ?= $(HOSTARCH)
+ endif
+ 
+ # always use the host compiler
+@@ -26,7 +30,7 @@ OBJTOOL_IN := $(OBJTOOL)-in.o
+ 
+ all: $(OBJTOOL)
+ 
+-INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/uapi
++INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi
+ CFLAGS   += -Wall -Werror $(EXTRA_WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
+ LDFLAGS  += -lelf $(LIBSUBCMD)
+ 
