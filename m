@@ -1,42 +1,85 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: build failure after merge of the nvdimm tree
-Date: Thu, 21 Jul 2016 14:33:01 -0700
-Message-ID: <CAPcyv4jDv0F+mHPkxG_wCyO_yH8ahOa2kAZMyGM+pEn0eTF3TQ@mail.gmail.com>
-References: <20160721161306.5e51e178@canb.auug.org.au>
+From: Tom Yan <tom.ty89@gmail.com>
+Subject: Re: [PATCH resend 3/5] libata-scsi: fix overflow in mode page copy
+Date: Fri, 22 Jul 2016 05:39:27 +0800
+Message-ID: <CAGnHSEkj2kXNUyQa=MxmLsTJT3P9xrQjpjoMLYiz6xKPB896EA@mail.gmail.com>
+References: <af84a796696f2f366d330595d1a818e8daeb86d8.1469126217.git.tom.ty89@gmail.com>
+ <b2ae6752649bc02641d38fee75ee35a59e8466d8.1469126217.git.tom.ty89@gmail.com>
+ <fc2946598c92137f65636b0fd7e50dc71a089fa1.1469126217.git.tom.ty89@gmail.com> <20160721211714.GE23759@htj.duckdns.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:35721 "EHLO
-	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754349AbcGUVdD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2016 17:33:03 -0400
-Received: by mail-oi0-f41.google.com with SMTP id l72so137057466oig.2
-        for <linux-next@vger.kernel.org>; Thu, 21 Jul 2016 14:33:02 -0700 (PDT)
-In-Reply-To: <20160721161306.5e51e178@canb.auug.org.au>
+Received: from mail-qt0-f177.google.com ([209.85.216.177]:33636 "EHLO
+	mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754349AbcGUVj2 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2016 17:39:28 -0400
+In-Reply-To: <20160721211714.GE23759@htj.duckdns.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 
-On Wed, Jul 20, 2016 at 11:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dan,
->
-> After merging the nvdimm tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> arch/powerpc/sysdev/axonram.c: In function 'axon_ram_direct_access':
-> arch/powerpc/sysdev/axonram.c:151:9: error: assignment makes pointer from integer without a cast [-Werror=int-conversion]
->   *kaddr = bank->io_addr + offset;
->          ^
->
-> Caused by commit
->
->   6e9c9dda79d9 ("pmem: kill __pmem address space")
->
-> I have used the nvdimm tree from next-20160720 for today.
+Well, I mean this is happening when ata_mselect_*() calls ata_msense_*():
 
-Sorry about that.  I had received a positive build notification from
-the kbuild robot for ppc64_defconfig, but it seems that was a false
-positive.
+[tom@localhost ~]$ cat test.c
+#include <stdio.h>
+#include <string.h>
 
-I've fixed it up and refreshed the branch.
+typedef unsigned char u8;
+
+int main() {
+  u8 a[2] = { 0xff, 0xff };
+  char b[2];
+  memcpy(b, a, 2);
+
+  for (int i=0; i<2; i++) {
+    printf("%d\n", a[i]);
+  }
+
+  for (int i=0; i<2; i++) {
+    printf("%d\n", b[i]);
+  }
+}
+
+[tom@localhost ~]$ cc test.c
+
+[tom@localhost ~]$ ./a.out
+255
+255
+-1
+-1
+
+Let me know how I should polish the description for this.
+
+On 22 July 2016 at 05:17, Tejun Heo <tj@kernel.org> wrote:
+> Hello,
+>
+> On Fri, Jul 22, 2016 at 02:41:52AM +0800, tom.ty89@gmail.com wrote:
+>> From: Tom Yan <tom.ty89@gmail.com>
+>>
+>> ata_mselect_*() would initialize a char array for storing a copy of
+>> the current mode page. However, if char was actually signed char,
+>> overflow could occur.
+>
+> Do you mean sign extension?
+>
+>> For example, `0xff` from def_control_mpage[] would be "truncated"
+>> to `-1`. This prevented ata_mselect_control() from working at all,
+>> since when it did the read-only bits check, there would always be
+>> a mismatch.
+>
+> Heh, the description doesn't really make sense.  Are you talking about
+> something like the following?
+>
+>         char ar[N];
+>         int i;
+>
+>         i = ar[x];
+>         if (i == 0xff)
+>                 asdf;
+>
+> If so, the description isn't quite right.
+>
+> Thanks.
+>
+> --
+> tejun
