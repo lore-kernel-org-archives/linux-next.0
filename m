@@ -1,60 +1,96 @@
-From: Dave Chinner <david@fromorbit.com>
-Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
-Date: Thu, 21 Jul 2016 11:35:58 +1000
-Message-ID: <20160721013558.GO16044@dastard>
-References: <20160721110756.7a905ee8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 21 Jul 2016 11:41:53 +1000
+Message-ID: <20160721114153.2d8fa30f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ipmail05.adl6.internode.on.net ([150.101.137.143]:58674 "EHLO
-	ipmail05.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753236AbcGUBgD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>);
-	Wed, 20 Jul 2016 21:36:03 -0400
-Content-Disposition: inline
-In-Reply-To: <20160721110756.7a905ee8@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:40684 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753219AbcGUBl4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 20 Jul 2016 21:41:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: xfs@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jann Horn <jann@thejh.net>
+To: David Miller <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eugenia Emantayev <eugenia@mellanox.com>, Tariq Toukan <tariqt@mellanox.com>, Brenden Blanco <bblanco@plumgrid.com>
 
-On Thu, Jul 21, 2016 at 11:07:56AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the xfs tree got a conflict in:
-> 
->   fs/xfs/xfs_ioctl.c
-> 
-> between commit:
-> 
->   3e0a39654645 ("xfs: fix type confusion in xfs_ioc_swapext")
-> 
-> from Linus' tree and commit:
-> 
->   7f1b62457b58 ("xfs: fix type confusion in xfs_ioc_swapext")
-> 
-> from the xfs tree.
-> 
-> These are not quite the same patch :-(
+Hi all,
 
-Yeah, I added comments to explain the code, because it's not obvious
-why the check was added, and I couldn't find any other examples of
-such checks in fs/. So, in five years time when I look at that code
-again, the comment will remind me why it's a bad idea to remove what
-appears to be an unnecesary check...
+Today's linux-next merge of the net-next tree got a conflict in:
 
-> I fixed it up (I used the version in the xfs tree) and can carry the
-> fix as necessary. This is now fixed as far as linux-next is concerned,
-> but any non trivial conflicts should be mentioned to your upstream
-> maintainer when your tree is submitted for merging.
+  drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
 
-Yup, I planned to let Linus know. Patches in private emails that
-aren't tagged [PATCH] in the subject line don't get the immediate
-attention of my mail filters, so I didn't see it immediately.
+between commit:
 
-Cheers,
+  ec25bc04ed8e ("net/mlx4_en: Add resilience in low memory systems")
 
-Dave.
+from the net tree and commit:
+
+  9ecc2d86171a ("net/mlx4_en: add xdp forwarding and data write support")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+index 44cf16d01f42,f32e272c83dd..000000000000
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@@ -1730,28 -1722,32 +1729,35 @@@ static int mlx4_en_set_channels(struct 
+  	    !channel->tx_count || !channel->rx_count)
+  		return -EINVAL;
+  
++ 	if (channel->tx_count * MLX4_EN_NUM_UP <= priv->xdp_ring_num) {
++ 		en_err(priv, "Minimum %d tx channels required with XDP on\n",
++ 		       priv->xdp_ring_num / MLX4_EN_NUM_UP + 1);
++ 		return -EINVAL;
++ 	}
++ 
+ +	tmp = kzalloc(sizeof(*tmp), GFP_KERNEL);
+ +	if (!tmp)
+ +		return -ENOMEM;
+ +
+  	mutex_lock(&mdev->state_lock);
+ +	memcpy(&new_prof, priv->prof, sizeof(struct mlx4_en_port_profile));
+ +	new_prof.num_tx_rings_p_up = channel->tx_count;
+ +	new_prof.tx_ring_num = channel->tx_count * MLX4_EN_NUM_UP;
+ +	new_prof.rx_ring_num = channel->rx_count;
+ +
+ +	err = mlx4_en_try_alloc_resources(priv, tmp, &new_prof);
+ +	if (err)
+ +		goto out;
+ +
+  	if (priv->port_up) {
+  		port_up = 1;
+  		mlx4_en_stop_port(dev, 1);
+  	}
+  
+ -	mlx4_en_free_resources(priv);
+ -
+ -	priv->num_tx_rings_p_up = channel->tx_count;
+ -	priv->tx_ring_num = channel->tx_count * MLX4_EN_NUM_UP;
+ -	priv->rx_ring_num = channel->rx_count;
+ -
+ -	err = mlx4_en_alloc_resources(priv);
+ -	if (err) {
+ -		en_err(priv, "Failed reallocating port resources\n");
+ -		goto out;
+ -	}
+ +	mlx4_en_safe_replace_resources(priv, tmp);
+  
+- 	netif_set_real_num_tx_queues(dev, priv->tx_ring_num);
++ 	netif_set_real_num_tx_queues(dev, priv->tx_ring_num -
++ 							priv->xdp_ring_num);
+  	netif_set_real_num_rx_queues(dev, priv->rx_ring_num);
+  
+  	if (dev->num_tc)
