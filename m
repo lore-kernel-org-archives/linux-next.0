@@ -1,46 +1,28 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build warnings after merge of the libata tree
-Date: Thu, 21 Jul 2016 10:44:59 -0400
-Message-ID: <20160721144459.GA22680@htj.duckdns.org>
-References: <20160721152603.4cf94e55@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jul 21 (gpu/virtio)
+Date: Thu, 21 Jul 2016 09:21:44 -0700
+Message-ID: <eae4bce5-3624-7ef7-f6b8-ca2c3caad2d0@infradead.org>
+References: <20160721165631.6508756a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:33780 "EHLO
-	mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752718AbcGUOpC (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 21 Jul 2016 10:45:02 -0400
-Content-Disposition: inline
-In-Reply-To: <20160721152603.4cf94e55@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160721165631.6508756a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>, dri-devel <dri-devel@lists.freedesktop.org>, virtualization@lists.linux-foundation.org
+List-Id: linux-next.vger.kernel.org
 
-Hello, Stephen.
+On 07/20/16 23:56, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160720:
+> 
 
-On Thu, Jul 21, 2016 at 03:26:03PM +1000, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> After merging the libata tree, today's linux-next build (arm
-> multi_v7_defconfig) produced these warning:
-> 
-> drivers/ata/libata-scsi.c: In function 'ata_mselect_caching':
-> drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
->     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
->                             ^
-> drivers/ata/libata-scsi.c: In function 'ata_mselect_control':
-> drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
->     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
->                             ^
-> 
-> Introduced by commit
-> 
->   9b7844a8c34a ("libata-scsi: fix read-only bits checking in ata_mselect_*()")
+on x86_64, when CONFIG_FB is not enabled:
 
-Already reverted the patch.  Sorry about that.
+ERROR: "remove_conflicting_framebuffers" [drivers/gpu/drm/virtio/virtio-gpu.ko] undefined!
 
-Thanks.
 
 -- 
-tejun
+~Randy
