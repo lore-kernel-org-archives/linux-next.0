@@ -1,52 +1,47 @@
-From: tom.ty89@gmail.com
-Subject: [PATCH resend v3 3/5] libata-scsi: use u8 array to store mode page copy
-Date: Sat, 23 Jul 2016 02:34:08 +0800
-Message-ID: <57926727.840e420a.d7fc9.38dd@mx.google.com>
-References: <CAGnHSEmTC06_NKrBDVyFkLSqx4qDRy+OhXvpcySk6HHYLSRsuw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: error fetching the y2038 tree
+Date: Fri, 22 Jul 2016 21:03:26 +0200
+Message-ID: <4383705.IL7BJvVHXQ@wuerfel>
+References: <20160722100159.72aa6476@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f67.google.com ([209.85.220.67]:36608 "EHLO
-	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbcGVSeQ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2016 14:34:16 -0400
-In-Reply-To: <CAGnHSEmTC06_NKrBDVyFkLSqx4qDRy+OhXvpcySk6HHYLSRsuw@mail.gmail.com>
+Received: from mout.kundenserver.de ([212.227.17.13]:59430 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbcGVTDd (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2016 15:03:33 -0400
+In-Reply-To: <20160722100159.72aa6476@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: tj@kernel.org, hare@suse.de, sergei.shtylyov@cogentembedded.com, arnd@arndb.de
-Cc: sfr@canb.auug.org.au, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Tom Yan <tom.ty89@gmail.com>
+On Friday, July 22, 2016 10:01:59 AM CEST Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> Fetching the y2038
+> (git://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git#y2038)
+> this morning produces this error:
+> 
+> fatal: Couldn't find remote ref refs/heads/y2038
+> 
+> I am still using the last version of this tree I fetched which contains:
+> 
+> 4b277763c5b3 vfs: Add support to document max and min inode times
+> 0b38aceef3f3 vfs: Add vfs_time accessors
+> df5999b78b01 fs: Add current_fs_time_sec() function
+> 549eb7b22e24 AFS: Correctly use 64-bit time for UUID
 
-ata_mselect_*() would initialize a char array for storing a copy of
-the current mode page. However, char could be signed char. In that
-case, bytes larger than 127 would be converted to negative number.
+Hi Stephen,
 
-For example, 0xff from def_control_mpage[] would become -1. This
-prevented ata_mselect_control() from working at all, since when it
-did the read-only bits check, there would always be a mismatch.
+my mistake, I wanted to remove the contents since Deepa has done
+a replacement series that obsolete three of the four patches
+(Linus didn't take the branch last time).
 
-Signed-off-by: Tom Yan <tom.ty89@gmail.com>
+I'll push a mainline commit to the branch instead, to make the
+contents disappear from -next.
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 4a4e6f1..5cfcb4b 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -3610,7 +3610,7 @@ static int ata_mselect_caching(struct ata_queued_cmd *qc,
- {
- 	struct ata_taskfile *tf = &qc->tf;
- 	struct ata_device *dev = qc->dev;
--	char mpage[CACHE_MPAGE_LEN];
-+	u8 mpage[CACHE_MPAGE_LEN];
- 	u8 wce, mask;
- 	int i;
- 
-@@ -3668,7 +3668,7 @@ static int ata_mselect_control(struct ata_queued_cmd *qc,
- 			       const u8 *buf, int len, u16 *fp)
- {
- 	struct ata_device *dev = qc->dev;
--	char mpage[CONTROL_MPAGE_LEN];
-+	u8 mpage[CONTROL_MPAGE_LEN];
- 	u8 d_sense, mask;
- 	int i;
- 
--- 
-2.9.0
+Thanks for letting me know about the problem.
+
+	Arnd
