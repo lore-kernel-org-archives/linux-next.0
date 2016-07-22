@@ -1,96 +1,142 @@
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
- luto-misc tree
-Date: Thu, 21 Jul 2016 22:41:18 -0500
-Message-ID: <20160722034118.guckaniobf3f7czc@treble>
-References: <20160719003906.GJ2207@kernel.org>
- <20160719132608.1aa2692a@canb.auug.org.au>
- <20160719125443.GL2207@kernel.org>
- <20160719174551.GM2207@kernel.org>
- <20160720092157.7cd8de65@canb.auug.org.au>
- <20160720095333.3034531c@canb.auug.org.au>
- <20160720025202.GB18962@kernel.org>
- <20160721092950.0047531e@canb.auug.org.au>
- <20160721131248.GH18962@kernel.org>
- <20160722092302.5a0a1544@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the nvdimm tree
+Date: Fri, 22 Jul 2016 16:13:20 +1000
+Message-ID: <20160722161320.144b7514@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160722092302.5a0a1544@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42080 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751334AbcGVGN0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 22 Jul 2016 02:13:26 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>, Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Toshi Kani <toshi.kani@hpe.com>
 
-On Fri, Jul 22, 2016 at 09:23:02AM +1000, Stephen Rothwell wrote:
-> Hi Arnaldo,
-> 
-> On Thu, 21 Jul 2016 10:12:48 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> >
-> > Em Thu, Jul 21, 2016 at 09:29:50AM +1000, Stephen Rothwell escreveu:
-> > > Hi Arnaldo,
-> > > 
-> > > On Tue, 19 Jul 2016 23:52:02 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:  
-> > > >
-> > > > Humm, it seems that the compiler used is not the cross one, but the
-> > > > native, check if, say, __powerpc__ is defined.  
-> > > 
-> > > Yes, __powerpc__ is defined (unsuprisingly).  
-> > 
-> > Maybe this one?
-> > 
-> > diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> > index 1f75b0a046cc..3500fcf7bd47 100644
-> > --- a/tools/objtool/Makefile
-> > +++ b/tools/objtool/Makefile
-> > @@ -1,10 +1,14 @@
-> >  include ../scripts/Makefile.include
-> >  
-> > +HOSTARCH=$(shell uname -m | sed -e s/i.86/x86/ -e s/x86_64/x86/ \
-> > +                                -e s/sun4u/sparc64/ \
-> > +                                -e s/arm.*/arm/ -e s/sa110/arm/ \
-> > +                                -e s/s390x/s390/ -e s/parisc64/parisc/ \
-> > +                                -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-> > +                                -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ )
-> > +
-> >  ifndef ($(ARCH))
-> > -ARCH ?= $(shell uname -m)
-> > -ifeq ($(ARCH),x86_64)
-> > -ARCH := x86
-> > -endif
-> > +ARCH ?= $(HOSTARCH)
-> >  endif
-> >  
-> >  # always use the host compiler
-> > @@ -26,7 +30,7 @@ OBJTOOL_IN := $(OBJTOOL)-in.o
-> >  
-> >  all: $(OBJTOOL)
-> >  
-> > -INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/uapi
-> > +INCLUDES := -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi
-> >  CFLAGS   += -Wall -Werror $(EXTRA_WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
-> >  LDFLAGS  += -lelf $(LIBSUBCMD)
-> >  
-> 
-> That gets me this errors from the x86_64 allmodconfig build:
-> 
-> tools/objtool/objtool-in.o: In function `decode_instructions':
-> tools/objtool/builtin-check.c:276: undefined reference to `arch_decode_instruction'
-> 
-> It just looks like objtool was not written with cross compilation in
-> mind?
+Hi Dan,
 
-I don't know yet what the specific problem is, but objtool should work
-fine in a cross-compiled environment.  It needs to be compiled with the
-host (powerpc) compiler, but then it needs to disassemble target (x86)
-files.  It worked fine before the bitsperlong.h files were merged.
+After merging the nvdimm tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-I can try to take a deeper look at it tomorrow.
+In file included from drivers/md/dm.h:14:0,
+                 from drivers/md/dm-uevent.c:27:
+include/linux/device-mapper.h:134:22: error: expected ';', ',' or ')' before '*' token
+          void __pmem **kaddr, pfn_t *pfn, long size);
+                      ^
+include/linux/device-mapper.h:182:2: error: unknown type name 'dm_direct_access_fn'
+  dm_direct_access_fn direct_access;
+  ^
 
-> It seems to build and run OK when you remove the test that
-> checks that BITS_PER_LONG and __BITS_PER_LONG are the same, but I have
-> no idea if it getting the desired results.
+Caused by commit
+
+  7a9eb2066631 ("pmem: kill __pmem address space")
+
+interacting with commit
+
+  545ed20e6df6 ("dm: add infrastructure for DAX support")
+
+from the device-mapper tree.
+
+I applied the following merge fix patch for today.  Someone needs to
+tell Linus about this when he merges the trees.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 22 Jul 2016 16:01:02 +1000
+Subject: [PATCH] dm: merge fix for "pmem: kill __pmem address space"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/dm-linear.c        | 2 +-
+ drivers/md/dm-snap.c          | 2 +-
+ drivers/md/dm-stripe.c        | 2 +-
+ drivers/md/dm-target.c        | 2 +-
+ drivers/md/dm.c               | 2 +-
+ include/linux/device-mapper.h | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index 6d35dd4e9efb..4788b0b989a9 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -142,7 +142,7 @@ static int linear_iterate_devices(struct dm_target *ti,
+ }
+ 
+ static long linear_direct_access(struct dm_target *ti, sector_t sector,
+-				 void __pmem **kaddr, pfn_t *pfn, long size)
++				 void **kaddr, pfn_t *pfn, long size)
+ {
+ 	struct linear_c *lc = ti->private;
+ 	struct block_device *bdev = lc->dev->bdev;
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index 731e1f5bd895..ce2a910709f7 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -2303,7 +2303,7 @@ static int origin_map(struct dm_target *ti, struct bio *bio)
+ }
+ 
+ static long origin_direct_access(struct dm_target *ti, sector_t sector,
+-		void __pmem **kaddr, pfn_t *pfn, long size)
++		void **kaddr, pfn_t *pfn, long size)
+ {
+ 	DMWARN("device does not support dax.");
+ 	return -EIO;
+diff --git a/drivers/md/dm-stripe.c b/drivers/md/dm-stripe.c
+index 01bb9cf2a8c2..83f1d4667195 100644
+--- a/drivers/md/dm-stripe.c
++++ b/drivers/md/dm-stripe.c
+@@ -309,7 +309,7 @@ static int stripe_map(struct dm_target *ti, struct bio *bio)
+ }
+ 
+ static long stripe_direct_access(struct dm_target *ti, sector_t sector,
+-				 void __pmem **kaddr, pfn_t *pfn, long size)
++				 void **kaddr, pfn_t *pfn, long size)
+ {
+ 	struct stripe_c *sc = ti->private;
+ 	uint32_t stripe;
+diff --git a/drivers/md/dm-target.c b/drivers/md/dm-target.c
+index 6eecd6b36f76..710ae28fd618 100644
+--- a/drivers/md/dm-target.c
++++ b/drivers/md/dm-target.c
+@@ -149,7 +149,7 @@ static void io_err_release_clone_rq(struct request *clone)
+ }
+ 
+ static long io_err_direct_access(struct dm_target *ti, sector_t sector,
+-				 void __pmem **kaddr, pfn_t *pfn, long size)
++				 void **kaddr, pfn_t *pfn, long size)
+ {
+ 	return -EIO;
+ }
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index ceb69fc0b10b..25d1d97154a8 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -906,7 +906,7 @@ int dm_set_target_max_io_len(struct dm_target *ti, sector_t len)
+ EXPORT_SYMBOL_GPL(dm_set_target_max_io_len);
+ 
+ static long dm_blk_direct_access(struct block_device *bdev, sector_t sector,
+-				 void __pmem **kaddr, pfn_t *pfn, long size)
++				 void **kaddr, pfn_t *pfn, long size)
+ {
+ 	struct mapped_device *md = bdev->bd_disk->private_data;
+ 	struct dm_table *map;
+diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
+index b0db857f334b..91acfce74a22 100644
+--- a/include/linux/device-mapper.h
++++ b/include/linux/device-mapper.h
+@@ -131,7 +131,7 @@ typedef int (*dm_busy_fn) (struct dm_target *ti);
+  * >= 0 : the number of bytes accessible at the address
+  */
+ typedef long (*dm_direct_access_fn) (struct dm_target *ti, sector_t sector,
+-				     void __pmem **kaddr, pfn_t *pfn, long size);
++				     void **kaddr, pfn_t *pfn, long size);
+ 
+ void dm_error(const char *message);
+ 
+-- 
+2.8.1
 
 -- 
-Josh
+Cheers,
+Stephen Rothwell
