@@ -1,61 +1,116 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH resend v2 3/5] libata-scsi: use u8 array to store mode
- page copy
-Date: Fri, 22 Jul 2016 12:59:01 +0300
-Message-ID: <65ee2deb-200c-a467-1eb8-ed2eb5f14a70@cogentembedded.com>
-References: <20160721214202.GG23759@htj.duckdns.org>
- <accc8ca07073cd0292b62903acac956f5f5eff74.1469143747.git.tom.ty89@gmail.com>
- <9bbf2b818f9ca1bb48f1eae31a0f3924a4fe0d9a.1469143747.git.tom.ty89@gmail.com>
- <8d3cb878e86e0e4be2212f05ce47ff60cbfd3e10.1469143747.git.tom.ty89@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <8d3cb878e86e0e4be2212f05ce47ff60cbfd3e10.1469143747.git.tom.ty89@gmail.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: tom.ty89@gmail.com, tj@kernel.org, hare@suse.de, arnd@arndb.de
-Cc: sfr@canb.auug.org.au, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160722 build: 1 failures 5 warnings (next-20160722)
+Date: Fri, 22 Jul 2016 11:13:41 +0100
+Message-ID: <E1bQXSf-0008Uu-Ej@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43868 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752378AbcGVKNs (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 22 Jul 2016 06:13:48 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hello.
+Tree/Branch: next-20160722
+Git describe: next-20160722
+Commit: 13123042d0 Add linux-next specific files for 20160722
 
-On 7/22/2016 2:29 AM, tom.ty89@gmail.com wrote:
+Build Time: 86 min 57 sec
 
-> From: Tom Yan <tom.ty89@gmail.com>
->
-> ata_mselect_*() would initialize a char array for storing a copy of
-> the current mode page. However, char could be signed char. In that
-> case, bytes larger than 127 would be converted to negative number.
->
-> For example, 0xff from def_control_mpage[] would become -1. This
-> prevented ata_mselect_control() from working at all, since when it
-> did the read-only bits check, there would always be a mismatch.
->
-> Signed-off-by: Tom Yan <tom.ty89@gmail.com>
->
-> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-> index 4a4e6f1..a28e2ea94 100644
-> --- a/drivers/ata/libata-scsi.c
-> +++ b/drivers/ata/libata-scsi.c
-> @@ -3610,7 +3610,7 @@ static int ata_mselect_caching(struct ata_queued_cmd *qc,
->  {
->  	struct ata_taskfile *tf = &qc->tf;
->  	struct ata_device *dev = qc->dev;
-> -	char mpage[CACHE_MPAGE_LEN];
-> +	u8 mpage[CACHE_MPAGE_LEN];
->  	u8 wce, mask;
->  	int i;
->
-> @@ -3668,7 +3668,7 @@ static int ata_mselect_control(struct ata_queued_cmd *qc,
->  			       const u8 *buf, int len, u16 *fp)
->  {
->  	struct ata_device *dev = qc->dev;
-> -	char mpage[CONTROL_MPAGE_LEN];
-> +        u8 mpage[CONTROL_MPAGE_LEN];
+Passed:    8 / 9   ( 88.89 %)
+Failed:    1 / 9   ( 11.11 %)
 
-    Indent with tabs please, as above.
+Errors: 1
+Warnings: 5
+Section Mismatches: 0
 
-[...]
+Failed defconfigs:
+	arm-allmodconfig
 
-MBR, Sergei
+Errors:
 
+	arm-allmodconfig
+ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
+
+Warnings Summary: 5
+	  6 ../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	  6 ../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 5 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "dax_do_io" [fs/xfs/xfs.ko] undefined!
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
