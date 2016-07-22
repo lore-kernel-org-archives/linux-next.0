@@ -1,60 +1,68 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH -next] pinctrl: fix build, PINCTRL_CYGNUS_MUX depends on
- OF
-Date: Fri, 22 Jul 2016 11:17:13 -0700
-Message-ID: <3598b756-e026-0810-59fc-5707e7a66b48@infradead.org>
-References: <fbda11e7-273c-c91a-777d-5eaa61c86b82@infradead.org>
- <e8bd2919-53f1-6fe9-0188-c52d44fdc54b@broadcom.com>
+From: Tom Yan <tom.ty89@gmail.com>
+Subject: Re: [PATCH resend v2 3/5] libata-scsi: use u8 array to store mode
+ page copy
+Date: Sat, 23 Jul 2016 02:22:17 +0800
+Message-ID: <CAGnHSEmTC06_NKrBDVyFkLSqx4qDRy+OhXvpcySk6HHYLSRsuw@mail.gmail.com>
+References: <20160721214202.GG23759@htj.duckdns.org> <accc8ca07073cd0292b62903acac956f5f5eff74.1469143747.git.tom.ty89@gmail.com>
+ <9bbf2b818f9ca1bb48f1eae31a0f3924a4fe0d9a.1469143747.git.tom.ty89@gmail.com>
+ <8d3cb878e86e0e4be2212f05ce47ff60cbfd3e10.1469143747.git.tom.ty89@gmail.com> <65ee2deb-200c-a467-1eb8-ed2eb5f14a70@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <e8bd2919-53f1-6fe9-0188-c52d44fdc54b@broadcom.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Ray Jui <ray.jui@broadcom.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: Ray Jui <rjui@broadcom.com>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <65ee2deb-200c-a467-1eb8-ed2eb5f14a70@cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 07/22/16 11:09, Ray Jui wrote:
-> Hi Randy,
-> 
-> On 7/22/2016 11:06 AM, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix pinctrl-cygnus-mux.c build when ARCH_BCM_CYGNUS is not enabled
->> but COMPILE_TEST is enabled by making the driver depend on OF.
->>
->> ../drivers/pinctrl/bcm/pinctrl-cygnus-mux.c:739:20: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
->>   .dt_node_to_map = pinconf_generic_dt_node_to_map_group,
->>
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Ray Jui <rjui@broadcom.com>
->> Cc: bcm-kernel-feedback-list@broadcom.com
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: linux-gpio@vger.kernel.org
->> ---
->>  drivers/pinctrl/bcm/Kconfig |    1 +
->>  1 file changed, 1 insertion(+)
->>
->> --- linux-next-20160722.orig/drivers/pinctrl/bcm/Kconfig
->> +++ linux-next-20160722/drivers/pinctrl/bcm/Kconfig
->> @@ -60,6 +60,7 @@ config PINCTRL_IPROC_GPIO
->>  config PINCTRL_CYGNUS_MUX
->>      bool "Broadcom Cygnus IOMUX driver"
->>      depends on (ARCH_BCM_CYGNUS || COMPILE_TEST)
->> +    depends on OF
->>      select PINMUX
->>      select GENERIC_PINCONF
->>      default ARCH_BCM_CYGNUS
->>
-> 
-> Thanks, but a fix was already submitted by Arnd and picked up by Linus: https://lkml.org/lkml/2016/7/15/649
+Strange. I merely changed the two "char" to "u8". I wonder how the tab
+became spaces. Anyway, sorry about that, resending soon.
 
-OK, it's just not in linux-next yet.
-
-Thanks.
-
-
--- 
-~Randy
+On 22 July 2016 at 17:59, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+>
+> On 7/22/2016 2:29 AM, tom.ty89@gmail.com wrote:
+>
+>> From: Tom Yan <tom.ty89@gmail.com>
+>>
+>> ata_mselect_*() would initialize a char array for storing a copy of
+>> the current mode page. However, char could be signed char. In that
+>> case, bytes larger than 127 would be converted to negative number.
+>>
+>> For example, 0xff from def_control_mpage[] would become -1. This
+>> prevented ata_mselect_control() from working at all, since when it
+>> did the read-only bits check, there would always be a mismatch.
+>>
+>> Signed-off-by: Tom Yan <tom.ty89@gmail.com>
+>>
+>> diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+>> index 4a4e6f1..a28e2ea94 100644
+>> --- a/drivers/ata/libata-scsi.c
+>> +++ b/drivers/ata/libata-scsi.c
+>> @@ -3610,7 +3610,7 @@ static int ata_mselect_caching(struct ata_queued_cmd
+>> *qc,
+>>  {
+>>         struct ata_taskfile *tf = &qc->tf;
+>>         struct ata_device *dev = qc->dev;
+>> -       char mpage[CACHE_MPAGE_LEN];
+>> +       u8 mpage[CACHE_MPAGE_LEN];
+>>         u8 wce, mask;
+>>         int i;
+>>
+>> @@ -3668,7 +3668,7 @@ static int ata_mselect_control(struct ata_queued_cmd
+>> *qc,
+>>                                const u8 *buf, int len, u16 *fp)
+>>  {
+>>         struct ata_device *dev = qc->dev;
+>> -       char mpage[CONTROL_MPAGE_LEN];
+>> +        u8 mpage[CONTROL_MPAGE_LEN];
+>
+>
+>    Indent with tabs please, as above.
+>
+> [...]
+>
+> MBR, Sergei
+>
