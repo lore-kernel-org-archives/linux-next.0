@@ -1,31 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the kvm tree
-Date: Sun, 24 Jul 2016 16:04:31 +1000
-Message-ID: <20160724160431.5c9ef32c@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the block tree
+Date: Sun, 24 Jul 2016 16:14:32 +1000
+Message-ID: <20160724161432.0f5a4011@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, kvm@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, Eric Auger <eric.auger@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58877 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750750AbcGXGOg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 24 Jul 2016 02:14:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jeremy Fitzhardinge <jeremy@goop.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Beulich <JBeulich@suse.com>, Mike Christie <mchristi@redhat.com>
 
 Hi all,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the xen-tip tree got a conflict in:
 
-  virt/kvm/irqchip.c
+  drivers/block/xen-blkfront.c
 
 between commit:
 
-  c63cf538eb4b ("KVM: pass struct kvm to kvm_set_routing_entry")
+  a418090aa88b ("block: do not use REQ_FLUSH for tracking flush support")
 
-from the kvm tree and commit:
+from the block tree and commit:
 
-  995a0ee9809b ("KVM: arm/arm64: Enable MSI routing")
+  ff595325ed55 ("xen-blkfront: prefer xenbus_scanf() over xenbus_gather()")
 
-from the kvm-arm tree.
+from the xen-tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,35 +42,71 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc virt/kvm/irqchip.c
-index df99e9c3b64d,c6202199e505..000000000000
---- a/virt/kvm/irqchip.c
-+++ b/virt/kvm/irqchip.c
-@@@ -208,15 -208,19 +209,19 @@@ int kvm_set_irq_routing(struct kvm *kvm
-  			goto out;
+diff --cc drivers/block/xen-blkfront.c
+index ab382c7997b8,ca0536eb7037..000000000000
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@@ -2298,11 -2308,9 +2297,10 @@@ static void blkfront_gather_backend_fea
+  	unsigned int indirect_segments;
   
-  		r = -EINVAL;
-- 		if (ue->flags) {
-- 			kfree(e);
-- 			goto out;
-+ 		switch (ue->type) {
-+ 		case KVM_IRQ_ROUTING_MSI:
-+ 			if (ue->flags & ~KVM_MSI_VALID_DEVID)
-+ 				goto free_entry;
-+ 			break;
-+ 		default:
-+ 			if (ue->flags)
-+ 				goto free_entry;
-+ 			break;
-  		}
- -		r = setup_routing_entry(new, e, ue);
- +		r = setup_routing_entry(kvm, new, e, ue);
-- 		if (r) {
-- 			kfree(e);
-- 			goto out;
-- 		}
-+ 		if (r)
-+ 			goto free_entry;
-  		++ue;
-  	}
+  	info->feature_flush = 0;
+ +	info->feature_fua = 0;
   
+- 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+- 			"feature-barrier", "%d", &barrier,
+- 			NULL);
++ 	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
++ 			   "feature-barrier", "%d", &barrier);
+  
+  	/*
+  	 * If there's no "feature-barrier" defined, then it means
+@@@ -2311,35 -2319,27 +2309,32 @@@
+  	 *
+  	 * If there are barriers, then we use flush.
+  	 */
+- 	if (!err && barrier) {
+ -	if (err > 0 && barrier)
+ -		info->feature_flush = REQ_FLUSH | REQ_FUA;
+++	if (err > 0 && barrier) {
+ +		info->feature_flush = 1;
+ +		info->feature_fua = 1;
+ +	}
+ +
+  	/*
+  	 * And if there is "feature-flush-cache" use that above
+  	 * barriers.
+  	 */
+- 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+- 			"feature-flush-cache", "%d", &flush,
+- 			NULL);
++ 	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
++ 			   "feature-flush-cache", "%d", &flush);
+  
+- 	if (!err && flush) {
+ -	if (err > 0 && flush)
+ -		info->feature_flush = REQ_FLUSH;
+++	if (err > 0 && flush) {
+ +		info->feature_flush = 1;
+ +		info->feature_fua = 0;
+ +	}
+  
+- 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+- 			"feature-discard", "%d", &discard,
+- 			NULL);
++ 	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
++ 			   "feature-discard", "%d", &discard);
+  
+- 	if (!err && discard)
++ 	if (err > 0 && discard)
+  		blkfront_setup_discard(info);
+  
+- 	err = xenbus_gather(XBT_NIL, info->xbdev->otherend,
+- 			"feature-persistent", "%u", &persistent,
+- 			NULL);
+- 	if (err)
++ 	err = xenbus_scanf(XBT_NIL, info->xbdev->otherend,
++ 			   "feature-persistent", "%d", &persistent);
++ 	if (err <= 0)
+  		info->feature_persistent = 0;
+  	else
+  		info->feature_persistent = persistent;
