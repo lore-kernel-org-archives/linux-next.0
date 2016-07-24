@@ -1,126 +1,121 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160724 build: 2 failures 6 warnings (next-20160724)
-Date: Sun, 24 Jul 2016 12:08:44 +0100
-Message-ID: <E1bRHH2-0004tC-9F@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33370 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752084AbcGXLIy (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jul 2016 07:08:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
+ luto-misc tree
+Date: Sun, 24 Jul 2016 11:40:18 -0700
+Message-ID: <CALCETrUPFprO0AUTKGk7T7tHuwqp_1CaNYxUR1rUSQUsZJb4gQ@mail.gmail.com>
+References: <20160720095333.3034531c@canb.auug.org.au> <20160720025202.GB18962@kernel.org>
+ <20160721092950.0047531e@canb.auug.org.au> <20160721131248.GH18962@kernel.org>
+ <20160722092302.5a0a1544@canb.auug.org.au> <20160722034118.guckaniobf3f7czc@treble>
+ <20160722143739.GI18962@kernel.org> <20160722191920.ej62fnspnqurbaa7@treble>
+ <20160722193655.GJ18962@kernel.org> <20160722194416.pxbsnyhaqcyoigsj@treble>
+ <20160722195734.GK18962@kernel.org> <20160723150845.3af8e452@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160723150845.3af8e452@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160724
-Git describe: next-20160724
-Commit: 6f9bfbf3e7 Add linux-next specific files for 20160724
+On Fri, Jul 22, 2016 at 10:08 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Arnaldo,
+>
+> On Fri, 22 Jul 2016 16:57:34 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+>>
+>> Em Fri, Jul 22, 2016 at 02:44:17PM -0500, Josh Poimboeuf escreveu:
+>> > On Fri, Jul 22, 2016 at 04:36:55PM -0300, Arnaldo Carvalho de Melo wrote:
+>> > > Em Fri, Jul 22, 2016 at 02:19:20PM -0500, Josh Poimboeuf escreveu:
+>> > > > On Fri, Jul 22, 2016 at 11:37:39AM -0300, Arnaldo Carvalho de Melo wrote:
+>> > > > > I.e. with the two patches I mentioned, that are equivalent to the last patch I
+>> > > > > sent to Stephen for testing, we would end up with HOSTARCH=powerpc and
+>> > > > > ARCH=x86, no?
+>>
+>> > > > Thanks for spelling it out, that helped a lot.
+>>
+>> > > Glad you liked it, I had to do it for my own sanity :-)
+>>
+>> > > And something that gave me mixed feelings was an e-mail from the kbuild
+>> > > test bot that noticed my perf/core changes and said that the build was
+>> > > broken for "make ARCH=x86_64", so I had to reinstate this part:
+>>
+>> > > ifeq ($(ARCH),x86_64)
+>> > > ARCH := x86
+>> > > endif
+>>
+>> > > Because, as you say, 'make ARCH=x86' works :-\ I think it will not be
+>> > > needed with your patch, right? I'm checking your patch below right now,
+>>
+>> > Yeah, that shouldn't be needed with my patch.  I think either would
+>> > work, but my patch is more of a permanent solution.
+>>
+>> Sure, I left it there because then we don't have bisection broke at that
+>> fix I made, i.e. 'make ARCH=x86_64' works at that point too.
+>>
+>> I applied your patch and will push it to Ingo, now we must cross our
+>> fingers so that Stephen doesn't come back to us once more telling it is
+>> still broken :o)
+>
+> Unfortunately, this is what I get when I just build perf/core:
+>
+>   DESCEND  objtool
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/builtin-check.o
+>   LD       /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool-in.o
+> Warning: objtool: x86 instruction decoder differs from kernel
+>   LINK     /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool
+> In file included from /home/sfr/next/next/arch/x86/include/uapi/asm/bitsperlong.h:10:0,
+>                  from /home/sfr/next/next/include/uapi/asm-generic/int-ll64.h:11,
+>                  from /home/sfr/next/next/include/uapi/asm-generic/types.h:6,
+>                  from /home/sfr/next/next/arch/x86/include/uapi/asm/types.h:4,
+>                  from /home/sfr/next/next/tools/include/linux/types.h:9,
+>                  from /home/sfr/next/next/include/uapi/linux/elf.h:4,
+>                  from /home/sfr/next/next/arch/x86/entry/vdso/vdso2c.c:66:
+> /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:13:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
+>  #error Inconsistent word size. Check asm/bitsperlong.h
+>   ^
+>
+> The be clear: this is a ppc64le hosted, x86_64 target cross build.
+>
+> I than added the following patch, and the build finishes successfully.
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sat, 23 Jul 2016 14:35:40 +1000
+> Subject: [PATCH] x86: make the vdso2c compiler use the host architecture
+>  headers
 
-Build Time: 73 min 58 sec
+Aha, I missed that bit in the makefile.
 
-Passed:    7 / 9   ( 77.78 %)
-Failed:    2 / 9   ( 22.22 %)
+Acked-by: Andy Lutomirski <luto@kernel.org>
 
-Errors: 1
-Warnings: 6
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm64-defconfig
-
-Errors:
-
-	arm64-allmodconfig
-../arch/arm64/kvm/../../../virt/kvm/arm/vgic/vgic-irqfd.c:48:5: error: conflicting types for 'kvm_set_routing_entry'
-
-	arm64-defconfig
-../arch/arm64/kvm/../../../virt/kvm/arm/vgic/vgic-irqfd.c:48:5: error: conflicting types for 'kvm_set_routing_entry'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      2 warnings    0 mismatches  : x86_64-defconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  2 ../arch/arm64/kvm/../../../virt/kvm/arm/vgic/vgic-irqfd.c:48:5: error: conflicting types for 'kvm_set_routing_entry'
-
-Warnings Summary: 6
-	  6 ../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  6 ../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  2 ../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/x86/entry/vdso/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index 253b72eaade6..25e88c030c47 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -55,7 +55,7 @@ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+>  $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
+>         $(call if_changed,vdso)
+>
+> -HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/x86/include/uapi
+> +HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/$(SUBARCH)/include/uapi
+>  hostprogs-y                    += vdso2c
+>
+>  quiet_cmd_vdso2c = VDSO2C  $@
+> --
+> 2.8.1
+>
+> There may be a more correct way to do this ...
+> --
+>Can  Cheers,
+> Stephen Rothwell
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/kvm/../../../virt/kvm/arm/vgic/vgic-irqfd.c:48:5: error: conflicting types for 'kvm_set_routing_entry'
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/kvm/../../../virt/kvm/arm/vgic/vgic-irqfd.c:48:5: error: conflicting types for 'kvm_set_routing_entry'
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
+-- 
+Andy Lutomirski
+AMA Capital Management, LLC
