@@ -1,45 +1,35 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Mon, 25 Jul 2016 01:30:28 +0100
-Message-ID: <20160725003028.GQ2356@ZenIV.linux.org.uk>
-References: <20160725102453.7fbe3ddd@canb.auug.org.au>
+From: Rich Felker <dalias@libc.org>
+Subject: Re: linux-next: build warning after merge of the sh tree
+Date: Sun, 24 Jul 2016 23:50:10 -0400
+Message-ID: <20160725035010.GP15995@brightrain.aerifal.cx>
+References: <20160724110012.188b6a27@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from zeniv.linux.org.uk ([195.92.253.2]:55064 "EHLO
-	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752732AbcGYAac (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jul 2016 20:30:32 -0400
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:59168 "EHLO
+	brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752585AbcGYDuU (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Sun, 24 Jul 2016 23:50:20 -0400
 Content-Disposition: inline
-In-Reply-To: <20160725102453.7fbe3ddd@canb.auug.org.au>
+In-Reply-To: <20160724110012.188b6a27@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Jul 25, 2016 at 10:24:53AM +1000, Stephen Rothwell wrote:
-> Hi Al,
+On Sun, Jul 24, 2016 at 11:00:12AM +1000, Stephen Rothwell wrote:
+> Hi Rich,
 > 
-> Today's linux-next merge of the vfs tree got a conflict in:
+> After merging the sh tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
->   fs/overlayfs/super.c
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/spi/spi-jcore.o
 > 
-> between commit:
+> Introduced by commit
 > 
->   e2475b7276d0 ("ovl: check mounter creds on underlying lookup")
-> 
-> from the overlayfs tree and commit:
-> 
->   b3ac9a85b31c ("qstr: constify instances in overlayfs")
-> 
-> from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+>   8c7f438f0661 ("spi: add driver for J-Core SPI controller")
 
-FWIW, if Miklos could pick that one-liner into overlayfs tree, I'd be only
-happy to drop it from that queue.
+Thanks. I'll make that change for sending to the subsystem maintainer
+and include it in my next rebase of for-next.
+
+Rich
