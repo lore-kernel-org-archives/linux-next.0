@@ -1,164 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: manual merge of the pwm tree with the regulator tree
-Date: Mon, 25 Jul 2016 16:26:11 +0200
-Message-ID: <20160725142611.GQ21170@ulmo.ba.sec>
-References: <20160711165648.029cb6f7@canb.auug.org.au>
- <CAD=FV=UBidDK2XN=uchV=Rr9LtYQ7m6Y6uRxe8xKhFLva6f5+w@mail.gmail.com>
- <20160711213059.GA12816@ulmo.ba.sec>
- <20160711213900.GA12942@ulmo.ba.sec>
- <20160725082906.GA4667@ulmo.ba.sec>
- <CAD=FV=Ufs+NBgSmMeJNUwGUnJZOC1Tvpt6PvSCQLAkxxLULhUA@mail.gmail.com>
+From: Rich Felker <dalias@libc.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Mon, 25 Jul 2016 10:48:46 -0400
+Message-ID: <20160725144846.GS15995@brightrain.aerifal.cx>
+References: <20160724153233.49f1574d@canb.auug.org.au>
+ <alpine.DEB.2.11.1607250915160.5629@nanos>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8HhMLSHvAouSipEr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Ufs+NBgSmMeJNUwGUnJZOC1Tvpt6PvSCQLAkxxLULhUA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexandre Courbot <acourbot@nvidia.com>
-List-Id: linux-next.vger.kernel.org
-
-
---8HhMLSHvAouSipEr
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:59185 "EHLO
+	brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752096AbcGYOvP (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2016 10:51:15 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alpine.DEB.2.11.1607250915160.5629@nanos>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On Mon, Jul 25, 2016 at 06:29:00AM -0700, Doug Anderson wrote:
-> Hi,
->=20
-> On Mon, Jul 25, 2016 at 1:29 AM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Mon, Jul 11, 2016 at 11:39:00PM +0200, Thierry Reding wrote:
-> >> On Mon, Jul 11, 2016 at 11:30:59PM +0200, Thierry Reding wrote:
-> >> > On Mon, Jul 11, 2016 at 09:47:34AM -0700, Doug Anderson wrote:
-> >> > > Hi,
-> >> > >
-> >> > > On Sun, Jul 10, 2016 at 11:56 PM, Stephen Rothwell <sfr@canb.auug.=
-org.au> wrote:
-> >> > > > Hi Thierry,
-> >> > > >
-> >> > > > Today's linux-next merge of the pwm tree got a conflict in:
-> >> > > >
-> >> > > >   drivers/regulator/pwm-regulator.c
-> >> > > >
-> >> > > > between commit:
-> >> > > >
-> >> > > >   830583004e61 ("regulator: pwm: Drop unneeded pwm_enable() call=
-")
-> >> > > >   27bfa8893b15 ("regulator: pwm: Support for enable GPIO")
-> >> > > >   c2588393e631 ("regulator: pwm: Fix regulator ramp delay for co=
-ntinuous mode")
-> >> > > >
-> >> > > > from the regulator tree and commit:
-> >> > > >
-> >> > > >   b0303deaa480 ("regulator: pwm: Adjust PWM config at probe time=
-")
-> >> > > >   8bd57ca236d0 ("regulator: pwm: Switch to the atomic PWM API")
-> >> > > >   25d16595935b ("regulator: pwm: Retrieve correct voltage")
-> >> > > >   53f239af4c14 ("regulator: pwm: Support extra continuous mode c=
-ases")
-> >> > > >
-> >> > > > from the pwm tree.
-> >> > > >
-> >> > > > I fixed it up (I think, please check - see below) and can carry =
-the fix
-> >> > > > as necessary. This is now fixed as far as linux-next is concerne=
-d, but
-> >> > > > any non trivial conflicts should be mentioned to your upstream m=
-aintainer
-> >> > > > when your tree is submitted for merging.  You may also want to c=
-onsider
-> >> > > > cooperating with the maintainer of the conflicting tree to minim=
-ise any
-> >> > > > particularly complex conflicts.
-> >> > > >
-> >> > > > --
-> >> > > > Cheers,
-> >> > > > Stephen Rothwell
-> >> > >
-> >> > > [ cut ]
-> >> > >
-> >> > > >  -      /* Delay required by PWM regulator to settle to the new =
-voltage */
-> >> > > >  -      usleep_range(ramp_delay, ramp_delay + 1000);
-> >> > > >  +      /* Ramp delay is in uV/uS. Adjust to uS and delay */
-> >> > > >  +      ramp_delay =3D DIV_ROUND_UP(abs(min_uV - old_uV), ramp_d=
-elay);
-> >> > >
-> >> > > This was what I was worried about and why I originally sent my pat=
-ch
-> >> > > based upon Boris's series.  The above should be:
-> >> > >
-> >> > > ramp_delay =3D DIV_ROUND_UP(abs(req_min_uV - old_uV), ramp_delay);
-> >> > >
-> >> > > Specifically note the use of "req_min_uV" and not "min_uV".
-> >> >
-> >> > Okay, so this is something that needs to be fixed up in one of Boris'
-> >> > patches? Can you help point out where exactly? The conflict should be
-> >> > gone as of tomorrow's linux-next.
-> >>
-> >> Looks like the below should be squashed into commit:
-> >>
-> >>       4585082afab4 regulator: pwm: Support extra continuous mode cases
-> >>
-> >> Can you confirm?
-> >>
-> >> Thierry
-> >>
-> >> --- >8 ---
-> >> diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm=
--regulator.c
-> >> index 263a2d16d909..c24524242da2 100644
-> >> --- a/drivers/regulator/pwm-regulator.c
-> >> +++ b/drivers/regulator/pwm-regulator.c
-> >> @@ -237,7 +237,7 @@ static int pwm_regulator_set_voltage(struct regula=
-tor_dev *rdev,
-> >>               return 0;
-> >>
-> >>       /* Ramp delay is in uV/uS. Adjust to uS and delay */
-> >> -     ramp_delay =3D DIV_ROUND_UP(abs(min_uV - old_uV), ramp_delay);
-> >> +     ramp_delay =3D DIV_ROUND_UP(abs(req_min_uV - old_uV), ramp_delay=
-);
-> >>       usleep_range(ramp_delay, ramp_delay + DIV_ROUND_UP(ramp_delay, 1=
-0));
-> >>
-> >>       return 0;
-> >
-> > Doug? Can you confirm?
->=20
-> Yes, right.  Sorry, previous email got lost in the shuffle since I was
-> on vacation.
->=20
-> Right, commit 4585082afab4 ("regulator: pwm: Support extra continuous
-> mode cases") is the one that renamed the parameters and so this use of
-> one of the parameters needs to be part of that commit.
+On Mon, Jul 25, 2016 at 09:16:48AM +0200, Thomas Gleixner wrote:
+> On Sun, 24 Jul 2016, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> > produced this warning:
+> > 
+> > In file included from include/linux/clocksource.h:18:0,
+> >                  from include/linux/clockchips.h:13,
+> >                  from drivers/clocksource/jcore-pit.c:14:
+> > include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
+> >         .data = (fn == (fn_type)NULL) ? fn : fn  }
+> >                     ^
+> > include/linux/of.h:1020:3: note: in expansion of macro '_OF_DECLARE'
+> >    _OF_DECLARE(table, name, compat, fn, of_init_fn_1_ret)
+> >    ^
+> > include/linux/clocksource.h:247:2: note: in expansion of macro 'OF_DECLARE_1_RET'
+> >   OF_DECLARE_1_RET(clksrc, name, compat, fn)
+> >   ^
+> > drivers/clocksource/jcore-pit.c:277:1: note: in expansion of macro 'CLOCKSOURCE_OF_DECLARE'
+> >  CLOCKSOURCE_OF_DECLARE(jcore_pit, "jcore,pit", jcore_pit_init);
+> >  ^
+> > 
+> > Introduced by commits
+> > 
+> >   b7c4db861683 ("clocksource/drivers/clksrc-probe: Introduce init functions with return code")
+> >   177cf6e52b0a ("clocksources: Switch back to the clksrc table")
+> > 
+> > interacting with commit
+> > 
+> >   e0aa0655c60b ("clocksource: add J-Core timer/clocksource driver")
+> > 
+> > from the sh tree.
+> 
+> And why is that driver coming through the superh tree and not through the
+> clocksource maintainers? It's not only based on an old interface it's probably
+> unreviewed as well ...
 
-Squashed it into the above commit and pushed everything out.
+Drivers will go upstream through their proper subsystem maintainers,
+not from my tree, but last time I got feedback that these drivers had
+not seen any testing in linux-next. I can refrain from including
+patches that I can't upstream directly in my for-next branch in the
+future if you'd prefer but this way seemed to make less work for
+others.
 
-Thanks,
-Thierry
-
---8HhMLSHvAouSipEr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXliGDAAoJEN0jrNd/PrOhpZcQAJZzkoM00c1z8yTMUUQlbWpq
-DyiWudzp7PQBFucasoP3HwHl7H5OmCFgnebEVrrT2f/5at5yGtmcYAoQQ5E9cq8m
-0ffml0oH58iLtArgTCJzOoatJBAQfzYohOnKZa5GW/IUmyM1FsZvn/RWPWuC3fUn
-jbDWkYHYWHwiT6VbHOL3gbWR+bAKNa47lEhcalb00Sfcb5dtTIljN2kx2sjvLmq0
-g5MUzu3Bk/VLOqRoumEO6PYNmZ42rGlGVpMJ3o86SSI1Rx1VAOx52mnwNRbUhloa
-3p4Ig2FKps3ETlZERqqEn03Ri/iS9qO3RMMl3O4M+zPWzWBXW1Ea8YNDO4/AikpP
-xZAyza/+pqbuICqkhAkiJ5zSW174o4B5YuEzuYZxLNZrQa2iTIrppiSQIoqYv3Xz
-uEnIsXdRGqG7PN7ICAXgMTABhuTcjinJL+i0MpxzxHw8Ybvtm6iXCjdOexlNiCFH
-YO/L4mZ8GtxaH+KcPMO9FTHQFVQMmqBFvhvsdMHG9IJC6wRLrD1XKQN/GsF6ZNAZ
-uNZzNwjPKqrmaLqU73xmYdCYppzxLmIXled2ndl+aaxng/o5Dh4L+DuEdSAYsGUf
-kTplv0jesgHi6fXWT90B/dkikATkHZco8Jrq5byM4gs6yGajvIk+7aBt0g+iUh7V
-pU9dF1grbx/ObQ7BsAey
-=vGpM
------END PGP SIGNATURE-----
-
---8HhMLSHvAouSipEr--
+Rich
