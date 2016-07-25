@@ -1,58 +1,46 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Mon, 25 Jul 2016 09:16:48 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1607250915160.5629@nanos>
-References: <20160724153233.49f1574d@canb.auug.org.au>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
+Date: Mon, 25 Jul 2016 10:09:02 +0200
+Message-ID: <CAJfpegsP0ZAubGSFMsUF-GWdoggntfpqZUfjjBaN5n9XXAt+Jw@mail.gmail.com>
+References: <20160725102453.7fbe3ddd@canb.auug.org.au> <20160725003028.GQ2356@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:39996 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750981AbcGYHTN (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2016 03:19:13 -0400
-In-Reply-To: <20160724153233.49f1574d@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Rich Felker <dalias@libc.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160725003028.GQ2356@ZenIV.linux.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, 24 Jul 2016, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> In file included from include/linux/clocksource.h:18:0,
->                  from include/linux/clockchips.h:13,
->                  from drivers/clocksource/jcore-pit.c:14:
-> include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
->         .data = (fn == (fn_type)NULL) ? fn : fn  }
->                     ^
-> include/linux/of.h:1020:3: note: in expansion of macro '_OF_DECLARE'
->    _OF_DECLARE(table, name, compat, fn, of_init_fn_1_ret)
->    ^
-> include/linux/clocksource.h:247:2: note: in expansion of macro 'OF_DECLARE_1_RET'
->   OF_DECLARE_1_RET(clksrc, name, compat, fn)
->   ^
-> drivers/clocksource/jcore-pit.c:277:1: note: in expansion of macro 'CLOCKSOURCE_OF_DECLARE'
->  CLOCKSOURCE_OF_DECLARE(jcore_pit, "jcore,pit", jcore_pit_init);
->  ^
-> 
-> Introduced by commits
-> 
->   b7c4db861683 ("clocksource/drivers/clksrc-probe: Introduce init functions with return code")
->   177cf6e52b0a ("clocksources: Switch back to the clksrc table")
-> 
-> interacting with commit
-> 
->   e0aa0655c60b ("clocksource: add J-Core timer/clocksource driver")
-> 
-> from the sh tree.
+On Mon, Jul 25, 2016 at 2:30 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Mon, Jul 25, 2016 at 10:24:53AM +1000, Stephen Rothwell wrote:
+>> Hi Al,
+>>
+>> Today's linux-next merge of the vfs tree got a conflict in:
+>>
+>>   fs/overlayfs/super.c
+>>
+>> between commit:
+>>
+>>   e2475b7276d0 ("ovl: check mounter creds on underlying lookup")
+>>
+>> from the overlayfs tree and commit:
+>>
+>>   b3ac9a85b31c ("qstr: constify instances in overlayfs")
+>>
+>> from the vfs tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>
+> FWIW, if Miklos could pick that one-liner into overlayfs tree, I'd be only
+> happy to drop it from that queue.
 
-And why is that driver coming through the superh tree and not through the
-clocksource maintainers? It's not only based on an old interface it's probably
-unreviewed as well ...
+OK, picked that one.
 
 Thanks,
-
-	tglx
+Miklos
