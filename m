@@ -1,42 +1,92 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
-Date: Mon, 25 Jul 2016 15:03:01 +0300
-Message-ID: <CAHp75Vd=8d6upXK4f-tKQopQR649oSU_TeZYzu=epOf-0DznSA@mail.gmail.com>
-References: <20160715121723.0f21f148@canb.auug.org.au> <2196027.ndrBocBl2R@vostro.rjw.lan>
- <20160717181448.GC1814@katana> <2565257.LbcJLfl1sl@vostro.rjw.lan> <20160719034806.GA1640@katana>
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
+ luto-misc tree
+Date: Mon, 25 Jul 2016 09:56:13 -0300
+Message-ID: <20160725125613.GL18962@kernel.org>
+References: <20160721092950.0047531e@canb.auug.org.au>
+ <20160721131248.GH18962@kernel.org>
+ <20160722092302.5a0a1544@canb.auug.org.au>
+ <20160722034118.guckaniobf3f7czc@treble>
+ <20160722143739.GI18962@kernel.org>
+ <20160722191920.ej62fnspnqurbaa7@treble>
+ <20160722193655.GJ18962@kernel.org>
+ <20160722194416.pxbsnyhaqcyoigsj@treble>
+ <20160722195734.GK18962@kernel.org>
+ <20160723150845.3af8e452@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34639 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751248AbcGYMDD (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2016 08:03:03 -0400
-In-Reply-To: <20160719034806.GA1640@katana>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Octavian Purdila <octavian.purdila@intel.com>, Jarkko Nikula <jarkko.nikula@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160723150845.3af8e452@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 19, 2016 at 6:48 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->
->> > Well, not knowing much about ACPI, I just need the conflict resolution
->> > for my latest i2c/for-next and your above branch. If you want to do it,
->> > fine with me. But maybe Jarkko will be back to office on Monday, too.
->>
->> Unfortunately, I don't see how these branches can be merged in a sensible
->> way without adding too much new code into the merge itself.
->>
->> Something needs to be dropped and then rebased and applied again.
->
-> Okay, I'll drop the I2C parts. Next to the core parts which I will drop,
-> there was also a driver patch making use of the core changes for which I
-> requested some updates. Since those did not happen yet (Jarkko on
-> holiday?), the core patches alone are not important anyhow.
+Em Sat, Jul 23, 2016 at 03:08:45PM +1000, Stephen Rothwell escreveu:
+> On Fri, 22 Jul 2016 16:57:34 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > I applied your patch and will push it to Ingo, now we must cross our
+> > fingers so that Stephen doesn't come back to us once more telling it is
+> > still broken :o)
+ 
+> Unfortunately, this is what I get when I just build perf/core:
+ 
+>   DESCEND  objtool
+>   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/builtin-check.o
 
-Jarkko and Mika are on holidays, I recently noticed this thread,
-sorry. For now your solution seems okay, since we can't push broken
-parts into v4.8-rc1.
+Cool! objtool is fixed, we're not at a different tool using those
+headers, and your patch fixes it, I see Andy acked it, I'll merge this
+and push to Ingo,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+
+- Arnaldo
+
+>   LD       /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool-in.o
+> Warning: objtool: x86 instruction decoder differs from kernel
+>   LINK     /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool
+> In file included from /home/sfr/next/next/arch/x86/include/uapi/asm/bitsperlong.h:10:0,
+>                  from /home/sfr/next/next/include/uapi/asm-generic/int-ll64.h:11,
+>                  from /home/sfr/next/next/include/uapi/asm-generic/types.h:6,
+>                  from /home/sfr/next/next/arch/x86/include/uapi/asm/types.h:4,
+>                  from /home/sfr/next/next/tools/include/linux/types.h:9,
+>                  from /home/sfr/next/next/include/uapi/linux/elf.h:4,
+>                  from /home/sfr/next/next/arch/x86/entry/vdso/vdso2c.c:66:
+> /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:13:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
+>  #error Inconsistent word size. Check asm/bitsperlong.h
+>   ^
+> 
+> The be clear: this is a ppc64le hosted, x86_64 target cross build.
+> 
+> I than added the following patch, and the build finishes successfully.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sat, 23 Jul 2016 14:35:40 +1000
+> Subject: [PATCH] x86: make the vdso2c compiler use the host architecture
+>  headers
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/x86/entry/vdso/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+> index 253b72eaade6..25e88c030c47 100644
+> --- a/arch/x86/entry/vdso/Makefile
+> +++ b/arch/x86/entry/vdso/Makefile
+> @@ -55,7 +55,7 @@ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
+>  $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
+>  	$(call if_changed,vdso)
+>  
+> -HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/x86/include/uapi
+> +HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/$(SUBARCH)/include/uapi
+>  hostprogs-y			+= vdso2c
+>  
+>  quiet_cmd_vdso2c = VDSO2C  $@
+> -- 
+> 2.8.1
+> 
+> There may be a more correct way to do this ...
+> -- 
+> Cheers,
+> Stephen Rothwell
