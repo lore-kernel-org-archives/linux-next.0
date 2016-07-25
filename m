@@ -1,110 +1,32 @@
-From: John Johansen <john.johansen@canonical.com>
-Subject: Re: linux-next: Tree for Jul 24 (apparmor)
-Date: Mon, 25 Jul 2016 11:00:40 -0700
-Message-ID: <c1b18fb7-a6b3-859b-c931-7a0e559cd673@canonical.com>
-References: <20160724182040.1e49e90f@canb.auug.org.au>
- <7a66a4c7-60cb-166d-2518-b7ba8de0033b@infradead.org>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH resend 5/5] libata-scsi: fix MODE SELECT translation for
+ Control mode page
+Date: Mon, 25 Jul 2016 14:30:55 -0400
+Message-ID: <20160725183055.GD19588@mtj.duckdns.org>
+References: <af84a796696f2f366d330595d1a818e8daeb86d8.1469126217.git.tom.ty89@gmail.com>
+ <b2ae6752649bc02641d38fee75ee35a59e8466d8.1469126217.git.tom.ty89@gmail.com>
+ <fc2946598c92137f65636b0fd7e50dc71a089fa1.1469126217.git.tom.ty89@gmail.com>
+ <14bd98eb08ddf86be28f558817bed3cd27c397cd.1469126217.git.tom.ty89@gmail.com>
+ <2ed3f3aba21a4b815e9497e6aeba497280f9f333.1469126217.git.tom.ty89@gmail.com>
+ <20160721212600.GF23759@htj.duckdns.org>
+ <CAGnHSEnSQcxcaJopGnVusC9Q41qHKkdr4QQDmymFSxVEH6zvPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from youngberry.canonical.com ([91.189.89.112]:54019 "EHLO
-	youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752821AbcGYSAq (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2016 14:00:46 -0400
-In-Reply-To: <7a66a4c7-60cb-166d-2518-b7ba8de0033b@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAGnHSEnSQcxcaJopGnVusC9Q41qHKkdr4QQDmymFSxVEH6zvPQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tom Yan <tom.ty89@gmail.com>
+Cc: Hannes Reinecke <hare@suse.de>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 07/24/2016 04:26 PM, Randy Dunlap wrote:
-> On 07/24/16 01:20, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20160722:
->>
-> 
-> on x86_64:
-> 
-> CONFIG_SECURITY_APPARMOR=y
-> CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
-> # CONFIG_SECURITY_APPARMOR_HASH is not set
-> 
-> ../security/apparmor/lsm.c:675:25: error: 'CONFIG_SECURITY_APPARMOR_HASH_DEFAULT' undeclared here (not in a function)
->  bool aa_g_hash_policy = CONFIG_SECURITY_APPARMOR_HASH_DEFAULT;
->                          ^
-> 
-> 
-yep thanks, its fixed by the following patch, and I have requested James pull it
+On Fri, Jul 22, 2016 at 05:50:18AM +0800, Tom Yan wrote:
+> As I've mentioned in the comment/message, there is no ATA command
+> needed to be sent to the device, since it only toggles a bit in
+> dev->flags. See that there is no ata_taskfile constructed in
+> ata_mselect_control().
 
+But ata_mselect_caching() contructs a tf?
 
-
-The newly added Kconfig option could never work and just causes a build error
-when disabled:
-
-security/apparmor/lsm.c:675:25: error: 'CONFIG_SECURITY_APPARMOR_HASH_DEFAULT' undeclared here (not in a function)
- bool aa_g_hash_policy = CONFIG_SECURITY_APPARMOR_HASH_DEFAULT;
-
-The problem is that the macro undefined in this case, and we need to use the IS_ENABLED()
-helper to turn it into a boolean constant.
-
-Another minor problem with the original patch is that the option is even offered
-in sysfs when SECURITY_APPARMOR_HASH is not enabled, so this also hides the option
-in that case.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Fixes: 6059f71f1e94 ("apparmor: add parameter to control whether policy hashing is used")
----
- security/apparmor/crypto.c        | 3 +++
- security/apparmor/lsm.c           | 4 +++-
- security/apparmor/policy_unpack.c | 3 +--
- 3 files changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/security/apparmor/crypto.c b/security/apparmor/crypto.c
-index 532471d0b3a0..b75dab0df1cb 100644
---- a/security/apparmor/crypto.c
-+++ b/security/apparmor/crypto.c
-@@ -39,6 +39,9 @@ int aa_calc_profile_hash(struct aa_profile *profile, u32 version, void *start,
- 	int error = -ENOMEM;
- 	u32 le32_version = cpu_to_le32(version);
- 
-+	if (!aa_g_hash_policy)
-+		return 0;
-+
- 	if (!apparmor_tfm)
- 		return 0;
- 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 3be30c701bfa..41b8cb115801 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -671,9 +671,11 @@ enum profile_mode aa_g_profile_mode = APPARMOR_ENFORCE;
- module_param_call(mode, param_set_mode, param_get_mode,
- 		  &aa_g_profile_mode, S_IRUSR | S_IWUSR);
- 
-+#ifdef CONFIG_SECURITY_APPARMOR_HASH
- /* whether policy verification hashing is enabled */
--bool aa_g_hash_policy = CONFIG_SECURITY_APPARMOR_HASH_DEFAULT;
-+bool aa_g_hash_policy = IS_ENABLED(CONFIG_SECURITY_APPARMOR_HASH_DEFAULT);
- module_param_named(hash_policy, aa_g_hash_policy, aabool, S_IRUSR | S_IWUSR);
-+#endif
- 
- /* Debug mode */
- bool aa_g_debug;
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index b9b1c66a32a5..138120698f83 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -778,8 +778,7 @@ int aa_unpack(void *udata, size_t size, struct list_head *lh, const char **ns)
- 		if (error)
- 			goto fail_profile;
- 
--		if (aa_g_hash_policy)
--			error = aa_calc_profile_hash(profile, e.version, start,
-+		error = aa_calc_profile_hash(profile, e.version, start,
- 						     e.pos - start);
- 		if (error)
- 			goto fail_profile;
 -- 
-2.9.0
+tejun
