@@ -1,92 +1,97 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH/RFC] Re: linux-next: build failure after merge of the
- luto-misc tree
-Date: Mon, 25 Jul 2016 09:56:13 -0300
-Message-ID: <20160725125613.GL18962@kernel.org>
-References: <20160721092950.0047531e@canb.auug.org.au>
- <20160721131248.GH18962@kernel.org>
- <20160722092302.5a0a1544@canb.auug.org.au>
- <20160722034118.guckaniobf3f7czc@treble>
- <20160722143739.GI18962@kernel.org>
- <20160722191920.ej62fnspnqurbaa7@treble>
- <20160722193655.GJ18962@kernel.org>
- <20160722194416.pxbsnyhaqcyoigsj@treble>
- <20160722195734.GK18962@kernel.org>
- <20160723150845.3af8e452@canb.auug.org.au>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: build warning after merge of the tip tree
+Date: Mon, 25 Jul 2016 15:11:48 +0200
+Message-ID: <57961014.7030902@linaro.org>
+References: <20160724153233.49f1574d@canb.auug.org.au>
+ <alpine.DEB.2.11.1607250915160.5629@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160723150845.3af8e452@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Andy Lutomirski <luto@amacapital.net>, Arnaldo Carvalho de Melo <acme@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:32995 "EHLO
+	mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752645AbcGYNLz (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 25 Jul 2016 09:11:55 -0400
+Received: by mail-wm0-f45.google.com with SMTP id p129so19551915wmp.0
+        for <linux-next@vger.kernel.org>; Mon, 25 Jul 2016 06:11:54 -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.11.1607250915160.5629@nanos>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>, Marc Zyngier <Marc.Zyngier@arm.com>
 
-Em Sat, Jul 23, 2016 at 03:08:45PM +1000, Stephen Rothwell escreveu:
-> On Fri, 22 Jul 2016 16:57:34 -0300 Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > I applied your patch and will push it to Ingo, now we must cross our
-> > fingers so that Stephen doesn't come back to us once more telling it is
-> > still broken :o)
- 
-> Unfortunately, this is what I get when I just build perf/core:
- 
->   DESCEND  objtool
->   CC       /home/sfr/next/x86_64_allmodconfig/tools/objtool/builtin-check.o
+On 07/25/2016 09:16 AM, Thomas Gleixner wrote:
+> On Sun, 24 Jul 2016, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the tip tree, today's linux-next build (x86_64 allmodc=
+onfig)
+>> produced this warning:
+>>
+>> In file included from include/linux/clocksource.h:18:0,
+>>                  from include/linux/clockchips.h:13,
+>>                  from drivers/clocksource/jcore-pit.c:14:
+>> include/linux/of.h:1004:20: warning: comparison of distinct pointer =
+types lacks a cast
+>>         .data =3D (fn =3D=3D (fn_type)NULL) ? fn : fn  }
+>>                     ^
+>> include/linux/of.h:1020:3: note: in expansion of macro '_OF_DECLARE'
+>>    _OF_DECLARE(table, name, compat, fn, of_init_fn_1_ret)
+>>    ^
+>> include/linux/clocksource.h:247:2: note: in expansion of macro 'OF_D=
+ECLARE_1_RET'
+>>   OF_DECLARE_1_RET(clksrc, name, compat, fn)
+>>   ^
+>> drivers/clocksource/jcore-pit.c:277:1: note: in expansion of macro '=
+CLOCKSOURCE_OF_DECLARE'
+>>  CLOCKSOURCE_OF_DECLARE(jcore_pit, "jcore,pit", jcore_pit_init);
+>>  ^
+>>
+>> Introduced by commits
+>>
+>>   b7c4db861683 ("clocksource/drivers/clksrc-probe: Introduce init fu=
+nctions with return code")
+>>   177cf6e52b0a ("clocksources: Switch back to the clksrc table")
+>>
+>> interacting with commit
+>>
+>>   e0aa0655c60b ("clocksource: add J-Core timer/clocksource driver")
+>>
+>> from the sh tree.
+>=20
+> And why is that driver coming through the superh tree and not through=
+ the
+> clocksource maintainers? It's not only based on an old interface it's=
+ probably
+> unreviewed as well ...
 
-Cool! objtool is fixed, we're not at a different tool using those
-headers, and your patch fixes it, I see Andy acked it, I'll merge this
-and push to Ingo,
+Rich,
 
-Thanks,
+why are these changes in linux-next ?
 
-- Arnaldo
+Except I am missing something, I don't see a new version sent for revie=
+w
+on the mailing list. The interrupt controller driver is almost empty as
+stated by Marc Zyngier and there is no explanation / discussion about i=
+t.
 
->   LD       /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool-in.o
-> Warning: objtool: x86 instruction decoder differs from kernel
->   LINK     /home/sfr/next/x86_64_allmodconfig/tools/objtool/objtool
-> In file included from /home/sfr/next/next/arch/x86/include/uapi/asm/bitsperlong.h:10:0,
->                  from /home/sfr/next/next/include/uapi/asm-generic/int-ll64.h:11,
->                  from /home/sfr/next/next/include/uapi/asm-generic/types.h:6,
->                  from /home/sfr/next/next/arch/x86/include/uapi/asm/types.h:4,
->                  from /home/sfr/next/next/tools/include/linux/types.h:9,
->                  from /home/sfr/next/next/include/uapi/linux/elf.h:4,
->                  from /home/sfr/next/next/arch/x86/entry/vdso/vdso2c.c:66:
-> /home/sfr/next/next/tools/include/asm-generic/bitsperlong.h:13:2: error: #error Inconsistent word size. Check asm/bitsperlong.h
->  #error Inconsistent word size. Check asm/bitsperlong.h
->   ^
-> 
-> The be clear: this is a ppc64le hosted, x86_64 target cross build.
-> 
-> I than added the following patch, and the build finishes successfully.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Sat, 23 Jul 2016 14:35:40 +1000
-> Subject: [PATCH] x86: make the vdso2c compiler use the host architecture
->  headers
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/entry/vdso/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-> index 253b72eaade6..25e88c030c47 100644
-> --- a/arch/x86/entry/vdso/Makefile
-> +++ b/arch/x86/entry/vdso/Makefile
-> @@ -55,7 +55,7 @@ VDSO_LDFLAGS_vdso.lds = -m64 -Wl,-soname=linux-vdso.so.1 \
->  $(obj)/vdso64.so.dbg: $(src)/vdso.lds $(vobjs) FORCE
->  	$(call if_changed,vdso)
->  
-> -HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/x86/include/uapi
-> +HOST_EXTRACFLAGS += -I$(srctree)/tools/include -I$(srctree)/include/uapi -I$(srctree)/arch/$(SUBARCH)/include/uapi
->  hostprogs-y			+= vdso2c
->  
->  quiet_cmd_vdso2c = VDSO2C  $@
-> -- 
-> 2.8.1
-> 
-> There may be a more correct way to do this ...
-> -- 
-> Cheers,
-> Stephen Rothwell
+I don't know the goal of adding those patches in linux-next via your
+tree, may be you misunderstood how linux-next works and you should
+remove them. But if the purpose was to merge the patches, I remind you
+that being an arch maintainer does not give you the right to apply any
+patches, everywhere, at all cost, without review, because you want them
+in, you must follow the process, otherwise you take the risk to upset a
+lot of people and to be kicked out.
+
+ -- Daniel
+
+
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =C3=A2=C2=94=C2=82 Open source sof=
+tware for ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
