@@ -1,41 +1,79 @@
-From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Subject: Re: linux-next: manual merge of the xen-tip tree with
-	the tip tree
-Date: Tue, 26 Jul 2016 09:58:54 -0400
-Message-ID: <f4966105-a8ff-c24c-608c-9aff66ad956b@oracle.com>
-References: <20160726140145.63ef0519@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the clockevents tree with the
+ arm-soc tree
+Date: Wed, 27 Jul 2016 08:08:45 +1000
+Message-ID: <20160727080845.12b58ebe@canb.auug.org.au>
+References: <20160707141226.2b9c1e15@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <xen-devel-bounces@lists.xen.org>
-In-Reply-To: <20160726140145.63ef0519@canb.auug.org.au>
-List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
-List-Post: <mailto:xen-devel@lists.xen.org>
-List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
-List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
- <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
-Errors-To: xen-devel-bounces@lists.xen.org
-Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, david.vrabel@citrix.com, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46188 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752549AbcGZWIs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jul 2016 18:08:48 -0400
+In-Reply-To: <20160707141226.2b9c1e15@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Linus <torvalds@linux-foundation.org>
 
-T24gMDcvMjYvMjAxNiAxMjowMSBBTSwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPiBIaSBhbGws
-Cj4KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIHhlbi10aXAgdHJlZSBnb3QgYSBj
-b25mbGljdCBpbjoKPgo+ICAgYXJjaC94ODYveGVuL2VubGlnaHRlbi5jCj4KPiBiZXR3ZWVuIGNv
-bW1pdDoKPgo+ICAgNGM5MDc1ODM1NTExICgieGVuL3g4NjogTW92ZSBpcnEgYWxsb2NhdGlvbiBm
-cm9tIFhlbiBzbXBfb3AuY3B1X3VwKCkiKQo+Cj4gZnJvbSB0aGUgdGlwIHRyZWUgYW5kIGNvbW1p
-dDoKPgo+ICAgODhlOTU3ZDZlNDdmICgieGVuOiBpbnRyb2R1Y2UgeGVuX3ZjcHVfaWQgbWFwcGlu
-ZyIpCj4KPiBmcm9tIHRoZSB4ZW4tdGlwIHRyZWUuCj4KPiBJIGZpeGVkIGl0IHVwIChJIHRoaW5r
-IC0gc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5Lgo+IFRoaXMg
-aXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBu
-b24gdHJpdmlhbAo+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJl
-YW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQo+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4g
-IFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNvb3BlcmF0aW5nCj4gd2l0aCB0aGUgbWFp
-bnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxh
-cmx5Cj4gY29tcGxleCBjb25mbGljdHMuCj4KClRoYW5rIHlvdSBTdGVwaGVuLiBCb3RoIHRoaXMg
-YW5kIGFyY2gveDg2L3hlbi9zbXAuYyBtZXJnZXMgKGZyb20gYW5vdGhlcgptZXNzYWdlKSBsb29r
-IGdvb2QuCgotYm9yaXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fClhlbi1kZXZlbCBtYWlsaW5nIGxpc3QKWGVuLWRldmVsQGxpc3RzLnhlbi5vcmcKaHR0
-cHM6Ly9saXN0cy54ZW4ub3JnL3hlbi1kZXZlbAo=
+Hi All,
+
+On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Daniel,
+> 
+> Today's linux-next merge of the clockevents tree got a conflict in:
+> 
+>   arch/arm/Kconfig
+> 
+> between commit:
+> 
+>   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
+> 
+> from the arm-soc tree and commit:
+> 
+>   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
+> 
+> from the clockevents tree.
+> 
+> I fixed it up (I used the arm-soc version of this file and then added
+> the following merge fix patch) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 7 Jul 2016 13:59:06 +1000
+> Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm/mach-clps711x/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
+> index 3b56197ccfd0..dc7c6edeab39 100644
+> --- a/arch/arm/mach-clps711x/Kconfig
+> +++ b/arch/arm/mach-clps711x/Kconfig
+> @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
+>  	depends on ARCH_MULTI_V4T
+>  	select ARCH_REQUIRE_GPIOLIB
+>  	select AUTO_ZRELADDR
+> -	select CLKSRC_MMIO
+>  	select CLKSRC_OF
+> +	select CLPS711X_TIMER
+>  	select COMMON_CLK
+>  	select CPU_ARM720T
+>  	select GENERIC_CLOCKEVENTS
+> -- 
+> 2.8.1
+
+Since Linus has merged most of the tip tree now, this merge fixup is
+required when (part of) the arm-soc tree is moerged with Linus' tree.
+-- 
+Cheers,
+Stephen Rothwell
