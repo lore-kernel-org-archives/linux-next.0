@@ -1,61 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Tue, 26 Jul 2016 14:02:39 +1000
-Message-ID: <20160726140239.364b2281@canb.auug.org.au>
+Subject: linux-next: manual merge of the random tree with the kspp tree
+Date: Tue, 26 Jul 2016 14:52:52 +1000
+Message-ID: <20160726145252.3d820d06@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57238 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42074 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752821AbcGZECl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 26 Jul 2016 00:02:41 -0400
+	id S1754540AbcGZEwy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 26 Jul 2016 00:52:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, boris.ostrovsky@oracle.com, david.vrabel@citrix.com, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Theodore Ts'o <tytso@mit.edu>, Kees Cook <keescook@google.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Emese Revfy <re.emese@gmail.com>
 
-Hi all,
+Hi Theodore,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+Today's linux-next merge of the random tree got a conflict in:
 
-  arch/x86/xen/smp.c
+  drivers/char/random.c
 
 between commit:
 
-  4c9075835511 ("xen/x86: Move irq allocation from Xen smp_op.cpu_up()")
+  8c6a68e9eaa5 ("latent_entropy: Mark functions with __latent_entropy")
 
-from the tip tree and commit:
+from the kspp tree and commit:
 
-  ad5475f9faf5 ("x86/xen: use xen_vcpu_id mapping for HYPERVISOR_vcpu_op")
+  e192be9d9a30 ("random: replace non-blocking pool with a Chacha20-based CRNG")
 
-from the xen-tip tree.
+from the random tree.
 
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/xen/smp.c
-index 09d5cc062dbe,0b4d04c8ab4d..000000000000
---- a/arch/x86/xen/smp.c
-+++ b/arch/x86/xen/smp.c
-@@@ -486,7 -495,11 +493,7 @@@ static int xen_cpu_up(unsigned int cpu
+diff --cc drivers/char/random.c
+index 6cca3ed45817,8d0af74f6569..000000000000
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@@ -442,10 -471,15 +471,15 @@@ struct entropy_store 
+  	__u8 last_data[EXTRACT_SIZE];
+  };
   
-  	xen_pmu_init(cpu);
++ static ssize_t extract_entropy(struct entropy_store *r, void *buf,
++ 			       size_t nbytes, int min, int rsvd);
++ static ssize_t _extract_entropy(struct entropy_store *r, void *buf,
++ 				size_t nbytes, int fips);
++ 
++ static void crng_reseed(struct crng_state *crng, struct entropy_store *r);
+  static void push_to_pool(struct work_struct *work);
+ -static __u32 input_pool_data[INPUT_POOL_WORDS];
+ -static __u32 blocking_pool_data[OUTPUT_POOL_WORDS];
+ +static __u32 input_pool_data[INPUT_POOL_WORDS] __latent_entropy;
+ +static __u32 blocking_pool_data[OUTPUT_POOL_WORDS] __latent_entropy;
+- static __u32 nonblocking_pool_data[OUTPUT_POOL_WORDS] __latent_entropy;
   
-- 	rc = HYPERVISOR_vcpu_op(VCPUOP_up, cpu, NULL);
- -	rc = xen_smp_intr_init(cpu);
- -	if (rc)
- -		return rc;
- -
-+ 	rc = HYPERVISOR_vcpu_op(VCPUOP_up, xen_vcpu_nr(cpu), NULL);
-  	BUG_ON(rc);
-  
-  	while (cpu_report_state(cpu) != CPU_ONLINE)
+  static struct entropy_store input_pool = {
+  	.poolinfo = &poolinfo_table[0],
