@@ -1,108 +1,41 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160726 build: 0 failures 6 warnings (next-20160726)
-Date: Tue, 26 Jul 2016 12:57:06 +0100
-Message-ID: <E1bS0yv-0001aW-8N@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49242 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752518AbcGZL5Q (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 26 Jul 2016 07:57:16 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with
+	the tip tree
+Date: Tue, 26 Jul 2016 09:58:54 -0400
+Message-ID: <f4966105-a8ff-c24c-608c-9aff66ad956b@oracle.com>
+References: <20160726140145.63ef0519@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <xen-devel-bounces@lists.xen.org>
+In-Reply-To: <20160726140145.63ef0519@canb.auug.org.au>
+List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
+ <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
+List-Post: <mailto:xen-devel@lists.xen.org>
+List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
+List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
+ <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
+Errors-To: xen-devel-bounces@lists.xen.org
+Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, david.vrabel@citrix.com, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160726
-Git describe: next-20160726
-Commit: 4072ebb63a Add linux-next specific files for 20160726
-
-Build Time: 178 min 45 sec
-
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 6
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      2 warnings    0 mismatches  : x86_64-defconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 6
-	  6 ../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  6 ../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	  2 ../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../include/linux/of.h:1004:20: warning: comparison of distinct pointer types lacks a cast
-	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+T24gMDcvMjYvMjAxNiAxMjowMSBBTSwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPiBIaSBhbGws
+Cj4KPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIHhlbi10aXAgdHJlZSBnb3QgYSBj
+b25mbGljdCBpbjoKPgo+ICAgYXJjaC94ODYveGVuL2VubGlnaHRlbi5jCj4KPiBiZXR3ZWVuIGNv
+bW1pdDoKPgo+ICAgNGM5MDc1ODM1NTExICgieGVuL3g4NjogTW92ZSBpcnEgYWxsb2NhdGlvbiBm
+cm9tIFhlbiBzbXBfb3AuY3B1X3VwKCkiKQo+Cj4gZnJvbSB0aGUgdGlwIHRyZWUgYW5kIGNvbW1p
+dDoKPgo+ICAgODhlOTU3ZDZlNDdmICgieGVuOiBpbnRyb2R1Y2UgeGVuX3ZjcHVfaWQgbWFwcGlu
+ZyIpCj4KPiBmcm9tIHRoZSB4ZW4tdGlwIHRyZWUuCj4KPiBJIGZpeGVkIGl0IHVwIChJIHRoaW5r
+IC0gc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5Lgo+IFRoaXMg
+aXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBu
+b24gdHJpdmlhbAo+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJl
+YW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQo+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4g
+IFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNvb3BlcmF0aW5nCj4gd2l0aCB0aGUgbWFp
+bnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxh
+cmx5Cj4gY29tcGxleCBjb25mbGljdHMuCj4KClRoYW5rIHlvdSBTdGVwaGVuLiBCb3RoIHRoaXMg
+YW5kIGFyY2gveDg2L3hlbi9zbXAuYyBtZXJnZXMgKGZyb20gYW5vdGhlcgptZXNzYWdlKSBsb29r
+IGdvb2QuCgotYm9yaXMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fClhlbi1kZXZlbCBtYWlsaW5nIGxpc3QKWGVuLWRldmVsQGxpc3RzLnhlbi5vcmcKaHR0
+cHM6Ly9saXN0cy54ZW4ub3JnL3hlbi1kZXZlbAo=
