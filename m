@@ -1,50 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the libata tree
-Date: Wed, 27 Jul 2016 16:32:31 +1000
-Message-ID: <20160727163231.51e88384@canb.auug.org.au>
-References: <20160721152603.4cf94e55@canb.auug.org.au>
-	<20160721144459.GA22680@htj.duckdns.org>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Wed, 27 Jul 2016 16:35:14 +1000
+Message-ID: <20160727163514.564bfe29@canb.auug.org.au>
+References: <20160727161533.5c5d1702@canb.auug.org.au>
+	<20160726.231959.811328304777471297.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54601 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36233 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751660AbcG0Gcd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jul 2016 02:32:33 -0400
-In-Reply-To: <20160721144459.GA22680@htj.duckdns.org>
+	id S1751041AbcG0GfQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jul 2016 02:35:16 -0400
+In-Reply-To: <20160726.231959.811328304777471297.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Yan <tom.ty89@gmail.com>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, isubramanian@apm.com
 
-Hi Tejun,
+Hi David,
 
-On Thu, 21 Jul 2016 10:44:59 -0400 Tejun Heo <tj@kernel.org> wrote:
+On Tue, 26 Jul 2016 23:19:59 -0700 (PDT) David Miller <davem@davemloft.net> wrote:
 >
-> On Thu, Jul 21, 2016 at 03:26:03PM +1000, Stephen Rothwell wrote:
-> > Hi Tejun,
-> > 
-> > After merging the libata tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced these warning:
-> > 
-> > drivers/ata/libata-scsi.c: In function 'ata_mselect_caching':
-> > drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-> >     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
-> >                             ^
-> > drivers/ata/libata-scsi.c: In function 'ata_mselect_control':
-> > drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
-> >     if (mpage[i + 2] & 0xfb != buf[i] & 0xfb) {
-> >                             ^
-> > 
-> > Introduced by commit
-> > 
-> >   9b7844a8c34a ("libata-scsi: fix read-only bits checking in ata_mselect_*()")  
+> Fixed thusly:
 > 
-> Already reverted the patch.  Sorry about that.
+> ====================
+> From 36232012344b8db67052432742deaf17f82e70e6 Mon Sep 17 00:00:00 2001
+> From: "David S. Miller" <davem@davemloft.net>
+> Date: Tue, 26 Jul 2016 23:19:29 -0700
+> Subject: [PATCH] xgene: Fix build warning with ACPI disabled.
+> 
+> drivers/net/ethernet/apm/xgene/xgene_enet_hw.c: In function 'xgene_enet_phy_connect':
+> drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:759:22: warning: unused variable 'adev' [-Wunused-variable]
+> 
+> Fixes: 8089a96f601b ("drivers: net: xgene: Add backward compatibility")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> ---
+>  drivers/net/ethernet/apm/xgene/xgene_enet_hw.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+> index 8a2a221..7714b7d 100644
+> --- a/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+> +++ b/drivers/net/ethernet/apm/xgene/xgene_enet_hw.c
+> @@ -756,7 +756,6 @@ int xgene_enet_phy_connect(struct net_device *ndev)
+>  	struct device_node *np;
+>  	struct phy_device *phy_dev;
+>  	struct device *dev = &pdata->pdev->dev;
+> -	struct acpi_device *adev;
+>  	int i;
+>  
+>  	if (dev->of_node) {
+> @@ -781,7 +780,7 @@ int xgene_enet_phy_connect(struct net_device *ndev)
+>  		pdata->phy_dev = phy_dev;
+>  	} else {
+>  #ifdef CONFIG_ACPI
+> -		adev = acpi_phy_find_device(dev);
+> +		struct acpi_device *adev = acpi_phy_find_device(dev);
+>  		if (adev)
+>  			pdata->phy_dev =  adev->driver_data;
 
-This patch is still in the libata tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/tj/libata.git#for-next)
+Looks good to me, thanks.
+
 -- 
 Cheers,
 Stephen Rothwell
