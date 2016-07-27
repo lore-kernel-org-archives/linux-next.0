@@ -1,70 +1,36 @@
-From: Duc Dang <dhdang@apm.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the arm-soc tree
-Date: Wed, 27 Jul 2016 13:41:41 -0700
-Message-ID: <CADaLNDn_eqKtUhYUQPOBOxt__8FukZmcnKWZk4QxWJQF4N4s2A@mail.gmail.com>
-References: <20160727125342.1902ece1@canb.auug.org.au>
+From: Tom Yan <tom.ty89@gmail.com>
+Subject: Re: [PATCH resend 5/5] libata-scsi: fix MODE SELECT translation for
+ Control mode page
+Date: Thu, 28 Jul 2016 05:00:00 +0800
+Message-ID: <CAGnHSEnPM8tOs-hUk--Hb_bdgZVH+3UO4Pk+CFS-cQ4_gW8kww@mail.gmail.com>
+References: <af84a796696f2f366d330595d1a818e8daeb86d8.1469126217.git.tom.ty89@gmail.com>
+ <b2ae6752649bc02641d38fee75ee35a59e8466d8.1469126217.git.tom.ty89@gmail.com>
+ <fc2946598c92137f65636b0fd7e50dc71a089fa1.1469126217.git.tom.ty89@gmail.com>
+ <14bd98eb08ddf86be28f558817bed3cd27c397cd.1469126217.git.tom.ty89@gmail.com>
+ <2ed3f3aba21a4b815e9497e6aeba497280f9f333.1469126217.git.tom.ty89@gmail.com>
+ <20160721212600.GF23759@htj.duckdns.org> <CAGnHSEnSQcxcaJopGnVusC9Q41qHKkdr4QQDmymFSxVEH6zvPQ@mail.gmail.com>
+ <20160725183055.GD19588@mtj.duckdns.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ua0-f176.google.com ([209.85.217.176]:33991 "EHLO
-	mail-ua0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754303AbcG0UmM (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jul 2016 16:42:12 -0400
-Received: by mail-ua0-f176.google.com with SMTP id 35so25825286uap.1
-        for <linux-next@vger.kernel.org>; Wed, 27 Jul 2016 13:42:11 -0700 (PDT)
-In-Reply-To: <20160727125342.1902ece1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Iyappan Subramanian <isubramanian@apm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160725183055.GD19588@mtj.duckdns.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tejun Heo <tj@kernel.org>
+Cc: Hannes Reinecke <hare@suse.de>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 26, 2016 at 7:53 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->
->   arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
->
-> between commit:
->
->   cafc4cd0c8b8 ("arm64: dts: apm: Use lowercase consistently for hex constants")
->
-> from the arm-soc tree and commit:
->
->   8e694cd2762c ("dtb: xgene: Add MDIO node")
->
-> from the net-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Yes, because it touches an actual ATA drive setting, while D_SENSE is
+merely a "software setting" stored in dev->flags to make the kernel
+response differently when build sense data.
 
-Thanks for taking care of this, Stephen. The fix looks fine.
-
+On 26 July 2016 at 02:30, Tejun Heo <tj@kernel.org> wrote:
+> On Fri, Jul 22, 2016 at 05:50:18AM +0800, Tom Yan wrote:
+>> As I've mentioned in the comment/message, there is no ATA command
+>> needed to be sent to the device, since it only toggles a bit in
+>> dev->flags. See that there is no ata_taskfile constructed in
+>> ata_mselect_control().
+>
+> But ata_mselect_caching() contructs a tf?
 >
 > --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-> index 21028b145d91,2e1e5daa1dc7..000000000000
-> --- a/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-> +++ b/arch/arm64/boot/dts/apm/apm-shadowcat.dtsi
-> @@@ -628,9 -636,9 +636,9 @@@
->                 sgenet0: ethernet@1f610000 {
->                         compatible = "apm,xgene2-sgenet";
->                         status = "disabled";
-> -                       reg = <0x0 0x1f610000 0x0 0x10000>,
-> +                       reg = <0x0 0x1f610000 0x0 0xd100>,
->  -                            <0x0 0x1f600000 0x0 0Xd100>,
->  -                            <0x0 0x20000000 0x0 0X20000>;
->  +                            <0x0 0x1f600000 0x0 0xd100>,
->  +                            <0x0 0x20000000 0x0 0x20000>;
->                         interrupts = <0 96 4>,
->                                      <0 97 4>;
->                         dma-coherent;
-Regards,
-Duc Dang.
+> tejun
