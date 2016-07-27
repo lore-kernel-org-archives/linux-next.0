@@ -1,59 +1,106 @@
-From: Michal Marek <mmarek@suse.cz>
-Subject: Re: linux-next: duplicate patches in the kspp and kbuild trees
-Date: Wed, 27 Jul 2016 09:52:16 +0200
-Message-ID: <57986830.50709@suse.cz>
-References: <20160614094019.14fac372@canb.auug.org.au>
- <CAGXu5jLh7gXMcdU=F0qWc1S61YX-QmfQHpUfb+sxkQLUXu1Hqw@mail.gmail.com>
- <CAGXu5jJK25pMi1kG2vUfWkZkDBxCVeLUVs61a=m8qmHDTjPg9g@mail.gmail.com>
- <20160614143203.220d0722@canb.auug.org.au> <57600036.8040900@suse.cz>
- <20160615001311.13db4b92@canb.auug.org.au>
- <CAGXu5jJO1v0SKt58TPjW2P8ZibW+1=iCV9pmmnM4bvj1NoQRXg@mail.gmail.com>
- <5797E1EA.8070605@suse.cz>
- <CAGXu5jLX3Z5dR8Wgf__RC6mptaHsVsizU-st4CDX+3LNaX+o6A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160727 build: 0 failures 7 warnings (next-20160727)
+Date: Wed, 27 Jul 2016 12:29:33 +0100
+Message-ID: <E1bSN1p-0001Xq-RW@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:36479 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751339AbcG0HwT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 27 Jul 2016 03:52:19 -0400
-In-Reply-To: <CAGXu5jLX3Z5dR8Wgf__RC6mptaHsVsizU-st4CDX+3LNaX+o6A@mail.gmail.com>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59820 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754200AbcG0L3n (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Wed, 27 Jul 2016 07:29:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 2016-07-27 01:09, Kees Cook wrote:
-> On Tue, Jul 26, 2016 at 3:19 PM, Michal Marek <mmarek@suse.cz> wrote:
->> Dne 14.6.2016 v 18:39 Kees Cook napsal(a):
->>> On Tue, Jun 14, 2016 at 7:13 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>> Hi Michal,
->>>>
->>>> On Tue, 14 Jun 2016 15:01:42 +0200 Michal Marek <mmarek@suse.cz> wrote:
->>>>>
->>>>> I won't :). Kees, are you going to keep the patch in your tree and send
->>>>> it to Linus once kbuild is in? Or shall I take it (which would
->>>>> temporarily result in another duplication...).
->>>>
->>>> Or Kees could send you a pull request ...
->>>
->>> My head hurts. :) How about this: since a pull request would (I think)
->>> end up pulling the other unrelated kspp patches, how about you take
->>> the patch into kbuild, and once it's there, I'll just remove it from
->>> my tree (since it's on top).
->>
->> Sorry, I forgot about this one. It's cherry-picked onto my kbuild branch
->> now.
-> 
-> Okay, no worries. I've removed it from my tree and merged your
-> kbuild/for-next branch into my for-next/kspp branch.
-> 
-> Let me know once you've sent the kbuild/for-next pull request, and I
-> can follow it up with the the entropy plugin pull request.
+Tree/Branch: next-20160727
+Git describe: next-20160727
+Commit: d9c44325f3 Add linux-next specific files for 20160727
 
-I actually send the individual branches of kbuild.git: "kbuild",
-"kconfig" and "misc". for-next is just a convenience for linux-next
-integration.
+Build Time: 90 min 4 sec
 
-Michal
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
+
+Errors: 0
+Warnings: 7
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+      7 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 7
+	  6 ../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	  6 ../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	  2 ../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+	  1 ../drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:803:23: warning: 'phy_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:759:22: warning: unused variable 'adev' [-Wunused-variable]
+	  1 ../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/misc/lkdtm_usercopy.c:52:15: warning: 'bad_stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:134:3: warning: 'carrier_offset' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:759:22: warning: unused variable 'adev' [-Wunused-variable]
+	../drivers/net/ethernet/apm/xgene/xgene_enet_hw.c:803:23: warning: 'phy_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:3637:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+	../drivers/ata/libata-scsi.c:3702:28: warning: suggest parentheses around comparison in operand of '&' [-Wparentheses]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
