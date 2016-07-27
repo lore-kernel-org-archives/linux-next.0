@@ -1,36 +1,56 @@
-From: Tom Yan <tom.ty89@gmail.com>
-Subject: Re: [PATCH resend 5/5] libata-scsi: fix MODE SELECT translation for
- Control mode page
-Date: Thu, 28 Jul 2016 05:00:00 +0800
-Message-ID: <CAGnHSEnPM8tOs-hUk--Hb_bdgZVH+3UO4Pk+CFS-cQ4_gW8kww@mail.gmail.com>
-References: <af84a796696f2f366d330595d1a818e8daeb86d8.1469126217.git.tom.ty89@gmail.com>
- <b2ae6752649bc02641d38fee75ee35a59e8466d8.1469126217.git.tom.ty89@gmail.com>
- <fc2946598c92137f65636b0fd7e50dc71a089fa1.1469126217.git.tom.ty89@gmail.com>
- <14bd98eb08ddf86be28f558817bed3cd27c397cd.1469126217.git.tom.ty89@gmail.com>
- <2ed3f3aba21a4b815e9497e6aeba497280f9f333.1469126217.git.tom.ty89@gmail.com>
- <20160721212600.GF23759@htj.duckdns.org> <CAGnHSEnSQcxcaJopGnVusC9Q41qHKkdr4QQDmymFSxVEH6zvPQ@mail.gmail.com>
- <20160725183055.GD19588@mtj.duckdns.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] pnpbios: add header file to fix build errors
+Date: Thu, 28 Jul 2016 01:49:55 +0200
+Message-ID: <2367158.Y693rAZPTH@vostro.rjw.lan>
+References: <ae7a56b8-27a4-05c3-44f7-e1140bfd7acd@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160725183055.GD19588@mtj.duckdns.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>
-Cc: Hannes Reinecke <hare@suse.de>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:62400 "HELO
+	cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S932335AbcG0Xow (ORCPT
+	<rfc822;linux-next@vger.kernel.org>);
+	Wed, 27 Jul 2016 19:44:52 -0400
+In-Reply-To: <ae7a56b8-27a4-05c3-44f7-e1140bfd7acd@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Rafael Wysocki <rafael.j.wysocki@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Luis R. Rodriguez" <mcgrof@suse.com>, LKML <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
-Yes, because it touches an actual ATA drive setting, while D_SENSE is
-merely a "software setting" stored in dev->flags to make the kernel
-response differently when build sense data.
+On Tuesday, July 26, 2016 04:26:40 PM Randy Dunlap wrote:
+> From: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Fix build errors due to missing header file:
+> 
+> ../drivers/pnp/pnpbios/core.c: In function 'pnp_dock_event':
+> ../drivers/pnp/pnpbios/core.c:141:2: error: implicit declaration of function 'call_usermodehelper' [-Werror=implicit-function-declaration]
+>   value = call_usermodehelper(argv [0], argv, envp, UMH_WAIT_EXEC);
+>   ^
+> ../drivers/pnp/pnpbios/core.c:141:52: error: 'UMH_WAIT_EXEC' undeclared (first use in this function)
+>   value = call_usermodehelper(argv [0], argv, envp, UMH_WAIT_EXEC);
+>                                                     ^
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> ---
+> I should have copied Rafael on this the first time.
+> Also applies to mainline.
 
-On 26 July 2016 at 02:30, Tejun Heo <tj@kernel.org> wrote:
-> On Fri, Jul 22, 2016 at 05:50:18AM +0800, Tom Yan wrote:
->> As I've mentioned in the comment/message, there is no ATA command
->> needed to be sent to the device, since it only toggles a bit in
->> dev->flags. See that there is no ata_taskfile constructed in
->> ata_mselect_control().
->
-> But ata_mselect_caching() contructs a tf?
->
-> --
-> tejun
+OK, I'm going to apply it, thanks!
+
+>  drivers/pnp/pnpbios/core.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- linux-next-20160711.orig/drivers/pnp/pnpbios/core.c
+> +++ linux-next-20160711/drivers/pnp/pnpbios/core.c
+> @@ -60,6 +60,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/acpi.h>
+>  #include <linux/freezer.h>
+> +#include <linux/kmod.h>
+>  #include <linux/kthread.h>
+>  
+>  #include <asm/page.h>
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
