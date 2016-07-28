@@ -1,75 +1,69 @@
-From: Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [BUG -next] "random: make /dev/urandom scalable for silly
- userspace programs" causes crash
-Date: Thu, 28 Jul 2016 09:24:08 +0200
-Message-ID: <20160728072408.GB3942@osiris>
-References: <20160727071400.GA3912@osiris>
- <20160728034601.GC20032@thunk.org>
- <20160728055548.GA3942@osiris>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160728055548.GA3942@osiris>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, linux-next@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160728 build: 0 failures 2 warnings (next-20160728)
+Date: Thu, 28 Jul 2016 13:41:59 +0100
+Message-ID: <E1bSkdR-0003i1-S7@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41462 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932080AbcG1MmL (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2016 08:42:11 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Jul 28, 2016 at 07:55:48AM +0200, Heiko Carstens wrote:
-> On Wed, Jul 27, 2016 at 11:46:01PM -0400, Theodore Ts'o wrote:
-> > On Wed, Jul 27, 2016 at 09:14:00AM +0200, Heiko Carstens wrote:
-> > > it looks like your patch "random: make /dev/urandom scalable for silly
-> > > userspace programs" within linux-next seems to be a bit broken:
-> > > 
-> > > It causes this allocation failure and subsequent crash on s390 with fake
-> > > NUMA enabled
-> > 
-> > Thanks for reporting this.  This patch fixes things for you, yes?
-> > 
-> >        	   	     	    	       	     	    - Ted
-> 
-> Yes, it does. It's actually the same what I did to fix this ;)
+Tree/Branch: next-20160728
+Git describe: next-20160728
+Commit: d4e661a485 Add linux-next specific files for 20160728
 
-Oh, I just realized that Linus pulled your changes. Actually I was hoping
-we could get this fixed before the broken code would be merged.
-Could you please make sure the bug fix gets included as soon as possible?
+Build Time: 239 min 23 sec
 
-Right now booting a kernel with any defconfig on s390 will crash because of
-this.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
-I will also change the fake NUMA code on s390, since it doesn't make sense
-to have possible but not online nodes (in this case).
+Errors: 0
+Warnings: 2
+Section Mismatches: 0
 
-> > commit 59b8d4f1f5d26e4ca92172ff6dcd1492cdb39613
-> > Author: Theodore Ts'o <tytso@mit.edu>
-> > Date:   Wed Jul 27 23:30:25 2016 -0400
-> > 
-> >     random: use for_each_online_node() to iterate over NUMA nodes
-> >     
-> >     This fixes a crash on s390 with fake NUMA enabled.
-> >     
-> >     Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> >     Fixes: 1e7f583af67b ("random: make /dev/urandom scalable for silly userspace programs")
-> >     Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-> > 
-> > diff --git a/drivers/char/random.c b/drivers/char/random.c
-> > index 8d0af74..7f06224 100644
-> > --- a/drivers/char/random.c
-> > +++ b/drivers/char/random.c
-> > @@ -1668,13 +1668,12 @@ static int rand_initialize(void)
-> >  #ifdef CONFIG_NUMA
-> >  	pool = kmalloc(num_nodes * sizeof(void *),
-> >  		       GFP_KERNEL|__GFP_NOFAIL|__GFP_ZERO);
-> > -	for (i=0; i < num_nodes; i++) {
-> > +	for_each_online_node(i) {
-> >  		crng = kmalloc_node(sizeof(struct crng_state),
-> >  				    GFP_KERNEL | __GFP_NOFAIL, i);
-> >  		spin_lock_init(&crng->lock);
-> >  		crng_initialize(crng);
-> >  		pool[i] = crng;
-> > -
-> >  	}
-> >  	mb();
-> >  	crng_node_pool = pool;
-> > 
-> 
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 2
+	  2 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
