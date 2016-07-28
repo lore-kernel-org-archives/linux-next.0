@@ -1,47 +1,64 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Date: Thu, 28 Jul 2016 12:40:04 +1000
-Message-ID: <8737mutri3.fsf@concordia.ellerman.id.au>
-References: <20160728120814.59e42bc8@canb.auug.org.au>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [BUG -next] "random: make /dev/urandom scalable for silly
+ userspace programs" causes crash
+Date: Wed, 27 Jul 2016 23:46:01 -0400
+Message-ID: <20160728034601.GC20032@thunk.org>
+References: <20160727071400.GA3912@osiris>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160728120814.59e42bc8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Michal Marek <mmarek@suse.cz>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20160727071400.GA3912@osiris>
+Sender: owner-linux-mm@kvack.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Wed, Jul 27, 2016 at 09:14:00AM +0200, Heiko Carstens wrote:
+> it looks like your patch "random: make /dev/urandom scalable for silly
+> userspace programs" within linux-next seems to be a bit broken:
+> 
+> It causes this allocation failure and subsequent crash on s390 with fake
+> NUMA enabled
 
-> Hi Michal,
->
-> After merging the kbuild tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-...
-> arch/powerpc/mm/hash_utils_64.c:929:10: note: in expansion of macro 'IS_ENABLED'
->   else if IS_ENABLED(CONFIG_PPC_NATIVE)
->           ^
-> cc1: all warnings being treated as errors
->
-> Caused by commit
->
->   7353644fa9df ("powerpc/mm: Fix build break when PPC_NATIVE=n")
->
-> from the powerpc tree interacting with commit
->
->   5e8754fd80b0 ("kconfig.h: allow to use IS_{ENABLE,REACHABLE} in macro expansion")
->
-> from the kbuild tree.
+Thanks for reporting this.  This patch fixes things for you, yes?
 
-**expletive deleted**
+       	   	     	    	       	     	    - Ted
 
-I was wary of IS_ENABLED(), I should have trusted my instincts.
+commit 59b8d4f1f5d26e4ca92172ff6dcd1492cdb39613
+Author: Theodore Ts'o <tytso@mit.edu>
+Date:   Wed Jul 27 23:30:25 2016 -0400
 
-> I have applied the following fix patch (that should be applied to the
-> powerpc tree):
+    random: use for_each_online_node() to iterate over NUMA nodes
+    
+    This fixes a crash on s390 with fake NUMA enabled.
+    
+    Reported-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+    Fixes: 1e7f583af67b ("random: make /dev/urandom scalable for silly userspace programs")
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
-Applied, thanks.
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 8d0af74..7f06224 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1668,13 +1668,12 @@ static int rand_initialize(void)
+ #ifdef CONFIG_NUMA
+ 	pool = kmalloc(num_nodes * sizeof(void *),
+ 		       GFP_KERNEL|__GFP_NOFAIL|__GFP_ZERO);
+-	for (i=0; i < num_nodes; i++) {
++	for_each_online_node(i) {
+ 		crng = kmalloc_node(sizeof(struct crng_state),
+ 				    GFP_KERNEL | __GFP_NOFAIL, i);
+ 		spin_lock_init(&crng->lock);
+ 		crng_initialize(crng);
+ 		pool[i] = crng;
+-
+ 	}
+ 	mb();
+ 	crng_node_pool = pool;
 
-cheers
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
