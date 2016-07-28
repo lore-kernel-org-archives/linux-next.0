@@ -1,69 +1,32 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160728 build: 0 failures 2 warnings (next-20160728)
-Date: Thu, 28 Jul 2016 13:41:59 +0100
-Message-ID: <E1bSkdR-0003i1-S7@optimist>
+From: Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [BUG -next] "random: make /dev/urandom scalable for silly
+ userspace programs" causes crash
+Date: Thu, 28 Jul 2016 09:41:42 -0400
+Message-ID: <20160728134142.GA12516@thunk.org>
+References: <20160727071400.GA3912@osiris>
+ <20160728034601.GC20032@thunk.org>
+ <20160728055548.GA3942@osiris>
+ <20160728072408.GB3942@osiris>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41462 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932080AbcG1MmL (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2016 08:42:11 -0400
+Received: from imap.thunk.org ([74.207.234.97]:52946 "EHLO imap.thunk.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757576AbcG1Nlr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 28 Jul 2016 09:41:47 -0400
+Content-Disposition: inline
+In-Reply-To: <20160728072408.GB3942@osiris>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-s390@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-Tree/Branch: next-20160728
-Git describe: next-20160728
-Commit: d4e661a485 Add linux-next specific files for 20160728
+On Thu, Jul 28, 2016 at 09:24:08AM +0200, Heiko Carstens wrote:
+> 
+> Oh, I just realized that Linus pulled your changes. Actually I was hoping
+> we could get this fixed before the broken code would be merged.
+> Could you please make sure the bug fix gets included as soon as possible?
 
-Build Time: 239 min 23 sec
+Yes, I'll send the pull request to ASAP.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
-
-Errors: 0
-Warnings: 2
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 2
-	  2 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+					- Ted
