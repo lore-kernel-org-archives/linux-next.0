@@ -1,80 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the tip tree
-Date: Fri, 29 Jul 2016 14:14:10 +1000
-Message-ID: <20160729141410.3dadca86@canb.auug.org.au>
+From: Al Viro <viro@ZenIV.linux.org.uk>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Fri, 29 Jul 2016 05:18:22 +0100
+Message-ID: <20160729041822.GX2356@ZenIV.linux.org.uk>
+References: <20160729111938.56ee0fa1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38356 "EHLO
+	ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752219AbcG2ES0 (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Fri, 29 Jul 2016 00:18:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20160729111938.56ee0fa1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
 
-Hi Andrew,
+On Fri, Jul 29, 2016 at 11:19:38AM +1000, Stephen Rothwell wrote:
+> ---
+>  fs/fuse/dir.c    | 2 +-
+>  fs/fuse/fuse_i.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index f910578e51ba..c47b7780ce37 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -935,7 +935,7 @@ int fuse_update_attributes(struct inode *inode, struct kstat *stat,
+>  }
+>  
+>  int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
+> -			     u64 child_nodeid, const struct qstr *name)
+> +			     u64 child_nodeid, struct qstr *name)
+>  {
+>  	int err = -ENOTDIR;
+>  	struct inode *parent;
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+I'm not sure if it's the best way to handle that, TBH...  It might be better
+to pass name.name/name.len separately here.  Both callers have a _lot_ of
+code duplication; I've a patch getting rid of code duplication there, will
+play with it and see if it would make sense to quit messing with struct
+qstr while we are at it.
 
-  arch/x86/include/asm/thread_info.h
+BTW, I'd been toying with the following trick:
 
-between commit:
+static inline const struct qstr *d_name(const struct dentry *dentry)
+{
+	return &dentry->d_name;
+}
+with subsequent switch of dentry->d_name.foo to d_name(dentry)->foo and
+&dentry->d_name to d_name(dentry).  Note 'const' in the above - the point is,
+there are very few places where dentry->d_name can be legitimately modified
+(__d_alloc(), swap_names() and copy_name()) and it'd be nice to have cc(1)
+enforce that.  Changing d_name to const struct qstr (and explicitly casting
+in the aforementioned 3 functions) would do it, but it's deep in nasal daemon
+territory; OTOH, conversion to the helper above with subsequent renaming of
+the field to something easily greppable for would get the same effect and
+stay within standard C.
 
-  609c19a385c8 ("x86/ptrace: Stop setting TS_COMPAT in ptrace code")
-
-from the tip tree and commit:
-
-  58f9594bd42f ("signal: consolidate {TS,TLF}_RESTORE_SIGMASK code")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/include/asm/thread_info.h
-index d4b0fd24a63e,b45ffdda3549..000000000000
---- a/arch/x86/include/asm/thread_info.h
-+++ b/arch/x86/include/asm/thread_info.h
-@@@ -263,35 -219,8 +263,11 @@@ static inline int arch_within_stack_fra
-   * have to worry about atomic accesses.
-   */
-  #define TS_COMPAT		0x0002	/* 32bit syscall active (64BIT)*/
- +#ifdef CONFIG_COMPAT
- +#define TS_I386_REGS_POKED	0x0004	/* regs poked by 32-bit ptracer */
- +#endif
-- #define TS_RESTORE_SIGMASK	0x0008	/* restore signal mask in do_signal() */
-  
-  #ifndef __ASSEMBLY__
-- #define HAVE_SET_RESTORE_SIGMASK	1
-- static inline void set_restore_sigmask(void)
-- {
-- 	struct thread_info *ti = current_thread_info();
-- 	ti->status |= TS_RESTORE_SIGMASK;
-- 	WARN_ON(!test_bit(TIF_SIGPENDING, (unsigned long *)&ti->flags));
-- }
-- static inline void clear_restore_sigmask(void)
-- {
-- 	current_thread_info()->status &= ~TS_RESTORE_SIGMASK;
-- }
-- static inline bool test_restore_sigmask(void)
-- {
-- 	return current_thread_info()->status & TS_RESTORE_SIGMASK;
-- }
-- static inline bool test_and_clear_restore_sigmask(void)
-- {
-- 	struct thread_info *ti = current_thread_info();
-- 	if (!(ti->status & TS_RESTORE_SIGMASK))
-- 		return false;
-- 	ti->status &= ~TS_RESTORE_SIGMASK;
-- 	return true;
-- }
-  
-  static inline bool in_ia32_syscall(void)
-  {
+FWIW, the whole "constify struct qstr * arguments" series is due to hunting
+for ppc bug reported a while ago; it manifested as NULL ->d_name.name observed
+in __d_lookup_rcu().  AFAICS, it's an effect of earlier memory corruption,
+seeing that there was list_del() in prune_dcache_sb() hitting NULL ->prev->next
+(in __list_del_entry(), probably via prune_dcache_sb()->shrink_dentry_list()->
+d_shrink_del()->list_del_init(&dentry->d_lru)), but it would be nice to have
+an easier way to prove that nothing would be able to bugger ->d_name.
