@@ -1,81 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Fri, 29 Jul 2016 11:19:38 +1000
-Message-ID: <20160729111938.56ee0fa1@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Fri, 29 Jul 2016 11:45:41 +1000
+Message-ID: <20160729114541.038fcf4e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44017 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39298 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751773AbcG2BTl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Thu, 28 Jul 2016 21:19:41 -0400
+	id S1751036AbcG2Bpn convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Thu, 28 Jul 2016 21:45:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Chris Wilson <chris@chris-wilson.co.uk>
 
-Hi Al,
+Hi Dave,
 
-After merging the vfs tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in:
 
-fs/fuse/dir.c: In function 'fuse_reverse_inval_entry':
-fs/fuse/dir.c:958:13: error: assignment of member 'hash' in read-only object
-  name->hash = full_name_hash(dir, name->name, name->len);
-             ^
+  drivers/gpu/drm/i915/i915_debugfs.c
 
-Caused by commit
+between commit:
 
-  8387ff2577eb ("vfs: make the string hashes salt the hash")
+  194dc870a589 ("Add braces to avoid "ambiguous =E2=80=98else=E2=80=99"=
+ compiler warnings")
 
-from Linus' tree interacting with commit
+from Linus' tree and commit:
 
-  5e70178ae20b ("qstr: constify instances in fuse")
+  24f1d3cc0997 ("drm/i915: Refactor execlists default context pinning")
 
-from the vfs tree.
+from the drm tree.
 
-I added this merge fix patch:
+I fixed it up (I just used the version from the drm tree) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflictin=
+g
+tree to minimise any particularly complex conflicts.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 29 Jul 2016 11:07:45 +1000
-Subject: [PATCH] qstr: unconstify fuse_reverse_inval_entry parameter
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/fuse/dir.c    | 2 +-
- fs/fuse/fuse_i.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index f910578e51ba..c47b7780ce37 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -935,7 +935,7 @@ int fuse_update_attributes(struct inode *inode, struct kstat *stat,
- }
- 
- int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
--			     u64 child_nodeid, const struct qstr *name)
-+			     u64 child_nodeid, struct qstr *name)
- {
- 	int err = -ENOTDIR;
- 	struct inode *parent;
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 6df761726a53..d98d8cc84def 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -929,7 +929,7 @@ int fuse_reverse_inval_inode(struct super_block *sb, u64 nodeid,
-  * then the dentry is unhashed (d_delete()).
-  */
- int fuse_reverse_inval_entry(struct super_block *sb, u64 parent_nodeid,
--			     u64 child_nodeid, const struct qstr *name);
-+			     u64 child_nodeid, struct qstr *name);
- 
- int fuse_do_open(struct fuse_conn *fc, u64 nodeid, struct file *file,
- 		 bool isdir);
--- 
-2.8.1
-
--- 
+--=20
 Cheers,
 Stephen Rothwell
