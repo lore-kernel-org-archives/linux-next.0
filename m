@@ -1,61 +1,117 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160801 build: 0 failures 1 warnings (next-20160801)
-Date: Mon, 01 Aug 2016 08:33:20 +0100
-Message-ID: <E1bU7iy-0006VW-LG@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42236 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751811AbcHAHei (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2016 03:34:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the clockevents tree with the
+ arm-soc tree
+Date: Tue, 2 Aug 2016 09:24:50 +1000
+Message-ID: <20160802092450.36780125@canb.auug.org.au>
+References: <20160707141226.2b9c1e15@canb.auug.org.au>
+ <20160727080845.12b58ebe@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160727080845.12b58ebe@canb.auug.org.au>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160801
-Git describe: next-20160801
-Commit: c24c1308a5 Add linux-next specific files for 20160801
+Hi all,
 
-Build Time: 89 min 27 sec
+On Wed, 27 Jul 2016 08:08:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > 
+> > Today's linux-next merge of the clockevents tree got a conflict in:
+> > 
+> >   arch/arm/Kconfig
+> > 
+> > between commit:
+> > 
+> >   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
+> > 
+> > from the arm-soc tree and commit:
+> > 
+> >   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
+> > 
+> > from the clockevents tree.
+> > 
+> > I fixed it up (I used the arm-soc version of this file and then added
+> > the following merge fix patch) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Thu, 7 Jul 2016 13:59:06 +1000
+> > Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > ---
+> >  arch/arm/mach-clps711x/Kconfig | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
+> > index 3b56197ccfd0..dc7c6edeab39 100644
+> > --- a/arch/arm/mach-clps711x/Kconfig
+> > +++ b/arch/arm/mach-clps711x/Kconfig
+> > @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
+> >  	depends on ARCH_MULTI_V4T
+> >  	select ARCH_REQUIRE_GPIOLIB
+> >  	select AUTO_ZRELADDR
+> > -	select CLKSRC_MMIO
+> >  	select CLKSRC_OF
+> > +	select CLPS711X_TIMER
+> >  	select COMMON_CLK
+> >  	select CPU_ARM720T
+> >  	select GENERIC_CLOCKEVENTS
+> > -- 
+> > 2.8.1  
+> 
+> Since Linus has merged most of the tip tree now, this merge fixup is
+> required when (part of) the arm-soc tree is moerged with Linus' tree.
 
-Passed:    9 / 9   (100.00 %)
-Failed:    0 / 9   (  0.00 %)
+This merge fix patch was missed when Linus merged the various bits of
+the arm-soc tree overnight. :-(
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+Here is the merge fix patch again:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 7 Jul 2016 13:59:06 +1000
+Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x:
+ Switch to MULTIPLATFORM"
 
--------------------------------------------------------------------------------
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/arm/mach-clps711x/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Warnings Summary: 1
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
+index 3b56197ccfd0..dc7c6edeab39 100644
+--- a/arch/arm/mach-clps711x/Kconfig
++++ b/arch/arm/mach-clps711x/Kconfig
+@@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
+ 	depends on ARCH_MULTI_V4T
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select AUTO_ZRELADDR
+-	select CLKSRC_MMIO
+ 	select CLKSRC_OF
++	select CLPS711X_TIMER
+ 	select COMMON_CLK
+ 	select CPU_ARM720T
+ 	select GENERIC_CLOCKEVENTS
+-- 
+2.8.1
 
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+Cheers,
+Stephen Rothwell
