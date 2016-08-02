@@ -1,117 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the clockevents tree with the
- arm-soc tree
-Date: Tue, 2 Aug 2016 09:24:50 +1000
-Message-ID: <20160802092450.36780125@canb.auug.org.au>
-References: <20160707141226.2b9c1e15@canb.auug.org.au>
- <20160727080845.12b58ebe@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the clockevents tree with the arm-soc tree
+Date: Mon, 1 Aug 2016 21:26:13 -0400
+Message-ID: <CA+55aFwMf2Z-_h-LH=3_fbbBfWV-yYWhcW63YhG-dEW6C0oZWQ@mail.gmail.com>
+References: <20160707141226.2b9c1e15@canb.auug.org.au> <20160727080845.12b58ebe@canb.auug.org.au>
+ <20160802092450.36780125@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160727080845.12b58ebe@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Linus <torvalds@linux-foundation.org>, linux-next@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f48.google.com ([209.85.218.48]:36132 "EHLO
+	mail-oi0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755556AbcHBB0O (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 1 Aug 2016 21:26:14 -0400
+In-Reply-To: <20160802092450.36780125@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexander Shiyan <shc_work@mail.ru>
 
-Hi all,
-
-On Wed, 27 Jul 2016 08:08:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Aug 1, 2016 at 7:24 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> On Thu, 7 Jul 2016 14:12:26 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > Today's linux-next merge of the clockevents tree got a conflict in:
-> > 
-> >   arch/arm/Kconfig
-> > 
-> > between commit:
-> > 
-> >   c86f51737f8d ("ARM: clps711x: Switch to MULTIPLATFORM")
-> > 
-> > from the arm-soc tree and commit:
-> > 
-> >   250e46aa3bb3 ("clocksource/drivers/clps_711x: Add the COMPILE_TEST option")
-> > 
-> > from the clockevents tree.
-> > 
-> > I fixed it up (I used the arm-soc version of this file and then added
-> > the following merge fix patch) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Thu, 7 Jul 2016 13:59:06 +1000
-> > Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x: Switch to MULTIPLATFORM"
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  arch/arm/mach-clps711x/Kconfig | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
-> > index 3b56197ccfd0..dc7c6edeab39 100644
-> > --- a/arch/arm/mach-clps711x/Kconfig
-> > +++ b/arch/arm/mach-clps711x/Kconfig
-> > @@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
-> >  	depends on ARCH_MULTI_V4T
-> >  	select ARCH_REQUIRE_GPIOLIB
-> >  	select AUTO_ZRELADDR
-> > -	select CLKSRC_MMIO
-> >  	select CLKSRC_OF
-> > +	select CLPS711X_TIMER
-> >  	select COMMON_CLK
-> >  	select CPU_ARM720T
-> >  	select GENERIC_CLOCKEVENTS
-> > -- 
-> > 2.8.1  
-> 
-> Since Linus has merged most of the tip tree now, this merge fixup is
-> required when (part of) the arm-soc tree is moerged with Linus' tree.
+> This merge fix patch was missed when Linus merged the various bits of
+> the arm-soc tree overnight. :-(
+>
+> Here is the merge fix patch again:
 
-This merge fix patch was missed when Linus merged the various bits of
-the arm-soc tree overnight. :-(
+Thanks, applied.
 
-Here is the merge fix patch again:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 7 Jul 2016 13:59:06 +1000
-Subject: [PATCH] clocksource/drivers/clps_711x: fixup for "ARM: clps711x:
- Switch to MULTIPLATFORM"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/mach-clps711x/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-clps711x/Kconfig b/arch/arm/mach-clps711x/Kconfig
-index 3b56197ccfd0..dc7c6edeab39 100644
---- a/arch/arm/mach-clps711x/Kconfig
-+++ b/arch/arm/mach-clps711x/Kconfig
-@@ -3,8 +3,8 @@ menuconfig ARCH_CLPS711X
- 	depends on ARCH_MULTI_V4T
- 	select ARCH_REQUIRE_GPIOLIB
- 	select AUTO_ZRELADDR
--	select CLKSRC_MMIO
- 	select CLKSRC_OF
-+	select CLPS711X_TIMER
- 	select COMMON_CLK
- 	select CPU_ARM720T
- 	select GENERIC_CLOCKEVENTS
--- 
-2.8.1
-
--- 
-Cheers,
-Stephen Rothwell
+          Linus
