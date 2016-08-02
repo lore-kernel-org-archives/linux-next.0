@@ -1,27 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please clean up the livepatching tree
-Date: Wed, 3 Aug 2016 09:31:09 +1000
-Message-ID: <20160803093109.1227bfcd@canb.auug.org.au>
+From: Jiri Kosina <jikos@kernel.org>
+Subject: Re: linux-next: please clean up the livepatching tree
+Date: Wed, 3 Aug 2016 01:41:17 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1608030139230.22028@cbobk.fhfr.pm>
+References: <20160803093109.1227bfcd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52254 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753759AbcHBXbN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2016 19:31:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160803093109.1227bfcd@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
+Hi Stephen
 
-The livepatching tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/jikos/livepatching#for-next)
-today consists of only lots of merges (and a patch that is also reverted).
-Please just reset it to somewhere in Linus' tree.
+On Wed, 3 Aug 2016, Stephen Rothwell wrote:
+
+> The livepatching tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/jikos/livepatching#for-next)
+> today consists of only lots of merges 
+
+This is a part we keep discussing from time to time, and I still don't 
+understand why it bothers you so much. The only reason is to keep the 
+branch non-rebasing, because it has downstreams. Code-wise, it's always 
+equivalent to what end up being merged, but without the actual superfluous 
+merge commits.
+
+> (and a patch that is also reverted).
+
+This of course is a good justification to rebase for-next exceptionally; 
+so I've just that.
+
+Thanks,
 
 -- 
-Cheers,
-Stephen Rothwell
+Jiri Kosina
+SUSE Labs
