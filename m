@@ -1,48 +1,63 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
  next-20160729 build failures
-Date: Wed, 3 Aug 2016 00:02:43 +0200
-Message-ID: <20160802220243.GK3296@wotan.suse.de>
+Date: Wed, 03 Aug 2016 00:34:29 +0200
+Message-ID: <1675797.qYisZ5OKTp@wuerfel>
 References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
- <20160802215839.GA7383@roeck-us.net>
+ <20160802215839.GA7383@roeck-us.net> <20160802220243.GK3296@wotan.suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160802215839.GA7383@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20160802220243.GK3296@wotan.suse.de>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 02, 2016 at 02:58:39PM -0700, Guenter Roeck wrote:
-> On Tue, Aug 02, 2016 at 01:07:09PM -0700, Luis R. Rodriguez wrote:
-> > Are linux-next builds being tested for powerpc with allyesconfig and
-> > allmodconfig ? I have some changes I'm making and while debugging my
-> > build issues I decided to give a clean build a shot and see linux-next
-> > next-20160729 up to next-20160729 all have build failures without my
-> > changes. I get:
-> > 
-> > /opt/gcc-4.9.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld:
-> > drivers/built-in.o: .opd is not a regular array of opd entries
-> >   MODPOST vmlinux.o
-> >   GEN     .version
-> >   CHK     include/generated/compile.h
-> >   UPD     include/generated/compile.h
-> >   CC      init/version.o
-> >   LD      init/built-in.o
-> > /opt/gcc-4.9.0-nolibc/powerpc64-linux/bin/powerpc64-linux-ld:
-> > drivers/built-in.o: .opd is not a regular array of opd entries
-> > drivers/built-in.o: In function `.ipw2100_up':
-> > ipw2100.c:(.text+0x1ff9c90): relocation truncated to fit:
-> 
-> "relocation truncated to fit"  errors are typical for ppc:allyesconfig.
-
-Thanks for the confirmation. For how long is it known this is broken?
-Does anyone care and fix these ? Or is this best effort?
-
-> allmodconfig should work, though.
-
-OK thanks.
-
-  Luis
+T24gV2VkbmVzZGF5LCBBdWd1c3QgMywgMjAxNiAxMjowMjo0MyBBTSBDRVNUIEx1aXMgUi4gUm9k
+cmlndWV6IHdyb3RlOgo+IE9uIFR1ZSwgQXVnIDAyLCAyMDE2IGF0IDAyOjU4OjM5UE0gLTA3MDAs
+IEd1ZW50ZXIgUm9lY2sgd3JvdGU6Cj4gPiBPbiBUdWUsIEF1ZyAwMiwgMjAxNiBhdCAwMTowNzow
+OVBNIC0wNzAwLCBMdWlzIFIuIFJvZHJpZ3VleiB3cm90ZToKPiA+ID4gQXJlIGxpbnV4LW5leHQg
+YnVpbGRzIGJlaW5nIHRlc3RlZCBmb3IgcG93ZXJwYyB3aXRoIGFsbHllc2NvbmZpZyBhbmQKPiA+
+ID4gYWxsbW9kY29uZmlnID8gSSBoYXZlIHNvbWUgY2hhbmdlcyBJJ20gbWFraW5nIGFuZCB3aGls
+ZSBkZWJ1Z2dpbmcgbXkKPiA+ID4gYnVpbGQgaXNzdWVzIEkgZGVjaWRlZCB0byBnaXZlIGEgY2xl
+YW4gYnVpbGQgYSBzaG90IGFuZCBzZWUgbGludXgtbmV4dAo+ID4gPiBuZXh0LTIwMTYwNzI5IHVw
+IHRvIG5leHQtMjAxNjA3MjkgYWxsIGhhdmUgYnVpbGQgZmFpbHVyZXMgd2l0aG91dCBteQo+ID4g
+PiBjaGFuZ2VzLiBJIGdldDoKPiA+ID4gCj4gPiA+IC9vcHQvZ2NjLTQuOS4wLW5vbGliYy9wb3dl
+cnBjNjQtbGludXgvYmluL3Bvd2VycGM2NC1saW51eC1sZDoKPiA+ID4gZHJpdmVycy9idWlsdC1p
+bi5vOiAub3BkIGlzIG5vdCBhIHJlZ3VsYXIgYXJyYXkgb2Ygb3BkIGVudHJpZXMKPiA+ID4gICBN
+T0RQT1NUIHZtbGludXgubwo+ID4gPiAgIEdFTiAgICAgLnZlcnNpb24KPiA+ID4gICBDSEsgICAg
+IGluY2x1ZGUvZ2VuZXJhdGVkL2NvbXBpbGUuaAo+ID4gPiAgIFVQRCAgICAgaW5jbHVkZS9nZW5l
+cmF0ZWQvY29tcGlsZS5oCj4gPiA+ICAgQ0MgICAgICBpbml0L3ZlcnNpb24ubwo+ID4gPiAgIExE
+ICAgICAgaW5pdC9idWlsdC1pbi5vCj4gPiA+IC9vcHQvZ2NjLTQuOS4wLW5vbGliYy9wb3dlcnBj
+NjQtbGludXgvYmluL3Bvd2VycGM2NC1saW51eC1sZDoKPiA+ID4gZHJpdmVycy9idWlsdC1pbi5v
+OiAub3BkIGlzIG5vdCBhIHJlZ3VsYXIgYXJyYXkgb2Ygb3BkIGVudHJpZXMKPiA+ID4gZHJpdmVy
+cy9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgLmlwdzIxMDBfdXAnOgo+ID4gPiBpcHcyMTAwLmM6
+KC50ZXh0KzB4MWZmOWM5MCk6IHJlbG9jYXRpb24gdHJ1bmNhdGVkIHRvIGZpdDoKPiA+IAo+ID4g
+InJlbG9jYXRpb24gdHJ1bmNhdGVkIHRvIGZpdCIgIGVycm9ycyBhcmUgdHlwaWNhbCBmb3IgcHBj
+OmFsbHllc2NvbmZpZy4KPiAKPiBUaGFua3MgZm9yIHRoZSBjb25maXJtYXRpb24uIEZvciBob3cg
+bG9uZyBpcyBpdCBrbm93biB0aGlzIGlzIGJyb2tlbj8KPiBEb2VzIGFueW9uZSBjYXJlIGFuZCBm
+aXggdGhlc2UgPyBPciBpcyB0aGlzIGJlc3QgZWZmb3J0PwoKV2UgdXNlZCB0byBoYXZlIHRoZSBz
+YW1lIHRoaW5nIG9uIEFSTSwgYnV0IGl0J3MgKG1vc3RseSkgZml4ZWQgbm93LgpJbiBjYXNlIG9m
+IEFSTSwgdGhlIHNvbHV0aW9uIHdhcyB0byBlbnN1cmUgdGhhdCBhbGwgc2VjdGlvbnMgdGhhdApo
+YXZlIGxvbmcganVtcHMgb3IgdGFyZ2V0cyBvZiBsb25nIGp1bXBzIGFyZSBtYXJrZWQgYXMgZXhl
+Y3V0YWJsZQppbiB0aGUgRUxGIGhlYWRlcnMsIHNvIHRoZSBsaW5rZXIgY2FuIGluc2VydCB0cmFt
+cG9saW5lcy4KClRoZSBvbmUgcmVtYWluaW5nIHByb2JsZW0gYXQgdGhlIG1vbWVudCBpcyByZWxh
+dGVkIHRvIHJlY3Vyc2l2ZQpsaW5raW5nIG9mIHRoZSBkcml2ZXJzLyBkaXJlY3RvcnksIHdoaWNo
+IGhhcyAudGV4dCBzZWN0aW9uIHRoYXQKaXMgbGFyZ2VyIHRoYW4gMzJNQiBieSBpdHNlbGYuIFRo
+ZXJlIGlzIGEgcGF0Y2ggdG8gc29sdmUgdGhpcyBieQpsaW5raW5nIGVhY2ggZHJpdmVycy8qL2J1
+aWx0LWluLm8gb2JqZWN0IGRpcmVjdGx5IGludG8gdm1saW51eCwKYnV0IHRoYXQgaXMgYSByYXRo
+ZXIgZHJhc3RpYyBjaGFuZ2UuCgoJQXJuZAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1haWxpbmcgbGlzdApMaW51eHBwYy1kZXZA
+bGlzdHMub3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96bGFicy5vcmcvbGlzdGluZm8vbGludXhw
+cGMtZGV2
