@@ -1,40 +1,67 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the clockevents tree with the arm-soc
- tree
-Date: Mon, 1 Aug 2016 21:28:24 -0400
-Message-ID: <CA+55aFx2AX1-X3EB2yN-dAiodsYFkrRb6J9ds0cdjS6DO8hWUA@mail.gmail.com>
-References: <20160707141226.2b9c1e15@canb.auug.org.au>
- <20160727080845.12b58ebe@canb.auug.org.au>
- <20160802092450.36780125@canb.auug.org.au>
- <CA+55aFwMf2Z-_h-LH=3_fbbBfWV-yYWhcW63YhG-dEW6C0oZWQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the powerpc tree
+Date: Tue, 2 Aug 2016 13:39:54 +1000
+Message-ID: <20160802133954.00eac68c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CA+55aFwMf2Z-_h-LH=3_fbbBfWV-yYWhcW63YhG-dEW6C0oZWQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alexander Shiyan <shc_work@mail.ru>, Arnd Bergmann <arnd@arndb.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40071 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933482AbcHBDj5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 1 Aug 2016 23:39:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kevin Hao <haokexin@gmail.com>, Jason Baron <jbaron@akamai.com>
 
-On Mon, Aug 1, 2016 at 9:26 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Thanks, applied.
+Hi Andrew,
 
-Gah, and I messed up the whitespace while doing so, so it looks a bit
-odd. Sadly, I only noticed after having already pushed out (since I
-had decided to just push out immediately as I don't build-test ARM
-anyway).
+Today's linux-next merge of the akpm tree got a conflict in:
 
-Oh well,
+  kernel/jump_label.c
 
-              Linus
+between commit:
+
+  e3f91083facb ("jump_label: Make it possible for arches to invoke jump_label_init() earlier")
+
+from the powerpc tree and patch:
+
+   "jump_label: remove bug.h, atomic.h dependencies for HAVE_JUMP_LABEL"
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/jump_label.c
+index 85b7105fdd86,20400055f177..000000000000
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@@ -235,9 -279,15 +279,18 @@@ void __init jump_label_init(void
+  	struct static_key *key = NULL;
+  	struct jump_entry *iter;
+  
++ 	/*
++ 	 * Since we are initializing the static_key.enabled field with
++ 	 * with the 'raw' int values (to avoid pulling in atomic.h) in
++ 	 * jump_label.h, let's make sure that is safe. There are only two
++ 	 * cases to check since we initialize to 0 or 1.
++ 	 */
++ 	BUILD_BUG_ON((int)ATOMIC_INIT(0) != 0);
++ 	BUILD_BUG_ON((int)ATOMIC_INIT(1) != 1);
++ 
+ +	if (static_key_initialized)
+ +		return;
+ +
+  	jump_label_lock();
+  	jump_label_sort_entries(iter_start, iter_stop);
+  
