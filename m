@@ -1,42 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 - next-20160729 build failures
-Date: Wed, 03 Aug 2016 14:29:13 +0200
-Message-ID: <5216072.9VpDc0iy8Q@wuerfel>
-References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com> <1944325.MtNrGQyQle@wuerfel> <20160803221911.2f76ccad@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: please clean up the fscache tree
+Date: Wed, 03 Aug 2016 14:30:32 +0100
+Message-ID: <30818.1470231032@warthog.procyon.org.uk>
+References: <20160803111510.65620fc7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160803221911.2f76ccad@canb.auug.org.au>
+In-Reply-To: <20160803111510.65620fc7@canb.auug.org.au>
+Content-ID: <30817.1470231032.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev@lists.ozlabs.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: dhowells@redhat.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, August 3, 2016 10:19:11 PM CEST Stephen Rothwell wrote:
-> Hi Arnd,
-> 
-> On Wed, 03 Aug 2016 09:52:23 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > Using a different way to link the kernel would also help us with
-> > the remaining allyesconfig problem on ARM, as the problem is only in
-> > 'ld -r' not producing trampolines for symbols that later cannot get
-> > them any more. It would probably also help building with ld.gold,
-> > which is currently not working.
-> > 
-> > What is your suggested alternative?
-> 
-> I have a patch that make the built-in.o files into thin archives (same
-> as archives, but the actual objects are replaced with the name of the
-> original object file).  That way the final link has all the original
-> objects.  I haven't checked to see what the overheads of doing it this
-> way is.
-> 
-> Nick Piggin has just today taken my old patch (it was last rebased to
-> v4.4-rc1) and tried it on a recent kernel and it still seems to mostly
-> work.  It probably needs some tidying up, but you are welcome to test
-> it if you want to.
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Sure, I'll certainly give it a try on ARM when you send me a copy.
+> The fscache tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#fscache)
+> only contains 2 commits:
+> 
+> b00c2ae2ed3c FS-Cache: Don't override netfs's primary_index if registering failed
+> 3c9b3b74606d FS-Cache: Increase reference of parent after registering, netfs success
+> 
+> which also exist in Linus' tree as other commits (they were merged in
+> Nov, 2015 via Al Viro).
+> 
+> Please clean this up, or let me know if it is not going to be used any
+> more and I will delete the tree from linux-next.
 
-	Arnd
+Done.
+
+David
