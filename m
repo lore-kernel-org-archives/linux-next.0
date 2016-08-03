@@ -1,58 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please clean up the livepatching tree
-Date: Wed, 3 Aug 2016 11:23:28 +1000
-Message-ID: <20160803112328.671372ef@canb.auug.org.au>
-References: <20160803093109.1227bfcd@canb.auug.org.au>
-	<alpine.LNX.2.00.1608030139230.22028@cbobk.fhfr.pm>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
+ next-20160729 build failures
+Date: Wed, 03 Aug 2016 12:46:47 +1000
+Message-ID: <87y44elgbs.fsf@concordia.ellerman.id.au>
+References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47353 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754264AbcHCBeS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 2 Aug 2016 21:34:18 -0400
-In-Reply-To: <alpine.LNX.2.00.1608030139230.22028@cbobk.fhfr.pm>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: "Luis R. Rodriguez" <mcgrof@kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>, linuxppc-dev@lists.ozlabs.org, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jiri,
-
-On Wed, 3 Aug 2016 01:41:17 +0200 (CEST) Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Wed, 3 Aug 2016, Stephen Rothwell wrote:
-> 
-> > The livepatching tree
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/jikos/livepatching#for-next)
-> > today consists of only lots of merges   
-> 
-> This is a part we keep discussing from time to time, and I still don't 
-> understand why it bothers you so much. The only reason is to keep the 
-> branch non-rebasing, because it has downstreams. Code-wise, it's always 
-> equivalent to what end up being merged, but without the actual superfluous 
-> merge commits.
-
-The problem from my point of view is that git seems to take more time
-to merge the tree into linux-next (I know this isn't much for just one
-tree, but I currently have over 200 trees to merge each day).  Also,
-having all those extra merges complicates the structure of my tree and
-presumably makes it harder for git to merge other trees.  Its also
-possible (I have seen this in other trees) for the merge commits
-themselves to generate conflicts with (merge) commits in Linus' and
-other trees.
-
-Also, I am not sure why you have a branch that ask Linus to merge
-separate from the branch you have me merge?
-
-> > (and a patch that is also reverted).  
-> 
-> This of course is a good justification to rebase for-next exceptionally; 
-> so I've just that.
-
-Thanks.
-
--- 
-Cheers,
-Stephen Rothwell
+Ikx1aXMgUi4gUm9kcmlndWV6IiA8bWNncm9mQGtlcm5lbC5vcmc+IHdyaXRlczoKCj4gQXJlIGxp
+bnV4LW5leHQgYnVpbGRzIGJlaW5nIHRlc3RlZCBmb3IgcG93ZXJwYyB3aXRoIGFsbHllc2NvbmZp
+ZyBhbmQKPiBhbGxtb2Rjb25maWcgPwoKWWVzLCBldmVyeSBzaW5nbGUgdmVyc2lvbjoKCiAgaHR0
+cDovL2tpc3NrYi5lbGxlcm1hbi5pZC5hdS9raXNza2IvdGFyZ2V0LzI2NTkvCgo+IEkgaGF2ZSBz
+b21lIGNoYW5nZXMgSSdtIG1ha2luZyBhbmQgd2hpbGUgZGVidWdnaW5nIG15Cj4gYnVpbGQgaXNz
+dWVzIEkgZGVjaWRlZCB0byBnaXZlIGEgY2xlYW4gYnVpbGQgYSBzaG90IGFuZCBzZWUgbGludXgt
+bmV4dAo+IG5leHQtMjAxNjA3MjkgdXAgdG8gbmV4dC0yMDE2MDcyOSBhbGwgaGF2ZSBidWlsZCBm
+YWlsdXJlcyB3aXRob3V0IG15Cj4gY2hhbmdlcy4gSSBnZXQ6Cj4KPiAvb3B0L2djYy00LjkuMC1u
+b2xpYmMvcG93ZXJwYzY0LWxpbnV4L2Jpbi9wb3dlcnBjNjQtbGludXgtbGQ6Cj4gZHJpdmVycy9i
+dWlsdC1pbi5vOiAub3BkIGlzIG5vdCBhIHJlZ3VsYXIgYXJyYXkgb2Ygb3BkIGVudHJpZXMKPiAg
+IE1PRFBPU1Qgdm1saW51eC5vCj4gICBHRU4gICAgIC52ZXJzaW9uCj4gICBDSEsgICAgIGluY2x1
+ZGUvZ2VuZXJhdGVkL2NvbXBpbGUuaAo+ICAgVVBEICAgICBpbmNsdWRlL2dlbmVyYXRlZC9jb21w
+aWxlLmgKPiAgIENDICAgICAgaW5pdC92ZXJzaW9uLm8KPiAgIExEICAgICAgaW5pdC9idWlsdC1p
+bi5vCj4gL29wdC9nY2MtNC45LjAtbm9saWJjL3Bvd2VycGM2NC1saW51eC9iaW4vcG93ZXJwYzY0
+LWxpbnV4LWxkOgo+IGRyaXZlcnMvYnVpbHQtaW4ubzogLm9wZCBpcyBub3QgYSByZWd1bGFyIGFy
+cmF5IG9mIG9wZCBlbnRyaWVzCj4gZHJpdmVycy9idWlsdC1pbi5vOiBJbiBmdW5jdGlvbiBgLmlw
+dzIxMDBfdXAnOgo+IGlwdzIxMDAuYzooLnRleHQrMHgxZmY5YzkwKTogcmVsb2NhdGlvbiB0cnVu
+Y2F0ZWQgdG8gZml0Ogo+IFJfUFBDNjRfUkVMMjQgKHN0dWIpIGFnYWluc3Qgc3ltYm9sIGAucm91
+bmRfamlmZmllc19yZWxhdGl2ZScgZGVmaW5lZAo+IGluIC50ZXh0IHNlY3Rpb24gaW4ga2VybmVs
+L2J1aWx0LWluLm8KCkFuZCB5ZXMgdGhpcyBpcyBhIGtub3duIHByb2JsZW0sIHRoZXJlIGhhdmUg
+YmVlbiBhdHRlbXB0cyB0byBmaXggaXQsIGJ1dApub25lIHRoYXQgcXVpdGUgZ290IHdvcmtpbmcu
+CgpJbiBmYWN0IGl0J3Mgb3VyIGJ1ZyAjMSA6KQoKICBodHRwczovL2dpdGh1Yi5jb20vbGludXhw
+cGMvbGludXgvaXNzdWVzLzEKCgpQbGVhc2UgdXNlIGFsbG1vZGNvbmZpZywgd2hpY2ggc2hvdWxk
+IGJ1aWxkIGluIGdlbmVyYWwuIE9yIG9uZSBvZiBvdXIKb3RoZXIgZGVmY29uZmlncywgZWcuIHBw
+YzY0L3BwYzY0bGUgZGVmY29uZmlnLgoKY2hlZXJzCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCkxpbnV4cHBjLWRldiBtYWlsaW5nIGxpc3QKTGludXhwcGMt
+ZGV2QGxpc3RzLm96bGFicy5vcmcKaHR0cHM6Ly9saXN0cy5vemxhYnMub3JnL2xpc3RpbmZvL2xp
+bnV4cHBjLWRldg==
