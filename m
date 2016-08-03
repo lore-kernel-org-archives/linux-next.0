@@ -1,63 +1,48 @@
-From: Jiri Kosina <jikos@kernel.org>
-Subject: Re: linux-next: please clean up the livepatching tree
-Date: Wed, 3 Aug 2016 11:29:02 +0200 (CEST)
-Message-ID: <alpine.LNX.2.00.1608031124330.22028@cbobk.fhfr.pm>
-References: <20160803093109.1227bfcd@canb.auug.org.au> <alpine.LNX.2.00.1608030139230.22028@cbobk.fhfr.pm> <20160803112328.671372ef@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
+ next-20160729 build failures
+Date: Wed, 3 Aug 2016 22:19:11 +1000
+Message-ID: <20160803221911.2f76ccad@canb.auug.org.au>
+References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
+ <20160802220243.GK3296@wotan.suse.de>
+ <20160803102324.6372e66a@canb.auug.org.au>
+ <1944325.MtNrGQyQle@wuerfel>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52506 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757675AbcHCKo0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Wed, 3 Aug 2016 06:44:26 -0400
-In-Reply-To: <20160803112328.671372ef@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <1944325.MtNrGQyQle@wuerfel>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, linuxppc-dev@lists.ozlabs.org, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 3 Aug 2016, Stephen Rothwell wrote:
-
-> > This is a part we keep discussing from time to time, and I still don't 
-> > understand why it bothers you so much. The only reason is to keep the 
-> > branch non-rebasing, because it has downstreams. Code-wise, it's 
-> > always equivalent to what end up being merged, but without the actual 
-> > superfluous merge commits.
-> 
-> The problem from my point of view is that git seems to take more time
-> to merge the tree into linux-next (I know this isn't much for just one
-> tree, but I currently have over 200 trees to merge each day).  
-
-Because of merge commits the number of which is below 100? That's an 
-interesting observation and quite unexpected bottleneck in git.
-
-> Also, having all those extra merges complicates the structure of my tree 
-> and presumably makes it harder for git to merge other trees.  Its also 
-> possible (I have seen this in other trees) for the merge commits 
-> themselves to generate conflicts with (merge) commits in Linus' and 
-> other trees.
-> 
-> Also, I am not sure why you have a branch that ask Linus to merge 
-> separate from the branch you have me merge?
-
-Exactly to avoid Linus' tree being polluted by the extra merge commits.
-
-My workflow is really simple -- development happens in (a lot of) topic 
-branches, and each and every time any of the topic branches is updated by 
-a new commit, that topic branch gets merged into for-next.
-
-Once code should go to Linus, the branches are merged at once into 
-'for-linus' brach, and it's guaranteed to be code-wise the same as what 
-was gradually appearing in for-next.
-
-What other workflow do you suggest for maintainers like me, who are using 
-a lot of topic branches?
-
-If this is so bothering for you, I'd just start instructing for-next 
-downstreams to stop using that branch so that it could be easily rebased.
-
-Thanks,
-
--- 
-Jiri Kosina
-SUSE Labs
+SGkgQXJuZCwKCk9uIFdlZCwgMDMgQXVnIDIwMTYgMDk6NTI6MjMgKzAyMDAgQXJuZCBCZXJnbWFu
+biA8YXJuZEBhcm5kYi5kZT4gd3JvdGU6Cj4KPiBVc2luZyBhIGRpZmZlcmVudCB3YXkgdG8gbGlu
+ayB0aGUga2VybmVsIHdvdWxkIGFsc28gaGVscCB1cyB3aXRoCj4gdGhlIHJlbWFpbmluZyBhbGx5
+ZXNjb25maWcgcHJvYmxlbSBvbiBBUk0sIGFzIHRoZSBwcm9ibGVtIGlzIG9ubHkgaW4KPiAnbGQg
+LXInIG5vdCBwcm9kdWNpbmcgdHJhbXBvbGluZXMgZm9yIHN5bWJvbHMgdGhhdCBsYXRlciBjYW5u
+b3QgZ2V0Cj4gdGhlbSBhbnkgbW9yZS4gSXQgd291bGQgcHJvYmFibHkgYWxzbyBoZWxwIGJ1aWxk
+aW5nIHdpdGggbGQuZ29sZCwKPiB3aGljaCBpcyBjdXJyZW50bHkgbm90IHdvcmtpbmcuCj4gCj4g
+V2hhdCBpcyB5b3VyIHN1Z2dlc3RlZCBhbHRlcm5hdGl2ZT8KCkkgaGF2ZSBhIHBhdGNoIHRoYXQg
+bWFrZSB0aGUgYnVpbHQtaW4ubyBmaWxlcyBpbnRvIHRoaW4gYXJjaGl2ZXMgKHNhbWUKYXMgYXJj
+aGl2ZXMsIGJ1dCB0aGUgYWN0dWFsIG9iamVjdHMgYXJlIHJlcGxhY2VkIHdpdGggdGhlIG5hbWUg
+b2YgdGhlCm9yaWdpbmFsIG9iamVjdCBmaWxlKS4gIFRoYXQgd2F5IHRoZSBmaW5hbCBsaW5rIGhh
+cyBhbGwgdGhlIG9yaWdpbmFsCm9iamVjdHMuICBJIGhhdmVuJ3QgY2hlY2tlZCB0byBzZWUgd2hh
+dCB0aGUgb3ZlcmhlYWRzIG9mIGRvaW5nIGl0IHRoaXMKd2F5IGlzLgoKTmljayBQaWdnaW4gaGFz
+IGp1c3QgdG9kYXkgdGFrZW4gbXkgb2xkIHBhdGNoIChpdCB3YXMgbGFzdCByZWJhc2VkIHRvCnY0
+LjQtcmMxKSBhbmQgdHJpZWQgaXQgb24gYSByZWNlbnQga2VybmVsIGFuZCBpdCBzdGlsbCBzZWVt
+cyB0byBtb3N0bHkKd29yay4gIEl0IHByb2JhYmx5IG5lZWRzIHNvbWUgdGlkeWluZyB1cCwgYnV0
+IHlvdSBhcmUgd2VsY29tZSB0byB0ZXN0Cml0IGlmIHlvdSB3YW50IHRvLgoKLS0gCkNoZWVycywK
+U3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRldkBsaXN0cy5vemxh
+YnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51eHBwYy1kZXY=
