@@ -1,48 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
- next-20160729 build failures
-Date: Wed, 3 Aug 2016 22:19:11 +1000
-Message-ID: <20160803221911.2f76ccad@canb.auug.org.au>
-References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
- <20160802220243.GK3296@wotan.suse.de>
- <20160803102324.6372e66a@canb.auug.org.au>
- <1944325.MtNrGQyQle@wuerfel>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 - next-20160729 build failures
+Date: Wed, 03 Aug 2016 14:29:13 +0200
+Message-ID: <5216072.9VpDc0iy8Q@wuerfel>
+References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com> <1944325.MtNrGQyQle@wuerfel> <20160803221911.2f76ccad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1944325.MtNrGQyQle@wuerfel>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, linuxppc-dev@lists.ozlabs.org, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160803221911.2f76ccad@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linuxppc-dev@lists.ozlabs.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, Guenter Roeck <linux@roeck-us.net>
 List-Id: linux-next.vger.kernel.org
 
-SGkgQXJuZCwKCk9uIFdlZCwgMDMgQXVnIDIwMTYgMDk6NTI6MjMgKzAyMDAgQXJuZCBCZXJnbWFu
-biA8YXJuZEBhcm5kYi5kZT4gd3JvdGU6Cj4KPiBVc2luZyBhIGRpZmZlcmVudCB3YXkgdG8gbGlu
-ayB0aGUga2VybmVsIHdvdWxkIGFsc28gaGVscCB1cyB3aXRoCj4gdGhlIHJlbWFpbmluZyBhbGx5
-ZXNjb25maWcgcHJvYmxlbSBvbiBBUk0sIGFzIHRoZSBwcm9ibGVtIGlzIG9ubHkgaW4KPiAnbGQg
-LXInIG5vdCBwcm9kdWNpbmcgdHJhbXBvbGluZXMgZm9yIHN5bWJvbHMgdGhhdCBsYXRlciBjYW5u
-b3QgZ2V0Cj4gdGhlbSBhbnkgbW9yZS4gSXQgd291bGQgcHJvYmFibHkgYWxzbyBoZWxwIGJ1aWxk
-aW5nIHdpdGggbGQuZ29sZCwKPiB3aGljaCBpcyBjdXJyZW50bHkgbm90IHdvcmtpbmcuCj4gCj4g
-V2hhdCBpcyB5b3VyIHN1Z2dlc3RlZCBhbHRlcm5hdGl2ZT8KCkkgaGF2ZSBhIHBhdGNoIHRoYXQg
-bWFrZSB0aGUgYnVpbHQtaW4ubyBmaWxlcyBpbnRvIHRoaW4gYXJjaGl2ZXMgKHNhbWUKYXMgYXJj
-aGl2ZXMsIGJ1dCB0aGUgYWN0dWFsIG9iamVjdHMgYXJlIHJlcGxhY2VkIHdpdGggdGhlIG5hbWUg
-b2YgdGhlCm9yaWdpbmFsIG9iamVjdCBmaWxlKS4gIFRoYXQgd2F5IHRoZSBmaW5hbCBsaW5rIGhh
-cyBhbGwgdGhlIG9yaWdpbmFsCm9iamVjdHMuICBJIGhhdmVuJ3QgY2hlY2tlZCB0byBzZWUgd2hh
-dCB0aGUgb3ZlcmhlYWRzIG9mIGRvaW5nIGl0IHRoaXMKd2F5IGlzLgoKTmljayBQaWdnaW4gaGFz
-IGp1c3QgdG9kYXkgdGFrZW4gbXkgb2xkIHBhdGNoIChpdCB3YXMgbGFzdCByZWJhc2VkIHRvCnY0
-LjQtcmMxKSBhbmQgdHJpZWQgaXQgb24gYSByZWNlbnQga2VybmVsIGFuZCBpdCBzdGlsbCBzZWVt
-cyB0byBtb3N0bHkKd29yay4gIEl0IHByb2JhYmx5IG5lZWRzIHNvbWUgdGlkeWluZyB1cCwgYnV0
-IHlvdSBhcmUgd2VsY29tZSB0byB0ZXN0Cml0IGlmIHlvdSB3YW50IHRvLgoKLS0gCkNoZWVycywK
-U3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRldkBsaXN0cy5vemxh
-YnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51eHBwYy1kZXY=
+On Wednesday, August 3, 2016 10:19:11 PM CEST Stephen Rothwell wrote:
+> Hi Arnd,
+> 
+> On Wed, 03 Aug 2016 09:52:23 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > Using a different way to link the kernel would also help us with
+> > the remaining allyesconfig problem on ARM, as the problem is only in
+> > 'ld -r' not producing trampolines for symbols that later cannot get
+> > them any more. It would probably also help building with ld.gold,
+> > which is currently not working.
+> > 
+> > What is your suggested alternative?
+> 
+> I have a patch that make the built-in.o files into thin archives (same
+> as archives, but the actual objects are replaced with the name of the
+> original object file).  That way the final link has all the original
+> objects.  I haven't checked to see what the overheads of doing it this
+> way is.
+> 
+> Nick Piggin has just today taken my old patch (it was last rebased to
+> v4.4-rc1) and tried it on a recent kernel and it still seems to mostly
+> work.  It probably needs some tidying up, but you are welcome to test
+> it if you want to.
+
+Sure, I'll certainly give it a try on ARM when you send me a copy.
+
+	Arnd
