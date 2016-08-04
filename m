@@ -1,145 +1,76 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2016-08-03-15-19 uploaded
-Date: Wed, 03 Aug 2016 15:19:48 -0700
-Message-ID: <57a26e04.+wBCBljpAc+ZsNLb%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
+ next-20160729 build failures
+Date: Thu, 4 Aug 2016 10:10:51 +1000
+Message-ID: <20160804101051.39ca1e26@canb.auug.org.au>
+References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
+	<5216072.9VpDc0iy8Q@wuerfel>
+	<20160804013729.7fffa45a@roar.ozlabs.ibm.com>
+	<3892328.nUGXIq3MaH@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-Sender: owner-linux-mm@kvack.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41231 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751528AbcHDALJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Wed, 3 Aug 2016 20:11:09 -0400
+In-Reply-To: <3892328.nUGXIq3MaH@wuerfel>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Nicholas Piggin <npiggin@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, linuxppc-dev@lists.ozlabs.org, Guenter Roeck <linux@roeck-us.net>
 
-The mm-of-the-moment snapshot 2016-08-03-15-19 has been uploaded to
+Hi Arnd,
 
-   http://www.ozlabs.org/~akpm/mmotm/
+On Wed, 03 Aug 2016 20:52:48 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Most of the difference appears to be in branch trampolines (634 added,
+> 559 removed, 14837 unchanged) as you suspect, but I also see a couple
+> of symbols show up in vmlinux that were not there before:
+> 
+> -A __crc_dma_noop_ops
+> -D dma_noop_ops
+> -R __clz_tab
+> -r fdt_errtable
+> -r __kcrctab_dma_noop_ops
+> -r __kstrtab_dma_noop_ops
+> -R __ksymtab_dma_noop_ops
+> -t dma_noop_alloc
+> -t dma_noop_free
+> -t dma_noop_map_page
+> -t dma_noop_mapping_error
+> -t dma_noop_map_sg
+> -t dma_noop_supported
+> -T fdt_add_reservemap_entry
+> -T fdt_begin_node
+> -T fdt_create
+> -T fdt_create_empty_tree
+> -T fdt_end_node
+> -T fdt_finish
+> -T fdt_finish_reservemap
+> -T fdt_property
+> -T fdt_resize
+> -T fdt_strerror
+> -T find_cpio_data
+> 
+> From my first look, it seems that all of lib/*.o is now getting linked
+> into vmlinux, while we traditionally leave out everything from lib/
+> that is not referenced.
 
-mmotm-readme.txt says
+You could try removing the --{,no-}whole-archive arguments to ld in
+scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh.  Last time I did
+that, though, a whole lot of stuff failed to be linked in. (Especially
+stuff only referenced by EXPORT_SYMBOL()s, bu that may have been fixed).
 
-README for mm-of-the-moment:
+> I also see a noticeable overhead in link time, the numbers are for
+> a cache-hot rebuild after a successful allyesconfig build, using a
+> 24-way Opteron@2.5Ghz, just relinking vmlinux:
 
-http://www.ozlabs.org/~akpm/mmotm/
+I was afraid of that, but it is offset by the time saved by not doing
+the "ld -r"s along the way?  It may also be that (for powerpc anyway)
+the linker is doing a better job.
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.7:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-* fpga-zynq-fpga-fix-build-failure.patch
-* tree-wide-replace-config_enabled-with-is_enabled.patch
-* bitmap-bitmap_equal-memcmp-optimization-fix.patch
-* media-mtk-vcodec-remove-unused-dma_attrs.patch
-* dma-mapping-use-unsigned-long-for-dma_attrs.patch
-* samples-kprobe-convert-the-printk-to-pr_info-pr_err.patch
-* samples-jprobe-convert-the-printk-to-pr_info-pr_err.patch
-* samples-kretprobe-convert-the-printk-to-pr_info-pr_err.patch
-* samples-kretprobe-fix-the-wrong-type.patch
-* block-remove-blk_dev_dax-config-option.patch
-* maintainers-update-email-and-list-of-samsung-hw-driver-maintainers.patch
-* cxd2841er-avoid-misleading-gcc-warning.patch
-* powerpc-add-explicit-include-asm-asm-compath-for-jump-label.patch
-* sparc-support-static_key-usage-in-non-module-__exit-sections.patch
-* tile-support-static_key-usage-in-non-module-__exit-sections.patch
-* arm-jump-label-may-reference-text-in-__exit.patch
-* jump_label-remove-bugh-atomich-dependencies-for-have_jump_label.patch
-* dynamic_debug-add-jump-label-support.patch
-  arch-alpha-kernel-systblss-remove-debug-check.patch
-  i-need-old-gcc.patch
-* mm-add-restriction-when-memory_hotplug-config-enable.patch
-* mm-memcontrol-fix-swap-counter-leak-on-swapout-from-offline-cgroup.patch
-* mm-memcontrol-fix-memcg-id-ref-counter-on-swap-charge-move.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* kbuild-simpler-generation-of-assembly-constants.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* kernel-watchdog-use-nmi-registers-snapshot-in-hardlockup-handler.patch
-  mm.patch
-* mm-memcontrol-add-sanity-checks-for-memcg-idref-on-get-put.patch
-* mm-oom-deduplicate-victim-selection-code-for-memcg-and-global-oom.patch
-* mm-zsmalloc-add-trace-events-for-zs_compact.patch
-* mm-zsmalloc-add-per-class-compact-trace-event.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
-* proc-relax-proc-tid-timerslack_ns-capability-requirements.patch
-* proc-add-lsm-hook-checks-to-proc-tid-timerslack_ns.patch
-* lib-add-crc64-ecma-module.patch
-* compat-remove-compat_printk.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-* ipc-msgc-msgsnd-use-freezable-blocking-call.patch
-* msgrcv-use-freezable-blocking-call.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* drivers-net-wireless-intel-iwlwifi-dvm-calibc-fix-min-warning.patch
-* ipc-semc-fix-complex_count-vs-simple-op-race.patch
-  mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  make-frame_pointer-default=y.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  add-debugging-aid-for-memory-initialisation-problems.patch
-  workaround-for-a-pci-restoring-bug.patch
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+-- 
+Cheers,
+Stephen Rothwell
