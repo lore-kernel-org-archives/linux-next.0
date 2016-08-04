@@ -1,44 +1,148 @@
-From: Segher Boessenkool <segher@kernel.crashing.org>
-Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
- next-20160729 build failures
-Date: Thu, 4 Aug 2016 12:06:41 -0500
-Message-ID: <20160804170640.GC22744@gate.crashing.org>
-References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
- <1880505.MpH3ISbtMJ@wuerfel> <20160804214713.4baa832e@roar.ozlabs.ibm.com>
- <2405930.iJXNaXEjI5@wuerfel>
+From: akpm@linux-foundation.org
+Subject: mmotm 2016-08-04-15-53 uploaded
+Date: Thu, 04 Aug 2016 15:54:28 -0700
+Message-ID: <57a3c7a4.gCWzM2XkCo5koanA%akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-Content-Disposition: inline
-In-Reply-To: <2405930.iJXNaXEjI5@wuerfel>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, linuxppc-dev@lists.ozlabs.org, Guenter Roeck <linux@roeck-us.net>
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 04, 2016 at 06:10:57PM +0200, Arnd Bergmann wrote:
-> On Thursday, August 4, 2016 9:47:13 PM CEST Nicholas Piggin wrote:
-> 
-> > +	__used							\
-> > +	__attribute__((section("___kentry" "+" #sym ",\"a\",@note #"), used)) \
-> 
-> 
-> I've just started testing this, but the first problem I ran into
-> is that @ and # are special characters that have an architecture
-> specific meaning to the assembler. On ARM, you need "%note @" instead
-> of "@note #".
+The mm-of-the-moment snapshot 2016-08-04-15-53 has been uploaded to
 
-That comment trick (I still feel guilty about it) causes more problems
-than it solves.  Please don't try to use it :-)
+   http://www.ozlabs.org/~akpm/mmotm/
+
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
 
-Segher
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.7:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* mm-add-restriction-when-memory_hotplug-config-enable.patch
+* mm-memblock-fix-a-typo-in-a-comment.patch
+* mm-initialise-per_cpu_nodestats-for-all-online-pgdats-at-boot.patch
+* powerpc-fsl_rio-fix-a-missing-error-code.patch
+* slub-drop-bogus-inline-for-fixup_red_left.patch
+* maintainers-update-cgroups-document-path.patch
+* mm-memblockc-fix-null-dereference-error.patch
+  arch-alpha-kernel-systblss-remove-debug-check.patch
+  i-need-old-gcc.patch
+* mm-oom-fix-uninitialized-ret-in-task_will_free_mem.patch
+* mm-page_alloc-replace-set_dma_reserve-to-set_memory_reserve.patch
+* fadump-register-the-memory-reserved-by-fadump.patch
+* mm-memcontrol-fix-swap-counter-leak-on-swapout-from-offline-cgroup.patch
+* mm-memcontrol-fix-memcg-id-ref-counter-on-swap-charge-move.patch
+* mm-slab-improve-performance-of-gathering-slabinfo-stats.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* kbuild-simpler-generation-of-assembly-constants.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* kernel-watchdog-use-nmi-registers-snapshot-in-hardlockup-handler.patch
+  mm.patch
+* mm-memcontrol-add-sanity-checks-for-memcg-idref-on-get-put.patch
+* mm-oom-deduplicate-victim-selection-code-for-memcg-and-global-oom.patch
+* mm-zsmalloc-add-trace-events-for-zs_compact.patch
+* mm-zsmalloc-add-per-class-compact-trace-event.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
+* proc-relax-proc-tid-timerslack_ns-capability-requirements.patch
+* proc-add-lsm-hook-checks-to-proc-tid-timerslack_ns.patch
+* printk-remove-unnecessary-ifdef-config_printk.patch
+* lib-add-crc64-ecma-module.patch
+* compat-remove-compat_printk.patch
+* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
+* random-simplify-api-for-random-address-requests.patch
+* x86-use-simpler-api-for-random-address-requests.patch
+* arm-use-simpler-api-for-random-address-requests.patch
+* arm64-use-simpler-api-for-random-address-requests.patch
+* tile-use-simpler-api-for-random-address-requests.patch
+* unicore32-use-simpler-api-for-random-address-requests.patch
+* random-remove-unused-randomize_range.patch
+* dma-mapping-introduce-the-dma_attr_no_warn-attribute.patch
+* powerpc-implement-the-dma_attr_no_warn-attribute.patch
+* nvme-use-the-dma_attr_no_warn-attribute.patch
+* ipc-msgc-msgsnd-use-freezable-blocking-call.patch
+* msgrcv-use-freezable-blocking-call.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* drivers-net-wireless-intel-iwlwifi-dvm-calibc-fix-min-warning.patch
+* ipc-semc-fix-complex_count-vs-simple-op-race.patch
+  mm-add-strictlimit-knob-v2.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  make-frame_pointer-default=y.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  mutex-subsystem-synchro-test-module.patch
+  slab-leaks3-default-y.patch
+  add-debugging-aid-for-memory-initialisation-problems.patch
+  workaround-for-a-pci-restoring-bug.patch
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
