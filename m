@@ -1,102 +1,47 @@
-From: Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 -
- next-20160729 build failures
-Date: Fri, 5 Aug 2016 22:26:25 +1000
-Message-ID: <20160805222625.30627e96@roar.ozlabs.ibm.com>
-References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com>
-	<20160804170640.GC22744@gate.crashing.org>
-	<20160805184108.7fc3dbd0@roar.ozlabs.ibm.com>
-	<2038522.anQ279eb8I@wuerfel>
+From: Jiri Kosina <jikos@kernel.org>
+Subject: Re: linux-next: please clean up the livepatching tree
+Date: Fri, 5 Aug 2016 15:11:07 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1608051509570.22028@cbobk.fhfr.pm>
+References: <20160803093109.1227bfcd@canb.auug.org.au> <alpine.LNX.2.00.1608030139230.22028@cbobk.fhfr.pm> <20160803112328.671372ef@canb.auug.org.au> <alpine.LNX.2.00.1608031124330.22028@cbobk.fhfr.pm> <s5hk2fvr8uo.wl-tiwai@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:34643 "EHLO
-	mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759658AbcHEM0f (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 5 Aug 2016 08:26:35 -0400
-In-Reply-To: <2038522.anQ279eb8I@wuerfel>
+Received: from mx2.suse.de ([195.135.220.15]:46695 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759705AbcHENLJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Fri, 5 Aug 2016 09:11:09 -0400
+In-Reply-To: <s5hk2fvr8uo.wl-tiwai@suse.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Segher Boessenkool <segher@kernel.crashing.org>, linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, Guenter Roeck <linux@roeck-us.net>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 05 Aug 2016 12:17:27 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On Fri, 5 Aug 2016, Takashi Iwai wrote:
 
-> On Friday, August 5, 2016 6:41:08 PM CEST Nicholas Piggin wrote:
-> > On Thu, 4 Aug 2016 12:06:41 -0500
-> > Segher Boessenkool <segher@kernel.crashing.org> wrote:
-> >   
-> > > On Thu, Aug 04, 2016 at 06:10:57PM +0200, Arnd Bergmann wrote:  
-> > > > On Thursday, August 4, 2016 9:47:13 PM CEST Nicholas Piggin wrote:
-> > > >     
-> > > > > +	__used							\
-> > > > > +	__attribute__((section("___kentry" "+" #sym ",\"a\",@note #"), used)) \    
-> > > > 
-> > > > 
-> > > > I've just started testing this, but the first problem I ran into
-> > > > is that @ and # are special characters that have an architecture
-> > > > specific meaning to the assembler. On ARM, you need "%note @" instead
-> > > > of "@note #".    
-> > > 
-> > > That comment trick (I still feel guilty about it) causes more problems
-> > > than it solves.  Please don't try to use it :-)  
+> > Exactly to avoid Linus' tree being polluted by the extra merge commits.
 > > 
-> > Yeah that's a funny hack. I don't think it's required though, but I'm just
-> > running through some more tests.
+> > My workflow is really simple -- development happens in (a lot of) topic 
+> > branches, and each and every time any of the topic branches is updated by 
+> > a new commit, that topic branch gets merged into for-next.
 > > 
-> > I think I found an improvement with the thin archives as well -- we were
-> > still building symbol table after removing the s option (that only avoids
-> > index). "S" is required to not build symbol table.
+> > Once code should go to Linus, the branches are merged at once into 
+> > 'for-linus' brach, and it's guaranteed to be code-wise the same as what 
+> > was gradually appearing in for-next.
 > > 
-> > I'll send out an RFC on a slightly more polished patch series shortly.  
+> > What other workflow do you suggest for maintainers like me, who are using 
+> > a lot of topic branches?
 > 
-> 
-> I could not find Nico's patches, but based on the information in his
-> presentation at
-> 
-> https://www.linuxplumbersconf.org/2015/ocw//system/presentations/3369/original/slides.html#(1)
-> 
-> I created a patch for ARM that mirrors what you have for powerpc, see
-> below.
+> Maybe refreshing merges in for-next branch at each time (or day)
+> instead of incremental merges?
 
-Great, thanks for jumping in. I posted another set which is a lot improved
-you should pick up.
+That slightly breaks for for-next downstreams, but one can successfully 
+counter that by the fact that topic branches should be the only ones 
+having downstreams, and for-next should be upstream solely for linux-next.
 
-
-> I have successfully built normal-sized kernels with this (not tried
-> running them). Unfortunately, the build time for "allyesconfig"
-> kernel explodes, the final link time is now in the hours instead of
-> minutes (no exact numbers unfortunately, it takes too long to
-> reproduce),
-
-That's becase we need to coalesce the new sections properly into the
-output file. binutils does not cope with vast number of sections in
-final linked file and spends all its time in hash lookup then explodes
-usually.
-
-
-> and I also get link errors for the .text.fixup section
-> for any users of __put_user() in really large kernels:
-> net/batman-adv/batman-adv.o:(.text.fixup+0x4): relocation truncated to fit: R_ARM_JUMP24 against `.text.batadv_log_read'
-
-This may be fixed by fixing the linker script to bring in the new
-sections properly (see new patchset).
-
-If not, then if you can combine the sections rather than have them
-consecutive in the output, e.g.,:
-
-    *(.text .text.fixup)
-
-Rather than
-
-    *(.text)            
-    *(.text.fixup)
-
-Then the linker has more freedom to rearrange them. I realize it's
-not that simple with ARM's .text.fixup, but maybe that helps you
-get it to work.
+I'll experiment with this during the next cycle.
 
 Thanks,
-Nick
+
+-- 
+Jiri Kosina
+SUSE Labs
