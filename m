@@ -1,31 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma tree with Linus' tree
-Date: Fri, 5 Aug 2016 11:05:11 +1000
-Message-ID: <20160805110511.7c9e9298@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
+Date: Fri, 5 Aug 2016 12:42:13 +1000
+Message-ID: <20160805124213.1a1d0931@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Hu <xavier.huwei@huawei.com>, Nenglong Zhao <zhaonenglong@hisilicon.com>, Lijun Ou <oulijun@huawei.com>, Sheng Li <lisheng011@huawei.com>, Daode Huang <huangdaode@hisilicon.com>, Yisen Zhuang <Yisen.Zhuang@huawei.com>, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33240 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754438AbcHECmQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Thu, 4 Aug 2016 22:42:16 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jani Nikula <jani.nikula@intel.com>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
-Hi Doug,
+Hi Jon,
 
-Today's linux-next merge of the rdma tree got a conflict in:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-  drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+  Documentation/DocBook/Makefile
 
 between commit:
 
-  8ae7b8a59938 ("net: hns: fix sbm default parameters config error")
+  43f71d93a0cb ("doc-rst: Remove the media docbook")
 
 from Linus' tree and commit:
 
-  c80815c0b214 ("net: hns: Add reset function support for RoCE driver")
+  bdf107d87eb8 ("DocBook: use DOCBOOKS="" to ignore DocBooks instead of IGNORE_DOCBOOKS=1")
 
-from the rdma tree.
+from the jc_docs tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,30 +42,28 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-index 235f74444b1d,750ab4b4d154..000000000000
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
-@@@ -796,18 -800,10 +805,22 @@@
-  #define DSAFV2_SBM_CFG4_RESET_BUF_NUM_NO_PFC_S 9
-  #define DSAFV2_SBM_CFG4_RESET_BUF_NUM_NO_PFC_M (((1ULL << 9) - 1) << 9)
+diff --cc Documentation/DocBook/Makefile
+index c481df33ef21,fb32ab85ea3a..000000000000
+--- a/Documentation/DocBook/Makefile
++++ b/Documentation/DocBook/Makefile
+@@@ -16,9 -14,19 +14,17 @@@ DOCBOOKS := z8530book.xml device-driver
+  	    genericirq.xml s390-drivers.xml uio-howto.xml scsi.xml \
+  	    80211.xml debugobjects.xml sh.xml regulator.xml \
+  	    alsa-driver-api.xml writing-an-alsa-driver.xml \
+ -	    tracepoint.xml gpu.xml media_api.xml w1.xml \
+ +	    tracepoint.xml w1.xml \
+  	    writing_musb_glue_layer.xml crypto-API.xml iio.xml
   
- +#define DSAFV2_SBM_CFG2_ROCEE_SET_BUF_NUM_S 0
- +#define DSAFV2_SBM_CFG2_ROCEE_SET_BUF_NUM_M (((1ULL << 8) - 1) << 0)
- +#define DSAFV2_SBM_CFG2_ROCEE_RESET_BUF_NUM_S 8
- +#define DSAFV2_SBM_CFG2_ROCEE_RESET_BUF_NUM_M (((1ULL << 8) - 1) << 8)
- +
- +#define DSAFV2_SBM_CFG2_PPE_SET_BUF_NUM_S (0)
- +#define DSAFV2_SBM_CFG2_PPE_SET_BUF_NUM_M (((1ULL << 6) - 1) << 0)
- +#define DSAFV2_SBM_CFG2_PPE_RESET_BUF_NUM_S (6)
- +#define DSAFV2_SBM_CFG2_PPE_RESET_BUF_NUM_M (((1ULL << 6) - 1) << 6)
- +#define DSAFV2_SBM_CFG2_PPE_CFG_USEFUL_NUM_S (12)
- +#define DSAFV2_SBM_CFG2_PPE_CFG_USEFUL_NUM_M (((1ULL << 6) - 1) << 12)
- +
-+ #define DSAF_CHNS_MASK			0x3f000
-+ #define DSAF_SBM_ROCEE_CFG_CRD_EN_B	2
-+ #define SRST_TIME_INTERVAL		20
++ ifeq ($(DOCBOOKS),)
 + 
-  #define DSAF_TBL_TCAM_ADDR_S 0
-  #define DSAF_TBL_TCAM_ADDR_M ((1ULL << 9) - 1)
-  
++ # Skip DocBook build if the user explicitly requested no DOCBOOKS.
++ .DEFAULT:
++ 	@echo "  SKIP    DocBook $@ target (DOCBOOKS=\"\" specified)."
++ 
++ else
++ 
+ -include Documentation/DocBook/media/Makefile
+ -
+  ###
+  # The build process is as follows (targets):
+  #              (xmldocs) [by docproc]
