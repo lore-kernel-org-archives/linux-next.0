@@ -1,42 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: please clean up the samsung-krzk tree
-Date: Tue, 9 Aug 2016 09:55:05 +1000
-Message-ID: <20160809095505.2fd76ca4@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of Linus' tree
+Date: Tue, 9 Aug 2016 09:59:24 +1000
+Message-ID: <20160809095924.176c008b@canb.auug.org.au>
+References: <20160808115827.6dd7fa6f@canb.auug.org.au>
+	<6a554a80-c3ed-1902-14d1-f1e03adbed49@redhat.com>
+	<20160809075315.07a86b32@canb.auug.org.au>
+	<a11851f5-067e-7b6d-6121-06e597381125@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54040 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750979AbcHHX71 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Mon, 8 Aug 2016 19:59:27 -0400
+In-Reply-To: <a11851f5-067e-7b6d-6121-06e597381125@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Moni Shoua <monis@mellanox.com>, Kamal Heib <kamalh@mellanox.com>, Amir Vadai <amirv@mellanox.com>, Haggai Eran <haggaie@mellanox.com>, Leon Romanovsky <leon@kernel.org>
 
-Hi Krzysztof,
+Hi Doug,
 
-The samsung-krzk tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git#for-next)
-contains just these:
+On Mon, 8 Aug 2016 19:30:57 -0400 Doug Ledford <dledford@redhat.com> wrote:
+>
+> Doh!  My apologies, that would certainly explain it.  I'll reset my
+> for-next tag.
 
-253256f64294 Merge branch 'next/soc' into for-next
-b148ebe425aa Merge branch 'next/defconfig64' into for-next
-d11d19d93a01 Merge branch 'next/defconfig64' into for-next
-cc8b7edeaeff Merge branch 'next/drivers' into for-next
-33d1679aeebb Merge branch 'next/dt64' into for-next
-c239aef8ed5c Merge branch 'fixes' into for-next
-45338b4af16f Merge branch 'next/drivers' into for-next
-42628e196937 Merge branch 'next/soc' into for-next
-336361e2749d arm64: dts: Fix RTC by providing rtc_src clock
-13fc4c900141 Merge branch 'for-v4.8/exynos-mfc' into for-next
-c210c51020f2 Merge branch 'for-v4.8/dts-exynos5410-odroid-xu' into for-next
-976b260e2989 Merge branch 'fixes-dt' into for-next
-279b6fdc5751 Merge branch 'next/defconfig' into for-next
-42ba6ffaa300 Merge branch 'next/dt' into for-next
-9f1bc73cb9b2 Merge branch 'next/drivers' into for-next
-a8c1aef0a08b Merge branch 'next/soc64' into for-next
-c39705ddcc6e Merge branch 'next/soc' into for-next
-63b9ef3830d1 Merge branch 'fixes' into for-next
-
-and is causing a conflict with mailline.  Please clean it up.
+Thanks.
 
 -- 
 Cheers,
