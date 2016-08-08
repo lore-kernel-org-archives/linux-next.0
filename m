@@ -1,136 +1,47 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: powerpc allyesconfig / allmodconfig linux-next next-20160729 - next-20160729 build failures
-Date: Sat, 06 Aug 2016 23:13:17 +0200
-Message-ID: <9809460.xqZt1viUce@wuerfel>
-References: <CAB=NE6U18jv89pxqAeZY8eTj44mq90kyXGaQO-108+ZMTyxQiQ@mail.gmail.com> <29606723.2uK9PgjbC3@wuerfel> <20160806141716.4b745b74@roar.ozlabs.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 8 Aug 2016 10:50:14 +1000
+Message-ID: <20160808105014.35899b71@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:65365 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751021AbcHFVOS (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Sat, 6 Aug 2016 17:14:18 -0400
-In-Reply-To: <20160806141716.4b745b74@roar.ozlabs.ibm.com>
+Received: from ozlabs.org ([103.22.144.67]:40541 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751836AbcHHAuW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 7 Aug 2016 20:50:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Nicholas Piggin <npiggin@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-next@vger.kernel.org, Paul Mackerras <paulus@samba.org>, Fengguang Wu <fengguang.wu@intel.com>, Guenter Roeck <linux@roeck-us.net>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On Saturday, August 6, 2016 2:17:16 PM CEST Nicholas Piggin wrote:
-> On Fri, 05 Aug 2016 21:16:00 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> 
-> > On Saturday, August 6, 2016 2:16:42 AM CEST Nicholas Piggin wrote:
-> > > > 
-> > > > diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-> > > > index 0ec807d69f18..7a3ad269fa23 100644
-> > > > --- a/include/asm-generic/vmlinux.lds.h
-> > > > +++ b/include/asm-generic/vmlinux.lds.h
-> > > > @@ -433,7 +433,7 @@
-> > > >   * during second ld run in second ld pass when generating System.map */
-> > > >  #define TEXT_TEXT                                                    \
-> > > >               ALIGN_FUNCTION();                                       \
-> > > > -             *(.text.hot .text .text.fixup .text.unlikely)           \
-> > > > +             *(.text.hot .text .text.* .text.fixup .text.unlikely)   \
-> > > >               *(.ref.text)                                            \
-> > > >       MEM_KEEP(init.text)                                             \
-> > > >       MEM_KEEP(exit.text)                                             \
-> > > > 
-> > > > 
-> > > > It also got much faster again, the link time for an allyesconfig
-> > > > kernel is now 18 minutes instead of 10 hours, but it's still
-> > > > much worse than the 2 minutes I had earlier or the four minutes
-> > > > with the previous patch.  
-> > > 
-> > > Are you using the patches I just sent?  
-> > 
-> > Not yet, I was still busy with the older version, and trying to
-> > figure out exactly what went wrong in ld.bfd. FWIW, I first tried
-> > to see if the hash tables were just too small, but as it turned
-> > out that was not the problem. When I tried to change the default
-> > hash table sizes, making them bigger only made things slower.
-> > 
-> > I also found the --hash-size=xxx option, which has a significant
-> > impact on runtime speed. Interestingly again, using sizes less
-> > than the default made things faster in practice. If we can
-> > work out the optimum size for the kernel build, that might
-> > shave a few minutes off the total build time.
-> > 
-> > > Either way, you also need
-> > > to do the same for data and bss sections as you are using
-> > > -fdata-sections too.  
-> > 
-> > Right.
-> > 
-> > > I've found virtually no build time regression on powerpc or x86
-> > > when those are taken care of properly (x86 numbers I sent are typo,
-> > > it's not 5m20, it's 5m02).  
-> > 
-> > Interesting. I wonder if it's got something to do with the
-> > generation of the branch trampolines on ARM, as we have a lot
-> > of them on an allyesconfig.
-> 
-> Powerpc generates quite a few branch trampolines as well, so
-> I'm not sure if that would be the issue. Can you get a profile
-> of the link?
+Hi all,
 
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig build) failed like this:
 
-CPU: AMD64 family15h, speed 2600 MHz (estimated)
-Counted CPU_CLK_UNHALTED events (CPU Clocks not Halted) with a unit mask of 0x00 (No unit mask) count 100000
-samples  %        image name               symbol name
-1212556  63.6990  ld-new                   bfd_hash_lookup
-416050   21.8563  ld-new                   bfd_hash_hash
-64861     3.4073  no-vmlinux               /no-vmlinux
-59038     3.1014  ld-new                   bfd_hash_traverse
-13873     0.7288  ld-new                   bfd_get_next_section_by_name
-9880      0.5190  ld-new                   strrevcmp
+sound/soc/generic/simple-card.c: In function 'asoc_simple_card_dai_link_of':
+sound/soc/generic/simple-card.c:350:8: error: implicit declaration of function 'asoc_simple_card_parse_clk_cpu' [-Werror=implicit-function-declaration]
+  ret = asoc_simple_card_parse_clk_cpu(cpu, dai_link, cpu_dai);
+        ^
+sound/soc/generic/simple-card.c:354:8: error: implicit declaration of function 'asoc_simple_card_parse_clk_codec' [-Werror=implicit-function-declaration]
+  ret = asoc_simple_card_parse_clk_codec(codec, dai_link, codec_dai);
+        ^
+sound/soc/sh/rcar/rsrc-card.c: In function 'rsrc_card_parse_links':
+sound/soc/sh/rcar/rsrc-card.c:193:9: error: implicit declaration of function 'asoc_simple_card_parse_clk_cpu' [-Werror=implicit-function-declaration]
+   ret = asoc_simple_card_parse_clk_cpu(np, dai_link, dai_props);
+         ^
+sound/soc/sh/rcar/rsrc-card.c:232:9: error: implicit declaration of function 'asoc_simple_card_parse_clk_codec' [-Werror=implicit-function-declaration]
+   ret = asoc_simple_card_parse_clk_codec(np, dai_link, dai_props);
+         ^
 
-I've manually marked bfd_hash_hash as __attribute__((noinline))
-to see it separately from bfd_hash_lookup.
+Caused by commits
 
-The vast majority of these calls seem to come from _bfd_elf_strtab_add
-and from bfd_get_section_by_name/bfd_get_next_section_by_name.
+  28abd99b6e40 ("ASoC: simple-card: use asoc_simple_card_parse_clk()")
+  c9a235da8a61 ("ASoC: rsrc-card: use asoc_simple_card_parse_clk()")
 
-While I first thought the hash tables were too slow, investigating
-further showed that most of the hash tables are really small
-(and appropriately sized), we just do a lot of lookups on them.
+I have used the sound-asoc tree from next-20160805 for today.
 
-> Are you linking with archives? Do your input archives have a
-> symbol index built?
-
-yes, and don't know. I've moved on to your new patches now, will
-see how that goes.
-
-> > Is the 5m20 the total build time for the kernel, the time for
-> > rebuilding after a trivial change, or the time to call 'ld.bfd'
-> > once?
-> 
-> 5m02 was the total time for x86 defconfig. With the powerpc
-> allyesconfig build, the final link:
-> 
-> $ time ld -EL -m elf64lppc -pie --emit-relocs --build-id --gc-sections -X -o vmlinux -T ./arch/powerpc/kernel/vmlinux.lds --whole-archive built-in.o .tmp_kallsyms2.o
-> 
-> real	0m15.556s
-> user	0m13.288s
-> sys	0m2.240s
-> 
-> $ ls -lh vmlinux
-> -rwxrwxr-x 1 npiggin npiggin 279M Aug  6 14:02 vmlinux
-> 
-> Without -pie --emit-relocs it's 11.8s and 150M but I'm using
-> emit-relocs for a post-link step.
-
-Interesting, that does sound more like an ARM specific bug in ld
-then. 
-
-> > Are you using ld.bfd on x86 or ld.gold? For me ld.gold either
-> > works and is really fast, or it crashes, depending on the
-> > configuration. I also don't think it supports big-endian ARM
-> > (which is what allyesconfig ends up using).
-> 
-> ld.bfd on both. Gold crashed on powerpc and I didn't try it on x86.
-
-Ok.
-
-	Arnd
+-- 
+Cheers,
+Stephen Rothwell
