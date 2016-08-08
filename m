@@ -1,31 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 8
-Date: Mon, 8 Aug 2016 14:21:20 +1000
-Message-ID: <20160808142120.32786e6d@canb.auug.org.au>
-References: <20160808131748.754d4fe6@canb.auug.org.au>
-	<952e0ca8-e56d-f7d3-f68c-22f068e7f242@au1.ibm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <952e0ca8-e56d-f7d3-f68c-22f068e7f242@au1.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160808 build: 0 failures 1 warnings (next-20160808)
+Date: Mon, 08 Aug 2016 09:54:54 +0100
+Message-ID: <E1bWgKj-00027J-36@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49454 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751280AbcHHIzD (ORCPT
+	<rfc822;linux-next@vger.kernel.org>); Mon, 8 Aug 2016 04:55:03 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Andrew,
+Tree/Branch: next-20160808
+Git describe: next-20160808
+Commit: a585f41f6c Add linux-next specific files for 20160808
 
-On Mon, 8 Aug 2016 13:51:22 +1000 Andrew Donnellan <andrew.donnellan@au1.ibm.com> wrote:
->
-> On 08/08/16 13:17, Stephen Rothwell wrote:
-> > Please do not add material destined for v4.9 to your linux-next included
-> > branches until after v4.8-rc1 has been released.  
-> 
-> Which has now happened :)
+Build Time: 172 min 11 sec
 
-Yes, I will remove the above message tomorrow.
+Passed:    9 / 9   (100.00 %)
+Failed:    0 / 9   (  0.00 %)
 
--- 
-Cheers,
-Stephen Rothwell
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
