@@ -1,81 +1,69 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160812 build: 0 failures 3 warnings (next-20160812)
-Date: Fri, 12 Aug 2016 08:15:58 +0100
-Message-ID: <E1bY6hC-0000Ci-AB@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 15 Aug 2016 10:35:03 +1000
+Message-ID: <20160815103503.2ff7aa58@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38204 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbcHLHQJ (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Fri, 12 Aug 2016 03:16:09 -0400
+Received: from ozlabs.org ([103.22.144.67]:50360 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751015AbcHOAfH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Sun, 14 Aug 2016 20:35:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Sargun Dhillon <sargun@sargun.me>
 
-Tree/Branch: next-20160812
-Git describe: next-20160812
-Commit: 8b2a28d3b5 Add linux-next specific files for 20160812
+Hi all,
 
-Build Time: 90 min 40 sec
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+  kernel/bpf/verifier.c
 
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+  747ea55e4f78 ("bpf: fix bpf_skb_in_cgroup helper naming")
 
--------------------------------------------------------------------------------
+from the net tree and commit:
 
-Warnings Summary: 3
-	  3 ../drivers/net/ethernet/freescale/fec_main.c:2890:0: warning: "HASH_BITS" redefined
-	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+  60d20f9195b2 ("bpf: Add bpf_current_task_under_cgroup helper")
 
+from the net-next tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Cheers,
+Stephen Rothwell
 
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/freescale/fec_main.c:2890:0: warning: "HASH_BITS" redefined
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/freescale/fec_main.c:2890:0: warning: "HASH_BITS" redefined
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/freescale/fec_main.c:2890:0: warning: "HASH_BITS" redefined
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+diff --cc kernel/bpf/verifier.c
+index daea765d72e6,0cc46f1df358..000000000000
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@@ -1053,7 -1078,8 +1078,8 @@@ static int check_map_func_compatibility
+  			goto error;
+  		break;
+  	case BPF_MAP_TYPE_CGROUP_ARRAY:
+- 		if (func_id != BPF_FUNC_skb_under_cgroup)
+ -		if (func_id != BPF_FUNC_skb_in_cgroup &&
+++		if (func_id != BPF_FUNC_skb_under_cgroup &&
++ 		    func_id != BPF_FUNC_current_task_under_cgroup)
+  			goto error;
+  		break;
+  	default:
+@@@ -1075,7 -1101,8 +1101,8 @@@
+  		if (map->map_type != BPF_MAP_TYPE_STACK_TRACE)
+  			goto error;
+  		break;
++ 	case BPF_FUNC_current_task_under_cgroup:
+ -	case BPF_FUNC_skb_in_cgroup:
+ +	case BPF_FUNC_skb_under_cgroup:
+  		if (map->map_type != BPF_MAP_TYPE_CGROUP_ARRAY)
+  			goto error;
+  		break;
