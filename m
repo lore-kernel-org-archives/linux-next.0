@@ -1,52 +1,57 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20160816 build: 1 failures 2 warnings (next-20160816)
-Date: Tue, 16 Aug 2016 17:38:41 +0100
-Message-ID: <20160816163841.GU9347@sirena.org.uk>
-References: <E1bZaoA-0004xE-Oj@optimist>
+From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
+Subject: Re: linux-next: Tree for Aug 16 (mellanox/mlx5 & sound/oss/)
+Date: Tue, 16 Aug 2016 19:54:37 +0300
+Message-ID: <CALzJLG8XOgEOTeQJqjdqHD21azfoVa7RTgKJG9UWUE11cUJRZQ@mail.gmail.com>
+References: <20160816140121.5b89f2a0@canb.auug.org.au> <c5f1449f-b1fb-37be-71c1-85691d34994e@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="00zH/wdDQmWzr4bS"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44586 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751729AbcHPQiz (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2016 12:38:55 -0400
-Content-Disposition: inline
-In-Reply-To: <E1bZaoA-0004xE-Oj@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Saeed Mahameed <saeedm@mellanox.com>, Leon Romanovsky <leon@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c5f1449f-b1fb-37be-71c1-85691d34994e@infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, moderated for non-subscribers <alsa-devel@alsa-project.org>
+List-Id: linux-next.vger.kernel.org
 
+On Tue, Aug 16, 2016 at 6:26 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+> On 08/15/16 21:01, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20160815:
+>>
+>
+> on i386:
+>
+> sound/built-in.o:(.data+0x5c): multiple definition of `dev_list'
+> drivers/built-in.o:(.data+0x6aee8): first defined here
+> ld: Warning: size of symbol `dev_list' changed from 8 in drivers/built-in.o to 16 in sound/built-in.o
+>
+>
+> sound/ is an old oss driver (soundcard.c):
+>
+> struct oss_minor_dev {
+>         unsigned short minor;
+>         unsigned int enabled;
+> } dev_list[] = {
+>         { SND_DEV_DSP16 },
+>         { SND_DEV_AUDIO },
+> };
+>
+> =====
+>
+> drivers/ is net/ethernet/mellanox/mlx5/core/mlx5_core.h:
+>
+> extern struct list_head dev_list;
+>
 
---00zH/wdDQmWzr4bS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Randy,
 
-On Tue, Aug 16, 2016 at 10:37:20AM +0100, Build bot for Mark Brown wrote:
+We will have to fix this in mlx5 driver.
 
-Today's -next fails to build an ARM allmodconfig due to:
+Thanks,
+Saeed.
 
-> 	arm-allmodconfig
-> ../drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:300:61: error: 'outb' undeclared (first use in this function)
-
-which appears to be caused by 535e20f083e6 ({net,IB}/mlx5: QP/XRCD
-commands via mlx5 ifc).  outb() just isn't available as standard on ARM,
-it's not something that's meaningful for the hardware.
-
---00zH/wdDQmWzr4bS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXs0GQAAoJECTWi3JdVIfQiX4H/iiH3VkZfY66gGV542x56tRt
-pM4JLiNISQesuGC/MUsje7QHddEoOi/6hbXRSWOFnQgl95LsCgZ2ObWJCKsDiO6Q
-6PKx8lMgfptozqm24/pTF9ClsCru1rS9wcy/EPirEvOZ2nacgIO1JLt7iBBauSgw
-m6nQuuUJoM1xQxjo9JUfTK2yVxaZ+0ca+5zBpt5vSe8i/ETc5ogM2oZEQgiEIBI2
-MFbniiB7jfSZXifTgGF02lVFetXxz0Vk2YuHtvpuYhTEaS4w5BWE3ZXbrrszVVas
-EnnPy/SFSHX2COxIjMFFGYTaPaQcvdMKLN4+GFgy4ktKnls00A1nqVQudKntXA8=
-=hABn
------END PGP SIGNATURE-----
-
---00zH/wdDQmWzr4bS--
+>
+>
+>
+> --
+> ~Randy
