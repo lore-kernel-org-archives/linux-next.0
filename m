@@ -1,84 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160816 build: 1 failures 2 warnings (next-20160816)
-Date: Tue, 16 Aug 2016 10:37:20 +0100
-Message-ID: <E1bZaoA-0004xE-Oj@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41200 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753880AbcHPJiA (ORCPT
-	<rfc822;linux-next@vger.kernel.org>); Tue, 16 Aug 2016 05:38:00 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Aug 16 (mellanox/mlx5 &
+	sound/oss/)
+Date: Tue, 16 Aug 2016 08:26:52 -0700
+Message-ID: <c5f1449f-b1fb-37be-71c1-85691d34994e@infradead.org>
+References: <20160816140121.5b89f2a0@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20160816140121.5b89f2a0@canb.auug.org.au>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, moderated for non-subscribers <alsa-devel@alsa-project.org>, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160816
-Git describe: next-20160816
-Commit: 0c9a343971 Add linux-next specific files for 20160816
+On 08/15/16 21:01, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160815:
+> 
 
-Build Time: 191 min 38 sec
+on i386:
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 1
-Warnings: 2
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:300:61: error: 'outb' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:300:61: error: 'outb' undeclared (first use in this function)
-
-Warnings Summary: 2
-	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
+sound/built-in.o:(.data+0x5c): multiple definition of `dev_list'
+drivers/built-in.o:(.data+0x6aee8): first defined here
+ld: Warning: size of symbol `dev_list' changed from 8 in drivers/built-in.o to 16 in sound/built-in.o
 
 
+sound/ is an old oss driver (soundcard.c):
 
-===============================================================================
-Detailed per-defconfig build reports below:
+struct oss_minor_dev {
+	unsigned short minor;
+	unsigned int enabled;
+} dev_list[] = {
+	{ SND_DEV_DSP16 },
+	{ SND_DEV_AUDIO },
+};
+
+=====
+
+drivers/ is net/ethernet/mellanox/mlx5/core/mlx5_core.h:
+
+extern struct list_head dev_list;
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-Warnings:
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../drivers/net/ethernet/mellanox/mlx5/core/debugfs.c:300:61: error: 'outb' undeclared (first use in this function)
-
-Warnings:
-	../drivers/tty/serial/8250/8250_fintek.c:34:0: warning: "IRQ_MODE" redefined
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+~Randy
