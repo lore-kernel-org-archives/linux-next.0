@@ -1,101 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 17 Aug 2016 11:05:52 +1000
-Message-ID: <20160817110552.67a3e615@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the kbuild tree
+Date: Wed, 17 Aug 2016 11:44:43 +1000
+Message-ID: <20160817114443.67675413@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53558 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42854 "EHLO ozlabs.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753259AbcHQBFz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-	Tue, 16 Aug 2016 21:05:55 -0400
+	id S1752345AbcHQBp2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+	Tue, 16 Aug 2016 21:45:28 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+To: Michal Marek <mmarek@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 
-Hi all,
+Hi Michal,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-  drivers/net/dsa/mv88e6xxx/chip.c
+WARNING: 25 bad relocations
+c000000000cf2570 R_PPC64_ADDR64    __crc___arch_hweight16
+c000000000cf2578 R_PPC64_ADDR64    __crc___arch_hweight32
+c000000000cf2580 R_PPC64_ADDR64    __crc___arch_hweight64
+c000000000cf2588 R_PPC64_ADDR64    __crc___arch_hweight8
+c000000000cf2678 R_PPC64_ADDR64    __crc___bswapdi2
+c000000000cf2690 R_PPC64_ADDR64    __crc___clear_user
+c000000000cf26b8 R_PPC64_ADDR64    __crc___copy_tofrom_user
+c000000000cf2728 R_PPC64_ADDR64    __crc___csum_partial
+c000000000cf3f90 R_PPC64_ADDR64    __crc_copy_page
+c000000000cf40e0 R_PPC64_ADDR64    __crc_csum_partial_copy_generic
+c000000000cf4100 R_PPC64_ADDR64    __crc_current_stack_pointer
+c000000000cf4928 R_PPC64_ADDR64    __crc_empty_zero_page
+c000000000cf4db0 R_PPC64_ADDR64    __crc_flush_dcache_range
+c000000000cf4dc0 R_PPC64_ADDR64    __crc_flush_icache_range
+c000000000cf6470 R_PPC64_ADDR64    __crc_load_fp_state
+c000000000cf6488 R_PPC64_ADDR64    __crc_load_vr_state
+c000000000cf68d0 R_PPC64_ADDR64    __crc_memchr
+c000000000cf68e0 R_PPC64_ADDR64    __crc_memcmp
+c000000000cf68e8 R_PPC64_ADDR64    __crc_memcpy
+c000000000cf6900 R_PPC64_ADDR64    __crc_memmove
+c000000000cf6988 R_PPC64_ADDR64    __crc_memset
+c000000000cf9328 R_PPC64_ADDR64    __crc_store_fp_state
+c000000000cf9330 R_PPC64_ADDR64    __crc_store_vr_state
+c000000000cf93d0 R_PPC64_ADDR64    __crc_strncmp
+c000000000cf93d8 R_PPC64_ADDR64    __crc_strncpy
 
-between commit:
+Introduced by commit
 
-  601bbae0bc10 ("dsa: mv88e6xxx: hide unused functions")
+  9445aa1a3062 ("ppc: move exports to definitions")
 
-from the net tree and commit:
+I have reverted that commit for today.
 
-  9c93829c014f ("net: dsa: mv88e6xxx: use the new PHY API")
+[cc-ing the ppc guys for clues - also involved is commit
 
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  22823ab419d8 ("EXPORT_SYMBOL() for asm")
+]
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/dsa/mv88e6xxx/chip.c
-index d1d9d3cf9139,a230fcba5b64..000000000000
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@@ -3187,48 -3250,13 +3250,20 @@@ static int mv88e6xxx_set_addr(struct ds
-  	return err;
-  }
-  
-- #ifdef CONFIG_NET_DSA_HWMON
-- static int mv88e6xxx_mdio_page_read(struct dsa_switch *ds, int port, int page,
-- 				    int reg)
-- {
-- 	struct mv88e6xxx_chip *chip = ds_to_priv(ds);
-- 	int ret;
-- 
-- 	mutex_lock(&chip->reg_lock);
-- 	ret = _mv88e6xxx_mdio_page_read(chip, port, page, reg);
-- 	mutex_unlock(&chip->reg_lock);
-- 
-- 	return ret;
-- }
-- 
-- static int mv88e6xxx_mdio_page_write(struct dsa_switch *ds, int port, int page,
-- 				     int reg, int val)
-- {
-- 	struct mv88e6xxx_chip *chip = ds_to_priv(ds);
-- 	int ret;
-- 
-- 	mutex_lock(&chip->reg_lock);
-- 	ret = _mv88e6xxx_mdio_page_write(chip, port, page, reg, val);
-- 	mutex_unlock(&chip->reg_lock);
-- 
-- 	return ret;
-- }
-- #endif
-- 
- +static int mv88e6xxx_port_to_mdio_addr(struct mv88e6xxx_chip *chip, int port)
- +{
- +	if (port >= 0 && port < chip->info->num_ports)
- +		return port;
- +	return -EINVAL;
- +}
- +
-- static int mv88e6xxx_mdio_read(struct mii_bus *bus, int port, int regnum)
-+ static int mv88e6xxx_mdio_read(struct mii_bus *bus, int phy, int reg)
-  {
-  	struct mv88e6xxx_chip *chip = bus->priv;
-- 	int addr = mv88e6xxx_port_to_mdio_addr(chip, port);
-- 	int ret;
-+ 	u16 val;
-+ 	int err;
-  
-- 	if (addr < 0)
-+ 	if (phy >= chip->info->num_ports)
-  		return 0xffff;
-  
-  	mutex_lock(&chip->reg_lock);
