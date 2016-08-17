@@ -1,12 +1,14 @@
-From: Mark Brown <broonie@kernel.org>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: next-20160817 build: 2 failures 5 warnings (next-20160817)
-Date: Wed, 17 Aug 2016 10:26:44 +0100
-Message-ID: <20160817092644.GE9347@sirena.org.uk>
-References: <E1bZvGr-0000Fe-Gg@optimist>
+Date: Wed, 17 Aug 2016 12:14:53 +0200
+Message-ID: <20160817101453.GT6232@phenom.ffwll.local>
+References: <E1bZvGr-0000Fe-Gg@optimist> <20160817092644.GE9347@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0796240596=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <E1bZvGr-0000Fe-Gg@optimist>
+Content-Disposition: inline
+In-Reply-To: <20160817092644.GE9347@sirena.org.uk>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -16,59 +18,31 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Xinliang Liu <xinliang.liu@linaro.org>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, Archit Taneja <architt@codeaurora.org>, Sean Paul <seanpaul@chromium.org>, Daniel Vetter <daniel.vetter@intel.com>
-Cc: linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel-build-reports@lists.linaro.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-
---===============0796240596==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4p/IC6kBmCKpHx3O"
-Content-Disposition: inline
-
-
---4p/IC6kBmCKpHx3O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Aug 17, 2016 at 08:28:17AM +0100, Build bot for Mark Brown wrote:
-
-Today's -next fails to build an arm64 allmodconfig due to:
-
-> 	arm64-allmodconfig
-> ../drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c:140:18: error: passing argument 1 of 'dc_ops->cleanup' from incompatible pointer type [-Werror=incompatible-pointer-types]
-> ../drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c:994:52: error: 'dev' undeclared (first use in this function)
-> ../drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c:1055:52: error: 'dev' undeclared (first use in this function)
-> ../drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c:1065:1: error: expected '}' before ';' token
-
-caused by d25bcfb8c2 (drm/hisilicon: Don't set drm_device->platformdev)
-which does a a partial conversion to new APIs.
-
---4p/IC6kBmCKpHx3O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJXtC3TAAoJECTWi3JdVIfQbg8IAIWoS5HOHevEIKazbSm315Pi
-dK0WckDbfrD2tBLEEkKqxb4nbsZ56QQ4MJIG1WE6Y/8q6JIWpRJcRhQ8YNAXH1DW
-vgXOvmLlccE796yGbz4G3CqaPHEURbmwBc7i0DCCccbilVYJQ7/HV8RyeygnR4uH
-Kgszu2OtpEO5uyblpSBNY5neVc83S9pJxgY+a51gfp51UHoBAIDLSYG5avYH0LMd
-3rduDI1M5QMa7Af+tqJL+gEs9lYOQw/j5tAxD9MQ3y+gpmwLoZpnfqPVnYJ7PGv9
-p+ci3EF3me9YBpFlc/OwWFdx5TQTkTWmdvfON6Kjnf4FeEEnFLZGQ/9MIul0jzc=
-=PV9B
------END PGP SIGNATURE-----
-
---4p/IC6kBmCKpHx3O--
-
---===============0796240596==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0796240596==--
+T24gV2VkLCBBdWcgMTcsIDIwMTYgYXQgMTA6MjY6NDRBTSArMDEwMCwgTWFyayBCcm93biB3cm90
+ZToKPiBPbiBXZWQsIEF1ZyAxNywgMjAxNiBhdCAwODoyODoxN0FNICswMTAwLCBCdWlsZCBib3Qg
+Zm9yIE1hcmsgQnJvd24gd3JvdGU6Cj4gCj4gVG9kYXkncyAtbmV4dCBmYWlscyB0byBidWlsZCBh
+biBhcm02NCBhbGxtb2Rjb25maWcgZHVlIHRvOgo+IAo+ID4gCWFybTY0LWFsbG1vZGNvbmZpZwo+
+ID4gLi4vZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9raXJpbi9raXJpbl9kcm1fZHJ2LmM6MTQw
+OjE4OiBlcnJvcjogcGFzc2luZyBhcmd1bWVudCAxIG9mICdkY19vcHMtPmNsZWFudXAnIGZyb20g
+aW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbLVdlcnJvcj1pbmNvbXBhdGlibGUtcG9pbnRlci10
+eXBlc10KPiA+IC4uL2RyaXZlcnMvZ3B1L2RybS9oaXNpbGljb24va2lyaW4va2lyaW5fZHJtX2Fk
+ZS5jOjk5NDo1MjogZXJyb3I6ICdkZXYnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlzIGZ1
+bmN0aW9uKQo+ID4gLi4vZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9raXJpbi9raXJpbl9kcm1f
+YWRlLmM6MTA1NTo1MjogZXJyb3I6ICdkZXYnIHVuZGVjbGFyZWQgKGZpcnN0IHVzZSBpbiB0aGlz
+IGZ1bmN0aW9uKQo+ID4gLi4vZHJpdmVycy9ncHUvZHJtL2hpc2lsaWNvbi9raXJpbi9raXJpbl9k
+cm1fYWRlLmM6MTA2NToxOiBlcnJvcjogZXhwZWN0ZWQgJ30nIGJlZm9yZSAnOycgdG9rZW4KPiAK
+PiBjYXVzZWQgYnkgZDI1YmNmYjhjMiAoZHJtL2hpc2lsaWNvbjogRG9uJ3Qgc2V0IGRybV9kZXZp
+Y2UtPnBsYXRmb3JtZGV2KQo+IHdoaWNoIGRvZXMgYSBhIHBhcnRpYWwgY29udmVyc2lvbiB0byBu
+ZXcgQVBJcy4KClllYWggSSBzY3Jld2VkIHVwIHNpbmNlIEkgbmFpdmVseSBhc3N1bWVkIHRoYXQg
+Y29tcGlsZSB0ZXN0aW5nIG9uIGFybQozMmJpdCBtdWx0aWFyY2ggaXMgZ29vZCBlbm91Z2guIEkn
+bSBzZXR0aW5nIHVwIGFuIGFybTY0IGVudmlyb25tZW50IG5vdywKYnV0IHdvdWxkIGJlIG5pY2Ug
+aWYgYXJtIGZvbGtzIHdvdWxkIHN0b3AgbG92aW5nIGJhemlsbGlvbnMgb2YgY29uZmlncyBzbwpt
+dWNoIDstKQotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRl
+bCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
