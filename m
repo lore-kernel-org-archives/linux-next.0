@@ -1,47 +1,98 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: manual merge of the jc_docs tree with
- the drm-misc tree
-Date: Mon, 22 Aug 2016 08:56:54 +0200
-Message-ID: <20160822065654.GY6232@phenom.ffwll.local>
-References: <20160819115215.6585dc3a@canb.auug.org.au>
- <20160819115009.354453a6@lwn.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160819115009.354453a6@lwn.net>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Markus Heiser <markus.heiser@darmarIT.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160822 build: 0 failures 5 warnings (next-20160822)
+Date: Mon, 22 Aug 2016 09:49:03 +0100
+Message-ID: <E1bbkul-0006LE-NT@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59804 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752429AbcHVItN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2016 04:49:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-T24gRnJpLCBBdWcgMTksIDIwMTYgYXQgMTE6NTA6MDlBTSAtMDYwMCwgSm9uYXRoYW4gQ29yYmV0
-IHdyb3RlOgo+IE9uIEZyaSwgMTkgQXVnIDIwMTYgMTE6NTI6MTUgKzEwMDAKPiBTdGVwaGVuIFJv
-dGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gCj4gPiBUb2RheSdzIGxpbnV4
-LW5leHQgbWVyZ2Ugb2YgdGhlIGpjX2RvY3MgdHJlZSBnb3QgYSBjb25mbGljdCBpbjoKPiA+IAo+
-ID4gICBEb2N1bWVudGF0aW9uL2dwdS9pbmRleC5yc3QKPiA+IAo+ID4gYmV0d2VlbiBjb21taXQ6
-Cj4gPiAKPiA+ICAgYjc1NGIzNWIwODlkICgidmdhYXJiaXRlcjogcnN0LWlmaXkgYW5kIHBvbGlz
-aCBrZXJuZWxkb2MiKQo+ID4gCj4gPiBmcm9tIHRoZSBkcm0tbWlzYyB0cmVlIGFuZCBjb21taXQ6
-Cj4gPiAKPiA+ICAgNTA1ZjcxMTE3NGIwICgiZG9jLXJzdDogYWRkIGluZGV4IHRvIHN1Yi1mb2xk
-ZXJzIikKPiA+IAo+ID4gZnJvbSB0aGUgamNfZG9jcyB0cmVlLgo+ID4gCj4gPiBJIGZpeGVkIGl0
-IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuCj4gCj4g
-VGhhbmtzLCB0aGUgZml4IGlzIGdvb2QuCj4gCj4gRGFuaWVsOiBteSBhcG9sb2dpZXMsIEkgc2hv
-dWxkIGhhdmUgYXNrZWQgZm9yIHRoYXQgcGF0Y2ggdG8gYmUgc3BsaXQgdXAKPiBhbmQgdGhlIHJl
-bGV2YW50IHBpZWNlcyBzZW50IHRocm91Z2ggdGhlIGdwdSBhbmQgbWVkaWEgdHJlZXMuCgpObyB3
-b3JyaWVzLCBhcyBmYXIgYXMgY29uZmxpY3RzIGdvIHRoaXMgb25lIGlzIHRyaXZpYWwgOy0pIEFu
-ZCBJIHRoaW5rIGEKZmV3IGNvbmZsaWN0cyB3aGlsZSB3ZSBzaGFrZSBvdXQgYmVzdCBwcmFjdGlj
-ZXMgZm9yIHRoZSBuZXcgZG9jCmluZnJhc3RydWN0dXJlIGluIHZhcmlvdXMgdHJlZXMgaXMgcGVy
-ZmVjdGx5IGZpbmUuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50
-ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+Tree/Branch: next-20160822
+Git describe: next-20160822
+Commit: d18b09e429 Add linux-next specific files for 20160822
+
+Build Time: 93 min 5 sec
+
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 5
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+     30 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 5
+	 26 ../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+	  1 ../include/linux/qed/common_hsi.h:28:48: warning: left shift count >= width of type [-Wshift-count-overflow]
+	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 30 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:28:48: warning: left shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
+	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
