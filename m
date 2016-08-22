@@ -1,98 +1,76 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160822 build: 0 failures 5 warnings (next-20160822)
-Date: Mon, 22 Aug 2016 09:49:03 +0100
-Message-ID: <E1bbkul-0006LE-NT@optimist>
+From: Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Mon, 22 Aug 2016 20:47:58 +1000
+Message-ID: <20160822204758.5b2cff63@roar.ozlabs.ibm.com>
+References: <20160817114443.67675413@canb.auug.org.au>
+        <e6fbe17c-1981-1579-433d-88462d2efb58@suse.cz>
+        <20160818110948.52f1322d@roar.ozlabs.ibm.com>
+        <20160819133854.17a7b1ca@canb.auug.org.au>
+        <20160819150914.36106b5b@canb.auug.org.au>
+        <5babe9ef-0e3d-6975-9ba4-9a29a700b24d@suse.cz>
+        <20160819204455.6351ffb8@roar.ozlabs.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59804 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752429AbcHVItN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2016 04:49:13 -0400
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:35828 "EHLO
+        mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754269AbcHVKsN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 22 Aug 2016 06:48:13 -0400
+In-Reply-To: <20160819204455.6351ffb8@roar.ozlabs.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, PowerPC <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
 
-Tree/Branch: next-20160822
-Git describe: next-20160822
-Commit: d18b09e429 Add linux-next specific files for 20160822
+On Fri, 19 Aug 2016 20:44:55 +1000
+Nicholas Piggin <npiggin@gmail.com> wrote:
 
-Build Time: 93 min 5 sec
+> On Fri, 19 Aug 2016 10:37:00 +0200
+> Michal Marek <mmarek@suse.cz> wrote:
+> 
+> > On 2016-08-19 07:09, Stephen Rothwell wrote:  
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+[snip]
 
-Errors: 0
-Warnings: 5
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-     30 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 5
-	 26 ../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../include/linux/qed/common_hsi.h:28:48: warning: left shift count >= width of type [-Wshift-count-overflow]
-	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
+> > > 
+> > > I may be missing something, but genksyms generates the crc's off the
+> > > preprocessed C source code and we don't have any for the asm files ...    
+> > 
+> > Of course you are right. Which means that we are losing type information
+> > for these exports for CONFIG_MODVERSIONS purposes. I guess it's
+> > acceptable, since the asm functions are pretty basic and their
+> > signatures do not change.  
+> 
+> I don't completely agree. It would be nice to have the functionality
+> still there.
+> 
+> What happens if you just run cmd_modversions on the as rule? It relies on
+> !defined(__ASSEMBLY__), but we're feeding the result to genksyms, not as.
+> It would require the header be included in the .S file and be protected for
+> asm builds.
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+This seems like it *could* be made to work, but there's a few problems.
 
-Warnings:
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+- .h files are not made for C consumption. Matter of manually adding the
+ifdef guards, which isn't terrible.
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 30 warnings, 0 section mismatches
+- .S files do not all include their .h where the C declaration is. Also
+will cause some churn but doable and maybe not completely unreasonable.
 
-Warnings:
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:28:48: warning: left shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../include/linux/qed/common_hsi.h:17:58: warning: right shift count >= width of type [-Wshift-count-overflow]
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
--------------------------------------------------------------------------------
+- genksyms parser barfs when it hits the assembly of the .S file. Best
+way to fix that seems just send the #include and EXPORT_SYMBOL lines
+from the .S to the preprocessor. That's a bit of a rabbit hole too, with
+some .S files being included, etc.
 
-Passed with no errors, warnings or mismatches:
+I'm not sure what to do here. If nobody cares and we lose CRCs for .S
+exports, then okay we can whitelist those relocs easily. If we don't want
+to lose the functionality, the above might work but it's a bit intrusive
+an is going to require another cycle of prep patches to go through arch
+code first.
 
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Or suggestions for alternative approach?
+
+Thanks,
+Nick
