@@ -1,41 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-intel tree
-Date: Tue, 23 Aug 2016 11:56:14 +1000
-Message-ID: <20160823115614.3182f7db@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 23 Aug 2016 12:27:14 +1000
+Message-ID: <20160823122714.476a246f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37869 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754407AbcHWC1R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 22 Aug 2016 22:27:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Hsu <KCHSU0@nuvoton.com>
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLWludGVsIHRyZWUsIHRvZGF5J3MgbGludXgt
-bmV4dCBidWlsZCAoYXJtCm11bHRpX3Y3X2RlZmNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoKCklu
-IGZpbGUgaW5jbHVkZWQgZnJvbSBkcml2ZXJzL2dwaW8vZ3Bpb2xpYi1vZi5jOjE5OjA6CmluY2x1
-ZGUvbGludXgvaW8tbWFwcGluZy5oOjExNTozMTogZmF0YWwgZXJyb3I6IGFzbS9wZ3RhYmxlX3R5
-cGVzLmg6IE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkKSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRy
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZpZi9vcy5oOjE2OjAsCiAgICAgICAgICAg
-ICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS9vcy5o
-OjMsCiAgICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9pbmNsdWRl
-L252a20vY29yZS9vYmplY3QuaDozLCAgIAogICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9n
-cHUvZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvY2xpZW50Lmg6MywgICAKICAgICAgICAg
-ICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252a20vY29yZS9jbGllbnQuYzoy
-NDoKaW5jbHVkZS9saW51eC9pby1tYXBwaW5nLmg6MTE1OjMxOiBmYXRhbCBlcnJvcjogYXNtL3Bn
-dGFibGVfdHlwZXMuaDogTm8gc3VjaCBmaWxlIG9yIGRpcmVjdG9yeQoKYW5kIG1hbnkgbW9yZS4K
-CkNhdXNlZCBieSBjb21taXQKCiAgY2FmYWYxNGE1ZDhmICgiaW8tbWFwcGluZzogQWx3YXlzIGNy
-ZWF0ZSBhIHN0cnVjdCB0byBob2xkIG1ldGFkYXRhIGFib3V0IHRoZSBpby1tYXBwaW5nIikKCkkg
-aGF2ZSB1c2VkIHRoZSBkcm0taW50ZWwgdHJlZSBmcm9tIG5leHQtMjAxNjA4MjIgZm9yIHRvZGF5
-LgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi all,
+
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from include/sound/soc.h:415:0,
+                 from sound/soc/codecs/nau8810.c:27:
+sound/soc/codecs/nau8810.c:441:3: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+   &nau8810_loopback),
+   ^
+include/sound/soc-dapm.h:111:19: note: in definition of macro 'SND_SOC_DAPM_SWITCH'
+  .kcontrol_news = wcontrols, .num_kcontrols = 1}
+                   ^
+sound/soc/codecs/nau8810.c:441:3: note: (near initialization for 'nau8810_dapm_widgets[11].kcontrol_news')
+   &nau8810_loopback),
+   ^
+include/sound/soc-dapm.h:111:19: note: in definition of macro 'SND_SOC_DAPM_SWITCH'
+  .kcontrol_news = wcontrols, .num_kcontrols = 1}
+                   ^
+
+Caused by commit
+
+  b6970b48e384 ("ASoC: nau8810: Add driver for Nuvoton codec chip NAU88C10")
+
+I have used the sound-asoc tree from next-20160822 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
