@@ -1,41 +1,63 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: linux-next: build warning after merge of the thermal tree
-Date: Wed, 24 Aug 2016 15:56:13 +0800
-Message-ID: <1472025373.2682.42.camel@intel.com>
-References: <20160824133833.3e92892a@canb.auug.org.au>
+From: Jani Nikula <jani.nikula@linux.intel.com>
+Subject: Re: [Intel-gfx] linux-next: manual merge of the drm-intel tree with
+ the drm-intel-fixes tree
+Date: Wed, 24 Aug 2016 16:33:59 +0300
+Message-ID: <8737lu70l4.fsf@intel.com>
+References: <20160824114206.17c98d9d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:16050 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751576AbcHXH5G (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 24 Aug 2016 03:57:06 -0400
-In-Reply-To: <20160824133833.3e92892a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Kucheria <amit.kucheria@linaro.org>, Leo Yan <leo.yan@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160824114206.17c98d9d@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On 三, 2016-08-24 at 13:38 +1000, Stephen Rothwell wrote:
-> Hi Zhang,
-> 
-> After merging the thermal tree, today's linux-next build (powerpc
-> allyesconfig) produced this warning:
-> 
-> warning: (HISI_THERMAL) selects STUB_CLK_HI6220 which has unmet
-> direct dependencies (COMMON_CLK && COMMON_CLK_HI6220 && MAILBOX)
-> 
-> Introduced by commit
-> 
->   5f63581ce68e ("thermal: hisilicon: Add dependency on the clock
-> driver to allow frequency scaling")
-> 
-> BTW: That commit message does not match the change (which adds a
-> "select" not a "depends on".
-> 
-Right, thanks for reporting the issue. Patch dropped from thermal -next
-tree.
-
-thanks,
-rui
+T24gV2VkLCAyNCBBdWcgMjAxNiwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcu
+YXU+IHdyb3RlOgo+IEhpIGFsbCwKPgo+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUg
+ZHJtLWludGVsIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4KPiAgIGRyaXZlcnMvZ3B1L2RybS9p
+OTE1L2ludGVsX2Rpc3BsYXkuYwo+Cj4gYmV0d2VlbiBjb21taXRzIGZyb20gdGhlIGRybS1pbnRl
+bC1maXhlcyB0cmVlIChzb21lIG9mIHdoaWNoIGFyZQo+IGNoZXJyeS1waWNrZWQgZnJvbSB0aGUg
+ZHJtLWludGVsIHRyZWUpIGFuZCB0ZWggc2FtZSBhbmQgb3RoZXIgY29tbWl0cwo+IGZyb20gdGhl
+IGRybS1pbnRlIHRyZWUuICBUaGVzZSBhcmUganVzdCBnb2luZyB0byBjYXVzZSBuZXcgY29uZmxp
+Y3RzCj4gZXZlcnkgdGltZSB5b3UgdG91Y2ggdGhpcyBmaWxlIGFnYWluIGluIGVpdGhlciB0cmVl
+ICh3aGljaCBoYXBwZW5zIGEKPiBsb3QgOi0oKS4KPgo+IEkgZml4ZWQgaXQgdXAgKHNlZSBiZWxv
+dykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwo+IGlzIG5vdyBmaXhl
+ZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwK
+PiBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWlu
+ZXIgd2hlbiB5b3VyIHRyZWUKPiBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFs
+c28gd2FudCB0byBjb25zaWRlciBvbmx5IHB1dHRpbmcKPiB0aGUgZml4IHBhdGNoZXMgaW50byB0
+aGUgZHJtLWludGVsLWZpeGVzIHRyZWUgYW5kIHRoZW4gZ2V0dGluZyB0aGVtCj4gaW50byB0aGUg
+ZHJtLWludGVsIHRyZWUgYnkgbWVyZ2luZyB0aGUgLWZpeGVzIHRyZWUgaW5zdGVhZCBvZgo+IGNo
+ZXJyeS1waWNraW5nIHRoZW0gdGhlIG90aGVyIHdheS4KCldlIHVzZWQgdG8gZG8gdGhhdCwgYnV0
+IHN3aXRjaGVkIHRvIHRoZSBjdXJyZW50IG1vZGVsIGluc3RlYWQuIFRoZSBtYWluCnJlYXNvbiB3
+YXMgdGhhdCB3ZSB3YW50ZWQgb3VyIGRldmVsb3BtZW50IGJyYW5jaCB0byBhbHdheXMgZ2V0IHRo
+ZSBmaXhlcwpmaXJzdCwgd2l0aG91dCBkZWxheS4gV2UgaGF2ZSBzZXZlcmFsIGNvbW1pdHRlcnMs
+IGFuZCB3ZSB3YW50IHRvIG1ha2UgaXQKZWZmaWNpZW50IGFuZCBoYXNzbGUgZnJlZSBmb3IgdGhl
+bSB0byBnZXQgZml4ZXMgYXBwbGllZC4KClRoZSBkcm0taW50ZWwgdHJlZSBpcyBhIGZhc3QgbW92
+aW5nIHRhcmdldC4gSWYgd2UgZml4IHNvbWV0aGluZyBpbgotZml4ZXMsIHRoZXJlJ3Mgbm8gZ3Vh
+cmFudGVlIHRoZSBmaXggYXBwbGllcyB0byAtbmV4dC4gSXQgaXMgbW9yZQppbXBvcnRhbnQgdGhh
+dCB3ZSBnZXQgdGhlIGZpeCBpbiAtbmV4dCwgYW5kIGFsbCBmdXR1cmUga2VybmVscy4gSWYgdGhl
+CmZpeCBpcyBpbXBvcnRhbnQgZm9yIGN1cnJlbnQgYW5kIHN0YWJsZSBrZXJuZWxzLCB3ZSBjYW4g
+ZG8gdGhlCmJhY2twb3J0LiBUaGlzIHdheSwgd2UgY2FuIGFsd2F5cyByZXNvbHZlIGNvbmZsaWN0
+cyB3aXRoIHRoZSBjb2RlIGluCi1uZXh0LCBhbmQgYmUgc3VyZSBpdCBjb250YWlucyBhbGwgdGhl
+IGZpeGVzLiBJZiBvbmx5IC1maXhlcyBoYWQgdGhlCmZpeGVzLCB3ZSdkIGhhdmUgbmlnaHRtYXJl
+IGNvbmZsaWN0IHJlc29sdXRpb25zIHRyeWluZyB0byBlbnN1cmUgbm9uZSBvZgp0aGUgZml4ZXMg
+Z2V0IGRyb3BwZWQgd2hpbGUgbWVyZ2luZy4KCkZpbmFsbHksIHlvdSBkb24ndCBhbHdheXMga25v
+dyBpbiBhZHZhbmNlIHdoZXRoZXIgdGhlIHBhdGNoIHNob3VsZCBiZQphcHBsaWVkIHRvIC1uZXh0
+IG9yIC1maXhlcy4gV2UnZCBlbmQgdXAgd2l0aCBjaGVycnktcGlja3MgbGlrZSB0aGlzCmFueXdh
+eS4gTm93IHdlIGNhbiBkbyBRQSBvbiB0aGUgZml4ZXMgaW4gLW5leHQsIGFuZCBjaG9vc2UgdGhl
+IG9uZXMgdG8KYmFja3BvcnQuCgpCUiwKSmFuaS4KCgotLSAKSmFuaSBOaWt1bGEsIEludGVsIE9w
+ZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
