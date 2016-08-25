@@ -1,31 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Aug 25
-Date: Thu, 25 Aug 2016 15:02:27 +1000
-Message-ID: <20160825150227.3b6e7661@canb.auug.org.au>
-References: <20160825145459.6b252d0a@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160825 build: 0 failures 4 warnings (next-20160825)
+Date: Thu, 25 Aug 2016 09:18:31 +0100
+Message-ID: <E1bcprr-0005vM-BV@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52215 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754973AbcHYF1a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 25 Aug 2016 01:27:30 -0400
-In-Reply-To: <20160825145459.6b252d0a@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39398 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755631AbcHYITI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2016 04:19:08 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi all,
+Tree/Branch: next-20160825
+Git describe: next-20160825
+Commit: 0f98f121e1 Add linux-next specific files for 20160825
 
-On Thu, 25 Aug 2016 14:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Changes since 20160824:
+Build Time: 93 min 1 sec
 
-Just a reminder that I will not doing a linux-next release until
-next-20160905 (i.e. Monday week my time).
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
--- 
-Cheers,
-Stephen Rothwell
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  3 ../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
+	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
+	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
+	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
