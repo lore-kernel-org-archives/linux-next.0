@@ -1,31 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the crypto tree
-Date: Thu, 25 Aug 2016 11:38:24 +1000
-Message-ID: <20160825113824.61ca7364@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 25
+Date: Thu, 25 Aug 2016 15:02:27 +1000
+Message-ID: <20160825150227.3b6e7661@canb.auug.org.au>
+References: <20160825145459.6b252d0a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52215 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754973AbcHYF1a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Aug 2016 01:27:30 -0400
+In-Reply-To: <20160825145459.6b252d0a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-Hi Herbert,
+Hi all,
 
-After merging the crypto tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+On Thu, 25 Aug 2016 14:54:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Changes since 20160824:
 
-crypto/xor.c: In function 'calibrate_xor_blocks':
-crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
- out:
- ^
-
-Introduced by commit
-
-  39457acda913 ("crypto: xor - skip speed test if the xor function is selected automatically")
-
-This build does not have XOR_SELECT_TEMPLATE set.
+Just a reminder that I will not doing a linux-next release until
+next-20160905 (i.e. Monday week my time).
 
 -- 
 Cheers,
