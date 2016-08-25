@@ -1,78 +1,73 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160825 build: 0 failures 4 warnings (next-20160825)
-Date: Thu, 25 Aug 2016 09:18:31 +0100
-Message-ID: <E1bcprr-0005vM-BV@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39398 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755631AbcHYITI (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 25 Aug 2016 04:19:08 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build warning after merge of the crypto tree
+Date: Thu, 25 Aug 2016 15:47:01 +0800
+Message-ID: <20160825074701.GA11175@gondor.apana.org.au>
+References: <20160825113824.61ca7364@canb.auug.org.au>
+ <20160825082010.5523ae6f@mschwide>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160825082010.5523ae6f@mschwide>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160825
-Git describe: next-20160825
-Commit: 0f98f121e1 Add linux-next specific files for 20160825
+On Thu, Aug 25, 2016 at 08:20:10AM +0200, Martin Schwidefsky wrote:
+> On Thu, 25 Aug 2016 11:38:24 +1000
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi Herbert,
+> > 
+> > After merging the crypto tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> > 
+> > crypto/xor.c: In function 'calibrate_xor_blocks':
+> > crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
+> >  out:
+> >  ^
+> > 
+> > Introduced by commit
+> > 
+> >   39457acda913 ("crypto: xor - skip speed test if the xor function is selected automatically")
+> > 
+> > This build does not have XOR_SELECT_TEMPLATE set.
+> 
+> Hmm, this is probably the best option to get rid of the warning: 
 
-Build Time: 93 min 1 sec
+I'm going to do something like this:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+---8<---
+This patch fixes an unused label warning triggered when the macro
+XOR_SELECT_TEMPLATE is not set.
 
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
+Fixes: 39457acda913 ("crypto: xor - skip speed test if the xor...")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+diff --git a/crypto/xor.c b/crypto/xor.c
+index b8975d9..69866e9 100644
+--- a/crypto/xor.c
++++ b/crypto/xor.c
+@@ -113,13 +113,14 @@ calibrate_xor_blocks(void)
+ 
+ #ifdef XOR_SELECT_TEMPLATE
+ 	fastest = XOR_SELECT_TEMPLATE(fastest);
++#endif
++
+ 	if (fastest) {
+ 		printk(KERN_INFO "xor: automatically using best "
+ 				 "checksumming function   %-10s\n",
+ 		       fastest->name);
+ 		goto out;
+ 	}
+-#endif
+ 
+ 	/*
+ 	 * Note: Since the memory is not actually used for _anything_ but to
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 4
-	  3 ../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
-	  2 ../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
-	../drivers/video/fbdev/mb862xx/mb862xx-i2c.c:160:6: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/qlogic/qede/qede_ethtool.c:63:5: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../crypto/xor.c:156:1: warning: label 'out' defined but not used [-Wunused-label]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
