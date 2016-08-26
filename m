@@ -1,125 +1,79 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Fri, 26 Aug 2016 06:21:27 +0000
-Message-ID: <20160826062127.GA13930@osadl.at>
-References: <20160817114443.67675413@canb.auug.org.au>
- <e6fbe17c-1981-1579-433d-88462d2efb58@suse.cz>
- <20160818110948.52f1322d@roar.ozlabs.ibm.com>
- <20160819133854.17a7b1ca@canb.auug.org.au>
- <20160819150914.36106b5b@canb.auug.org.au>
- <5babe9ef-0e3d-6975-9ba4-9a29a700b24d@suse.cz>
- <20160819204455.6351ffb8@roar.ozlabs.ibm.com>
- <20160822204758.5b2cff63@roar.ozlabs.ibm.com>
- <20160826135803.0c5ffb42@roar.ozlabs.ibm.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: crypto: xor - Fix warning when XOR_SELECT_TEMPLATE is unset
+Date: Fri, 26 Aug 2016 23:19:39 +0800
+Message-ID: <20160826151938.GA22619@gondor.apana.org.au>
+References: <20160825113824.61ca7364@canb.auug.org.au>
+ <20160825082010.5523ae6f@mschwide>
+ <20160825074701.GA11175@gondor.apana.org.au>
+ <20160825211411.08858397@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.osadl.at ([92.243.35.153]:46349 "EHLO mail.osadl.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750849AbcHZG2Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 26 Aug 2016 02:28:24 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160826135803.0c5ffb42@roar.ozlabs.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Michal Marek <mmarek@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, PowerPC <linuxppc-dev@lists.ozlabs.org>, linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, linux-kbuild@vger.kernel.org
+In-Reply-To: <20160825211411.08858397@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 26, 2016 at 01:58:03PM +1000, Nicholas Piggin wrote:
-> On Mon, 22 Aug 2016 20:47:58 +1000
-> Nicholas Piggin <npiggin@gmail.com> wrote:
+On Thu, Aug 25, 2016 at 09:14:11PM +1000, Stephen Rothwell wrote:
+>
+> That looks fine to me.  An alternative might be to have:
 > 
-> > On Fri, 19 Aug 2016 20:44:55 +1000
-> > Nicholas Piggin <npiggin@gmail.com> wrote:
-> > 
-> > > On Fri, 19 Aug 2016 10:37:00 +0200
-> > > Michal Marek <mmarek@suse.cz> wrote:
-> > >   
-> > > > On 2016-08-19 07:09, Stephen Rothwell wrote:    
-> > 
-> > [snip]
-> > 
-> > > > > 
-> > > > > I may be missing something, but genksyms generates the crc's off the
-> > > > > preprocessed C source code and we don't have any for the asm files ...      
-> > > > 
-> > > > Of course you are right. Which means that we are losing type information
-> > > > for these exports for CONFIG_MODVERSIONS purposes. I guess it's
-> > > > acceptable, since the asm functions are pretty basic and their
-> > > > signatures do not change.    
-> > > 
-> > > I don't completely agree. It would be nice to have the functionality
-> > > still there.
-> > > 
-> > > What happens if you just run cmd_modversions on the as rule? It relies on
-> > > !defined(__ASSEMBLY__), but we're feeding the result to genksyms, not as.
-> > > It would require the header be included in the .S file and be protected for
-> > > asm builds.  
-> > 
-> > 
-> > This seems like it *could* be made to work, but there's a few problems.
-> > 
-> > - .h files are not made for C consumption. Matter of manually adding the
-> > ifdef guards, which isn't terrible.
-> > 
-> > - .S files do not all include their .h where the C declaration is. Also
-> > will cause some churn but doable and maybe not completely unreasonable.
-> > 
-> > - genksyms parser barfs when it hits the assembly of the .S file. Best
-> > way to fix that seems just send the #include and EXPORT_SYMBOL lines
-> > from the .S to the preprocessor. That's a bit of a rabbit hole too, with
-> > some .S files being included, etc.
-> > 
-> > I'm not sure what to do here. If nobody cares and we lose CRCs for .S
-> > exports, then okay we can whitelist those relocs easily. If we don't want
-> > to lose the functionality, the above might work but it's a bit intrusive
-> > an is going to require another cycle of prep patches to go through arch
-> > code first.
-> > 
-> > Or suggestions for alternative approach?
+> #ifndef XOR_SELECT_TEMPLATE
+> #define XOR_SELECT_TEMPLATE(x)	(x)
+> #endif
 > 
-> Here is a quick patch that I think should catch missing CRCs in
-> architecture independent way. If we merge something like this, we
-> can whitelist the symbols in arch/powerpc so people get steered to
-> the right place.
-> 
-> Powerpc seems to be the only one really catching this, and it's
-> only as a side effect of a test run for CONFIG_RELOCATABLE kernels,
-> which means version failures probably slipped through other archs.
-> 
-> I'll clean it up, do some more testing, and submit it unless
-> anybody dislikes it or has a better way to do it.
-> 
-> Thanks,
-> Nick
-> 
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 4b8ffd3..1efc454 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -609,6 +609,7 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
->  {
->  	unsigned int crc;
->  	enum export export;
-> +	int is_crc = 0;
+> near the top of the file.  That gets the #ifdef out of the code flow
+> and serves as some hint that such a thing can be defined by arch header
+> files.
 
-should that not be a bool here ?
+Good idea.  Thanks Stephen.
 
->  
->  	if ((!is_vmlinux(mod->name) || mod->is_dot_o) &&
->  	    strncmp(symname, "__ksymtab", 9) == 0)
-> @@ -618,6 +619,7 @@ static void handle_modversions(struct module *mod, struct elf_info *info,
->  
->  	/* CRC'd symbol */
->  	if (strncmp(symname, CRC_PFX, strlen(CRC_PFX)) == 0) {
-> +		is_crc = 1;
+---8<---
+This patch fixes an unused label warning triggered when the macro
+XOR_SELECT_TEMPLATE is not set.
 
-is_crc = true;
+Fixes: 39457acda913 ("crypto: xor - skip speed test if the xor...")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
->  		crc = (unsigned int) sym->st_value;
->  		sym_update_crc(symname + strlen(CRC_PFX), mod, crc,
->  				export);
-
-thx!
-hofrat
+diff --git a/crypto/xor.c b/crypto/xor.c
+index b8975d9..263af9f 100644
+--- a/crypto/xor.c
++++ b/crypto/xor.c
+@@ -24,6 +24,10 @@
+ #include <linux/preempt.h>
+ #include <asm/xor.h>
+ 
++#ifndef XOR_SELECT_TEMPLATE
++#define XOR_SELECT_TEMPLATE(x) (x)
++#endif
++
+ /* The xor routines to use.  */
+ static struct xor_block_template *active_template;
+ 
+@@ -109,17 +113,14 @@ calibrate_xor_blocks(void)
+ 	void *b1, *b2;
+ 	struct xor_block_template *f, *fastest;
+ 
+-	fastest = NULL;
++	fastest = XOR_SELECT_TEMPLATE(NULL);
+ 
+-#ifdef XOR_SELECT_TEMPLATE
+-	fastest = XOR_SELECT_TEMPLATE(fastest);
+ 	if (fastest) {
+ 		printk(KERN_INFO "xor: automatically using best "
+ 				 "checksumming function   %-10s\n",
+ 		       fastest->name);
+ 		goto out;
+ 	}
+-#endif
+ 
+ 	/*
+ 	 * Note: Since the memory is not actually used for _anything_ but to
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
