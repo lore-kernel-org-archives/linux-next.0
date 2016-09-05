@@ -1,60 +1,43 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 6 (scsi_debug.c)
-Date: Fri, 2 Sep 2016 08:40:47 -0700
-Message-ID: <dfed0e24-0ea1-d364-9a6a-d07e3d55d178@infradead.org>
-References: <20160606142058.44b82e38@canb.auug.org.au>
- <57563B40.4090801@infradead.org>
- <CALLJCT0r7FfL=rLARTV9-YB-x10d1w0hYMOO6BC-dv8zGC4VLA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Mon, 5 Sep 2016 10:58:03 +1000
+Message-ID: <20160905105803.13ed27ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALLJCT0r7FfL=rLARTV9-YB-x10d1w0hYMOO6BC-dv8zGC4VLA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masanari Iida <standby24x7@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35016 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754146AbcIEA6x (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Sep 2016 20:58:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>
 
-On 08/23/16 16:22, Masanari Iida wrote:
-> This one still exist on linus's tree (as of  v4.8-rc3).
-> 
-> CALL    scripts/checksyscalls.sh
->   CHK     kernel/config_data.h
->   Building modules, stage 2.
->   MODPOST 720 modules
-> ERROR: "ip_compute_csum" [drivers/scsi/scsi_debug.ko] undefined!
-> scripts/Makefile.modpost:91: recipe for target '__modpost' failed
-> make[1]: *** [__modpost] Error 1
-> Makefile:1178: recipe for target 'modules' failed
-> make: *** [modules] Error 2
-> 
-> Masanari
+Hi all,
 
-Hi,
+Today's linux-next merge of the arm-soc tree got a conflict in:
 
-Do you have the kernel .config file that causes this?
-I can no longer reproduce it.
+  arch/arm/mach-realview/core.c
 
-What $arch did you build on?
+between commit:
 
-Thanks.
+  2fb04fdf3019 ("net: smc91x: fix SMC accesses")
 
-> On Tue, Jun 7, 2016 at 12:10 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 06/05/16 21:20, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20160603:
->>
->> on x86_64:
->>
->> ERROR: "ip_compute_csum" [drivers/scsi/scsi_debug.ko] undefined!
->>
->> CONFIG_GENERIC_CSUM doesn't seem to exist for x86, so lib/checksum.o is not built.
->>
->>
->> --
->> ~Randy
+from Linus' tree and commit:
 
+  7484c727b636 ("ARM: realview: delete the RealView board files")
+
+from the arm-soc tree.
+
+I fixed it up (I deleted the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
