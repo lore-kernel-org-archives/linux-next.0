@@ -1,41 +1,37 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: manual merge of the tty tree with the slave-dma tree
-Date: Mon, 5 Sep 2016 21:23:21 +0530
-Message-ID: <20160905155321.GT9355@localhost>
-References: <20160905164321.4dd8801b@canb.auug.org.au>
- <20160905112802.GJ9355@localhost>
- <20160905113333.GA27586@kroah.com>
- <20160905124305.GQ9355@localhost>
- <20160905135541.GA13403@kroah.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 5 (kernel/events/core.c)
+Date: Mon, 5 Sep 2016 09:39:49 -0700
+Message-ID: <e568fff8-c23f-877e-5a74-ab4b355126e0@infradead.org>
+References: <20160905192502.24dd8d80@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160905135541.GA13403@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nandor Han <nandor.han@ge.com>, Dave Jiang <dave.jiang@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from merlin.infradead.org ([205.233.59.134]:60010 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754197AbcIEQj5 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Sep 2016 12:39:57 -0400
+In-Reply-To: <20160905192502.24dd8d80@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, acme@kernel.org
 
-On Mon, Sep 05, 2016 at 03:55:41PM +0200, Greg KH wrote:
-> On Mon, Sep 05, 2016 at 06:13:05PM +0530, Vinod Koul wrote:
-> > > > Stephen,
-> > > > 
-> > > > The fix looks right to me.
-> > > > 
-> > > > Greg let me know if you would like me to merge this to avoid conflict
-> > > 
-> > > Sure, which way do you want to merge, do you want me to pull your tree
-> > > into mine, or do you want to pull my tree into yours?  Either is fine
-> > > with me.
-> > 
-> > Great, I would prefer to pull.
+On 09/05/16 02:25, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Do you want a signed tag, or do you just want to pull my tty-next branch
-> directly into your tree?
+> Changes since 20160825:
+> 
 
-Signed tag would be better
 
-Thanks
+on i386 or x86_64:
+when CONFIG_EVENT_TRACING is not enabled:
+
+../kernel/events/core.c: In function 'perf_event_alloc':
+../kernel/events/core.c:9106:27: error: 'bpf_overflow_handler' undeclared (first use in this function)
+   if (overflow_handler == bpf_overflow_handler) {
+                           ^
+
+
 -- 
-~Vinod
+~Randy
