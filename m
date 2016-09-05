@@ -1,57 +1,41 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160905 build: 1 failures 0 warnings (next-20160905)
-Date: Mon, 05 Sep 2016 15:00:14 +0100
-Message-ID: <E1bguRZ-0000aL-S7@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49300 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932395AbcIEOAZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Sep 2016 10:00:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: linux-next: manual merge of the tty tree with the slave-dma tree
+Date: Mon, 5 Sep 2016 21:23:21 +0530
+Message-ID: <20160905155321.GT9355@localhost>
+References: <20160905164321.4dd8801b@canb.auug.org.au>
+ <20160905112802.GJ9355@localhost>
+ <20160905113333.GA27586@kroah.com>
+ <20160905124305.GQ9355@localhost>
+ <20160905135541.GA13403@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160905135541.GA13403@kroah.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nandor Han <nandor.han@ge.com>, Dave Jiang <dave.jiang@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160905
-Git describe: next-20160905
-Commit: 0693c28cfc Add linux-next specific files for 20160905
+On Mon, Sep 05, 2016 at 03:55:41PM +0200, Greg KH wrote:
+> On Mon, Sep 05, 2016 at 06:13:05PM +0530, Vinod Koul wrote:
+> > > > Stephen,
+> > > > 
+> > > > The fix looks right to me.
+> > > > 
+> > > > Greg let me know if you would like me to merge this to avoid conflict
+> > > 
+> > > Sure, which way do you want to merge, do you want me to pull your tree
+> > > into mine, or do you want to pull my tree into yours?  Either is fine
+> > > with me.
+> > 
+> > Great, I would prefer to pull.
+> 
+> Do you want a signed tag, or do you just want to pull my tty-next branch
+> directly into your tree?
 
-Build Time: 84 min 26 sec
+Signed tag would be better
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
-
-Failed defconfigs:
-
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks
+-- 
+~Vinod
