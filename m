@@ -1,57 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the y2038 tree with the net-next tree
-Date: Mon, 5 Sep 2016 18:08:45 +1000
-Message-ID: <20160905180845.7f6f63b8@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 5 Sep 2016 19:19:17 +1000
+Message-ID: <20160905191917.4ca6dd56@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35782 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38379 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754961AbcIEIIs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Sep 2016 04:08:48 -0400
+        id S1751648AbcIEJTU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Sep 2016 05:19:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Tina Ruchandani <ruchandani.tina@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-Hi Arnd,
+Hi Andrew,
 
-Today's linux-next merge of the y2038 tree got a conflict in:
+After merging the akpm tree, today's linux-next build (powerpc
+pseries_le_defconfig) failed like this:
 
-  fs/afs/main.c
+powerpc-linux-ld: arch/powerpc/purgatory/purgatory.o: compiled for a big endian system and target is little endian  
+powerpc-linux-ld: failed to merge target specific data of file arch/powerpc/purgatory/purgatory.o
+powerpc-linux-ld: arch/powerpc/purgatory/printf.o: compiled for a big endian system and target is little endian
+powerpc-linux-ld: failed to merge target specific data of file arch/powerpc/purgatory/printf.o
 
-between commit:
+and so on ...
 
-  e0661dfc5961 ("afs: Need linux/random.h")
+Presumably caused by commit
 
-from the net-next tree and commit:
+  b26db279958b ("powerpc: add purgatory for kexec_file_load implementation")
 
-  549eb7b22e24 ("AFS: Correctly use 64-bit time for UUID")
+I added this patch for today:
 
-from the y2038 tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 5 Sep 2016 19:12:42 +1000
+Subject: [PATCH] disable KEXEC_FILE on powerpc for now
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 41300c3a1bfe..86ea07d7ead2 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -467,6 +467,7 @@ config KEXEC_FILE
+ 	depends on PPC64
+ 	depends on CRYPTO=y
+ 	depends on CRYPTO_SHA256=y
++	depends on BROKEN
+ 	help
+ 	  This is a new version of the kexec system call. This call is
+ 	  file based and takes in file descriptors as system call arguments
+-- 
+2.8.1
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/afs/main.c
-index 0b187ef3b5b7,129ff432391c..000000000000
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@@ -14,7 -14,7 +14,8 @@@
-  #include <linux/init.h>
-  #include <linux/completion.h>
-  #include <linux/sched.h>
- +#include <linux/random.h>
-+ #include <linux/ktime.h>
-  #include "internal.h"
-  
-  MODULE_DESCRIPTION("AFS Client File System");
