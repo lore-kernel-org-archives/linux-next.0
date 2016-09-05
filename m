@@ -1,68 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung-krzk tree with the arm-soc
- tree
-Date: Mon, 5 Sep 2016 11:19:48 +1000
-Message-ID: <20160905111948.553487be@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Mon, 5 Sep 2016 11:27:42 +1000
+Message-ID: <20160905112742.668cb341@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:38885 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754244AbcIEB1p (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Sep 2016 21:27:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Will Deacon <will.deacon@arm.com>
 
-Hi Krzysztof,
+Hi Catalin,
 
-Today's linux-next merge of the samsung-krzk tree got a conflict in:
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-  arch/arm64/boot/dts/exynos/exynos7.dtsi
+  arch/arm64/kernel/head.S
 
 between commit:
 
-  585dcacac6bb ("arm64: dts: Fix broken architected timer interrupt trigger")
+  fd363bd417dd ("arm64: avoid TLB conflict with CONFIG_RANDOMIZE_BASE")
 
-from the arm-soc tree and commit:
+from Linus' tree and commit:
 
-  36d1c9cd07cd ("arm64: dts: exynos: Use human-friendly symbols for timer interrupt flags")
+  3c5e9f238bc4 ("arm64: head.S: move KASLR processing out of __enable_mmu()")
 
-from the samsung-krzk tree.
+from the arm64 tree.
 
-I fixed it up (I *think* - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (the latter included the former change, so I just used that)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 162831546e18,8d7ce97c0ddb..000000000000
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@@ -473,10 -474,14 +474,14 @@@
-  
-  		timer {
-  			compatible = "arm,armv8-timer";
-- 			interrupts = <1 13 0xff08>,
-- 				     <1 14 0xff08>,
-- 				     <1 11 0xff08>,
-- 				     <1 10 0xff08>;
-+ 			interrupts = <GIC_PPI 13
- -					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_EDGE_RISING)>,
-++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+ 				     <GIC_PPI 14
- -					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_EDGE_RISING)>,
-++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+ 				     <GIC_PPI 11
- -					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_EDGE_RISING)>,
-++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+ 				     <GIC_PPI 10
- -					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_EDGE_RISING)>;
-++					(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-  		};
-  
-  		pmu_system_controller: system-controller@105c0000 {
