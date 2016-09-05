@@ -1,61 +1,43 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: manual merge of the tty tree with the slave-dma tree
-Date: Mon, 5 Sep 2016 18:13:05 +0530
-Message-ID: <20160905124305.GQ9355@localhost>
-References: <20160905164321.4dd8801b@canb.auug.org.au>
- <20160905112802.GJ9355@localhost>
- <20160905113333.GA27586@kroah.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: linux-next: please clean up the thermal-soc tree
+Date: Mon, 5 Sep 2016 06:03:35 -0700
+Message-ID: <20160905130333.GA21673@localhost.localdomain>
+References: <20160822114346.4cb45ec5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:64949 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755061AbcIEMe4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Sep 2016 08:34:56 -0400
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:33404 "EHLO
+        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932127AbcIENDi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Sep 2016 09:03:38 -0400
 Content-Disposition: inline
-In-Reply-To: <20160905113333.GA27586@kroah.com>
+In-Reply-To: <20160822114346.4cb45ec5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nandor Han <nandor.han@ge.com>, Dave Jiang <dave.jiang@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>
 
-On Mon, Sep 05, 2016 at 01:33:33PM +0200, Greg KH wrote:
-> On Mon, Sep 05, 2016 at 04:58:02PM +0530, Vinod Koul wrote:
-> > On Mon, Sep 05, 2016 at 04:43:21PM +1000, Stephen Rothwell wrote:
-> > > Hi Greg,
-> > > 
-> > > Today's linux-next merge of the tty tree got a conflict in:
-> > > 
-> > >   drivers/dma/imx-sdma.c
-> > > 
-> > > between commit:
-> > > 
-> > >   48dc77e2d4fc ("dmaengine: imx-sdma: convert callback to helper function")
-> > > 
-> > > from the slave-dma tree and commit:
-> > > 
-> > >   15f30f513111 ("dmaengine: imx-sdma - reduce transfer latency for DMA cyclic clients")
-> > > 
-> > > from the tty tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particularly
-> > > complex conflicts.
-> > 
-> > Stephen,
-> > 
-> > The fix looks right to me.
-> > 
-> > Greg let me know if you would like me to merge this to avoid conflict
+Stephen,
+
+On Mon, Aug 22, 2016 at 11:43:46AM +1000, Stephen Rothwell wrote:
+> Hi Eduardo,
 > 
-> Sure, which way do you want to merge, do you want me to pull your tree
-> into mine, or do you want to pull my tree into yours?  Either is fine
-> with me.
+> The thermal-soc tree now shares quite a few patches (but not commits)
+> with the thermal tree.  These are causing a few unnecessary conflicts,
+> so please clean it up.
 
-Great, I would prefer to pull.
+I had to be out for several weeks and my tree was broken during this
+time causing the above problem. Sorry for this.
 
--- 
-~Vinod
+I have removed the problematic patches out of linux-next way.
+
+Let me know if you still have troubles.
+
+BR,
+
+Eduardo Valentin
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
