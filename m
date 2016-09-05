@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the gpio tree with the arm64 tree
-Date: Mon, 5 Sep 2016 17:53:59 +1000
-Message-ID: <20160905175359.44fda083@canb.auug.org.au>
+Subject: linux-next: manual merge of the y2038 tree with the net-next tree
+Date: Mon, 5 Sep 2016 18:08:45 +1000
+Message-ID: <20160905180845.7f6f63b8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49748 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35782 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754940AbcIEHyH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Sep 2016 03:54:07 -0400
+        id S1754961AbcIEIIs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Sep 2016 04:08:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Will Deacon <will.deacon@arm.com>
+To: Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Tina Ruchandani <ruchandani.tina@gmail.com>
 
-Hi Linus,
+Hi Arnd,
 
-Today's linux-next merge of the gpio tree got a conflict in:
+Today's linux-next merge of the y2038 tree got a conflict in:
 
-  arch/arm64/Kconfig.platforms
+  fs/afs/main.c
 
 between commit:
 
-  67060ed148cc ("arm64: remove redundant "select HAVE_CLK"")
+  e0661dfc5961 ("afs: Need linux/random.h")
 
-from the arm64 tree and commit:
+from the net-next tree and commit:
 
-  da9a1c676754 ("arm64: do away with ARCH_[WANT_OPTIONAL|REQUIRE]_GPIOLIB")
+  549eb7b22e24 ("AFS: Correctly use 64-bit time for UUID")
 
-from the gpio tree.
+from the y2038 tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,19 +42,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/Kconfig.platforms
-index 4e0e1071f2e8,4fb0bef0f094..000000000000
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@@ -163,9 -158,9 +162,10 @@@ config ARCH_TEGR
-  	select CLKSRC_MMIO
-  	select CLKSRC_OF
-  	select GENERIC_CLOCKEVENTS
-+ 	select GPIOLIB
- -	select HAVE_CLK
-  	select PINCTRL
- +	select PM
- +	select PM_GENERIC_DOMAINS
-  	select RESET_CONTROLLER
-  	help
-  	  This enables support for the NVIDIA Tegra SoC family.
+diff --cc fs/afs/main.c
+index 0b187ef3b5b7,129ff432391c..000000000000
+--- a/fs/afs/main.c
++++ b/fs/afs/main.c
+@@@ -14,7 -14,7 +14,8 @@@
+  #include <linux/init.h>
+  #include <linux/completion.h>
+  #include <linux/sched.h>
+ +#include <linux/random.h>
++ #include <linux/ktime.h>
+  #include "internal.h"
+  
+  MODULE_DESCRIPTION("AFS Client File System");
