@@ -1,33 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 5 Sep 2016 13:10:16 +1000
-Message-ID: <20160905131016.12c38970@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 5 Sep 2016 13:51:21 +1000
+Message-ID: <20160905135121.0a64586a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Wang <sean.wang@mediatek.com>, Nelson Chang <nelson.chang@mediatek.com>, Wei Yongjun <weiyj.lk@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40381 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750895AbcIEDvY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Sep 2016 23:51:24 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Michel =?UTF-8?B?RMOkbnplcg==?= <michel.daenzer@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/net/ethernet/mediatek/mtk_eth_soc.c
+  drivers/gpu/drm/drm_crtc.c
 
-between commits:
+between commit:
 
-  d3bd1ce4db8e ("net: ethernet: mediatek: remove redundant free_irq for devm_request_irq allocated irq")
-  7c6b0d76fa02 ("net: ethernet: mediatek: fix logic unbalance between probe and remove")
+  6f00975c6190 ("drm: Reject page_flip for !DRIVER_MODESET")
 
-from the net tree and commits:
+from Linus' tree and commit:
 
-  45d339309f49 ("net: mediatek: remove unnecessary platform_set_drvdata()")
-  bacfd110e059 ("net: ethernet: mediatek: modify to use the PDMA instead of the QDMA for Ethernet RX")
+  f837297ad824 ("drm: Add DRM_MODE_PAGE_FLIP_TARGET_ABSOLUTE/RELATIVE flags v2")
 
-from the net-next tree.
+from the drm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -40,43 +42,32 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index d9199151a83e,2dadfa961898..000000000000
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@@ -334,9 -338,12 +334,10 @@@ static void mtk_mdio_cleanup(struct mtk
-  		return;
+diff --cc drivers/gpu/drm/drm_crtc.c
+index ddebe54cd5ca,a33dab27bb0d..000000000000
+--- a/drivers/gpu/drm/drm_crtc.c
++++ b/drivers/gpu/drm/drm_crtc.c
+@@@ -5402,13 -1915,19 +1915,22 @@@ int drm_mode_page_flip_ioctl(struct drm
+  	struct drm_crtc *crtc;
+  	struct drm_framebuffer *fb = NULL;
+  	struct drm_pending_vblank_event *e = NULL;
++ 	u32 target_vblank = page_flip->sequence;
+  	int ret = -EINVAL;
   
-  	mdiobus_unregister(eth->mii_bus);
- -	of_node_put(eth->mii_bus->dev.of_node);
- -	mdiobus_free(eth->mii_bus);
-  }
+ +	if (!drm_core_check_feature(dev, DRIVER_MODESET))
+ +		return -EINVAL;
+ +
+- 	if (page_flip->flags & ~DRM_MODE_PAGE_FLIP_FLAGS ||
+- 	    page_flip->reserved != 0)
++ 	if (page_flip->flags & ~DRM_MODE_PAGE_FLIP_FLAGS)
++ 		return -EINVAL;
++ 
++ 	if (page_flip->sequence != 0 && !(page_flip->flags & DRM_MODE_PAGE_FLIP_TARGET))
++ 		return -EINVAL;
++ 
++ 	/* Only one of the DRM_MODE_PAGE_FLIP_TARGET_ABSOLUTE/RELATIVE flags
++ 	 * can be specified
++ 	 */
++ 	if ((page_flip->flags & DRM_MODE_PAGE_FLIP_TARGET) == DRM_MODE_PAGE_FLIP_TARGET)
+  		return -EINVAL;
   
-- static inline void mtk_irq_disable(struct mtk_eth *eth, u32 mask)
-+ static inline void mtk_irq_disable(struct mtk_eth *eth,
-+ 				   unsigned reg, u32 mask)
-  {
-  	unsigned long flags;
-  	u32 val;
-@@@ -1501,7 -1513,11 +1508,8 @@@ static void mtk_uninit(struct net_devic
-  	struct mtk_eth *eth = mac->hw;
-  
-  	phy_disconnect(mac->phy_dev);
-- 	mtk_irq_disable(eth, ~0);
- -	mtk_mdio_cleanup(eth);
-+ 	mtk_irq_disable(eth, MTK_QDMA_INT_MASK, ~0);
-+ 	mtk_irq_disable(eth, MTK_PDMA_INT_MASK, ~0);
- -	free_irq(eth->irq[1], dev);
- -	free_irq(eth->irq[2], dev);
-  }
-  
-  static int mtk_do_ioctl(struct net_device *dev, struct ifreq *ifr, int cmd)
-@@@ -1913,8 -1920,6 +1921,7 @@@ static int mtk_remove(struct platform_d
-  	netif_napi_del(&eth->tx_napi);
-  	netif_napi_del(&eth->rx_napi);
-  	mtk_cleanup(eth);
- +	mtk_mdio_cleanup(eth);
-- 	platform_set_drvdata(pdev, NULL);
-  
-  	return 0;
-  }
+  	if ((page_flip->flags & DRM_MODE_PAGE_FLIP_ASYNC) && !dev->mode_config.async_page_flip)
