@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the md tree with the s390 tree
-Date: Mon, 5 Sep 2016 14:56:15 +1000
-Message-ID: <20160905145615.5423e1ac@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the slave-dma tree
+Date: Mon, 5 Sep 2016 16:43:21 +1000
+Message-ID: <20160905164321.4dd8801b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49329 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49604 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750720AbcIEE4T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Sep 2016 00:56:19 -0400
+        id S1755033AbcIEGnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Sep 2016 02:43:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shaohua Li <shli@kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gayatri Kammela <gayatri.kammela@intel.com>, Megha Dey <megha.dey@linux.intel.com>
+To: Greg KH <greg@kroah.com>, Vinod Koul <vinod.koul@intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nandor Han <nandor.han@ge.com>, Dave Jiang <dave.jiang@intel.com>
 
-Hi Shaohua,
+Hi Greg,
 
-Today's linux-next merge of the md tree got a conflict in:
+Today's linux-next merge of the tty tree got a conflict in:
 
-  include/linux/raid/pq.h
+  drivers/dma/imx-sdma.c
 
 between commit:
 
-  f5b55fa1f81d ("RAID/s390: provide raid6 recovery optimization")
+  48dc77e2d4fc ("dmaengine: imx-sdma: convert callback to helper function")
 
-from the s390 tree and commit:
+from the slave-dma tree and commit:
 
-  a5e49b04af05 ("lib/raid6: Add AVX512 optimized recovery functions")
+  15f30f513111 ("dmaengine: imx-sdma - reduce transfer latency for DMA cyclic clients")
 
-from the md tree.
+from the tty tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,28 +42,69 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/raid/pq.h
-index 395a4c674168,1abd89584568..000000000000
---- a/include/linux/raid/pq.h
-+++ b/include/linux/raid/pq.h
-@@@ -102,8 -102,10 +102,11 @@@ extern const struct raid6_calls raid6_a
-  extern const struct raid6_calls raid6_avx2x1;
-  extern const struct raid6_calls raid6_avx2x2;
-  extern const struct raid6_calls raid6_avx2x4;
-+ extern const struct raid6_calls raid6_avx512x1;
-+ extern const struct raid6_calls raid6_avx512x2;
-+ extern const struct raid6_calls raid6_avx512x4;
-  extern const struct raid6_calls raid6_tilegx8;
- +extern const struct raid6_calls raid6_s390vx8;
+diff --cc drivers/dma/imx-sdma.c
+index a6bffbc47ee2,3cb47386fbb9..000000000000
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@@ -689,12 -664,36 +686,35 @@@ static void sdma_update_channel_loop(st
+  		if (bd->mode.status & BD_DONE)
+  			break;
   
-  struct raid6_recov_calls {
-  	void (*data2)(int, size_t, int, int, void **);
-@@@ -116,7 -118,7 +119,8 @@@
-  extern const struct raid6_recov_calls raid6_recov_intx1;
-  extern const struct raid6_recov_calls raid6_recov_ssse3;
-  extern const struct raid6_recov_calls raid6_recov_avx2;
-+ extern const struct raid6_recov_calls raid6_recov_avx512;
- +extern const struct raid6_recov_calls raid6_recov_s390xc;
+- 		if (bd->mode.status & BD_RROR)
++ 		if (bd->mode.status & BD_RROR) {
++ 			bd->mode.status &= ~BD_RROR;
+  			sdmac->status = DMA_ERROR;
++ 			error = -EIO;
++ 		}
   
-  extern const struct raid6_calls raid6_neonx1;
-  extern const struct raid6_calls raid6_neonx2;
++ 	       /*
++ 		* We use bd->mode.count to calculate the residue, since contains
++ 		* the number of bytes present in the current buffer descriptor.
++ 		*/
++ 
++ 		sdmac->chn_real_count = bd->mode.count;
+  		bd->mode.status |= BD_DONE;
++ 		bd->mode.count = sdmac->period_len;
++ 
++ 		/*
++ 		 * The callback is called from the interrupt context in order
++ 		 * to reduce latency and to avoid the risk of altering the
++ 		 * SDMA transaction status by the time the client tasklet is
++ 		 * executed.
++ 		 */
++ 
+ -		if (sdmac->desc.callback)
+ -			sdmac->desc.callback(sdmac->desc.callback_param);
+++		dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
++ 
+  		sdmac->buf_tail++;
+  		sdmac->buf_tail %= sdmac->num_bd;
++ 
++ 		if (error)
++ 			sdmac->status = old_status;
+  	}
+  }
+  
+@@@ -722,20 -722,10 +743,10 @@@ static void mxc_sdma_handle_channel_nor
+  		sdmac->status = DMA_COMPLETE;
+  
+  	dma_cookie_complete(&sdmac->desc);
+ -	if (sdmac->desc.callback)
+ -		sdmac->desc.callback(sdmac->desc.callback_param);
+ +
+ +	dmaengine_desc_get_callback_invoke(&sdmac->desc, NULL);
+  }
+  
+- static void sdma_tasklet(unsigned long data)
+- {
+- 	struct sdma_channel *sdmac = (struct sdma_channel *) data;
+- 
+- 	if (sdmac->flags & IMX_DMA_SG_LOOP)
+- 		sdma_handle_channel_loop(sdmac);
+- 	else
+- 		mxc_sdma_handle_channel_normal(sdmac);
+- }
+- 
+  static irqreturn_t sdma_int_handler(int irq, void *dev_id)
+  {
+  	struct sdma_engine *sdma = dev_id;
