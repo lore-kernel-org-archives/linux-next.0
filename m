@@ -1,75 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160906 build: 2 failures 0 warnings (next-20160906)
-Date: Tue, 06 Sep 2016 09:45:43 +0100
-Message-ID: <E1bhC0l-0003y3-Ls@optimist>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Tue, 06 Sep 2016 12:17:48 +0200
+Message-ID: <7417301.9zVsJPTCb3@wuerfel>
+References: <20160905105803.13ed27ff@canb.auug.org.au> <20160905182603.GS1041@n2100.armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:32962 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932977AbcIFIpw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2016 04:45:52 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:64899 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932133AbcIFKRw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2016 06:17:52 -0400
+In-Reply-To: <20160905182603.GS1041@n2100.armlinux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>
 
-Tree/Branch: next-20160906
-Git describe: next-20160906
-Commit: eb94d148a8 Add linux-next specific files for 20160906
+On Monday, September 5, 2016 7:26:03 PM CEST Russell King - ARM Linux wrote:
+> On Mon, Sep 05, 2016 at 10:58:03AM +1000, Stephen Rothwell wrote:
+> > I fixed it up (I deleted the file) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.
+> 
+> That's the "simple" way of making the conflict go away, but I'm afraid
+> it's really not that simple.
+> 
+> Having just looked at the SMC91x definition for realview, it shows that
+> the SMC91x binding, like many of the conversions that the patch in my
+> tree fixes, has been created without a proper understanding of the
+> hardware.  To put it simply, it is broken.
+> 
+> The binding only allows _one_ register width to be specified, which is
+> completely incorrect: the binding _must_ allow multiple register widths
+> to be specified.  This is what SMC91x has always expected: to be told
+> which register access widths it is permitted to make.
 
-Build Time: 83 min 57 sec
+This is what is documented:
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Documentation/devicetree/bindings/net/smsc-lan91c111.txt
+- reg-io-width : Mask of sizes (in bytes) of the IO accesses that
+  are supported on the device.  Valid value for SMSC LAN91c111 are
+  1, 2 or 4.  If it's omitted or invalid, the size would be 2 meaning
+  16-bit access only.
 
-Errors: 1
-Warnings: 0
-Section Mismatches: 0
+and this appears to match what the driver does, although it is a
+rather unconventional definition (I would have expected an array
+of widths in bytes).
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+Almost all of the users leave out the property, so they get 16-bit
+access, nomadik-nhk15 is the only one that actually specifies
+the width explicitly, and it also requests 16-bit only. I don't
+think your patch changes anything for these cases.
 
-Errors:
-
-	arm64-allmodconfig
-../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
-
-	arm-allmodconfig
-../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  2 ../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+	Arnd
