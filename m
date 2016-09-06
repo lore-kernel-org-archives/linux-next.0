@@ -1,59 +1,69 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Tue, 06 Sep 2016 12:17:48 +0200
-Message-ID: <7417301.9zVsJPTCb3@wuerfel>
-References: <20160905105803.13ed27ff@canb.auug.org.au> <20160905182603.GS1041@n2100.armlinux.org.uk>
+Date: Tue, 6 Sep 2016 11:42:32 +0100
+Message-ID: <20160906104232.GT1041@n2100.armlinux.org.uk>
+References: <20160905105803.13ed27ff@canb.auug.org.au>
+ <20160905182603.GS1041@n2100.armlinux.org.uk>
+ <7417301.9zVsJPTCb3@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([217.72.192.74]:64899 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932133AbcIFKRw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2016 06:17:52 -0400
-In-Reply-To: <20160905182603.GS1041@n2100.armlinux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <7417301.9zVsJPTCb3@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Monday, September 5, 2016 7:26:03 PM CEST Russell King - ARM Linux wrote:
-> On Mon, Sep 05, 2016 at 10:58:03AM +1000, Stephen Rothwell wrote:
-> > I fixed it up (I deleted the file) and can carry the fix as
-> > necessary. This is now fixed as far as linux-next is concerned, but any
-> > non trivial conflicts should be mentioned to your upstream maintainer
-> > when your tree is submitted for merging.  You may also want to consider
-> > cooperating with the maintainer of the conflicting tree to minimise any
-> > particularly complex conflicts.
+On Tue, Sep 06, 2016 at 12:17:48PM +0200, Arnd Bergmann wrote:
+> On Monday, September 5, 2016 7:26:03 PM CEST Russell King - ARM Linux wrote:
+> > On Mon, Sep 05, 2016 at 10:58:03AM +1000, Stephen Rothwell wrote:
+> > > I fixed it up (I deleted the file) and can carry the fix as
+> > > necessary. This is now fixed as far as linux-next is concerned, but any
+> > > non trivial conflicts should be mentioned to your upstream maintainer
+> > > when your tree is submitted for merging.  You may also want to consider
+> > > cooperating with the maintainer of the conflicting tree to minimise any
+> > > particularly complex conflicts.
+> > 
+> > That's the "simple" way of making the conflict go away, but I'm afraid
+> > it's really not that simple.
+> > 
+> > Having just looked at the SMC91x definition for realview, it shows that
+> > the SMC91x binding, like many of the conversions that the patch in my
+> > tree fixes, has been created without a proper understanding of the
+> > hardware.  To put it simply, it is broken.
+> > 
+> > The binding only allows _one_ register width to be specified, which is
+> > completely incorrect: the binding _must_ allow multiple register widths
+> > to be specified.  This is what SMC91x has always expected: to be told
+> > which register access widths it is permitted to make.
 > 
-> That's the "simple" way of making the conflict go away, but I'm afraid
-> it's really not that simple.
+> This is what is documented:
 > 
-> Having just looked at the SMC91x definition for realview, it shows that
-> the SMC91x binding, like many of the conversions that the patch in my
-> tree fixes, has been created without a proper understanding of the
-> hardware.  To put it simply, it is broken.
+> Documentation/devicetree/bindings/net/smsc-lan91c111.txt
+> - reg-io-width : Mask of sizes (in bytes) of the IO accesses that
+>   are supported on the device.  Valid value for SMSC LAN91c111 are
+>   1, 2 or 4.  If it's omitted or invalid, the size would be 2 meaning
+>   16-bit access only.
 > 
-> The binding only allows _one_ register width to be specified, which is
-> completely incorrect: the binding _must_ allow multiple register widths
-> to be specified.  This is what SMC91x has always expected: to be told
-> which register access widths it is permitted to make.
+> and this appears to match what the driver does, although it is a
+> rather unconventional definition (I would have expected an array
+> of widths in bytes).
 
-This is what is documented:
+It doesn't match what the driver does - have you not been following the
+discussion on the breakage caused by your commit b70661c70830 ?
 
-Documentation/devicetree/bindings/net/smsc-lan91c111.txt
-- reg-io-width : Mask of sizes (in bytes) of the IO accesses that
-  are supported on the device.  Valid value for SMSC LAN91c111 are
-  1, 2 or 4.  If it's omitted or invalid, the size would be 2 meaning
-  16-bit access only.
+> Almost all of the users leave out the property, so they get 16-bit
+> access, nomadik-nhk15 is the only one that actually specifies
+> the width explicitly, and it also requests 16-bit only. I don't
+> think your patch changes anything for these cases.
 
-and this appears to match what the driver does, although it is a
-rather unconventional definition (I would have expected an array
-of widths in bytes).
+Okay, so all the DT users _only_ use 16-bit accesses, and end up
+_emulating_ 8-bit accesses through a 16-bit read-modify-write
+sequence, even when they may be perfectly capable of 8-bit accesses,
+because this fine detail of the SMC91x driver hasn't been understood.
 
-Almost all of the users leave out the property, so they get 16-bit
-access, nomadik-nhk15 is the only one that actually specifies
-the width explicitly, and it also requests 16-bit only. I don't
-think your patch changes anything for these cases.
-
-	Arnd
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
