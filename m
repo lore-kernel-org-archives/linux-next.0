@@ -1,63 +1,75 @@
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
-Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
-Date: Mon, 5 Sep 2016 19:26:03 +0100
-Message-ID: <20160905182603.GS1041@n2100.armlinux.org.uk>
-References: <20160905105803.13ed27ff@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160906 build: 2 failures 0 warnings (next-20160906)
+Date: Tue, 06 Sep 2016 09:45:43 +0100
+Message-ID: <E1bhC0l-0003y3-Ls@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42264 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750721AbcIFHVf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2016 03:21:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20160905105803.13ed27ff@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:32962 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932977AbcIFIpw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Sep 2016 04:45:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Sep 05, 2016 at 10:58:03AM +1000, Stephen Rothwell wrote:
-> I fixed it up (I deleted the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Tree/Branch: next-20160906
+Git describe: next-20160906
+Commit: eb94d148a8 Add linux-next specific files for 20160906
 
-That's the "simple" way of making the conflict go away, but I'm afraid
-it's really not that simple.
+Build Time: 83 min 57 sec
 
-Having just looked at the SMC91x definition for realview, it shows that
-the SMC91x binding, like many of the conversions that the patch in my
-tree fixes, has been created without a proper understanding of the
-hardware.  To put it simply, it is broken.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-The binding only allows _one_ register width to be specified, which is
-completely incorrect: the binding _must_ allow multiple register widths
-to be specified.  This is what SMC91x has always expected: to be told
-which register access widths it is permitted to make.
+Errors: 1
+Warnings: 0
+Section Mismatches: 0
 
-That must include at least one of 8 or 16 bit accesses, but 32-bit
-access is optional.
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-The result will be that - despite I've fixed up all the static platform
-data to be correct, there's no way to fix up the DT binding without
-inventing a new one.
+Errors:
 
-So, deleting the Realview (and other) board files results in platforms
-that can't use networking - it's worse than that, because the smc91x
-driver will BUG() as a result of this at boot time.
+	arm64-allmodconfig
+../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
 
-Since the patch in my tree is fixing a regression caused by the broken
-conversions, I'm not mindful to drop it from the merge window - I
-actually want to push it into -rc kernels.  We _do_ need to fix the
-DT regressions, and quickly though, and push those with this patch.
+	arm-allmodconfig
+../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
 
-Since I don't use the SMC91x with DT, that's outside of what I can
-test, so consider this a call for help on that subject.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pwm/pwm-berlin.c:245:35: error: 'struct berlin_pwm_chip' has no member named 'chips'
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
