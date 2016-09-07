@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 7 Sep 2016 13:16:59 +1000
-Message-ID: <20160907131659.2c6f8789@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-intel tree with the drm tree
+Date: Wed, 7 Sep 2016 13:59:26 +1000
+Message-ID: <20160907135926.17a52554@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34082 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36737 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754261AbcIGDRE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Sep 2016 23:17:04 -0400
+        id S1755693AbcIGD73 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Sep 2016 23:59:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Wu Fengguang <fengguang.wu@intel.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>, Dave Gordon <david.s.gordon@intel.com>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+  include/drm/drmP.h
 
 between commit:
 
-  561ed23331df ("qed: fix kzalloc-simple.cocci warnings")
+  c4e68a583202 ("drm: Introduce DRM_DEV_* log messages")
 
-from the net tree and commit:
+from the drm tree and commit:
 
-  2591c280c375 ("qed: Remove OOM messages")
+  30b0da8d556e ("drm: extra printk() wrapper macros")
 
-from the net-next tree.
+from the drm-intel tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,39 +38,42 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
+I just did a minimal fixup, and more work consolidating these changes
+could probably be done.
+
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-index 3656d2fd673d,be7b3dc7c9a7..000000000000
---- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
-@@@ -1189,11 -1172,9 +1186,9 @@@ int qed_dcbx_get_config_params(struct q
-  		return 0;
-  	}
+diff --cc include/drm/drmP.h
+index 94eb138753a9,734e4fb11f52..000000000000
+--- a/include/drm/drmP.h
++++ b/include/drm/drmP.h
+@@@ -194,26 -205,8 +214,23 @@@ void drm_printk(const char *level, unsi
+  				      DEFAULT_RATELIMIT_BURST);		\
+  									\
+  	if (__ratelimit(&_rs))						\
+ -		drm_err(fmt, ##__VA_ARGS__);				\
+ +		DRM_DEV_ERROR(dev, fmt, ##__VA_ARGS__);			\
+ +})
+ +#define DRM_ERROR_RATELIMITED(fmt, ...)					\
+ +	DRM_DEV_ERROR_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
+ +
+ +#define DRM_DEV_INFO(dev, fmt, ...)					\
+ +	drm_dev_printk(dev, KERN_INFO, DRM_UT_NONE, __func__, "", fmt,	\
+ +		       ##__VA_ARGS__)
+- #define DRM_INFO(fmt, ...)						\
+- 	drm_printk(KERN_INFO, DRM_UT_NONE, __func__, "", fmt, ##__VA_ARGS__)
+ +
+ +#define DRM_DEV_INFO_ONCE(dev, fmt, ...)				\
+ +({									\
+ +	static bool __print_once __read_mostly;				\
+ +	if (!__print_once) {						\
+ +		__print_once = true;					\
+ +		DRM_DEV_INFO(dev, fmt, ##__VA_ARGS__);			\
+ +	}								\
+  })
+- #define DRM_INFO_ONCE(fmt, ...) DRM_DEV_INFO_ONCE(NULL, fmt, ##__VA_ARGS__)
   
- -	dcbx_info = kmalloc(sizeof(*dcbx_info), GFP_KERNEL);
- +	dcbx_info = kzalloc(sizeof(*dcbx_info), GFP_KERNEL);
-- 	if (!dcbx_info) {
-- 		DP_ERR(p_hwfn, "Failed to allocate struct qed_dcbx_info\n");
-+ 	if (!dcbx_info)
-  		return -ENOMEM;
-- 	}
-  
-  	rc = qed_dcbx_query_params(p_hwfn, dcbx_info, QED_DCBX_OPERATIONAL_MIB);
-  	if (rc) {
-@@@ -1226,11 -1207,9 +1221,9 @@@ static struct qed_dcbx_get *qed_dcbnl_g
-  {
-  	struct qed_dcbx_get *dcbx_info;
-  
- -	dcbx_info = kmalloc(sizeof(*dcbx_info), GFP_KERNEL);
- +	dcbx_info = kzalloc(sizeof(*dcbx_info), GFP_KERNEL);
-- 	if (!dcbx_info) {
-- 		DP_ERR(hwfn->cdev, "Failed to allocate memory for dcbx_info\n");
-+ 	if (!dcbx_info)
-  		return NULL;
-- 	}
-  
-  	if (qed_dcbx_query_params(hwfn, dcbx_info, type)) {
-  		kfree(dcbx_info);
+  /**
+   * Debug output.
