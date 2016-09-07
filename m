@@ -1,79 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ftrace tree with the tip tree
-Date: Wed, 7 Sep 2016 15:25:17 +1000
-Message-ID: <20160907152517.5a67a991@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the net-next
+ tree
+Date: Wed, 7 Sep 2016 08:47:12 +0200
+Message-ID: <20160907064712.GB31273@kroah.com>
+References: <20160905165650.180e6c89@canb.auug.org.au>
+ <20160905113353.GB27586@kroah.com>
+ <DM2PR0301MB07835EA7440B54BE9B27A516A0F90@DM2PR0301MB0783.namprd03.prod.outlook.com>
+ <DM2PR0301MB078354E908258795044BFCFEA0F90@DM2PR0301MB0783.namprd03.prod.outlook.com>
+ <BLUPR0301MB209827200D789C51EC56DA41CCF90@BLUPR0301MB2098.namprd03.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Namhyung Kim <namhyung@kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:45251 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932263AbcIGGrG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2016 02:47:06 -0400
+Content-Disposition: inline
+In-Reply-To: <BLUPR0301MB209827200D789C51EC56DA41CCF90@BLUPR0301MB2098.namprd03.prod.outlook.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: KY Srinivasan <kys@microsoft.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Hi Steven,
+On Tue, Sep 06, 2016 at 04:07:17PM +0000, Stephen Hemminger wrote:
+> How about I setup a git tree (hyperv-next) to premerge these.
+> 
+> We are getting changes from multiple submitters through multiple trees now.
 
-Today's linux-next merge of the ftrace tree got conflicts in:
+That's because there are multiple drivers in different subsystems, so
+having a single git tree would have to cross multiple subsystem, making
+merges a mess.
 
-  include/linux/ftrace.h
-  kernel/trace/trace_functions_graph.c
+Also, I didn't want a git tree as I've still found problems with hyperv
+patches in the near past, so don't quite trust that they go in without
+review :(
 
-between commit:
+thanks,
 
-  daa460a88c09 ("ftrace: Only allocate the ret_stack 'fp' field when needed")
-
-from the tip tree and commit:
-
-  8861dd303cba ("ftrace: Access ret_stack->subtime only in the function profiler")
-
-from the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/ftrace.h
-index 6f93ac46e7f0,1e2b316d6693..000000000000
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@@ -794,13 -794,10 +794,15 @@@ struct ftrace_ret_stack 
-  	unsigned long ret;
-  	unsigned long func;
-  	unsigned long long calltime;
-+ #ifdef CONFIG_FUNCTION_PROFILER
-  	unsigned long long subtime;
-+ #endif
- +#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-  	unsigned long fp;
- +#endif
- +#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
- +	unsigned long *retp;
- +#endif
-  };
-  
-  /*
-diff --cc kernel/trace/trace_functions_graph.c
-index 0cbe38a844fa,148c90f1e49b..000000000000
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@@ -170,13 -170,7 +170,12 @@@ ftrace_push_return_trace(unsigned long 
-  	current->ret_stack[index].ret = ret;
-  	current->ret_stack[index].func = func;
-  	current->ret_stack[index].calltime = calltime;
-- 	current->ret_stack[index].subtime = 0;
- +#ifdef HAVE_FUNCTION_GRAPH_FP_TEST
-  	current->ret_stack[index].fp = frame_pointer;
- +#endif
- +#ifdef HAVE_FUNCTION_GRAPH_RET_ADDR_PTR
- +	current->ret_stack[index].retp = retp;
- +#endif
-  	*depth = current->curr_ret_stack;
-  
-  	return 0;
+greg k-h
