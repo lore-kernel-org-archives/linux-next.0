@@ -1,81 +1,69 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [next] make htmldocs fails with "too many values to unpack"
-Date: Wed, 7 Sep 2016 15:06:23 +0200
-Message-ID: <CAMuHMdVP6ANoWcmQC8NcSGirTujBASyO84UcNxpq0jbcW0Up4Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160907 build: 1 failures 0 warnings (next-20160907)
+Date: Wed, 07 Sep 2016 14:13:16 +0100
+Message-ID: <E1bhcfD-000291-8Z@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f51.google.com ([209.85.214.51]:37054 "EHLO
-        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757224AbcIGNGY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2016 09:06:24 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59332 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757512AbcIGNNZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2016 09:13:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On next-20160907, "make htmldocs" fails:
+Tree/Branch: next-20160907
+Git describe: next-20160907
+Commit: 322db72ea4 Add linux-next specific files for 20160907
 
-Exception occurred:
-  File "/usr/lib/python2.7/dist-packages/sphinx/environment.py", line
-1530, in create_index
-    for type, value, tid, main in entries:
-ValueError: too many values to unpack
-The full traceback has been saved in /tmp/sphinx-err-GYk3bJ.log, if
-you want to report the issue to the developers.
-Please also report this if it was a user error, so that a better error
-message can be provided next time.
-A bug report can be filed in the tracker at
-<https://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!
+Build Time: 147 min 16 sec
 
-It works fine on v4.8-rc5.
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
 
-Full traceback:
+Errors: 1
+Warnings: 0
+Section Mismatches: 0
 
-# Sphinx version: 1.2.2
-# Python version: 2.7.6
-# Docutils version: 0.11 release
-# Jinja2 version: 2.7.2
-# Loaded extensions:
-#   kernel_include from
-<prefix>/linux-next/Documentation/sphinx/kernel_include.pyc
-#   kernel-doc from <prefix>/linux-next/Documentation/sphinx/kernel-doc.pyc
-#   rstFlatTable from <prefix>/linux-next/Documentation/sphinx/rstFlatTable.pyc
-#   cdomain from <prefix>/linux-next/Documentation/sphinx/cdomain.pyc
-#   sphinx.ext.pngmath from
-/usr/lib/python2.7/dist-packages/sphinx/ext/pngmath.pyc
-#   sphinx.ext.oldcmarkup from
-/usr/lib/python2.7/dist-packages/sphinx/ext/oldcmarkup.pyc
-Traceback (most recent call last):
-  File "/usr/lib/python2.7/dist-packages/sphinx/cmdline.py", line 254, in main
-    app.build(force_all, filenames)
-  File "/usr/lib/python2.7/dist-packages/sphinx/application.py", line
-212, in build
-    self.builder.build_update()
-  File "/usr/lib/python2.7/dist-packages/sphinx/builders/__init__.py",
-line 214, in build_update
-    'out of date' % len(to_build))
-  File "/usr/lib/python2.7/dist-packages/sphinx/builders/__init__.py",
-line 279, in build
-    self.finish()
-  File "/usr/lib/python2.7/dist-packages/sphinx/builders/html.py",
-line 458, in finish
-    self.write_genindex()
-  File "/usr/lib/python2.7/dist-packages/sphinx/builders/html.py",
-line 492, in write_genindex
-    genindex = self.env.create_index(self)
-  File "/usr/lib/python2.7/dist-packages/sphinx/environment.py", line
-1530, in create_index
-    for type, value, tid, main in entries:
-ValueError: too many values to unpack
+Failed defconfigs:
+	arm64-allmodconfig
 
-Gr{oetje,eeting}s,
+Errors:
 
-                        Geert
+	arm64-allmodconfig
+ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
