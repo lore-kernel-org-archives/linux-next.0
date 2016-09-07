@@ -1,63 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the btrfs-kdave tree
-Date: Wed, 7 Sep 2016 11:22:53 +1000
-Message-ID: <20160907112253.3bd54c49@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 7 Sep 2016 13:16:59 +1000
+Message-ID: <20160907131659.2c6f8789@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41953 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34082 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755902AbcIGBW4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Sep 2016 21:22:56 -0400
+        id S1754261AbcIGDRE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Sep 2016 23:17:04 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>, Jan Kara <jack@suse.cz>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Perches <joe@perches.com>, Wu Fengguang <fengguang.wu@intel.com>
 
-Hi David,
+Hi all,
 
-After merging the btrfs-kdave tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-fs/ntfs/attrib.c: In function 'ntfs_attr_set':
-fs/ntfs/attrib.c:2549:35: error: implicit declaration of function 'inode_to_bdi' [-Werror=implicit-function-declaration]
-   balance_dirty_pages_ratelimited(inode_to_bdi(inode),
-                                   ^
-fs/ntfs/attrib.c:2549:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
-In file included from include/linux/memcontrol.h:30:0,
-                 from include/linux/swap.h:8,
-                 from fs/ntfs/attrib.c:26:
-include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
- void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
-      ^
-fs/ntfs/attrib.c:2591:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
-   balance_dirty_pages_ratelimited(inode_to_bdi(inode),
-                                   ^
-In file included from include/linux/memcontrol.h:30:0,
-                 from include/linux/swap.h:8,
-                 from fs/ntfs/attrib.c:26:
-include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
- void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
-      ^
-fs/ntfs/attrib.c:2609:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
-   balance_dirty_pages_ratelimited(inode_to_bdi(inode),
-                                   ^
-In file included from include/linux/memcontrol.h:30:0,
-                 from include/linux/swap.h:8,
-                 from fs/ntfs/attrib.c:26:
-include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
- void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
-      ^
+  drivers/net/ethernet/qlogic/qed/qed_dcbx.c
 
-Caused by commit
+between commit:
 
-  a685fa61566d ("remove mapping from balance_dirty_pages*()")
+  561ed23331df ("qed: fix kzalloc-simple.cocci warnings")
 
-I assume some forgotten include(s).
+from the net tree and commit:
 
-I have used the btrfs-kdave tree from next-20160906 for today.
+  2591c280c375 ("qed: Remove OOM messages")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+index 3656d2fd673d,be7b3dc7c9a7..000000000000
+--- a/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_dcbx.c
+@@@ -1189,11 -1172,9 +1186,9 @@@ int qed_dcbx_get_config_params(struct q
+  		return 0;
+  	}
+  
+ -	dcbx_info = kmalloc(sizeof(*dcbx_info), GFP_KERNEL);
+ +	dcbx_info = kzalloc(sizeof(*dcbx_info), GFP_KERNEL);
+- 	if (!dcbx_info) {
+- 		DP_ERR(p_hwfn, "Failed to allocate struct qed_dcbx_info\n");
++ 	if (!dcbx_info)
+  		return -ENOMEM;
+- 	}
+  
+  	rc = qed_dcbx_query_params(p_hwfn, dcbx_info, QED_DCBX_OPERATIONAL_MIB);
+  	if (rc) {
+@@@ -1226,11 -1207,9 +1221,9 @@@ static struct qed_dcbx_get *qed_dcbnl_g
+  {
+  	struct qed_dcbx_get *dcbx_info;
+  
+ -	dcbx_info = kmalloc(sizeof(*dcbx_info), GFP_KERNEL);
+ +	dcbx_info = kzalloc(sizeof(*dcbx_info), GFP_KERNEL);
+- 	if (!dcbx_info) {
+- 		DP_ERR(hwfn->cdev, "Failed to allocate memory for dcbx_info\n");
++ 	if (!dcbx_info)
+  		return NULL;
+- 	}
+  
+  	if (qed_dcbx_query_params(hwfn, dcbx_info, type)) {
+  		kfree(dcbx_info);
