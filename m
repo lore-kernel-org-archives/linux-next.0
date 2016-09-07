@@ -1,69 +1,42 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160907 build: 1 failures 0 warnings (next-20160907)
-Date: Wed, 07 Sep 2016 14:13:16 +0100
-Message-ID: <E1bhcfD-000291-8Z@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59332 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757512AbcIGNNZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Sep 2016 09:13:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 7 (kernel/trace/trace_hwlat.c)
+Date: Wed, 7 Sep 2016 09:37:00 -0700
+Message-ID: <d6c3b7eb-ba95-1ffa-0453-464e1e24262a@infradead.org>
+References: <20160907175258.1f17a8ba@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160907175258.1f17a8ba@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160907
-Git describe: next-20160907
-Commit: 322db72ea4 Add linux-next specific files for 20160907
+On 09/07/16 00:52, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160906:
+> 
 
-Build Time: 147 min 16 sec
+on i386:
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+../kernel/trace/trace_hwlat.c: In function 'get_sample':
+../kernel/trace/trace_hwlat.c:258:18: error: 'struct trace_array' has no member named 'max_latency'
+   if (sample > tr->max_latency)
+                  ^
+../kernel/trace/trace_hwlat.c:259:6: error: 'struct trace_array' has no member named 'max_latency'
+    tr->max_latency = sample;
+      ^
+../kernel/trace/trace_hwlat.c: In function 'hwlat_tracer_init':
+../kernel/trace/trace_hwlat.c:583:4: error: 'struct trace_array' has no member named 'max_latency'
+  tr->max_latency = 0;
+    ^
 
-Errors: 1
-Warnings: 0
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
+when CONFIG_TRACER_MAX_TRACE is not enabled.
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
 
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+~Randy
