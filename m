@@ -1,89 +1,52 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160908 build: 2 failures 1 warnings (next-20160908)
-Date: Thu, 08 Sep 2016 11:33:24 +0100
-Message-ID: <E1bhwe4-00023R-1G@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add my kvm-mips linux-next branch
+Date: Fri, 9 Sep 2016 03:21:49 +1000
+Message-ID: <20160909032149.7dc5d5a6@canb.auug.org.au>
+References: <20160908164501.GB26885@jhogan-linux.le.imgtec.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38070 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966352AbcIHKde (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Sep 2016 06:33:34 -0400
+Received: from ozlabs.org ([103.22.144.67]:47248 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752327AbcIHRVx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Sep 2016 13:21:53 -0400
+In-Reply-To: <20160908164501.GB26885@jhogan-linux.le.imgtec.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: James Hogan <james.hogan@imgtec.com>, linux-next@vger.kernel.org
 
-Tree/Branch: next-20160908
-Git describe: next-20160908
-Commit: 4affa544ad Add linux-next specific files for 20160908
+Hi James,
 
-Build Time: 95 min 39 sec
+On Thu, 8 Sep 2016 17:45:01 +0100 James Hogan <james.hogan@imgtec.com> wrote:
+>
+> Please can you add the following branch to linux-next:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/jhogan/kvm-mips.git#next
+> 
+> It should probably go with the other kvm architecture branches after the
+> main kvm one.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Added from today.
 
-Errors: 2
-Warnings: 1
-Section Mismatches: 0
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
 
-Errors:
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-	arm64-allmodconfig
-ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
-
-	arm-allmodconfig
-../crypto/crypto_engine.c:234:3: error: implicit declaration of function 'queue_kthread_work' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
-	  1 ../crypto/crypto_engine.c:234:3: error: implicit declaration of function 'queue_kthread_work' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 1
-	  2 ../arch/arm64/kvm/../../../virt/kvm/arm/arch_timer.c:457:1: warning: label 'out_free' defined but not used [-Wunused-label]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
-
-Warnings:
-	../arch/arm64/kvm/../../../virt/kvm/arm/arch_timer.c:457:1: warning: label 'out_free' defined but not used [-Wunused-label]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../crypto/crypto_engine.c:234:3: error: implicit declaration of function 'queue_kthread_work' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm64/kvm/../../../virt/kvm/arm/arch_timer.c:457:1: warning: label 'out_free' defined but not used [-Wunused-label]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
