@@ -1,46 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Sep 7 (kernel/trace/trace_hwlat.c)
-Date: Thu, 8 Sep 2016 07:42:01 +1000
-Message-ID: <20160908074201.1ae6c9cc@canb.auug.org.au>
-References: <20160907175258.1f17a8ba@canb.auug.org.au>
-        <d6c3b7eb-ba95-1ffa-0453-464e1e24262a@infradead.org>
-        <20160907124422.70216727@gandalf.local.home>
-        <2c4a12e1-7970-f272-8883-db7c6ae36825@infradead.org>
-        <20160907144838.22484ad3@gandalf.local.home>
-        <20160907153810.54f2a9ef@gandalf.local.home>
+Subject: linux-next: manual merge of the drm-intel tree with
+	Linus' tree
+Date: Thu, 8 Sep 2016 12:08:40 +1000
+Message-ID: <20160908120840.52c68ca4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40897 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750878AbcIGVmE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Sep 2016 17:42:04 -0400
-In-Reply-To: <20160907153810.54f2a9ef@gandalf.local.home>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Steven,
-
-On Wed, 7 Sep 2016 15:38:10 -0400 Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> commit 64cfdb9788bf3fb2bf6c30701fc3644f25e76df2
-> Author: Steven Rostedt (Red Hat) <rostedt@goodmis.org>
-> Date:   Wed Sep 7 12:45:09 2016 -0400
-> 
->     tracing: Have max_latency be defined for HWLAT_TRACER as well
->     
->     The hwlat tracer uses tr->max_latency, and if it's the only tracer enabled
->     that uses it, the build will fail. Add max_latency and its file when the
->     hwlat tracer is enabled.
->     
->     Link: http://lkml.kernel.org/r/20160907175258.1f17a8ba@canb.auug.org.au
-
-That is not the reporting email ... Randy's was a reply to that one
-with message id "<d6c3b7eb-ba95-1ffa-0453-464e1e24262a@infradead.org>".
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0taW50ZWwgdHJlZSBn
+b3QgYSBjb25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcG0uYwoKYmV0
+d2VlbiBjb21taXQ6CgogIDk5MDkxMTNjYzQ4YSAoImRybS9pOTE1L2dlbjk6IE9ubHkgY29weSBX
+TSByZXN1bHRzIGZvciBjaGFuZ2VkIHBpcGVzIHRvIHNrbF9odyIpCgpmcm9tIExpbnVzJyB0cmVl
+IGFuZCBjb21taXRzOgoKICAyNzIyZWZiOTBiMzQgKCJkcm0vaTkxNS9nZW45OiBPbmx5IGNvcHkg
+V00gcmVzdWx0cyBmb3IgY2hhbmdlZCBwaXBlcyB0byBza2xfaHciKQogIDI3MDgyNDkzZTljNiAo
+ImRybS9pOTE1L3NrbDogVXBkYXRlIEREQiB2YWx1ZXMgYXRvbWljYWxseSB3aXRoIHdtcy9wbGFu
+ZSBhdHRycyIpCgpmcm9tIHRoZSBkcm0taW50ZWwgdHJlZS4KCkkgZml4ZWQgaXQgdXAgKEkganVz
+dCB1c2VkIHRoZSBkcm0taW50ZWwgdHJlZSB2ZXJzaW9uKSBhbmQgY2FuIGNhcnJ5IHRoZQpmaXgg
+YXMgbmVjZXNzYXJ5LiBUaGlzIGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBj
+b25jZXJuZWQsCmJ1dCBhbnkgbm9uIHRyaXZpYWwgY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9u
+ZWQgdG8geW91ciB1cHN0cmVhbQptYWludGFpbmVyIHdoZW4geW91ciB0cmVlIGlzIHN1Ym1pdHRl
+ZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50CnRvIGNvbnNpZGVyIGNvb3BlcmF0aW5n
+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8KbWluaW1pc2Ug
+YW55IHBhcnRpY3VsYXJseSBjb21wbGV4IGNvbmZsaWN0cy4KCi0tIApDaGVlcnMsClN0ZXBoZW4g
+Um90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+SW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
