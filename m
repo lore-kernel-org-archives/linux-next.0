@@ -1,58 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the imx-mxs
- tree
-Date: Fri, 9 Sep 2016 13:10:01 +1000
-Message-ID: <20160909131001.024a5b50@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the gpio tree
+Date: Fri, 9 Sep 2016 14:36:17 +1000
+Message-ID: <20160909143617.7106762e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36334 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751372AbcIIDKE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Sep 2016 23:10:04 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andrej Rosano <andrej@inversepath.com>, Rask Ingemann Lambertsen <ccc94453@vip.cybercity.dk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rob,
+Hi Linus,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+After merging the gpio tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  Documentation/devicetree/bindings/vendor-prefixes.txt
+drivers/gpio/gpiolib.c: In function '_gpiochip_irqchip_add':
+drivers/gpio/gpiolib.c:1622:62: error: macro "WARN_ON" passed 3 arguments, but takes just 1
+       "%s: Ignoring %d default trigger\n", of_node->full_name))
+                                                              ^
+drivers/gpio/gpiolib.c:1621:6: error: 'WARN_ON' undeclared (first use in this function)
+  if (WARN_ON(of_node && type != IRQ_TYPE_NONE,
+      ^
 
-between commit:
+Caused by commit
 
-  8266b4ae7135 ("devicetree: Add vendor prefix for Inverse Path")
+  1ded8b1dafe6 ("gpio/gpiolib: Forbid irqchip default trigger if probed over DT")
 
-from the imx-mxs tree and commit:
-
-  a24f7253f26d ("devicetree: Sort vendor prefixes in alphabetical order")
-
-from the devicetree tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I used the version of the gpio tree from next-20160908 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
-index cc15e9911dc8,4d95a9ddecdf..000000000000
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@@ -136,7 -134,7 +135,8 @@@ innolux	Innolux Corporatio
-  intel	Intel Corporation
-  intercontrol	Inter Control Group
-  invensense	InvenSense Inc.
- +inversepath	Inverse Path
-+ iom	Iomega Corporation
-  isee	ISEE 2007 S.L.
-  isil	Intersil
-  issi	Integrated Silicon Solutions Inc.
