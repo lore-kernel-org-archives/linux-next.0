@@ -1,38 +1,61 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20160909 build: 1 failures 0 warnings (next-20160909)
-Date: Fri, 09 Sep 2016 12:56:46 +0200
-Message-ID: <3281448.mbmBk67UZ8@wuerfel>
-References: <E1biHa1-0004JG-Om@optimist> <20160909101407.GA27946@sirena.org.uk>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
+Date: Fri, 9 Sep 2016 13:11:05 +0200
+Message-ID: <20160909111105.GR16983@suse.cz>
+References: <20160907112253.3bd54c49@canb.auug.org.au>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:64726 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753820AbcIIK7X (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Sep 2016 06:59:23 -0400
-In-Reply-To: <20160909101407.GA27946@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linaro-kernel@lists.linaro.org
-Cc: Mark Brown <broonie@kernel.org>, Hoan Tran <hotran@apm.com>, Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160907112253.3bd54c49@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>, Jan Kara <jack@suse.cz>
+List-Id: linux-next.vger.kernel.org
 
-On Friday, September 9, 2016 11:14:07 AM CEST Mark Brown wrote:
-> On Fri, Sep 09, 2016 at 09:54:37AM +0100, Build bot for Mark Brown wrote:
+On Wed, Sep 07, 2016 at 11:22:53AM +1000, Stephen Rothwell wrote:
+> Hi David,
 > 
-> Since yesterday -next has been failing to build an arm64 allmodconfig
-> due to:
+> After merging the btrfs-kdave tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> > 	arm64-allmodconfig
-> > ERROR: "memblock_is_memory" [drivers/hwmon/xgene-hwmon.ko] undefined!
+> fs/ntfs/attrib.c: In function 'ntfs_attr_set':
+> fs/ntfs/attrib.c:2549:35: error: implicit declaration of function 'inode_to_bdi' [-Werror=implicit-function-declaration]
+>    balance_dirty_pages_ratelimited(inode_to_bdi(inode),
+>                                    ^
+> fs/ntfs/attrib.c:2549:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
+> In file included from include/linux/memcontrol.h:30:0,
+>                  from include/linux/swap.h:8,
+>                  from fs/ntfs/attrib.c:26:
+> include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
+>  void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
+>       ^
+> fs/ntfs/attrib.c:2591:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
+>    balance_dirty_pages_ratelimited(inode_to_bdi(inode),
+>                                    ^
+> In file included from include/linux/memcontrol.h:30:0,
+>                  from include/linux/swap.h:8,
+>                  from fs/ntfs/attrib.c:26:
+> include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
+>  void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
+>       ^
+> fs/ntfs/attrib.c:2609:35: warning: passing argument 1 of 'balance_dirty_pages_ratelimited' makes pointer from integer without a cast [-Wint-conversion]
+>    balance_dirty_pages_ratelimited(inode_to_bdi(inode),
+>                                    ^
+> In file included from include/linux/memcontrol.h:30:0,
+>                  from include/linux/swap.h:8,
+>                  from fs/ntfs/attrib.c:26:
+> include/linux/writeback.h:367:6: note: expected 'struct backing_dev_info *' but argument is of type 'int'
+>  void balance_dirty_pages_ratelimited(struct backing_dev_info *bdi,
+>       ^
 > 
-> caused by 05dbf57876b97d2 (hwmon: Add xgene hwmon driver).  That symbol
-> is not exported so can't be used from modules though I can't immediately
-> see how that module acquired a reference to that symbol.
+> Caused by commit
+> 
+>   a685fa61566d ("remove mapping from balance_dirty_pages*()")
+> 
+> I assume some forgotten include(s).
 
-See also https://lkml.org/lkml/2016/9/8/311
-
-I haven't done a patch since we're still debating about how to best
-address this.
-
-	Arnd
+No, I picked a wrong version of the patchset. But the patchset should
+not have been in for-next as it's a change to writeback (a prerequisity
+for a btrfs patchset). Now removed.
