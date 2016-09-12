@@ -1,43 +1,35 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 12 Sep 2016 15:27:07 +0200
-Message-ID: <CACRpkdbOeSDEx0ms_VMPSdB=5qrfhNVPWs-neL+sVMydVy-E-A@mail.gmail.com>
-References: <20160909143617.7106762e@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Sep 12 (leds/leds-mlxcpld.c)
+Date: Mon, 12 Sep 2016 10:01:35 -0700
+Message-ID: <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
+References: <20160912154216.724eb884@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f54.google.com ([209.85.218.54]:33743 "EHLO
-        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758894AbcILN1I (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Sep 2016 09:27:08 -0400
-Received: by mail-oi0-f54.google.com with SMTP id y2so313059706oie.0
-        for <linux-next@vger.kernel.org>; Mon, 12 Sep 2016 06:27:08 -0700 (PDT)
-In-Reply-To: <20160909143617.7106762e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160912154216.724eb884@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>, linux-leds@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Sep 9, 2016 at 6:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 09/11/16 22:42, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160909:
+> 
 
-> After merging the gpio tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> drivers/gpio/gpiolib.c: In function '_gpiochip_irqchip_add':
-> drivers/gpio/gpiolib.c:1622:62: error: macro "WARN_ON" passed 3 arguments, but takes just 1
->        "%s: Ignoring %d default trigger\n", of_node->full_name))
->                                                               ^
-> drivers/gpio/gpiolib.c:1621:6: error: 'WARN_ON' undeclared (first use in this function)
->   if (WARN_ON(of_node && type != IRQ_TYPE_NONE,
->       ^
->
-> Caused by commit
->
->   1ded8b1dafe6 ("gpio/gpiolib: Forbid irqchip default trigger if probed over DT")
->
-> I used the version of the gpio tree from next-20160908 for today.
+on x86_64:
 
-Sorry about this, fixed it up.
+../drivers/leds/leds-mlxcpld.c: In function 'mlxcpld_led_bus_access_func':
+../drivers/leds/leds-mlxcpld.c:253:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
+   outb(*data, addr);
+   ^
+../drivers/leds/leds-mlxcpld.c:255:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
+   *data = inb(addr);
+   ^
 
-Yours,
-Linus Walleij
+
+
+-- 
+~Randy
