@@ -1,35 +1,41 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 12 (leds/leds-mlxcpld.c)
-Date: Mon, 12 Sep 2016 10:01:35 -0700
-Message-ID: <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
-References: <20160912154216.724eb884@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kbuild tree with Linus' tree
+Date: Tue, 13 Sep 2016 09:39:45 +1000
+Message-ID: <20160913093945.521a28b4@canb.auug.org.au>
+References: <20160912113224.792b24f0@canb.auug.org.au>
+        <20160912125341.0596ed9f@roar.ozlabs.ibm.com>
+        <e1cd32fd-6db2-0dc7-43c4-f678582326ad@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160912154216.724eb884@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>, linux-leds@vger.kernel.org
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-Reply-To: <e1cd32fd-6db2-0dc7-43c4-f678582326ad@suse.cz>
+Sender: linux-arch-owner@vger.kernel.org
+To: Michal Marek <mmarek@suse.cz>
+Cc: Nicholas Piggin <npiggin@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, linux-arch@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 09/11/16 22:42, Stephen Rothwell wrote:
-> Hi all,
+Hi Michal,
+
+On Mon, 12 Sep 2016 11:03:08 +0200 Michal Marek <mmarek@suse.cz> wrote:
+>
+> On 2016-09-12 04:53, Nicholas Piggin wrote:
+> > Question, what is the best way to merge dependent patches? Considering
+> > they will need a good amount of architecture testing, I think they will
+> > have to go via arch trees. But it also does not make sense to merge these
+> > kbuild changes upstream first, without having tested them.  
 > 
-> Changes since 20160909:
-> 
+> I think it makes sense to merge the kbuild changes via kbuild.git, even
+> if they are unused and untested. Any follow-up fixes required to enable
+> the first architecture can go through the respective architecture tree.
+> Does that sound OK?
 
-on x86_64:
-
-../drivers/leds/leds-mlxcpld.c: In function 'mlxcpld_led_bus_access_func':
-../drivers/leds/leds-mlxcpld.c:253:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
-   outb(*data, addr);
-   ^
-../drivers/leds/leds-mlxcpld.c:255:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
-   *data = inb(addr);
-   ^
-
-
+And if you guarantee not to rebase the kbuild tree (or at least the
+subset containing these patches), then each of the architecture trees
+can just merge your tree (or a tag?) and then implement any necessary
+arch dependent changes.  I fixes are necessary, they can also be merged
+into the architecture trees.
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
