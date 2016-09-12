@@ -1,68 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm64 tree
-Date: Mon, 12 Sep 2016 12:54:23 +1000
-Message-ID: <20160912125423.636f916a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the v4l-dvb tree
+Date: Mon, 12 Sep 2016 15:10:16 +1000
+Message-ID: <20160912151016.4ce05e9f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55742 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54253 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932255AbcILCy0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 11 Sep 2016 22:54:26 -0400
+        id S1751677AbcILFKS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Sep 2016 01:10:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Robert Jarzmik <robert.jarzmik@free.fr>, Hans Verkuil <hans.verkuil@cisco.com>
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the dax-misc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-  include/linux/jump_label.h
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x678): multiple definition of `soc_mbus_config_compatible'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x78): first defined here
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x630): multiple definition of `soc_mbus_image_size'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x30): first defined here
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x600): multiple definition of `soc_mbus_samples_per_pixel'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x0): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_bytes_per_line':
+(.text+0x4d20): multiple definition of `.soc_mbus_bytes_per_line'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x120): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_get_fmtdesc':
+(.text+0x4f90): multiple definition of `.soc_mbus_get_fmtdesc'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x390): first defined here
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x660): multiple definition of `soc_mbus_get_fmtdesc'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x60): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_image_size':
+(.text+0x4e10): multiple definition of `.soc_mbus_image_size'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x210): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_samples_per_pixel':
+(.text+0x4c00): multiple definition of `.soc_mbus_samples_per_pixel'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x0): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_config_compatible':
+(.text+0x5030): multiple definition of `.soc_mbus_config_compatible'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x430): first defined here
+drivers/media/platform/soc_camera/built-in.o: In function `.soc_mbus_find_fmtdesc':
+(.text+0x4ec0): multiple definition of `.soc_mbus_find_fmtdesc'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.text+0x2c0): first defined here
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x648): multiple definition of `soc_mbus_find_fmtdesc'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x48): first defined here
+drivers/media/platform/soc_camera/built-in.o:(.opd+0x618): multiple definition of `soc_mbus_bytes_per_line'
+drivers/media/platform/soc_camera/soc_mediabus.o:(.opd+0x18): first defined here
 
-between commit:
+Caused by commit
 
-  ef0da55a84a3 ("jump_labels: Allow array initialisers")
+  4bb738f228b3 ("[media] media: platform: pxa_camera: move pxa_camera out of soc_camera")
 
-from the arm64 tree and commit:
-
-  b8fb03785d4d ("locking/static_keys: Provide DECLARE and well as DEFINE macros")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have reverted that commit for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/linux/jump_label.h
-index a534c7f15a61,595fb46213fc..000000000000
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@@ -272,16 -273,9 +275,19 @@@ struct static_key_false 
-  #define DEFINE_STATIC_KEY_FALSE(name)	\
-  	struct static_key_false name = STATIC_KEY_FALSE_INIT
-  
-+ #define DECLARE_STATIC_KEY_FALSE(name)	\
-+ 	extern struct static_key_false name
-+ 
- +#define DEFINE_STATIC_KEY_ARRAY_TRUE(name, count)		\
- +	struct static_key_true name[count] = {			\
- +		[0 ... (count) - 1] = STATIC_KEY_TRUE_INIT,	\
- +	}
- +
- +#define DEFINE_STATIC_KEY_ARRAY_FALSE(name, count)		\
- +	struct static_key_false name[count] = {			\
- +		[0 ... (count) - 1] = STATIC_KEY_FALSE_INIT,	\
- +	}
- +
-  extern bool ____wrong_branch_error(void);
-  
-  #define static_key_enabled(x)							\
