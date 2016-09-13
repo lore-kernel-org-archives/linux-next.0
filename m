@@ -1,40 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kbuild tree with Linus' tree
-Date: Tue, 13 Sep 2016 09:39:45 +1000
-Message-ID: <20160913093945.521a28b4@canb.auug.org.au>
-References: <20160912113224.792b24f0@canb.auug.org.au>
-        <20160912125341.0596ed9f@roar.ozlabs.ibm.com>
-        <e1cd32fd-6db2-0dc7-43c4-f678582326ad@suse.cz>
+Subject: linux-next: manual merge of the netfilter-next tree with the net
+ tree
+Date: Tue, 13 Sep 2016 10:12:50 +1000
+Message-ID: <20160913101250.0ffee30f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-Reply-To: <e1cd32fd-6db2-0dc7-43c4-f678582326ad@suse.cz>
-Sender: linux-arch-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: Nicholas Piggin <npiggin@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, linux-arch@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43002 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751287AbcIMAMx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Sep 2016 20:12:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liping Zhang <liping.zhang@spreadtrum.com>
 
-Hi Michal,
+Hi all,
 
-On Mon, 12 Sep 2016 11:03:08 +0200 Michal Marek <mmarek@suse.cz> wrote:
->
-> On 2016-09-12 04:53, Nicholas Piggin wrote:
-> > Question, what is the best way to merge dependent patches? Considering
-> > they will need a good amount of architecture testing, I think they will
-> > have to go via arch trees. But it also does not make sense to merge these
-> > kbuild changes upstream first, without having tested them.  
-> 
-> I think it makes sense to merge the kbuild changes via kbuild.git, even
-> if they are unused and untested. Any follow-up fixes required to enable
-> the first architecture can go through the respective architecture tree.
-> Does that sound OK?
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-And if you guarantee not to rebase the kbuild tree (or at least the
-subset containing these patches), then each of the architecture trees
-can just merge your tree (or a tag?) and then implement any necessary
-arch dependent changes.  I fixes are necessary, they can also be merged
-into the architecture trees.
+  net/netfilter/nf_tables_netdev.c
+
+between commit:
+
+  c73c24849011 ("netfilter: nf_tables_netdev: remove redundant ip_hdr assignment")
+
+from the net tree and commit:
+
+  ddc8b6027ad0 ("netfilter: introduce nft_set_pktinfo_{ipv4, ipv6}_validate()")
+
+from the netfilter-next tree.
+
+I fixed it up (I used the latter version of this file and applied the
+patch below) and can carry the fix as necessary. This is now fixed as
+far as linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Sep 2016 10:08:58 +1000
+Subject: [PATCH] netfilter: merge fixup for "nf_tables_netdev: remove
+ redundant ip_hdr assignment"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/net/netfilter/nf_tables_ipv4.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/include/net/netfilter/nf_tables_ipv4.h b/include/net/netfilter/nf_tables_ipv4.h
+index 968f00b82fb5..25e33aee91e7 100644
+--- a/include/net/netfilter/nf_tables_ipv4.h
++++ b/include/net/netfilter/nf_tables_ipv4.h
+@@ -33,7 +33,6 @@ __nft_set_pktinfo_ipv4_validate(struct nft_pktinfo *pkt,
+ 	if (!iph)
+ 		return -1;
+ 
+-	iph = ip_hdr(skb);
+ 	if (iph->ihl < 5 || iph->version != 4)
+ 		return -1;
+ 
+-- 
+2.8.1
 
 -- 
 Cheers,
