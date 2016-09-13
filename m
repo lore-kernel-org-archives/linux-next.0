@@ -1,42 +1,104 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: linux-next: Tree for Sep 12 (leds/leds-mlxcpld.c)
-Date: Tue, 13 Sep 2016 09:12:26 +0200
-Message-ID: <b7750571-77d4-cc10-3fd6-364cc9869040@samsung.com>
-References: <20160912154216.724eb884@canb.auug.org.au>
- <CGME20160912170143eucas1p14f9050dc4bd8a2793b7b03089970eadc@eucas1p1.samsung.com>
- <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-reply-to: <14fc21ba-9658-4c6d-fe3e-2c87a02f377c@infradead.org>
-Sender: linux-leds-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Vadim Pasternak <vadimp@mellanox.com>, linux-leds@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160913 build: 0 failures 3 warnings (next-20160913)
+Date: Tue, 13 Sep 2016 08:34:06 +0100
+Message-ID: <E1bjiEI-0006WJ-ET@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37294 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750999AbcIMHeP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 13 Sep 2016 03:34:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Randy,
+Tree/Branch: next-20160913
+Git describe: next-20160913
+Commit: 562d4a2d7f Add linux-next specific files for 20160913
 
-On 09/12/2016 07:01 PM, Randy Dunlap wrote:
-> On 09/11/16 22:42, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20160909:
->>
->
-> on x86_64:
->
-> ../drivers/leds/leds-mlxcpld.c: In function 'mlxcpld_led_bus_access_func':
-> ../drivers/leds/leds-mlxcpld.c:253:3: error: implicit declaration of function 'outb' [-Werror=implicit-function-declaration]
->    outb(*data, addr);
->    ^
-> ../drivers/leds/leds-mlxcpld.c:255:3: error: implicit declaration of function 'inb' [-Werror=implicit-function-declaration]
->    *data = inb(addr);
->    ^
+Build Time: 93 min 31 sec
 
-Thanks for the report. Fixed the issues along with three other
-sparse warnings.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
--- 
-Best regards,
-Jacek Anaszewski
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      6 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	  8 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  8 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  8 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm64-allmodconfig
+x86_64-defconfig
+arm64-defconfig
