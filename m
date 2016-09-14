@@ -1,124 +1,55 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160914 build: 2 failures 3 warnings (next-20160914)
-Date: Wed, 14 Sep 2016 09:18:08 +0100
-Message-ID: <E1bk5OS-0000Vu-1C@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160914 build: 2 failures 3 warnings (next-20160914)
+Date: Wed, 14 Sep 2016 18:11:37 +0100
+Message-ID: <20160914171137.GF27974@sirena.org.uk>
+References: <E1bk5OS-0000Vu-1C@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uCPdOCrL+PnN2Vxy"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53718 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59278 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755890AbcINIST (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2016 04:18:19 -0400
+        with ESMTP id S1758858AbcINRLz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2016 13:11:55 -0400
+Content-Disposition: inline
+In-Reply-To: <E1bk5OS-0000Vu-1C@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160914
-Git describe: next-20160914
-Commit: b224027bb7 Add linux-next specific files for 20160914
-
-Build Time: 83 min 32 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 1
-Warnings: 3
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings Summary: 3
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+To: Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
+--uCPdOCrL+PnN2Vxy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Wed, Sep 14, 2016 at 09:18:08AM +0100, Build bot for Mark Brown wrote:
 
+Today's -next fails to build both arm and arm64 allmodconfig due to:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+> 	arm64-allmodconfig
+> ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+>=20
+> 	arm-allmodconfig
+> ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+due to 262d5cc6ceb293 (mfd: tps65217: Add support for IRQs) since
+irq_set_parent() isn't exported.
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+--uCPdOCrL+PnN2Vxy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+iQEcBAEBCAAGBQJX2YTIAAoJECTWi3JdVIfQ2iwH/iPcL04x8p6PUMuEcfz3nToV
+DcUiIHhE2WjU1utFiT98zb3yuvGtrOiU8PM6INaes7MYduCu4NRuXkqEWFOhOY2g
+qxBgn1hay1GUWdjqCYvnBG/XhH/CwJMBCbs8wKSME0qWYYkU3sJ/fJdyxNNTOmCR
+p3XdaeOB61/27OSRlZiYwd1et+KNSX9LTFaxtJ178et51Ys8XhEpF4w0pgf1B0K9
+xa6qv9miEPRBLaq9rVcNGEGBDRUi0k9F4U3oY0lpb6n0x9ms9o++lkvpu0LgIOzw
+L4GHj33ODOimHPdmEVzSedzfBAOfNKf/Kb142e9QKE2mDLqImsdlps4cu/+VCbI=
+=Br1J
+-----END PGP SIGNATURE-----
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-arm64-defconfig
+--uCPdOCrL+PnN2Vxy--
