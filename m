@@ -1,45 +1,66 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: next-20160914 build: 2 failures 3 warnings (next-20160914)
-Date: Wed, 14 Sep 2016 20:58:30 +0100
-Message-ID: <20160914195830.GF638@dell>
-References: <E1bk5OS-0000Vu-1C@optimist>
- <20160914171137.GF27974@sirena.org.uk>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build failure after merge of the pm tree
+Date: Wed, 14 Sep 2016 23:38:49 +0200
+Message-ID: <1813290.OlV7mnkH53@vostro.rjw.lan>
+References: <20160914142747.1553f1c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:35042 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755879AbcINT4e (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Sep 2016 15:56:34 -0400
-Received: by mail-wm0-f47.google.com with SMTP id i130so66126529wmf.0
-        for <linux-next@vger.kernel.org>; Wed, 14 Sep 2016 12:56:34 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20160914171137.GF27974@sirena.org.uk>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:62588 "HELO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1753312AbcINVcm (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Sep 2016 17:32:42 -0400
+In-Reply-To: <20160914142747.1553f1c8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <k.kozlowski@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Wed, 14 Sep 2016, Mark Brown wrote:
-
-> On Wed, Sep 14, 2016 at 09:18:08AM +0100, Build bot for Mark Brown wrote:
+On Wednesday, September 14, 2016 02:27:47 PM Stephen Rothwell wrote:
+> Hi Rafael,
 > 
-> Today's -next fails to build both arm and arm64 allmodconfig due to:
+> After merging the pm tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
 > 
-> > 	arm64-allmodconfig
-> > ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-> > 
-> > 	arm-allmodconfig
-> > ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+> drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_target':
+> drivers/devfreq/tegra-devfreq.c:500:2: error: implicit declaration of function 'clk_set_min_rate' [-Werror=implicit-function-declaration]
+>   clk_set_min_rate(tegra->emc_clock, rate);
+>   ^
 > 
-> due to 262d5cc6ceb293 (mfd: tps65217: Add support for IRQs) since
-> irq_set_parent() isn't exported.
+> Caused by commit
+> 
+>   797da5598f3a ("PM / devfreq: Add COMPILE_TEST for build coverage")
+> 
+> clk_set_min_rate() usage depends on CONFIG_HAVE_CLK.
+> 
+> I added the following for today:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 14 Sep 2016 14:22:25 +1000
+> Subject: [PATCH] partial revert of 797da5598f3a ("PM / devfreq: Add
+>  COMPILE_TEST for build coverage")
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/devfreq/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index cadd56e50b2c..93b6ada06676 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -92,7 +92,7 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>  
+>  config ARM_TEGRA_DEVFREQ
+>  	tristate "Tegra DEVFREQ Driver"
+> -	depends on ARCH_TEGRA_124_SOC || COMPILE_TEST
+> +	depends on ARCH_TEGRA_124_SOC
+>  	select DEVFREQ_GOV_SIMPLE_ONDEMAND
+>  	select PM_OPP
+>  	help
 
-Arnd is talking to Thomas about a possible solution.
+I've just gone ahead and applied it.
 
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks Stephen!
