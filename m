@@ -1,36 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the amlogic tree with the pinctrl tree
-Date: Thu, 15 Sep 2016 14:22:40 +0200
-Message-ID: <CACRpkdZnovdXWdm3udHXtfobPUiovTTSJ5WOKKw+QrSVp+GpHA@mail.gmail.com>
-References: <20160915101908.08f24fe1@canb.auug.org.au>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Thu, 15 Sep 2016 09:55:39 -0400
+Message-ID: <yq1fup1z2qs.fsf@sermon.lab.mkp.net>
+References: <20160913141546.648845fb@canb.auug.org.au>
+        <47697E90-DAB1-4940-834A-E7932044928C@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:36354 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933761AbcIOMWl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2016 08:22:41 -0400
-Received: by mail-oi0-f51.google.com with SMTP id q188so66048000oia.3
-        for <linux-next@vger.kernel.org>; Thu, 15 Sep 2016 05:22:41 -0700 (PDT)
-In-Reply-To: <20160915101908.08f24fe1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Deepak <deepak_das@mentor.com>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <47697E90-DAB1-4940-834A-E7932044928C@linux.vnet.ibm.com> (Bryant
+        G. Ly's message of "Tue, 13 Sep 2016 09:09:53 -0500")
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Martin K. Petersen" <martin.petersen@oracle.com>, Michael Cyr <mikecyr@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Sep 15, 2016 at 2:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>>> "Bryant" == Bryant G Ly <bryantly@linux.vnet.ibm.com> writes:
 
->   23b4ed268076 ("driver: base: pinctrl: return error from pinctrl_bind_pins()")
->
-> from the pinctrl tree and commit:
->
->   eb4ec68acf5e ("driver: base: pinctrl: return error from pinctrl_bind_pins()")
->
-> from the amlogic tree.
+Bryant> On 9/12/16, 11:15 PM, "Stephen Rothwell" <sfr@canb.auug.org.au> wrote:
 
-That should not be in the amlogic tree.
+>> Hi James,
+>> 
+>> After merging the scsi tree, today's linux-next build (powerpc
+>> allyesconfig) produced this warning:
+>> 
+>> drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c: In function
+>> 'ibmvscsis_rdma': drivers/scsi/ibmvscsi_tgt/ibmvscsi_tgt.c:3190:20:
+>> warning: unused variable 'srp' [-Wunused-variable] struct srp_cmd
+>> *srp = (struct srp_cmd *)iue->sbuf->buf; ^
+>> 
+>> Introduced by commit
+>> 
+>> 812902159d41 ("scsi: ibmvscsis: Code cleanup of print statements")
+    
+Bryant> Looks like cleaning up the print statement made this variable
+Bryant> unused so deleting that line would be best.
 
-Carlo, Deepak etc: Please make sure it goes away from there.
+Please submit a patch to do so.
 
-Yours,
-Linus Walleij
+-- 
+Martin K. Petersen	Oracle Linux Engineering
