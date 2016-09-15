@@ -1,43 +1,62 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: manual merge of the amlogic tree with the pinctrl tree
-Date: Thu, 15 Sep 2016 14:18:01 -0700
-Message-ID: <7h60pwlv5i.fsf@baylibre.com>
-References: <20160915101908.08f24fe1@canb.auug.org.au>
-        <CACRpkdZnovdXWdm3udHXtfobPUiovTTSJ5WOKKw+QrSVp+GpHA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: removal of the kgdb tree
+Date: Fri, 16 Sep 2016 07:49:07 +1000
+Message-ID: <20160916074907.3355feff@canb.auug.org.au>
+References: <20160309161650.2477ec9e@canb.auug.org.au>
+        <8767b8c5-d156-9b5a-5376-cc313652bb2f@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:35845 "EHLO
-        mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752784AbcIOVSE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Sep 2016 17:18:04 -0400
-Received: by mail-pa0-f54.google.com with SMTP id id6so19338031pad.3
-        for <linux-next@vger.kernel.org>; Thu, 15 Sep 2016 14:18:03 -0700 (PDT)
-In-Reply-To: <CACRpkdZnovdXWdm3udHXtfobPUiovTTSJ5WOKKw+QrSVp+GpHA@mail.gmail.com>
-        (Linus Walleij's message of "Thu, 15 Sep 2016 14:22:40 +0200")
+Received: from ozlabs.org ([103.22.144.67]:35336 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754421AbcIOVtL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Sep 2016 17:49:11 -0400
+In-Reply-To: <8767b8c5-d156-9b5a-5376-cc313652bb2f@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Carlo Caione <carlo@caione.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Deepak <deepak_das@mentor.com>
+To: Jason Wessel <jason.wessel@windriver.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Linus Walleij <linus.walleij@linaro.org> writes:
+Hi Jason,
 
-> On Thu, Sep 15, 2016 at 2:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 15 Sep 2016 07:16:18 -0500 Jason Wessel <jason.wessel@windriver.com> wrote:
 >
->>   23b4ed268076 ("driver: base: pinctrl: return error from pinctrl_bind_pins()")
->>
->> from the pinctrl tree and commit:
->>
->>   eb4ec68acf5e ("driver: base: pinctrl: return error from pinctrl_bind_pins()")
->>
->> from the amlogic tree.
->
-> That should not be in the amlogic tree.
->
-> Carlo, Deepak etc: Please make sure it goes away from there.
+> On 03/08/2016 11:16 PM, Stephen Rothwell wrote:
+> >
+> > I noticed that the kgdb tree
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jwessel/kgdb.git branch kgdb-next
+> >
+> > has not been updated since March 2015.  I am going to remove it from
+> > linux-next tomorrow unless I hear that it may be useful.  It can always
+> > be easily added back if it proves useful in the future.
+> >  
+> 
+> The time has finally arrived.  :-)
+> 
+> Could you please add the kgdb-next branch back to linux-next.
 
-It in the amlogic tree because I merged your pinctrl/devel into my
-integration branch for testing, but appears the one I merged was
-out-dated.  Fixed.
+Done from today.
 
-Kevin
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
