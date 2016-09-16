@@ -1,75 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-msm tree with Linus' tree
-Date: Fri, 16 Sep 2016 10:48:22 +1000
-Message-ID: <20160916104822.3168b510@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Fri, 16 Sep 2016 11:14:34 +1000
+Message-ID: <20160916111434.43bcf04e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40316 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750717AbcIPAs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Sep 2016 20:48:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Rob,
+Hi Jens,
 
-Today's linux-next merge of the drm-msm tree got a conflict in:
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  drivers/gpu/drm/msm/msm_gem_submit.c
+drivers/block/nbd.c:884:2: error: unknown field 'map_queue' specified in initializer
+  .map_queue = blk_mq_map_queue,
+  ^
+/home/sfr/next/next/drivers/block/nbd.c:884:15: error: 'blk_mq_map_queue' undeclared here (not in a function)
+  .map_queue = blk_mq_map_queue,
+               ^
 
-between commit:
+Caused by commit
 
-  d78d383ab354 ("drm/msm: protect against faults from copy_from_user() in submit ioctl")
+  9151bcb4fb38 ("blk-mq: kill unused blk_mq_create_mq_map()")
 
-from Linus' tree and commits:
+interacting with commit
 
-  4cd0945901a6 ("drm/msm: submit support for out-fences")
+  fd8383fd88a2 ("nbd: convert to blkmq")
 
-from the drm-msm tree.
+also in the block tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the block tree from next-20160915 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/gpu/drm/msm/msm_gem_submit.c
-index 880d6a9af7c8,3ac14cd1e5b9..000000000000
---- a/drivers/gpu/drm/msm/msm_gem_submit.c
-+++ b/drivers/gpu/drm/msm/msm_gem_submit.c
-@@@ -394,8 -385,14 +402,16 @@@ int msm_ioctl_gem_submit(struct drm_dev
-  	if (ret)
-  		return ret;
-  
- +	priv->struct_mutex_task = current;
- +
-+ 	if (args->flags & MSM_SUBMIT_FENCE_FD_OUT) {
-+ 		out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
-+ 		if (out_fence_fd < 0) {
-+ 			ret = out_fence_fd;
-+ 			goto out_unlock;
-+ 		}
-+ 	}
-+ 
-  	submit = submit_create(dev, gpu, args->nr_bos, args->nr_cmds);
-  	if (!submit) {
-  		ret = -ENOMEM;
-@@@ -487,7 -529,8 +548,9 @@@ out
-  	if (ret)
-  		msm_gem_submit_free(submit);
-  out_unlock:
-+ 	if (ret && (out_fence_fd >= 0))
-+ 		put_unused_fd(out_fence_fd);
- +	priv->struct_mutex_task = NULL;
-  	mutex_unlock(&dev->struct_mutex);
-  	return ret;
-  }
