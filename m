@@ -1,42 +1,40 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: next-20160915 build: 2 failures 16 warnings (next-20160915)
-Date: Fri, 16 Sep 2016 16:59:03 +0200
-Message-ID: <ae530830-21c0-444a-85df-fc3ddebb7ec6@redhat.com>
-References: <E1bkV4u-0004AY-TY@optimist>
- <20160915154140.GM27974@sirena.org.uk>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: linux-next: Tree for Sep 16 (spi/spi-bcm-qspi.c)
+Date: Fri, 16 Sep 2016 09:26:25 -0700
+Message-ID: <d7ab4275-bc93-94f3-ab26-4ff5649ad0fb@infradead.org>
+References: <20160916144547.7ea03f37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:45900 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759654AbcIPO7I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 16 Sep 2016 10:59:08 -0400
-In-Reply-To: <20160915154140.GM27974@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160916144547.7ea03f37-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kamal Dasu <kdasu.kdev-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On 09/15/16 21:45, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20160915:
+> 
 
-On 15-09-16 17:41, Mark Brown wrote:
-> On Thu, Sep 15, 2016 at 12:43:41PM +0100, Build bot for Mark Brown wrote:
->
-> Today's -next fails to build both arm and arm64 allmodconfigs due to:
->
->> 	arm64-allmodconfig
->> ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
->
->> 	arm-allmodconfig
->> ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
->
-> due to 7cba17ec9adc8cf (musb: sunxi: Add support for platform_set_mode)
-> which adds a call to that non-exported function to a module.
+on i386:
 
-Thank you for catching / reporting this. One patch fixing this
-coming up.
+when CONFIG_PM_SLEEP and CONFIG_SUSPEND are not enabled:
 
-Regards,
+../drivers/spi/spi-bcm-qspi.c:1300:13: error: 'bcm_qspi_suspend' undeclared here (not in a function)
+  .suspend = bcm_qspi_suspend,
+             ^
+../drivers/spi/spi-bcm-qspi.c:1301:13: error: 'bcm_qspi_resume' undeclared here (not in a function)
+  .resume  = bcm_qspi_resume,
+             ^
 
-Hans
+
+
+-- 
+~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
