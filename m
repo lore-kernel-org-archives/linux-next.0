@@ -1,38 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with Linus' tree
-Date: Fri, 16 Sep 2016 10:38:38 +1000
-Message-ID: <20160916103838.34a84b44@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-msm tree with Linus' tree
+Date: Fri, 16 Sep 2016 10:48:22 +1000
+Message-ID: <20160916104822.3168b510@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Deepak M <m.deepak@intel.com>, Jani Nikula <jani.nikula@intel.com>, Lyude <cpaul@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40316 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750717AbcIPAs0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Sep 2016 20:48:26 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0taW50ZWwgdHJlZSBn
-b3QgYSBjb25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcG0uYwoKYmV0
-d2VlbiBjb21taXQ6CgogIGY0MDMzNzI2NThmYyAoImRybS9pOTE1L3NrbDogQWRkIHN1cHBvcnQg
-Zm9yIHRoZSBTQUdWLCBmaXggdW5kZXJydW4gaGFuZ3MiKQood2hpY2ggaXMgYWxzbyBpbiB0aGUg
-ZHJtLWludGVsIHRyZWUpCgpmcm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIDZmM2ZmZjYw
-MmU4MSAoImRybS9pOTE1OiBBZGQgZGRiIHNpemUgZmllbGQgdG8gZGV2aWNlIGluZm8gc3RydWN0
-dXJlIikKCmZyb20gdGhlIGRybS1pbnRlbCB0cmVlLgoKSSBmaXhlZCBpdCB1cCAoSSBqdXN0IHVz
-ZWQgdGhlIGRybS1pbnRlbCB2ZXJzaW9uKSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXgKYXMgbmVjZXNz
-YXJ5LiBUaGlzIGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQs
-IGJ1dAphbnkgbm9uIHRyaXZpYWwgY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9uZWQgdG8geW91
-ciB1cHN0cmVhbSBtYWludGFpbmVyCndoZW4geW91ciB0cmVlIGlzIHN1Ym1pdHRlZCBmb3IgbWVy
-Z2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyCmNvb3BlcmF0aW5nIHdpdGggdGhl
-IG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55CnBhcnRp
-Y3VsYXJseSBjb21wbGV4IGNvbmZsaWN0cy4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwK
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Rob,
+
+Today's linux-next merge of the drm-msm tree got a conflict in:
+
+  drivers/gpu/drm/msm/msm_gem_submit.c
+
+between commit:
+
+  d78d383ab354 ("drm/msm: protect against faults from copy_from_user() in submit ioctl")
+
+from Linus' tree and commits:
+
+  4cd0945901a6 ("drm/msm: submit support for out-fences")
+
+from the drm-msm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/msm/msm_gem_submit.c
+index 880d6a9af7c8,3ac14cd1e5b9..000000000000
+--- a/drivers/gpu/drm/msm/msm_gem_submit.c
++++ b/drivers/gpu/drm/msm/msm_gem_submit.c
+@@@ -394,8 -385,14 +402,16 @@@ int msm_ioctl_gem_submit(struct drm_dev
+  	if (ret)
+  		return ret;
+  
+ +	priv->struct_mutex_task = current;
+ +
++ 	if (args->flags & MSM_SUBMIT_FENCE_FD_OUT) {
++ 		out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
++ 		if (out_fence_fd < 0) {
++ 			ret = out_fence_fd;
++ 			goto out_unlock;
++ 		}
++ 	}
++ 
+  	submit = submit_create(dev, gpu, args->nr_bos, args->nr_cmds);
+  	if (!submit) {
+  		ret = -ENOMEM;
+@@@ -487,7 -529,8 +548,9 @@@ out
+  	if (ret)
+  		msm_gem_submit_free(submit);
+  out_unlock:
++ 	if (ret && (out_fence_fd >= 0))
++ 		put_unused_fd(out_fence_fd);
+ +	priv->struct_mutex_task = NULL;
+  	mutex_unlock(&dev->struct_mutex);
+  	return ret;
+  }
