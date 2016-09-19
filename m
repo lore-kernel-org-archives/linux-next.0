@@ -1,56 +1,92 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Mon, 19 Sep 2016 08:22:32 -0600
-Message-ID: <1e8697fe-a8e5-a5b6-25db-c4676d36efdf@kernel.dk>
-References: <20160919161834.08302d33@canb.auug.org.au>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: next-20160914 build: 2 failures 3 warnings (next-20160914)
+Date: Mon, 19 Sep 2016 18:31:50 +0300
+Message-ID: <b651f279-75c0-17b6-4940-938e0d29207d@ti.com>
+References: <E1bk5OS-0000Vu-1C@optimist> <2300987.vYzazfRX5F@wuerfel>
+ <20160919105429.GK10189@sirena.org.uk> <1474883226.Je8NqnULCh@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f50.google.com ([209.85.214.50]:35368 "EHLO
-        mail-it0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755445AbcISOWe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 10:22:34 -0400
-Received: by mail-it0-f50.google.com with SMTP id r192so69751937ita.0
-        for <linux-next@vger.kernel.org>; Mon, 19 Sep 2016 07:22:34 -0700 (PDT)
-In-Reply-To: <20160919161834.08302d33@canb.auug.org.au>
+Received: from comal.ext.ti.com ([198.47.26.152]:53919 "EHLO comal.ext.ti.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750845AbcISPcg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 19 Sep 2016 11:32:36 -0400
+In-Reply-To: <1474883226.Je8NqnULCh@wuerfel>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
+Cc: Marcin Niestroj <m.niestroj@grinn-global.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 09/19/2016 12:18 AM, Stephen Rothwell wrote:
-> Hi Jens,
->
-> After merging the block tree, today's linux-next build (powerpc
-> allnoconfig) failed like this:
->
-> In file included from block/blk-mq-pci.c:13:0:
-> include/linux/blk-mq.h:57:18: error: field 'kobj' has incomplete type
->   struct kobject  kobj;
->                   ^
-> include/linux/blk-mq.h:121:2: error: unknown type name 'softirq_done_fn'
->   softirq_done_fn  *complete;
->   ^
-> include/linux/blk-mq.h: In function 'blk_mq_rq_from_pdu':
-> include/linux/blk-mq.h:253:22: error: invalid application of 'sizeof' to incomplete type 'struct request'
->   return pdu - sizeof(struct request);
->                       ^
-> include/linux/blk-mq.h: In function 'blk_mq_rq_to_pdu':
-> include/linux/blk-mq.h:257:2: error: invalid use of undefined type 'struct request'
->   return rq + 1;
->   ^
->
-> Caused by commit
->
->   973c4e372c8f ("blk-mq: provide a default queue mapping for PCI device")
->
-> include/linux/blk-mq.h does not include all the headers files that it
-> depends on, and building block/blk-mq-pci.c should depend on CONFIG_BLOCK.
->
-> I applied this fix patch (the block/blk-mq-pci.c may not be becessary):
+On 09/19/2016 02:30 PM, Arnd Bergmann wrote:
+> On Monday, September 19, 2016 11:54:29 AM CEST Mark Brown wrote:
+>> On Mon, Sep 19, 2016 at 12:31:04PM +0200, Arnd Bergmann wrote:
+>>
+>>> My guess is that this is indeed the correct fix, but I don't understand
+>>> at all what the function does, and Marcin Niestroj said the same thing,
+>>> he just copied the code from a driver that is always built-in.
+>>
+>> Yes, most of the code is copied from regmap-irq.  Setting the parent is
+>> needed for edge triggered interrupts that don't latch state when
+>> disabled but isn't needed in the general case.
+> 
+> I found this in the tps65217 data sheet:
+> 
+>  9.3.7 Interrupt Pin (nINT)
+>  The interrupt pin is used to signal any event or fault
+>  condition to the host processor. Whenever a fault or event
+>  occurs in the IC the corresponding interrupt bit is set in
+>  the INT register, and the open-drain output is pulled low.
+>  The nINT pin is released (returns to Hi-Z state) and fault
+>  bits are cleared when the INT register is read by the
+>  host. However, if a failure persists, the corresponding
+>  INT bit remains set and the nINT pin is pulled low again
+>  after a maximum of 32 µs.
+> 
+>  Interrupt events include pushbutton pressed/released, USB
+>  and AC voltage status change.
+>  The MASK bits in the INT register are used to mask events
+>  from generating interrupts. The MASK settings affect the
+>  nINT pin only and have no impact on protection and
+>  monitor circuits themselves. Note that persisting event
+>  conditions such as ISINK enabled shutdown can cause the
+>  nINT pin to be pulled low for an extended period of
+>  time which can keep the host in a loop trying to resolve
+>  the interrupt. If this behavior is not desired, set the
+>  corresponding mask bit after receiving the interrupt and
+>  keep polling the INT register to see when the event
+>  condition has disappeared. Then unmask the interrupt bit
+>  again.
+> 
+> Does this tell us if it's needed or not?
+> 
 
-Added, thanks Stephen.
+
+The irq_set_parent() is required for proper supporting of lazy irq disabling
+for threaded nested irqs and allow them to be re-triggered in the following case:
+
+driverX:
+ disable(nested_irq);
+...
+ parent irq triggered
+   |- handle_nested_irq()
+	|- mark nested_irq with IRQS_PENDING
+
+...
+driverX:
+ enable(nested_irq);
+   |- if IRQS_PENDING -> resend parent_irq [*], because nested threaded irq can't
+      be resend by itself 
+
+[*] if parent_irq is not set the IRQS_PENDING status will be ignored and irq might be lost.
+
+Also, it was "mandatory" to be done before commit 75a06189fc5 
+"genirq: Prevent resend to interrupts marked IRQ_NESTED_THREAD"
+which made setting of parent_irq optional.
+
+So, if is it required or not depends not only on HW, but, rather, on MFD drivers implementation
+(Interrupt controller and MFD cell drivers).
 
 -- 
-Jens Axboe
+regards,
+-grygorii
