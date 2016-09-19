@@ -1,144 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160919 build: 2 failures 5 warnings (next-20160919)
-Date: Mon, 19 Sep 2016 11:02:56 +0100
-Message-ID: <E1blvPc-0008Mq-M6@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160914 build: 2 failures 3 warnings (next-20160914)
+Date: Mon, 19 Sep 2016 11:21:50 +0100
+Message-ID: <20160919102150.GI10189@sirena.org.uk>
+References: <E1bk5OS-0000Vu-1C@optimist>
+ <20160914171137.GF27974@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ZOudaV4lSIjFTlHv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57296 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57392 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752279AbcISKDH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 06:03:07 -0400
+        with ESMTP id S1755777AbcISKWK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 06:22:10 -0400
+Content-Disposition: inline
+In-Reply-To: <20160914171137.GF27974@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20160919
-Git describe: next-20160919
-Commit: 3551fc28a8 Add linux-next specific files for 20160919
-
-Build Time: 85 min 56 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 2
-Warnings: 5
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  2 ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings Summary: 5
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	  3 ../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
-	  2 ../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+To: Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>, arnd@arndb.de
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 
+--ZOudaV4lSIjFTlHv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Wed, Sep 14, 2016 at 06:11:37PM +0100, Mark Brown wrote:
+> On Wed, Sep 14, 2016 at 09:18:08AM +0100, Build bot for Mark Brown wrote:
 
+> Today's -next fails to build both arm and arm64 allmodconfig due to:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
+> > 	arm64-allmodconfig
+> > ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-Errors:
-	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+> > 	arm-allmodconfig
+> > ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-Warnings:
-	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
+> due to 262d5cc6ceb293 (mfd: tps65217: Add support for IRQs) since
+> irq_set_parent() isn't exported.
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+This is still breaking the build, do we have any ETA on getting the
+export added?
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+--ZOudaV4lSIjFTlHv
+Content-Type: application/pgp-signature; name="signature.asc"
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+iQEcBAEBCAAGBQJX37w9AAoJECTWi3JdVIfQDtcH/j/R6m090kU4q/LtEgZKR5GO
+oDcics+1vOzrKPf+PO65lqeHynos4Pw6i7aHdExR8kzmHbixFyW8+pq2NLDelM1s
+ZMy+6aE493L/UhZ+6l8Qfr5terElyZoipXFbD1Judkle6dAu5qUhG1JpoeSedl8z
+UFokKqgc/fYwYWl2h2wymHE9AAUEd6TGe7NYozkL8CbYS0MNEJpKq+ij5tp9is7Z
+yeUWyrlPDuCULaKtUxPmiOdW5VAbXtbAUIiPhBbKOr5oamtCkzkDdxPT0Yc7Q96N
+ho/JmZ5H8rCYHseWI38FNFQkK+uwR1/RXshj2fOjK9No1Sr+fWo5by5/kYqVh5A=
+=O6YC
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 5 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
-	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
+--ZOudaV4lSIjFTlHv--
