@@ -1,70 +1,144 @@
-From: =?UTF-8?B?TXl1bmdKb28gSGFt?= <myungjoo.ham@samsung.com>
-Subject: =?UTF-8?B?UkU6IFJlOiBsaW51eC1uZXh0OiBidWlsZCBmYWlsdXJlIGFm?=
- =?UTF-8?B?dGVyIG1lcmdlIG9mIHRoZSBwbSB0cmVl?=
-Date: Mon, 19 Sep 2016 07:37:24 +0000
-Message-ID: <1589961933.1419204.1474270644855.JavaMail.weblogic@ep1ml103c>
-References: <20160914142747.1553f1c8@canb.auug.org.au>
- <CGME20160914213244epcas1p12dc9e18680105107404e1715ebcd40f8@epcas1p1.samsung.com>
-Reply-To: myungjoo.ham@samsung.com
-Mime-Version: 1.0
-Content-Type: multipart/related;
- boundary="----=_Part_1419203_2136845302.1474270644855"
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160919 build: 2 failures 5 warnings (next-20160919)
+Date: Mon, 19 Sep 2016 11:02:56 +0100
+Message-ID: <E1blvPc-0008Mq-M6@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44337 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753252AbcISHh1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 03:37:27 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5 2014))
- with ESMTP id <0ODQ02B5YQIDRUC0@mailout4.samsung.com> for
- linux-next@vger.kernel.org; Mon, 19 Sep 2016 16:37:25 +0900 (KST)
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57296 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752279AbcISKDH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 06:03:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?UTF-8?B?UmFmYWVsIEouIFd5c29ja2k=?= <rjw@rjwysocki.net>, =?UTF-8?B?U3RlcGhlbiBSb3Rod2VsbA==?= <sfr@canb.auug.org.au>
-Cc: =?UTF-8?B?bGludXgtbmV4dEB2Z2VyLmtlcm5lbC5vcmc=?= <linux-next@vger.kernel.org>, =?UTF-8?B?bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw==?= <linux-kernel@vger.kernel.org>, =?UTF-8?B?S3J6eXN6dG9mIEtvemxvd3NraQ==?= <k.kozlowski@samsung.com>, =?UTF-8?B?Q2hhbndvbyBDaG9p?= <cw00.choi@samsung.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-------=_Part_1419203_2136845302.1474270644855
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset="utf-8"
+Tree/Branch: next-20160919
+Git describe: next-20160919
+Commit: 3551fc28a8 Add linux-next specific files for 20160919
 
-PiBPbiBXZWRuZXNkYXksIFNlcHRlbWJlciAxNCwgMjAxNiAwMjoyNzo0NyBQTSBTdGVwaGVuIFJv
-dGh3ZWxsIHdyb3RlOg0KPiA+IEhpIFJhZmFlbCwNCj4gPiANCj4gPiBBZnRlciBtZXJnaW5nIHRo
-ZSBwbSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHBvd2VycGMgYWxseWVzY29uZmln
-KQ0KPiA+IGZhaWxlZCBsaWtlIHRoaXM6DQo+ID4gDQo+ID4gZHJpdmVycy9kZXZmcmVxL3RlZ3Jh
-LWRldmZyZXEuYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RldmZyZXFfdGFyZ2V0JzoNCj4gPiBkcml2
-ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jOjUwMDoyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFy
-YXRpb24gb2YgZnVuY3Rpb24gJ2Nsa19zZXRfbWluX3JhdGUnIFstV2Vycm9yPWltcGxpY2l0LWZ1
-bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiA+ICAgY2xrX3NldF9taW5fcmF0ZSh0ZWdyYS0+ZW1jX2Ns
-b2NrLCByYXRlKTsNCj4gPiAgIF4NCj4gPiANCj4gPiBDYXVzZWQgYnkgY29tbWl0DQo+ID4gDQo+
-ID4gICA3OTdkYTU1OThmM2EgKCJQTSAvIGRldmZyZXE6IEFkZCBDT01QSUxFX1RFU1QgZm9yIGJ1
-aWxkIGNvdmVyYWdlIikNCg0KQFJhZmFlbDogVGhhbmsgeW91IQ0KDQoNCkBLb3psb3dza2k6DQoN
-Ckl0IGxvb2tzIGxpa2UgQ09NTU9OX0NMSyBpcyByZXF1aXJlZCB0byBiZSAic2VsZWN0ZWQiIGZv
-ciBURUdSQS4NCg0KQWx0aG91Z2ggQ09NTU9OX0NMSyBpcyBzdXBwb3NlZCB0byBiZSB3aWRlbHkg
-dXNlZCBieSBtb3N0IEFSTSBwbGF0Zm9ybXMNCmVzcGVjaWFsbHkgaWYgIk11bHRpcGxlIHBsYXRm
-cm9tIHNlbGVjdGlvbiIgZm9yIEFSTXY3IGlzIHVzZWQsDQpDT01QSUxFX1RFU1Qgd29uJ3QgcmVj
-b2duaXplIGl0Lg0KDQpBZGRpbmcgQ09NTU9OX0NMSyBmb3IgVEVHUkEgd2lsbCBzb2x2ZSB0aGlz
-IGluc3RhbmNlIG9mIGlzc3VlOyBob3dldmVyLA0KZm9yIENPTVBJTEVfVEVTVCB0byBiZSByZWFz
-b25hYmx5IHJvYnVzdCwgZWFjaCAiQ09NUElMRV9URVNUImVkIGl0ZW0NCnNob3VsZCAic2VsZWN0
-IiBldmVyeSByZXF1aXJlZCBpdGVtLiBIb3cgZG8geW91IHdhbnQgdG8gcHJvY2VlZCB3aXRoDQpD
-T01QSUxFX1RFU1Qgb24gU29DLXNwZWNpZmljIGRldmljZSBkcml2ZXJzPw0KDQoNCg0KQ2hlZXJz
-LA0KTXl1bmdKb28uDQoNCj4gPiANCj4gPiBjbGtfc2V0X21pbl9yYXRlKCkgdXNhZ2UgZGVwZW5k
-cyBvbiBDT05GSUdfSEFWRV9DTEsuDQo+ID4gDQo+ID4gSSBhZGRlZCB0aGUgZm9sbG93aW5nIGZv
-ciB0b2RheToNCj4gPiANCj4gPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVn
-Lm9yZy5hdT4NCj4gPiBEYXRlOiBXZWQsIDE0IFNlcCAyMDE2IDE0OjIyOjI1ICsxMDAwDQo+ID4g
-U3ViamVjdDogW1BBVENIXSBwYXJ0aWFsIHJldmVydCBvZiA3OTdkYTU1OThmM2EgKCJQTSAvIGRl
-dmZyZXE6IEFkZA0KPiA+ICBDT01QSUxFX1RFU1QgZm9yIGJ1aWxkIGNvdmVyYWdlIikNCj4gPiAN
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5h
-dT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgfCAyICstDQo+ID4gIDEg
-ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+IA0KPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvS2NvbmZpZyBiL2RyaXZlcnMvZGV2ZnJlcS9LY29u
-ZmlnDQo+ID4gaW5kZXggY2FkZDU2ZTUwYjJjLi45M2I2YWRhMDY2NzYgMTAwNjQ0DQo+ID4gLS0t
-IGEvZHJpdmVycy9kZXZmcmVxL0tjb25maWcNCj4gPiArKysgYi9kcml2ZXJzL2RldmZyZXEvS2Nv
-bmZpZw0KPiA+IEBAIC05Miw3ICs5Miw3IEBAIGNvbmZpZyBBUk1fRVhZTk9TX0JVU19ERVZGUkVR
-DQo+ID4gIA0KPiA+ICBjb25maWcgQVJNX1RFR1JBX0RFVkZSRVENCj4gPiAgCXRyaXN0YXRlICJU
-ZWdyYSBERVZGUkVRIERyaXZlciINCj4gPiAtCWRlcGVuZHMgb24gQVJDSF9URUdSQV8xMjRfU09D
-IHx8IENPTVBJTEVfVEVTVA0KPiA+ICsJZGVwZW5kcyBvbiBBUkNIX1RFR1JBXzEyNF9TT0MNCj4g
-PiAgCXNlbGVjdCBERVZGUkVRX0dPVl9TSU1QTEVfT05ERU1BTkQNCj4gPiAgCXNlbGVjdCBQTV9P
-UFANCj4gPiAgCWhlbHANCj4gDQo+IEkndmUganVzdCBnb25lIGFoZWFkIGFuZCBhcHBsaWVkIGl0
-Lg0KPiANCj4gVGhhbmtzIFN0ZXBoZW4hDQo+IA0K
-------=_Part_1419203_2136845302.1474270644855--
+Build Time: 85 min 56 sec
+
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 2
+Warnings: 5
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+	arm-allmodconfig
+ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      7 warnings    0 mismatches  : arm-multi_v7_defconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings Summary: 5
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  3 ../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
+	  2 ../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 5 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/mmc/host/meson-gxbb.c:411:22: warning: unused variable 'cmd' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
