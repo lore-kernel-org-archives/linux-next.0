@@ -1,92 +1,63 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: next-20160914 build: 2 failures 3 warnings (next-20160914)
-Date: Mon, 19 Sep 2016 18:31:50 +0300
-Message-ID: <b651f279-75c0-17b6-4940-938e0d29207d@ti.com>
-References: <E1bk5OS-0000Vu-1C@optimist> <2300987.vYzazfRX5F@wuerfel>
- <20160919105429.GK10189@sirena.org.uk> <1474883226.Je8NqnULCh@wuerfel>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: Re: linux-next: build failure after merge of the pm tree
+Date: Mon, 19 Sep 2016 18:12:18 +0200
+Message-ID: <20160919161218.GA5073@kozik-book>
+References: <20160914142747.1553f1c8@canb.auug.org.au>
+ <CGME20160914213244epcas1p12dc9e18680105107404e1715ebcd40f8@epcas1p1.samsung.com>
+ <1589961933.1419204.1474270644855.JavaMail.weblogic@ep1ml103c>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:53919 "EHLO comal.ext.ti.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750845AbcISPcg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 19 Sep 2016 11:32:36 -0400
-In-Reply-To: <1474883226.Je8NqnULCh@wuerfel>
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35694 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751146AbcISQMZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Sep 2016 12:12:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1589961933.1419204.1474270644855.JavaMail.weblogic@ep1ml103c>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>
-Cc: Marcin Niestroj <m.niestroj@grinn-global.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 09/19/2016 02:30 PM, Arnd Bergmann wrote:
-> On Monday, September 19, 2016 11:54:29 AM CEST Mark Brown wrote:
->> On Mon, Sep 19, 2016 at 12:31:04PM +0200, Arnd Bergmann wrote:
->>
->>> My guess is that this is indeed the correct fix, but I don't understand
->>> at all what the function does, and Marcin Niestroj said the same thing,
->>> he just copied the code from a driver that is always built-in.
->>
->> Yes, most of the code is copied from regmap-irq.  Setting the parent is
->> needed for edge triggered interrupts that don't latch state when
->> disabled but isn't needed in the general case.
+On Mon, Sep 19, 2016 at 07:37:24AM +0000, MyungJoo Ham wrote:
+> > On Wednesday, September 14, 2016 02:27:47 PM Stephen Rothwell wrote:
+> > > Hi Rafael,
+> > > 
+> > > After merging the pm tree, today's linux-next build (powerpc allyesconfig)
+> > > failed like this:
+> > > 
+> > > drivers/devfreq/tegra-devfreq.c: In function 'tegra_devfreq_target':
+> > > drivers/devfreq/tegra-devfreq.c:500:2: error: implicit declaration of function 'clk_set_min_rate' [-Werror=implicit-function-declaration]
+> > >   clk_set_min_rate(tegra->emc_clock, rate);
+> > >   ^
+> > > 
+> > > Caused by commit
+> > > 
+> > >   797da5598f3a ("PM / devfreq: Add COMPILE_TEST for build coverage")
 > 
-> I found this in the tps65217 data sheet:
+> @Rafael: Thank you!
 > 
->  9.3.7 Interrupt Pin (nINT)
->  The interrupt pin is used to signal any event or fault
->  condition to the host processor. Whenever a fault or event
->  occurs in the IC the corresponding interrupt bit is set in
->  the INT register, and the open-drain output is pulled low.
->  The nINT pin is released (returns to Hi-Z state) and fault
->  bits are cleared when the INT register is read by the
->  host. However, if a failure persists, the corresponding
->  INT bit remains set and the nINT pin is pulled low again
->  after a maximum of 32 µs.
 > 
->  Interrupt events include pushbutton pressed/released, USB
->  and AC voltage status change.
->  The MASK bits in the INT register are used to mask events
->  from generating interrupts. The MASK settings affect the
->  nINT pin only and have no impact on protection and
->  monitor circuits themselves. Note that persisting event
->  conditions such as ISINK enabled shutdown can cause the
->  nINT pin to be pulled low for an extended period of
->  time which can keep the host in a loop trying to resolve
->  the interrupt. If this behavior is not desired, set the
->  corresponding mask bit after receiving the interrupt and
->  keep polling the INT register to see when the event
->  condition has disappeared. Then unmask the interrupt bit
->  again.
+> @Kozlowski:
 > 
-> Does this tell us if it's needed or not?
+> It looks like COMMON_CLK is required to be "selected" for TEGRA.
 > 
+> Although COMMON_CLK is supposed to be widely used by most ARM platforms
+> especially if "Multiple platfrom selection" for ARMv7 is used,
+> COMPILE_TEST won't recognize it.
+> 
+> Adding COMMON_CLK for TEGRA will solve this instance of issue; however,
+> for COMPILE_TEST to be reasonably robust, each "COMPILE_TEST"ed item
+> should "select" every required item. How do you want to proceed with
+> COMPILE_TEST on SoC-specific device drivers?
 
+I think drivers should depend on COMMON_CLK in such case. This tegra
+driver probably does not require strict ARCH_TEGRA_124_SOC dependency
+because it does not use any SoC-specific data/functions etc. However it
+uses common clock framework so explicit dependency looks proper to me.
 
-The irq_set_parent() is required for proper supporting of lazy irq disabling
-for threaded nested irqs and allow them to be re-triggered in the following case:
+In fact this is already seen in kernel like SND_SOC_TEGRA, SND_MXS_SOC,
+PWM_IMG(with compile test), SND_SOC_RCAR (even without compile test).
 
-driverX:
- disable(nested_irq);
-...
- parent irq triggered
-   |- handle_nested_irq()
-	|- mark nested_irq with IRQS_PENDING
-
-...
-driverX:
- enable(nested_irq);
-   |- if IRQS_PENDING -> resend parent_irq [*], because nested threaded irq can't
-      be resend by itself 
-
-[*] if parent_irq is not set the IRQS_PENDING status will be ignored and irq might be lost.
-
-Also, it was "mandatory" to be done before commit 75a06189fc5 
-"genirq: Prevent resend to interrupts marked IRQ_NESTED_THREAD"
-which made setting of parent_irq optional.
-
-So, if is it required or not depends not only on HW, but, rather, on MFD drivers implementation
-(Interrupt controller and MFD cell drivers).
-
--- 
-regards,
--grygorii
+Best regards,
+Krzysztof
