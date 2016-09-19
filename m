@@ -1,73 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the f2fs tree with the ext4 tree
-Date: Mon, 19 Sep 2016 11:26:37 +1000
-Message-ID: <20160919112637.31d5eadd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Mon, 19 Sep 2016 16:18:34 +1000
+Message-ID: <20160919161834.08302d33@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47910 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39213 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932543AbcISB0k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 18 Sep 2016 21:26:40 -0400
+        id S1750933AbcISGSh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 19 Sep 2016 02:18:37 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>, Chao Yu <yuchao0@huawei.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-Hi Jaegeuk,
+Hi Jens,
 
-Today's linux-next merge of the f2fs tree got a conflict in:
+After merging the block tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-  fs/f2fs/dir.c
+In file included from block/blk-mq-pci.c:13:0:
+include/linux/blk-mq.h:57:18: error: field 'kobj' has incomplete type
+  struct kobject  kobj;
+                  ^
+include/linux/blk-mq.h:121:2: error: unknown type name 'softirq_done_fn'
+  softirq_done_fn  *complete;
+  ^
+include/linux/blk-mq.h: In function 'blk_mq_rq_from_pdu':
+include/linux/blk-mq.h:253:22: error: invalid application of 'sizeof' to incomplete type 'struct request'
+  return pdu - sizeof(struct request);
+                      ^
+include/linux/blk-mq.h: In function 'blk_mq_rq_to_pdu':
+include/linux/blk-mq.h:257:2: error: invalid use of undefined type 'struct request'
+  return rq + 1;
+  ^
 
-between commit:
+Caused by commit
 
-  59aa5a3aeead ("fscrypto: make filename crypto functions return 0 on success")
+  973c4e372c8f ("blk-mq: provide a default queue mapping for PCI device")
 
-from the ext4 tree and commit:
+include/linux/blk-mq.h does not include all the headers files that it
+depends on, and building block/blk-mq-pci.c should depend on CONFIG_BLOCK.
 
-  e06f86e61d7a ("f2fs crypto: avoid unneeded memory allocation in ->readdir")
+I applied this fix patch (the block/blk-mq-pci.c may not be becessary):
 
-from the f2fs tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 19 Sep 2016 15:50:16 +1000
+Subject: [PATCH] blk_mq: linux/blk-mq.h does not include all the headers it
+ depends on
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+and building block/blk-mq-pci.o should depend on CONFIG_BLOCK
+
+Fixes: 973c4e372c8f ("blk-mq: provide a default queue mapping for PCI device")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ block/Kconfig      | 5 +++++
+ block/Makefile     | 2 +-
+ block/blk-mq-pci.c | 2 ++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/block/Kconfig b/block/Kconfig
+index 5136ad4bb6d5..1d4d624492fc 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -125,4 +125,9 @@ config BLOCK_COMPAT
+ 	depends on BLOCK && COMPAT
+ 	default y
+ 
++config BLK_MQ_PCI
++	bool
++	depends on BLOCK && PCI
++	default y
++
+ source block/Kconfig.iosched
+diff --git a/block/Makefile b/block/Makefile
+index 2447a0b1ef9c..37a0d93f97bb 100644
+--- a/block/Makefile
++++ b/block/Makefile
+@@ -22,4 +22,4 @@ obj-$(CONFIG_IOSCHED_CFQ)	+= cfq-iosched.o
+ obj-$(CONFIG_BLOCK_COMPAT)	+= compat_ioctl.o
+ obj-$(CONFIG_BLK_CMDLINE_PARSER)	+= cmdline-parser.o
+ obj-$(CONFIG_BLK_DEV_INTEGRITY) += bio-integrity.o blk-integrity.o t10-pi.o
+-obj-$(CONFIG_PCI)		+= blk-mq-pci.o
++obj-$(CONFIG_BLK_MQ_PCI)	+= blk-mq-pci.o
+diff --git a/block/blk-mq-pci.c b/block/blk-mq-pci.c
+index 33c7bd743c63..966c2169762e 100644
+--- a/block/blk-mq-pci.c
++++ b/block/blk-mq-pci.c
+@@ -10,6 +10,8 @@
+  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+  * more details.
+  */
++#include <linux/kobject.h>
++#include <linux/blkdev.h>
+ #include <linux/blk-mq.h>
+ #include <linux/blk-mq-pci.h>
+ #include <linux/pci.h>
+-- 
+2.8.1
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/f2fs/dir.c
-index 8716943335b1,2fb20fc58346..000000000000
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@@ -786,19 -813,12 +813,10 @@@ bool f2fs_fill_dentries(struct dir_cont
-  
-  		if (f2fs_encrypted_inode(d->inode)) {
-  			int save_len = fstr->len;
-- 			int err;
- -			int ret;
-  
-- 			de_name.name = f2fs_kmalloc(de_name.len, GFP_NOFS);
-- 			if (!de_name.name)
-- 				return false;
-- 
-- 			memcpy(de_name.name, d->filename[bit_pos], de_name.len);
-- 
-- 			err = fscrypt_fname_disk_to_usr(d->inode,
- -			ret = fscrypt_fname_disk_to_usr(d->inode,
-++			if (fscrypt_fname_disk_to_usr(d->inode,
-  						(u32)de->hash_code, 0,
---						&de_name, fstr);
-- 			kfree(de_name.name);
-- 			if (err)
- -			if (ret < 0)
-++						&de_name, fstr))
-  				return true;
-  
-  			de_name = *fstr;
