@@ -1,65 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
-Date: Tue, 20 Sep 2016 13:14:42 +0200
-Message-ID: <20160920111442.GA17516@kroah.com>
-References: <20160920150327.7f646dee@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160920 build: 2 failures 5 warnings (next-20160920)
+Date: Tue, 20 Sep 2016 12:18:48 +0100
+Message-ID: <20160920111848.GQ10189@sirena.org.uk>
+References: <E1bmIpL-0004P7-Bh@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4T94Hejb80K+e1gX"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:50588 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754320AbcITLOh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 20 Sep 2016 07:14:37 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41930 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932165AbcITLTI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2016 07:19:08 -0400
 Content-Disposition: inline
-In-Reply-To: <20160920150327.7f646dee@canb.auug.org.au>
+In-Reply-To: <E1bmIpL-0004P7-Bh@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Eremin <dmitry.eremin@intel.com>, James Simmons <jsimmons@infradead.org>
+To: frank zago <fzago@cray.com>, James Simmons <uja.ornl@gmail.com>, Dmitry Eremin <dmitry.eremin@intel.com>, Oleg Drokin <oleg.drokin@intel.com>, James Simmons <jsimmons@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tue, Sep 20, 2016 at 03:03:27PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   drivers/staging/lustre/lustre/llite/file.c
-> 
-> between commit:
-> 
->   47b34458fc93 ("lustre: use %pD")
-> 
-> from the vfs tree and commit:
-> 
->   bb5c7f2630de ("staging: lustre: changelog: fix comparison between signed and unsigned")
-> 
-> from the staging tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/staging/lustre/lustre/llite/file.c
-> index 23249b3e6cad,5d4d17f2de61..000000000000
-> --- a/drivers/staging/lustre/lustre/llite/file.c
-> +++ b/drivers/staging/lustre/lustre/llite/file.c
-> @@@ -1141,8 -1123,8 +1123,8 @@@ ll_file_io_generic(const struct lu_env 
->   	struct cl_io	 *io;
->   	ssize_t	       result;
->   
-> - 	CDEBUG(D_VFSTRACE, "file: %pD, type: %d ppos: %llu, count: %zd\n",
->  -	CDEBUG(D_VFSTRACE, "file: %s, type: %d ppos: %llu, count: %zu\n",
->  -	       file->f_path.dentry->d_name.name, iot, *ppos, count);
-> ++	CDEBUG(D_VFSTRACE, "file: %pD, type: %d ppos: %llu, count: %zu\n",
->  +	       file, iot, *ppos, count);
 
-Fixup looks good to me, thanks for doing this.
+--4T94Hejb80K+e1gX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-greg k-h
+On Tue, Sep 20, 2016 at 12:03:03PM +0100, Build bot for Mark Brown wrote:
+
+Today's -next fails to build arm and arm64 allmodconfig due to:
+
+> 	arm64-allmodconfig
+> 	arm-allmodconfig
+> ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
+> ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
+
+due to the series of commits that were added yesterday removing
+EXPORT_SYMBOL()s.
+
+--4T94Hejb80K+e1gX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJX4RsXAAoJECTWi3JdVIfQRkQH/0ns8YCQMtC2GsgH+TUZmMkM
+1VyF7V5wcXV8uTKZ63L84j2i/pj83mkVzcaukz20408bygU4NebyLaNUfXsb+0+M
+bOtn+NrEq+TFLGgk7gG/EXU58Z6C4IDVDZKaKCTefMZgivhBwb48bh2aXPyPqKy3
+GQQt9ZQG35j+fIwVAElwr/D+Ga1tq16JEnAQJTT4Xo2vvzbnHcHDSDcIc48g31fH
+hkrJzbrS+d9sx7RPX4BAMOMCGvLuTWXTLTcWLtd/radMSgg+MOOt1v6qh0KRWFAZ
+q1GT1GijfgPQIp+QPI3VHCF5qiE/vVbniZj1Uu8ofCgdVZxU9xlZpYJ0XYP6vkc=
+=FIgh
+-----END PGP SIGNATURE-----
+
+--4T94Hejb80K+e1gX--
