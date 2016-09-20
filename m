@@ -1,48 +1,39 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: manual merge of the amlogic tree with the arm-soc tree
-Date: Tue, 20 Sep 2016 14:02:25 -0700
-Message-ID: <7hk2e6i8ta.fsf@baylibre.com>
-References: <20160920101938.5d46a0ab@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 21 Sep 2016 09:16:22 +1000
+Message-ID: <20160921091622.53067648@canb.auug.org.au>
+References: <20160920164414.4062bb0b@canb.auug.org.au>
+        <20160920173012.1abe1d84@canb.auug.org.au>
+        <87mvj2srvj.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:34640 "EHLO
-        mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752931AbcITVCa (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 20 Sep 2016 17:02:30 -0400
-Received: by mail-pa0-f48.google.com with SMTP id wk8so10600907pab.1
-        for <linux-next@vger.kernel.org>; Tue, 20 Sep 2016 14:02:30 -0700 (PDT)
-In-Reply-To: <20160920101938.5d46a0ab@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 20 Sep 2016 10:19:38 +1000")
+Received: from ozlabs.org ([103.22.144.67]:32927 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753822AbcITXQZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Sep 2016 19:16:25 -0400
+In-Reply-To: <87mvj2srvj.fsf@concordia.ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Carlo Caione <carlo@caione.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jerome Brunet <jbrunet@baylibre.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "bauerman@linux.vnet.ibm.com" <bauerman@linux.vnet.ibm.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Michael,
 
-> Hi all,
+On Tue, 20 Sep 2016 22:00:32 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
 >
-> Today's linux-next merge of the amlogic tree got a conflict in:
->
->   arch/arm64/boot/dts/amlogic/meson-gxbb-p20x.dtsi
->
-> between commit:
->
->   8735053d7968 ("ARM64: dts: meson-gxbb-p20x: Enable USB Nodes")
->
-> from the arm-soc tree and commit:
->
->   d82801a385a1 ("ARM64: dts: meson-gxbb-p20x: Enable USB Nodes")
->
-> from the amlogic tree.
->
-> This patch was modified before being merged into the arm-soc tree.
-> Please clean up the amlogic tree.
+> Ah yep looks like that's the problem, patch below should fix it?
 
-Cleaned up.
+Yeah, I am just going to (logically) run "sed 's/CONFIG_WORD_SIZE/BITS/'"
+over the tree during the merge of the apm-current tree today.
 
-I forgot to push the updated amlogic/for-next after sending pull
-requests to arm-soc.
+> I think I'd actually prefer it if purgatory didn't redefine the CFLAGS
+> from scratch, so I'll see if Thiago can do that and send a new version.
 
-Kevin
+That could be better, but there are still some additions of
+CONFIG_WORD_SIZE elsewhere :-(
+
+-- 
+Cheers,
+Stephen Rothwell
