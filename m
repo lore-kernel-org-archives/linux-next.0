@@ -1,60 +1,69 @@
-From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 20 Sep 2016 23:26:57 -0300
-Message-ID: <2789631.bINkkb0RYT@hactar>
-References: <20160920164414.4062bb0b@canb.auug.org.au> <20160920173012.1abe1d84@canb.auug.org.au> <87mvj2srvj.fsf@concordia.ellerman.id.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Wed, 21 Sep 2016 13:23:57 +1000
+Message-ID: <20160921132357.3ae9d8dd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57671 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754843AbcIUC1G (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 20 Sep 2016 22:27:06 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.17/8.16.0.17) with SMTP id u8L2Mm2P107320
-        for <linux-next@vger.kernel.org>; Tue, 20 Sep 2016 22:27:06 -0400
-Received: from e24smtp05.br.ibm.com (e24smtp05.br.ibm.com [32.104.18.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 25jpef26qs-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Tue, 20 Sep 2016 22:27:05 -0400
-Received: from localhost
-        by e24smtp05.br.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <bauerman@linux.vnet.ibm.com>;
-        Tue, 20 Sep 2016 23:27:02 -0300
-In-Reply-To: <87mvj2srvj.fsf@concordia.ellerman.id.au>
+Received: from ozlabs.org ([103.22.144.67]:38489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751643AbcIUDYA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Sep 2016 23:24:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Am Dienstag, 20 September 2016, 22:00:32 schrieb Michael Ellerman:
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> > On Tue, 20 Sep 2016 16:44:14 +1000 Stephen Rothwell 
-<sfr@canb.auug.org.au> wrote:
-> >> After merging the akpm-current tree, today's linux-next build (powerpc
-> >> ppc64_defconfig) failed like this:
-> >> 
-> >> powerpc-linux-gcc: error: unrecognized command line option '-m'
-> >> scripts/Makefile.build:290: recipe for target
-> >> 'arch/powerpc/purgatory/printf.o' failed
-> >> 
-> >> and a few more like that.
-> > 
-> > OK, this is (most likely) caused by the CONFIG_WORD_SIZE -> BITS change
-> > interacting with the KEXEC_FILE changes. Tomorrow I will do a better
-> > merge conflict resolution patch that fixes all those.
-> 
-> Ah yep looks like that's the problem, patch below should fix it?
-> 
-> I think I'd actually prefer it if purgatory didn't redefine the CFLAGS
-> from scratch, so I'll see if Thiago can do that and send a new version.
+Hi all,
 
-I could move the purgatory inside arch/powerpc/boot and use its BOOTCFLAGS. 
-The needs of the purgatory and the boot wrapper are very similar. Would that 
-be better?
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
+
+drivers/cpufreq/cpufreq.c:1324:12: error: conflicting types for 'cpufreq_offline'
+ static int cpufreq_offline(unsigned int cpu)
+            ^
+drivers/cpufreq/cpufreq.c:1289:13: note: previous declaration of 'cpufreq_offline' was here
+ static void cpufreq_offline(unsigned int cpu);
+             ^
+
+Caused by commit
+
+  27622b061eb4 ("cpufreq: Convert to hotplug state machine")
+
+interacting with commit
+
+  26619804e733 ("cpufreq: create link to policy only for registered CPUs")
+
+from the pm tree.
+
+I have applied the foloowing build fix for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 21 Sep 2016 13:20:32 +1000
+Subject: [PATCH] cpufreq: merge fix for type of cpufreq_offline changing
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/cpufreq/cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index 611395cb115e..6e6c1fb60fbc 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1286,7 +1286,7 @@ out_free_policy:
+ 	return ret;
+ }
+ 
+-static void cpufreq_offline(unsigned int cpu);
++static int cpufreq_offline(unsigned int cpu);
+ 
+ /**
+  * cpufreq_add_dev - the cpufreq interface for a CPU device.
 -- 
-[]'s
-Thiago Jung Bauermann
-IBM Linux Technology Center
+2.8.1
+
+-- 
+Cheers,
+Stephen Rothwell
