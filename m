@@ -1,142 +1,168 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160921 build: 2 failures 4 warnings (next-20160921)
-Date: Wed, 21 Sep 2016 10:18:33 +0100
-Message-ID: <E1bmdfl-0004iM-2t@optimist>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: + softirq-fix-tasklet_kill-and-its-users.patch added to -mm tree
+Date: Wed, 21 Sep 2016 10:23:52 -0700
+Message-ID: <d072b085-2d07-066c-f1f7-7eab0a45273a@oracle.com>
+References: <57e1b041.zRoBcsxStpPQoyeo%akpm@linux-foundation.org>
+ <20160921051810.GA396@swordfish> <20160921080942.GA476@swordfish>
+Mime-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------D4BE268B7B74EE035CC92F8B"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54174 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753240AbcIUJSo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2016 05:18:44 -0400
+Received: from aserp1040.oracle.com ([141.146.126.69]:17871 "EHLO
+        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756023AbcIURZI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2016 13:25:08 -0400
+In-Reply-To: <20160921080942.GA476@swordfish>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, ssantosh@kernel.org
+Cc: akpm@linux-foundation.org, davem@davemloft.net, giovanni.cabiddu@intel.com, gregkh@linuxfoundation.org, herbert@gondor.apana.org.au, isdn@linux-pingi.de, mingo@elte.hu, pebolle@tiscali.nl, peterz@infradead.org, salvatore.benedetto@intel.com, tadeusz.struk@intel.com, tglx@linutronix.de, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, sergey.senozhatsky@gmail.com
 
-Tree/Branch: next-20160921
-Git describe: next-20160921
-Commit: 4fbbc83e89 Add linux-next specific files for 20160921
+This is a multi-part message in MIME format.
+--------------D4BE268B7B74EE035CC92F8B
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Build Time: 85 min 15 sec
+On 9/21/2016 1:09 AM, Sergey Senozhatsky wrote:
+> didn't look into the issue, but this thing
+>
+Thanks for reporting Sergey.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+>>> tasklet_init() == Init and Enable scheduling
+> [..]
+>>> @@ -559,7 +559,7 @@ void tasklet_init(struct tasklet_struct
+>>>  {
+>>>  	t->next = NULL;
+>>>  	t->state = 0;
+>>> -	atomic_set(&t->count, 0);
+>>> +	atomic_set(&t->count, 1);
+>
 
-Errors: 4
-Warnings: 4
-Section Mismatches: 0
+    			^^^^^^^^
+>>>  	t->func = func;
+>>>  	t->data = data;
+>>>  }
+>
+> seems to be in conflict with
+>
+Static helpers also needs to follow the API.
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+>  #define DECLARE_TASKLET(name, func, data) \
+>  struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(0), func, data }
+> 						^^^^^^^
+>
+>  #define DECLARE_TASKLET_DISABLED(name, func, data) \
+>  struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
+> 						^^^^^^^
+>
 
-Errors:
+>
+> as well as with the tasklet_{disable, enable} helpers
+>
+Those are fine since they work like a pair and the use count
+is always balanced.
 
-	arm64-allmodconfig
-ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
-ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+Am assuming one of the driver in your test is using the DECLARE_TASKLET
+to init the tasklet and killed by tasklet_kill() which leaves that
+tasklet to be still scheduled by tasklet action.
 
-	arm-allmodconfig
-ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
-ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+Can you please try below patch and see if you still see the issue ?
+Attaching the same, just in case mailer eat the tabs.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      7 warnings    0 mismatches  : arm-multi_v7_defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
+Regards,
+Santosh
 
--------------------------------------------------------------------------------
+ From e3e676e501a59b2a7de6e9f99ec3917c157e9caf Mon Sep 17 00:00:00 2001
+From: Santosh Shilimkar <ssantosh@kernel.org>
+Date: Wed, 21 Sep 2016 09:58:51 -0700
+Subject: [PATCH] softirq: fix DECLARE_TASKLET[_DISABLE] macros init state
 
-Errors summary: 4
-	  2 ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	  2 ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
-	  2 ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+In linux-next, commit 1f5e9c3bc47f ("softirq: fix tasklet_kill() and its 
+users")
+changed the init state of the tasklet but missed to update the macros.
 
-Warnings Summary: 4
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	  2 ../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+Fix them too.
+
+Reported-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Santosh Shilimkar <ssantosh@kernel.org>
+---
+  include/linux/interrupt.h | 4 ++--
+  1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 72f0721..cabf575 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -521,10 +521,10 @@ struct tasklet_struct
+  };
+
+  #define DECLARE_TASKLET(name, func, data) \
+-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(0), func, data }
++struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
+
+  #define DECLARE_TASKLET_DISABLED(name, func, data) \
+-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
++struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(2), func, data }
+
+
+  enum
+-- 
+1.9.1
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 4 errors, 0 warnings, 0 section mismatches
 
-Errors:
-	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
-	ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+--------------D4BE268B7B74EE035CC92F8B
+Content-Type: text/x-diff;
+ name="0001-softirq-fix-DECLARE_TASKLET-_DISABLE-macros-init-sta.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-softirq-fix-DECLARE_TASKLET-_DISABLE-macros-init-sta.pa";
+ filename*1="tch"
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+>From e3e676e501a59b2a7de6e9f99ec3917c157e9caf Mon Sep 17 00:00:00 2001
+From: Santosh Shilimkar <ssantosh@kernel.org>
+Date: Wed, 21 Sep 2016 09:58:51 -0700
+Subject: [PATCH] softirq: fix DECLARE_TASKLET[_DISABLE] macros init state
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+In linux-next, commit 1f5e9c3bc47f ("softirq: fix tasklet_kill() and its users")
+changed the init state of the tasklet but missed to update the macros.
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 4 errors, 4 warnings, 0 section mismatches
+Fix them too.
 
-Errors:
-	ERROR: "musb_root_disconnect" [drivers/usb/musb/sunxi.ko] undefined!
-	ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/lov/lov.ko] undefined!
-	ERROR: "lustre_swab_lov_mds_md" [drivers/staging/lustre/lustre/llite/lustre.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+Reported-by: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Santosh Shilimkar <ssantosh@kernel.org>
+---
+ include/linux/interrupt.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	../drivers/dma/imx-sdma.c:673:13: warning: 'sdma_handle_channel_loop' defined but not used [-Wunused-function]
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 72f0721..cabf575 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -521,10 +521,10 @@ struct tasklet_struct
+ };
+ 
+ #define DECLARE_TASKLET(name, func, data) \
+-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(0), func, data }
++struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
+ 
+ #define DECLARE_TASKLET_DISABLED(name, func, data) \
+-struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
++struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(2), func, data }
+ 
+ 
+ enum
+-- 
+1.9.1
 
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
 
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-arm64-defconfig
+--------------D4BE268B7B74EE035CC92F8B--
