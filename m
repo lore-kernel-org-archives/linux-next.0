@@ -1,72 +1,64 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 21 Sep 2016 12:14:23 +0530
-Message-ID: <20160921064423.GE6313@vireshk-i7>
-References: <20160921132357.3ae9d8dd@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: + softirq-fix-tasklet_kill-and-its-users.patch added to -mm tree
+Date: Wed, 21 Sep 2016 17:09:43 +0900
+Message-ID: <20160921080942.GA476@swordfish>
+References: <57e1b041.zRoBcsxStpPQoyeo%akpm@linux-foundation.org>
+ <20160921051810.GA396@swordfish>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34318 "EHLO
-        mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750785AbcIUGo1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Sep 2016 02:44:27 -0400
-Received: by mail-pa0-f46.google.com with SMTP id wk8so15227282pab.1
-        for <linux-next@vger.kernel.org>; Tue, 20 Sep 2016 23:44:27 -0700 (PDT)
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160921132357.3ae9d8dd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+In-Reply-To: <20160921051810.GA396@swordfish>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ssantosh@kernel.org
+Cc: akpm@linux-foundation.org, davem@davemloft.net, giovanni.cabiddu@intel.com, gregkh@linuxfoundation.org, herbert@gondor.apana.org.au, isdn@linux-pingi.de, mingo@elte.hu, pebolle@tiscali.nl, peterz@infradead.org, salvatore.benedetto@intel.com, tadeusz.struk@intel.com, tglx@linutronix.de, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, sergey.senozhatsky@gmail.com, sergey.senozhatsky.work@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On 21-09-16, 13:23, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/cpufreq/cpufreq.c:1324:12: error: conflicting types for 'cpufreq_offline'
->  static int cpufreq_offline(unsigned int cpu)
->             ^
-> drivers/cpufreq/cpufreq.c:1289:13: note: previous declaration of 'cpufreq_offline' was here
->  static void cpufreq_offline(unsigned int cpu);
->              ^
-> 
-> Caused by commit
-> 
->   27622b061eb4 ("cpufreq: Convert to hotplug state machine")
-> 
-> interacting with commit
-> 
->   26619804e733 ("cpufreq: create link to policy only for registered CPUs")
-> 
-> from the pm tree.
-> 
-> I have applied the foloowing build fix for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 21 Sep 2016 13:20:32 +1000
-> Subject: [PATCH] cpufreq: merge fix for type of cpufreq_offline changing
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/cpufreq/cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> index 611395cb115e..6e6c1fb60fbc 100644
-> --- a/drivers/cpufreq/cpufreq.c
-> +++ b/drivers/cpufreq/cpufreq.c
-> @@ -1286,7 +1286,7 @@ out_free_policy:
->  	return ret;
->  }
->  
-> -static void cpufreq_offline(unsigned int cpu);
-> +static int cpufreq_offline(unsigned int cpu);
+didn't look into the issue, but this thing
 
-Thanks and sorry about it. Looks fine.
+> > tasklet_init() == Init and Enable scheduling
+[..]
+> > @@ -559,7 +559,7 @@ void tasklet_init(struct tasklet_struct
+> >  {
+> >  	t->next = NULL;
+> >  	t->state = 0;
+> > -	atomic_set(&t->count, 0);
+> > +	atomic_set(&t->count, 1);
+			^^^^^^^^
+> >  	t->func = func;
+> >  	t->data = data;
+> >  }
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+seems to be in conflict with
 
--- 
-viresh
+ #define DECLARE_TASKLET(name, func, data) \
+ struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(0), func, data }
+						^^^^^^^
+
+ #define DECLARE_TASKLET_DISABLED(name, func, data) \
+ struct tasklet_struct name = { NULL, 0, ATOMIC_INIT(1), func, data }
+						^^^^^^^
+
+
+as well as with the tasklet_{disable, enable} helpers
+
+static inline void tasklet_disable_nosync(struct tasklet_struct *t)
+{
+	atomic_inc(&t->count);
+	smp_mb__after_atomic();
+}
+
+static inline void tasklet_disable(struct tasklet_struct *t)
+{
+	tasklet_disable_nosync(t);
+	tasklet_unlock_wait(t);
+	smp_mb();
+}
+
+static inline void tasklet_enable(struct tasklet_struct *t)
+{
+	smp_mb__before_atomic();
+	atomic_dec(&t->count);
+}
+
+	-ss
