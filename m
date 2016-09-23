@@ -1,47 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: + softirq-fix-tasklet_kill-and-its-users.patch added to -mm
- tree
-Date: Fri, 23 Sep 2016 09:37:51 +1000
-Message-ID: <20160923093751.1b74c620@canb.auug.org.au>
-References: <57e1b041.zRoBcsxStpPQoyeo%akpm@linux-foundation.org>
-        <20160921051810.GA396@swordfish>
-        <20160921080942.GA476@swordfish>
-        <d072b085-2d07-066c-f1f7-7eab0a45273a@oracle.com>
-        <20160922004204.GA701@swordfish>
-        <36fffd08-17ec-0a73-17f3-378597e0c25a@oracle.com>
-        <alpine.DEB.2.20.1609220854090.5599@nanos>
+Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Fri, 23 Sep 2016 11:35:47 +1000
+Message-ID: <20160923113547.1f5a1d09@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38982 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35017 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753364AbcIVXhy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 22 Sep 2016 19:37:54 -0400
-In-Reply-To: <alpine.DEB.2.20.1609220854090.5599@nanos>
+        id S933640AbcIWBfu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 22 Sep 2016 21:35:50 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, ssantosh@kernel.org, David Miller <davem@davemloft.net>, giovanni.cabiddu@intel.com, gregkh@linuxfoundation.org, herbert@gondor.apana.org.au, isdn@linux-pingi.de, mingo@elte.hu, pebolle@tiscali.nl, Peter Zijlstra <peterz@infradead.org>, salvatore.benedetto@intel.com, tadeusz.struk@intel.com, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sergey.senozhatsky@gmail.com, Ingo Molnar <mingo@kernel.org>, Tony Lindgren <tony@atomide.com>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Airlie <airlied@redhat.com>, Sean Paul <seanpaul@chromium.org>
 
-Hi Thomas,
+Hi all,
 
-On Thu, 22 Sep 2016 09:05:23 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> B1;2802;0cOn Wed, 21 Sep 2016, Santosh Shilimkar wrote:
-> > I requested you to include this patch but now am not sure anymore.
-> > Looks like there are almost 30 more users which are directly
-> > tweaking 'tasklet_struct' fields and calling other APIs. Hunting them
-> > and fixing them probably would be an exercise and also those changes
-> > needs those changed drivers to be tested.
-> > 
-> > What do you suggest ? At least this patch needs to be dropped as of now
-> > till we can have complete coverage for those bad users.  
-> 
-> Yes, it needs to be dropped. Stephen, can you please revert it from next?
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-I will do the revert today.  It reverts cleanly, so hopefully there are
-no side effects.
+  drivers/gpu/drm/drm_crtc.c
+
+between commit:
+
+  6f00975c6190 ("drm: Reject page_flip for !DRIVER_MODESET")
+
+from Linus' tree and commit:
+
+  43968d7b806d ("drm: Extract drm_plane.[hc]")
+
+from the drm-misc tree.
+
+I fixed it up (the latter incorporated the former, so I just used the
+latter) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
