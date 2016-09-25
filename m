@@ -1,53 +1,71 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: Tree for Sep 21
-Date: Sat, 24 Sep 2016 09:28:00 +0200
-Message-ID: <20160924072800.GC4462@kroah.com>
-References: <20160921160838.71395247@canb.auug.org.au>
- <CA+55aFwS6i_N3nUrEiD8aRt_1HjScKG7S8a2sREs0Sv1eJsrAQ@mail.gmail.com>
- <20160924104245.0d6429c1@canb.auug.org.au>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: Re: linux-next: manual merge of the arm-soc tree with Linus' tree
+Date: Sun, 25 Sep 2016 18:07:30 +0200
+Message-ID: <871t08c69p.fsf@belgarion.home>
+References: <20160905105803.13ed27ff@canb.auug.org.au>
+        <20160905182603.GS1041@n2100.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46511 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933908AbcIXH14 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 24 Sep 2016 03:27:56 -0400
-Content-Disposition: inline
-In-Reply-To: <20160924104245.0d6429c1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Olof Johansson <olof@lixom.net>, "David S. Miller" <davem@davemloft.net>, ARM <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Sep 24, 2016 at 10:42:45AM +1000, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> On Fri, 23 Sep 2016 11:24:04 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> >
-> > On Tue, Sep 20, 2016 at 11:08 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Changes since 20160920:
-> > > [...]
-> > > Non-merge commits (relative to Linus' tree): 11180
-> > >  8424 files changed, 456474 insertions(+), 237951 deletions(-)  
-> > 
-> > What happened here? The previous linux-next tree was much smaller. The
-> > "changes since" part doesn't actually talk about the almost 3000 new
-> > non-merge commits that very suddenly showed up.
-> 
-> That was Greg's (cc'd) greybus stuff entering the staging tree:
-> 
-> $ git rev-list --count --no-merges origin/master..2bbadafbe4ea
-> 2363
+Russell King - ARM Linux <linux@armlinux.org.uk> writes:
 
-This is a staging driver (new hardware bus and drivers), self-contained,
-and the development history of the code was preserved by importing it
-this way.
+> On Mon, Sep 05, 2016 at 10:58:03AM +1000, Stephen Rothwell wrote:
+>> I fixed it up (I deleted the file) and can carry the fix as
+>> necessary. This is now fixed as far as linux-next is concerned, but any
+>> non trivial conflicts should be mentioned to your upstream maintainer
+>> when your tree is submitted for merging.  You may also want to consider
+>> cooperating with the maintainer of the conflicting tree to minimise any
+>> particularly complex conflicts.
 
-The overall size of the kernel only grew by 35k of lines or so, not
-much, but yes, the history did jump all at once.  Much like when we
-imported btrfs the same way.
+...zip...
+> Since the patch in my tree is fixing a regression caused by the broken
+> conversions, I'm not mindful to drop it from the merge window - I
+> actually want to push it into -rc kernels.  We _do_ need to fix the
+> DT regressions, and quickly though, and push those with this patch.
+>
+> Since I don't use the SMC91x with DT, that's outside of what I can
+> test, so consider this a call for help on that subject.
+Then consider you have one more tester, for a 16-bits access.
 
-thanks,
+My lubbock is now DT aware, with a smc91x ethernet card actually working,
+provided the small patch in [2].
 
-greg k-h
+Cheers.
+
+-- 
+Robert
+
+[1] DT extract
+	ethernet@extbus {
+		compatible = "smsc,lan91c94";
+		reg = <0x0c000c00 0x100000 0x0e00000 0x100000>;
+		reg-names = "smc91x-regs", "smc91x-attrib";
+		interrupts-extended = <&pxa_cplds_irqs 3 IRQ_TYPE_EDGE_RISING>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_eth_default>;
+		reg-io-width = <2>;
+		reg-io-shift = <2>;
+	};
+
+
+[2] Patch for lubbock
+---8>---
+diff --git a/drivers/net/ethernet/smsc/smc91x.c b/drivers/net/ethernet/smsc/smc91x.c
+index 726b80f45906..6d4fdac6c0e0 100644
+--- a/drivers/net/ethernet/smsc/smc91x.c
++++ b/drivers/net/ethernet/smsc/smc91x.c
+@@ -2316,6 +2316,9 @@ static int smc_drv_probe(struct platform_device *pdev)
+ 		} else {
+ 			lp->cfg.flags |= SMC91X_USE_16BIT;
+ 		}
++		if (!device_property_read_u32(&pdev->dev, "reg-io-shift",
++					      &val))
++			lp->io_shift = val;
+ 	}
+ #endif
+ 
