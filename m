@@ -1,46 +1,132 @@
-From: Jan Kara <jack@suse.cz>
-Subject: Re: linux-next: manual merge of the vfs-jk tree with the fuse tree
-Date: Tue, 27 Sep 2016 09:41:31 +0200
-Message-ID: <20160927074131.GB1139@quack2.suse.cz>
-References: <20160927101204.19fdab82@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160927 build: 2 failures 4 warnings (next-20160927)
+Date: Tue, 27 Sep 2016 10:49:27 +0100
+Message-ID: <E1bop0x-0001YK-4h@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:60200 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752814AbcI0Hle (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 27 Sep 2016 03:41:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20160927101204.19fdab82@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58954 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932222AbcI0Jti (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2016 05:49:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+Tree/Branch: next-20160927
+Git describe: next-20160927
+Commit: 31e69fdf27 Add linux-next specific files for 20160927
 
-On Tue 27-09-16 10:12:04, Stephen Rothwell wrote:
-> Today's linux-next merge of the vfs-jk tree got a conflict in:
-> 
->   fs/fuse/dir.c
-> 
-> between commits:
-> 
->   3b3fb74935ce ("fuse: invalidate dir dentry after chmod")
->   5f69e628df75 ("fuse: fix killing s[ug]id in setattr")
-> 
-> from the fuse tree and commit:
-> 
->   62490330769c ("fuse: Propagate dentry down to inode_change_ok()")
-> 
-> from the vfs-jk tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
+Build Time: 85 min 35 sec
 
-Thanks! The resolution looks good to me.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-								Honza
+Errors: 2
+Warnings: 4
+Section Mismatches: 0
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
