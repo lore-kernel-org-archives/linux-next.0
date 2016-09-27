@@ -1,132 +1,307 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160927 build: 2 failures 4 warnings (next-20160927)
-Date: Tue, 27 Sep 2016 10:49:27 +0100
-Message-ID: <E1bop0x-0001YK-4h@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58954 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932222AbcI0Jti (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 27 Sep 2016 05:49:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: Tree for Sep 27
+Date: Tue, 27 Sep 2016 19:03:24 +0900
+Message-ID: <20160927100324.GA466@swordfish>
+References: <20160927164026.741b290b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160927164026.741b290b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Aaron Conole <aconole@bytheb.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20160927
-Git describe: next-20160927
-Commit: 31e69fdf27 Add linux-next specific files for 20160927
+Hello,
 
-Build Time: 85 min 35 sec
+On (09/27/16 16:40), Stephen Rothwell wrote:
+> 
+> Changes since 20160923:
+> 
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+seems that commit e3b37f11e6e4e6b6 ("netfilter: replace list_head with
+single linked list") breaks the build on !CONFIG_NETFILTER_INGRESS systems
+accessing ->nf_hooks_ingress
 
-Errors: 2
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-
-Warnings Summary: 4
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+static void nf_set_hooks_head(struct net *net, const struct nf_hook_ops *reg,
+                             struct nf_hook_entry *entry)
+{
+       switch (reg->pf) {
+       case NFPROTO_NETDEV:
+               /* We already checked in nf_register_net_hook() that this is
+                * used from ingress.
+                */
+               rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+					^^^^^^^^^^^^^^^^^^^^
 
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
+log:
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+In file included from ./include/linux/linkage.h:4:0,
+                 from ./include/linux/kernel.h:6,
+                 from net/netfilter/core.c:10:
+net/netfilter/core.c: In function ‘nf_set_hooks_head’:
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:322:17: note: in definition of macro ‘WRITE_ONCE’
+  union { typeof(x) __val; char __c[1]; } __u = \
+                 ^
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:323:30: note: in definition of macro ‘WRITE_ONCE’
+   { .__val = (__force typeof(x)) (val) }; \
+                              ^
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:323:35: note: in definition of macro ‘WRITE_ONCE’
+   { .__val = (__force typeof(x)) (val) }; \
+                                   ^~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:324:22: note: in definition of macro ‘WRITE_ONCE’
+  __write_once_size(&(x), __u.__c, sizeof(x)); \
+                      ^
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:324:42: note: in definition of macro ‘WRITE_ONCE’
+  __write_once_size(&(x), __u.__c, sizeof(x)); \
+                                          ^
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+In file included from ./include/linux/linkage.h:4:0,
+                 from ./include/linux/kernel.h:6,
+                 from net/netfilter/core.c:10:
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:498:19: note: in definition of macro ‘__compiletime_assert’
+   bool __cond = !(condition);    \
+                   ^~~~~~~~~
+./include/linux/compiler.h:518:2: note: in expansion of macro ‘_compiletime_assert’
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:2: note: in expansion of macro ‘compiletime_assert’
+  compiletime_assert(__native_word(t),    \
+  ^~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:21: note: in expansion of macro ‘__native_word’
+  compiletime_assert(__native_word(t),    \
+                     ^~~~~~~~~~~~~
+./arch/x86/include/asm/barrier.h:64:2: note: in expansion of macro ‘compiletime_assert_atomic_type’
+  compiletime_assert_atomic_type(*p);    \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:498:19: note: in definition of macro ‘__compiletime_assert’
+   bool __cond = !(condition);    \
+                   ^~~~~~~~~
+./include/linux/compiler.h:518:2: note: in expansion of macro ‘_compiletime_assert’
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:2: note: in expansion of macro ‘compiletime_assert’
+  compiletime_assert(__native_word(t),    \
+  ^~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:21: note: in expansion of macro ‘__native_word’
+  compiletime_assert(__native_word(t),    \
+                     ^~~~~~~~~~~~~
+./arch/x86/include/asm/barrier.h:64:2: note: in expansion of macro ‘compiletime_assert_atomic_type’
+  compiletime_assert_atomic_type(*p);    \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:498:19: note: in definition of macro ‘__compiletime_assert’
+   bool __cond = !(condition);    \
+                   ^~~~~~~~~
+./include/linux/compiler.h:518:2: note: in expansion of macro ‘_compiletime_assert’
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:2: note: in expansion of macro ‘compiletime_assert’
+  compiletime_assert(__native_word(t),    \
+  ^~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:21: note: in expansion of macro ‘__native_word’
+  compiletime_assert(__native_word(t),    \
+                     ^~~~~~~~~~~~~
+./arch/x86/include/asm/barrier.h:64:2: note: in expansion of macro ‘compiletime_assert_atomic_type’
+  compiletime_assert_atomic_type(*p);    \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:498:19: note: in definition of macro ‘__compiletime_assert’
+   bool __cond = !(condition);    \
+                   ^~~~~~~~~
+./include/linux/compiler.h:518:2: note: in expansion of macro ‘_compiletime_assert’
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:2: note: in expansion of macro ‘compiletime_assert’
+  compiletime_assert(__native_word(t),    \
+  ^~~~~~~~~~~~~~~~~~
+./include/linux/compiler.h:521:21: note: in expansion of macro ‘__native_word’
+  compiletime_assert(__native_word(t),    \
+                     ^~~~~~~~~~~~~
+./arch/x86/include/asm/barrier.h:64:2: note: in expansion of macro ‘compiletime_assert_atomic_type’
+  compiletime_assert_atomic_type(*p);    \
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+In file included from ./include/linux/linkage.h:4:0,
+                 from ./include/linux/kernel.h:6,
+                 from net/netfilter/core.c:10:
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:322:17: note: in definition of macro ‘WRITE_ONCE’
+  union { typeof(x) __val; char __c[1]; } __u = \
+                 ^
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:323:30: note: in definition of macro ‘WRITE_ONCE’
+   { .__val = (__force typeof(x)) (val) }; \
+                              ^
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:323:35: note: in definition of macro ‘WRITE_ONCE’
+   { .__val = (__force typeof(x)) (val) }; \
+                                   ^~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:25: note: in expansion of macro ‘RCU_INITIALIZER’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+                         ^~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:323:35: note: in definition of macro ‘WRITE_ONCE’
+   { .__val = (__force typeof(x)) (val) }; \
+                                   ^~~
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:25: note: in expansion of macro ‘RCU_INITIALIZER’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+                         ^~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:324:22: note: in definition of macro ‘WRITE_ONCE’
+  __write_once_size(&(x), __u.__c, sizeof(x)); \
+                      ^
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:30: error: ‘struct net_device’ has no member named ‘nf_hooks_ingress’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+                              ^
+./include/linux/compiler.h:324:42: note: in definition of macro ‘WRITE_ONCE’
+  __write_once_size(&(x), __u.__c, sizeof(x)); \
+                                          ^
+./include/asm-generic/barrier.h:157:33: note: in expansion of macro ‘__smp_store_release’
+ #define smp_store_release(p, v) __smp_store_release(p, v)
+                                 ^~~~~~~~~~~~~~~~~~~
+./include/linux/rcupdate.h:668:3: note: in expansion of macro ‘smp_store_release’
+   smp_store_release(&p, RCU_INITIALIZER((typeof(p))_r_a_p__v)); \
+   ^~~~~~~~~~~~~~~~~
+net/netfilter/core.c:96:3: note: in expansion of macro ‘rcu_assign_pointer’
+   rcu_assign_pointer(reg->dev->nf_hooks_ingress, entry);
+   ^~~~~~~~~~~~~~~~~~
+  CC      net/ipv4/ip_fragment.o
+make[2]: *** [scripts/Makefile.build:290: net/netfilter/core.o] Error 1
+make[1]: *** [scripts/Makefile.build:475: net/netfilter] Error 2
+make[1]: *** Waiting for unfinished jobs....
 
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-arm64-defconfig
+	-ss
