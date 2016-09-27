@@ -1,27 +1,43 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Tue, 27 Sep 2016 07:04:15 +0200
-Message-ID: <20160927050415.GA2024@lst.de>
-References: <20160927112334.3615159e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the arm-soc tree
+Date: Tue, 27 Sep 2016 15:05:42 +1000
+Message-ID: <20160927150542.7e81e7ee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:52590 "EHLO newverein.lst.de"
+Received: from ozlabs.org ([103.22.144.67]:57593 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750840AbcI0FES (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 27 Sep 2016 01:04:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20160927112334.3615159e@canb.auug.org.au>
+        id S1751314AbcI0FFp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 27 Sep 2016 01:05:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
 
-On Tue, Sep 27, 2016 at 11:23:34AM +1000, Stephen Rothwell wrote:
-> Hi Doug,
-> 
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+Hi Linus,
 
-Please just disable broken staging code like lustre for the linux-next
-builds. We had that discussion before, didn't we?
+Today's linux-next merge of the gpio tree got a conflict in:
+
+  arch/arm/mach-omap2/board-rx51-peripherals.c
+
+between commit:
+
+  9b7141d01a76 ("ARM: OMAP2+: Drop legacy board file for n900")
+
+from the arm-soc tree and commit:
+
+  9132ce450bd1 ("ARM: omap2: fix missing include")
+
+from the gpio tree.
+
+I fixed it up (the former removed the file, so I did that) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
