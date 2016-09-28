@@ -1,135 +1,145 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160928 build: 2 failures 4 warnings (next-20160928)
-Date: Wed, 28 Sep 2016 12:26:10 +0100
-Message-ID: <E1bpD05-0005F4-6K@optimist>
+From: Doug Ledford <dledford@redhat.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+Date: Wed, 28 Sep 2016 11:00:11 -0400
+Message-ID: <57EBDAFB.9060204@redhat.com>
+References: <20160927112334.3615159e@canb.auug.org.au>
+ <20160928114348.2832fe46@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ protocol="application/pgp-signature";
+ boundary="nWCflHI5DOiBLEWRVnRVkApnOtHXj42Ku"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48308 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbcI1L0U (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2016 07:26:20 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:59234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750988AbcI1PAL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Sep 2016 11:00:11 -0400
+In-Reply-To: <20160928114348.2832fe46@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>
 
-Tree/Branch: next-20160928
-Git describe: next-20160928
-Commit: d1dfecd6e1 Add linux-next specific files for 20160928
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--nWCflHI5DOiBLEWRVnRVkApnOtHXj42Ku
+Content-Type: multipart/mixed; boundary="M8nd0eO10qaTCIwLkBXv9BCPmS1RakSNl";
+ protected-headers="v1"
+From: Doug Ledford <dledford@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>,
+ Oleg Drokin <oleg.drokin@intel.com>,
+ Andreas Dilger <andreas.dilger@intel.com>
+Message-ID: <57EBDAFB.9060204@redhat.com>
+Subject: Re: linux-next: build failure after merge of the rdma tree
+References: <20160927112334.3615159e@canb.auug.org.au>
+ <20160928114348.2832fe46@canb.auug.org.au>
+In-Reply-To: <20160928114348.2832fe46@canb.auug.org.au>
 
-Build Time: 157 min 45 sec
+--M8nd0eO10qaTCIwLkBXv9BCPmS1RakSNl
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+On 9/27/16 9:43 PM, Stephen Rothwell wrote:
+> Hi Stephen,
+>=20
+> On Tue, 27 Sep 2016 11:23:34 +1000 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+>>
+>> Hi Doug,
+>>
+>> After merging the rdma tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kibl=
+nd_hdev_setup_mrs':
+>> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2317:7: error: imp=
+licit declaration of function 'ib_get_dma_mr' [-Werror=3Dimplicit-functio=
+n-declaration]
+>>   mr =3D ib_get_dma_mr(hdev->ibh_pd, acflags);
+>>        ^
+>> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2317:5: warning: a=
+ssignment makes pointer from integer without a cast [-Wint-conversion]
+>>   mr =3D ib_get_dma_mr(hdev->ibh_pd, acflags);
+>>      ^
+>>
+>> Caused by commit
+>>
+>>   5ef990f06bd7 ("IB/core: remove ib_get_dma_mr")
+>>
+>> I have used the rdma tree from next-20160923 for today.
+>=20
+> As pointed out by Christoph, I should have just disabled the driver in
+> staging, so today I just applied the patch below.  Doug, that should
+> probably be applied to the rdma tree so that you don't break Linus'
+> tree when it gets merged.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 28 Sep 2016 11:35:28 +1000
+> Subject: [PATCH] starging/lustre: disable LNET infiniband support
+>=20
+> Commit 5ef990f06bd7 ("IB/core: remove ib_get_dma_mr") broke the
+> lustre LNET infiniband support.  Since this is in drivers/staging,
+> lets just disable it for now until ti can be fixed properly.
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/staging/lustre/lnet/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lust=
+re/lnet/Kconfig
+> index 2b5930150cda..13b43278a38d 100644
+> --- a/drivers/staging/lustre/lnet/Kconfig
+> +++ b/drivers/staging/lustre/lnet/Kconfig
+> @@ -35,6 +35,7 @@ config LNET_SELFTEST
+>  config LNET_XPRT_IB
+>  	tristate "LNET infiniband support"
+>  	depends on LNET && INFINIBAND && INFINIBAND_ADDR_TRANS
+> +	depends on BROKEN
+>  	default LNET && INFINIBAND
+>  	help
+>  	  This option allows the LNET users to use infiniband as an
+>=20
 
-Errors: 2
-Warnings: 4
-Section Mismatches: 0
+That doesn't seem like a particularly good thing to put in.  Wouldn't
+you end up just reverting it later when they fix lustre?  And are you
+going to revert the revert when it breaks again and revert the revert of
+the revert when it's fixed again?  That just seems a lot of churn.  I
+thought it was generally accepted that things in staging might or might
+not work and if they don't, we don't care?  Am I wrong on that?
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-
-Warnings Summary: 4
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+--=20
+Doug Ledford <dledford@redhat.com>    GPG Key ID: 0E572FDD
+  Red Hat, Inc.
+  100 E. Davie St
+  Raleigh, NC 27601 USA
 
 
+--M8nd0eO10qaTCIwLkBXv9BCPmS1RakSNl--
 
-===============================================================================
-Detailed per-defconfig build reports below:
+--nWCflHI5DOiBLEWRVnRVkApnOtHXj42Ku
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - https://gpgtools.org
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+iQIcBAEBCgAGBQJX69r7AAoJELgmozMOVy/dv2cP/1rAMlqrN82/5LrW2hwjG0gI
+200H6USrhGfiylFGEnxctwZcsyWiniOxYLFxS9xchEN+ry6SR5uEj2LRdBSLuoRb
+azKI/DZnltztsJTts9yda13NisL0108PmuhokY6BNmRM6rsdMonnyscZ9b1WrYZE
+KohCX3fv8q49CynEQMhjpUNPpi5H4Vc7gwKM4wqIgnQDj+b+m+AppRX+/F78im3I
++nbUT8Ybqp+sJbK4+5a6UPSQvVjH3J/ErBdzy/ibNevDDRq9LerlgjMiUKhfnZoq
+GCDMGzrJOrzqDBnjvqAGuXUq33viWttwHFgBLpwAigw/WB4SWIvT+lEWaCJfdy3R
+z53jfd4mOza2IzWWwX4IlJJgcFEMbNaOf2xrWYMDt18EhzZ2MSOqQo77eddXK+xh
+0TbXd77PFTonR0dFTUD5FwJhFHMD/VC6WFyZk7A//EoAqwgq0CHfpQZOZVSRr8RM
+topXgApGvi36bW2InDib748LsFLMfsWb97xTNB0NeI7qr6pO05i4+V2rHHIRWW/n
+pNDr64XofWIxrtHHbSOOyMHQGnUmsPPHyle0InfSyHK1TJMePIcFiHU/RjE+9hBO
+wZuZO7j+uy1FthSDoXJgJOmTp2duVWwnRzgkKBP3VxUeSZ25N7/7tVzB+mpg1Mji
+8aUcKQ135TcJi+86g8X3
+=EmNh
+-----END PGP SIGNATURE-----
 
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+--nWCflHI5DOiBLEWRVnRVkApnOtHXj42Ku--
