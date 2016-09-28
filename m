@@ -1,77 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Wed, 28 Sep 2016 11:43:48 +1000
-Message-ID: <20160928114348.2832fe46@canb.auug.org.au>
-References: <20160927112334.3615159e@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Wed, 28 Sep 2016 11:57:17 +1000
+Message-ID: <20160928115717.66d493d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54137 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933675AbcI1Bnv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 27 Sep 2016 21:43:51 -0400
-In-Reply-To: <20160927112334.3615159e@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Doug Ledford <dledford@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Greg KH <greg@kroah.com>, Oleg Drokin <oleg.drokin@intel.com>, Andreas Dilger <andreas.dilger@intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi Dave,
 
-On Tue, 27 Sep 2016 11:23:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Doug,
-> 
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c: In function 'kiblnd_hdev_setup_mrs':
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2317:7: error: implicit declaration of function 'ib_get_dma_mr' [-Werror=implicit-function-declaration]
->   mr = ib_get_dma_mr(hdev->ibh_pd, acflags);
->        ^
-> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd.c:2317:5: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->   mr = ib_get_dma_mr(hdev->ibh_pd, acflags);
->      ^
-> 
-> Caused by commit
-> 
->   5ef990f06bd7 ("IB/core: remove ib_get_dma_mr")
-> 
-> I have used the rdma tree from next-20160923 for today.
+Today's linux-next merge of the drm tree got a conflict in:
 
-As pointed out by Christoph, I should have just disabled the driver in
-staging, so today I just applied the patch below.  Doug, that should
-probably be applied to the rdma tree so that you don't break Linus'
-tree when it gets merged.
+  drivers/gpu/drm/drm_crtc.c
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Sep 2016 11:35:28 +1000
-Subject: [PATCH] starging/lustre: disable LNET infiniband support
+between commit:
 
-Commit 5ef990f06bd7 ("IB/core: remove ib_get_dma_mr") broke the
-lustre LNET infiniband support.  Since this is in drivers/staging,
-lets just disable it for now until ti can be fixed properly.
+  6f00975c6190 ("drm: Reject page_flip for !DRIVER_MODESET")
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/staging/lustre/lnet/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+from Linus' tree and commit:
 
-diff --git a/drivers/staging/lustre/lnet/Kconfig b/drivers/staging/lustre/lnet/Kconfig
-index 2b5930150cda..13b43278a38d 100644
---- a/drivers/staging/lustre/lnet/Kconfig
-+++ b/drivers/staging/lustre/lnet/Kconfig
-@@ -35,6 +35,7 @@ config LNET_SELFTEST
- config LNET_XPRT_IB
- 	tristate "LNET infiniband support"
- 	depends on LNET && INFINIBAND && INFINIBAND_ADDR_TRANS
-+	depends on BROKEN
- 	default LNET && INFINIBAND
- 	help
- 	  This option allows the LNET users to use infiniband as an
--- 
-2.8.1
+  43968d7b806d ("drm: Extract drm_plane.[hc]")
+
+from the drm tree.
+
+I fixed it up (the latter takes the former into account, so I just used
+the drm tree version) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging.  You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
