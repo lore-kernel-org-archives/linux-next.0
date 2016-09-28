@@ -1,70 +1,135 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.4 17/73] tools: Support relative directory path for O=
-Date: Wed, 28 Sep 2016 11:04:47 +0200
-Message-ID: <20160928090435.763757231@linuxfoundation.org>
-References: <20160928090434.509091655@linuxfoundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160928 build: 2 failures 4 warnings (next-20160928)
+Date: Wed, 28 Sep 2016 12:26:10 +0100
+Message-ID: <E1bpD05-0005F4-6K@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57237 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752700AbcI1JGm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2016 05:06:42 -0400
-In-Reply-To: <20160928090434.509091655@linuxfoundation.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48308 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752809AbcI1L0U (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Sep 2016 07:26:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Josh Poimboeuf <jpoimboe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Jiri Olsa <jolsa@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, linux-next@vger.kernel.org, linux@roeck-us.net, live-patching@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Tree/Branch: next-20160928
+Git describe: next-20160928
+Commit: d1dfecd6e1 Add linux-next specific files for 20160928
 
-------------------
+Build Time: 157 min 45 sec
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-commit e17cf3a80d4ba0c4e40bf1a89deb1354c2e10e14 upstream.
+Errors: 2
+Warnings: 4
+Section Mismatches: 0
 
-Running "make O=foo" (with a relative directory path) fails with:
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-  scripts/Makefile.include:3: *** O=foo does not exist.  Stop.
-  /home/jpoimboe/git/linux/Makefile:1547: recipe for target 'tools/objtool' failed
+Errors:
 
-The tools Makefile gets confused by the relative path and tries to build
-objtool in tools/foo.  Convert the output directory to an absolute path
-before passing it to the tools Makefile.
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-next@vger.kernel.org
-Cc: linux@roeck-us.net
-Cc: live-patching@vger.kernel.org
-Link: http://lkml.kernel.org/r/94a078c6c998fac9f01a14f574008bf7dff40191.1457016803.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
----
- Makefile |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
 
---- a/Makefile
-+++ b/Makefile
-@@ -1506,11 +1506,11 @@ image_name:
- # Clear a bunch of variables before executing the submake
- tools/: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/
- 
- tools/%: FORCE
- 	$(Q)mkdir -p $(objtree)/tools
--	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(O) subdir=tools -C $(src)/tools/ $*
-+	$(Q)$(MAKE) LDFLAGS= MAKEFLAGS="$(filter --j% -j,$(MAKEFLAGS))" O=$(shell cd $(objtree) && /bin/pwd) subdir=tools -C $(src)/tools/ $*
- 
- # Single targets
- # ---------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
