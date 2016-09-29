@@ -1,72 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the netfilter-next tree with the
- net tree
-Date: Thu, 29 Sep 2016 11:20:14 +1000
-Message-ID: <20160929112014.4293728d@canb.auug.org.au>
-References: <20160913101250.0ffee30f@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the vfs tree
+Date: Thu, 29 Sep 2016 12:57:53 +1000
+Message-ID: <20160929125753.66d921ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160913101250.0ffee30f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liping Zhang <liping.zhang@spreadtrum.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50723 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751420AbcI2C54 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Sep 2016 22:57:56 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>
 
 Hi all,
 
-On Tue, 13 Sep 2016 10:12:50 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the netfilter-next tree got a conflict in:
-> 
->   net/netfilter/nf_tables_netdev.c
-> 
-> between commit:
-> 
->   c73c24849011 ("netfilter: nf_tables_netdev: remove redundant ip_hdr assignment")
-> 
-> from the net tree and commit:
-> 
->   ddc8b6027ad0 ("netfilter: introduce nft_set_pktinfo_{ipv4, ipv6}_validate()")
-> 
-> from the netfilter-next tree.
-> 
-> I fixed it up (I used the latter version of this file and applied the
-> patch below) and can carry the fix as necessary. This is now fixed as
-> far as linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 13 Sep 2016 10:08:58 +1000
-> Subject: [PATCH] netfilter: merge fixup for "nf_tables_netdev: remove
->  redundant ip_hdr assignment"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/net/netfilter/nf_tables_ipv4.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/net/netfilter/nf_tables_ipv4.h b/include/net/netfilter/nf_tables_ipv4.h
-> index 968f00b82fb5..25e33aee91e7 100644
-> --- a/include/net/netfilter/nf_tables_ipv4.h
-> +++ b/include/net/netfilter/nf_tables_ipv4.h
-> @@ -33,7 +33,6 @@ __nft_set_pktinfo_ipv4_validate(struct nft_pktinfo *pkt,
->  	if (!iph)
->  		return -1;
->  
-> -	iph = ip_hdr(skb);
->  	if (iph->ihl < 5 || iph->version != 4)
->  		return -1;
->  
-> -- 
-> 2.8.1
+Today's linux-next merge of the tip tree got a conflict in:
 
-The above merge fix patch is now needed when the net-next tree is
-merged with Linus' tree.
+  arch/x86/mm/fault.c
+
+between commit:
+
+  df720ac12fc7 ("exceptions: detritus removal")
+
+from the vfs tree and commit:
+
+  744c193eb9a2 ("x86: Migrate exception table users off module.h and onto extable.h")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/x86/mm/fault.c
+index c0413d5541af,4dc13340653e..000000000000
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@@ -5,7 -5,7 +5,7 @@@
+   */
+  #include <linux/sched.h>		/* test_thread_flag(), ...	*/
+  #include <linux/kdebug.h>		/* oops_begin/end, ...		*/
+- #include <linux/module.h>		/* search_exception_tables	*/
+ -#include <linux/extable.h>		/* search_exception_table	*/
+++#include <linux/extable.h>		/* search_exception_tables	*/
+  #include <linux/bootmem.h>		/* max_low_pfn			*/
+  #include <linux/kprobes.h>		/* NOKPROBE_SYMBOL, ...		*/
+  #include <linux/mmiotrace.h>		/* kmmio_handler, ...		*/
