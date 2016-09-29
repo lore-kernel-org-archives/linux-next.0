@@ -1,167 +1,132 @@
-From: =?UTF-8?Q?Christian_K=c3=b6nig?= <deathsimple@vodafone.de>
-Subject: Re: linux-next: Tree for Sep 28 (drivers/gpu/drm/amd/amdgpu/amdgpu.ko)
-Date: Thu, 29 Sep 2016 09:27:44 +0200
-Message-ID: <2d4dc1e5-5dac-8be0-8ad3-05cdc33a7b2c@vodafone.de>
-References: <20160928165618.56208c39@canb.auug.org.au>
- <f5495e73-ea11-cab0-5d0a-df4567a086b6@infradead.org>
- <MWHPR12MB1694FDEF1A23DC7231AD5834F7CF0@MWHPR12MB1694.namprd12.prod.outlook.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1293740952=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <MWHPR12MB1694FDEF1A23DC7231AD5834F7CF0@MWHPR12MB1694.namprd12.prod.outlook.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>, 'Randy Dunlap' <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "Koenig,
- Christian" <Christian.Koenig@amd.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160929 build: 2 failures 4 warnings (next-20160929)
+Date: Thu, 29 Sep 2016 12:40:35 +0100
+Message-ID: <E1bpZhb-0002Oz-OQ@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35168 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755160AbcI2Lko (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2016 07:40:44 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-This is a multi-part message in MIME format.
---===============1293740952==
-Content-Type: multipart/alternative;
- boundary="------------C52CBB7D698394358B7D69DD"
+Tree/Branch: next-20160929
+Git describe: next-20160929
+Commit: 136afaa263 Add linux-next specific files for 20160929
 
-This is a multi-part message in MIME format.
---------------C52CBB7D698394358B7D69DD
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Build Time: 131 min 35 sec
 
-Am 28.09.2016 um 22:46 schrieb Deucher, Alexander:
->> -----Original Message-----
->> From: Randy Dunlap [mailto:rdunlap@infradead.org]
->> Sent: Wednesday, September 28, 2016 1:10 PM
->> To: Stephen Rothwell; linux-next@vger.kernel.org
->> Cc: linux-kernel@vger.kernel.org; dri-devel; Deucher, Alexander; Koenig,
->> Christian
->> Subject: Re: linux-next: Tree for Sep 28
->> (drivers/gpu/drm/amd/amdgpu/amdgpu.ko)
->>
->> On 09/27/16 23:56, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20160927:
->>>
->> on i386:
->>
->> ERROR: "amd_set_clockgating_by_smu"
->> [drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
->>
-> DRM_AMD_POWERPLAY needs to be set.  Fixed in the attached patch.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-Patch is Reviewed-by: Christian König <christian.koenig@amd.com>.
+Errors: 2
+Warnings: 4
+Section Mismatches: 0
 
->
-> Alex
->
->> Full randconfig file is attached.
->>
->> --
->> ~Randy
->>
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
 
 
 
---------------C52CBB7D698394358B7D69DD
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: 8bit
+===============================================================================
+Detailed per-defconfig build reports below:
 
-<html>
-  <head>
-    <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-  </head>
-  <body bgcolor="#FFFFFF" text="#000000">
-    <div class="moz-cite-prefix">Am 28.09.2016 um 22:46 schrieb Deucher,
-      Alexander:<br>
-    </div>
-    <blockquote
-cite="mid:MWHPR12MB1694FDEF1A23DC7231AD5834F7CF0@MWHPR12MB1694.namprd12.prod.outlook.com"
-      type="cite">
-      <blockquote type="cite">
-        <pre wrap="">-----Original Message-----
-From: Randy Dunlap [<a class="moz-txt-link-freetext" href="mailto:rdunlap@infradead.org">mailto:rdunlap@infradead.org</a>]
-Sent: Wednesday, September 28, 2016 1:10 PM
-To: Stephen Rothwell; <a class="moz-txt-link-abbreviated" href="mailto:linux-next@vger.kernel.org">linux-next@vger.kernel.org</a>
-Cc: <a class="moz-txt-link-abbreviated" href="mailto:linux-kernel@vger.kernel.org">linux-kernel@vger.kernel.org</a>; dri-devel; Deucher, Alexander; Koenig,
-Christian
-Subject: Re: linux-next: Tree for Sep 28
-(drivers/gpu/drm/amd/amdgpu/amdgpu.ko)
 
-On 09/27/16 23:56, Stephen Rothwell wrote:
-</pre>
-        <blockquote type="cite">
-          <pre wrap="">Hi all,
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
 
-Changes since 20160927:
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-</pre>
-        </blockquote>
-        <pre wrap="">
-on i386:
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
 
-ERROR: "amd_set_clockgating_by_smu"
-[drivers/gpu/drm/amd/amdgpu/amdgpu.ko] undefined!
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
 
-</pre>
-      </blockquote>
-      <pre wrap="">
-DRM_AMD_POWERPLAY needs to be set.  Fixed in the attached patch.</pre>
-    </blockquote>
-    <br>
-    Patch is Reviewed-by: Christian König
-    <a class="moz-txt-link-rfc2396E" href="mailto:christian.koenig@amd.com">&lt;christian.koenig@amd.com&gt;</a>.<br>
-    <br>
-    <blockquote
-cite="mid:MWHPR12MB1694FDEF1A23DC7231AD5834F7CF0@MWHPR12MB1694.namprd12.prod.outlook.com"
-      type="cite">
-      <pre wrap="">
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
 
-Alex
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
 
-</pre>
-      <blockquote type="cite">
-        <pre wrap="">
-Full randconfig file is attached.
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
 
---
-~Randy
-</pre>
-        <br>
-        <fieldset class="mimeAttachmentHeader"></fieldset>
-        <br>
-        <pre wrap="">_______________________________________________
-dri-devel mailing list
-<a class="moz-txt-link-abbreviated" href="mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.freedesktop.org</a>
-<a class="moz-txt-link-freetext" href="https://lists.freedesktop.org/mailman/listinfo/dri-devel">https://lists.freedesktop.org/mailman/listinfo/dri-devel</a>
-</pre>
-      </blockquote>
-    </blockquote>
-    <p><br>
-    </p>
-  </body>
-</html>
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
 
---------------C52CBB7D698394358B7D69DD--
+Errors:
+	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
---===============1293740952==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
 
---===============1293740952==--
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
