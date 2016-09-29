@@ -1,132 +1,89 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20160929 build: 2 failures 4 warnings (next-20160929)
-Date: Thu, 29 Sep 2016 12:40:35 +0100
-Message-ID: <E1bpZhb-0002Oz-OQ@optimist>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 29 Sep 2016 14:25:14 +0200
+Message-ID: <4057532.rZT5v6PsDv@vostro.rjw.lan>
+References: <20160929132007.4fa85f3a@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35168 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755160AbcI2Lko (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2016 07:40:44 -0400
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:58511 "HELO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1753068AbcI2MSr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Sep 2016 08:18:47 -0400
+In-Reply-To: <20160929132007.4fa85f3a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denys Vlasenko <dvlasenk@redhat.com>, Chen Yu <yu.c.chen@intel.com>
 
-Tree/Branch: next-20160929
-Git describe: next-20160929
-Commit: 136afaa263 Add linux-next specific files for 20160929
+On Thursday, September 29, 2016 01:20:07 PM Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> arch/x86/power/hibernate_64.c: In function 'hibernation_e820_save':
+> arch/x86/power/hibernate_64.c:236:15: error: passing argument 1 of 'get_e820_md5' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   get_e820_md5(&e820_saved, buf);
+>                ^
+> arch/x86/power/hibernate_64.c:203:12: note: expected 'struct e820map *' but argument is of type 'struct e820map **'
+>  static int get_e820_md5(struct e820map *map, void *buf)
+>             ^
+> arch/x86/power/hibernate_64.c: In function 'hibernation_e820_mismatch':
+> arch/x86/power/hibernate_64.c:249:21: error: passing argument 1 of 'get_e820_md5' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   ret = get_e820_md5(&e820_saved, result);
+>                      ^
+> arch/x86/power/hibernate_64.c:203:12: note: expected 'struct e820map *' but argument is of type 'struct e820map **'
+>  static int get_e820_md5(struct e820map *map, void *buf)
+>             ^
+> 
+> Caused by commit
+> 
+>   475339684ef1 ("x86/e820: Prepare e280 code for switch to dynamic storage")
+> 
+> interacting with commit
+> 
+>   6f95ad2b6162 ("PM / hibernate: Verify e820 memory map by MD5 digest")
+> 
+> from the pm tree.
+> 
+> I have applied the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 29 Sep 2016 13:13:45 +1000
+> Subject: [PATCH] pm/hibernate: merge fix for type of e820_saved changing
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/x86/power/hibernate_64.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
+> index 72f2c9531b03..904048f7a9c9 100644
+> --- a/arch/x86/power/hibernate_64.c
+> +++ b/arch/x86/power/hibernate_64.c
+> @@ -233,7 +233,7 @@ static int get_e820_md5(struct e820map *map, void *buf)
+>  
+>  static void hibernation_e820_save(void *buf)
+>  {
+> -	get_e820_md5(&e820_saved, buf);
+> +	get_e820_md5(e820_saved, buf);
+>  }
+>  
+>  static bool hibernation_e820_mismatch(void *buf)
+> @@ -246,7 +246,7 @@ static bool hibernation_e820_mismatch(void *buf)
+>  	if (!memcmp(result, buf, MD5_DIGEST_SIZE))
+>  		return false;
+>  
+> -	ret = get_e820_md5(&e820_saved, result);
+> +	ret = get_e820_md5(e820_saved, result);
+>  	if (ret)
+>  		return true;
+>  
+> 
 
-Build Time: 131 min 35 sec
+Looks good to me, thanks Stephen!
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 2
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-multi_v5_defconfig
-      6 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      3 warnings    0 mismatches  : arm-allnoconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-
-Warnings Summary: 4
-	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
-	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
-	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-x86_64-defconfig
-arm64-defconfig
+Rafael
