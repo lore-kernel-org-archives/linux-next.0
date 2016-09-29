@@ -1,89 +1,91 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Thu, 29 Sep 2016 14:25:14 +0200
-Message-ID: <4057532.rZT5v6PsDv@vostro.rjw.lan>
+From: "Chen, Yu C" <yu.c.chen@intel.com>
+Subject: RE: linux-next: build failure after merge of the tip tree
+Date: Thu, 29 Sep 2016 15:54:24 +0000
+Message-ID: <36DF59CE26D8EE47B0655C516E9CE6405E617A77@shsmsx102.ccr.corp.intel.com>
 References: <20160929132007.4fa85f3a@canb.auug.org.au>
+ <4057532.rZT5v6PsDv@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:58511 "HELO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1753068AbcI2MSr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Sep 2016 08:18:47 -0400
-In-Reply-To: <20160929132007.4fa85f3a@canb.auug.org.au>
+Received: from mga05.intel.com ([192.55.52.43]:10582 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932366AbcI2Py3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Sep 2016 11:54:29 -0400
+In-Reply-To: <4057532.rZT5v6PsDv@vostro.rjw.lan>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Denys Vlasenko <dvlasenk@redhat.com>, Chen Yu <yu.c.chen@intel.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Denys Vlasenko <dvlasenk@redhat.com>
 
-On Thursday, September 29, 2016 01:20:07 PM Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> arch/x86/power/hibernate_64.c: In function 'hibernation_e820_save':
-> arch/x86/power/hibernate_64.c:236:15: error: passing argument 1 of 'get_e820_md5' from incompatible pointer type [-Werror=incompatible-pointer-types]
->   get_e820_md5(&e820_saved, buf);
->                ^
-> arch/x86/power/hibernate_64.c:203:12: note: expected 'struct e820map *' but argument is of type 'struct e820map **'
->  static int get_e820_md5(struct e820map *map, void *buf)
->             ^
-> arch/x86/power/hibernate_64.c: In function 'hibernation_e820_mismatch':
-> arch/x86/power/hibernate_64.c:249:21: error: passing argument 1 of 'get_e820_md5' from incompatible pointer type [-Werror=incompatible-pointer-types]
->   ret = get_e820_md5(&e820_saved, result);
->                      ^
-> arch/x86/power/hibernate_64.c:203:12: note: expected 'struct e820map *' but argument is of type 'struct e820map **'
->  static int get_e820_md5(struct e820map *map, void *buf)
->             ^
-> 
-> Caused by commit
-> 
->   475339684ef1 ("x86/e820: Prepare e280 code for switch to dynamic storage")
-> 
-> interacting with commit
-> 
->   6f95ad2b6162 ("PM / hibernate: Verify e820 memory map by MD5 digest")
-> 
-> from the pm tree.
-> 
-> I have applied the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 29 Sep 2016 13:13:45 +1000
-> Subject: [PATCH] pm/hibernate: merge fix for type of e820_saved changing
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/x86/power/hibernate_64.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/power/hibernate_64.c b/arch/x86/power/hibernate_64.c
-> index 72f2c9531b03..904048f7a9c9 100644
-> --- a/arch/x86/power/hibernate_64.c
-> +++ b/arch/x86/power/hibernate_64.c
-> @@ -233,7 +233,7 @@ static int get_e820_md5(struct e820map *map, void *buf)
->  
->  static void hibernation_e820_save(void *buf)
->  {
-> -	get_e820_md5(&e820_saved, buf);
-> +	get_e820_md5(e820_saved, buf);
->  }
->  
->  static bool hibernation_e820_mismatch(void *buf)
-> @@ -246,7 +246,7 @@ static bool hibernation_e820_mismatch(void *buf)
->  	if (!memcmp(result, buf, MD5_DIGEST_SIZE))
->  		return false;
->  
-> -	ret = get_e820_md5(&e820_saved, result);
-> +	ret = get_e820_md5(e820_saved, result);
->  	if (ret)
->  		return true;
->  
-> 
-
-Looks good to me, thanks Stephen!
-
-Rafael
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFmYWVsIEouIFd5
+c29ja2kgW21haWx0bzpyandAcmp3eXNvY2tpLm5ldF0NCj4gU2VudDogVGh1cnNkYXksIFNlcHRl
+bWJlciAyOSwgMjAxNiA4OjI1IFBNDQo+IFRvOiBTdGVwaGVuIFJvdGh3ZWxsDQo+IENjOiBUaG9t
+YXMgR2xlaXhuZXI7IEluZ28gTW9sbmFyOyBILiBQZXRlciBBbnZpbjsgUGV0ZXIgWmlqbHN0cmE7
+IGxpbnV4LQ0KPiBuZXh0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgRGVueXMgVmxhc2Vua287IENoZW4sIFl1DQo+IEMNCj4gU3ViamVjdDogUmU6IGxpbnV4
+LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHRpcCB0cmVlDQo+IA0KPiBP
+biBUaHVyc2RheSwgU2VwdGVtYmVyIDI5LCAyMDE2IDAxOjIwOjA3IFBNIFN0ZXBoZW4gUm90aHdl
+bGwgd3JvdGU6DQo+ID4gSGkgYWxsLA0KPiA+DQo+ID4gQWZ0ZXIgbWVyZ2luZyB0aGUgdGlwIHRy
+ZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0DQo+ID4gYWxsbW9kY29uZmlnKSBm
+YWlsZWQgbGlrZSB0aGlzOg0KPiA+DQo+ID4gYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmM6
+IEluIGZ1bmN0aW9uICdoaWJlcm5hdGlvbl9lODIwX3NhdmUnOg0KPiA+IGFyY2gveDg2L3Bvd2Vy
+L2hpYmVybmF0ZV82NC5jOjIzNjoxNTogZXJyb3I6IHBhc3NpbmcgYXJndW1lbnQgMSBvZg0KPiAn
+Z2V0X2U4MjBfbWQ1JyBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9aW5j
+b21wYXRpYmxlLQ0KPiBwb2ludGVyLXR5cGVzXQ0KPiA+ICAgZ2V0X2U4MjBfbWQ1KCZlODIwX3Nh
+dmVkLCBidWYpOw0KPiA+ICAgICAgICAgICAgICAgIF4NCj4gPiBhcmNoL3g4Ni9wb3dlci9oaWJl
+cm5hdGVfNjQuYzoyMDM6MTI6IG5vdGU6IGV4cGVjdGVkICdzdHJ1Y3QgZTgyMG1hcCAqJw0KPiBi
+dXQgYXJndW1lbnQgaXMgb2YgdHlwZSAnc3RydWN0IGU4MjBtYXAgKionDQo+ID4gIHN0YXRpYyBp
+bnQgZ2V0X2U4MjBfbWQ1KHN0cnVjdCBlODIwbWFwICptYXAsIHZvaWQgKmJ1ZikNCj4gPiAgICAg
+ICAgICAgICBeDQo+ID4gYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmM6IEluIGZ1bmN0aW9u
+ICdoaWJlcm5hdGlvbl9lODIwX21pc21hdGNoJzoNCj4gPiBhcmNoL3g4Ni9wb3dlci9oaWJlcm5h
+dGVfNjQuYzoyNDk6MjE6IGVycm9yOiBwYXNzaW5nIGFyZ3VtZW50IDEgb2YNCj4gJ2dldF9lODIw
+X21kNScgZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJs
+ZS0NCj4gcG9pbnRlci10eXBlc10NCj4gPiAgIHJldCA9IGdldF9lODIwX21kNSgmZTgyMF9zYXZl
+ZCwgcmVzdWx0KTsNCj4gPiAgICAgICAgICAgICAgICAgICAgICBeDQo+ID4gYXJjaC94ODYvcG93
+ZXIvaGliZXJuYXRlXzY0LmM6MjAzOjEyOiBub3RlOiBleHBlY3RlZCAnc3RydWN0IGU4MjBtYXAg
+KicNCj4gYnV0IGFyZ3VtZW50IGlzIG9mIHR5cGUgJ3N0cnVjdCBlODIwbWFwICoqJw0KPiA+ICBz
+dGF0aWMgaW50IGdldF9lODIwX21kNShzdHJ1Y3QgZTgyMG1hcCAqbWFwLCB2b2lkICpidWYpDQo+
+ID4gICAgICAgICAgICAgXg0KPiA+DQo+ID4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiA+DQo+ID4gICA0
+NzUzMzk2ODRlZjEgKCJ4ODYvZTgyMDogUHJlcGFyZSBlMjgwIGNvZGUgZm9yIHN3aXRjaCB0byBk
+eW5hbWljDQo+ID4gc3RvcmFnZSIpDQo+ID4NCj4gPiBpbnRlcmFjdGluZyB3aXRoIGNvbW1pdA0K
+PiA+DQo+ID4gICA2Zjk1YWQyYjYxNjIgKCJQTSAvIGhpYmVybmF0ZTogVmVyaWZ5IGU4MjAgbWVt
+b3J5IG1hcCBieSBNRDUNCj4gPiBkaWdlc3QiKQ0KPiA+DQo+ID4gZnJvbSB0aGUgcG0gdHJlZS4N
+Cj4gPg0KPiA+IEkgaGF2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoOg0K
+PiA+DQo+ID4gRnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+
+ID4gRGF0ZTogVGh1LCAyOSBTZXAgMjAxNiAxMzoxMzo0NSArMTAwMA0KPiA+IFN1YmplY3Q6IFtQ
+QVRDSF0gcG0vaGliZXJuYXRlOiBtZXJnZSBmaXggZm9yIHR5cGUgb2YgZTgyMF9zYXZlZA0KPiA+
+IGNoYW5naW5nDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJA
+Y2FuYi5hdXVnLm9yZy5hdT4NCj4gPiAtLS0NCj4gPiAgYXJjaC94ODYvcG93ZXIvaGliZXJuYXRl
+XzY0LmMgfCA0ICsrLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
+ZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9wb3dlci9oaWJlcm5h
+dGVfNjQuYw0KPiA+IGIvYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmMgaW5kZXggNzJmMmM5
+NTMxYjAzLi45MDQwNDhmN2E5YzkNCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9wb3dl
+ci9oaWJlcm5hdGVfNjQuYw0KPiA+ICsrKyBiL2FyY2gveDg2L3Bvd2VyL2hpYmVybmF0ZV82NC5j
+DQo+ID4gQEAgLTIzMyw3ICsyMzMsNyBAQCBzdGF0aWMgaW50IGdldF9lODIwX21kNShzdHJ1Y3Qg
+ZTgyMG1hcCAqbWFwLCB2b2lkDQo+ID4gKmJ1ZikNCj4gPg0KPiA+ICBzdGF0aWMgdm9pZCBoaWJl
+cm5hdGlvbl9lODIwX3NhdmUodm9pZCAqYnVmKSAgew0KPiA+IC0JZ2V0X2U4MjBfbWQ1KCZlODIw
+X3NhdmVkLCBidWYpOw0KPiA+ICsJZ2V0X2U4MjBfbWQ1KGU4MjBfc2F2ZWQsIGJ1Zik7DQo+ID4g
+IH0NCj4gPg0KPiA+ICBzdGF0aWMgYm9vbCBoaWJlcm5hdGlvbl9lODIwX21pc21hdGNoKHZvaWQg
+KmJ1ZikgQEAgLTI0Niw3ICsyNDYsNyBAQA0KPiA+IHN0YXRpYyBib29sIGhpYmVybmF0aW9uX2U4
+MjBfbWlzbWF0Y2godm9pZCAqYnVmKQ0KPiA+ICAJaWYgKCFtZW1jbXAocmVzdWx0LCBidWYsIE1E
+NV9ESUdFU1RfU0laRSkpDQo+ID4gIAkJcmV0dXJuIGZhbHNlOw0KPiA+DQo+ID4gLQlyZXQgPSBn
+ZXRfZTgyMF9tZDUoJmU4MjBfc2F2ZWQsIHJlc3VsdCk7DQo+ID4gKwlyZXQgPSBnZXRfZTgyMF9t
+ZDUoZTgyMF9zYXZlZCwgcmVzdWx0KTsNCj4gPiAgCWlmIChyZXQpDQo+ID4gIAkJcmV0dXJuIHRy
+dWU7DQo+ID4NCj4gPg0KPiANCj4gTG9va3MgZ29vZCB0byBtZSwgdGhhbmtzIFN0ZXBoZW4hDQo+
+IA0KPiBSYWZhZWwNClRoYW5rcyBmb3IgdGhlIGZpeCENCg0KSSBtYWRlIGEgZG91YmxlIGNoZWNr
+IG9mIHRoZSBwYXRjaCA6DQoieDg2L2U4MjA6IFByZXBhcmUgZTI4MCBjb2RlIGZvciBzd2l0Y2gg
+dG8gZHluYW1pYyBzdG9yYWdlIg0KSXQgbG9va3MgbGlrZSB0aGlzIHBhdGNoIGhhcyByZWFsbG9j
+YXRlIHRoZSBlODIwICYgZTgyMF9zYXZlIHRvIHRoZWlyIGFjdHVhbCBzaXplOg0KKwlzaXplID0g
+b2Zmc2V0b2Yoc3RydWN0IGU4MjBtYXAsIG1hcCkgKyBzaXplb2Yoc3RydWN0IGU4MjBlbnRyeSkg
+KiBlODIwLT5ucl9tYXA7DQorCW4gPSBrbWFsbG9jKHNpemUsIEdGUF9LRVJORUwpOw0KDQpob3dl
+dmVyIHRoZSBwcmV2aW91cyBwYXRjaCB0byB2ZXJpZnkgdGhlIG1kNSBoYXNoIGR1cmluZyBoaWJl
+cm5hdGlvbiB3aWxsDQp1c2UgdGhlIG9yaWdpbmFsIGU4MjBfbWFwIHN0cnVjdHVyZSBieSBzaXpl
+b2Yoc3RydWN0IGU4MjBtYXApLCB3aGljaCBtaWdodCANCnJlYWQgaW52YWxpZCB2YWx1ZSBhZnRl
+ciB0aGUgbGF0ZXN0IHBhdGNoIGFwcGxpZWQuIEkgdGhpbmsgSSBuZWVkIHRvIG1vZGlmeSB0aGUg
+DQpoaWJlcm5hdGlvbiBlODIwIGNoZWNraW5nIHBhdGNoIHRvIG9ubHkgZ2VuZXJhdGUgIG1kNSBk
+aWdlc3QgYmFzZWQgb24gdGhlIGFjdHVhbCANCmU4MjBfc2F2ZSBzaXplIGJ5IHNpemVvZihzdHJ1
+Y3QgZTgyMGVudHJ5KSAqIGU4MjAtPm5yX21hcC4NCg0KSSBkb24ndCBoYXZlIGEgbWFjaGluZSBp
+biBoYW5kIG5vdywgd2lsbCB0ZXN0IGxhdGVyIGFuZCBnaXZlIGZlZWRiYWNrIGxhdGVyLiBUaGFu
+a3MgYWdhaW4hDQpZdQ0K
