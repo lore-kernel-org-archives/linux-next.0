@@ -1,39 +1,68 @@
-From: Vishwanath Pai <vpai@akamai.com>
-Subject: Re: next-20160929 build: 2 failures 4 warnings (next-20160929)
-Date: Thu, 29 Sep 2016 15:08:58 -0400
-Message-ID: <57ED66CA.3090903@akamai.com>
-References: <E1bpZhb-0002Oz-OQ@optimist>
- <20160929184737.ragquwy2tmhxo5bn@sirena.org.uk>
+From: Segher Boessenkool <segher@kernel.crashing.org>
+Subject: Re: linux-next: Tree for Jul 21
+Date: Thu, 29 Sep 2016 14:34:42 -0500
+Message-ID: <20160929193442.GA16617@gate.crashing.org>
+References: <20160721165631.6508756a@canb.auug.org.au> <CAP=VYLoa6C1uFtuqEhqTw6fdjGrNhFCQyUv3FNNkOWH2m2kTDw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20160929184737.ragquwy2tmhxo5bn@sirena.org.uk>
-Sender: netdev-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Joshua Hunt <johunt@akamai.com>, Pablo Neira Ayuso <pablo@netfilter.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from gate.crashing.org ([63.228.1.57]:56643 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755315AbcI2Tex (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Sep 2016 15:34:53 -0400
+Content-Disposition: inline
+In-Reply-To: <CAP=VYLoa6C1uFtuqEhqTw6fdjGrNhFCQyUv3FNNkOWH2m2kTDw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On 09/29/2016 02:47 PM, Mark Brown wrote:
-> On Thu, Sep 29, 2016 at 12:40:35PM +0100, Build bot for Mark Brown wrote:
+On Thu, Jul 21, 2016 at 07:52:43PM -0400, Paul Gortmaker wrote:
+> A new i386-allmodconfig fail showed up relating to VDSO:
 > 
-> For the past couple of days -next has been failing to build an ARM
-> allmodconfig due to:
+> I tried to reproduce it locally with x86-64 build host and could
+> not, so I wonder if it is a missing HOSTCC vs. CC since next
+> coverage is power host...
 > 
->> 	arm-allmodconfig
->> ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
-> 
-> which appears to be triggered by 11d5f15723c9 (netfilter: xt_hashlimit:
-> Create revision 2 to support higher pps rates) introducing a division of
-> a 64 bit number which should be done using do_div().
-> 
+>   VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
+> Error: input is not a shared object
+> make[4]: *** [arch/x86/entry/vdso/vdso-image-32.c] Error 1
+> make[3]: *** [arch/x86/entry/vdso] Error 2
+> make[2]: *** [arch/x86/entry] Error 2
 
-I have sent a patch for this a couple of days ago to netdev, it hasn't
-made it to net-next yet. Here's the latest one:
+This is caused by building on a BE (better-endian) host.  See patch.
 
-[PATCH net-next v3] netfilter: xt_hashlimit: Fix link error in 32bit
-arch because of 64bit division
 
-This should fix the link error.
+Segher
 
--Vishwanath
+
+===
+>From 7f098efa4d184ab1216c6cf8214c44a3abe50a14 Mon Sep 17 00:00:00 2001
+Message-Id: <7f098efa4d184ab1216c6cf8214c44a3abe50a14.1475177310.git.segher@kernel.crashing.org>
+From: Segher Boessenkool <segher@kernel.crashing.org>
+Date: Thu, 29 Sep 2016 11:51:00 +0000
+Subject: [PATCH] x86: Fix building on BE
+
+We need to call GET_LE to read hdr->e_type.
+
+Signed-off-by: Segher Boessenkool <segher@kernel.crashing.org>
+
+---
+ arch/x86/entry/vdso/vdso2c.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
+index 4f74119..3dab75f 100644
+--- a/arch/x86/entry/vdso/vdso2c.h
++++ b/arch/x86/entry/vdso/vdso2c.h
+@@ -22,7 +22,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
+ 
+ 	ELF(Phdr) *pt = (ELF(Phdr) *)(raw_addr + GET_LE(&hdr->e_phoff));
+ 
+-	if (hdr->e_type != ET_DYN)
++	if (GET_LE(&hdr->e_type) != ET_DYN)
+ 		fail("input is not a shared object\n");
+ 
+ 	/* Walk the segment table. */
+-- 
+1.9.3
