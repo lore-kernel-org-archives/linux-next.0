@@ -1,91 +1,52 @@
-From: "Chen, Yu C" <yu.c.chen@intel.com>
-Subject: RE: linux-next: build failure after merge of the tip tree
-Date: Thu, 29 Sep 2016 15:54:24 +0000
-Message-ID: <36DF59CE26D8EE47B0655C516E9CE6405E617A77@shsmsx102.ccr.corp.intel.com>
-References: <20160929132007.4fa85f3a@canb.auug.org.au>
- <4057532.rZT5v6PsDv@vostro.rjw.lan>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20160929 build: 2 failures 4 warnings (next-20160929)
+Date: Thu, 29 Sep 2016 11:47:37 -0700
+Message-ID: <20160929184737.ragquwy2tmhxo5bn@sirena.org.uk>
+References: <E1bpZhb-0002Oz-OQ@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r3uavwzpl3blzqiv"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga05.intel.com ([192.55.52.43]:10582 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932366AbcI2Py3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Sep 2016 11:54:29 -0400
-In-Reply-To: <4057532.rZT5v6PsDv@vostro.rjw.lan>
-Content-Language: en-US
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40328 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751027AbcI2Sr6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Sep 2016 14:47:58 -0400
+Content-Disposition: inline
+In-Reply-To: <E1bpZhb-0002Oz-OQ@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Denys Vlasenko <dvlasenk@redhat.com>
+To: Vishwanath Pai <vpai@akamai.com>, Joshua Hunt <johunt@akamai.com>, Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUmFmYWVsIEouIFd5
-c29ja2kgW21haWx0bzpyandAcmp3eXNvY2tpLm5ldF0NCj4gU2VudDogVGh1cnNkYXksIFNlcHRl
-bWJlciAyOSwgMjAxNiA4OjI1IFBNDQo+IFRvOiBTdGVwaGVuIFJvdGh3ZWxsDQo+IENjOiBUaG9t
-YXMgR2xlaXhuZXI7IEluZ28gTW9sbmFyOyBILiBQZXRlciBBbnZpbjsgUGV0ZXIgWmlqbHN0cmE7
-IGxpbnV4LQ0KPiBuZXh0QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgRGVueXMgVmxhc2Vua287IENoZW4sIFl1DQo+IEMNCj4gU3ViamVjdDogUmU6IGxpbnV4
-LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHRpcCB0cmVlDQo+IA0KPiBP
-biBUaHVyc2RheSwgU2VwdGVtYmVyIDI5LCAyMDE2IDAxOjIwOjA3IFBNIFN0ZXBoZW4gUm90aHdl
-bGwgd3JvdGU6DQo+ID4gSGkgYWxsLA0KPiA+DQo+ID4gQWZ0ZXIgbWVyZ2luZyB0aGUgdGlwIHRy
-ZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0DQo+ID4gYWxsbW9kY29uZmlnKSBm
-YWlsZWQgbGlrZSB0aGlzOg0KPiA+DQo+ID4gYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmM6
-IEluIGZ1bmN0aW9uICdoaWJlcm5hdGlvbl9lODIwX3NhdmUnOg0KPiA+IGFyY2gveDg2L3Bvd2Vy
-L2hpYmVybmF0ZV82NC5jOjIzNjoxNTogZXJyb3I6IHBhc3NpbmcgYXJndW1lbnQgMSBvZg0KPiAn
-Z2V0X2U4MjBfbWQ1JyBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9aW5j
-b21wYXRpYmxlLQ0KPiBwb2ludGVyLXR5cGVzXQ0KPiA+ICAgZ2V0X2U4MjBfbWQ1KCZlODIwX3Nh
-dmVkLCBidWYpOw0KPiA+ICAgICAgICAgICAgICAgIF4NCj4gPiBhcmNoL3g4Ni9wb3dlci9oaWJl
-cm5hdGVfNjQuYzoyMDM6MTI6IG5vdGU6IGV4cGVjdGVkICdzdHJ1Y3QgZTgyMG1hcCAqJw0KPiBi
-dXQgYXJndW1lbnQgaXMgb2YgdHlwZSAnc3RydWN0IGU4MjBtYXAgKionDQo+ID4gIHN0YXRpYyBp
-bnQgZ2V0X2U4MjBfbWQ1KHN0cnVjdCBlODIwbWFwICptYXAsIHZvaWQgKmJ1ZikNCj4gPiAgICAg
-ICAgICAgICBeDQo+ID4gYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmM6IEluIGZ1bmN0aW9u
-ICdoaWJlcm5hdGlvbl9lODIwX21pc21hdGNoJzoNCj4gPiBhcmNoL3g4Ni9wb3dlci9oaWJlcm5h
-dGVfNjQuYzoyNDk6MjE6IGVycm9yOiBwYXNzaW5nIGFyZ3VtZW50IDEgb2YNCj4gJ2dldF9lODIw
-X21kNScgZnJvbSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJs
-ZS0NCj4gcG9pbnRlci10eXBlc10NCj4gPiAgIHJldCA9IGdldF9lODIwX21kNSgmZTgyMF9zYXZl
-ZCwgcmVzdWx0KTsNCj4gPiAgICAgICAgICAgICAgICAgICAgICBeDQo+ID4gYXJjaC94ODYvcG93
-ZXIvaGliZXJuYXRlXzY0LmM6MjAzOjEyOiBub3RlOiBleHBlY3RlZCAnc3RydWN0IGU4MjBtYXAg
-KicNCj4gYnV0IGFyZ3VtZW50IGlzIG9mIHR5cGUgJ3N0cnVjdCBlODIwbWFwICoqJw0KPiA+ICBz
-dGF0aWMgaW50IGdldF9lODIwX21kNShzdHJ1Y3QgZTgyMG1hcCAqbWFwLCB2b2lkICpidWYpDQo+
-ID4gICAgICAgICAgICAgXg0KPiA+DQo+ID4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiA+DQo+ID4gICA0
-NzUzMzk2ODRlZjEgKCJ4ODYvZTgyMDogUHJlcGFyZSBlMjgwIGNvZGUgZm9yIHN3aXRjaCB0byBk
-eW5hbWljDQo+ID4gc3RvcmFnZSIpDQo+ID4NCj4gPiBpbnRlcmFjdGluZyB3aXRoIGNvbW1pdA0K
-PiA+DQo+ID4gICA2Zjk1YWQyYjYxNjIgKCJQTSAvIGhpYmVybmF0ZTogVmVyaWZ5IGU4MjAgbWVt
-b3J5IG1hcCBieSBNRDUNCj4gPiBkaWdlc3QiKQ0KPiA+DQo+ID4gZnJvbSB0aGUgcG0gdHJlZS4N
-Cj4gPg0KPiA+IEkgaGF2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoOg0K
-PiA+DQo+ID4gRnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+DQo+
-ID4gRGF0ZTogVGh1LCAyOSBTZXAgMjAxNiAxMzoxMzo0NSArMTAwMA0KPiA+IFN1YmplY3Q6IFtQ
-QVRDSF0gcG0vaGliZXJuYXRlOiBtZXJnZSBmaXggZm9yIHR5cGUgb2YgZTgyMF9zYXZlZA0KPiA+
-IGNoYW5naW5nDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJA
-Y2FuYi5hdXVnLm9yZy5hdT4NCj4gPiAtLS0NCj4gPiAgYXJjaC94ODYvcG93ZXIvaGliZXJuYXRl
-XzY0LmMgfCA0ICsrLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
-ZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9wb3dlci9oaWJlcm5h
-dGVfNjQuYw0KPiA+IGIvYXJjaC94ODYvcG93ZXIvaGliZXJuYXRlXzY0LmMgaW5kZXggNzJmMmM5
-NTMxYjAzLi45MDQwNDhmN2E5YzkNCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL3g4Ni9wb3dl
-ci9oaWJlcm5hdGVfNjQuYw0KPiA+ICsrKyBiL2FyY2gveDg2L3Bvd2VyL2hpYmVybmF0ZV82NC5j
-DQo+ID4gQEAgLTIzMyw3ICsyMzMsNyBAQCBzdGF0aWMgaW50IGdldF9lODIwX21kNShzdHJ1Y3Qg
-ZTgyMG1hcCAqbWFwLCB2b2lkDQo+ID4gKmJ1ZikNCj4gPg0KPiA+ICBzdGF0aWMgdm9pZCBoaWJl
-cm5hdGlvbl9lODIwX3NhdmUodm9pZCAqYnVmKSAgew0KPiA+IC0JZ2V0X2U4MjBfbWQ1KCZlODIw
-X3NhdmVkLCBidWYpOw0KPiA+ICsJZ2V0X2U4MjBfbWQ1KGU4MjBfc2F2ZWQsIGJ1Zik7DQo+ID4g
-IH0NCj4gPg0KPiA+ICBzdGF0aWMgYm9vbCBoaWJlcm5hdGlvbl9lODIwX21pc21hdGNoKHZvaWQg
-KmJ1ZikgQEAgLTI0Niw3ICsyNDYsNyBAQA0KPiA+IHN0YXRpYyBib29sIGhpYmVybmF0aW9uX2U4
-MjBfbWlzbWF0Y2godm9pZCAqYnVmKQ0KPiA+ICAJaWYgKCFtZW1jbXAocmVzdWx0LCBidWYsIE1E
-NV9ESUdFU1RfU0laRSkpDQo+ID4gIAkJcmV0dXJuIGZhbHNlOw0KPiA+DQo+ID4gLQlyZXQgPSBn
-ZXRfZTgyMF9tZDUoJmU4MjBfc2F2ZWQsIHJlc3VsdCk7DQo+ID4gKwlyZXQgPSBnZXRfZTgyMF9t
-ZDUoZTgyMF9zYXZlZCwgcmVzdWx0KTsNCj4gPiAgCWlmIChyZXQpDQo+ID4gIAkJcmV0dXJuIHRy
-dWU7DQo+ID4NCj4gPg0KPiANCj4gTG9va3MgZ29vZCB0byBtZSwgdGhhbmtzIFN0ZXBoZW4hDQo+
-IA0KPiBSYWZhZWwNClRoYW5rcyBmb3IgdGhlIGZpeCENCg0KSSBtYWRlIGEgZG91YmxlIGNoZWNr
-IG9mIHRoZSBwYXRjaCA6DQoieDg2L2U4MjA6IFByZXBhcmUgZTI4MCBjb2RlIGZvciBzd2l0Y2gg
-dG8gZHluYW1pYyBzdG9yYWdlIg0KSXQgbG9va3MgbGlrZSB0aGlzIHBhdGNoIGhhcyByZWFsbG9j
-YXRlIHRoZSBlODIwICYgZTgyMF9zYXZlIHRvIHRoZWlyIGFjdHVhbCBzaXplOg0KKwlzaXplID0g
-b2Zmc2V0b2Yoc3RydWN0IGU4MjBtYXAsIG1hcCkgKyBzaXplb2Yoc3RydWN0IGU4MjBlbnRyeSkg
-KiBlODIwLT5ucl9tYXA7DQorCW4gPSBrbWFsbG9jKHNpemUsIEdGUF9LRVJORUwpOw0KDQpob3dl
-dmVyIHRoZSBwcmV2aW91cyBwYXRjaCB0byB2ZXJpZnkgdGhlIG1kNSBoYXNoIGR1cmluZyBoaWJl
-cm5hdGlvbiB3aWxsDQp1c2UgdGhlIG9yaWdpbmFsIGU4MjBfbWFwIHN0cnVjdHVyZSBieSBzaXpl
-b2Yoc3RydWN0IGU4MjBtYXApLCB3aGljaCBtaWdodCANCnJlYWQgaW52YWxpZCB2YWx1ZSBhZnRl
-ciB0aGUgbGF0ZXN0IHBhdGNoIGFwcGxpZWQuIEkgdGhpbmsgSSBuZWVkIHRvIG1vZGlmeSB0aGUg
-DQpoaWJlcm5hdGlvbiBlODIwIGNoZWNraW5nIHBhdGNoIHRvIG9ubHkgZ2VuZXJhdGUgIG1kNSBk
-aWdlc3QgYmFzZWQgb24gdGhlIGFjdHVhbCANCmU4MjBfc2F2ZSBzaXplIGJ5IHNpemVvZihzdHJ1
-Y3QgZTgyMGVudHJ5KSAqIGU4MjAtPm5yX21hcC4NCg0KSSBkb24ndCBoYXZlIGEgbWFjaGluZSBp
-biBoYW5kIG5vdywgd2lsbCB0ZXN0IGxhdGVyIGFuZCBnaXZlIGZlZWRiYWNrIGxhdGVyLiBUaGFu
-a3MgYWdhaW4hDQpZdQ0K
+
+--r3uavwzpl3blzqiv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Sep 29, 2016 at 12:40:35PM +0100, Build bot for Mark Brown wrote:
+
+For the past couple of days -next has been failing to build an ARM
+allmodconfig due to:
+
+> 	arm-allmodconfig
+> ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+
+which appears to be triggered by 11d5f15723c9 (netfilter: xt_hashlimit:
+Create revision 2 to support higher pps rates) introducing a division of
+a 64 bit number which should be done using do_div().
+
+--r3uavwzpl3blzqiv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAABCAAGBQJX7WHIAAoJECTWi3JdVIfQ5KUH/339abZCS8frqbj8neJs8s6t
+ISnhEV/EcOvwbAsTdNaDs3PVlNTic2DmGInY+mQ/FdQRk8j4n/5sNE3YgoYexFyj
+caw49S5dvwnrsMWVGNXd6BRwxtVJY9ae2jWPONaSUCWoiI1ZzEwrYhGgD/nJQFFR
+dkw5ohOAKaipfA8AsiF50F/AxERI0w0mYDGdG5sHN+C9B1yu42idA11DU6XtMW76
+cYxL+dWkTgIayP/tw3Wl7O6AvUcLojUfwTkDliaizFN45YCeFDoaKvIY8CXM8Yya
+iDHvkjK694JHW0iCZMLqtzaMg5HTWhD3PYVhf+NLApYRHLvMtiFihNqYJppfm+g=
+=hOF6
+-----END PGP SIGNATURE-----
+
+--r3uavwzpl3blzqiv--
