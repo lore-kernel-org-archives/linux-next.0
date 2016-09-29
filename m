@@ -1,65 +1,72 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xtensa tree with Linus' tree
-Date: Thu, 29 Sep 2016 10:01:18 +1000
-Message-ID: <20160929100118.07bac0fb@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the netfilter-next tree with the
+ net tree
+Date: Thu, 29 Sep 2016 11:20:14 +1000
+Message-ID: <20160929112014.4293728d@canb.auug.org.au>
+References: <20160913101250.0ffee30f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55757 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753938AbcI2ABW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Sep 2016 20:01:22 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Max Filippov <jcmvbkbc@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kefeng Wang <wangkefeng.wang@huawei.com>, Rob Herring <robh@kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160913101250.0ffee30f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Liping Zhang <liping.zhang@spreadtrum.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Max,
+Hi all,
 
-Today's linux-next merge of the xtensa tree got a conflict in:
+On Tue, 13 Sep 2016 10:12:50 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the netfilter-next tree got a conflict in:
+> 
+>   net/netfilter/nf_tables_netdev.c
+> 
+> between commit:
+> 
+>   c73c24849011 ("netfilter: nf_tables_netdev: remove redundant ip_hdr assignment")
+> 
+> from the net tree and commit:
+> 
+>   ddc8b6027ad0 ("netfilter: introduce nft_set_pktinfo_{ipv4, ipv6}_validate()")
+> 
+> from the netfilter-next tree.
+> 
+> I fixed it up (I used the latter version of this file and applied the
+> patch below) and can carry the fix as necessary. This is now fixed as
+> far as linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 13 Sep 2016 10:08:58 +1000
+> Subject: [PATCH] netfilter: merge fixup for "nf_tables_netdev: remove
+>  redundant ip_hdr assignment"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  include/net/netfilter/nf_tables_ipv4.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/include/net/netfilter/nf_tables_ipv4.h b/include/net/netfilter/nf_tables_ipv4.h
+> index 968f00b82fb5..25e33aee91e7 100644
+> --- a/include/net/netfilter/nf_tables_ipv4.h
+> +++ b/include/net/netfilter/nf_tables_ipv4.h
+> @@ -33,7 +33,6 @@ __nft_set_pktinfo_ipv4_validate(struct nft_pktinfo *pkt,
+>  	if (!iph)
+>  		return -1;
+>  
+> -	iph = ip_hdr(skb);
+>  	if (iph->ihl < 5 || iph->version != 4)
+>  		return -1;
+>  
+> -- 
+> 2.8.1
 
-  arch/xtensa/kernel/setup.c
-
-between commits:
-
-  69d99e6c0d62 ("xtensa: Remove unnecessary of_platform_populate with default match table")
-  e973f4ec130a ("xtensa: Partially Revert "xtensa: Remove unnecessary of_platform_populate with default match table"")
-
-from Linus' tree and commit:
-
-  205ad548a742 ("xtensa: rearrange CCOUNT calibration")
-
-from the xtensa tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+The above merge fix patch is now needed when the net-next tree is
+merged with Linus' tree.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/xtensa/kernel/setup.c
-index 143251ede897,d61c8468abea..000000000000
---- a/arch/xtensa/kernel/setup.c
-+++ b/arch/xtensa/kernel/setup.c
-@@@ -252,14 -246,14 +245,6 @@@ void __init early_init_devtree(void *pa
-  		strlcpy(command_line, boot_command_line, COMMAND_LINE_SIZE);
-  }
-  
---static int __init xtensa_device_probe(void)
---{
-- 	of_clk_init(NULL);
- -	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
---	return 0;
---}
---
---device_initcall(xtensa_device_probe);
---
-  #endif /* CONFIG_OF */
-  
-  /*
