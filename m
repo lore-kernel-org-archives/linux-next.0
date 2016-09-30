@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the v4l-dvb tree
-Date: Fri, 30 Sep 2016 13:33:19 +1000
-Message-ID: <20160930133319.57ac11a3@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the arm64 tree
+Date: Fri, 30 Sep 2016 13:38:22 +1000
+Message-ID: <20160930133822.0bf16c41@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53287 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58197 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751171AbcI3DdW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Sep 2016 23:33:22 -0400
+        id S1753786AbcI3Di3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Sep 2016 23:38:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Songjun Wu <songjun.wu@microchip.com>, Nicolas Ferre <nicolas.ferre@atmel.com>
+To: Greg KH <greg@kroah.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Scott Wood <oss@buserror.net>, Will Deacon <will.deacon@arm.com>, Aleksey Makarov <aleksey.makarov@linaro.org>
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got a conflict in:
+Today's linux-next merge of the tty tree got conflicts in:
 
-  MAINTAINERS
+  arch/arm64/Kconfig
 
 between commit:
 
-  71fb2c74287d ("[media] MAINTAINERS: atmel-isc: add entry for Atmel ISC")
+  1d8f51d41fc7 ("arm/arm64: arch_timer: Use archdata to indicate vdso suitability")
 
-from the v4l-dvb tree and commit:
+from the arm64 tree and commit:
 
-  5615c3715749 ("MAINTAINERS: update entry for atmel_serial driver")
+  888125a71298 ("ARM64: ACPI: enable ACPI_SPCR_TABLE")
 
 from the tty tree.
 
@@ -42,28 +42,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index 8c86c07409c8,4e2ae17c478e..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -7848,14 -7745,12 +7843,20 @@@ T:	git git://git.monstr.eu/linux-2.6-mi
-  S:	Supported
-  F:	arch/microblaze/
-  
-+ MICROCHIP / ATMEL AT91 / AT32 SERIAL DRIVER
-+ M:	Richard Genoud <richard.genoud@gmail.com>
-+ S:	Maintained
-+ F:	drivers/tty/serial/atmel_serial.c
-+ F:	include/linux/atmel_serial.h
-+ 
- +MICROCHIP / ATMEL ISC DRIVER
- +M:	Songjun Wu <songjun.wu@microchip.com>
- +L:	linux-media@vger.kernel.org
- +S:	Supported
- +F:	drivers/media/platform/atmel/atmel-isc.c
- +F:	drivers/media/platform/atmel/atmel-isc-regs.h
- +F:	devicetree/bindings/media/atmel-isc.txt
- +
-  MICROSOFT SURFACE PRO 3 BUTTON DRIVER
-  M:	Chen Yu <yu.c.chen@intel.com>
-  L:	platform-driver-x86@vger.kernel.org
+diff --cc arch/arm64/Kconfig
+index 17c14a1d9112,11a2d36b27ef..000000000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -4,7 -4,7 +4,8 @@@ config ARM6
+  	select ACPI_GENERIC_GSI if ACPI
+  	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+  	select ACPI_MCFG if ACPI
++ 	select ACPI_SPCR_TABLE if ACPI
+ +	select ARCH_CLOCKSOURCE_DATA
+  	select ARCH_HAS_DEVMEM_IS_ALLOWED
+  	select ARCH_HAS_ACPI_TABLE_UPGRADE if ACPI
+  	select ARCH_HAS_ATOMIC64_DEC_IF_POSITIVE
