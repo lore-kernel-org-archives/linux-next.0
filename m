@@ -1,79 +1,135 @@
-From: Ian Kent <raven@themaw.net>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- userns tree
-Date: Fri, 30 Sep 2016 17:48:03 +0800
-Message-ID: <1475228883.3102.11.camel@themaw.net>
-References: <20160930174210.7e71aee4@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20160930 build: 2 failures 4 warnings (next-20160930)
+Date: Fri, 30 Sep 2016 14:36:03 +0100
+Message-ID: <E1bpxyt-0008MG-K9@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:40325 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932413AbcI3J6P (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 30 Sep 2016 05:58:15 -0400
-In-Reply-To: <20160930174210.7e71aee4@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53178 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932417AbcI3N46 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 30 Sep 2016 09:56:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, 2016-09-30 at 17:42 +1000, Stephen Rothwell wrote:
-> Hi Andrew,
+Tree/Branch: next-20160930
+Git describe: next-20160930
+Commit: 2325bd31c8 Add linux-next specific files for 20160930
 
-Hi Stephen,
+Build Time: 148 min 43 sec
 
-> 
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   include/linux/mount.h
-> 
-> between commit:
-> 
->   312ddcb332c3 ("mnt: Add a per mount namespace limit on the number of
-> mounts")
-> 
-> from the userns tree and commit:
-> 
->   a0461d15d75c ("vfs: make is_local_mountpoint() usable by others")
-> 
-> from the akpm-current tree.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-Yes, this is a problem.
+Errors: 2
+Warnings: 4
+Section Mismatches: 0
 
-There is a fundamental flaw in the series surrounding commit a0461d15d75c.
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-In discussion with Eric it was decided a different approach was needed and I'm
-holding back on posting an updated series because I was worried something like
-this might happen and didn't want to make matters worse.
+Errors:
 
-I definitely don't want this series to go to the Linus tree and it would be
-great if you could drop it from the next tree. Eric's patch should then apply
-without change.
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-I had asked Andrew to drop the series but he must have missed my request.
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-And I thought they had already been dropped but I must have been looking at an
-incorrect branch. I'll need to look at the akpm repo. again.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
 
-In the meantime all I can offer is the patch names corresponding to the
-descriptions.
+-------------------------------------------------------------------------------
 
-They are:
-fs-make-is_local_mountpoint-usable-by-others.patch
-fs-add-have_local_submounts.patch
-autofs-make-mountpoint-checks-namespace-aware.patch
-fs-remove-unused-have_submounts-function.patch
+Errors summary: 2
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+	  1 ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
 
-Sorry for the inconvenience.
-Ian
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
 
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "__aeabi_uldivmod" [net/netfilter/xt_hashlimit.ko] undefined!
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
