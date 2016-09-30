@@ -1,42 +1,52 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the pm tree
-Date: Fri, 30 Sep 2016 07:44:41 +0200
-Message-ID: <20160930054441.GC5458@kroah.com>
-References: <20160930134223.4eb0767d@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Fri, 30 Sep 2016 07:46:47 +0200
+Message-ID: <20160930054647.GD5458@kroah.com>
+References: <20160930135437.246d050b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:44201 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935992AbcI3FxP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 30 Sep 2016 01:53:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20160930134223.4eb0767d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20160930135437.246d050b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksey Makarov <aleksey.makarov@linaro.org>, Mika Westerberg <mika.westerberg@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksey Makarov <aleksey.makarov@linaro.org>
 
-On Fri, Sep 30, 2016 at 01:42:23PM +1000, Stephen Rothwell wrote:
+On Fri, Sep 30, 2016 at 01:54:37PM +1000, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> Today's linux-next merge of the tty tree got a conflict in:
+> After merging the tty tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 > 
->   include/linux/acpi.h
+> drivers/tty/serial/amba-pl011.c: In function 'pl011_console_match':
+> drivers/tty/serial/amba-pl011.c:2346:44: error: passing argument 3 of 'uart_parse_earlycon' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   if (uart_parse_earlycon(options, &iotype, &addr, &options))
+>                                             ^
+> In file included from drivers/tty/serial/amba-pl011.c:45:0:
+> include/linux/serial_core.h:384:5: note: expected 'resource_size_t * {aka unsigned int *}' but argument is of type 'long unsigned int *'
+>  int uart_parse_earlycon(char *p, unsigned char *iotype, resource_size_t *addr,
+>      ^
 > 
-> between commit:
+> Caused by commit
 > 
->   058dfc767008 ("ACPI / watchdog: Add support for WDAT hardware watchdog")
+>   8b8f347d3a48 ("serial: pl011: add console matching function")
 > 
-> from the pm tree and commit:
+> interacting with commit
 > 
->   ad1696f6f09d ("ACPI: parse SPCR and enable matching console")
+>   46e36683f433 ("serial: earlycon: Extend earlycon command line option to support 64-bit addresses")
 > 
-> from the tty tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> I have reverted commit 8b8f347d3a48 for today.
 
-Looks good to me, thanks.
+Ick, sorry about that.  I wonder why I'm not seeing that same build
+failure here, odd.  I'll go revert the same patch in my tree now as
+well.
+
+thanks,
 
 greg k-h
