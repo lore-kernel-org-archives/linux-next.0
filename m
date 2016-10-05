@@ -1,39 +1,46 @@
-From: Eric Dumazet <eric.dumazet@gmail.com>
-Subject: Re: error: 'struct net_device' has no member named
- 'nf_hooks_ingress'
-Date: Thu, 06 Oct 2016 06:11:26 +0900
-Message-ID: <1475701886.28155.223.camel@edumazet-glaptop3.roam.corp.google.com>
-References: <20160927164026.741b290b@canb.auug.org.au>
-         <20160927100324.GA466@swordfish> <20161004004801.GA4661@swordfish>
-         <87wphm1pn8.fsf@steelpick.2x.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc tree
+Date: Thu, 6 Oct 2016 09:41:14 +1100
+Message-ID: <20161006094114.764d2f34@canb.auug.org.au>
+References: <20160927150542.7e81e7ee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f171.google.com ([209.85.161.171]:33916 "EHLO
-        mail-yw0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751687AbcJEVLd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 5 Oct 2016 17:11:33 -0400
-In-Reply-To: <87wphm1pn8.fsf@steelpick.2x.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michal Sojka <sojkam1@fel.cvut.cz>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Aaron Conole <aconole@bytheb.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160927150542.7e81e7ee@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 2016-10-05 at 22:56 +0200, Michal Sojka wrote:
+Hi all,
 
-> this commit is now in mainline as
-> e3b37f11e6e4e6b6f02cc762f182ce233d2c1c9d and it breaks my build:
+On Tue, 27 Sep 2016 15:05:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the gpio tree got a conflict in:
 > 
->     net/netfilter/core.c: In function 'nf_set_hooks_head':
->     net/netfilter/core.c:96:3: error: 'struct net_device' has no member named 'nf_hooks_ingress'
+>   arch/arm/mach-omap2/board-rx51-peripherals.c
 > 
-> Are the fixes (see below) on the way to mainline too?
+> between commit:
+> 
+>   9b7141d01a76 ("ARM: OMAP2+: Drop legacy board file for n900")
+> 
+> from the arm-soc tree and commit:
+> 
+>   9132ce450bd1 ("ARM: omap2: fix missing include")
+> 
+> from the gpio tree.
+> 
+> I fixed it up (the former removed the file, so I did that) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Yes the fixes are already in nf tree and _will_ get pushed.
+Since Linus (Torvalds) has merged the gpio tree, this conflict (and
+file removal) now affects the merge of the arm-soc tree).
 
-Pablo and David are attending netdev 1.2 in Tokyo and have obligations.
-
-https://git.kernel.org/cgit/linux/kernel/git/pablo/nf-next.git/
-
-Thanks.
+-- 
+Cheers,
+Stephen Rothwell
