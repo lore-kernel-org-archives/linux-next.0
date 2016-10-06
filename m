@@ -1,52 +1,129 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the gpio tree with the arm-soc tree
-Date: Thu, 6 Oct 2016 08:52:00 +0200
-Message-ID: <CACRpkdYT9Zr+9gJgBU9RoJM_Yn32fv2AO_Y+URYW+NTyFOa+fQ@mail.gmail.com>
-References: <20160927150542.7e81e7ee@canb.auug.org.au> <20161006094114.764d2f34@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161006 build: 2 failures 4 warnings (next-20161006)
+Date: Thu, 06 Oct 2016 11:54:25 +0100
+Message-ID: <E1bs6Jj-0001E7-2a@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f41.google.com ([209.85.218.41]:34090 "EHLO
-        mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752152AbcJFGwC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2016 02:52:02 -0400
-Received: by mail-oi0-f41.google.com with SMTP id n132so11720031oih.1
-        for <linux-next@vger.kernel.org>; Wed, 05 Oct 2016 23:52:01 -0700 (PDT)
-In-Reply-To: <20161006094114.764d2f34@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45848 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751693AbcJFKye (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 6 Oct 2016 06:54:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Oct 6, 2016 at 12:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Tue, 27 Sep 2016 15:05:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the gpio tree got a conflict in:
->>
->>   arch/arm/mach-omap2/board-rx51-peripherals.c
->>
->> between commit:
->>
->>   9b7141d01a76 ("ARM: OMAP2+: Drop legacy board file for n900")
->>
->> from the arm-soc tree and commit:
->>
->>   9132ce450bd1 ("ARM: omap2: fix missing include")
->>
->> from the gpio tree.
->>
->> I fixed it up (the former removed the file, so I did that) and can
->> carry the fix as necessary. This is now fixed as far as linux-next is
->> concerned, but any non trivial conflicts should be mentioned to your
->> upstream maintainer when your tree is submitted for merging.  You may
->> also want to consider cooperating with the maintainer of the conflicting
->> tree to minimise any particularly complex conflicts.
->
-> Since Linus (Torvalds) has merged the gpio tree, this conflict (and
-> file removal) now affects the merge of the arm-soc tree).
+Tree/Branch: next-20161006
+Git describe: next-20161006
+Commit: c802e87fbe Add linux-next specific files for 20161006
 
-Yup and I also informed him in my pull request about this conflict
-so shouldn't be a problem.
+Build Time: 235 min 19 sec
 
-Yours,
-Linus Walleij
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 1
+Warnings: 4
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+	arm-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
