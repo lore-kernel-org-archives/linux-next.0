@@ -1,49 +1,132 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [mac80211] BUG_ON with current -git (4.8.0-11417-g24532f7)
-Date: Wed, 12 Oct 2016 11:05:06 +0200
-Message-ID: <1476263106.5271.23.camel@sipsolutions.net>
-References: <20161010150358.GA514@swordfish>
-         <20161010153050.GA836@swordfish> (sfid-20161010_173147_270639_33210BFD)
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20161010153050.GA836@swordfish> (sfid-20161010_173147_270639_33210BFD)
-Sender: netdev-owner@vger.kernel.org
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>, "David S. Miller" <davem@davemloft.net>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161012 build: 2 failures 4 warnings (next-20161012)
+Date: Wed, 12 Oct 2016 10:22:29 +0100
+Message-ID: <E1buFk3-0003Qm-UJ@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55612 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932599AbcJLJWh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Oct 2016 05:22:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi,
+Tree/Branch: next-20161012
+Git describe: next-20161012
+Commit: 11127a2424 Add linux-next specific files for 20161012
 
-Sorry - I meant to look into this yesterday but forgot.
+Build Time: 199 min 28 sec
 
-> Andy, can this be related to CONFIG_VMAP_STACK?
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-I think it is.
+Errors: 1
+Warnings: 4
+Section Mismatches: 0
 
-> > current -git kills my system. 
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
-Can you elaborate on how exactly it kills your system?
+Errors:
 
-> > adding
-> > 
-> > 	if (!virt_addr_valid(&aad[2])) {
-> > 		WARN_ON(1);
-> > 		return -EINVAL;
-> > 	}
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-That's pretty obviously false with VMAP_STACK, since the caller
-(ieee80211_crypto_ccmp_decrypt) puts the aad on the stack. b_0 is also
-on the stack, but maybe that doesn't matter.
+	arm-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
 
-Herbert, do you know what could cause this, and how we should fix it?
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      6 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm-allnoconfig
 
-We can't really afford to do an allocation here, and we don't have
-space in the skb (not even in skb->cb at that point), so if we really
-have no way to continue using the stack we'd ... not sure, use a per-
-CPU buffer perhaps.
-We need 32 bytes for aad and 16 bytes for b_0, if that also can't be on
-the stack any more.
+-------------------------------------------------------------------------------
 
-johannes
+Errors summary: 1
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings Summary: 4
+	  7 <stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	  7 <stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	  7 <stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	  1 ../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:739:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1316:2: warning: #warning syscall pkey_mprotect not implemented [-Wcpp]
+	<stdin>:1319:2: warning: #warning syscall pkey_alloc not implemented [-Wcpp]
+	<stdin>:1322:2: warning: #warning syscall pkey_free not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+x86_64-defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
