@@ -1,40 +1,40 @@
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+From: Johannes Berg <johannes@sipsolutions.net>
 Subject: Re: [mac80211] BUG_ON with current -git (4.8.0-11417-g24532f7)
-Date: Thu, 13 Oct 2016 22:45:49 +0900
-Message-ID: <20161013134549.GB583@swordfish>
+Date: Thu, 13 Oct 2016 15:45:54 +0200
+Message-ID: <1476366354.4904.31.camel@sipsolutions.net>
 References: <20161010150358.GA514@swordfish>
- <20161010153050.GA836@swordfish>
- <1476263106.5271.23.camel@sipsolutions.net>
- <20161012141245.GA436@swordfish>
- <1476282127.5271.30.camel@sipsolutions.net>
- <CALCETrXg9-OpJx5Rqz8afyaug+0DjzxvpdbOV9q6i01=zCZbcQ@mail.gmail.com>
- <1476338524.4904.1.camel@sipsolutions.net>
- <20161013134252.GA583@swordfish>
+         <20161010153050.GA836@swordfish>
+         <1476263106.5271.23.camel@sipsolutions.net>
+         <20161012141245.GA436@swordfish>
+         <1476282127.5271.30.camel@sipsolutions.net>
+         <CALCETrXg9-OpJx5Rqz8afyaug+0DjzxvpdbOV9q6i01=zCZbcQ@mail.gmail.com>
+         <1476338524.4904.1.camel@sipsolutions.net> <20161013134252.GA583@swordfish>
+         (sfid-20161013_154350_352486_97A4AB85)
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161013134252.GA583@swordfish>
-Sender: netdev-owner@vger.kernel.org
-To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Andy Lutomirski <luto@amacapital.net>, Johannes Berg <johannes@sipsolutions.net>, Andy Lutomirski <luto@kernel.org>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161013134252.GA583@swordfish> (sfid-20161013_154350_352486_97A4AB85)
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Andy Lutomirski <luto@amacapital.net>
+Cc: Andy Lutomirski <luto@kernel.org>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, Network Development <netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
 List-Id: linux-next.vger.kernel.org
 
-On (10/13/16 22:42), Sergey Senozhatsky wrote:
-> 
-> On (10/13/16 08:02), Johannes Berg wrote:
-> > On Wed, 2016-10-12 at 22:39 -0700, Andy Lutomirski wrote:
+On Thu, 2016-10-13 at 22:42 +0900, Sergey Senozhatsky wrote:
+> 
+> > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commi
+> > > t/?h=x86/vmap_stack&id=0a39cfa6fbb5d5635c85253cc7d6b44b54822afd
+> > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commi
+> > > t/?h=x86/vmap_stack&id=bf8cfa200b5a01383ea39fc8ce2f32909767baa8
 > > 
-> > > In a pinch, I have these patches sitting around:
-> > > 
-> > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commit/?h=x86/vmap_stack&id=0a39cfa6fbb5d5635c85253cc7d6b44b54822afd
-> > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commit/?h=x86/vmap_stack&id=bf8cfa200b5a01383ea39fc8ce2f32909767baa8
-> > 
-> > That truly sounds like something we'd rather avoid in the TX/RX paths
-> > though, which should perform well.
+> > That truly sounds like something we'd rather avoid in the TX/RX
+> > paths though, which should perform well.
 > 
 > didn't fix.
-> 
+
+It couldn't, since the new helpers weren't used in mac80211 in those
+patches yet.
+
 > so I finally had some time to do a better bug-reporter job.
 > 
 > I added a bunch of printk-s and several virt_addr_valid()-s
@@ -44,13 +44,13 @@ On (10/13/16 22:42), Sergey Senozhatsky wrote:
 > virt_addr_valid()
 > 
 > 
->  FAIL: 00004100002cba02 > ffffc900802cba02 || 1 -> (00004100002cba02 >> 39) == 130
+>  FAIL: 00004100002cba02 > ffffc900802cba02 || 1 -> (00004100002cba02
+> >> 39) == 130
 
-that  `(00004100002cba02 >> 39) == 130'   part is
+Yeah, we already know that in this function the aad variable is on the
+stack, it explicitly is.
 
-phys_addr_valid()
-{
-	(addr >> boot_cpu_data.x86_phys_bits)
-}
+The question, though, is why precisely that fails in the crypto code.
+Can you send the Oops report itself?
 
-	-ss
+johannes
