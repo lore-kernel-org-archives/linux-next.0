@@ -1,68 +1,43 @@
-From: Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [mac80211] BUG_ON with current -git (4.8.0-11417-g24532f7)
-Date: Thu, 13 Oct 2016 14:49:55 -0700
-Message-ID: <CALCETrW8imkGTtR9-mFB=e=Gdr1QXVuhXN3GRs2B6wbmPaaGhA@mail.gmail.com>
-References: <20161010150358.GA514@swordfish> <20161010153050.GA836@swordfish>
- <1476263106.5271.23.camel@sipsolutions.net> <20161012141245.GA436@swordfish>
- <1476282127.5271.30.camel@sipsolutions.net> <CALCETrXg9-OpJx5Rqz8afyaug+0DjzxvpdbOV9q6i01=zCZbcQ@mail.gmail.com>
- <1476338524.4904.1.camel@sipsolutions.net> <20161013134252.GA583@swordfish> <1476366354.4904.31.camel@sipsolutions.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net tree
+Date: Fri, 14 Oct 2016 13:12:51 +1100
+Message-ID: <20161014131251.6708fcbc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f48.google.com ([209.85.213.48]:36299 "EHLO
-        mail-vk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756315AbcJMVuU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Oct 2016 17:50:20 -0400
-Received: by mail-vk0-f48.google.com with SMTP id 2so94681017vkb.3
-        for <linux-next@vger.kernel.org>; Thu, 13 Oct 2016 14:50:17 -0700 (PDT)
-In-Reply-To: <1476366354.4904.31.camel@sipsolutions.net>
+Received: from ozlabs.org ([103.22.144.67]:38221 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751645AbcJNCMy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 13 Oct 2016 22:12:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Network Development <netdev@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Herbert <tom@herbertland.com>, Saeed Mahameed <saeedm@mellanox.com>
 
-On Oct 13, 2016 6:46 AM, "Johannes Berg" <johannes@sipsolutions.net> wrote:
->
-> On Thu, 2016-10-13 at 22:42 +0900, Sergey Senozhatsky wrote:
-> >
-> > > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commi
-> > > > t/?h=x86/vmap_stack&id=0a39cfa6fbb5d5635c85253cc7d6b44b54822afd
-> > > > https://git.kernel.org/cgit/linux/kernel/git/luto/linux.git/commi
-> > > > t/?h=x86/vmap_stack&id=bf8cfa200b5a01383ea39fc8ce2f32909767baa8
-> > >
-> > > That truly sounds like something we'd rather avoid in the TX/RX
-> > > paths though, which should perform well.
-> >
-> > didn't fix.
->
-> It couldn't, since the new helpers weren't used in mac80211 in those
-> patches yet.
->
-> > so I finally had some time to do a better bug-reporter job.
-> >
-> > I added a bunch of printk-s and several virt_addr_valid()-s
-> > to ieee80211_aes_ccm_encrypt().
-> >
-> > and right befoe the Oops I see the following report from
-> > virt_addr_valid()
-> >
-> >
-> >  FAIL: 00004100002cba02 > ffffc900802cba02 || 1 -> (00004100002cba02
-> > >> 39) == 130
->
-> Yeah, we already know that in this function the aad variable is on the
-> stack, it explicitly is.
->
-> The question, though, is why precisely that fails in the crypto code.
-> Can you send the Oops report itself?
->
+Hi Andrew,
 
-It's failing before that.  With CONFIG_VMAP_STACK=y, the stack may not
-be physically contiguous and can't be used for DMA, so putting it in a
-scatterlist is bogus in general, and the crypto code mostly wants a
-scatterlist.
+Today's linux-next merge of the akpm tree got a conflict in:
 
-There are a couple (faster!) APIs for crypto that don't use
-scatterlists, but I don't think AEAD works with them.
+  include/linux/mlx5/device.h
 
---Andy
+between commit:
+
+  b8a4ddb2e8f4 ("net/mlx5: Add MLX5_ARRAY_SET64 to fix BUILD_BUG_ON")
+
+from the net tree and patch:
+
+  "include/linux/mlx5/device.h: kill BUILD_BUG_ON()s"
+
+from the akpm tree.
+
+I fixed it up (I just dropped the akpm tree patch for today) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
