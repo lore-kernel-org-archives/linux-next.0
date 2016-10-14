@@ -1,7 +1,7 @@
 From: Johannes Berg <johannes@sipsolutions.net>
 Subject: Re: [mac80211] BUG_ON with current -git (4.8.0-11417-g24532f7)
-Date: Fri, 14 Oct 2016 09:25:16 +0200
-Message-ID: <1476429916.4382.12.camel@sipsolutions.net>
+Date: Fri, 14 Oct 2016 10:28:19 +0200
+Message-ID: <1476433699.31114.6.camel@sipsolutions.net>
 References: <20161010150358.GA514@swordfish>
          <20161010153050.GA836@swordfish>
          <1476263106.5271.23.camel@sipsolutions.net>
@@ -11,52 +11,55 @@ References: <20161010150358.GA514@swordfish>
          <1476338524.4904.1.camel@sipsolutions.net> <20161013134252.GA583@swordfish>
          <1476366354.4904.31.camel@sipsolutions.net>
          <CALCETrW8imkGTtR9-mFB=e=Gdr1QXVuhXN3GRs2B6wbmPaaGhA@mail.gmail.com>
-         (sfid-20161013_235018_225755_5BCF27D2)
+         (sfid-20161013_235018_225755_5BCF27D2) <1476429916.4382.12.camel@sipsolutions.net>
+         (sfid-20161014_092541_208009_922C51BD)
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:57178 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753004AbcJNHZb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 14 Oct 2016 03:25:31 -0400
-In-Reply-To: <CALCETrW8imkGTtR9-mFB=e=Gdr1QXVuhXN3GRs2B6wbmPaaGhA@mail.gmail.com> (sfid-20161013_235018_225755_5BCF27D2)
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1476429916.4382.12.camel@sipsolutions.net> (sfid-20161014_092541_208009_922C51BD)
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andy Lutomirski <luto@amacapital.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Network Development <netdev@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Network Development <netdev@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Jouni Malinen <j@w1.fi>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 2016-10-13 at 14:49 -0700, Andy Lutomirski wrote:
-> 
-> It's failing before that.  With CONFIG_VMAP_STACK=y, the stack may
-> not be physically contiguous and can't be used for DMA, so putting it
-> in a scatterlist is bogus in general, and the crypto code mostly
-> wants a scatterlist.
 
-I see, so all this stuff is getting inlined, and we crash in
-sg_set_buf() because it does sg_set_page() and that obviously needs to
-do virt_to_page(), which is invalid on this address now.
-With CONFIG_DEBUG_SG we'd have hit the BUG_ON there instead.
+>    1. revert that patch (doing so would need some major adjustments now,
+>       since it's pretty old and a number of new things were added in the
+>       meantime)
 
-It does indeed look like AEAD doesn't have any non-SG API.
+This it will have to be, I guess.
 
-So ultimately, the bug already goes back to Ard's commit 7ec7c4a9a686
-("mac80211: port CCMP to cryptoapi's CCM driver") since that already
-potentially used stack space for DMA.
+>    2. allocate a per-CPU buffer for all the things that we put on the
+>       stack and use in SG lists, those are:
+>        * CCM/GCM: AAD (32B), B_0/J_0 (16B)
+>        * GMAC: AAD (20B), zero (16B)
+>        * (not sure why CMAC isn't using this API, but it would be like GMAC)
 
-Since we don't have any space in the SKB or anywhere else at this point
-(other than the stack that we can't use), I see two ways out of this:
+This doesn't work - I tried to move the mac80211 buffers, but because
+we also put the struct aead_request on the stack, and crypto_ccm has
+the "odata" in there, and we can't separate the odata from that struct,
+we'd have to also put that into a per-CPU buffer, but it's very big -
+456 bytes for CCM, didn't measure the others but I'd expect them to be
+larger, if different.
 
-   1. revert that patch (doing so would need some major adjustments now,
-      since it's pretty old and a number of new things were added in the
-      meantime)
-   2. allocate a per-CPU buffer for all the things that we put on the
-      stack and use in SG lists, those are:
-       * CCM/GCM: AAD (32B), B_0/J_0 (16B)
-       * GMAC: AAD (20B), zero (16B)
-       * (not sure why CMAC isn't using this API, but it would be like
-      GMAC)
+I don't think we can allocate half a kb for each CPU just to be able to
+possibly use the acceleration here. We can't even make that conditional
+on not having hardware crypto in the wifi NIC because drivers are
+always allowed to pass undecrypted frames, regardless of whether or not
+HW crypto was attempted, so we don't know upfront if we'll have to
+decrypt anything in software...
 
-Thoughts?
+Given that, I think we have had a bug in here basically since Ard's
+patch, we never should've put these structs on the stack. Herbert, you
+also touched this later and converted the API usage, did you see the
+way the stack is used here and think it should be OK, or did you simply
+not realize that?
+
+Ard, are you able to help out working on a revert of your patch? That
+would require also reverting a number of other patches (various fixes,
+API adjustments, etc. to the AEAD usage), but the more complicated part
+is that in the meantime Jouni introduced GCMP and CCMP-256, both of
+which we of course need to retain.
 
 johannes
