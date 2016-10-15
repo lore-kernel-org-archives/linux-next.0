@@ -1,50 +1,90 @@
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: Re: [mac80211] BUG_ON with current -git (4.8.0-11417-g24532f7)
-Date: Fri, 14 Oct 2016 12:11:12 +0100
-Message-ID: <CAKv+Gu9t2fk2+4QwsDATv11wggQPryobGUGJQHO-G09bYbecGg@mail.gmail.com>
-References: <20161010150358.GA514@swordfish> <20161010153050.GA836@swordfish>
- <1476263106.5271.23.camel@sipsolutions.net> <20161012141245.GA436@swordfish>
- <1476282127.5271.30.camel@sipsolutions.net> <CALCETrXg9-OpJx5Rqz8afyaug+0DjzxvpdbOV9q6i01=zCZbcQ@mail.gmail.com>
- <1476338524.4904.1.camel@sipsolutions.net> <20161013134252.GA583@swordfish>
- <1476366354.4904.31.camel@sipsolutions.net> <CALCETrW8imkGTtR9-mFB=e=Gdr1QXVuhXN3GRs2B6wbmPaaGhA@mail.gmail.com>
- <1476429916.4382.12.camel@sipsolutions.net> <1476433699.31114.6.camel@sipsolutions.net>
- <CAKv+Gu8hTy8U7FcA58P1YWt2rHU09xP9v1UU0KcnD4uuaK8How@mail.gmail.com>
- <CAKv+Gu_v+4D_7EvRkrSrStheuP1L-oPh=o7Ub+NU7-wgLYks4w@mail.gmail.com>
- <1476434561.31114.7.camel@sipsolutions.net> <CAKv+Gu896xme5sd5i8hs7tA=Xt=qQKCiAx7fQg1ZECn50NttbQ@mail.gmail.com>
- <1476435303.31114.14.camel@sipsolutions.net> <CAKv+Gu9KObA61fEYxr1FFj_3SKNS2RUbqZo01yfnm9Bf0AncwA@mail.gmail.com>
- <1476436248.31114.21.camel@sipsolutions.net> <CAKv+Gu-Y6wuMGuRgrHRGCvAM9qZjvufs=7VWL8hAUKFSF=tZWg@mail.gmail.com>
- <1476437149.31114.27.camel@sipsolutions.net> <CAKv+Gu_p7neD-ttCBBA6p7VSkQt8mvfhS9cdcLftdkXNtAAFnQ@mail.gmail.com>
- <1476439212.31114.37.camel@sipsolutions.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net tree with Linus' tree
+Date: Sun, 16 Oct 2016 08:13:17 +1100
+Message-ID: <20161016081317.229c5c47@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1476439212.31114.37.camel@sipsolutions.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Andy Lutomirski <luto@amacapital.net>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Network Development <netdev@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Linux Wireless List <linux-wireless@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jouni Malinen <j@w1.fi>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ram Amrani <Ram.Amrani@cavium.com>, Doug Ledford <dledford@redhat.com>, Yuval Mintz <Yuval.Mintz@caviumnetworks.com>
 List-Id: linux-next.vger.kernel.org
 
-On 14 October 2016 at 11:00, Johannes Berg <johannes@sipsolutions.net> wrote:
->
->> So why is the performance hit acceptable for ESP but not for WPA? We
->> could easily implement the same thing, i.e.,
->> kmalloc(GFP_ATOMIC)/kfree the aead_req struct rather than allocate it
->> on the stack
->
-> Yeah, maybe we should. It's likely a much bigger allocation, but I
-> don't actually know if that affects speed.
->
-> In most cases where you want high performance we never hit this anyway
-> since we'll have hardware crypto. I know for our (Intel's) devices we
-> normally never hit these code paths.
->
-> But on the other hand, you also did your changes for a reason, and the
-> only reason I can see of that is performance. So you'd be the one with
-> most "skin in the game", I guess?
->
+Hi all,
 
-Well, what sucks here is that the accelerated driver I implemented for
-arm64 does not actually need this, as long as we take aad[] off the
-stack. And note that the API was changed since my patch, to add aad[]
-to the scatterlist: prior to this change, it used
-aead_request_set_assoc() to set the associated data separately.
+Today's linux-next merge of the net tree got a conflict in:
+
+  drivers/net/ethernet/qlogic/Kconfig
+
+between commit:
+
+  2e0cbc4dd077 ("qedr: Add RoCE driver framework")
+
+from Linus' tree and commit:
+
+  0189efb8f4f8 ("qed*: Fix Kconfig dependencies with INFINIBAND_QEDR")
+
+from the net tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+I also added this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Sun, 16 Oct 2016 08:09:42 +1100
+Subject: [PATCH] qed*: merge fix for CONFIG_INFINIBAND_QEDR Kconfig move
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/infiniband/hw/qedr/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/infiniband/hw/qedr/Kconfig b/drivers/infiniband/hw/qedr/Kconfig
+index 7c06d85568d4..6c9f3923e838 100644
+--- a/drivers/infiniband/hw/qedr/Kconfig
++++ b/drivers/infiniband/hw/qedr/Kconfig
+@@ -2,6 +2,7 @@ config INFINIBAND_QEDR
+ 	tristate "QLogic RoCE driver"
+ 	depends on 64BIT && QEDE
+ 	select QED_LL2
++	select QED_RDMA
+ 	---help---
+ 	  This driver provides low-level InfiniBand over Ethernet
+ 	  support for QLogic QED host channel adapters (HCAs).
+-- 
+2.8.1
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/qlogic/Kconfig
+index 1e8339a67f6e,77567727528a..000000000000
+--- a/drivers/net/ethernet/qlogic/Kconfig
++++ b/drivers/net/ethernet/qlogic/Kconfig
+@@@ -107,4 -107,19 +107,7 @@@ config QED
+  	---help---
+  	  This enables the support for ...
+  
++ config QED_RDMA
++ 	bool
++ 
+ -config INFINIBAND_QEDR
+ -	tristate "QLogic qede RoCE sources [debug]"
+ -	depends on QEDE && 64BIT
+ -	select QED_LL2
+ -	select QED_RDMA
+ -	default n
+ -	---help---
+ -	  This provides a temporary node that allows the compilation
+ -	  and logical testing of the InfiniBand over Ethernet support
+ -	  for QLogic QED. This would be replaced by the 'real' option
+ -	  once the QEDR driver is added [+relocated].
+ -
+  endif # NET_VENDOR_QLOGIC
