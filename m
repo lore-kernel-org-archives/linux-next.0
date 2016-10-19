@@ -1,48 +1,104 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the drm-intel
-	tree
-Date: Wed, 19 Oct 2016 10:57:53 +1100
-Message-ID: <20161019105753.65cac1aa@canb.auug.org.au>
+From: Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: Re: linux-next: build warnings after merge of the drm-intel tree
+Date: Wed, 19 Oct 2016 09:57:59 +0800
+Message-ID: <20161019015759.fhvadx5m7jqoe6sb@zhen-hp.sh.intel.com>
+References: <20161019105753.65cac1aa@canb.auug.org.au>
+Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0779795423=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161019105753.65cac1aa@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, Zhi Wang <zhi.a.wang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLWludGVsIHRyZWUsIHRvZGF5J3MgbGludXgt
-bmV4dCBidWlsZCAoeDg2XzY0CmFsbG1vZGNvbmZpZykgcHJvZHVjZWQgdGhlc2Ugd2FybmluZ3M6
-Cgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQvZXhlY2xpc3QuYzogSW4gZnVuY3Rpb24gJ3JlbGVh
-c2Vfc2hhZG93X2JhdGNoX2J1ZmZlcic6CmRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9leGVjbGlz
-dC5jOjUwMTo0OiB3YXJuaW5nOiAnZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVuY2UnIGlzIGRlcHJl
-Y2F0ZWQgWy1XZGVwcmVjYXRlZC1kZWNsYXJhdGlvbnNdCiAgICBkcm1fZ2VtX29iamVjdF91bnJl
-ZmVyZW5jZSgmKGVudHJ5X29iai0+b2JqLT5iYXNlKSk7CiAgICBeCkluIGZpbGUgaW5jbHVkZWQg
-ZnJvbSBkcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQvZXhlY2xpc3QuYzozNTowOgpkcml2ZXJzL2dw
-dS9kcm0vaTkxNS9pOTE1X2Rydi5oOjIzNDQ6MTM6IG5vdGU6IGRlY2xhcmVkIGhlcmUKIGV4dGVy
-biB2b2lkIGRybV9nZW1fb2JqZWN0X3VucmVmZXJlbmNlKHN0cnVjdCBkcm1fZ2VtX29iamVjdCAq
-KTsKICAgICAgICAgICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2V4ZWNsaXN0LmM6IElu
-IGZ1bmN0aW9uICdyZWxlYXNlX3NoYWRvd193YV9jdHgnOgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9n
-dnQvZXhlY2xpc3QuYzo1MTQ6Mjogd2FybmluZzogJ2RybV9nZW1fb2JqZWN0X3VucmVmZXJlbmNl
-JyBpcyBkZXByZWNhdGVkIFstV2RlcHJlY2F0ZWQtZGVjbGFyYXRpb25zXQogIGRybV9nZW1fb2Jq
-ZWN0X3VucmVmZXJlbmNlKCYod2FfY3R4LT5pbmRpcmVjdF9jdHgub2JqLT5iYXNlKSk7CiAgXgpJ
-biBmaWxlIGluY2x1ZGVkIGZyb20gZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2V4ZWNsaXN0LmM6
-MzU6MDoKZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9kcnYuaDoyMzQ0OjEzOiBub3RlOiBkZWNs
-YXJlZCBoZXJlCiBleHRlcm4gdm9pZCBkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZShzdHJ1Y3Qg
-ZHJtX2dlbV9vYmplY3QgKik7CiAgICAgICAgICAgICBeCgpJbnRyb2R1Y2VkIGJ5IGNvbW1pdAoK
-ICBiZTFkYTcwNzBhZWEgKCJkcm0vaTkxNS9ndnQ6IHZHUFUgY29tbWFuZCBzY2FubmVyIikKCmlu
-dGVyYWN0aW5nIHdpdGggY29tbWl0CgogIGY4YzQxN2NkYjFiOCAoImRybS9pOTE1OiBSZW5hbWUg
-ZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVuY2UgaW4gcHJlcGFyYXRpb24gZm9yIGxvY2tsZXNzIGZy
-ZWUiKQoKZnJvbSBMaW51cycgdHJlZS4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1h
-aWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============0779795423==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lqdbufq5mn5k2iwi"
+Content-Disposition: inline
+
+
+--lqdbufq5mn5k2iwi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 2016.10.19 10:57:53 +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> After merging the drm-intel tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+>=20
+> drivers/gpu/drm/i915/gvt/execlist.c: In function 'release_shadow_batch_bu=
+ffer':
+> drivers/gpu/drm/i915/gvt/execlist.c:501:4: warning: 'drm_gem_object_unref=
+erence' is deprecated [-Wdeprecated-declarations]
+>     drm_gem_object_unreference(&(entry_obj->obj->base));
+>     ^
+> In file included from drivers/gpu/drm/i915/gvt/execlist.c:35:0:
+> drivers/gpu/drm/i915/i915_drv.h:2344:13: note: declared here
+>  extern void drm_gem_object_unreference(struct drm_gem_object *);
+>              ^
+> drivers/gpu/drm/i915/gvt/execlist.c: In function 'release_shadow_wa_ctx':
+> drivers/gpu/drm/i915/gvt/execlist.c:514:2: warning: 'drm_gem_object_unref=
+erence' is deprecated [-Wdeprecated-declarations]
+>   drm_gem_object_unreference(&(wa_ctx->indirect_ctx.obj->base));
+>   ^
+> In file included from drivers/gpu/drm/i915/gvt/execlist.c:35:0:
+> drivers/gpu/drm/i915/i915_drv.h:2344:13: note: declared here
+>  extern void drm_gem_object_unreference(struct drm_gem_object *);
+>              ^
+>=20
+> Introduced by commit
+>=20
+>   be1da7070aea ("drm/i915/gvt: vGPU command scanner")
+>=20
+> interacting with commit
+>=20
+>   f8c417cdb1b8 ("drm/i915: Rename drm_gem_object_unreference in preparati=
+on for lockless free")
+>=20
+> from Linus' tree.
+>=20
+
+Sorry for this, we will fix that in next pull request to replace old interf=
+ace.
+
+--=20
+Open Source Technology Center, Intel ltd.
+
+$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
+
+--lqdbufq5mn5k2iwi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iEYEABECAAYFAlgG0ycACgkQsQQaM014GCdqfQCbB4NT7TcY21YDzW5xRp+Fn198
+R6MAnA1vtl8VwcaZ8hobG/LKgq2hcrZh
+=EzL0
+-----END PGP SIGNATURE-----
+
+--lqdbufq5mn5k2iwi--
+
+--===============0779795423==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0779795423==--
