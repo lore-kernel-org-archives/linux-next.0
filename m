@@ -1,96 +1,52 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161020 build: 2 failures 4 warnings (next-20161020)
-Date: Thu, 20 Oct 2016 21:53:25 +0100
-Message-ID: <E1bxKL5-0004A6-VT@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: including PHY tree in linux-next
+Date: Fri, 21 Oct 2016 09:00:41 +1100
+Message-ID: <20161021090041.46cc5fee@canb.auug.org.au>
+References: <5808995C.3010300@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44230 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752476AbcJTUxf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Oct 2016 16:53:35 -0400
+Received: from ozlabs.org ([103.22.144.67]:59811 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932826AbcJTWAo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Oct 2016 18:00:44 -0400
+In-Reply-To: <5808995C.3010300@ti.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-next@vger.kernel.org
 
-Tree/Branch: next-20161020
-Git describe: next-20161020
-Commit: 02ec82a137 Add linux-next specific files for 20161020
+Hi Kishon,
 
-Build Time: 289 min 27 sec
+On Thu, 20 Oct 2016 15:45:56 +0530 Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>
+> Can you include the following branches for linux-phy tree into linux-next?
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
+> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git fixes
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Added from today (called phy-next and phy respectively).  Will these be
+merged via Dave Miller's trees, or directly to Linus?
 
-Errors: 1
-Warnings: 4
-Section Mismatches: 0
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
 
-Errors:
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-	arm64-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : x86_64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings Summary: 4
-	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
-	  1 ../fs/nfs/nfs4proc.c:1548:2: warning: missing braces around initializer [-Wmissing-braces]
-	  1 ../fs/nfs/nfs4proc.c:1548:2: warning: (near initialization for 'freeme.<anonymous>') [-Wmissing-braces]
-	  1 ../drivers/scsi/lpfc/lpfc_logmsg.h:56:45: warning: format '%ld' expects argument of type 'long int', but argument 9 has type 'size_t {aka const unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-
-Warnings:
-	../drivers/scsi/lpfc/lpfc_logmsg.h:56:45: warning: format '%ld' expects argument of type 'long int', but argument 9 has type 'size_t {aka const unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../fs/nfs/nfs4proc.c:1548:2: warning: missing braces around initializer [-Wmissing-braces]
-	../fs/nfs/nfs4proc.c:1548:2: warning: (near initialization for 'freeme.<anonymous>') [-Wmissing-braces]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
