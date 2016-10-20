@@ -1,52 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: including PHY tree in linux-next
-Date: Fri, 21 Oct 2016 09:00:41 +1100
-Message-ID: <20161021090041.46cc5fee@canb.auug.org.au>
-References: <5808995C.3010300@ti.com>
+Subject: linux-next: build failure after merge of the net tree
+Date: Fri, 21 Oct 2016 09:27:10 +1100
+Message-ID: <20161021092710.1b56a35b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59811 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932826AbcJTWAo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Oct 2016 18:00:44 -0400
-In-Reply-To: <5808995C.3010300@ti.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-next@vger.kernel.org
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Kishon,
+Hi all,
 
-On Thu, 20 Oct 2016 15:45:56 +0530 Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> Can you include the following branches for linux-phy tree into linux-next?
-> 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
-> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git fixes
+After merging the net tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Added from today (called phy-next and phy respectively).  Will these be
-merged via Dave Miller's trees, or directly to Linus?
+ERROR: "kexec_in_progress" [drivers/net/dsa/bcm_sf2.ko] undefined!
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Caused by commit
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+  2399d6143f85 ("net: dsa: bcm_sf2: Prevent GPHY shutdown for kexec'd kernels")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+I used the version of the net tree from next-20161020 for today.
 
 -- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Stephen Rothwell
