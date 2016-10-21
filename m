@@ -1,54 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 21 Oct 2016 10:40:46 +1100
-Message-ID: <20161021104046.2bfb8b58@canb.auug.org.au>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Thu, 20 Oct 2016 17:30:33 -0700
+Message-ID: <e2380249-29b4-4769-514a-5fc5fbd8f95c@gmail.com>
+References: <20161021092710.1b56a35b@canb.auug.org.au>
+ <bd2fa038-2d0a-8cd1-d80d-860a7497bdf5@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarod Wilson <jarod@redhat.com>, Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <bd2fa038-2d0a-8cd1-d80d-860a7497bdf5@gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On 10/20/2016 03:42 PM, Florian Fainelli wrote:
+> On 10/20/2016 03:27 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the net tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> ERROR: "kexec_in_progress" [drivers/net/dsa/bcm_sf2.ko] undefined!
+>>
+>> Caused by commit
+>>
+>>   2399d6143f85 ("net: dsa: bcm_sf2: Prevent GPHY shutdown for kexec'd kernels")
+>>
+>> I used the version of the net tree from next-20161020 for today.
+> 
+> OK, seems like we need an ifdef CONFIG_KEXEC_CORE, let me fix that.
+> Thanks Stephen!
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Stephen, can you send me the .config file? I could not reproduce it with
+next-20161020 and doing a make multi_v7_defconfig:
 
-  drivers/net/ethernet/ibm/ibmvnic.c
+fainelli@fainelli-desktop:[~/../linux]$ ls -l drivers/net/dsa/*.ko
+-rw-rw-r-- 1 fainelli fainelli 17K Oct 20 17:30 drivers/net/dsa/bcm_sf2.ko
 
-between commit:
-
-  87737f8810db ("ibmvnic: Update MTU after device initialization")
-
-from the net tree and commit:
-
-  d894be57ca92 ("ethernet: use net core MTU range checking in more drivers")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+Thanks
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/ibm/ibmvnic.c
-index 213162df1a9b,657206be7ba9..000000000000
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@@ -3654,7 -3644,8 +3644,9 @@@ static void handle_crq_init_rsp(struct 
-  		goto task_failed;
-  
-  	netdev->real_num_tx_queues = adapter->req_tx_queues;
- +	netdev->mtu = adapter->req_mtu;
-+ 	netdev->min_mtu = adapter->min_mtu;
-+ 	netdev->max_mtu = adapter->max_mtu;
-  
-  	if (adapter->failover) {
-  		adapter->failover = false;
+Florian
