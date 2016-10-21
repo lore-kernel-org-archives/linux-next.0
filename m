@@ -1,44 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] kernel: irq: fix build failure
-Date: Fri, 21 Oct 2016 12:00:20 +1100
-Message-ID: <20161021120020.52b3fa35@canb.auug.org.au>
-References: <1475775403-27207-1-git-send-email-sudipm.mukherjee@gmail.com>
-        <57FBBA0B.9070500@gmail.com>
-        <alpine.DEB.2.20.1610201454410.5073@nanos>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Fri, 21 Oct 2016 12:21:45 +1100
+Message-ID: <20161021122145.0139d5a3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1610201454410.5073@nanos>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33737 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753574AbcJUBVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 20 Oct 2016 21:21:47 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarod Wilson <jarod@redhat.com>, Sergio Paracuellos <sergio.paracuellos@gmail.com>
 
-Hi Thomas,
+Hi Greg,
 
-On Thu, 20 Oct 2016 14:55:45 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 10 Oct 2016, Sudip Mukherjee wrote:
-> 
-> > On Thursday 06 October 2016 11:06 PM, Sudip Mukherjee wrote:  
-> > > The allmodconfig build of powerpc is failing with the error:
-> > > ERROR: ".irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
-> > > 
-> > > export the symbol to fix the failure.  
-> > 
-> > Hi Thomas,
-> > powerpc and arm allmodconfig builds still fails with the same error.
-> > Build logs of next-20161010 are at:
-> > arm at https://travis-ci.org/sudipm-mukherjee/parport/jobs/166321467
-> > powerpc at https://travis-ci.org/sudipm-mukherjee/parport/jobs/166321473  
-> 
-> I know. This is under discussion with the driver folks as we are not going
-> to blindly export stuff just because someone slapped a irq_set_parent()
-> into the code w/o knowing why.
+Today's linux-next merge of the staging tree got a conflict in:
 
-Do we have any idea if a resolution is close.  This was first reported
-in linux-next in September 14/15.  :-(
+  drivers/staging/wlan-ng/p80211netdev.c
+
+between commit:
+
+  9c22b4a34edd ("net: use core MTU range checking in wireless drivers")
+
+from the net-next tree and commit:
+
+  84ad1efa7d2b ("staging: wlan-ng: fix block comment warnings in p80211netdev.c")
+
+from the staging tree.
+
+I fixed it up (the former removed the code updates by the latter, so I
+just did that) and can carry the fix as necessary. This is now fixed as
+far as linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
