@@ -1,40 +1,96 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] kernel: irq: fix build failure
-Date: Fri, 21 Oct 2016 21:20:26 +1100
-Message-ID: <20161021212026.76f4ec1c@canb.auug.org.au>
-References: <1475775403-27207-1-git-send-email-sudipm.mukherjee@gmail.com>
-        <57FBBA0B.9070500@gmail.com>
-        <alpine.DEB.2.20.1610201454410.5073@nanos>
-        <20161021120020.52b3fa35@canb.auug.org.au>
-        <alpine.DEB.2.20.1610211006370.4797@nanos>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1610211006370.4797@nanos>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161021 build: 2 failures 4 warnings (next-20161021)
+Date: Fri, 21 Oct 2016 14:51:41 +0100
+Message-ID: <E1bxaEV-0006Hk-JL@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52774 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754584AbcJUNvx (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Oct 2016 09:51:53 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Thomas,
+Tree/Branch: next-20161021
+Git describe: next-20161021
+Commit: 4a764da294 Add linux-next specific files for 20161021
 
-On Fri, 21 Oct 2016 10:07:41 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Fri, 21 Oct 2016, Stephen Rothwell wrote:
-> > On Thu, 20 Oct 2016 14:55:45 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:  
-> > > I know. This is under discussion with the driver folks as we are not going
-> > > to blindly export stuff just because someone slapped a irq_set_parent()
-> > > into the code w/o knowing why.  
-> > 
-> > Do we have any idea if a resolution is close.  This was first reported
-> > in linux-next in September 14/15.  :-(  
-> 
-> Grr. Yes. As much as I hate it, I'll go and export it for now. Should be
-> able to get it into rc2.
+Build Time: 298 min 20 sec
 
-Thanks.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
--- 
-Cheers,
-Stephen Rothwell
+Errors: 1
+Warnings: 4
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+	arm-allmodconfig
+ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings Summary: 4
+	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+	  1 ../fs/nfs/nfs4proc.c:1548:2: warning: missing braces around initializer [-Wmissing-braces]
+	  1 ../fs/nfs/nfs4proc.c:1548:2: warning: (near initialization for 'freeme.<anonymous>') [-Wmissing-braces]
+	  1 ../drivers/scsi/lpfc/lpfc_logmsg.h:56:45: warning: format '%ld' expects argument of type 'long int', but argument 9 has type 'size_t {aka const unsigned int}' [-Wformat=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "irq_set_parent" [drivers/mfd/tps65217.ko] undefined!
+
+Warnings:
+	../drivers/scsi/lpfc/lpfc_logmsg.h:56:45: warning: format '%ld' expects argument of type 'long int', but argument 9 has type 'size_t {aka const unsigned int}' [-Wformat=]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../fs/nfs/nfs4proc.c:1548:2: warning: missing braces around initializer [-Wmissing-braces]
+	../fs/nfs/nfs4proc.c:1548:2: warning: (near initialization for 'freeme.<anonymous>') [-Wmissing-braces]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
