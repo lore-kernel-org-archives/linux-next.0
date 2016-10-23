@@ -1,38 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: including PHY tree in linux-next
-Date: Mon, 24 Oct 2016 09:27:27 +1100
-Message-ID: <20161024092727.4f01dce6@canb.auug.org.au>
-References: <5808995C.3010300@ti.com>
-        <20161021090041.46cc5fee@canb.auug.org.au>
-        <58099C11.8050700@ti.com>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 24 Oct 2016 10:34:16 +1100
+Message-ID: <20161024103416.02bef8bb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38803 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48091 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754380AbcJWW13 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 23 Oct 2016 18:27:29 -0400
-In-Reply-To: <58099C11.8050700@ti.com>
+        id S1756483AbcJWXeT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Oct 2016 19:34:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-next@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
 
-Hi Kishon,
+Hi all,
 
-On Fri, 21 Oct 2016 10:09:45 +0530 Kishon Vijay Abraham I <kishon@ti.com> wrote:
->
-> I send pull request to gregkh. This tree contains USB, SATA and other PHYs
-> except ethernet PHY. greg generally merges it into his USB tree.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-OK, so I have put your trees after Gregs USB trees now.
+  include/net/udp.h
 
-> hmm.. I see atleast 4 drivers in drivers/phy which has just
-> MODULE_LICENSE("GPL"). I can check if these can be changed to GPL v2.
+between commit:
 
-I would not be too fussed about existing licenses.
+  286c72deabaa ("udp: must lock the socket in udp_disconnect()")
+
+from the net tree and commit:
+
+  f970bd9e3a06 ("udp: implement memory accounting helpers")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/net/udp.h
+index 4948790d393d,18f1e6b91927..000000000000
+--- a/include/net/udp.h
++++ b/include/net/udp.h
+@@@ -258,7 -261,7 +261,8 @@@ void udp_flush_pending_frames(struct so
+  void udp4_hwcsum(struct sk_buff *skb, __be32 src, __be32 dst);
+  int udp_rcv(struct sk_buff *skb);
+  int udp_ioctl(struct sock *sk, int cmd, unsigned long arg);
++ int udp_init_sock(struct sock *sk);
+ +int __udp_disconnect(struct sock *sk, int flags);
+  int udp_disconnect(struct sock *sk, int flags);
+  unsigned int udp_poll(struct file *file, struct socket *sock, poll_table *wait);
+  struct sk_buff *skb_udp_tunnel_segment(struct sk_buff *skb,
