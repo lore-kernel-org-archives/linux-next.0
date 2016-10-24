@@ -1,62 +1,47 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161024 build: 0 failures 1 warnings (next-20161024)
-Date: Mon, 24 Oct 2016 10:12:13 +0100
-Message-ID: <E1bybIi-0005bu-GA@optimist>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] kernel: irq: fix build failure
+Date: Mon, 24 Oct 2016 11:22:15 +0100
+Message-ID: <20161024102215.GN14477@dell>
+References: <1475775403-27207-1-git-send-email-sudipm.mukherjee@gmail.com>
+ <57FBBA0B.9070500@gmail.com>
+ <alpine.DEB.2.20.1610201454410.5073@nanos>
+ <20161021120020.52b3fa35@canb.auug.org.au>
+ <alpine.DEB.2.20.1610211006370.4797@nanos>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34276 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934500AbcJXJMW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2016 05:12:22 -0400
+Received: from mail-lf0-f49.google.com ([209.85.215.49]:36417 "EHLO
+        mail-lf0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753620AbcJXKTs (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2016 06:19:48 -0400
+Received: by mail-lf0-f49.google.com with SMTP id b75so190151920lfg.3
+        for <linux-next@vger.kernel.org>; Mon, 24 Oct 2016 03:19:42 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.20.1610211006370.4797@nanos>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Tree/Branch: next-20161024
-Git describe: next-20161024
-Commit: ce571494de Add linux-next specific files for 20161024
+On Fri, 21 Oct 2016, Thomas Gleixner wrote:
 
-Build Time: 176 min 15 sec
+> On Fri, 21 Oct 2016, Stephen Rothwell wrote:
+> > On Thu, 20 Oct 2016 14:55:45 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > I know. This is under discussion with the driver folks as we are not going
+> > > to blindly export stuff just because someone slapped a irq_set_parent()
+> > > into the code w/o knowing why.
+> > 
+> > Do we have any idea if a resolution is close.  This was first reported
+> > in linux-next in September 14/15.  :-(
+> 
+> Grr. Yes. As much as I hate it, I'll go and export it for now. Should be
+> able to get it into rc2.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Did this get in?  I still have people complaining about it.
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
