@@ -1,51 +1,30 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] kernel: irq: fix build failure
-Date: Mon, 24 Oct 2016 13:08:41 +0100
-Message-ID: <20161024120840.GC8574@dell>
-References: <1475775403-27207-1-git-send-email-sudipm.mukherjee@gmail.com>
- <57FBBA0B.9070500@gmail.com>
- <alpine.DEB.2.20.1610201454410.5073@nanos>
- <20161021120020.52b3fa35@canb.auug.org.au>
- <alpine.DEB.2.20.1610211006370.4797@nanos>
- <20161024102215.GN14477@dell>
- <20161024223231.5cdbb2ac@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the sunxi tree
+Date: Tue, 25 Oct 2016 09:22:55 +1100
+Message-ID: <20161025092255.3f4f59e2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161024223231.5cdbb2ac@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Sudip Mukherjee <sudipm.mukherjee@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marcin Niestroj <m.niestroj@grinn-global.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Tony Lindgren <tony@atomide.com>, Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42405 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S938991AbcJXWW5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Oct 2016 18:22:57 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, 24 Oct 2016, Stephen Rothwell wrote:
-> On Mon, 24 Oct 2016 11:22:15 +0100 Lee Jones <lee.jones@linaro.org> wrote:
-> > On Fri, 21 Oct 2016, Thomas Gleixner wrote:
-> > 
-> > > On Fri, 21 Oct 2016, Stephen Rothwell wrote:  
-> > > > On Thu, 20 Oct 2016 14:55:45 +0200 (CEST) Thomas Gleixner <tglx@linutronix.de> wrote:  
-> > > > > I know. This is under discussion with the driver folks as we are not going
-> > > > > to blindly export stuff just because someone slapped a irq_set_parent()
-> > > > > into the code w/o knowing why.  
-> > > > 
-> > > > Do we have any idea if a resolution is close.  This was first reported
-> > > > in linux-next in September 14/15.  :-(  
-> > > 
-> > > Grr. Yes. As much as I hate it, I'll go and export it for now. Should be
-> > > able to get it into rc2.  
-> > 
-> > Did this get in?  I still have people complaining about it.
-> 
-> It is in -rc2.  Commit 3118dac501bc.
+Hi Maxime,
 
-Ah, I was searching for patches authored my Thomas.
+In today's sunxi tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git#sunxi/for-next)
+I noticed that commit
 
-I see it now, thanks.
+  3861b711f8b5 ("ARM: sun5i: chip: add a node for the w1 gpio controller")
+
+has no Signed-off-by from its committer.
 
 -- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Cheers,
+Stephen Rothwell
