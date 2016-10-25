@@ -1,52 +1,62 @@
-From: Lina Iyer <lina.iyer@linaro.org>
-Subject: Re: linux-next: manual merge of the pm tree with the imx-mxs tree
-Date: Mon, 24 Oct 2016 21:32:08 -0600
-Message-ID: <20161025033208.GI72940@linaro.org>
-References: <20161025104729.35f5b009@canb.auug.org.au>
- <8126928.lSNgbyj5lv@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161025 build: 0 failures 1 warnings (next-20161025)
+Date: Tue, 25 Oct 2016 10:18:48 +0100
+Message-ID: <E1byxsc-0002sl-BO@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yw0-f170.google.com ([209.85.161.170]:33298 "EHLO
-        mail-yw0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965056AbcJYDcL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Oct 2016 23:32:11 -0400
-Received: by mail-yw0-f170.google.com with SMTP id t192so25519650ywf.0
-        for <linux-next@vger.kernel.org>; Mon, 24 Oct 2016 20:32:10 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <8126928.lSNgbyj5lv@vostro.rjw.lan>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54512 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758328AbcJYJS6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2016 05:18:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Shawn Guo <shawn.guo@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tue, Oct 25 2016 at 17:51 -0600, Rafael J. Wysocki wrote:
->On Tuesday, October 25, 2016 10:47:29 AM Stephen Rothwell wrote:
->> Hi Rafael,
->>
->> Today's linux-next merge of the pm tree got a conflict in:
->>
->>   arch/arm/mach-imx/gpc.c
->>
->> between commits:
->>
->>   eef0b282bb58 ("ARM: imx: gpc: Initialize all power domains")
->>   f9d1f7a7ad91 ("ARM: imx: gpc: Fix the imx_gpc_genpd_init() error path")
->>
->> from the imx-mxs tree and commit:
->>
->>   59d65b73a23c ("PM / Domains: Make genpd state allocation dynamic")
->>
->> from the pm tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary.
->
->Thanks Stephen!
->
->Lina, please have a look at the Stephen's fix and let me know if that
->conflict should be resolved in a different way.
->
-Hi Rafael,
-Stephen's conflict resolution seems correct. Thanks Stephen.
+Tree/Branch: next-20161025
+Git describe: next-20161025
+Commit: 556dd18b9e Add linux-next specific files for 20161025
 
--- Lina
+Build Time: 196 min 0 sec
+
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
