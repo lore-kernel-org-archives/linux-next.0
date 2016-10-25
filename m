@@ -1,52 +1,64 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: linux-next: manual merge of the pm tree with the imx-mxs tree
-Date: Tue, 25 Oct 2016 07:55:58 +0800
-Message-ID: <20161024235558.GN30578@tiger>
-References: <20161025104729.35f5b009@canb.auug.org.au>
- <8126928.lSNgbyj5lv@vostro.rjw.lan>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mali-dp tree with the
+	drm-misc tree
+Date: Tue, 25 Oct 2016 11:20:44 +1100
+Message-ID: <20161025112044.1a866eaa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33698 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754880AbcJXX4W (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Oct 2016 19:56:22 -0400
-Content-Disposition: inline
-In-Reply-To: <8126928.lSNgbyj5lv@vostro.rjw.lan>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Lina Iyer <lina.iyer@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Liviu Dudau <Liviu.Dudau@arm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Starkey <brian.starkey@arm.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Oct 25, 2016 at 01:58:25AM +0200, Rafael J. Wysocki wrote:
-> On Tuesday, October 25, 2016 10:47:29 AM Stephen Rothwell wrote:
-> > Hi Rafael,
-> > 
-> > Today's linux-next merge of the pm tree got a conflict in:
-> > 
-> >   arch/arm/mach-imx/gpc.c
-> > 
-> > between commits:
-> > 
-> >   eef0b282bb58 ("ARM: imx: gpc: Initialize all power domains")
-> >   f9d1f7a7ad91 ("ARM: imx: gpc: Fix the imx_gpc_genpd_init() error path")
-> > 
-> > from the imx-mxs tree and commit:
-> > 
-> >   59d65b73a23c ("PM / Domains: Make genpd state allocation dynamic")
-> > 
-> > from the pm tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary.
-> 
-> Thanks Stephen!
-> 
-> Lina, please have a look at the Stephen's fix and let me know if that
-> conflict should be resolved in a different way.
-
-FYI. We target the following two fixes 4.9-rc.
-
-eef0b282bb58 ("ARM: imx: gpc: Initialize all power domains")
-f9d1f7a7ad91 ("ARM: imx: gpc: Fix the imx_gpc_genpd_init() error path")
-
-Shawn
+SGkgTGl2aXUsCgpUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIG1hbGktZHAgdHJlZSBn
+b3QgYSBjb25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfcGxhbmVzLmMK
+CmJldHdlZW4gY29tbWl0OgoKICBlYTBlMWNlMjBmNzMgKCJkcm0vYXJtOiBVc2UgcGVyLXBsYW5l
+IHJvdGF0aW9uIHByb3BlcnR5IikKCmZyb20gdGhlIGRybS1taXNjIHRyZWUgYW5kIGNvbW1pdDoK
+CiAgOWViYjg5NzYyYzMwICgiZHJtOiBtYWxpLWRwOiBSZWZhY3RvciBwbGFuZSBpbml0aWFsaXNh
+dGlvbiIpCgpmcm9tIHRoZSBtYWxpLWRwIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cp
+IGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMgbm93IGZpeGVkIGFz
+IGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24gdHJpdmlhbApjb25m
+bGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hl
+biB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdhbnQg
+dG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxp
+Y3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBsZXggY29uZmxpY3Rz
+LgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2Ry
+bS9hcm0vbWFsaWRwX3BsYW5lcy5jCmluZGV4IGFiYWNhMDNiOWQzNiw5MDIwYzBkODM5OWMuLjAw
+MDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9wbGFuZXMuYworKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9wbGFuZXMuYwpAQEAgLTI1NCwyMyAtMjg0LDMz
+ICsyODQsMzAgQEBAIGludCBtYWxpZHBfZGVfcGxhbmVzX2luaXQoc3RydWN0IGRybV9kZQogIAkJ
+aWYgKHJldCA8IDApCiAgCQkJZ290byBjbGVhbnVwOwogIAorIAkJZHJtX3BsYW5lX2hlbHBlcl9h
+ZGQoJnBsYW5lLT5iYXNlLAorIAkJCQkgICAgICZtYWxpZHBfZGVfcGxhbmVfaGVscGVyX2Z1bmNz
+KTsKKyAJCXBsYW5lLT5od2RldiA9IG1hbGlkcC0+ZGV2OworIAkJcGxhbmUtPmxheWVyID0gJm1h
+cC0+bGF5ZXJzW2ldOworIAorIAkJLyogU2tpcCB0aGUgZmVhdHVyZXMgd2hpY2ggdGhlIFNNQVJU
+IGxheWVyIGRvZXNuJ3QgaGF2ZSAqLworIAkJaWYgKGlkID09IERFX1NNQVJUKQorIAkJCWNvbnRp
+bnVlOworIAogLQkJaWYgKCFkcm0tPm1vZGVfY29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5KSB7CiAr
+CQkvKiBTTUFSVCBsYXllciBjYW4ndCBiZSByb3RhdGVkICovCiArCQlpZiAoaWQgIT0gREVfU01B
+UlQpIHsKICAJCQl1bnNpZ25lZCBsb25nIGZsYWdzID0gRFJNX1JPVEFURV8wIHwKICAJCQkJCSAg
+ICAgIERSTV9ST1RBVEVfOTAgfAogIAkJCQkJICAgICAgRFJNX1JPVEFURV8xODAgfAogIAkJCQkJ
+ICAgICAgRFJNX1JPVEFURV8yNzAgfAogIAkJCQkJICAgICAgRFJNX1JFRkxFQ1RfWCB8CiAgCQkJ
+CQkgICAgICBEUk1fUkVGTEVDVF9ZOwogLQkJCWRybS0+bW9kZV9jb25maWcucm90YXRpb25fcHJv
+cGVydHkgPQogLQkJCQlkcm1fbW9kZV9jcmVhdGVfcm90YXRpb25fcHJvcGVydHkoZHJtLCBmbGFn
+cyk7CiArCQkJZHJtX3BsYW5lX2NyZWF0ZV9yb3RhdGlvbl9wcm9wZXJ0eSgmcGxhbmUtPmJhc2Us
+CiArCQkJCQkJCSAgIERSTV9ST1RBVEVfMCwKICsJCQkJCQkJICAgZmxhZ3MpOwogIAkJfQogIAot
+IAkJZHJtX3BsYW5lX2hlbHBlcl9hZGQoJnBsYW5lLT5iYXNlLAotIAkJCQkgICAgICZtYWxpZHBf
+ZGVfcGxhbmVfaGVscGVyX2Z1bmNzKTsKLSAJCXBsYW5lLT5od2RldiA9IG1hbGlkcC0+ZGV2Owot
+IAkJcGxhbmUtPmxheWVyID0gJm1hcC0+bGF5ZXJzW2ldOwogLQkJaWYgKGRybS0+bW9kZV9jb25m
+aWcucm90YXRpb25fcHJvcGVydHkpCiAtCQkJZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBs
+YW5lLT5iYXNlLmJhc2UsCiAtCQkJCQkJICAgZHJtLT5tb2RlX2NvbmZpZy5yb3RhdGlvbl9wcm9w
+ZXJ0eSwKIC0JCQkJCQkgICBEUk1fUk9UQVRFXzApOwogLQorIAkJbWFsaWRwX2h3X3dyaXRlKG1h
+bGlkcC0+ZGV2LCBNQUxJRFBfQUxQSEFfTFVULAorIAkJCQlwbGFuZS0+bGF5ZXItPmJhc2UgKyBN
+QUxJRFBfTEFZRVJfQ09NUE9TRSk7CiAgCX0KICAKICAJa2ZyZWUoZm9ybWF0cyk7Cl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5n
+IGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
