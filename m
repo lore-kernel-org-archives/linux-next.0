@@ -1,42 +1,44 @@
 From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: bad commit in the sunxi tree
-Date: Tue, 25 Oct 2016 11:44:09 +0200
-Message-ID: <20161025094409.hhf5rg3gbzaryjom@lukather>
-References: <20161025092255.3f4f59e2@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sunxi tree
+Date: Tue, 25 Oct 2016 12:41:39 +0200
+Message-ID: <20161025104139.t62j4ccqsk7mq4ky@lukather>
+References: <20161025112628.44493fd6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kvfm6tmrkcas5pvn"
+        protocol="application/pgp-signature"; boundary="heegtteu2rn6f6vu"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161025092255.3f4f59e2@canb.auug.org.au>
+In-Reply-To: <20161025112628.44493fd6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
 
---kvfm6tmrkcas5pvn
+--heegtteu2rn6f6vu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
-
-On Tue, Oct 25, 2016 at 09:22:55AM +1100, Stephen Rothwell wrote:
+On Tue, Oct 25, 2016 at 11:26:28AM +1100, Stephen Rothwell wrote:
 > Hi Maxime,
 >=20
-> In today's sunxi tree
-> (git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git#sunxi/fo=
-r-next)
-> I noticed that commit
+> After merging the sunxi tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 >=20
->   3861b711f8b5 ("ARM: sun5i: chip: add a node for the w1 gpio controller")
+> ERROR (phandle_references): Reference to non-existent node or label "pwm1=
+_pins_a"
+> ERROR: Input tree has errors, aborting (use -f to force output)
+> scripts/Makefile.lib:313: recipe for target 'arch/arm/boot/dts/ntc-gr8-ch=
+ip-pro.dtb' failed
 >=20
-> has no Signed-off-by from its committer.
+> Caused by commit
+>=20
+>   f49f86fa3b49 ("ARM: gr8: Add CHIP Pro support")
+>=20
+> I have used the sunxi tree from next-20161024 for today.
 
-Thanks, this has been fixed.
-
-Just out of curiosity, what command do you run to catch this?
+Ugh, sorry for that. The commit is fixed now...
 
 Thanks,
 Maxime
@@ -46,24 +48,24 @@ Maxime Ripard, Free Electrons
 Embedded Linux and Kernel engineering
 http://free-electrons.com
 
---kvfm6tmrkcas5pvn
+--heegtteu2rn6f6vu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBCAAGBQJYDyllAAoJEBx+YmzsjxAgN44P/0dZBV8QqFuiF4UdrV75NwLl
-H5EMQ1GpWz5R5H7e4e8Y3c7ARNtmdbI48F79kSXdh4wAPhG8um34pwe8Nn+cWhfL
-UxI6m4YR/oH0O06Q/XP+iw9eaG9xrGOzb15zGfnuLQFRqkhk9KrsWEbV6M61kox7
-Gs44vedSoW1qV96mkEwGNk6uMtQJn+F4SkZi4rSLaevn+VYcAwvmfTT8pNIBuWac
-rUYeihkCkHDbaSvm+qnvdY47NtEguDpYY5tX2VQ422bCLne/yqhwDFApBdiI/7xj
-VQrgsPwBaEQmP0xytoI/KlpUgOjYadn54zWhgwriP5KkiYJgN3/XD2UcQPj8EgYC
-vdqmvW1PUaVXGsOBjig9VMx4he90S4mtoN00ZuDiOa2Sf26Z7EaJCLioAwmr3SZA
-wOtdw/qzFIM/Vjs5JsnPjv2IkHx7mt3b+Yg7EInvMY6czAOEX/4Wa0tdhqzgJ4lN
-IeMjY9xoO8JsleI1sn1dcvAcLHVDEGoDI2ob5io29WoiBN3prflMwsCPBpXBcuLH
-LVjTZ5DbJ88mW7KXJeAkGQWmPNILSIAx4CgNxrtBn5a1Ga1NnfmsvIlNoPaNaCuI
-4ekCrl2bO+++pzDFrvI5E4JOnzxc/9uDdMAoJRmWHCx1JQggpBA0MAG22Gwvz39a
-zdLBRW+LHwy+DKipAuhQ
-=mVeA
+iQIcBAEBCAAGBQJYDzbjAAoJEBx+YmzsjxAgjiMP/RDWaHMOlOmcN3rHTcOYd+wm
+74MvhV7Ccw0JZnF3qM0yxTGlurdaL1rFHJxnUlqZRcruodgthxkoIbDSYeUtAl0N
+QsK27b99G+PJ2uEDcp2oTWgVwpkNKe/wNomJKHnPl1joj3YLb9wUGdH4thorCO9F
+GFfCMwH1VRSpOWM0hPNwUMqILDdSrI+g7dy4eg2XNs3hrbUH/91vV+Yk8TS02YMG
+UFuBcR+PUhn/U8oIDG2YHcQbRBnJpvMrTl+eaFTAf5X9bPWjGqMwBUPvu1w7w6XX
+GHjL6oC4LLvUz6Xxh8jVceaiWeUsDGfmjRKzTW6MFYFab/sdBcrlZFKyw1Wm8+FJ
+mpNg4KBVZEO//cxwagK66JM5qUNxqS4Nd8rFeV1HDSbmjsDJMmXCHuljxI3s0riu
+WnhPf3vKCcyaVKsQnLMFBxEBEJpmZDeuWORnlCtNK0e3AZBZSr+2wk1y526n1HrJ
+sHwlgIaSqJ5ZUKfvVODT/5FkvDyJDw6kXgTI+k6HxgLypngOLwWbDop3eRRWeG42
+F1LJu+4melcqf2Oqh5q3yhg9gVewjBuFwMWZMG3vaiX1xSR/KUqTR5nf2dcxB7+A
+OO8c6I4X+7XgKeQ5msGrJiSA7xo2iESSn7rcBL1Td26PRzkyo3Zvqpjz/lO3FCAw
+pjW2w4G4PPtWLpfSbL8h
+=JTlq
 -----END PGP SIGNATURE-----
 
---kvfm6tmrkcas5pvn--
+--heegtteu2rn6f6vu--
