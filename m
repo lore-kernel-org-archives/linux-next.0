@@ -1,20 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no releases next week
-Date: Wed, 26 Oct 2016 13:53:00 +1100
-Message-ID: <20161026135300.2de06f8e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161026 build: 0 failures 1 warnings (next-20161026)
+Date: Wed, 26 Oct 2016 07:21:18 +0100
+Message-ID: <E1bzHaP-0002UL-UK@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43436 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752173AbcJZGV3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 26 Oct 2016 02:21:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi all,
+Tree/Branch: next-20161026
+Git describe: next-20161026
+Commit: 44c67c23aa Add linux-next specific files for 20161026
 
-There will probably be no linux-next releases next week while I am
-attending Kernel Summit.
+Build Time: 94 min 31 sec
 
--- 
-Cheers,
-Stephen Rothwell
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
