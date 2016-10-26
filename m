@@ -1,62 +1,55 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161025 build: 0 failures 1 warnings (next-20161025)
-Date: Tue, 25 Oct 2016 10:18:48 +0100
-Message-ID: <E1byxsc-0002sl-BO@optimist>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Tree for Oct 25
+Date: Tue, 25 Oct 2016 21:09:33 -0400
+Message-ID: <CAP=VYLqdh2E17pZmEwQWS66Y9jdx-3SHsZkt5e4nitpg1N-A_g@mail.gmail.com>
+References: <20161025143134.7ab67718@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54512 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758328AbcJYJS6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2016 05:18:58 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:34732 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750820AbcJZBKF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Oct 2016 21:10:05 -0400
+In-Reply-To: <20161025143134.7ab67718@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, zhi.a.wang@intel.com, zhenyuw@linux.intel.com
 
-Tree/Branch: next-20161025
-Git describe: next-20161025
-Commit: 556dd18b9e Add linux-next specific files for 20161025
+On Mon, Oct 24, 2016 at 11:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> There will probably be no linux-next releases next week while I attend
+> the Kernel Summit.
+>
+> Changes since 20161024:
+>
+> The pm tree gained a conflict against the imx-mxs tree.
+>
+> The mali-dp tree gained a conflict against the drm-misc tree.
+>
+> The sunxi tree gained a build failure so I used the version from
+> next-20161024.
+>
+> The akpm-current tree still had its build failures for which I applied
+> 2 patches.
+>
+> Non-merge commits (relative to Linus' tree): 2174
+>  2622 files changed, 187829 insertions(+), 38953 deletions(-)
 
-Build Time: 196 min 0 sec
+The i386 allmodconfig fails with bad 32/64 math for about the last 5 days.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+ERROR: "__umoddi3" [drivers/gpu/drm/i915/i915.ko] undefined!
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+http://kisskb.ellerman.id.au/kisskb/buildresult/12840554/
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
+git bisect says:
 
--------------------------------------------------------------------------------
+first bad commit: [4d60c5fd3f8751ea751d6dc6cfe0c1620420ccf8]
+drm/i915/gvt: vGPU PCI configuration space virtualization
 
-Warnings Summary: 1
-	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
+Authors/maintainers added to Cc/To list.   Guessing folks weren't
+aware of the regression.
 
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks,
+Paul.
