@@ -1,29 +1,31 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Fri, 28 Oct 2016 10:40:02 +1100
-Message-ID: <20161028104002.08987383@canb.auug.org.au>
-References: <20161028092920.4d84f8f1@canb.auug.org.au>
-        <CA+55aFztZ1VuMhmx0_DX3ubrFNKcLTcW0OqDLRfxa0g2AeGY-w@mail.gmail.com>
-        <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: bad merge in the jc_docs tree
+Date: Thu, 27 Oct 2016 17:50:13 -0600
+Message-ID: <20161027175013.234467d8@lwn.net>
+References: <20161028103029.1e147f3e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from tex.lwn.net ([70.33.254.29]:41395 "EHLO vena.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937770AbcJ0XuR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 27 Oct 2016 19:50:17 -0400
+In-Reply-To: <20161028103029.1e147f3e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, 28 Oct 2016 10:30:29 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Thu, 27 Oct 2016 16:01:22 -0700 Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
-> In the meantime, thanks for noticing and letting me know.
+> I noticed that you left some conflict markers in
+> Documentation/admin-guide/index.rst in merge commit
+> 
+>   7a6992dc952e ("Merge branch 'doc-tweaks' into docs-next")
 
-It was pointed out by the extra checking you asked me to add in order
-to easier detect new warnings for code added to linux-next :-)
+Argh.  I noticed that too, but failed to amend the merge before pushing.
+Thanks for the heads-up.
 
--- 
-Cheers,
-Stephen Rothwell
+jon
