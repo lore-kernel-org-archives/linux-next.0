@@ -1,59 +1,47 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161028 build: 0 failures 1 warnings (next-20161028)
-Date: Fri, 28 Oct 2016 10:01:05 +0100
-Message-ID: <E1c0327-0004nG-Ut@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60526 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753096AbcJ1JBN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Oct 2016 05:01:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build warning in Linus' tree
+Date: Sat, 29 Oct 2016 23:29:32 +0200
+Message-ID: <CAMuHMdVSqTkockvOBChTfGt9PJBZiEqDiUAAcCSas2x9t6mD_g@mail.gmail.com>
+References: <20161028092920.4d84f8f1@canb.auug.org.au> <CA+55aFztZ1VuMhmx0_DX3ubrFNKcLTcW0OqDLRfxa0g2AeGY-w@mail.gmail.com>
+ <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161028
-Git describe: next-20161028
-Commit: fee425e048 Add linux-next specific files for 20161028
+Hi Linus,
 
-Build Time: 167 min 49 sec
+On Fri, Oct 28, 2016 at 1:01 AM, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Thu, Oct 27, 2016 at 3:48 PM, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+>>
+>> I wonder if we should make KASAN depend on !COMPILE_TEST, because it
+>> does seem to disable a lot of build-time testing.
+>
+> Actually, we should probably just make the MEMORY_HOTPLUG dependency be
+>
+>         depends on COMPILE_TEST || !KASAN
+>
+> since the memory-hotplug code should still *build* with KASAN, it just
+> doesn't work. That's exactly what the COMPILE_TEST config option is
+> there for - to get build coverage even for things that aren't
+> necessarily sane to run.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+In what way does it not work? Does it crash?
+People do run COMPILE_TEST=y/allmodconfig kernels.
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+Gr{oetje,eeting}s,
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
+                        Geert
 
--------------------------------------------------------------------------------
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Warnings Summary: 1
-	  1 ../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:740:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
