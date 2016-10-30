@@ -1,47 +1,74 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build warning in Linus' tree
-Date: Sat, 29 Oct 2016 23:29:32 +0200
-Message-ID: <CAMuHMdVSqTkockvOBChTfGt9PJBZiEqDiUAAcCSas2x9t6mD_g@mail.gmail.com>
-References: <20161028092920.4d84f8f1@canb.auug.org.au> <CA+55aFztZ1VuMhmx0_DX3ubrFNKcLTcW0OqDLRfxa0g2AeGY-w@mail.gmail.com>
- <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: mmotm 2016-10-27-18-27 uploaded
+Date: Sun, 30 Oct 2016 14:15:30 -0400
+Message-ID: <CAP=VYLqNv8p_ojkcjeWCN-nMumDg296UkV1b460KDHAXOHZSEA@mail.gmail.com>
+References: <5812a9b6.OlAMBhewokz9/Mou%akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFwDL2_Ecuei4tYLH34RDmOba_COfr5JajasvYXA++yUgA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrey Ryabinin <aryabinin@virtuozzo.com>, Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <5812a9b6.OlAMBhewokz9/Mou%akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
-
-On Fri, Oct 28, 2016 at 1:01 AM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, Oct 27, 2016 at 3:48 PM, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> I wonder if we should make KASAN depend on !COMPILE_TEST, because it
->> does seem to disable a lot of build-time testing.
+On Thu, Oct 27, 2016 at 9:28 PM,  <akpm@linux-foundation.org> wrote:
+> The mm-of-the-moment snapshot 2016-10-27-18-27 has been uploaded to
 >
-> Actually, we should probably just make the MEMORY_HOTPLUG dependency be
+>    http://www.ozlabs.org/~akpm/mmotm/
+
+Just a heads up:
+
+Somehow one of the akpm commits as it appears in linux-next has had
+spaces replaced with garbage chars:
+
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/scripts/get_maintainer.pl?id=b67071653d3fc9f9b73aab3e7978f060728bf392
+
+Paul.
+--
+
 >
->         depends on COMPILE_TEST || !KASAN
+> mmotm-readme.txt says
 >
-> since the memory-hotplug code should still *build* with KASAN, it just
-> doesn't work. That's exactly what the COMPILE_TEST config option is
-> there for - to get build coverage even for things that aren't
-> necessarily sane to run.
-
-In what way does it not work? Does it crash?
-People do run COMPILE_TEST=y/allmodconfig kernels.
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> README for mm-of-the-moment:
+>
+> http://www.ozlabs.org/~akpm/mmotm/
+>
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+>
+> You will need quilt to apply these patches to the latest Linus release (4.x
+> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
+>
+> The file broken-out.tar.gz contains two datestamp files: .DATE and
+> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+> followed by the base kernel version against which this patch series is to
+> be applied.
+>
+> This tree is partially included in linux-next.  To see which patches are
+> included in linux-next, consult the `series' file.  Only the patches
+> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+> linux-next.
+>
+> A git tree which contains the memory management portion of this tree is
+> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+> by Michal Hocko.  It contains the patches which are between the
+> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+> file, http://www.ozlabs.org/~akpm/mmotm/series.
+>
+>
+> A full copy of the full kernel tree with the linux-next and mmotm patches
+> already applied is available through git within an hour of the mmotm
+> release.  Individual mmotm releases are tagged.  The master branch always
+> points to the latest release, so it's constantly rebasing.
+>
+> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+>
+[...]
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
