@@ -1,60 +1,78 @@
-From: Valdis.Kletnieks@vt.edu
-Subject: Re: mmotm 2016-10-27-18-27 uploaded
-Date: Mon, 31 Oct 2016 16:37:50 -0400
-Message-ID: <21418.1477946270@turing-police.cc.vt.edu>
-References: <5812a9b6.OlAMBhewokz9/Mou%akpm@linux-foundation.org>
- <CAP=VYLqNv8p_ojkcjeWCN-nMumDg296UkV1b460KDHAXOHZSEA@mail.gmail.com>
+From: Liviu Dudau <Liviu.Dudau@arm.com>
+Subject: Re: linux-next: manual merge of the mali-dp tree with
+ the drm-misc tree
+Date: Thu, 3 Nov 2016 17:19:58 +0000
+Message-ID: <20161103171958.GA17265@e106497-lin.cambridge.arm.com>
+References: <20161025112044.1a866eaa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1477946270_20678P";
-	 micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAP=VYLqNv8p_ojkcjeWCN-nMumDg296UkV1b460KDHAXOHZSEA@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Michal Hocko <mhocko@suse.cz>, broonie@kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20161025112044.1a866eaa@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---==_Exmh_1477946270_20678P
-Content-Type: text/plain; charset=us-ascii
-
-On Sun, 30 Oct 2016 14:15:30 -0400, Paul Gortmaker said:
-> On Thu, Oct 27, 2016 at 9:28 PM,  <akpm@linux-foundation.org> wrote:
-> > The mm-of-the-moment snapshot 2016-10-27-18-27 has been uploaded to
-> >
-> >    http://www.ozlabs.org/~akpm/mmotm/
->
-> Just a heads up:
->
-> Somehow one of the akpm commits as it appears in linux-next has had
-> spaces replaced with garbage chars:
->
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/commit/scripts/get_maintainer.pl?id=b67071653d3fc9f9b73aab3e7978f060728bf392
-
-How... special.  They're 0xA0 non-breaking-space chars.  Somebody's
-editor was obviously in the wrong mode. :)
-
-
-
---==_Exmh_1477946270_20678P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.5 07/13/2001
-
-iQEVAwUBWBerno0DS38y7CIcAQLP2Qf+NdAaDANAToJLVajkwVYVDGOxMb8pwJBN
-1gowWGHDALNepgrYZXAp/SL6zwc7DTScE6RXbj0hiv0aMXsENXcB2DP9et/HX1st
-PB2BPOjVCLhjL6vNW57WOlUlb4YgGdwoE7Ba06sJH/YbAGLCnwxYuhoz4e6bwHFU
-BkXDCbdZRVE3xstXpM0ZBJrZ1tiZW6dQ4RXb12pHhlrBHIDtdnhksvOFgz9CemxY
-PWRQS4vZbWAQza6g89H6f3QZEBc1A82K1RtV7gtObrwrpQhZvKpxXOYpwx9yg2pP
-Md5jjbmye4yBsFLsap7jH0Z37gyAaFBKFAJapVnv/b75p2gFc1sgCg==
-=XuS+
------END PGP SIGNATURE-----
-
---==_Exmh_1477946270_20678P--
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+T24gVHVlLCBPY3QgMjUsIDIwMTYgYXQgMTE6MjA6NDRBTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBMaXZpdSwKCkhpIFN0ZXBoZW4sCgo+IAo+IFRvZGF5J3MgbGludXgtbmV4
+dCBtZXJnZSBvZiB0aGUgbWFsaS1kcCB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+IAo+ICAgZHJp
+dmVycy9ncHUvZHJtL2FybS9tYWxpZHBfcGxhbmVzLmMKPiAKPiBiZXR3ZWVuIGNvbW1pdDoKPiAK
+PiAgIGVhMGUxY2UyMGY3MyAoImRybS9hcm06IFVzZSBwZXItcGxhbmUgcm90YXRpb24gcHJvcGVy
+dHkiKQo+IAo+IGZyb20gdGhlIGRybS1taXNjIHRyZWUgYW5kIGNvbW1pdDoKPiAKPiAgIDllYmI4
+OTc2MmMzMCAoImRybTogbWFsaS1kcDogUmVmYWN0b3IgcGxhbmUgaW5pdGlhbGlzYXRpb24iKQo+
+IAo+IGZyb20gdGhlIG1hbGktZHAgdHJlZS4KPiAKPiBJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cp
+IGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKPiBpcyBub3cgZml4ZWQg
+YXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4g
+Y29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVy
+IHdoZW4geW91ciB0cmVlCj4gaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNv
+IHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRo
+ZSBjb25mbGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkKPiBjb21wbGV4
+IGNvbmZsaWN0cy4KClNvcnJ5IGZvciBkZWxheSBpbiBhbnN3ZXJpbmcsIEkgd2FzIG9uIGhvbGlk
+YXkuCgpJIGhhdmUgcmV2YW1wZWQgdGhlIG1hbGktZHAgdHJlZSBhbmQgcmViYXNlZCBpdCBvbiB0
+aGUgbmV3ZXIKdmVyc2lvbiBvZiBkcm0tbmV4dCAod2hpY2ggaW5jbHVkZXMgdGhlIGRybS1taXNj
+IGNoYW5nZSkgYW5kIHB1c2hlZCB0aGUKdXBkYXRlZCBwYXRjaCBpbiBteSB0cmVlLgoKQmVzdCBy
+ZWdhcmRzLApMaXZpdQoKCj4gCj4gLS0gCj4gQ2hlZXJzLAo+IFN0ZXBoZW4gUm90aHdlbGwKPiAK
+PiBkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfcGxhbmVzLmMKPiBpbmRleCBh
+YmFjYTAzYjlkMzYsOTAyMGMwZDgzOTljLi4wMDAwMDAwMDAwMDAKPiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vYXJtL21hbGlkcF9wbGFuZXMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFs
+aWRwX3BsYW5lcy5jCj4gQEBAIC0yNTQsMjMgLTI4NCwzMyArMjg0LDMwIEBAQCBpbnQgbWFsaWRw
+X2RlX3BsYW5lc19pbml0KHN0cnVjdCBkcm1fZGUKPiAgIAkJaWYgKHJldCA8IDApCj4gICAJCQln
+b3RvIGNsZWFudXA7Cj4gICAKPiArIAkJZHJtX3BsYW5lX2hlbHBlcl9hZGQoJnBsYW5lLT5iYXNl
+LAo+ICsgCQkJCSAgICAgJm1hbGlkcF9kZV9wbGFuZV9oZWxwZXJfZnVuY3MpOwo+ICsgCQlwbGFu
+ZS0+aHdkZXYgPSBtYWxpZHAtPmRldjsKPiArIAkJcGxhbmUtPmxheWVyID0gJm1hcC0+bGF5ZXJz
+W2ldOwo+ICsgCj4gKyAJCS8qIFNraXAgdGhlIGZlYXR1cmVzIHdoaWNoIHRoZSBTTUFSVCBsYXll
+ciBkb2Vzbid0IGhhdmUgKi8KPiArIAkJaWYgKGlkID09IERFX1NNQVJUKQo+ICsgCQkJY29udGlu
+dWU7Cj4gKyAKPiAgLQkJaWYgKCFkcm0tPm1vZGVfY29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5KSB7
+Cj4gICsJCS8qIFNNQVJUIGxheWVyIGNhbid0IGJlIHJvdGF0ZWQgKi8KPiAgKwkJaWYgKGlkICE9
+IERFX1NNQVJUKSB7Cj4gICAJCQl1bnNpZ25lZCBsb25nIGZsYWdzID0gRFJNX1JPVEFURV8wIHwK
+PiAgIAkJCQkJICAgICAgRFJNX1JPVEFURV85MCB8Cj4gICAJCQkJCSAgICAgIERSTV9ST1RBVEVf
+MTgwIHwKPiAgIAkJCQkJICAgICAgRFJNX1JPVEFURV8yNzAgfAo+ICAgCQkJCQkgICAgICBEUk1f
+UkVGTEVDVF9YIHwKPiAgIAkJCQkJICAgICAgRFJNX1JFRkxFQ1RfWTsKPiAgLQkJCWRybS0+bW9k
+ZV9jb25maWcucm90YXRpb25fcHJvcGVydHkgPQo+ICAtCQkJCWRybV9tb2RlX2NyZWF0ZV9yb3Rh
+dGlvbl9wcm9wZXJ0eShkcm0sIGZsYWdzKTsKPiAgKwkJCWRybV9wbGFuZV9jcmVhdGVfcm90YXRp
+b25fcHJvcGVydHkoJnBsYW5lLT5iYXNlLAo+ICArCQkJCQkJCSAgIERSTV9ST1RBVEVfMCwKPiAg
+KwkJCQkJCQkgICBmbGFncyk7Cj4gICAJCX0KPiAgIAo+IC0gCQlkcm1fcGxhbmVfaGVscGVyX2Fk
+ZCgmcGxhbmUtPmJhc2UsCj4gLSAJCQkJICAgICAmbWFsaWRwX2RlX3BsYW5lX2hlbHBlcl9mdW5j
+cyk7Cj4gLSAJCXBsYW5lLT5od2RldiA9IG1hbGlkcC0+ZGV2Owo+IC0gCQlwbGFuZS0+bGF5ZXIg
+PSAmbWFwLT5sYXllcnNbaV07Cj4gIC0JCWlmIChkcm0tPm1vZGVfY29uZmlnLnJvdGF0aW9uX3By
+b3BlcnR5KQo+ICAtCQkJZHJtX29iamVjdF9hdHRhY2hfcHJvcGVydHkoJnBsYW5lLT5iYXNlLmJh
+c2UsCj4gIC0JCQkJCQkgICBkcm0tPm1vZGVfY29uZmlnLnJvdGF0aW9uX3Byb3BlcnR5LAo+ICAt
+CQkJCQkJICAgRFJNX1JPVEFURV8wKTsKPiAgLQo+ICsgCQltYWxpZHBfaHdfd3JpdGUobWFsaWRw
+LT5kZXYsIE1BTElEUF9BTFBIQV9MVVQsCj4gKyAJCQkJcGxhbmUtPmxheWVyLT5iYXNlICsgTUFM
+SURQX0xBWUVSX0NPTVBPU0UpOwo+ICAgCX0KPiAgIAo+ICAgCWtmcmVlKGZvcm1hdHMpOwo+IAoK
+LS0gCj09PT09PT09PT09PT09PT09PT09CnwgSSB3b3VsZCBsaWtlIHRvIHwKfCBmaXggdGhlIHdv
+cmxkLCAgfAp8IGJ1dCB0aGV5J3JlIG5vdCB8CnwgZ2l2aW5nIG1lIHRoZSAgIHwKIFwgc291cmNl
+IGNvZGUhICAvCiAgLS0tLS0tLS0tLS0tLS0tCiAgICDCr1xfKOODhClfL8KvCl9fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxp
+c3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
