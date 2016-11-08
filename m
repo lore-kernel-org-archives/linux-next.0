@@ -1,57 +1,64 @@
-From: Chen-Yu Tsai <wens@csie.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 8 Nov 2016 11:18:29 +0800
-Message-ID: <CAGb2v64S_YzHDOeRfHKRTrti8jZThuxfexRApjDAqzmJYR_N7Q@mail.gmail.com>
-References: <20161108134723.3b4fc5d5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Tue, 8 Nov 2016 14:21:40 +1100
+Message-ID: <20161108142140.3232b3b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161108134723.3b4fc5d5@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ming Lei <tom.leiming@gmail.com>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi,
+Hi Jens,
 
-On Tue, Nov 8, 2016 at 10:47 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the sound-asoc tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> sound/soc/sunxi/sun4i-codec.c:1188:2: error: unknown field 'has_reset' specified in initializer
->   .has_reset = true,
->   ^
-> sound/soc/sunxi/sun4i-codec.c:1188:15: warning: excess elements in struct initializer
->   .has_reset = true,
->                ^
-> sound/soc/sunxi/sun4i-codec.c:1188:15: note: (near initialization for 'sun6i_a31_codec_quirks')
->
-> Caused by commit
->
->   8d9e4c9e993f ("ASoC: sun4i-codec: Add support for A31 playback through headphone output")
->
-> I have used the sound-asoc tree from next-20161028 for today.
+After merging the block tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-sound-asoc is missing patch
+block/blk-flush.c: In function 'flush_data_end_io':
+block/blk-flush.c:369:20: error: 'REQ_STARTED' undeclared (first use in this function)
+  rq->cmd_flags &= ~REQ_STARTED;
+                    ^
 
-    ASoC: sun4i-codec: Add support for optional reset control to quirks
-    http://www.spinics.net/lists/alsa-devel/msg56289.html
+Caused by commit
 
-which commit 8d9e4c9e993f ("ASoC: sun4i-codec: Add support for A31 playback
-through headphone output") depends on. This was part of the same series that
-I posted:
+  e806402130c9 ("block: split out request-only flags into a new namespace")
 
-    http://www.spinics.net/lists/alsa-devel/msg56283.html
+interacting with commit
 
-A new version of the remaining patches was posted yesterday:
+  94d7dea448fa ("block: flush: fix IO hang in case of flood fua req")
 
-    http://www.spinics.net/lists/alsa-devel/msg56443.html
+from Linus' tree (v4.9-rc3).
 
-The build failure should be resolved once Mark merges the remaining patches,
-though some reordering might be needed to maintain bisectability.
+I have applied the following merge fix patch for today (I don't know if
+this is correct, but it does build):
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 8 Nov 2016 14:08:03 +1100
+Subject: [PATCH] block: fixup for "split out request-only flags into a new namespace"
 
-Regards
-ChenYu
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ block/blk-flush.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index 0a02e765fa14..0bef7432d725 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -366,7 +366,7 @@ static void flush_data_end_io(struct request *rq, int error)
+ 	elv_completed_request(q, rq);
+ 
+ 	/* for avoiding double accounting */
+-	rq->cmd_flags &= ~REQ_STARTED;
++	rq->rq_flags &= ~RQF_STARTED;
+ 
+ 	/*
+ 	 * After populating an empty queue, kick it to avoid stall.  Read
+-- 
+2.10.2
+
+-- 
+Cheers,
+Stephen Rothwell
