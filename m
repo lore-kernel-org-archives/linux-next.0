@@ -1,51 +1,39 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the block tree
-Date: Tue, 08 Nov 2016 08:17:58 -0800
-Message-ID: <1478621878.2824.6.camel@HansenPartnership.com>
-References: <20161108164804.0aef27e8@canb.auug.org.au>
+From: Peter Zijlstra <peterz@infradead.org>
+Subject: Re: linux-next: manual merge of the tip tree with the
+ drm-intel tree
+Date: Tue, 8 Nov 2016 18:02:00 +0100
+Message-ID: <20161108170200.GL3117@twins.programming.kicks-ass.net>
+References: <20161108152541.096711bb@canb.auug.org.au>
+ <20161108104403.mi3onjfn65etrrtu@phenom.ffwll.local>
+ <20161108132448.GG3117@twins.programming.kicks-ass.net>
+ <20161108160916.56nxpkiupw3u7rgy@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:53076 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752039AbcKHQSB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 11:18:01 -0500
-In-Reply-To: <20161108164804.0aef27e8@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Gilad Broner <gbroner@codeaurora.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Subhash Jadavani <subhashj@codeaurora.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20161108160916.56nxpkiupw3u7rgy@phenom.ffwll.local>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rob Clark <robdclark@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2016-11-08 at 16:48 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> Today's linux-next merge of the scsi tree got a conflict in:
-> 
->   drivers/scsi/ufs/ufshcd.c
-> 
-> between commit:
-> 
->   e806402130c9 ("block: split out request-only flags into a new
-> namespace")
-> 
-> from the block tree and commit:
-> 
->   2266d5678ad1 ("scsi: ufs: fix sense buffer size to 18 bytes")
-> 
-> from the scsi tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your 
-> tree is submitted for merging.  You may also want to consider 
-> cooperating with the maintainer of the conflicting tree to minimise 
-> any particularly complex conflicts.
-
-Thanks for doing this.  I think this is exactly the type of easily
-resolvable conflict Linus likes to fix himself, so keeping the trees
-separate seems the best options.
-
-Regards,
-
-James
+T24gVHVlLCBOb3YgMDgsIDIwMTYgYXQgMDU6MDk6MTZQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
+cm90ZToKPiA+IFlvdSdyZSB0YWxraW5nIGFib3V0Ogo+ID4gCj4gPiAgIGxrbWwua2VybmVsLm9y
+Zy9yLzIwMTYxMDA3MTU0MzUxLkdMMzExN0B0d2lucy5wcm9ncmFtbWluZy5raWNrcy1hc3MubmV0
+Cj4gPiAKPiA+ID8gSSBnb3Qgbm8gZmVlZGJhY2sgZnJvbSB5b3UgRFJNIGd1eXMgb24gdGhhdCBz
+byBJIGtpbmRhIGZvcmdvdCBhYm91dAo+ID4gdGhhdCBpbiB0aGUgaG9wZSB3ZSdkIG5vdCBoYXZl
+IHRvIGRvIHRoaXMgYXQgYWxsLgo+IAo+IFllcy4gQ2hyaXMvSm9vbmFzLCBwbHMgZ2l2ZSB0aGlz
+IGlzIGEgc3BpbiBhbmQgcmV2aWV3LgoKT0ssIEknbGwgcmVzcGluIHRoYXQgdGhpbmcgd2l0aCBM
+aW51cycgZmVlZGJhY2sgZXRjLiBNaWdodCBub3QgYmUgdW50aWwKdG9tb3Jyb3cgdGhvdWdoLCBz
+byBhbnkgYWRkaXRpb25hbCBmZWVkYmFjayB3b3VsZCBiZSBnb29kLgoKVGhhbmtzIQpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGlu
+ZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
