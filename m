@@ -1,42 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the jc_docs tree
-Date: Tue, 8 Nov 2016 16:30:13 +1100
-Message-ID: <20161108163013.24d165f3@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with the block tree
+Date: Tue, 8 Nov 2016 16:48:04 +1100
+Message-ID: <20161108164804.0aef27e8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Jiri Slaby <jslaby@suse.cz>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51421 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752363AbcKHFsH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 8 Nov 2016 00:48:07 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Gilad Broner <gbroner@codeaurora.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Subhash Jadavani <subhashj@codeaurora.org>
 
-Hi Greg,
+Hi James,
 
-Today's linux-next merge of the tty tree got a conflict in:
+Today's linux-next merge of the scsi tree got a conflict in:
 
-  Documentation/VGA-softcursor.txt
+  drivers/scsi/ufs/ufshcd.c
 
-between commits:
+between commit:
 
-  27641b953c54 ("Documentation/VGA-softcursor.txt: convert to ReST markup")
-  9d85025b0418 ("docs-rst: create an user's manual book")
+  e806402130c9 ("block: split out request-only flags into a new namespace")
 
-from the jc_docs tree and commit:
+from the block tree and commit:
 
-  b9c8b7fc252c ("vgacon: remove prehistoric macros")
+  2266d5678ad1 ("scsi: ufs: fix sense buffer size to 18 bytes")
 
-from the tty tree.
+from the scsi tree.
 
-I fixed it up (I deleted it - since 9d85025b0418 moved it - but that
-means it may need fixing up in its new location to match any relevant
-changes in b9c8b7fc252c) and can carry the fix as necessary. This is
-now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your
-tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/scsi/ufs/ufshcd.c
+index cf549871c1ee,304adce3bdbe..000000000000
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@@ -5589,8 -5642,8 +5642,8 @@@ ufshcd_send_request_sense(struct ufs_hb
+  	}
+  
+  	ret = scsi_execute_req_flags(sdp, cmd, DMA_FROM_DEVICE, buffer,
+- 				SCSI_SENSE_BUFFERSIZE, NULL,
++ 				UFSHCD_REQ_SENSE_SIZE, NULL,
+ -				msecs_to_jiffies(1000), 3, NULL, REQ_PM);
+ +				msecs_to_jiffies(1000), 3, NULL, 0, RQF_PM);
+  	if (ret)
+  		pr_err("%s: failed with err %d\n", __func__, ret);
+  
