@@ -1,46 +1,85 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the jc_docs tree
-Date: Tue, 8 Nov 2016 11:15:54 +0100
-Message-ID: <20161108101554.GA17244@kroah.com>
-References: <20161108163013.24d165f3@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161108163013.24d165f3@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Jiri Slaby <jslaby@suse.cz>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161108 build: 2 failures 1 warnings (next-20161108)
+Date: Tue, 08 Nov 2016 10:39:01 +0000
+Message-ID: <E1c43nx-0006yU-De@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41626 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752395AbcKHKjK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 05:39:10 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tue, Nov 08, 2016 at 04:30:13PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the tty tree got a conflict in:
-> 
->   Documentation/VGA-softcursor.txt
-> 
-> between commits:
-> 
->   27641b953c54 ("Documentation/VGA-softcursor.txt: convert to ReST markup")
->   9d85025b0418 ("docs-rst: create an user's manual book")
-> 
-> from the jc_docs tree and commit:
-> 
->   b9c8b7fc252c ("vgacon: remove prehistoric macros")
-> 
-> from the tty tree.
-> 
-> I fixed it up (I deleted it - since 9d85025b0418 moved it - but that
-> means it may need fixing up in its new location to match any relevant
-> changes in b9c8b7fc252c) and can carry the fix as necessary. This is
-> now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your
-> tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Tree/Branch: next-20161108
+Git describe: next-20161108
+Commit: fa0208c825 Add linux-next specific files for 20161108
 
-Thanks, I'll work on sending a documentation patch after 4.10-rc1 to fix
-this up.
+Build Time: 80 min 11 sec
 
-greg k-h
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 1
+Warnings: 1
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
+
+	arm-allmodconfig
+../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
+
+Warnings Summary: 1
+	  1 ../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
+
+Warnings:
+	../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
