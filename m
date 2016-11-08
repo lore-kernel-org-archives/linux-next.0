@@ -1,39 +1,57 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Nov 8 (netdev, netfilter)
-Date: Tue, 8 Nov 2016 10:22:34 -0800
-Message-ID: <44b626cf-7cc5-a82d-299b-5ce7418f53db@infradead.org>
-References: <20161108183855.5f8c209a@canb.auug.org.au>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: Re: linux-next: manual merge of the tty tree with the jc_docs tree
+Date: Tue, 8 Nov 2016 19:40:53 +0100
+Message-ID: <8b7599f2-6933-9636-7326-6c7fd08ddb16@suse.cz>
+References: <20161108163013.24d165f3@canb.auug.org.au>
+ <20161108101554.GA17244@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161108183855.5f8c209a@canb.auug.org.au>
+In-Reply-To: <20161108101554.GA17244@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>
 List-Id: linux-next.vger.kernel.org
 
-On 11/07/16 23:38, Stephen Rothwell wrote:
-> Hi all,
+On 11/08/2016, 11:15 AM, Greg KH wrote:
+> On Tue, Nov 08, 2016 at 04:30:13PM +1100, Stephen Rothwell wrote:
+>> Hi Greg,
+>>
+>> Today's linux-next merge of the tty tree got a conflict in:
+>>
+>>   Documentation/VGA-softcursor.txt
+>>
+>> between commits:
+>>
+>>   27641b953c54 ("Documentation/VGA-softcursor.txt: convert to ReST markup")
+>>   9d85025b0418 ("docs-rst: create an user's manual book")
+>>
+>> from the jc_docs tree and commit:
+>>
+>>   b9c8b7fc252c ("vgacon: remove prehistoric macros")
+>>
+>> from the tty tree.
+>>
+>> I fixed it up (I deleted it - since 9d85025b0418 moved it - but that
+>> means it may need fixing up in its new location to match any relevant
+>> changes in b9c8b7fc252c) and can carry the fix as necessary. This is
+>> now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your
+>> tree is submitted for merging.  You may also want to consider
+>> cooperating with the maintainer of the conflicting tree to minimise any
+>> particularly complex conflicts.
 > 
-> Changes since 20161028:
+> Thanks, I'll work on sending a documentation patch after 4.10-rc1 to fix
+> this up.
 
+I have the change in my tree already:
+https://git.kernel.org/cgit/linux/kernel/git/jirislaby/linux.git/commit/?h=devel&id=c4321f11b3ea88fc1c756a087869c09e89f2d299
 
-on i386 or x86_64:
+If you want me to send that as a separate patch (or any other action),
+please let me know.
 
-net/built-in.o: In function `nf_sk_lookup_slow_v4':
-(.text+0x97414): undefined reference to `udp4_lib_lookup'
-
-when these are not enabled:
-#if IS_ENABLED(CONFIG_NETFILTER_XT_MATCH_SOCKET) || \
-    IS_ENABLED(CONFIG_NETFILTER_XT_TARGET_TPROXY)
-
-and
-CONFIG_NF_SOCKET_IPV4=y
-
-See net/ipv4/netfilter/nf_socket_ipv4.c.
-
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+thanks,
 -- 
-~Randy
+js
+suse labs
