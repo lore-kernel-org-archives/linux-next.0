@@ -1,57 +1,62 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: Re: linux-next: manual merge of the tty tree with the jc_docs tree
-Date: Tue, 8 Nov 2016 19:40:53 +0100
-Message-ID: <8b7599f2-6933-9636-7326-6c7fd08ddb16@suse.cz>
-References: <20161108163013.24d165f3@canb.auug.org.au>
- <20161108101554.GA17244@kroah.com>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: manual merge of the kspp tree with Linus' tree
+Date: Tue, 8 Nov 2016 11:44:40 -0700
+Message-ID: <CAGXu5jJFvqCtszv=vNZ1naoecSHcBNfX3y2k+-Sew-5EDbQ8oA@mail.gmail.com>
+References: <20161108133130.24c065f8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161108101554.GA17244@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f47.google.com ([74.125.82.47]:36012 "EHLO
+        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752445AbcKHSon (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 13:44:43 -0500
+Received: by mail-wm0-f47.google.com with SMTP id p190so264479395wmp.1
+        for <linux-next@vger.kernel.org>; Tue, 08 Nov 2016 10:44:42 -0800 (PST)
+In-Reply-To: <20161108133130.24c065f8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Emese Revfy <re.emese@gmail.com>
 
-On 11/08/2016, 11:15 AM, Greg KH wrote:
-> On Tue, Nov 08, 2016 at 04:30:13PM +1100, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> Today's linux-next merge of the tty tree got a conflict in:
->>
->>   Documentation/VGA-softcursor.txt
->>
->> between commits:
->>
->>   27641b953c54 ("Documentation/VGA-softcursor.txt: convert to ReST markup")
->>   9d85025b0418 ("docs-rst: create an user's manual book")
->>
->> from the jc_docs tree and commit:
->>
->>   b9c8b7fc252c ("vgacon: remove prehistoric macros")
->>
->> from the tty tree.
->>
->> I fixed it up (I deleted it - since 9d85025b0418 moved it - but that
->> means it may need fixing up in its new location to match any relevant
->> changes in b9c8b7fc252c) and can carry the fix as necessary. This is
->> now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your
->> tree is submitted for merging.  You may also want to consider
->> cooperating with the maintainer of the conflicting tree to minimise any
->> particularly complex conflicts.
-> 
-> Thanks, I'll work on sending a documentation patch after 4.10-rc1 to fix
-> this up.
+On Mon, Nov 7, 2016 at 7:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
+>
+> FIXME: Add owner of second tree to To:
+>        Add author(s)/SOB of conflicting commits.
+>
+> Today's linux-next merge of the kspp tree got a conflict in:
+>
+>   mm/page_alloc.c
+>   scripts/gcc-plugins/latent_entropy_plugin.c
+>
+> between commits:
+>
+>   38addce8b600 ("gcc-plugins: Add latent_entropy plugin")
+>   0766f788eb72 ("latent_entropy: Mark functions with __latent_entropy")
+>   58bea4144d23 ("latent_entropy: Fix wrong gcc code generation with 64 bit variables")
+>
+> from Linus' tree and commits:
+>
+>   2a5448668a3c ("gcc-plugins: Add latent_entropy plugin")
+>   09dd109d8241 ("latent_entropy: Mark functions with __latent_entropy")
+>
+> from the kspp tree.
+>
+> I fixed it up (I used the version from Linus' tree) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
+>
+> Kees, maybe you could clean up the kspp tree.
 
-I have the change in my tree already:
-https://git.kernel.org/cgit/linux/kernel/git/jirislaby/linux.git/commit/?h=devel&id=c4321f11b3ea88fc1c756a087869c09e89f2d299
+Oh, I wonder how that got out of sync. I've updated the kspp tree.
 
-If you want me to send that as a separate patch (or any other action),
-please let me know.
+Thanks!
 
-thanks,
+-Kees
+
 -- 
-js
-suse labs
+Kees Cook
+Nexus Security
