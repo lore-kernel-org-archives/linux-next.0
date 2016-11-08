@@ -1,85 +1,76 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161108 build: 2 failures 1 warnings (next-20161108)
-Date: Tue, 08 Nov 2016 10:39:01 +0000
-Message-ID: <E1c43nx-0006yU-De@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41626 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752395AbcKHKjK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 05:39:10 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: manual merge of the tip tree with the drm-intel tree
+Date: Tue, 8 Nov 2016 11:44:03 +0100
+Message-ID: <20161108104403.mi3onjfn65etrrtu@phenom.ffwll.local>
+References: <20161108152541.096711bb@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20161108152541.096711bb@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Peter Zijlstra <peterz@infradead.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161108
-Git describe: next-20161108
-Commit: fa0208c825 Add linux-next specific files for 20161108
-
-Build Time: 80 min 11 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 1
-Warnings: 1
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
-
-	arm-allmodconfig
-../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  2 ../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
-
-Warnings Summary: 1
-	  1 ../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	../drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this function)
-
-Warnings:
-	../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+T24gVHVlLCBOb3YgMDgsIDIwMTYgYXQgMDM6MjU6NDFQTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gRklYTUU6IEFkZCBvd25lciBvZiBzZWNvbmQgdHJlZSB0
+byBUbzoKPiAgICAgICAgQWRkIGF1dGhvcihzKS9TT0Igb2YgY29uZmxpY3RpbmcgY29tbWl0cy4K
+PiAKPiBUb2RheSdzIGxpbnV4LW5leHQgbWVyZ2Ugb2YgdGhlIHRpcCB0cmVlIGdvdCBhIGNvbmZs
+aWN0IGluOgo+IAo+ICAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fc2hyaW5rZXIuYwo+
+IAo+IGJldHdlZW4gY29tbWl0czoKPiAKPiAgIDEyMzNlMmRiMTk5ZCAoImRybS9pOTE1OiBNb3Zl
+IG9iamVjdCBiYWNraW5nIHN0b3JhZ2UgbWFuaXB1bGF0aW9uIHRvIGl0cyBvd24gbG9ja2luZyIp
+Cj4gCj4gZnJvbSB0aGUgZHJtLWludGVsIHRyZWUgYW5kIGNvbW1pdDoKPiAKPiAgIDNhYjdjMDg2
+ZDVlYyAoImxvY2tpbmcvZHJtOiBLaWxsIG11dGV4IHRyaWNrZXJ5IikKPiAgIGM3ZmFlZTIxMDlm
+OSAoImxvY2tpbmcvZHJtOiBGaXggaTkxNV9nZW1fc2hyaW5rZXJfbG9jaygpIGxvY2tpbmciKQoK
+SG0sIHRoaXMgc2VlbXMgdG8gYmUgdGhlIG9sZGVyIHZlcnNpb25zIHRoYXQgbnVrZSB0aGUgcmVj
+dXJzaXZlIGxvY2tpbmcKdHJpY2tlcnkgZW50aXJlbHksIEkgdGhvdWdodCB3ZSBoYWQgdmVyc2lv
+biBpbi1mbGlnaHQgdGhhdCBrZXB0IHRoYXQ/IEkKa25vdyB0aGF0IHRoZSBpOTE1IChhbmQgbXNt
+IGxvY2tpbmcgZndpdykgaXMgaG9ycmlibGUgc2luY2UgZXNzZW50aWFsbHkKaXQncyBhIHJlY3Vy
+c2l2ZSBCS0wsIGFuZCB3ZSdyZSB3b3JraW5nIChzbG93bHksIGFmdGVyIGFsbCBnZXR0aW5nIHJp
+ZCBvZgp0aGUgQktMIHdhc24ndCBzaW1wbGUgZWl0aGVyKSB0byBmaXggdGhpcy4gQnV0IG1lYW53
+aGlsZSBJJ20gYXNzdW1pbmcgdGhhdAp3ZSdsbCBzdGlsbCBuZWVkIHRoaXMgdG8gYmUgYWJsZSB0
+byBnZXQgb3V0IG9mIGxvdyBtZW1vcnkgc2l0dWF0aW9ucyBpbgppOTE1LiBIYXMgdGhhdCBwYXJ0
+IHNpbXBseSBub3QgeWV0IGxhbmRlZD8KClRoYW5rcywgRGFuaWVsCgo+IAo+IGZyb20gdGhlIHRp
+cCB0cmVlLgo+IAo+IEkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUg
+Zml4IGFzIG5lY2Vzc2FyeS4gVGhpcwo+IGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4
+dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKPiBjb25mbGljdHMgc2hvdWxkIGJl
+IG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5b3VyIHRyZWUKPiBp
+cyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlciBj
+b29wZXJhdGluZwo+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUg
+dG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+IGNvbXBsZXggY29uZmxpY3RzLgo+IAo+IC0t
+IAo+IENoZWVycywKPiBTdGVwaGVuIFJvdGh3ZWxsCj4gCj4gZGlmZiAtLWNjIGRyaXZlcnMvZ3B1
+L2RybS9pOTE1L2k5MTVfZ2VtX3Nocmlua2VyLmMKPiBpbmRleCBhNmZjMWJkYzQ4YWYsZTliZDJh
+ODFkMDNhLi4wMDAwMDAwMDAwMDAKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dl
+bV9zaHJpbmtlci5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fc2hyaW5r
+ZXIuYwo+IEBAQCAtMzUsMzMgLTM1LDYgKzM1LDE1IEBAQAo+ICAgI2luY2x1ZGUgImk5MTVfZHJ2
+LmgiCj4gICAjaW5jbHVkZSAiaTkxNV90cmFjZS5oIgo+ICAgCj4gLSBzdGF0aWMgYm9vbCBtdXRl
+eF9pc19sb2NrZWRfYnkoc3RydWN0IG11dGV4ICptdXRleCwgc3RydWN0IHRhc2tfc3RydWN0ICp0
+YXNrKQo+IC0gewo+IC0gCWlmICghbXV0ZXhfaXNfbG9ja2VkKG11dGV4KSkKPiAtIAkJcmV0dXJu
+IGZhbHNlOwo+IC0gCj4gLSAjaWYgZGVmaW5lZChDT05GSUdfREVCVUdfTVVURVhFUykgfHwgZGVm
+aW5lZChDT05GSUdfTVVURVhfU1BJTl9PTl9PV05FUikKPiAtIAlyZXR1cm4gbXV0ZXgtPm93bmVy
+ID09IHRhc2s7Cj4gLSAjZWxzZQo+IC0gCS8qIFNpbmNlIFVQIG1heSBiZSBwcmUtZW1wdGVkLCB3
+ZSBjYW5ub3QgYXNzdW1lIHRoYXQgd2Ugb3duIHRoZSBsb2NrICovCj4gLSAJcmV0dXJuIGZhbHNl
+Owo+IC0gI2VuZGlmCj4gLSB9Cj4gLSAKPiAgK3N0YXRpYyBib29sIGk5MTVfZ2VtX3Nocmlua2Vy
+X2xvY2soc3RydWN0IGRybV9kZXZpY2UgKmRldiwgYm9vbCAqdW5sb2NrKQo+ICArewo+IC0gCWlm
+ICghbXV0ZXhfdHJ5bG9jaygmZGV2LT5zdHJ1Y3RfbXV0ZXgpKSB7Cj4gLSAJCWlmICghbXV0ZXhf
+aXNfbG9ja2VkX2J5KCZkZXYtPnN0cnVjdF9tdXRleCwgY3VycmVudCkpCj4gLSAJCQlyZXR1cm4g
+ZmFsc2U7Cj4gLSAKPiAtIAkJKnVubG9jayA9IGZhbHNlOwo+IC0gCX0gZWxzZSB7Cj4gLSAJCSp1
+bmxvY2sgPSB0cnVlOwo+IC0gCX0KPiArKwlpZiAoIW11dGV4X3RyeWxvY2soJmRldi0+c3RydWN0
+X211dGV4KSkKPiArKwkJcmV0dXJuIGZhbHNlOwo+ICArCj4gKysJKnVubG9jayA9IHRydWU7Cj4g
+ICsJcmV0dXJuIHRydWU7Cj4gICt9Cj4gICsKPiAgIHN0YXRpYyBib29sIGFueV92bWFfcGlubmVk
+KHN0cnVjdCBkcm1faTkxNV9nZW1fb2JqZWN0ICpvYmopCj4gICB7Cj4gICAJc3RydWN0IGk5MTVf
+dm1hICp2bWE7CgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29y
+cG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
