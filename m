@@ -1,62 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the libata tree with the block tree
-Date: Tue, 8 Nov 2016 16:58:54 +1100
-Message-ID: <20161108165854.0872cd8b@canb.auug.org.au>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 7 Nov 2016 22:34:11 -0800
+Message-ID: <CAM_iQpU1p8aJy_64muXhszzYMzC8AZtRC7+1bB7f4hK+6-rSNQ@mail.gmail.com>
+References: <20161108122537.40fa6e58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36481 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750781AbcKHF64 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 8 Nov 2016 00:58:56 -0500
+Received: from mail-it0-f65.google.com ([209.85.214.65]:35600 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751919AbcKHGec (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 01:34:32 -0500
+In-Reply-To: <20161108122537.40fa6e58@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Manzanares <adam.manzanares@hgst.com>, Christoph Hellwig <hch@lst.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Johannes Berg <johannes.berg@intel.com>
 
-Hi Tejun,
+On Mon, Nov 7, 2016 at 5:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>
+>   net/netlink/genetlink.c
+>
+> between commit:
+>
+>   00ffc1ba02d8 ("genetlink: fix a memory leak on error path")
+>
+> from the net tree and commit:
+>
+>   2ae0f17df1cd ("genetlink: use idr to track families")
+>
+> from the net-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Today's linux-next merge of the libata tree got a conflict in:
+Looks good to me.
 
-  block/blk-core.c
-
-between commits:
-
-  e806402130c9 ("block: split out request-only flags into a new namespace")
-  ef295ecf090d ("block: better op and flags encoding")
-
-from the block tree and commit:
-
-  5dc8b362a237 ("block: Add iocontext priority to request")
-
-from the libata tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@@ -1152,11 -1153,11 +1152,12 @@@ static struct request *__get_request(st
-
-        blk_rq_init(q, rq);
-        blk_rq_set_rl(rq, rl);
-+       blk_rq_set_prio(rq, ioc);
- -      req_set_op_attrs(rq, op, op_flags | REQ_ALLOCED);
- +      rq->cmd_flags = op;
- +      rq->rq_flags = rq_flags;
-
-        /* init elvpriv */
- -      if (op_flags & REQ_ELVPRIV) {
- +      if (rq_flags & RQF_ELVPRIV) {
-                if (unlikely(et->icq_cache && !icq)) {
-                        if (ioc)
-                                icq = ioc_create_icq(ioc, q, gfp_mask);
+Thanks!
