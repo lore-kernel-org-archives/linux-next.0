@@ -1,25 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad commit in the omap tree
-Date: Wed, 9 Nov 2016 07:37:00 +1100
-Message-ID: <20161109073700.2ffb276d@canb.auug.org.au>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: linux-next: build failure after merge of the rtc tree
+Date: Tue, 8 Nov 2016 23:21:32 +0100
+Message-ID: <20161108222132.t7okgkv452baj6ub@piout.net>
+References: <20161108174152.4a5620c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35569 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753767AbcKHUhZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 8 Nov 2016 15:37:25 -0500
+Received: from up.free-electrons.com ([163.172.77.33]:59467 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S932197AbcKHWVh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 17:21:37 -0500
+Content-Disposition: inline
+In-Reply-To: <20161108174152.4a5620c4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Nishanth Menon <nm@ti.com>, Keerthy <j-keerthy@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
 
-Hi Tony,
+Hi,
 
-Commit 63fdf6527272 ("ARM: OMAP5: Add basic cpuidle MPU CSWR support")
-in the omap tree has no Signed-off-by from you as the committer.
+On 08/11/2016 at 17:41:52 +1100, Stephen Rothwell wrote :
+> Hi Alexandre,
+> 
+> After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> 
+> Caused by commit
+> 
+>   f9eb69d1ae2f ("rtc: jz4740: Add support for acting as the system power controller")
+> 
+> I have used the rtc tree from next-20161028 for today.
+> 
+
+Thanks for the report it is fixed in rtc-next now.
+
 
 -- 
-Cheers,
-Stephen Rothwell
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
