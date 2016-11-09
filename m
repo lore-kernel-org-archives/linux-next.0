@@ -1,33 +1,41 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Wed, 9 Nov 2016 13:21:53 -0800
-Message-ID: <20161109132153.60da86bfe834249ef7b294e9@linux-foundation.org>
-References: <20161109151006.7354dfae@canb.auug.org.au>
-        <20161109071823.GA15161@sha-win-210.asiapac.arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the asm-generic tree with Linus' tree
+Date: Thu, 10 Nov 2016 09:38:45 +1100
+Message-ID: <20161110093845.6f188af7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161109071823.GA15161@sha-win-210.asiapac.arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Huang Shijie <shijie.huang@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nd@arm.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Chunyan Zhang <zhang.chunyan@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 9 Nov 2016 15:18:24 +0800 Huang Shijie <shijie.huang@arm.com> wrote:
+Hi Arnd,
 
-> On Wed, Nov 09, 2016 at 03:10:06PM +1100, Stephen Rothwell wrote:
-> Hi Stephen,
-> > Hi Andrew,
-> > 
-> > After merging the akpm-current tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > mm/hugetlb.c:1166:21: warning: 'alloc_gigantic_page' defined but not used [-Wunused-function]
-> >  static struct page *alloc_gigantic_page(int nid, unsigned int order)
-> The warning should be fixed by the patch (or next version of this patch):
->   http://marc.info/?l=linux-mm&m=147867535926059&w=2	
+Today's linux-next merge of the asm-generic tree got a conflict in:
 
-I'll drop "mm/hugetlb.c: rename some allocation functions" for now. 
-Please change it to fix this warning then add it to the surplus-page
-series when resending that.
+  include/asm-generic/percpu.h
+
+between commit:
+
+  7f8d61f00522 ("percpu: use notrace variant of preempt_disable/preempt_enable")
+
+from Linus' tree and commit:
+
+  acbdf0e98066 ("percpu: make this_cpu_generic_read notrace")
+
+from the asm-generic tree.
+
+I fixed it up (these commits do exactly the same thing ... so I just
+used the version from Linus' tree (since there is another patch there
+that affects this part of the code)) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
