@@ -1,42 +1,33 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: linux-next: build failure after merge of the rtc tree
-Date: Tue, 8 Nov 2016 23:21:32 +0100
-Message-ID: <20161108222132.t7okgkv452baj6ub@piout.net>
-References: <20161108174152.4a5620c4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-misc
+	tree
+Date: Wed, 9 Nov 2016 11:14:13 +1100
+Message-ID: <20161109111413.37690cb0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from up.free-electrons.com ([163.172.77.33]:59467 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S932197AbcKHWVh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 8 Nov 2016 17:21:37 -0500
-Content-Disposition: inline
-In-Reply-To: <20161108174152.4a5620c4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On 08/11/2016 at 17:41:52 +1100, Stephen Rothwell wrote :
-> Hi Alexandre,
-> 
-> After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> 
-> Caused by commit
-> 
->   f9eb69d1ae2f ("rtc: jz4740: Add support for acting as the system power controller")
-> 
-> I have used the rtc tree from next-20161028 for today.
-> 
-
-Thanks for the report it is fixed in rtc-next now.
-
-
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
+ZXh0IGJ1aWxkICh4ODZfNjQKYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKRVJST1I6
+ICJkZXBvdF9zYXZlX3N0YWNrIiBbZHJpdmVycy9ncHUvZHJtL2RybS5rb10gdW5kZWZpbmVkIQpF
+UlJPUjogImRlcG90X2ZldGNoX3N0YWNrIiBbZHJpdmVycy9ncHUvZHJtL2RybS5rb10gdW5kZWZp
+bmVkIQoKQ2F1c2VkIGJ5IGNvbW1pdAoKICA1NzA1NjcwZDA0NjMgKCJkcm06IFRyYWNrIGRybV9t
+bSBhbGxvY2F0b3JzIGFuZCBzaG93IGxlYWtzIG9uIHNodXRkb3duIikKCkkgaGF0ZSB1c2VkIHRo
+ZSBkcm0tbWlzYyB0cmVlIGZyb20gbmV4dC0yMDE2MTEwOCBmb3IgdG9kYXkuCgotLSAKQ2hlZXJz
+LApTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2lu
+dGVsLWdmeAo=
