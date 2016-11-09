@@ -1,28 +1,71 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: bad commit in the omap tree
-Date: Wed, 9 Nov 2016 16:18:10 -0700
-Message-ID: <20161109231809.GQ2428@atomide.com>
-References: <20161109073700.2ffb276d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 10 Nov 2016 10:50:30 +1100
+Message-ID: <20161110105030.3724fe28@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:58572 "EHLO muru.com"
+Received: from ozlabs.org ([103.22.144.67]:41445 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752576AbcKIXSN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 9 Nov 2016 18:18:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20161109073700.2ffb276d@canb.auug.org.au>
+        id S1753021AbcKIXud (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 9 Nov 2016 18:50:33 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Nishanth Menon <nm@ti.com>, Keerthy <j-keerthy@ti.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Hadar Hen Zion <hadarh@mellanox.com>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [161108 13:37]:
-> Hi Tony,
-> 
-> Commit 63fdf6527272 ("ARM: OMAP5: Add basic cpuidle MPU CSWR support")
-> in the omap tree has no Signed-off-by from you as the committer.
+Hi all,
 
-Thanks for letting me know, will fix it up.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Tony
+  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+
+between commit:
+
+  ee39fbc4447d ("net/mlx5: E-Switch, Set the actions for offloaded rules properly")
+
+from the net tree and commit:
+
+  66958ed906b8 ("net/mlx5: Support encap id when setting new steering entry")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+index d239f5d0ea36,50fe8e8861bb..000000000000
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+@@@ -57,14 -58,14 +58,15 @@@ mlx5_eswitch_add_offloaded_rule(struct 
+  	if (esw->mode != SRIOV_OFFLOADS)
+  		return ERR_PTR(-EOPNOTSUPP);
+  
+ -	flow_act.action = attr->action;
+ +	/* per flow vlan pop/push is emulated, don't set that into the firmware */
+- 	action = attr->action & ~(MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH | MLX5_FLOW_CONTEXT_ACTION_VLAN_POP);
+++	flow_act.action = attr->action & ~(MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH | MLX5_FLOW_CONTEXT_ACTION_VLAN_POP);
+  
+- 	if (action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) {
+- 		dest.type = MLX5_FLOW_DESTINATION_TYPE_VPORT;
+- 		dest.vport_num = attr->out_rep->vport;
+- 		action = MLX5_FLOW_CONTEXT_ACTION_FWD_DEST;
+- 	} else if (action & MLX5_FLOW_CONTEXT_ACTION_COUNT) {
++ 	if (flow_act.action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) {
++ 		dest[i].type = MLX5_FLOW_DESTINATION_TYPE_VPORT;
++ 		dest[i].vport_num = attr->out_rep->vport;
++ 		i++;
++ 	}
++ 	if (flow_act.action & MLX5_FLOW_CONTEXT_ACTION_COUNT) {
+  		counter = mlx5_fc_create(esw->dev, true);
+  		if (IS_ERR(counter))
+  			return ERR_CAST(counter);
