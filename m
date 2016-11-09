@@ -1,69 +1,30 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161109 build: 0 failures 2 warnings (next-20161109)
-Date: Wed, 09 Nov 2016 10:36:59 +0000
-Message-ID: <E1c4QFW-0005Tj-1Z@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37330 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751425AbcKIKhJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 9 Nov 2016 05:37:09 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Huang Shijie <shijie.huang@arm.com>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Wed, 9 Nov 2016 15:18:24 +0800
+Message-ID: <20161109071823.GA15161@sha-win-210.asiapac.arm.com>
+References: <20161109151006.7354dfae@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161109151006.7354dfae@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, nd@arm.com
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161109
-Git describe: next-20161109
-Commit: 6b9ac964c2 Add linux-next specific files for 20161109
-
-Build Time: 159 min 43 sec
-
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 2
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 2
-	  1 ../mm/hugetlb.c:1166:21: warning: 'alloc_gigantic_page' defined but not used [-Wunused-function]
-	  1 ../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
+On Wed, Nov 09, 2016 at 03:10:06PM +1100, Stephen Rothwell wrote:
+Hi Stephen,
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> mm/hugetlb.c:1166:21: warning: 'alloc_gigantic_page' defined but not used [-Wunused-function]
+>  static struct page *alloc_gigantic_page(int nid, unsigned int order)
+The warning should be fixed by the patch (or next version of this patch):
+  http://marc.info/?l=linux-mm&m=147867535926059&w=2	
 
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/tty/serial/pxa.c:944:1: warning: 'serial_pxa_init' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../mm/hugetlb.c:1166:21: warning: 'alloc_gigantic_page' defined but not used [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks
+Huang Shijie
