@@ -1,33 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 10 Nov 2016 10:50:30 +1100
-Message-ID: <20161110105030.3724fe28@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the netfilter
+ tree
+Date: Thu, 10 Nov 2016 10:56:33 +1100
+Message-ID: <20161110105633.31ebdc76@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41445 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753021AbcKIXud (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 9 Nov 2016 18:50:33 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Or Gerlitz <ogerlitz@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Hadar Hen Zion <hadarh@mellanox.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, WANG Cong <xiyou.wangcong@gmail.com>, Johannes Berg <johannes.berg@intel.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
+  net/netfilter/ipvs/ip_vs_ctl.c
 
 between commit:
 
-  ee39fbc4447d ("net/mlx5: E-Switch, Set the actions for offloaded rules properly")
+  8fbfef7f505b ("ipvs: use IPVS_CMD_ATTR_MAX for family.maxattr")
 
-from the net tree and commit:
+from the netfilter tree and commit:
 
-  66958ed906b8 ("net/mlx5: Support encap id when setting new steering entry")
+  489111e5c25b ("genetlink: statically initialize families")
 
 from the net-next tree.
 
@@ -42,30 +39,31 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-index d239f5d0ea36,50fe8e8861bb..000000000000
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch_offloads.c
-@@@ -57,14 -58,14 +58,15 @@@ mlx5_eswitch_add_offloaded_rule(struct 
-  	if (esw->mode != SRIOV_OFFLOADS)
-  		return ERR_PTR(-EOPNOTSUPP);
+diff --cc net/netfilter/ipvs/ip_vs_ctl.c
+index a6e44ef2ec9a,6b85ded4f91d..000000000000
+--- a/net/netfilter/ipvs/ip_vs_ctl.c
++++ b/net/netfilter/ipvs/ip_vs_ctl.c
+@@@ -3872,10 -3865,20 +3865,20 @@@ static const struct genl_ops ip_vs_genl
+  	},
+  };
   
- -	flow_act.action = attr->action;
- +	/* per flow vlan pop/push is emulated, don't set that into the firmware */
-- 	action = attr->action & ~(MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH | MLX5_FLOW_CONTEXT_ACTION_VLAN_POP);
-++	flow_act.action = attr->action & ~(MLX5_FLOW_CONTEXT_ACTION_VLAN_PUSH | MLX5_FLOW_CONTEXT_ACTION_VLAN_POP);
++ static struct genl_family ip_vs_genl_family __ro_after_init = {
++ 	.hdrsize	= 0,
++ 	.name		= IPVS_GENL_NAME,
++ 	.version	= IPVS_GENL_VERSION,
+ -	.maxattr	= IPVS_CMD_MAX,
+++	.maxattr	= IPVS_CMD_ATTR_MAX,
++ 	.netnsok        = true,         /* Make ipvsadm to work on netns */
++ 	.module		= THIS_MODULE,
++ 	.ops		= ip_vs_genl_ops,
++ 	.n_ops		= ARRAY_SIZE(ip_vs_genl_ops),
++ };
++ 
+  static int __init ip_vs_genl_register(void)
+  {
+- 	return genl_register_family_with_ops(&ip_vs_genl_family,
+- 					     ip_vs_genl_ops);
++ 	return genl_register_family(&ip_vs_genl_family);
+  }
   
-- 	if (action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) {
-- 		dest.type = MLX5_FLOW_DESTINATION_TYPE_VPORT;
-- 		dest.vport_num = attr->out_rep->vport;
-- 		action = MLX5_FLOW_CONTEXT_ACTION_FWD_DEST;
-- 	} else if (action & MLX5_FLOW_CONTEXT_ACTION_COUNT) {
-+ 	if (flow_act.action & MLX5_FLOW_CONTEXT_ACTION_FWD_DEST) {
-+ 		dest[i].type = MLX5_FLOW_DESTINATION_TYPE_VPORT;
-+ 		dest[i].vport_num = attr->out_rep->vport;
-+ 		i++;
-+ 	}
-+ 	if (flow_act.action & MLX5_FLOW_CONTEXT_ACTION_COUNT) {
-  		counter = mlx5_fc_create(esw->dev, true);
-  		if (IS_ERR(counter))
-  			return ERR_CAST(counter);
+  static void ip_vs_genl_unregister(void)
