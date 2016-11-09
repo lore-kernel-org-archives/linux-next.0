@@ -1,41 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the asm-generic tree with Linus' tree
-Date: Thu, 10 Nov 2016 09:38:45 +1100
-Message-ID: <20161110093845.6f188af7@canb.auug.org.au>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: bad commit in the omap tree
+Date: Wed, 9 Nov 2016 16:18:10 -0700
+Message-ID: <20161109231809.GQ2428@atomide.com>
+References: <20161109073700.2ffb276d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Chunyan Zhang <zhang.chunyan@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:58572 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752576AbcKIXSN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 9 Nov 2016 18:18:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20161109073700.2ffb276d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, Nishanth Menon <nm@ti.com>, Keerthy <j-keerthy@ti.com>
 
-Hi Arnd,
+* Stephen Rothwell <sfr@canb.auug.org.au> [161108 13:37]:
+> Hi Tony,
+> 
+> Commit 63fdf6527272 ("ARM: OMAP5: Add basic cpuidle MPU CSWR support")
+> in the omap tree has no Signed-off-by from you as the committer.
 
-Today's linux-next merge of the asm-generic tree got a conflict in:
+Thanks for letting me know, will fix it up.
 
-  include/asm-generic/percpu.h
-
-between commit:
-
-  7f8d61f00522 ("percpu: use notrace variant of preempt_disable/preempt_enable")
-
-from Linus' tree and commit:
-
-  acbdf0e98066 ("percpu: make this_cpu_generic_read notrace")
-
-from the asm-generic tree.
-
-I fixed it up (these commits do exactly the same thing ... so I just
-used the version from Linus' tree (since there is another patch there
-that affects this part of the code)) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+Tony
