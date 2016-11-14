@@ -1,36 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Mon, 14 Nov 2016 11:28:01 +1100
-Message-ID: <20161114112801.46392f36@canb.auug.org.au>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: manual merge of the sound tree with the jc_docs
+ tree
+Date: Sun, 13 Nov 2016 17:56:28 -0700
+Message-ID: <20161113175628.7906efa8@lwn.net>
+References: <20161114111553.533d5615@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48841 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751599AbcKNA2E (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 13 Nov 2016 19:28:04 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161114111553.533d5615@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SeongJae Park <sj38.park@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Mon, 14 Nov 2016 11:15:53 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Today's linux-next merge of the sound tree got a conflict in:
+> 
+>   Documentation/index.rst
+> 
+> between commits:
+> 
+>   799a545bb938 ("tpm: move documentation under Documentation/security")
+>   ba42c574fc8b ("Documentation: Add HOWTO Korean translation into rst based build system")
+> 
+> from the jc_docs tree and commit:
+> 
+>   8551914a5e19 ("ALSA: doc: ReSTize alsa-driver-api document")
+> 
+> from the sound tree.
 
-sound/soc/codecs/wm_adsp.c: In function 'wm_coeff_write_acked_control':
-sound/soc/codecs/wm_adsp.c:791:8: error: implicit declaration of function 'wm_coeff_base_reg' [-Werror=implicit-function-declaration]
-  ret = wm_coeff_base_reg(ctl, &reg);
-        ^
+Sigh.  I'm glad this work is being done, but if we're going to create
+some coordinated documentation it might be good to involve the docs
+maintainer when doing it...
 
-Caused by commit
+In this case, I would have liked the chance to comment.  This
+documentation belongs in the driver-api document, not the top-level one.
+So, in an ideal world, I'd like to see this stuff moved there, preferably
+with the patches going though the docs tree.
 
-  f4f0c4c60c39 ("ASoC: wm_adsp: Signal firmware shutdown through event control")
+(Thanks, Stephen, for fixing it up).
 
-I have used the sound-asoc tree from next-20161111 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+jon
