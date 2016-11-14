@@ -1,35 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unable to fetch the arm tree
-Date: Mon, 14 Nov 2016 21:42:49 +1100
-Message-ID: <20161114214249.21ebfb09@canb.auug.org.au>
-References: <20161114092922.2963d6d8@canb.auug.org.au>
-        <20161114102219.GE17314@flint.armlinux.org.uk>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build warning after merge of the scsi-mkp tree
+Date: Mon, 14 Nov 2016 13:31:41 +0100
+Message-ID: <20161114123141.GA14653@lst.de>
+References: <20161114161624.784ab3da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45393 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751608AbcKNKmx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 14 Nov 2016 05:42:53 -0500
-In-Reply-To: <20161114102219.GE17314@flint.armlinux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King <rmk@armlinux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161114161624.784ab3da@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Russell,
-
-On Mon, 14 Nov 2016 10:22:19 +0000 Russell King <rmk@armlinux.org.uk> wrote:
->
-> Gah, that's down to selinux having an argument over how the repository
-> should be labelled - different parts of the system want different
-> labels on that.  selinux is sometimes a nightmare.
+On Mon, Nov 14, 2016 at 04:16:24PM +1100, Stephen Rothwell wrote:
+> Hi Martin,
 > 
-> Should be fixed now.
+> After merging the scsi-mkp tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/scsi/hpsa.c: In function 'hpsa_free_irqs':
+> drivers/scsi/hpsa.c:8223:40: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>    free_irq(pci_irq_vector(h->pdev, 0), &h->q[i]);
 
-Yep, looks good, thanks.
-
--- 
-Cheers,
-Stephen Rothwell
+The i here shold be h->intr_mode, I'll send a fix in a bit.
