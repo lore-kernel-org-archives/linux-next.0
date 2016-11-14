@@ -1,64 +1,128 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the driver-core tree with the pm tree
-Date: Mon, 14 Nov 2016 13:09:02 +1100
-Message-ID: <20161114130902.532c3c64@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the usb-gadget tree
+Date: Mon, 14 Nov 2016 13:36:49 +1100
+Message-ID: <20161114133649.348eb08e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi Felipe,
 
-Today's linux-next merge of the driver-core tree got a conflict in:
+After merging the usb-gadget tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-  drivers/base/power/main.c
+drivers/staging/iio/frequency/ad9832.c: In function 'ad9832_probe':
+drivers/staging/iio/frequency/ad9832.c:214:11: warning: 'st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  st->avdd = devm_regulator_get(&spi->dev, "avdd");
+           ^
 
-between commit:
+This was probably because -Wmaybe-uninitialized has been reenabled in Linus' tree
 
-  6f75c3fd56da ("PM / sleep: don't suspend parent when async child suspend_{noirq, late} fails")
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:35:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h:37:0,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:34:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c:42:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from include/linux/notifier.h:13:0,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:751,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c:37:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:56:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from include/linux/notifier.h:13:0,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:751,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:36:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:53:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from arch/x86/include/asm/mmu.h:5:0,
+                 from arch/x86/include/asm/acpi.h:31,
+                 from arch/x86/include/asm/fixmap.h:19,
+                 from arch/x86/include/asm/apic.h:11,
+                 from arch/x86/include/asm/smp.h:12,
+                 from include/linux/smp.h:59,
+                 from include/linux/percpu.h:6,
+                 from include/linux/context_tracking_state.h:4,
+                 from include/linux/vtime.h:4,
+                 from include/linux/hardirq.h:7,
+                 from include/linux/interrupt.h:12,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_2835_arm.c:37:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c:42:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from include/linux/notifier.h:13:0,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:751,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_kern_lib.c:37:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c:35:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h:39:0,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c:34:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c:36:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h:37:0,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c:35:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c:36:0:
+drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+ #define mutex_lock_interruptible mutex_lock_interruptible_killable
+ ^
+In file included from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.h:37:0,
+                 from drivers/staging/vc04_services/interface/vchiq_arm/vchiq_connected.c:35:
+include/linux/mutex.h:161:0: note: this is the location of the previous definition
+ #define mutex_lock_interruptible(lock) mutex_lock_interruptible_nested(lock, 0)
+ ^
 
-from the pm tree and commit:
-
-  8c73b4288496 ("PM / sleep: Make async suspend/resume of devices use device links")
-
-from the driver-core tree.
-
-I fixed it up (maybe .. see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I am not sure where the reset of these came from.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/base/power/main.c
-index 2932a5bd892f,04bcb11ed8de..000000000000
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@@ -1027,8 -1085,6 +1085,8 @@@ static int __device_suspend_noirq(struc
-  	TRACE_DEVICE(dev);
-  	TRACE_SUSPEND(0);
-  
-- 	dpm_wait_for_children(dev, async);
-++	dpm_wait_for_subordinate(dev, async);
- +
-  	if (async_error)
-  		goto Complete;
-  
-@@@ -1174,8 -1232,6 +1232,8 @@@ static int __device_suspend_late(struc
-  
-  	__pm_runtime_disable(dev, false);
-  
-- 	dpm_wait_for_children(dev, async);
-++	dpm_wait_for_subordinate(dev, async);
- +
-  	if (async_error)
-  		goto Complete;
-  
