@@ -1,43 +1,63 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Mon, 14 Nov 2016 01:03:52 +0100
-Message-ID: <2357318.aIcIp7uAlP@vostro.rjw.lan>
-References: <20161114104009.57b7e64b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound tree with the jc_docs tree
+Date: Mon, 14 Nov 2016 11:15:53 +1100
+Message-ID: <20161114111553.533d5615@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cloudserver094114.home.net.pl ([79.96.170.134]:51465 "EHLO
-        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750866AbcKMX4V (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Sun, 13 Nov 2016 18:56:21 -0500
-In-Reply-To: <20161114104009.57b7e64b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SeongJae Park <sj38.park@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Monday, November 14, 2016 10:40:09 AM Stephen Rothwell wrote:
-> Hi Rafael,
+Hi Takashi,
 
-Hi Stephen,
+Today's linux-next merge of the sound tree got a conflict in:
 
-> After merging the pm tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> drivers/cpufreq/powernv-cpufreq.c: In function 'gpstate_timer_handler':
-> drivers/cpufreq/powernv-cpufreq.c:642:5: warning: 'lpstate_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   if (gpstate_idx != gpstates->last_lpstate_idx)
->      ^
-> 
-> Introduced by commit
-> 
->   20b15b766354 ("cpufreq: powernv: Use PMCR to verify global and local pstate")
+  Documentation/index.rst
 
-Thanks for the notice!
+between commits:
 
-Akshay, any thoughts?
+  799a545bb938 ("tpm: move documentation under Documentation/security")
+  ba42c574fc8b ("Documentation: Add HOWTO Korean translation into rst based build system")
 
-Thanks,
-Rafael
+from the jc_docs tree and commit:
+
+  8551914a5e19 ("ALSA: doc: ReSTize alsa-driver-api document")
+
+from the sound tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/index.rst
+index 733bd9013541,115c551da5f5..000000000000
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@@ -57,16 -18,8 +57,17 @@@ needed)
+     media/index
+     gpu/index
+     80211/index
+ +   security/index
++    sound/index
+  
+ +Korean translations
+ +-------------------
+ +
+ +.. toctree::
+ +   :maxdepth: 1
+ +
+ +   translations/ko_KR/index
+ +
+  Indices and tables
+  ==================
+  
