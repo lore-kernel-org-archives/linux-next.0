@@ -1,34 +1,110 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: unable to fetch the arm tree
-Date: Mon, 14 Nov 2016 10:22:19 +0000
-Message-ID: <20161114102219.GE17314@flint.armlinux.org.uk>
-References: <20161114092922.2963d6d8@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161114092922.2963d6d8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161114 build: 0 failures 5 warnings (next-20161114)
+Date: Mon, 14 Nov 2016 10:33:59 +0000
+Message-ID: <E1c6EaM-0002B1-SZ@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57768 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752514AbcKNKeH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 14 Nov 2016 05:34:07 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Nov 14, 2016 at 09:29:22AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> I could not fetch the arm or arm-current trees
-> (git://git.armlinux.org.uk/~rmk/linux-arm.git) this morning:
-> 
-> fatal: remote error: access denied or repository not exported: ~rmk/linux-arm.git
-> 
-> I will use the previous versions that I have.
+Tree/Branch: next-20161114
+Git describe: next-20161114
+Commit: b60de3eba5 Add linux-next specific files for 20161114
 
-Gah, that's down to selinux having an argument over how the repository
-should be labelled - different parts of the system want different
-labels on that.  selinux is sometimes a nightmare.
+Build Time: 88 min 46 sec
 
-Should be fixed now.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+Errors: 0
+Warnings: 5
+Section Mismatches: 4
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     12 warnings    2 mismatches  : arm64-allmodconfig
+     10 warnings    2 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 5
+	 16 ../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	  2 ../drivers/staging/iio/frequency/ad9832.c:214:11: warning: 'st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/scsi/hpsa.c:8223:40: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/gpio/gpiolib-acpi.c:925:9: warning: 'lflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/gpio/gpiolib-acpi.c:925:7: warning: 'dflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+Section Mismatch Summary: 4
+	  1 WARNING: vmlinux.o(.text+0x791ca4): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+	  1 WARNING: vmlinux.o(.text+0x548560): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+	  1 WARNING: drivers/built-in.o(.text+0x1a365c): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+	  1 WARNING: drivers/built-in.o(.text+0x1105d8): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 12 warnings, 2 section mismatches
+
+Warnings:
+	../drivers/gpio/gpiolib-acpi.c:925:9: warning: 'lflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpio/gpiolib-acpi.c:925:7: warning: 'dflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/frequency/ad9832.c:214:11: warning: 'st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/scsi/hpsa.c:8223:40: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+
+Section Mismatches:
+	WARNING: drivers/built-in.o(.text+0x1a365c): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+	WARNING: vmlinux.o(.text+0x791ca4): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 10 warnings, 2 section mismatches
+
+Warnings:
+	../drivers/scsi/hpsa.c:8223:40: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/iio/frequency/ad9832.c:214:11: warning: 'st' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+	../drivers/staging/vc04_services/interface/vchiq_arm/vchiq_killable.h:67:0: warning: "mutex_lock_interruptible" redefined
+
+Section Mismatches:
+	WARNING: drivers/built-in.o(.text+0x1105d8): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+	WARNING: vmlinux.o(.text+0x548560): Section mismatch in reference from the function fsl_guts_probe() to the function .init.text:of_flat_dt_get_machine_name()
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpio/gpiolib-acpi.c:925:9: warning: 'lflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpio/gpiolib-acpi.c:925:7: warning: 'dflags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
