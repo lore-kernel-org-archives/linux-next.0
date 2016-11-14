@@ -1,34 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the pm tree
-Date: Mon, 14 Nov 2016 10:40:09 +1100
-Message-ID: <20161114104009.57b7e64b@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: build warning after merge of the pm tree
+Date: Mon, 14 Nov 2016 01:03:52 +0100
+Message-ID: <2357318.aIcIp7uAlP@vostro.rjw.lan>
+References: <20161114104009.57b7e64b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42763 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753676AbcKMXkM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 13 Nov 2016 18:40:12 -0500
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:51465 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750866AbcKMX4V (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Sun, 13 Nov 2016 18:56:21 -0500
+In-Reply-To: <20161114104009.57b7e64b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
 
-Hi Rafael,
+On Monday, November 14, 2016 10:40:09 AM Stephen Rothwell wrote:
+> Hi Rafael,
 
-After merging the pm tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Hi Stephen,
 
-drivers/cpufreq/powernv-cpufreq.c: In function 'gpstate_timer_handler':
-drivers/cpufreq/powernv-cpufreq.c:642:5: warning: 'lpstate_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  if (gpstate_idx != gpstates->last_lpstate_idx)
-     ^
+> After merging the pm tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> drivers/cpufreq/powernv-cpufreq.c: In function 'gpstate_timer_handler':
+> drivers/cpufreq/powernv-cpufreq.c:642:5: warning: 'lpstate_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   if (gpstate_idx != gpstates->last_lpstate_idx)
+>      ^
+> 
+> Introduced by commit
+> 
+>   20b15b766354 ("cpufreq: powernv: Use PMCR to verify global and local pstate")
 
-Introduced by commit
+Thanks for the notice!
 
-  20b15b766354 ("cpufreq: powernv: Use PMCR to verify global and local pstate")
+Akshay, any thoughts?
 
--- 
-Cheers,
-Stephen Rothwell
+Thanks,
+Rafael
