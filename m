@@ -1,38 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound tree with the jc_docs tree
-Date: Mon, 14 Nov 2016 11:18:52 +1100
-Message-ID: <20161114111852.5a9b3f87@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 14 Nov 2016 11:28:01 +1100
+Message-ID: <20161114112801.46392f36@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Takashi Iwai <tiwai@suse.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@s-opensource.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48841 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751599AbcKNA2E (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 13 Nov 2016 19:28:04 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 
-Hi Takashi,
+Hi all,
 
-Today's linux-next merge of the sound tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  Documentation/sound/alsa/alsa-parameters.txt
+sound/soc/codecs/wm_adsp.c: In function 'wm_coeff_write_acked_control':
+sound/soc/codecs/wm_adsp.c:791:8: error: implicit declaration of function 'wm_coeff_base_reg' [-Werror=implicit-function-declaration]
+  ret = wm_coeff_base_reg(ctl, &reg);
+        ^
 
-between commit:
+Caused by commit
 
-  8c27ceff3604 ("docs: fix locations of several documents that got moved")
+  f4f0c4c60c39 ("ASoC: wm_adsp: Signal firmware shutdown through event control")
 
-from the jc_docs tree and commit:
-
-  3a5182c04a02 ("ALSA: doc: Remove alsa-parameters.txt")
-
-from the sound tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I have used the sound-asoc tree from next-20161111 for today.
 
 -- 
 Cheers,
