@@ -1,46 +1,64 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: manual merge of the sound tree with the jc_docs
- tree
-Date: Sun, 13 Nov 2016 17:56:28 -0700
-Message-ID: <20161113175628.7906efa8@lwn.net>
-References: <20161114111553.533d5615@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Mon, 14 Nov 2016 13:09:02 +1100
+Message-ID: <20161114130902.532c3c64@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161114111553.533d5615@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Takashi Iwai <tiwai@suse.de>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, SeongJae Park <sj38.park@gmail.com>
+To: Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 14 Nov 2016 11:15:53 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Greg,
 
-> Today's linux-next merge of the sound tree got a conflict in:
-> 
->   Documentation/index.rst
-> 
-> between commits:
-> 
->   799a545bb938 ("tpm: move documentation under Documentation/security")
->   ba42c574fc8b ("Documentation: Add HOWTO Korean translation into rst based build system")
-> 
-> from the jc_docs tree and commit:
-> 
->   8551914a5e19 ("ALSA: doc: ReSTize alsa-driver-api document")
-> 
-> from the sound tree.
+Today's linux-next merge of the driver-core tree got a conflict in:
 
-Sigh.  I'm glad this work is being done, but if we're going to create
-some coordinated documentation it might be good to involve the docs
-maintainer when doing it...
+  drivers/base/power/main.c
 
-In this case, I would have liked the chance to comment.  This
-documentation belongs in the driver-api document, not the top-level one.
-So, in an ideal world, I'd like to see this stuff moved there, preferably
-with the patches going though the docs tree.
+between commit:
 
-(Thanks, Stephen, for fixing it up).
+  6f75c3fd56da ("PM / sleep: don't suspend parent when async child suspend_{noirq, late} fails")
 
-jon
+from the pm tree and commit:
+
+  8c73b4288496 ("PM / sleep: Make async suspend/resume of devices use device links")
+
+from the driver-core tree.
+
+I fixed it up (maybe .. see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/base/power/main.c
+index 2932a5bd892f,04bcb11ed8de..000000000000
+--- a/drivers/base/power/main.c
++++ b/drivers/base/power/main.c
+@@@ -1027,8 -1085,6 +1085,8 @@@ static int __device_suspend_noirq(struc
+  	TRACE_DEVICE(dev);
+  	TRACE_SUSPEND(0);
+  
+- 	dpm_wait_for_children(dev, async);
+++	dpm_wait_for_subordinate(dev, async);
+ +
+  	if (async_error)
+  		goto Complete;
+  
+@@@ -1174,8 -1232,6 +1232,8 @@@ static int __device_suspend_late(struc
+  
+  	__pm_runtime_disable(dev, false);
+  
+- 	dpm_wait_for_children(dev, async);
+++	dpm_wait_for_subordinate(dev, async);
+ +
+  	if (async_error)
+  		goto Complete;
+  
