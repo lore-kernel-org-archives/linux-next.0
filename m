@@ -1,53 +1,35 @@
-From: Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
-Subject: Re: linux-next: build warning after merge of the pm tree
-Date: Mon, 14 Nov 2016 14:19:33 +0530
-Message-ID: <8b5d3227-b5e4-c45c-3703-aa17a1584893@linux.vnet.ibm.com>
-References: <20161114104009.57b7e64b@canb.auug.org.au>
- <2357318.aIcIp7uAlP@vostro.rjw.lan>
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 14 Nov 2016 09:45:14 +0000
+Message-ID: <1479116714.18450.11.camel@rf-debian.wolfsonmicro.main>
+References: <20161114112801.46392f36@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2357318.aIcIp7uAlP@vostro.rjw.lan>
+In-Reply-To: <20161114112801.46392f36@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Rafeal,
+Yes, it's because Mark applied a chain of patches but missed the first
+patch in the chain that added the wm_coeff_base_reg() function
 
-Good catch, I need to set lpstate_idx = gpstate_idx.
-I will send a patch which fixes this commit.
-
-Thanks Stephen for reporting it. :)
-
-Regards
-Akshay Adiga
-
-On 11/14/2016 05:33 AM, Rafael J. Wysocki wrote:
-> On Monday, November 14, 2016 10:40:09 AM Stephen Rothwell wrote:
-> > Hi Rafael,
->
-> Hi Stephen,
->
-> > After merging the pm tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> >
-> > drivers/cpufreq/powernv-cpufreq.c: In function 'gpstate_timer_handler':
-> > drivers/cpufreq/powernv-cpufreq.c:642:5: warning: 'lpstate_idx' may
-> be used uninitialized in this function [-Wmaybe-uninitialized]
-> >   if (gpstate_idx != gpstates->last_lpstate_idx)
-> >      ^
-> >
-> > Introduced by commit
-> >
-> >   20b15b766354 ("cpufreq: powernv: Use PMCR to verify global and
-> local pstate")
->
-> Thanks for the notice!
->
-> Akshay, any thoughts?
->
-> Thanks,
-> Rafael
->
+On Mon, 2016-11-14 at 11:28 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> sound/soc/codecs/wm_adsp.c: In function 'wm_coeff_write_acked_control':
+> sound/soc/codecs/wm_adsp.c:791:8: error: implicit declaration of function 'wm_coeff_base_reg' [-Werror=implicit-function-declaration]
+>   ret = wm_coeff_base_reg(ctl, &reg);
+>         ^
+> 
+> Caused by commit
+> 
+>   f4f0c4c60c39 ("ASoC: wm_adsp: Signal firmware shutdown through event control")
+> 
+> I have used the sound-asoc tree from next-20161111 for today.
+> 
