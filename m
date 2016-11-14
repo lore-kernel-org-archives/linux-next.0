@@ -1,43 +1,46 @@
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: linux-next: Tree for Nov 14 (drivers/cpufreq/intel_pstate.c)
-Date: Mon, 14 Nov 2016 10:17:46 -0800
-Message-ID: <1479147466.6544.21.camel@linux.intel.com>
-References: <20161114182351.434e9c57@canb.auug.org.au>
-         <e7f4138c-709a-b60f-e6b8-9ef4dc418d7f@infradead.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the driver-core tree with the pm tree
+Date: Mon, 14 Nov 2016 22:07:06 +0100
+Message-ID: <8505055.Ay02BoB5Vi@vostro.rjw.lan>
+References: <20161114130902.532c3c64@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e7f4138c-709a-b60f-e6b8-9ef4dc418d7f@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Len Brown <lenb@kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Arnd Bergmann <arnd@arndb.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:43122 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933275AbcKNU7d (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Nov 2016 15:59:33 -0500
+In-Reply-To: <20161114130902.532c3c64@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Brian Norris <briannorris@chromium.org>
 
-On Mon, 2016-11-14 at 09:48 -0800, Randy Dunlap wrote:
-> On 11/13/16 23:23, Stephen Rothwell wrote:
-> > 
-> > Hi all,
-> > 
-> > Changes since 20161111:
-> > 
+On Monday, November 14, 2016 01:09:02 PM Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> on i386, when CONFIG_ACPI is not enabled:
+> Today's linux-next merge of the driver-core tree got a conflict in:
 > 
-> ../drivers/cpufreq/intel_pstate.c: In function 'copy_cpu_funcs':
-> ../drivers/cpufreq/intel_pstate.c:1798:2: error: too few arguments to
-> function 'intel_pstate_use_acpi_profile'
->   intel_pstate_use_acpi_profile();
->   ^
-> ../drivers/cpufreq/intel_pstate.c:1782:20: note: declared here
->  static inline void intel_pstate_use_acpi_profile(struct pstate_funcs
-> *funcs)
+>   drivers/base/power/main.c
 > 
-                    ^
-[PATCH] cpufreq: intel_pstate: fix intel_pstate_use_acpi_profile helper
-from Arnd Bergmann <arnd@arndb.de>
-fixes this. 
-But I am resubmitting the original patch as this is a compile issue.
+> between commit:
+> 
+>   6f75c3fd56da ("PM / sleep: don't suspend parent when async child suspend_{noirq, late} fails")
+> 
+> from the pm tree and commit:
+> 
+>   8c73b4288496 ("PM / sleep: Make async suspend/resume of devices use device links")
+> 
+> from the driver-core tree.
 
-Thanks,
-Srinivas
+Well, right.  The device links series predates the Brian's fix (which is in -rc5
+already, BTW).
+
+> I fixed it up (maybe .. see below) and can carry the fix as necessary.
+
+That's the correct one, thanks Stephen!
+
+Cheers,
+Rafael
