@@ -1,39 +1,235 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: build warning after merge of the tpmdd tree
-Date: Mon, 14 Nov 2016 18:13:41 -0800
-Message-ID: <20161115021341.7tt6acyumfueq2kf@intel.com>
-References: <20161115120107.35e7db48@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the powerpc tree
+Date: Tue, 15 Nov 2016 14:52:50 +1100
+Message-ID: <20161115145250.4f38496e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161115120107.35e7db48@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nayna Jain <nayna@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60691 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754349AbcKODwx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Nov 2016 22:52:53 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
 
-On Tue, Nov 15, 2016 at 12:01:07PM +1100, Stephen Rothwell wrote:
-> Hi Jarkko,
-> 
-> After merging the tpmdd tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/char/tpm/tpm_of.c: In function 'read_log_of':
-> drivers/char/tpm/tpm_of.c:37:8: warning: 'np' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   sizep = of_get_property(np, "linux,sml-size", NULL);
->         ^
-> 
-> Introduced by commit
-> 
->   4a45d9669ac1 ("tpm: replace of_find_node_by_name() with dev of_node property")
-> 
-> This commit is just wrong :-(
+Hi Andrew,
 
-It really is. I'll drop it from my tree.
+Today's linux-next merge of the akpm tree got a conflict in:
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+  arch/powerpc/kernel/module_64.c
 
-/Jarkko
+between commit:
+
+  9f751b82b491 ("powerpc/module: Add support for R_PPC64_REL32 relocations")
+
+from the powerpc tree and patch:
+
+  "powerpc: factor out relocation code in module_64.c"
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/powerpc/kernel/module_64.c
+index bb1807184bad,61baad036639..000000000000
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@@ -507,6 -507,181 +507,186 @@@ static int restore_r2(u32 *instruction
+  	return 1;
+  }
+  
++ static int elf64_apply_relocate_add_item(const Elf64_Shdr *sechdrs,
++ 					 const char *strtab,
++ 					 const Elf64_Rela *rela,
++ 					 const Elf64_Sym *sym,
++ 					 unsigned long *location,
++ 					 unsigned long value,
++ 					 unsigned long my_r2,
++ 					 const char *obj_name,
++ 					 struct module *me)
++ {
++ 	switch (ELF64_R_TYPE(rela->r_info)) {
++ 	case R_PPC64_ADDR32:
++ 		/* Simply set it */
++ 		*(u32 *)location = value;
++ 		break;
++ 
++ 	case R_PPC64_ADDR64:
++ 		/* Simply set it */
++ 		*(unsigned long *)location = value;
++ 		break;
++ 
++ 	case R_PPC64_TOC:
++ 		*(unsigned long *)location = my_r2;
++ 		break;
++ 
++ 	case R_PPC64_TOC16:
++ 		/* Subtract TOC pointer */
++ 		value -= my_r2;
++ 		if (value + 0x8000 > 0xffff) {
++ 			pr_err("%s: bad TOC16 relocation (0x%lx)\n",
++ 			       obj_name, value);
++ 			return -ENOEXEC;
++ 		}
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xffff)
++ 			| (value & 0xffff);
++ 		break;
++ 
++ 	case R_PPC64_TOC16_LO:
++ 		/* Subtract TOC pointer */
++ 		value -= my_r2;
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xffff)
++ 			| (value & 0xffff);
++ 		break;
++ 
++ 	case R_PPC64_TOC16_DS:
++ 		/* Subtract TOC pointer */
++ 		value -= my_r2;
++ 		if ((value & 3) != 0 || value + 0x8000 > 0xffff) {
++ 			pr_err("%s: bad TOC16_DS relocation (0x%lx)\n",
++ 			       obj_name, value);
++ 			return -ENOEXEC;
++ 		}
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xfffc)
++ 			| (value & 0xfffc);
++ 		break;
++ 
++ 	case R_PPC64_TOC16_LO_DS:
++ 		/* Subtract TOC pointer */
++ 		value -= my_r2;
++ 		if ((value & 3) != 0) {
++ 			pr_err("%s: bad TOC16_LO_DS relocation (0x%lx)\n",
++ 			       obj_name, value);
++ 			return -ENOEXEC;
++ 		}
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xfffc)
++ 			| (value & 0xfffc);
++ 		break;
++ 
++ 	case R_PPC64_TOC16_HA:
++ 		/* Subtract TOC pointer */
++ 		value -= my_r2;
++ 		value = ((value + 0x8000) >> 16);
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xffff)
++ 			| (value & 0xffff);
++ 		break;
++ 
++ 	case R_PPC_REL24:
++ 		/* FIXME: Handle weak symbols here --RR */
++ 		if (sym->st_shndx == SHN_UNDEF) {
++ 			/* External: go via stub */
++ 			value = stub_for_addr(sechdrs, value, me);
++ 			if (!value)
++ 				return -ENOENT;
++ 			if (!restore_r2((u32 *)location + 1, me))
++ 				return -ENOEXEC;
++ 
++ 			squash_toc_save_inst(strtab + sym->st_name, value);
++ 		} else
++ 			value += local_entry_offset(sym);
++ 
++ 		/* Convert value to relative */
++ 		value -= (unsigned long)location;
++ 		if (value + 0x2000000 > 0x3ffffff || (value & 3) != 0) {
++ 			pr_err("%s: REL24 %li out of range!\n",
++ 			       obj_name, (long int)value);
++ 			return -ENOEXEC;
++ 		}
++ 
++ 		/* Only replace bits 2 through 26 */
++ 		*(uint32_t *)location
++ 			= (*(uint32_t *)location & ~0x03fffffc)
++ 			| (value & 0x03fffffc);
++ 		break;
++ 
++ 	case R_PPC64_REL64:
++ 		/* 64 bits relative (used by features fixups) */
++ 		*location = value - (unsigned long)location;
++ 		break;
++ 
+++	case R_PPC64_REL32:
+++		/* 32 bits relative (used by relative exception tables) */
+++		*(u32 *)location = value - (unsigned long)location;
+++		break;
+++
++ 	case R_PPC64_TOCSAVE:
++ 		/*
++ 		 * Marker reloc indicates we don't have to save r2.
++ 		 * That would only save us one instruction, so ignore
++ 		 * it.
++ 		 */
++ 		break;
++ 
++ 	case R_PPC64_ENTRY:
++ 		/*
++ 		 * Optimize ELFv2 large code model entry point if
++ 		 * the TOC is within 2GB range of current location.
++ 		 */
++ 		value = my_r2 - (unsigned long)location;
++ 		if (value + 0x80008000 > 0xffffffff)
++ 			break;
++ 		/*
++ 		 * Check for the large code model prolog sequence:
++ 		 *	ld r2, ...(r12)
++ 		 *	add r2, r2, r12
++ 		 */
++ 		if ((((uint32_t *)location)[0] & ~0xfffc)
++ 		    != 0xe84c0000)
++ 			break;
++ 		if (((uint32_t *)location)[1] != 0x7c426214)
++ 			break;
++ 		/*
++ 		 * If found, replace it with:
++ 		 *	addis r2, r12, (.TOC.-func)@ha
++ 		 *	addi r2, r12, (.TOC.-func)@l
++ 		 */
++ 		((uint32_t *)location)[0] = 0x3c4c0000 + PPC_HA(value);
++ 		((uint32_t *)location)[1] = 0x38420000 + PPC_LO(value);
++ 		break;
++ 
++ 	case R_PPC64_REL16_HA:
++ 		/* Subtract location pointer */
++ 		value -= (unsigned long)location;
++ 		value = ((value + 0x8000) >> 16);
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xffff)
++ 			| (value & 0xffff);
++ 		break;
++ 
++ 	case R_PPC64_REL16_LO:
++ 		/* Subtract location pointer */
++ 		value -= (unsigned long)location;
++ 		*((uint16_t *) location)
++ 			= (*((uint16_t *) location) & ~0xffff)
++ 			| (value & 0xffff);
++ 		break;
++ 
++ 	default:
++ 		pr_err("%s: Unknown ADD relocation: %lu\n", obj_name,
++ 		       (unsigned long)ELF64_R_TYPE(rela->r_info));
++ 		return -ENOEXEC;
++ 	}
++ 
++ 	return 0;
++ }
++ 
+  int apply_relocate_add(Elf64_Shdr *sechdrs,
+  		       const char *strtab,
+  		       unsigned int symindex,
