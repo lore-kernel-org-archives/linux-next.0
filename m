@@ -1,34 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Nov 16
-Date: Thu, 17 Nov 2016 09:54:58 +1100
-Message-ID: <20161117095458.36c19852@canb.auug.org.au>
-References: <20161116152445.7a7902f6@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 17 Nov 2016 10:36:28 +1100
+Message-ID: <20161117103628.4cf3e73b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56371 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37927 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1422751AbcKPWzB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 16 Nov 2016 17:55:01 -0500
-In-Reply-To: <20161116152445.7a7902f6@canb.auug.org.au>
+        id S1753838AbcKPXgb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 16 Nov 2016 18:36:31 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarod Wilson <jarod@redhat.com>, Sunil Goutham <sgoutham@cavium.com>
 
 Hi all,
 
-On Wed, 16 Nov 2016 15:24:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Changes since 20161115:
-> 
-> Non-merge commits (relative to Linus' tree): 5617
->  5979 files changed, 365287 insertions(+), 131171 deletions(-)
+Today's linux-next merge of the net-next tree got a conflict in:
 
-I forgot to mention that there will be no linux-next releases on Friday
-(tomorrow) or Monday.
+  drivers/net/ethernet/cavium/thunder/nicvf_main.c
+
+between commit:
+
+  712c31853440 ("net: thunderx: Program LMAC credits based on MTU")
+
+from the net tree and commit:
+
+  109cc16526c6 ("ethernet/cavium: use core min/max MTU checking")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/net/ethernet/cavium/thunder/nicvf_main.c
+index 8a37012c9c89,b192712c93b7..000000000000
+--- a/drivers/net/ethernet/cavium/thunder/nicvf_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nicvf_main.c
+@@@ -1292,19 -1312,10 +1292,13 @@@ static int nicvf_change_mtu(struct net_
+  {
+  	struct nicvf *nic = netdev_priv(netdev);
+  
+- 	if (new_mtu > NIC_HW_MAX_FRS)
+- 		return -EINVAL;
+- 
+- 	if (new_mtu < NIC_HW_MIN_FRS)
+- 		return -EINVAL;
+- 
+ +	netdev->mtu = new_mtu;
+ +
+ +	if (!netif_running(netdev))
+ +		return 0;
+ +
+  	if (nicvf_update_hw_max_frs(nic, new_mtu))
+  		return -EINVAL;
+ -	netdev->mtu = new_mtu;
+ -	nic->mtu = new_mtu;
+  
+  	return 0;
+  }
