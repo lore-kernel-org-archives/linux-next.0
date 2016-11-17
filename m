@@ -1,66 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Date: Thu, 17 Nov 2016 14:04:04 +1100
-Message-ID: <20161117140404.0f960966@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the tip tree
+Date: Thu, 17 Nov 2016 14:22:27 +1100
+Message-ID: <20161117142227.7753ef12@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47313 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35435 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752291AbcKQDEH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 16 Nov 2016 22:04:07 -0500
+        id S1752897AbcKQDWa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 16 Nov 2016 22:22:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, Thomas Lendacky <Thomas.Lendacky@amd.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Borntraeger <borntraeger@de.ibm.com>, Eric Dumazet <edumazet@google.com>
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  drivers/net/ethernet/amd/Kconfig
+net/core/dev.c: In function 'sk_busy_loop':
+net/core/dev.c:5065:3: error: implicit declaration of function 'cpu_relax_lowlatency' [-Werror=implicit-function-declaration]
+   cpu_relax_lowlatency();
+   ^
 
-between commits:
+Caused by commit
 
-  e78332b2285d ("amd-xgbe: Add ECC status support for the device memory")
-  abf0a1c2b26a ("amd-xgbe: Add support for SFP+ modules")
+  5bd0b85ba8bb ("locking/core, arch: Remove cpu_relax_lowlatency()")
 
-from the net-next tree and commit:
+interacting with commit
 
-  d1cbfd771ce8 ("ptp_clock: Allow for it to be optional")
+  217f69743681 ("net: busy-poll: allow preemption in sk_busy_loop()")
 
-from the tip tree.
+from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have applied the following merge fix patch.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 17 Nov 2016 14:13:05 +1100
+Subject: [PATCH] net: busy-poll: fix up for cpu_relax_lowlatency() removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index d29d538ec5ad..6b9f8eb55b62 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5062,7 +5062,7 @@ bool sk_busy_loop(struct sock *sk, int nonblock)
+ 				return rc;
+ 			goto restart;
+ 		}
+-		cpu_relax_lowlatency();
++		cpu_relax();
+ 	}
+ 	if (napi_poll)
+ 		busy_poll_stop(napi, have_poll_lock);
+-- 
+2.10.2
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/ethernet/amd/Kconfig
-index 7ab6efbe4189,713ea7ad22c3..000000000000
---- a/drivers/net/ethernet/amd/Kconfig
-+++ b/drivers/net/ethernet/amd/Kconfig
-@@@ -173,13 -173,11 +173,13 @@@ config SUNLANC
-  
-  config AMD_XGBE
-  	tristate "AMD 10GbE Ethernet driver"
- -	depends on ((OF_NET && OF_ADDRESS) || ACPI) && HAS_IOMEM && HAS_DMA
- -	depends on ARM64 || COMPILE_TEST
- +	depends on ((OF_NET && OF_ADDRESS) || ACPI || PCI) && HAS_IOMEM && HAS_DMA
- +	depends on X86 || ARM64 || COMPILE_TEST
-  	select BITREVERSE
-  	select CRC32
-- 	select PTP_1588_CLOCK
- +	select PHYLIB
- +	select AMD_XGBE_HAVE_ECC if X86
-+ 	imply PTP_1588_CLOCK
-  	---help---
-  	  This driver supports the AMD 10GbE Ethernet device found on an
-  	  AMD SoC.
