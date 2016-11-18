@@ -1,67 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-Date: Fri, 18 Nov 2016 08:31:52 +1100
-Message-ID: <20161118083152.1ca4264b@canb.auug.org.au>
-References: <20161117145035.3891820c@canb.auug.org.au>
-        <alpine.DEB.2.20.1611170805510.3697@nanos>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: manual merge of the block tree with the btrfs-kdave
+ tree
+Date: Fri, 18 Nov 2016 18:47:56 +0100
+Message-ID: <20161118174756.GA12522@suse.cz>
+References: <20161117130134.682bb6b4@canb.auug.org.au>
+ <5d5a631b-e18e-aa2b-67bb-e2df6d8bef15@kernel.dk>
+ <20161117132301.GA26525@lst.de>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59901 "EHLO ozlabs.org"
+Received: from mx2.suse.de ([195.135.220.15]:39325 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751905AbcKQVb4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 17 Nov 2016 16:31:56 -0500
-In-Reply-To: <alpine.DEB.2.20.1611170805510.3697@nanos>
+        id S1751971AbcKRRsB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 18 Nov 2016 12:48:01 -0500
+Content-Disposition: inline
+In-Reply-To: <20161117132301.GA26525@lst.de>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fenghua Yu <fenghua.yu@intel.com>, He Chen <he.chen@linux.intel.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On Thu, 17 Nov 2016 08:07:27 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Thu, 17 Nov 2016, Stephen Rothwell wrote:
-> > + /* Please keep the leaf sorted by cpuid_bit.level for faster search. */
-> > + static const struct cpuid_bit cpuid_bits[] = {
-> > + 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
-> > + 	{ X86_FEATURE_EPB,              CPUID_ECX,  3, 0x00000006, 0 },
-> > ++	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
-> > ++	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
-> > ++	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
-> > + 	{ X86_FEATURE_INTEL_PT,         CPUID_EBX, 25, 0x00000007, 0 },
-> > + 	{ X86_FEATURE_AVX512_4VNNIW,    CPUID_EDX,  2, 0x00000007, 0 },
-> > + 	{ X86_FEATURE_AVX512_4FMAPS,    CPUID_EDX,  3, 0x00000007, 0 },
-> > + 	{ X86_FEATURE_HW_PSTATE,        CPUID_EDX,  7, 0x80000007, 0 },
-> > + 	{ X86_FEATURE_CPB,              CPUID_EDX,  9, 0x80000007, 0 },
-> > + 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
-> > + 	{ 0, 0, 0, 0, 0 }
-> >   };  
+On Thu, Nov 17, 2016 at 02:23:01PM +0100, Christoph Hellwig wrote:
+> On Wed, Nov 16, 2016 at 07:49:29PM -0700, Jens Axboe wrote:
+> > doesn't look correct, if bio_readpage_error() is called from the 
+> > ->bi_end_io() handler. bi_size is generally zeroed at that time.
 > 
-> This should be
-> 
-> > + static const struct cpuid_bit cpuid_bits[] = {
-> > + 	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
-> > + 	{ X86_FEATURE_EPB,              CPUID_ECX,  3, 0x00000006, 0 },
-> > + 	{ X86_FEATURE_INTEL_PT,         CPUID_EBX, 25, 0x00000007, 0 },
-> > + 	{ X86_FEATURE_AVX512_4VNNIW,    CPUID_EDX,  2, 0x00000007, 0 },
-> > + 	{ X86_FEATURE_AVX512_4FMAPS,    CPUID_EDX,  3, 0x00000007, 0 },
-> > ++	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
-> > ++	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
-> > ++	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
-> > + 	{ X86_FEATURE_HW_PSTATE,        CPUID_EDX,  7, 0x80000007, 0 },
-> > + 	{ X86_FEATURE_CPB,              CPUID_EDX,  9, 0x80000007, 0 },
-> > + 	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
-> > + 	{ 0, 0, 0, 0, 0 }
-> >   };  
+> At least some of these bios are magic btrfs-internal ones that never
+> reach the block layer.  But I don't think all are, and both the new
+> code and one of the old cases are broken.  David, can you drop
+> this one patch for now, and I'll restart the discussion on the
+> failfast behavior on the btrfs list?
 
-Thanks for letting me know.
-
-> tip will carry a proper resolution today.
-
-Too easy.
-
--- 
-Cheers,
-Stephen Rothwell
+Ok, updated in today's for-next snapshot.
