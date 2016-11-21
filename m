@@ -1,118 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Tue, 22 Nov 2016 10:34:58 +1100
-Message-ID: <20161122103458.1f10bcbc@canb.auug.org.au>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: linux-next: manual merge of the rockchip tree with the arm-soc tree
+Date: Mon, 21 Nov 2016 15:38:17 -0800
+Message-ID: <CAOesGMhm2n3-7zLD4xUdJGJ7B6p9J_kNdNU-b-z7w+NXGZu_0g@mail.gmail.com>
+References: <20161122101908.2e967e42@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:36364 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752787AbcKUXiT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2016 18:38:19 -0500
+Received: by mail-qk0-f196.google.com with SMTP id h201so249266qke.3
+        for <linux-next@vger.kernel.org>; Mon, 21 Nov 2016 15:38:18 -0800 (PST)
+In-Reply-To: <20161122101908.2e967e42@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Andy Yan <andy.yan@rock-chips.com>
 
-Hi Catalin,
+Hi,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+On Mon, Nov 21, 2016 at 3:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Heiko,
+>
+> Today's linux-next merge of the rockchip tree got a conflict in:
+>
+>   arch/arm64/configs/defconfig
+>
+> between commit:
+>
+>   a59294b2f7c7 ("ARM64: defconfig: Enable MMC related configs")
+>
+> from the arm-soc tree and commit:
+>
+>   5295a3157348 ("arm64: defconfig: enable RK808 components")
+>
+> from the rockchip tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-  arch/arm64/include/asm/cpufeature.h
+This sounds fine, and it's a conflict we'll resolve when we merge this
+material from Heiko.
 
-between commit:
 
-  272d01bd790f ("arm64: Fix circular include of asm/lse.h through linux/jump_label.h")
-
-from Linus' tree and commits:
-
-  a4023f682739 ("arm64: Add hypervisor safe helper for checking constant capabilities")
-  82e0191a1aa1 ("arm64: Support systems without FP/ASIMD")
-
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-I also added this merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Nov 2016 10:30:40 +1100
-Subject: [PATCH] arm64: merge fix for code movement to cpucaps.h
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm64/include/asm/cpucaps.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/include/asm/cpucaps.h b/arch/arm64/include/asm/cpucaps.h
-index 87b446535185..4174f09678c4 100644
---- a/arch/arm64/include/asm/cpucaps.h
-+++ b/arch/arm64/include/asm/cpucaps.h
-@@ -34,7 +34,8 @@
- #define ARM64_HAS_32BIT_EL0			13
- #define ARM64_HYP_OFFSET_LOW			14
- #define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
-+#define ARM64_HAS_NO_FPSIMD			16
- 
--#define ARM64_NCAPS				16
-+#define ARM64_NCAPS				17
- 
- #endif /* __ASM_CPUCAPS_H */
--- 
-2.10.2
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/include/asm/cpufeature.h
-index 0bc0b1de90c4,0ef718b67c54..000000000000
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@@ -9,9 -9,6 +9,7 @@@
-  #ifndef __ASM_CPUFEATURE_H
-  #define __ASM_CPUFEATURE_H
-  
-- #include <linux/jump_label.h>
-- 
- +#include <asm/cpucaps.h>
-  #include <asm/hwcap.h>
-  #include <asm/sysreg.h>
-  
-@@@ -25,8 -22,34 +23,10 @@@
-  #define MAX_CPU_FEATURES	(8 * sizeof(elf_hwcap))
-  #define cpu_feature(x)		ilog2(HWCAP_ ## x)
-  
- -#define ARM64_WORKAROUND_CLEAN_CACHE		0
- -#define ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE	1
- -#define ARM64_WORKAROUND_845719			2
- -#define ARM64_HAS_SYSREG_GIC_CPUIF		3
- -#define ARM64_HAS_PAN				4
- -#define ARM64_HAS_LSE_ATOMICS			5
- -#define ARM64_WORKAROUND_CAVIUM_23154		6
- -#define ARM64_WORKAROUND_834220			7
- -#define ARM64_HAS_NO_HW_PREFETCH		8
- -#define ARM64_HAS_UAO				9
- -#define ARM64_ALT_PAN_NOT_UAO			10
- -#define ARM64_HAS_VIRT_HOST_EXTN		11
- -#define ARM64_WORKAROUND_CAVIUM_27456		12
- -#define ARM64_HAS_32BIT_EL0			13
- -#define ARM64_HYP_OFFSET_LOW			14
- -#define ARM64_MISMATCHED_CACHE_LINE_SIZE	15
- -/*
- - * The macro below will be moved to asm/cpucaps.h together with the
- - * ARM64_NCAPS update.
- - */
- -#define ARM64_HAS_NO_FPSIMD			16
- -
- -#define ARM64_NCAPS				17
- -
-  #ifndef __ASSEMBLY__
-  
-+ #include <linux/bug.h>
-+ #include <linux/jump_label.h>
-  #include <linux/kernel.h>
-  
-  /* CPU feature register tracking */
+-Olof
