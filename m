@@ -1,50 +1,57 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the userns tree with Linus' tree
-Date: Tue, 22 Nov 2016 11:44:25 -0600
-Message-ID: <87r363h0jq.fsf@xmission.com>
-References: <20161122191719.3e438d1e@canb.auug.org.au>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
+Date: Tue, 22 Nov 2016 16:25:12 -0500
+Message-ID: <CAHC9VhQCwE3FKv_1NUrpC3D-gbQQUkASvu0Wak8P8zLC+WFF+Q@mail.gmail.com>
+References: <20161122162936.674b7531@canb.auug.org.au> <20161122103538.GS27818@madcap2.tricolour.ca>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161122191719.3e438d1e@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 22 Nov 2016 19:17:19 +1100")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-vk0-f50.google.com ([209.85.213.50]:34622 "EHLO
+        mail-vk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933511AbcKVVZO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 16:25:14 -0500
+Received: by mail-vk0-f50.google.com with SMTP id x186so23537244vkd.1
+        for <linux-next@vger.kernel.org>; Tue, 22 Nov 2016 13:25:14 -0800 (PST)
+In-Reply-To: <20161122103538.GS27818@madcap2.tricolour.ca>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Tue, Nov 22, 2016 at 5:35 AM, Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2016-11-22 16:29, Stephen Rothwell wrote:
+>> Hi Paul,
+>
+> Hi Stephen,
+>
+>> Today's linux-next merge of the audit tree got a conflict in:
+>>
+>>   include/uapi/linux/audit.h
+>>
+>> between commit:
+>>
+>>   7ff89ac608d9 ("audit: add exclude filter extension to feature bitmap")
+>>
+>> from Linus' tree and commit:
+>>
+>>   0489410368df ("audit: add support for session ID user filter")
+>>
+>> from the audit tree.
+>
+> Ok, I expected this conflict...
+>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
+>
+> The fix looks as expected.  Thanks!
 
-> Hi Eric,
->
-> Today's linux-next merge of the userns tree got conflicts in:
->
->   arch/alpha/kernel/ptrace.c
->   arch/blackfin/kernel/ptrace.c
->   arch/cris/arch-v32/kernel/ptrace.c
->   arch/ia64/kernel/ptrace.c
->   arch/mips/kernel/ptrace32.c
->   arch/powerpc/kernel/ptrace32.c
->   include/linux/mm.h
->   kernel/ptrace.c
->   mm/memory.c
->   mm/nommu.c
->
-> between commit:
->
->   442486ec1096 ("mm: replace __access_remote_vm() write parameter with gup_flags")
-> (and others)
->
-> from Linus' tree and commit:
->
->   0cabf9a438e1 ("ptrace: Don't allow accessing an undumpable mm")
->
-> from the userns tree.
->
-> I just used the version of the userns tree from next-20161117 for today.
-> Please merge v4.9-rc2 and fix up the conflicts (or just rebase onto
-> v4.9-rc2).
+Yes, +1 to what Richard already said; I've had to apply similar
+patches for some of my test kernels.
 
-Will do.  Thank you.
-
-Eric
+-- 
+paul moore
+www.paul-moore.com
