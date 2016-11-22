@@ -1,42 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad commits in the security tree
-Date: Wed, 23 Nov 2016 04:09:07 +1100
-Message-ID: <20161123040907.708bb4cc@canb.auug.org.au>
-References: <20161122215810.60c0cb1f@canb.auug.org.au>
-        <03bf91ac-1f20-1089-79dd-e342c9f610d9@schaufler-ca.com>
+Subject: Re: linux-next: Tree for Nov 22 (ext4 + dax)
+Date: Wed, 23 Nov 2016 04:19:35 +1100
+Message-ID: <20161123041935.6644679f@canb.auug.org.au>
+References: <20161122213032.2a88af29@canb.auug.org.au>
+        <bdfc4395-0df1-15d2-d084-3b84944dcbe7@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56963 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49985 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755406AbcKVRJf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Nov 2016 12:09:35 -0500
-In-Reply-To: <03bf91ac-1f20-1089-79dd-e342c9f610d9@schaufler-ca.com>
+        id S932674AbcKVRTj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Nov 2016 12:19:39 -0500
+In-Reply-To: <bdfc4395-0df1-15d2-d084-3b84944dcbe7@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Linux FS Devel <linux-fsdevel@vger.kernel.org>
 
-Hi Casey,
+Hi Randy,
 
-On Tue, 22 Nov 2016 08:17:24 -0800 Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Tue, 22 Nov 2016 08:48:39 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> On 11/22/2016 2:58 AM, Stephen Rothwell wrote:
-> > Hi James,
-> >
-> > I noticed that there are some commits in the security tree that have no
-> > Signed-off-by from the committer (Casey Schaufler).
-> >  
-> My understanding is that patches I don't write should
-> be Acked, not Signed-off when I commit them. If this is
-> not correct I will address my misconduct.
+> on i386:
+> 
+> I don't see why this is happening but I reproduced it multiple times.
+> 
+> fs/built-in.o: In function `ext4_dax_fault':
+> file.c:(.text+0x6278b): undefined reference to `dax_iomap_fault'
+> file.c:(.text+0x627dc): undefined reference to `dax_iomap_fault'
+> fs/built-in.o: In function `ext4_file_write_iter':
+> file.c:(.text+0x62bbc): undefined reference to `dax_iomap_rw'
+> file.c:(.text+0x62d75): undefined reference to `dax_iomap_rw'
+> fs/built-in.o: In function `ext4_file_read_iter':
+> file.c:(.text+0x63756): undefined reference to `dax_iomap_rw'
+> fs/built-in.o: In function `ext4_block_zero_page_range':
+> inode.c:(.text+0x68c24): undefined reference to `iomap_zero_range'
+> 
+> Full randconfig file is attached.
 
-If you are on the path of a patch to Linus, you need to sign off on the
-patch according to the DCO - see section 11 of
-Documentation/SubmittingPatches (or
-Documentation/process/submitting-patches.rst where it has been moved
-recently).
+CONFIG_FS_IOMAP is not set ...
 
 -- 
 Cheers,
