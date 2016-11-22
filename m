@@ -1,38 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Tue, 22 Nov 2016 19:41:30 +1100
-Message-ID: <20161122194130.4efdd019@canb.auug.org.au>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: build warning after merge of the overlayfs tree
+Date: Tue, 22 Nov 2016 09:41:44 +0100
+Message-ID: <CAJfpegsb5Qg0Y0SRpDC32tq1w2CBzdwMNip5DN-=QoEsfoqTAA@mail.gmail.com>
+References: <20161122111939.0c0ea92a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35626 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755558AbcKVIlq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 03:41:46 -0500
+Received: by mail-oi0-f65.google.com with SMTP id v84so1529314oie.2
+        for <linux-next@vger.kernel.org>; Tue, 22 Nov 2016 00:41:46 -0800 (PST)
+In-Reply-To: <20161122111939.0c0ea92a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Tue, Nov 22, 2016 at 1:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Miklos,
+>
+> After merging the overlayfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>
+> In file included from fs/overlayfs/dir.c:20:0:
+> fs/overlayfs/dir.c: In function 'ovl_set_redirect':
+> fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   int err = vfs_setxattr(dentry, name, value, size, flags);
+>       ^
+> fs/overlayfs/dir.c:788:14: note: 'ret' was declared here
+>   char *buf, *ret;
+>               ^
+>
+> Introduced by commit
+>
+>   496654b0792e ("ovl: redirect on rename-dir")
+>
+> This is not necessarily a false positive (although is is a confusing
+> message): if the kmalloc of "buf" fails and samedir was not set in
+> ovl_get_redirect(), then "return ret" will be executed but "ret" has
+> not been set.
 
-Today's linux-next merge of the clk tree got conflicts in:
+Fixed. Thanks for reporting.
 
-  arch/arm/boot/dts/r8a7779.dtsi
-  arch/arm/boot/dts/r8a7790.dtsi
-  arch/arm/boot/dts/r8a7791.dtsi
-  arch/arm/boot/dts/r8a7792.dtsi
-  arch/arm/boot/dts/r8a7793.dtsi
-  arch/arm/boot/dts/r8a7794.dtsi
-  arch/arm/mach-shmobile/setup-rcar-gen2.c
-  arch/arm64/boot/dts/renesas/r8a7795.dtsi
-  arch/arm64/boot/dts/renesas/r8a7796.dtsi
-  drivers/soc/renesas/Makefile
-
-between various commits from the arm-soc tree and commits from the
-clk tree.
-
-It was just too much at this time of day, so please talk to each other
-and figure out how to fix these up.  I have used the clk tree from
-next-20161117 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+Miklos
