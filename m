@@ -1,147 +1,55 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161122 build: 1 failures 20 warnings (next-20161122)
-Date: Tue, 22 Nov 2016 13:35:26 +0000
-Message-ID: <E1c9BEM-0006Ow-Bs@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59858 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755274AbcKVNff (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 08:35:35 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: manual merge of the char-misc tree with the lightnvm
+ tree
+Date: Tue, 22 Nov 2016 10:45:38 -0500
+Message-ID: <20161122154538.GO2165@windriver.com>
+References: <20161122182908.4c961d64@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161122182908.4c961d64@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier =?iso-8859-1?Q?Gonz=E1lez?= <jg@lightnvm.io>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161122
-Git describe: next-20161122
-Commit: 637aaecae2 Add linux-next specific files for 20161122
+[linux-next: manual merge of the char-misc tree with the lightnvm tree] On 22/11/2016 (Tue 18:29) Stephen Rothwell wrote:
 
-Build Time: 94 min 0 sec
+> Hi all,
+> 
+> Today's linux-next merge of the char-misc tree got a conflict in:
+> 
+>   drivers/lightnvm/core.c
+> 
+> between commit:
+> 
+>   7b0d392f6957 ("lightnvm: remove sysfs configuration interface")
+> 
+> from the lightnvm tree and commit:
+> 
+>   389b2a1c0e90 ("lightnvm: make core.c explicitly non-modular")
+> 
+> from the char-misc tree.
+> 
+> I fixed it up (the former removed the code that was commented by the
+> latter, so I just removed it) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your
+> tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
+> I do wonder why commit 389b2a1c0e90 is in the char-misc tree and not
+> the lightnvm or block trees?
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+It relied on the new macro builtin_misc_device which came in via
+char-misc.  I was going to wait a release but Greg said he'd be willing
+to take the patch in his tree concurrently.
 
-Errors: 1
-Warnings: 20
-Section Mismatches: 0
+P.
+--
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     28 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
-
-Warnings Summary: 20
-	  5 ../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  4 ../drivers/net/ethernet/marvell/mvpp2.c:529:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  3 ../fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  3 ../drivers/net/ethernet/marvell/mvpp2.c:517:34: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  2 ../drivers/scsi/hpsa.c:2033:5: warning: 'sd' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/net/ethernet/marvell/mvpp2.c:537:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  2 ../drivers/net/ethernet/marvell/mvpp2.c:524:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  2 ../drivers/net/ethernet/marvell/mvpp2.c:3375:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  2 ../drivers/net/ethernet/marvell/mvneta_bm.c:128:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/marvell/mvpp2.c:5136:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvpp2.c:5066:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvpp2.c:5011:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/marvell/mvpp2.c:3647:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/marvell/mvpp2.c:3433:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvneta_bm.c:103:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/net/ethernet/marvell/mvneta.c:2023:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvneta.c:1902:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvneta.c:1864:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/net/ethernet/marvell/mvneta.c:1802:42: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/clocksource/timer-nps.c:102:6: warning: 'nps_timer1_freq' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 28 warnings, 0 section mismatches
-
-Warnings:
-	../fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/ethernet/marvell/mvneta_bm.c:103:16: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvneta_bm.c:128:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvneta_bm.c:128:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvneta.c:1802:42: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvneta.c:1864:16: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/marvell/mvneta.c:1902:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/marvell/mvneta.c:2023:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:524:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:517:34: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:517:34: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:529:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:529:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:517:34: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:529:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:537:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:529:30: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:537:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:524:33: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/net/ethernet/marvell/mvpp2.c:3375:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:3375:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:3433:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:3647:47: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:5011:46: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:5066:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/net/ethernet/marvell/mvpp2.c:5136:9: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/scsi/hpsa.c:2033:5: warning: 'sd' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [fs/f2fs/f2fs.ko] undefined!
-
-Warnings:
-	../drivers/clocksource/timer-nps.c:102:6: warning: 'nps_timer1_freq' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/scsi/hpsa.c:2033:5: warning: 'sd' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1300:36: warning: 'dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
-x86_64-defconfig
+> -- 
+> Cheers,
+> Stephen Rothwell
