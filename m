@@ -1,73 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 22 Nov 2016 21:05:11 +1100
-Message-ID: <20161122210511.024ec341@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+Date: Tue, 22 Nov 2016 21:21:14 +1100
+Message-ID: <20161122212114.45ba8b17@canb.auug.org.au>
+References: <20161122195832.0f031e62@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44307 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932234AbcKVKFO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Nov 2016 05:05:14 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kirti Wankhede <kwankhede@nvidia.com>, Neo Jia <cjia@nvidia.com>, Lorenzo Stoakes <lstoakes@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161122195832.0f031e62@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Hi all,
 
-After merging the akpm-current tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Tue, 22 Nov 2016 19:58:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the powerpc tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> Inconsistent kallsyms data
+> Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+> 
+> Which is a vast improvement.  I'll try adding 'KALLSYMS_EXTRA_PASS=1'
+> later and see how it goes.  It would be nice not to need it, though.
 
-drivers/vfio/vfio_iommu_type1.c: In function 'vaddr_get_pfn':
-drivers/vfio/vfio_iommu_type1.c:364:9: error: too few arguments to function 'get_user_pages_remote'
-   ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
-         ^
-In file included from include/linux/scatterlist.h:7:0,
-                 from include/linux/iommu.h:26,
-                 from drivers/vfio/vfio_iommu_type1.c:30:
-include/linux/mm.h:1274:6: note: declared here
- long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
-      ^
-
-Caused by commit
-
-  d6c547ad0c61 ("mm: add locked parameter to get_user_pages_remote()")
-
-interacting with commit
-
-  ea85cf353e4f ("vfio iommu type1: Update argument of vaddr_get_pfn()")
-
-from the vfio tree.
-
-I applied this merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Nov 2016 20:54:27 +1100
-Subject: [PATCH] vfio iommu type1: merge fix for get_user_pages_remote API
- change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/vfio/vfio_iommu_type1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 51810a95416e..cae2e9121e48 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -362,7 +362,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
- 
- 		down_read(&mm->mmap_sem);
- 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
--					    NULL);
-+					    NULL, NULL);
- 		up_read(&mm->mmap_sem);
- 	}
- 
--- 
-2.10.2
+It build with KALLSYMS_EXTRA_PASS=1 on the command line.
 
 -- 
 Cheers,
