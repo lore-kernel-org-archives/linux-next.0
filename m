@@ -1,51 +1,43 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: linux-next: manual merge of the rockchip tree with the arm-soc tree
-Date: Mon, 21 Nov 2016 15:38:17 -0800
-Message-ID: <CAOesGMhm2n3-7zLD4xUdJGJ7B6p9J_kNdNU-b-z7w+NXGZu_0g@mail.gmail.com>
-References: <20161122101908.2e967e42@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the overlayfs tree
+Date: Tue, 22 Nov 2016 11:19:39 +1100
+Message-ID: <20161122111939.0c0ea92a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:36364 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752787AbcKUXiT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 21 Nov 2016 18:38:19 -0500
-Received: by mail-qk0-f196.google.com with SMTP id h201so249266qke.3
-        for <linux-next@vger.kernel.org>; Mon, 21 Nov 2016 15:38:18 -0800 (PST)
-In-Reply-To: <20161122101908.2e967e42@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:45029 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753937AbcKVATx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 21 Nov 2016 19:19:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Stuebner <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Andy Yan <andy.yan@rock-chips.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi,
+Hi Miklos,
 
-On Mon, Nov 21, 2016 at 3:19 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Heiko,
->
-> Today's linux-next merge of the rockchip tree got a conflict in:
->
->   arch/arm64/configs/defconfig
->
-> between commit:
->
->   a59294b2f7c7 ("ARM64: defconfig: Enable MMC related configs")
->
-> from the arm-soc tree and commit:
->
->   5295a3157348 ("arm64: defconfig: enable RK808 components")
->
-> from the rockchip tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+After merging the overlayfs tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-This sounds fine, and it's a conflict we'll resolve when we merge this
-material from Heiko.
+In file included from fs/overlayfs/dir.c:20:0:
+fs/overlayfs/dir.c: In function 'ovl_set_redirect':
+fs/overlayfs/overlayfs.h:92:6: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  int err = vfs_setxattr(dentry, name, value, size, flags);
+      ^
+fs/overlayfs/dir.c:788:14: note: 'ret' was declared here
+  char *buf, *ret;
+              ^
 
+Introduced by commit
 
--Olof
+  496654b0792e ("ovl: redirect on rename-dir")
+
+This is not necessarily a false positive (although is is a confusing
+message): if the kmalloc of "buf" fails and samedir was not set in
+ovl_get_redirect(), then "return ret" will be executed but "ret" has
+not been set.
+
+-- 
+Cheers,
+Stephen Rothwell
