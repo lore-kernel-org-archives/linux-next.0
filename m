@@ -1,60 +1,119 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Tue, 22 Nov 2016 10:36:46 +0100
-Message-ID: <CAMuHMdU5Df2kNT=ccr7Ts6=a1ELRJdiBbh1xxuqo+e_UeYw-tw@mail.gmail.com>
-References: <20161122194130.4efdd019@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 22 Nov 2016 21:04:10 +1100
+Message-ID: <20161122210410.5eca9fc2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f68.google.com ([209.85.214.68]:33326 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753324AbcKVJgs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 04:36:48 -0500
-In-Reply-To: <20161122194130.4efdd019@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi Andrew,
 
-On Tue, Nov 22, 2016 at 9:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Today's linux-next merge of the clk tree got conflicts in:
->
->   arch/arm/boot/dts/r8a7779.dtsi
->   arch/arm/boot/dts/r8a7790.dtsi
->   arch/arm/boot/dts/r8a7791.dtsi
->   arch/arm/boot/dts/r8a7792.dtsi
->   arch/arm/boot/dts/r8a7793.dtsi
->   arch/arm/boot/dts/r8a7794.dtsi
->   arch/arm/mach-shmobile/setup-rcar-gen2.c
->   arch/arm64/boot/dts/renesas/r8a7795.dtsi
->   arch/arm64/boot/dts/renesas/r8a7796.dtsi
->   drivers/soc/renesas/Makefile
->
-> between various commits from the arm-soc tree and commits from the
-> clk tree.
->
-> It was just too much at this time of day, so please talk to each other
-> and figure out how to fix these up.  I have used the clk tree from
-> next-20161117 for today.
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-Most of these are of the "add both sides" type.
-The only exception is the one in arch/arm/mach-shmobile/setup-rcar-gen2.c,
-where you just want to keep the call to of_clk_init(NULL);
+ipc/sem.c: In function 'freeary':
+ipc/sem.c:1125:2: error: implicit declaration of function 'WAKE_Q' [-Werror=implicit-function-declaration]
+  WAKE_Q(wake_q);
+  ^
+ipc/sem.c:1125:9: error: 'wake_q' undeclared (first use in this function)
+  WAKE_Q(wake_q);
+         ^
+ipc/sem.c:1125:9: note: each undeclared identifier is reported only once for each function it appears in
+ipc/sem.c: In function 'semctl_setval':
+ipc/sem.c:1305:9: error: 'wake_q' undeclared (first use in this function)
+  WAKE_Q(wake_q);
+         ^
+ipc/sem.c: In function 'semctl_main':
+ipc/sem.c:1375:9: error: 'wake_q' undeclared (first use in this function)
+  WAKE_Q(wake_q);
+         ^
+ipc/sem.c: In function 'SYSC_semtimedop':
+ipc/sem.c:1931:10: error: 'wake_q' undeclared (first use in this function)
+   WAKE_Q(wake_q);
+          ^
+ipc/sem.c: In function 'exit_sem':
+ipc/sem.c:2115:10: error: 'wake_q' undeclared (first use in this function)
+   WAKE_Q(wake_q);
+          ^
 
-There's a resolution in
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=renesas-devel-20161117v2-v4.9-rc5%2brcar-rst
+Caused by commit
 
-Sorry for the mess.
+  fa8ecccee99f ("ipc/sem: rework task wakeups")
 
-Gr{oetje,eeting}s,
+interacting with commit
 
-                        Geert
+  194a6b5b9cb6 ("sched/wake_q: Rename WAKE_Q to DEFINE_WAKE_Q")
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+from the tip tree.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I applied this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 22 Nov 2016 20:34:47 +1100
+Subject: [PATCH] ipc/sem: merge fix for WAKE_Q to DEFINE_WAKE_Q rename
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ ipc/sem.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/ipc/sem.c b/ipc/sem.c
+index ca4aa23c622b..77c011e90414 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -1122,7 +1122,7 @@ static void freeary(struct ipc_namespace *ns, struct kern_ipc_perm *ipcp)
+ 	struct sem_queue *q, *tq;
+ 	struct sem_array *sma = container_of(ipcp, struct sem_array, sem_perm);
+ 	int i;
+-	WAKE_Q(wake_q);
++	DEFINE_WAKE_Q(wake_q);
+ 
+ 	/* Free the existing undo structures for this semaphore set.  */
+ 	ipc_assert_locked_object(&sma->sem_perm);
+@@ -1302,7 +1302,7 @@ static int semctl_setval(struct ipc_namespace *ns, int semid, int semnum,
+ 	struct sem_array *sma;
+ 	struct sem *curr;
+ 	int err, val;
+-	WAKE_Q(wake_q);
++	DEFINE_WAKE_Q(wake_q);
+ 
+ #if defined(CONFIG_64BIT) && defined(__BIG_ENDIAN)
+ 	/* big-endian 64bit */
+@@ -1372,7 +1372,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
+ 	int err, nsems;
+ 	ushort fast_sem_io[SEMMSL_FAST];
+ 	ushort *sem_io = fast_sem_io;
+-	WAKE_Q(wake_q);
++	DEFINE_WAKE_Q(wake_q);
+ 
+ 	rcu_read_lock();
+ 	sma = sem_obtain_object_check(ns, semid);
+@@ -1928,7 +1928,7 @@ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
+ 
+ 	error = perform_atomic_semop(sma, &queue);
+ 	if (error == 0) { /* non-blocking succesfull path */
+-		WAKE_Q(wake_q);
++		DEFINE_WAKE_Q(wake_q);
+ 
+ 		/*
+ 		 * If the operation was successful, then do
+@@ -2112,7 +2112,7 @@ void exit_sem(struct task_struct *tsk)
+ 		struct sem_array *sma;
+ 		struct sem_undo *un;
+ 		int semid, i;
+-		WAKE_Q(wake_q);
++		DEFINE_WAKE_Q(wake_q);
+ 
+ 		cond_resched();
+ 
+-- 
+2.10.2
+
+-- 
+Cheers,
+Stephen Rothwell
