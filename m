@@ -1,51 +1,38 @@
-From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Subject: Re: linux-next: build warnings after merge of the net-next tree
-Date: Tue, 22 Nov 2016 09:23:38 +0100
-Message-ID: <20161122092338.1b788f05@free-electrons.com>
-References: <20161122122216.575b1793@canb.auug.org.au>
-        <e5c5a4d7-355e-b8a6-9526-d6acbe4e54f8@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the clk tree with the arm-soc tree
+Date: Tue, 22 Nov 2016 19:41:30 +1100
+Message-ID: <20161122194130.4efdd019@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:51044 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755448AbcKVIXl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 03:23:41 -0500
-In-Reply-To: <e5c5a4d7-355e-b8a6-9526-d6acbe4e54f8@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
+Hi all,
 
-On Mon, 21 Nov 2016 17:28:39 -0800, Florian Fainelli wrote:
-> +Thomas, Gregory,
-> 
-> On 11/21/2016 05:22 PM, Stephen Rothwell wrote:
-> [snip]
-> > 
-> > Introduced by commit
-> > 
-> >   a0627f776a45 ("net: marvell: Allow drivers to be built with COMPILE_TEST")
-> > 
-> > "a few warnings" is a matter of perception.  :-(  
-> 
-> Thomas, based on our IRC conversation, do you already have patches for
-> mvneta and mvpp2 to build without warning on 64-bit or should I prepare
-> patches for these?
+Today's linux-next merge of the clk tree got conflicts in:
 
-Yes, we already have patches for making mvneta and mvpp2 build without
-warning for 64-bit (Grégory for mvneta, and myself for mvpp2). I
-intended to send the mvpp2 ones together with patches adding support
-for a new variant of the IP, but I guess I can send just the few ones
-that make it 64-bit "buildable".
+  arch/arm/boot/dts/r8a7779.dtsi
+  arch/arm/boot/dts/r8a7790.dtsi
+  arch/arm/boot/dts/r8a7791.dtsi
+  arch/arm/boot/dts/r8a7792.dtsi
+  arch/arm/boot/dts/r8a7793.dtsi
+  arch/arm/boot/dts/r8a7794.dtsi
+  arch/arm/mach-shmobile/setup-rcar-gen2.c
+  arch/arm64/boot/dts/renesas/r8a7795.dtsi
+  arch/arm64/boot/dts/renesas/r8a7796.dtsi
+  drivers/soc/renesas/Makefile
 
-Best regards,
+between various commits from the arm-soc tree and commits from the
+clk tree.
 
-Thomas
+It was just too much at this time of day, so please talk to each other
+and figure out how to fix these up.  I have used the clk tree from
+next-20161117 for today.
+
 -- 
-Thomas Petazzoni, CTO, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Cheers,
+Stephen Rothwell
