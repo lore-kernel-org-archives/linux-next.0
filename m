@@ -1,115 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 22 Nov 2016 21:04:10 +1100
-Message-ID: <20161122210410.5eca9fc2@canb.auug.org.au>
+Date: Tue, 22 Nov 2016 21:05:11 +1100
+Message-ID: <20161122210511.024ec341@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Waiman Long <longman@redhat.com>, Davidlohr Bueso <dave@stgolabs.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:44307 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932234AbcKVKFO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Nov 2016 05:05:14 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Alex Williamson <alex.williamson@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kirti Wankhede <kwankhede@nvidia.com>, Neo Jia <cjia@nvidia.com>, Lorenzo Stoakes <lstoakes@gmail.com>
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-ipc/sem.c: In function 'freeary':
-ipc/sem.c:1125:2: error: implicit declaration of function 'WAKE_Q' [-Werror=implicit-function-declaration]
-  WAKE_Q(wake_q);
-  ^
-ipc/sem.c:1125:9: error: 'wake_q' undeclared (first use in this function)
-  WAKE_Q(wake_q);
+drivers/vfio/vfio_iommu_type1.c: In function 'vaddr_get_pfn':
+drivers/vfio/vfio_iommu_type1.c:364:9: error: too few arguments to function 'get_user_pages_remote'
+   ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
          ^
-ipc/sem.c:1125:9: note: each undeclared identifier is reported only once for each function it appears in
-ipc/sem.c: In function 'semctl_setval':
-ipc/sem.c:1305:9: error: 'wake_q' undeclared (first use in this function)
-  WAKE_Q(wake_q);
-         ^
-ipc/sem.c: In function 'semctl_main':
-ipc/sem.c:1375:9: error: 'wake_q' undeclared (first use in this function)
-  WAKE_Q(wake_q);
-         ^
-ipc/sem.c: In function 'SYSC_semtimedop':
-ipc/sem.c:1931:10: error: 'wake_q' undeclared (first use in this function)
-   WAKE_Q(wake_q);
-          ^
-ipc/sem.c: In function 'exit_sem':
-ipc/sem.c:2115:10: error: 'wake_q' undeclared (first use in this function)
-   WAKE_Q(wake_q);
-          ^
+In file included from include/linux/scatterlist.h:7:0,
+                 from include/linux/iommu.h:26,
+                 from drivers/vfio/vfio_iommu_type1.c:30:
+include/linux/mm.h:1274:6: note: declared here
+ long get_user_pages_remote(struct task_struct *tsk, struct mm_struct *mm,
+      ^
 
 Caused by commit
 
-  fa8ecccee99f ("ipc/sem: rework task wakeups")
+  d6c547ad0c61 ("mm: add locked parameter to get_user_pages_remote()")
 
 interacting with commit
 
-  194a6b5b9cb6 ("sched/wake_q: Rename WAKE_Q to DEFINE_WAKE_Q")
+  ea85cf353e4f ("vfio iommu type1: Update argument of vaddr_get_pfn()")
 
-from the tip tree.
+from the vfio tree.
 
 I applied this merge fix patch:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 22 Nov 2016 20:34:47 +1100
-Subject: [PATCH] ipc/sem: merge fix for WAKE_Q to DEFINE_WAKE_Q rename
+Date: Tue, 22 Nov 2016 20:54:27 +1100
+Subject: [PATCH] vfio iommu type1: merge fix for get_user_pages_remote API
+ change
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- ipc/sem.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/vfio/vfio_iommu_type1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/ipc/sem.c b/ipc/sem.c
-index ca4aa23c622b..77c011e90414 100644
---- a/ipc/sem.c
-+++ b/ipc/sem.c
-@@ -1122,7 +1122,7 @@ static void freeary(struct ipc_namespace *ns, struct kern_ipc_perm *ipcp)
- 	struct sem_queue *q, *tq;
- 	struct sem_array *sma = container_of(ipcp, struct sem_array, sem_perm);
- 	int i;
--	WAKE_Q(wake_q);
-+	DEFINE_WAKE_Q(wake_q);
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 51810a95416e..cae2e9121e48 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -362,7 +362,7 @@ static int vaddr_get_pfn(struct mm_struct *mm, unsigned long vaddr,
  
- 	/* Free the existing undo structures for this semaphore set.  */
- 	ipc_assert_locked_object(&sma->sem_perm);
-@@ -1302,7 +1302,7 @@ static int semctl_setval(struct ipc_namespace *ns, int semid, int semnum,
- 	struct sem_array *sma;
- 	struct sem *curr;
- 	int err, val;
--	WAKE_Q(wake_q);
-+	DEFINE_WAKE_Q(wake_q);
- 
- #if defined(CONFIG_64BIT) && defined(__BIG_ENDIAN)
- 	/* big-endian 64bit */
-@@ -1372,7 +1372,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
- 	int err, nsems;
- 	ushort fast_sem_io[SEMMSL_FAST];
- 	ushort *sem_io = fast_sem_io;
--	WAKE_Q(wake_q);
-+	DEFINE_WAKE_Q(wake_q);
- 
- 	rcu_read_lock();
- 	sma = sem_obtain_object_check(ns, semid);
-@@ -1928,7 +1928,7 @@ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
- 
- 	error = perform_atomic_semop(sma, &queue);
- 	if (error == 0) { /* non-blocking succesfull path */
--		WAKE_Q(wake_q);
-+		DEFINE_WAKE_Q(wake_q);
- 
- 		/*
- 		 * If the operation was successful, then do
-@@ -2112,7 +2112,7 @@ void exit_sem(struct task_struct *tsk)
- 		struct sem_array *sma;
- 		struct sem_undo *un;
- 		int semid, i;
--		WAKE_Q(wake_q);
-+		DEFINE_WAKE_Q(wake_q);
- 
- 		cond_resched();
+ 		down_read(&mm->mmap_sem);
+ 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+-					    NULL);
++					    NULL, NULL);
+ 		up_read(&mm->mmap_sem);
+ 	}
  
 -- 
 2.10.2
