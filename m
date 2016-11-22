@@ -1,40 +1,35 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-Date: Tue, 22 Nov 2016 17:24:15 -0500
-Message-ID: <yq1eg23w3u8.fsf@sermon.lab.mkp.net>
-References: <20161122184404.2fdd253d@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the userns tree with Linus' tree
+Date: Wed, 23 Nov 2016 09:56:35 +1100
+Message-ID: <20161123095635.35dfb6c2@canb.auug.org.au>
+References: <20161122191719.3e438d1e@canb.auug.org.au>
+        <87r363h0jq.fsf@xmission.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:48911 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751678AbcKVWYb (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 17:24:31 -0500
-In-Reply-To: <20161122184404.2fdd253d@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 22 Nov 2016 18:44:04 +1100")
+Received: from ozlabs.org ([103.22.144.67]:35793 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933931AbcKVW5F (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Nov 2016 17:57:05 -0500
+In-Reply-To: <87r363h0jq.fsf@xmission.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hannes Reinecke <hare@suse.de>, "Martin K. Petersen" <martin.petersen@oracle.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
 
->>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Eric,
 
-Stephen,
+On Tue, 22 Nov 2016 11:44:25 -0600 ebiederm@xmission.com (Eric W. Biederman) wrote:
+>
+> > I just used the version of the userns tree from next-20161117 for today.
+> > Please merge v4.9-rc2 and fix up the conflicts (or just rebase onto
+> > v4.9-rc2).  
+> 
+> Will do.  Thank you.
 
-Stephen> drivers/scsi/hpsa.c: In function 'hpsa_slave_alloc':
-Stephen> drivers/scsi/hpsa.c:2033:5: warning: 'sd' may be used
-Stephen> uninitialized in this function [-Wmaybe-uninitialized]
-Stephen>   if (!sd)
-Stephen>      ^
-
-Stephen> Introduced by commit
-
-Stephen>   4eb307f7b18d ("scsi: hpsa: use bus '3' for legacy HBA
-Stephen>   devices")
-
-Fixed this up.
-
-Thanks!
+Thanks.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Cheers,
+Stephen Rothwell
