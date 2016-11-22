@@ -1,55 +1,24 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the lightnvm
- tree
-Date: Tue, 22 Nov 2016 10:45:38 -0500
-Message-ID: <20161122154538.GO2165@windriver.com>
-References: <20161122182908.4c961d64@canb.auug.org.au>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: linux-next: bad commits in the security tree
+Date: Tue, 22 Nov 2016 08:17:24 -0800
+Message-ID: <03bf91ac-1f20-1089-79dd-e342c9f610d9@schaufler-ca.com>
+References: <20161122215810.60c0cb1f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161122182908.4c961d64@canb.auug.org.au>
+In-Reply-To: <20161122215810.60c0cb1f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Javier =?iso-8859-1?Q?Gonz=E1lez?= <jg@lightnvm.io>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-[linux-next: manual merge of the char-misc tree with the lightnvm tree] On 22/11/2016 (Tue 18:29) Stephen Rothwell wrote:
-
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   drivers/lightnvm/core.c
-> 
-> between commit:
-> 
->   7b0d392f6957 ("lightnvm: remove sysfs configuration interface")
-> 
-> from the lightnvm tree and commit:
-> 
->   389b2a1c0e90 ("lightnvm: make core.c explicitly non-modular")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (the former removed the code that was commented by the
-> latter, so I just removed it) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your
-> tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
-> I do wonder why commit 389b2a1c0e90 is in the char-misc tree and not
-> the lightnvm or block trees?
-
-It relied on the new macro builtin_misc_device which came in via
-char-misc.  I was going to wait a release but Greg said he'd be willing
-to take the patch in his tree concurrently.
-
-P.
---
-
-> -- 
-> Cheers,
-> Stephen Rothwell
+On 11/22/2016 2:58 AM, Stephen Rothwell wrote:
+> Hi James,
+>
+> I noticed that there are some commits in the security tree that have no
+> Signed-off-by from the committer (Casey Schaufler).
+>
+My understanding is that patches I don't write should
+be Acked, not Signed-off when I commit them. If this is
+not correct I will address my misconduct.
