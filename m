@@ -1,50 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with Linus' tree
-Date: Tue, 22 Nov 2016 19:17:19 +1100
-Message-ID: <20161122191719.3e438d1e@canb.auug.org.au>
+From: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+Subject: Re: linux-next: build warnings after merge of the net-next tree
+Date: Tue, 22 Nov 2016 09:23:38 +0100
+Message-ID: <20161122092338.1b788f05@free-electrons.com>
+References: <20161122122216.575b1793@canb.auug.org.au>
+        <e5c5a4d7-355e-b8a6-9526-d6acbe4e54f8@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47519 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755267AbcKVIRW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Nov 2016 03:17:22 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:51044 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755448AbcKVIXl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 03:23:41 -0500
+In-Reply-To: <e5c5a4d7-355e-b8a6-9526-d6acbe4e54f8@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory Clement <gregory.clement@free-electrons.com>
 
-Hi Eric,
+Hello,
 
-Today's linux-next merge of the userns tree got conflicts in:
+On Mon, 21 Nov 2016 17:28:39 -0800, Florian Fainelli wrote:
+> +Thomas, Gregory,
+> 
+> On 11/21/2016 05:22 PM, Stephen Rothwell wrote:
+> [snip]
+> > 
+> > Introduced by commit
+> > 
+> >   a0627f776a45 ("net: marvell: Allow drivers to be built with COMPILE_TEST")
+> > 
+> > "a few warnings" is a matter of perception.  :-(  
+> 
+> Thomas, based on our IRC conversation, do you already have patches for
+> mvneta and mvpp2 to build without warning on 64-bit or should I prepare
+> patches for these?
 
-  arch/alpha/kernel/ptrace.c
-  arch/blackfin/kernel/ptrace.c
-  arch/cris/arch-v32/kernel/ptrace.c
-  arch/ia64/kernel/ptrace.c
-  arch/mips/kernel/ptrace32.c
-  arch/powerpc/kernel/ptrace32.c
-  include/linux/mm.h
-  kernel/ptrace.c
-  mm/memory.c
-  mm/nommu.c
+Yes, we already have patches for making mvneta and mvpp2 build without
+warning for 64-bit (Grégory for mvneta, and myself for mvpp2). I
+intended to send the mvpp2 ones together with patches adding support
+for a new variant of the IP, but I guess I can send just the few ones
+that make it 64-bit "buildable".
 
-between commit:
+Best regards,
 
-  442486ec1096 ("mm: replace __access_remote_vm() write parameter with gup_flags")
-(and others)
-
-from Linus' tree and commit:
-
-  0cabf9a438e1 ("ptrace: Don't allow accessing an undumpable mm")
-
-from the userns tree.
-
-I just used the version of the userns tree from next-20161117 for today.
-Please merge v4.9-rc2 and fix up the conflicts (or just rebase onto
-v4.9-rc2).
-
+Thomas
 -- 
-Cheers,
-Stephen Rothwell
+Thomas Petazzoni, CTO, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
