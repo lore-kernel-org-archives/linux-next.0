@@ -1,230 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the clk tree with the arm-soc tree
-Date: Wed, 23 Nov 2016 10:59:27 +1100
-Message-ID: <20161123105927.4d2c263c@canb.auug.org.au>
-References: <20161122194130.4efdd019@canb.auug.org.au>
-        <CAMuHMdU5Df2kNT=ccr7Ts6=a1ELRJdiBbh1xxuqo+e_UeYw-tw@mail.gmail.com>
+From: Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+Date: Wed, 23 Nov 2016 13:02:10 +1100
+Message-ID: <20161123130210.72c35b76@roar.ozlabs.ibm.com>
+References: <20161122195832.0f031e62@canb.auug.org.au>
+        <20161122212114.45ba8b17@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34581 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751245AbcKVX73 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Nov 2016 18:59:29 -0500
-In-Reply-To: <CAMuHMdU5Df2kNT=ccr7Ts6=a1ELRJdiBbh1xxuqo+e_UeYw-tw@mail.gmail.com>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33425 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756019AbcKWCCX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 21:02:23 -0500
+In-Reply-To: <20161122212114.45ba8b17@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Tue, 22 Nov 2016 21:21:14 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Tue, 22 Nov 2016 10:36:46 +0100 Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Most of these are of the "add both sides" type.
-> The only exception is the one in arch/arm/mach-shmobile/setup-rcar-gen2.c,
-> where you just want to keep the call to of_clk_init(NULL);
+> Hi all,
 > 
-> There's a resolution in
-> https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git/log/?h=renesas-devel-20161117v2-v4.9-rc5%2brcar-rst
+> On Tue, 22 Nov 2016 19:58:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the powerpc tree, today's linux-next build (powerpc
+> > allyesconfig) failed like this:
+> > 
+> > Inconsistent kallsyms data
+> > Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+> > 
+> > Which is a vast improvement.  I'll try adding 'KALLSYMS_EXTRA_PASS=1'
+> > later and see how it goes.  It would be nice not to need it, though.  
 > 
-> Sorry for the mess.
+> It build with KALLSYMS_EXTRA_PASS=1 on the command line.
+> 
 
-Thanks for the help.  Today I did this much earlier in the build and
-got the following merge resolution (which matches yours, I think).
-The resolution for arch/arm/mach-shmobile/setup-rcar-gen2.c is empty
-because I used the clk tree side of the conflicts.
--- 
-Cheers,
-Stephen Rothwell
+Yay!
 
-diff --cc arch/arm/boot/dts/r8a7779.dtsi
-index 9d3bb74bd3f6,8cf16008a09b..000000000000
---- a/arch/arm/boot/dts/r8a7779.dtsi
-+++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@@ -590,11 -590,11 +590,16 @@@
-  		};
-  	};
-  
- +	prr: chipid@ff000044 {
- +		compatible = "renesas,prr";
- +		reg = <0xff000044 4>;
- +	};
- +
-+ 	rst: reset-controller@ffcc0000 {
-+ 		compatible = "renesas,r8a7779-reset-wdt";
-+ 		reg = <0xffcc0000 0x48>;
-+ 	};
-+ 
-  	sysc: system-controller@ffd85000 {
-  		compatible = "renesas,r8a7779-sysc";
-  		reg = <0xffd85000 0x0200>;
-diff --cc arch/arm/boot/dts/r8a7790.dtsi
-index f554ef3c8096,3f10b0bf1b08..000000000000
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@@ -1471,11 -1471,11 +1471,16 @@@
-  		};
-  	};
-  
- +	prr: chipid@ff000044 {
- +		compatible = "renesas,prr";
- +		reg = <0 0xff000044 0 4>;
- +	};
- +
-+ 	rst: reset-controller@e6160000 {
-+ 		compatible = "renesas,r8a7790-rst";
-+ 		reg = <0 0xe6160000 0 0x0100>;
-+ 	};
-+ 
-  	sysc: system-controller@e6180000 {
-  		compatible = "renesas,r8a7790-sysc";
-  		reg = <0 0xe6180000 0 0x0200>;
-diff --cc arch/arm/boot/dts/r8a7791.dtsi
-index 4c50de2faef1,c465c79bcca6..000000000000
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@@ -1485,11 -1482,11 +1485,16 @@@
-  		};
-  	};
-  
- +	prr: chipid@ff000044 {
- +		compatible = "renesas,prr";
- +		reg = <0 0xff000044 0 4>;
- +	};
- +
-+ 	rst: reset-controller@e6160000 {
-+ 		compatible = "renesas,r8a7791-rst";
-+ 		reg = <0 0xe6160000 0 0x0100>;
-+ 	};
-+ 
-  	sysc: system-controller@e6180000 {
-  		compatible = "renesas,r8a7791-sysc";
-  		reg = <0 0xe6180000 0 0x0200>;
-diff --cc arch/arm/boot/dts/r8a7792.dtsi
-index 69789020cf39,6e1f61f65d29..000000000000
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@@ -120,11 -118,11 +120,16 @@@
-  				      IRQ_TYPE_LEVEL_LOW)>;
-  		};
-  
- +		prr: chipid@ff000044 {
- +			compatible = "renesas,prr";
- +			reg = <0 0xff000044 0 4>;
- +		};
- +
-+ 		rst: reset-controller@e6160000 {
-+ 			compatible = "renesas,r8a7792-rst";
-+ 			reg = <0 0xe6160000 0 0x0100>;
-+ 		};
-+ 
-  		sysc: system-controller@e6180000 {
-  			compatible = "renesas,r8a7792-sysc";
-  			reg = <0 0xe6180000 0 0x0200>;
-diff --cc arch/arm/boot/dts/r8a7793.dtsi
-index a377dda17724,e4b385eccf74..000000000000
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@@ -1306,11 -1279,11 +1306,16 @@@
-  		};
-  	};
-  
- +	prr: chipid@ff000044 {
- +		compatible = "renesas,prr";
- +		reg = <0 0xff000044 0 4>;
- +	};
- +
-+ 	rst: reset-controller@e6160000 {
-+ 		compatible = "renesas,r8a7793-rst";
-+ 		reg = <0 0xe6160000 0 0x0100>;
-+ 	};
-+ 
-  	sysc: system-controller@e6180000 {
-  		compatible = "renesas,r8a7793-sysc";
-  		reg = <0 0xe6180000 0 0x0200>;
-diff --cc arch/arm/boot/dts/r8a7794.dtsi
-index 63dc7f29d216,69e4f4fad89b..000000000000
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@@ -1377,11 -1375,11 +1377,16 @@@
-  		};
-  	};
-  
- +	prr: chipid@ff000044 {
- +		compatible = "renesas,prr";
- +		reg = <0 0xff000044 0 4>;
- +	};
- +
-+ 	rst: reset-controller@e6160000 {
-+ 		compatible = "renesas,r8a7794-rst";
-+ 		reg = <0 0xe6160000 0 0x0100>;
-+ 	};
-+ 
-  	sysc: system-controller@e6180000 {
-  		compatible = "renesas,r8a7794-sysc";
-  		reg = <0 0xe6180000 0 0x0200>;
-diff --cc arch/arm/mach-shmobile/setup-rcar-gen2.c
-index 14c1f0ed2ecb,b527258e0a62..000000000000
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-diff --cc arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index a39a702b904d,625dda713548..000000000000
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@@ -321,11 -321,11 +321,16 @@@
-  			#power-domain-cells = <0>;
-  		};
-  
- +		prr: chipid@fff00044 {
- +			compatible = "renesas,prr";
- +			reg = <0 0xfff00044 0 4>;
- +		};
- +
-+ 		rst: reset-controller@e6160000 {
-+ 			compatible = "renesas,r8a7795-rst";
-+ 			reg = <0 0xe6160000 0 0x0200>;
-+ 		};
-+ 
-  		sysc: system-controller@e6180000 {
-  			compatible = "renesas,r8a7795-sysc";
-  			reg = <0 0xe6180000 0 0x0400>;
-diff --cc arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 41a050d2f192,75c8c55a8248..000000000000
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@@ -243,11 -233,11 +243,16 @@@
-  			#power-domain-cells = <0>;
-  		};
-  
- +		prr: chipid@fff00044 {
- +			compatible = "renesas,prr";
- +			reg = <0 0xfff00044 0 4>;
- +		};
- +
-+ 		rst: reset-controller@e6160000 {
-+ 			compatible = "renesas,r8a7796-rst";
-+ 			reg = <0 0xe6160000 0 0x0200>;
-+ 		};
-+ 
-  		sysc: system-controller@e6180000 {
-  			compatible = "renesas,r8a7796-sysc";
-  			reg = <0 0xe6180000 0 0x0400>;
-diff --cc drivers/soc/renesas/Makefile
-index 91c42b34705f,86cc78cd1962..000000000000
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@@ -1,7 -1,8 +1,12 @@@
- +obj-$(CONFIG_SOC_BUS)		+= renesas-soc.o
- +
-+ obj-$(CONFIG_ARCH_RCAR_GEN1)	+= rcar-rst.o
-+ obj-$(CONFIG_ARCH_RCAR_GEN2)	+= rcar-rst.o
-+ obj-$(CONFIG_ARCH_R8A7795)	+= rcar-rst.o
-+ obj-$(CONFIG_ARCH_R8A7796)	+= rcar-rst.o
-+ 
- +obj-$(CONFIG_ARCH_R8A7743)	+= rcar-sysc.o r8a7743-sysc.o
- +obj-$(CONFIG_ARCH_R8A7745)	+= rcar-sysc.o r8a7745-sysc.o
-  obj-$(CONFIG_ARCH_R8A7779)	+= rcar-sysc.o r8a7779-sysc.o
-  obj-$(CONFIG_ARCH_R8A7790)	+= rcar-sysc.o r8a7790-sysc.o
-  obj-$(CONFIG_ARCH_R8A7791)	+= rcar-sysc.o r8a7791-sysc.o
+The inconsistent kallsyms data is not something we're doing wrong or
+toolchain bug so much as an inherent flaw in how kallsyms are done.
+Basically the allyesconfig kallsyms section expands the kernel so much
+that a subsequent linking requires even more stubs, which adds more
+symbols, which means the next kallsyms will be a different size, which
+means or offsets will be wrong :)
+
+In theory I think it could actually be triggered on smaller kernels if
+the size was just right. I'm sort of looking at ways to fix it:
+
+https://patchwork.ozlabs.org/patch/684910/
+
+Hopefully will get something in 4.10. Worst case we could detect the
+kallsyms size change and do another pass in response without slowing
+down the case where it's not required. Hmm, that might be the best
+thing to do for a first pass.
+
+Thanks,
+Nick
