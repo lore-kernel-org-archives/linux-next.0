@@ -1,60 +1,63 @@
-From: Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: linux-next: build failure after merge of the powerpc tree
-Date: Wed, 23 Nov 2016 13:02:10 +1100
-Message-ID: <20161123130210.72c35b76@roar.ozlabs.ibm.com>
-References: <20161122195832.0f031e62@canb.auug.org.au>
-        <20161122212114.45ba8b17@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the md tree with the block tree
+Date: Wed, 23 Nov 2016 13:17:23 +1100
+Message-ID: <20161123131723.75a9477b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33425 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756019AbcKWCCX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Nov 2016 21:02:23 -0500
-In-Reply-To: <20161122212114.45ba8b17@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:38355 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752522AbcKWCZf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Nov 2016 21:25:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>
 
-On Tue, 22 Nov 2016 21:21:14 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Shaohua,
 
-> Hi all,
-> 
-> On Tue, 22 Nov 2016 19:58:32 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the powerpc tree, today's linux-next build (powerpc
-> > allyesconfig) failed like this:
-> > 
-> > Inconsistent kallsyms data
-> > Try make KALLSYMS_EXTRA_PASS=1 as a workaround
-> > 
-> > Which is a vast improvement.  I'll try adding 'KALLSYMS_EXTRA_PASS=1'
-> > later and see how it goes.  It would be nice not to need it, though.  
-> 
-> It build with KALLSYMS_EXTRA_PASS=1 on the command line.
-> 
+Today's linux-next merge of the md tree got a conflict in:
 
-Yay!
+  drivers/md/md.c
 
-The inconsistent kallsyms data is not something we're doing wrong or
-toolchain bug so much as an inherent flaw in how kallsyms are done.
-Basically the allyesconfig kallsyms section expands the kernel so much
-that a subsequent linking requires even more stubs, which adds more
-symbols, which means the next kallsyms will be a different size, which
-means or offsets will be wrong :)
+between commit:
 
-In theory I think it could actually be triggered on smaller kernels if
-the size was just right. I'm sort of looking at ways to fix it:
+  70fd76140a6c ("block,fs: use REQ_* flags directly")
 
-https://patchwork.ozlabs.org/patch/684910/
+from the block tree and commit:
 
-Hopefully will get something in 4.10. Worst case we could detect the
-kallsyms size change and do another pass in response without slowing
-down the case where it's not required. Hmm, that might be the best
-thing to do for a first pass.
+  46533ff7fefb ("md: Use REQ_FAILFAST_* on metadata writes where appropriate")
 
-Thanks,
-Nick
+from the md tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/md/md.c
+index f975cd08923d,c7894fbbd8e5..000000000000
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@@ -743,7 -765,12 +765,12 @@@ void md_super_write(struct mddev *mddev
+  	bio_add_page(bio, page, size, 0);
+  	bio->bi_private = rdev;
+  	bio->bi_end_io = super_written;
+- 	bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_FUA;
++ 
++ 	if (test_bit(MD_FAILFAST_SUPPORTED, &mddev->flags) &&
++ 	    test_bit(FailFast, &rdev->flags) &&
++ 	    !test_bit(LastDev, &rdev->flags))
++ 		ff = MD_FAILFAST;
+ -	bio_set_op_attrs(bio, REQ_OP_WRITE, WRITE_FLUSH_FUA | ff);
+++	bio->bi_opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_FUA | ff;
+  
+  	atomic_inc(&mddev->pending_writes);
+  	submit_bio(bio);
