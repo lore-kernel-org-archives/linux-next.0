@@ -1,34 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: remove the remoteproc tree?
-Date: Wed, 23 Nov 2016 23:08:02 +1100
-Message-ID: <20161123230802.133021cd@canb.auug.org.au>
-References: <20161123154127.675b75a8@canb.auug.org.au>
-        <CAK=Wgbbcyi36ef1-PV8VS=M6nFoQnFGUDWy6V7OCnkt0dDrtfg@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Nov 23 (f2fs)
+Date: Wed, 23 Nov 2016 08:00:57 -0800
+Message-ID: <320e8cf0-a0ee-8178-9aec-b8c0002ceb6d@infradead.org>
+References: <20161123175848.5b56c35c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53953 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934812AbcKWMPg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 23 Nov 2016 07:15:36 -0500
-In-Reply-To: <CAK=Wgbbcyi36ef1-PV8VS=M6nFoQnFGUDWy6V7OCnkt0dDrtfg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161123175848.5b56c35c@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>, linux-f2fs-devel@lists.sourceforge.net
+List-Id: linux-next.vger.kernel.org
 
-Hi Ohad,
-
-On Wed, 23 Nov 2016 10:04:18 +0200 Ohad Ben-Cohen <ohad@wizery.com> wrote:
->
-> On Wed, Nov 23, 2016 at 6:41 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Should I remove it from linux-next?  
+On 11/22/16 22:58, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Yes, please.
+> Changes since 20161122:
+> 
 
-Done.
+on i386:
+
+fs/built-in.o: In function `__issue_discard_async':
+segment.c:(.text+0x5e2135): undefined reference to `__umoddi3'
+
+or when built as a loadable module:
+ERROR: "__umoddi3" [fs/f2fs/f2fs.ko] undefined!
+
 
 -- 
-Cheers,
-Stephen Rothwell
+~Randy
