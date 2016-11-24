@@ -1,62 +1,64 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161124 build: 0 failures 1 warnings (next-20161124)
-Date: Thu, 24 Nov 2016 08:35:13 +0000
-Message-ID: <E1c9pUv-0002Tg-1C@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33570 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932607AbcKXIfW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2016 03:35:22 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 24 Nov 2016 13:02:39 -0200
+Message-ID: <9443137.1vHEJqnA2s@morokweng>
+References: <20161124160151.20206af7@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <20161124160151.20206af7@canb.auug.org.au>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161124
-Git describe: next-20161124
-Commit: 4bb7003993 Add linux-next specific files for 20161124
+Hello Stephen,
 
-Build Time: 85 min 5 sec
+Am Donnerstag, 24. November 2016, 16:01:51 BRST schrieb Stephen Rothwell:
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> powerpc-linux-ld: unrecognized option '--no-dynamic-linker'
+> 
+> Caused by patch
+> 
+>   "powerpc: add purgatory for kexec_file_load implementation"
+> 
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Sorry about that. --no-dynamic-linker was added in binutils 2.26.
+The patch below fixes the problem.
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
 
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+diff --git a/arch/powerpc/purgatory/Makefile b/arch/powerpc/purgatory/Makefile
+index 2dfb53ac9944..cf6e78b9af86 100644
+--- a/arch/powerpc/purgatory/Makefile
++++ b/arch/powerpc/purgatory/Makefile
+@@ -6,8 +6,10 @@ purgatory-y := purgatory.o string.o v2wrap.o purgatory-ppc64.o crtsavres.o \
+ targets += $(purgatory-y)
+ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+ 
+-LDFLAGS_purgatory.ro := -pie --no-dynamic-linker -e purgatory_start \
+-			--no-undefined -nostartfiles -nostdlib -nodefaultlibs
++LDFLAGS_purgatory.ro := -pie -e purgatory_start --no-undefined -nostartfiles \
++			-nostdlib -nodefaultlibs
++LDFLAGS_purgatory.ro += $(call ld-option, --no-dynamic-linker)
++
+ targets += purgatory.ro
+ 
+ KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_FTRACE), $(KBUILD_CFLAGS))
