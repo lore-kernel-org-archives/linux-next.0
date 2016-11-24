@@ -1,16 +1,20 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
 Subject: Re: linux-next: Tree for Nov 24
-Date: Thu, 24 Nov 2016 10:53:20 -0500
-Message-ID: <CAP=VYLpEvqtHJ_CDgFY4QHKSduJESg7dCxOvJrcKByfM4w9NPA@mail.gmail.com>
+Date: Thu, 24 Nov 2016 11:00:53 -0500
+Message-ID: <CAP=VYLq6Lz89GHmudoqVOxQ3Zj57z+adsu6JuVfvp3XhTo=4-Q@mail.gmail.com>
 References: <20161124163524.46a65a8e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:35032 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965473AbcKXQBZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Nov 2016 11:01:25 -0500
 In-Reply-To: <20161124163524.46a65a8e@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Helge Deller <deller@gmx.de>
-List-Id: linux-next.vger.kernel.org
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Paul Mackerras <paulus@ozlabs.org>
 
 On Thu, Nov 24, 2016 at 12:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi all,
@@ -32,26 +36,29 @@ On Thu, Nov 24, 2016 at 12:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Non-merge commits (relative to Linus' tree): 7885
 >  7978 files changed, 461386 insertions(+), 174925 deletions(-)
 
-The parisc allmodconfig started failing recently.   An automated
-bisect comes up with the following commit:
+One of the PPC configs failed today.  An automated bisect leads
+to the following commit:
 
-af3dcc1705ead3cbff4450a1b16c8b060c7ef69a is the first bad commit
-commit af3dcc1705ead3cbff4450a1b16c8b060c7ef69a
-Author: Helge Deller <deller@gmx.de>
-Date:   Tue Nov 22 18:08:30 2016 +0100
+commit 1704a81ccebc69b5223220df97cde8a645271828
+Author: Paul Mackerras <paulus@ozlabs.org>
+Date:   Fri Nov 18 08:47:08 2016 +1100
 
-    parisc: Switch to generic sched_clock implementation
+    KVM: PPC: Book3S HV: Use msgsnd for IPIs to other cores on POWER9
 
-    Drop the open-coded sched_clock() function and replace it by the provided
-    GENERIC_SCHED_CLOCK implementation.  We have seen quite some hung
-tasks in the
-    past, which seem to be fixed by this patch.
+    On POWER9, the msgsnd instruction is able to send interrupts to
+    other cores, as well as other threads on the local core.  Since
+    msgsnd is generally simpler and faster than sending an IPI via the
+    XICS, we use msgsnd for all IPIs sent by KVM on POWER9.
 
-    Signed-off-by: Helge Deller <deller@gmx.de>
-    Cc: <stable@vger.kernel.org> # v4.8
+    Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+
+Here is the fail link:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12866462/
 
 Paul.
 --
+
 
 >
 > ----------------------------------------------------------------------------
