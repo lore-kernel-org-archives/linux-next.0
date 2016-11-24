@@ -1,67 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the powerpc tree with the powerpc-fixes
- tree
-Date: Thu, 24 Nov 2016 10:36:06 +1100
-Message-ID: <20161124103606.0333e388@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: manual merge of the powerpc tree with the powerpc-fixes tree
+Date: Thu, 24 Nov 2016 13:40:28 +1100
+Message-ID: <87fumhtxb7.fsf@concordia.ellerman.id.au>
+References: <20161124103606.0333e388@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37483 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753917AbcKXCke (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 23 Nov 2016 21:40:34 -0500
+In-Reply-To: <20161124103606.0333e388@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
 
-Hi all,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+> Hi all,
+>
+> Today's linux-next merge of the powerpc tree got a conflict in:
+>
+>   arch/powerpc/include/asm/asm-prototypes.h
+>
+> between commit:
+>
+>   9e5f68842276 ("powerpc: Fix missing CRCs, add more asm-prototypes.h declarations")
+>
+> from the powerpc-fixes tree and commit:
+>
+>   82de5797a260 ("powerpc: Remove extraneous header from asm-prototypes.h")
+>
+> from the powerpc tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-  arch/powerpc/include/asm/asm-prototypes.h
+Thanks. I'm planning to merge fixes into next RSN ... as soon as people
+stop finding bugs.
 
-between commit:
-
-  9e5f68842276 ("powerpc: Fix missing CRCs, add more asm-prototypes.h declarations")
-
-from the powerpc-fixes tree and commit:
-
-  82de5797a260 ("powerpc: Remove extraneous header from asm-prototypes.h")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/powerpc/include/asm/asm-prototypes.h
-index e0baba1535e6,dfef1174663e..000000000000
---- a/arch/powerpc/include/asm/asm-prototypes.h
-+++ b/arch/powerpc/include/asm/asm-prototypes.h
-@@@ -13,12 -13,6 +13,11 @@@
-   */
-  
-  #include <linux/threads.h>
-- #include <linux/kprobes.h>
- +#include <asm/cacheflush.h>
- +#include <asm/checksum.h>
- +#include <asm/uaccess.h>
- +#include <asm/epapr_hcalls.h>
- +
-  #include <uapi/asm/ucontext.h>
-  
-  /* SMP */
+cheers
