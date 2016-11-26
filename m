@@ -1,62 +1,29 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161125 build: 0 failures 1 warnings (next-20161125)
-Date: Fri, 25 Nov 2016 06:24:02 +0000
-Message-ID: <E1cA9vW-0007mg-Ms@optimist>
+From: Jessica Yu <jeyu@redhat.com>
+Subject: Add modules-next branch to linux-next
+Date: Sat, 26 Nov 2016 14:42:09 -0800
+Message-ID: <20161126224209.iqrmopqv3b2augpb@jeyu>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33488 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750995AbcKYGZr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 25 Nov 2016 01:25:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40192 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752435AbcKZWmL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 26 Nov 2016 17:42:11 -0500
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20161125
-Git describe: next-20161125
-Commit: 09bfc750ec Add linux-next specific files for 20161125
+Hi Stephen,
 
-Build Time: 91 min 50 sec
+Could you please add the modules-next branch at:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+   git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git modules-next
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+to linux-next? The branch contains patches for modules targeted for the next
+merge window. It is meant to replace Rusty's old modules-next branch.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
+Thanks,
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Jessica
