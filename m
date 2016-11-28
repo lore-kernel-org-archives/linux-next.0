@@ -1,68 +1,80 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the edac tree
-Date: Mon, 28 Nov 2016 09:27:35 +0100
-Message-ID: <20161128082734.bdl4dhothemm7ja5@pd.tnic>
-References: <20161128143726.7fda1849@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161128 build: 2 failures 3 warnings (next-20161128)
+Date: Mon, 28 Nov 2016 08:40:09 +0000
+Message-ID: <E1cBHTt-0002ZT-NV@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.skyhub.de ([78.46.96.112]:39341 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754060AbcK1I1h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Nov 2016 03:27:37 -0500
-Content-Disposition: inline
-In-Reply-To: <20161128143726.7fda1849@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40184 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932258AbcK1IkW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2016 03:40:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Nov 28, 2016 at 02:37:26PM +1100, Stephen Rothwell wrote:
-> Hi Borislav,
-> 
-> Today's linux-next merge of the edac-amd tree got a conflict in:
-> 
->   drivers/edac/edac_mc.c
-> 
-> between commit:
-> 
->   ef91afa61088 ("edac: move documentation from edac_mc.c to edac_core.h")
-> 
-> from the edac tree and commit:
-> 
->   c73e8833bec5 ("EDAC, mc: Fix locking around mc_devices list")
-> 
-> from the edac-amd tree.
-> 
-> I fixed it up (see below - there may be more fixes needed in
-> edac_core.h) and can carry the fix as necessary. This is now fixed as
-> far as linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
+Tree/Branch: next-20161128
+Git describe: next-20161128
+Commit: 02eb3c71e3 Add linux-next specific files for 20161128
 
-Just one issue which has nothing to do with linux-next. There's still
-that in ef91afa61088:
+Build Time: 72 min 19 sec
 
-> +/**
-> + * edac_mc_find: Search for a mem_ctl_info structure whose index is @idx.
-> + *
-> + * @idx: index to be seek
-> + *
-> + * If found, return a pointer to the structure.
-> + * Else return NULL.
-> + *
-> + * Caller must hold mem_ctls_mutex.
-> + */
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-That last sentence in the comment is not true anymore - edac_mc_find()
-is grabbing the mutex itself as it should be. Mauro, please fix that in
-your tree.
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
 
-Thanks.
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
 
--- 
-Regards/Gruss,
-    Boris.
+Errors:
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	  2 ../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	  1 ../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
