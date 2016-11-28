@@ -1,57 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Date: Mon, 28 Nov 2016 14:56:41 +1100
-Message-ID: <20161128145641.24d1cd60@canb.auug.org.au>
+Subject: Re: Add modules-next branch to linux-next
+Date: Mon, 28 Nov 2016 16:12:30 +1100
+Message-ID: <20161128161230.5f28b34d@canb.auug.org.au>
+References: <20161126224209.iqrmopqv3b2augpb@jeyu>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49791 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52893 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752302AbcK1D4n (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 27 Nov 2016 22:56:43 -0500
+        id S1751597AbcK1FMn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 28 Nov 2016 00:12:43 -0500
+In-Reply-To: <20161126224209.iqrmopqv3b2augpb@jeyu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Luwei Kang <luwei.kang@intel.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Jessica Yu <jeyu@redhat.com>
+Cc: Rusty Russell <rusty@rustcorp.com.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Jessica,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+On Sat, 26 Nov 2016 14:42:09 -0800 Jessica Yu <jeyu@redhat.com> wrote:
+>
+> Could you please add the modules-next branch at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git modules-next
+> 
+> to linux-next? The branch contains patches for modules targeted for the next
+> merge window. It is meant to replace Rusty's old modules-next branch.
 
-  arch/x86/kvm/cpuid.c
+Added from today.
 
-between commit:
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-  c592b5734706 ("x86/fpu: Remove use_eager_fpu()")
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
 
-from the tip tree and commit:
-
-  4504b5c9414c ("kvm: x86: Add AVX512_4VNNIW and AVX512_4FMAPS support")
-
-from the kvm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 -- 
 Cheers,
-Stephen Rothwell
-
-diff --cc arch/x86/kvm/cpuid.c
-index 0aefb626fa8f,25f0f15fab1a..000000000000
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@@ -16,6 -16,8 +16,7 @@@
-  #include <linux/export.h>
-  #include <linux/vmalloc.h>
-  #include <linux/uaccess.h>
-+ #include <asm/processor.h>
- -#include <asm/fpu/internal.h> /* For use_eager_fpu.  Ugh! */
-  #include <asm/user.h>
-  #include <asm/fpu/xstate.h>
-  #include "cpuid.h"
+Stephen Rothwell 
+sfr@canb.auug.org.au
