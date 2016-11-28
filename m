@@ -1,80 +1,65 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161128 build: 2 failures 3 warnings (next-20161128)
-Date: Mon, 28 Nov 2016 08:40:09 +0000
-Message-ID: <E1cBHTt-0002ZT-NV@optimist>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
+Date: Mon, 28 Nov 2016 13:44:40 +0200
+Message-ID: <87oa0zygk7.fsf@kamboji.qca.qualcomm.com>
+References: <20161128115814.2cabf139@canb.auug.org.au>
+        <87d1hg83rp.fsf@kamboji.qca.qualcomm.com>
+        <20161128081649.GA8403@testbox>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40184 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932258AbcK1IkW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2016 03:40:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:34618 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754036AbcK1Lou (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Nov 2016 06:44:50 -0500
+In-Reply-To: <20161128081649.GA8403@testbox> (Barry Day's message of "Mon, 28
+        Nov 2016 18:16:51 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Barry Day <briselec@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jes Sorensen <Jes.Sorensen@redhat.com>, Wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20161128
-Git describe: next-20161128
-Commit: 02eb3c71e3 Add linux-next specific files for 20161128
+Barry Day <briselec@gmail.com> writes:
 
-Build Time: 72 min 19 sec
+> On Mon, Nov 28, 2016 at 09:25:30AM +0200, Kalle Valo wrote:
+>> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>> 
+>> > Hi all,
+>> >
+>> > After merging the wireless-drivers-next tree, today's linux-next build
+>> > (x86_64 allmodconfig) produced this warning:
+>> >
+>> > In file included from include/linux/usb/ch9.h:35:0,
+>> >                  from include/linux/usb.h:5,
+>> >                  from drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:32:
+>> > drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_fill_txdesc_v2':
+>> > include/linux/device.h:1214:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>> >  #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
+>> >                                     ^
+>> > drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4841:6: note: 'rate' was declared here
+>> >   u32 rate;
+>> >       ^
+>> >
+>> > Introduced by commit
+>> >
+>> >   b4c3d9cfb607 ("rtl8xxxu: Pass tx_info to fill_txdesc in order to have access to retry count")
+>> >
+>> > This is a correct diagnosis.
+>> 
+>> Thanks for the report. Jes, can you send a patch to fix this? (Unless
+>> someone else beats to it.)
+>> 
+>> -- 
+>> Kalle Valo
+>
+> I posted a patch on the 26th that fixes this
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Thanks, I see it:
 
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
+https://patchwork.kernel.org/patch/9448225/
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+The commit log doesn't mention anything about the compilation warning,
+I'll add that. Also a Fixes line is nice to have.
 
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	  2 ../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	  1 ../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/device.h:1300:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+-- 
+Kalle Valo
