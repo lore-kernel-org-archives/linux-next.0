@@ -1,51 +1,68 @@
-From: Barry Day <briselec@gmail.com>
-Subject: Re: linux-next: build warning after merge of the
- wireless-drivers-next tree
-Date: Mon, 28 Nov 2016 18:16:51 +1000
-Message-ID: <20161128081649.GA8403@testbox>
-References: <20161128115814.2cabf139@canb.auug.org.au>
- <87d1hg83rp.fsf@kamboji.qca.qualcomm.com>
+From: Borislav Petkov <bp@alien8.de>
+Subject: Re: linux-next: manual merge of the edac-amd tree with the edac tree
+Date: Mon, 28 Nov 2016 09:27:35 +0100
+Message-ID: <20161128082734.bdl4dhothemm7ja5@pd.tnic>
+References: <20161128143726.7fda1849@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.skyhub.de ([78.46.96.112]:39341 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754060AbcK1I1h (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 28 Nov 2016 03:27:37 -0500
 Content-Disposition: inline
-In-Reply-To: <87d1hg83rp.fsf@kamboji.qca.qualcomm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jes Sorensen <Jes.Sorensen@redhat.com>, Wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20161128143726.7fda1849@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon, Nov 28, 2016 at 09:25:30AM +0200, Kalle Valo wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Mon, Nov 28, 2016 at 02:37:26PM +1100, Stephen Rothwell wrote:
+> Hi Borislav,
 > 
-> > Hi all,
-> >
-> > After merging the wireless-drivers-next tree, today's linux-next build
-> > (x86_64 allmodconfig) produced this warning:
-> >
-> > In file included from include/linux/usb/ch9.h:35:0,
-> >                  from include/linux/usb.h:5,
-> >                  from drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:32:
-> > drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c: In function 'rtl8xxxu_fill_txdesc_v2':
-> > include/linux/device.h:1214:36: warning: 'rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> >  #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-> >                                     ^
-> > drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c:4841:6: note: 'rate' was declared here
-> >   u32 rate;
-> >       ^
-> >
-> > Introduced by commit
-> >
-> >   b4c3d9cfb607 ("rtl8xxxu: Pass tx_info to fill_txdesc in order to have access to retry count")
-> >
-> > This is a correct diagnosis.
+> Today's linux-next merge of the edac-amd tree got a conflict in:
 > 
-> Thanks for the report. Jes, can you send a patch to fix this? (Unless
-> someone else beats to it.)
+>   drivers/edac/edac_mc.c
 > 
-> -- 
-> Kalle Valo
+> between commit:
+> 
+>   ef91afa61088 ("edac: move documentation from edac_mc.c to edac_core.h")
+> 
+> from the edac tree and commit:
+> 
+>   c73e8833bec5 ("EDAC, mc: Fix locking around mc_devices list")
+> 
+> from the edac-amd tree.
+> 
+> I fixed it up (see below - there may be more fixes needed in
+> edac_core.h) and can carry the fix as necessary. This is now fixed as
+> far as linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-I posted a patch on the 26th that fixes this
+Just one issue which has nothing to do with linux-next. There's still
+that in ef91afa61088:
 
-Barry
+> +/**
+> + * edac_mc_find: Search for a mem_ctl_info structure whose index is @idx.
+> + *
+> + * @idx: index to be seek
+> + *
+> + * If found, return a pointer to the structure.
+> + * Else return NULL.
+> + *
+> + * Caller must hold mem_ctls_mutex.
+> + */
+
+That last sentence in the comment is not true anymore - edac_mc_find()
+is grabbing the mutex itself as it should be. Mauro, please fix that in
+your tree.
+
+Thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
