@@ -1,66 +1,62 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Tue, 29 Nov 2016 16:43:33 +0800
-Message-ID: <20161129084333.GA5705@gondor.apana.org.au>
-References: <20161129115529.41f9f0b5@canb.auug.org.au>
- <20161129070840.GA5113@gondor.apana.org.au>
- <DB4PR04MB084718B8EB90B061EA144C02988D0@DB4PR04MB0847.eurprd04.prod.outlook.com>
+From: Borislav Petkov <bp@suse.de>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 29 Nov 2016 10:01:41 +0100
+Message-ID: <20161129090141.qabvgzjrwd4wd2ql@pd.tnic>
+References: <20161129112232.333d3363@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-crypto-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:47674 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755581AbcK2JEZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 29 Nov 2016 04:04:25 -0500
 Content-Disposition: inline
-In-Reply-To: <DB4PR04MB084718B8EB90B061EA144C02988D0@DB4PR04MB0847.eurprd04.prod.outlook.com>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20161129112232.333d3363@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>
+Cc: Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>
 
-On Tue, Nov 29, 2016 at 08:34:08AM +0000, Horia Geantă wrote:
->
-> > Fixes: da40e7a4ba4d ("crypto: aes-ce - Convert to skcipher")
-> > Fixes: 211f41af534a ("crypto: aesbs - Convert to skcipher")
-> The fix for this commit is missing.
-> CRYPTO_AES_ARM_BS also needs to select CRYPTO_SIMD.
+On Tue, Nov 29, 2016 at 11:22:32AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   drivers/net/ethernet/amd/xgbe/xgbe-main.c
+> 
+> between commit:
+> 
+>   91eefaabf102 ("amd-xgbe: Fix unused suspend handlers build warning")
+> 
+> from the net tree and commit:
+> 
+>   bd8255d8ba35 ("amd-xgbe: Prepare for supporting PCI devices")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (the latter removed the code modified by the former)
 
-Thanks.  I'll add this patch on top:
+... except that +#ifdef CONFIG_PM is present in the new
+drivers/net/ethernet/amd/xgbe/xgbe-platform.c now.
 
----8<---
-Subject: crypto: arm/aes - Add missing SIMD select for aesbs
+So actually the proper fix is, IMO, to convert:
 
-This patch adds one more missing SIMD select for AES_ARM_BS.  It
-also changes selects on ALGAPI to BLKCIPHER.
++#ifdef CONFIG_PM
++static int xgbe_platform_suspend(struct device *dev)
 
-Fixes: 211f41af534a ("crypto: aesbs - Convert to skcipher")
-Reported-by: Horia Geantă <horia.geanta@nxp.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+to
 
-diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
-index 8134888..dd90e38 100644
---- a/arch/arm/crypto/Kconfig
-+++ b/arch/arm/crypto/Kconfig
-@@ -88,9 +88,9 @@ config CRYPTO_AES_ARM
- config CRYPTO_AES_ARM_BS
- 	tristate "Bit sliced AES using NEON instructions"
- 	depends on KERNEL_MODE_NEON
--	select CRYPTO_ALGAPI
- 	select CRYPTO_AES_ARM
--	select CRYPTO_ABLK_HELPER
-+	select CRYPTO_BLKCIPHER
-+	select CRYPTO_SIMD
- 	help
- 	  Use a faster and more secure NEON based implementation of AES in CBC,
- 	  CTR and XTS modes
-@@ -104,7 +104,7 @@ config CRYPTO_AES_ARM_BS
- config CRYPTO_AES_ARM_CE
- 	tristate "Accelerated AES using ARMv8 Crypto Extensions"
- 	depends on KERNEL_MODE_NEON
--	select CRYPTO_ALGAPI
-+	select CRYPTO_BLKCIPHER
- 	select CRYPTO_SIMD
- 	help
- 	  Use an implementation of AES in CBC, CTR and XTS modes that uses
++#ifdef CONFIG_PM_SLEEP
++static int xgbe_platform_suspend(struct device *dev)
+
+so that it doesn't fire again.
+
+David, would you prefer a patch against linux-next?
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+-- 
