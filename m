@@ -1,90 +1,69 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Tue, 29 Nov 2016 15:08:40 +0800
-Message-ID: <20161129070840.GA5113@gondor.apana.org.au>
-References: <20161129115529.41f9f0b5@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161129 build: 0 failures 2 warnings (next-20161129)
+Date: Tue, 29 Nov 2016 07:55:37 +0000
+Message-ID: <E1cBdGL-0002ZQ-7r@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:54246 "EHLO
-        helcar.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753188AbcK2HIt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 29 Nov 2016 02:08:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20161129115529.41f9f0b5@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51180 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754507AbcK2Hzr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 29 Nov 2016 02:55:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tue, Nov 29, 2016 at 11:55:29AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
-> 
-> After merging the crypto tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> ERROR: "simd_skcipher_free" [arch/arm/crypto/aes-arm-ce.ko] undefined!
-> ERROR: "simd_skcipher_create_compat" [arch/arm/crypto/aes-arm-ce.ko] undefined!
-> ERROR: "simd_skcipher_free" [arch/arm/crypto/aes-arm-bs.ko] undefined!
-> ERROR: "simd_skcipher_create_compat" [arch/arm/crypto/aes-arm-bs.ko] undefined!
-> 
-> Caused by commits
-> 
->   da40e7a4ba4d ("crypto: aes-ce - Convert to skcipher")
->   211f41af534a ("crypto: aesbs - Convert to skcipher")
-> 
-> Missing dependencies?
-> 
-> I have used the crypto tree from next-20161128 for today.
+Tree/Branch: next-20161129
+Git describe: next-20161129
+Commit: 4030ddad30 Add linux-next specific files for 20161129
 
-Indeed.  This patch should fix the problem.
+Build Time: 84 min 40 sec
 
----8<---
-Subject: crypto: arm/aes - Select SIMD in Kconfig
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-The skcipher conversion for ARM missed the select on CRYPTO_SIMD,
-causing build failures if SIMD was not otherwise enabled.
+Errors: 0
+Warnings: 2
+Section Mismatches: 0
 
-Fixes: da40e7a4ba4d ("crypto: aes-ce - Convert to skcipher")
-Fixes: 211f41af534a ("crypto: aesbs - Convert to skcipher")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
-index 27ed1b1..8134888 100644
---- a/arch/arm/crypto/Kconfig
-+++ b/arch/arm/crypto/Kconfig
-@@ -105,7 +105,7 @@ config CRYPTO_AES_ARM_CE
- 	tristate "Accelerated AES using ARMv8 Crypto Extensions"
- 	depends on KERNEL_MODE_NEON
- 	select CRYPTO_ALGAPI
--	select CRYPTO_ABLK_HELPER
-+	select CRYPTO_SIMD
- 	help
- 	  Use an implementation of AES in CBC, CTR and XTS modes that uses
- 	  ARMv8 Crypto Extensions
-diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
-index 5f4a617..c5ce39c 100644
---- a/arch/arm64/crypto/Kconfig
-+++ b/arch/arm64/crypto/Kconfig
-@@ -48,14 +48,14 @@ config CRYPTO_AES_ARM64_CE_BLK
- 	depends on ARM64 && KERNEL_MODE_NEON
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_AES_ARM64_CE
--	select CRYPTO_ABLK_HELPER
-+	select CRYPTO_SIMD
- 
- config CRYPTO_AES_ARM64_NEON_BLK
- 	tristate "AES in ECB/CBC/CTR/XTS modes using NEON instructions"
- 	depends on ARM64 && KERNEL_MODE_NEON
- 	select CRYPTO_BLKCIPHER
- 	select CRYPTO_AES
--	select CRYPTO_ABLK_HELPER
-+	select CRYPTO_SIMD
- 
- config CRYPTO_CRC32_ARM64
- 	tristate "CRC32 and CRC32C using optional ARMv8 instructions"
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+-------------------------------------------------------------------------------
+
+Warnings Summary: 2
+	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+	  1 ../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
