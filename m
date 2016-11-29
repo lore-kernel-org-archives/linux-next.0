@@ -1,31 +1,59 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: linux-next: manual merge of the mmc tree with the block tree
-Date: Tue, 29 Nov 2016 10:22:53 +0100
-Message-ID: <CAPDyKFrQn=-Beqm0jBnOOUyJVOY9WxDH07_OXjVG1MUnrxM5HA@mail.gmail.com>
-References: <20161128131211.55f096b8@canb.auug.org.au> <CAPDyKFrRFOhaQPedRO_2BSinA=cWTza2tHAnP7oPFGKzW5E2Wg@mail.gmail.com>
- <20161129091632.GA6527@lst.de>
+From: <cl_luzcc@hotmail.com>
+Subject: (unknown)
+Date: Tue, 29 Nov 2016 09:58:24 -0000
+Message-ID: <148041350463.10256.1430432505973457971@younet.com.br>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161129091632.GA6527@lst.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@fb.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: application/zip; name="MESSAGE_88250465_linux-next.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from 201-71-142-228-arpa.younet.com.br ([201.71.142.228]:57109 "HELO
+        younet.com.br" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1754349AbcK2J6a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 29 Nov 2016 04:58:30 -0500
+Subject: 
+Content-Disposition: attachment
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-On 29 November 2016 at 10:16, Christoph Hellwig <hch@lst.de> wrote:
-> On Tue, Nov 29, 2016 at 10:13:59AM +0100, Ulf Hansson wrote:
->> Jens, Christoph, I believe I said this before; could you please make
->> sure patches for mmc also becomes cc:ed to me?
->> Don't get me wrong, I have no problem you carrying changes for mmc,
->> especially clean-ups like this one, but it just be nice to be aware of
->> what goes on.
->
-> I'm not going to Cc every driver maintainer on trivial tree-wide
-> cleanups.  As the maintainer of a block driver you should be subscribed
-> to the linux-block mailing list where every block patch is discussed.
-
-Okay!
-
-Kind regards
-Uffe
+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
