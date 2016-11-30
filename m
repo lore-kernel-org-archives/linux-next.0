@@ -1,54 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the kbuild tree
-Date: Thu, 1 Dec 2016 10:06:08 +1100
-Message-ID: <20161201100608.625b8915@canb.auug.org.au>
+Subject: Re: linux-next: problems fetching the drm-intel, etc trees
+Date: Thu, 1 Dec 2016 10:13:01 +1100
+Message-ID: <20161201101301.48163c3b@canb.auug.org.au>
+References: <20161201093958.3be47944@canb.auug.org.au>
+        <CAF6AEGvh0pJcot9_6TESY28f8yZsAyKJfByca2TuhkKpkcxQXw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michal Marek <mmarek@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57615 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752856AbcK3XND (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 30 Nov 2016 18:13:03 -0500
+In-Reply-To: <CAF6AEGvh0pJcot9_6TESY28f8yZsAyKJfByca2TuhkKpkcxQXw@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Stone <daniels@collabora.com>
 
-Hi Michal,
+Hi Rob,
 
-After merging the kbuild tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Wed, 30 Nov 2016 17:49:24 -0500 Rob Clark <robdclark@gmail.com> wrote:
+>
+> yeah, {cgit,anongit}.fd.o have been having problems all day.. (the ssh
+> git urls for folks who have push access work fine).. although it has
+> worked for me a couple times today, given enough time.
+> 
+> (not sure if we have github/etc mirrors somewhere?  I do have a github
+> clone of mesa which is up to date as of ~10min ago.. I could do the
+> same for other git trees if someone somewhere is stuck)
 
-WARNING: EXPORT symbol "__sw_hweight32" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "memcpy_mcsafe_unrolled" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "empty_zero_page" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__get_user_2" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__put_user_2" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__fentry__" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "native_load_gs_index" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__copy_user_nocache" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "copy_user_generic_unrolled" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "memset" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_copy_to_user" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__sw_hweight64" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__put_user_1" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__memcpy" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "memmove" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__put_user_8" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "copy_user_generic_string" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__get_user_4" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "clear_page" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__memset" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__memmove" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "copy_user_enhanced_fast_string" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "_copy_from_user" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__get_user_1" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "phys_base" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__get_user_8" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "copy_page" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "__put_user_4" [vmlinux] version generation failed, symbol will not be versioned.
-WARNING: EXPORT symbol "memcpy" [vmlinux] version generation failed, symbol will not be versioned.
-
-Introduced by commit
-
-  d8c1eb86e952 ("kbuild: modpost warn if export version crc is missing")
+I have managed (with a lot of persistence) to fetch all the trees I
+need from there today.
 
 -- 
 Cheers,
