@@ -1,56 +1,60 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Stafford Horne <shorne@gmail.com>
 Subject: Re: Add openrisc for-next branch to linux-next
-Date: Thu, 1 Dec 2016 08:35:55 +1100
-Message-ID: <20161201083555.1b9005c2@canb.auug.org.au>
-References: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net>
+Date: Thu, 1 Dec 2016 07:02:26 +0900 (JST)
+Message-ID: <alpine.LFD.2.20.1612010658350.29569@lianli.shorne-pla.net>
+References: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net> <f7f0e124-00b9-5b21-9ca0-1f17e7c338bd@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41607 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755249AbcK3Vf6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 30 Nov 2016 16:35:58 -0500
-In-Reply-To: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net>
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34491 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759190AbcK3WCh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 17:02:37 -0500
+In-Reply-To: <f7f0e124-00b9-5b21-9ca0-1f17e7c338bd@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stafford Horne <shorne@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, openrisc@lists.librecores.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stafford Horne <shorne@gmail.com>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, openrisc@lists.librecores.org
 
-Hi Stafford,
 
-On Wed, 30 Nov 2016 22:22:41 +0900 (JST) Stafford Horne <shorne@gmail.com> wrote:
+
+On Wed, 30 Nov 2016, Randy Dunlap wrote:
+
+> On 11/30/16 05:22, Stafford Horne wrote:
+>> Hi Stephen,
+>>
+>> I have been working on getting the OpenRISC backlog of fixes sorted out for upstream.  Can this branch be added to linux-next?
+>>
+>>   git://github.com/openrisc/linux.git for-next
+>>
+>> These have been through a few reviews and we plan to ask Linus to pull in the next merge window.
+>>
+>> -Stafford
 >
-> I have been working on getting the OpenRISC backlog of fixes sorted out 
-> for upstream.  Can this branch be added to linux-next?
-> 
->    git://github.com/openrisc/linux.git for-next
-> 
-> These have been through a few reviews and we plan to ask Linus to pull in 
-> the next merge window.
+> Hi,
+>
+> I see that you have updated MAINTAINERS.  Good.
+>
+> Does openRISC support VGA console?
+> I tried to send a patch to Jason a few days ago.
+> Please look at http://marc.info/?l=linux-kernel&m=147968525011508&w=2
+> (or I can resend it if you wish).
+>
+> The kbuild test bot has been reporting this build error for several
+> months.  If my fix is wrong, please submit something else.
 
-Added from today.
+Hi Randy,
 
-Just a note: your top commits has no Signed-off-by from you as the committer ...
+I was watching that thread, I honestly thought it would have been pulled 
+in by one of the console maintainers.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Openrisc does not have support for vga console, some people may have 
+hacked something together, but its not in our kernel yet.  So I have no 
+issue disabling it in the build.
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+I will pull it in to my branch.
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+If someone else pulls,
+Acked-by: Stafford Horne <shorne@gmail.com>
 
--- 
-Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+-Stafford
