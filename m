@@ -1,206 +1,71 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161130 build: 2 failures 20 warnings (next-20161130)
-Date: Wed, 30 Nov 2016 08:58:46 +0000
-Message-ID: <E1cC0iy-0000y9-Pi@optimist>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: linux-next: manual merge of the edac-amd tree with the edac
+ tree
+Date: Wed, 30 Nov 2016 08:50:13 -0200
+Message-ID: <20161130085013.4798b4a7@vento.lan>
+References: <20161128143726.7fda1849@canb.auug.org.au>
+        <20161128082734.bdl4dhothemm7ja5@pd.tnic>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49902 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757610AbcK3I65 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 03:58:57 -0500
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:50997
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755790AbcK3Ku0 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 05:50:26 -0500
+In-Reply-To: <20161128082734.bdl4dhothemm7ja5@pd.tnic>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Borislav Petkov <bp@alien8.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20161130
-Git describe: next-20161130
-Commit: 59ab008349 Add linux-next specific files for 20161130
+Em Mon, 28 Nov 2016 09:27:35 +0100
+Borislav Petkov <bp@alien8.de> escreveu:
 
-Build Time: 151 min 57 sec
+> On Mon, Nov 28, 2016 at 02:37:26PM +1100, Stephen Rothwell wrote:
+> > Hi Borislav,
+> > 
+> > Today's linux-next merge of the edac-amd tree got a conflict in:
+> > 
+> >   drivers/edac/edac_mc.c
+> > 
+> > between commit:
+> > 
+> >   ef91afa61088 ("edac: move documentation from edac_mc.c to edac_core.h")
+> > 
+> > from the edac tree and commit:
+> > 
+> >   c73e8833bec5 ("EDAC, mc: Fix locking around mc_devices list")
+> > 
+> > from the edac-amd tree.
+> > 
+> > I fixed it up (see below - there may be more fixes needed in
+> > edac_core.h) and can carry the fix as necessary. This is now fixed as
+> > far as linux-next is concerned, but any non trivial conflicts should be
+> > mentioned to your upstream maintainer when your tree is submitted for
+> > merging.  You may also want to consider cooperating with the maintainer
+> > of the conflicting tree to minimise any particularly complex conflicts.  
+> 
+> Just one issue which has nothing to do with linux-next. There's still
+> that in ef91afa61088:
+> 
+> > +/**
+> > + * edac_mc_find: Search for a mem_ctl_info structure whose index is @idx.
+> > + *
+> > + * @idx: index to be seek
+> > + *
+> > + * If found, return a pointer to the structure.
+> > + * Else return NULL.
+> > + *
+> > + * Caller must hold mem_ctls_mutex.
+> > + */  
+> 
+> That last sentence in the comment is not true anymore - edac_mc_find()
+> is grabbing the mutex itself as it should be. Mauro, please fix that in
+> your tree.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Fixed. If you have a stable branch, I can rebase it on the top
+of your patches, in order to avoid the confict at linux-next.
 
-Errors: 16
-Warnings: 20
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR: "cnstr_shdsc_ablkcipher_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_xts_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_xts_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4106_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4106_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4543_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4543_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_gcm_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_gcm_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_null_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_null_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-
-	arm-allmodconfig
-ERROR: "cnstr_shdsc_ablkcipher_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_xts_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_xts_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4106_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4106_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4543_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_rfc4543_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_gcm_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_gcm_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_null_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-ERROR: "cnstr_shdsc_aead_null_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-     18 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 16
-	  2 ERROR: "cnstr_shdsc_xts_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_xts_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_rfc4543_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_rfc4543_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_rfc4106_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_rfc4106_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_gcm_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_gcm_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_aead_null_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_aead_null_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_aead_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_aead_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_aead_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_ablkcipher_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	  2 ERROR: "cnstr_shdsc_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-
-Warnings Summary: 20
-	  1 ../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-	  1 ../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:918:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:848:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:776:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:705:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:67:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:629:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:539:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:236:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:228:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:143:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1271:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1219:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1148:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1143:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1079:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1074:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1014:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	  1 ../drivers/crypto/caam/caamalg_desc.c:1009:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 16 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "cnstr_shdsc_ablkcipher_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_xts_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_xts_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4106_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4106_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4543_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4543_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_gcm_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_gcm_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_null_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_null_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-
-Warnings:
-	../include/linux/kern_levels.h:4:18: warning: format '%d' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 16 errors, 18 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "cnstr_shdsc_ablkcipher_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_xts_ablkcipher_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_xts_ablkcipher_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4106_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4106_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4543_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_rfc4543_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_gcm_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_gcm_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_givencap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_null_decap" [drivers/crypto/caam/caamalg.ko] undefined!
-	ERROR: "cnstr_shdsc_aead_null_encap" [drivers/crypto/caam/caamalg.ko] undefined!
-
-Warnings:
-	../drivers/crypto/caam/caamalg_desc.c:67:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:143:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:228:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:236:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:539:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:629:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:705:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:776:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:848:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:918:27: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1009:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1014:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1074:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1079:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1143:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1148:15: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1219:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-	../drivers/crypto/caam/caamalg_desc.c:1271:26: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/btrfs/inode.c:1198:31: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Regards,
+Mauro
