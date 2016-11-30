@@ -1,27 +1,41 @@
-From: Stafford Horne <shorne@gmail.com>
-Subject: Add openrisc for-next branch to linux-next
-Date: Wed, 30 Nov 2016 22:22:41 +0900 (JST)
-Message-ID: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: Add openrisc for-next branch to linux-next
+Date: Wed, 30 Nov 2016 10:38:47 -0800
+Message-ID: <f7f0e124-00b9-5b21-9ca0-1f17e7c338bd@infradead.org>
+References: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:33109 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753112AbcK3NW4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 08:22:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.LFD.2.20.1611302214520.29569@lianli.shorne-pla.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stafford Horne <shorne@gmail.com>, sfr@canb.auug.org.au
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, openrisc@lists.librecores.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 11/30/16 05:22, Stafford Horne wrote:
+> Hi Stephen,
+> 
+> I have been working on getting the OpenRISC backlog of fixes sorted out for upstream.  Can this branch be added to linux-next?
+> 
+>   git://github.com/openrisc/linux.git for-next
+> 
+> These have been through a few reviews and we plan to ask Linus to pull in the next merge window.
+> 
+> -Stafford
 
-I have been working on getting the OpenRISC backlog of fixes sorted out 
-for upstream.  Can this branch be added to linux-next?
+Hi,
 
-   git://github.com/openrisc/linux.git for-next
+I see that you have updated MAINTAINERS.  Good.
 
-These have been through a few reviews and we plan to ask Linus to pull in 
-the next merge window.
+Does openRISC support VGA console?
+I tried to send a patch to Jason a few days ago.
+Please look at http://marc.info/?l=linux-kernel&m=147968525011508&w=2
+(or I can resend it if you wish).
 
--Stafford
+The kbuild test bot has been reporting this build error for several
+months.  If my fix is wrong, please submit something else.
+
+Thanks.
+-- 
+~Randy
