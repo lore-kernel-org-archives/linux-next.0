@@ -1,115 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 1 Dec 2016 12:41:59 +1100
-Message-ID: <20161201124159.79f2e4f9@canb.auug.org.au>
+From: Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: linux-next: build warning after merge of the kbuild tree
+Date: Thu, 1 Dec 2016 13:00:31 +1100
+Message-ID: <20161201130031.6c7ba4a0@roar.ozlabs.ibm.com>
+References: <20161201100608.625b8915@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>, Roi Dayan <roid@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:34564 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755404AbcLACAw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 21:00:52 -0500
+In-Reply-To: <20161201100608.625b8915@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michal Marek <mmarek@suse.cz>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi all,
+On Thu, 1 Dec 2016 10:06:08 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Today's linux-next merge of the net-next tree got a conflict in:
+> Hi Michal,
+> 
+> After merging the kbuild tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> WARNING: EXPORT symbol "__sw_hweight32" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "memcpy_mcsafe_unrolled" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "empty_zero_page" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__get_user_2" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__put_user_2" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__fentry__" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "native_load_gs_index" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__copy_user_nocache" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "copy_user_generic_unrolled" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "memset" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "_copy_to_user" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__sw_hweight64" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__put_user_1" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__memcpy" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "memmove" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__put_user_8" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "copy_user_generic_string" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__get_user_4" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "clear_page" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__memset" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__memmove" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "copy_user_enhanced_fast_string" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "_copy_from_user" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__get_user_1" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "phys_base" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__get_user_8" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "copy_page" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "__put_user_4" [vmlinux] version generation failed, symbol will not be versioned.
+> WARNING: EXPORT symbol "memcpy" [vmlinux] version generation failed, symbol will not be versioned.
+> 
+> Introduced by commit
+> 
+>   d8c1eb86e952 ("kbuild: modpost warn if export version crc is missing")
+> 
 
-  net/sched/cls_flower.c
+These are existing problems caught by the new warning. The modversions saga
+has another chapter left, but one way or another we'll get rid of the warnings
+for 4.10.
 
-between commit:
-
-  725cbb62e7ad ("sched: cls_flower: remove from hashtable only in case skip sw flag is not set")
-
-from the net tree and commit:
-
-  13fa876ebd03 ("net/sched: cls_flower: merge filter delete/destroy common code")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc net/sched/cls_flower.c
-index 904442421db3,e8dd09af0d0c..000000000000
---- a/net/sched/cls_flower.c
-+++ b/net/sched/cls_flower.c
-@@@ -273,24 -272,14 +276,32 @@@ static void fl_hw_update_stats(struct t
-  	dev->netdev_ops->ndo_setup_tc(dev, tp->q->handle, tp->protocol, &tc);
-  }
-  
- +static void fl_destroy_sleepable(struct work_struct *work)
- +{
- +	struct cls_fl_head *head = container_of(work, struct cls_fl_head,
- +						work);
- +	if (head->mask_assigned)
- +		rhashtable_destroy(&head->ht);
- +	kfree(head);
- +	module_put(THIS_MODULE);
- +}
- +
- +static void fl_destroy_rcu(struct rcu_head *rcu)
- +{
- +	struct cls_fl_head *head = container_of(rcu, struct cls_fl_head, rcu);
- +
- +	INIT_WORK(&head->work, fl_destroy_sleepable);
- +	schedule_work(&head->work);
- +}
- +
-+ static void __fl_delete(struct tcf_proto *tp, struct cls_fl_filter *f)
-+ {
-+ 	list_del_rcu(&f->list);
-+ 	fl_hw_destroy_filter(tp, (unsigned long)f);
-+ 	tcf_unbind_filter(tp, &f->res);
-+ 	call_rcu(&f->rcu, fl_destroy_filter);
-+ }
-+ 
-  static bool fl_destroy(struct tcf_proto *tp, bool force)
-  {
-  	struct cls_fl_head *head = rtnl_dereference(tp->root);
-@@@ -299,14 -288,12 +310,11 @@@
-  	if (!force && !list_empty(&head->filters))
-  		return false;
-  
-- 	list_for_each_entry_safe(f, next, &head->filters, list) {
-- 		fl_hw_destroy_filter(tp, (unsigned long)f);
-- 		list_del_rcu(&f->list);
-- 		call_rcu(&f->rcu, fl_destroy_filter);
-- 	}
-+ 	list_for_each_entry_safe(f, next, &head->filters, list)
-+ 		__fl_delete(tp, f);
- -	RCU_INIT_POINTER(tp->root, NULL);
- -	if (head->mask_assigned)
- -		rhashtable_destroy(&head->ht);
- -	kfree_rcu(head, rcu);
- +
- +	__module_get(THIS_MODULE);
- +	call_rcu(&head->rcu, fl_destroy_rcu);
-  	return true;
-  }
-  
-@@@ -761,13 -782,9 +804,10 @@@ static int fl_delete(struct tcf_proto *
-  	struct cls_fl_head *head = rtnl_dereference(tp->root);
-  	struct cls_fl_filter *f = (struct cls_fl_filter *) arg;
-  
- -	rhashtable_remove_fast(&head->ht, &f->ht_node,
- -			       head->ht_params);
- +	if (!tc_skip_sw(f->flags))
- +		rhashtable_remove_fast(&head->ht, &f->ht_node,
- +				       head->ht_params);
-- 	list_del_rcu(&f->list);
-- 	fl_hw_destroy_filter(tp, (unsigned long)f);
-- 	tcf_unbind_filter(tp, &f->res);
-- 	call_rcu(&f->rcu, fl_destroy_filter);
-+ 	__fl_delete(tp, f);
-  	return 0;
-  }
-  
+Thanks,
+Nick
