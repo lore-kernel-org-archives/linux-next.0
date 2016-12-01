@@ -1,43 +1,73 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: linux-next: problems fetching the drm-intel, etc trees
-Date: Thu, 1 Dec 2016 20:50:01 +0000
-Message-ID: <CAPj87rOxZxJAB-2FqdBV9jHJ3gcbbSvfARhUtF39HfM_eDryQw@mail.gmail.com>
-References: <20161201093958.3be47944@canb.auug.org.au> <CAF6AEGvh0pJcot9_6TESY28f8yZsAyKJfByca2TuhkKpkcxQXw@mail.gmail.com>
- <cdua8dskv8xvorsys9a6z53yl-0@mailer.nylas.com> <20161202074515.6ae9fa4c@canb.auug.org.au>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH] EDAC: Document HW_EVENT_ERR_DEFERRED type
+Date: Thu, 1 Dec 2016 19:36:45 -0200
+Message-ID: <20161201193645.1b5e4f24@vento.lan>
+References: <20161201195753.rrxgwvltptq4gegp@yaz-fedora.dyhomenet>
+        <1480623893-76399-1-git-send-email-Yazen.Ghannam@amd.com>
+        <20161201202741.gb3lkeohdo26fofu@pd.tnic>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-lf0-f44.google.com ([209.85.215.44]:34485 "EHLO
-        mail-lf0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751676AbcLAUuE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2016 15:50:04 -0500
-Received: by mail-lf0-f44.google.com with SMTP id o141so180736459lff.1
-        for <linux-next@vger.kernel.org>; Thu, 01 Dec 2016 12:50:03 -0800 (PST)
-In-Reply-To: <20161202074515.6ae9fa4c@canb.auug.org.au>
+Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:59697
+        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1755581AbcLAVgx (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2016 16:36:53 -0500
+In-Reply-To: <20161201202741.gb3lkeohdo26fofu@pd.tnic>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Stone <daniels@collabora.com>, Rob Clark <robdclark@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Borislav Petkov <bp@suse.de>
+Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-next@vger.kernel.org
 
-Hi Stephen,
+Em Thu, 1 Dec 2016 21:27:42 +0100
+Borislav Petkov <bp@suse.de> escreveu:
 
-On 1 December 2016 at 20:45, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Thu, 01 Dec 2016 11:02:26 +0000 Daniel Stone <daniels@collabora.com> wrote:
->> Sorry about this, it is quite bad. I think having mirrors for the key DRM
->> trees on GitHub is a good idea though, and I can get to setting that up.
->> Stephen, you need DRM (airlied), drm-misc, drm-panel, drm-intel, drm-tegra,
->> drm-exynos and drm-msm, right?
->
-> Well, here are the trees I fetch from *.freedesktop.org:
->
-> [...]
->
-> I did not have any trouble with the people.fd.o ones.
+> On Thu, Dec 01, 2016 at 02:24:53PM -0600, Yazen Ghannam wrote:
+> > Add a description of the HW_EVENT_ERR_DEFERRED type that wasn't included
+> > with commit d12a969ebbfc ("EDAC, amd64: Add Deferred Error type").
 
-That's actually interesting, given that they lie on the same host.
-Perhaps it means that the locally-mounted ones were fine, and it was
-the NFS (cough) mount between git/anongit which took a dive ... thanks
-for the datapoint!
+Thanks for the patch!
 
-Cheers,
-Daniel
+> > 
+> > Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> > Cc: Borislav Petkov <bp@suse.de>
+> > Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
+> > ---
+> >  include/linux/edac.h | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/include/linux/edac.h b/include/linux/edac.h
+> > index cb56dcb..43cd51d 100644
+> > --- a/include/linux/edac.h
+> > +++ b/include/linux/edac.h
+> > @@ -128,6 +128,12 @@ enum dev_type {
+> >   *				fatal (maybe it is on an unused memory area,
+> >   *				or the memory controller could recover from
+> >   *				it for example, by re-trying the operation).
+> > + * @HW_EVENT_ERR_DEFERRED:	Deferred Error - Indicates an uncorrectable
+> > + *				error whose handling is not urgent. This could
+> > + *				be due to hardware data poisoning where the
+> > + *				system can continue operation until the poisoned
+> > + *				data is consumed. Preemptive measures may also
+> > + *				be taken, e.g. offlining pages, etc.
+
+I'm wandering if DEFERRED is the best name here... Maybe it could be
+called, instead HW_EVENT_ERR_NON_URGENT or something like that.
+
+Anyway, the description itself looks good.
+
+> >   * @HW_EVENT_ERR_FATAL:		Fatal Error - Uncorrected error that could not
+> >   *				be recovered.
+> >   */
+> > --   
+> 
+> Acked-by: Borislav Petkov <bp@suse.de>
+> 
+> Mauro, are you taking this through your tree or should I?
+
+Boris, yeah, I can take care on it. I'll send my pull request
+after yours, to avoid any issues.
+
+-- 
+Thanks,
+Mauro
