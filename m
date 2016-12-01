@@ -1,48 +1,59 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Wed, 30 Nov 2016 20:04:53 -0700
-Message-ID: <e1f0ec6b-454e-a20c-a655-4302e952644a@kernel.dk>
-References: <20161201135517.273c9a4d@canb.auug.org.au>
- <be0dd730-037a-2f42-489a-2a1fc90c8932@kernel.dk>
- <20161201140243.2554a006@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Thu, 1 Dec 2016 14:46:41 +1100
+Message-ID: <20161201144641.7e6d73e4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f171.google.com ([209.85.192.171]:36292 "EHLO
-        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751937AbcLADE5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Nov 2016 22:04:57 -0500
-Received: by mail-pf0-f171.google.com with SMTP id 189so42959778pfz.3
-        for <linux-next@vger.kernel.org>; Wed, 30 Nov 2016 19:04:57 -0800 (PST)
-In-Reply-To: <20161201140243.2554a006@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, xfs@oss.sgi.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Edward Cree <ecree@solarflare.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On 11/30/2016 08:02 PM, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> On Wed, 30 Nov 2016 20:00:36 -0700 Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 11/30/2016 07:55 PM, Stephen Rothwell wrote:
->>>
->>> I love APIs changing :-(  
->>
->> It's a necessary evil...
-> 
-> Yeah
-> 
->> This could have been avoided with the XFS tree pulling in the block
->> changes, but that obviously has other implications. Something to watch
->> for when the XFS tree is sent in for the merge window, however.
-> 
-> Indeed.  Or the block tree, which ever comes last.
+Hi all,
 
-Sure, but I usually try and push in the first few days since other trees
-depend on mine. So it's more likely that the XFS tree will run into the
-issue.
+Today's linux-next merge of the tip tree got a conflict in:
+
+  drivers/net/ethernet/sfc/Kconfig
+
+between commit:
+
+  5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new sfc-falcon driver")
+
+from the net-next tree and commit:
+
+  d1cbfd771ce8 ("ptp_clock: Allow for it to be optional")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Jens Axboe
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/ethernet/sfc/Kconfig
+index 0e16197e4f18,83f4766a1da0..000000000000
+--- a/drivers/net/ethernet/sfc/Kconfig
++++ b/drivers/net/ethernet/sfc/Kconfig
+@@@ -5,11 -5,11 +5,11 @@@ config SF
+  	select CRC32
+  	select I2C
+  	select I2C_ALGOBIT
+- 	select PTP_1588_CLOCK
+ +	select SFC_FALCON
++ 	imply PTP_1588_CLOCK
+  	---help---
+  	  This driver supports 10/40-gigabit Ethernet cards based on
+ -	  the Solarflare SFC4000, SFC9000-family and SFC9100-family
+ -	  controllers.
+ +	  the Solarflare SFC9000-family and SFC9100-family controllers.
+  
+  	  To compile this driver as a module, choose M here.  The module
+  	  will be called sfc.
