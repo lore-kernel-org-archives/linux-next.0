@@ -1,59 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Date: Thu, 1 Dec 2016 14:46:41 +1100
-Message-ID: <20161201144641.7e6d73e4@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Thu, 1 Dec 2016 00:27:56 -0600
+Message-ID: <CAH2r5msUNuqY7ZRsJa2k4ssPusgOtg31=KDNM7ZS5he-Sx+btQ@mail.gmail.com>
+References: <20161130092742.0f1cc03b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Edward Cree <ecree@solarflare.com>, Nicolas Pitre <nicolas.pitre@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161130092742.0f1cc03b-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Pavel Shilovsky <pshilov-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Commit fixed to handle the ifdef CONFIG_CIFS_SMB2 disabled problem you
+noted, and repushed to my for-next branch. Thx for pointing this out.
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Tue, Nov 29, 2016 at 4:27 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+> Hi all,
+>
+> After merging the cifs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/cifs/connect.c: In function 'cifs_find_tcon':
+> fs/cifs/connect.c:2610:11: error: 'struct cifs_tcon' has no member named 'snapshot_time'
+>    if (tcon->snapshot_time != volume_info->snapshot_time)
+>            ^
+> fs/cifs/connect.c: In function 'cifs_get_tcon':
+> fs/cifs/connect.c:2681:8: error: 'struct cifs_tcon' has no member named 'snapshot_time'
+>     tcon->snapshot_time = volume_info->snapshot_time;
+>         ^
+>
+> Caused by commit
+>
+>   36c659cf9241 ("SMB3: parsing for new snapshot timestamp mount parm")
+>
+> CONFIG_CIFS_SMB2 is not set for this build ...
+>
+> I have used the cifs tree from next-20161129 for today.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-  drivers/net/ethernet/sfc/Kconfig
 
-between commit:
-
-  5a6681e22c14 ("sfc: separate out SFC4000 ("Falcon") support into new sfc-falcon driver")
-
-from the net-next tree and commit:
-
-  d1cbfd771ce8 ("ptp_clock: Allow for it to be optional")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 -- 
-Cheers,
-Stephen Rothwell
+Thanks,
 
-diff --cc drivers/net/ethernet/sfc/Kconfig
-index 0e16197e4f18,83f4766a1da0..000000000000
---- a/drivers/net/ethernet/sfc/Kconfig
-+++ b/drivers/net/ethernet/sfc/Kconfig
-@@@ -5,11 -5,11 +5,11 @@@ config SF
-  	select CRC32
-  	select I2C
-  	select I2C_ALGOBIT
-- 	select PTP_1588_CLOCK
- +	select SFC_FALCON
-+ 	imply PTP_1588_CLOCK
-  	---help---
-  	  This driver supports 10/40-gigabit Ethernet cards based on
- -	  the Solarflare SFC4000, SFC9000-family and SFC9100-family
- -	  controllers.
- +	  the Solarflare SFC9000-family and SFC9100-family controllers.
-  
-  	  To compile this driver as a module, choose M here.  The module
-  	  will be called sfc.
+Steve
