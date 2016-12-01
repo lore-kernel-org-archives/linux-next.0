@@ -1,46 +1,32 @@
-From: Borislav Petkov <bp@alien8.de>
-Subject: Re: linux-next: manual merge of the edac-amd tree with the edac tree
-Date: Thu, 1 Dec 2016 19:15:01 +0100
-Message-ID: <20161201181501.eynw6ucx6cdsg6hl@pd.tnic>
-References: <20161128143726.7fda1849@canb.auug.org.au>
- <20161128082734.bdl4dhothemm7ja5@pd.tnic>
- <20161130085013.4798b4a7@vento.lan>
- <20161201104846.kjvuy5tj475oxzke@pd.tnic>
- <20161201100617.511d8aae@vento.lan>
- <20161201160203.hhm6w3iyrnvcukzu@yaz-fedora.dyhomenet>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Dec 1 (ethernet/mellanox)
+Date: Thu, 1 Dec 2016 10:38:22 -0800
+Message-ID: <c4b199c7-fcf4-c814-74f2-2ae6c457824c@infradead.org>
+References: <20161201174235.21689436@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161201160203.hhm6w3iyrnvcukzu@yaz-fedora.dyhomenet>
+In-Reply-To: <20161201174235.21689436@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Tariq Toukan <tariqt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Dec 01, 2016 at 11:02:04AM -0500, Yazen Ghannam wrote:
-> A deferred error is an uncorrectable error whose handling can be
-> deferred, i.e. it's not urgent. This affects the system behavior, but
-> I'm now thinking that this shouldn't affect users' behavior. I think it
-> would be simpler to just classify deferred errors as uncorrectable
-> errors so that users treat them as such.
+On 11/30/16 22:42, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20161130:
+> 
 
-Why would we want to lie about deferred errors being uncorrectable?
+on i386:
 
-And I believe deferred errors can be handled differently like freeze the
-process using the page instead of killing it. And so on...
+when CONFIG_INET is not enabled:
 
-Why aren't you simply adding the documentation about
-HW_EVENT_ERR_DEFERRED and be done with it? The downstream path like
-tracepoint and all can handle all that just fine.
+drivers/built-in.o: In function `mlx5e_test_loopback':
+en_selftest.c:(.text+0x690bde): undefined reference to `ip_send_check'
+en_selftest.c:(.text+0x690c42): undefined reference to `udp4_hwcsum'
 
-> Boris,
-> Can we drop or revert commit d12a969ebbfc?
-
-No can do. It is a public branch and there's no touching it.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+~Randy
