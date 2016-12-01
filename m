@@ -1,47 +1,42 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH] EDAC: Document HW_EVENT_ERR_DEFERRED type
-Date: Thu, 1 Dec 2016 20:00:15 -0200
-Message-ID: <20161201200015.616247fc@vento.lan>
-References: <20161201195753.rrxgwvltptq4gegp@yaz-fedora.dyhomenet>
-        <1480623893-76399-1-git-send-email-Yazen.Ghannam@amd.com>
-        <20161201202741.gb3lkeohdo26fofu@pd.tnic>
-        <20161201193645.1b5e4f24@vento.lan>
-        <20161201214918.wjt2axxmuca65qip@pd.tnic>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb tree with the jc_docs tree
+Date: Fri, 2 Dec 2016 10:31:07 +1100
+Message-ID: <20161202103107.01452535@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ec2-52-27-115-49.us-west-2.compute.amazonaws.com ([52.27.115.49]:59821
-        "EHLO osg.samsung.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1752572AbcLAWAX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Dec 2016 17:00:23 -0500
-In-Reply-To: <20161201214918.wjt2axxmuca65qip@pd.tnic>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Borislav Petkov <bp@suse.de>
-Cc: Yazen Ghannam <Yazen.Ghannam@amd.com>, linux-next@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Em Thu, 1 Dec 2016 22:49:18 +0100
-Borislav Petkov <bp@suse.de> escreveu:
+Hi Mauro,
 
-> On Thu, Dec 01, 2016 at 07:36:45PM -0200, Mauro Carvalho Chehab wrote:
-> > I'm wandering if DEFERRED is the best name here... Maybe it could be
-> > called, instead HW_EVENT_ERR_NON_URGENT or something like that.  
-> 
-> No, that's what the error is called in the hw documentation. It is
-> really a *deferred* uncorrectable error. Deferred in the sense that it
-> hasn't been consumed yet.
+Today's linux-next merge of the v4l-dvb tree got conflicts in:
 
-OK.
+  Documentation/media/uapi/v4l/dev-subdev_files/subdev-image-processing-crop.svg
+  Documentation/media/uapi/v4l/dev-subdev_files/subdev-image-processing-full.svg
+  Documentation/media/uapi/v4l/dev-subdev_files/subdev-image-processing-scaling-multi-source.svg
 
-> > Boris, yeah, I can take care on it. I'll send my pull request
-> > after yours, to avoid any issues.  
-> 
-> Ok, cool.
-> 
-> Thanks.
+between commit:
 
-Patch applied.
+  15a04d4e76bd ("docs-rst: auto-generate PDF image files")
 
-Thanks!
-Mauro
+from the jc_docs tree and commit:
+
+  9e3d073009d2 ("[media] docs-rst: cleanup SVG files")
+
+from the v4l-dvb tree.
+
+I fixed it up (I have no idea, so I just deleted the files as the former
+did.  Or were they moved?) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
