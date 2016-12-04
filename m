@@ -1,44 +1,41 @@
-From: <muirs@stolaf.edu>
-Subject: (unknown)
-Date: Sat, 03 Dec 2016 19:41:21 -0000
-Message-ID: <148079408121.32573.10053151387515667540@hinet.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: unable to fetch the watchdog tree
+Date: Mon, 5 Dec 2016 09:39:34 +1100
+Message-ID: <20161205093934.4d5449fa@canb.auug.org.au>
+References: <20161114093426.2000ff4c@canb.auug.org.au>
+        <20161114152615.GA16294@spo001.leaseweb.nl>
+        <20161122094919.2a7365e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="MESSAGE_818_linux-next.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 114-37-88-111.dynamic.hinet.net ([114.37.88.111]:43438 "HELO
-        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1750708AbcLCTl1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 3 Dec 2016 14:41:27 -0500
-Subject: 
-Content-Disposition: attachment
+Received: from ozlabs.org ([103.22.144.67]:38613 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751230AbcLDWka (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Dec 2016 17:40:30 -0500
+In-Reply-To: <20161122094919.2a7365e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-UEsDBBQAAgAIAIEKhEnQNtx37AQAAO4EAAALABwAODU4X1pJUC56aXBVVAkAA+EaQ1jhGkNYdXgL
-AAEEAAAAAAQAAAAAC/BmZhFhYGLgYGjkavFsmvr3kA8LA4NFEAMDG4MMg4WphV5WcWgIJwPzQynn
-CBAureBmYAQqYWAAE29jYvNveYjU+tW1muqzqRbZab11c12RdTn19wWT1UKmUyPkemy3sfcc32o7
-I/Hq/ziNFrPCJe+Yn29ZeYKZX6Og9P0cy+/3itfP/NkqfPvijfJd504v+vD2wFnu2Jennl2Srdp5
-zrpdqyiq+aq0VVHW1NZdcnx+7X7bX+9Q405dYiS56+3X43vfLmfPE3qhYND5Xu9/ee6SYovoW8au
-L/uFZ9+8/PQ38/cTtmVlP4JUV8lUlW+Lfrv1bEKSmFrAc47u+HijSGvbyaxTL0VmP1dzUTz63c/S
-fXe5cwhb/uITH8xkxDOdvzC/uC7OJbdw68I9h+RblWTK3zieX8xuyz9RSK/s/iSF0DAV56Ku/ltf
-O56cmcHQ2FBw8+45W+m3YbtntmtLHzXynaf4aUPEmk1Pbp1Tn33D5f0NLrPj62tn/Lzx5tGDQoP2
-a4KLvD7oSWTMcJlewLW9lmm1iEpXiKVY0A2hR0Lyaoq1Ts0K3yO/i3vtyHZe25CS4ZTBL37jiuCD
-au3Ce227Ligu6Zvp3ySyUEqxesqGXd+Nw17s0nEuZtofkOXeL7Jh/0bJNa82du2eslSqpoHNx+m0
-TaDQpOltr0oXPZ3k9+uT5ZX+evP6AOXtEQ8NuTkLVm00b2JdXtZusDUhlC+Qu0ojgbE7IMEwS/vi
-W6fDLPMad95QO57IobaG7a7AnJMRrlVHg/70qEj+knfmNpX7mVzMODPyyearJ5K2Jm2Ui9wy9z8f
-/5uUPPeipLDXXPe3qbJxTLRQOPNn46u331/sSU+XvN4ccGwiz+ary06arWAOuXhyl7R//Ou/a9tW
-93Ptcz4gFDDfIF9QK13VbepRFW+5mk5mqxxhsd0Rik++SPGvuXh+V9dpnbqESTHPVu258byxVq7i
-U2VD4NZAL/PAytprCW6PQtMmmlUcF5vIKf7vy815Fd+OfH7S+XzVf8H6D+H55yNTHx7X3mOdf/+O
-Q2PNZ//mkisa3y6fmH+l/k1k+nkr/3mlcfv2qVl+/iWaXXb/ONfK07uNci8csvm2OOJ5unfQjslH
-2TZcZTm0r9J+eWOM4Ar1t5lrPASFrplzK0h3fGZb8vqKX2ngiWCNZZYF+xRtrmyaabnn8LmM5Z8Y
-ucLcTdeeVdra2JO+euWxbfpMc6Yd+7bGyDl9D++Lf4eu9X7f91fiWnl4y+rJ9vaNx14tWffR74qc
-d4W+SrbsNpMHRss5NnI/vmEcGSQqtqPOYilv8YbzF55wZnf8UXolNE/ow4YDX7UV9nZfdlM8duLd
-oimSnMwPlVnPmIeyXjUNndb6kZ31Vp959JGZO/a7FD84rnX1ISuf1PvUk1rzTB+a83r97NowV/rW
-sX0+uwxS12r9VXe2fKIj/1fMfrli1Q31x0GHSnrulJptEpp04Kipb8+puhsxzTKi23u+Kjvt/hEw
-70bKcjNRQ2kuFY5uYzGjfJOTAt/NK9vWri2qe5Ij6q4XdUS1cUHpz+JT59013uTFcwucbPowRzNG
-SYRxy0bxhe4LHlpy561ZruzHwZp7ePrxE5x339f/YwrwZmSSY8ZVGkmAihsGRiBe0ghiwcomVkjZ
-hFYuBXizskHUMzL4AOkesCgAUEsBAh4DFAACAAgAgQqESdA23HfsBAAA7gQAAAsAGAAAAAAAAAAA
-AKSBAAAAADg1OF9aSVAuemlwVVQFAAPhGkNYdXgLAAEEAAAAAAQAAAAAUEsFBgAAAAABAAEAUQAA
-ADEFAAAAAA==
+Hi Wim,
+
+On Tue, 22 Nov 2016 09:49:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Mon, 14 Nov 2016 16:26:16 +0100 Wim Van Sebroeck <wim@iguana.be> wrote:
+> >
+> > This has been fixed. Thanks for notifying me about it.
+> >   
+> > > For the past few days (nearly a week, sorry) fetching the watchdog tree
+> > > (git://www.linux-watchdog.org/linux-watchdog-next.git#master) has
+> > > resulted in a hung connection.  
+> 
+> It's happening again :-(
+
+And again.  Have you considered moving your tree somewhere more
+reliable like kernel.org?
+
+-- 
+Cheers,
+Stephen Rothwell
