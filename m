@@ -1,42 +1,41 @@
-From: Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: linux-next: build failure in the powerpc allyesconfig build
-Date: Mon, 5 Dec 2016 16:41:53 +1100
-Message-ID: <20161205164153.43c84010@roar.ozlabs.ibm.com>
-References: <20161205162204.02c2c236@canb.auug.org.au>
-        <20161205162431.71013317@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: Alexander Graf <agraf@suse.de>
+Subject: Re: linux-next: possible removal of the kvm-ppc tree
+Date: Mon, 5 Dec 2016 07:52:00 +0200
+Message-ID: <4DD53EA4-2C6D-4FBD-8787-F50223E61BCC@suse.de>
+References: <20161205103911.5b3e6a40@canb.auug.org.au>
+Mime-Version: 1.0 (1.0)
+Content-Type: text/plain;
+        charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:33328 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750841AbcLEFmI (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Dec 2016 00:42:08 -0500
-In-Reply-To: <20161205162431.71013317@canb.auug.org.au>
+Received: from mx2.suse.de ([195.135.220.15]:54113 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751096AbcLEFwG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Dec 2016 00:52:06 -0500
+In-Reply-To: <20161205103911.5b3e6a40@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>
 
-On Mon, 5 Dec 2016 16:24:31 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Stephen,
 
-> Hi all,
+> Am 05.12.2016 um 01:39 schrieb Stephen Rothwell <sfr@canb.auug.org.au>:
 > 
-> On Mon, 5 Dec 2016 16:22:04 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After mergeing everything but Andrew's tree, today's linux-next build
-> > (powerpc allyesconfig) failed like this:
-> > 
-> > kallsyms failure: relative symbol value 0xc000000000000000 out of range in relative mode
-> > 
-> > I have no idea what caused this, so I have left the powerpc allyesconfig
-> > build broken for now.  
+> Hi Alexander,
 > 
-> Just as a data point, I tried reverting commit
+> I noticed that the kvm-ppc tree
+> (git://github.com/agraf/linux-2.6.git#kvm-ppc-next) has not been
+> updated for over a year.  I was wondering if I should remove it from
+> linux-next?
 > 
->   dadc4a1bb9f0 ("powerpc/64: Fix placement of .text to be immediately following .head.text")
-> 
-> but that did not help.
+> If so, I will rename the kvm-ppc-paulus tree to be the kvm-ppc tree.
 
-In scripts/kallsyms.c, is there a table[i].sym string you can print?
+Yes, please go ahead.
+
+Alex
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
