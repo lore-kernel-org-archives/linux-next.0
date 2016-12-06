@@ -1,47 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-Date: Wed, 7 Dec 2016 09:38:19 +1100
-Message-ID: <20161207093819.1d4358b1@canb.auug.org.au>
-References: <20161128110230.2e2bda87@canb.auug.org.au>
+From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: next-20161206 WARN@ mm/hugetlb.c:2918 during boot
+Date: Tue, 6 Dec 2016 14:40:25 -0800
+Message-ID: <ef890d7f-2918-4848-e77d-b10f528b7afe@intel.com>
+References: <70A62042-92E6-414D-8FBD-BA0F5308944B@linux.vnet.ibm.com>
+ <20161207092721.270fbc43@canb.auug.org.au>
+ <CAKTCnzmxjf+v3t-o7GwZkWp1Wrff+o0B6CAt0Ehp8gv3pdQTOA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56399 "EHLO ozlabs.org"
+Received: from mga02.intel.com ([134.134.136.20]:15806 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751905AbcLFWiV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Dec 2016 17:38:21 -0500
-In-Reply-To: <20161128110230.2e2bda87@canb.auug.org.au>
+        id S1752112AbcLFWk1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Dec 2016 17:40:27 -0500
+In-Reply-To: <CAKTCnzmxjf+v3t-o7GwZkWp1Wrff+o0B6CAt0Ehp8gv3pdQTOA@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Xiaoguang <wangxg.fnst@cn.fujitsu.com>
+To: Balbir Singh <bsingharora@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sachin Sant <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Anton Blanchard <anton@samba.org>, Aneesh Kumar KV <aneesh.kumar@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>
 
-Hi David,
+On 12/06/2016 02:37 PM, Balbir Singh wrote:
+> I think Michael found this as well, its related to adding our gigantic
+> page to the hugetlb list
+> and the WARN_ON that Dave Hansen added (commit
+> a3a18061c987aa9da4f5d3cbb31a9e71e9d7191d)
+> 
+> I've not looked at this issue yet, Aneesh is aware of the issue as well
 
-On Mon, 28 Nov 2016 11:02:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the btrfs-kdave tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> fs/btrfs/inode.c: In function 'run_delalloc_range':
-> fs/btrfs/inode.c:1219:9: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    start = cur_end + 1;
->          ^
-> fs/btrfs/inode.c:1172:6: note: 'cur_end' was declared here
->   u64 cur_end;
->       ^
-> 
-> Introduced by commit
-> 
->   cow_file_range_async ("btrfs: Introduce COMPRESS reserve type to fix false enospc for compression")
-> 
-> Presumably a false positive because ASSERT(0) panics?
+It's harmless, and I believe Andrew pulled it out of -mm.  So, just
+ignore it for now.
 
-Actually it does not if CONFIG_BTRFS_ASSERT is not set (which it isn't
-for the above build), so this is not a false positive.  I am still
-seeing this.
-
--- 
-Cheers,
-Stephen Rothwell
+Thanks for the report, though.
