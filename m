@@ -1,70 +1,60 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161206 build: 0 failures 3 warnings (next-20161206)
-Date: Tue, 06 Dec 2016 07:38:35 +0000
-Message-ID: <E1cEAKh-0000Mt-Co@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 6 Dec 2016 09:37:45 +0000
+Message-ID: <20161206093745.gerksfd5gygxk6ym@sirena.org.uk>
+References: <20161206111459.77b05dc4@canb.auug.org.au>
+ <87inqxc2lr.wl%kuninori.morimoto.gx@renesas.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6r4yaac2p6nqvgb3"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38914 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40640 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752262AbcLFHin (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2016 02:38:43 -0500
+        with ESMTP id S1752388AbcLFKFV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Dec 2016 05:05:21 -0500
+Content-Disposition: inline
+In-Reply-To: <87inqxc2lr.wl%kuninori.morimoto.gx@renesas.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20161206
-Git describe: next-20161206
-Commit: efe90db21f Add linux-next specific files for 20161206
-
-Build Time: 98 min 51 sec
-
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	  2 ../net/netfilter/nft_payload.c:261:15: warning: 'tsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/net/checksum.h:71:9: warning: 'fsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/apm/xgene/xgene_enet_cle.c:836:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org
 
 
+--6r4yaac2p6nqvgb3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Tue, Dec 06, 2016 at 12:41:15AM +0000, Kuninori Morimoto wrote:
+> > In file included from sound/soc/codecs/cq93vc.c:32:0:
+> > include/linux/mfd/davinci_voicecodec.h:31:27: fatal error: mach/hardwar=
+e.h: No such file or directory
+> >=20
 
+> As I indicated on cover letter, this patch is based on
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git :: for-mfd-next
 
-Warnings:
-	../net/netfilter/nft_payload.c:261:15: warning: 'tsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/net/checksum.h:71:9: warning: 'fsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> 	Especially this commit
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+> 	8ca9edc837932469b81b8b47ea43a074b6add970
+> 	("mfd: davinci_voicecodec: Tidyup header difinitions")
 
-Warnings:
-	../net/netfilter/nft_payload.c:261:15: warning: 'tsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/net/checksum.h:71:9: warning: 'fsum' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/ethernet/apm/xgene/xgene_enet_cle.c:836:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
--------------------------------------------------------------------------------
+Reverted.  Lee, there is actually a dependency here...
 
-Passed with no errors, warnings or mismatches:
+--6r4yaac2p6nqvgb3
+Content-Type: application/pgp-signature; name="signature.asc"
 
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhGhugACgkQJNaLcl1U
+h9Dahgf+JLtJmK2G57YkyBoTgXTrpCl3obKlH3xLfIrVp4fSZiUantVv0ju9jBMB
+2xpJ/CgpWqBAvsqOCReZWZ/l2KmGYjjWAPGs80+fg03QVEX6xPk50UmydZl1cwM5
+QKAMlh/jZFxDAcD9TLzXy/ye1P6jrXsN7t9bvXSdJQ5fkZvqPv4iWaydtDTQissM
+6rTbavae6Rg9Xe2ltMeMoqLSv5Fnh/aE39xCCjCH+l9Fe5x4/0rI4Wq4WaRapUMh
+ZE0BaUR9XTxHawJBGhRHNCPIrdKdYB+Q4ew6vvtGflt5GOFCjWxsKERe3/PrshWo
+AZwlLgkaXTgOXYdMnG+xSKrup/MEWQ==
+=vS7l
+-----END PGP SIGNATURE-----
+
+--6r4yaac2p6nqvgb3--
