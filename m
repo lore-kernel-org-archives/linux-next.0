@@ -1,39 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: possible removal of the kvm-ppc tree
-Date: Tue, 6 Dec 2016 10:00:32 +1100
-Message-ID: <20161206100032.02f823c9@canb.auug.org.au>
-References: <20161205103911.5b3e6a40@canb.auug.org.au>
-        <4DD53EA4-2C6D-4FBD-8787-F50223E61BCC@suse.de>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Tue, 6 Dec 2016 11:11:23 +1100
+Message-ID: <20161206111123.24a332c1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48003 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54211 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751590AbcLEXAf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 5 Dec 2016 18:00:35 -0500
-In-Reply-To: <4DD53EA4-2C6D-4FBD-8787-F50223E61BCC@suse.de>
+        id S1751802AbcLFALZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Dec 2016 19:11:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexander Graf <agraf@suse.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mengdong Lin <mengdong.lin@linux.intel.com>
 
-Hi Alex,
+Hi all,
 
-On Mon, 5 Dec 2016 07:52:00 +0200 Alexander Graf <agraf@suse.de> wrote:
->
-> > Am 05.12.2016 um 01:39 schrieb Stephen Rothwell <sfr@canb.auug.org.au>:
-> > 
-> > I noticed that the kvm-ppc tree
-> > (git://github.com/agraf/linux-2.6.git#kvm-ppc-next) has not been
-> > updated for over a year.  I was wondering if I should remove it from
-> > linux-next?
-> > 
-> > If so, I will rename the kvm-ppc-paulus tree to be the kvm-ppc tree.  
-> 
-> Yes, please go ahead.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-Thanks, done.
+sound/soc/soc-topology.c: In function 'soc_tplg_dapm_widget_create':
+sound/soc/soc-topology.c:1566:36: warning: 'kcontrol_type' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  widget->dobj.widget.kcontrol_type = kcontrol_type;
+                                    ^
+
+Introduced by commit
+
+  eea3dd4f1247 ("ASoC: topology: Only free TLV for volume mixers of a widget")
 
 -- 
 Cheers,
