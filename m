@@ -1,43 +1,56 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net-next tree
-Date: Wed, 7 Dec 2016 15:04:47 +1100
-Message-ID: <20161207150447.160b7735@canb.auug.org.au>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: linux-next: build failure after merge of the pinctrl tree
+Date: Tue, 6 Dec 2016 23:27:48 +0100
+Message-ID: <c7690265-1f26-ed63-48bf-0e4968e7c63c@axentia.se>
+Reply-To: 20161207083102.093fdf96@canb.auug.org.au
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52017 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932302AbcLGEEu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Dec 2016 23:04:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarod Wilson <jarod@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Lunn <andrew@lunn.ch>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+> Hi Linus,
+> 
+> On Mon, 5 Dec 2016 10:00:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the pinctrl tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>> 
+>> drivers/gpio/gpio-pl061.c: In function 'pl061_irq_set_wake':
+>> drivers/gpio/gpio-pl061.c:280:28: error: 'struct gpio_chip' has no member named 'irq_parent'
+>>   return irq_set_irq_wake(gc->irq_parent, state);
+>>                             ^
+>> drivers/gpio/gpio-pl061.c:281:1: warning: control reaches end of non-void function [-Wreturn-type]
+>>  }
+>>  ^
+>> 
+>> Caused by commit
+>> 
+>>   d245b3f9bd36 ("gpio: simplify adding threaded interrupts")
+>> 
+>> I have used the pinctrl tree from next-20161202 for today.
+> 
+> I am still getting this.
 
-Today's linux-next merge of the staging tree got a conflict in:
+The bug you are referring to is in the gpio tree, not pinctrl.
+That had me confused for a while, and is the reason I'm writing
+this. Maybe the next person need not be confused...
 
-  drivers/staging/slicoss/slicoss.c
+But when I'm writing on this topic anyway, I'll add some more
+info, in case anyone cares.
 
-between commit:
+I think fix for this bug is to use gc->irq_chained_parent instead
+of gc->irq_parent, at least that changed as part of the indicated
+commit. Completely untested...
 
-  a52ad514fdf3 ("net: deprecate eth_change_mtu, remove usage")
+The fix for the bug in the pinctrl tree is to add a missing >
+as posted by Andrew Lunn in [1] (with a slightly broken commit
+message; two counts of s/chip-/client-/, an extra line after
+the sob and I guess the subject is no longer true).
 
-from the net-next tree and commit:
-
-  0af72df267f2 ("staging: slicoss: remove the staging driver")
-
-from the staging tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
--- 
 Cheers,
-Stephen Rothwell
+Peter
+
+[1] http://marc.info/?l=linux-gpio&m=148088890030876&w=2
