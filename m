@@ -1,34 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tip tree
-Date: Wed, 7 Dec 2016 12:37:11 +1100
-Message-ID: <20161207123711.795d97bb@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Wed, 7 Dec 2016 15:04:47 +1100
+Message-ID: <20161207150447.160b7735@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43699 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52017 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751064AbcLGBhN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 6 Dec 2016 20:37:13 -0500
+        id S932302AbcLGEEu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 6 Dec 2016 23:04:50 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jarod Wilson <jarod@redhat.com>
 
-Hi all,
+Hi Greg,
 
-After merging the tip tree, today's linux-next build (powerpc64le perf)
-failed like this:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  LINK     /home/sfr/next/perf/fixdep
-/bin/sh: 1: /home/sfr/next/perf//fixdep: Permission denied
-tools/build/Makefile.build:91: recipe for target '/home/sfr/next/perf/pmu-events/jevents.o' failed
+  drivers/staging/slicoss/slicoss.c
 
-$ ls -l /home/sfr/next/perf/fixdep
--rwxr-xr-x 1 sfr users 71104 Dec  7 12:26 /home/sfr/next/perf/fixdep
+between commit:
 
-I am not sure what caused this, but redoing the build succeeded, so I
-have just filed this report and left it for today.
+  a52ad514fdf3 ("net: deprecate eth_change_mtu, remove usage")
+
+from the net-next tree and commit:
+
+  0af72df267f2 ("staging: slicoss: remove the staging driver")
+
+from the staging tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
