@@ -1,85 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161207 build: 1 failures 4 warnings (next-20161207)
-Date: Wed, 07 Dec 2016 09:37:44 +0000
-Message-ID: <E1cEYfY-00054O-2w@optimist>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the pinctrl tree
+Date: Wed, 7 Dec 2016 15:22:32 +0100
+Message-ID: <CACRpkdZdFBrKyzGRBbWLm1UB-ehsnR_vMSrhLvJK9aH+dDF1bQ@mail.gmail.com>
+References: <20161205100038.30581ee1@canb.auug.org.au> <20161207083102.093fdf96@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33382 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752103AbcLGJhv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2016 04:37:51 -0500
+Received: from mail-qk0-f176.google.com ([209.85.220.176]:36831 "EHLO
+        mail-qk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932203AbcLGOWe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2016 09:22:34 -0500
+Received: by mail-qk0-f176.google.com with SMTP id n21so414875448qka.3
+        for <linux-next@vger.kernel.org>; Wed, 07 Dec 2016 06:22:33 -0800 (PST)
+In-Reply-To: <20161207083102.093fdf96@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20161207
-Git describe: next-20161207
-Commit: 7677a1fb12 Add linux-next specific files for 20161207
+On Tue, Dec 6, 2016 at 10:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Linus,
+>
+> On Mon, 5 Dec 2016 10:00:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the pinctrl tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> drivers/gpio/gpio-pl061.c: In function 'pl061_irq_set_wake':
+>> drivers/gpio/gpio-pl061.c:280:28: error: 'struct gpio_chip' has no member named 'irq_parent'
+>>   return irq_set_irq_wake(gc->irq_parent, state);
+>>                             ^
+>> drivers/gpio/gpio-pl061.c:281:1: warning: control reaches end of non-void function [-Wreturn-type]
+>>  }
+>>  ^
+>>
+>> Caused by commit
+>>
+>>   d245b3f9bd36 ("gpio: simplify adding threaded interrupts")
+>>
+>> I have used the pinctrl tree from next-20161202 for today.
+>
+> I am still getting this.
 
-Build Time: 98 min 50 sec
+Sorry. My intention was of course to put the required pl061 patches on
+an immutable branch and pull into pinctrl as well.
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+Oh well.
 
-Errors: 1
-Warnings: 4
-Section Mismatches: 0
+FIxing it up now, sorry for the mess.
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__bad_xchg" [net/netfilter/nft_counter.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__bad_xchg" [net/netfilter/nft_counter.ko] undefined!
-
-Warnings Summary: 4
-	  2 ../net/netfilter/nf_tables_api.c:3011:15: warning: 'objtype' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/netfilter/nft_counter.c:129:16: warning: 'bytes' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../net/netfilter/nft_counter.c:128:18: warning: 'packets' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/apm/xgene/xgene_enet_cle.c:836:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../net/netfilter/nf_tables_api.c:3011:15: warning: 'objtype' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__bad_xchg" [net/netfilter/nft_counter.ko] undefined!
-
-Warnings:
-	../net/netfilter/nf_tables_api.c:3011:15: warning: 'objtype' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/netfilter/nft_counter.c:128:18: warning: 'packets' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/netfilter/nft_counter.c:129:16: warning: 'bytes' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/ethernet/apm/xgene/xgene_enet_cle.c:836:1: warning: the frame size of 1056 bytes is larger than 1024 bytes [-Wframe-larger-than=]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Yours,
+Linus Walleij
