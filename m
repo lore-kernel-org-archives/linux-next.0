@@ -1,38 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Dec 7 (kallsyms failure)
-Date: Thu, 8 Dec 2016 10:56:07 +1100
-Message-ID: <20161208105607.68810cae@canb.auug.org.au>
-References: <20161207172432.184970d7@canb.auug.org.au>
-        <13d83759-40d3-593b-b53f-f3e75fb05b7a@infradead.org>
+Subject: linux-next: manual merge of the sunxi tree with the arm-soc tree
+Date: Thu, 8 Dec 2016 11:13:59 +1100
+Message-ID: <20161208111359.7d201b0f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49739 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932434AbcLGX4J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Dec 2016 18:56:09 -0500
-In-Reply-To: <13d83759-40d3-593b-b53f-f3e75fb05b7a@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Sant <sachinp@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Nicholas Piggin <npiggin@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>
+List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+Hi Maxime,
 
-On Wed, 7 Dec 2016 15:42:32 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> I started seeing this yesterday (2016-1206).
-> This is on x86_64.
-> 
-> Anybody know about it?
-> 
-> kallsyms failure: relative symbol value 0xffffffff81000000 out of range in relative mode
+Today's linux-next merge of the sunxi tree got a conflict in:
 
-I got a similar failure starting a few days ago on my powerpc
-allyesconfig build.  I was assuming that it was PowerPC specific, but
-noone has found a cause yet.
+  arch/arm/boot/dts/sun8i-h3.dtsi
+
+between commit:
+
+  4367c1d84655 ("dts: sun8i-h3: correct UART3 pin definitions")
+
+from the arm-soc tree and commits:
+
+  acac77949d26 ("ARM: sunxi: Remove useless allwinner,drive property")
+  3872abae96ef ("ARM: sunxi: Remove useless allwinner,pull property")
+  264969c22623 ("ARM: sunxi: Convert pinctrl nodes to generic bindings")
+
+from the sunxi tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/arm/boot/dts/sun8i-h3.dtsi
+index 6c14a6f72820,fca66bf2dec5..000000000000
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@@ -425,10 -406,8 +406,8 @@@
+  			};
+  
+  			uart3_pins: uart3 {
+- 				allwinner,pins = "PA13", "PA14";
+- 				allwinner,function = "uart3";
+- 				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
+- 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
+ -				pins = "PG13", "PG14";
+++				pins = "PA13", "PA14";
++ 				function = "uart3";
+  			};
+  		};
+  
