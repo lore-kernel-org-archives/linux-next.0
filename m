@@ -1,43 +1,53 @@
-From: Balbir Singh <bsingharora@gmail.com>
-Subject: Re: -next build failure with gcc 5.2.1
-Date: Thu, 8 Dec 2016 13:09:27 +1100
-Message-ID: <798a8079-6d96-6a9c-b413-21e46f0fcbb0@gmail.com>
-References: <8BC02969-0A0D-4C59-8E5E-31F5FC2B1391@linux.vnet.ibm.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Dec 7 (kallsyms failure)
+Date: Wed, 7 Dec 2016 18:30:57 -0800
+Message-ID: <90c66e73-f7c9-3d48-04b7-0985cce53382@infradead.org>
+References: <20161207172432.184970d7@canb.auug.org.au>
+ <13d83759-40d3-593b-b53f-f3e75fb05b7a@infradead.org>
+ <20161208105607.68810cae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:32783 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753287AbcLHCKJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2016 21:10:09 -0500
-Received: by mail-pf0-f196.google.com with SMTP id 144so21394802pfv.0
-        for <linux-next@vger.kernel.org>; Wed, 07 Dec 2016 18:09:32 -0800 (PST)
-In-Reply-To: <8BC02969-0A0D-4C59-8E5E-31F5FC2B1391@linux.vnet.ibm.com>
+Received: from bombadil.infradead.org ([198.137.202.9]:32818 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752756AbcLHCbD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2016 21:31:03 -0500
+In-Reply-To: <20161208105607.68810cae@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>, linux-next@vger.kernel.org
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@lists.ozlabs.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sachin Sant <sachinp@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Nicholas Piggin <npiggin@gmail.com>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-On 12/07/2016 07:26 PM, Sachin Sant wrote:
-> next tree fails to build on a ppc64le box with following message
->
->   LD      init/built-in.o
->   LD      vmlinux.o
->   MODPOST vmlinux.o
-> WARNING: modpost: Found 3 section mismatch(es).
-> To see full details build your kernel with:
-> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
->   KSYM    .tmp_kallsyms1.o
-> kallsyms failure: relative symbol value 0xc000000000000000 out of range in relative mode
-> Makefile:969: recipe for target 'vmlinux' failed
-> make: *** [vmlinux] Error 1
->
-> GCC version is : gcc version 5.2.1 20151010 (Ubuntu 5.2.1-22ubuntu2)
->
-> Have attached kernel config file.
->
+On 12/07/16 15:56, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> On Wed, 7 Dec 2016 15:42:32 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> I started seeing this yesterday (2016-1206).
+>> This is on x86_64.
+>>
+>> Anybody know about it?
+>>
+>> kallsyms failure: relative symbol value 0xffffffff81000000 out of range in relative mode
+> 
+> I got a similar failure starting a few days ago on my powerpc
+> allyesconfig build.  I was assuming that it was PowerPC specific, but
+> noone has found a cause yet.
+> 
 
-Thanks, would you be in a position to bisect?
+It may just be an invalid randconfig.  I modified scripts/kallsyms.c and
+I see this message:
+kallsyms failure: relative symbol value 0xffffffff81000000 [symbol: Tstartup_64] out of range in relative mode
 
-Balbir Singh.
+and it makes sense that startup_64 would (or could) be at 0xffffffff81000000...
+especially since CONFIG_PHYSICAL_START=0x1000000 and
+(from Documentation/x86/x86_64/mm.txt)
+ffffffff80000000 - ffffffff9fffffff (=512 MB)  kernel text mapping, from phys 0
+
+
+Ard, what do you think about this?
+
+thanks,
+-- 
+~Randy
