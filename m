@@ -1,60 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sunxi tree with the arm-soc tree
-Date: Thu, 8 Dec 2016 11:13:59 +1100
-Message-ID: <20161208111359.7d201b0f@canb.auug.org.au>
+From: Balbir Singh <bsingharora@gmail.com>
+Subject: Re: -next build failure with gcc 5.2.1
+Date: Thu, 8 Dec 2016 13:09:27 +1100
+Message-ID: <798a8079-6d96-6a9c-b413-21e46f0fcbb0@gmail.com>
+References: <8BC02969-0A0D-4C59-8E5E-31F5FC2B1391@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jorik Jonker <jorik@kippendief.biz>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:32783 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753287AbcLHCKJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 7 Dec 2016 21:10:09 -0500
+Received: by mail-pf0-f196.google.com with SMTP id 144so21394802pfv.0
+        for <linux-next@vger.kernel.org>; Wed, 07 Dec 2016 18:09:32 -0800 (PST)
+In-Reply-To: <8BC02969-0A0D-4C59-8E5E-31F5FC2B1391@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sachin Sant <sachinp@linux.vnet.ibm.com>, linux-next@vger.kernel.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev@lists.ozlabs.org
 
-Hi Maxime,
+On 12/07/2016 07:26 PM, Sachin Sant wrote:
+> next tree fails to build on a ppc64le box with following message
+>
+>   LD      init/built-in.o
+>   LD      vmlinux.o
+>   MODPOST vmlinux.o
+> WARNING: modpost: Found 3 section mismatch(es).
+> To see full details build your kernel with:
+> 'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+>   KSYM    .tmp_kallsyms1.o
+> kallsyms failure: relative symbol value 0xc000000000000000 out of range in relative mode
+> Makefile:969: recipe for target 'vmlinux' failed
+> make: *** [vmlinux] Error 1
+>
+> GCC version is : gcc version 5.2.1 20151010 (Ubuntu 5.2.1-22ubuntu2)
+>
+> Have attached kernel config file.
+>
 
-Today's linux-next merge of the sunxi tree got a conflict in:
+Thanks, would you be in a position to bisect?
 
-  arch/arm/boot/dts/sun8i-h3.dtsi
-
-between commit:
-
-  4367c1d84655 ("dts: sun8i-h3: correct UART3 pin definitions")
-
-from the arm-soc tree and commits:
-
-  acac77949d26 ("ARM: sunxi: Remove useless allwinner,drive property")
-  3872abae96ef ("ARM: sunxi: Remove useless allwinner,pull property")
-  264969c22623 ("ARM: sunxi: Convert pinctrl nodes to generic bindings")
-
-from the sunxi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm/boot/dts/sun8i-h3.dtsi
-index 6c14a6f72820,fca66bf2dec5..000000000000
---- a/arch/arm/boot/dts/sun8i-h3.dtsi
-+++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-@@@ -425,10 -406,8 +406,8 @@@
-  			};
-  
-  			uart3_pins: uart3 {
-- 				allwinner,pins = "PA13", "PA14";
-- 				allwinner,function = "uart3";
-- 				allwinner,drive = <SUN4I_PINCTRL_10_MA>;
-- 				allwinner,pull = <SUN4I_PINCTRL_NO_PULL>;
- -				pins = "PG13", "PG14";
-++				pins = "PA13", "PA14";
-+ 				function = "uart3";
-  			};
-  		};
-  
+Balbir Singh.
