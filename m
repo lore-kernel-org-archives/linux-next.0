@@ -1,42 +1,37 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warning after merge of the crypto-current tree
-Date: Thu, 8 Dec 2016 17:07:25 +0800
-Message-ID: <20161208090725.GC22932@gondor.apana.org.au>
-References: <20161208083116.7881820c@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure in the powerpc allyesconfig build
+Date: Thu, 08 Dec 2016 14:31:33 +0100
+Message-ID: <3533648.l4A0kia4Vv@wuerfel>
+References: <20161205162204.02c2c236@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from helcar.hengli.com.au ([209.40.204.226]:46109 "EHLO
-        helcar.apana.org.au" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751225AbcLHJHd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2016 04:07:33 -0500
-Content-Disposition: inline
-In-Reply-To: <20161208083116.7881820c@canb.auug.org.au>
+Received: from mout.kundenserver.de ([217.72.192.75]:53575 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752863AbcLHNbq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Dec 2016 08:31:46 -0500
+In-Reply-To: <20161205162204.02c2c236@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephan Mueller <smueller@chronox.de>
+To: linuxppc-dev@lists.ozlabs.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>
 
-On Thu, Dec 08, 2016 at 08:31:16AM +1100, Stephen Rothwell wrote:
-> Hi Herbert,
+On Monday, December 5, 2016 4:22:04 PM CET Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the crypto-current tree, today's linux-next build (x86_64
-> allmodconig) produced this warning:
+> After mergeing everything but Andrew's tree, today's linux-next build
+> (powerpc allyesconfig) failed like this:
 > 
-> crypto/algif_aead.c: In function 'aead_recvmsg':
-> crypto/algif_aead.c:539:9: warning: 'outlen' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   return err ? err : outlen;
->          ^
-> crypto/algif_aead.c:423:9: note: 'outlen' was declared here
->   size_t outlen;
->          ^
+> kallsyms failure: relative symbol value 0xc000000000000000 out of range in relative mode
 > 
-> Introduced by commit
-> 
->   0c1e16cd1ec4 ("crypto: algif_aead - fix AEAD tag memory handling")
+> I have no idea what caused this, so I have left the powerpc allyesconfig
+> build broken for now.
 
-Thanks Stephen.  This should be fixed in tomorrow's tree.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+I get this on an x86-64 randconfig build:
+
+kallsyms failure: relative symbol value 0xffffffff81000000 out of range in relative mode
+
+This is probably related, so it's not something powerpc specific.
+
+	Arnd
