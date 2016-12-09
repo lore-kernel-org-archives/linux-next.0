@@ -1,110 +1,64 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: [PATCH 37/50] netfilter: nf_tables: atomic dump and reset for
- stateful objects
-Date: Fri, 9 Dec 2016 11:24:32 +0100
-Message-ID: <20161209102432.GA986@salvia>
-References: <1481147576-5690-1-git-send-email-pablo@netfilter.org>
- <1481147576-5690-38-git-send-email-pablo@netfilter.org>
- <CAP=VYLp-ZBFjR1W9=V_vyPYAi1=Yub3ugq6D8hkoLigcPaaxFg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
+Date: Fri, 09 Dec 2016 11:40:52 +0100
+Message-ID: <2680957.ot0HfIkH6p@wuerfel>
+References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="gKMricLos+KVdGMg"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLp-ZBFjR1W9=V_vyPYAi1=Yub3ugq6D8hkoLigcPaaxFg@mail.gmail.com>
-Sender: netdev-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: netfilter-devel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@google.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Thursday, December 8, 2016 11:00:42 AM CET Kees Cook wrote:
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> If you have a moment, applying 215e2aa6c024[1] and reverting
+> a519167e753e for an allyesconfig/allmodconfig build should let you
+> know if things are working correctly with headers installed. If anyone
+> sees any problems, please let me know and I can queue up fixes.
 
-Hi Paul,
+Using gcc-4.9.3 or gcc-5.3.1 for an ARM allmodconfig build, I get tons of
+errors such as this one:
 
-On Thu, Dec 08, 2016 at 07:40:14PM -0500, Paul Gortmaker wrote:
-> On Wed, Dec 7, 2016 at 4:52 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
-> > This patch adds a new NFT_MSG_GETOBJ_RESET command perform an atomic
-> > dump-and-reset of the stateful object. This also comes with add support
-> > for atomic dump and reset for counter and quota objects.
-> 
-> This triggered a new build failure in linux-next on parisc-32, which a
-> hands-off bisect
-> run lists as resulting from this:
-> 
-> ERROR: "__cmpxchg_u64" [net/netfilter/nft_counter.ko] undefined!
-> make[2]: *** [__modpost] Error 1
-> make[1]: *** [modules] Error 2
-> make: *** [sub-make] Error 2
-> 43da04a593d8b2626f1cf4b56efe9402f6b53652 is the first bad commit
-> commit 43da04a593d8b2626f1cf4b56efe9402f6b53652
-> Author: Pablo Neira Ayuso <pablo@netfilter.org>
-> Date:   Mon Nov 28 00:05:44 2016 +0100
-> 
->     netfilter: nf_tables: atomic dump and reset for stateful objects
-> 
->     This patch adds a new NFT_MSG_GETOBJ_RESET command perform an atomic
->     dump-and-reset of the stateful object. This also comes with add support
->     for atomic dump and reset for counter and quota objects.
-> 
->     Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-> 
-> :040000 040000 6cd4554f69247e5c837db52342f26888beda1623
-> 5908aca93c89e7922336546c3753bfcf2aceefba M      include
-> :040000 040000 f25d5831eb30972436bd198c5bb237a0cb0b4856
-> 4ee5751c8de02bb5a8dcaadb2a2df7986d90f8e9 M      net
-> bisect run success
-> 
-> Guessing this is more an issue with parisc than it is with netfilter, but I
-> figured I'd mention it anyway.
+/git/arm-soc/init/initramfs.c: In function 'error':
+/git/arm-soc/init/initramfs.c:50:1: error: unrecognizable insn:
+ }
+ ^
+(insn 26 25 27 5 (set (reg:SI 111 [ local_entropy.243 ])
+        (rotatert:SI (reg:SI 116 [ local_entropy.243 ])
+            (const_int -30 [0xffffffffffffffe2]))) -1
+     (nil))
+*** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
+Event                            | Plugins
+PLUGIN_ATTRIBUTES                | latent_entropy_plugin
+PLUGIN_START_UNIT                | latent_entropy_plugin
+/git/arm-soc/init/initramfs.c:50:1: internal compiler error: in extract_insn, at recog.c:2202
+/git/arm-soc/arch/arm/vfp/vfpmodule.c: In function 'vfp_init':
+/git/arm-soc/arch/arm/vfp/vfpmodule.c:824:1: error: unrecognizable insn:
+ }
+ ^
+(insn 138 137 139 17 (set (reg:SI 165 [ local_entropy.93 ])
+        (rotatert:SI (reg:SI 150 [ local_entropy.93 ])
+            (const_int -9 [0xfffffffffffffff7]))) -1
+     (nil))
+*** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
 
-I'm planning to submit this patch to parisc, I'm attaching it to this
-email.
+Using gcc-6.1.1 or gcc-7.0.0, everything works fine as far as I
+can tell. With some older Ubuntu binary toolchains, I get this one:
 
---gKMricLos+KVdGMg
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment; filename="0001-parisc-export-symbol-__cmpxchg_u64.patch"
+In file included from <stdin>:1:0:
+/git/arm-soc/scripts/gcc-plugins/gcc-common.h:4:22: fatal error: bversion.h: No such file or directory
+compilation terminated.
+Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?
 
->From c9d320ac0be2a32a7b2bfad398be549865088ecf Mon Sep 17 00:00:00 2001
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Date: Thu, 8 Dec 2016 22:55:33 +0100
-Subject: [PATCH] parisc: export symbol __cmpxchg_u64()
+and I can't find the packages for the headers (I still get them for
+gcc-5, but not older versions). On very old toolchains (e.g. gcc-4.3),
+I get this one:
 
-kbuild test robot reports:
+Cannot use CONFIG_GCC_PLUGINS: your gcc version does not support plugins, you should upgrade it to at least gcc 4.5
+scripts/Makefile.gcc-plugins:54: recipe for target 'gcc-plugins-check' failed
 
->> ERROR: "__cmpxchg_u64" [net/netfilter/nft_counter.ko] undefined!
-
-Commit 43da04a593d8 ("netfilter: nf_tables: atomic dump and reset for
-stateful objects") introduces the first client of cmpxchg64() from
-modules.
-
-Patch 54b668009076 ("parisc: Add native high-resolution sched_clock()
-implementation") removed __cmpxchg_u64() dependency on CONFIG_64BIT.
-So, let's fix this problem by exporting this symbol unconditionally.
-
-Reported-by: kbuild test robot <fengguang.wu@intel.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
----
- arch/parisc/kernel/parisc_ksyms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/parisc/kernel/parisc_ksyms.c b/arch/parisc/kernel/parisc_ksyms.c
-index 3cad8aadc69e..cfa704548cf3 100644
---- a/arch/parisc/kernel/parisc_ksyms.c
-+++ b/arch/parisc/kernel/parisc_ksyms.c
-@@ -40,8 +40,8 @@ EXPORT_SYMBOL(__atomic_hash);
- #endif
- #ifdef CONFIG_64BIT
- EXPORT_SYMBOL(__xchg64);
--EXPORT_SYMBOL(__cmpxchg_u64);
- #endif
-+EXPORT_SYMBOL(__cmpxchg_u64);
- 
- #include <asm/uaccess.h>
- EXPORT_SYMBOL(lclear_user);
--- 
-2.1.4
-
-
---gKMricLos+KVdGMg--
+	Arnd
