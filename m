@@ -1,51 +1,65 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
-Date: Fri, 9 Dec 2016 11:40:29 -0800
-Message-ID: <CA+55aFwyDj21NDiQExue-z19NwZ7N4HmFV-ACKENSXhj1ETOyA@mail.gmail.com>
-References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
- <2680957.ot0HfIkH6p@wuerfel> <CAGXu5jJpBiffFhdQ+sjwWeeWOnpEkz4JQyH8VwmVCWP3TzXmLQ@mail.gmail.com>
+Date: Fri, 09 Dec 2016 21:35:54 +0100
+Message-ID: <4284516.VtSFlm1aM8@wuerfel>
+References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com> <5572017.jUy2fe8FTb@wuerfel> <CAGXu5jKtoN+uUa5zCmHR0=s8907kS3x30xMNc+s-On0_nyGiHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:33158 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752965AbcLITka (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Dec 2016 14:40:30 -0500
-In-Reply-To: <CAGXu5jJpBiffFhdQ+sjwWeeWOnpEkz4JQyH8VwmVCWP3TzXmLQ@mail.gmail.com>
+Received: from mout.kundenserver.de ([217.72.192.75]:61269 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751143AbcLIUhJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Dec 2016 15:37:09 -0500
+In-Reply-To: <CAGXu5jKtoN+uUa5zCmHR0=s8907kS3x30xMNc+s-On0_nyGiHg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Kees Cook <keescook@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>, PaX Team <pageexec@freemail.hu>, Emese Revfy <re.emese@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>, PaX Team <pageexec@freemail.hu>, Emese Revfy <re.emese@gmail.com>, maxim.kuvyrkov@linaro.org, Kugan Vivekanandarajah <kuganv@linaro.org>
 
-On Fri, Dec 9, 2016 at 11:12 AM, Kees Cook <keescook@google.com> wrote:
->
-> I'm starting to wonder if we need to expose the compiler version to
-> Kconfig so that "all*config" builds for earlier compiler will
-> automatically leave things like plugins off. But I have no idea what
-> the right approach for that might be.
+On Friday, December 9, 2016 11:13:20 AM CET Kees Cook wrote:
+> On Fri, Dec 9, 2016 at 3:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Thursday, December 8, 2016 11:00:42 AM CET Kees Cook wrote:
+> >> If you have a moment, applying 215e2aa6c024[1] and reverting
+> >> a519167e753e for an allyesconfig/allmodconfig build should let you
+> >> know if things are working correctly with headers installed. If anyone
+> >> sees any problems, please let me know and I can queue up fixes.
+> >>
+> > This is what I got on x86-64 with a gcc-7.0.0 snapshot:
+> >
+> > In file included from /git/arm-soc/scripts/gcc-plugins/gcc-common.h:42:0,
+> >                  from <stdin>:1:
+> > /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/emit-rtl.h:371:41: error: use of enum ‘memmodel’ without previous declaration
+> >  extern bool need_atomic_barrier_p (enum memmodel, bool);
+> >                                          ^
+> > In file included from /git/arm-soc/scripts/gcc-plugins/gcc-common.h:94:0,
+> >                  from <stdin>:1:
+> > /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:70:40: error: use of enum ‘value_range_type’ without previous declaration
+> >  extern void set_range_info (tree, enum value_range_type, const wide_int_ref &,
+> >                                         ^
+> > /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:73:13: error: use of enum ‘value_range_type’ without previous declaration
+> >  extern enum value_range_type get_range_info (const_tree, wide_int *,
+> >              ^
+> > /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:98:55: error: use of enum ‘value_range_type’ without previous declaration
+> >  extern void duplicate_ssa_name_range_info (tree, enum value_range_type,
+> >                                                        ^
+> > Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?
+> > scripts/Makefile.gcc-plugins:51: recipe for target 'gcc-plugins-check' failed
+> >
+> > I manually fixed up the gcc header files to include the ones with the
+> > definition for now, to address those, but I don't know if that change is
+> > correct.
+> 
+> What was needed?
 
-We had some broken mock-up of a config option that did a "system()"
-call to do some shell scripting for filling in config options (ie turn
-a fail/pass into false/true boolean automatically with something like
+I added '#include "memmodel.h"' and '#include "tree-vrp.h"', respectively, to
+the headers that failed to get compiled.
 
-   config COMPILER_SUPPORTS_XYZ
-       bool
-       option shell="gcc -XYZ"
+This might be the correct solution, or the headers might not be meant to
+be used standalone and instead require being included in the right order.
 
-The idea is really solid: move a lot of the nasty ad-hoc runtime
-testing in the Makefiles to the configuration stage. I would seriously
-like to see this, so that we could replace the stupid
+Gcc commit svn+ssh://gcc.gnu.org/svn/gcc/trunk@239638 moved
+value_range_type from tree-ssanames.h to tree-vrp.h, I've added
+Kugan to Cc, maybe he can clarify what that means for plugins.
 
-  CFLAGS_KCOV     := $(call cc-option,-fsanitize-coverage=trace-pc,)
-
-with just nicer thing (ok, that's a bad example, but some of the other
-cc-option cases are really pretty fundamental to kernel configuration,
-and it really matters whether the compiler supports something or not).
-
-The main problem was actually that we don't have good infrastructure
-for passing in the compiler environment etc to kbuild.
-
-I forgot who did that mock-up (and what the exact syntax was), but it
-was pretty simple.
-
-                 Linus
+	Arnd
