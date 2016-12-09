@@ -1,63 +1,109 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pci tree
-Date: Fri, 9 Dec 2016 13:38:13 +1100
-Message-ID: <20161209133813.79fe0f87@canb.auug.org.au>
+From: Kees Cook <keescook@google.com>
+Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
+Date: Thu, 8 Dec 2016 20:15:05 -0800
+Message-ID: <CAGXu5jLuuoCpaQ82nK=pFWEeRrm86=vozyS=3nPN=Lw+2uUHQg@mail.gmail.com>
+References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
+ <CAP=VYLrOu8Yjzds2cHcii=kX5-i5xV3GUkLR9yhxBdJBw31F0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAP=VYLrOu8Yjzds2cHcii=kX5-i5xV3GUkLR9yhxBdJBw31F0Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Tony Breeds <tony@bakeyournoodle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On Thu, Dec 8, 2016 at 5:52 PM, Paul Gortmaker
+<paul.gortmaker@windriver.com> wrote:
+> On Thu, Dec 8, 2016 at 2:00 PM, Kees Cook <keescook@google.com> wrote:
+>> Hi,
+>>
+>> I'd like to get the GCC plugins building under
+>> allyesconfig/allmodconfig for -next soon (with the intention of
+>> landing the change in v4.11). Specifically, I intend to revert
+>> a519167e753e ("gcc-plugins: disable under COMPILE_TEST").
+>
+> If I recall correctly, I noted that the plugins broke the kernel.org
+> cross compiler toolchains which led to the above disable.
 
-Today's linux-next merge of the tip tree got a conflict in:
+Do you mean these?
+https://www.kernel.org/pub/tools/crosstool/
 
-  drivers/pci/msi.c
+> Has that changed?    People who have been doing tree wide changes
+> and have been compiling across a bunch of different arch to ensure
+> their changes don't cause breakage should not be left out in the cold.
 
-between commit:
+Totally agreed! :) That's why I want to get the ball rolling now, so
+there's plenty of time.
 
-  67f1e4473857 ("PCI/MSI: Document new parameter for msi_capability_init()")
+> If there are newer toolchains that I can download and use in "toaster"
+> mode, then great.   But I (and many others) don't want to waste a day
+> trying to make the latest gcc build some obsolete pa-risc architecture
+> just to support a Kconfig default setting change.
 
-from the pci tree and commit:
+The good news is, pa-risc doesn't support the plugins yet. It's only
+x86, arm, arm64, and soon powerpc. The point being, the less common
+architectures won't be hit by this anyway.
 
-  61e1c5905290 ("PCI/MSI: Propagate IRQ affinity description through the MSI code")
+Regardless, it would be nice to get a newer set of toolchains up on
+kernel.org...
 
-from the tip tree.
+> Can you elaborate on the motivation for this change?  At the moment
+> I see more downsides than advantages.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Since the plugins run during every object build, getting them running
+in the widest possible coverage means we'll shake out bugs more
+rapidly.
+
+-Kees
+
+>
+> Thanks,
+> Paul.
+> --
+>
+>>
+>> Right now the plugins are only supported on x86, arm, and arm64,
+>> though powerpc may happen in either v4.10 or v4.11 as well. This means
+>> that the autobuilders for these architectures need to have the "gcc
+>> plugin development" package installed which contains the GCC headers
+>> needed for the plugins. For Debian/Ubuntu, this is gcc-$N-plugin-dev
+>> (and for cross compilers: gcc-$N-plugin-dev-$arch-linux-$abi). For
+>> Fedora, it is gcc-plugin-devel (though I'm not sure the naming for
+>> cross compilers). Manual builds of compilers should already have these
+>> headers installed.
+>>
+>> The "noisy" plugin, cyc_complexity, is just an example, and I have
+>> disabled it (which is pending[1] for v4.10). The remaining ones
+>> (sancov and latent_entropy) are what I'm hoping to see tested
+>> tree-wide (with the expectation that more are coming down the road:
+>> initify, randstruct, structleak, constify, ...)
+>>
+>> IIUC, the 0day builder already has the headers installed. I tried to
+>> look through linux-next to find all the other folks that do
+>> autobuilding on these architectures; apologies if I've missed anyone.
+>>
+>> If you have a moment, applying 215e2aa6c024[1] and reverting
+>> a519167e753e for an allyesconfig/allmodconfig build should let you
+>> know if things are working correctly with headers installed. If anyone
+>> sees any problems, please let me know and I can queue up fixes.
+>>
+>> Thanks!
+>>
+>> -Kees
+>>
+>> [1] http://git.kernel.org/cgit/linux/kernel/git/kees/linux.git/commit/?h=for-next/gcc-plugins&id=215e2aa6c024d27cdbe88e2ea88cb59dcab588eb
+>>
+>> --
+>> Kees Cook
+>> Nexus Security
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/pci/msi.c
-index da95f4e689f2,dd27f73a45fc..000000000000
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@@ -753,14 -754,14 +754,14 @@@ static void msix_program_entries(struc
-   * @dev: pointer to the pci_dev data structure of MSI-X device function
-   * @entries: pointer to an array of struct msix_entry entries
-   * @nvec: number of @entries
--  * @affinity: flag to indicate CPU IRQ affinity mask should be set
-+  * @affd: Optional pointer to enable automatic affinity assignement
-   *
-   * Setup the MSI-X capability structure of device function with a
- - * single MSI-X irq. A return of zero indicates the successful setup of
- - * requested MSI-X entries with allocated irqs or non-zero for otherwise.
- + * single MSI-X IRQ. A return of zero indicates the successful setup of
- + * requested MSI-X entries with allocated IRQs or non-zero for otherwise.
-   **/
-  static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
-- 				int nvec, bool affinity)
-+ 				int nvec, const struct irq_affinity *affd)
-  {
-  	int ret;
-  	u16 control;
+Kees Cook
+Nexus Security
