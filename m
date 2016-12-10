@@ -1,71 +1,33 @@
-From: kugan <kugan.vivekanandarajah@linaro.org>
-Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
-Date: Sat, 10 Dec 2016 08:08:54 +1100
-Message-ID: <864d5aa6-245c-0b60-4862-f3eb172305b3@linaro.org>
-References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
- <5572017.jUy2fe8FTb@wuerfel>
- <CAGXu5jKtoN+uUa5zCmHR0=s8907kS3x30xMNc+s-On0_nyGiHg@mail.gmail.com>
- <4284516.VtSFlm1aM8@wuerfel>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: [PATCH 37/50] netfilter: nf_tables: atomic dump and reset for
+ stateful objects
+Date: Sat, 10 Dec 2016 13:21:52 +0100
+Message-ID: <20161210122152.GA4653@salvia>
+References: <1481147576-5690-1-git-send-email-pablo@netfilter.org>
+ <1481147576-5690-38-git-send-email-pablo@netfilter.org>
+ <CAP=VYLp-ZBFjR1W9=V_vyPYAi1=Yub3ugq6D8hkoLigcPaaxFg@mail.gmail.com>
+ <20161209102432.GA986@salvia>
+ <1481293492.4930.168.camel@edumazet-glaptop3.roam.corp.google.com>
+ <1481296926.4930.171.camel@edumazet-glaptop3.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4284516.VtSFlm1aM8@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Kees Cook <keescook@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>, PaX Team <pageexec@freemail.hu>, Emese Revfy <re.emese@gmail.com>, maxim.kuvyrkov@linaro.org, Kugan Vivekanandarajah <kuganv@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1481296926.4930.171.camel@edumazet-glaptop3.roam.corp.google.com>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, netfilter-devel@vger.kernel.org, David Miller <davem@davemloft.net>, netdev <netdev@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Fri, Dec 09, 2016 at 07:22:06AM -0800, Eric Dumazet wrote:
+> On Fri, 2016-12-09 at 06:24 -0800, Eric Dumazet wrote:
+> 
+> > It looks that you want a seqcount, even on 64bit arches,
+> > so that CPU 2 can restart its loop, and more importantly you need
+> > to not accumulate the values you read, because they might be old/invalid.
+> 
+> Untested patch to give general idea. I can polish it a bit later today.
 
+I'm preparing a patch now, so you can review it.
 
-On 10/12/16 07:35, Arnd Bergmann wrote:
-> On Friday, December 9, 2016 11:13:20 AM CET Kees Cook wrote:
->> On Fri, Dec 9, 2016 at 3:33 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->>> On Thursday, December 8, 2016 11:00:42 AM CET Kees Cook wrote:
->>>> If you have a moment, applying 215e2aa6c024[1] and reverting
->>>> a519167e753e for an allyesconfig/allmodconfig build should let you
->>>> know if things are working correctly with headers installed. If anyone
->>>> sees any problems, please let me know and I can queue up fixes.
->>>>
->>> This is what I got on x86-64 with a gcc-7.0.0 snapshot:
->>>
->>> In file included from /git/arm-soc/scripts/gcc-plugins/gcc-common.h:42:0,
->>>                  from <stdin>:1:
->>> /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/emit-rtl.h:371:41: error: use of enum ‘memmodel’ without previous declaration
->>>  extern bool need_atomic_barrier_p (enum memmodel, bool);
->>>                                          ^
->>> In file included from /git/arm-soc/scripts/gcc-plugins/gcc-common.h:94:0,
->>>                  from <stdin>:1:
->>> /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:70:40: error: use of enum ‘value_range_type’ without previous declaration
->>>  extern void set_range_info (tree, enum value_range_type, const wide_int_ref &,
->>>                                         ^
->>> /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:73:13: error: use of enum ‘value_range_type’ without previous declaration
->>>  extern enum value_range_type get_range_info (const_tree, wide_int *,
->>>              ^
->>> /home/arnd/cross-gcc/lib/gcc/x86_64-linux/7.0.0/plugin/include/tree-ssanames.h:98:55: error: use of enum ‘value_range_type’ without previous declaration
->>>  extern void duplicate_ssa_name_range_info (tree, enum value_range_type,
->>>                                                        ^
->>> Cannot use CONFIG_GCC_PLUGINS: your gcc installation does not support plugins, perhaps the necessary headers are missing?
->>> scripts/Makefile.gcc-plugins:51: recipe for target 'gcc-plugins-check' failed
->>>
->>> I manually fixed up the gcc header files to include the ones with the
->>> definition for now, to address those, but I don't know if that change is
->>> correct.
->>
->> What was needed?
->
-> I added '#include "memmodel.h"' and '#include "tree-vrp.h"', respectively, to
-> the headers that failed to get compiled.
->
-> This might be the correct solution, or the headers might not be meant to
-> be used standalone and instead require being included in the right order.
->
-> Gcc commit svn+ssh://gcc.gnu.org/svn/gcc/trunk@239638 moved
-> value_range_type from tree-ssanames.h to tree-vrp.h, I've added
-> Kugan to Cc, maybe he can clarify what that means for plugins.
-
-Looks to me that in gcc-common.h  tree-vrp.h should be included before 
-tree-ssanames.h as it is done in gcc now.
-
-Thanks,
-Kugan
+Eric, thanks a lot for reviewing and proposing a working approach!
