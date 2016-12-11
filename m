@@ -1,46 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Mon, 12 Dec 2016 10:08:51 +1100
-Message-ID: <20161212100851.41831d05@canb.auug.org.au>
+Date: Mon, 12 Dec 2016 10:13:10 +1100
+Message-ID: <20161212101311.272ed674@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39345 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753930AbcLKXNN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 11 Dec 2016 18:13:13 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
 
 Hi Al,
 
 Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/overlayfs/dir.c
+  fs/overlayfs/copy_up.c
 
-between commits:
+between commit:
 
-  659f95a46dd0 ("ovl: add ovl_dentry_is_whiteout()")
-  ee2e4303d554 ("ovl: opaque cleanup")
-  f7cd4e7b2743 ("ovl: clean up kstat usage")
+  4a756233184d ("Revert "ovl: Warn on copy up if a process has a R/O fd open to the lower file"")
 
 from the overlayfs tree and commit:
 
-  718324db4435 ("overlayfs: stop abusing kstat")
+  450630975da9 ("don't open-code file_inode()")
 
 from the vfs tree.
 
-It looks like commits f7cd4e7b2743 and 718324db4435 are essentially the
-smae change (with some white space differences).
-
-I fixed it up (I just took bits from each of teh above) and can carry
-the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
+I fixed it up (the former removed the code updated by the latter) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
 upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
-Miklos, that overlayfs tree commit f7cd4e7b2743 has no Signed-off-by
-from Al as its Author :-(
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
