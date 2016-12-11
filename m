@@ -1,36 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the clk tree
-Date: Mon, 12 Dec 2016 08:39:44 +1100
-Message-ID: <20161212083944.5b6f2b54@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
+Date: Mon, 12 Dec 2016 10:08:51 +1100
+Message-ID: <20161212100851.41831d05@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48521 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753859AbcLKVjs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 11 Dec 2016 16:39:48 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Al,
 
-After merging the clk tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-drivers/clk/bcm/clk-bcm2835.c: In function 'bcm2835_clock_determine_rate':
-drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  *prate = curdiv * best_rate;
-                  ^
-drivers/clk/bcm/clk-bcm2835.c:1032:16: note: 'best_rate' was declared here
-  unsigned long best_rate;
-                ^
+  fs/overlayfs/dir.c
 
-Introduced by commit
+between commits:
 
-  155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
+  659f95a46dd0 ("ovl: add ovl_dentry_is_whiteout()")
+  ee2e4303d554 ("ovl: opaque cleanup")
+  f7cd4e7b2743 ("ovl: clean up kstat usage")
+
+from the overlayfs tree and commit:
+
+  718324db4435 ("overlayfs: stop abusing kstat")
+
+from the vfs tree.
+
+It looks like commits f7cd4e7b2743 and 718324db4435 are essentially the
+smae change (with some white space differences).
+
+I fixed it up (I just took bits from each of teh above) and can carry
+the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+Miklos, that overlayfs tree commit f7cd4e7b2743 has no Signed-off-by
+from Al as its Author :-(
 
 -- 
 Cheers,
