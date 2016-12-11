@@ -1,44 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs-miklos tree with the vfs tree
-Date: Mon, 12 Dec 2016 10:38:17 +1100
-Message-ID: <20161212103817.15e09cc0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the hid tree
+Date: Mon, 12 Dec 2016 10:59:03 +1100
+Message-ID: <20161212105903.418e913f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39795 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:58647 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753944AbcLKXiU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 11 Dec 2016 18:38:20 -0500
+        id S1753944AbcLKX7G (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 11 Dec 2016 18:59:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <darrick.wong@oracle.com>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?Sm/Do28=?= Paulo Rechi Vita <jprvita@gmail.com>, David Arcari <darcari@redhat.com>
 
-Hi Miklos,
+Hi Jiri,
 
-Today's linux-next merge of the vfs-miklos tree got a conflict in:
+After merging the hid tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  fs/read_write.c
+drivers/hid/i2c-hid/i2c-hid.c: In function 'i2c_hid_start':
+drivers/hid/i2c-hid/i2c-hid.c:773:19: error: 'struct i2c_hid' has no member named 'irq'
+   disable_irq(ihid->irq);
+                   ^
+drivers/hid/i2c-hid/i2c-hid.c:777:18: error: 'struct i2c_hid' has no member named 'irq'
+   enable_irq(ihid->irq);
+                  ^
 
-between commit:
+Caused by commit
 
-  a76b5b04375f ("fs: try to clone files first in vfs_copy_file_range")
+  de3c99488609 ("HID: i2c-hid: Disable IRQ before freeing buffers")
 
-from the vfs tree and commit:
+interacting with commit
 
-  b2368d2bb4a5 ("vfs: check file types in vfs_copy_file_range()")
+  ba18a9314a94 ("Revert "HID: i2c-hid: Add support for ACPI GPIO interrupts"")
 
-from the vfs-miklos tree.
+from earlier in the same tree!
 
-I fixed it up (I used the vfs tree version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-Darrick, commit a76b5b04375f has no Signed-off-by from you as committer :-(
+I have used the hid tree from next-20161209 for today.
 
 -- 
 Cheers,
