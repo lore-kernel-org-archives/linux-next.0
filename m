@@ -1,78 +1,24 @@
-From: <cl_luzcc@hotmail.com>
-Subject: (unknown)
-Date: Sun, 11 Dec 2016 18:20:36 -0000
-Message-ID: <148148043643.24231.3386325107172220478@hinet.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: no v4.11 code yet
+Date: Mon, 12 Dec 2016 07:54:18 +1100
+Message-ID: <20161212075418.22b03970@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_3090637_linux-next.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 114-25-234-4.dynamic.hinet.net ([114.25.234.4]:33994 "HELO
-        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1753457AbcLKSUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 11 Dec 2016 13:20:42 -0500
-Content-Disposition: attachment
-Subject: 
+Received: from ozlabs.org ([103.22.144.67]:60357 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753620AbcLKUyW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 11 Dec 2016 15:54:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 
-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
+Hi all,
+
+Please do not add any v4.11 code to your linux-next included branches
+until after v4.10-rc1 has been released.
+
+-- 
+Cheers,
+Stephen Rothwell
