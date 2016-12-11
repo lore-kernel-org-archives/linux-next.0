@@ -1,67 +1,78 @@
-From: Emese Revfy <re.emese@gmail.com>
-Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
-Date: Sat, 10 Dec 2016 17:45:31 +0100
-Message-ID: <20161210174531.3c6b66ec00cbbbe7290ed69e@gmail.com>
-References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
-        <2680957.ot0HfIkH6p@wuerfel>
-        <CAGXu5jJpBiffFhdQ+sjwWeeWOnpEkz4JQyH8VwmVCWP3TzXmLQ@mail.gmail.com>
+From: <cl_luzcc@hotmail.com>
+Subject: (unknown)
+Date: Sun, 11 Dec 2016 18:20:36 -0000
+Message-ID: <148148043643.24231.3386325107172220478@hinet.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="EMAIL_3090637_linux-next.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wj0-f193.google.com ([209.85.210.193]:36373 "EHLO
-        mail-wj0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752328AbcLJQqg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 10 Dec 2016 11:46:36 -0500
-In-Reply-To: <CAGXu5jJpBiffFhdQ+sjwWeeWOnpEkz4JQyH8VwmVCWP3TzXmLQ@mail.gmail.com>
+Received: from 114-25-234-4.dynamic.hinet.net ([114.25.234.4]:33994 "HELO
+        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1753457AbcLKSUm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 11 Dec 2016 13:20:42 -0500
+Content-Disposition: attachment
+Subject: 
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>, PaX Team <pageexec@freemail.hu>
+To: linux-next@vger.kernel.org
 
-On Fri, 9 Dec 2016 11:12:18 -0800
-Kees Cook <keescook@google.com> wrote:
-
-> On Fri, Dec 9, 2016 at 2:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thursday, December 8, 2016 11:00:42 AM CET Kees Cook wrote:
-> >
-> >> If you have a moment, applying 215e2aa6c024[1] and reverting
-> >> a519167e753e for an allyesconfig/allmodconfig build should let you
-> >> know if things are working correctly with headers installed. If anyone
-> >> sees any problems, please let me know and I can queue up fixes.
-> >
-> > Using gcc-4.9.3 or gcc-5.3.1 for an ARM allmodconfig build, I get tons of
-> > errors such as this one:
-> >
-> > /git/arm-soc/init/initramfs.c: In function 'error':
-> > /git/arm-soc/init/initramfs.c:50:1: error: unrecognizable insn:
-> >  }
-> >  ^
-> > (insn 26 25 27 5 (set (reg:SI 111 [ local_entropy.243 ])
-> >         (rotatert:SI (reg:SI 116 [ local_entropy.243 ])
-> >             (const_int -30 [0xffffffffffffffe2]))) -1
-> >      (nil))
-> > *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
-> > Event                            | Plugins
-> > PLUGIN_ATTRIBUTES                | latent_entropy_plugin
-> > PLUGIN_START_UNIT                | latent_entropy_plugin
-> > /git/arm-soc/init/initramfs.c:50:1: internal compiler error: in extract_insn, at recog.c:2202
-> > /git/arm-soc/arch/arm/vfp/vfpmodule.c: In function 'vfp_init':
-> > /git/arm-soc/arch/arm/vfp/vfpmodule.c:824:1: error: unrecognizable insn:
-> >  }
-> >  ^
-> > (insn 138 137 139 17 (set (reg:SI 165 [ local_entropy.93 ])
-> >         (rotatert:SI (reg:SI 150 [ local_entropy.93 ])
-> >             (const_int -9 [0xfffffffffffffff7]))) -1
-> >      (nil))
-> > *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
-> 
-> Well that's exciting! :P
-
-Hi,
-
-You can find the fix here:
-https://github.com/ephox-gcc-plugins/latent_entropy/commit/c91275a1bfcebbcfc0ca1af03396e06039f04db8
-
--- 
-Emese
+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
