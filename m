@@ -1,77 +1,65 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161212 build: 0 failures 1 warnings (next-20161212)
-Date: Mon, 12 Dec 2016 10:00:01 +0000
-Message-ID: <E1cGNOq-0005sP-SZ@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45076 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753901AbcLLKAK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2016 05:00:10 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the pci tree
+Date: Mon, 12 Dec 2016 10:09:09 -0600
+Message-ID: <20161212160909.GB29792@bhelgaas-glaptop.roam.corp.google.com>
+References: <20161209133813.79fe0f87@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161209133813.79fe0f87@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161212
-Git describe: next-20161212
-Commit: b11a0cf861 Add linux-next specific files for 20161212
+On Fri, Dec 09, 2016 at 01:38:13PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   drivers/pci/msi.c
+> 
+> between commit:
+> 
+>   67f1e4473857 ("PCI/MSI: Document new parameter for msi_capability_init()")
+> 
+> from the pci tree and commit:
+> 
+>   61e1c5905290 ("PCI/MSI: Propagate IRQ affinity description through the MSI code")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Build Time: 98 min 40 sec
+Thanks, I didn't realize Thomas had already merged this.  I dropped
+the slightly different one from my tree.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  4 ../drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+> diff --cc drivers/pci/msi.c
+> index da95f4e689f2,dd27f73a45fc..000000000000
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@@ -753,14 -754,14 +754,14 @@@ static void msix_program_entries(struc
+>    * @dev: pointer to the pci_dev data structure of MSI-X device function
+>    * @entries: pointer to an array of struct msix_entry entries
+>    * @nvec: number of @entries
+> -  * @affinity: flag to indicate CPU IRQ affinity mask should be set
+> +  * @affd: Optional pointer to enable automatic affinity assignement
+>    *
+>    * Setup the MSI-X capability structure of device function with a
+>  - * single MSI-X irq. A return of zero indicates the successful setup of
+>  - * requested MSI-X entries with allocated irqs or non-zero for otherwise.
+>  + * single MSI-X IRQ. A return of zero indicates the successful setup of
+>  + * requested MSI-X entries with allocated IRQs or non-zero for otherwise.
+>    **/
+>   static int msix_capability_init(struct pci_dev *dev, struct msix_entry *entries,
+> - 				int nvec, bool affinity)
+> + 				int nvec, const struct irq_affinity *affd)
+>   {
+>   	int ret;
+>   	u16 control;
