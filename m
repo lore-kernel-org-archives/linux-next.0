@@ -1,52 +1,55 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: linux-next: build warning after merge of the clk tree
-Date: Mon, 12 Dec 2016 09:05:21 +0100
-Message-ID: <20161212090521.0450504e@bbrezillon>
-References: <20161212083944.5b6f2b54@canb.auug.org.au>
+From: Ian Kent <ikent@redhat.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Mon, 12 Dec 2016 16:14:26 +0800
+Message-ID: <1481530466.3372.1.camel@redhat.com>
+References: <20161212165207.48c149de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:54221 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751266AbcLLIFh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Dec 2016 03:05:37 -0500
-In-Reply-To: <20161212083944.5b6f2b54@canb.auug.org.au>
+Received: from mx1.redhat.com ([209.132.183.28]:36550 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751995AbcLLIO3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Dec 2016 03:14:29 -0500
+In-Reply-To: <20161212165207.48c149de@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-+Eric
+On Mon, 2016-12-12 at 16:52 +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Al let me know that he had put a newer version of the autofs patches
+> into his vfs tree, so I have dropped the following patches from the akpm
+> tree today:
+> 
+>   vfs: change d_manage() to take a struct path
+>   vfs: add path_is_mountpoint() helper
+>   vfs: fix boolreturn.cocci warnings
+>   vfs: add path_has_submounts()
+>   autofs: change autofs4_expire_wait() to take struct path
+>   autofs: change autofs4_wait() to take struct path
+>   autofs: use path_is_mountpoint() to fix unreliable d_mountpoint() checks
+>   autofs: use path_has_submounts() to fix unreliable have_submount() checks
+>   vfs: remove unused have_submounts() function
+>   vfs: merge path_is_mountpoint() and path_is_mountpoint_rcu()
+>   autofs: make struct path const in autofs4_dir_open()
+>   autofs: change struct path to const in autofs4_expire_wait() and
+> autofs4_wait()
+>   vfs: change struct path to const in d_manage()
+>   vfs: constify path parameter of path_has_submounts()
+>   autofs: don't hold spinlock over direct mount expire
+>   vfs: make may_umount_tree() mount propagation aware
+>   vfs-make-may_umount_tree-mount-propogation-aware-checkpatch-fixes
+> 
+> I hope that was the correct ones.
 
 Hi Stephen,
 
-On Mon, 12 Dec 2016 08:39:44 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Yes, Al merged a number of the patches, fixed a couple of problems, and rejected
+one which I'm still working on.
 
-> Hi all,
-> 
-> After merging the clk tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/clk/bcm/clk-bcm2835.c: In function 'bcm2835_clock_determine_rate':
-> drivers/clk/bcm/clk-bcm2835.c:1069:18: warning: 'best_rate' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   *prate = curdiv * best_rate;
->                   ^
-> drivers/clk/bcm/clk-bcm2835.c:1032:16: note: 'best_rate' was declared here
->   unsigned long best_rate;
->                 ^
-> 
-> Introduced by commit
-> 
->   155e8b3b0ee3 ("clk: bcm: Support rate change propagation on bcm2835 clocks")
-> 
-
-Thanks for the report (I just sent a patch fixing this warning).
-May I ask which toolchain you're using, because my gcc failed to detect
-this uninitialized variable (and this is not the first time I have this
-problem).
-
-Regards,
-
-Boris
+The list looks right to me.
+That's great, thanks,
+Ian
