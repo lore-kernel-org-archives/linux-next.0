@@ -1,42 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Mon, 12 Dec 2016 13:24:29 +1100
-Message-ID: <20161212132429.0d948f4f@canb.auug.org.au>
-References: <20161209133256.7e8a5ead@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Mon, 12 Dec 2016 13:30:00 +1100
+Message-ID: <20161212133000.6cf7a90e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33083 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751617AbcLLCYb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 11 Dec 2016 21:24:31 -0500
-In-Reply-To: <20161209133256.7e8a5ead@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Pitre <nicolas.pitre@linaro.org>, WingMan Kwok <w-kwok2@ti.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+Hi all,
 
-On Fri, 9 Dec 2016 13:32:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the spi tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/spi/spi-orion.c: In function 'orion_spi_baudrate_set':
-> drivers/spi/spi-orion.c:192:8: error: 'sspr' undeclared (first use in this function)
->     if (sspr > 7)
->         ^
-> 
-> Caused by commit
-> 
->   d9fc6452af47 ("spi: mvebu: fix baudrate calculation for armada variants")
-> 
-> I have used the spi tree from next-20161208 for today.
+Today's linux-next merge of the tip tree got a conflict in:
 
-Still getting this.
+  drivers/net/ethernet/ti/Kconfig
+
+between commit:
+
+  6246168b4a38 ("net: ethernet: ti: netcp: add support of cpts")
+
+from the net-next tree and commit:
+
+  d1cbfd771ce8 ("ptp_clock: Allow for it to be optional")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/net/ethernet/ti/Kconfig
+index dc217fd7a734,61b835a7e6ae..000000000000
+--- a/drivers/net/ethernet/ti/Kconfig
++++ b/drivers/net/ethernet/ti/Kconfig
+@@@ -74,14 -74,13 +74,14 @@@ config TI_CPS
+  	  will be called cpsw.
+  
+  config TI_CPTS
+ -	bool "TI Common Platform Time Sync (CPTS) Support"
+ -	depends on TI_CPSW
+ +	tristate "TI Common Platform Time Sync (CPTS) Support"
+ +	depends on TI_CPSW || TI_KEYSTONE_NETCP
+- 	select PTP_1588_CLOCK
++ 	imply PTP_1588_CLOCK
+  	---help---
+  	  This driver supports the Common Platform Time Sync unit of
+ -	  the CPSW Ethernet Switch. The unit can time stamp PTP UDP/IPv4
+ -	  and Layer 2 packets, and the driver offers a PTP Hardware Clock.
+ +	  the CPSW Ethernet Switch and Keystone 2 1g/10g Switch Subsystem.
+ +	  The unit can time stamp PTP UDP/IPv4 and Layer 2 packets, and the
+ +	  driver offers a PTP Hardware Clock.
+  
+  config TI_KEYSTONE_NETCP
+  	tristate "TI Keystone NETCP Core Support"
