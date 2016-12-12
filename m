@@ -1,43 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 12 Dec 2016 16:49:51 +1100
-Message-ID: <20161212164951.703f26d9@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Mon, 12 Dec 2016 16:52:07 +1100
+Message-ID: <20161212165207.48c149de@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49359 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50925 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750780AbcLLFty (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 12 Dec 2016 00:49:54 -0500
+        id S1750720AbcLLFwJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Dec 2016 00:52:09 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>, Matthew Wilcox <mawilcox@microsoft.com>
+To: Al Viro <viro@zeniv.linux.org.uk>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ian Kent <ikent@redhat.com>
 
-Hi Andrew,
+Hi all,
 
-Today's linux-next merge of the akpm tree got a conflict in:
+Al let me know that he had put a newer version of the autofs patches
+into his vfs tree, so I have dropped the following patches from the akpm
+tree today:
 
-  lib/radix-tree.c
+  vfs: change d_manage() to take a struct path
+  vfs: add path_is_mountpoint() helper
+  vfs: fix boolreturn.cocci warnings
+  vfs: add path_has_submounts()
+  autofs: change autofs4_expire_wait() to take struct path
+  autofs: change autofs4_wait() to take struct path
+  autofs: use path_is_mountpoint() to fix unreliable d_mountpoint() checks
+  autofs: use path_has_submounts() to fix unreliable have_submount() checks
+  vfs: remove unused have_submounts() function
+  vfs: merge path_is_mountpoint() and path_is_mountpoint_rcu()
+  autofs: make struct path const in autofs4_dir_open()
+  autofs: change struct path to const in autofs4_expire_wait() and autofs4_wait()
+  vfs: change struct path to const in d_manage()
+  vfs: constify path parameter of path_has_submounts()
+  autofs: don't hold spinlock over direct mount expire
+  vfs: make may_umount_tree() mount propagation aware
+  vfs-make-may_umount_tree-mount-propogation-aware-checkpatch-fixes
 
-between commit:
-
-  2b41226b39b6 ("Revert "radix tree test suite: fix compilation"")
-
-from Linus' tree and patch:
-
-  "reimplement IDR and IDA using the radix tree"
-
-from the akpm tree.
-
-I fixed it up (I added back the include of notifier.h) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
+I hope that was the correct ones.
 -- 
 Cheers,
 Stephen Rothwell
