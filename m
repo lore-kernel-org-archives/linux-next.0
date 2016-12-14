@@ -1,49 +1,51 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: Issue with DRM and "reimplement IDR and IDA using the radix tree"
-Date: Wed, 14 Dec 2016 23:08:20 +0900
-Message-ID: <ca40ae10-2352-9cec-94db-94bca3c14616@nvidia.com>
-References: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
+Date: Wed, 14 Dec 2016 16:19:04 +0100
+Message-ID: <20161214151904.GE3620@suse.cz>
+References: <20161128110230.2e2bda87@canb.auug.org.au>
+ <20161207093819.1d4358b1@canb.auug.org.au>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Matthew Wilcox <willy@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:55703 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753439AbcLNPTW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Dec 2016 10:19:22 -0500
+Content-Disposition: inline
+In-Reply-To: <20161207093819.1d4358b1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Xiaoguang <wangxg.fnst@cn.fujitsu.com>
 
-Rm9yZ290IHRvIGFkZCB0aGUgbW9zdCByZWxldmFudCBsaXN0IGZvciB0aGlzIGlzc3VlIChsaW51
-eC1uZXh0KS4KClN0ZXBoZW4sIG1heWJlIHlvdSB3aWxsIHdhbnQgdG8gdGVtcG9yYXJpbHkgcmV2
-ZXJ0IHRoaXMgcGF0Y2ggdW50aWwgdGhpcwppcyBjbGVhcmVkPyBUaGlzIHByb2JhYmx5IGFmZmVj
-dHMgb3RoZXIgdXNlcnMgdGhhbiBEUk0uCgpPbiAxMi8xMy8yMDE2IDA0OjE0IFBNLCBBbGV4YW5k
-cmUgQ291cmJvdCB3cm90ZToKPiBIaSBNYXR0aGV3LAo+IAo+IFRyeWluZyB0aGUgbGF0ZXN0IC1u
-ZXh0IG9uIHRoZSBKZXRzb24gVEsxIGJvYXJkICh3aXRoIHR3byBkaWZmZXJlbnQgRFJNCj4gZGV2
-aWNlcyBhbmQgZGlzcGxheSBhbmQgcmVuZGVyKSwgSSBub3RpY2VkIHRoYXQgdGhlIEdQVSBkZXZp
-Y2UgcHJvYmUKPiBhbHdheXMgZmFpbGVkIHdpdGggZXJyb3IgLUVOT1NQQy4gQWZ0ZXIgaW52ZXN0
-aWdhdGluZyBJIGZpZ3VyZWQgb3V0IHRoYXQKPiB0aGlzIHdhcyBkdWUgdG8gdGhlIG1pbm9yIGRl
-dmljZSBhbGxvY2F0aW9uIGZhaWxpbmcgd2hlbiBhIHNlY29uZCBEUk0KPiBkZXZpY2UgaXMgYWRk
-ZWQuCj4gCj4gTW9yZSBwcmVjaXNlbHksIHdoZW4gZHJtX21pbm9yX2FsbG9jKCkgaXMgY2FsbGVk
-IHdpdGggRFJNX01JTk9SX1BSSU1BUlkKPiAoMCkgYXMgYXJndW1lbnQgZm9yIGEgc2Vjb25kIHRp
-bWUsIHRoZSBjYWxsIHRvIGlkcl9hbGxvYygpICh3aGljaCBoYXMgYQo+IHJlcXVlc3RlZCByYW5n
-ZSBvZiAwLi42NCkgZmFpbHMgaW5zdGVhZCBvZiByZXR1cm5pbmcgMSBhcyBleHBlY3RlZC4gTm90
-ZQo+IHRoYXQgdGhlIGZpcnN0IGNhbGwgaXMgc3VjY2Vzc2Z1bC4KPiAKPiBSZXZlcnRpbmcgInJl
-aW1wbGVtZW50IElEUiBhbmQgSURBIHVzaW5nIHRoZSByYWRpeCB0cmVlIiBvbiAyMDE2MTIxMydz
-Cj4gbmV4dCBmaXhlcyB0aGUgaXNzdWUgZm9yIG1lLCBzdWdnZXN0aW5nIGEgYnVnIG1heSBoYXZl
-IHNsaXBwZWQgaW4gdGhlcmUuCj4gCj4gTm90IHN1cmUgaG93IHRoaXMgY291bGQgYmUgZml4ZWQs
-IHNvIHJlcG9ydGluZyB0aGUgaXNzdWUgZm9yIG5vdyBpbiBjYXNlCj4gaXQgaXMgbm90IGtub3du
-IHlldC4KPiAKPiBDaGVlcnMsCj4gQWxleC4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+On Wed, Dec 07, 2016 at 09:38:19AM +1100, Stephen Rothwell wrote:
+> Hi David,
+> 
+> On Mon, 28 Nov 2016 11:02:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the btrfs-kdave tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> > 
+> > fs/btrfs/inode.c: In function 'run_delalloc_range':
+> > fs/btrfs/inode.c:1219:9: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >    start = cur_end + 1;
+> >          ^
+> > fs/btrfs/inode.c:1172:6: note: 'cur_end' was declared here
+> >   u64 cur_end;
+> >       ^
+> > 
+> > Introduced by commit
+> > 
+> >   cow_file_range_async ("btrfs: Introduce COMPRESS reserve type to fix false enospc for compression")
+> > 
+> > Presumably a false positive because ASSERT(0) panics?
+> 
+> Actually it does not if CONFIG_BTRFS_ASSERT is not set (which it isn't
+> for the above build), so this is not a false positive.  I am still
+> seeing this.
+
+Sorry for late reply. I've updatd the for-next branch now, the patches
+introducing the warning have been removed temporarily. Arnd Bergmann
+sent a patch to fix the warning, I'll make sure to include it so the
+warning does not reappear.
