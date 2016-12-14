@@ -1,65 +1,49 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161214 build: 0 failures 1 warnings (next-20161214)
-Date: Wed, 14 Dec 2016 13:24:39 +0000
-Message-ID: <E1cH9Xx-0007NS-83@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43120 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754920AbcLNNZP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2016 08:25:15 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: Issue with DRM and "reimplement IDR and IDA using the radix tree"
+Date: Wed, 14 Dec 2016 23:08:20 +0900
+Message-ID: <ca40ae10-2352-9cec-94db-94bca3c14616@nvidia.com>
+References: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Matthew Wilcox <willy@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161214
-Git describe: next-20161214
-Commit: 9aa17b2861 Add linux-next specific files for 20161214
-
-Build Time: 267 min 2 sec
-
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  2 ../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Rm9yZ290IHRvIGFkZCB0aGUgbW9zdCByZWxldmFudCBsaXN0IGZvciB0aGlzIGlzc3VlIChsaW51
+eC1uZXh0KS4KClN0ZXBoZW4sIG1heWJlIHlvdSB3aWxsIHdhbnQgdG8gdGVtcG9yYXJpbHkgcmV2
+ZXJ0IHRoaXMgcGF0Y2ggdW50aWwgdGhpcwppcyBjbGVhcmVkPyBUaGlzIHByb2JhYmx5IGFmZmVj
+dHMgb3RoZXIgdXNlcnMgdGhhbiBEUk0uCgpPbiAxMi8xMy8yMDE2IDA0OjE0IFBNLCBBbGV4YW5k
+cmUgQ291cmJvdCB3cm90ZToKPiBIaSBNYXR0aGV3LAo+IAo+IFRyeWluZyB0aGUgbGF0ZXN0IC1u
+ZXh0IG9uIHRoZSBKZXRzb24gVEsxIGJvYXJkICh3aXRoIHR3byBkaWZmZXJlbnQgRFJNCj4gZGV2
+aWNlcyBhbmQgZGlzcGxheSBhbmQgcmVuZGVyKSwgSSBub3RpY2VkIHRoYXQgdGhlIEdQVSBkZXZp
+Y2UgcHJvYmUKPiBhbHdheXMgZmFpbGVkIHdpdGggZXJyb3IgLUVOT1NQQy4gQWZ0ZXIgaW52ZXN0
+aWdhdGluZyBJIGZpZ3VyZWQgb3V0IHRoYXQKPiB0aGlzIHdhcyBkdWUgdG8gdGhlIG1pbm9yIGRl
+dmljZSBhbGxvY2F0aW9uIGZhaWxpbmcgd2hlbiBhIHNlY29uZCBEUk0KPiBkZXZpY2UgaXMgYWRk
+ZWQuCj4gCj4gTW9yZSBwcmVjaXNlbHksIHdoZW4gZHJtX21pbm9yX2FsbG9jKCkgaXMgY2FsbGVk
+IHdpdGggRFJNX01JTk9SX1BSSU1BUlkKPiAoMCkgYXMgYXJndW1lbnQgZm9yIGEgc2Vjb25kIHRp
+bWUsIHRoZSBjYWxsIHRvIGlkcl9hbGxvYygpICh3aGljaCBoYXMgYQo+IHJlcXVlc3RlZCByYW5n
+ZSBvZiAwLi42NCkgZmFpbHMgaW5zdGVhZCBvZiByZXR1cm5pbmcgMSBhcyBleHBlY3RlZC4gTm90
+ZQo+IHRoYXQgdGhlIGZpcnN0IGNhbGwgaXMgc3VjY2Vzc2Z1bC4KPiAKPiBSZXZlcnRpbmcgInJl
+aW1wbGVtZW50IElEUiBhbmQgSURBIHVzaW5nIHRoZSByYWRpeCB0cmVlIiBvbiAyMDE2MTIxMydz
+Cj4gbmV4dCBmaXhlcyB0aGUgaXNzdWUgZm9yIG1lLCBzdWdnZXN0aW5nIGEgYnVnIG1heSBoYXZl
+IHNsaXBwZWQgaW4gdGhlcmUuCj4gCj4gTm90IHN1cmUgaG93IHRoaXMgY291bGQgYmUgZml4ZWQs
+IHNvIHJlcG9ydGluZyB0aGUgaXNzdWUgZm9yIG5vdyBpbiBjYXNlCj4gaXQgaXMgbm90IGtub3du
+IHlldC4KPiAKPiBDaGVlcnMsCj4gQWxleC4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiAKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
