@@ -1,51 +1,74 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-Date: Wed, 14 Dec 2016 16:19:04 +0100
-Message-ID: <20161214151904.GE3620@suse.cz>
-References: <20161128110230.2e2bda87@canb.auug.org.au>
- <20161207093819.1d4358b1@canb.auug.org.au>
-Reply-To: dsterba@suse.cz
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Tree for Dec 14
+Date: Wed, 14 Dec 2016 11:25:49 -0500
+Message-ID: <CAP=VYLqtuDk-wyHqrp8kySo6Uz4=5QQ_P5qweW_g9W9QkYmzmg@mail.gmail.com>
+References: <20161214152218.3a4fda3d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:55703 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753439AbcLNPTW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Dec 2016 10:19:22 -0500
-Content-Disposition: inline
-In-Reply-To: <20161207093819.1d4358b1@canb.auug.org.au>
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:33510 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753141AbcLNQ0V (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2016 11:26:21 -0500
+In-Reply-To: <20161214152218.3a4fda3d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Wang Xiaoguang <wangxg.fnst@cn.fujitsu.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Heiko Carstens <heiko.carstens@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Peter Oberparleiter <oberpar@linux.vnet.ibm.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-On Wed, Dec 07, 2016 at 09:38:19AM +1100, Stephen Rothwell wrote:
-> Hi David,
-> 
-> On Mon, 28 Nov 2016 11:02:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the btrfs-kdave tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > fs/btrfs/inode.c: In function 'run_delalloc_range':
-> > fs/btrfs/inode.c:1219:9: warning: 'cur_end' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> >    start = cur_end + 1;
-> >          ^
-> > fs/btrfs/inode.c:1172:6: note: 'cur_end' was declared here
-> >   u64 cur_end;
-> >       ^
-> > 
-> > Introduced by commit
-> > 
-> >   cow_file_range_async ("btrfs: Introduce COMPRESS reserve type to fix false enospc for compression")
-> > 
-> > Presumably a false positive because ASSERT(0) panics?
-> 
-> Actually it does not if CONFIG_BTRFS_ASSERT is not set (which it isn't
-> for the above build), so this is not a false positive.  I am still
-> seeing this.
+On Tue, Dec 13, 2016 at 11:22 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Please do not add any material for v4.11 to your linux-next included
+> branches until after v4.10-rc1 has been released.
+>
+> Changes since 20161213:
+>
+> The vfs-miklos tree gained a conflict against the ubifs tree.
+>
+> The akpm-current tree gained a conflict against the jc_docs tree.
+>
+> Non-merge commits (relative to Linus' tree): 4498
+>  4320 files changed, 189429 insertions(+), 94239 deletions(-)
 
-Sorry for late reply. I've updatd the for-next branch now, the patches
-introducing the warning have been removed temporarily. Arnd Bergmann
-sent a patch to fix the warning, I'll make sure to include it so the
-warning does not reappear.
+New s390 build failure today:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12883922/
+
+I reproduced it locally using the older korg s390 toolchain.
+
+Reverting this and the file compiles fine:
+
+commit d543a106f96d6f15e4507cf349128912d44356d9
+Author: Heiko Carstens <heiko.carstens@de.ibm.com>
+Date:   Tue Dec 6 15:52:10 2016 +0100
+
+    s390: fix initrd corruptions with gcov/kcov instrumented kernels
+
+Appears old toolchains don't like this commit.
+
+Paul.
+--
+
+
+>
+> ----------------------------------------------------------------------------
+>
+> I have created today's linux-next tree at
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+> are tracking the linux-next tree using git, you should not use "git pull"
+> to do so as that will try to merge the new linux-next release with the
+> old one.  You should use "git fetch" and checkout or reset to the new
+> master.
+>
+> You can see which trees have been included by looking in the Next/Trees
+> file in the source.  There are also quilt-import.log and merge.log
+> files in the Next directory.  Between each merge, the tree was built
+> with a ppc64_defconfig for powerpc and an allmodconfig (with
+> CONFIG_BUILD_DOCSRC=n) for x86_64, a multi_v7_defconfig for arm and a
+> native build of tools/perf. After the final fixups (if any), I do an
+> x86_64 modules_install followed by builds for x86_64 allnoconfig,
+> powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
+
+[...]
