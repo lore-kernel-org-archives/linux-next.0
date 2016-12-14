@@ -1,34 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next x86 build fixes
-Date: Thu, 15 Dec 2016 07:41:51 +1100
-Message-ID: <20161215074151.2412ddb8@canb.auug.org.au>
-References: <CAB=NE6XSPhQsjXNPhfuUjjHruBvxt-EF5q4N_Lu2ndz5Uo7_qQ@mail.gmail.com>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
+Date: Wed, 14 Dec 2016 14:21:38 -0800
+Message-ID: <20161214222138.GA116314@f23x64.localdomain>
+References: <20161214135044.57dc96f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAB=NE6XSPhQsjXNPhfuUjjHruBvxt-EF5q4N_Lu2ndz5Uo7_qQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20161214135044.57dc96f5@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@do-not-panic.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>, Borislav Petkov <bp@alien8.de>, linux-next@vger.kernel.org, X86 ML <x86@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Adam Borowski <kilobyte@angband.pl>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lyude <lyude@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Luis,
+On Wed, Dec 14, 2016 at 01:50:44PM +1100, Stephen Rothwell wrote:
+> Hi Darren,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> In file included from include/linux/kernel.h:13:0,
+>                  from drivers/platform/x86/thinkpad_acpi.c:52:
+> drivers/platform/x86/thinkpad_acpi.c: In function 'hotkey_init':
+> include/linux/printk.h:299:2: warning: 'type' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+>   ^
+> drivers/platform/x86/thinkpad_acpi.c:3147:8: note: 'type' was declared here
+>   char *type;
+>         ^
+> In file included from include/linux/kernel.h:13:0,
+>                  from drivers/platform/x86/thinkpad_acpi.c:52:
+> include/linux/printk.h:299:2: warning: 'in_tablet_mode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
+>   ^
+> drivers/platform/x86/thinkpad_acpi.c:3146:6: note: 'in_tablet_mode' was declared here
+>   int in_tablet_mode, res;
+>       ^
+> 
+> Introduced by commit
+> 
+>   b31800283868 ("platform/x86: thinkpad_acpi: Move tablet detection into separate function")
+> 
+> I can't tell if this is a false positive or not.
 
-On Wed, 14 Dec 2016 11:17:25 -0600 "Luis R. Rodriguez" <mcgrof@do-not-panic.com> wrote:
->
-> Curious if the x86 symbol build issues are supposed to be resolved
-> already on linux-next as of today, if not, how's it looking to get
-> this fixed ? I am carrying around Adam's temporary patch "kbuild:
-> provide include/asm/asm-prototypes.h for x86" on top of linux-next but
-> each day I move on I keep seeing this is still not fixed and keep
-> having to carry it. Curious what the delays are to get this resolved,
-> the last thread I saw seemed to acknowledge the issue and that Nick
-> was working on a fix ?
-
-That commit will be in linux-next today (it was added to the kbuild
-tree last night (my time)).
+That's an uninitialized local variable. Not sure how I missed that. I'll
+fix it up today. Thank you for the report.
 
 -- 
-Cheers,
-Stephen Rothwell
+Darren Hart
+Intel Open Source Technology Center
