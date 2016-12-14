@@ -1,46 +1,65 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: [PATCH] ubifs: Initialize fstr_real_len
-Date: Wed, 14 Dec 2016 11:09:25 +0100
-Message-ID: <20161214100925.10797-1-richard@nod.at>
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20161214 build: 0 failures 1 warnings (next-20161214)
+Date: Wed, 14 Dec 2016 13:24:39 +0000
+Message-ID: <E1cH9Xx-0007NS-83@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.sigma-star.at ([95.130.255.111]:45996 "EHLO
-        mail.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753184AbcLNKJf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2016 05:09:35 -0500
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43120 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754920AbcLNNZP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Dec 2016 08:25:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-mtd@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, adrian.hunter@intel.com, dedekind1@gmail.com, richard@nod.at, david@sigma-star.at, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-While fstr_real_len is only being used under if (encrypted),
-gcc-6 still warns.
+Tree/Branch: next-20161214
+Git describe: next-20161214
+Commit: 9aa17b2861 Add linux-next specific files for 20161214
 
-Fixes this false positive:
-fs/ubifs/dir.c: In function 'ubifs_readdir':
-fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used
-uninitialized in this function [-Wmaybe-uninitialized]
-    fstr.len = fstr_real_len
+Build Time: 267 min 2 sec
 
-Initialize fstr_real_len to make gcc happy.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- fs/ubifs/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
 
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index 7f01f3d2ac3b..1c5331ac9614 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -528,7 +528,7 @@ static unsigned int vfs_dent_type(uint8_t type)
-  */
- static int ubifs_readdir(struct file *file, struct dir_context *ctx)
- {
--	int fstr_real_len, err = 0;
-+	int fstr_real_len = 0, err = 0;
- 	struct fscrypt_name nm;
- 	struct fscrypt_str fstr = {0};
- 	union ubifs_key key;
--- 
-2.10.2
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  2 ../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
