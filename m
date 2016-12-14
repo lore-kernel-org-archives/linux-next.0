@@ -1,37 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Richard Weinberger <richard@nod.at>
 Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Wed, 14 Dec 2016 19:10:43 +1100
-Message-ID: <20161214191043.680ca964@canb.auug.org.au>
+Date: Wed, 14 Dec 2016 09:05:10 +0100
+Message-ID: <bd5e8291-5ace-eb83-5b63-6af8957376bf@nod.at>
 References: <20161214132828.1d128963@canb.auug.org.au>
-        <20161214072411.GA1635@gmail.com>
+ <20161214072411.GA1635@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48959 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752752AbcLNIKs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Dec 2016 03:10:48 -0500
+Received: from b.ns.miles-group.at ([95.130.255.144]:44724 "EHLO radon.swed.at"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754923AbcLNIL7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Dec 2016 03:11:59 -0500
 In-Reply-To: <20161214072411.GA1635@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
+To: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Artem Bityutskiy <dedekind1@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Gstir <david@sigma-star.at>
 
-Hi Ingo,
+Stephen, Ingo,
 
-On Wed, 14 Dec 2016 08:24:11 +0100 Ingo Molnar <mingo@kernel.org> wrote:
->
+CC'ing David.
+
+On 14.12.2016 08:24, Ingo Molnar wrote:
+> 
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+>> Hi all,
+>>
+>> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+>> produced this warning:
+>>
+>> fs/ubifs/dir.c: In function 'ubifs_readdir':
+>> fs/ubifs/dir.c:629:13: warning: 'fstr_real_len' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>>     fstr.len = fstr_real_len;
+>>              ^
+>>
+>> Introduced by commit
+>>
+>>   f4f61d2cc6d8 ("ubifs: Implement encrypted filenames")
+>>
+>> This is a false positive because assignment and use are both protected by
+>> "if (encrypted)".
+>>
+>> I have no idea why this did not turn up earlier in my builds.
+> 
 > FYI, f4f61d2cc6d8 is not in the -tip tree, so it cannot possibly have introduced 
 > this warning.
 
-Yeah, I know, but the warning only seemed to happen after merging the
-tip tree.  I would have expected it to appear much earlier like when I
-merged the ubifs tree.  I figured that out, but forgot to mention it,
-sorry.
+The commit comes via my UBIFS tree. But I never saw this warning, I'm testing with both gcc-4.8 and gcc-6.1.
+Let me investigate into that.
 
-Actually I just checked and it did turn up then, but my heuristics did
-not point it out :-(
--- 
-Cheers,
-Stephen Rothwell
+Does today's tip change some compiler flags?
+
+Thanks,
+//richard
