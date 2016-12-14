@@ -1,53 +1,57 @@
-From: Darren Hart <dvhart@linux.intel.com>
-Subject: [PATCH] platform/x86: thinkpad_acpi: Initialize local in_tablet_mode
-Date: Wed, 14 Dec 2016 15:10:59 -0800
-Message-ID: <20161214231059.GA8243@f23x64.localdomain>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
+Date: Thu, 15 Dec 2016 10:25:35 +1100
+Message-ID: <20161215102535.5e8db7e0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <platform-driver-x86-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: platform-driver-x86-owner@vger.kernel.org
-To: Lyude <lyude@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: platform-driver-x86@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Sterba <dsterba@suse.cz>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>, Jeff Mahoney <jeffm@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-linux-next reported in_tablet_mode may be used uninitialized after:
+Hi David,
 
-b31800283868 ("platform/x86: thinkpad_acpi: Move tablet detection into separate function")
+Today's linux-next merge of the btrfs-kdave tree got a conflict in:
 
-This turns out to be a false positive as the pr_info call cannot be
-reached if tp_features.hotkey_tablet (global scope) is 0, and
-in_tablet_mode is assigned in both places tp_features.hotkey_tablet is
-assigned.
+  fs/btrfs/inode.c
 
-Regardless, to make it explicit and avoid further reports, initialize
-in_tablet_mode to 0.
+between commit:
 
-Signed-off-by: Darren Hart <dvhart@linux.intel.com>
-Cc: Lyude <lyude@redhat.com>
-Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/thinkpad_acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  70fd76140a6c ("block,fs: use REQ_* flags directly")
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 69cb0da..1c5a6e2 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -3143,7 +3143,7 @@ typedef tpacpi_keymap_entry_t tpacpi_keymap_t[TPACPI_HOTKEY_MAP_LEN];
- 
- static int hotkey_init_tablet_mode(void)
- {
--	int in_tablet_mode, res;
-+	int in_tablet_mode = 0, res;
- 	char *type;
- 
- 	if (acpi_evalf(hkey_handle, &res, "MHKG", "qd")) {
--- 
-2.9.3
+from Linus' tree and commit:
 
+  da17066c4047 ("btrfs: pull node/sector/stripe sizes out of root and into fs_info")
+
+from the btrfs-kdave tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Darren Hart
-Intel Open Source Technology Center
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/btrfs/inode.c
+index a4c879671b9d,b2a577cf001f..000000000000
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@@ -7935,8 -7941,10 +7941,8 @@@ static int dio_read_error(struct inode 
+  
+  	if ((failed_bio->bi_vcnt > 1)
+  		|| (failed_bio->bi_io_vec->bv_len
+- 			> BTRFS_I(inode)->root->sectorsize))
++ 			> btrfs_inode_sectorsize(inode)))
+ -		read_mode = READ_SYNC | REQ_FAILFAST_DEV;
+ -	else
+ -		read_mode = READ_SYNC;
+ +		read_mode |= REQ_FAILFAST_DEV;
+  
+  	isector = start - btrfs_io_bio(failed_bio)->logical;
+  	isector >>= inode->i_sb->s_blocksize_bits;
