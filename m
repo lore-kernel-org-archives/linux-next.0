@@ -1,59 +1,46 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: [PATCH v2] platform/x86: thinkpad_acpi: Initialize local
- in_tablet_mode and type
-Date: Thu, 15 Dec 2016 13:16:55 -0800
-Message-ID: <20161215211655.GA39589@f23x64.localdomain>
-References: <20161215041424.GA19534@f23x64.localdomain>
- <1481825702.9552.44.camel@linux.intel.com>
+From: Richard Weinberger <richard@nod.at>
+Subject: Re: linux-next: Tree for Dec 15 (fs/ubifs/ causes problems in
+ fs/crypto/)
+Date: Thu, 15 Dec 2016 23:46:02 +0100
+Message-ID: <ac59de6f-eaac-d088-a9d7-ce77e10f8a51@nod.at>
+References: <20161215142108.0ec084b0@canb.auug.org.au>
+ <a29553a3-c355-43ed-7d50-3aeb7eb8b3b1@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:56502 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751448AbcLOVRN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2016 16:17:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1481825702.9552.44.camel@linux.intel.com>
+Received: from b.ns.miles-group.at ([95.130.255.144]:44724 "EHLO radon.swed.at"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753995AbcLOWqI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Dec 2016 17:46:08 -0500
+In-Reply-To: <a29553a3-c355-43ed-7d50-3aeb7eb8b3b1@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Darren Hart <dvhart@linux.intel.com>, Lyude <lyude@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>, Theodore Ts'o <tytso@mit.edu>, Ext4 Developers List <linux-ext4@vger.kernel.org>
 
-On Thu, Dec 15, 2016 at 08:15:02PM +0200, Andy Shevchenko wrote:
-> On Wed, 2016-12-14 at 20:14 -0800, Darren Hart wrote:
-> > linux-next reported in_tablet_mode and type may be used uninitialized
-> > after:
-> > 
-> > b31800283868 ("platform/x86: thinkpad_acpi: Move tablet detection into
-> > separate function")
-> > 
-> > This turns out to be a false positive as the pr_info call cannot be
-> > reached if tp_features.hotkey_tablet (global scope) is 0, and
-> > in_tablet_mode and type are assigned in both places
-> > tp_features.hotkey_tablet is assigned.
-> > 
-> > Regardless, to make it explicit and avoid further reports, initialize
-> > in_tablet_mode to 0 and type to "".
-> > 
-> 
-> @@ -3143,8 +3143,8 @@ typedef tpacpi_keymap_entry_t
-> > tpacpi_keymap_t[TPACPI_HOTKEY_MAP_LEN];
-> >  
-> >  static int hotkey_init_tablet_mode(void)
-> >  {
-> > -	int in_tablet_mode, res;
-> > -	char *type;
-> > +	int in_tablet_mode = 0, res;
-> > +	char *type = "";
-> 
-> Subtle correction
-> NULL will work either and takes less memory ;)
-> 
-> P.S. Even pr_*() is NULL-aware
+Randy,
 
-Agreed. Fixed, pushed, tagged. Thanks all.
+On 15.12.2016 19:13, Randy Dunlap wrote:
+> On 12/14/16 19:21, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Please do not add any material for v4.11 to your linux-next included
+>> branches until after v4.10-rc1 has been released.
+>>
+>> Changes since 20161214:
+>>
+> 
+> on x86_64:
+> 
+> when CONFIG_BLOCK is not enabled:
+> 
+> warning: (UBIFS_FS_ENCRYPTION) selects FS_ENCRYPTION which has unmet direct dependencies (BLOCK)
 
--- 
-Darren Hart
-Intel Open Source Technology Center
+UBIFS does not depend on CONFIG_BLOCK but fs/crypto/ does.
+As short-term solution we can make UBIFS_FS_ENCRYPTION depend on CONFIG_BLOCK,
+a better solution would be extracting all block specific stuff from fs/crypto/crypto.c
+to another file.
+
+Thanks,
+//richard
