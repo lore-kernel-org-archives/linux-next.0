@@ -1,70 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
-Date: Thu, 15 Dec 2016 11:02:19 +1100
-Message-ID: <20161215110219.61fec1a0@canb.auug.org.au>
-References: <20161214135044.57dc96f5@canb.auug.org.au>
-        <20161214222138.GA116314@f23x64.localdomain>
-        <20161214225914.GA7743@f23x64.localdomain>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Date: Thu, 15 Dec 2016 11:47:50 +1100
+Message-ID: <20161215114750.6915c7a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20161214225914.GA7743@f23x64.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Lyude <lyude@redhat.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Doug Ledford <dledford@redhat.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yonatan Cohen <yonatanc@mellanox.com>, Andrew Boyer <andrew.boyer@dell.com>, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Darren,
+Hi Doug,
 
-On Wed, 14 Dec 2016 14:59:14 -0800 Darren Hart <dvhart@infradead.org> wrote:
->
-> On Wed, Dec 14, 2016 at 02:21:38PM -0800, Darren Hart wrote:
-> > On Wed, Dec 14, 2016 at 01:50:44PM +1100, Stephen Rothwell wrote:  
-> > > 
-> > > After merging the drivers-x86 tree, today's linux-next build (x86_64
-> > > allmodconfig) produced this warning:
-> > > 
-> > > In file included from include/linux/kernel.h:13:0,
-> > >                  from drivers/platform/x86/thinkpad_acpi.c:52:
-> > > drivers/platform/x86/thinkpad_acpi.c: In function 'hotkey_init':
-> > > include/linux/printk.h:299:2: warning: 'type' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> > >   printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
-> > >   ^
-> > > drivers/platform/x86/thinkpad_acpi.c:3147:8: note: 'type' was declared here
-> > >   char *type;
-> > >         ^
-> > > In file included from include/linux/kernel.h:13:0,
-> > >                  from drivers/platform/x86/thinkpad_acpi.c:52:
-> > > include/linux/printk.h:299:2: warning: 'in_tablet_mode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-> > >   printk(KERN_INFO pr_fmt(fmt), ##__VA_ARGS__)
-> > >   ^
-> > > drivers/platform/x86/thinkpad_acpi.c:3146:6: note: 'in_tablet_mode' was declared here
-> > >   int in_tablet_mode, res;
-> > >       ^
-> > > 
-> > > Introduced by commit
-> > > 
-> > >   b31800283868 ("platform/x86: thinkpad_acpi: Move tablet detection into separate function")
-> > > 
-> > > I can't tell if this is a false positive or not.  
-> > 
-> > That's an uninitialized local variable. Not sure how I missed that. I'll
-> > fix it up today. Thank you for the report.  
-> 
-> OK, no, it's a false positive because tp_features.hotkey_tablet is assigned in
-> both places where in_tablet_mode is assigned, and if the former is 0 (global
-> scope), the function returns without calling pr_info.
+Today's linux-next merge of the rdma tree got a conflict in:
 
-How about "type".
+  drivers/infiniband/sw/rxe/rxe_req.c
 
-> Lyude, Henrique, please confirm.
-> 
-> Regardless, I'll add a patch to init in_tablet_mode to 0 so it is explicit - but
-> will not rebase as it isn't technically an error.
+between commit:
 
-No problem, it is only a warning after all.
+  002e062e13db ("IB/rxe: Fix handling of erroneous WR")
+
+from Linus' tree and commit:
+
+  37f69f43fb5a ("IB/rxe: Hold refs when running tasklets")
+
+from the rdma tree.
+
+I fixed it up (I think - see below - thanks for the heads up, Doug) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/infiniband/sw/rxe/rxe_req.c
+index 22bd9630dcd9,b246653cf713..000000000000
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@@ -696,8 -698,7 +698,9 @@@ next_wqe
+  						       qp->req.wqe_index);
+  			wqe->state = wqe_state_done;
+  			wqe->status = IB_WC_SUCCESS;
+ -			goto complete;
+ +			__rxe_do_task(&qp->comp.task);
+++			rxe_drop_ref(qp);
+ +			return 0;
+  		}
+  		payload = mtu;
+  	}
+@@@ -746,18 -747,15 +749,20 @@@ err
+  	wqe->status = IB_WC_LOC_PROT_ERR;
+  	wqe->state = wqe_state_error;
+  
+ -complete:
+ -	if (qp_type(qp) != IB_QPT_RC) {
+ -		while (rxe_completer(qp) == 0)
+ -			;
+ -	}
+ +	/*
+ +	 * IBA Spec. Section 10.7.3.1 SIGNALED COMPLETIONS
+ +	 * ---------8<---------8<-------------
+ +	 * ...Note that if a completion error occurs, a Work Completion
+ +	 * will always be generated, even if the signaling
+ +	 * indicator requests an Unsignaled Completion.
+ +	 * ---------8<---------8<-------------
+ +	 */
+ +	wqe->wr.send_flags |= IB_SEND_SIGNALED;
+ +	__rxe_do_task(&qp->comp.task);
++ 	rxe_drop_ref(qp);
+ -	return 0;
+ +	return -EAGAIN;
+  
+  exit:
++ 	rxe_drop_ref(qp);
+  	return -EAGAIN;
+  }
