@@ -1,62 +1,69 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161215 build: 0 failures 1 warnings (next-20161215)
-Date: Thu, 15 Dec 2016 09:20:25 +0000
-Message-ID: <E1cHSDB-0005rk-Ii@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47658 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755107AbcLOJrV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Dec 2016 04:47:21 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Subject: Re: [PATCH v2] platform/x86: thinkpad_acpi: Initialize local
+ in_tablet_mode and type
+Date: Thu, 15 Dec 2016 10:44:24 -0200
+Message-ID: <20161215124424.GA20905@khazad-dum.debian.net>
+References: <20161215041424.GA19534@f23x64.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161215041424.GA19534@f23x64.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Darren Hart <dvhart@linux.intel.com>
+Cc: Lyude <lyude@redhat.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, platform-drivers-x86@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161215
-Git describe: next-20161215
-Commit: df5462d601 Add linux-next specific files for 20161215
+On Wed, 14 Dec 2016, Darren Hart wrote:
+> linux-next reported in_tablet_mode and type may be used uninitialized
+> after:
+> 
+> b31800283868 ("platform/x86: thinkpad_acpi: Move tablet detection into separate function")
+> 
+> This turns out to be a false positive as the pr_info call cannot be
+> reached if tp_features.hotkey_tablet (global scope) is 0, and
+> in_tablet_mode and type are assigned in both places
+> tp_features.hotkey_tablet is assigned.
+> 
+> Regardless, to make it explicit and avoid further reports, initialize
+> in_tablet_mode to 0 and type to "".
+> 
+> Signed-off-by: Darren Hart <dvhart@linux.intel.com>
+> Cc: Lyude <lyude@redhat.com>
+> Cc: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Build Time: 180 min 47 sec
+Acked-by: Henrique de Moraes Holschuh <hmh@hmh.eng.br>
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+> ---
+> Since v1: Initialize type also.
+> 
+>  drivers/platform/x86/thinkpad_acpi.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
+> index 69cb0da..c408390 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -3143,8 +3143,8 @@ typedef tpacpi_keymap_entry_t tpacpi_keymap_t[TPACPI_HOTKEY_MAP_LEN];
+>  
+>  static int hotkey_init_tablet_mode(void)
+>  {
+> -	int in_tablet_mode, res;
+> -	char *type;
+> +	int in_tablet_mode = 0, res;
+> +	char *type = "";
+>  
+>  	if (acpi_evalf(hkey_handle, &res, "MHKG", "qd")) {
+>  		/* For X41t, X60t, X61t Tablets... */
+> -- 
+> 2.9.3
+> 
+> 
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+-- 
+  Henrique Holschuh
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../drivers/infiniband/sw/rdmavt/cq.c:542:2: warning: 'worker' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/infiniband/sw/rdmavt/cq.c:542:2: warning: 'worker' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+  "One disk to rule them all, One disk to find them. One disk to bring
+  them all and in the darkness grind them. In the Land of Redmond
+  where the shadows lie." -- The Silicon Valley Tarot
