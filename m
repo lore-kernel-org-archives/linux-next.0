@@ -1,46 +1,43 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: Tree for Dec 15 (fs/ubifs/ causes problems in
- fs/crypto/)
-Date: Thu, 15 Dec 2016 23:46:02 +0100
-Message-ID: <ac59de6f-eaac-d088-a9d7-ce77e10f8a51@nod.at>
-References: <20161215142108.0ec084b0@canb.auug.org.au>
- <a29553a3-c355-43ed-7d50-3aeb7eb8b3b1@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the vfs tree
+Date: Fri, 16 Dec 2016 13:09:08 +1100
+Message-ID: <20161216130908.0b9a9b8a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b.ns.miles-group.at ([95.130.255.144]:44724 "EHLO radon.swed.at"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1753995AbcLOWqI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Dec 2016 17:46:08 -0500
-In-Reply-To: <a29553a3-c355-43ed-7d50-3aeb7eb8b3b1@infradead.org>
+Received: from ozlabs.org ([103.22.144.67]:36233 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751710AbcLPCLP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Dec 2016 21:11:15 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Artem Bityutskiy <dedekind1@gmail.com>, linux-mtd@lists.infradead.org, Eric Biggers <ebiggers@google.com>, Theodore Ts'o <tytso@mit.edu>, Ext4 Developers List <linux-ext4@vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-Randy,
+Hi Michael,
 
-On 15.12.2016 19:13, Randy Dunlap wrote:
-> On 12/14/16 19:21, Stephen Rothwell wrote:
->> Hi all,
->>
->> Please do not add any material for v4.11 to your linux-next included
->> branches until after v4.10-rc1 has been released.
->>
->> Changes since 20161214:
->>
-> 
-> on x86_64:
-> 
-> when CONFIG_BLOCK is not enabled:
-> 
-> warning: (UBIFS_FS_ENCRYPTION) selects FS_ENCRYPTION which has unmet direct dependencies (BLOCK)
+Today's linux-next merge of the vhost tree got a conflict in:
 
-UBIFS does not depend on CONFIG_BLOCK but fs/crypto/ does.
-As short-term solution we can make UBIFS_FS_ENCRYPTION depend on CONFIG_BLOCK,
-a better solution would be extracting all block specific stuff from fs/crypto/crypto.c
-to another file.
+  fs/logfs/logfs.h
 
-Thanks,
-//richard
+between commit:
+
+  6b4fbde3b979 ("logfs: remove from tree")
+
+from the vfs tree and commit:
+
+  378d5a40fa2c ("fs/logfs: drop __CHECK_ENDIAN__")
+
+from the vhost tree.
+
+I fixed it up (I just deleted the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
