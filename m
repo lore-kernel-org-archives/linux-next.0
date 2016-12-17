@@ -1,74 +1,86 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
-Date: Fri, 16 Dec 2016 13:05:51 -0800
-Message-ID: <CAGXu5j+25Mr7XofQbaMaP3iwiC8yKJwwk=ayU+fG=hq=bxNWzg@mail.gmail.com>
-References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com>
- <2680957.ot0HfIkH6p@wuerfel> <CAGXu5jJpBiffFhdQ+sjwWeeWOnpEkz4JQyH8VwmVCWP3TzXmLQ@mail.gmail.com>
- <20161210174531.3c6b66ec00cbbbe7290ed69e@gmail.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: Issue with DRM and "reimplement IDR and IDA using the radix tree"
+Date: Sat, 17 Dec 2016 15:47:48 +0900
+Message-ID: <cc36b4dd-2aff-0939-43c8-72f442cbb303@nvidia.com>
+References: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
+ <ca40ae10-2352-9cec-94db-94bca3c14616@nvidia.com>
+ <20161216161644.GA2018@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f47.google.com ([209.85.214.47]:38151 "EHLO
-        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1758156AbcLPVFx (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Dec 2016 16:05:53 -0500
-Received: by mail-it0-f47.google.com with SMTP id b132so823366iti.1
-        for <linux-next@vger.kernel.org>; Fri, 16 Dec 2016 13:05:52 -0800 (PST)
-In-Reply-To: <20161210174531.3c6b66ec00cbbbe7290ed69e@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Emese Revfy <re.emese@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>, PaX Team <pageexec@freemail.hu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161216161644.GA2018@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Matthew Wilcox <willy@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-next.vger.kernel.org
 
-On Sat, Dec 10, 2016 at 8:45 AM, Emese Revfy <re.emese@gmail.com> wrote:
-> On Fri, 9 Dec 2016 11:12:18 -0800
-> Kees Cook <keescook@google.com> wrote:
->
->> On Fri, Dec 9, 2016 at 2:40 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > On Thursday, December 8, 2016 11:00:42 AM CET Kees Cook wrote:
->> >
->> >> If you have a moment, applying 215e2aa6c024[1] and reverting
->> >> a519167e753e for an allyesconfig/allmodconfig build should let you
->> >> know if things are working correctly with headers installed. If anyone
->> >> sees any problems, please let me know and I can queue up fixes.
->> >
->> > Using gcc-4.9.3 or gcc-5.3.1 for an ARM allmodconfig build, I get tons of
->> > errors such as this one:
->> >
->> > /git/arm-soc/init/initramfs.c: In function 'error':
->> > /git/arm-soc/init/initramfs.c:50:1: error: unrecognizable insn:
->> >  }
->> >  ^
->> > (insn 26 25 27 5 (set (reg:SI 111 [ local_entropy.243 ])
->> >         (rotatert:SI (reg:SI 116 [ local_entropy.243 ])
->> >             (const_int -30 [0xffffffffffffffe2]))) -1
->> >      (nil))
->> > *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
->> > Event                            | Plugins
->> > PLUGIN_ATTRIBUTES                | latent_entropy_plugin
->> > PLUGIN_START_UNIT                | latent_entropy_plugin
->> > /git/arm-soc/init/initramfs.c:50:1: internal compiler error: in extract_insn, at recog.c:2202
->> > /git/arm-soc/arch/arm/vfp/vfpmodule.c: In function 'vfp_init':
->> > /git/arm-soc/arch/arm/vfp/vfpmodule.c:824:1: error: unrecognizable insn:
->> >  }
->> >  ^
->> > (insn 138 137 139 17 (set (reg:SI 165 [ local_entropy.93 ])
->> >         (rotatert:SI (reg:SI 150 [ local_entropy.93 ])
->> >             (const_int -9 [0xfffffffffffffff7]))) -1
->> >      (nil))
->> > *** WARNING *** there are active plugins, do not report this as a bug unless you can reproduce it without enabling any plugins.
->>
->> Well that's exciting! :P
->
-> Hi,
->
-> You can find the fix here:
-> https://github.com/ephox-gcc-plugins/latent_entropy/commit/c91275a1bfcebbcfc0ca1af03396e06039f04db8
-
-Great, thanks!
-
--Kees
-
--- 
-Kees Cook
-Nexus Security
+T24gMTIvMTcvMjAxNiAwMToxNiBBTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gKiBQR1AgU2ln
+bmVkIGJ5IGFuIHVua25vd24ga2V5Cj4gCj4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMTE6MDg6
+MjBQTSArMDkwMCwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4+IEZvcmdvdCB0byBhZGQgdGhl
+IG1vc3QgcmVsZXZhbnQgbGlzdCBmb3IgdGhpcyBpc3N1ZSAobGludXgtbmV4dCkuCj4+Cj4+IFN0
+ZXBoZW4sIG1heWJlIHlvdSB3aWxsIHdhbnQgdG8gdGVtcG9yYXJpbHkgcmV2ZXJ0IHRoaXMgcGF0
+Y2ggdW50aWwgdGhpcwo+PiBpcyBjbGVhcmVkPyBUaGlzIHByb2JhYmx5IGFmZmVjdHMgb3RoZXIg
+dXNlcnMgdGhhbiBEUk0uCj4+Cj4+IE9uIDEyLzEzLzIwMTYgMDQ6MTQgUE0sIEFsZXhhbmRyZSBD
+b3VyYm90IHdyb3RlOgo+Pj4gSGkgTWF0dGhldywKPj4+Cj4+PiBUcnlpbmcgdGhlIGxhdGVzdCAt
+bmV4dCBvbiB0aGUgSmV0c29uIFRLMSBib2FyZCAod2l0aCB0d28gZGlmZmVyZW50IERSTQo+Pj4g
+ZGV2aWNlcyBhbmQgZGlzcGxheSBhbmQgcmVuZGVyKSwgSSBub3RpY2VkIHRoYXQgdGhlIEdQVSBk
+ZXZpY2UgcHJvYmUKPj4+IGFsd2F5cyBmYWlsZWQgd2l0aCBlcnJvciAtRU5PU1BDLiBBZnRlciBp
+bnZlc3RpZ2F0aW5nIEkgZmlndXJlZCBvdXQgdGhhdAo+Pj4gdGhpcyB3YXMgZHVlIHRvIHRoZSBt
+aW5vciBkZXZpY2UgYWxsb2NhdGlvbiBmYWlsaW5nIHdoZW4gYSBzZWNvbmQgRFJNCj4+PiBkZXZp
+Y2UgaXMgYWRkZWQuCj4+Pgo+Pj4gTW9yZSBwcmVjaXNlbHksIHdoZW4gZHJtX21pbm9yX2FsbG9j
+KCkgaXMgY2FsbGVkIHdpdGggRFJNX01JTk9SX1BSSU1BUlkKPj4+ICgwKSBhcyBhcmd1bWVudCBm
+b3IgYSBzZWNvbmQgdGltZSwgdGhlIGNhbGwgdG8gaWRyX2FsbG9jKCkgKHdoaWNoIGhhcyBhCj4+
+PiByZXF1ZXN0ZWQgcmFuZ2Ugb2YgMC4uNjQpIGZhaWxzIGluc3RlYWQgb2YgcmV0dXJuaW5nIDEg
+YXMgZXhwZWN0ZWQuIE5vdGUKPj4+IHRoYXQgdGhlIGZpcnN0IGNhbGwgaXMgc3VjY2Vzc2Z1bC4K
+Pj4+Cj4+PiBSZXZlcnRpbmcgInJlaW1wbGVtZW50IElEUiBhbmQgSURBIHVzaW5nIHRoZSByYWRp
+eCB0cmVlIiBvbiAyMDE2MTIxMydzCj4+PiBuZXh0IGZpeGVzIHRoZSBpc3N1ZSBmb3IgbWUsIHN1
+Z2dlc3RpbmcgYSBidWcgbWF5IGhhdmUgc2xpcHBlZCBpbiB0aGVyZS4KPj4+Cj4+PiBOb3Qgc3Vy
+ZSBob3cgdGhpcyBjb3VsZCBiZSBmaXhlZCwgc28gcmVwb3J0aW5nIHRoZSBpc3N1ZSBmb3Igbm93
+IGluIGNhc2UKPj4+IGl0IGlzIG5vdCBrbm93biB5ZXQuCj4gCj4gSSBjYW4gY29uZmlybSBBbGV4
+JyBmaW5kaW5ncywgdGhvdWdoIHRoZSBzeW1wdG9tcyBzZWVtIHRvIGJlIHNsaWdodGx5Cj4gZGlm
+ZmVyZW50LCB3aGljaCBtYXkgYmUgcmVsYXRlZCB0byBtZSB0ZXN0aW5nIG9uIG5leHQtMjAxNjEy
+MTYgcmF0aGVyCj4gdGhhbiBuZXh0LTIwMTYxMjEzLgo+IAo+IFdoYXQgSSdtIHNlZWluZyBpcyB0
+aGF0IGFsbCBkcml2ZXJzIGdldCBwcm9iZWQgY29ycmVjdGx5LCBidXQgd2hlbiBhbgo+IGFwcGxp
+Y2F0aW9uIHRyaWVzIHRvIG9wZW4gdGhlIERSTSBkZXZpY2UgZmlsZXMgKC9kZXYvZHJpL2NhcmQw
+IGluIHRoaXMKPiBjYXNlKSwgdGhlbiBhbGwgZGV2aWNlcyBvZiBhIGdpdmVuIG1pbm9yIHR5cGUg
+ZGlzYXBwZWFyLiBTbyBpbiBteSBjYXNlCj4gdXBvbiBib290IEkgZ2V0IHRoaXM6Cj4gCj4gCSMg
+bHMgLWwgL2Rldi9kcmkvCj4gCXRvdGFsIDAKPiAJY3J3LXJ3LS0tLSAxIHJvb3QgdmlkZW8gMjI2
+LCAgIDAgRGVjIDE2IDE1OjU5IGNhcmQwCj4gCWNydy1ydy0tLS0gMSByb290IHZpZGVvIDIyNiwg
+ICAxIERlYyAxNiAxNTo1OSBjYXJkMQo+IAljcnctcnctLS0tIDEgcm9vdCB2aWRlbyAyMjYsIDEy
+OCBEZWMgMTYgMTU6NTkgcmVuZGVyRDEyOAo+IAo+IFRoZSBtb2RldGVzdCBwcm9ncmFtIGZyb20g
+bGliZHJtIGlzIHRoZW4gdW5hYmxlIHRvIG9wZW4gYW55IGRldmljZXM6Cj4gCj4gCSMgbW9kZXRl
+c3QKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdpOTE1Jy4uLmZhaWxlZAo+IAl0cnlpbmcgdG8g
+b3BlbiBkZXZpY2UgJ2FtZGdwdScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdy
+YWRlb24nLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAnbm91dmVhdScuLi5mYWls
+ZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICd2bXdnZngnLi4uZmFpbGVkCj4gCXRyeWluZyB0
+byBvcGVuIGRldmljZSAnb21hcGRybScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNl
+ICdleHlub3MnLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndGlsY2RjJy4uLmZh
+aWxlZAo+IAl0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ21zbScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRv
+IG9wZW4gZGV2aWNlICdzdGknLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndGVn
+cmEnLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAnaW14LWRybScuLi5mYWlsZWQK
+PiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdyb2NrY2hpcCcuLi5mYWlsZWQKPiAJdHJ5aW5nIHRv
+IG9wZW4gZGV2aWNlICdhdG1lbC1obGNkYycuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2
+aWNlICdmc2wtZGN1LWRybScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICd2YzQn
+Li4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndmlydGlvX2dwdScuLi5mYWlsZWQK
+PiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdtZWRpYXRlaycuLi5mYWlsZWQKPiAJbm8gZGV2aWNl
+IGZvdW5kCj4gCj4gQW5kIGFmdGVyIHRoYXQgYWxsIG9mIHRoZSBwcmltYXJ5IG1pbm9ycyBhcmUg
+Z29uZToKPiAKPiAJIyBscyAtbCAvZGV2L2RyaS8KPiAJdG90YWwgMAo+IAljcnctcnctLS0tIDEg
+cm9vdCB2aWRlbyAyMjYsIDEyOCBEZWMgMTYgMTU6NTkgcmVuZGVyRDEyOAoKVGhhdCdzIGV4YWN0
+bHkgd2hhdCBJIGFtIGFsc28gZ2V0dGluZyB3aXRoIDIwMTYxMjE2LiBBcyBpdCB0dXJucyBvdXQg
+dGhlCnBhdGNoIGhhcyBjaGFuZ2VkIHNsaWdodGx5IChteSByZXZlcnQgZGlkIG5vdCBhcHBseSBh
+ZnRlciBhIHJlYmFzZSksIGFuZAp0aGUgc3ltcHRvbXMgY2hhbmdlZCBhZ2FpbnN0IDIwMTYxMjE1
+LCBidXQgdGhlIGZpeCBpcyB0aGUgc2FtZToKcmV2ZXJ0aW5nIGdpdmVzIG1lIGJhY2sgYSB3b3Jr
+aW5nIHN5c3RlbS4KClRoaXMgcGF0Y2ggcmVhbGx5IHNob3VsZCBiZSByZXZlcnRlZCBmb3Igbm93
+LiBMaWtlIFRoaWVycnkgSSBhbQphdmFpbGFibGUgdG8gdGVzdCBmdXJ0aGVyIGl0ZXJhdGlvbnMu
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
