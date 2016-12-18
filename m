@@ -1,86 +1,66 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: Issue with DRM and "reimplement IDR and IDA using the radix tree"
-Date: Sat, 17 Dec 2016 15:47:48 +0900
-Message-ID: <cc36b4dd-2aff-0939-43c8-72f442cbb303@nvidia.com>
-References: <fd3db206-8b3e-150f-a060-e88cc2f49606@nvidia.com>
- <ca40ae10-2352-9cec-94db-94bca3c14616@nvidia.com>
- <20161216161644.GA2018@ulmo.ba.sec>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add bvanassche/linux.git/for-next to linux-next
+Date: Mon, 19 Dec 2016 09:05:41 +1100
+Message-ID: <20161219090529.25e15aa8@canb.auug.org.au>
+References: <CA+55aFyYOjRnYhfm3Fu=p9AGqW_OY+=T0sg_AYFHt3M23hveSg@mail.gmail.com>
+        <8952a919-1d55-301d-8b50-b3177713acc5@acm.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161216161644.GA2018@ulmo.ba.sec>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Matthew Wilcox <willy@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41553 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753595AbcLRWFp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 18 Dec 2016 17:05:45 -0500
+In-Reply-To: <8952a919-1d55-301d-8b50-b3177713acc5@acm.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bart Van Assche <bart.vanassche@gmail.com>
+Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, linux-next@vger.kernel.org, target-devel@vger.kernel.org
 
-T24gMTIvMTcvMjAxNiAwMToxNiBBTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gKiBQR1AgU2ln
-bmVkIGJ5IGFuIHVua25vd24ga2V5Cj4gCj4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMTE6MDg6
-MjBQTSArMDkwMCwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4+IEZvcmdvdCB0byBhZGQgdGhl
-IG1vc3QgcmVsZXZhbnQgbGlzdCBmb3IgdGhpcyBpc3N1ZSAobGludXgtbmV4dCkuCj4+Cj4+IFN0
-ZXBoZW4sIG1heWJlIHlvdSB3aWxsIHdhbnQgdG8gdGVtcG9yYXJpbHkgcmV2ZXJ0IHRoaXMgcGF0
-Y2ggdW50aWwgdGhpcwo+PiBpcyBjbGVhcmVkPyBUaGlzIHByb2JhYmx5IGFmZmVjdHMgb3RoZXIg
-dXNlcnMgdGhhbiBEUk0uCj4+Cj4+IE9uIDEyLzEzLzIwMTYgMDQ6MTQgUE0sIEFsZXhhbmRyZSBD
-b3VyYm90IHdyb3RlOgo+Pj4gSGkgTWF0dGhldywKPj4+Cj4+PiBUcnlpbmcgdGhlIGxhdGVzdCAt
-bmV4dCBvbiB0aGUgSmV0c29uIFRLMSBib2FyZCAod2l0aCB0d28gZGlmZmVyZW50IERSTQo+Pj4g
-ZGV2aWNlcyBhbmQgZGlzcGxheSBhbmQgcmVuZGVyKSwgSSBub3RpY2VkIHRoYXQgdGhlIEdQVSBk
-ZXZpY2UgcHJvYmUKPj4+IGFsd2F5cyBmYWlsZWQgd2l0aCBlcnJvciAtRU5PU1BDLiBBZnRlciBp
-bnZlc3RpZ2F0aW5nIEkgZmlndXJlZCBvdXQgdGhhdAo+Pj4gdGhpcyB3YXMgZHVlIHRvIHRoZSBt
-aW5vciBkZXZpY2UgYWxsb2NhdGlvbiBmYWlsaW5nIHdoZW4gYSBzZWNvbmQgRFJNCj4+PiBkZXZp
-Y2UgaXMgYWRkZWQuCj4+Pgo+Pj4gTW9yZSBwcmVjaXNlbHksIHdoZW4gZHJtX21pbm9yX2FsbG9j
-KCkgaXMgY2FsbGVkIHdpdGggRFJNX01JTk9SX1BSSU1BUlkKPj4+ICgwKSBhcyBhcmd1bWVudCBm
-b3IgYSBzZWNvbmQgdGltZSwgdGhlIGNhbGwgdG8gaWRyX2FsbG9jKCkgKHdoaWNoIGhhcyBhCj4+
-PiByZXF1ZXN0ZWQgcmFuZ2Ugb2YgMC4uNjQpIGZhaWxzIGluc3RlYWQgb2YgcmV0dXJuaW5nIDEg
-YXMgZXhwZWN0ZWQuIE5vdGUKPj4+IHRoYXQgdGhlIGZpcnN0IGNhbGwgaXMgc3VjY2Vzc2Z1bC4K
-Pj4+Cj4+PiBSZXZlcnRpbmcgInJlaW1wbGVtZW50IElEUiBhbmQgSURBIHVzaW5nIHRoZSByYWRp
-eCB0cmVlIiBvbiAyMDE2MTIxMydzCj4+PiBuZXh0IGZpeGVzIHRoZSBpc3N1ZSBmb3IgbWUsIHN1
-Z2dlc3RpbmcgYSBidWcgbWF5IGhhdmUgc2xpcHBlZCBpbiB0aGVyZS4KPj4+Cj4+PiBOb3Qgc3Vy
-ZSBob3cgdGhpcyBjb3VsZCBiZSBmaXhlZCwgc28gcmVwb3J0aW5nIHRoZSBpc3N1ZSBmb3Igbm93
-IGluIGNhc2UKPj4+IGl0IGlzIG5vdCBrbm93biB5ZXQuCj4gCj4gSSBjYW4gY29uZmlybSBBbGV4
-JyBmaW5kaW5ncywgdGhvdWdoIHRoZSBzeW1wdG9tcyBzZWVtIHRvIGJlIHNsaWdodGx5Cj4gZGlm
-ZmVyZW50LCB3aGljaCBtYXkgYmUgcmVsYXRlZCB0byBtZSB0ZXN0aW5nIG9uIG5leHQtMjAxNjEy
-MTYgcmF0aGVyCj4gdGhhbiBuZXh0LTIwMTYxMjEzLgo+IAo+IFdoYXQgSSdtIHNlZWluZyBpcyB0
-aGF0IGFsbCBkcml2ZXJzIGdldCBwcm9iZWQgY29ycmVjdGx5LCBidXQgd2hlbiBhbgo+IGFwcGxp
-Y2F0aW9uIHRyaWVzIHRvIG9wZW4gdGhlIERSTSBkZXZpY2UgZmlsZXMgKC9kZXYvZHJpL2NhcmQw
-IGluIHRoaXMKPiBjYXNlKSwgdGhlbiBhbGwgZGV2aWNlcyBvZiBhIGdpdmVuIG1pbm9yIHR5cGUg
-ZGlzYXBwZWFyLiBTbyBpbiBteSBjYXNlCj4gdXBvbiBib290IEkgZ2V0IHRoaXM6Cj4gCj4gCSMg
-bHMgLWwgL2Rldi9kcmkvCj4gCXRvdGFsIDAKPiAJY3J3LXJ3LS0tLSAxIHJvb3QgdmlkZW8gMjI2
-LCAgIDAgRGVjIDE2IDE1OjU5IGNhcmQwCj4gCWNydy1ydy0tLS0gMSByb290IHZpZGVvIDIyNiwg
-ICAxIERlYyAxNiAxNTo1OSBjYXJkMQo+IAljcnctcnctLS0tIDEgcm9vdCB2aWRlbyAyMjYsIDEy
-OCBEZWMgMTYgMTU6NTkgcmVuZGVyRDEyOAo+IAo+IFRoZSBtb2RldGVzdCBwcm9ncmFtIGZyb20g
-bGliZHJtIGlzIHRoZW4gdW5hYmxlIHRvIG9wZW4gYW55IGRldmljZXM6Cj4gCj4gCSMgbW9kZXRl
-c3QKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdpOTE1Jy4uLmZhaWxlZAo+IAl0cnlpbmcgdG8g
-b3BlbiBkZXZpY2UgJ2FtZGdwdScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdy
-YWRlb24nLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAnbm91dmVhdScuLi5mYWls
-ZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICd2bXdnZngnLi4uZmFpbGVkCj4gCXRyeWluZyB0
-byBvcGVuIGRldmljZSAnb21hcGRybScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNl
-ICdleHlub3MnLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndGlsY2RjJy4uLmZh
-aWxlZAo+IAl0cnlpbmcgdG8gb3BlbiBkZXZpY2UgJ21zbScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRv
-IG9wZW4gZGV2aWNlICdzdGknLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndGVn
-cmEnLi4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAnaW14LWRybScuLi5mYWlsZWQK
-PiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdyb2NrY2hpcCcuLi5mYWlsZWQKPiAJdHJ5aW5nIHRv
-IG9wZW4gZGV2aWNlICdhdG1lbC1obGNkYycuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2
-aWNlICdmc2wtZGN1LWRybScuLi5mYWlsZWQKPiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICd2YzQn
-Li4uZmFpbGVkCj4gCXRyeWluZyB0byBvcGVuIGRldmljZSAndmlydGlvX2dwdScuLi5mYWlsZWQK
-PiAJdHJ5aW5nIHRvIG9wZW4gZGV2aWNlICdtZWRpYXRlaycuLi5mYWlsZWQKPiAJbm8gZGV2aWNl
-IGZvdW5kCj4gCj4gQW5kIGFmdGVyIHRoYXQgYWxsIG9mIHRoZSBwcmltYXJ5IG1pbm9ycyBhcmUg
-Z29uZToKPiAKPiAJIyBscyAtbCAvZGV2L2RyaS8KPiAJdG90YWwgMAo+IAljcnctcnctLS0tIDEg
-cm9vdCB2aWRlbyAyMjYsIDEyOCBEZWMgMTYgMTU6NTkgcmVuZGVyRDEyOAoKVGhhdCdzIGV4YWN0
-bHkgd2hhdCBJIGFtIGFsc28gZ2V0dGluZyB3aXRoIDIwMTYxMjE2LiBBcyBpdCB0dXJucyBvdXQg
-dGhlCnBhdGNoIGhhcyBjaGFuZ2VkIHNsaWdodGx5IChteSByZXZlcnQgZGlkIG5vdCBhcHBseSBh
-ZnRlciBhIHJlYmFzZSksIGFuZAp0aGUgc3ltcHRvbXMgY2hhbmdlZCBhZ2FpbnN0IDIwMTYxMjE1
-LCBidXQgdGhlIGZpeCBpcyB0aGUgc2FtZToKcmV2ZXJ0aW5nIGdpdmVzIG1lIGJhY2sgYSB3b3Jr
-aW5nIHN5c3RlbS4KClRoaXMgcGF0Y2ggcmVhbGx5IHNob3VsZCBiZSByZXZlcnRlZCBmb3Igbm93
-LiBMaWtlIFRoaWVycnkgSSBhbQphdmFpbGFibGUgdG8gdGVzdCBmdXJ0aGVyIGl0ZXJhdGlvbnMu
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Bart,
+
+On Sun, 18 Dec 2016 11:51:28 +0100 Bart Van Assche <bart.vanassche@gmail.com> wrote:
+>
+> Nicholas Bellinger, the official SCSI target maintainer, stopped sending
+> pull requests for the SCSI target subsystem (drivers/target) to Linus
+> and I would like to take over. Nic has been CC-ed for the e-mail
+> conversation below.
+
+[Nicholas, should I remove the the target-updates and/or target-merge
+trees from linux-next?]
+
+> I have pushed out the patches I would like to send to Linus during the
+> v4.10 merge window to
+> kernel.org:/pub/scm/linux/kernel/git/bvanassche/linux.git/for-next.
+
+I assume you meant
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bvanassche/linux.git#for-next
+
+> Would it be possible to add that branch to the linux-next test system?
+
+Added from today.  For now it is called target-bva, but I will change
+that when Nicholas replies to the above question.
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
