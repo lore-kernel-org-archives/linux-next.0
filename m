@@ -1,53 +1,32 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161219 build: 0 failures 0 warnings (next-20161219)
-Date: Mon, 19 Dec 2016 08:37:14 +0000
-Message-ID: <E1cItRY-0001ST-Rn@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45434 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751192AbcLSIhY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Dec 2016 03:37:24 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: manual merge of the overlayfs tree with Linus' tree
+Date: Mon, 19 Dec 2016 10:06:36 +0100
+Message-ID: <CAJfpeguwvwy78-ahrswi5_RRENUzuSbqF2PR2x+nKxX1WC6h9Q@mail.gmail.com>
+References: <20161219102555.15519eee@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161219102555.15519eee@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161219
-Git describe: next-20161219
-Commit: 44f9151a72 Add linux-next specific files for 20161219
+On Mon, Dec 19, 2016 at 12:25 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Miklos,
+>
+> Today's linux-next merge of the overlayfs tree got conflicts in:
+>
+>   fs/overlayfs/dir.c
+>   fs/overlayfs/inode.c
+>
+> I am pretty sure thses conflicts only exist because the overlayfs tree
+> was rebased before being merged by Linus.  I am dropping the oevrlay fs
+> tree for today.  Please clean it up.
 
-Build Time: 194 min 6 sec
+Hi Stephen,
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Sorry, fixed now.
 
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks,
+Miklos
