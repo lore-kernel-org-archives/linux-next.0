@@ -1,126 +1,69 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20161222 build: 3 failures 0 warnings (next-20161222)
-Date: Thu, 22 Dec 2016 05:30:09 +0000
-Message-ID: <E1cJvxB-0003tv-HM@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40936 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933708AbcLVFaS (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 22 Dec 2016 00:30:18 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Fri, 23 Dec 2016 11:45:13 +1100
+Message-ID: <20161223114513.101402e4@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Manish Rangankar <manish.rangankar@cavium.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Nilesh Javali <nilesh.javali@cavium.com>, Adheer Chandravanshi <adheer.chandravanshi@qlogic.com>, Chad Dupuis <chad.dupuis@cavium.com>, Saurav Kashyap <saurav.kashyap@cavium.com>, Arun Easi <arun.easi@cavium.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20161222
-Git describe: next-20161222
-Commit: 49358776a0 Add linux-next specific files for 20161222
+Hi James,
 
-Build Time: 83 min 57 sec
+After merging the scsi tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Passed:    7 / 10   ( 70.00 %)
-Failed:    3 / 10   ( 30.00 %)
+drivers/scsi/qedi/qedi_main.c: In function 'qedi_init':
+drivers/scsi/qedi/qedi_main.c:2073:2: error: implicit declaration of function 'register_hotcpu_notifier' [-Werror=implicit-function-declaration]
+  register_hotcpu_notifier(&qedi_cpu_notifier);
+  ^
+drivers/scsi/qedi/qedi_main.c: In function 'qedi_cleanup':
+drivers/scsi/qedi/qedi_main.c:2113:2: error: implicit declaration of function 'unregister_hotcpu_notifier' [-Werror=implicit-function-declaration]
+  unregister_hotcpu_notifier(&qedi_cpu_notifier);
+  ^
 
-Errors: 1
-Warnings: 0
-Section Mismatches: 0
+Caused by commit
 
-Failed defconfigs:
-	arm64-allnoconfig
-	arm64-allmodconfig
-	arm64-defconfig
+  ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
 
-Errors:
+Interacting with commit
 
-	arm64-allnoconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+  8e38db753d95 ("cpu/hotplug: Remove obsolete cpu hotplug register/unregister functions")
 
-	arm64-allmodconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+from the tip tree.
 
-	arm64-defconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+I have disabled that driver for now:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 23 Dec 2016 11:39:41 +1100
+Subject: [PATCH] scsi: disable the QEDI driver for now
 
--------------------------------------------------------------------------------
+until it can be converted to cope with the removal of
+register_hotcpu_notifier.
 
-Errors summary: 1
-	 24 ../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/qedi/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/drivers/scsi/qedi/Kconfig b/drivers/scsi/qedi/Kconfig
+index 23ca8a274586..8261f0abd807 100644
+--- a/drivers/scsi/qedi/Kconfig
++++ b/drivers/scsi/qedi/Kconfig
+@@ -2,6 +2,7 @@ config QEDI
+ 	tristate "QLogic QEDI 25/40/100Gb iSCSI Initiator Driver Support"
+ 	depends on PCI && SCSI
+ 	depends on QED
++	depends on BROKEN
+ 	select SCSI_ISCSI_ATTRS
+ 	select QED_LL2
+ 	select QED_ISCSI
+-- 
+2.10.2
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : FAIL, 5 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 12 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 7 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+-- 
+Cheers,
+Stephen Rothwell
