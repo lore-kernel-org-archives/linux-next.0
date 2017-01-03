@@ -1,37 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the pinctrl tree
-Date: Tue, 3 Jan 2017 15:37:01 +1100
-Message-ID: <20170103153701.79e58cab@canb.auug.org.au>
+From: Alex Williamson <alex.williamson@redhat.com>
+Subject: Re: linux-next: build failure after merge of the drm-intel-fixes tree
+Date: Mon, 2 Jan 2017 21:48:57 -0700
+Message-ID: <20170102214857.6ad8f2eb@t450s.home>
+References: <20170103104239.67dd95ba@canb.auug.org.au>
+ <20170103025929.35gp5n27uc7iszra@zhen-hp.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33823 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755686AbdACEhF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 2 Jan 2017 23:37:05 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nehal Shah <Nehal-bakulchandra.Shah@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170103025929.35gp5n27uc7iszra@zhen-hp.sh.intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Zhenyu Wang <zhenyuw@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jike Song <jike.song@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
-
-After merging the pinctrl tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-drivers/pinctrl/pinctrl-amd.c: In function 'amd_gpio_dbg_show':
-drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   for (; i < pin_num; i++) {
-   ^
-drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  unsigned int bank, i, pin_num;
-                     ^
-
-Introduced by commit
-
-  3bfd44306c65 ("pinctrl: amd: Add support for additional GPIO")
-
--- 
-Cheers,
-Stephen Rothwell
+T24gVHVlLCAzIEphbiAyMDE3IDEwOjU5OjI5ICswODAwClpoZW55dSBXYW5nIDx6aGVueXV3QGxp
+bnV4LmludGVsLmNvbT4gd3JvdGU6Cgo+IE9uIDIwMTcuMDEuMDMgMTA6NDI6MzkgKzExMDAsIFN0
+ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPiBIaSBhbGwsCj4gPiAKPiA+IEFmdGVyIG1lcmdpbmcg
+dGhlIGRybS1pbnRlbC1maXhlcyB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82
+NAo+ID4gYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+ID4gCj4gPiBkcml2ZXJzL2dw
+dS9kcm0vaTkxNS9ndnQva3ZtZ3QuYzogSW4gZnVuY3Rpb24gJ2ludGVsX3ZncHVfb3Blbic6Cj4g
+PiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQva3ZtZ3QuYzo1MTE6MzI6IGVycm9yOiBkZXJlZmVy
+ZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0ZSB0eXBlICdzdHJ1Y3QgbWRldl9kZXZpY2UnCj4g
+PiAgIHZmaW9fdW5yZWdpc3Rlcl9ub3RpZmllcigmbWRldi0+ZGV2LCBWRklPX0dST1VQX05PVElG
+WSwKPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXiAgIAo+ID4gCj4gPiBDYXVz
+ZWQgYnkgY29tbWl0Cj4gPiAKPiA+ICAgOTllMzEyM2UzZDcyICgidmZpby1tZGV2OiBNYWtlIG1k
+ZXZfZGV2aWNlIHByaXZhdGUgYW5kIGFic3RyYWN0IGludGVyZmFjZXMiKQo+ID4gCj4gPiBmcm9t
+IHRoZSB2ZmlvLWZpeGVzIHRyZWUgaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKPiA+IAo+ID4gICAz
+NjRmYjZiNzg5ZmYgKCJkcm0vaTkxNS9ndnQva3ZtZ3Q6IHByZXZlbnQgZG91YmxlLXJlbGVhc2Ug
+b2YgdmdwdSIpCj4gPiAKPiA+IGZyb20gdGhlIGRybS1pbnRlbC1maXhlcyB0cmVlLiAgCj4gCj4g
+QWxleCwgSSBsaWtlZCB0byBoYXZlIGt2bWd0IHJlbGF0ZWQgbWRldiBpbnRlcmZhY2UgY2hhbmdl
+IGJlIG1lcmdlZCB0aHJvdWdoCj4gdmZpbyB0cmVlLCBidXQgd2Fzbid0IGF3YXJlZCBvbmUgb2Yg
+SmlrZSdzIGZpeCBoYWQgY29uZmxpY3QuIENvdWxkIHlvdSBhcHBseQo+IGJlbG93IGZpeCBpbiB5
+b3VyIHRyZWU/IEkgdGhpbmsgaW4gZ2VuZXJhbCBmb3IgcG9zc2libGUgaW50ZXJmYWNlIGNoYW5n
+ZSBpbgo+IGZ1dHVyZSB3ZSBzdGlsbCBuZWVkIGEgcHVsbCByZXF1ZXN0IGZvciBpOTE1IHRvIHJl
+c29sdmUgZGVwZW5kZW5jZSBlYXJsaWVyLgoKSGkgWmhlbnl1LAoKSG9wZWZ1bGx5IHRoaXMgYWJz
+dHJhY3Rpb24gd2lsbCBoZWxwIHRvIGlzb2xhdGUgdmVuZG9yIGRyaXZlcnMgZnJvbQptZGV2IEFQ
+SSBjaGFuZ2VzIGluIHRoZSBmdXR1cmUuICBJIGNhbiBjZXJ0YWlubHkgcm9sbCB0aGlzIHBhdGNo
+IGludG8KdGhlIG9yaWdpbmFsIHRvIG1haW50YWluIGJpc2VjdGFiaWxpdHkuICBJIHdhbnQgdG8g
+Z2V0IHRoZXNlIGNoYW5nZXMgaW4KZm9yIHJjMywgd2lsbCBhIHB1bGwgcmVxdWVzdCBmb3IgdGhl
+IGk5MTUgY2hhbmdlcyBiZSBzZW50IHRoaXMgd2Vlaz8KVGhhbmtzIGZvciBzcG90dGluZyBhbmQg
+Zml4aW5nIHRoaXMsIFN0ZXBoZW4uICBUaGFua3MsCgpBbGV4Cgo+ID4gSSBhcHBsaWVkIHRoaXMg
+bWVyZ2UgZml4IHBhdGNoOgo+ID4gCj4gPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2Fu
+Yi5hdXVnLm9yZy5hdT4KPiA+IERhdGU6IFR1ZSwgMyBKYW4gMjAxNyAxMDozODo0OCArMTEwMAo+
+ID4gU3ViamVjdDogW1BBVENIXSB2ZmlvLW1kZXY6IGZpeHVwIGZvciAiTWFrZSBtZGV2X2Rldmlj
+ZSBwcml2YXRlIGFuZCBhYnN0cmFjdCBpbnRlcmZhY2VzIgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5
+OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPiA+IC0tLQo+ID4gIGRy
+aXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9rdm1ndC5jIHwgMiArLQo+ID4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2t2bWd0LmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQv
+a3ZtZ3QuYwo+ID4gaW5kZXggYzI0YjY2NWUwMDdiLi5mYWFhZTA3YWU0ODcgMTAwNjQ0Cj4gPiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQva3ZtZ3QuYwo+ID4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2k5MTUvZ3Z0L2t2bWd0LmMKPiA+IEBAIC01MDgsNyArNTA4LDcgQEAgc3RhdGljIGlu
+dCBpbnRlbF92Z3B1X29wZW4oc3RydWN0IG1kZXZfZGV2aWNlICptZGV2KQo+ID4gIAlyZXR1cm4g
+cmV0Owo+ID4gIAo+ID4gIHVuZG9fZ3JvdXA6Cj4gPiAtCXZmaW9fdW5yZWdpc3Rlcl9ub3RpZmll
+cigmbWRldi0+ZGV2LCBWRklPX0dST1VQX05PVElGWSwKPiA+ICsJdmZpb191bnJlZ2lzdGVyX25v
+dGlmaWVyKG1kZXZfZGV2KG1kZXYpLCBWRklPX0dST1VQX05PVElGWSwKPiA+ICAJCQkJCSZ2Z3B1
+LT52ZGV2Lmdyb3VwX25vdGlmaWVyKTsKPiA+ICAKPiA+ICB1bmRvX2lvbW11Ogo+ID4gLS0gCj4g
+PiAyLjEwLjIKPiA+IAo+ID4gLS0gCj4gPiBDaGVlcnMsCj4gPiBTdGVwaGVuIFJvdGh3ZWxsICAK
+PiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
