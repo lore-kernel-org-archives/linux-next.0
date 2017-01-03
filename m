@@ -1,57 +1,59 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel-fixes tree
-Date: Tue, 3 Jan 2017 13:37:17 -0700
-Message-ID: <20170103133717.319f60aa@t450s.home>
-References: <20170103104239.67dd95ba@canb.auug.org.au>
- <20170103025929.35gp5n27uc7iszra@zhen-hp.sh.intel.com>
- <20170102214857.6ad8f2eb@t450s.home>
- <20170103092317.slzmtrdzzrjzbypw@zhen-hp.sh.intel.com>
- <8737h0i8cb.fsf@intel.com>
+From: Galo Navarro <anglorvaroa@gmail.com>
+Subject: [PATCH] staging: rtl8188eu: fix incorrect ERROR tags from logs
+Date: Tue, 3 Jan 2017 23:12:09 +0100
+Message-ID: <20170103221147.GA28676@lear>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <8737h0i8cb.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wj0-f194.google.com ([209.85.210.194]:36454 "EHLO
+        mail-wj0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1757209AbdACWNC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 3 Jan 2017 17:13:02 -0500
+Received: by mail-wj0-f194.google.com with SMTP id j10so73561875wjb.3
+        for <linux-next@vger.kernel.org>; Tue, 03 Jan 2017 14:13:02 -0800 (PST)
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>
 
-T24gVHVlLCAwMyBKYW4gMjAxNyAxNToyNToyNCArMDIwMApKYW5pIE5pa3VsYSA8amFuaS5uaWt1
-bGFAaW50ZWwuY29tPiB3cm90ZToKCj4gT24gVHVlLCAwMyBKYW4gMjAxNywgWmhlbnl1IFdhbmcg
-PHpoZW55dXdAbGludXguaW50ZWwuY29tPiB3cm90ZToKPiA+IE9uIDIwMTcuMDEuMDIgMjE6NDg6
-NTcgLTA3MDAsIEFsZXggV2lsbGlhbXNvbiB3cm90ZTogIAo+ID4+ID4gQWxleCwgSSBsaWtlZCB0
-byBoYXZlIGt2bWd0IHJlbGF0ZWQgbWRldiBpbnRlcmZhY2UgY2hhbmdlIGJlIG1lcmdlZCB0aHJv
-dWdoCj4gPj4gPiB2ZmlvIHRyZWUsIGJ1dCB3YXNuJ3QgYXdhcmVkIG9uZSBvZiBKaWtlJ3MgZml4
-IGhhZCBjb25mbGljdC4gQ291bGQgeW91IGFwcGx5Cj4gPj4gPiBiZWxvdyBmaXggaW4geW91ciB0
-cmVlPyBJIHRoaW5rIGluIGdlbmVyYWwgZm9yIHBvc3NpYmxlIGludGVyZmFjZSBjaGFuZ2UgaW4K
-PiA+PiA+IGZ1dHVyZSB3ZSBzdGlsbCBuZWVkIGEgcHVsbCByZXF1ZXN0IGZvciBpOTE1IHRvIHJl
-c29sdmUgZGVwZW5kZW5jZSBlYXJsaWVyLiAgCj4gPj4gCj4gPj4gSGkgWmhlbnl1LAo+ID4+IAo+
-ID4+IEhvcGVmdWxseSB0aGlzIGFic3RyYWN0aW9uIHdpbGwgaGVscCB0byBpc29sYXRlIHZlbmRv
-ciBkcml2ZXJzIGZyb20KPiA+PiBtZGV2IEFQSSBjaGFuZ2VzIGluIHRoZSBmdXR1cmUuICBJIGNh
-biBjZXJ0YWlubHkgcm9sbCB0aGlzIHBhdGNoIGludG8KPiA+PiB0aGUgb3JpZ2luYWwgdG8gbWFp
-bnRhaW4gYmlzZWN0YWJpbGl0eS4gIEkgd2FudCB0byBnZXQgdGhlc2UgY2hhbmdlcyBpbgo+ID4+
-IGZvciByYzMsIHdpbGwgYSBwdWxsIHJlcXVlc3QgZm9yIHRoZSBpOTE1IGNoYW5nZXMgYmUgc2Vu
-dCB0aGlzIHdlZWs/ICAKPiA+Cj4gPiBTZW5kIHRvIEphbmkgd2hvIGlzIG1hbmFnaW5nIGk5MTUg
-Zml4ZXMgcHVsbC4gIAo+IAo+IFNlbmQgd2hhdCB0byBtZT8gSSd2ZSBwdXNoZWQgZml4ZXMgdG8g
-ZHJtLWludGVsLWZpeGVzIHRvZGF5IGZvciB0ZXN0aW5nLAo+IGFuZCBleHBlY3QgdG8gc2VuZCBh
-IHB1bGwgcmVxdWVzdCB0byBEYXZlIGVhcmx5IFRodXJzZGF5LiBJZiB0aGVyZSdzIGEKPiBjb25m
-bGljdCwgaXQgY2FuIHVzdWFsbHkgYmUgc29sdmVkIHdoaWxlIG1lcmdpbmcsIGxpa2UgU3RlcGhl
-biBoYXMgZG9uZS4KClVubGVzcyB0aGVyZSdzIHNvbWUgcHJlZmVyZW5jZSBvdGhlcndpc2UsIEkg
-d2FzIG9ubHkgYXNraW5nIGlmIHRoZSBpOTE1CmNoYW5nZXMgd2VyZSBxdWV1ZWQgZm9yIHJjMyBz
-dWNoIHRoYXQgSSBjb3VsZCB0cmFpbCBiZWhpbmQgdGhlbSBhbmQKZml4dXAgdGhlIG1kZXYgQVBJ
-IGNoYW5nZSB3aXRob3V0IHJlbHlpbmcgb24gaXQgZ2V0dGluZyBjYXVnaHQgaW4gdGhlCm1lcmdl
-LiAgSWYgd2UncmUgaGFwcHkgdG8gZG8gaXQgYXQgbWVyZ2UgdGltZSwgSSB3b24ndCB3b3JyeSBh
-Ym91dCBpdC4KVGhhbmtzLAoKQWxleApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9pbnRlbC1nZngK
+Several lifecycle events in the rtl8188eu driver are logged using the
+DBG_88E_LEVEL macro from rtw_debug.h, which is tagged as ERROR
+regardless of the actual level.  Below are dmesg excerpts after loading
+and unloading the module, the messages are misleading as there was no
+error.
+
+    [517434.916239] usbcore: registered new interface driver r8188eu
+    [517435.680653] R8188EU: ERROR indicate disassoc
+    [517437.122606] R8188EU: ERROR assoc success
+    [517797.735611] usbcore: deregistering interface driver r8188eu
+    [517797.736069] R8188EU: ERROR indicate disassoc
+
+Remove the ERROR prefix from the logs.  After the patch, logs are:
+
+    [517949.873976] usbcore: registered new interface driver r8188eu
+    [517950.592845] R8188EU: indicate disassoc
+    [517951.993973] R8188EU: assoc success
+    [521778.784448] usbcore: deregistering interface driver r8188eu
+    [521778.784838] R8188EU: indicate disassoc
+
+Signed-off-by: Galo Navarro <anglorvaroa@gmail.com>
+---
+ drivers/staging/rtl8188eu/include/rtw_debug.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8188eu/include/rtw_debug.h b/drivers/staging/rtl8188eu/include/rtw_debug.h
+index 95590a1..9cc4b8c 100644
+--- a/drivers/staging/rtl8188eu/include/rtw_debug.h
++++ b/drivers/staging/rtl8188eu/include/rtw_debug.h
+@@ -70,7 +70,7 @@ extern u32 GlobalDebugLevel;
+ #define DBG_88E_LEVEL(_level, fmt, arg...)				\
+ 	do {								\
+ 		if (_level <= GlobalDebugLevel)				\
+-			pr_info(DRIVER_PREFIX"ERROR " fmt, ##arg);	\
++			pr_info(DRIVER_PREFIX fmt, ##arg);	\
+ 	} while (0)
+ 
+ #define DBG_88E(...)							\
+-- 
+2.1.4
