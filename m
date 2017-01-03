@@ -1,52 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the
-	drm-intel-fixes tree
-Date: Tue, 3 Jan 2017 10:42:39 +1100
-Message-ID: <20170103104239.67dd95ba@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with Linus' tree
+Date: Tue, 3 Jan 2017 11:26:45 +1100
+Message-ID: <20170103112645.453786f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Alex Williamson <alex.williamson@redhat.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Burton <paul.burton@imgtec.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLWludGVsLWZpeGVzIHRyZWUsIHRvZGF5J3Mg
-bGludXgtbmV4dCBidWlsZCAoeDg2XzY0CmFsbG1vZGNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoK
-CmRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9rdm1ndC5jOiBJbiBmdW5jdGlvbiAnaW50ZWxfdmdw
-dV9vcGVuJzoKZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2t2bWd0LmM6NTExOjMyOiBlcnJvcjog
-ZGVyZWZlcmVuY2luZyBwb2ludGVyIHRvIGluY29tcGxldGUgdHlwZSAnc3RydWN0IG1kZXZfZGV2
-aWNlJwogIHZmaW9fdW5yZWdpc3Rlcl9ub3RpZmllcigmbWRldi0+ZGV2LCBWRklPX0dST1VQX05P
-VElGWSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeICAgCgpDYXVzZWQgYnkgY29t
-bWl0CgogIDk5ZTMxMjNlM2Q3MiAoInZmaW8tbWRldjogTWFrZSBtZGV2X2RldmljZSBwcml2YXRl
-IGFuZCBhYnN0cmFjdCBpbnRlcmZhY2VzIikKCmZyb20gdGhlIHZmaW8tZml4ZXMgdHJlZSBpbnRl
-cmFjdGluZyB3aXRoIGNvbW1pdAoKICAzNjRmYjZiNzg5ZmYgKCJkcm0vaTkxNS9ndnQva3ZtZ3Q6
-IHByZXZlbnQgZG91YmxlLXJlbGVhc2Ugb2YgdmdwdSIpCgpmcm9tIHRoZSBkcm0taW50ZWwtZml4
-ZXMgdHJlZS4KCkkgYXBwbGllZCB0aGlzIG1lcmdlIGZpeCBwYXRjaDoKCkZyb206IFN0ZXBoZW4g
-Um90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PgpEYXRlOiBUdWUsIDMgSmFuIDIwMTcgMTA6
-Mzg6NDggKzExMDAKU3ViamVjdDogW1BBVENIXSB2ZmlvLW1kZXY6IGZpeHVwIGZvciAiTWFrZSBt
-ZGV2X2RldmljZSBwcml2YXRlIGFuZCBhYnN0cmFjdCBpbnRlcmZhY2VzIgoKU2lnbmVkLW9mZi1i
-eTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Ci0tLQogZHJpdmVycy9n
-cHUvZHJtL2k5MTUvZ3Z0L2t2bWd0LmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRp
-b24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9n
-dnQva3ZtZ3QuYyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9rdm1ndC5jCmluZGV4IGMyNGI2
-NjVlMDA3Yi4uZmFhYWUwN2FlNDg3IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9n
-dnQva3ZtZ3QuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQva3ZtZ3QuYwpAQCAtNTA4
-LDcgKzUwOCw3IEBAIHN0YXRpYyBpbnQgaW50ZWxfdmdwdV9vcGVuKHN0cnVjdCBtZGV2X2Rldmlj
-ZSAqbWRldikKIAlyZXR1cm4gcmV0OwogCiB1bmRvX2dyb3VwOgotCXZmaW9fdW5yZWdpc3Rlcl9u
-b3RpZmllcigmbWRldi0+ZGV2LCBWRklPX0dST1VQX05PVElGWSwKKwl2ZmlvX3VucmVnaXN0ZXJf
-bm90aWZpZXIobWRldl9kZXYobWRldiksIFZGSU9fR1JPVVBfTk9USUZZLAogCQkJCQkmdmdwdS0+
-dmRldi5ncm91cF9ub3RpZmllcik7CiAKIHVuZG9faW9tbXU6Ci0tIAoyLjEwLjIKCi0tIApDaGVl
-cnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-aW50ZWwtZ2Z4Cg==
+Hi Ralf,
+
+Today's linux-next merge of the mips tree got a conflict in:
+
+  arch/mips/kernel/mips_ksyms.c
+
+between commit:
+
+  7c0f6ba682b9 ("Replace <asm/uaccess.h> with <linux/uaccess.h> globally")
+
+from Linus' tree and commit:
+
+  238f9fbc3244 ("MIPS: Export {copy, clear}_page functions alongside their definitions")
+
+from the mips tree.
+
+I fixed it up (I just deleted the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
