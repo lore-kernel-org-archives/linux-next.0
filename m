@@ -1,55 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Theodore Ts'o <tytso@mit.edu>
 Subject: Re: Please add fscrypt.git to linux-next
-Date: Wed, 4 Jan 2017 22:51:01 +1100
-Message-ID: <20170104225101.209ed782@canb.auug.org.au>
+Date: Wed, 4 Jan 2017 10:01:08 -0500
+Message-ID: <20170104150108.xu3vvt5iz2yf24z2@thunk.org>
 References: <20170104044424.jcztr7swmyjc2cwn@thunk.org>
+ <20170104225101.209ed782@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170104044424.jcztr7swmyjc2cwn@thunk.org>
+Content-Disposition: inline
+In-Reply-To: <20170104225101.209ed782@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Ted,
-
-On Tue, 3 Jan 2017 23:44:24 -0500 Theodore Ts'o <tytso@mit.edu> wrote:
->
-> Could you please add:
+On Wed, Jan 04, 2017 at 10:51:01PM +1100, Stephen Rothwell wrote:
+> > Linus has already accepted a pull request from the for-stable branch
+> > of fscrypt.git.  I plan to send a separate pull request for the master
+> > branch of fscrypt.git during the next merge window.
 > 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git  master
-> 
-> To the linux-next tree?  I was previously feeding fscrypt changes by
-> merging them into the ext4.git dev branch, but it will make life
-> simpler if we have a separate git tree for it.
-> 
-> Linus has already accepted a pull request from the for-stable branch
-> of fscrypt.git.  I plan to send a separate pull request for the master
-> branch of fscrypt.git during the next merge window.
+> Added from tomorrow.  Should I add the for-stable branch as well (as a
+> bug fixes tree)?
 
-Added from tomorrow.  Should I add the for-stable branch as well (as a
-bug fixes tree)?
+The master branch should include the for-stable branch 99.9% of the
+time (for my own testing sanity), but if it's not too much trouble,
+sure, that would be great.  If it would cause you too much extra work
+on your end, it might not be worth it; I'll leave it up to you.
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Thanks!!
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
--- 
-Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+					- Ted
