@@ -1,150 +1,65 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170104 build: 4 failures 2 warnings (next-20170104)
-Date: Wed, 04 Jan 2017 06:26:50 +0000
-Message-ID: <E1cOf2A-0007EM-IJ@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60262 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932633AbdADG1G (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2017 01:27:06 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: build failure after merge of the
+ drm-intel-fixes tree
+Date: Wed, 4 Jan 2017 10:07:00 +0100
+Message-ID: <20170104090700.yikowiec7nrpgb3d@phenom.ffwll.local>
+References: <20170103104239.67dd95ba@canb.auug.org.au>
+ <20170103025929.35gp5n27uc7iszra@zhen-hp.sh.intel.com>
+ <20170102214857.6ad8f2eb@t450s.home>
+ <20170103092317.slzmtrdzzrjzbypw@zhen-hp.sh.intel.com>
+ <8737h0i8cb.fsf@intel.com> <20170103133717.319f60aa@t450s.home>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170103133717.319f60aa@t450s.home>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170104
-Git describe: next-20170104
-Commit: d7ebc8e412 Add linux-next specific files for 20170104
-
-Build Time: 84 min 54 sec
-
-Passed:    6 / 10   ( 60.00 %)
-Failed:    4 / 10   ( 40.00 %)
-
-Errors: 2
-Warnings: 2
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allnoconfig
-	arm64-allmodconfig
-	arm-allmodconfig
-	arm64-defconfig
-
-Errors:
-
-	arm64-allnoconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
-	arm64-allmodconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
-	arm-allmodconfig
-../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-	arm64-defconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	 24 ../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	  1 ../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings Summary: 2
-	  2 ../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : FAIL, 5 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 12 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
-Warnings:
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings:
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 7 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+T24gVHVlLCBKYW4gMDMsIDIwMTcgYXQgMDE6Mzc6MTdQTSAtMDcwMCwgQWxleCBXaWxsaWFtc29u
+IHdyb3RlOgo+IE9uIFR1ZSwgMDMgSmFuIDIwMTcgMTU6MjU6MjQgKzAyMDAKPiBKYW5pIE5pa3Vs
+YSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPiB3cm90ZToKPiAKPiA+IE9uIFR1ZSwgMDMgSmFuIDIw
+MTcsIFpoZW55dSBXYW5nIDx6aGVueXV3QGxpbnV4LmludGVsLmNvbT4gd3JvdGU6Cj4gPiA+IE9u
+IDIwMTcuMDEuMDIgMjE6NDg6NTcgLTA3MDAsIEFsZXggV2lsbGlhbXNvbiB3cm90ZTogIAo+ID4g
+Pj4gPiBBbGV4LCBJIGxpa2VkIHRvIGhhdmUga3ZtZ3QgcmVsYXRlZCBtZGV2IGludGVyZmFjZSBj
+aGFuZ2UgYmUgbWVyZ2VkIHRocm91Z2gKPiA+ID4+ID4gdmZpbyB0cmVlLCBidXQgd2Fzbid0IGF3
+YXJlZCBvbmUgb2YgSmlrZSdzIGZpeCBoYWQgY29uZmxpY3QuIENvdWxkIHlvdSBhcHBseQo+ID4g
+Pj4gPiBiZWxvdyBmaXggaW4geW91ciB0cmVlPyBJIHRoaW5rIGluIGdlbmVyYWwgZm9yIHBvc3Np
+YmxlIGludGVyZmFjZSBjaGFuZ2UgaW4KPiA+ID4+ID4gZnV0dXJlIHdlIHN0aWxsIG5lZWQgYSBw
+dWxsIHJlcXVlc3QgZm9yIGk5MTUgdG8gcmVzb2x2ZSBkZXBlbmRlbmNlIGVhcmxpZXIuICAKPiA+
+ID4+IAo+ID4gPj4gSGkgWmhlbnl1LAo+ID4gPj4gCj4gPiA+PiBIb3BlZnVsbHkgdGhpcyBhYnN0
+cmFjdGlvbiB3aWxsIGhlbHAgdG8gaXNvbGF0ZSB2ZW5kb3IgZHJpdmVycyBmcm9tCj4gPiA+PiBt
+ZGV2IEFQSSBjaGFuZ2VzIGluIHRoZSBmdXR1cmUuICBJIGNhbiBjZXJ0YWlubHkgcm9sbCB0aGlz
+IHBhdGNoIGludG8KPiA+ID4+IHRoZSBvcmlnaW5hbCB0byBtYWludGFpbiBiaXNlY3RhYmlsaXR5
+LiAgSSB3YW50IHRvIGdldCB0aGVzZSBjaGFuZ2VzIGluCj4gPiA+PiBmb3IgcmMzLCB3aWxsIGEg
+cHVsbCByZXF1ZXN0IGZvciB0aGUgaTkxNSBjaGFuZ2VzIGJlIHNlbnQgdGhpcyB3ZWVrPyAgCj4g
+PiA+Cj4gPiA+IFNlbmQgdG8gSmFuaSB3aG8gaXMgbWFuYWdpbmcgaTkxNSBmaXhlcyBwdWxsLiAg
+Cj4gPiAKPiA+IFNlbmQgd2hhdCB0byBtZT8gSSd2ZSBwdXNoZWQgZml4ZXMgdG8gZHJtLWludGVs
+LWZpeGVzIHRvZGF5IGZvciB0ZXN0aW5nLAo+ID4gYW5kIGV4cGVjdCB0byBzZW5kIGEgcHVsbCBy
+ZXF1ZXN0IHRvIERhdmUgZWFybHkgVGh1cnNkYXkuIElmIHRoZXJlJ3MgYQo+ID4gY29uZmxpY3Qs
+IGl0IGNhbiB1c3VhbGx5IGJlIHNvbHZlZCB3aGlsZSBtZXJnaW5nLCBsaWtlIFN0ZXBoZW4gaGFz
+IGRvbmUuCj4gCj4gVW5sZXNzIHRoZXJlJ3Mgc29tZSBwcmVmZXJlbmNlIG90aGVyd2lzZSwgSSB3
+YXMgb25seSBhc2tpbmcgaWYgdGhlIGk5MTUKPiBjaGFuZ2VzIHdlcmUgcXVldWVkIGZvciByYzMg
+c3VjaCB0aGF0IEkgY291bGQgdHJhaWwgYmVoaW5kIHRoZW0gYW5kCj4gZml4dXAgdGhlIG1kZXYg
+QVBJIGNoYW5nZSB3aXRob3V0IHJlbHlpbmcgb24gaXQgZ2V0dGluZyBjYXVnaHQgaW4gdGhlCj4g
+bWVyZ2UuICBJZiB3ZSdyZSBoYXBweSB0byBkbyBpdCBhdCBtZXJnZSB0aW1lLCBJIHdvbid0IHdv
+cnJ5IGFib3V0IGl0LgoKRGF2ZSBBaXJsaWUgaXMgc3RpbGwgb24gdmFjYXRpb24sIHNvIEkgZXhw
+ZWN0IGRybSBmaXhlcyBwdWxsIHJlcXVlc3QgdG8KZ2V0IGEgYml0IGRlbGF5ZWQuIEkgdGhpbmsg
+YWRkaW5nIGEgd2FybmluZyB3aGVuIHNlbmRpbmcgZWFjaCByZXNwZWN0aXZlCnB1bGwgdG8gTGlu
+dXMgYWJvdXQgdGhpcyBpcyB0aGUgYmVzdCBhcHByb2FjaCwgdG8gYXZvaWQgc3RhbGxpbmcgbWRl
+dgpmaXhlcy4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
+ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1n
+ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
