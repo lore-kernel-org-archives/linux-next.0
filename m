@@ -1,65 +1,55 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel-fixes tree
-Date: Wed, 4 Jan 2017 10:07:00 +0100
-Message-ID: <20170104090700.yikowiec7nrpgb3d@phenom.ffwll.local>
-References: <20170103104239.67dd95ba@canb.auug.org.au>
- <20170103025929.35gp5n27uc7iszra@zhen-hp.sh.intel.com>
- <20170102214857.6ad8f2eb@t450s.home>
- <20170103092317.slzmtrdzzrjzbypw@zhen-hp.sh.intel.com>
- <8737h0i8cb.fsf@intel.com> <20170103133717.319f60aa@t450s.home>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please add fscrypt.git to linux-next
+Date: Wed, 4 Jan 2017 22:51:01 +1100
+Message-ID: <20170104225101.209ed782@canb.auug.org.au>
+References: <20170104044424.jcztr7swmyjc2cwn@thunk.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170103133717.319f60aa@t450s.home>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jani Nikula <jani.nikula@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170104044424.jcztr7swmyjc2cwn@thunk.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCBKYW4gMDMsIDIwMTcgYXQgMDE6Mzc6MTdQTSAtMDcwMCwgQWxleCBXaWxsaWFtc29u
-IHdyb3RlOgo+IE9uIFR1ZSwgMDMgSmFuIDIwMTcgMTU6MjU6MjQgKzAyMDAKPiBKYW5pIE5pa3Vs
-YSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPiB3cm90ZToKPiAKPiA+IE9uIFR1ZSwgMDMgSmFuIDIw
-MTcsIFpoZW55dSBXYW5nIDx6aGVueXV3QGxpbnV4LmludGVsLmNvbT4gd3JvdGU6Cj4gPiA+IE9u
-IDIwMTcuMDEuMDIgMjE6NDg6NTcgLTA3MDAsIEFsZXggV2lsbGlhbXNvbiB3cm90ZTogIAo+ID4g
-Pj4gPiBBbGV4LCBJIGxpa2VkIHRvIGhhdmUga3ZtZ3QgcmVsYXRlZCBtZGV2IGludGVyZmFjZSBj
-aGFuZ2UgYmUgbWVyZ2VkIHRocm91Z2gKPiA+ID4+ID4gdmZpbyB0cmVlLCBidXQgd2Fzbid0IGF3
-YXJlZCBvbmUgb2YgSmlrZSdzIGZpeCBoYWQgY29uZmxpY3QuIENvdWxkIHlvdSBhcHBseQo+ID4g
-Pj4gPiBiZWxvdyBmaXggaW4geW91ciB0cmVlPyBJIHRoaW5rIGluIGdlbmVyYWwgZm9yIHBvc3Np
-YmxlIGludGVyZmFjZSBjaGFuZ2UgaW4KPiA+ID4+ID4gZnV0dXJlIHdlIHN0aWxsIG5lZWQgYSBw
-dWxsIHJlcXVlc3QgZm9yIGk5MTUgdG8gcmVzb2x2ZSBkZXBlbmRlbmNlIGVhcmxpZXIuICAKPiA+
-ID4+IAo+ID4gPj4gSGkgWmhlbnl1LAo+ID4gPj4gCj4gPiA+PiBIb3BlZnVsbHkgdGhpcyBhYnN0
-cmFjdGlvbiB3aWxsIGhlbHAgdG8gaXNvbGF0ZSB2ZW5kb3IgZHJpdmVycyBmcm9tCj4gPiA+PiBt
-ZGV2IEFQSSBjaGFuZ2VzIGluIHRoZSBmdXR1cmUuICBJIGNhbiBjZXJ0YWlubHkgcm9sbCB0aGlz
-IHBhdGNoIGludG8KPiA+ID4+IHRoZSBvcmlnaW5hbCB0byBtYWludGFpbiBiaXNlY3RhYmlsaXR5
-LiAgSSB3YW50IHRvIGdldCB0aGVzZSBjaGFuZ2VzIGluCj4gPiA+PiBmb3IgcmMzLCB3aWxsIGEg
-cHVsbCByZXF1ZXN0IGZvciB0aGUgaTkxNSBjaGFuZ2VzIGJlIHNlbnQgdGhpcyB3ZWVrPyAgCj4g
-PiA+Cj4gPiA+IFNlbmQgdG8gSmFuaSB3aG8gaXMgbWFuYWdpbmcgaTkxNSBmaXhlcyBwdWxsLiAg
-Cj4gPiAKPiA+IFNlbmQgd2hhdCB0byBtZT8gSSd2ZSBwdXNoZWQgZml4ZXMgdG8gZHJtLWludGVs
-LWZpeGVzIHRvZGF5IGZvciB0ZXN0aW5nLAo+ID4gYW5kIGV4cGVjdCB0byBzZW5kIGEgcHVsbCBy
-ZXF1ZXN0IHRvIERhdmUgZWFybHkgVGh1cnNkYXkuIElmIHRoZXJlJ3MgYQo+ID4gY29uZmxpY3Qs
-IGl0IGNhbiB1c3VhbGx5IGJlIHNvbHZlZCB3aGlsZSBtZXJnaW5nLCBsaWtlIFN0ZXBoZW4gaGFz
-IGRvbmUuCj4gCj4gVW5sZXNzIHRoZXJlJ3Mgc29tZSBwcmVmZXJlbmNlIG90aGVyd2lzZSwgSSB3
-YXMgb25seSBhc2tpbmcgaWYgdGhlIGk5MTUKPiBjaGFuZ2VzIHdlcmUgcXVldWVkIGZvciByYzMg
-c3VjaCB0aGF0IEkgY291bGQgdHJhaWwgYmVoaW5kIHRoZW0gYW5kCj4gZml4dXAgdGhlIG1kZXYg
-QVBJIGNoYW5nZSB3aXRob3V0IHJlbHlpbmcgb24gaXQgZ2V0dGluZyBjYXVnaHQgaW4gdGhlCj4g
-bWVyZ2UuICBJZiB3ZSdyZSBoYXBweSB0byBkbyBpdCBhdCBtZXJnZSB0aW1lLCBJIHdvbid0IHdv
-cnJ5IGFib3V0IGl0LgoKRGF2ZSBBaXJsaWUgaXMgc3RpbGwgb24gdmFjYXRpb24sIHNvIEkgZXhw
-ZWN0IGRybSBmaXhlcyBwdWxsIHJlcXVlc3QgdG8KZ2V0IGEgYml0IGRlbGF5ZWQuIEkgdGhpbmsg
-YWRkaW5nIGEgd2FybmluZyB3aGVuIHNlbmRpbmcgZWFjaCByZXNwZWN0aXZlCnB1bGwgdG8gTGlu
-dXMgYWJvdXQgdGhpcyBpcyB0aGUgYmVzdCBhcHByb2FjaCwgdG8gYXZvaWQgc3RhbGxpbmcgbWRl
-dgpmaXhlcy4KLURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50
-ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1n
-ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Hi Ted,
+
+On Tue, 3 Jan 2017 23:44:24 -0500 Theodore Ts'o <tytso@mit.edu> wrote:
+>
+> Could you please add:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git  master
+> 
+> To the linux-next tree?  I was previously feeding fscrypt changes by
+> merging them into the ext4.git dev branch, but it will make life
+> simpler if we have a separate git tree for it.
+> 
+> Linus has already accepted a pull request from the for-stable branch
+> of fscrypt.git.  I plan to send a separate pull request for the master
+> branch of fscrypt.git during the next merge window.
+
+Added from tomorrow.  Should I add the for-stable branch as well (as a
+bug fixes tree)?
+
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
