@@ -1,41 +1,60 @@
-From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Subject: Re: linux-next: build failure after merge of the swiotlb tree
-Date: Tue, 3 Jan 2017 19:11:38 -0500
-Message-ID: <20170104001138.GA22030@char.us.oracle.com>
-References: <20170104105749.6f305c35@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rdma-leon tree
+Date: Wed, 4 Jan 2017 11:27:18 +1100
+Message-ID: <20170104112718.0f73458e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170104105749.6f305c35@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>, Kamal Heib <kamalh@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 04, 2017 at 10:57:49AM +1100, Stephen Rothwell wrote:
-> Hi Konrad,
-> 
-> After merging the swiotlb tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> net/bridge/br_input.o: In function `.swiotlb_max_segment':
-> (.text+0x780): multiple definition of `.swiotlb_max_segment'
-> net/bridge/br.o:br.c:(.text+0x3c0): first defined here
-> 
-> and many, many more :-(
-> Caused by commit
-> 
->   f196f1294fd2 ("swiotlb: Export swiotlb_max_segment to users")
-> 
-> Forgotten "static nline" in include/linux/swiotlb.h ...
+Hi Leon,
 
-Duh!
+After merging the rdma-leon tree, today's linux-next build (x86_64
+allmodconfig build) failed like this:
 
-	Fixed it up and pushed the fix in. Thanks!
-> 
-> I have used the swiotlb tree from next-20170103 for today.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+In file included from include/linux/swab.h:4:0,
+                 from include/uapi/linux/byteorder/little_endian.h:12,
+                 from include/linux/byteorder/little_endian.h:4,
+                 from arch/x86/include/uapi/asm/byteorder.h:4,
+                 from include/asm-generic/bitops/le.h:5,
+                 from arch/x86/include/asm/bitops.h:517,
+                 from include/linux/bitops.h:36,
+                 from include/linux/kernel.h:10,
+                 from include/linux/list.h:8,
+                 from include/linux/module.h:9,
+                 from drivers/infiniband/hw/mlx5/qp.c:33:
+drivers/infiniband/hw/mlx5/qp.c: In function 'mlx5_ib_modify_wq':
+drivers/infiniband/hw/mlx5/qp.c:4910:48: error: 'struct mlx5_ib_port' has no member named 'q_cnt_id'
+    MLX5_SET(rqc, rqc, counter_set_id, dev->port->q_cnt_id);
+                                                ^
+include/uapi/linux/swab.h:113:54: note: in definition of macro '__swab32'
+ #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+                                                      ^
+include/linux/byteorder/generic.h:93:21: note: in expansion of macro '__cpu_to_be32'
+ #define cpu_to_be32 __cpu_to_be32  
+                     ^
+drivers/infiniband/hw/mlx5/qp.c:4910:4: note: in expansion of macro 'MLX5_SET'
+    MLX5_SET(rqc, rqc, counter_set_id, dev->port->q_cnt_id);
+    ^
+
+Caused by commit
+
+  cbd0624cc927 ("IB/mlx5: Expose Q counters groups only when they are supported by FW")
+
+interacting with commit
+
+  fbcb2b5c3749 ("B/mlx5: Add port counter support for Receive WQs")
+
+This needed to be fixed up in the merge commit
+
+  3064f9066da1 ("Merge branch 'topic/q_counters' into rdma-next")
+
+I have dropped the rdma-leon tree again for today.
+
+-- 
+Cheers,
+Stephen Rothwell
