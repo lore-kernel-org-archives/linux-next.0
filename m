@@ -1,32 +1,150 @@
-From: Theodore Ts'o <tytso@mit.edu>
-Subject: Please add fscrypt.git to linux-next
-Date: Tue, 3 Jan 2017 23:44:24 -0500
-Message-ID: <20170104044424.jcztr7swmyjc2cwn@thunk.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170104 build: 4 failures 2 warnings (next-20170104)
+Date: Wed, 04 Jan 2017 06:26:50 +0000
+Message-ID: <E1cOf2A-0007EM-IJ@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from imap.thunk.org ([74.207.234.97]:36858 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752439AbdADFuT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 4 Jan 2017 00:50:19 -0500
-Content-Disposition: inline
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60262 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932633AbdADG1G (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 4 Jan 2017 01:27:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Could you please add:
+Tree/Branch: next-20170104
+Git describe: next-20170104
+Commit: d7ebc8e412 Add linux-next specific files for 20170104
 
-git://git.kernel.org/pub/scm/linux/kernel/git/tytso/fscrypt.git  master
+Build Time: 84 min 54 sec
 
-To the linux-next tree?  I was previously feeding fscrypt changes by
-merging them into the ext4.git dev branch, but it will make life
-simpler if we have a separate git tree for it.
+Passed:    6 / 10   ( 60.00 %)
+Failed:    4 / 10   ( 40.00 %)
 
-Linus has already accepted a pull request from the for-stable branch
-of fscrypt.git.  I plan to send a separate pull request for the master
-branch of fscrypt.git during the next merge window.
+Errors: 2
+Warnings: 2
+Section Mismatches: 0
 
-Thanks!!
+Failed defconfigs:
+	arm64-allnoconfig
+	arm64-allmodconfig
+	arm-allmodconfig
+	arm64-defconfig
 
-						- Ted
+Errors:
+
+	arm64-allnoconfig
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+
+	arm64-allmodconfig
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+
+	arm-allmodconfig
+../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+	arm64-defconfig
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	 24 ../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	  1 ../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 2
+	  2 ../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : FAIL, 5 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 12 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+
+Warnings:
+	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings:
+	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : FAIL, 7 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
