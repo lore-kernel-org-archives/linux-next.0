@@ -1,41 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: failure fetching the sunxi tree
-Date: Fri, 6 Jan 2017 09:50:40 +1100
-Message-ID: <20170106095033.0fb9661c@canb.auug.org.au>
-References: <20161221092413.3b1b1f75@canb.auug.org.au>
-        <20170104093124.24147e05@canb.auug.org.au>
-        <20170105151523.vec6dnldfbkce2mk@lukather>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: linux-next: build warning after merge of the battery tree
+Date: Fri, 6 Jan 2017 00:29:03 +0100
+Message-ID: <20170105232902.gyxlc2uj3yjw4g54@earth>
+References: <20170105125342.3dcce8ab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170105151523.vec6dnldfbkce2mk@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2imwef57ro54myhb"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:52038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752106AbdAEX3L (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 5 Jan 2017 18:29:11 -0500
+Content-Disposition: inline
+In-Reply-To: <20170105125342.3dcce8ab@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Quentin Schulz <quentin.schulz@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi Maxime,
 
-On Thu, 5 Jan 2017 16:15:23 +0100 Maxime Ripard <maxime.ripard@free-electrons.com> wrote:
->
-> Sorry, I went in holidays and removed that branch to avoid any
-> conflicts during the merge window... I didn't know it was an issue to
+--2imwef57ro54myhb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-To do that in the future, just set your branch to point somewhere in
-Linus' tree (or whatever upstream you use).
+Hi Quentin,
 
-> you and assumed that you would just ignore it, sorry for that, it
-> won't happen again.
+On Thu, Jan 05, 2017 at 12:53:42PM +1100, Stephen Rothwell wrote:
+> After merging the battery tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>=20
+> drivers/power/supply/axp20x_usb_power.c: In function 'axp20x_usb_power_pr=
+obe':
+> drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointe=
+r to integer of different size [-Wpointer-to-int-cast]
+>   power->axp20x_id =3D (int)of_device_get_match_data(&pdev->dev);
 
-I do fetch the branches every morning.  Its not a big problem as if I
-get an error, I just use whatever I had previously fetched.
+Can you send a follow-up patch fixing this false-positive warning?
 
-> Anyway, I just pushed a new one, so everything should be back to
-> normal.
+-- Sebastian
 
-Thanks.
+--2imwef57ro54myhb
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-Cheers,
-Stephen Rothwell
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlhu1rsACgkQ2O7X88g7
++poV/g/+IYoAvsXzIx5fFS98vb9fWgb02FWWuNrP5g9LNdK0LonjSnRYtthAVXYC
++XH7YZLvn35jkU21ILqK5kagRoLWb89T5fVB6JJqy2plkjl4qP/BUHcV8Fm+kGVT
+uaRoOcGv9Ca6QSyzGEheU8HlE0Ty6vavbiP+mm3s8O9mq87+3FiSHgB4FhbqGcai
+Ofj3EtjQvKWImpSRAgeWTZsBAf557oNZHNMg9HCO2AVSERfNmXqG0V2/37P5UKvh
+0CTkXfdYSJ/tLGVErU7s0Seg2jGkvBtPms1Iz/D4koqkXajnWoZk3A6wnZ5UhsSm
+Qi4iABAJsvdM4jsZsyMvwM+RPSVE8/B7fPE9f6n0DZDGViyF0Qet98/S/Eo1+wVf
+5TCQ/a/IIafi4rdSlyI1i6SfzCQSrFV+sxfAC7IugBd5dP3VPW2OjSPimWn9c+Ro
+I6XE7d7s7cQt19Q1EReTkNl+CGa87ujKmH6+3yfRAh/NnDFoiA2zoz5thtY1EqzT
+8SB4iCHlrhU7Dnjy+/SC0g/BcDLjTDMJ+eiHu6Y0PxeXfnJb2g3DHDxTdqx/jEMp
+oPsnNFcyw/xQ1wbDFPoPO/KnG9MXjMWnxh6COe9Vs71RvX1ouWYYFICLSR/7p4yP
+mOxz/kpmETEZ7iEny9BZs/brB07c5M9m1M81EVpEy48WAMsKp2s=
+=LngH
+-----END PGP SIGNATURE-----
+
+--2imwef57ro54myhb--
