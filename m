@@ -1,31 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the
- drm-misc tree
-Date: Thu, 5 Jan 2017 21:46:37 +1100
-Message-ID: <20170105214637.52c76fde@canb.auug.org.au>
-References: <20170105115329.117649e0@canb.auug.org.au>
- <874m1dhkj6.fsf@intel.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Please add fbdev-for-next to linux-next
+Date: Thu, 05 Jan 2017 12:45:32 +0100
+Message-ID: <3374870.z5x5pT8vjP@amdc3058>
+References: <CGME20170105114535epcas5p38b89f23a8fbfdc198f703eb226153961@epcas5p3.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <874m1dhkj6.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:54302 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1762101AbdAELpi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2017 06:45:38 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgSmFuaSwKCk9uIFRodSwgMDUgSmFuIDIwMTcgMTI6MjQ6MTMgKzAyMDAgSmFuaSBOaWt1bGEg
-PGphbmkubmlrdWxhQGxpbnV4LmludGVsLmNvbT4gd3JvdGU6Cj4KPiBEYW5pZWwgcmV2ZXJ0ZWQg
-aXQgaW4gZHJtLW1pc2MuCgpPSywgdGhhbmtzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2Vs
-bApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1n
-ZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9s
-aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+
+Hi,
+
+Could you please add:
+
+git://github.com/bzolnier/linux.git fbdev-for-next
+
+To the linux-next tree?
+
+Linus has recently accepted u pull request from the fbdev-v4.10-rc2
+tag that added fbdev subsystem back into Maintained mode (with me as
+Maintainer).
+
+Thanks!
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
