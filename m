@@ -1,34 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad rebase of the rdma-leon tree
-Date: Thu, 5 Jan 2017 09:34:53 +1100
-Message-ID: <20170105093453.71ff8281@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Date: Thu, 5 Jan 2017 11:53:29 +1100
+Message-ID: <20170105115329.117649e0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Leon Romanovsky <leon@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Philippe Reynes <tremyfr@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Leon,
-
-In rebasing the rdma-leon tree, you have cherry-picked several patches
-that were in the net-next tree:
-
-Commit 8e4881aa == 90af6fea  net: mdio: add mdio45_ethtool_ksettings_get
-Commit e938ed15 == 9aee5260  net: sfc: falcon: use new api ethtool_{get|set}_link_ksettings
-Commit 41a65f70 == fae73a50  net: dec: de2104x: use new api ethtool_{get|set}_link_ksettings
-Commit 6711a87a == acbf8e3c  net: dec: uli526x: use new api ethtool_{get|set}_link_ksettings
-Commit 453e5f3d == edffccbc  net: dec: winbond-840: use new api ethtool_{get|set}_link_ksettings
-Commit 90222550 == 8c2863a7  net: dlink: dl2k: use new api ethtool_{get|set}_link_ksettings
-Commit 88c513d4 == c9abb356  net: dlink: sundance: use new api ethtool_{get|set}_link_ksettings
-Commit fd90095d == ba141e8e  net: emulex: benet: use new api ethtool_{get|set}_link_ksettings
-Commit 9da12b64 == 4c8dff9c  net: faraday: ftmac100: use new api ethtool_{get|set}_link_ksettings
-Commit 0a0a8d6b == 98192246  net: fealnx: use new api ethtool_{get|set}_link_ksettings
-
-(The first SHA1s above are in the net-next tree.)
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
+ZXh0IGJ1aWxkIChhcm0KbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKZHJp
+dmVycy91c2IvS2NvbmZpZzozOTplcnJvcjogcmVjdXJzaXZlIGRlcGVuZGVuY3kgZGV0ZWN0ZWQh
+CmRyaXZlcnMvdXNiL0tjb25maWc6Mzk6IHN5bWJvbCBVU0IgaXMgc2VsZWN0ZWQgYnkgTU9VU0Vf
+QVBQTEVUT1VDSApkcml2ZXJzL2lucHV0L21vdXNlL0tjb25maWc6MTg3OiAgICAgICAgc3ltYm9s
+IE1PVVNFX0FQUExFVE9VQ0ggZGVwZW5kcyBvbiBJTlBVVApkcml2ZXJzL2lucHV0L0tjb25maWc6
+ODogICAgICAgIHN5bWJvbCBJTlBVVCBpcyBzZWxlY3RlZCBieSBWVApkcml2ZXJzL3R0eS9LY29u
+ZmlnOjEyOiBzeW1ib2wgVlQgaXMgc2VsZWN0ZWQgYnkgRkJfU1RJCmRyaXZlcnMvdmlkZW8vZmJk
+ZXYvS2NvbmZpZzo2Nzg6ICAgICAgICBzeW1ib2wgRkJfU1RJIGRlcGVuZHMgb24gRkIKZHJpdmVy
+cy92aWRlby9mYmRldi9LY29uZmlnOjU6ICBzeW1ib2wgRkIgaXMgc2VsZWN0ZWQgYnkgRFJNX0tN
+U19GQl9IRUxQRVIKZHJpdmVycy9ncHUvZHJtL0tjb25maWc6NzI6ICAgICBzeW1ib2wgRFJNX0tN
+U19GQl9IRUxQRVIgZGVwZW5kcyBvbiBEUk1fS01TX0hFTFBFUgpkcml2ZXJzL2dwdS9kcm0vS2Nv
+bmZpZzo2NjogICAgIHN5bWJvbCBEUk1fS01TX0hFTFBFUiBpcyBzZWxlY3RlZCBieSBEUk1fTk9V
+VkVBVQpkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9LY29uZmlnOjE6ICAgICAgc3ltYm9sIERSTV9O
+T1VWRUFVIGRlcGVuZHMgb24gTEVEU19DTEFTUwpkcml2ZXJzL2xlZHMvS2NvbmZpZzoxNjogICAg
+ICAgIHN5bWJvbCBMRURTX0NMQVNTIGlzIHNlbGVjdGVkIGJ5IE9NQVBfREVCVUdfTEVEUwphcmNo
+L2FybS9wbGF0LW9tYXAvS2NvbmZpZzoxOTogIHN5bWJvbCBPTUFQX0RFQlVHX0xFRFMgZGVwZW5k
+cyBvbiBORVdfTEVEUwpkcml2ZXJzL2xlZHMvS2NvbmZpZzo4OiBzeW1ib2wgTkVXX0xFRFMgaXMg
+c2VsZWN0ZWQgYnkgQVRIOUtfSFRDCmRyaXZlcnMvbmV0L3dpcmVsZXNzL2F0aC9hdGg5ay9LY29u
+ZmlnOjE1ODogICAgIHN5bWJvbCBBVEg5S19IVEMgZGVwZW5kcyBvbiBVU0IKCkNhdXNlZCBieSBj
+b21taXQKCiAgYTVhZDBmZDg1MjRlICgiZHJtOiBub3V2ZWF1OiBmaXggYnVpbGQgd2hlbiBMRURT
+X0NMQVNTPW0iKQoKSSBoYXZlIHJldmVydGVkIHRoYXQgY29tbWl0IGZvciB0b2RheSAoanVzdCBi
+ZWNhdXNlIEkgaGFkIHRvIHRvIG1ha2UKc3VyZSB0aGF0IHdhcyB0aGUgcHJvYmxlbSkuCgotLSAK
+Q2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
