@@ -1,155 +1,80 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170105 build: 4 failures 3 warnings (next-20170105)
-Date: Thu, 05 Jan 2017 12:07:08 +0000
-Message-ID: <E1cP6p1-0007i0-IF@optimist>
+From: Maxime Ripard <maxime.ripard@free-electrons.com>
+Subject: Re: linux-next: failure fetching the sunxi tree
+Date: Thu, 5 Jan 2017 16:15:23 +0100
+Message-ID: <20170105151523.vec6dnldfbkce2mk@lukather>
+References: <20161221092413.3b1b1f75@canb.auug.org.au>
+ <20170104093124.24147e05@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="flbra6kdw63gbzbc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46596 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbdAEMHg (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2017 07:07:36 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:32783 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1032726AbdAEPQC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 5 Jan 2017 10:16:02 -0500
+Content-Disposition: inline
+In-Reply-To: <20170104093124.24147e05@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20170105
-Git describe: next-20170105
-Commit: ed93c117c1 Add linux-next specific files for 20170105
-
-Build Time: 241 min 43 sec
-
-Passed:    6 / 10   ( 60.00 %)
-Failed:    4 / 10   ( 40.00 %)
-
-Errors: 2
-Warnings: 3
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allnoconfig
-	arm64-allmodconfig
-	arm-allmodconfig
-	arm64-defconfig
-
-Errors:
-
-	arm64-allnoconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
-	arm64-allmodconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
-	arm-allmodconfig
-../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-	arm64-defconfig
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	 24 ../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	  1 ../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings Summary: 3
-	  2 ../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
 
+--flbra6kdw63gbzbc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Hi Stephen,
 
+On Wed, Jan 04, 2017 at 09:31:24AM +1100, Stephen Rothwell wrote:
+> Hi Maxime,
+>=20
+> On Wed, 21 Dec 2016 09:24:13 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Trying to fetch the sunxi tree
+> > (git://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git#sunxi/=
+for-next),
+> > produces this error:
+> >=20
+> > fatal: Couldn't find remote ref refs/heads/sunxi/for-next
+>=20
+> I am still getting this error.
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : FAIL, 5 errors, 0 warnings, 0 section mismatches
+Sorry, I went in holidays and removed that branch to avoid any
+conflicts during the merge window... I didn't know it was an issue to
+you and assumed that you would just ignore it, sorry for that, it
+won't happen again.
 
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+Anyway, I just pushed a new one, so everything should be back to
+normal.
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 12 errors, 3 warnings, 0 section mismatches
+Maxime
 
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
+--=20
+Maxime Ripard, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-Warnings:
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+--flbra6kdw63gbzbc
+Content-Type: application/pgp-signature; name="signature.asc"
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
 
-Errors:
-	../samples/vfio-mdev/mtty.c:1418:20: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+iQIcBAEBCAAGBQJYbmMHAAoJEBx+YmzsjxAgBfMP/3GxCXYet6fzPTyIxGbECnWH
+P/lYZNuPTkGJ10mEepZz7v1F22/wEjjZc84i03KoLSTkPK8Sx1H3TdxCOFO+nmcN
+7v0gbvTGIg9FFUSApZC2qL8UXDLRd+m/1xD/qRX8c4n1oqTyifVFxDGB7MzxMZP/
+u6Yav9wzwiSsURSgxPpv4oqRAT1tDx8bzzMiLh8a0p/V9usw4usD3i4LeU2DsWQy
+IrE6yNYPFvWERZHUVBoeiqDmMwYSCN25LEuEP1OoQp/jcfFbZ76D0VNFAbX6sb83
+Ll4Z02rGnH6bfUa8Jjps9QZDFJqLj1Pwik0lH2jsEjIo0VtyH5ZKztghCJuG5pTT
+s/Mz1rJF3ksQNh3USWHjehTEXZpL+014XqyldAB8sN2/F3xo+9UCwA8trsC3ftRb
+nOVnS8VSqzm1IDuLBcngKUEbWdEGr/Q3LMTNMHWX6mBfWnjQKq2qpPbhw9Q1LASo
+vH8RYatpTftQmEeSleHEaw0gMBxwXHU0dsios6/4FRB2yjJVT5c3oslWyjjnFvRz
+S9LYhZPtoHKLo+4anA67wEit+/hEkpCQaAIivf9ZxQ6UaW2FV62EzQUoeEpqrFyF
+8eEhVi4eRnyicNZ/tVYR5N/lu1L6E3Y8WG1KbMTcjh7SDJsOLmCugdzR+jbupAPp
+HLIb9HA7jEadIbJh0xNZ
+=tZdm
+-----END PGP SIGNATURE-----
 
-Warnings:
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 7 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
-	../arch/arm64/include/asm/setup.h:14:29: error: redefinition of 'kaslr_offset'
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+--flbra6kdw63gbzbc--
