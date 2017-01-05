@@ -1,48 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Date: Thu, 5 Jan 2017 11:53:29 +1100
-Message-ID: <20170105115329.117649e0@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the battery tree
+Date: Thu, 5 Jan 2017 12:53:42 +1100
+Message-ID: <20170105125342.3dcce8ab@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-next@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51545 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1759919AbdAEByC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 4 Jan 2017 20:54:02 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Sebastian Reichel <sre@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@free-electrons.com>
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
-ZXh0IGJ1aWxkIChhcm0KbXVsdGlfdjdfZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKZHJp
-dmVycy91c2IvS2NvbmZpZzozOTplcnJvcjogcmVjdXJzaXZlIGRlcGVuZGVuY3kgZGV0ZWN0ZWQh
-CmRyaXZlcnMvdXNiL0tjb25maWc6Mzk6IHN5bWJvbCBVU0IgaXMgc2VsZWN0ZWQgYnkgTU9VU0Vf
-QVBQTEVUT1VDSApkcml2ZXJzL2lucHV0L21vdXNlL0tjb25maWc6MTg3OiAgICAgICAgc3ltYm9s
-IE1PVVNFX0FQUExFVE9VQ0ggZGVwZW5kcyBvbiBJTlBVVApkcml2ZXJzL2lucHV0L0tjb25maWc6
-ODogICAgICAgIHN5bWJvbCBJTlBVVCBpcyBzZWxlY3RlZCBieSBWVApkcml2ZXJzL3R0eS9LY29u
-ZmlnOjEyOiBzeW1ib2wgVlQgaXMgc2VsZWN0ZWQgYnkgRkJfU1RJCmRyaXZlcnMvdmlkZW8vZmJk
-ZXYvS2NvbmZpZzo2Nzg6ICAgICAgICBzeW1ib2wgRkJfU1RJIGRlcGVuZHMgb24gRkIKZHJpdmVy
-cy92aWRlby9mYmRldi9LY29uZmlnOjU6ICBzeW1ib2wgRkIgaXMgc2VsZWN0ZWQgYnkgRFJNX0tN
-U19GQl9IRUxQRVIKZHJpdmVycy9ncHUvZHJtL0tjb25maWc6NzI6ICAgICBzeW1ib2wgRFJNX0tN
-U19GQl9IRUxQRVIgZGVwZW5kcyBvbiBEUk1fS01TX0hFTFBFUgpkcml2ZXJzL2dwdS9kcm0vS2Nv
-bmZpZzo2NjogICAgIHN5bWJvbCBEUk1fS01TX0hFTFBFUiBpcyBzZWxlY3RlZCBieSBEUk1fTk9V
-VkVBVQpkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9LY29uZmlnOjE6ICAgICAgc3ltYm9sIERSTV9O
-T1VWRUFVIGRlcGVuZHMgb24gTEVEU19DTEFTUwpkcml2ZXJzL2xlZHMvS2NvbmZpZzoxNjogICAg
-ICAgIHN5bWJvbCBMRURTX0NMQVNTIGlzIHNlbGVjdGVkIGJ5IE9NQVBfREVCVUdfTEVEUwphcmNo
-L2FybS9wbGF0LW9tYXAvS2NvbmZpZzoxOTogIHN5bWJvbCBPTUFQX0RFQlVHX0xFRFMgZGVwZW5k
-cyBvbiBORVdfTEVEUwpkcml2ZXJzL2xlZHMvS2NvbmZpZzo4OiBzeW1ib2wgTkVXX0xFRFMgaXMg
-c2VsZWN0ZWQgYnkgQVRIOUtfSFRDCmRyaXZlcnMvbmV0L3dpcmVsZXNzL2F0aC9hdGg5ay9LY29u
-ZmlnOjE1ODogICAgIHN5bWJvbCBBVEg5S19IVEMgZGVwZW5kcyBvbiBVU0IKCkNhdXNlZCBieSBj
-b21taXQKCiAgYTVhZDBmZDg1MjRlICgiZHJtOiBub3V2ZWF1OiBmaXggYnVpbGQgd2hlbiBMRURT
-X0NMQVNTPW0iKQoKSSBoYXZlIHJldmVydGVkIHRoYXQgY29tbWl0IGZvciB0b2RheSAoanVzdCBi
-ZWNhdXNlIEkgaGFkIHRvIHRvIG1ha2UKc3VyZSB0aGF0IHdhcyB0aGUgcHJvYmxlbSkuCgotLSAK
-Q2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Hi all,
+
+After merging the battery tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/power/supply/axp20x_usb_power.c: In function 'axp20x_usb_power_probe':
+drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  power->axp20x_id = (int)of_device_get_match_data(&pdev->dev);
+                     ^
+
+Introduced by commit
+
+  0dcc70ca8644 ("power: supply: axp20x_usb_power: use of_device_id data field instead of device_is_compatible")
+
+-- 
+Cheers,
+Stephen Rothwell
