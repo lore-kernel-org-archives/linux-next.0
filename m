@@ -1,30 +1,57 @@
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Subject: Re: linux-next: error fetching the sh tree
-Date: Sun, 8 Jan 2017 23:42:37 +0100
-Message-ID: <e1673354-cfc2-771c-a644-666ded303a5b@physik.fu-berlin.de>
-References: <20170109092521.1046df66@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with Linus' tree
+Date: Mon, 9 Jan 2017 13:51:01 +1100
+Message-ID: <20170109135101.3dfce262@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170109092521.1046df66@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Rich Felker <dalias@libc.org>, Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On 01/08/2017 11:25 PM, Stephen Rothwell wrote:
-> I am hoping someone can look into this, or contact Rich via a different
-> email address.
+Hi Andrew,
 
-You can try reaching him over Twitter [1].
+Today's linux-next merge of the akpm tree got a conflict in:
 
-Adrian
+  include/linux/radix-tree.h
 
-> [1] https://twitter.com/RichFelker/
+between commit:
+
+  ea07b862ac8e ("mm: workingset: fix use-after-free in shadow node shrinker")
+
+from Linus' tree and patch:
+
+   "Reimplement IDR and IDA using the radix tree"
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/radix-tree.h
+index 52bda854593b,50aaac14a4f1..000000000000
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@@ -306,9 -309,9 +309,11 @@@ void radix_tree_iter_replace(struct rad
+  void radix_tree_replace_slot(struct radix_tree_root *root,
+  			     void **slot, void *item);
+  void __radix_tree_delete_node(struct radix_tree_root *root,
+ -			      struct radix_tree_node *node);
+ +			      struct radix_tree_node *node,
+ +			      radix_tree_update_node_t update_node,
+ +			      void *private);
++ void radix_tree_iter_delete(struct radix_tree_root *,
++ 				const struct radix_tree_iter *iter);
+  void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
+  void *radix_tree_delete(struct radix_tree_root *, unsigned long);
+  void radix_tree_clear_tags(struct radix_tree_root *root,
