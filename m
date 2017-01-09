@@ -1,28 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error fetching the sh tree
-Date: Tue, 10 Jan 2017 07:20:52 +1100
-Message-ID: <20170110072052.4a48d0e8@canb.auug.org.au>
-References: <20170109092521.1046df66@canb.auug.org.au>
-        <20170109043305.GA1517@brightrain.aerifal.cx>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Tue, 10 Jan 2017 10:59:27 +1100
+Message-ID: <20170110105927.29edcec0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <20170109043305.GA1517@brightrain.aerifal.cx>
-Sender: linux-sh-owner@vger.kernel.org
-To: Rich Felker <dalias@libc.org>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Utz Bacher <utz.bacher@de.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Rich,
+Hi all,
 
-On Sun, 8 Jan 2017 23:33:05 -0500 Rich Felker <dalias@libc.org> wrote:
->
-> It should be back soon (pending dns propagation) if not already. Fire
-> took out some of my network infrastructure; for libc.org, just the dns
-> was affected.
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Ouch!  Hope everything else is OK.
+net/smc/af_smc.c: In function 'smc_splice_read':
+net/smc/af_smc.c:1258:39: error: passing argument 1 of 'smc->clcsock->ops->splice_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
+   rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
+                                       ^
+net/smc/af_smc.c:1258:39: note: expected 'struct file *' but argument is of type 'struct socket *'
+net/smc/af_smc.c: At top level:
+net/smc/af_smc.c:1288:17: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .splice_read = smc_splice_read,   
+                 ^
+net/smc/af_smc.c:1288:17: note: (near initialization for 'smc_sock_ops.splice_read')
+
+Caused by commit
+
+  ac7138746e14 ("smc: establish new socket family")
+
+interacting with commit
+
+  15a8f657c71d ("switch socket ->splice_read() to struct file *")
+
+from the vfs tree.
+
+I applied the following merge fix patch which could well be incorrect ...
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 10 Jan 2017 10:52:38 +1100
+Subject: [PATCH] smc: merge fix for "switch socket ->splice_read() to struct file *"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/smc/af_smc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 5d4208ad029e..4875e65f0c4a 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -1242,10 +1242,11 @@ static ssize_t smc_sendpage(struct socket *sock, struct page *page,
+ 	return rc;
+ }
+ 
+-static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
++static ssize_t smc_splice_read(struct file *file, loff_t *ppos,
+ 			       struct pipe_inode_info *pipe, size_t len,
+ 				    unsigned int flags)
+ {
++	struct socket *sock = file->private_data;
+ 	struct sock *sk = sock->sk;
+ 	struct smc_sock *smc;
+ 	int rc = -ENOTCONN;
+@@ -1255,7 +1256,7 @@ static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
+ 	if ((sk->sk_state != SMC_ACTIVE) && (sk->sk_state != SMC_CLOSED))
+ 		goto out;
+ 	if (smc->use_fallback) {
+-		rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
++		rc = smc->clcsock->ops->splice_read(file, ppos,
+ 						    pipe, len, flags);
+ 	} else {
+ 		rc = -EOPNOTSUPP;
+-- 
+2.10.2
 
 -- 
 Cheers,
