@@ -1,29 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with Linus' tree
-Date: Mon, 9 Jan 2017 13:51:01 +1100
-Message-ID: <20170109135101.3dfce262@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the rockchip tree
+Date: Mon, 9 Jan 2017 13:55:21 +1100
+Message-ID: <20170109135521.4bd995f5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48505 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S969188AbdAICzX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 8 Jan 2017 21:55:23 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm tree got a conflict in:
 
-  include/linux/radix-tree.h
+  Documentation/devicetree/bindings/soc/rockchip/grf.txt
 
 between commit:
 
-  ea07b862ac8e ("mm: workingset: fix use-after-free in shadow node shrinker")
+  2c257ce6ab6f ("dt-bindings: add used but undocumented rockchip grf compatible values")
 
-from Linus' tree and patch:
+from the rockchip tree and patch:
 
-   "Reimplement IDR and IDA using the radix tree"
+   "scripts/spelling.txt: add "followings" pattern and fix typo instances"
 
 from the akpm tree.
 
@@ -38,20 +42,29 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/radix-tree.h
-index 52bda854593b,50aaac14a4f1..000000000000
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@@ -306,9 -309,9 +309,11 @@@ void radix_tree_iter_replace(struct rad
-  void radix_tree_replace_slot(struct radix_tree_root *root,
-  			     void **slot, void *item);
-  void __radix_tree_delete_node(struct radix_tree_root *root,
- -			      struct radix_tree_node *node);
- +			      struct radix_tree_node *node,
- +			      radix_tree_update_node_t update_node,
- +			      void *private);
-+ void radix_tree_iter_delete(struct radix_tree_root *,
-+ 				const struct radix_tree_iter *iter);
-  void *radix_tree_delete_item(struct radix_tree_root *, unsigned long, void *);
-  void *radix_tree_delete(struct radix_tree_root *, unsigned long);
-  void radix_tree_clear_tags(struct radix_tree_root *root,
+diff --cc Documentation/devicetree/bindings/soc/rockchip/grf.txt
+index c6e62cb30712,76d6ccf677f5..000000000000
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+@@@ -10,19 -9,16 +10,19 @@@ From RK3368 SoCs, the GRF is divided in
+  
+  Required Properties:
+  
+- - compatible: GRF should be one of the followings
++ - compatible: GRF should be one of the following:
+ +   - "rockchip,rk3036-grf", "syscon": for rk3036
+     - "rockchip,rk3066-grf", "syscon": for rk3066
+     - "rockchip,rk3188-grf", "syscon": for rk3188
+     - "rockchip,rk3228-grf", "syscon": for rk3228
+     - "rockchip,rk3288-grf", "syscon": for rk3288
+     - "rockchip,rk3368-grf", "syscon": for rk3368
+     - "rockchip,rk3399-grf", "syscon": for rk3399
+- - compatible: PMUGRF should be one of the followings
++ - compatible: PMUGRF should be one of the following:
+     - "rockchip,rk3368-pmugrf", "syscon": for rk3368
+     - "rockchip,rk3399-pmugrf", "syscon": for rk3399
+ +- compatible: SGRF should be one of the following
+ +   - "rockchip,rk3288-sgrf", "syscon": for rk3288
+  - reg: physical base address of the controller and length of memory mapped
+    region.
+  
