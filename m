@@ -1,70 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the rockchip tree
-Date: Mon, 9 Jan 2017 13:55:21 +1100
-Message-ID: <20170109135521.4bd995f5@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 9 Jan 2017 15:09:20 +1100
+Message-ID: <20170109150920.444b4560@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48505 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43669 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S969188AbdAICzX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 8 Jan 2017 21:55:23 -0500
+        id S1031666AbdAIEJX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 8 Jan 2017 23:09:23 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@linux.intel.com>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in:
+After merging the akpm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  Documentation/devicetree/bindings/soc/rockchip/grf.txt
+lib/radix-tree.c: In function 'radix_tree_iter_delete':
+lib/radix-tree.c:1952:3: error: too few arguments to function '__radix_tree_delete_node'
+   __radix_tree_delete_node(root, node);
+   ^
+lib/radix-tree.c:1936:6: note: declared here
+ void __radix_tree_delete_node(struct radix_tree_root *root,
+      ^
 
-between commit:
+Caused by patch
 
-  2c257ce6ab6f ("dt-bindings: add used but undocumented rockchip grf compatible values")
+  "Reimplement IDR and IDA using the radix tree"
 
-from the rockchip tree and patch:
+interacting with commit
 
-   "scripts/spelling.txt: add "followings" pattern and fix typo instances"
+  ea07b862ac8e ("mm: workingset: fix use-after-free in shadow node shrinker")
 
-from the akpm tree.
+from Linus' tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I applied the following fixup patch (which may not be entirely complete,
+of course).
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Jan 2017 15:05:08 +1100
+Subject: [PATCH] mm: merge fixup for "fix use-after-free in shadow node shrinker"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ lib/radix-tree.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index e563b5f50ace..4a8d206d508a 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -1949,7 +1949,7 @@ void radix_tree_iter_delete(struct radix_tree_root *root,
+ 	if (node) {
+ 		node->slots[iter_offset(iter)] = NULL;
+ 		node->count--;
+-		__radix_tree_delete_node(root, node);
++		__radix_tree_delete_node(root, node, NULL, NULL);
+ 	} else {
+ 		root->rnode = NULL;
+ 	}
+-- 
+2.10.2
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc Documentation/devicetree/bindings/soc/rockchip/grf.txt
-index c6e62cb30712,76d6ccf677f5..000000000000
---- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
-+++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
-@@@ -10,19 -9,16 +10,19 @@@ From RK3368 SoCs, the GRF is divided in
-  
-  Required Properties:
-  
-- - compatible: GRF should be one of the followings
-+ - compatible: GRF should be one of the following:
- +   - "rockchip,rk3036-grf", "syscon": for rk3036
-     - "rockchip,rk3066-grf", "syscon": for rk3066
-     - "rockchip,rk3188-grf", "syscon": for rk3188
-     - "rockchip,rk3228-grf", "syscon": for rk3228
-     - "rockchip,rk3288-grf", "syscon": for rk3288
-     - "rockchip,rk3368-grf", "syscon": for rk3368
-     - "rockchip,rk3399-grf", "syscon": for rk3399
-- - compatible: PMUGRF should be one of the followings
-+ - compatible: PMUGRF should be one of the following:
-     - "rockchip,rk3368-pmugrf", "syscon": for rk3368
-     - "rockchip,rk3399-pmugrf", "syscon": for rk3399
- +- compatible: SGRF should be one of the following
- +   - "rockchip,rk3288-sgrf", "syscon": for rk3288
-  - reg: physical base address of the controller and length of memory mapped
-    region.
-  
