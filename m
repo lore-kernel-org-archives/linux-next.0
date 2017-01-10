@@ -1,84 +1,52 @@
-From: Ursula Braun <ubraun@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Tue, 10 Jan 2017 16:14:25 +0100
-Message-ID: <da3e6b7a-b0ea-4197-f698-ddee4fdcc940@linux.vnet.ibm.com>
-References: <20170110105927.29edcec0@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170110 build: 1 failures 4 warnings (next-20170110)
+Date: Tue, 10 Jan 2017 18:16:07 +0000
+Message-ID: <20170110181607.dp6giaxyeczykmv4@sirena.org.uk>
+References: <E1cQqkO-0005XB-2K@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170110105927.29edcec0@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Utz Bacher <utz.bacher@de.ibm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="63sanvmh3yu7xdkw"
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1cQqkO-0005XB-2K@optimist>
+Sender: netdev-owner@vger.kernel.org
+To: Michael Scherban <m-scherban@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, Sekhar Nori <nsekhar@ti.com>, "David S. Miller" <davem@davemloft.net>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-ACK - smc_splice_read() is just a place holder at the moment. Its implementation for AF_SMC will follow.
 
-Regards, Ursula Braun
+--63sanvmh3yu7xdkw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 01/10/2017 12:59 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> net/smc/af_smc.c: In function 'smc_splice_read':
-> net/smc/af_smc.c:1258:39: error: passing argument 1 of 'smc->clcsock->ops->splice_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
->    rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
->                                        ^
-> net/smc/af_smc.c:1258:39: note: expected 'struct file *' but argument is of type 'struct socket *'
-> net/smc/af_smc.c: At top level:
-> net/smc/af_smc.c:1288:17: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .splice_read = smc_splice_read,   
->                  ^
-> net/smc/af_smc.c:1288:17: note: (near initialization for 'smc_sock_ops.splice_read')
-> 
-> Caused by commit
-> 
->   ac7138746e14 ("smc: establish new socket family")
-> 
-> interacting with commit
-> 
->   15a8f657c71d ("switch socket ->splice_read() to struct file *")
-> 
-> from the vfs tree.
-> 
-> I applied the following merge fix patch which could well be incorrect ...
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 10 Jan 2017 10:52:38 +1100
-> Subject: [PATCH] smc: merge fix for "switch socket ->splice_read() to struct file *"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  net/smc/af_smc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index 5d4208ad029e..4875e65f0c4a 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -1242,10 +1242,11 @@ static ssize_t smc_sendpage(struct socket *sock, struct page *page,
->  	return rc;
->  }
-> 
-> -static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
-> +static ssize_t smc_splice_read(struct file *file, loff_t *ppos,
->  			       struct pipe_inode_info *pipe, size_t len,
->  				    unsigned int flags)
->  {
-> +	struct socket *sock = file->private_data;
->  	struct sock *sk = sock->sk;
->  	struct smc_sock *smc;
->  	int rc = -ENOTCONN;
-> @@ -1255,7 +1256,7 @@ static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
->  	if ((sk->sk_state != SMC_ACTIVE) && (sk->sk_state != SMC_CLOSED))
->  		goto out;
->  	if (smc->use_fallback) {
-> -		rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
-> +		rc = smc->clcsock->ops->splice_read(file, ppos,
->  						    pipe, len, flags);
->  	} else {
->  		rc = -EOPNOTSUPP;
-> 
+On Tue, Jan 10, 2017 at 07:21:32AM +0000, Build bot for Mark Brown wrote:
+
+Today's -next fails to build an arm allmodconfig due to:
+
+> 	arm-allmodconfig
+> ../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+caused by 6a8162e99ef344 (net: netcp: store network statistics in 64
+bits).  It's assigning the function
+
+  static struct rtnl_link_stats64 *
+  netcp_get_stats(struct net_device *ndev, struct rtnl_link_stats64 *stats)
+
+to ndo_get_stats64 which expects a function returning void.
+
+--63sanvmh3yu7xdkw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlh1JOYACgkQJNaLcl1U
+h9D51Qf+KwriZ5/QHLVpchJX7ozC75aiZOua8cRooPNuldRsfCbB/CCKfk2HcZ7J
+/BvsRfhtuLFZS1OUYuJT6G3KnkjQg9byHM0QZVRKqFsZNGCO+P0QDidtmp8sYmEU
+WxuZy2UJXk8PIa2SQzWPxQs8LS/ttOesndlrqY/vYenqwGcbCvn3FnZHzA129v/C
+n5WnLIW+YVITAKhi23uDhAreqHqNc4iaYtIqxHtVv9YM3VOs4aqjilbbMugSqjjT
+ZqWi7ACqq2uquhIQeHnB23FLQwK4UQNyDyZOuAbNlZ1E0OQiUDw4GwsLwlYvb89W
+4WaTEYzqg3xySGrKj8Pgc/BtGsbegw==
+=dWbS
+-----END PGP SIGNATURE-----
+
+--63sanvmh3yu7xdkw--
