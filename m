@@ -1,59 +1,43 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the y2038 tree with the net-next tree
-Date: Tue, 10 Jan 2017 11:06:22 +0100
-Message-ID: <CAK8P3a2U5=LGWkLY6jCdfsoAAshc7ggL15Uao_Y1rwdwVNf0oA@mail.gmail.com>
-References: <20170110135201.2a62a4d9@canb.auug.org.au>
+From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Subject: Re: linux-next: build warning after merge of the rtc tree
+Date: Tue, 10 Jan 2017 11:59:22 +0100
+Message-ID: <20170110105922.lsso4g7zjfzeryfa@piout.net>
+References: <20170110140100.4a5a0158@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170110135201.2a62a4d9@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.free-electrons.com ([62.4.15.54]:56012 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932624AbdAJK7f (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2017 05:59:35 -0500
+Content-Disposition: inline
+In-Reply-To: <20170110140100.4a5a0158@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Tina Ruchandani <ruchandani.tina@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Hmm, I thought I had removed that commit when you asked me about it
-last week. I've done it now, the conflict should be gone tomorrow.
+Hi,
 
-On Tue, Jan 10, 2017 at 3:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Arnd,
->
-> Today's linux-next merge of the y2038 tree got a conflict in:
->
->   fs/afs/main.c
->
-> between commit:
->
->   8e8d7f13b6d5 ("afs: Add some tracepoints")
->
-> from the net-next tree and commit:
->
->   549eb7b22e24 ("AFS: Correctly use 64-bit time for UUID")
->
-> from the y2038 tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc fs/afs/main.c
-> index f8188feb03ad,129ff432391c..000000000000
-> --- a/fs/afs/main.c
-> +++ b/fs/afs/main.c
-> @@@ -14,8 -14,7 +14,9 @@@
->   #include <linux/init.h>
->   #include <linux/completion.h>
->   #include <linux/sched.h>
->  +#include <linux/random.h>
->  +#define CREATE_TRACE_POINTS
-> + #include <linux/ktime.h>
->   #include "internal.h"
->
->   MODULE_DESCRIPTION("AFS Client File System");
+On 10/01/2017 at 14:01:00 +1100, Stephen Rothwell wrote :
+> Hi Alexandre,
+> 
+> After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/rtc/rtc-armada38x.c: In function 'read_rtc_register_wa':
+> drivers/rtc/rtc-armada38x.c:131:25: warning: 'index_max' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   return rtc->val_to_freq[index_max].value;
+>                          ^
+> 
+> Introduced by commit
+> 
+>   61cffa2438e3 ("rtc: armada38x: Follow the new recommendation for errata implementation")
+
+This is definitively a false positive, is it worth fixing it?
+
+
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
