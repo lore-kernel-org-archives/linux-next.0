@@ -1,54 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the y2038 tree with the net-next tree
-Date: Tue, 10 Jan 2017 13:52:01 +1100
-Message-ID: <20170110135201.2a62a4d9@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rtc tree
+Date: Tue, 10 Jan 2017 14:01:00 +1100
+Message-ID: <20170110140100.4a5a0158@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Tina Ruchandani <ruchandani.tina@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55617 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1764732AbdAJDBF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 9 Jan 2017 22:01:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Hi Arnd,
+Hi Alexandre,
 
-Today's linux-next merge of the y2038 tree got a conflict in:
+After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-  fs/afs/main.c
+drivers/rtc/rtc-armada38x.c: In function 'read_rtc_register_wa':
+drivers/rtc/rtc-armada38x.c:131:25: warning: 'index_max' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  return rtc->val_to_freq[index_max].value;
+                         ^
 
-between commit:
+Introduced by commit
 
-  8e8d7f13b6d5 ("afs: Add some tracepoints")
-
-from the net-next tree and commit:
-
-  549eb7b22e24 ("AFS: Correctly use 64-bit time for UUID")
-
-from the y2038 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  61cffa2438e3 ("rtc: armada38x: Follow the new recommendation for errata implementation")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/afs/main.c
-index f8188feb03ad,129ff432391c..000000000000
---- a/fs/afs/main.c
-+++ b/fs/afs/main.c
-@@@ -14,8 -14,7 +14,9 @@@
-  #include <linux/init.h>
-  #include <linux/completion.h>
-  #include <linux/sched.h>
- +#include <linux/random.h>
- +#define CREATE_TRACE_POINTS
-+ #include <linux/ktime.h>
-  #include "internal.h"
-  
-  MODULE_DESCRIPTION("AFS Client File System");
