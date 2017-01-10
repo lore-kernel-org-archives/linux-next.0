@@ -1,87 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170110 build: 1 failures 4 warnings (next-20170110)
-Date: Tue, 10 Jan 2017 07:21:32 +0000
-Message-ID: <E1cQqkO-0005XB-2K@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37692 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbdAJHVk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2017 02:21:40 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the y2038 tree with the net-next tree
+Date: Tue, 10 Jan 2017 11:06:22 +0100
+Message-ID: <CAK8P3a2U5=LGWkLY6jCdfsoAAshc7ggL15Uao_Y1rwdwVNf0oA@mail.gmail.com>
+References: <20170110135201.2a62a4d9@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170110135201.2a62a4d9@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>, Tina Ruchandani <ruchandani.tina@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170110
-Git describe: next-20170110
-Commit: 7a399e4b4b Add linux-next specific files for 20170110
+Hmm, I thought I had removed that commit when you asked me about it
+last week. I've done it now, the conflict should be gone tomorrow.
 
-Build Time: 106 min 47 sec
-
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 1
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings Summary: 4
-	  2 ../drivers/rtc/rtc-armada38x.c:131:25: warning: 'index_max' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/power/supply/axp20x_usb_power.c:297:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/rtc/rtc-armada38x.c:131:25: warning: 'index_max' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-
-Warnings:
-	../drivers/pinctrl/pinctrl-amd.c:210:3: warning: 'pin_num' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/pinctrl/pinctrl-amd.c:172:21: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/rtc/rtc-armada38x.c:131:25: warning: 'index_max' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+On Tue, Jan 10, 2017 at 3:52 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Arnd,
+>
+> Today's linux-next merge of the y2038 tree got a conflict in:
+>
+>   fs/afs/main.c
+>
+> between commit:
+>
+>   8e8d7f13b6d5 ("afs: Add some tracepoints")
+>
+> from the net-next tree and commit:
+>
+>   549eb7b22e24 ("AFS: Correctly use 64-bit time for UUID")
+>
+> from the y2038 tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc fs/afs/main.c
+> index f8188feb03ad,129ff432391c..000000000000
+> --- a/fs/afs/main.c
+> +++ b/fs/afs/main.c
+> @@@ -14,8 -14,7 +14,9 @@@
+>   #include <linux/init.h>
+>   #include <linux/completion.h>
+>   #include <linux/sched.h>
+>  +#include <linux/random.h>
+>  +#define CREATE_TRACE_POINTS
+> + #include <linux/ktime.h>
+>   #include "internal.h"
+>
+>   MODULE_DESCRIPTION("AFS Client File System");
