@@ -1,46 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: next-20170110 build: 1 failures 4 warnings (next-20170110)
-Date: Wed, 11 Jan 2017 07:21:41 +1100
-Message-ID: <20170111072131.51449059@canb.auug.org.au>
-References: <E1cQqkO-0005XB-2K@optimist>
-        <20170110181607.dp6giaxyeczykmv4@sirena.org.uk>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: linux-next: manual merge of the akpm tree with the rockchip tree
+Date: Wed, 11 Jan 2017 10:07:33 +0900
+Message-ID: <CAK7LNATca+7CMs+Nxw00KmPVHbiXO8Nsd-Kf9RhYWJviAO43Ag@mail.gmail.com>
+References: <20170109135521.4bd995f5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58041 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031680AbdAJUVq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 10 Jan 2017 15:21:46 -0500
-In-Reply-To: <20170110181607.dp6giaxyeczykmv4@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Michael Scherban <m-scherban@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, Sekhar Nori <nsekhar@ti.com>, "David S. Miller" <davem@davemloft.net>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, stephen hemminger <stephen@networkplumber.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170109135521.4bd995f5@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+Hi Andrew,
 
-On Tue, 10 Jan 2017 18:16:07 +0000 Mark Brown <broonie@kernel.org> wrote:
+I have been wondering this
+because this series is touching files across sub-systems.
+
+I expected it would be pulled into upstream
+during the previous MW, but it was not.
+How long will it stay in your branch?
+
+
+
+2017-01-09 11:55 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Andrew,
 >
-> On Tue, Jan 10, 2017 at 07:21:32AM +0000, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build an arm allmodconfig due to:
-> 
-> > 	arm-allmodconfig
-> > ../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]  
-> 
-> caused by 6a8162e99ef344 (net: netcp: store network statistics in 64
-> bits).  It's assigning the function
-> 
->   static struct rtnl_link_stats64 *
->   netcp_get_stats(struct net_device *ndev, struct rtnl_link_stats64 *stats)
-> 
-> to ndo_get_stats64 which expects a function returning void.
+> Today's linux-next merge of the akpm tree got a conflict in:
+>
+>   Documentation/devicetree/bindings/soc/rockchip/grf.txt
+>
+> between commit:
+>
+>   2c257ce6ab6f ("dt-bindings: add used but undocumented rockchip grf compatible values")
+>
+> from the rockchip tree and patch:
+>
+>    "scripts/spelling.txt: add "followings" pattern and fix typo instances"
+>
+> from the akpm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc Documentation/devicetree/bindings/soc/rockchip/grf.txt
+> index c6e62cb30712,76d6ccf677f5..000000000000
+> --- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+> +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+> @@@ -10,19 -9,16 +10,19 @@@ From RK3368 SoCs, the GRF is divided in
+>
+>   Required Properties:
+>
+> - - compatible: GRF should be one of the followings
+> + - compatible: GRF should be one of the following:
+>  +   - "rockchip,rk3036-grf", "syscon": for rk3036
+>      - "rockchip,rk3066-grf", "syscon": for rk3066
+>      - "rockchip,rk3188-grf", "syscon": for rk3188
+>      - "rockchip,rk3228-grf", "syscon": for rk3228
+>      - "rockchip,rk3288-grf", "syscon": for rk3288
+>      - "rockchip,rk3368-grf", "syscon": for rk3368
+>      - "rockchip,rk3399-grf", "syscon": for rk3399
+> - - compatible: PMUGRF should be one of the followings
+> + - compatible: PMUGRF should be one of the following:
+>      - "rockchip,rk3368-pmugrf", "syscon": for rk3368
+>      - "rockchip,rk3399-pmugrf", "syscon": for rk3399
+>  +- compatible: SGRF should be one of the following
+>  +   - "rockchip,rk3288-sgrf", "syscon": for rk3288
+>   - reg: physical base address of the controller and length of memory mapped
+>     region.
+>
 
-Yes, but only because commit bc1f44709cf2 ("net: make ndo_get_stats64 a
-void function") entered the net-next tree on the same day ... so it
-needs a followup fixup patch for this new usage.
+
 
 -- 
-Cheers,
-Stephen Rothwell
+Best Regards
+Masahiro Yamada
