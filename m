@@ -1,56 +1,56 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: next-20170110 build: 1 failures 4 warnings (next-20170110)
-Date: Wed, 11 Jan 2017 15:39:22 +0530
-Message-ID: <d0fadcde-aa8a-74c9-b48b-98d8f53a3a1b@ti.com>
-References: <E1cQqkO-0005XB-2K@optimist>
- <20170110181607.dp6giaxyeczykmv4@sirena.org.uk>
- <20170111072131.51449059@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: Please include Aspeed ARM SoC tree in linux-next
+Date: Thu, 12 Jan 2017 08:17:15 +1100
+Message-ID: <20170112081715.59f50b35@canb.auug.org.au>
+References: <CACPK8XcCPXWsVjufu0RAjGRjegTLuXAOHO7SbqXx8iTCJ4hbUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170111072131.51449059@canb.auug.org.au>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, netdev@vger.kernel.org, stephen hemminger <stephen@networkplumber.org>, Michael Scherban <m-scherban@ti.com>, linux-next@vger.kernel.org, Murali Karicheri <m-karicheri2@ti.com>, "J, KEERTHY" <j-keerthy@ti.com>, "David S. Miller" <davem@davemloft.net>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACPK8XcCPXWsVjufu0RAjGRjegTLuXAOHO7SbqXx8iTCJ4hbUA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joel Stanley <joel@jms.id.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Andrew Jeffery <andrew@aj.id.au>, =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday 11 January 2017 01:51 AM, Stephen Rothwell wrote:
-> Hi Mark,
+Hi Joel,
+
+On Wed, 11 Jan 2017 12:11:29 +1100 Joel Stanley <joel@jms.id.au> wrote:
+>
+> I'm the maintainer for the Aspeed ARM SoC tree and I would like it
+> added to linux-next.
 > 
-> On Tue, 10 Jan 2017 18:16:07 +0000 Mark Brown <broonie@kernel.org> wrote:
->>
->> On Tue, Jan 10, 2017 at 07:21:32AM +0000, Build bot for Mark Brown wrote:
->>
->> Today's -next fails to build an arm allmodconfig due to:
->>
->>> 	arm-allmodconfig
->>> ../drivers/net/ethernet/ti/netcp_core.c:1951:28: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]  
->>
->> caused by 6a8162e99ef344 (net: netcp: store network statistics in 64
->> bits).  It's assigning the function
->>
->>   static struct rtnl_link_stats64 *
->>   netcp_get_stats(struct net_device *ndev, struct rtnl_link_stats64 *stats)
->>
->> to ndo_get_stats64 which expects a function returning void.
+> The tree is a sub-maintainer tree for the Aspeed family of 32-bit ARM
+> SoCs that went upstream earlier last year.
 > 
-> Yes, but only because commit bc1f44709cf2 ("net: make ndo_get_stats64 a
-> void function") entered the net-next tree on the same day ... so it
-> needs a followup fixup patch for this new usage.
+> Tree: git://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git
+> Branch: for-next
+> 
+> for-next is a merge of the trees that I intend to send to the ARM
+> maintainers for 4.11.
+> 
+> For now please notify just myself if something breaks.
 
-Keerthy sent a patch fixing this yesterday. Looks like he will have to
-spin another version though.
+Added from today.
 
-https://patchwork.ozlabs.org/patch/713224/
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
 
-Thanks,
-Sekhar
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+-- 
+Cheers,
+Stephen Rothwell 
+sfr@canb.auug.org.au
