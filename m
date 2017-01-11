@@ -1,96 +1,101 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the rockchip
- tree
-Date: Tue, 10 Jan 2017 17:22:48 -0800
-Message-ID: <20170110172248.9195c9bdeb15c4c2dfe52719@linux-foundation.org>
-References: <20170109135521.4bd995f5@canb.auug.org.au>
-        <CAK7LNATca+7CMs+Nxw00KmPVHbiXO8Nsd-Kf9RhYWJviAO43Ag@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: build failure after merge of the selinux tree
+Date: Tue, 10 Jan 2017 22:11:15 -0500
+Message-ID: <CAHC9VhR_fa1q4F5hd4SG3LcNhS8zCsG57Luwg2hgn8eA0R0h_Q@mail.gmail.com>
+References: <20170110122703.2dbdfd18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34340 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754389AbdAKBWt (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Jan 2017 20:22:49 -0500
-In-Reply-To: <CAK7LNATca+7CMs+Nxw00KmPVHbiXO8Nsd-Kf9RhYWJviAO43Ag@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20170110122703.2dbdfd18@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Stephen Smalley <sds@tycho.nsa.gov>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, 11 Jan 2017 10:07:33 +0900 Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-
-> 2017-01-09 11:55 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> > Hi Andrew,
-> >
-> > Today's linux-next merge of the akpm tree got a conflict in:
-> >
-> >   Documentation/devicetree/bindings/soc/rockchip/grf.txt
-> >
-> > between commit:
-> >
-> >   2c257ce6ab6f ("dt-bindings: add used but undocumented rockchip grf compatible values")
-> >
-> > from the rockchip tree and patch:
-> >
-> >    "scripts/spelling.txt: add "followings" pattern and fix typo instances"
-> >
-> > from the akpm tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
-> >
-> > diff --cc Documentation/devicetree/bindings/soc/rockchip/grf.txt
-> > index c6e62cb30712,76d6ccf677f5..000000000000
-> > --- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
-> > +++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
-> > @@@ -10,19 -9,16 +10,19 @@@ From RK3368 SoCs, the GRF is divided in
-> >
-> >   Required Properties:
-> >
-> > - - compatible: GRF should be one of the followings
-> > + - compatible: GRF should be one of the following:
-> >  +   - "rockchip,rk3036-grf", "syscon": for rk3036
-> >      - "rockchip,rk3066-grf", "syscon": for rk3066
-> >      - "rockchip,rk3188-grf", "syscon": for rk3188
-> >      - "rockchip,rk3228-grf", "syscon": for rk3228
-> >      - "rockchip,rk3288-grf", "syscon": for rk3288
-> >      - "rockchip,rk3368-grf", "syscon": for rk3368
-> >      - "rockchip,rk3399-grf", "syscon": for rk3399
-> > - - compatible: PMUGRF should be one of the followings
-> > + - compatible: PMUGRF should be one of the following:
-> >      - "rockchip,rk3368-pmugrf", "syscon": for rk3368
-> >      - "rockchip,rk3399-pmugrf", "syscon": for rk3399
-> >  +- compatible: SGRF should be one of the following
-> >  +   - "rockchip,rk3288-sgrf", "syscon": for rk3288
-> >   - reg: physical base address of the controller and length of memory mapped
-> >     region.
+On Mon, Jan 9, 2017 at 8:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
 >
-> Hi Andrew,
-> 
-> I have been wondering this
-> because this series is touching files across sub-systems.
-> 
-> I expected it would be pulled into upstream
-> during the previous MW, but it was not.
-> How long will it stay in your branch?
+> After merging the selinux tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> In file included from /home/sfr/next/next/security/selinux/avc.c:35:0:
+> /home/sfr/next/next/security/selinux/include/classmap.h:242:2: error: #error New address family defined, please update secclass_map.
+>  #error New address family defined, please update secclass_map.
+>   ^
+> /home/sfr/next/next/security/selinux/hooks.c: In function 'socket_type_to_security_class':
+> /home/sfr/next/next/security/selinux/hooks.c:1409:2: error: #error New address family defined, please update this function.
+>
+> Caused by commit
+>
+>   da69a5306ab9 ("selinux: support distinctions among all network address families")
+>
+> interacting with commit
+>
+>   ac7138746e14 ("smc: establish new socket family")
+>
+> from the net-next tree.
+>
+> I added the following merge fix patch:
 
-(Top-posting fixed.  Please don't do that!)
+Thanks Stephen.
 
-I expect I'll be sending
-scripts-spellingtxt-add-several-more-common-spelling-mistakes.patch in
-to Linus for 4.11-rc1.  If "dt-bindings: add used but undocumented
-rockchip grf compatible values" gets merged befoe that, I'll fix up
-scripts-spellingtxt-add-several-more-common-spelling-mistakes.patch. 
-If scripts-spellingtxt-add-several-more-common-spelling-mistakes.patch
-get merged first, you'lll need to fix up "dt-bindings: add used but
-undocumented rockchip grf compatible values".
+There are still some concerns around which protocol/address families
+require their own SELinux object class, but it looks like SMC should
+have it's own object class.  If the "selinux: support distinctions
+among all network address families" commit doesn't go up to Linus
+during the next merge window I'll make sure it is updated for PF_SMC.
+
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 10 Jan 2017 12:22:21 +1100
+> Subject: [PATCH] selinux: merge fix for "smc: establish new socket family"
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  security/selinux/hooks.c            | 4 +++-
+>  security/selinux/include/classmap.h | 4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index bada3cd42b9c..712fd0e7c91d 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1405,7 +1405,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
+>                         return SECCLASS_KCM_SOCKET;
+>                 case PF_QIPCRTR:
+>                         return SECCLASS_QIPCRTR_SOCKET;
+> -#if PF_MAX > 43
+> +               case PF_SMC:
+> +                       return SECCLASS_SMC_SOCKET;
+> +#if PF_MAX > 44
+>  #error New address family defined, please update this function.
+>  #endif
+>                 }
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 0dfd26d0b8d8..40f1d4f8bc2a 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -235,9 +235,11 @@ struct security_class_mapping secclass_map[] = {
+>           { COMMON_SOCK_PERMS, NULL } },
+>         { "qipcrtr_socket",
+>           { COMMON_SOCK_PERMS, NULL } },
+> +       { "smc_socket",
+> +         { COMMON_SOCK_PERMS, NULL } },
+>         { NULL }
+>    };
+>
+> -#if PF_MAX > 43
+> +#if PF_MAX > 44
+>  #error New address family defined, please update secclass_map.
+>  #endif
+> --
+> 2.10.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+-- 
+paul moore
+www.paul-moore.com
