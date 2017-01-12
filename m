@@ -1,288 +1,73 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2017-01-11-17-14 uploaded
-Date: Wed, 11 Jan 2017 17:14:57 -0800
-Message-ID: <5876d891.KO+lq262YUFdAzyd%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: mmotm 2017-01-11-17-14 uploaded
+Date: Thu, 12 Jan 2017 13:05:54 +1100
+Message-ID: <20170112130554.3ef6fc64@canb.auug.org.au>
+References: <5876d891.KO+lq262YUFdAzyd%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5876d891.KO+lq262YUFdAzyd%akpm@linux-foundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org, "David S. Miller" <davem@davemloft.net>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2017-01-11-17-14 has been uploaded to
+Hi Andrew,
 
-   http://www.ozlabs.org/~akpm/mmotm/
+On Wed, 11 Jan 2017 17:14:57 -0800 akpm@linux-foundation.org wrote:
+>
+> The mm-of-the-moment snapshot 2017-01-11-17-14 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-mmotm-readme.txt says
+Imported mostly fine ...
 
-README for mm-of-the-moment:
+>   linux-next-git-rejects.patch
 
-http://www.ozlabs.org/~akpm/mmotm/
+That is not correct :-(
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+I used (more or less) the resolution in DaveM's tree today:
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
+2d6567d103301509f941d5e565a8cce78ded1456
+diff --cc net/core/sock.c
+index 4eca27dc5c94,31f72f3a3559..9e07ab81a144
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@@ -222,7 -222,7 +222,7 @@@ static const char *const af_family_key_
+    "sk_lock-AF_RXRPC" , "sk_lock-AF_ISDN"     , "sk_lock-AF_PHONET"   ,
+    "sk_lock-AF_IEEE802154", "sk_lock-AF_CAIF" , "sk_lock-AF_ALG"      ,
+    "sk_lock-AF_NFC"   , "sk_lock-AF_VSOCK"    , "sk_lock-AF_KCM"      ,
+-   "sk_lock-AF_QIPCRTR", "sk_lock-AF_MAX"
+ -  "sk_lock-AF_SMC"   , "sk_lock-AF_MAX"
+++  "sk_lock-AF_QIPCRTR", "sk_lock-AF_SMC"   , "sk_lock-AF_MAX"
+  };
+  static const char *const af_family_slock_key_strings[AF_MAX+1] = {
+    "slock-AF_UNSPEC", "slock-AF_UNIX"     , "slock-AF_INET"     ,
+@@@ -239,7 -239,7 +239,7 @@@
+    "slock-AF_RXRPC" , "slock-AF_ISDN"     , "slock-AF_PHONET"   ,
+    "slock-AF_IEEE802154", "slock-AF_CAIF" , "slock-AF_ALG"      ,
+    "slock-AF_NFC"   , "slock-AF_VSOCK"    ,"slock-AF_KCM"       ,
+-   "slock-AF_QIPCRTR", "slock-AF_MAX"
+ -  "slock-AF_SMC"   , "slock-AF_MAX"
+++  "slock-AF_QIPCRTR", "slock-AF_SMC"   , "slock-AF_MAX"
+  };
+  static const char *const af_family_clock_key_strings[AF_MAX+1] = {
+    "clock-AF_UNSPEC", "clock-AF_UNIX"     , "clock-AF_INET"     ,
+@@@ -256,7 -256,7 +256,7 @@@
+    "clock-AF_RXRPC" , "clock-AF_ISDN"     , "clock-AF_PHONET"   ,
+    "clock-AF_IEEE802154", "clock-AF_CAIF" , "clock-AF_ALG"      ,
+    "clock-AF_NFC"   , "clock-AF_VSOCK"    , "clock-AF_KCM"      ,
+-   "clock-AF_QIPCRTR", "clock-AF_MAX"
+ -  "closck-AF_smc"  , "clock-AF_MAX"
+++  "clock-AF_QIPCRTR", "closck-AF_smc"  , "clock-AF_MAX"
+  };
+  
+  /*
 
 
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.10-rc3:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* memory_hotplug-zone_can_shift-returns-boolean-value.patch
-* mm-respect-foll_force-foll_cow-for-thp.patch
-* mm-respect-foll_force-foll_cow-for-thp-checkpatch-fixes.patch
-* dax-fix-build-warnings-with-fs_dax-and-fs_iomap.patch
-* memstick-core-avoid-wnonnull-warning.patch
-* userfaultfd-fix-sigbus-resulting-from-false-rwsem-wakeups.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* tracing-add-__print_flags_u64.patch
-* dax-add-tracepoint-infrastructure-pmd-tracing.patch
-* dax-update-maintainers-entries-for-fs-dax.patch
-* dax-add-tracepoints-to-dax_pmd_load_hole.patch
-* dax-add-tracepoints-to-dax_pmd_insert_mapping.patch
-* mm-dax-make-pmd_fault-and-friends-to-be-the-same-as-fault.patch
-* mm-dax-move-pmd_fault-to-take-only-vmf-parameter.patch
-* scripts-spellingtxt-add-several-more-common-spelling-mistakes.patch
-* scripts-lindent-clean-up-and-optimize.patch
-* m32r-use-generic-currenth.patch
-* debugobjects-track-number-of-kmem_cache_alloc-kmem_cache_free-done.patch
-* debugobjects-scale-thresholds-with-of-cpus.patch
-* debugobjects-reduce-contention-on-the-global-pool_lock.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called-fix.patch
-* ocfs2-dlmglue-prepare-tracking-logic-to-avoid-recursive-cluster-lock.patch
-* ocfs2-fix-deadlocks-when-taking-inode-lock-at-vfs-entry-points.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* kernel-watchdog-prevent-false-hardlockup-on-overloaded-system.patch
-* kernel-watchdog-prevent-false-hardlockup-on-overloaded-system-fix.patch
-* kernel-watchdogc-do-not-hardcode-cpu-0-as-the-initial-thread.patch
-  mm.patch
-* slub-do-not-merge-cache-if-slub_debug-contains-a-never-merge-flag.patch
-* tmpfs-change-shmem_mapping-to-test-shmem_aops.patch
-* mm-throttle-show_mem-from-warn_alloc.patch
-* mm-throttle-show_mem-from-warn_alloc-fix.patch
-* mm-page_alloc-dont-convert-pfn-to-idx-when-merging.patch
-* mm-page_alloc-avoid-page_to_pfn-when-merging-buddies.patch
-* mm-vmallocc-use-rb_entry_safe.patch
-* mm-page_alloc-convert-page_group_by_mobility_disable-to-static-key.patch
-* mm-trace-extract-compaction_status-and-zone_type-to-a-common-header.patch
-* oom-trace-add-oom-detection-tracepoints.patch
-* oom-trace-add-compaction-retry-tracepoint.patch
-* userfaultfd-document-_ior-_iow.patch
-* userfaultfd-correct-comment-about-uffd_feature_pagefault_flag_wp.patch
-* userfaultfd-convert-bug-to-warn_on_once.patch
-* userfaultfd-use-vma_is_anonymous.patch
-* userfaultfd-non-cooperative-split-the-find_userfault-routine.patch
-* userfaultfd-non-cooperative-add-ability-to-report-non-pf-events-from-uffd-descriptor.patch
-* userfaultfd-non-cooperative-report-all-available-features-to-userland.patch
-* userfaultfd-non-cooperative-add-fork-event.patch
-* userfaultfd-non-cooperative-add-fork-event-build-warning-fix.patch
-* userfaultfd-non-cooperative-dup_userfaultfd-use-mm_count-instead-of-mm_users.patch
-* userfaultfd-non-cooperative-add-mremap-event.patch
-* userfaultfd-non-cooperative-optimize-mremap_userfaultfd_complete.patch
-* userfaultfd-non-cooperative-add-madvise-event-for-madv_dontneed-request.patch
-* userfaultfd-non-cooperative-avoid-madv_dontneed-race-condition.patch
-* userfaultfd-non-cooperative-wake-userfaults-after-uffdio_unregister.patch
-* userfaultfd-hugetlbfs-add-copy_huge_page_from_user-for-hugetlb-userfaultfd-support.patch
-* userfaultfd-hugetlbfs-add-hugetlb_mcopy_atomic_pte-for-userfaultfd-support.patch
-* userfaultfd-hugetlbfs-add-__mcopy_atomic_hugetlb-for-huge-page-uffdio_copy.patch
-* userfaultfd-hugetlbfs-fix-__mcopy_atomic_hugetlb-retry-error-processing.patch
-* userfaultfd-hugetlbfs-add-userfaultfd-hugetlb-hook.patch
-* userfaultfd-hugetlbfs-allow-registration-of-ranges-containing-huge-pages.patch
-* userfaultfd-hugetlbfs-add-userfaultfd_hugetlb-test.patch
-* userfaultfd-hugetlbfs-userfaultfd_huge_must_wait-for-hugepmd-ranges.patch
-* userfaultfd-hugetlbfs-gup-support-vm_fault_retry.patch
-* userfaultfd-hugetlbfs-reserve-count-on-error-in-__mcopy_atomic_hugetlb.patch
-* userfaultfd-hugetlbfs-uffd_feature_missing_hugetlbfs.patch
-* userfaultfd-introduce-vma_can_userfault.patch
-* userfaultfd-shmem-add-shmem_mcopy_atomic_pte-for-userfaultfd-support.patch
-* userfaultfd-shmem-introduce-vma_is_shmem.patch
-* userfaultfd-shmem-add-tlbflushh-header-for-microblaze.patch
-* userfaultfd-shmem-use-shmem_mcopy_atomic_pte-for-shared-memory.patch
-* userfaultfd-shmem-add-userfaultfd-hook-for-shared-memory-faults.patch
-* userfaultfd-shmem-allow-registration-of-shared-memory-ranges.patch
-* userfaultfd-shmem-add-userfaultfd_shmem-test.patch
-* userfaultfd-shmem-lock-the-page-before-adding-it-to-pagecache.patch
-* userfaultfd-shmem-avoid-leaking-blocks-and-used-blocks-in-uffdio_copy.patch
-* userfaultfd-hugetlbfs-uffd_feature_missing_shmem.patch
-* userfaultfd-non-cooperative-selftest-introduce-userfaultfd_open.patch
-* userfaultfd-non-cooperative-selftest-add-ufd-parameter-to-copy_page.patch
-* userfaultfd-non-cooperative-selftest-add-test-for-fork-madvdontneed-and-remap-events.patch
-* userfaultfd-selftest-test-uffdio_zeropage-on-all-memory-types.patch
-* mm-mprotect-use-pmd_trans_unstable-instead-of-taking-the-pmd_lock.patch
-* mm-vmscan-remove-unused-mm_vmscan_memcg_isolate.patch
-* mm-vmscan-add-active-list-aging-tracepoint.patch
-* mm-vmscan-add-active-list-aging-tracepoint-update.patch
-* mm-vmscan-show-the-number-of-skipped-pages-in-mm_vmscan_lru_isolate.patch
-* mm-vmscan-show-lru-name-in-mm_vmscan_lru_isolate-tracepoint.patch
-* mm-vmscan-extract-shrink_page_list-reclaim-counters-into-a-struct.patch
-* mm-vmscan-enhance-mm_vmscan_lru_shrink_inactive-tracepoint.patch
-* mm-vmscan-add-mm_vmscan_inactive_list_is_low-tracepoint.patch
-* trace-vmscan-postprocess-sync-with-tracepoints-updates.patch
-* nfs-no-pg_private-waiters-remain-remove-waker.patch
-* mm-un-export-wake_up_page-functions.patch
-* mm-fix-filemapc-kernel-doc-warnings.patch
-* mm-page_alloc-swap-likely-to-unlikely-as-code-logic-is-different-for-next_zones_zonelist.patch
-* mm-compaction-add-vmstats-for-kcompactd-work.patch
-* mm-page_alloc-skip-over-regions-of-invalid-pfns-where-possible.patch
-* mmcompaction-serialize-waitqueue_active-checks.patch
-* mm-bootmemc-cosmetic-improvement-of-code-readability.patch
-* mm-fix-some-typos-in-mm-zsmallocc.patch
-* mm-memblockc-trivial-code-refine-in-memblock_is_region_memory.patch
-* mm-memblockc-check-return-value-of-memblock_reserve-in-memblock_virt_alloc_internal.patch
-* mm-sparse-use-page_private-to-get-page-private-value.patch
-* mm-memory_hotplug-set-magic-number-to-page-freelsit-instead-of-page-lrunext.patch
-* powerpc-do-not-make-the-entire-heap-executable.patch
-* mm-swap-fix-kernel-message-in-swap_info_get.patch
-* mm-swap-add-cluster-lock.patch
-* mm-swap-split-swap-cache-into-64mb-trunks.patch
-* mm-swap-skip-read-ahead-for-unreferenced-swap-slots.patch
-* mm-swap-allocate-swap-slots-in-batches.patch
-* mm-swap-free-swap-slots-in-batch.patch
-* mm-swap-add-cache-for-swap-slots-allocation.patch
-* mm-swap-enable-swap-slots-cache-usage.patch
-* mm-swap-skip-readahead-only-when-swap-slot-cache-is-enabled.patch
-* mm-thp-add-new-defermadvise-defrag-option.patch
-* z3fold-limit-first_num-to-the-actual-range-of-possible-buddy-indexes.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
-* kasan-drain-quarantine-of-memcg-slab-objects.patch
-* kasan-add-memcg-kmem_cache-test.patch
-* proc-use-rb_entry.patch
-* proc-less-code-duplication-in-proc-cmdline.patch
-* notifier-simplify-expression.patch
-* timerqueue-use-rb_entry_safe.patch
-* lib-add-module-support-to-crc32-tests.patch
-* lib-add-module-support-to-glob-tests.patch
-* lib-add-module-support-to-atomic64-tests.patch
-* find_bit-micro-optimise-find_next__bit.patch
-* find_bit-micro-optimise-find_next__bit-v2.patch
-* linux-kernelh-fix-div_round_closest-to-support-negative-divisors.patch
-* linux-kernelh-fix-div_round_closest-to-support-negative-divisors-fix.patch
-* rbtree-use-designated-initializers.patch
-* lib-add-config_test_sort-to-enable-self-test-of-sort.patch
-* checkpatch-warn-on-embedded-function-names.patch
-* checkpatch-warn-on-logging-continuations.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-* rapidio-use-get_user_pages_unlocked.patch
-* config-android-recommended-disable-aio-support.patch
-* config-android-base-enable-hardened-usercopy-and-kernel-aslr.patch
-* fonts-keep-non-sparc-fonts-listed-together.patch
-* scripts-gdb-add-lx-fdtdump-command.patch
-* ipc-semc-avoid-using-spin_unlock_wait.patch
-* ipc-sem-add-hysteresis.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* fs-add-i_blocksize.patch
-* reimplement-idr-and-ida-using-the-radix-tree.patch
-* reimplement-idr-and-ida-using-the-radix-tree-support-storing-null-in-the-idr.patch
-* reimplement-idr-and-ida-using-the-radix-tree-support-storing-null-in-the-idr-checkpatch-fixes.patch
-* reimplement-idr-and-ida-using-the-radix-tree-fix.patch
-* scripts-spellingtxt-add-swith-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-swithc-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-an-user-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-an-union-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-an-one-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-partiton-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-aligment-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-algined-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-efective-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-varible-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-embeded-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-againt-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-neded-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-unneded-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-intialization-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-initialiazation-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-intialised-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-comsumer-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-disbled-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-overide-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-overrided-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-configuartion-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-applys-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-explictely-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-omited-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-disassocation-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-deintialized-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-overwritting-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-overwriten-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-therfore-pattern-and-fix-typo-instances.patch
-* scripts-spellingtxt-add-followings-pattern-and-fix-typo-instances.patch
-* lib-vsprintfc-remove-%z-support.patch
-* checkpatchpl-warn-against-using-%z.patch
-* checkpatchpl-warn-against-using-%z-fix.patch
-* kernel-exit-compute-current-directly.patch
-* drivers-tty-compute-current-directly.patch
-* kernel-locking-compute-current-directly.patch
-* sched-remove-set_task_state.patch
-* mm-add-new-mmgrab-helper.patch
-* mm-add-new-mmget-helper.patch
-* mm-use-mmget_not_zero-helper.patch
-* mm-clarify-mm_structmm_userscount-documentation.patch
-  mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  make-frame_pointer-default=y.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  add-debugging-aid-for-memory-initialisation-problems.patch
-  workaround-for-a-pci-restoring-bug.patch
+And just noticed the typo in the last two lines (which is also in DaveM's
+tree) :-(
+-- 
+Cheers,
+Stephen Rothwell
