@@ -1,73 +1,154 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2017-01-11-17-14 uploaded
-Date: Thu, 12 Jan 2017 13:05:54 +1100
-Message-ID: <20170112130554.3ef6fc64@canb.auug.org.au>
-References: <5876d891.KO+lq262YUFdAzyd%akpm@linux-foundation.org>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 12 Jan 2017 14:49:33 +1100
+Message-ID: <20170112144933.7f161c69@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5876d891.KO+lq262YUFdAzyd%akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org, "David S. Miller" <davem@davemloft.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54015 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750736AbdALDtf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 11 Jan 2017 22:49:35 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Ren <zren@suse.com>
 
 Hi Andrew,
 
-On Wed, 11 Jan 2017 17:14:57 -0800 akpm@linux-foundation.org wrote:
->
-> The mm-of-the-moment snapshot 2017-01-11-17-14 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
+After merging the akpm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-Imported mostly fine ...
+In file included from fs/ocfs2/file.c:49:0:
+fs/ocfs2/file.c: In function 'ocfs2_permission':
+fs/ocfs2/dlmglue.h:189:29: error: inlining failed in call to always_inline 'ocfs2_is_locked_by_me': function body not available
+ inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
+                             ^
+fs/ocfs2/file.c:1345:16: error: called from here
+  has_locked = (ocfs2_is_locked_by_me(lockres) != NULL);
+                ^
+In file included from fs/ocfs2/file.c:49:0:
+fs/ocfs2/dlmglue.h:189:29: error: inlining failed in call to always_inline 'ocfs2_is_locked_by_me': function body not available
+ inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
+                             ^
+fs/ocfs2/file.c:1345:16: error: called from here
+  has_locked = (ocfs2_is_locked_by_me(lockres) != NULL);
+                ^
+In file included from fs/ocfs2/file.c:49:0:
+fs/ocfs2/dlmglue.h:185:13: error: inlining failed in call to always_inline 'ocfs2_add_holder': function body not available
+ inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+             ^
+fs/ocfs2/file.c:1353:3: error: called from here
+   ocfs2_add_holder(lockres, &oh);
+   ^
+In file included from fs/ocfs2/file.c:49:0:
+fs/ocfs2/dlmglue.h:187:13: error: inlining failed in call to always_inline 'ocfs2_remove_holder': function body not available
+ inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+             ^
+fs/ocfs2/file.c:1359:3: error: called from here
+   ocfs2_remove_holder(lockres, &oh);
+   ^
+In file included from fs/ocfs2/acl.c:31:0:
+fs/ocfs2/acl.c: In function 'ocfs2_iop_set_acl':
+fs/ocfs2/dlmglue.h:189:29: error: inlining failed in call to always_inline 'ocfs2_is_locked_by_me': function body not available
+ inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
+                             ^
+fs/ocfs2/acl.c:292:16: error: called from here
+  has_locked = (ocfs2_is_locked_by_me(lockres) != NULL);
+                ^
+In file included from fs/ocfs2/acl.c:31:0:
+fs/ocfs2/dlmglue.h:189:29: error: inlining failed in call to always_inline 'ocfs2_is_locked_by_me': function body not available
+ inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
+                             ^
+fs/ocfs2/acl.c:292:16: error: called from here
+  has_locked = (ocfs2_is_locked_by_me(lockres) != NULL);
+                ^
+In file included from fs/ocfs2/acl.c:31:0:
+fs/ocfs2/dlmglue.h:185:13: error: inlining failed in call to always_inline 'ocfs2_add_holder': function body not available
+ inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+             ^
+fs/ocfs2/acl.c:302:3: error: called from here
+   ocfs2_add_holder(lockres, &oh);
+   ^
+In file included from fs/ocfs2/acl.c:31:0:
+fs/ocfs2/dlmglue.h:187:13: error: inlining failed in call to always_inline 'ocfs2_remove_holder': function body not available
+ inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+             ^
+fs/ocfs2/acl.c:307:3: error: called from here
+   ocfs2_remove_holder(lockres, &oh);
+   ^
 
->   linux-next-git-rejects.patch
+Caused by commits
 
-That is not correct :-(
+  984c4659d463 ("ocfs2/dlmglue: prepare tracking logic to avoid recursive cluster lock")
+  0ca17730270e ("ocfs2: fix deadlocks when taking inode lock at vfs entry points")
 
-I used (more or less) the resolution in DaveM's tree today:
+I applied this fix patch for today:
 
-2d6567d103301509f941d5e565a8cce78ded1456
-diff --cc net/core/sock.c
-index 4eca27dc5c94,31f72f3a3559..9e07ab81a144
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@@ -222,7 -222,7 +222,7 @@@ static const char *const af_family_key_
-    "sk_lock-AF_RXRPC" , "sk_lock-AF_ISDN"     , "sk_lock-AF_PHONET"   ,
-    "sk_lock-AF_IEEE802154", "sk_lock-AF_CAIF" , "sk_lock-AF_ALG"      ,
-    "sk_lock-AF_NFC"   , "sk_lock-AF_VSOCK"    , "sk_lock-AF_KCM"      ,
--   "sk_lock-AF_QIPCRTR", "sk_lock-AF_MAX"
- -  "sk_lock-AF_SMC"   , "sk_lock-AF_MAX"
-++  "sk_lock-AF_QIPCRTR", "sk_lock-AF_SMC"   , "sk_lock-AF_MAX"
-  };
-  static const char *const af_family_slock_key_strings[AF_MAX+1] = {
-    "slock-AF_UNSPEC", "slock-AF_UNIX"     , "slock-AF_INET"     ,
-@@@ -239,7 -239,7 +239,7 @@@
-    "slock-AF_RXRPC" , "slock-AF_ISDN"     , "slock-AF_PHONET"   ,
-    "slock-AF_IEEE802154", "slock-AF_CAIF" , "slock-AF_ALG"      ,
-    "slock-AF_NFC"   , "slock-AF_VSOCK"    ,"slock-AF_KCM"       ,
--   "slock-AF_QIPCRTR", "slock-AF_MAX"
- -  "slock-AF_SMC"   , "slock-AF_MAX"
-++  "slock-AF_QIPCRTR", "slock-AF_SMC"   , "slock-AF_MAX"
-  };
-  static const char *const af_family_clock_key_strings[AF_MAX+1] = {
-    "clock-AF_UNSPEC", "clock-AF_UNIX"     , "clock-AF_INET"     ,
-@@@ -256,7 -256,7 +256,7 @@@
-    "clock-AF_RXRPC" , "clock-AF_ISDN"     , "clock-AF_PHONET"   ,
-    "clock-AF_IEEE802154", "clock-AF_CAIF" , "clock-AF_ALG"      ,
-    "clock-AF_NFC"   , "clock-AF_VSOCK"    , "clock-AF_KCM"      ,
--   "clock-AF_QIPCRTR", "clock-AF_MAX"
- -  "closck-AF_smc"  , "clock-AF_MAX"
-++  "clock-AF_QIPCRTR", "closck-AF_smc"  , "clock-AF_MAX"
-  };
-  
-  /*
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 12 Jan 2017 14:40:03 +1100
+Subject: [PATCH] ocfs2/dmglue: do not inline functions whose bodies are not in
+ scope
 
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/ocfs2/dlmglue.c | 6 +++---
+ fs/ocfs2/dlmglue.h | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-And just noticed the typo in the last two lines (which is also in DaveM's
-tree) :-(
+diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
+index 951f5d9a0884..f0823f4d0afd 100644
+--- a/fs/ocfs2/dlmglue.c
++++ b/fs/ocfs2/dlmglue.c
+@@ -750,7 +750,7 @@ void ocfs2_lock_res_free(struct ocfs2_lock_res *res)
+ 	res->l_flags = 0UL;
+ }
+ 
+-inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
++void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+ 				   struct ocfs2_holder *oh)
+ {
+ 	INIT_LIST_HEAD(&oh->oh_list);
+@@ -761,7 +761,7 @@ inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+ 	spin_unlock(&lockres->l_lock);
+ }
+ 
+-inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
++void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+ 				       struct ocfs2_holder *oh)
+ {
+ 	spin_lock(&lockres->l_lock);
+@@ -771,7 +771,7 @@ inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+ 	put_pid(oh->oh_owner_pid);
+ }
+ 
+-inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres)
++struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres)
+ {
+ 	struct ocfs2_holder *oh;
+ 	struct pid *pid;
+diff --git a/fs/ocfs2/dlmglue.h b/fs/ocfs2/dlmglue.h
+index d65ff1e49552..7f0c07bb30a3 100644
+--- a/fs/ocfs2/dlmglue.h
++++ b/fs/ocfs2/dlmglue.h
+@@ -182,10 +182,10 @@ void ocfs2_set_locking_protocol(void);
+  * Keep a list of processes who have interest in a lockres.
+  * Note: this is now only uesed for check recursive cluster lock.
+  */
+-inline void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
++void ocfs2_add_holder(struct ocfs2_lock_res *lockres,
+ 			     struct ocfs2_holder *oh);
+-inline void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
++void ocfs2_remove_holder(struct ocfs2_lock_res *lockres,
+ 			     struct ocfs2_holder *oh);
+-inline struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
++struct ocfs2_holder *ocfs2_is_locked_by_me(struct ocfs2_lock_res *lockres);
+ 
+ #endif	/* DLMGLUE_H */
+-- 
+2.10.2
+
 -- 
 Cheers,
 Stephen Rothwell
