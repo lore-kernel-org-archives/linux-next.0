@@ -1,70 +1,70 @@
-From: Amelie DELAUNAY <amelie.delaunay@st.com>
-Subject: RE: linux-next: build warning after merge of the rtc tree
-Date: Fri, 13 Jan 2017 08:42:00 +0000
-Message-ID: <f7eec548c3214003ac7bf3c94ba70153@SFHDAG3NODE2.st.com>
-References: <20170113141809.4784c004@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170113 build: 0 failures 4 warnings (next-20170113)
+Date: Fri, 13 Jan 2017 09:14:04 +0000
+Message-ID: <E1cRxvw-0006e7-CM@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39570 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751222AbdAMImL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 13 Jan 2017 03:42:11 -0500
-In-Reply-To: <20170113141809.4784c004@canb.auug.org.au>
-Content-Language: en-US
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36666 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751280AbdAMJOS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 13 Jan 2017 04:14:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+Tree/Branch: next-20170113
+Git describe: next-20170113
+Commit: 41ca03cdbd Add linux-next specific files for 20170113
 
-I'm going to send a patch to fix this warning.
-Thanks,
+Build Time: 103 min 28 sec
 
-Regards,
-Amelie
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: vendredi 13 janvier 2017 04:18
-> To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Amelie
-> DELAUNAY <amelie.delaunay@st.com>; Mathieu Poirier
-> <mathieu.poirier@linaro.org>
-> Subject: linux-next: build warning after merge of the rtc tree
-> 
-> Hi Alexandre,
-> 
-> After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> In file included from drivers/rtc/rtc-stm32.c:14:0:
-> drivers/rtc/rtc-stm32.c: In function 'stm32_rtc_probe':
-> drivers/rtc/rtc-stm32.c:653:51: warning: large integer implicitly truncated to
-> unsigned type [-Woverflow]
->   regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, ~PWR_CR_DBP);
->                                                    ^
-> include/linux/regmap.h:73:42: note: in definition of macro
-> 'regmap_update_bits'
->   regmap_update_bits_base(map, reg, mask, val, NULL, false, false)
->                                           ^
-> drivers/rtc/rtc-stm32.c: In function 'stm32_rtc_remove':
-> drivers/rtc/rtc-stm32.c:675:51: warning: large integer implicitly truncated to
-> unsigned type [-Woverflow]
->   regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, ~PWR_CR_DBP);
->                                                    ^
-> include/linux/regmap.h:73:42: note: in definition of macro
-> 'regmap_update_bits'
->   regmap_update_bits_base(map, reg, mask, val, NULL, false, false)
->                                           ^
-> 
-> Introduced by commit
-> 
->   4e64350f42e2 ("rtc: add STM32 RTC driver")
-> 
-> --
-> Cheers,
-> Stephen Rothwell
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  1 ../drivers/rtc/rtc-stm32.c:675:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/rtc/rtc-stm32.c:653:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/rtc/rtc-stm32.c:653:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/rtc/rtc-stm32.c:675:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
