@@ -1,37 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the wireless-drivers-next
- tree
-Date: Fri, 13 Jan 2017 11:12:50 +1100
-Message-ID: <20170113111250.2023a160@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rtc tree
+Date: Fri, 13 Jan 2017 14:18:09 +1100
+Message-ID: <20170113141809.4784c004@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39287 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750888AbdAMATp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 12 Jan 2017 19:19:45 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amelie Delaunay <amelie.delaunay@st.com>, Mathieu Poirier <mathieu.poirier@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Alexandre,
 
-After merging the wireless-drivers-next tree, today's linux-next build
-(x86_64 allmodconfig) produced this warning:
+After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-drivers/net/wireless/marvell/mwifiex/pcie.c: In function 'mwifiex_pcie_remove':
-drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  if (fw_status == FIRMWARE_READY_PCIE && !adapter->mfg_mode) {
-     ^
+In file included from drivers/rtc/rtc-stm32.c:14:0:
+drivers/rtc/rtc-stm32.c: In function 'stm32_rtc_probe':
+drivers/rtc/rtc-stm32.c:653:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+  regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, ~PWR_CR_DBP);
+                                                   ^
+include/linux/regmap.h:73:42: note: in definition of macro 'regmap_update_bits'
+  regmap_update_bits_base(map, reg, mask, val, NULL, false, false)
+                                          ^
+drivers/rtc/rtc-stm32.c: In function 'stm32_rtc_remove':
+drivers/rtc/rtc-stm32.c:675:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+  regmap_update_bits(rtc->dbp, PWR_CR, PWR_CR_DBP, ~PWR_CR_DBP);
+                                                   ^
+include/linux/regmap.h:73:42: note: in definition of macro 'regmap_update_bits'
+  regmap_update_bits_base(map, reg, mask, val, NULL, false, false)
+                                          ^
 
 Introduced by commit
 
-  045f0c1b5e26 ("mwifiex: get rid of global user_rmmod flag")
-
-This is not a false positive since "reg" could be NULL just above
-(otherwise it would be tested for).
+  4e64350f42e2 ("rtc: add STM32 RTC driver")
 
 -- 
 Cheers,
