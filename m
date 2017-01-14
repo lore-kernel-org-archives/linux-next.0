@@ -1,39 +1,32 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
-Date: Fri, 13 Jan 2017 15:47:41 +0200
-Message-ID: <87shonjcle.fsf@codeaurora.org>
-References: <20170113111250.2023a160@canb.auug.org.au>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [BISECT] ARM build errors on GCC v6.2 (crypto: arm/aes - replace
+ scalar AES cipher)
+Date: Sat, 14 Jan 2017 16:24:35 +0200
+Message-ID: <20170114142435.ashdj2xm5b3kzg2p@kozik-lap>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170113111250.2023a160@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 13 Jan 2017 11:12:50 +1100")
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, davem@davemloft.net, linux-next@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi,
 
-> Hi all,
->
-> After merging the wireless-drivers-next tree, today's linux-next build
-> (x86_64 allmodconfig) produced this warning:
->
-> drivers/net/wireless/marvell/mwifiex/pcie.c: In function 'mwifiex_pcie_remove':
-> drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   if (fw_status == FIRMWARE_READY_PCIE && !adapter->mfg_mode) {
->      ^
->
-> Introduced by commit
->
->   045f0c1b5e26 ("mwifiex: get rid of global user_rmmod flag")
->
-> This is not a false positive since "reg" could be NULL just above
-> (otherwise it would be tested for).
+allyesconfig and multi_v7_defconfig fail to build on recent linux-next
+on GCC 6.2.0.
 
-Thanks, I noticed this myself yesterday (after I had applied the patch)
-and I have asked Marvell to send a fix.
+Errors:
+../arch/arm/crypto/aes-cipher-core.S: Assembler messages:
+../arch/arm/crypto/aes-cipher-core.S:21: Error: selected processor does not support `tt .req ip' in ARM mode
+../arch/arm/crypto/aes-cipher-core.S:174: Error: ARM register expected -- `movw tt,#:lower16:crypto_ft_tab'
+../arch/arm/crypto/aes-cipher-core.S:174: Error: ARM register expected -- `movt tt,#:upper16:crypto_ft_tab'
 
--- 
-Kalle Valo
+Compiler: arm-linux-gnueabi-gcc (Ubuntu 6.2.0-5ubuntu12) 6.2.0 20161005
+
+Git bisect pointed to:
+first bad commit: [81edb42629758bacdf813dd5e4542ae26e3ad73a] crypto: arm/aes - replace scalar AES cipher
+
+Best regards,
+Krzysztof
