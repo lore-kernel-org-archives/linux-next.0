@@ -1,42 +1,70 @@
-From: Dave Jiang <dave.jiang@intel.com>
-Subject: Re: next-20170131 build: 2 failures 3 warnings (next-20170131)
-Date: Tue, 31 Jan 2017 12:18:07 -0700
-Message-ID: <d75e33ae-45ec-af7a-9ad1-1b8e54285b0c@intel.com>
-References: <E1cYVke-0001Pw-1e@optimist>
- <20170131191021.ogodwklhn74o5ws5@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170116 build: 0 failures 4 warnings (next-20170116)
+Date: Mon, 16 Jan 2017 10:48:57 +0000
+Message-ID: <E1cT4qO-0002vU-Su@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:63499 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752013AbdAaTah (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Jan 2017 14:30:37 -0500
-In-Reply-To: <20170131191021.ogodwklhn74o5ws5@sirena.org.uk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39208 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750956AbdAPKtG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 16 Jan 2017 05:49:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Ross Zwisler <ross.zwisler@linux.intel.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20170116
+Git describe: next-20170116
+Commit: 38e4a8f0d6 Add linux-next specific files for 20170116
+
+Build Time: 182 min 44 sec
+
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  1 ../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
 
-On 01/31/2017 12:10 PM, Mark Brown wrote:
-> On Tue, Jan 31, 2017 at 10:33:28AM +0000, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build an arm allmodconfig due to:
-> 
->> 	arm-allmodconfig
->> ../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->> ../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->> ../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->> ../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
->> ../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->> ../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
-> 
-> which is triggered by 25d3db7600b87 (mm, fs: reduce fault, page_mkwrite,
-> and pfn_mkwrite to take only vmf) which updates the signature for fault
-> but doesn't update all the users.
-> 
+===============================================================================
+Detailed per-defconfig build reports below:
 
-I think this patch posted by Arnd should've fixed it
-http://ozlabs.org/~akpm/mmots/broken-out/mm-fs-reduce-fault-page_mkwrite-and-pfn_mkwrite-to-take-only-vmf-fix.patch
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
