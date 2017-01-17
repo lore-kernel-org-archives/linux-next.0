@@ -1,68 +1,52 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170117 build: 0 failures 3 warnings (next-20170117)
-Date: Tue, 17 Jan 2017 07:54:14 +0000
-Message-ID: <E1cTOar-0004qp-TJ@optimist>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
+Date: Tue, 17 Jan 2017 13:49:31 +0200
+Message-ID: <87vatdhpo4.fsf@purkki.adurom.net>
+References: <20170113111250.2023a160@canb.auug.org.au>
+        <87shonjcle.fsf@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46460 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750787AbdAQHzJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Jan 2017 02:55:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60550 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751131AbdAQLth (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Jan 2017 06:49:37 -0500
+In-Reply-To: <87shonjcle.fsf@codeaurora.org> (Kalle Valo's message of "Fri, 13
+        Jan 2017 15:47:41 +0200")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>
 
-Tree/Branch: next-20170117
-Git describe: next-20170117
-Commit: a65f0161f4 Add linux-next specific files for 20170117
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-Build Time: 101 min 43 sec
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>
+>> Hi all,
+>>
+>> After merging the wireless-drivers-next tree, today's linux-next build
+>> (x86_64 allmodconfig) produced this warning:
+>>
+>> drivers/net/wireless/marvell/mwifiex/pcie.c: In function 'mwifiex_pcie_remove':
+>> drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>>   if (fw_status == FIRMWARE_READY_PCIE && !adapter->mfg_mode) {
+>>      ^
+>>
+>> Introduced by commit
+>>
+>>   045f0c1b5e26 ("mwifiex: get rid of global user_rmmod flag")
+>>
+>> This is not a false positive since "reg" could be NULL just above
+>> (otherwise it would be tested for).
+>
+> Thanks, I noticed this myself yesterday (after I had applied the patch)
+> and I have asked Marvell to send a fix.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+I missed that Arnd had already sent a fix, I'll apply that one:
 
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
+mwifiex: fix uninitialized variable access in pcie_remove
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
+https://patchwork.kernel.org/patch/9515899/
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	  1 ../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Kalle Valo
