@@ -1,47 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next 0112 tree breaks fs DAX
-Date: Mon, 16 Jan 2017 21:45:43 +1100
-Message-ID: <20170116214543.1388c2e9@canb.auug.org.au>
-References: <20170113101641.3jecr5qx2pgajc2k@XZHOUW.usersys.redhat.com>
-        <20170116092916.lltpfa24gzlj3hkr@XZHOUW.usersys.redhat.com>
+Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes
+ tree
+Date: Tue, 17 Jan 2017 11:59:21 +1100
+Message-ID: <20170117115921.7d80d719@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-fsdevel-owner@vger.kernel.org>
-In-Reply-To: <20170116092916.lltpfa24gzlj3hkr@XZHOUW.usersys.redhat.com>
-Sender: linux-fsdevel-owner@vger.kernel.org
-To: Xiong Zhou <xzhou@redhat.com>
-Cc: linux-nvdimm@ml01.01.org, dave.jiang@intel.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56011 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750863AbdAQA70 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 16 Jan 2017 19:59:26 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 
-Hi Xiong,
+Hi Dave,
 
-Just cc'ing Andrew.
+Today's linux-next merge of the drm tree got a conflict in:
 
-On Mon, 16 Jan 2017 17:29:16 +0800 Xiong Zhou <xzhou@redhat.com> wrote:
->
-> On Fri, Jan 13, 2017 at 06:16:41PM +0800, Xiong Zhou wrote:
-> > Hi,
-> > 
-> > These cases "hang" when testing with -o dax mount option:
-> > xfstests generic/030 generic/34{0,4,5,6} generic/198
-> > (maybe more)
-> > 
-> > The test programme holetest or aiodio keep running for a
-> > long time. It's killable, but it seems never return.
-> > 
-> > With both ext4 and xfs as fs.
-> > 
-> > Without -o dax mount option, cases pass in seconds.
-> > 
-> > 0111 tree passed the tests.
-> > 
-> > sh-4.2# git log --oneline next-20170111..next-20170112 fs/dax.c
-> > 0c9a7909dd13 mm, dax: change pmd_fault() to take only vmf parameter
-> > f8dbc198d4ea mm, dax: make pmd_fault() and friends be the same as fault()  
-> 
-> 0112 tree with above 2 commits reverted pass the tests.
+  include/drm/drm_atomic.h
+
+between commit:
+
+  7e9081c5aac7 ("drm/fence: fix memory overwrite when setting out_fence fd")
+
+from the drm-misc-fixes tree and commit:
+
+  bdc571464c49 ("drm/atomic: Clean up wait_for_vblanks, v2.")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/drm/drm_atomic.h
+index 56814e8ae7ea,f96220ed4004..000000000000
+--- a/include/drm/drm_atomic.h
++++ b/include/drm/drm_atomic.h
+@@@ -144,7 -144,8 +144,8 @@@ struct __drm_crtcs_state 
+  	struct drm_crtc *ptr;
+  	struct drm_crtc_state *state;
+  	struct drm_crtc_commit *commit;
+ -	s64 __user *out_fence_ptr;
+ +	s32 __user *out_fence_ptr;
++ 	unsigned last_vblank_count;
+  };
+  
+  struct __drm_connnectors_state {
