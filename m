@@ -1,52 +1,56 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the wireless-drivers-next tree
-Date: Tue, 17 Jan 2017 13:49:31 +0200
-Message-ID: <87vatdhpo4.fsf@purkki.adurom.net>
-References: <20170113111250.2023a160@canb.auug.org.au>
-        <87shonjcle.fsf@codeaurora.org>
+From: Dave Jiang <dave.jiang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next 0112 tree breaks fs DAX
+Date: Tue, 17 Jan 2017 09:05:33 -0700
+Message-ID: <833df5ca-39a5-f402-fcd1-985217a55a85@intel.com>
+References: <20170113101641.3jecr5qx2pgajc2k@XZHOUW.usersys.redhat.com>
+ <20170116092916.lltpfa24gzlj3hkr@XZHOUW.usersys.redhat.com>
+ <20170116214543.1388c2e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60550 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751131AbdAQLth (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Jan 2017 06:49:37 -0500
-In-Reply-To: <87shonjcle.fsf@codeaurora.org> (Kalle Valo's message of "Fri, 13
-        Jan 2017 15:47:41 +0200")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wireless <linux-wireless@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Xinming Hu <huxm@marvell.com>, Amitkumar Karwar <akarwar@marvell.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <20170116214543.1388c2e9-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+List-Unsubscribe: <https://lists.01.org/mailman/options/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.01.org/pipermail/linux-nvdimm/>
+List-Post: <mailto:linux-nvdimm-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+List-Help: <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.01.org/mailman/listinfo/linux-nvdimm>,
+ <mailto:linux-nvdimm-request-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org?subject=subscribe>
+Errors-To: linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org
+Sender: "Linux-nvdimm" <linux-nvdimm-bounces-hn68Rpc1hR1g9hUCZPvPmw@public.gmane.org>
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Xiong Zhou <xzhou-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-nvdimm-y27Ovi1pjclAfugRpC6u6w@public.gmane.org, "Zwisler, Ross" <ross.zwisler-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fsdevel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Kalle Valo <kvalo@codeaurora.org> writes:
-
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->
->> Hi all,
+On 01/16/2017 03:45 AM, Stephen Rothwell wrote:
+> Hi Xiong,
+> 
+> Just cc'ing Andrew.
+> 
+> On Mon, 16 Jan 2017 17:29:16 +0800 Xiong Zhou <xzhou-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org> wrote:
 >>
->> After merging the wireless-drivers-next tree, today's linux-next build
->> (x86_64 allmodconfig) produced this warning:
+>> On Fri, Jan 13, 2017 at 06:16:41PM +0800, Xiong Zhou wrote:
+>>> Hi,
+>>>
+>>> These cases "hang" when testing with -o dax mount option:
+>>> xfstests generic/030 generic/34{0,4,5,6} generic/198
+>>> (maybe more)
+>>>
+>>> The test programme holetest or aiodio keep running for a
+>>> long time. It's killable, but it seems never return.
+>>>
+>>> With both ext4 and xfs as fs.
+>>>
+>>> Without -o dax mount option, cases pass in seconds.
+>>>
+>>> 0111 tree passed the tests.
+>>>
+>>> sh-4.2# git log --oneline next-20170111..next-20170112 fs/dax.c
+>>> 0c9a7909dd13 mm, dax: change pmd_fault() to take only vmf parameter
+>>> f8dbc198d4ea mm, dax: make pmd_fault() and friends be the same as fault()  
 >>
->> drivers/net/wireless/marvell/mwifiex/pcie.c: In function 'mwifiex_pcie_remove':
->> drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   if (fw_status == FIRMWARE_READY_PCIE && !adapter->mfg_mode) {
->>      ^
->>
->> Introduced by commit
->>
->>   045f0c1b5e26 ("mwifiex: get rid of global user_rmmod flag")
->>
->> This is not a false positive since "reg" could be NULL just above
->> (otherwise it would be tested for).
->
-> Thanks, I noticed this myself yesterday (after I had applied the patch)
-> and I have asked Marvell to send a fix.
+>> 0112 tree with above 2 commits reverted pass the tests.
+> 
 
-I missed that Arnd had already sent a fix, I'll apply that one:
-
-mwifiex: fix uninitialized variable access in pcie_remove
-
-https://patchwork.kernel.org/patch/9515899/
-
--- 
-Kalle Valo
+Thanks. I will debug.
