@@ -1,39 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the amlogic tree with the arm-soc tree
-Date: Wed, 18 Jan 2017 09:55:31 +1100
-Message-ID: <20170118095531.37f33df0@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the net-next tree
+Date: Wed, 18 Jan 2017 11:37:13 +1100
+Message-ID: <20170118113713.43c862b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57435 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751272AbdARAh6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 17 Jan 2017 19:37:58 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ganesh Goudar <ganeshgr@chelsio.com>
 
 Hi all,
 
-Today's linux-next merge of the amlogic tree got a conflict in:
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) produced these warnings:
 
-  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c: In function 'init_one':
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4646:9: warning: unused variable 'port_vec' [-Wunused-variable]
+  u32 v, port_vec;
+         ^
+drivers/net/ethernet/chelsio/cxgb4/cxgb4_main.c:4646:6: warning: unused variable 'v' [-Wunused-variable]
+  u32 v, port_vec;
+      ^
+Introduced by commit
 
-between commit:
-
-  f7bcd4b6f698 ("ARM64: dts: meson-gxbb-odroidc2: Disable SCPI DVFS")
-
-from the arm-soc tree and commit:
-
-  47961f1353b8 ("ARM64: dts: meson-gx: move the SCPI and SRAM nodes to meson-gx")
-
-from the amlogic tree.
-
-I fixed it up (the latter moved the code modified by the former into
-another file, but also incorporated the change from the former) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+  96fe11f27b70 ("cxgb4: Implement ndo_get_phys_port_id for mgmt dev")
 
 -- 
 Cheers,
