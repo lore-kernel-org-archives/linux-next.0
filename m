@@ -1,47 +1,70 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: manual merge of the amlogic tree with the arm-soc tree
-Date: Wed, 18 Jan 2017 11:06:53 -0800
-Message-ID: <m2inpc192q.fsf@baylibre.com>
-References: <20170118095531.37f33df0@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Tree for Jan 18
+Date: Wed, 18 Jan 2017 15:44:59 -0500
+Message-ID: <CAP=VYLoirfK_wBSZuV_9YO_Cnm1SN=CsQ0zN5dZ6pMF4nU3D5g@mail.gmail.com>
+References: <20170118163225.5776630e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170118095531.37f33df0@canb.auug.org.au> (Stephen Rothwell's
- message of "Wed, 18 Jan 2017 09:55:31 +1100")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170118163225.5776630e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-next@vger.kernel.org, Carlo Caione <carlo@caione.org>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Ard Biesheuvel <ard.biesheuvel@linaro.org>, Herbert Xu <herbert@gondor.apana.org.au>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-
+On Wed, Jan 18, 2017 at 12:32 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi all,
 >
-> Today's linux-next merge of the amlogic tree got a conflict in:
+> Changes since 20170117:
 >
->   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> The arm-soc tree gained a conflict against the arm tree.
 >
-> between commit:
+> The amlogic tree gained a conflict against the arm-soc tree.
 >
->   f7bcd4b6f698 ("ARM64: dts: meson-gxbb-odroidc2: Disable SCPI DVFS")
->
-> from the arm-soc tree and commit:
->
->   47961f1353b8 ("ARM64: dts: meson-gx: move the SCPI and SRAM nodes to meson-gx")
->
-> from the amlogic tree.
+> Non-merge commits (relative to Linus' tree): 3676
+>  4511 files changed, 139928 insertions(+), 85028 deletions(-)
 
-The latter has been dropped from the amlogic pending some ongoing
-discussion, but I forgot to push an updated for-next. That's remedied
-now.
+Crypto now fails on arm allmodconfig:
 
-Kevin
+arch/arm/crypto/Makefile:25: These ARMv8 Crypto Extensions modules
+need binutils 2.23 or higher
+arch/arm/crypto/Makefile:26:  aes-arm-ce.o sha1-arm-ce.o sha2-arm-ce.o
+ghash-arm-ce.o crct10dif-arm-ce.o crc32-arm-ce.o
+  AS [M]  arch/arm/crypto/aes-neonbs-core.o
+  CC [M]  arch/arm/crypto/aes-neonbs-glue.o
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S: Assembler messages:
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:817:
+Error: bad type for scalar -- `vmov q1h[1],r10'
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:817:
+Error: bad type for scalar -- `vmov q1h[0],r9'
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:817:
+Error: bad type for scalar -- `vmov q1l[1],r8'
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:817:
+Error: bad type for scalar -- `vmov q1l[0],r7'
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:818:
+Error: bad type for scalar -- `vmov q2h[1],r10'
+/home/paul/git/linux-head/arch/arm/crypto/aes-neonbs-core.S:818:
+Error: bad type for scalar -- `vmov q2h[0],r9'
+
+[many more similar scalar errors deleted]
+
+The 2.2.3 warning was there in the past, but it wasn't fatal.  I'm using
+an older binutils 2.22 from the kernel.org crosstool stuff.
+
+Seems sfr's builds get the same issue:
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12910945/
+
+A mindless "git bisect run" comes up with:
+
+cc477bf645736739e69d31fdf715281ef0dd5f9b is the first bad commit
+commit cc477bf645736739e69d31fdf715281ef0dd5f9b
+Author: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed Jan 11 16:41:54 2017 +0000
+
+    crypto: arm/aes - replace bit-sliced OpenSSL NEON code
+
+Maybe binnutils 2.22 is finally too old?
+
+Paul.
+--
