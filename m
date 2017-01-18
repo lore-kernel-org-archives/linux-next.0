@@ -1,53 +1,47 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170118 build: 0 failures 0 warnings (next-20170118)
-Date: Wed, 18 Jan 2017 08:58:35 +0000
-Message-ID: <E1cTm4g-0006xW-Tg@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58308 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751316AbdARI6n (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Jan 2017 03:58:43 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: linux-next: manual merge of the amlogic tree with the arm-soc tree
+Date: Wed, 18 Jan 2017 11:06:53 -0800
+Message-ID: <m2inpc192q.fsf@baylibre.com>
+References: <20170118095531.37f33df0@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20170118095531.37f33df0@canb.auug.org.au> (Stephen Rothwell's
+ message of "Wed, 18 Jan 2017 09:55:31 +1100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Neil Armstrong <narmstrong@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-next@vger.kernel.org, Carlo Caione <carlo@caione.org>, ARM <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170118
-Git describe: next-20170118
-Commit: 8fd170ca36 Add linux-next specific files for 20170118
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Build Time: 105 min 43 sec
+> Hi all,
+>
+> Today's linux-next merge of the amlogic tree got a conflict in:
+>
+>   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+>
+> between commit:
+>
+>   f7bcd4b6f698 ("ARM64: dts: meson-gxbb-odroidc2: Disable SCPI DVFS")
+>
+> from the arm-soc tree and commit:
+>
+>   47961f1353b8 ("ARM64: dts: meson-gx: move the SCPI and SRAM nodes to meson-gx")
+>
+> from the amlogic tree.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+The latter has been dropped from the amlogic pending some ongoing
+discussion, but I forgot to push an updated for-next. That's remedied
+now.
 
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Kevin
