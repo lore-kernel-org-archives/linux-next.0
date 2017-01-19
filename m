@@ -1,69 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the security tree
-Date: Thu, 19 Jan 2017 14:04:39 +1100
-Message-ID: <20170119140439.493b3928@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Thu, 19 Jan 2017 14:34:45 +1100
+Message-ID: <20170119143445.6b65dc8b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, James Morris <jmorris@namei.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, John Johansen <john.johansen@canonical.com>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  security/apparmor/include/apparmor.h
+net/smc/af_smc.c:102:16: error: 'SLAB_DESTROY_BY_RCU' undeclared here (not in a function)
+  .slab_flags = SLAB_DESTROY_BY_RCU,
+                ^
 
-between commit:
+Caused by commit
 
-  12557dcba21b ("apparmor: move lib definitions into separate lib include")
+  c7a545924ca1 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
 
-from the security tree and commit:
+interacting with commit
 
-  6b1ffa06e59d ("locking/atomic, kref: Use kref_get_unless_zero() more")
+  ac7138746e14 ("smc: establish new socket family")
 
-from the tip tree.
+from the net-next tree.
 
-I fixed it up (the former moved the code to another file, so I applied the
-below patch there) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I have applied the following merge fix patch (someone will need to
+remember to mention this to Linus):
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 19 Jan 2017 14:01:15 +1100
-Subject: [PATCH] locking/atomic, kref: merge fixup for code movement
+Date: Thu, 19 Jan 2017 14:29:12 +1100
+Subject: [PATCH] smc: merge fix for "mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- security/apparmor/include/lib.h | 6 ------
- 1 file changed, 6 deletions(-)
+ net/smc/af_smc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-index fa281c272970..65ff492a9807 100644
---- a/security/apparmor/include/lib.h
-+++ b/security/apparmor/include/lib.h
-@@ -76,12 +76,6 @@ static inline void *kvzalloc(size_t size)
- 	return __aa_kvmalloc(size, __GFP_ZERO);
- }
+diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+index 4875e65f0c4a..a48260f9ebb7 100644
+--- a/net/smc/af_smc.c
++++ b/net/smc/af_smc.c
+@@ -99,7 +99,7 @@ struct proto smc_proto = {
+ 	.unhash		= smc_unhash_sk,
+ 	.obj_size	= sizeof(struct smc_sock),
+ 	.h.smc_hash	= &smc_v4_hashinfo,
+-	.slab_flags	= SLAB_DESTROY_BY_RCU,
++	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
+ };
+ EXPORT_SYMBOL_GPL(smc_proto);
  
--/* returns 0 if kref not incremented */
--static inline int kref_get_not0(struct kref *kref)
--{
--	return atomic_inc_not_zero(&kref->refcount);
--}
--
- /**
-  * aa_strneq - compare null terminated @str to a non null terminated substring
-  * @str: a null terminated string
 -- 
 2.10.2
-
-
 
 -- 
 Cheers,
