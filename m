@@ -1,58 +1,74 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for Jan 19
-Date: Thu, 19 Jan 2017 11:42:45 -0500
-Message-ID: <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
-References: <20170119163959.07a25ca8@canb.auug.org.au>
+From: Paul McKenney <paulmckrcu@gmail.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Thu, 19 Jan 2017 13:54:37 -0800
+Message-ID: <CAJzB8QEdnVG8Gy-WOSu1pWTtkeVWgBzZvGCu0nobW3M-hBhpkw@mail.gmail.com>
+References: <20170119143445.6b65dc8b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170119163959.07a25ca8@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-yb0-f195.google.com ([209.85.213.195]:35572 "EHLO
+        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751349AbdASV6F (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 19 Jan 2017 16:58:05 -0500
+In-Reply-To: <20170119143445.6b65dc8b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.vnet.ibm.com>
 
-On Thu, Jan 19, 2017 at 12:39 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On Wed, Jan 18, 2017 at 7:34 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
 >
-> Changes since 20170118:
+> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 >
-> The audit tree gained a conflict against Linus' tree.
+> net/smc/af_smc.c:102:16: error: 'SLAB_DESTROY_BY_RCU' undeclared here (not in a function)
+>   .slab_flags = SLAB_DESTROY_BY_RCU,
+>                 ^
 >
-> The tip tree gained a conflict against the security tree.
+> Caused by commit
 >
-> The rcu tree gained a semantic conflict against the net-next tree for
-> which I applied a merge fix patch.
+>   c7a545924ca1 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
 >
-> I dropped 4 patches from the akpm tree that turned up in the tip tree.
+> interacting with commit
 >
-> Non-merge commits (relative to Linus' tree): 3931
->  4740 files changed, 146960 insertions(+), 87918 deletions(-)
+>   ac7138746e14 ("smc: establish new socket family")
 >
+> from the net-next tree.
+>
+> I have applied the following merge fix patch (someone will need to
+> remember to mention this to Linus):
 
-The or32 builds started failing in the last couple days:
+Thank you, Stephen!  I expect that there might be a bit more
+bikeshedding on the name, but here is hoping...  :-/
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/12912013/
+                                                      Thanx, Paul
 
-I was able to reproduce it locally, and a mindless bisect says:
-
-116ded1356614cff3facc9010125b5a28718cbf1 is the first bad commit
-commit 116ded1356614cff3facc9010125b5a28718cbf1
-Author: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-Date:   Mon May 12 14:08:26 2014 +0300
-
-    openrisc: add atomic bitops
-
-I expect the binutils sfr is using is probably similar vintage to
-what I've got here locally - from kernel.org crosstool stuff:
-
-$ or32-linux-as --version
-GNU assembler (GNU Binutils) 2.20.1.20100303
-Copyright 2009 Free Software Foundation, Inc.
-This program is free software; you may redistribute it under the terms of
-the GNU General Public License version 3 or later.
-This program has absolutely no warranty.
-This assembler was configured for a target of `or32-linux'.
-
-Paul.
---
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 19 Jan 2017 14:29:12 +1100
+> Subject: [PATCH] smc: merge fix for "mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU"
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/smc/af_smc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 4875e65f0c4a..a48260f9ebb7 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -99,7 +99,7 @@ struct proto smc_proto = {
+>         .unhash         = smc_unhash_sk,
+>         .obj_size       = sizeof(struct smc_sock),
+>         .h.smc_hash     = &smc_v4_hashinfo,
+> -       .slab_flags     = SLAB_DESTROY_BY_RCU,
+> +       .slab_flags     = SLAB_TYPESAFE_BY_RCU,
+>  };
+>  EXPORT_SYMBOL_GPL(smc_proto);
+>
+> --
+> 2.10.2
+>
+> --
+> Cheers,
+> Stephen Rothwell
