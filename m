@@ -1,36 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the arm-soc tree
-Date: Tue, 24 Jan 2017 13:43:19 +1100
-Message-ID: <20170124134319.2a6ba85d@canb.auug.org.au>
+Subject: linux-next: manual merge of the kselftest tree with the net-next
+ tree
+Date: Tue, 24 Jan 2017 15:45:24 +1100
+Message-ID: <20170124154524.2a993739@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33779 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750749AbdAXCnX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 23 Jan 2017 21:43:23 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Amelie Delaunay <amelie.delaunay@st.com>, Alexandre TORGUE <alexandre.torgue@st.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Fabrice GASNIER <fabrice.gasnier@st.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shuah Khan <shuahkh@osg.samsung.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Herrmann <dh.herrmann@gmail.com>, Daniel Mack <daniel@zonque.org>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>, "bamvor.zhangjian@huawei.com" <bamvor.zhangjian@huawei.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Shuah,
 
-Today's linux-next merge of the mfd tree got a conflict in:
+Today's linux-next merge of the kselftest tree got a conflict in:
 
-  arch/arm/boot/dts/stm32f429.dtsi
+  tools/testing/selftests/bpf/Makefile
 
-between commits:
+between commit:
 
-  3604ef9c8154 ("ARM: dts: stm32: Add ADC support to stm32f429")
-  dd3feb755a4a ("ARM: dts: stm32: Add RTC support for STM32F429 MCU")
+  4d3381f5a322 ("bpf: Add tests for the lpm trie map")
 
-from the arm-soc tree and commit:
+from the net-next tree and commit:
 
-  9072b6b2ba83 ("ARM: dts: stm32: add Timers driver for stm32f429 MCU")
+  88baa78d1f31 ("selftests: remove duplicated all and clean target")
 
-from the mfd tree.
+from the kselftest tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -39,126 +35,31 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
+P.S. Shuah, that kselftest commit has a different email address in its
+Author and Signed-off-by.
+
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/boot/dts/stm32f429.dtsi
-index f05a9d95ef23,b6089351c0d3..000000000000
---- a/arch/arm/boot/dts/stm32f429.dtsi
-+++ b/arch/arm/boot/dts/stm32f429.dtsi
-@@@ -125,20 -218,73 +225,87 @@@
-  			status = "disabled";
-  		};
+diff --cc tools/testing/selftests/bpf/Makefile
+index 064a3e5f2836,058351b0694f..000000000000
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@@ -1,13 -1,7 +1,7 @@@
+  CFLAGS += -Wall -O2 -I../../../../usr/include
   
-+ 		timers7: timers@40001400 {
-+ 			#address-cells = <1>;
-+ 			#size-cells = <0>;
-+ 			compatible = "st,stm32-timers";
-+ 			reg = <0x40001400 0x400>;
-+ 			clocks = <&rcc 0 133>;
-+ 			clock-names = "int";
-+ 			status = "disabled";
-+ 
-+ 			timer@6 {
-+ 				compatible = "st,stm32-timer-trigger";
-+ 				reg = <6>;
-+ 				status = "disabled";
-+ 			};
-+ 		};
-+ 
-+ 			timers12: timers@40001800 {
-+ 			#address-cells = <1>;
-+ 			#size-cells = <0>;
-+ 			compatible = "st,stm32-timers";
-+ 			reg = <0x40001800 0x400>;
-+ 			clocks = <&rcc 0 134>;
-+ 			clock-names = "int";
-+ 			status = "disabled";
-+ 
-+ 			pwm {
-+ 				compatible = "st,stm32-pwm";
-+ 				status = "disabled";
-+ 			};
-+ 
-+ 			timer@11 {
-+ 				compatible = "st,stm32-timer-trigger";
-+ 				reg = <11>;
-+ 				status = "disabled";
-+ 			};
-+ 		};
-+ 
-+ 		timers13: timers@40001c00 {
-+ 			#address-cells = <1>;
-+ 			#size-cells = <0>;
-+ 			compatible = "st,stm32-timers";
-+ 			reg = <0x40001C00 0x400>;
-+ 			clocks = <&rcc 0 135>;
-+ 			clock-names = "int";
-+ 			status = "disabled";
-+ 
-+ 			pwm {
-+ 				compatible = "st,stm32-pwm";
-+ 				status = "disabled";
-+ 			};
-+ 		};
-+ 
-+ 		timers14: timers@40002000 {
-+ 			#address-cells = <1>;
-+ 			#size-cells = <0>;
-+ 			compatible = "st,stm32-timers";
-+ 			reg = <0x40002000 0x400>;
-+ 			clocks = <&rcc 0 136>;
-+ 			clock-names = "int";
-+ 			status = "disabled";
-+ 
-+ 			pwm {
-+ 				compatible = "st,stm32-pwm";
-+ 				status = "disabled";
-+ 			};
-+ 		};
-+ 
- +		rtc: rtc@40002800 {
- +			compatible = "st,stm32-rtc";
- +			reg = <0x40002800 0x400>;
- +			clocks = <&rcc 1 CLK_RTC>;
- +			clock-names = "ck_rtc";
- +			assigned-clocks = <&rcc 1 CLK_RTC>;
- +			assigned-clock-parents = <&rcc 1 CLK_LSE>;
- +			interrupt-parent = <&exti>;
- +			interrupts = <17 1>;
- +			interrupt-names = "alarm";
- +			st,syscfg = <&pwrcfg>;
- +			status = "disabled";
- +		};
- +
-  		usart2: serial@40004400 {
-  			compatible = "st,stm32-usart", "st,stm32-uart";
-  			reg = <0x40004400 0x400>;
-@@@ -433,11 -616,20 +693,26 @@@
-  				};
-  			};
+- test_objs = test_verifier test_maps test_lru_map test_lpm_map
+ -TEST_GEN_PROGS = test_verifier test_maps test_lru_map
+++TEST_GEN_PROGS = test_verifier test_maps test_lru_map test_lpm_map
   
- +			adc3_in8_pin: adc@200 {
- +				pins {
- +					pinmux = <STM32F429_PF10_FUNC_ANALOG>;
- +				};
- +			};
-++
-+ 			pwm1_pins: pwm@1 {
-+ 				pins {
-+ 					pinmux = <STM32F429_PA8_FUNC_TIM1_CH1>,
-+ 						 <STM32F429_PB13_FUNC_TIM1_CH1N>,
-+ 						 <STM32F429_PB12_FUNC_TIM1_BKIN>;
-+ 				};
-+ 			};
-+ 
-+ 			pwm3_pins: pwm@3 {
-+ 				pins {
-+ 					pinmux = <STM32F429_PB4_FUNC_TIM3_CH1>,
-+ 						 <STM32F429_PB5_FUNC_TIM3_CH2>;
-+ 				};
-+ 			};
-  		};
+- TEST_PROGS := test_verifier test_maps test_lru_map test_lpm_map test_kmod.sh
+- TEST_FILES := $(test_objs)
+- 
+- all: $(test_objs)
++ TEST_PROGS := test_kmod.sh
   
-  		rcc: rcc@40023810 {
+  include ../lib.mk
+- 
+- clean:
+- 	$(RM) $(test_objs)
