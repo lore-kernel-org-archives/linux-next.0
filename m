@@ -1,71 +1,122 @@
-From: Stafford Horne <shorne@gmail.com>
-Subject: Re: linux-next: Tree for Jan 19
-Date: Mon, 23 Jan 2017 23:11:59 +0900
-Message-ID: <20170123141159.GE7836@lianli.shorne-pla.net>
-References: <20170119163959.07a25ca8@canb.auug.org.au>
- <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 24 Jan 2017 11:38:51 +1100
+Message-ID: <20170124113851.359ed2be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux@roeck-us.net, fengguang.wu@intel.com
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Ahern <dsa@cumulusnetworks.com>, Robert Shearman <rshearma@brocade.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jan 19, 2017 at 11:42:45AM -0500, Paul Gortmaker wrote:
-> On Thu, Jan 19, 2017 at 12:39 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > Changes since 20170118:
-> >
-> > The audit tree gained a conflict against Linus' tree.
-> >
-> > The tip tree gained a conflict against the security tree.
-> >
-> > The rcu tree gained a semantic conflict against the net-next tree for
-> > which I applied a merge fix patch.
-> >
-> > I dropped 4 patches from the akpm tree that turned up in the tip tree.
-> >
-> > Non-merge commits (relative to Linus' tree): 3931
-> >  4740 files changed, 146960 insertions(+), 87918 deletions(-)
-> >
-> 
-> The or32 builds started failing in the last couple days:
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12912013/
-> 
-> I was able to reproduce it locally, and a mindless bisect says:
-> 
-> 116ded1356614cff3facc9010125b5a28718cbf1 is the first bad commit
-> commit 116ded1356614cff3facc9010125b5a28718cbf1
-> Author: Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
-> Date:   Mon May 12 14:08:26 2014 +0300
-> 
->     openrisc: add atomic bitops
-> 
-> I expect the binutils sfr is using is probably similar vintage to
-> what I've got here locally - from kernel.org crosstool stuff:
-> 
-> $ or32-linux-as --version
-> GNU assembler (GNU Binutils) 2.20.1.20100303
-> Copyright 2009 Free Software Foundation, Inc.
-> This program is free software; you may redistribute it under the terms of
-> the GNU General Public License version 3 or later.
-> This program has absolutely no warranty.
-> This assembler was configured for a target of `or32-linux'.
-> 
+Hi all,
 
-Are all of these builds using the tests from lkp-tests [0]?
+Today's linux-next merge of the net-next tree got a conflict in:
 
-If so and no one is working on openrisc toolchain updates I will package up
-a modern toolchain for the cdn [1] and send patches for lkp-test.
+  net/mpls/af_mpls.c
 
-If there is something else that needs to be done let me know.
+between commit:
 
-[0] git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git
-[1] https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.1/
+  9f427a0e474a ("net: mpls: Fix multipath selection for LSR use case")
 
--Stafford
+from the net tree and commit:
+
+  27d691056bde ("mpls: Packet stats")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc net/mpls/af_mpls.c
+index 5b77377e5a15,4dc81963af8f..000000000000
+--- a/net/mpls/af_mpls.c
++++ b/net/mpls/af_mpls.c
+@@@ -98,10 -94,35 +94,35 @@@ bool mpls_pkt_too_big(const struct sk_b
+  }
+  EXPORT_SYMBOL_GPL(mpls_pkt_too_big);
+  
++ void mpls_stats_inc_outucastpkts(struct net_device *dev,
++ 				 const struct sk_buff *skb)
++ {
++ 	struct mpls_dev *mdev;
++ 
++ 	if (skb->protocol == htons(ETH_P_MPLS_UC)) {
++ 		mdev = mpls_dev_get(dev);
++ 		if (mdev)
++ 			MPLS_INC_STATS_LEN(mdev, skb->len,
++ 					   tx_packets,
++ 					   tx_bytes);
++ 	} else if (skb->protocol == htons(ETH_P_IP)) {
++ 		IP_UPD_PO_STATS(dev_net(dev), IPSTATS_MIB_OUT, skb->len);
++ #if IS_ENABLED(CONFIG_IPV6)
++ 	} else if (skb->protocol == htons(ETH_P_IPV6)) {
++ 		struct inet6_dev *in6dev = __in6_dev_get(dev);
++ 
++ 		if (in6dev)
++ 			IP6_UPD_PO_STATS(dev_net(dev), in6dev,
++ 					 IPSTATS_MIB_OUT, skb->len);
++ #endif
++ 	}
++ }
++ EXPORT_SYMBOL_GPL(mpls_stats_inc_outucastpkts);
++ 
+ -static u32 mpls_multipath_hash(struct mpls_route *rt,
+ -			       struct sk_buff *skb, bool bos)
+ +static u32 mpls_multipath_hash(struct mpls_route *rt, struct sk_buff *skb)
+  {
+  	struct mpls_entry_decoded dec;
+ +	unsigned int mpls_hdr_len = 0;
+  	struct mpls_shim_hdr *hdr;
+  	bool eli_seen = false;
+  	int label_index;
+@@@ -280,27 -308,24 +310,24 @@@ static int mpls_forward(struct sk_buff 
+  	hdr = mpls_hdr(skb);
+  	dec = mpls_entry_decode(hdr);
+  
+ -	/* Pop the label */
+ -	skb_pull(skb, sizeof(*hdr));
+ -	skb_reset_network_header(skb);
+ -
+ -	skb_orphan(skb);
+ -
+  	rt = mpls_route_input_rcu(net, dec.label);
+- 	if (!rt)
++ 	if (!rt) {
++ 		MPLS_INC_STATS(mdev, rx_noroute);
+  		goto drop;
++ 	}
+  
+ -	nh = mpls_select_multipath(rt, skb, dec.bos);
+ +	nh = mpls_select_multipath(rt, skb);
+  	if (!nh)
+- 		goto drop;
+- 
+- 	/* Find the output device */
+- 	out_dev = rcu_dereference(nh->nh_dev);
+- 	if (!mpls_output_possible(out_dev))
+- 		goto drop;
++ 		goto err;
+  
+ +	/* Pop the label */
+ +	skb_pull(skb, sizeof(*hdr));
+ +	skb_reset_network_header(skb);
+ +
+ +	skb_orphan(skb);
+ +
+  	if (skb_warn_if_lro(skb))
+- 		goto drop;
++ 		goto err;
+  
+  	skb_forward_csum(skb);
+  
