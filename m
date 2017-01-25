@@ -1,60 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with the selinux tree
-Date: Wed, 25 Jan 2017 15:16:54 +1100
-Message-ID: <20170125151654.02960975@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the mfd tree
+Date: Wed, 25 Jan 2017 15:54:50 +1100
+Message-ID: <20170125155450.6e517bfc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60313 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60581 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751137AbdAYEQ5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 24 Jan 2017 23:16:57 -0500
+        id S1751137AbdAYEyx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 24 Jan 2017 23:54:53 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Smalley <sds@tycho.nsa.gov>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>
 
-Hi Eric,
+Hi Lee,
 
-Today's linux-next merge of the userns tree got a conflict in:
+After merging the mfd tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-  security/selinux/hooks.c
+drivers/pwm/pwm-stm32.c: In function 'stm32_pwm_apply':
+drivers/pwm/pwm-stm32.c:204:33: warning: 'curstate.polarity' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  if (state->polarity != curstate.polarity)
+                                 ^
 
-between commit:
+Introduced by commit
 
-  be0554c9bf9f ("selinux: clean up cred usage and simplify")
-
-from the selinux tree and commit:
-
-  9227dd2a84a7 ("exec: Remove LSM_UNSAFE_PTRACE_CAP")
-
-from the userns tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  bafffb6e7bd1 ("pwm: Add driver for STM32 plaftorm")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc security/selinux/hooks.c
-index 0d24eb2325d2,cece6fe55f02..000000000000
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@@ -2397,9 -2404,8 +2397,8 @@@ static int selinux_bprm_set_creds(struc
-  
-  		/* Make sure that anyone attempting to ptrace over a task that
-  		 * changes its SID has the appropriate permit */
-- 		if (bprm->unsafe &
-- 		    (LSM_UNSAFE_PTRACE | LSM_UNSAFE_PTRACE_CAP)) {
-+ 		if (bprm->unsafe & LSM_UNSAFE_PTRACE) {
- -			u32 ptsid = ptrace_parent_sid(current);
- +			u32 ptsid = ptrace_parent_sid();
-  			if (ptsid != 0) {
-  				rc = avc_has_perm(ptsid, new_tsec->sid,
-  						  SECCLASS_PROCESS,
