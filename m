@@ -1,41 +1,62 @@
-From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Subject: [PATCH] pwm: STM32 fix compilation warning
-Date: Wed, 25 Jan 2017 09:50:47 +0100
-Message-ID: <1485334247-28996-1-git-send-email-benjamin.gaignard@st.com>
+From: Vincent ABRIOU <vincent.abriou@st.com>
+Subject: RE: linux-next: build failure after merge of the drm tree
+Date: Wed, 25 Jan 2017 10:52:39 +0000
+Message-ID: <1e7d5e40781c4248a150894f91d0db40@SFHDAG5NODE1.st.com>
+References: <20170124122515.07a3fcc8@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170124122515.07a3fcc8@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, thierry.reding@gmail.com, lee.jones@linaro.org
-Cc: Benjamin Gaignard <benjamin.gaignard@st.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?iso-8859-1?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-remove useless curstate variable.
+Dave,
 
-Fixes: bafffb6e7bd1 ("pwm: Add driver for STM32 plaftorm")
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- drivers/pwm/pwm-stm32.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Here is the patch from Chris Wilson to solve the build issue:
+[PATCH] drm/sti: Fix compilation failure for drm_framebuffer.pixel_format
 
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index ce6232e..6139512 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -189,7 +189,6 @@ static void stm32_pwm_disable(struct stm32_pwm *priv, int ch)
- static int stm32_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 			   struct pwm_state *state)
- {
--	struct pwm_state curstate;
- 	bool enabled;
- 	struct stm32_pwm *priv = to_stm32_pwm_dev(chip);
- 	int ret;
-@@ -201,7 +200,7 @@ static int stm32_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 		return 0;
- 	}
- 
--	if (state->polarity != curstate.polarity)
-+	if (state->polarity != pwm->state.polarity)
- 		stm32_pwm_set_polarity(priv, pwm->hwpwm, state->polarity);
- 
- 	ret = stm32_pwm_config(priv, pwm->hwpwm,
--- 
-1.9.1
+BR
+Vincent
+
+> -----Original Message-----
+> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> Sent: mardi 24 janvier 2017 02:25
+> To: Dave Airlie <airlied@linux.ie>
+> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Vincent
+> ABRIOU <vincent.abriou@st.com>; Ville Syrjälä
+> <ville.syrjala@linux.intel.com>
+> Subject: linux-next: build failure after merge of the drm tree
+> 
+> Hi Dave,
+> 
+> After merging the drm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> drivers/gpu/drm/sti/sti_plane.c: In function 'sti_plane_update_fps':
+> drivers/gpu/drm/sti/sti_plane.c:76:33: error: 'struct drm_framebuffer' has
+> no member named 'pixel_format'
+>      (char *)&plane->drm_plane.fb->pixel_format,
+>                                  ^
+> 
+> Caused by commit
+> 
+>   a69e466b0666 ("drm/sti: update fps debugfs entries")
+> 
+> Interacting with commit
+> 
+>   438b74a5497c ("drm: Nuke fb->pixel_format")
+> 
+> This should have been fixed up in commit
+> 
+>   d64a1661c8f7 ("Merge tag 'sti-drm-next-2017-01-06' of
+> https://github.com/vinceab/linux into drm-next")
+> 
+> I have used the drm tree from next-20170123 for today.
+> 
+> --
+> Cheers,
+> Stephen Rothwell
