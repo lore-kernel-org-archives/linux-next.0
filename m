@@ -1,41 +1,56 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the kselftest tree with the net-next
- tree
-Date: Wed, 25 Jan 2017 08:39:11 +0100
-Message-ID: <5888561F.9080503@iogearbox.net>
-References: <20170125150321.0b377f57@canb.auug.org.au>
+From: Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Subject: Re: linux-next: build warning after merge of the mfd tree
+Date: Wed, 25 Jan 2017 09:13:30 +0100
+Message-ID: <CA+M3ks7ToYdZF0Mv0=zcF2hTsst9HnDTc+pjcensrU6EeZhbZQ@mail.gmail.com>
+References: <20170125155450.6e517bfc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170125150321.0b377f57@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Shuah Khan <shuahkh@osg.samsung.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "bamvor.zhangjian@huawei.com" <bamvor.zhangjian@huawei.com>, Bamvor Jian Zhang <bamvor.zhangjian@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qt0-f182.google.com ([209.85.216.182]:36683 "EHLO
+        mail-qt0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751337AbdAYINc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 25 Jan 2017 03:13:32 -0500
+Received: by mail-qt0-f182.google.com with SMTP id k15so10014387qtg.3
+        for <linux-next@vger.kernel.org>; Wed, 25 Jan 2017 00:13:32 -0800 (PST)
+In-Reply-To: <20170125155450.6e517bfc@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Lee Jones <lee.jones@linaro.org>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 01/25/2017 05:03 AM, Stephen Rothwell wrote:
-> Hi Shuah,
+2017-01-25 5:54 GMT+01:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Lee,
 >
-> Today's linux-next merge of the kselftest tree got a conflict in:
+> After merging the mfd tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
 >
->    tools/testing/selftests/bpf/Makefile
+> drivers/pwm/pwm-stm32.c: In function 'stm32_pwm_apply':
+> drivers/pwm/pwm-stm32.c:204:33: warning: 'curstate.polarity' may be used =
+uninitialized in this function [-Wmaybe-uninitialized]
+>   if (state->polarity !=3D curstate.polarity)
+>                                  ^
 >
-> between commit:
->
->    62b64660262a ("bpf: add prog tag test case to bpf selftests")
->
-> from the net-next tree and commit:
->
->    88baa78d1f31 ("selftests: remove duplicated all and clean target")
->
-> from the kselftest tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
 
-Looks good to me, thanks!
+I will send a patch to fix that today
+
+Benjamin
+
+> Introduced by commit
+>
+>   bafffb6e7bd1 ("pwm: Add driver for STM32 plaftorm")
+>
+> --
+> Cheers,
+> Stephen Rothwell
+
+
+
+--=20
+Benjamin Gaignard
+
+Graphic Study Group
+
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+
+Follow Linaro: Facebook | Twitter | Blog
