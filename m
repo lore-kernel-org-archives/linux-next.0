@@ -1,62 +1,46 @@
-From: Vincent ABRIOU <vincent.abriou@st.com>
-Subject: RE: linux-next: build failure after merge of the drm tree
-Date: Wed, 25 Jan 2017 10:52:39 +0000
-Message-ID: <1e7d5e40781c4248a150894f91d0db40@SFHDAG5NODE1.st.com>
-References: <20170124122515.07a3fcc8@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: linux-next: Tree for Jan 19
+Date: Wed, 25 Jan 2017 11:37:11 -0500
+Message-ID: <20170125163711.GE29778@windriver.com>
+References: <20170119163959.07a25ca8@canb.auug.org.au>
+ <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
+ <20170123141159.GE7836@lianli.shorne-pla.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170124122515.07a3fcc8@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20170123141159.GE7836@lianli.shorne-pla.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?iso-8859-1?Q?Ville_Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Stafford Horne <shorne@gmail.com>
+Cc: linux@roeck-us.net, fengguang.wu@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Dave,
+[Re: linux-next: Tree for Jan 19] On 23/01/2017 (Mon 23:11) Stafford Horne wrote:
 
-Here is the patch from Chris Wilson to solve the build issue:
-[PATCH] drm/sti: Fix compilation failure for drm_framebuffer.pixel_format
+[...]
 
-BR
-Vincent
+> 
+> Are all of these builds using the tests from lkp-tests [0]?
 
-> -----Original Message-----
-> From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
-> Sent: mardi 24 janvier 2017 02:25
-> To: Dave Airlie <airlied@linux.ie>
-> Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Vincent
-> ABRIOU <vincent.abriou@st.com>; Ville Syrjälä
-> <ville.syrjala@linux.intel.com>
-> Subject: linux-next: build failure after merge of the drm tree
+Not using any specific tests, other than compiling allmodconfig and
+defconfig.
+
 > 
-> Hi Dave,
+> If so and no one is working on openrisc toolchain updates I will package up
+> a modern toolchain for the cdn [1] and send patches for lkp-test.
 > 
-> After merging the drm tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
+> If there is something else that needs to be done let me know.
 > 
-> drivers/gpu/drm/sti/sti_plane.c: In function 'sti_plane_update_fps':
-> drivers/gpu/drm/sti/sti_plane.c:76:33: error: 'struct drm_framebuffer' has
-> no member named 'pixel_format'
->      (char *)&plane->drm_plane.fb->pixel_format,
->                                  ^
+> [0] git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git
+> [1] https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.1/
+
+If you could work with Tony (his email is at the bottom of the crosstool
+front page in [1]) to get the or32 binutils updated, that would be
+great.  With all the arch currrently in linux, I pretty much have to
+just use what is available from kernel.org as prebuilts.
+
+Paul.
+--
+
 > 
-> Caused by commit
-> 
->   a69e466b0666 ("drm/sti: update fps debugfs entries")
-> 
-> Interacting with commit
-> 
->   438b74a5497c ("drm: Nuke fb->pixel_format")
-> 
-> This should have been fixed up in commit
-> 
->   d64a1661c8f7 ("Merge tag 'sti-drm-next-2017-01-06' of
-> https://github.com/vinceab/linux into drm-next")
-> 
-> I have used the drm tree from next-20170123 for today.
-> 
-> --
-> Cheers,
-> Stephen Rothwell
+> -Stafford
