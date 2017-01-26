@@ -1,38 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- userns tree
-Date: Thu, 26 Jan 2017 14:55:37 +1100
-Message-ID: <20170126145537.74768b41@canb.auug.org.au>
-References: <20170125160835.1b94db55@canb.auug.org.au>
-        <871svqeivo.fsf@xmission.com>
-        <20170125174322.777ddcb0e232d5409569e95c@linux-foundation.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: Tree for Jan 19
+Date: Wed, 25 Jan 2017 20:54:53 -0800
+Message-ID: <1014aa6f-447d-9dcc-2a60-01156dcdf88f@roeck-us.net>
+References: <20170119163959.07a25ca8@canb.auug.org.au>
+ <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
+ <20170123141159.GE7836@lianli.shorne-pla.net>
+ <20170125163711.GE29778@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51749 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750780AbdAZDzk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 25 Jan 2017 22:55:40 -0500
-In-Reply-To: <20170125174322.777ddcb0e232d5409569e95c@linux-foundation.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170125163711.GE29778@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Stafford Horne <shorne@gmail.com>
+Cc: fengguang.wu@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
-
-On Wed, 25 Jan 2017 17:43:22 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
+On 01/25/2017 08:37 AM, Paul Gortmaker wrote:
+> [Re: linux-next: Tree for Jan 19] On 23/01/2017 (Mon 23:11) Stafford Horne wrote:
 >
-> On Thu, 26 Jan 2017 13:59:23 +1300 ebiederm@xmission.com (Eric W. Biederman) wrote:
-> 
-> > Andrew do you see merit in Aleksa's patch that I don't?  Otherwise can
-> > you remove it from your tree?  
-> 
-> I have done so.
+> [...]
+>
+>>
+>> Are all of these builds using the tests from lkp-tests [0]?
+>
+> Not using any specific tests, other than compiling allmodconfig and
+> defconfig.
+>
+>>
+>> If so and no one is working on openrisc toolchain updates I will package up
+>> a modern toolchain for the cdn [1] and send patches for lkp-test.
+>>
+>> If there is something else that needs to be done let me know.
+>>
+>> [0] git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git
+>> [1] https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.1/
+>
+> If you could work with Tony (his email is at the bottom of the crosstool
+> front page in [1]) to get the or32 binutils updated, that would be
+> great.  With all the arch currrently in linux, I pretty much have to
+> just use what is available from kernel.org as prebuilts.
+>
 
-I'll drop it from linux-next on Monday (if there is no new mmotm by then).
+Different problem, but from the 0day info I thought you might be interested
+in the following breakage as well (seen in -next).
 
--- 
-Cheers,
-Stephen Rothwell
+/opt/buildbot/slave/next-next/build/arch/score/kernel/traps.c: In function 'do_adedata':
+/opt/buildbot/slave/next-next/build/arch/score/kernel/traps.c:185:2: error: implicit declaration of function 'search_exception_tables'
+
+Reported on kerneltests.org.
+
+Guenter
