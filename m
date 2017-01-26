@@ -1,46 +1,61 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for Jan 19
-Date: Wed, 25 Jan 2017 11:37:11 -0500
-Message-ID: <20170125163711.GE29778@windriver.com>
-References: <20170119163959.07a25ca8@canb.auug.org.au>
- <CAP=VYLptRY21K58v6BXj-WoZ1cm9Hv=UPF6z8Owfzct=fobbzQ@mail.gmail.com>
- <20170123141159.GE7836@lianli.shorne-pla.net>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the akpm-current tree with the userns tree
+Date: Thu, 26 Jan 2017 13:59:23 +1300
+Message-ID: <871svqeivo.fsf@xmission.com>
+References: <20170125160835.1b94db55@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170123141159.GE7836@lianli.shorne-pla.net>
+In-Reply-To: <20170125160835.1b94db55@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 25 Jan 2017 16:08:35 +1100")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stafford Horne <shorne@gmail.com>
-Cc: linux@roeck-us.net, fengguang.wu@intel.com, Stephen Rothwell <sfr@canb.auug.org.au>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Aleksa Sarai <asarai@suse.de>
 List-Id: linux-next.vger.kernel.org
 
-[Re: linux-next: Tree for Jan 19] On 23/01/2017 (Mon 23:11) Stafford Horne wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-[...]
+> Hi all,
+>
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+>
+>   fs/proc/base.c
+>
+> between commit:
+>
+>   68eb94f16227 ("proc: Better ownership of files for non-dumpable tasks in user namespaces")
+>
+> from the userns tree and commit:
+>
+>   d15d29b5352f ("procfs: change the owner of non-dumpable and writeable files")
+>
+> from the akpm-current tree.
+>
+> I *think* that the former supercedes the latter?
 
-> 
-> Are all of these builds using the tests from lkp-tests [0]?
+Sort of.  After a long conversation it turns out what they are trying to
+do is orthogonal.
 
-Not using any specific tests, other than compiling allmodconfig and
-defconfig.
+The first (mine) is handling the case of non-dumpable tasks in user
+namespaces.
 
-> 
-> If so and no one is working on openrisc toolchain updates I will package up
-> a modern toolchain for the cdn [1] and send patches for lkp-test.
-> 
-> If there is something else that needs to be done let me know.
-> 
-> [0] git://git.kernel.org/pub/scm/linux/kernel/git/wfg/lkp-tests.git
-> [1] https://www.kernel.org/pub/tools/crosstool/files/bin/x86_64/4.5.1/
+The second by Aleksa Sarai is trying to trying to relax the permission
+checks in proc so that non-dumpable is not as strict, to sort out some
+runC issues where they are having challenges coding themselves into a
+corner.  In the case of /proc/self I think there may be a case but in
+general relaxing the permission checks in proc gives me the Heebie
+Jeebies.
 
-If you could work with Tony (his email is at the bottom of the crosstool
-front page in [1]) to get the or32 binutils updated, that would be
-great.  With all the arch currrently in linux, I pretty much have to
-just use what is available from kernel.org as prebuilts.
+Andrew do you see merit in Aleksa's patch that I don't?  Otherwise can
+you remove it from your tree?
 
-Paul.
---
+> I fixed it up (I just used the former) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-> 
-> -Stafford
+Stephen thank you for pointing this out.
+
+Eric
