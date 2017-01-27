@@ -1,28 +1,39 @@
-From: David Ahern <dsa@cumulusnetworks.com>
-Subject: Re: [next-20170124] Kernel oops(rt6_fill_node) during reboot of LPAR
-Date: Fri, 27 Jan 2017 08:34:15 -0700
-Message-ID: <84f3cb86-5110-64a0-5575-4024ba758135@cumulusnetworks.com>
-References: <9520531C-6458-4442-9ED5-3598E72C7C6A@linux.vnet.ibm.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 2/2] m68k: replaced gcc specific macros with ones from compiler.h
+Date: Fri, 27 Jan 2017 11:39:12 -0500
+Message-ID: <CAP=VYLobUppjdMpeoQ7gXn60zmbEZU6d5Ga1mccCPbbpw9n1yA@mail.gmail.com>
+References: <1485260068-2495-1-git-send-email-gidisrael@gmail.com> <1485260068-2495-2-git-send-email-gidisrael@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <9520531C-6458-4442-9ED5-3598E72C7C6A@linux.vnet.ibm.com>
-Sender: netdev-owner@vger.kernel.org
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, netdev@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org, Stephen Rothwell <sfr@canb.auug.org.au>, davem@davemloft.net, Michael Ellerman <michael@ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-Reply-To: <1485260068-2495-2-git-send-email-gidisrael@gmail.com>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Gideon Israel Dsouza <gidisrael@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, gerg@linux-m68k.org, Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 1/27/17 5:54 AM, Sachin Sant wrote:
-> While rebooting PowerVM LPAR running 4.10.0-rc5-next-20170124
-> on a POWER8 box, following kernel oops is displayed.
-> 
-> This problem was introduced with next-20170123. next-20170120 works.
-> Initial analysis points to following patch included with next-20170123
-> 
-> commit a1a22c12060e4b9c52f45d4b3460f614e00162a2
-> net: ipv6: Keep nexthop of multipath route on admin down
+On Tue, Jan 24, 2017 at 7:14 AM, Gideon Israel Dsouza
+<gidisrael@gmail.com> wrote:
+> There is <linux/compiler.h> which provides macros for various gcc specific
+> constructs. Eg: __weak for __attribute__((weak)). I've cleaned all
+> instances of gcc specific attributes with the right macros for all files
+> under /arch/m68k
+>
+> This patch depends on the previous with changes in
 
-Thanks for the report. Fixed by:
+> @@ -17,6 +18,6 @@ void nf_init(void);
+>  void nf_shutdown(void);
+>
+>  void nfprint(const char *fmt, ...)
+> -       __attribute__ ((format (printf, 1, 2)));
+> +       __print(1, 2);
+>
 
-https://git.kernel.org/cgit/linux/kernel/git/davem/net-next.git/commit/?id=1f17e2f2c8a8be3430813119fa7b633398f6185b
+You've gone from printf to print here.  This commit is breaking the
+linux-next builds on m68k.  I see the kbuild bot tripped over the same
+issue and did the same bisect.
+
+http://kisskb.ellerman.id.au/kisskb/buildresult/12916834/
+
+Paul.
+--
