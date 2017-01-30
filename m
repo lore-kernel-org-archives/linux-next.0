@@ -1,48 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the
- drm-misc-fixes tree
-Date: Mon, 30 Jan 2017 13:22:39 +1100
-Message-ID: <20170130132239.6cb67529@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the powerpc-fixes
+ tree
+Date: Mon, 30 Jan 2017 13:46:45 +1100
+Message-ID: <20170130134645.5464272d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H.
- Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: linux-next@vger.kernel.org, Michel =?UTF-8?B?RMOkbnplcg==?= <michel.daenzer@amd.com>, linux-kernel@vger.kernel.org, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41091 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751039AbdA3CrE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 29 Jan 2017 21:47:04 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSB0aXAgdHJlZSBnb3QgYSBj
-b25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL3R0bS90dG1fYm8uYwoKYmV0d2VlbiBjb21t
-aXQ6CgogIDdjNmQ2MzlkNDY1ZSAoImRybS90dG06IE1ha2Ugc3VyZSBCT3MgYmVpbmcgc3dhcHBl
-ZCBvdXQgYXJlIGNhY2hlYWJsZSIpCgpmcm9tIHRoZSBkcm0tbWlzYy1maXhlcyB0cmVlIGFuZCBj
-b21taXQ6CgogIGJkZmFmYzRmZmRkMiAoImxvY2tpbmcvYXRvbWljLCBrcmVmOiBLaWxsIGtyZWZf
-c3ViKCkiKQoKZnJvbSB0aGUgdGlwIHRyZWUuCgpJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cpIGFu
-ZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKaXMgbm93IGZpeGVkIGFzIGZh
-ciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBub24gdHJpdmlhbApjb25mbGlj
-dHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5
-b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdhbnQgdG8g
-Y29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxpY3Rp
-bmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNvbXBsZXggY29uZmxpY3RzLgoK
-LS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS90
-dG0vdHRtX2JvLmMKaW5kZXggODZlM2IyMzNiNzIyLGZmYzZjYjU1Yzc4Yy4uMDAwMDAwMDAwMDAw
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90dG0vdHRtX2JvLmMKKysrIGIvZHJpdmVycy9ncHUvZHJt
-L3R0bS90dG1fYm8uYwpAQEAgLTE2NjksNyAtMTY0NSw3ICsxNjQ1LDYgQEBAIHN0YXRpYyBpbnQg
-dHRtX2JvX3N3YXBvdXQoc3RydWN0IHR0bV9tZQogIAkgICAgY29udGFpbmVyX29mKHNocmluaywg
-c3RydWN0IHR0bV9ib19nbG9iYWwsIHNocmluayk7CiAgCXN0cnVjdCB0dG1fYnVmZmVyX29iamVj
-dCAqYm87CiAgCWludCByZXQgPSAtRUJVU1k7Ci0gCWludCBwdXRfY291bnQ7CiAtCXVpbnQzMl90
-IHN3YXBfcGxhY2VtZW50ID0gKFRUTV9QTF9GTEFHX0NBQ0hFRCB8IFRUTV9QTF9GTEFHX1NZU1RF
-TSk7CiAgCiAgCXNwaW5fbG9jaygmZ2xvYi0+bHJ1X2xvY2spOwogIAlsaXN0X2Zvcl9lYWNoX2Vu
-dHJ5KGJvLCAmZ2xvYi0+c3dhcF9scnUsIHN3YXApIHsKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Hi Paul,
+
+Today's linux-next merge of the rcu tree got a conflict in:
+
+  arch/powerpc/Kconfig
+
+between commit:
+
+  f2574030b0e3 ("powerpc: Revert the initial stack protector support")
+
+from the powerpc-fixes tree and commit:
+
+  c7327406b3c3 ("rcu: Make arch select smp_mb__after_unlock_lock() strength")
+
+from the rcu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/powerpc/Kconfig
+index a0fe262408a5,9fecd004fee8..000000000000
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@@ -164,9 -164,11 +164,10 @@@ config PP
+  	select ARCH_HAS_SCALED_CPUTIME if VIRT_CPU_ACCOUNTING_NATIVE
+  	select HAVE_ARCH_HARDENED_USERCOPY
+  	select HAVE_KERNEL_GZIP
+ -	select HAVE_CC_STACKPROTECTOR
++ 	select ARCH_WEAK_RELEASE_ACQUIRE
+  
+  config GENERIC_CSUM
+ -	def_bool CPU_LITTLE_ENDIAN
+ +	def_bool n
+  
+  config EARLY_PRINTK
+  	bool
