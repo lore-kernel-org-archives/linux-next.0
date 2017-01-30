@@ -1,66 +1,97 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [PATCH] powerpc: sort Kconfig selects under CONFIG_PPC
-Date: Mon, 30 Jan 2017 20:56:12 +1100
-Message-ID: <87lgtsx45f.fsf@concordia.ellerman.id.au>
-References: <87y3xtw62l.fsf@concordia.ellerman.id.au>
- <20170130093002.22180-1-andrew.donnellan@au1.ibm.com>
- <20170130204102.423cebea@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20170130204102.423cebea@canb.auug.org.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-Cc: linux-next@vger.kernel.org, paulmck@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170130 build: 1 failures 3 warnings (next-20170130)
+Date: Mon, 30 Jan 2017 10:02:21 +0000
+Message-ID: <E1cY8mz-0002o1-BW@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39442 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752501AbdA3KDD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Jan 2017 05:03:03 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> On Mon, 30 Jan 2017 20:30:02 +1100 Andrew Donnellan <andrew.donnellan@au1.ibm.com> wrote:
->>
->> config PPC has a lot of selects under it. They're not sorted in any
->> particular order, leading to merge conflicts when adding items at the end.
->> 
->> Sort them alphabetically.
->
-> Excellent, thanks.
->
->> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
->> Signed-off-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
->> ---
->> 
->> On top of linux-next 20170130
->
-> Probably best done on top of powerpc-next and I can cope with the
-> conflicts one more time.
+Tree/Branch: next-20170130
+Git describe: next-20170130
+Commit: 14dcd7ee9f Add linux-next specific files for 20170130
 
-But I don't want to send that many conflicts to Linus.
+Build Time: 104 min 18 sec
 
-What we need to do is generate the patch just after 4.11-rc1 is out,
-that way there should be zero skew between my fixes/next and Linus'
-tree. I've been meaning to do it for a few releases but just never
-remember.
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
 
-So Andrew if you can remember to do it then that would be awesome :)
+Errors: 6
+Warnings: 3
+Section Mismatches: 0
 
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 689cf9218b21..570195c8a86a 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -80,91 +80,91 @@ config ARCH_HAS_DMA_SET_COHERENT_MASK
->>  config PPC
->
-> Could we add a comment just above asking that the selects be kept in order?
+Failed defconfigs:
+	arm-allmodconfig
 
-Actually at the bottom would make more sense I think, that's where
-people will try to add new ones.
+Errors:
 
-cheers
+	arm-allmodconfig
+../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 6
+	  1 ../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+	  1 ../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+	  1 ../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 3
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/pinctrl/mvebu/pinctrl-kirkwood.c:460:19: warning: unused variable 'res' [-Wunused-variable]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:816:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 6 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+	../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+
+Warnings:
+	../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:816:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/pinctrl/mvebu/pinctrl-kirkwood.c:460:19: warning: unused variable 'res' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
