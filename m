@@ -1,32 +1,30 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Mon, 30 Jan 2017 07:34:57 +0100
-Message-ID: <20170130063457.GA2592@lst.de>
-References: <20170130124350.36a57549@canb.auug.org.au> <5f2da80f-c6fe-8c45-0e56-819aae7d925c@kernel.dk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jan 30
+Date: Mon, 30 Jan 2017 17:49:56 +1100
+Message-ID: <20170130174956.706ee797@canb.auug.org.au>
+References: <20170130174901.6c7e88bd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:47500 "EHLO newverein.lst.de"
+Received: from ozlabs.org ([103.22.144.67]:41985 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751922AbdA3GnW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 30 Jan 2017 01:43:22 -0500
-Content-Disposition: inline
-In-Reply-To: <5f2da80f-c6fe-8c45-0e56-819aae7d925c@kernel.dk>
+        id S1751996AbdA3Gup (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 30 Jan 2017 01:50:45 -0500
+In-Reply-To: <20170130174901.6c7e88bd@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
+To: linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-On Sun, Jan 29, 2017 at 06:53:42PM -0700, Jens Axboe wrote:
-> Huh, I wonder how that snuck past my allmodconfig builds, that looks
-> like a clear failure.
+Hi all,
 
-I also did tons of test builds and never saw it, not sure why
-the NVMe-SCSI code still someone how an implicit include of scsi_cmnd.h.
+On Mon, 30 Jan 2017 17:49:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> There will be no linux-next release until Monday (next-20170130).
 
-But in the end it should not be using the defintion anyway, and I sent
-a patch on Saturday so that it doesn't:
+Obviously, this is not longer relevant :-)
 
-	[PATCH 1/5] nvme/scsi: don't rely on BLK_MAX_CDB
-
-might make sense to expedite that.
+-- 
+Cheers,
+Stephen Rothwell
