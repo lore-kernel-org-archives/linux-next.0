@@ -1,52 +1,44 @@
-From: "Gideon D'souza" <gidisrael@gmail.com>
-Subject: Re: [PATCH 2/2] m68k: replaced gcc specific macros with ones from compiler.h
-Date: Fri, 27 Jan 2017 22:48:31 +0530
-Message-ID: <CAPNrq4wf_ZwjN5uwzz6vgm8EMuMR5pf1CkTLHUZQNZyNo7bwYA@mail.gmail.com>
-References: <1485260068-2495-1-git-send-email-gidisrael@gmail.com>
- <1485260068-2495-2-git-send-email-gidisrael@gmail.com> <CAP=VYLobUppjdMpeoQ7gXn60zmbEZU6d5Ga1mccCPbbpw9n1yA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Mon, 30 Jan 2017 12:43:50 +1100
+Message-ID: <20170130124350.36a57549@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-m68k-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLobUppjdMpeoQ7gXn60zmbEZU6d5Ga1mccCPbbpw9n1yA@mail.gmail.com>
-Sender: linux-m68k-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Greg Ungerer <gerg@linux-m68k.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k <linux-m68k@lists.linux-m68k.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51293 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751553AbdA3Bnx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 29 Jan 2017 20:43:53 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
->You've gone from printf to print here.  This commit is breaking the
->linux-next builds on m68k.  I see the kbuild bot tripped over the same
->issue and did the same bisect.
+Hi Jens,
 
-I did do a build before sending, as you may guess I'm not on an m68k machine.
+After merging the block tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Forgive the newbie please!
+drivers/nvme/host/scsi.c: In function 'nvme_scsi_translate':
+drivers/nvme/host/scsi.c:2350:9: error: 'BLK_MAX_CDB' undeclared (first use in this function)
+  u8 cmd[BLK_MAX_CDB];
+         ^
+drivers/nvme/host/scsi.c:2350:9: note: each undeclared identifier is reported only once for each function it appears in
+drivers/nvme/host/scsi.c:2350:5: warning: unused variable 'cmd' [-Wunused-variable]
+  u8 cmd[BLK_MAX_CDB];
+     ^
+drivers/nvme/host/scsi.c: In function 'nvme_sg_io':
+drivers/nvme/host/scsi.c:2454:20: error: 'BLK_MAX_CDB' undeclared (first use in this function)  
+  if (hdr.cmd_len > BLK_MAX_CDB)
+                    ^
 
-I'm re-sending my patch with the correction.
+Caused by commit
 
-On Fri, Jan 27, 2017 at 10:09 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On Tue, Jan 24, 2017 at 7:14 AM, Gideon Israel Dsouza
-> <gidisrael@gmail.com> wrote:
->> There is <linux/compiler.h> which provides macros for various gcc specific
->> constructs. Eg: __weak for __attribute__((weak)). I've cleaned all
->> instances of gcc specific attributes with the right macros for all files
->> under /arch/m68k
->>
->> This patch depends on the previous with changes in
->
->> @@ -17,6 +18,6 @@ void nf_init(void);
->>  void nf_shutdown(void);
->>
->>  void nfprint(const char *fmt, ...)
->> -       __attribute__ ((format (printf, 1, 2)));
->> +       __print(1, 2);
->>
->
-> You've gone from printf to print here.  This commit is breaking the
-> linux-next builds on m68k.  I see the kbuild bot tripped over the same
-> issue and did the same bisect.
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/12916834/
->
-> Paul.
-> --
+  82ed4db499b8 ("block: split scsi_request out of struct request")
+
+I have used the block tree from next-20170125 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
