@@ -1,75 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] powerpc: sort Kconfig selects under CONFIG_PPC
-Date: Mon, 30 Jan 2017 21:21:10 +1100
-Message-ID: <20170130212110.057b788c@canb.auug.org.au>
-References: <87y3xtw62l.fsf@concordia.ellerman.id.au>
- <20170130093002.22180-1-andrew.donnellan@au1.ibm.com>
- <20170130204102.423cebea@canb.auug.org.au>
- <87lgtsx45f.fsf@concordia.ellerman.id.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the gpio tree with the staging tree
+Date: Mon, 30 Jan 2017 18:02:45 +0100
+Message-ID: <20170130170245.GB13895@kroah.com>
+References: <20170130152855.7e8cb6c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <87lgtsx45f.fsf@concordia.ellerman.id.au>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, paulmck@linux.vnet.ibm.com, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170130152855.7e8cb6c2@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roman Sommer <roman.sommer@fau.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Michael,
+On Mon, Jan 30, 2017 at 03:28:55PM +1100, Stephen Rothwell wrote:
+> Hi Linus,
+> 
+> Today's linux-next merge of the gpio tree got a conflict in:
+> 
+>   drivers/staging/greybus/gpio.c
+> 
+> between commit:
+> 
+>   1d3dfbd1dd34 ("staging: greybus: fix checkpatch unsigned warnings")
+> 
+> from the staging tree and commit:
+> 
+>   2956b5d94a76 ("pinctrl / gpio: Introduce .set_config() callback for GPIO chips")
+> 
+> from the gpio tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/staging/greybus/gpio.c
+> index 558550cfe687,51384bdde450..000000000000
+> --- a/drivers/staging/greybus/gpio.c
+> +++ b/drivers/staging/greybus/gpio.c
+> @@@ -474,17 -474,20 +474,20 @@@ static void gb_gpio_set(struct gpio_chi
+>   	gb_gpio_set_value_operation(ggc, (u8)offset, !!value);
+>   }
+>   
+> - static int gb_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
+> - 				unsigned int debounce)
+>  -static int gb_gpio_set_config(struct gpio_chip *chip, unsigned offset,
+> ++static int gb_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+> + 			      unsigned long config)
+>   {
+>   	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
+> - 	u16 usec;
+> + 	u32 debounce;
+>   
+> + 	if (pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
+> + 		return -ENOTSUPP;
+> + 
+> + 	debounce = pinconf_to_config_argument(config);
+>   	if (debounce > U16_MAX)
+>   		return -EINVAL;
+> - 	usec = (u16)debounce;
+>   
+> - 	return gb_gpio_set_debounce_operation(ggc, (u8)offset, usec);
+> + 	return gb_gpio_set_debounce_operation(ggc, (u8)offset, (u16)debounce);
+>   }
+>   
+>   static int gb_gpio_controller_setup(struct gb_gpio_controller *ggc)
 
-On Mon, 30 Jan 2017 20:56:12 +1100 Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> > On Mon, 30 Jan 2017 20:30:02 +1100 Andrew Donnellan <andrew.donnellan@au1.ibm.com> wrote:  
-> >>
-> >> config PPC has a lot of selects under it. They're not sorted in any
-> >> particular order, leading to merge conflicts when adding items at the end.
-> >> 
-> >> Sort them alphabetically.  
-> >
-> > Excellent, thanks.
-> >  
-> >> Suggested-by: Michael Ellerman <mpe@ellerman.id.au>
-> >> Signed-off-by: Andrew Donnellan <andrew.donnellan@au1.ibm.com>
-> >> ---
-> >> 
-> >> On top of linux-next 20170130  
-> >
-> > Probably best done on top of powerpc-next and I can cope with the
-> > conflicts one more time.  
-> 
-> But I don't want to send that many conflicts to Linus.
-> 
-> What we need to do is generate the patch just after 4.11-rc1 is out,
-> that way there should be zero skew between my fixes/next and Linus'
-> tree. I've been meaning to do it for a few releases but just never
-> remember.
-> 
-> So Andrew if you can remember to do it then that would be awesome :)
-> 
-> >> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> >> index 689cf9218b21..570195c8a86a 100644
-> >> --- a/arch/powerpc/Kconfig
-> >> +++ b/arch/powerpc/Kconfig
-> >> @@ -80,91 +80,91 @@ config ARCH_HAS_DMA_SET_COHERENT_MASK
-> >>  config PPC  
-> >
-> > Could we add a comment just above asking that the selects be kept in order?  
-> 
-> Actually at the bottom would make more sense I think, that's where
-> people will try to add new ones.
 
-Sure, both good ideas.
--- 
-Cheers,
-Stephen Rothwell
+Looks good, thanks for this.
+
+greg k-h
