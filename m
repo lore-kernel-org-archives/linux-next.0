@@ -1,79 +1,32 @@
-From: Greg KH <greg@kroah.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: linux-next: manual merge of the gpio tree with the staging tree
-Date: Mon, 30 Jan 2017 18:02:45 +0100
-Message-ID: <20170130170245.GB13895@kroah.com>
+Date: Mon, 30 Jan 2017 18:28:16 +0100
+Message-ID: <CACRpkdYtux7ZqJ1VLbpa0Qgk3Nf+SczGdhOT6AK1GsNQ0b_NxQ@mail.gmail.com>
 References: <20170130152855.7e8cb6c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-it0-f48.google.com ([209.85.214.48]:36829 "EHLO
+        mail-it0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752289AbdA3R2S (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Jan 2017 12:28:18 -0500
+Received: by mail-it0-f48.google.com with SMTP id c7so198163725itd.1
+        for <linux-next@vger.kernel.org>; Mon, 30 Jan 2017 09:28:17 -0800 (PST)
 In-Reply-To: <20170130152855.7e8cb6c2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Roman Sommer <roman.sommer@fau.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Roman Sommer <roman.sommer@fau.de>, Mika Westerberg <mika.westerberg@linux.intel.com>
 
-On Mon, Jan 30, 2017 at 03:28:55PM +1100, Stephen Rothwell wrote:
-> Hi Linus,
-> 
-> Today's linux-next merge of the gpio tree got a conflict in:
-> 
->   drivers/staging/greybus/gpio.c
-> 
-> between commit:
-> 
->   1d3dfbd1dd34 ("staging: greybus: fix checkpatch unsigned warnings")
-> 
-> from the staging tree and commit:
-> 
->   2956b5d94a76 ("pinctrl / gpio: Introduce .set_config() callback for GPIO chips")
-> 
-> from the gpio tree.
-> 
+On Mon, Jan 30, 2017 at 5:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
 > conflicts should be mentioned to your upstream maintainer when your tree
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/staging/greybus/gpio.c
-> index 558550cfe687,51384bdde450..000000000000
-> --- a/drivers/staging/greybus/gpio.c
-> +++ b/drivers/staging/greybus/gpio.c
-> @@@ -474,17 -474,20 +474,20 @@@ static void gb_gpio_set(struct gpio_chi
->   	gb_gpio_set_value_operation(ggc, (u8)offset, !!value);
->   }
->   
-> - static int gb_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
-> - 				unsigned int debounce)
->  -static int gb_gpio_set_config(struct gpio_chip *chip, unsigned offset,
-> ++static int gb_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-> + 			      unsigned long config)
->   {
->   	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-> - 	u16 usec;
-> + 	u32 debounce;
->   
-> + 	if (pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
-> + 		return -ENOTSUPP;
-> + 
-> + 	debounce = pinconf_to_config_argument(config);
->   	if (debounce > U16_MAX)
->   		return -EINVAL;
-> - 	usec = (u16)debounce;
->   
-> - 	return gb_gpio_set_debounce_operation(ggc, (u8)offset, usec);
-> + 	return gb_gpio_set_debounce_operation(ggc, (u8)offset, (u16)debounce);
->   }
->   
->   static int gb_gpio_controller_setup(struct gb_gpio_controller *ggc)
 
+OK I'll mention it to Linus (the big penguin). Thanks!
 
-Looks good, thanks for this.
-
-greg k-h
+Linus Walleij
