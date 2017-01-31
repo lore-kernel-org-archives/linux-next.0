@@ -1,47 +1,109 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch missing update_rq_clock() calls
-Date: Tue, 31 Jan 2017 19:35:59 +1100
-Message-ID: <87d1f3vd74.fsf@concordia.ellerman.id.au>
-References: <20160921133813.31976-8-matt@codeblueprint.co.uk> <tip-cb42c9a3ebbbb23448c3f9a25417fae6309b1a92@git.kernel.org> <87tw8gutp6.fsf@concordia.ellerman.id.au> <20170130213435.GM31613@codeblueprint.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170131 build: 2 failures 3 warnings (next-20170131)
+Date: Tue, 31 Jan 2017 10:33:28 +0000
+Message-ID: <E1cYVke-0001Pw-1e@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44657 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750906AbdAaIgC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Jan 2017 03:36:02 -0500
-In-Reply-To: <20170130213435.GM31613@codeblueprint.co.uk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44250 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbdAaKdg (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 31 Jan 2017 05:33:36 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: fweisbec@gmail.com, tglx@linutronix.de, pmladek@suse.com, hpa@zytor.com, efault@gmx.de, sergey.senozhatsky.work@gmail.com, peterz@infradead.org, mgorman@techsingularity.net, wanpeng.li@hotmail.com, umgwanakikbuti@gmail.com, byungchul.park@lge.com, jack@suse.cz, mingo@kernel.org, riel@redhat.com, luca.abeni@unitn.it, yuyang.du@intel.com, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Matt Fleming <matt@codeblueprint.co.uk> writes:
+Tree/Branch: next-20170131
+Git describe: next-20170131
+Commit: 7c088bd91d Add linux-next specific files for 20170131
 
-> On Tue, 31 Jan, at 08:24:53AM, Michael Ellerman wrote:
->> 
->> I'm hitting this on multiple powerpc systems:
->> 
->> [   38.339126] rq->clock_update_flags < RQCF_ACT_SKIP
->> [   38.339134] ------------[ cut here ]------------
->> [   38.339142] WARNING: CPU: 2 PID: 1 at kernel/sched/sched.h:804 detach_task_cfs_rq+0xa0c/0xd10
->
-> [...]
->  
->> I assume I should be worried?
->
-> Thanks for the report. No need to worry, the bug has existed for a
-> while, this patch just turns on the warning ;-)
->
-> The following commit queued up in tip/sched/core should fix your
-> issues (assuming you see the same callstack on all your powerpc
-> machines):
->
->   https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git/commit/?h=sched/core&id=1b1d62254df0fe42a711eb71948f915918987790
+Build Time: 105 min 2 sec
 
-Great thanks.
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
-Looks like that commit is in today's linux-next, so hopefully I won't
-see any oopses in my boot tests overnight. If I do I'll let you know.
+Errors: 6
+Warnings: 3
+Section Mismatches: 0
 
-cheers
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      1 warnings    0 mismatches  : arm64-allnoconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 6
+	  1 ../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+	  1 ../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+	  1 ../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	  1 ../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+
+Warnings Summary: 3
+	  3 ../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 6 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../drivers/hsi/clients/cmt_speech.c:1114:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/armada/armada_gem.c:38:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/etnaviv/etnaviv_drv.c:468:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/etnaviv/etnaviv_gem.c:178:5: error: conflicting types for 'etnaviv_gem_fault'
+	../drivers/gpu/drm/omapdrm/omap_drv.c:696:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+	../drivers/gpu/drm/omapdrm/omap_gem.c:531:5: error: conflicting types for 'omap_gem_fault'
+
+Warnings:
+	../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
