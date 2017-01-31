@@ -1,81 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 31 Jan 2017 12:18:45 +1100
-Message-ID: <20170131121845.759053d7@canb.auug.org.au>
+Subject: linux-next: manual merge of the pinctrl tree with the arm-soc tree
+Date: Tue, 31 Jan 2017 16:29:51 +1100
+Message-ID: <20170131162951.3de4bcd6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37323 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750772AbdAaB3a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 30 Jan 2017 20:29:30 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rafal Ozieblo <rafalo@cadence.com>, Andrei Pistirica <andrei.pistirica@microchip.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Linus,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the pinctrl tree got a conflict in:
 
-  drivers/net/ethernet/cadence/macb.h
+  arch/arm/mach-exynos/suspend.c
 
 between commit:
 
-  dc97a89e726c ("net: macb: Fix 64 bit addressing support for GEM")
+  b4765037fc8c ("ARM: EXYNOS: Constify list of retention registers")
 
-from the net tree and commit:
+from the arm-soc tree and commit:
 
-  c2594d804d5c ("macb: Common code to enable ptp support for MACB/GEM")
+  07731019c59c ("pinctrl: samsung: Move retention control from mach-exynos to the pinctrl driver")
 
-from the net-next tree.
+from the pinctrl tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the latter removed the code updated by the former, so I
+just did that) and can carry the fix as necessary. This is now fixed as
+far as linux-next is concerned, but any non trivial conflicts should be
+mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/ethernet/cadence/macb.h
-index fc8550a5d47f,94ddedd2d83e..000000000000
---- a/drivers/net/ethernet/cadence/macb.h
-+++ b/drivers/net/ethernet/cadence/macb.h
-@@@ -385,9 -426,18 +426,20 @@@
-  /* Bitfields in DCFG6. */
-  #define GEM_PBUF_LSO_OFFSET			27
-  #define GEM_PBUF_LSO_SIZE			1
- +#define GEM_DAW64_OFFSET			23
- +#define GEM_DAW64_SIZE				1
-  
-+ /* Bitfields in TISUBN */
-+ #define GEM_SUBNSINCR_OFFSET			0
-+ #define GEM_SUBNSINCR_SIZE			16
-+ 
-+ /* Bitfields in TI */
-+ #define GEM_NSINCR_OFFSET			0
-+ #define GEM_NSINCR_SIZE				8
-+ 
-+ /* Bitfields in ADJ */
-+ #define GEM_ADDSUB_OFFSET			31
-+ #define GEM_ADDSUB_SIZE				1
-  /* Constants for CLK */
-  #define MACB_CLK_DIV8				0
-  #define MACB_CLK_DIV16				1
-@@@ -885,9 -942,7 +952,11 @@@ struct macb 
-  
-  	u32			wol;
-  
- +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
- +	enum macb_hw_dma_cap hw_dma_cap;
- +#endif
-++
-+ 	struct macb_ptp_info	*ptp_info;	/* macb-ptp interface */
-  };
-  
-  static inline bool macb_is_gem(struct macb *bp)
