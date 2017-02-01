@@ -1,106 +1,54 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170201 build: 3 failures 3 warnings (next-20170201)
-Date: Wed, 01 Feb 2017 10:38:07 +0000
-Message-ID: <E1cYsIh-0004Lj-OF@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170201 build: 3 failures 3 warnings (next-20170201)
+Date: Wed, 1 Feb 2017 10:56:27 +0000
+Message-ID: <20170201105627.pmx2c2wjfxjvnujq@sirena.org.uk>
+References: <E1cYsIh-0004Lj-OF@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2flrilzdksh4bdog"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50642 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50750 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751202AbdBAKiR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Feb 2017 05:38:17 -0500
+        with ESMTP id S1751374AbdBAK4j (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Feb 2017 05:56:39 -0500
+Content-Disposition: inline
+In-Reply-To: <E1cYsIh-0004Lj-OF@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20170201
-Git describe: next-20170201
-Commit: 5f9e8892d9 Add linux-next specific files for 20170201
-
-Build Time: 94 min 22 sec
-
-Passed:    7 / 10   ( 70.00 %)
-Failed:    3 / 10   ( 30.00 %)
-
-Errors: 2
-Warnings: 3
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-
-	arm-allmodconfig
-../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  2 ../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-	  1 ../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 3
-	  3 ../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+To: Michael Zoran <mzoran@crowfest.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
 
+--2flrilzdksh4bdog
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Wed, Feb 01, 2017 at 10:38:07AM +0000, Build bot for Mark Brown wrote:
 
+Today's -next fails to build both arm and arm64 allmodconfigs due to:
 
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+> 	arm64-allmodconfig
+> ../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
 
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+> 	arm-allmodconfig
+> ../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+> ../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
 
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+caused by that driver being added.
 
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+--2flrilzdksh4bdog
+Content-Type: application/pgp-signature; name="signature.asc"
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
 
-Errors:
-	../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliRvtoACgkQJNaLcl1U
+h9BJRwf+NPKFt0lSpaywj+5Zv2vJB1ATwNnBMENshxc2RHevyH9AMszIcXF2iUdv
+19IURWOXQ2sziscSyE0gEmb48/4UWRqbi/FsZtfQwFjhOcMr0e8Hjku5P5TkmWMd
+kWmI++zfojKp+hPsfse2L4gyObr7raY+gw1P/yaocBfB6W0GZTHOBA7xTGWTTVaQ
+iDnkLjcY+wd8172mKSG8H6cnEqVfng6Kx1n7hbVv+8i+n5ig3f0DANOdLgCB8UOp
++dWEcUJXfV2HfyK+K1co0K3/6EAWNbRzly5u6bD6TbhDUkjov4zZxxY4Aq9knj+h
+dZwu3lBTcml3oRMhpQI/H33bisJRiQ==
+=qmWw
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 2 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-	../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v4t_defconfig
-x86_64-defconfig
-arm-multi_v7_defconfig
-arm-multi_v5_defconfig
-arm64-defconfig
+--2flrilzdksh4bdog--
