@@ -1,70 +1,137 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170116 build: 0 failures 4 warnings (next-20170116)
-Date: Mon, 16 Jan 2017 10:48:57 +0000
-Message-ID: <E1cT4qO-0002vU-Su@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39208 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750956AbdAPKtG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 16 Jan 2017 05:49:06 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the
+ char-misc.current tree
+Date: Wed, 1 Feb 2017 12:11:37 +1100
+Message-ID: <20170201121137.66ee94c7@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>, stephen hemminger <stephen@networkplumber.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170116
-Git describe: next-20170116
-Commit: 38e4a8f0d6 Add linux-next specific files for 20170116
+Hi all,
 
-Build Time: 182 min 44 sec
+Today's linux-next merge of the net-next tree got a conflict in:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+  drivers/net/hyperv/netvsc.c
 
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
+  433e19cf33d3 ("Drivers: hv: vmbus: finally fix hv_need_to_signal_on_read()")
 
--------------------------------------------------------------------------------
+from the char-misc.current tree and commits:
 
-Warnings Summary: 4
-	  1 ../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  0b307ebd6834 ("netvsc: remove no longer needed receive staging buffers")
+  46b4f7f5d1f7 ("netvsc: eliminate per-device outstanding send counter")
 
+from the net-next tree.
 
+I fixed it up (I think, but I have no idea what this code actually
+does :-) - see below) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging.  You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Cheers,
+Stephen Rothwell
 
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/rtc/rtc-stm32.c:651:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/rtc/rtc-stm32.c:673:51: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/mellanox/mlx5/en/tc.c:716:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/wireless/marvell/mwifiex/pcie.c:303:5: warning: 'fw_status' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+diff --cc drivers/net/hyperv/netvsc.c
+index 86e5749226ef,5cfdb1a1b4c1..000000000000
+--- a/drivers/net/hyperv/netvsc.c
++++ b/drivers/net/hyperv/netvsc.c
+@@@ -1289,74 -1245,25 +1245,29 @@@ void netvsc_channel_cb(void *context
+  	else
+  		device = channel->device_obj;
+  
+- 	net_device = get_inbound_net_device(device);
+- 	if (!net_device)
+- 		return;
+  	ndev = hv_get_drvdata(device);
+- 	buffer = get_per_channel_state(channel);
++ 	if (unlikely(!ndev))
++ 		return;
++ 
++ 	net_device = net_device_to_netvsc_device(ndev);
++ 	if (unlikely(net_device->destroy) &&
++ 	    netvsc_channel_idle(net_device, q_idx))
++ 		return;
+  
+ +	/* commit_rd_index() -> hv_signal_on_read() needs this. */
+ +	init_cached_read_index(channel);
+ +
+- 	do {
+- 		desc = get_next_pkt_raw(channel);
+- 		if (desc != NULL) {
+- 			netvsc_process_raw_pkt(device,
+- 					       channel,
+- 					       net_device,
+- 					       ndev,
+- 					       desc->trans_id,
+- 					       desc);
+- 
+- 			put_pkt_raw(channel, desc);
+- 			need_to_commit = true;
+- 			continue;
+- 		}
+- 		if (need_to_commit) {
+- 			need_to_commit = false;
+- 			commit_rd_index(channel);
+- 		}
+- 
+- 		ret = vmbus_recvpacket_raw(channel, buffer, bufferlen,
+- 					   &bytes_recvd, &request_id);
+- 		if (ret == 0) {
+- 			if (bytes_recvd > 0) {
+- 				desc = (struct vmpacket_descriptor *)buffer;
+- 				netvsc_process_raw_pkt(device,
+- 						       channel,
+- 						       net_device,
+- 						       ndev,
+- 						       request_id,
+- 						       desc);
+- 			} else {
+- 				/*
+- 				 * We are done for this pass.
+- 				 */
+- 				break;
+- 			}
+- 
+- 		} else if (ret == -ENOBUFS) {
+- 			if (bufferlen > NETVSC_PACKET_SIZE)
+- 				kfree(buffer);
+- 			/* Handle large packet */
+- 			buffer = kmalloc(bytes_recvd, GFP_ATOMIC);
+- 			if (buffer == NULL) {
+- 				/* Try again next time around */
+- 				netdev_err(ndev,
+- 					   "unable to allocate buffer of size "
+- 					   "(%d)!!\n", bytes_recvd);
+- 				break;
+- 			}
+- 
+- 			bufferlen = bytes_recvd;
+- 		}
++ 	while ((desc = get_next_pkt_raw(channel)) != NULL) {
++ 		netvsc_process_raw_pkt(device, channel, net_device,
++ 				       ndev, desc->trans_id, desc);
+  
++ 		put_pkt_raw(channel, desc);
++ 		need_to_commit = true;
+ +		init_cached_read_index(channel);
++ 	}
+  
+- 	} while (1);
+- 
+- 	if (bufferlen > NETVSC_PACKET_SIZE)
+- 		kfree(buffer);
++ 	if (need_to_commit)
++ 		commit_rd_index(channel);
+  
+  	netvsc_chk_recv_comp(net_device, channel, q_idx);
+  }
