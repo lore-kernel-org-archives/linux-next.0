@@ -1,38 +1,41 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: Tree for Feb 2 (drivers/md/dm.c)
-Date: Thu, 2 Feb 2017 13:29:16 -0500
-Message-ID: <20170202182916.GA26910@redhat.com>
+From: Christoph Hellwig <hch@infradead.org>
+Subject: Re: [dm-devel] linux-next: Tree for Feb 2 (drivers/md/dm.c)
+Date: Thu, 2 Feb 2017 10:44:10 -0800
+Message-ID: <20170202184409.GA27869@infradead.org>
 References: <20170202182117.73e354f1@canb.auug.org.au>
  <8a8224e7-4c90-7fa7-9960-fc04fe658014@infradead.org>
+ <20170202182916.GA26910@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:49518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbdBBS3R (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Feb 2017 13:29:17 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <8a8224e7-4c90-7fa7-9960-fc04fe658014@infradead.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, dm <dm-devel@redhat.com>, Alasdair G Kergon <agk@redhat.com>, hch@infradead.org
+In-Reply-To: <20170202182916.GA26910@redhat.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Snitzer <snitzer@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, hch@infradead.org, dm <dm-devel@redhat.com>, linux-next@vger.kernel.org, Alasdair G Kergon <agk@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 02 2017 at 12:58pm -0500,
-Randy Dunlap <rdunlap@infradead.org> wrote:
-
-> On 02/01/17 23:21, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20170201:
-> > 
+On Thu, Feb 02, 2017 at 01:29:16PM -0500, Mike Snitzer wrote:
+> Are you trying to say that this happens using a certain .config?
 > 
-> on x86_64:
-> 
-> drivers/built-in.o: In function `dm_blk_ioctl':
-> dm.c:(.text+0x1a5121): undefined reference to `scsi_verify_blk_ioctl'
+> Also, not sure why you didn't cc Christoph (or Jens) seeing as these
+> changes are _not_ staged in linux-next by linux-dm.git.
 
-Are you trying to say that this happens using a certain .config?
+No changes to dm caused this, it was me making the SCSI ioctl / request
+code optional.  The tree apparently has nothing pulling in the SCSI
+ioctls (SCSI, IDE, virtio, cciss, target, cdrom, etc).  It turns
+out DM calls the SCSI ioctl verification functions, despite never
+actually using SCSIO ioctls directly, which looks very odd (and which is
+why I missed it).
 
-Also, not sure why you didn't cc Christoph (or Jens) seeing as these
-changes are _not_ staged in linux-next by linux-dm.git.
+Git-blame for these lines pointes to ... me.  Heh.  But I just moved the
+code around, before that every target had a copy of it.  The original
+calls seem to come from:
+
+ec8013bedd ("dm: do not forward ioctls from logical volumes to the
+underlying device"),
+
+The trivial fix would be to add a select of the SCSI_REQUEST symbol
+to dm, but my gut feeling teels me the call is simply wrong, and
+should be removed and instead all ioctls on DM devices that don't
+map to a full underlying devices should be rejected.
