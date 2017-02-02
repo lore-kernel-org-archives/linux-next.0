@@ -1,60 +1,47 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: next-20170202 build: 4 failures 7 warnings (next-20170202)
-Date: Thu, 2 Feb 2017 18:08:44 -0500
-Message-ID: <CAP=VYLraQvfRLdFMVCiqS9DtH-GHNYdM+CYZ_hJ+K8GwWLKT+Q@mail.gmail.com>
-References: <E1cZEYY-0006f4-PQ@optimist>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: linux-next: build failure after merge of the v4l-dvb tree
+Date: Thu, 2 Feb 2017 21:24:40 -0200
+Message-ID: <20170202212440.5e514ebc@vento.lan>
+References: <20170131115505.3f8c769b@canb.auug.org.au>
+        <20170203092446.7e86e8af@canb.auug.org.au>
+        <20170202204620.75b20605@vento.lan>
+        <20170203095934.2bbbbf45@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:34489 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751861AbdBBXJP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2017 18:09:15 -0500
-Received: by mail-vk0-f65.google.com with SMTP id r136so226681vke.1
-        for <linux-next@vger.kernel.org>; Thu, 02 Feb 2017 15:09:15 -0800 (PST)
-In-Reply-To: <E1cZEYY-0006f4-PQ@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Build bot for Mark Brown <broonie@kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170203095934.2bbbbf45@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Young <sean@mess.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 2, 2017 at 5:23 AM, Build bot for Mark Brown
-<broonie@kernel.org> wrote:
-> Tree/Branch: next-20170202
-> Git describe: next-20170202
-> Commit: c356cf7a65 Add linux-next specific files for 20170202
->
-> Build Time: 94 min 58 sec
->
-> Passed:    6 / 10   ( 60.00 %)
-> Failed:    4 / 10   ( 40.00 %)
->
-> Errors: 4
-> Warnings: 7
-> Section Mismatches: 0
->
-> Failed defconfigs:
->         arm64-allmodconfig
->         arm-allnoconfig
->         arm-allmodconfig
->
-> Errors:
->
->         arm64-allmodconfig
-> ../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
->
->         arm-allnoconfig
-> ../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
-> ../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
->
+Em Fri, 3 Feb 2017 09:59:34 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
-Also in sfr build: http://kisskb.ellerman.id.au/kisskb/buildresult/12924855/
+> Hi Mauro,
+> 
+> On Thu, 2 Feb 2017 20:46:20 -0200 Mauro Carvalho Chehab <mchehab@osg.samsung.com> wrote:
+> >
+> > Gah, forgot to push the fix on the -next branch. Should be ok now.  
+> 
+> What I fetch for the v4l-dvb tree is the master branch of
+> git://linuxtv.org/mchehab/media-next.git
 
-Bisects as follows:
+I actually push the patches on a different tree:
+	git://linuxtv.org/media_tree.git
 
-5b8d82e2e798609e113ec0dae37708f0578b68e2 is the first bad commit
-commit 5b8d82e2e798609e113ec0dae37708f0578b68e2
-Author: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Date:   Thu Feb 2 10:46:41 2017 +1100
+At the branches "master" and "fixes", where
 
-    userfaultfd: non-cooperative: add event for memory unmaps
+master - for rolling develoment patches
+fixes - for bug fixes against current -rc release
+
+My current procedure is to manually merge both branches
+at git://linuxtv.org/mchehab/media-next.git, but this is a manual
+work, that I use to do by the end of the days I merge patches.
+Unfortunately, sometimes, I got side-tracked by something and
+I forget to do such manual merge.
+
+-- 
+Thanks,
+Mauro
