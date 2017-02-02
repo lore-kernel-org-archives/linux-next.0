@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Thu, 2 Feb 2017 12:49:44 +1100
-Message-ID: <20170202124944.6c3fd4f4@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the vfs tree
+Date: Thu, 2 Feb 2017 13:44:07 +1100
+Message-ID: <20170202134407.4403ad3a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45443 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:38211 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750861AbdBBBtv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 1 Feb 2017 20:49:51 -0500
+        id S1750808AbdBBCoL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 1 Feb 2017 21:44:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Yotam Gigi <yotamg@mellanox.com>
+To: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the block tree got a conflict in:
 
-  net/sched/cls_matchall.c
+  drivers/block/nbd.c
 
 between commit:
 
-  fd62d9f5c575 ("net/sched: matchall: Fix configuration race")
+  c9f2b6aeb922 ("[nbd] pass iov_iter to nbd_xmit()")
 
-from Linus' tree and commit:
+from the vfs tree and commit:
 
-  ec2507d2a306 ("net/sched: cls_matchall: Fix error path")
+  09fc54ccc427 ("nbd: move request validity checking into nbd_send_cmd")
+  aebf526b53ae ("block: fold cmd_type into the REQ_OP_ space")
 
-from the net-next tree.
+from the block tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,98 +43,46 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc net/sched/cls_matchall.c
-index b12bc2abea93,fcecf5aac666..000000000000
---- a/net/sched/cls_matchall.c
-+++ b/net/sched/cls_matchall.c
-@@@ -118,19 -141,24 +118,24 @@@ static int mall_set_parms(struct net *n
-  	struct tcf_exts e;
-  	int err;
+diff --cc drivers/block/nbd.c
+index 48132b0530fe,0be84a3cb6d7..000000000000
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@@ -265,17 -275,32 +262,32 @@@ static int nbd_send_cmd(struct nbd_devi
+  	u32 type;
+  	u32 tag = blk_mq_unique_tag(req);
   
-- 	tcf_exts_init(&e, TCA_MATCHALL_ACT, 0);
-+ 	err = tcf_exts_init(&e, TCA_MATCHALL_ACT, 0);
-+ 	if (err)
-+ 		return err;
-  	err = tcf_exts_validate(net, tp, tb, est, &e, ovr);
-  	if (err < 0)
-- 		return err;
-+ 		goto errout;
+ +	iov_iter_kvec(&from, WRITE | ITER_KVEC, &iov, 1, sizeof(request));
+ +
+- 	if (req_op(req) == REQ_OP_DISCARD)
++ 	switch (req_op(req)) {
++ 	case REQ_OP_DISCARD:
+  		type = NBD_CMD_TRIM;
+- 	else if (req_op(req) == REQ_OP_FLUSH)
++ 		break;
++ 	case REQ_OP_FLUSH:
+  		type = NBD_CMD_FLUSH;
+- 	else if (rq_data_dir(req) == WRITE)
++ 		break;
++ 	case REQ_OP_WRITE:
+  		type = NBD_CMD_WRITE;
+- 	else
++ 		break;
++ 	case REQ_OP_READ:
+  		type = NBD_CMD_READ;
++ 		break;
++ 	default:
++ 		return -EIO;
++ 	}
++ 
++ 	if (rq_data_dir(req) == WRITE &&
++ 	    (nbd->flags & NBD_FLAG_READ_ONLY)) {
++ 		dev_err_ratelimited(disk_to_dev(nbd->disk),
++ 				    "Write on read-only\n");
++ 		return -EIO;
++ 	}
   
-  	if (tb[TCA_MATCHALL_CLASSID]) {
- -		f->res.classid = nla_get_u32(tb[TCA_MATCHALL_CLASSID]);
- -		tcf_bind_filter(tp, &f->res, base);
- +		head->res.classid = nla_get_u32(tb[TCA_MATCHALL_CLASSID]);
- +		tcf_bind_filter(tp, &head->res, base);
-  	}
-  
- -	tcf_exts_change(tp, &f->exts, &e);
- +	tcf_exts_change(tp, &head->exts, &e);
-  
-  	return 0;
-+ errout:
-+ 	tcf_exts_destroy(&e);
-+ 	return err;
-  }
-  
-  static int mall_change(struct net *net, struct sk_buff *in_skb,
-@@@ -162,39 -194,43 +167,44 @@@
-  			return -EINVAL;
-  	}
-  
- -	f = kzalloc(sizeof(*f), GFP_KERNEL);
- -	if (!f)
- +	new = kzalloc(sizeof(*new), GFP_KERNEL);
- +	if (!new)
-  		return -ENOBUFS;
-  
-- 	tcf_exts_init(&new->exts, TCA_MATCHALL_ACT, 0);
- -	err = tcf_exts_init(&f->exts, TCA_MATCHALL_ACT, 0);
-++	err = tcf_exts_init(&new->exts, TCA_MATCHALL_ACT, 0);
-+ 	if (err)
-+ 		goto err_exts_init;
-  
-  	if (!handle)
-  		handle = 1;
- -	f->handle = handle;
- -	f->flags = flags;
- +	new->handle = handle;
- +	new->flags = flags;
-  
- -	err = mall_set_parms(net, tp, f, base, tb, tca[TCA_RATE], ovr);
- +	err = mall_set_parms(net, tp, new, base, tb, tca[TCA_RATE], ovr);
-  	if (err)
-- 		goto errout;
-+ 		goto err_set_parms;
-  
-  	if (tc_should_offload(dev, tp, flags)) {
- -		err = mall_replace_hw_filter(tp, f, (unsigned long) f);
- +		err = mall_replace_hw_filter(tp, new, (unsigned long) new);
-  		if (err) {
-  			if (tc_skip_sw(flags))
-- 				goto errout;
-+ 				goto err_replace_hw_filter;
-  			else
-  				err = 0;
-  		}
-  	}
-  
- -	*arg = (unsigned long) f;
- -	rcu_assign_pointer(head->filter, f);
- -
- +	*arg = (unsigned long) head;
- +	rcu_assign_pointer(tp->root, new);
- +	if (head)
- +		call_rcu(&head->rcu, mall_destroy_rcu);
-  	return 0;
-  
-- errout:
-+ err_replace_hw_filter:
-+ err_set_parms:
- -	tcf_exts_destroy(&f->exts);
-++	tcf_exts_destroy(&new->exts);
-+ err_exts_init:
- -	kfree(f);
- +	kfree(new);
-  	return err;
-  }
-  
+ -	memset(&request, 0, sizeof(request));
+ -	request.magic = htonl(NBD_REQUEST_MAGIC);
+  	request.type = htonl(type);
+  	if (type != NBD_CMD_FLUSH) {
+  		request.from = cpu_to_be64((u64)blk_rq_pos(req) << 9);
