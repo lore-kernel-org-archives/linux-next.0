@@ -1,157 +1,128 @@
-From: Yotam Gigi <yotamg@mellanox.com>
-Subject: RE: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Thu, 2 Feb 2017 08:40:24 +0000
-Message-ID: <DB3PR05MB0764A96B7BB6DE69AD5F749FAC4C0@DB3PR05MB0764.eurprd05.prod.outlook.com>
-References: <20170202124944.6c3fd4f4@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170202 build: 4 failures 7 warnings (next-20170202)
+Date: Thu, 02 Feb 2017 10:23:58 +0000
+Message-ID: <E1cZEYY-0006f4-PQ@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-db5eur01on0086.outbound.protection.outlook.com ([104.47.2.86]:25440
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750936AbdBBIka (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Feb 2017 03:40:30 -0500
-In-Reply-To: <20170202124944.6c3fd4f4@canb.auug.org.au>
-Content-Language: en-US
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54906 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdBBKYG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2017 05:24:06 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
->-----Original Message-----
->From: netdev-owner@vger.kernel.org [mailto:netdev-owner@vger.kernel.org] O=
-n
->Behalf Of Stephen Rothwell
->Sent: Thursday, February 02, 2017 3:50 AM
->To: David Miller <davem@davemloft.net>; Networking <netdev@vger.kernel.org=
->
->Cc: linux-next@vger.kernel.org; linux-kernel@vger.kernel.org; Yotam Gigi
-><yotamg@mellanox.com>
->Subject: linux-next: manual merge of the net-next tree with Linus' tree
->
->Hi all,
->
->Today's linux-next merge of the net-next tree got a conflict in:
->
->  net/sched/cls_matchall.c
->
->between commit:
->
->  fd62d9f5c575 ("net/sched: matchall: Fix configuration race")
->
->from Linus' tree and commit:
->
->  ec2507d2a306 ("net/sched: cls_matchall: Fix error path")
->
->from the net-next tree.
->
->I fixed it up (see below) and can carry the fix as necessary. This
->is now fixed as far as linux-next is concerned, but any non trivial
->conflicts should be mentioned to your upstream maintainer when your tree
->is submitted for merging.  You may also want to consider cooperating
->with the maintainer of the conflicting tree to minimise any particularly
->complex conflicts.
+Tree/Branch: next-20170202
+Git describe: next-20170202
+Commit: c356cf7a65 Add linux-next specific files for 20170202
 
-Looks good. Thanks!
+Build Time: 94 min 58 sec
 
->
->--
->Cheers,
->Stephen Rothwell
->
->diff --cc net/sched/cls_matchall.c
->index b12bc2abea93,fcecf5aac666..000000000000
->--- a/net/sched/cls_matchall.c
->+++ b/net/sched/cls_matchall.c
->@@@ -118,19 -141,24 +118,24 @@@ static int mall_set_parms(struct net *n
->  	struct tcf_exts e;
->  	int err;
->
->- 	tcf_exts_init(&e, TCA_MATCHALL_ACT, 0);
->+ 	err =3D tcf_exts_init(&e, TCA_MATCHALL_ACT, 0);
->+ 	if (err)
->+ 		return err;
->  	err =3D tcf_exts_validate(net, tp, tb, est, &e, ovr);
->  	if (err < 0)
->- 		return err;
->+ 		goto errout;
->
->  	if (tb[TCA_MATCHALL_CLASSID]) {
-> -		f->res.classid =3D nla_get_u32(tb[TCA_MATCHALL_CLASSID]);
-> -		tcf_bind_filter(tp, &f->res, base);
-> +		head->res.classid =3D nla_get_u32(tb[TCA_MATCHALL_CLASSID]);
-> +		tcf_bind_filter(tp, &head->res, base);
->  	}
->
-> -	tcf_exts_change(tp, &f->exts, &e);
-> +	tcf_exts_change(tp, &head->exts, &e);
->
->  	return 0;
->+ errout:
->+ 	tcf_exts_destroy(&e);
->+ 	return err;
->  }
->
->  static int mall_change(struct net *net, struct sk_buff *in_skb,
->@@@ -162,39 -194,43 +167,44 @@@
->  			return -EINVAL;
->  	}
->
-> -	f =3D kzalloc(sizeof(*f), GFP_KERNEL);
-> -	if (!f)
-> +	new =3D kzalloc(sizeof(*new), GFP_KERNEL);
-> +	if (!new)
->  		return -ENOBUFS;
->
->- 	tcf_exts_init(&new->exts, TCA_MATCHALL_ACT, 0);
-> -	err =3D tcf_exts_init(&f->exts, TCA_MATCHALL_ACT, 0);
->++	err =3D tcf_exts_init(&new->exts, TCA_MATCHALL_ACT, 0);
->+ 	if (err)
->+ 		goto err_exts_init;
->
->  	if (!handle)
->  		handle =3D 1;
-> -	f->handle =3D handle;
-> -	f->flags =3D flags;
-> +	new->handle =3D handle;
-> +	new->flags =3D flags;
->
-> -	err =3D mall_set_parms(net, tp, f, base, tb, tca[TCA_RATE], ovr);
-> +	err =3D mall_set_parms(net, tp, new, base, tb, tca[TCA_RATE], ovr);
->  	if (err)
->- 		goto errout;
->+ 		goto err_set_parms;
->
->  	if (tc_should_offload(dev, tp, flags)) {
-> -		err =3D mall_replace_hw_filter(tp, f, (unsigned long) f);
-> +		err =3D mall_replace_hw_filter(tp, new, (unsigned long) new);
->  		if (err) {
->  			if (tc_skip_sw(flags))
->- 				goto errout;
->+ 				goto err_replace_hw_filter;
->  			else
->  				err =3D 0;
->  		}
->  	}
->
-> -	*arg =3D (unsigned long) f;
-> -	rcu_assign_pointer(head->filter, f);
-> -
-> +	*arg =3D (unsigned long) head;
-> +	rcu_assign_pointer(tp->root, new);
-> +	if (head)
-> +		call_rcu(&head->rcu, mall_destroy_rcu);
->  	return 0;
->
->- errout:
->+ err_replace_hw_filter:
->+ err_set_parms:
-> -	tcf_exts_destroy(&f->exts);
->++	tcf_exts_destroy(&new->exts);
->+ err_exts_init:
-> -	kfree(f);
-> +	kfree(new);
->  	return err;
->  }
->
+Passed:    6 / 10   ( 60.00 %)
+Failed:    4 / 10   ( 40.00 %)
+
+Errors: 4
+Warnings: 7
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allnoconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+
+	arm-allnoconfig
+../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
+../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
+
+	arm-allmodconfig
+../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      1 warnings    0 mismatches  : arm64-allnoconfig
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      5 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 4
+	  2 ../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+	  1 ../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
+	  1 ../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
+	  1 ../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 7
+	  3 ../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/ext4/file.c:279:1: warning: 'ext4_dax_huge_fault' defined but not used [-Wunused-function]
+	  1 ../fs/cifs/smb2ops.c:2008:16: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../fs/cifs/smb2ops.c:2008:16: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../fs/cifs/cifs_debug.h:55:24: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'size_t {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../fs/ext4/file.c:279:1: warning: 'ext4_dax_huge_fault' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
+	../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
+
+Warnings:
+	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 2 errors, 5 warnings, 0 section mismatches
+
+Errors:
+	../drivers/staging/bcm2835-audio/bcm2835-vchiq.c:97:9: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+	../drivers/staging/media/platform/bcm2835/mmal-vchiq.c:453:8: error: implicit declaration of function 'vchi_msg_queue' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../fs/cifs/cifs_debug.h:55:24: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../fs/cifs/smb2ops.c:2008:16: warning: format '%lu' expects argument of type 'long unsigned int', but argument 3 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../fs/cifs/smb2ops.c:2008:16: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'size_t {aka unsigned int}' [-Wformat=]
+	../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:815:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v4t_defconfig
+x86_64-defconfig
+arm-multi_v7_defconfig
+arm-multi_v5_defconfig
+arm64-defconfig
