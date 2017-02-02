@@ -1,33 +1,41 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [dm-devel] linux-next: Tree for Feb 2 (drivers/md/dm.c)
-Date: Thu, 2 Feb 2017 12:19:57 -0800
-Message-ID: <73fe1d1f-e0ef-f79c-9997-2573f5687d70@redhat.com>
-References: <20170202182117.73e354f1@canb.auug.org.au>
- <8a8224e7-4c90-7fa7-9960-fc04fe658014@infradead.org>
- <20170202182916.GA26910@redhat.com> <20170202184409.GA27869@infradead.org>
+From: Matt Fleming <matt@codeblueprint.co.uk>
+Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch missing
+ update_rq_clock() calls
+Date: Thu, 2 Feb 2017 22:01:00 +0000
+Message-ID: <20170202220100.GA18235@codeblueprint.co.uk>
+References: <20160921133813.31976-8-matt@codeblueprint.co.uk>
+ <tip-cb42c9a3ebbbb23448c3f9a25417fae6309b1a92@git.kernel.org>
+ <87tw8gutp6.fsf@concordia.ellerman.id.au>
+ <20170130213435.GM31613@codeblueprint.co.uk>
+ <33118425-8548-475A-8DED-9A2424C0BCCC@linux.vnet.ibm.com>
+ <1485863317.4498.2.camel@gmx.de>
+ <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com>
+ <20170202155506.GX6515@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170202184409.GA27869@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>, Mike Snitzer <snitzer@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, dm <dm-devel@redhat.com>, linux-next@vger.kernel.org, Alasdair G Kergon <agk@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:37312 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751467AbdBBWBD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Feb 2017 17:01:03 -0500
+Received: by mail-wm0-f42.google.com with SMTP id v77so8220253wmv.0
+        for <linux-next@vger.kernel.org>; Thu, 02 Feb 2017 14:01:03 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20170202155506.GX6515@twins.programming.kicks-ass.net>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ross Zwisler <zwisler@gmail.com>, Mike Galbraith <efault@gmx.de>, Sachin Sant <sachinp@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-
-
-On 02/02/2017 10:44, Christoph Hellwig wrote:
-> ec8013bedd ("dm: do not forward ioctls from logical volumes to the
-> underlying device"),
+On Thu, 02 Feb, at 04:55:06PM, Peter Zijlstra wrote:
+> On Tue, Jan 31, 2017 at 10:22:47AM -0700, Ross Zwisler wrote:
+> > On Tue, Jan 31, 2017 at 4:48 AM, Mike Galbraith <efault@gmx.de> wrote:
+> > > On Tue, 2017-01-31 at 16:30 +0530, Sachin Sant wrote:
 > 
-> The trivial fix would be to add a select of the SCSI_REQUEST symbol
-> to dm, but my gut feeling teels me the call is simply wrong, and
-> should be removed and instead all ioctls on DM devices that don't
-> map to a full underlying devices should be rejected.
+> 
+> Could some of you test this? It seems to cure things in my (very)
+> limited testing.
 
-I would certainly be fine with that.  It would not be surprising if
-something broke, but a middle ground could be to allow all ioctls if you
-have CAP_SYS_RAWIO and none if you don't.
+I haven't tested it but this looks like the correct fix to me.
 
-Paolo
+Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
