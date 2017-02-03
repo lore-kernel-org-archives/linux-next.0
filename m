@@ -1,52 +1,65 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the regulator tree
-Date: Fri, 3 Feb 2017 12:31:54 +0100
-Message-ID: <20170203113154.3aeiwo7mg2cty6dz@sirena.org.uk>
-References: <20170201134221.7a413d9b@canb.auug.org.au>
- <20170201100343.yv5e66pxkdmlnoxm@sirena.org.uk>
- <20170203092955.62f9681b@canb.auug.org.au>
+Subject: Re: next-20170202 build: 4 failures 7 warnings (next-20170202)
+Date: Fri, 3 Feb 2017 13:01:23 +0100
+Message-ID: <20170203120123.ep5ceio5gzbnismn@sirena.org.uk>
+References: <E1cZEYY-0006f4-PQ@optimist>
+ <CAP=VYLraQvfRLdFMVCiqS9DtH-GHNYdM+CYZ_hJ+K8GwWLKT+Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bwowsnxouccibt4e"
+        protocol="application/pgp-signature"; boundary="4i5ufqvawgpyy4vz"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59364 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59512 "EHLO
         mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753070AbdBCLcD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2017 06:32:03 -0500
+        with ESMTP id S1751878AbdBCMBf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2017 07:01:35 -0500
 Content-Disposition: inline
-In-Reply-To: <20170203092955.62f9681b@canb.auug.org.au>
+In-Reply-To: <CAP=VYLraQvfRLdFMVCiqS9DtH-GHNYdM+CYZ_hJ+K8GwWLKT+Q@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Bhumika Goyal <bhumirks@gmail.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Hillf Danton <hillf.zj@alibaba-inc.com>
 
 
---bwowsnxouccibt4e
+--4i5ufqvawgpyy4vz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 03, 2017 at 09:30:04AM +1100, Stephen Rothwell wrote:
+On Thu, Feb 02, 2017 at 06:08:44PM -0500, Paul Gortmaker wrote:
+> On Thu, Feb 2, 2017 at 5:23 AM, Build bot for Mark Brown
 
-> > Discarded that commit.
+> >         arm-allnoconfig
+> > ../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
+> > ../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
 
-> The patch is still there ...
+> Also in sfr build: http://kisskb.ellerman.id.au/kisskb/buildresult/129248=
+55/
 
-Only in the merge branch, it got dropped from the source branch but the
-merge ended up not being rebuilt.
+> Bisects as follows:
 
---bwowsnxouccibt4e
+> 5b8d82e2e798609e113ec0dae37708f0578b68e2 is the first bad commit
+> commit 5b8d82e2e798609e113ec0dae37708f0578b68e2
+> Author: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Date:   Thu Feb 2 10:46:41 2017 +1100
+>=20
+>     userfaultfd: non-cooperative: add event for memory unmaps
+
+I'm seeing that showing up as 197b090832eaa4a6e in -next, adding the
+other people who acked/signed off on the commit.
+
+--4i5ufqvawgpyy4vz
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliUaikACgkQJNaLcl1U
-h9BwcAf9FQcC3WhNaaG3rgJ/zDU3De4aH8+fTxqU0raCvfcmqh4CW+Ikg1gf20ZD
-1yhETye9gefiAXTOVSdhhONlgiAm2nDolmAYzqfam2aeF9cJ2SK+VUHuAQ0f/u2D
-7TiFxrRnTnKHECk5i1KfZerHvucqGJ6te4QyWhvRETL7WAXa80xhjF5XHKl6AzoW
-sB8ZG0vV3PNCgLEuoUbFQzAL27mya3AAleztjmUonw25o0Es8X5yFMKY1UAB46K2
-zC8x+bKldUZHIqMRF0YVOdzOm+E4mGHs1DO2FM+1YV96dw77P30gYpsiFrid7RBd
-msdNU9xZ3hUMv+9QpiGPlB68x+o1SQ==
-=oV/G
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliUcRIACgkQJNaLcl1U
+h9BC0Qf9GCt92XSMzSQjAiZnbPgt+Loq7FLTmFhbXgmYlEVsPl3izQwdZp3Jeatt
+9T+5P1s+P9+bceyuosSXqvqM09qXvNvaRg1AFUfof0sA3yCUN5BsP4z7wT6sRmFN
+NDh1ldjfWGAzi8ACLAzuzFASuVKHYBcndCez30TL/I9wgz4Q1cV4Aw8dGhwPJcOr
+jhz0bo2qi4cUopARty4sKy7aSC67cYa0Otv7y4pvAgtoSqldiHu1YZqCOXQqcSf4
+OXCGet+l193FhnDBQeM/OGMappaGzPHENmIDj2iAw9na484266+tg8ThOZKWGHta
+b/b7z0S5UEj5mJmkO7nbzdALE5Hkyg==
+=5nVq
 -----END PGP SIGNATURE-----
 
---bwowsnxouccibt4e--
+--4i5ufqvawgpyy4vz--
