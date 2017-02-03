@@ -1,61 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the netfilter-next
- tree
-Date: Fri, 3 Feb 2017 13:08:02 +1100
-Message-ID: <20170203130802.55dbd6e6@canb.auug.org.au>
+From: Mike Galbraith <efault@gmx.de>
+Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch
+ missing update_rq_clock() calls
+Date: Fri, 03 Feb 2017 04:05:31 +0100
+Message-ID: <1486091131.4083.0.camel@gmx.de>
+References: <20160921133813.31976-8-matt@codeblueprint.co.uk>
+         <tip-cb42c9a3ebbbb23448c3f9a25417fae6309b1a92@git.kernel.org>
+         <87tw8gutp6.fsf@concordia.ellerman.id.au>
+         <20170130213435.GM31613@codeblueprint.co.uk>
+         <33118425-8548-475A-8DED-9A2424C0BCCC@linux.vnet.ibm.com>
+         <1485863317.4498.2.camel@gmx.de>
+         <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com>
+         <20170202155506.GX6515@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35153 "EHLO ozlabs.org"
+Received: from mout.gmx.net ([212.227.17.20]:64360 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751720AbdBCCIE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Feb 2017 21:08:04 -0500
+        id S1752095AbdBCDGL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Feb 2017 22:06:11 -0500
+In-Reply-To: <20170202155506.GX6515@twins.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Westphal <fw@strlen.de>
+To: Peter Zijlstra <peterz@infradead.org>, Ross Zwisler <zwisler@gmail.com>
+Cc: Sachin Sant <sachinp@linux.vnet.ibm.com>, Matt Fleming <matt@codeblueprint.co.uk>, Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Thu, 2017-02-02 at 16:55 +0100, Peter Zijlstra wrote:
+> On Tue, Jan 31, 2017 at 10:22:47AM -0700, Ross Zwisler wrote:
+> > On Tue, Jan 31, 2017 at 4:48 AM, Mike Galbraith <efault@gmx.de>
+> > wrote:
+> > > On Tue, 2017-01-31 at 16:30 +0530, Sachin Sant wrote:
+> 
+> 
+> Could some of you test this? It seems to cure things in my (very)
+> limited testing.
 
-Today's linux-next merge of the rcu tree got a conflict in:
+Hotplug stress gripe is gone here.
 
-  net/netfilter/nf_conntrack_core.c
-
-between commit:
-
-  a9e419dc7be6 ("netfilter: merge ctinfo into nfct pointer storage area")
-
-from the netfilter-next tree and commit:
-
-  55f619e5c322 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
-
-from the rcu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc net/netfilter/nf_conntrack_core.c
-index 071b97fcbefb,13b7e5159660..000000000000
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@@ -1876,9 -1862,8 +1876,9 @@@ int nf_conntrack_init_start(void
-  	nf_conntrack_max = max_factor * nf_conntrack_htable_size;
-  
-  	nf_conntrack_cachep = kmem_cache_create("nf_conntrack",
- -						sizeof(struct nf_conn), 0,
- +						sizeof(struct nf_conn),
- +						NFCT_INFOMASK + 1,
-- 						SLAB_DESTROY_BY_RCU | SLAB_HWCACHE_ALIGN, NULL);
-+ 						SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN, NULL);
-  	if (!nf_conntrack_cachep)
-  		goto err_cachep;
-  
+	-Mike
