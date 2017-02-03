@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the powerpc tree
-Date: Fri, 3 Feb 2017 13:03:16 +1100
-Message-ID: <20170203130316.720ea048@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the netfilter-next
+ tree
+Date: Fri, 3 Feb 2017 13:08:02 +1100
+Message-ID: <20170203130802.55dbd6e6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57627 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35153 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751653AbdBCCDW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Feb 2017 21:03:22 -0500
+        id S1751720AbdBCCIE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Feb 2017 21:08:04 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Anton Blanchard <anton@samba.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Florian Westphal <fw@strlen.de>
 
 Hi all,
 
 Today's linux-next merge of the rcu tree got a conflict in:
 
-  arch/powerpc/Kconfig
+  net/netfilter/nf_conntrack_core.c
 
 between commit:
 
-  d6c569b99558 ("powerpc/64: Move HAVE_CONTEXT_TRACKING from pseries to common Kconfig")
+  a9e419dc7be6 ("netfilter: merge ctinfo into nfct pointer storage area")
 
-from the powerpc tree and commit:
+from the netfilter-next tree and commit:
 
-  c7327406b3c3 ("rcu: Make arch select smp_mb__after_unlock_lock() strength")
+  55f619e5c322 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
 
 from the rcu tree.
 
@@ -42,21 +43,19 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/Kconfig
-index a47e2b22df67,9fecd004fee8..000000000000
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@@ -164,10 -164,11 +164,11 @@@ config PP
-  	select ARCH_HAS_SCALED_CPUTIME if VIRT_CPU_ACCOUNTING_NATIVE
-  	select HAVE_ARCH_HARDENED_USERCOPY
-  	select HAVE_KERNEL_GZIP
- -	select HAVE_CC_STACKPROTECTOR
- +	select HAVE_CONTEXT_TRACKING if PPC64
-+ 	select ARCH_WEAK_RELEASE_ACQUIRE
+diff --cc net/netfilter/nf_conntrack_core.c
+index 071b97fcbefb,13b7e5159660..000000000000
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@@ -1876,9 -1862,8 +1876,9 @@@ int nf_conntrack_init_start(void
+  	nf_conntrack_max = max_factor * nf_conntrack_htable_size;
   
-  config GENERIC_CSUM
- -	def_bool CPU_LITTLE_ENDIAN
- +	def_bool n
+  	nf_conntrack_cachep = kmem_cache_create("nf_conntrack",
+ -						sizeof(struct nf_conn), 0,
+ +						sizeof(struct nf_conn),
+ +						NFCT_INFOMASK + 1,
+- 						SLAB_DESTROY_BY_RCU | SLAB_HWCACHE_ALIGN, NULL);
++ 						SLAB_TYPESAFE_BY_RCU | SLAB_HWCACHE_ALIGN, NULL);
+  	if (!nf_conntrack_cachep)
+  		goto err_cachep;
   
-  config EARLY_PRINTK
-  	bool
