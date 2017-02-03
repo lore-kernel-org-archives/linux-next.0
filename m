@@ -1,65 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170202 build: 4 failures 7 warnings (next-20170202)
-Date: Fri, 3 Feb 2017 13:01:23 +0100
-Message-ID: <20170203120123.ep5ceio5gzbnismn@sirena.org.uk>
-References: <E1cZEYY-0006f4-PQ@optimist>
- <CAP=VYLraQvfRLdFMVCiqS9DtH-GHNYdM+CYZ_hJ+K8GwWLKT+Q@mail.gmail.com>
+From: Mike Galbraith <efault@gmx.de>
+Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch
+ missing update_rq_clock() calls
+Date: Fri, 03 Feb 2017 13:59:34 +0100
+Message-ID: <1486126774.4277.6.camel@gmx.de>
+References: <20160921133813.31976-8-matt@codeblueprint.co.uk>
+         <tip-cb42c9a3ebbbb23448c3f9a25417fae6309b1a92@git.kernel.org>
+         <87tw8gutp6.fsf@concordia.ellerman.id.au>
+         <20170130213435.GM31613@codeblueprint.co.uk>
+         <33118425-8548-475A-8DED-9A2424C0BCCC@linux.vnet.ibm.com>
+         <1485863317.4498.2.camel@gmx.de>
+         <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com>
+         <20170202155506.GX6515@twins.programming.kicks-ass.net>
+         <3BAB5673-2BF8-46E0-8018-6A0F3DEEC9F7@linux.vnet.ibm.com>
+         <20170203085301.GA6515@twins.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4i5ufqvawgpyy4vz"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59512 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751878AbdBCMBf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Feb 2017 07:01:35 -0500
-Content-Disposition: inline
-In-Reply-To: <CAP=VYLraQvfRLdFMVCiqS9DtH-GHNYdM+CYZ_hJ+K8GwWLKT+Q@mail.gmail.com>
+Received: from mout.gmx.net ([212.227.17.21]:62016 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751958AbdBCNAP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 3 Feb 2017 08:00:15 -0500
+In-Reply-To: <20170203085301.GA6515@twins.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Hillf Danton <hillf.zj@alibaba-inc.com>
+To: Peter Zijlstra <peterz@infradead.org>, Sachin Sant <sachinp@linux.vnet.ibm.com>
+Cc: Ross Zwisler <zwisler@gmail.com>, Matt Fleming <matt@codeblueprint.co.uk>, Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 
+On Fri, 2017-02-03 at 09:53 +0100, Peter Zijlstra wrote:
+> On Fri, Feb 03, 2017 at 10:03:14AM +0530, Sachin Sant wrote:
 
---4i5ufqvawgpyy4vz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > I ran few cycles of cpu hot(un)plug tests. In most cases it works except one
+> > where I ran into rcu stall:
+> > 
+> > [  173.493453] INFO: rcu_sched detected stalls on CPUs/tasks:
+> > [  173.493473] > > 	> > 8-...: (2 GPs behind) idle=006/140000000000000/0 softirq=0/0 fqs=2996 
+> > [  173.493476] > > 	> > (detected by 0, t=6002 jiffies, g=885, c=884, q=6350)
+> 
+> Right, I actually saw that too, but I don't think that would be related
+> to my patch. I'll see if I can dig into this though, ought to get fixed
+> regardless.
 
-On Thu, Feb 02, 2017 at 06:08:44PM -0500, Paul Gortmaker wrote:
-> On Thu, Feb 2, 2017 at 5:23 AM, Build bot for Mark Brown
+FWIW, I'm not seeing stalls/hangs while beating hotplug up in tip. (so
+next grew a wart?)
 
-> >         arm-allnoconfig
-> > ../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
-> > ../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
-
-> Also in sfr build: http://kisskb.ellerman.id.au/kisskb/buildresult/129248=
-55/
-
-> Bisects as follows:
-
-> 5b8d82e2e798609e113ec0dae37708f0578b68e2 is the first bad commit
-> commit 5b8d82e2e798609e113ec0dae37708f0578b68e2
-> Author: Mike Rapoport <rppt@linux.vnet.ibm.com>
-> Date:   Thu Feb 2 10:46:41 2017 +1100
->=20
->     userfaultfd: non-cooperative: add event for memory unmaps
-
-I'm seeing that showing up as 197b090832eaa4a6e in -next, adding the
-other people who acked/signed off on the commit.
-
---4i5ufqvawgpyy4vz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAliUcRIACgkQJNaLcl1U
-h9BC0Qf9GCt92XSMzSQjAiZnbPgt+Loq7FLTmFhbXgmYlEVsPl3izQwdZp3Jeatt
-9T+5P1s+P9+bceyuosSXqvqM09qXvNvaRg1AFUfof0sA3yCUN5BsP4z7wT6sRmFN
-NDh1ldjfWGAzi8ACLAzuzFASuVKHYBcndCez30TL/I9wgz4Q1cV4Aw8dGhwPJcOr
-jhz0bo2qi4cUopARty4sKy7aSC67cYa0Otv7y4pvAgtoSqldiHu1YZqCOXQqcSf4
-OXCGet+l193FhnDBQeM/OGMappaGzPHENmIDj2iAw9na484266+tg8ThOZKWGHta
-b/b7z0S5UEj5mJmkO7nbzdALE5Hkyg==
-=5nVq
------END PGP SIGNATURE-----
-
---4i5ufqvawgpyy4vz--
+	-Mike
