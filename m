@@ -1,112 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the crypto tree
-Date: Mon, 6 Feb 2017 12:28:37 +1100
-Message-ID: <20170206122837.0226fb89@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the net-next tree
+Date: Mon, 6 Feb 2017 12:46:27 +1100
+Message-ID: <20170206124627.6d7e2543@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59631 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45689 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751710AbdBFB2l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Feb 2017 20:28:41 -0500
+        id S1751532AbdBFBqa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 5 Feb 2017 20:46:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>
+To: Dave Airlie <airlied@linux.ie>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>, Chris Wilson <chris@chris-wilson.co.uk>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Hi Herbert,
+Hi Dave,
 
-After merging the crypto tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Today's linux-next merge of the drm tree got a conflict in:
 
-warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
+  lib/Kconfig
 
-Introduced by commit
+between commit:
 
-  89a82ef87e01 ("crypto: atmel-authenc - add support to authenc(hmac(shaX), Y(aes)) modes")
+  44091d29f207 ("lib: Introduce priority array area manager")
 
-In file included from include/linux/printk.h:329:0,
-                 from include/linux/kernel.h:13,
-                 from drivers/crypto/atmel-sha.c:17:
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_cpu':
-drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:571:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-  ^
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_pdc':
-drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:600:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-  ^
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma':
-drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:647:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-  ^
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma_map':
-drivers/crypto/atmel-sha.c:726:20: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-   dev_err(dd->dev, "dma %u bytes error\n", ctx->buflen +
-                    ^
-In file included from include/linux/printk.h:329:0,
-                 from include/linux/kernel.h:13,
-                 from drivers/crypto/atmel-sha.c:17:
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_slow':
-drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:747:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
-  ^
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_start':
-drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:775:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
-  ^
-drivers/crypto/atmel-sha.c:817:21: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-    dev_err(dd->dev, "dma %u bytes error\n",
-                     ^
-In file included from include/linux/printk.h:329:0,
-                 from include/linux/kernel.h:13,
-                 from drivers/crypto/atmel-sha.c:17:
-drivers/crypto/atmel-sha.c: In function 'atmel_sha_finish':
-drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-  dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
-                   ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/crypto/atmel-sha.c:997:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
-  ^
+from the net-next tree and commit:
 
-I am not sure what caused this, but it may be that this code has not
-been built for this platform before?
+  cf4a7207b1cb ("lib: Add a simple prime number generator")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc lib/Kconfig
+index 5d644f180fe5,1788a1f50d28..000000000000
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@@ -550,7 -550,11 +550,14 @@@ config STACKDEPO
+  config SBITMAP
+  	bool
+  
+ +config PARMAN
+ +	tristate "parman"
+ +
++ config PRIME_NUMBERS
++ 	tristate "Prime number generator"
++ 	default n
++ 	help
++ 	  Provides a helper module to generate prime numbers. Useful for writing
++ 	  test code, especially when checking multiplication and divison.
++ 
+  endmenu
