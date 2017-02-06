@@ -1,87 +1,86 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Mon, 6 Feb 2017 16:04:51 +1100
-Message-ID: <20170206160451.537ce0f9@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+From: Sachin Sant <sachinp@linux.vnet.ibm.com>
+Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch missing
+ update_rq_clock() calls
+Date: Mon, 6 Feb 2017 11:53:10 +0530
+Message-ID: <45DC157B-EA1A-4E1C-9449-8DD317837FCB@linux.vnet.ibm.com>
+References: <20170130213435.GM31613@codeblueprint.co.uk>
+ <33118425-8548-475A-8DED-9A2424C0BCCC@linux.vnet.ibm.com>
+ <1485863317.4498.2.camel@gmx.de>
+ <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com>
+ <20170202155506.GX6515@twins.programming.kicks-ass.net>
+ <3BAB5673-2BF8-46E0-8018-6A0F3DEEC9F7@linux.vnet.ibm.com>
+ <20170203085301.GA6515@twins.programming.kicks-ass.net>
+ <1486126774.4277.6.camel@gmx.de>
+ <20170203133748.GB6515@twins.programming.kicks-ass.net>
+ <20170203154457.GJ30506@linux.vnet.ibm.com>
+ <20170203155453.GA23760@linux.vnet.ibm.com>
+Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43254 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1750962AbdBFGX3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2017 01:23:29 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v166IUYj129372
+        for <linux-next@vger.kernel.org>; Mon, 6 Feb 2017 01:23:28 -0500
+Received: from e28smtp07.in.ibm.com (e28smtp07.in.ibm.com [125.16.236.7])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 28ekjr0md4-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Mon, 06 Feb 2017 01:23:28 -0500
+Received: from localhost
+        by e28smtp07.in.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <sachinp@linux.vnet.ibm.com>;
+        Mon, 6 Feb 2017 11:53:23 +0530
+In-Reply-To: <20170203155453.GA23760@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: paulmck@linux.vnet.ibm.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Matt Fleming <matt@codeblueprint.co.uk>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ross Zwisler <zwisler@gmail.com>
 
-Hi all,
 
-After merging the scsi tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+>>> I've seen it on tip. It looks like hot unplug goes really slow when
+>>> there's running tasks on the CPU being taken down.
+>>> 
+>>> What I did was something like:
+>>> 
+>>>  taskset -p $((1<<1)) $$
+>>>  for ((i=0; i<20; i++)) do while :; do :; done & done
+>>> 
+>>>  taskset -p $((1<<0)) $$
+>>>  echo 0 > /sys/devices/system/cpu/cpu1/online
+>>> 
+>>> And with those 20 tasks stuck sucking cycles on CPU1, the unplug goes
+>>> _really_ slow and the RCU stall triggers. What I suspect happens is that
+>>> hotplug stops participating in the RCU state machine early, but only
+>>> tells RCU about it really late, and in between it gets suspicious it
+>>> takes too long.
+>>> 
+>>> I've yet to dig through the RCU code to figure out the exact sequence of
+>>> events, but found the above to be fairly reliable in triggering the
+>>> issue.
+> 
+>> If you send me the full splat from the dmesg and the RCU portions of
+>> .config, I will take a look.  Is this new behavior, or a new test?
+> 
 
-In file included from include/uapi/linux/stddef.h:1:0,
-                 from include/linux/stddef.h:4,
-                 from include/uapi/linux/posix_types.h:4,
-                 from include/uapi/linux/types.h:13,
-                 from include/linux/types.h:5,
-                 from include/linux/list.h:4,
-                 from include/linux/module.h:9,
-                 from drivers/scsi/mpt3sas/mpt3sas_scsih.c:45:
-drivers/scsi/mpt3sas/mpt3sas_scsih.c: In function '_scsih_io_done':
-drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:28: error: 'struct request' has no member named 'cmd_type'
-  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
-                            ^
-include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
- # define unlikely(x) __builtin_expect(!!(x), 0)
-                                          ^
-drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:42: error: 'REQ_TYPE_FS' undeclared (first use in this function)
-  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
-                                          ^
-include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
- # define unlikely(x) __builtin_expect(!!(x), 0)
-                                          ^
-drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:42: note: each undeclared identifier is reported only once for each function it appears in
-  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
-                                          ^
-include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
- # define unlikely(x) __builtin_expect(!!(x), 0)
-                                          ^
+I have sent the required files to you via separate email.
 
-Caused by commit
+> If new behavior, I would be most suspicious of these commits in -rcu which
+> recently entered -tip:
+> 
+> 19e4d983cda1 rcu: Place guard on rcu_all_qs() and rcu_note_context_switch() actions
+> 913324b1364f rcu: Eliminate flavor scan in rcu_momentary_dyntick_idle()
+> fcdcfefafa45 rcu: Pull rcu_qs_ctr into rcu_dynticks structure
+> 0919a0b7e7a5 rcu: Pull rcu_sched_qs_mask into rcu_dynticks structure
+> caa7c8e34293 rcu: Make rcu_note_context_switch() do deferred NOCB wakeups
+> 41e4b159d516 rcu: Make rcu_all_qs() do deferred NOCB wakeups
+> b457a3356a68 rcu: Make call_rcu() do deferred NOCB wakeups
+> 
+> Does reverting any of these help?
 
-  f2e767bb5d6e ("scsi: mpt3sas: Force request partial completion alignment")
+I tried reverting the above commits. That does not help. I can still recreate the issue.
 
-interacting with commit
-
-  aebf526b53ae ("block: fold cmd_type into the REQ_OP_ space")
-
-from the block tree.
-
-I have applied teh following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 6 Feb 2017 16:00:54 +1100
-Subject: [PATCH] scsi: mpt3sas: fix up for "block: fold cmd_type into the
- REQ_OP_ space"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/scsi/mpt3sas/mpt3sas_scsih.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 5f7b0c7d7e4d..81a64678390d 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -4747,7 +4747,7 @@ _scsih_io_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
- 	 * then scsi-ml does not need to handle this misbehavior.
- 	 */
- 	sector_sz = scmd->device->sector_size;
--	if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
-+	if (unlikely(!blk_rq_is_passthrough(scmd->request) && sector_sz &&
- 		     xfer_cnt % sector_sz)) {
- 		sdev_printk(KERN_INFO, scmd->device,
- 		    "unaligned partial completion avoided (xfer_cnt=%u, sector_sz=%u)\n",
--- 
-2.10.2
-
--- 
-Cheers,
-Stephen Rothwell
+Thanks
+-Sachin
