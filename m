@@ -1,44 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Mon, 6 Feb 2017 15:31:51 +1100
-Message-ID: <20170206153151.3e999469@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi tree
+Date: Mon, 6 Feb 2017 16:04:51 +1100
+Message-ID: <20170206160451.537ce0f9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38949 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751052AbdBFEby (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Feb 2017 23:31:54 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Sean Young <sean@mess.org>, Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ram Pai <linuxram@us.ibm.com>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got a conflict in:
+After merging the scsi tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  drivers/staging/media/lirc/lirc_parallel.c
+In file included from include/uapi/linux/stddef.h:1:0,
+                 from include/linux/stddef.h:4,
+                 from include/uapi/linux/posix_types.h:4,
+                 from include/uapi/linux/types.h:13,
+                 from include/linux/types.h:5,
+                 from include/linux/list.h:4,
+                 from include/linux/module.h:9,
+                 from drivers/scsi/mpt3sas/mpt3sas_scsih.c:45:
+drivers/scsi/mpt3sas/mpt3sas_scsih.c: In function '_scsih_io_done':
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:28: error: 'struct request' has no member named 'cmd_type'
+  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
+                            ^
+include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                                          ^
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:42: error: 'REQ_TYPE_FS' undeclared (first use in this function)
+  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
+                                          ^
+include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                                          ^
+drivers/scsi/mpt3sas/mpt3sas_scsih.c:4750:42: note: each undeclared identifier is reported only once for each function it appears in
+  if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
+                                          ^
+include/linux/compiler.h:179:42: note: in definition of macro 'unlikely'
+ # define unlikely(x) __builtin_expect(!!(x), 0)
+                                          ^
 
-between commit:
+Caused by commit
 
-  2933974cbb03 ("[media] staging: lirc_parallel: remove")
+  f2e767bb5d6e ("scsi: mpt3sas: Force request partial completion alignment")
 
-from the v4l-dvb tree and commit:
+interacting with commit
 
-  1c5fa1c7dbff ("staging: media: lirc: use new parport device model")
+  aebf526b53ae ("block: fold cmd_type into the REQ_OP_ space")
 
-from the staging tree.
+from the block tree.
 
-Unfortunate ...
+I have applied teh following merge fix patch:
 
-I fixed it up (I removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 6 Feb 2017 16:00:54 +1100
+Subject: [PATCH] scsi: mpt3sas: fix up for "block: fold cmd_type into the
+ REQ_OP_ space"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 5f7b0c7d7e4d..81a64678390d 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -4747,7 +4747,7 @@ _scsih_io_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
+ 	 * then scsi-ml does not need to handle this misbehavior.
+ 	 */
+ 	sector_sz = scmd->device->sector_size;
+-	if (unlikely(scmd->request->cmd_type == REQ_TYPE_FS && sector_sz &&
++	if (unlikely(!blk_rq_is_passthrough(scmd->request) && sector_sz &&
+ 		     xfer_cnt % sector_sz)) {
+ 		sdev_printk(KERN_INFO, scmd->device,
+ 		    "unaligned partial completion avoided (xfer_cnt=%u, sector_sz=%u)\n",
+-- 
+2.10.2
 
 -- 
 Cheers,
