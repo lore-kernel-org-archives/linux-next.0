@@ -1,53 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tty tree
-Date: Tue, 7 Feb 2017 07:38:23 +1100
-Message-ID: <20170207073823.638e2e67@canb.auug.org.au>
-References: <20170206152209.0819e332@canb.auug.org.au>
-        <20170206085105.GB3726@kroah.com>
-        <CAL_JsqJnzCNtg19jKekzQyMO6fuqt3b1JU-ps=5MJByKGC1xLg@mail.gmail.com>
-        <20170206151822.GA13626@kroah.com>
+Subject: Re: linux-next: build warning after merge of the tty tree
+Date: Tue, 7 Feb 2017 09:37:09 +1100
+Message-ID: <20170207093709.0287cb68@canb.auug.org.au>
+References: <20170206151638.6e0f8a60@canb.auug.org.au>
+        <20170206085042.GA3726@kroah.com>
+        <CAO3366y+pGVY78BDtgkeqDenKqfnhdpxaRRFPUjnw2bwoMGYnQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170206151822.GA13626@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Rob Herring <robh@kernel.org>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40027 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751372AbdBFWhM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 6 Feb 2017 17:37:12 -0500
+In-Reply-To: <CAO3366y+pGVY78BDtgkeqDenKqfnhdpxaRRFPUjnw2bwoMGYnQ@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Greg,
+Hi all,
 
-On Mon, 6 Feb 2017 16:18:22 +0100 Greg KH <greg@kroah.com> wrote:
+On Mon, 6 Feb 2017 18:01:20 +0100 Ulrich Hecht <ulrich.hecht+renesas@gmail.com> wrote:
 >
-> On Mon, Feb 06, 2017 at 08:09:16AM -0600, Rob Herring wrote:
-> > 
-> > It didn't, but we happened to already have a fix queued up for 4.11.
-> > The fix is in your usb-next branch:
-> > 
-> > commit 7a3b7cd332db08546f3cdd984f11773e0d1999e7
-> > Author: Stephen Boyd <stephen.boyd@linaro.org>
-> > Date:   Wed Dec 28 14:56:48 2016 -0800
-> > 
-> >     of: device: Export of_device_{get_modalias, uvent_modalias} to modules
-> > 
-> >     The ULPI bus can be built as a module, and it will soon be
-> >     calling these functions when it supports probing devices from DT.
-> >     Export them so they can be used by the ULPI module.
-> > 
-> >     Acked-by: Rob Herring <robh@kernel.org>
-> >     Cc: <devicetree@vger.kernel.org>
-> >     Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
-> >     Signed-off-by: Peter Chen <peter.chen@nxp.com>  
+> On Mon, Feb 6, 2017 at 9:50 AM, Greg KH <greg@kroah.com> wrote:
+> >
+> > I think this is fixed by a patch I just took into my tree, which isn't
+> > in linux-next yet.  Right Ulrich?  
 > 
-> Ah, so the if this is pulled into linux-next at the same time, then
-> there's no build error.
-> 
-> Stephen, do you need/want me to cherry-pick this into the tty branch, or
-> is it ok as-is?
+> That is correct, it's called in "[PATCH v4 2/4] serial: sh-sci:
+> SCIFA/B RX FIFO software timeout".
 
-I will change things so that I merge the usb tree before the tty tree.
-Please remember to tell Linus that they need to be merged in that order.
+I don't see that commit in any tree I have fetched.
 
 -- 
 Cheers,
