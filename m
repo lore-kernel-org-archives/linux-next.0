@@ -1,47 +1,111 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with the qcom tree
-Date: Mon, 6 Feb 2017 10:23:29 +1100
-Message-ID: <20170206102329.04879df9@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the crypto tree
+Date: Mon, 6 Feb 2017 12:28:37 +1100
+Message-ID: <20170206122837.0226fb89@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34157 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59631 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751165AbdBEXXg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Feb 2017 18:23:36 -0500
+        id S1751710AbdBFB2l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 5 Feb 2017 20:28:41 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>, Andy Gross <andy.gross@linaro.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>
 
-Hi all,
+Hi Herbert,
 
-Today's linux-next merge of the arm64 tree got conflicts in:
+After merging the crypto tree, today's linux-next build (x86_64
+allmodconfig) produced these warnings:
 
-  arch/arm/kernel/armksyms.c
-  arch/arm64/kernel/arm64ksyms.c
-  arch/arm64/kernel/smccc-call.S
-  include/linux/arm-smccc.h
+warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
+warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
 
-between commits:
+Introduced by commit
 
-  0a0c5b832751 ("arm: kernel: Add SMC structure parameter")
-  9c96e7f72029 ("firmware: qcom: scm: Fix interrupted SCM calls")
+  89a82ef87e01 ("crypto: atmel-authenc - add support to authenc(hmac(shaX), Y(aes)) modes")
 
-from the qcom tree and commits:
+In file included from include/linux/printk.h:329:0,
+                 from include/linux/kernel.h:13,
+                 from drivers/crypto/atmel-sha.c:17:
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_cpu':
+drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:571:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+  ^
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_pdc':
+drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:600:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+  ^
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma':
+drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:647:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+  ^
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma_map':
+drivers/crypto/atmel-sha.c:726:20: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
+   dev_err(dd->dev, "dma %u bytes error\n", ctx->buflen +
+                    ^
+In file included from include/linux/printk.h:329:0,
+                 from include/linux/kernel.h:13,
+                 from drivers/crypto/atmel-sha.c:17:
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_slow':
+drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:747:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
+  ^
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_start':
+drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:775:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
+  ^
+drivers/crypto/atmel-sha.c:817:21: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
+    dev_err(dd->dev, "dma %u bytes error\n",
+                     ^
+In file included from include/linux/printk.h:329:0,
+                 from include/linux/kernel.h:13,
+                 from drivers/crypto/atmel-sha.c:17:
+drivers/crypto/atmel-sha.c: In function 'atmel_sha_finish':
+drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+  dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
+                   ^
+include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+   __dynamic_dev_dbg(&descriptor, dev, fmt, \
+                                       ^
+drivers/crypto/atmel-sha.c:997:2: note: in expansion of macro 'dev_dbg'
+  dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
+  ^
 
-  680a0873e193 ("arm: kernel: Add SMC structure parameter")
-  82bcd087029f ("firmware: qcom: scm: Fix interrupted SCM calls")
-
-from the arm64 tree.
-
-I fixed it up (please check the final resolution when it is released,
-or fix these up) and can carry the fix as necessary. This is now fixed
-as far as linux-next is concerned, but any non trivial conflicts should
-be mentioned to your upstream maintainer when your tree is submitted for
-merging.  You may also want to consider cooperating with the maintainer
-of the conflicting tree to minimise any particularly complex conflicts.
+I am not sure what caused this, but it may be that this code has not
+been built for this platform before?
 
 -- 
 Cheers,
