@@ -1,21 +1,26 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
+From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
 Subject: Re: linux-next: build warnings after merge of the crypto tree
-Date: Mon, 6 Feb 2017 17:03:40 +0800
-Message-ID: <20170206090340.GA9531@gondor.apana.org.au>
+Date: Mon, 6 Feb 2017 11:15:38 +0100
+Message-ID: <7bb7f79a-dcf0-3912-ab31-031378828f4e@atmel.com>
 References: <20170206122837.0226fb89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtpout.microchip.com ([198.175.253.82]:34582 "EHLO
+        email.microchip.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750950AbdBFKPl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2017 05:15:41 -0500
 In-Reply-To: <20170206122837.0226fb89@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Stephen:
+Hi all,
 
-On Mon, Feb 06, 2017 at 12:28:37PM +1100, Stephen Rothwell wrote:
+Le 06/02/2017 à 02:28, Stephen Rothwell a écrit :
+> Hi Herbert,
 > 
 > After merging the crypto tree, today's linux-next build (x86_64
 > allmodconfig) produced these warnings:
@@ -30,120 +35,100 @@ On Mon, Feb 06, 2017 at 12:28:37PM +1100, Stephen Rothwell wrote:
 > In file included from include/linux/printk.h:329:0,
 >                  from include/linux/kernel.h:13,
 >                  from drivers/crypto/atmel-sha.c:17:
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_cpu':
+> drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:571:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>   ^
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_pdc':
+> drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:600:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>   ^
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma':
+> drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:647:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
+>   ^
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_xmit_dma_map':
+> drivers/crypto/atmel-sha.c:726:20: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>    dev_err(dd->dev, "dma %u bytes error\n", ctx->buflen +
+>                     ^
+> In file included from include/linux/printk.h:329:0,
+>                  from include/linux/kernel.h:13,
+>                  from drivers/crypto/atmel-sha.c:17:
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_slow':
+> drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:747:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
+>   ^
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_update_dma_start':
+> drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:775:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
+>   ^
+> drivers/crypto/atmel-sha.c:817:21: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>     dev_err(dd->dev, "dma %u bytes error\n",
+>                      ^
+> In file included from include/linux/printk.h:329:0,
+>                  from include/linux/kernel.h:13,
+>                  from drivers/crypto/atmel-sha.c:17:
+> drivers/crypto/atmel-sha.c: In function 'atmel_sha_finish':
+> drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>   dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
+>                    ^
+> include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
+>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>                                        ^
+> drivers/crypto/atmel-sha.c:997:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
+>   ^
+> 
+> I am not sure what caused this, but it may be that this code has not
+> been built for this platform before?
+> 
 
-This patch should fix both issues.  Thanks,
 
----8<---
-Subject: crypto: atmel - Fix authenc compile test warnings
+Indeed, the drivers/crypto/atmel-sha.c driver has never been built for x86_64.
 
-The authenc code depends on the sha code so in order to allow
-compile testing on the former we must allow it on sha as well.
+CRYPTO_DEV_ATMEL_AUTHENC must select both CRYPTO_DEV_ATMEL_AES and
+CRYPTO_DEV_ATMEL_SHA. I thought I could add a dependency to COMPILE_TEST
+for CRYPTO_DEV_ATMEL_AUTHENC since CRYPTO_DEV_ATMEL_AES already had such a
+dependency, hence could be compiled on architectures other than AT91 but I
+didn't check the same for CRYPTO_DEV_ATMEL_SHA.
 
-This patch enables compile testing on sha as well as tdes and
-fixes the few x86-64 warnings that arise in the sha code.
+So maybe the easiest solution could be to remove the COMPILE_TEST
+dependency on CRYPTO_DEV_ATMEL_AUTHENC for now, then I could try to fix all
+these dev_dbg() format strings to make them become cross-platform compliant.
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Herbert, if you think this solution is suitable I can prepare a first patch
+to remove the COMPILE_TEST dependency on CRYPTO_DEV_ATMEL_AUTHENC.
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 7482461..9b7e19e 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -444,7 +444,7 @@ config CRYPTO_DEV_ATMEL_AES
- 
- config CRYPTO_DEV_ATMEL_TDES
- 	tristate "Support for Atmel DES/TDES hw accelerator"
--	depends on ARCH_AT91
-+	depends on ARCH_AT91 || COMPILE_TEST
- 	select CRYPTO_DES
- 	select CRYPTO_BLKCIPHER
- 	help
-@@ -457,7 +457,7 @@ config CRYPTO_DEV_ATMEL_TDES
- 
- config CRYPTO_DEV_ATMEL_SHA
- 	tristate "Support for Atmel SHA hw accelerator"
--	depends on ARCH_AT91
-+	depends on ARCH_AT91 || COMPILE_TEST
- 	select CRYPTO_HASH
- 	help
- 	  Some Atmel processors have SHA1/SHA224/SHA256/SHA384/SHA512
-diff --git a/drivers/crypto/atmel-sha.c b/drivers/crypto/atmel-sha.c
-index 22d0c0c..b081e78 100644
---- a/drivers/crypto/atmel-sha.c
-+++ b/drivers/crypto/atmel-sha.c
-@@ -568,7 +568,7 @@ static int atmel_sha_xmit_cpu(struct atmel_sha_dev *dd, const u8 *buf,
- 	int count, len32;
- 	const u32 *buffer = (const u32 *)buf;
- 
--	dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_cpu: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length, final);
- 
- 	atmel_sha_write_ctrl(dd, 0);
-@@ -597,7 +597,7 @@ static int atmel_sha_xmit_pdc(struct atmel_sha_dev *dd, dma_addr_t dma_addr1,
- 	struct atmel_sha_reqctx *ctx = ahash_request_ctx(dd->req);
- 	int len32;
- 
--	dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_pdc: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length1, final);
- 
- 	len32 = DIV_ROUND_UP(length1, sizeof(u32));
-@@ -644,7 +644,7 @@ static int atmel_sha_xmit_dma(struct atmel_sha_dev *dd, dma_addr_t dma_addr1,
- 	struct dma_async_tx_descriptor	*in_desc;
- 	struct scatterlist sg[2];
- 
--	dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %d, final: %d\n",
-+	dev_dbg(dd->dev, "xmit_dma: digcnt: 0x%llx 0x%llx, length: %zu, final: %d\n",
- 		ctx->digcnt[1], ctx->digcnt[0], length1, final);
- 
- 	dd->dma_lch_in.dma_conf.src_maxburst = 16;
-@@ -723,7 +723,7 @@ static int atmel_sha_xmit_dma_map(struct atmel_sha_dev *dd,
- 	ctx->dma_addr = dma_map_single(dd->dev, ctx->buffer,
- 				ctx->buflen + ctx->block_size, DMA_TO_DEVICE);
- 	if (dma_mapping_error(dd->dev, ctx->dma_addr)) {
--		dev_err(dd->dev, "dma %u bytes error\n", ctx->buflen +
-+		dev_err(dd->dev, "dma %zu bytes error\n", ctx->buflen +
- 				ctx->block_size);
- 		atmel_sha_complete(dd, -EINVAL);
- 	}
-@@ -744,7 +744,7 @@ static int atmel_sha_update_dma_slow(struct atmel_sha_dev *dd)
- 
- 	final = (ctx->flags & SHA_FLAGS_FINUP) && !ctx->total;
- 
--	dev_dbg(dd->dev, "slow: bufcnt: %u, digcnt: 0x%llx 0x%llx, final: %d\n",
-+	dev_dbg(dd->dev, "slow: bufcnt: %zu, digcnt: 0x%llx 0x%llx, final: %d\n",
- 		 ctx->bufcnt, ctx->digcnt[1], ctx->digcnt[0], final);
- 
- 	if (final)
-@@ -772,7 +772,7 @@ static int atmel_sha_update_dma_start(struct atmel_sha_dev *dd)
- 	if (ctx->bufcnt || ctx->offset)
- 		return atmel_sha_update_dma_slow(dd);
- 
--	dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %u, total: %u\n",
-+	dev_dbg(dd->dev, "fast: digcnt: 0x%llx 0x%llx, bufcnt: %zu, total: %u\n",
- 		ctx->digcnt[1], ctx->digcnt[0], ctx->bufcnt, ctx->total);
- 
- 	sg = ctx->sg;
-@@ -814,7 +814,7 @@ static int atmel_sha_update_dma_start(struct atmel_sha_dev *dd)
- 		ctx->dma_addr = dma_map_single(dd->dev, ctx->buffer,
- 			ctx->buflen + ctx->block_size, DMA_TO_DEVICE);
- 		if (dma_mapping_error(dd->dev, ctx->dma_addr)) {
--			dev_err(dd->dev, "dma %u bytes error\n",
-+			dev_err(dd->dev, "dma %zu bytes error\n",
- 				ctx->buflen + ctx->block_size);
- 			atmel_sha_complete(dd, -EINVAL);
- 		}
-@@ -994,7 +994,7 @@ static int atmel_sha_finish(struct ahash_request *req)
- 	if (ctx->digcnt[0] || ctx->digcnt[1])
- 		atmel_sha_copy_ready_hash(req);
- 
--	dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %d\n", ctx->digcnt[1],
-+	dev_dbg(dd->dev, "digcnt: 0x%llx 0x%llx, bufcnt: %zu\n", ctx->digcnt[1],
- 		ctx->digcnt[0], ctx->bufcnt);
- 
- 	return 0;
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Best regards,
+
+Cyrille
