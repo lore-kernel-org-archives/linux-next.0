@@ -1,130 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170206 build: 2 failures 16 warnings (next-20170206)
-Date: Mon, 06 Feb 2017 11:02:50 +0000
-Message-ID: <E1cah4M-0001Yq-7i@optimist>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the qcom tree
+Date: Mon, 6 Feb 2017 11:44:18 +0000
+Message-ID: <20170206114418.GB19939@arm.com>
+References: <20170206102329.04879df9@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43980 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750953AbdBFLC7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2017 06:02:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:55906 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751001AbdBFLoS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 6 Feb 2017 06:44:18 -0500
+Content-Disposition: inline
+In-Reply-To: <20170206102329.04879df9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Andy Gross <andy.gross@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Tree/Branch: next-20170206
-Git describe: next-20170206
-Commit: ce05054690 Add linux-next specific files for 20170206
+On Mon, Feb 06, 2017 at 10:23:29AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the arm64 tree got conflicts in:
+> 
+>   arch/arm/kernel/armksyms.c
+>   arch/arm64/kernel/arm64ksyms.c
+>   arch/arm64/kernel/smccc-call.S
+>   include/linux/arm-smccc.h
+> 
+> between commits:
+> 
+>   0a0c5b832751 ("arm: kernel: Add SMC structure parameter")
+>   9c96e7f72029 ("firmware: qcom: scm: Fix interrupted SCM calls")
+> 
+> from the qcom tree and commits:
+> 
+>   680a0873e193 ("arm: kernel: Add SMC structure parameter")
+>   82bcd087029f ("firmware: qcom: scm: Fix interrupted SCM calls")
+> 
+> from the arm64 tree.
+> 
+> I fixed it up (please check the final resolution when it is released,
+> or fix these up) and can carry the fix as necessary. This is now fixed
+> as far as linux-next is concerned, but any non trivial conflicts should
+> be mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-Build Time: 108 min 11 sec
+Thanks Stephen, although if looks like you've resolved the conflict to
+be what is in the qcom tree, which is in fact an earlier version of this
+patch series.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Andy, please can you drop your stuff from -next now that a newer version
+is queued via arm64? (and also please check that you're happy with what
+I've got queued).
 
-Errors: 2
-Warnings: 16
-Section Mismatches: 0
+Thanks,
 
-Failed defconfigs:
-	arm-allnoconfig
-
-Errors:
-
-	arm-allnoconfig
-../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
-../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      1 warnings    0 mismatches  : arm64-allnoconfig
-     11 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
-	  1 ../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
-
-Warnings Summary: 16
-	  3 warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	  3 ../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:814:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
-
-Warnings:
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	../mm/nommu.c:1201:15: error: conflicting types for 'do_mmap'
-	../mm/nommu.c:1580:5: error: conflicting types for 'do_munmap'
-
-Warnings:
-	../drivers/char/random.c:318:12: warning: 'random_min_urandom_seed' defined but not used [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/net/ethernet/mellanox/mlx5/core/en_tc.c:814:40: warning: 'out_dev' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v4t_defconfig
-x86_64-defconfig
-arm-multi_v7_defconfig
-arm-multi_v5_defconfig
-arm64-defconfig
+Will
