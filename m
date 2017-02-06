@@ -1,41 +1,36 @@
 From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the tty tree
-Date: Mon, 6 Feb 2017 09:50:42 +0100
-Message-ID: <20170206085042.GA3726@kroah.com>
-References: <20170206151638.6e0f8a60@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Mon, 6 Feb 2017 09:51:05 +0100
+Message-ID: <20170206085105.GB3726@kroah.com>
+References: <20170206152209.0819e332@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:42028 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751071AbdBFIvC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Feb 2017 03:51:02 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170206151638.6e0f8a60@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20170206152209.0819e332@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Sebastian Reichel <sre@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 06, 2017 at 03:16:38PM +1100, Stephen Rothwell wrote:
+On Mon, Feb 06, 2017 at 03:22:09PM +1100, Stephen Rothwell wrote:
 > Hi Greg,
 > 
-> After merging the tty tree, today's linux-next build
-> (arm_multi_v7_defconfig) produced this warning:
+> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> drivers/tty/serial/sh-sci.c:977:12: warning: 'scif_set_rtrg' defined but not used [-Wunused-function]
->  static int scif_set_rtrg(struct uart_port *port, int rx_trig)
->             ^
+> ERROR: "of_device_uevent_modalias" [drivers/tty/serdev/serdev.ko] undefined!
+> ERROR: "of_device_get_modalias" [drivers/tty/serdev/serdev.ko] undefined!
 > 
-> Introduced by commit
+> Caused by commit
 > 
->   a380ed461f66 ("serial: sh-sci: implement FIFO threshold register setting")
+>   cd6484e1830b ("serdev: Introduce new bus for serial attached devices")
 > 
-> Forgot to add a call to this new function?
+> I have used the tty tree from next-20170203 for today.
 
-I think this is fixed by a patch I just took into my tree, which isn't
-in linux-next yet.  Right Ulrich?  Or is this still a warning with your
-latest patch series?
+Ugh, how has this been passing the 0-day bot builds succesfully?
+
+Rob, any ideas?
 
 thanks,
 
