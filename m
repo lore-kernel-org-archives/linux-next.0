@@ -1,85 +1,65 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch missing
- update_rq_clock() calls
-Date: Mon, 6 Feb 2017 07:14:06 -0800
-Message-ID: <20170206151406.GA2177@linux.vnet.ibm.com>
-References: <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com>
- <20170202155506.GX6515@twins.programming.kicks-ass.net>
- <3BAB5673-2BF8-46E0-8018-6A0F3DEEC9F7@linux.vnet.ibm.com>
- <20170203085301.GA6515@twins.programming.kicks-ass.net>
- <1486126774.4277.6.camel@gmx.de>
- <20170203133748.GB6515@twins.programming.kicks-ass.net>
- <20170203154457.GJ30506@linux.vnet.ibm.com>
- <20170203155453.GA23760@linux.vnet.ibm.com>
- <45DC157B-EA1A-4E1C-9449-8DD317837FCB@linux.vnet.ibm.com>
- <20170206151048.GK30506@linux.vnet.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the tty tree
+Date: Mon, 6 Feb 2017 16:18:22 +0100
+Message-ID: <20170206151822.GA13626@kroah.com>
+References: <20170206152209.0819e332@canb.auug.org.au>
+ <20170206085105.GB3726@kroah.com>
+ <CAL_JsqJnzCNtg19jKekzQyMO6fuqt3b1JU-ps=5MJByKGC1xLg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170206151048.GK30506@linux.vnet.ibm.com>
+In-Reply-To: <CAL_JsqJnzCNtg19jKekzQyMO6fuqt3b1JU-ps=5MJByKGC1xLg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Matt Fleming <matt@codeblueprint.co.uk>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Mike Galbraith <efault@gmx.de>, LKML <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Ross Zwisler <zwisler@gmail.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 06, 2017 at 07:10:48AM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 06, 2017 at 11:53:10AM +0530, Sachin Sant wrote:
-> > 
-> > >>> I've seen it on tip. It looks like hot unplug goes really slow when
-> > >>> there's running tasks on the CPU being taken down.
-> > >>> 
-> > >>> What I did was something like:
-> > >>> 
-> > >>>  taskset -p $((1<<1)) $$
-> > >>>  for ((i=0; i<20; i++)) do while :; do :; done & done
-> > >>> 
-> > >>>  taskset -p $((1<<0)) $$
-> > >>>  echo 0 > /sys/devices/system/cpu/cpu1/online
-> > >>> 
-> > >>> And with those 20 tasks stuck sucking cycles on CPU1, the unplug goes
-> > >>> _really_ slow and the RCU stall triggers. What I suspect happens is that
-> > >>> hotplug stops participating in the RCU state machine early, but only
-> > >>> tells RCU about it really late, and in between it gets suspicious it
-> > >>> takes too long.
-> > >>> 
-> > >>> I've yet to dig through the RCU code to figure out the exact sequence of
-> > >>> events, but found the above to be fairly reliable in triggering the
-> > >>> issue.
-> > > 
-> > >> If you send me the full splat from the dmesg and the RCU portions of
-> > >> .config, I will take a look.  Is this new behavior, or a new test?
-> > > 
-> > 
-> > I have sent the required files to you via separate email.
-> > 
-> > > If new behavior, I would be most suspicious of these commits in -rcu which
-> > > recently entered -tip:
-> > > 
-> > > 19e4d983cda1 rcu: Place guard on rcu_all_qs() and rcu_note_context_switch() actions
-> > > 913324b1364f rcu: Eliminate flavor scan in rcu_momentary_dyntick_idle()
-> > > fcdcfefafa45 rcu: Pull rcu_qs_ctr into rcu_dynticks structure
-> > > 0919a0b7e7a5 rcu: Pull rcu_sched_qs_mask into rcu_dynticks structure
-> > > caa7c8e34293 rcu: Make rcu_note_context_switch() do deferred NOCB wakeups
-> > > 41e4b159d516 rcu: Make rcu_all_qs() do deferred NOCB wakeups
-> > > b457a3356a68 rcu: Make call_rcu() do deferred NOCB wakeups
-> > > 
-> > > Does reverting any of these help?
-> > 
-> > I tried reverting the above commits. That does not help. I can still recreate the issue.
+On Mon, Feb 06, 2017 at 08:09:16AM -0600, Rob Herring wrote:
+> On Mon, Feb 6, 2017 at 2:51 AM, Greg KH <greg@kroah.com> wrote:
+> > On Mon, Feb 06, 2017 at 03:22:09PM +1100, Stephen Rothwell wrote:
+> >> Hi Greg,
+> >>
+> >> After merging the tty tree, today's linux-next build (x86_64 allmodconfig)
+> >> failed like this:
+> >>
+> >> ERROR: "of_device_uevent_modalias" [drivers/tty/serdev/serdev.ko] undefined!
+> >> ERROR: "of_device_get_modalias" [drivers/tty/serdev/serdev.ko] undefined!
+> >>
+> >> Caused by commit
+> >>
+> >>   cd6484e1830b ("serdev: Introduce new bus for serial attached devices")
+> >>
+> >> I have used the tty tree from next-20170203 for today.
+> >
+> > Ugh, how has this been passing the 0-day bot builds succesfully?
+> >
+> > Rob, any ideas?
 > 
-> Thank you for testing, Sachin!
+> It didn't, but we happened to already have a fix queued up for 4.11.
+> The fix is in your usb-next branch:
 > 
-> Could you please try building and testing with CONFIG_RCU_BOOST=y?
-> You will need to enable CONFIG_RCU_EXPERT=y to see this Kconfig option.
+> commit 7a3b7cd332db08546f3cdd984f11773e0d1999e7
+> Author: Stephen Boyd <stephen.boyd@linaro.org>
+> Date:   Wed Dec 28 14:56:48 2016 -0800
+> 
+>     of: device: Export of_device_{get_modalias, uvent_modalias} to modules
+> 
+>     The ULPI bus can be built as a module, and it will soon be
+>     calling these functions when it supports probing devices from DT.
+>     Export them so they can be used by the ULPI module.
+> 
+>     Acked-by: Rob Herring <robh@kernel.org>
+>     Cc: <devicetree@vger.kernel.org>
+>     Signed-off-by: Stephen Boyd <stephen.boyd@linaro.org>
+>     Signed-off-by: Peter Chen <peter.chen@nxp.com>
 
-Ah, but looking ahead to your .config file, you have CONFIG_PREEMPT=n,
-which means boosting would not help and is not available in any case.
+Ah, so the if this is pulled into linux-next at the same time, then
+there's no build error.
 
-So it looks like there is a very long loop within an RCU read-side
-critical section, and that this critical section needs to be broken
-up a bit -- 21 seconds in pretty much any kind of critical section is
-a bit excessive, after all.
+Stephen, do you need/want me to cherry-pick this into the tty branch, or
+is it ok as-is?
 
-							Thanx, Paul
+thanks,
+
+greg k-h
