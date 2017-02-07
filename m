@@ -1,42 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm tree with the net-next
- tree
-Date: Tue, 7 Feb 2017 20:45:36 +1100
-Message-ID: <20170207204501.23ef9b12@canb.auug.org.au>
-References: <20170207162322.3732a5a1@canb.auug.org.au>
-        <4cbbbce4-1318-9a75-d918-5b209cc418e6@pengutronix.de>
+Subject: Re: linux-next: build warning after merge of the tty tree
+Date: Tue, 7 Feb 2017 22:18:40 +1100
+Message-ID: <20170207221840.29af3b84@canb.auug.org.au>
+References: <20170206151638.6e0f8a60@canb.auug.org.au>
+        <20170206085042.GA3726@kroah.com>
+        <CAO3366y+pGVY78BDtgkeqDenKqfnhdpxaRRFPUjnw2bwoMGYnQ@mail.gmail.com>
+        <20170207093709.0287cb68@canb.auug.org.au>
+        <20170207083731.GA20338@kroah.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4cbbbce4-1318-9a75-d918-5b209cc418e6@pengutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52933 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753285AbdBGLSq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 7 Feb 2017 06:18:46 -0500
+In-Reply-To: <20170207083731.GA20338@kroah.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-next@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 
-Hi Marc,
+Hi Greg,
 
-On Tue, 7 Feb 2017 09:40:09 +0100 Marc Kleine-Budde <mkl@pengutronix.de> wrote:
+On Tue, 7 Feb 2017 09:37:31 +0100 Greg KH <greg@kroah.com> wrote:
 >
-> On 02/07/2017 06:23 AM, Stephen Rothwell wrote:
-> > diff --cc drivers/net/can/flexcan.c
-> > index ea57fed375c6,4dc71bce525c..000000000000
-> > --- a/drivers/net/can/flexcan.c
-> > +++ b/drivers/net/can/flexcan.c
-> > @@@ -195,9 -189,7 +195,9 @@@
-> >    */
-> >   #define FLEXCAN_QUIRK_BROKEN_ERR_STATE	BIT(1) /* [TR]WRN_INT not connected */
-> >   #define FLEXCAN_QUIRK_DISABLE_RXFG	BIT(2) /* Disable RX FIFO Global mask */
-> >  -#define FLEXCAN_QUIRK_DISABLE_MECR	BIT(3) /* Disable Memory error detection */
-> >  +#define FLEXCAN_QUIRK_ENABLE_EACEN_RRS	BIT(3) /* Enable EACEN and RRS bit in ctrl2 */
-> > - #define FLEXCAN_QUIRK_DISABLE_MECR	BIT(4) /* Disble Memory error detection */
-> > ++#define FLEXCAN_QUIRK_DISABLE_MECR	BIT(4) /* Disbale Memory error detection */  
+> On Tue, Feb 07, 2017 at 09:37:09AM +1100, Stephen Rothwell wrote:
+> > 
+> > I don't see that commit in any tree I have fetched.  
 > 
->                                                   ^^^^^^^
-> Should be "Disable". I'll send David Miller a fix for the typo.
+> That is correct, it's in my "testing" branch that I use to stage things
+> in before it gets sent to the branch that you pull from.
 
-The "Disbale" typo is only in my merge resolution :-(  I will fix it there.
+What an amusing idea ;-)
+
+> That branch is now merged with my -next branch, so you will see this
+> change the next time you sync.
+
+Thanks.
 
 -- 
 Cheers,
