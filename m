@@ -1,89 +1,56 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Wed, 8 Feb 2017 10:05:03 +0100
-Message-ID: <20170208100503.375ab31a@bbrezillon>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH] serial: st-asc: Use new GPIOD API to obtain RTS pin
+Date: Wed, 8 Feb 2017 09:24:25 +0000
+Message-ID: <20170208092425.azqkx3nwf4jhsfz5@dell>
 References: <20170208161113.1b597c01@canb.auug.org.au>
-        <20170208084854.qrxnbrtdnbxefwpg@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170208084854.qrxnbrtdnbxefwpg@dell>
+Content-Disposition: inline
+In-Reply-To: <20170208161113.1b597c01@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexander Stein <alexander.stein@systec-electronic.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 8 Feb 2017 08:48:54 +0000
-Lee Jones <lee.jones@linaro.org> wrote:
+The commits mentioned below adapt the GPIO API to allow more information
+to be passed directly through devm_get_gpiod_from_child() in the first
+instance.  This facilitates the removal of subsequent calls, such as
+gpiod_direction_output().  This patch firstly moves to utilise the new
+API and secondly removes the now superfluous call do set the direction.
 
-> On Wed, 08 Feb 2017, Stephen Rothwell wrote:
-> 
-> > Hi Linus,  
-> 
-> I believe this patch would need to go in via Greg's tree.
-> 
-> (see below)
-> 
-> > After merging the gpio tree, today's linux-next build (arm
-> > multi_v7_defconfig) failed like this:
-> > 
-> > drivers/tty/serial/st-asc.c: In function 'asc_set_termios':
-> > drivers/tty/serial/st-asc.c:578:12: error: implicit declaration of function 'devm_get_gpiod_from_child' [-Werror=implicit-function-declaration]
-> >     gpiod = devm_get_gpiod_from_child(port->dev, "rts",
-> >             ^
-> > drivers/tty/serial/st-asc.c:578:10: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-> >     gpiod = devm_get_gpiod_from_child(port->dev, "rts",
-> >           ^
-> > 
-> > Caused by commits
-> > 
-> >   a264d10ff45c ("gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO")
-> >   b2987d7438e0 ("gpio: Pass GPIO label down to gpiod_request")
-> >   4b0947974e59 ("gpio: Rename devm_get_gpiod_from_child()")
-> > 
-> > interacting with commit
-> > 
-> >   d7356256488c ("serial: st-asc: (De)Register GPIOD and swap Pinctrl profiles")
-> > 
-> > from the tty tree.
-> > 
-> > I applied the following merge fix patch (I guessed about the new arguments):
-> > 
-> > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Date: Wed, 8 Feb 2017 15:50:22 +1100
-> > Subject: [PATCH] serial: st-asc: merge fix for devm_get_gpiod_from_child rename
-> > 
-> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > ---
-> >  drivers/tty/serial/st-asc.c | 7 +++++--
-> >  1 file changed, 5 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
-> > index bcf1d33e6ffe..c02e6b089364 100644
-> > --- a/drivers/tty/serial/st-asc.c
-> > +++ b/drivers/tty/serial/st-asc.c
-> > @@ -575,8 +575,11 @@ static void asc_set_termios(struct uart_port *port, struct ktermios *termios,
-> >  			pinctrl_select_state(ascport->pinctrl,
-> >  					     ascport->states[NO_HW_FLOWCTRL]);
-> >  
-> > -			gpiod =	devm_get_gpiod_from_child(port->dev, "rts",
-> > -							  &np->fwnode);
-> > +			gpiod =	devm_fwnode_get_gpiod_from_child(port->dev,
-> > +								 "rts",
-> > +								 &np->fwnode,
-> > +								 GPIOD_IN,  
-> 
-> GPIOD_OUT
+Fixes: a264d10ff45c ("gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO")
+Fixes: b2987d7438e0 ("gpio: Pass GPIO label down to gpiod_request")
+Fixes: 4b0947974e59 ("gpio: Rename devm_get_gpiod_from_child()")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Suggested-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/tty/serial/st-asc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-I think it should be GPIOD_OUT_LOW ...
-
-> 
-> > +								 np->name);
-> >  			if (!IS_ERR(gpiod)) {
-> >  				gpiod_direction_output(gpiod, 0);
-
-... and you should drop this call to gpiod_direction_output().
-
-> >  				ascport->rts = gpiod;  
-> 
+diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
+index bcf1d33..c334bcc 100644
+--- a/drivers/tty/serial/st-asc.c
++++ b/drivers/tty/serial/st-asc.c
+@@ -575,12 +575,13 @@ static void asc_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			pinctrl_select_state(ascport->pinctrl,
+ 					     ascport->states[NO_HW_FLOWCTRL]);
+ 
+-			gpiod =	devm_get_gpiod_from_child(port->dev, "rts",
+-							  &np->fwnode);
+-			if (!IS_ERR(gpiod)) {
+-				gpiod_direction_output(gpiod, 0);
++			gpiod = devm_fwnode_get_gpiod_from_child(port->dev,
++								 "rts",
++								 &np->fwnode,
++								 GPIOD_OUT_LOW,
++								 np->name);
++			if (!IS_ERR(gpiod))
+ 				ascport->rts = gpiod;
+-			}
+ 		}
+ 	}
+ 
+-- 
+2.9.3
