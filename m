@@ -1,37 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with the arm-soc tree
-Date: Wed, 8 Feb 2017 12:34:15 +1100
-Message-ID: <20170208123415.35b5425d@canb.auug.org.au>
+Subject: linux-next: manual merge of the kspp tree with the s390 tree
+Date: Wed, 8 Feb 2017 12:37:03 +1100
+Message-ID: <20170208123703.6165fbce@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kees Cook <keescook@google.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Laura Abbott <labbott@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36089 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932077AbdBHBhF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 7 Feb 2017 20:37:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kees Cook <keescook@google.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>
 
 Hi Kees,
 
 Today's linux-next merge of the kspp tree got a conflict in:
 
-  arch/arm/configs/aspeed_g5_defconfig
+  arch/s390/Kconfig.debug
 
 between commit:
 
-  0e81eb77f5f8 ("ARM: configs: Update Aspeed with new drivers")
+  89175cf76686 ("s390: provide sclp based boot console")
 
-from the arm-soc tree and commit:
+from the s390 tree and commit:
 
-  0f5bf6d0afe4 ("arch: Rename CONFIG_DEBUG_RODATA and CONFIG_DEBUG_MODULE_RONX")
+  ad21fc4faa2a ("arch: Move CONFIG_DEBUG_RODATA and CONFIG_SET_MODULE_RONX to be common")
 
 from the kspp tree.
 
@@ -46,27 +42,19 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/configs/aspeed_g5_defconfig
-index ae4295ec5c3e,05a16d53d03c..000000000000
---- a/arch/arm/configs/aspeed_g5_defconfig
-+++ b/arch/arm/configs/aspeed_g5_defconfig
-@@@ -26,8 -26,6 +26,7 @@@ CONFIG_ARCH_MULTI_V6=
-  # CONFIG_ARCH_MULTI_V7 is not set
-  CONFIG_ARCH_ASPEED=y
-  CONFIG_MACH_ASPEED_G5=y
-- CONFIG_DEBUG_RODATA=y
- +CONFIG_VMSPLIT_2G=y
-  CONFIG_AEABI=y
-  CONFIG_UACCESS_WITH_MEMCPY=y
-  CONFIG_SECCOMP=y
-@@@ -116,8 -80,8 +115,9 @@@ CONFIG_DEBUG_LL_UART_8250=
-  CONFIG_DEBUG_UART_PHYS=0x1e784000
-  CONFIG_DEBUG_UART_VIRT=0xe8784000
-  CONFIG_EARLY_PRINTK=y
-- CONFIG_DEBUG_SET_MODULE_RONX=y
-+ CONFIG_STRICT_MODULE_RWX=y
-+ CONFIG_STRICT_KERNEL_RWX=y
- +CONFIG_CRYPTO_ECHAINIV=y
-  # CONFIG_XZ_DEC_X86 is not set
-  # CONFIG_XZ_DEC_POWERPC is not set
-  # CONFIG_XZ_DEC_IA64 is not set
+diff --cc arch/s390/Kconfig.debug
+index 32b3e3bfd022,57f8ea9c49e3..000000000000
+--- a/arch/s390/Kconfig.debug
++++ b/arch/s390/Kconfig.debug
+@@@ -17,11 -17,4 +17,7 @@@ config S390_PTDUM
+  	  kernel.
+  	  If in doubt, say "N"
+  
+- config DEBUG_SET_MODULE_RONX
+- 	def_bool y
+- 	depends on MODULES
+- 
+ +config EARLY_PRINTK
+ +	def_bool y
+ +
+  endmenu
