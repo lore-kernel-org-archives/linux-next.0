@@ -1,118 +1,67 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170208 build: 1 failures 16 warnings (next-20170208)
-Date: Wed, 08 Feb 2017 10:54:16 +0000
-Message-ID: <E1cbPtA-00012m-9J@optimist>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH] serial: st-asc: Use new GPIOD API to obtain RTS pin
+Date: Wed, 8 Feb 2017 14:00:39 +0100
+Message-ID: <20170208130039.GA28327@kroah.com>
+References: <20170208161113.1b597c01@canb.auug.org.au>
+ <20170208092425.azqkx3nwf4jhsfz5@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53040 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752573AbdBHK4F (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2017 05:56:05 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:59072 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932513AbdBHNDI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2017 08:03:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20170208092425.azqkx3nwf4jhsfz5@dell>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Tree/Branch: next-20170208
-Git describe: next-20170208
-Commit: e3e6c5f354 Add linux-next specific files for 20170208
+On Wed, Feb 08, 2017 at 09:24:25AM +0000, Lee Jones wrote:
+> The commits mentioned below adapt the GPIO API to allow more information
+> to be passed directly through devm_get_gpiod_from_child() in the first
+> instance.  This facilitates the removal of subsequent calls, such as
+> gpiod_direction_output().  This patch firstly moves to utilise the new
+> API and secondly removes the now superfluous call do set the direction.
+> 
+> Fixes: a264d10ff45c ("gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO")
+> Fixes: b2987d7438e0 ("gpio: Pass GPIO label down to gpiod_request")
+> Fixes: 4b0947974e59 ("gpio: Rename devm_get_gpiod_from_child()")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Suggested-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/tty/serial/st-asc.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/st-asc.c b/drivers/tty/serial/st-asc.c
+> index bcf1d33..c334bcc 100644
+> --- a/drivers/tty/serial/st-asc.c
+> +++ b/drivers/tty/serial/st-asc.c
+> @@ -575,12 +575,13 @@ static void asc_set_termios(struct uart_port *port, struct ktermios *termios,
+>  			pinctrl_select_state(ascport->pinctrl,
+>  					     ascport->states[NO_HW_FLOWCTRL]);
+>  
+> -			gpiod =	devm_get_gpiod_from_child(port->dev, "rts",
+> -							  &np->fwnode);
+> -			if (!IS_ERR(gpiod)) {
+> -				gpiod_direction_output(gpiod, 0);
+> +			gpiod = devm_fwnode_get_gpiod_from_child(port->dev,
+> +								 "rts",
+> +								 &np->fwnode,
+> +								 GPIOD_OUT_LOW,
+> +								 np->name);
 
-Build Time: 98 min 5 sec
+I can't apply this :(
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+Usually, when you move apis around, you add it, then convert it, wait a
+kernel release, then remove the old one.  That allows for issues like
+this when new code is added in one maintainer's branch but not yours.
 
-Errors: 2
-Warnings: 16
-Section Mismatches: 0
+So how about reverting your "drop the function" patch and then wait for
+-rc2 to really remove it?
 
-Failed defconfigs:
-	arm64-allmodconfig
+thanks,
 
-Errors:
-
-	arm64-allmodconfig
-../arch/arm64/kernel/armv8_deprecated.c:359:31: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'aarch32_check_condition'
-../arch/arm64/kernel/armv8_deprecated.c:386:10: error: implicit declaration of function 'aarch32_check_condition' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     11 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ../arch/arm64/kernel/armv8_deprecated.c:386:10: error: implicit declaration of function 'aarch32_check_condition' [-Werror=implicit-function-declaration]
-	  1 ../arch/arm64/kernel/armv8_deprecated.c:359:31: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'aarch32_check_condition'
-
-Warnings Summary: 16
-	  3 warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/cpufreq/ti-cpufreq.c:250:6: warning: assignment makes integer from pointer without a cast [-Wint-conversion]
-	  1 ../arch/arm/mach-orion5x/wnr854t-setup.c:109:44: warning: 'wnr854t_switch_plat_data' defined but not used [-Wunused-variable]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 11 warnings, 0 section mismatches
-
-Errors:
-	../arch/arm64/kernel/armv8_deprecated.c:359:31: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'aarch32_check_condition'
-	../arch/arm64/kernel/armv8_deprecated.c:386:10: error: implicit declaration of function 'aarch32_check_condition' [-Werror=implicit-function-declaration]
-
-Warnings:
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/cpufreq/ti-cpufreq.c:250:6: warning: assignment makes integer from pointer without a cast [-Wint-conversion]
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../arch/arm/mach-orion5x/wnr854t-setup.c:109:44: warning: 'wnr854t_switch_plat_data' defined but not used [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+greg k-h
