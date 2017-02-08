@@ -1,39 +1,61 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH] arm64: armv8_deprecated: add missing arm/kprobes.h header
-Date: Wed, 8 Feb 2017 19:09:05 +0000
-Message-ID: <20170208190904.GO3986@arm.com>
-References: <20170208173341.14326-1-mcgrof@kernel.org>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH] serial: st-asc: Use new GPIOD API to obtain RTS pin
+Date: Wed, 08 Feb 2017 21:42:47 +0200
+Message-ID: <1486582967.2133.415.camel@linux.intel.com>
+References: <201702082123.rT1uJnvr%fengguang.wu@intel.com>
+         <1486571470.2133.404.camel@linux.intel.com>
+         <20170208174759.GA4773@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170208173341.14326-1-mcgrof@kernel.org>
+In-Reply-To: <20170208174759.GA4773@kroah.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: akpm@linux-foundation.org, arnd@arndb.de, mhiramat@kernel.org, ananth@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com, davem@davemloft.net, mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, luto@kernel.org, broonie@kernel.org, catalin.marinas@arm.com, rostedt@goodmis.org, bp@suse.de, bp@alien8.de, linux@armlinux.org.uk, dhowells@redhat.com, benh@kernel.crashing.org, ralf@linux-mips.org, jpoimboe@redhat.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org
+To: Greg KH <greg@kroah.com>
+Cc: kbuild test robot <lkp@intel.com>, Lee Jones <lee.jones@linaro.org>, kbuild-all@01.org, Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>
 List-Id: linux-next.vger.kernel.org
 
-Thanks, Luis.
-
-On Wed, Feb 08, 2017 at 09:33:41AM -0800, Luis R. Rodriguez wrote:
-> 0-day caught a compile issue after the commit titled (kprobes: move
-> kprobe declarations to asm-generic/kprobes.h) was applied. This fixes
-> that.
+On Wed, 2017-02-08 at 18:47 +0100, Greg KH wrote:
+> On Wed, Feb 08, 2017 at 06:31:10PM +0200, Andy Shevchenko wrote:
+> > On Wed, 2017-02-08 at 21:48 +0800, kbuild test robot wrote:
+> > > Hi Lee,
+> > > 
+> > > [auto build test ERROR on tty/tty-testing]
+> > > [cannot apply to v4.10-rc7 next-20170208]
+> > > [if your patch is applied to the wrong git tree, please drop us a
+> > > note
+> > > to help improve the system]
+> > > 
+> > > url:    https://github.com/0day-ci/linux/commits/Lee-Jones/serial-
+> > > st-a
+> > > sc-Use-new-GPIOD-API-to-obtain-RTS-pin/20170208-180609
+> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
+> > > .git
+> > >  tty-testing
+> > > config: x86_64-allmodconfig (attached as .config)
+> > > compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
+> > > reproduce:
+> > >         # save the attached .config to linux build tree
+> > >         make ARCH=x86_64 
+> > > 
+> > 
+> > It requires to have immutable branch in one of the subsystem which
+> > the
+> > other one can pull.
 > 
-> Reported-by: 0-day
-> Cc: Mark Brown <broonie@kernel.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
-> ---
-> 
-> As seen on linux-next tag next-20170208.
+> Which sucks, and is why you should not do api changes this way!
 
-I'm happy to pick this up in arm64, but given that the offending commit
-comes via akpm, I guess he may prefer to pick it up so that his tree
-builds for arm64 stand-alone. In that case:
+Not only me :-)
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+If above will not work we may do something like below for this cycle:
 
-Will
+static inline ... devm_get_gpiod_from_child()
+{
+ return devm_fwnode_get_gpiod_from_child(..., GPIO_AS_IS, "?");
+}
+
+in GPIO tree.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
