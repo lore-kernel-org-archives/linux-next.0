@@ -1,29 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with the net-next tree
-Date: Wed, 8 Feb 2017 12:30:05 +1100
-Message-ID: <20170208123005.1ffc070f@canb.auug.org.au>
+Subject: linux-next: manual merge of the kspp tree with the arm-soc tree
+Date: Wed, 8 Feb 2017 12:34:15 +1100
+Message-ID: <20170208123415.35b5425d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Mao Wenan <maowenan@huawei.com>, Laura Abbott <labbott@redhat.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kees Cook <keescook@google.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Laura Abbott <labbott@redhat.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Joel Stanley <joel@jms.id.au>
 List-Id: linux-next.vger.kernel.org
 
 Hi Kees,
 
 Today's linux-next merge of the kspp tree got a conflict in:
 
-  arch/Kconfig
+  arch/arm/configs/aspeed_g5_defconfig
 
 between commit:
 
-  1a8b6d76dc5b ("net:add one common config ARCH_WANT_RELAX_ORDER to support relax ordering")
+  0e81eb77f5f8 ("ARM: configs: Update Aspeed with new drivers")
 
-from the net-next tree and commits:
+from the arm-soc tree and commit:
 
-  ad21fc4faa2a ("arch: Move CONFIG_DEBUG_RODATA and CONFIG_SET_MODULE_RONX to be common")
   0f5bf6d0afe4 ("arch: Rename CONFIG_DEBUG_RODATA and CONFIG_DEBUG_MODULE_RONX")
 
 from the kspp tree.
@@ -39,49 +46,27 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/Kconfig
-index bd04eace455c,7425fde9c723..000000000000
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@@ -781,7 -843,38 +843,41 @@@ config VMAP_STAC
-  	  the stack to map directly to the KASAN shadow map using a formula
-  	  that is incorrect if the stack is in vmalloc space.
-  
- +config ARCH_WANT_RELAX_ORDER
- +	bool
- +
-+ config ARCH_OPTIONAL_KERNEL_RWX
-+ 	def_bool n
-+ 
-+ config ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
-+ 	def_bool n
-+ 
-+ config ARCH_HAS_STRICT_KERNEL_RWX
-+ 	def_bool n
-+ 
-+ config STRICT_KERNEL_RWX
-+ 	bool "Make kernel text and rodata read-only" if ARCH_OPTIONAL_KERNEL_RWX
-+ 	depends on ARCH_HAS_STRICT_KERNEL_RWX
-+ 	default !ARCH_OPTIONAL_KERNEL_RWX || ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
-+ 	help
-+ 	  If this is set, kernel text and rodata memory will be made read-only,
-+ 	  and non-text memory will be made non-executable. This provides
-+ 	  protection against certain security exploits (e.g. executing the heap
-+ 	  or modifying text)
-+ 
-+ 	  These features are considered standard security practice these days.
-+ 	  You should say Y here in almost all cases.
-+ 
-+ config ARCH_HAS_STRICT_MODULE_RWX
-+ 	def_bool n
-+ 
-+ config STRICT_MODULE_RWX
-+ 	bool "Set loadable kernel module data as NX and text as RO" if ARCH_OPTIONAL_KERNEL_RWX
-+ 	depends on ARCH_HAS_STRICT_MODULE_RWX && MODULES
-+ 	default !ARCH_OPTIONAL_KERNEL_RWX || ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
-+ 	help
-+ 	  If this is set, module text and rodata memory will be made read-only,
-+ 	  and non-text memory will be made non-executable. This provides
-+ 	  protection against certain security exploits (e.g. writing to text)
-+ 
-  source "kernel/gcov/Kconfig"
+diff --cc arch/arm/configs/aspeed_g5_defconfig
+index ae4295ec5c3e,05a16d53d03c..000000000000
+--- a/arch/arm/configs/aspeed_g5_defconfig
++++ b/arch/arm/configs/aspeed_g5_defconfig
+@@@ -26,8 -26,6 +26,7 @@@ CONFIG_ARCH_MULTI_V6=
+  # CONFIG_ARCH_MULTI_V7 is not set
+  CONFIG_ARCH_ASPEED=y
+  CONFIG_MACH_ASPEED_G5=y
+- CONFIG_DEBUG_RODATA=y
+ +CONFIG_VMSPLIT_2G=y
+  CONFIG_AEABI=y
+  CONFIG_UACCESS_WITH_MEMCPY=y
+  CONFIG_SECCOMP=y
+@@@ -116,8 -80,8 +115,9 @@@ CONFIG_DEBUG_LL_UART_8250=
+  CONFIG_DEBUG_UART_PHYS=0x1e784000
+  CONFIG_DEBUG_UART_VIRT=0xe8784000
+  CONFIG_EARLY_PRINTK=y
+- CONFIG_DEBUG_SET_MODULE_RONX=y
++ CONFIG_STRICT_MODULE_RWX=y
++ CONFIG_STRICT_KERNEL_RWX=y
+ +CONFIG_CRYPTO_ECHAINIV=y
+  # CONFIG_XZ_DEC_X86 is not set
+  # CONFIG_XZ_DEC_POWERPC is not set
+  # CONFIG_XZ_DEC_IA64 is not set
