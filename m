@@ -1,66 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with Linus' tree
-Date: Wed, 8 Feb 2017 12:41:06 +1100
-Message-ID: <20170208124106.7f5ed322@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kvm tree
+Date: Wed, 8 Feb 2017 14:23:51 +1100
+Message-ID: <20170208142351.15da0ae2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52675 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932077AbdBHBlI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 7 Feb 2017 20:41:08 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Marek <mmarek@suse.com>, Emese Revfy <re.emese@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Kees,
+Hi all,
 
-Today's linux-next merge of the kspp tree got a conflict in:
+After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  include/asm-generic/asm-prototypes.h
+arch/x86/kvm/x86.c: In function 'kvm_pv_clock_pairing':
+arch/x86/kvm/x86.c:6157:2: error: unknown type name 'cycle_t'
+  cycle_t cycle;
+  ^
+arch/x86/kvm/x86.c:6163:42: error: passing argument 2 of 'kvm_get_walltime_and_clockread' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  if (kvm_get_walltime_and_clockread(&ts, &cycle) == false)
+                                          ^
+arch/x86/kvm/x86.c:1665:13: note: expected 'u64 * {aka long long unsigned int *}' but argument is of type 'int *'
+ static bool kvm_get_walltime_and_clockread(struct timespec *ts,
+             ^
 
-between commit:
+Caused by commit
 
-  c7858bf16c0b ("asm-prototypes: Clear any CPP defines before declaring the functions")
+  55dd00a73a51 ("KVM: x86: add KVM_HC_CLOCK_PAIRING hypercall")
 
-from Linus' tree and commit:
-
-  e89c98504d89 ("initify: Mark functions with the __nocapture attribute")
-
-from the kspp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the version fo the kvm tree from next-20170207 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/asm-generic/asm-prototypes.h
-index 939869c772b1,ea784e02b28e..000000000000
---- a/include/asm-generic/asm-prototypes.h
-+++ b/include/asm-generic/asm-prototypes.h
-@@@ -1,13 -1,7 +1,13 @@@
-  #include <linux/bitops.h>
- +#undef __memset
-  extern void *__memset(void *, int, __kernel_size_t);
- +#undef __memcpy
-- extern void *__memcpy(void *, const void *, __kernel_size_t);
-+ extern void *__memcpy(void *, const void *, __kernel_size_t) __nocapture(2);
- +#undef __memmove
-- extern void *__memmove(void *, const void *, __kernel_size_t);
-+ extern void *__memmove(void *, const void *, __kernel_size_t) __nocapture(2);
- +#undef memset
-  extern void *memset(void *, int, __kernel_size_t);
- +#undef memcpy
-- extern void *memcpy(void *, const void *, __kernel_size_t);
-+ extern void *memcpy(void *, const void *, __kernel_size_t) __nocapture(2);
- +#undef memmove
-- extern void *memmove(void *, const void *, __kernel_size_t);
-+ extern void *memmove(void *, const void *, __kernel_size_t) __nocapture(2);
