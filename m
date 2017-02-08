@@ -1,47 +1,32 @@
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: next-20170208 build: 1 failures 16 warnings (next-20170208)
-Date: Wed, 8 Feb 2017 09:25:40 -0800
-Message-ID: <CAB=NE6X1WMByuARS4mZ1g9+W=LuVBnMDnh_5zyN0CLADaVh=Jw@mail.gmail.com>
-References: <E1cbPtA-00012m-9J@optimist>
- <20170208172250.rnqxq7g77ekuo2pv@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20170208172250.rnqxq7g77ekuo2pv@sirena.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linaro-kernel@lists.linaro.org, kernel-build-reports@lists.linaro.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, linux-next@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: armv8_deprecated: add missing arm/kprobes.h header
+Date: Wed,  8 Feb 2017 09:33:41 -0800
+Message-ID: <20170208173341.14326-1-mcgrof@kernel.org>
+Return-path: <linux-arch-owner@vger.kernel.org>
+Sender: linux-arch-owner@vger.kernel.org
+To: akpm@linux-foundation.org, arnd@arndb.de, mhiramat@kernel.org, ananth@linux.vnet.ibm.com, anil.s.keshavamurthy@intel.com, davem@davemloft.net, mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com, luto@kernel.org, broonie@kernel.org, catalin.marinas@arm.com, will.deacon@arm.com, rostedt@goodmis.org
+Cc: bp@suse.de, bp@alien8.de, linux@armlinux.org.uk, dhowells@redhat.com, benh@kernel.crashing.org, ralf@linux-mips.org, jpoimboe@redhat.com, linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, kernel-build-reports@lists.linaro.org, "Luis R. Rodriguez" <mcgrof@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Feb 8, 2017 at 9:22 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Feb 08, 2017 at 10:54:16AM +0000, Build bot for Mark Brown wrote:
->
-> Today's -next fails to build an arm64 allmodconfig due to:
->
->>       arm64-allmodconfig
->> ../arch/arm64/kernel/armv8_deprecated.c:359:31: error: expected '=',
->> ',', ';',
-> +'asm' or '__attribute__' before 'aarch32_check_condition'
->> ../arch/arm64/kernel/armv8_deprecated.c:386:10: error: implicit
->> declaration of
-> +function 'aarch32_check_condition'
-> [-Werror=implicit-function-declaration]
->
-> triggered by 1930faf201e83f6 (kprobes: move kprobe declarations to
-> asm-generic/kprobes.h) according to a bisect, though I didn't
-> immediately see how.
+0-day caught a compile issue after the commit titled (kprobes: move
+kprobe declarations to asm-generic/kprobes.h) was applied. This fixes
+that.
 
-This fixes that, will send patch.
+Reported-by: 0-day
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
+---
 
+As seen on linux-next tag next-20170208.
+
+ arch/arm64/kernel/armv8_deprecated.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
+index 86032a012388..657977e77ec8 100644
 --- a/arch/arm64/kernel/armv8_deprecated.c
 +++ b/arch/arm64/kernel/armv8_deprecated.c
 @@ -19,6 +19,7 @@
@@ -51,3 +36,6 @@ This fixes that, will send patch.
 +#include <asm/kprobes.h>
  #include <linux/uaccess.h>
  #include <asm/cpufeature.h>
+ 
+-- 
+2.11.0
