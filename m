@@ -1,83 +1,52 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH] serial: st-asc: Use new GPIOD API to obtain RTS pin
-Date: Wed, 08 Feb 2017 18:31:10 +0200
-Message-ID: <1486571470.2133.404.camel@linux.intel.com>
-References: <201702082123.rT1uJnvr%fengguang.wu@intel.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170208 build: 1 failures 16 warnings (next-20170208)
+Date: Wed, 8 Feb 2017 17:21:01 +0000
+Message-ID: <20170208172101.k5slp2zw2tatrjvs@sirena.org.uk>
+References: <E1cbPtA-00012m-9J@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201702082123.rT1uJnvr%fengguang.wu@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>, Lee Jones <lee.jones@linaro.org>
-Cc: kbuild-all@01.org, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Linus Walleij <linus.walleij@linaro.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="apqxi3tugshul4kf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54296 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752061AbdBHRVO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Feb 2017 12:21:14 -0500
+Content-Disposition: inline
+In-Reply-To: <E1cbPtA-00012m-9J@optimist>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Wed, 2017-02-08 at 21:48 +0800, kbuild test robot wrote:
-> Hi Lee,
-> 
-> [auto build test ERROR on tty/tty-testing]
-> [cannot apply to v4.10-rc7 next-20170208]
-> [if your patch is applied to the wrong git tree, please drop us a note
-> to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Lee-Jones/serial-st-a
-> sc-Use-new-GPIOD-API-to-obtain-RTS-pin/20170208-180609
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git
->  tty-testing
-> config: x86_64-allmodconfig (attached as .config)
-> compiler: gcc-6 (Debian 6.2.0-3) 6.2.0 20160901
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
 
-It requires to have immutable branch in one of the subsystem which the
-other one can pull.
+--apqxi3tugshul4kf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> All errors (new ones prefixed by >>):
-> 
->    drivers/tty/serial/st-asc.c: In function 'asc_set_termios':
-> > > drivers/tty/serial/st-asc.c:578:12: error: implicit declaration of
-> > > function 'devm_fwnode_get_gpiod_from_child' [-Werror=implicit-
-> > > function-declaration]
-> 
->        gpiod = devm_fwnode_get_gpiod_from_child(port->dev,
->                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/tty/serial/st-asc.c:578:10: warning: assignment makes
-> pointer from integer without a cast [-Wint-conversion]
->        gpiod = devm_fwnode_get_gpiod_from_child(port->dev,
->              ^
->    cc1: some warnings being treated as errors
-> 
-> vim +/devm_fwnode_get_gpiod_from_child +578 drivers/tty/serial/st-
-> asc.c
-> 
->    572		} else {
->    573			/* If flow-control disabled, it's safe
-> to handle RTS manually */
->    574			if (!ascport->rts && ascport-
-> >states[NO_HW_FLOWCTRL]) {
->    575				pinctrl_select_state(ascport-
-> >pinctrl,
->    576						     ascport-
-> >states[NO_HW_FLOWCTRL]);
->    577	
->  > 578				gpiod =
-> devm_fwnode_get_gpiod_from_child(port->dev,
->    579									
->  "rts",
->    580									
->  &np->fwnode,
->    581									
->  GPIOD_OUT_LOW,
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology
-> Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel
-> Corporation
+On Wed, Feb 08, 2017 at 10:54:16AM +0000, Build bot for Mark Brown wrote:
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+Today's -next fails to build an arm64 allmodconfig due to:
+
+> 	arm64-allmodconfig
+> ../arch/arm64/kernel/armv8_deprecated.c:359:31: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'aarch32_check_condition'
+> ../arch/arm64/kernel/armv8_deprecated.c:386:10: error: implicit declaration of function 'aarch32_check_condition' [-Werror=implicit-function-declaration]
+
+triggered by 1930faf201e83f6 (kprobes: move kprobe declarations to
+asm-generic/kprobes.h) according to a bisect, though I didn't
+immediately see how.
+
+--apqxi3tugshul4kf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlibU3wACgkQJNaLcl1U
+h9DVVQf+Jzmrn5fZNjx+WnDyG640/2h4QTx2Bzo8xufnxvLFoobqnWeE1QQ44ZA/
+2hVVTcUihbCoLgbOqn+ZGb8xF8/wkMQ9P2fJxiBvqdQdY7K++QHTZocOvbrHha4E
+3/14wMY13fGA2yCCWfval9zekqe0jIj95RZmRc9BfpfsBbn2qNoYvfpYw7wtfjZG
+NlptQIBuU4KfVR9oTPVB6yiU+uDxe+jTO2AuDqmdGk48EtDID7hh8lIephEPDLl+
+z35YBrXFKgP+vLxdeCZuPL2hiada8755Nkb2iHuQTjWL+moDPdZBNBEYH4PTBbU+
+NVNKwbA8DnoJoDh42XTH9IQwIdvieg==
+=Jkjl
+-----END PGP SIGNATURE-----
+
+--apqxi3tugshul4kf--
