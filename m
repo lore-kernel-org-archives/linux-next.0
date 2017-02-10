@@ -1,40 +1,91 @@
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: linux-next: build warning after merge of the f2fs tree
-Date: Thu, 9 Feb 2017 16:01:52 -0800
-Message-ID: <20170210000152.GA20930@jaegeuk.local>
-References: <20170210105135.26bc6739@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the selinux tree
+Date: Fri, 10 Feb 2017 13:50:15 +1100
+Message-ID: <20170210135015.7a573b81@canb.auug.org.au>
+References: <20170110122703.2dbdfd18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:54536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751439AbdBJAUQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 9 Feb 2017 19:20:16 -0500
-Content-Disposition: inline
-In-Reply-To: <20170210105135.26bc6739@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170110122703.2dbdfd18@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, James Morris <jmorris@namei.org>
+Cc: Paul Moore <paul@paul-moore.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Stephen Smalley <sds@tycho.nsa.gov>
+List-Id: linux-next.vger.kernel.org
 
-Thank you.
-Worked around that in the dev branch.
+Hi all,
 
-On 02/10, Stephen Rothwell wrote:
-> Hi Jaegeuk,
+On Tue, 10 Jan 2017 12:27:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the selinux tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> After merging the f2fs tree, today's linux-next build
-> (x86_64_allmodconfig) produced this warning:
+> In file included from /home/sfr/next/next/security/selinux/avc.c:35:0:
+> /home/sfr/next/next/security/selinux/include/classmap.h:242:2: error: #error New address family defined, please update secclass_map.
+>  #error New address family defined, please update secclass_map.
+>   ^
+> /home/sfr/next/next/security/selinux/hooks.c: In function 'socket_type_to_security_class':
+> /home/sfr/next/next/security/selinux/hooks.c:1409:2: error: #error New address family defined, please update this function.
 > 
-> fs/f2fs/node.c: In function 'fsync_node_pages':
-> fs/f2fs/node.c:1520:3: warning: 'last_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    f2fs_submit_merged_bio_cond(sbi, NULL, ino, last_idx,
->    ^
+> Caused by commit
 > 
-> Introduced by commit
+>   da69a5306ab9 ("selinux: support distinctions among all network address families")
 > 
->   9563642a6ec2 ("f2fs: check last page index in cached bio to decide submission")
+> interacting with commit
 > 
+>   ac7138746e14 ("smc: establish new socket family")
+> 
+> from the net-next tree.
+> 
+> I added the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 10 Jan 2017 12:22:21 +1100
+> Subject: [PATCH] selinux: merge fix for "smc: establish new socket family"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  security/selinux/hooks.c            | 4 +++-
+>  security/selinux/include/classmap.h | 4 +++-
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index bada3cd42b9c..712fd0e7c91d 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1405,7 +1405,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
+>  			return SECCLASS_KCM_SOCKET;
+>  		case PF_QIPCRTR:
+>  			return SECCLASS_QIPCRTR_SOCKET;
+> -#if PF_MAX > 43
+> +		case PF_SMC:
+> +			return SECCLASS_SMC_SOCKET;
+> +#if PF_MAX > 44
+>  #error New address family defined, please update this function.
+>  #endif
+>  		}
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 0dfd26d0b8d8..40f1d4f8bc2a 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -235,9 +235,11 @@ struct security_class_mapping secclass_map[] = {
+>  	  { COMMON_SOCK_PERMS, NULL } },
+>  	{ "qipcrtr_socket",
+>  	  { COMMON_SOCK_PERMS, NULL } },
+> +	{ "smc_socket",
+> +	  { COMMON_SOCK_PERMS, NULL } },
+>  	{ NULL }
+>    };
+>  
+> -#if PF_MAX > 43
+> +#if PF_MAX > 44
+>  #error New address family defined, please update secclass_map.
+>  #endif
 > -- 
-> Cheers,
-> Stephen Rothwell
+> 2.10.2
+
+This now applies when I merge the security tree (as it merged the
+selinux tree, presumably).
+-- 
+Cheers,
+Stephen Rothwell
