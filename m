@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the xfs tree
-Date: Fri, 10 Feb 2017 18:07:33 +1100
-Message-ID: <20170210180733.670c80b1@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net tree
+Date: Fri, 10 Feb 2017 18:27:14 +1100
+Message-ID: <20170210182714.0a186a25@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34343 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50513 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750966AbdBJHOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 10 Feb 2017 02:14:47 -0500
+        id S1751515AbdBJH1S (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 10 Feb 2017 02:27:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, Dave Jiang <dave.jiang@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>, Stefan =?UTF-8?B?QnLDvG5z?= <stefan.bruens@rwth-aachen.de>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Today's linux-next merge of the akpm tree got a conflict in:
 
-  include/linux/iomap.h
+  drivers/net/usb/sierra_net.c
 
 between commit:
 
-  8ff6daa17b6a ("iomap: constify struct iomap_ops")
+  5a70348e1187 ("sierra_net: Add support for IPv6 and Dual-Stack Link Sense Indications")
 
-from the xfs tree and commit:
+from the net tree and patch:
 
-  d6fb008f420c ("mm, fs: reduce fault, page_mkwrite, and pfn_mkwrite to take only vmf")
+  "lib/vsprintf.c: remove %Z support"
 
-from the akpm-current tree.
+from the akpm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,32 +42,24 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/iomap.h
-index 891459caa278,857e440af9d5..000000000000
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@@ -72,17 -72,16 +72,16 @@@ struct iomap_ops 
-  };
+diff --cc drivers/net/usb/sierra_net.c
+index d9440bc022f2,88ace5024306..000000000000
+--- a/drivers/net/usb/sierra_net.c
++++ b/drivers/net/usb/sierra_net.c
+@@@ -376,11 -349,11 +376,11 @@@ static inline int sierra_net_is_valid_a
+  static int sierra_net_parse_lsi(struct usbnet *dev, char *data, int datalen)
+  {
+  	struct lsi_umts *lsi = (struct lsi_umts *)data;
+ +	u32 expected_length;
   
-  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
- -		struct iomap_ops *ops);
- +		const struct iomap_ops *ops);
-  int iomap_file_dirty(struct inode *inode, loff_t pos, loff_t len,
- -		struct iomap_ops *ops);
- +		const struct iomap_ops *ops);
-  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
- -		bool *did_zero, struct iomap_ops *ops);
- +		bool *did_zero, const struct iomap_ops *ops);
-  int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
- -		struct iomap_ops *ops);
- -int iomap_page_mkwrite(struct vm_fault *vmf, struct iomap_ops *ops);
- +		const struct iomap_ops *ops);
-- int iomap_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
-- 		const struct iomap_ops *ops);
-++int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops);
-  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- -		loff_t start, loff_t len, struct iomap_ops *ops);
- +		loff_t start, loff_t len, const struct iomap_ops *ops);
+ -	if (datalen < sizeof(struct lsi_umts)) {
+ -		netdev_err(dev->net, "%s: Data length %d, exp %zu\n",
+ -				__func__, datalen,
+ -				sizeof(struct lsi_umts));
+ +	if (datalen < sizeof(struct lsi_umts_single)) {
+- 		netdev_err(dev->net, "%s: Data length %d, exp >= %Zu\n",
+++		netdev_err(dev->net, "%s: Data length %d, exp >= %zu\n",
+ +			   __func__, datalen, sizeof(struct lsi_umts_single));
+  		return -1;
+  	}
   
-  /*
-   * Flags for direct I/O ->end_io:
