@@ -1,99 +1,94 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170210 build: 0 failures 17 warnings (next-20170210)
-Date: Fri, 10 Feb 2017 11:27:31 +0000
-Message-ID: <E1cc9MR-0000XN-Rt@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39234 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751827AbdBJL1u (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 10 Feb 2017 06:27:50 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: build failure after merge of the selinux tree
+Date: Fri, 10 Feb 2017 07:34:10 -0500
+Message-ID: <CAHC9VhTTO7JK=BbFnpfHHC_itN03VvioCw_J0p8xc+A7zELm5A@mail.gmail.com>
+References: <20170110122703.2dbdfd18@canb.auug.org.au> <20170210135015.7a573b81@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170210135015.7a573b81@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Stephen Smalley <sds@tycho.nsa.gov>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170210
-Git describe: next-20170210
-Commit: 632571b1be Add linux-next specific files for 20170210
+On Thu, Feb 9, 2017 at 9:50 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> On Tue, 10 Jan 2017 12:27:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the selinux tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> In file included from /home/sfr/next/next/security/selinux/avc.c:35:0:
+>> /home/sfr/next/next/security/selinux/include/classmap.h:242:2: error: #error New address family defined, please update secclass_map.
+>>  #error New address family defined, please update secclass_map.
+>>   ^
+>> /home/sfr/next/next/security/selinux/hooks.c: In function 'socket_type_to_security_class':
+>> /home/sfr/next/next/security/selinux/hooks.c:1409:2: error: #error New address family defined, please update this function.
+>>
+>> Caused by commit
+>>
+>>   da69a5306ab9 ("selinux: support distinctions among all network address families")
+>>
+>> interacting with commit
+>>
+>>   ac7138746e14 ("smc: establish new socket family")
+>>
+>> from the net-next tree.
+>>
+>> I added the following merge fix patch:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Tue, 10 Jan 2017 12:22:21 +1100
+>> Subject: [PATCH] selinux: merge fix for "smc: establish new socket family"
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  security/selinux/hooks.c            | 4 +++-
+>>  security/selinux/include/classmap.h | 4 +++-
+>>  2 files changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index bada3cd42b9c..712fd0e7c91d 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -1405,7 +1405,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
+>>                       return SECCLASS_KCM_SOCKET;
+>>               case PF_QIPCRTR:
+>>                       return SECCLASS_QIPCRTR_SOCKET;
+>> -#if PF_MAX > 43
+>> +             case PF_SMC:
+>> +                     return SECCLASS_SMC_SOCKET;
+>> +#if PF_MAX > 44
+>>  #error New address family defined, please update this function.
+>>  #endif
+>>               }
+>> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+>> index 0dfd26d0b8d8..40f1d4f8bc2a 100644
+>> --- a/security/selinux/include/classmap.h
+>> +++ b/security/selinux/include/classmap.h
+>> @@ -235,9 +235,11 @@ struct security_class_mapping secclass_map[] = {
+>>         { COMMON_SOCK_PERMS, NULL } },
+>>       { "qipcrtr_socket",
+>>         { COMMON_SOCK_PERMS, NULL } },
+>> +     { "smc_socket",
+>> +       { COMMON_SOCK_PERMS, NULL } },
+>>       { NULL }
+>>    };
+>>
+>> -#if PF_MAX > 43
+>> +#if PF_MAX > 44
+>>  #error New address family defined, please update secclass_map.
+>>  #endif
+>> --
+>> 2.10.2
+>
+> This now applies when I merge the security tree (as it merged the
+> selinux tree, presumably).
 
-Build Time: 110 min 19 sec
+Yes, James just pulled the SELinux tree yesterday.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 17
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-     12 warnings    0 mismatches  : arm64-allmodconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 17
-	  3 warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	  2 ../fs/f2fs/node.c:1520:3: warning: 'last_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	  1 ../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
-
-Warnings:
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	warning: (CRYPTO_DEV_ATMEL_AUTHENC) selects CRYPTO_DEV_ATMEL_SHA which has unmet direct dependencies (CRYPTO && CRYPTO_HW && ARCH_AT91)
-	../fs/f2fs/node.c:1520:3: warning: 'last_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/crypto/atmel-sha.c:571:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:600:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:647:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:726:26: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:747:19: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:775:19: warning: format '%u' expects argument of type 'unsigned int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:817:27: warning: format '%u' expects argument of type 'unsigned int', but argument 3 has type 'size_t {aka long unsigned int}' [-Wformat=]
-	../drivers/crypto/atmel-sha.c:997:19: warning: format '%d' expects argument of type 'int', but argument 6 has type 'size_t {aka long unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	../fs/f2fs/node.c:1520:3: warning: 'last_idx' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+paul moore
+www.paul-moore.com
