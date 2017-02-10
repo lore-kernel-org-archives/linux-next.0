@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the xfs tree
-Date: Fri, 10 Feb 2017 17:57:43 +1100
-Message-ID: <20170210175743.2a872558@canb.auug.org.au>
+Date: Fri, 10 Feb 2017 18:07:33 +1100
+Message-ID: <20170210180733.670c80b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33775 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34343 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750966AbdBJG6b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 10 Feb 2017 01:58:31 -0500
+        id S1750966AbdBJHOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 10 Feb 2017 02:14:47 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
@@ -19,16 +19,15 @@ Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  include/linux/dax.h
+  include/linux/iomap.h
 
 between commit:
 
-  8ff6daa17b6a ("omap: constify struct iomap_ops")
+  8ff6daa17b6a ("iomap: constify struct iomap_ops")
 
-from the xfs tree and commits:
+from the xfs tree and commit:
 
   d6fb008f420c ("mm, fs: reduce fault, page_mkwrite, and pfn_mkwrite to take only vmf")
-  db09ccff3e4e ("mm: replace FAULT_FLAG_SIZE with parameter to huge_fault")
 
 from the akpm-current tree.
 
@@ -43,21 +42,32 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/dax.h
-index 2983e52efd07,df63730e86d2..000000000000
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@@ -37,9 -37,9 +37,9 @@@ static inline void *dax_radix_locked_en
-  }
+diff --cc include/linux/iomap.h
+index 891459caa278,857e440af9d5..000000000000
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@@ -72,17 -72,16 +72,16 @@@ struct iomap_ops 
+  };
   
-  ssize_t dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
+  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
  -		struct iomap_ops *ops);
  +		const struct iomap_ops *ops);
-- int dax_iomap_fault(struct vm_area_struct *vma, struct vm_fault *vmf,
-- 			const struct iomap_ops *ops);
-+ int dax_iomap_fault(struct vm_fault *vmf, enum page_entry_size pe_size,
+  int iomap_file_dirty(struct inode *inode, loff_t pos, loff_t len,
  -		struct iomap_ops *ops);
-++		const struct iomap_ops *ops);
-  int dax_delete_mapping_entry(struct address_space *mapping, pgoff_t index);
-  int dax_invalidate_mapping_entry(struct address_space *mapping, pgoff_t index);
-  int dax_invalidate_mapping_entry_sync(struct address_space *mapping,
+ +		const struct iomap_ops *ops);
+  int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+ -		bool *did_zero, struct iomap_ops *ops);
+ +		bool *did_zero, const struct iomap_ops *ops);
+  int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ -		struct iomap_ops *ops);
+ -int iomap_page_mkwrite(struct vm_fault *vmf, struct iomap_ops *ops);
+ +		const struct iomap_ops *ops);
+- int iomap_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+- 		const struct iomap_ops *ops);
+++int iomap_page_mkwrite(struct vm_fault *vmf, const struct iomap_ops *ops);
+  int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
+ -		loff_t start, loff_t len, struct iomap_ops *ops);
+ +		loff_t start, loff_t len, const struct iomap_ops *ops);
+  
+  /*
+   * Flags for direct I/O ->end_io:
