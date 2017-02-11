@@ -1,94 +1,30 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: build failure after merge of the selinux tree
-Date: Fri, 10 Feb 2017 07:34:10 -0500
-Message-ID: <CAHC9VhTTO7JK=BbFnpfHHC_itN03VvioCw_J0p8xc+A7zELm5A@mail.gmail.com>
-References: <20170110122703.2dbdfd18@canb.auug.org.au> <20170210135015.7a573b81@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: build warnings after merge of the crypto tree
+Date: Sat, 11 Feb 2017 18:56:21 +0800
+Message-ID: <20170211105621.GJ855@gondor.apana.org.au>
+References: <20170206122837.0226fb89@canb.auug.org.au>
+ <20170206090340.GA9531@gondor.apana.org.au>
+ <20170210141251.03b39b40@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170210135015.7a573b81@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20170210141251.03b39b40@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, James Morris <jmorris@namei.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Stephen Smalley <sds@tycho.nsa.gov>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Feb 9, 2017 at 9:50 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On Fri, Feb 10, 2017 at 02:12:51PM +1100, Stephen Rothwell wrote:
 >
-> On Tue, 10 Jan 2017 12:27:03 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the selinux tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> In file included from /home/sfr/next/next/security/selinux/avc.c:35:0:
->> /home/sfr/next/next/security/selinux/include/classmap.h:242:2: error: #error New address family defined, please update secclass_map.
->>  #error New address family defined, please update secclass_map.
->>   ^
->> /home/sfr/next/next/security/selinux/hooks.c: In function 'socket_type_to_security_class':
->> /home/sfr/next/next/security/selinux/hooks.c:1409:2: error: #error New address family defined, please update this function.
->>
->> Caused by commit
->>
->>   da69a5306ab9 ("selinux: support distinctions among all network address families")
->>
->> interacting with commit
->>
->>   ac7138746e14 ("smc: establish new socket family")
->>
->> from the net-next tree.
->>
->> I added the following merge fix patch:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Tue, 10 Jan 2017 12:22:21 +1100
->> Subject: [PATCH] selinux: merge fix for "smc: establish new socket family"
->>
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
->> ---
->>  security/selinux/hooks.c            | 4 +++-
->>  security/selinux/include/classmap.h | 4 +++-
->>  2 files changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
->> index bada3cd42b9c..712fd0e7c91d 100644
->> --- a/security/selinux/hooks.c
->> +++ b/security/selinux/hooks.c
->> @@ -1405,7 +1405,9 @@ static inline u16 socket_type_to_security_class(int family, int type, int protoc
->>                       return SECCLASS_KCM_SOCKET;
->>               case PF_QIPCRTR:
->>                       return SECCLASS_QIPCRTR_SOCKET;
->> -#if PF_MAX > 43
->> +             case PF_SMC:
->> +                     return SECCLASS_SMC_SOCKET;
->> +#if PF_MAX > 44
->>  #error New address family defined, please update this function.
->>  #endif
->>               }
->> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
->> index 0dfd26d0b8d8..40f1d4f8bc2a 100644
->> --- a/security/selinux/include/classmap.h
->> +++ b/security/selinux/include/classmap.h
->> @@ -235,9 +235,11 @@ struct security_class_mapping secclass_map[] = {
->>         { COMMON_SOCK_PERMS, NULL } },
->>       { "qipcrtr_socket",
->>         { COMMON_SOCK_PERMS, NULL } },
->> +     { "smc_socket",
->> +       { COMMON_SOCK_PERMS, NULL } },
->>       { NULL }
->>    };
->>
->> -#if PF_MAX > 43
->> +#if PF_MAX > 44
->>  #error New address family defined, please update secclass_map.
->>  #endif
->> --
->> 2.10.2
->
-> This now applies when I merge the security tree (as it merged the
-> selinux tree, presumably).
+> I am still getting these warnings ... I have seen no updates to the
+> crypot tree since Feb 2.
 
-Yes, James just pulled the SELinux tree yesterday.
+Sorry Stephen.  I have now applied Arnd's fixes for this problem
+and it should be pushed out.
 
+Cheers,
 -- 
-paul moore
-www.paul-moore.com
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
