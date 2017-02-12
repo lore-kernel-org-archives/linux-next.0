@@ -1,45 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma-leon tree with Linus' tree
-Date: Mon, 13 Feb 2017 10:30:29 +1100
-Message-ID: <20170213103029.60176142@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the crypto tree
+Date: Mon, 13 Feb 2017 10:42:12 +1100
+Message-ID: <20170213104212.73c09fe2@canb.auug.org.au>
+References: <20170206122837.0226fb89@canb.auug.org.au>
+        <20170206090340.GA9531@gondor.apana.org.au>
+        <20170210141251.03b39b40@canb.auug.org.au>
+        <20170211105621.GJ855@gondor.apana.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34845 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751000AbdBLXac (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 12 Feb 2017 18:30:32 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Ledford <dledford@redhat.com>
+Return-path: <linux-crypto-owner@vger.kernel.org>
+In-Reply-To: <20170211105621.GJ855@gondor.apana.org.au>
+Sender: linux-crypto-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyrille Pitchen <cyrille.pitchen@atmel.com>, Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Leon,
+Hi Herbert,
 
-Today's linux-next merge of the rdma-leon tree got a conflict in:
+On Sat, 11 Feb 2017 18:56:21 +0800 Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Fri, Feb 10, 2017 at 02:12:51PM +1100, Stephen Rothwell wrote:
+> >
+> > I am still getting these warnings ... I have seen no updates to the
+> > crypot tree since Feb 2.  
+> 
+> Sorry Stephen.  I have now applied Arnd's fixes for this problem
+> and it should be pushed out.
 
-  include/uapi/rdma/ib_user_verbs.h
-
-between commit:
-
-  646ebd4166ca ("RDMA: Don't reference kernel private header from UAPI header")
-
-from Linus' tree and commit:
-
-  39bfb78f4acb ("RDMA: Remove kernel private defines and reference to header from UAPI")
-
-from the rdma-leon tree.
-
-More or less the same patch.
-
-I fixed it up (I used the version from Linus' tree (as it contains
-explanatory comments)) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Thanks, its much cleaner now. :-)
 
 -- 
 Cheers,
