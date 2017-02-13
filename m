@@ -1,71 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170213 build: 0 failures 7 warnings (next-20170213)
-Date: Mon, 13 Feb 2017 10:07:32 +0000
-Message-ID: <E1cdDXg-0006Kl-8N@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44282 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751050AbdBMKHl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Feb 2017 05:07:41 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 13 Feb 2017 16:18:06 +0100
+Message-ID: <CACRpkdY2Ki1m__O0tSpstJpP9p2BWmXNzV9np6emoAtXqt-9yw@mail.gmail.com>
+References: <20170208161113.1b597c01@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170208161113.1b597c01@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170213
-Git describe: next-20170213
-Commit: 8813198236 Add linux-next specific files for 20170213
+On Wed, Feb 8, 2017 at 6:11 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Build Time: 110 min 38 sec
+> Hi Linus,
+>
+> After merging the gpio tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>
+> drivers/tty/serial/st-asc.c: In function 'asc_set_termios':
+> drivers/tty/serial/st-asc.c:578:12: error: implicit declaration of function 'devm_get_gpiod_from_child' [-Werror=implicit-function-declaration]
+>     gpiod = devm_get_gpiod_from_child(port->dev, "rts",
+>             ^
+> drivers/tty/serial/st-asc.c:578:10: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>     gpiod = devm_get_gpiod_from_child(port->dev, "rts",
+>           ^
+>
+> Caused by commits
+>
+>   a264d10ff45c ("gpiolib: Convert fwnode_get_named_gpiod() to configure GPIO")
+>   b2987d7438e0 ("gpio: Pass GPIO label down to gpiod_request")
+>   4b0947974e59 ("gpio: Rename devm_get_gpiod_from_child()")
+>
+> interacting with commit
+>
+>   d7356256488c ("serial: st-asc: (De)Register GPIOD and swap Pinctrl profiles")
+>
+> from the tty tree.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Ah what a bummer, a new user colliding with the treewide changes of these
+prototypes.
 
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
+> I applied the following merge fix patch (I guessed about the new arguments):
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      7 warnings    0 mismatches  : arm-allmodconfig
+Looks correct. Well not much to do about it apart from mentioning the
+problem to Linus (the big penguin) when merging the trees.
 
--------------------------------------------------------------------------------
+Thanks for your efforts!
 
-Warnings Summary: 7
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Yours,
+Linus Walleij
