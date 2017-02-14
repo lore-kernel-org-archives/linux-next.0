@@ -1,68 +1,60 @@
-From: Dave Jiang <dave.jiang@intel.com>
-Subject: =?UTF-8?B?UmU6IHJlZGVmaW5pdGlvbiBvZiDigJhuYXRpdmVfcHVkX2NsZWFy4oCZ?=
- =?UTF-8?Q?_error_on_x86?=
-Date: Tue, 14 Feb 2017 12:42:01 -0700
-Message-ID: <32aa9635-c0a1-4085-5ba8-8b41f5cabcbd@intel.com>
-References: <CAJ1xhMXXcqi9mo4jQG5bT03ocP9aXwn2d0DMKTiA_-bCnwiLcA@mail.gmail.com>
- <CAGXu5jKpNZNdxPfPKSuE+oAHdXp8Rgv0tD_o-bR=as-N4YaPxQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the f2fs tree with the fscrypt tree
+Date: Wed, 15 Feb 2017 09:51:04 +1100
+Message-ID: <20170215095104.26b14290@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:3656 "EHLO mga09.intel.com"
+Received: from ozlabs.org ([103.22.144.67]:39267 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752987AbdBNTmC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Feb 2017 14:42:02 -0500
-In-Reply-To: <CAGXu5jKpNZNdxPfPKSuE+oAHdXp8Rgv0tD_o-bR=as-N4YaPxQ@mail.gmail.com>
+        id S1750731AbdBNWvI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Feb 2017 17:51:08 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>, Alexander Kapshuk <alexander.kapshuk@gmail.com>, Matthew Wilcox <mawilcox@microsoft.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next <linux-next@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>, Bhumika Goyal <bhumirks@gmail.com>
 
+Hi Jaegeuk,
 
+Today's linux-next merge of the f2fs tree got a conflict in:
 
-On 02/14/2017 12:31 PM, Kees Cook wrote:
-> On Tue, Feb 14, 2017 at 8:14 AM, Alexander Kapshuk
-> <alexander.kapshuk@gmail.com> wrote:
->> I'm getting this error on x86 when compiling next-20170214.
->> Any advice on how to fix this would be much appreciated.
->>
->>   time make -j2
->> ...
->> CC      arch/x86/kernel/asm-offsets.s
->>   GEN     scripts/gdb/linux/constants.py
->> In file included from ./include/linux/mm.h:68:0,
->>                  from ./include/linux/suspend.h:8,
->>                  from arch/x86/kernel/asm-offsets.c:12:
->> ./arch/x86/include/asm/pgtable.h:66:26: error: redefinition of
->> ‘native_pud_clear’
->>  #define pud_clear(pud)   native_pud_clear(pud)
->>                           ^
->> ./arch/x86/include/asm/pgtable-3level.h:128:20: note: in expansion of
->> macro ‘pud_clear’
->>  static inline void pud_clear(pud_t *pudp)
->>                     ^
->> In file included from ./arch/x86/include/asm/pgtable_32.h:44:0,
->>                  from ./arch/x86/include/asm/pgtable.h:581,
->>                  from ./include/linux/mm.h:68,
->>                  from ./include/linux/suspend.h:8,
->>                  from arch/x86/kernel/asm-offsets.c:12:
->> ./arch/x86/include/asm/pgtable-3level.h:124:20: note: previous
->> definition of ‘native_pud_clear’ was here
->>  static inline void native_pud_clear(pud_t *pudp)
->>                     ^
->> make[1]: *** [Kbuild:82: arch/x86/kernel/asm-offsets.s] Error 1
->> make: *** [Makefile:1033: prepare0] Error 2
->>
->> real 0m10.637s
->> user 0m9.466s
->> sys 0m2.752s
-> 
-> Seems like it's related to "mm, x86: add support for PUD-sized
-> transparent hugepages".
+  fs/f2fs/super.c
 
-Can I please get a config file to reproduce? Thanks!
+between commit:
 
-> 
-> -Kees
-> 
+  a5d431eff2e0 ("fscrypt: make fscrypt_operations.key_prefix a string")
+
+from the fscrypt tree and commit:
+
+  aacf533a90a7 ("f2fs: super: constify fscrypt_operations structure")
+
+from the f2fs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/f2fs/super.c
+index 503c3b7fa053,8a02d747fa97..000000000000
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@@ -1170,9 -1207,9 +1201,9 @@@ static unsigned f2fs_max_namelen(struc
+  			inode->i_sb->s_blocksize : F2FS_NAME_LEN;
+  }
+  
+- static struct fscrypt_operations f2fs_cryptops = {
++ static const struct fscrypt_operations f2fs_cryptops = {
+ +	.key_prefix	= "f2fs:",
+  	.get_context	= f2fs_get_context,
+ -	.key_prefix	= f2fs_key_prefix,
+  	.set_context	= f2fs_set_context,
+  	.is_encrypted	= f2fs_encrypted_inode,
+  	.empty_dir	= f2fs_empty_dir,
