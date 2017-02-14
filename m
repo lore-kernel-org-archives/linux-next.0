@@ -1,24 +1,56 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] tile: fix build failure
-Date: Tue, 14 Feb 2017 09:48:42 +0100 (CET)
-Message-ID: <alpine.DEB.2.20.1702140948210.3635@nanos>
-References: <1485275961-20112-1-git-send-email-sudip.mukherjee@codethink.co.uk> <0a7c53b5-0d1f-baa1-b159-b188e68e8f26@mellanox.com> <58A23A20.30000@gmail.com> <20170214100157.1740cdee@canb.auug.org.au>
+From: Jiri Olsa <jolsa@redhat.com>
+Subject: Re: linux-next: build failure after merge of the net tree
+Date: Tue, 14 Feb 2017 10:19:37 +0100
+Message-ID: <20170214091937.GA18546@krava>
+References: <20170214091250.57d054b2@canb.auug.org.au>
+ <20170214064221.GB10242@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from Galois.linutronix.de ([146.0.238.70]:42647 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751453AbdBNIsv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2017 03:48:51 -0500
-In-Reply-To: <20170214100157.1740cdee@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Sudip Mukherjee <sudipm.mukherjee@gmail.com>, Chris Metcalf <cmetcalf@mellanox.com>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170214064221.GB10242@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@fb.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 14 Feb 2017, Stephen Rothwell wrote:
-> > linux-next is still failing for this error. Who will pick this up?
+On Tue, Feb 14, 2017 at 07:42:21AM +0100, Ingo Molnar wrote:
 > 
-> Presumably the tip tree (timers/core).  Added Thomas to cc.
+> * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> > Hi all,
+> > 
+> > After merging the net tree, today's linux-next build (powerpc64le perf)
+> > failed like this:
+> > 
+> > Warning: tools/include/uapi/linux/bpf.h differs from kernel
+> > bpf.c: In function 'bpf_prog_attach':
+> > bpf.c:180:6: error: 'union bpf_attr' has no member named 'attach_flags'; did you mean 'map_flags'?
+> >   attr.attach_flags  = flags;
+> >       ^
+> > 
+> > Caused by commit
+> > 
+> >   7f677633379b ("bpf: introduce BPF_F_ALLOW_OVERRIDE flag")
+> > 
+> > Unfortunately, the perf header files are kept separate from the kernel
+> > header files proper and are not automatically copied over :-(
+> 
+> No, that's wrong, the problem is not that headers were not shared, the problem is 
+> that a tooling interdependency was not properly tested *and* that the dependency 
+> was not properly implemented in the build system either.
+> 
+> Note that we had similar build breakages when include headers _were_ shared as 
+> well, so sharing the headers would only have worked around this particular bug and 
+> would have introduced fragility in other places...
+> 
+> The best, most robust solution in this particular case would be to fix the 
+> (tooling) build system to express the dependency, that would have shown the build 
+> failure right when the modification was done.
 
-Applied.
+so we have the warning now:
+  Warning: tools/include/uapi/linux/bpf.h differs from kernel
+
+do you want to change it into the build failure?
+
+jirka
