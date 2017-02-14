@@ -1,29 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kvm tree with the powerpc tree
-Date: Tue, 14 Feb 2017 14:12:26 +1100
-Message-ID: <20170214141226.6920079a@canb.auug.org.au>
+Date: Tue, 14 Feb 2017 14:16:22 +1100
+Message-ID: <20170214141622.1aac0ef3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45413 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750946AbdBNDQZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 13 Feb 2017 22:16:25 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, David Gibson <david@gibson.dropbear.id.au>, Paul Mackerras <paulus@ozlabs.org>
-List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
 Today's linux-next merge of the kvm tree got a conflict in:
 
-  arch/powerpc/include/asm/hvcall.h
+  arch/powerpc/include/asm/prom.h
 
 between commit:
 
-  64b40ffbc830 ("powerpc/pseries: Add hypercall wrappers for hash page table resizing")
+  0de0fb09bbce ("powerpc/pseries: Advertise HPT resizing support via CAS")
 
 from the powerpc tree and commit:
 
-  cc3d2940133d ("powerpc/64: Enable use of radix MMU under hypervisor on POWER9")
+  3f4ab2f83b4e ("powerpc/pseries: Fixes for the "ibm,architecture-vec-5" options")
 
 from the kvm tree.
 
@@ -38,17 +42,30 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/include/asm/hvcall.h
-index 490c4b9f4e3a,54d11b3a6bf7..000000000000
---- a/arch/powerpc/include/asm/hvcall.h
-+++ b/arch/powerpc/include/asm/hvcall.h
-@@@ -276,8 -276,7 +276,9 @@@
-  #define H_GET_MPP_X		0x314
-  #define H_SET_MODE		0x31C
-  #define H_CLEAR_HPT		0x358
- +#define H_RESIZE_HPT_PREPARE	0x36C
- +#define H_RESIZE_HPT_COMMIT	0x370
-+ #define H_REGISTER_PROC_TBL	0x37C
-  #define H_SIGNAL_SYS_RESET	0x380
-  #define MAX_HCALL_OPCODE	H_SIGNAL_SYS_RESET
+diff --cc arch/powerpc/include/asm/prom.h
+index 00fcfcbdd053,8af2546ea593..000000000000
+--- a/arch/powerpc/include/asm/prom.h
++++ b/arch/powerpc/include/asm/prom.h
+@@@ -151,11 -153,17 +153,18 @@@ struct of_drconf_cell 
+  #define OV5_XCMO		0x0440	/* Page Coalescing */
+  #define OV5_TYPE1_AFFINITY	0x0580	/* Type 1 NUMA affinity */
+  #define OV5_PRRN		0x0540	/* Platform Resource Reassignment */
+ +#define OV5_RESIZE_HPT		0x0601	/* Hash Page Table resizing */
+- #define OV5_PFO_HW_RNG		0x0E80	/* PFO Random Number Generator */
+- #define OV5_PFO_HW_842		0x0E40	/* PFO Compression Accelerator */
+- #define OV5_PFO_HW_ENCR		0x0E20	/* PFO Encryption Accelerator */
+- #define OV5_SUB_PROCESSORS	0x0F01	/* 1,2,or 4 Sub-Processors supported */
++ #define OV5_PFO_HW_RNG		0x1180	/* PFO Random Number Generator */
++ #define OV5_PFO_HW_842		0x1140	/* PFO Compression Accelerator */
++ #define OV5_PFO_HW_ENCR		0x1120	/* PFO Encryption Accelerator */
++ #define OV5_SUB_PROCESSORS	0x1501	/* 1,2,or 4 Sub-Processors supported */
++ #define OV5_XIVE_EXPLOIT	0x1701	/* XIVE exploitation supported */
++ #define OV5_MMU_RADIX_300	0x1880	/* ISA v3.00 radix MMU supported */
++ #define OV5_MMU_HASH_300	0x1840	/* ISA v3.00 hash MMU supported */
++ #define OV5_MMU_SEGM_RADIX	0x1820	/* radix mode (no segmentation) */
++ #define OV5_MMU_PROC_TBL	0x1810	/* hcall selects SLB or proc table */
++ #define OV5_MMU_SLB		0x1800	/* always use SLB */
++ #define OV5_MMU_GTSE		0x1808	/* Guest translation shootdown */
   
+  /* Option Vector 6: IBM PAPR hints */
+  #define OV6_LINUX		0x02	/* Linux is our OS */
