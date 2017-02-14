@@ -1,109 +1,74 @@
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Tue, 14 Feb 2017 10:54:30 -0300
-Message-ID: <20170214135430.GB4458@kernel.org>
-References: <20170214091250.57d054b2@canb.auug.org.au>
- <20170214064221.GB10242@gmail.com>
- <20170214091937.GA18546@krava>
- <20170214125020.GA4458@kernel.org>
- <20170214132326.GD18546@krava>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170214132326.GD18546@krava>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jiri Olsa <jolsa@redhat.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@fb.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo <acme@infradead.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170214 build: 0 failures 7 warnings (next-20170214)
+Date: Tue, 14 Feb 2017 13:57:47 +0000
+Message-ID: <E1cddc2-0003MJ-1L@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50370 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753202AbdBNN5z (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2017 08:57:55 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Em Tue, Feb 14, 2017 at 02:23:26PM +0100, Jiri Olsa escreveu:
-> On Tue, Feb 14, 2017 at 09:50:20AM -0300, Arnaldo Carvalho de Melo wrote:
-> 
-> SNIP
-> 
-> > 
-> > What I think Ingo meant with dependency at the build system level is to
-> > somehow state that if file A gets changed, then tool B must be rebuilt.
-> > 
-> > Now that samples/bpf and tools/perf/ depend on tools/lib/bpf/ I _always_
-> > build both, ditto for tools/objtool, that shares a different library
-> > with tools/perf/, tools/lib/subcmd/:
-> > 
-> > ENTRYPOINT make -C /git/linux/tools/perf O=/tmp/build/perf && \
-> >            rm -rf /tmp/build/perf/{.[^.]*,*} && \
-> >            make NO_LIBELF=1 -C /git/linux/tools/perf O=/tmp/build/perf && \
-> >            make -C /git/linux/tools/objtool O=/tmp/build/objtool && \
-> >            make -C /git/linux O=/tmp/build/linux allmodconfig && \
-> >            make -C /git/linux O=/tmp/build/linux headers_install && \
-> >            make -C /git/linux O=/tmp/build/linux samples/bpf/
-> > 
-> > This is the default action for my
-> > docker.io/acmel/linux-perf-tools-build-fedora:rawhide container.
-> > 
-> > It is published, so a:
-> > 
-> >    docker pull docker.io/acmel/linux-perf-tools-build-fedora:rawhide
-> > 
-> > And then run it before pushing things upstream would catch these kinds
-> > of errors.
-> > 
-> > But that would possibly disrupt too much people's workflow, that is why
-> > using the Kbuild originated tools/build/ we have to somehow express that
-> > when a change is made in a file then a tool that uses that file needs to
-> > be rebuilt.
-> 
-> we already have the check in the check-headers.sh script,
-> an AFAICS there's no 'rebuild' option here.. just warn or fail
-> because the headers update needs to be done manualy
+Tree/Branch: next-20170214
+Git describe: next-20170214
+Commit: b483962237 Add linux-next specific files for 20170214
 
-... when needed. And that will only be detected if you try to build
-tools using what is in tools/include/linux/bpf.h
+Build Time: 212 min 37 sec
 
-Tools using tools/lib/bpf/ _must_ use what is in tools/include/.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-So lemme see if my reasoning is right:
+Errors: 0
+Warnings: 7
+Section Mismatches: 0
 
-tools/lib/bpf/bpf.c has:
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      7 warnings    0 mismatches  : arm-allmodconfig
 
-  #include <linux/bpf.h>
+-------------------------------------------------------------------------------
 
-Now, samples/bpf/ will build tools/lib/bpf/bpf.o:
+Warnings Summary: 7
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-# Libbpf dependencies
-LIBBPF := ../../tools/lib/bpf/bpf.o
 
-HOSTCFLAGS += -I$(objtree)/usr/include
-HOSTCFLAGS += -I$(srctree)/tools/lib/
-HOSTCFLAGS += -I$(srctree)/tools/testing/selftests/bpf/
-HOSTCFLAGS += -I$(srctree)/tools/lib/ -I$(srctree)/tools/include
-HOSTCFLAGS += -I$(srctree)/tools/perf
 
-HOSTCFLAGS_bpf_load.o += -I$(objtree)/usr/include -Wno-unused-variable
+===============================================================================
+Detailed per-defconfig build reports below:
 
-So it will never include tools/include/uapi/linux/bpf.h, which it
-should.
 
-Because the workflow people working on sample/bpf/ is to first install
-the new headers using a variation of:
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
 
-  make headers_install
+Warnings:
+	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
 
-So they will get the new bpf.h, not use tools/include/uapi/linux/bpf.h,
-b00m.
+Passed with no errors, warnings or mismatches:
 
-They should use tools/include/uapi/linux/bpf.h, which is the one we know
-builds well with tools/lib/bpf/bpf.c, since we tested it last time we
-made the copy.
- 
-> > Makefile rules probably would be enough, but then it would have to be
-> > done at the tools/build/ level and all tools using shared components
-> > would have to use it to trigger the rebuild.
- 
-> we can move/invoke the check-headers.sh script in some upper dir
-
-Most of the time I just ignore that warning, only when I find spare time
-I go look if the changes in the kernel copy, i.e. upstream, should
-trigger changes in the tools using its copy in tools/include/.
-
-- Arnaldo
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
