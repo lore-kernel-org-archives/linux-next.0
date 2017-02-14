@@ -1,65 +1,59 @@
-From: Joe Stringer <joe@ovn.org>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Mon, 13 Feb 2017 23:59:42 -0800
-Message-ID: <CAPWQB7GPyiN+5rdLRyXA4v03-2hPZ=Xfw_URFyuFjTQo+=C1Dg@mail.gmail.com>
-References: <20170214091250.57d054b2@canb.auug.org.au> <58A241EC.8050400@fb.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the mfd tree with the input tree
+Date: Tue, 14 Feb 2017 08:38:40 +0000
+Message-ID: <20170214083840.s36lep65kvecoao3@dell>
+References: <20170214131006.4c5ab762@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:57271 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbdBNIAL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Feb 2017 03:00:11 -0500
-In-Reply-To: <58A241EC.8050400@fb.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alexei Starovoitov <ast@fb.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <brouer@redhat.com>, Wang Nan <wangnan0@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170214131006.4c5ab762@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Douglas Anderson <dianders@chromium.org>
+List-Id: linux-next.vger.kernel.org
 
-On 13 February 2017 at 15:31, Alexei Starovoitov <ast@fb.com> wrote:
-> On 2/13/17 2:12 PM, Stephen Rothwell wrote:
->>
->> Hi all,
->>
->> After merging the net tree, today's linux-next build (powerpc64le perf)
->> failed like this:
->>
->> Warning: tools/include/uapi/linux/bpf.h differs from kernel
->> bpf.c: In function 'bpf_prog_attach':
->> bpf.c:180:6: error: 'union bpf_attr' has no member named 'attach_flags';
->> did you mean 'map_flags'?
->>    attr.attach_flags  = flags;
->>        ^
->>
->> Caused by commit
->>
->>    7f677633379b ("bpf: introduce BPF_F_ALLOW_OVERRIDE flag")
->>
->> Unfortunately, the perf header files are kept separate from the kernel
->> header files proper and are not automatically copied over :-(
->>
->> I have applied the following build fix patch for today.
->
->
-> Yes. Thanks for the fix. It's more than a merge conflict.
-> I should have added it in the first place. Now we have both
-> perf and samples/bpf depend on tools/lib/bpf and I simply
-> forgot about this dependency, since building perf
-> is not my typical workflow.
->
-> Joe,
-> can you think of a way to make tools/lib/bpf to
-> use tools/include only?
-> Right now we just pull tools/lib/bpf/bpf.o in samples/bpf/Makefile
-> and that's a hack that caused this issue.
-> samples/bpf/ needs to depend on libbpf.a properly.
+On Tue, 14 Feb 2017, Stephen Rothwell wrote:
 
-Honestly the build system stuff is all black magic to me.
+> Hi Lee,
+> 
+> Today's linux-next merge of the mfd tree got a conflict in:
+> 
+>   drivers/input/keyboard/cros_ec_keyb.c
+> 
+> between commits:
+> 
+>   2057e15945a8 ("Input: cros_ec_keyb - drop unnecessary call to dev_set_drvdata and other changes")
+>   aef01aad89e4 ("Input: matrix-keypad - switch to using generic device properties")
+> 
+> from the input tree and commit:
+> 
+>   cdd7950e7aa4 ("input: cros_ec_keyb: Add non-matrix buttons and switches")
+> 
+> from the mfd tree.
+> 
+> It looks like the latter introduces a call to dev_get_drvdata(), so I
+> left the dev_set_drvdata() call in.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Originally I had a line in the samples/bpf makefile that changed
-directory and ran make there, but it was limited in that it only
-addressed the 'all' target so you could still hit issues when trying
-to build specific samples directly via their own targets so I removed
-it on request:
+Morning Stephen,
 
-https://patchwork.kernel.org/patch/9472573/
+It looks like Dmitry is yet to pull from:
+
+  http://tinyurl.com/ztg68nj
+
+Kind regards,
+Lee
+
+-- 
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
