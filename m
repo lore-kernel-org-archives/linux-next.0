@@ -1,71 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170215 build: 0 failures 7 warnings (next-20170215)
-Date: Wed, 15 Feb 2017 09:23:11 +0000
-Message-ID: <E1cdvnr-00031a-9a@optimist>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: manual merge of the kvm tree with the powerpc tree
+Date: Wed, 15 Feb 2017 21:52:08 +1100
+Message-ID: <878tp7lo9z.fsf@concordia.ellerman.id.au>
+References: <20170215133820.439190c9@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54496 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751642AbdBOJXU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 15 Feb 2017 04:23:20 -0500
+Received: from ozlabs.org ([103.22.144.67]:37803 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751474AbdBOKwP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 15 Feb 2017 05:52:15 -0500
+In-Reply-To: <20170215133820.439190c9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>, Li Zhong <zhong@linux.vnet.ibm.com>
 
-Tree/Branch: next-20170215
-Git describe: next-20170215
-Commit: fee922e6a9 Add linux-next specific files for 20170215
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Build Time: 110 min 54 sec
+> Hi all,
+>
+> Today's linux-next merge of the kvm tree got a conflict in:
+>
+>   arch/powerpc/kvm/book3s_hv_rm_xics.c
+>
+> between commit:
+>
+>   ab9bad0ead9a ("powerpc/powernv: Remove separate entry for OPAL real mode calls")
+>
+> from the powerpc tree and commit:
+>
+>   21acd0e4df04 ("KVM: PPC: Book 3S: XICS: Don't lock twice when checking for resend")
+>
+> from the kvm tree.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Thanks.
 
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
+That will go away if/when Paolo merges the rest of Paul's next.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      7 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 7
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+cheers
 
 
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+> diff --cc arch/powerpc/kvm/book3s_hv_rm_xics.c
+> index 29f43ed6d5eb,0b2e388f4cdf..000000000000
+> --- a/arch/powerpc/kvm/book3s_hv_rm_xics.c
+> +++ b/arch/powerpc/kvm/book3s_hv_rm_xics.c
+> @@@ -35,8 -35,8 +35,8 @@@ int kvm_irq_bypass = 1
+>   EXPORT_SYMBOL(kvm_irq_bypass);
+>   
+>   static void icp_rm_deliver_irq(struct kvmppc_xics *xics, struct kvmppc_icp *icp,
+> - 			    u32 new_irq);
+> + 			    u32 new_irq, bool check_resend);
+>  -static int xics_opal_rm_set_server(unsigned int hw_irq, int server_cpu);
+>  +static int xics_opal_set_server(unsigned int hw_irq, int server_cpu);
+>   
+>   /* -- ICS routines -- */
+>   static void ics_rm_check_resend(struct kvmppc_xics *xics,
