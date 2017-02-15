@@ -1,60 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the f2fs tree with the fscrypt tree
-Date: Wed, 15 Feb 2017 09:51:04 +1100
-Message-ID: <20170215095104.26b14290@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rdma tree
+Date: Wed, 15 Feb 2017 11:30:03 +1100
+Message-ID: <20170215113003.4c730d86@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39267 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37203 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750731AbdBNWvI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Feb 2017 17:51:08 -0500
+        id S1750905AbdBOAaH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Feb 2017 19:30:07 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Biggers <ebiggers@google.com>, Bhumika Goyal <bhumirks@gmail.com>
+To: Doug Ledford <dledford@redhat.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>, Selvin Xavier <selvin.xavier@broadcom.com>, Eddie Wai <eddie.wai@broadcom.com>, Devesh Sharma <devesh.sharma@broadcom.com>, Somnath Kotur <somnath.kotur@broadcom.com>, Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>
 
-Hi Jaegeuk,
+Hi Doug,
 
-Today's linux-next merge of the f2fs tree got a conflict in:
+After merging the rdma tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  fs/f2fs/super.c
+drivers/infiniband/hw/bnxt_re/main.c: In function 'bnxt_re_net_ring_free':
+drivers/infiniband/hw/bnxt_re/main.c:231:18: error: 'RING_ALLOC_REQ_RING_TYPE_CMPL' undeclared (first use in this function)
+  req.ring_type = RING_ALLOC_REQ_RING_TYPE_CMPL;
+                  ^
+drivers/infiniband/hw/bnxt_re/main.c:231:18: note: each undeclared identifier is reported only once for each function it appears in
+drivers/infiniband/hw/bnxt_re/main.c: In function 'bnxt_re_net_ring_alloc':
+drivers/infiniband/hw/bnxt_re/main.c:271:18: error: 'RING_ALLOC_REQ_RING_TYPE_CMPL' undeclared (first use in this function)
+  req.ring_type = RING_ALLOC_REQ_RING_TYPE_CMPL;
+                  ^
 
-between commit:
+Caused by commit
 
-  a5d431eff2e0 ("fscrypt: make fscrypt_operations.key_prefix a string")
+  1ac5a4047975 ("RDMA/bnxt_re: Add bnxt_re RoCE driver")
 
-from the fscrypt tree and commit:
+interacting with commit
 
-  aacf533a90a7 ("f2fs: super: constify fscrypt_operations structure")
+  bac9a7e0f5d6 ("bnxt_en: Update to firmware interface spec 1.7.0.")
 
-from the f2fs tree.
+from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I added this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 15 Feb 2017 11:23:25 +1100
+Subject: [PATCH] RDMA/bnxt_re: fix for "bnxt_en: Update to firmware interface spec 1.7.0."
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/infiniband/hw/bnxt_re/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index 6b9f1178050f..bd452a92b386 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -228,7 +228,7 @@ static int bnxt_re_net_ring_free(struct bnxt_re_dev *rdev, u16 fw_ring_id,
+ 	}
+ 
+ 	bnxt_re_init_hwrm_hdr(rdev, (void *)&req, HWRM_RING_FREE, -1, -1);
+-	req.ring_type = RING_ALLOC_REQ_RING_TYPE_CMPL;
++	req.ring_type = RING_ALLOC_REQ_RING_TYPE_L2_CMPL;
+ 	req.ring_id = cpu_to_le16(fw_ring_id);
+ 	bnxt_re_fill_fw_msg(&fw_msg, (void *)&req, sizeof(req), (void *)&resp,
+ 			    sizeof(resp), DFLT_HWRM_CMD_TIMEOUT);
+@@ -268,7 +268,7 @@ static int bnxt_re_net_ring_alloc(struct bnxt_re_dev *rdev, dma_addr_t *dma_arr,
+ 	/* Association of ring index with doorbell index and MSIX number */
+ 	req.logical_id = cpu_to_le16(map_index);
+ 	req.length = cpu_to_le32(ring_mask + 1);
+-	req.ring_type = RING_ALLOC_REQ_RING_TYPE_CMPL;
++	req.ring_type = RING_ALLOC_REQ_RING_TYPE_L2_CMPL;
+ 	req.int_mode = RING_ALLOC_REQ_INT_MODE_MSIX;
+ 	bnxt_re_fill_fw_msg(&fw_msg, (void *)&req, sizeof(req), (void *)&resp,
+ 			    sizeof(resp), DFLT_HWRM_CMD_TIMEOUT);
+-- 
+2.10.2
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/f2fs/super.c
-index 503c3b7fa053,8a02d747fa97..000000000000
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@@ -1170,9 -1207,9 +1201,9 @@@ static unsigned f2fs_max_namelen(struc
-  			inode->i_sb->s_blocksize : F2FS_NAME_LEN;
-  }
-  
-- static struct fscrypt_operations f2fs_cryptops = {
-+ static const struct fscrypt_operations f2fs_cryptops = {
- +	.key_prefix	= "f2fs:",
-  	.get_context	= f2fs_get_context,
- -	.key_prefix	= f2fs_key_prefix,
-  	.set_context	= f2fs_set_context,
-  	.is_encrypted	= f2fs_encrypted_inode,
-  	.empty_dir	= f2fs_empty_dir,
