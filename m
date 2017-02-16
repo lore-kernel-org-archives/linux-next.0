@@ -1,71 +1,116 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170216 build: 0 failures 7 warnings (next-20170216)
-Date: Thu, 16 Feb 2017 08:23:01 +0000
-Message-ID: <E1ceHLB-0005Iq-IJ@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with Linus' tree
+Date: Fri, 17 Feb 2017 09:06:21 +1100
+Message-ID: <20170217090621.29b02a59@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60644 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751162AbdBPIXL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 16 Feb 2017 03:23:11 -0500
+Received: from ozlabs.org ([103.22.144.67]:50579 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933157AbdBPWGZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 16 Feb 2017 17:06:25 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rashmica Gupta <rashmicy@gmail.com>
 
-Tree/Branch: next-20170216
-Git describe: next-20170216
-Commit: 38161d2f17 Add linux-next specific files for 20170216
+Hi all,
 
-Build Time: 110 min 49 sec
+FIXME: Add owner of second tree to To:
+       Add author(s)/SOB of conflicting commits.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
+  arch/powerpc/kernel/asm-offsets.c
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      7 warnings    0 mismatches  : arm-allmodconfig
+between commit:
 
--------------------------------------------------------------------------------
+  f2574030b0e3 ("powerpc: Revert the initial stack protector support")
 
-Warnings Summary: 7
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+from Linus' tree and commit:
 
+  454656155110 ("powerpc/asm: Use OFFSET macro in asm-offsets.c")
 
+from the powerpc tree.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+-- 
+Cheers,
+Stephen Rothwell
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1472:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1477:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+diff --cc arch/powerpc/kernel/asm-offsets.c
+index 195a9fc8f81c,b6709021fee5..000000000000
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@@ -88,39 -91,42 +91,39 @@@ int main(void
+  #endif /* CONFIG_PPC64 */
+  
+  #ifdef CONFIG_LIVEPATCH
+- 	DEFINE(TI_livepatch_sp, offsetof(struct thread_info, livepatch_sp));
++ 	OFFSET(TI_livepatch_sp, thread_info, livepatch_sp);
+  #endif
+  
+- 	DEFINE(KSP, offsetof(struct thread_struct, ksp));
+- 	DEFINE(PT_REGS, offsetof(struct thread_struct, regs));
+ -#ifdef CONFIG_CC_STACKPROTECTOR
+ -	DEFINE(TSK_STACK_CANARY, offsetof(struct task_struct, stack_canary));
+ -#endif
++ 	OFFSET(KSP, thread_struct, ksp);
++ 	OFFSET(PT_REGS, thread_struct, regs);
+  #ifdef CONFIG_BOOKE
+- 	DEFINE(THREAD_NORMSAVES, offsetof(struct thread_struct, normsave[0]));
++ 	OFFSET(THREAD_NORMSAVES, thread_struct, normsave[0]);
+  #endif
+- 	DEFINE(THREAD_FPEXC_MODE, offsetof(struct thread_struct, fpexc_mode));
+- 	DEFINE(THREAD_FPSTATE, offsetof(struct thread_struct, fp_state));
+- 	DEFINE(THREAD_FPSAVEAREA, offsetof(struct thread_struct, fp_save_area));
+- 	DEFINE(FPSTATE_FPSCR, offsetof(struct thread_fp_state, fpscr));
+- 	DEFINE(THREAD_LOAD_FP, offsetof(struct thread_struct, load_fp));
++ 	OFFSET(THREAD_FPEXC_MODE, thread_struct, fpexc_mode);
++ 	OFFSET(THREAD_FPSTATE, thread_struct, fp_state);
++ 	OFFSET(THREAD_FPSAVEAREA, thread_struct, fp_save_area);
++ 	OFFSET(FPSTATE_FPSCR, thread_fp_state, fpscr);
++ 	OFFSET(THREAD_LOAD_FP, thread_struct, load_fp);
+  #ifdef CONFIG_ALTIVEC
+- 	DEFINE(THREAD_VRSTATE, offsetof(struct thread_struct, vr_state));
+- 	DEFINE(THREAD_VRSAVEAREA, offsetof(struct thread_struct, vr_save_area));
+- 	DEFINE(THREAD_VRSAVE, offsetof(struct thread_struct, vrsave));
+- 	DEFINE(THREAD_USED_VR, offsetof(struct thread_struct, used_vr));
+- 	DEFINE(VRSTATE_VSCR, offsetof(struct thread_vr_state, vscr));
+- 	DEFINE(THREAD_LOAD_VEC, offsetof(struct thread_struct, load_vec));
++ 	OFFSET(THREAD_VRSTATE, thread_struct, vr_state);
++ 	OFFSET(THREAD_VRSAVEAREA, thread_struct, vr_save_area);
++ 	OFFSET(THREAD_VRSAVE, thread_struct, vrsave);
++ 	OFFSET(THREAD_USED_VR, thread_struct, used_vr);
++ 	OFFSET(VRSTATE_VSCR, thread_vr_state, vscr);
++ 	OFFSET(THREAD_LOAD_VEC, thread_struct, load_vec);
+  #endif /* CONFIG_ALTIVEC */
+  #ifdef CONFIG_VSX
+- 	DEFINE(THREAD_USED_VSR, offsetof(struct thread_struct, used_vsr));
++ 	OFFSET(THREAD_USED_VSR, thread_struct, used_vsr);
+  #endif /* CONFIG_VSX */
+  #ifdef CONFIG_PPC64
+- 	DEFINE(KSP_VSID, offsetof(struct thread_struct, ksp_vsid));
++ 	OFFSET(KSP_VSID, thread_struct, ksp_vsid);
+  #else /* CONFIG_PPC64 */
+- 	DEFINE(PGDIR, offsetof(struct thread_struct, pgdir));
++ 	OFFSET(PGDIR, thread_struct, pgdir);
+  #ifdef CONFIG_SPE
+- 	DEFINE(THREAD_EVR0, offsetof(struct thread_struct, evr[0]));
+- 	DEFINE(THREAD_ACC, offsetof(struct thread_struct, acc));
+- 	DEFINE(THREAD_SPEFSCR, offsetof(struct thread_struct, spefscr));
+- 	DEFINE(THREAD_USED_SPE, offsetof(struct thread_struct, used_spe));
++ 	OFFSET(THREAD_EVR0, thread_struct, evr[0]);
++ 	OFFSET(THREAD_ACC, thread_struct, acc);
++ 	OFFSET(THREAD_SPEFSCR, thread_struct, spefscr);
++ 	OFFSET(THREAD_USED_SPE, thread_struct, used_spe);
+  #endif /* CONFIG_SPE */
+  #endif /* CONFIG_PPC64 */
+  #if defined(CONFIG_4xx) || defined(CONFIG_BOOKE)
