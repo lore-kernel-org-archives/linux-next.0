@@ -1,40 +1,80 @@
-From: Alexei Starovoitov <ast@fb.com>
-Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 15 Feb 2017 19:06:02 -0800
-Message-ID: <58A5171A.8080604@fb.com>
-References: <20170214091250.57d054b2@canb.auug.org.au>
- <20170216140215.69d39914@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kselftest tree with the net-next
+ tree
+Date: Thu, 16 Feb 2017 14:24:53 +1100
+Message-ID: <20170216142453.53d1f5e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20170216140215.69d39914@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, Joe Stringer <joe@ovn.org>, Jiri Olsa <jolsa@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58879 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751958AbdBPDY4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 15 Feb 2017 22:24:56 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Shuah Khan <shuahkh@osg.samsung.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "bamvor.zhangjian@huawei.com" <bamvor.zhangjian@huawei.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 
-On 2/15/17 7:02 PM, Stephen Rothwell wrote:
-> Hi all,
->
-> On Tue, 14 Feb 2017 09:12:50 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the net tree, today's linux-next build (powerpc64le perf)
->> failed like this:
->>
->> Warning: tools/include/uapi/linux/bpf.h differs from kernel
->> bpf.c: In function 'bpf_prog_attach':
->> bpf.c:180:6: error: 'union bpf_attr' has no member named 'attach_flags'; did you mean 'map_flags'?
->>    attr.attach_flags  = flags;
->>        ^
->>
->> Caused by commit
->>
->>    7f677633379b ("bpf: introduce BPF_F_ALLOW_OVERRIDE flag")
->>
->
-> So do we have a fix for this?  I am sure that Dave would like to send
-> his "net" tree to Linus sometime soonish ...
+Hi Shuah,
 
-Do you mind resending it to netdev with my Ack ?
-please mention [PATCH net] in subj, so it's get caught by Dave's scripts.
+Today's linux-next merge of the kselftest tree got a conflict in:
+
+  tools/testing/selftests/bpf/Makefile
+
+between commit:
+
+  d498f8719a09 ("bpf: Rebuild bpf.o for any dependency update")
+
+from the net-next tree and commit:
+
+  88baa78d1f31 ("selftests: remove duplicated all and clean target")
+
+from the kselftest tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/bpf/Makefile
+index c7816fe60feb,058351b0694f..000000000000
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@@ -1,26 -1,7 +1,20 @@@
+ -CFLAGS += -Wall -O2 -I../../../../usr/include
+ +LIBDIR := ../../../lib
+ +BPFOBJ := $(LIBDIR)/bpf/bpf.o
+  
+ -TEST_GEN_PROGS = test_verifier test_maps test_lru_map
+ +CFLAGS += -Wall -O2 -lcap -I../../../include/uapi -I$(LIBDIR)
+ +
+- test_objs = test_verifier test_tag test_maps test_lru_map test_lpm_map
+++TEST_GEN_PROGS = test_verifier test_tag test_maps test_lru_map test_lpm_map
+  
+- TEST_PROGS := $(test_objs) test_kmod.sh
+- TEST_FILES := $(test_objs)
++ TEST_PROGS := test_kmod.sh
+  
+ +.PHONY: all clean force
+ +
+- all: $(test_objs)
+- 
+ +# force a rebuild of BPFOBJ when its dependencies are updated
+ +force:
+ +
+ +$(BPFOBJ): force
+ +	$(MAKE) -C $(dir $(BPFOBJ))
+ +
+ +$(test_objs): $(BPFOBJ)
+ +
+  include ../lib.mk
+- 
+- clean:
+- 	$(RM) $(test_objs)
