@@ -1,58 +1,33 @@
-From: Alexei Starovoitov <ast@fb.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the net tree
-Date: Wed, 15 Feb 2017 19:30:04 -0800
-Message-ID: <58A51CBC.7080405@fb.com>
+Date: Thu, 16 Feb 2017 14:42:59 +1100
+Message-ID: <20170216144259.3351f5d0@canb.auug.org.au>
 References: <20170214091250.57d054b2@canb.auug.org.au>
- <20170216140215.69d39914@canb.auug.org.au> <58A5171A.8080604@fb.com>
- <20170215.222746.1747689327951875592.davem@davemloft.net>
+        <20170216140215.69d39914@canb.auug.org.au>
+        <58A5171A.8080604@fb.com>
+        <20170215.222746.1747689327951875592.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:52722 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752338AbdBPDaz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 15 Feb 2017 22:30:55 -0500
+Received: from ozlabs.org ([103.22.144.67]:53807 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752481AbdBPDnC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 15 Feb 2017 22:43:02 -0500
 In-Reply-To: <20170215.222746.1747689327951875592.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com, joe@ovn.org, jolsa@redhat.com
+Cc: ast@fb.com, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, acme@kernel.org, alexander.shishkin@linux.intel.com, joe@ovn.org, jolsa@redhat.com
 
-On 2/15/17 7:27 PM, David Miller wrote:
-> From: Alexei Starovoitov <ast@fb.com>
-> Date: Wed, 15 Feb 2017 19:06:02 -0800
->
->> On 2/15/17 7:02 PM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> On Tue, 14 Feb 2017 09:12:50 +1100 Stephen Rothwell
->>> <sfr@canb.auug.org.au> wrote:
->>>>
->>>> After merging the net tree, today's linux-next build (powerpc64le
->>>> perf)
->>>> failed like this:
->>>>
->>>> Warning: tools/include/uapi/linux/bpf.h differs from kernel
->>>> bpf.c: In function 'bpf_prog_attach':
->>>> bpf.c:180:6: error: 'union bpf_attr' has no member named
->>>> 'attach_flags'; did you mean 'map_flags'?
->>>>     attr.attach_flags  = flags;
->>>>         ^
->>>>
->>>> Caused by commit
->>>>
->>>>     7f677633379b ("bpf: introduce BPF_F_ALLOW_OVERRIDE flag")
->>>>
->>>
->>> So do we have a fix for this?  I am sure that Dave would like to send
->>> his "net" tree to Linus sometime soonish ...
->>
->> Do you mind resending it to netdev with my Ack ?
->> please mention [PATCH net] in subj, so it's get caught by Dave's
->> scripts.
+Hi Dave,
+
+On Wed, 15 Feb 2017 22:27:46 -0500 (EST) David Miller <davem@davemloft.net> wrote:
 >
 > I applied the fix that synced the two header files already.
 
-Ahh. Thanks!
+Sorry about that, I missed it in checking your tree over breakfast :-)
+
+-- 
+Cheers,
+Stephen Rothwell
