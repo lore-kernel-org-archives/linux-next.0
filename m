@@ -1,33 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the openrisc tree
-Date: Fri, 17 Feb 2017 12:43:21 +1100
-Message-ID: <20170217124321.7b4b394d@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the powerpc tree
+Date: Fri, 17 Feb 2017 12:48:43 +1100
+Message-ID: <20170217124843.7ea6e3d8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53269 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755078AbdBQBnY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 16 Feb 2017 20:43:24 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Stafford Horne <shorne@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Rashmica Gupta <rashmicy@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
 Today's linux-next merge of the tip tree got a conflict in:
 
-  arch/openrisc/include/asm/Kbuild
+  arch/powerpc/kernel/asm-offsets.c
 
 between commit:
 
-  157e82f58007 ("openrisc: add cmpxchg and xchg implementations")
+  454656155110 ("powerpc/asm: Use OFFSET macro in asm-offsets.c")
 
-from the openrisc tree and commit:
+from the powerpc tree and commit:
 
-  b672592f0221 ("sched/cputime: Remove generic asm headers")
+  8c8b73c4811f ("sched/cputime, powerpc: Prepare accounting structure for cputime flush on tick")
 
 from the tip tree.
 
@@ -42,17 +38,105 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/openrisc/include/asm/Kbuild
-index a669c141436e,ef8d1ccc3e45..000000000000
---- a/arch/openrisc/include/asm/Kbuild
-+++ b/arch/openrisc/include/asm/Kbuild
-@@@ -9,7 -10,8 +9,6 @@@ generic-y += bugs.
-  generic-y += cacheflush.h
-  generic-y += checksum.h
-  generic-y += clkdev.h
-- generic-y += cputime.h
- -generic-y += cmpxchg-local.h
- -generic-y += cmpxchg.h
-  generic-y += current.h
-  generic-y += device.h
-  generic-y += div64.h
+diff --cc arch/powerpc/kernel/asm-offsets.c
+index d918338b54b0,9e8e771f8acb..000000000000
+--- a/arch/powerpc/kernel/asm-offsets.c
++++ b/arch/powerpc/kernel/asm-offsets.c
+@@@ -208,48 -213,58 +208,48 @@@ int main(void
+  #endif /* CONFIG_PPC_BOOK3E */
+  
+  #ifdef CONFIG_PPC_STD_MMU_64
+ -	DEFINE(PACASLBCACHE, offsetof(struct paca_struct, slb_cache));
+ -	DEFINE(PACASLBCACHEPTR, offsetof(struct paca_struct, slb_cache_ptr));
+ -	DEFINE(PACAVMALLOCSLLP, offsetof(struct paca_struct, vmalloc_sllp));
+ +	OFFSET(PACASLBCACHE, paca_struct, slb_cache);
+ +	OFFSET(PACASLBCACHEPTR, paca_struct, slb_cache_ptr);
+ +	OFFSET(PACAVMALLOCSLLP, paca_struct, vmalloc_sllp);
+  #ifdef CONFIG_PPC_MM_SLICES
+ -	DEFINE(MMUPSIZESLLP, offsetof(struct mmu_psize_def, sllp));
+ +	OFFSET(MMUPSIZESLLP, mmu_psize_def, sllp);
+  #else
+ -	DEFINE(PACACONTEXTSLLP, offsetof(struct paca_struct, mm_ctx_sllp));
+ +	OFFSET(PACACONTEXTSLLP, paca_struct, mm_ctx_sllp);
+  #endif /* CONFIG_PPC_MM_SLICES */
+ -	DEFINE(PACA_EXGEN, offsetof(struct paca_struct, exgen));
+ -	DEFINE(PACA_EXMC, offsetof(struct paca_struct, exmc));
+ -	DEFINE(PACA_EXSLB, offsetof(struct paca_struct, exslb));
+ -	DEFINE(PACALPPACAPTR, offsetof(struct paca_struct, lppaca_ptr));
+ -	DEFINE(PACA_SLBSHADOWPTR, offsetof(struct paca_struct, slb_shadow_ptr));
+ -	DEFINE(SLBSHADOW_STACKVSID,
+ -	       offsetof(struct slb_shadow, save_area[SLB_NUM_BOLTED - 1].vsid));
+ -	DEFINE(SLBSHADOW_STACKESID,
+ -	       offsetof(struct slb_shadow, save_area[SLB_NUM_BOLTED - 1].esid));
+ -	DEFINE(SLBSHADOW_SAVEAREA, offsetof(struct slb_shadow, save_area));
+ -	DEFINE(LPPACA_PMCINUSE, offsetof(struct lppaca, pmcregs_in_use));
+ -	DEFINE(LPPACA_DTLIDX, offsetof(struct lppaca, dtl_idx));
+ -	DEFINE(LPPACA_YIELDCOUNT, offsetof(struct lppaca, yield_count));
+ -	DEFINE(PACA_DTL_RIDX, offsetof(struct paca_struct, dtl_ridx));
+ +	OFFSET(PACA_EXGEN, paca_struct, exgen);
+ +	OFFSET(PACA_EXMC, paca_struct, exmc);
+ +	OFFSET(PACA_EXSLB, paca_struct, exslb);
+ +	OFFSET(PACALPPACAPTR, paca_struct, lppaca_ptr);
+ +	OFFSET(PACA_SLBSHADOWPTR, paca_struct, slb_shadow_ptr);
+ +	OFFSET(SLBSHADOW_STACKVSID, slb_shadow, save_area[SLB_NUM_BOLTED - 1].vsid);
+ +	OFFSET(SLBSHADOW_STACKESID, slb_shadow, save_area[SLB_NUM_BOLTED - 1].esid);
+ +	OFFSET(SLBSHADOW_SAVEAREA, slb_shadow, save_area);
+ +	OFFSET(LPPACA_PMCINUSE, lppaca, pmcregs_in_use);
+ +	OFFSET(LPPACA_DTLIDX, lppaca, dtl_idx);
+ +	OFFSET(LPPACA_YIELDCOUNT, lppaca, yield_count);
+ +	OFFSET(PACA_DTL_RIDX, paca_struct, dtl_ridx);
+  #endif /* CONFIG_PPC_STD_MMU_64 */
+ -	DEFINE(PACAEMERGSP, offsetof(struct paca_struct, emergency_sp));
+ +	OFFSET(PACAEMERGSP, paca_struct, emergency_sp);
+  #ifdef CONFIG_PPC_BOOK3S_64
+ -	DEFINE(PACAMCEMERGSP, offsetof(struct paca_struct, mc_emergency_sp));
+ -	DEFINE(PACA_IN_MCE, offsetof(struct paca_struct, in_mce));
+ -#endif
+ -	DEFINE(PACAHWCPUID, offsetof(struct paca_struct, hw_cpu_id));
+ -	DEFINE(PACAKEXECSTATE, offsetof(struct paca_struct, kexec_state));
+ -	DEFINE(PACA_DSCR_DEFAULT, offsetof(struct paca_struct, dscr_default));
+ -	DEFINE(ACCOUNT_STARTTIME,
+ -	       offsetof(struct paca_struct, accounting.starttime));
+ -	DEFINE(ACCOUNT_STARTTIME_USER,
+ -	       offsetof(struct paca_struct, accounting.starttime_user));
+ -	DEFINE(ACCOUNT_USER_TIME,
+ -	       offsetof(struct paca_struct, accounting.utime));
+ -	DEFINE(ACCOUNT_SYSTEM_TIME,
+ -	       offsetof(struct paca_struct, accounting.stime));
+ -	DEFINE(PACA_TRAP_SAVE, offsetof(struct paca_struct, trap_save));
+ -	DEFINE(PACA_NAPSTATELOST, offsetof(struct paca_struct, nap_state_lost));
+ -	DEFINE(PACA_SPRG_VDSO, offsetof(struct paca_struct, sprg_vdso));
+ +	OFFSET(PACAMCEMERGSP, paca_struct, mc_emergency_sp);
+ +	OFFSET(PACA_IN_MCE, paca_struct, in_mce);
+ +#endif
+ +	OFFSET(PACAHWCPUID, paca_struct, hw_cpu_id);
+ +	OFFSET(PACAKEXECSTATE, paca_struct, kexec_state);
+ +	OFFSET(PACA_DSCR_DEFAULT, paca_struct, dscr_default);
+ +	OFFSET(ACCOUNT_STARTTIME, paca_struct, accounting.starttime);
+ +	OFFSET(ACCOUNT_STARTTIME_USER, paca_struct, accounting.starttime_user);
+- 	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.user_time);
+- 	OFFSET(ACCOUNT_SYSTEM_TIME, paca_struct, accounting.system_time);
+++	OFFSET(ACCOUNT_USER_TIME, paca_struct, accounting.utime);
+++	OFFSET(ACCOUNT_SYSTEM_TIME, paca_struct, accounting.stime);
+ +	OFFSET(PACA_TRAP_SAVE, paca_struct, trap_save);
+ +	OFFSET(PACA_NAPSTATELOST, paca_struct, nap_state_lost);
+ +	OFFSET(PACA_SPRG_VDSO, paca_struct, sprg_vdso);
+  #else /* CONFIG_PPC64 */
+  #ifdef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
+ -	DEFINE(ACCOUNT_STARTTIME,
+ -	       offsetof(struct thread_info, accounting.starttime));
+ -	DEFINE(ACCOUNT_STARTTIME_USER,
+ -	       offsetof(struct thread_info, accounting.starttime_user));
+ -	DEFINE(ACCOUNT_USER_TIME,
+ -	       offsetof(struct thread_info, accounting.utime));
+ -	DEFINE(ACCOUNT_SYSTEM_TIME,
+ -	       offsetof(struct thread_info, accounting.stime));
+ +	OFFSET(ACCOUNT_STARTTIME, thread_info, accounting.starttime);
+ +	OFFSET(ACCOUNT_STARTTIME_USER, thread_info, accounting.starttime_user);
+- 	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.user_time);
+- 	OFFSET(ACCOUNT_SYSTEM_TIME, thread_info, accounting.system_time);
+++	OFFSET(ACCOUNT_USER_TIME, thread_info, accounting.utime);
+++	OFFSET(ACCOUNT_SYSTEM_TIME, thread_info, accounting.stime);
+  #endif
+  #endif /* CONFIG_PPC64 */
+  
