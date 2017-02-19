@@ -1,43 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree.
-Date: Mon, 20 Feb 2017 09:40:56 +1100
-Message-ID: <20170220094056.449c28c4@canb.auug.org.au>
+Subject: Re: linux-next: error fetching the ipmi tree
+Date: Mon, 20 Feb 2017 10:33:01 +1100
+Message-ID: <20170220103301.24f1ac6c@canb.auug.org.au>
+References: <20150722082946.39366276@canb.auug.org.au>
+        <55AED99D.1060405@mvista.com>
+        <20150722110331.2ed76955@canb.auug.org.au>
+        <20170220080019.7972746b@canb.auug.org.au>
+        <1d5ff522-7a88-ff61-bc0c-fff28d6882ae@acm.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33459 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51425 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751382AbdBSWlc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 19 Feb 2017 17:41:32 -0500
+        id S1751470AbdBSXdF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 19 Feb 2017 18:33:05 -0500
+In-Reply-To: <1d5ff522-7a88-ff61-bc0c-fff28d6882ae@acm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Corey Minyard <minyard@acm.org>
+Cc: Corey Minyard <cminyard@mvista.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+Hi Corey,
 
-Today's linux-next merge of the pci tree got conflicts in:
+On Sun, 19 Feb 2017 16:26:18 -0600 Corey Minyard <minyard@acm.org> wrote:
+>
+> Dang, I was hoping SourceForge had cleaned up their act.  I can ask for 
+> an account on
+> kernel.org, but I'm not sure I will be able to get one.
 
-  drivers/pci/dwc/pcie-designware-host.c
+Yeah, you need a well signed GPG key ...
 
-I have no idea why? I see this file has been split out from another that
-was itself moved from another directory, but that all happened in the
-pci tree.
+> I'm in the process of moving userland things I support to github, which 
+> seems more
+> stable than SourceForge.  Would that be better?
 
-I fixed it up (I just used the pci tree version) and can carry the fix
-as necessary. This is now fixed as far as linux-next is concerned, but
-any non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Probably better than SourceForge :-)  Keep in mind that Linus requires
+signed tags for pulls from basically anywhere besides kernel.org.
 
-OK, I checked again ... it may be conflicting with commit
-
-  a782b5f986c3 ("PCI: designware: Check for iATU unroll only on platforms that use ATU")
-
-from Linus' tree (merged into v4.10-rc5), so my resolution above may be
-incorrect.
 -- 
 Cheers,
 Stephen Rothwell
