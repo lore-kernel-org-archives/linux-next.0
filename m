@@ -1,79 +1,78 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Date: Mon, 20 Feb 2017 12:22:27 +1100
-Message-ID: <20170220122227.54f04c2a@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [next-20170217] WARN @/arch/powerpc/include/asm/xics.h:124 .icp_hv_eoi+0x40/0x140
+Date: Mon, 20 Feb 2017 13:35:42 +1100
+Message-ID: <87zihhh9mp.fsf@concordia.ellerman.id.au>
+References: <E96217CD-2ADD-430D-86BD-27FF87752D7F@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50579 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55869 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751534AbdBTBWc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 19 Feb 2017 20:22:32 -0500
+        id S1751789AbdBTCfp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 19 Feb 2017 21:35:45 -0500
+In-Reply-To: <E96217CD-2ADD-430D-86BD-27FF87752D7F@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>
+To: Sachin Sant <sachinp@linux.vnet.ibm.com>, linux-next@vger.kernel.org
+Cc: linuxppc-dev@ozlabs.org
 
-Hi all,
+Sachin Sant <sachinp@linux.vnet.ibm.com> writes:
 
-Today's linux-next merge of the tip tree got a conflict in:
+> While booting next-20170217 on a POWER6 box, I ran into following
+> warning. This is a full system lpar. Previous next tree was good.
+> I will try a bisect tomorrow.
 
-  kernel/extable.c
+Do you have CONFIG_DEBUG_SHIRQ=y ?
 
-between commit:
+cheers
 
-  74451e66d516 ("bpf: make jited programs visible in traces")
-
-from the net-next tree and commit:
-
-  5b485629ba0d ("kprobes, extable: Identify kprobes trampolines as kernel text area")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/extable.c
-index bd82117ad424,e1359474baa5..000000000000
---- a/kernel/extable.c
-+++ b/kernel/extable.c
-@@@ -20,7 -20,7 +20,8 @@@
-  #include <linux/module.h>
-  #include <linux/mutex.h>
-  #include <linux/init.h>
- +#include <linux/filter.h>
-+ #include <linux/kprobes.h>
-  
-  #include <asm/sections.h>
-  #include <linux/uaccess.h>
-@@@ -105,8 -105,8 +106,10 @@@ int __kernel_text_address(unsigned lon
-  		return 1;
-  	if (is_ftrace_trampoline(addr))
-  		return 1;
- +	if (is_bpf_text_address(addr))
- +		return 1;
-+ 	if (is_kprobe_optinsn_slot(addr) || is_kprobe_insn_slot(addr))
-+ 		return 1;
-  	/*
-  	 * There might be init symbols in saved stacktraces.
-  	 * Give those symbols a chance to be printed in
-@@@ -128,8 -128,8 +131,10 @@@ int kernel_text_address(unsigned long a
-  		return 1;
-  	if (is_ftrace_trampoline(addr))
-  		return 1;
- +	if (is_bpf_text_address(addr))
- +		return 1;
-+ 	if (is_kprobe_optinsn_slot(addr) || is_kprobe_insn_slot(addr))
-+ 		return 1;
-  	return 0;
-  }
-  
+> ipr: IBM Power RAID SCSI Device Driver version: 2.6.3 (October 17, 2015)
+> ipr 0200:00:01.0: Found IOA with IRQ: 305
+> ------------[ cut here ]------------
+> WARNING: CPU: 12 PID: 1 at ./arch/powerpc/include/asm/xics.h:124 .icp_hv_eoi+0x40/0x140
+> Modules linked in:
+> CPU: 12 PID: 1 Comm: swapper/14 Not tainted 4.10.0-rc8-next-20170217-autotest #1
+> task: c0000002b2a4a580 task.stack: c0000002b2a5c000
+> NIP: c0000000000731b0 LR: c0000000001389f8 CTR: c000000000073170
+> REGS: c0000002b2a5f050 TRAP: 0700   Not tainted  (4.10.0-rc8-next-20170217-autotest)
+> MSR: 8000000000029032 <SF,EE,ME,IR,DR,RI>
+>   CR: 28004082  XER: 20000004
+> CFAR: c0000000001389e0 SOFTE: 0 
+> GPR00: c0000000001389f8 c0000002b2a5f2d0 c000000001025800 c0000002b203f498 
+> GPR04: 0000000000000000 0000000000000000 0000000000000064 0000000000000131 
+> GPR08: 0000000000000001 c0000000d3104cb8 ffffffffffffffff 000000000009b1f8 
+> GPR12: 0000000048004082 c00000000edc2400 c00000000000dad0 0000000000000000 
+> GPR16: 0000000000000000 00003c007efc0000 c000000000a9e848 0000000000000000 
+> GPR20: d000080080080000 c0000002af4d47f0 c0000000011efda8 c000000000a9ea10 
+> GPR24: c000000000a9e848 0000000000000000 c0000002af4d4fb8 0000000000000000 
+> GPR28: 0000000000000000 c0000002b203f498 c000000000ef8928 c0000002b203f400 
+> NIP [c0000000000731b0] .icp_hv_eoi+0x40/0x140
+> LR [c0000000001389f8] .handle_fasteoi_irq+0x1e8/0x270
+> Call Trace:
+> [c0000002b2a5f2d0] [c0000002b2a5f360] 0xc0000002b2a5f360 (unreliable)
+> [c0000002b2a5f360] [c0000000001389f8] .handle_fasteoi_irq+0x1e8/0x270
+> [c0000002b2a5f3e0] [c000000000136a08] .request_threaded_irq+0x298/0x370
+> [c0000002b2a5f490] [c0000000005895c0] .ipr_probe_ioa+0x1110/0x1390
+> [c0000002b2a5f5c0] [c00000000058d030] .ipr_probe+0x30/0x3e0
+> [c0000002b2a5f670] [c000000000466860] .local_pci_probe+0x60/0x130
+> [c0000002b2a5f710] [c000000000467658] .pci_device_probe+0x148/0x1e0
+> [c0000002b2a5f7c0] [c000000000527524] .driver_probe_device+0x2d4/0x5b0
+> [c0000002b2a5f860] [c00000000052796c] .__driver_attach+0x16c/0x190
+> [c0000002b2a5f8f0] [c0000000005242c4] .bus_for_each_dev+0x84/0xf0
+> [c0000002b2a5f990] [c000000000526af4] .driver_attach+0x24/0x40
+> [c0000002b2a5fa00] [c000000000526318] .bus_add_driver+0x2a8/0x370
+> [c0000002b2a5faa0] [c000000000528a5c] .driver_register+0x8c/0x170
+> [c0000002b2a5fb20] [c000000000465a54] .__pci_register_driver+0x44/0x60
+> [c0000002b2a5fb90] [c000000000b8efc8] .ipr_init+0x58/0x70
+> [c0000002b2a5fc10] [c00000000000d20c] .do_one_initcall+0x5c/0x1c0
+> [c0000002b2a5fce0] [c000000000b44738] .kernel_init_freeable+0x280/0x360
+> [c0000002b2a5fdb0] [c00000000000daec] .kernel_init+0x1c/0x130
+> [c0000002b2a5fe30] [c00000000000baa0] .ret_from_kernel_thread+0x58/0xb8
+> Instruction dump:
+> f8010010 f821ff71 80e3000c 7c0004ac e94d0030 3d02ffbc 3928f4b8 7d295214 
+> 81090004 3948ffff 7d484378 79080fe2 <0b080000> 2fa80000 40de0050 91490004 
+> ---[ end trace 5e18ae409f46392c ]---
+> ipr 0200:00:01.0: Initializing IOA.
+>
+> Thanks
+> -Sachin
