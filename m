@@ -1,24 +1,28 @@
 From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the kspp tree with the net-next tree
-Date: Mon, 20 Feb 2017 10:01:03 +0100
-Message-ID: <58AAB04F.6010400@iogearbox.net>
-References: <20170220105642.616b119b@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
+Date: Mon, 20 Feb 2017 10:02:36 +0100
+Message-ID: <58AAB0AC.9080601@iogearbox.net>
+References: <20170220122227.54f04c2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170220105642.616b119b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from www62.your-server.de ([213.133.104.62]:36792 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750920AbdBTJtO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2017 04:49:14 -0500
+In-Reply-To: <20170220122227.54f04c2a@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>
 
-On 02/20/2017 12:56 AM, Stephen Rothwell wrote:
-> Hi Kees,
+On 02/20/2017 02:22 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> Today's linux-next merge of the kspp tree got a conflict in:
+> Today's linux-next merge of the tip tree got a conflict in:
 >
->    include/linux/filter.h
+>    kernel/extable.c
 >
 > between commit:
 >
@@ -26,9 +30,9 @@ On 02/20/2017 12:56 AM, Stephen Rothwell wrote:
 >
 > from the net-next tree and commit:
 >
->    0f5bf6d0afe4 ("arch: Rename CONFIG_DEBUG_RODATA and CONFIG_DEBUG_MODULE_RONX")
+>    5b485629ba0d ("kprobes, extable: Identify kprobes trampolines as kernel text area")
 >
-> from the kspp tree.
+> from the tip tree.
 >
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -37,4 +41,4 @@ On 02/20/2017 12:56 AM, Stephen Rothwell wrote:
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 
-Looks good thanks!
+Looks good to me, thanks!
