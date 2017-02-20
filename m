@@ -1,25 +1,25 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with the net-next tree
-Date: Mon, 20 Feb 2017 10:56:42 +1100
-Message-ID: <20170220105642.616b119b@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Mon, 20 Feb 2017 12:22:27 +1100
+Message-ID: <20170220122227.54f04c2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44443 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50579 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751042AbdBSX4p (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 19 Feb 2017 18:56:45 -0500
+        id S1751534AbdBTBWc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 19 Feb 2017 20:22:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Masami Hiramatsu <mhiramat@kernel.org>
 
-Hi Kees,
+Hi all,
 
-Today's linux-next merge of the kspp tree got a conflict in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  include/linux/filter.h
+  kernel/extable.c
 
 between commit:
 
@@ -27,9 +27,9 @@ between commit:
 
 from the net-next tree and commit:
 
-  0f5bf6d0afe4 ("arch: Rename CONFIG_DEBUG_RODATA and CONFIG_DEBUG_MODULE_RONX")
+  5b485629ba0d ("kprobes, extable: Identify kprobes trampolines as kernel text area")
 
-from the kspp tree.
+from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,30 +42,38 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/filter.h
-index 0c1cc9143cb2,c6dd53e88711..000000000000
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@@ -574,21 -561,8 +574,21 @@@ static inline void bpf_prog_lock_ro(str
-  static inline void bpf_prog_unlock_ro(struct bpf_prog *fp)
-  {
-  }
- +
- +static inline void bpf_jit_binary_unlock_ro(struct bpf_binary_header *hdr)
- +{
- +}
-- #endif /* CONFIG_DEBUG_SET_MODULE_RONX */
-+ #endif /* CONFIG_STRICT_MODULE_RWX */
+diff --cc kernel/extable.c
+index bd82117ad424,e1359474baa5..000000000000
+--- a/kernel/extable.c
++++ b/kernel/extable.c
+@@@ -20,7 -20,7 +20,8 @@@
+  #include <linux/module.h>
+  #include <linux/mutex.h>
+  #include <linux/init.h>
+ +#include <linux/filter.h>
++ #include <linux/kprobes.h>
   
- +static inline struct bpf_binary_header *
- +bpf_jit_binary_hdr(const struct bpf_prog *fp)
- +{
- +	unsigned long real_start = (unsigned long)fp->bpf_func;
- +	unsigned long addr = real_start & PAGE_MASK;
- +
- +	return (void *)addr;
- +}
- +
-  int sk_filter_trim_cap(struct sock *sk, struct sk_buff *skb, unsigned int cap);
-  static inline int sk_filter(struct sock *sk, struct sk_buff *skb)
-  {
+  #include <asm/sections.h>
+  #include <linux/uaccess.h>
+@@@ -105,8 -105,8 +106,10 @@@ int __kernel_text_address(unsigned lon
+  		return 1;
+  	if (is_ftrace_trampoline(addr))
+  		return 1;
+ +	if (is_bpf_text_address(addr))
+ +		return 1;
++ 	if (is_kprobe_optinsn_slot(addr) || is_kprobe_insn_slot(addr))
++ 		return 1;
+  	/*
+  	 * There might be init symbols in saved stacktraces.
+  	 * Give those symbols a chance to be printed in
+@@@ -128,8 -128,8 +131,10 @@@ int kernel_text_address(unsigned long a
+  		return 1;
+  	if (is_ftrace_trampoline(addr))
+  		return 1;
+ +	if (is_bpf_text_address(addr))
+ +		return 1;
++ 	if (is_kprobe_optinsn_slot(addr) || is_kprobe_insn_slot(addr))
++ 		return 1;
+  	return 0;
+  }
+  
