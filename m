@@ -1,80 +1,104 @@
-From: Stafford Horne <shorne@gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the openrisc tree
-Date: Mon, 20 Feb 2017 23:53:46 +0900
-Message-ID: <20170220145346.GE2379@lianli.shorne-pla.net>
-References: <20170217124321.7b4b394d@canb.auug.org.au>
- <20170219072654.GB2379@lianli.shorne-pla.net>
- <20170220111805.GP6500@twins.programming.kicks-ass.net>
- <20170220112844.GN6536@twins.programming.kicks-ass.net>
+From: Jason Baron <jbaron@akamai.com>
+Subject: Re: next-20170217 boot on POWER8 LPAR : WARNING
+ @kernel/jump_label.c:287
+Date: Mon, 20 Feb 2017 09:57:34 -0500
+Message-ID: <1dffdaac-be8b-0052-52d4-a65fed39f894@akamai.com>
+References: <E6A8A7A8-6A55-4989-BAE9-39274876CA3C@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170220112844.GN6536@twins.programming.kicks-ass.net>
+In-Reply-To: <E6A8A7A8-6A55-4989-BAE9-39274876CA3C@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Frederic Weisbecker <fweisbec@gmail.com>, Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>
+To: Sachin Sant <sachinp@linux.vnet.ibm.com>, linux-next@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>, Steven Rostedt <rostedt@goodmis.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 20, 2017 at 12:28:44PM +0100, Peter Zijlstra wrote:
-> On Mon, Feb 20, 2017 at 12:18:05PM +0100, Peter Zijlstra wrote:
-> > On Sun, Feb 19, 2017 at 04:26:54PM +0900, Stafford Horne wrote:
-> > > On Fri, Feb 17, 2017 at 12:43:21PM +1100, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Today's linux-next merge of the tip tree got a conflict in:
-> > > > 
-> > > >   arch/openrisc/include/asm/Kbuild
-> > > > 
-> > > > between commit:
-> > > > 
-> > > >   157e82f58007 ("openrisc: add cmpxchg and xchg implementations")
-> > 
-> > *groan* branch delay slots...
-> > 
-> > 
-> > It it typically recommended to implement 1 and 2 byte versions as well.
-> > If the architecture doesn't support these natively, you can easily
-> > implement them with the 4 byte ll/sc and simply retain the other bits.
+Hi,
+
+On 02/19/2017 09:07 AM, Sachin Sant wrote:
+> While booting next-20170217 on a POWER8 LPAR following
+> warning is displayed.
 > 
-> While there; I spotted commit 8ffa662370f0 ("openrisc: add optimized
-> atomic operations") which doesn't make any kind of sense to me.
+> Reverting the following commit helps boot cleanly.
+> commit 3821fd35b5 :  jump_label: Reduce the size of struct static_key
 > 
-> Have you actually read the asm-generic/atomic.h file you're including?
->
+> [   11.393008] ------------[ cut here ]------------
+> [   11.393031] WARNING: CPU: 5 PID: 2890 at kernel/jump_label.c:287 static_key_set_entries.isra.10+0x3c/0x50
 
-Hi Peter,
-
- For 8ffa662370f0 ("openrisc: add optimized atomic operations")
-
-As discussed on IRC, you are referring to the fact that this patch only
-implements a few of the atomic operations.  I initially thought there
-was a reason for that (when doing the first review of Stefan's patch and
-discussing with him).  However, the issue is that this patch is against
-the code before the atomic.h rewrite (3 years back).
-
-This needs to be fixed by implementing all of the methods.
+Thanks for the report. So this is saying that the jump_entry table is
+not at least 4-byte aligned. I wonder if this fixes it up?
 
 
- For 157e82f58007 ("openrisc: add cmpxchg and xchg implementations")
+diff --git a/arch/powerpc/include/asm/jump_label.h
+b/arch/powerpc/include/asm/jump_label.h
+index 9a287e0ac8b1..f870a85bac46 100644
+--- a/arch/powerpc/include/asm/jump_label.h
++++ b/arch/powerpc/include/asm/jump_label.h
+@@ -24,6 +24,7 @@ static __always_inline bool arch_static_branch(struct
+static_key *key, bool bran
+ 	asm_volatile_goto("1:\n\t"
+ 		 "nop # arch_static_branch\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
++		 ".balign 4 \n\t"
+ 		 JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
+ 		 ".popsection \n\t"
+ 		 : :  "i" (&((char *)key)[branch]) : : l_yes);
+@@ -38,6 +39,7 @@ static __always_inline bool
+arch_static_branch_jump(struct static_key *key, bool
+ 	asm_volatile_goto("1:\n\t"
+ 		 "b %l[l_yes] # arch_static_branch_jump\n\t"
+ 		 ".pushsection __jump_table,  \"aw\"\n\t"
++		 ".balign 4 \n\t"
+ 		 JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
+ 		 ".popsection \n\t"
+ 		 : :  "i" (&((char *)key)[branch]) : : l_yes);
+@@ -63,6 +65,7 @@ struct jump_entry {
+ #define ARCH_STATIC_BRANCH(LABEL, KEY)		\
+ 1098:	nop;					\
+ 	.pushsection __jump_table, "aw";	\
++	.balign 4;				\
+ 	FTR_ENTRY_LONG 1098b, LABEL, KEY;	\
+ 	.popsection
+ #endif
 
-Also as discussed 1 and 2 byte ops are not currently used, however they
-will become required when using qspinlock.  Some example code exists
-which could be borrowed for handling to bitmasking and alignment
-complications. i.e.
 
-  arch/sh/include/asm/cmpxchg-xchg.h
+Thanks,
 
-These will be added.  Possibly it would also be good to try and move
-this generic 1 and 2 byte implementation code into include/asm?
+-Jason
 
-
-I am not sure if I will have time to get these done before the merge
-window.  Ill see if I can get the time to work on them, if not I will
-pull the "atomic operations" patch as its really just preparation for
-the SMP work.
-
-Also, going forward I will Cc you on any atomic or barrier related
-patches.
-
--Stafford
+> [   11.393035] Modules linked in: nfsd(+) ip_tables x_tables autofs4
+> [   11.393043] CPU: 5 PID: 2890 Comm: modprobe Not tainted 4.10.0-rc8-next-20170217-autotest #1
+> [   11.393047] task: c0000003a5692500 task.stack: c0000003a7774000
+> [   11.393051] NIP: c0000000017bcffc LR: c0000000017bd46c CTR: 0000000000000000
+> [   11.393054] REGS: c0000003a7777800 TRAP: 0700   Not tainted  (4.10.0-rc8-next-20170217-autotest)
+> [   11.393058] MSR: 800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>
+> [   11.393065]   CR: 48248282  XER: 00000001
+> [   11.393070] CFAR: c0000000017bcfcc SOFTE: 1
+> GPR00: c0000000017bd42c c0000003a7777a80 c00000000262ce00 d000000003fdd580
+> GPR04: d000000003fe07df 0000000100000017 c0000000017bcd50 0000000000000000
+> GPR08: 0000000000053a09 0000000000000001 c00000000254ce00 0000000000000001
+> GPR12: c000000001b56c40 c00000000ea81400 0000000000000020 d000000005081098
+> GPR16: c0000003a7777da0 c0000003a7777dec 0000000000000000 00000000000084a8
+> GPR20: d000000003fef000 d000000003fe2b28 c00000000252dc90 0000000000000001
+> GPR24: c00000000254d314 0000000000000000 c0000000025338f8 d000000003fe089f
+> GPR28: 0000000000000000 d000000003fe1400 d000000003fdd578 d000000003fe07df
+> [   11.393115] NIP [c0000000017bcffc] static_key_set_entries.isra.10+0x3c/0x50
+> [   11.393119] LR [c0000000017bd46c] jump_label_module_notify+0x20c/0x420
+> [   11.393122] Call Trace:
+> [   11.393125] [c0000003a7777a80] [c0000000017bd42c] jump_label_module_notify+0x1cc/0x420 (unreliable)
+> [   11.393132] [c0000003a7777b40] [c0000000016b38e0] notifier_call_chain+0x90/0x100
+> [   11.393137] [c0000003a7777b90] [c0000000016b3db0] __blocking_notifier_call_chain+0x60/0x90
+> [   11.393142] [c0000003a7777be0] [c0000000017357bc] load_module+0x1c1c/0x2750
+> [   11.393147] [c0000003a7777d70] [c000000001736550] SyS_finit_module+0xc0/0xf0
+> [   11.393152] [c0000003a7777e30] [c0000000015cb8e0] system_call+0x38/0xfc
+> [   11.393156] Instruction dump:
+> [   11.393158] 40c20018 e9230000 792907a0 7c844b78 f8830000 4e800020 3d42fff2 892a0514
+> [   11.393166] 2f890000 40feffe0 39200001 992a0514 <0fe00000> 4bffffd0 60000000 60000000
+> [   11.393173] ---[ end trace a5f8fbc5d8226aec ]---
+> 
+> Have attached boot log.
+> 
+> Thanks
+> -Sachin
+> 
