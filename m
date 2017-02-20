@@ -1,97 +1,119 @@
-From: Sachin Sant <sachinp@linux.vnet.ibm.com>
-Subject: Re: [next-20170217] WARN @/arch/powerpc/include/asm/xics.h:124
- .icp_hv_eoi+0x40/0x140
-Date: Mon, 20 Feb 2017 10:34:12 +0530
-Message-ID: <15420F42-D2C6-4E29-8874-C47F4D61B098@linux.vnet.ibm.com>
-References: <E96217CD-2ADD-430D-86BD-27FF87752D7F@linux.vnet.ibm.com>
- <87zihhh9mp.fsf@concordia.ellerman.id.au>
-Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170220 build: 2 failures 9 warnings (next-20170220)
+Date: Mon, 20 Feb 2017 08:19:12 +0000
+Message-ID: <E1cfjBg-0003Zo-9z@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52461 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750842AbdBTFHY (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 20 Feb 2017 00:07:24 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v1K53j2m008207
-        for <linux-next@vger.kernel.org>; Mon, 20 Feb 2017 00:07:02 -0500
-Received: from e23smtp02.au.ibm.com (e23smtp02.au.ibm.com [202.81.31.144])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 28pnxpx4hb-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Mon, 20 Feb 2017 00:07:02 -0500
-Received: from localhost
-        by e23smtp02.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <sachinp@linux.vnet.ibm.com>;
-        Mon, 20 Feb 2017 15:06:59 +1000
-In-Reply-To: <87zihhh9mp.fsf@concordia.ellerman.id.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54876 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751043AbdBTITU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Feb 2017 03:19:20 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, tglx@linutronix.de
-Cc: linux-next@vger.kernel.org, linuxppc-dev@ozlabs.org, LKML <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20170220
+Git describe: next-20170220
+Commit: b349d1bbdc Add linux-next specific files for 20170220
+
+Build Time: 99 min 42 sec
+
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 5
+Warnings: 9
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
+../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+
+	arm-allmodconfig
+../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
+../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
+../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
+../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      9 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 5
+	  2 ../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+	  2 ../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
+	  1 ../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
+	  1 ../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
+	  1 ../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
+
+Warnings Summary: 9
+	  2 ../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
->> While booting next-20170217 on a POWER6 box, I ran into following
->> warning. This is a full system lpar. Previous next tree was good.
->> I will try a bisect tomorrow.
-> 
-> Do you have CONFIG_DEBUG_SHIRQ=y ?
-> 
 
-Yes. CONFIG_DEBUG_SHIRQ is enabled.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-As suggested by you reverting following commit allows a clean boot.
-f91f694540f3 ("genirq: Reenable shared irq debugging in request_*_irq()”)
 
->> ipr: IBM Power RAID SCSI Device Driver version: 2.6.3 (October 17, 2015)
->> ipr 0200:00:01.0: Found IOA with IRQ: 305
->> ------------[ cut here ]------------
->> WARNING: CPU: 12 PID: 1 at ./arch/powerpc/include/asm/xics.h:124 .icp_hv_eoi+0x40/0x140
->> Modules linked in:
->> CPU: 12 PID: 1 Comm: swapper/14 Not tainted 4.10.0-rc8-next-20170217-autotest #1
->> task: c0000002b2a4a580 task.stack: c0000002b2a5c000
->> NIP: c0000000000731b0 LR: c0000000001389f8 CTR: c000000000073170
->> REGS: c0000002b2a5f050 TRAP: 0700   Not tainted  (4.10.0-rc8-next-20170217-autotest)
->> MSR: 8000000000029032 <SF,EE,ME,IR,DR,RI>
->>  CR: 28004082  XER: 20000004
->> CFAR: c0000000001389e0 SOFTE: 0 
->> GPR00: c0000000001389f8 c0000002b2a5f2d0 c000000001025800 c0000002b203f498 
->> GPR04: 0000000000000000 0000000000000000 0000000000000064 0000000000000131 
->> GPR08: 0000000000000001 c0000000d3104cb8 ffffffffffffffff 000000000009b1f8 
->> GPR12: 0000000048004082 c00000000edc2400 c00000000000dad0 0000000000000000 
->> GPR16: 0000000000000000 00003c007efc0000 c000000000a9e848 0000000000000000 
->> GPR20: d000080080080000 c0000002af4d47f0 c0000000011efda8 c000000000a9ea10 
->> GPR24: c000000000a9e848 0000000000000000 c0000002af4d4fb8 0000000000000000 
->> GPR28: 0000000000000000 c0000002b203f498 c000000000ef8928 c0000002b203f400 
->> NIP [c0000000000731b0] .icp_hv_eoi+0x40/0x140
->> LR [c0000000001389f8] .handle_fasteoi_irq+0x1e8/0x270
->> Call Trace:
->> [c0000002b2a5f2d0] [c0000002b2a5f360] 0xc0000002b2a5f360 (unreliable)
->> [c0000002b2a5f360] [c0000000001389f8] .handle_fasteoi_irq+0x1e8/0x270
->> [c0000002b2a5f3e0] [c000000000136a08] .request_threaded_irq+0x298/0x370
->> [c0000002b2a5f490] [c0000000005895c0] .ipr_probe_ioa+0x1110/0x1390
->> [c0000002b2a5f5c0] [c00000000058d030] .ipr_probe+0x30/0x3e0
->> [c0000002b2a5f670] [c000000000466860] .local_pci_probe+0x60/0x130
->> [c0000002b2a5f710] [c000000000467658] .pci_device_probe+0x148/0x1e0
->> [c0000002b2a5f7c0] [c000000000527524] .driver_probe_device+0x2d4/0x5b0
->> [c0000002b2a5f860] [c00000000052796c] .__driver_attach+0x16c/0x190
->> [c0000002b2a5f8f0] [c0000000005242c4] .bus_for_each_dev+0x84/0xf0
->> [c0000002b2a5f990] [c000000000526af4] .driver_attach+0x24/0x40
->> [c0000002b2a5fa00] [c000000000526318] .bus_add_driver+0x2a8/0x370
->> [c0000002b2a5faa0] [c000000000528a5c] .driver_register+0x8c/0x170
->> [c0000002b2a5fb20] [c000000000465a54] .__pci_register_driver+0x44/0x60
->> [c0000002b2a5fb90] [c000000000b8efc8] .ipr_init+0x58/0x70
->> [c0000002b2a5fc10] [c00000000000d20c] .do_one_initcall+0x5c/0x1c0
->> [c0000002b2a5fce0] [c000000000b44738] .kernel_init_freeable+0x280/0x360
->> [c0000002b2a5fdb0] [c00000000000daec] .kernel_init+0x1c/0x130
->> [c0000002b2a5fe30] [c00000000000baa0] .ret_from_kernel_thread+0x58/0xb8
->> Instruction dump:
->> f8010010 f821ff71 80e3000c 7c0004ac e94d0030 3d02ffbc 3928f4b8 7d295214 
->> 81090004 3948ffff 7d484378 79080fe2 <0b080000> 2fa80000 40de0050 91490004 
->> ---[ end trace 5e18ae409f46392c ]---
->> ipr 0200:00:01.0: Initializing IOA.
->> 
->> Thanks
->> -Sachin
-> 
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 2 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
+	../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 5 errors, 9 warnings, 0 section mismatches
+
+Errors:
+	../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
+	../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+	../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
+	../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
+	../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
+
+Warnings:
+	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
