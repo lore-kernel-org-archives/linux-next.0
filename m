@@ -1,119 +1,66 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170221 build: 2 failures 9 warnings (next-20170221)
-Date: Tue, 21 Feb 2017 09:14:04 +0000
-Message-ID: <E1cg6WK-0000gP-QT@optimist>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] serial: st-asc: Use new GPIOD API to obtain RTS pin
+Date: Tue, 21 Feb 2017 11:26:21 +0100
+Message-ID: <CACRpkdbehwfPghwpnG1sEhFngbRQ5WUS12UEDybsBvoAt7fnpA@mail.gmail.com>
+References: <20170208161113.1b597c01@canb.auug.org.au> <20170208092425.azqkx3nwf4jhsfz5@dell>
+ <20170208130039.GA28327@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60006 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750954AbdBUJOO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2017 04:14:14 -0500
+Received: from mail-it0-f41.google.com ([209.85.214.41]:38023 "EHLO
+        mail-it0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751352AbdBUK0X (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2017 05:26:23 -0500
+Received: by mail-it0-f41.google.com with SMTP id y135so44741369itc.1
+        for <linux-next@vger.kernel.org>; Tue, 21 Feb 2017 02:26:22 -0800 (PST)
+In-Reply-To: <20170208130039.GA28327@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexander Stein <alexander.stein@systec-electronic.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Tree/Branch: next-20170221
-Git describe: next-20170221
-Commit: 3d4ffb93f7 Add linux-next specific files for 20170221
+On Wed, Feb 8, 2017 at 2:00 PM, Greg KH <greg@kroah.com> wrote:
 
-Build Time: 100 min 17 sec
+>> -                     gpiod = devm_get_gpiod_from_child(port->dev, "rts",
+>> -                                                       &np->fwnode);
+>> -                     if (!IS_ERR(gpiod)) {
+>> -                             gpiod_direction_output(gpiod, 0);
+>> +                     gpiod = devm_fwnode_get_gpiod_from_child(port->dev,
+>> +                                                              "rts",
+>> +                                                              &np->fwnode,
+>> +                                                              GPIOD_OUT_LOW,
+>> +                                                              np->name);
+>
+> I can't apply this :(
+>
+> Usually, when you move apis around, you add it, then convert it, wait a
+> kernel release, then remove the old one.  That allows for issues like
+> this when new code is added in one maintainer's branch but not yours.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Sorry about this, I guess I got a bit stressed too recently so I was not
+able to solve this in the ultimate way.
 
-Errors: 5
-Warnings: 9
-Section Mismatches: 0
+We converted over all existing users of the APIs but I guess I optimistically
+assumed no new users would be added in this
+kernel cycle, but of course they did.... this new driver was using it, Stephen
+fixed that up in next and now a patch to that driver arrived on top, ouch.
 
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
+> So how about reverting your "drop the function" patch and then wait for
+> -rc2 to really remove it?
 
-Errors:
+I never did a thing like this before, hm sorry for the inexperience. :(
 
-	arm64-allmodconfig
-../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
-../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
+I did make an immutable branch like Andy suggested but didn't advertise
+it well enough. But as stated that approach sucks anyways.
 
-	arm-allmodconfig
-../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
-../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
-../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
-../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
-../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
+Typically I saw this suggestion right after sending the pull request to
+Torvalds (yeah I should have seen it first, my inbox is chaotic too, mea
+culpa).
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      9 warnings    0 mismatches  : arm-allmodconfig
+I'll follow up on it asking him not to pull that and look for a resolution like
+you suggest instead. Since it is three patches that then have users on
+top I guess it is best to add back the old prototype helper for this driver
+exclusively then fix it for -rc2.
 
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  2 ../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
-	  2 ../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
-	  1 ../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
-	  1 ../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
-	  1 ../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
-
-Warnings Summary: 9
-	  2 ../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
-	  2 ../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
-	../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
-	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 5 errors, 9 warnings, 0 section mismatches
-
-Errors:
-	../kernel/sched/core.c:198:25: error: 'paravirt_steal_rq_enabled' undeclared (first use in this function)
-	../kernel/sched/core.c:199:11: error: implicit declaration of function 'paravirt_steal_clock' [-Werror=implicit-function-declaration]
-	../drivers/pci/dwc/pci-exynos.c:132:25: error: 'struct exynos_pcie' has no member named 'pp'
-	../drivers/pci/dwc/pci-exynos.c:162:25: error: 'struct exynos_pcie' has no member named 'pp'
-	../drivers/pci/dwc/pci-exynos.c:185:25: error: 'struct exynos_pcie' has no member named 'pp'
-
-Warnings:
-	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
-	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
-	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Yours,
+Linus Walleij
