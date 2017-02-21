@@ -1,158 +1,97 @@
-From: Jason Baron <jbaron@akamai.com>
-Subject: Re: next-20170217 boot on POWER8 LPAR : WARNING
- @kernel/jump_label.c:287
-Date: Tue, 21 Feb 2017 11:37:21 -0500
-Message-ID: <20c53e88-acf5-4c4f-cea9-4dd8745814b5@akamai.com>
-References: <E6A8A7A8-6A55-4989-BAE9-39274876CA3C@linux.vnet.ibm.com>
- <1dffdaac-be8b-0052-52d4-a65fed39f894@akamai.com>
- <02B52EFB-4608-47F3-A81C-B8B52DB11233@linux.vnet.ibm.com>
+From: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Subject: Re: +
+ mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix.patch added
+ to -mm tree
+Date: Tue, 21 Feb 2017 19:12:06 +0200
+Message-ID: <20170221171206.GA4397@box1>
+References: <58a4bc95.wUw3v0FZUCnAXeFL%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from prod-mail-xrelay07.akamai.com ([23.79.238.175]:65282 "EHLO
-        prod-mail-xrelay07.akamai.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752362AbdBUQhd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 21 Feb 2017 11:37:33 -0500
-In-Reply-To: <02B52EFB-4608-47F3-A81C-B8B52DB11233@linux.vnet.ibm.com>
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:33109 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753514AbdBURMR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 21 Feb 2017 12:12:17 -0500
+Content-Disposition: inline
+In-Reply-To: <58a4bc95.wUw3v0FZUCnAXeFL%akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Sachin Sant <sachinp@linux.vnet.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>
+To: akpm@linux-foundation.org
+Cc: dave.jiang@intel.com, mm-commits@vger.kernel.org, linux-next@vger.kernel.org
 
-On 02/20/2017 10:05 PM, Sachin Sant wrote:
->
->> On 20-Feb-2017, at 8:27 PM, Jason Baron <jbaron@akamai.com
->> <mailto:jbaron@akamai.com>> wrote:
->>
->> Hi,
->>
->> On 02/19/2017 09:07 AM, Sachin Sant wrote:
->>> While booting next-20170217 on a POWER8 LPAR following
->>> warning is displayed.
->>>
->>> Reverting the following commit helps boot cleanly.
->>> commit 3821fd35b5 :  jump_label: Reduce the size of struct static_key
->>>
->>> [   11.393008] ------------[ cut here ]------------
->>> [   11.393031] WARNING: CPU: 5 PID: 2890 at kernel/jump_label.c:287
->>> static_key_set_entries.isra.10+0x3c/0x50
->>
->> Thanks for the report. So this is saying that the jump_entry table is
->> not at least 4-byte aligned. I wonder if this fixes it up?
->>
->
-> Yes. With this patch the warning is gone.
->
+On Wed, Feb 15, 2017 at 12:39:49PM -0800, akpm@linux-foundation.org wrote:
+> 
+> The patch titled
+>      Subject: mm,x86: fix SMP x86 32bit build for native_pud_clear()
+> has been added to the -mm tree.  Its filename is
+>      mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix.patch
+> 
+> This patch should soon appear at
+>     http://ozlabs.org/~akpm/mmots/broken-out/mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix.patch
+> and later at
+>     http://ozlabs.org/~akpm/mmotm/broken-out/mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix.patch
+> 
+> Before you just go and hit "reply", please:
+>    a) Consider who else should be cc'ed
+>    b) Prefer to cc a suitable mailing list as well
+>    c) Ideally: find the original patch on the mailing list and do a
+>       reply-to-all to that, adding suitable additional cc's
+> 
+> *** Remember to use Documentation/SubmitChecklist when testing your code ***
+> 
+> The -mm tree is included into linux-next and is updated
+> there every 3-4 working days
+> 
+> ------------------------------------------------------
+> From: Dave Jiang <dave.jiang@intel.com>
+> Subject: mm,x86: fix SMP x86 32bit build for native_pud_clear()
+> 
+> The fix introduced by e4decc90 to fix the UP case for 32bit x86, however
+> that broke the SMP case that was working previously. Add ifdef so the dummy
+> function only show up for 32bit UP case only.
+> 
+> Fix: e4decc90 mm,x86: native_pud_clear missing on i386 build
+> 
+> Link: http://lkml.kernel.org/r/148719066814.31111.3239231168815337012.stgit@djiang5-desk3.ch.intel.com
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Reported-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  arch/x86/include/asm/pgtable-3level.h |    2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff -puN arch/x86/include/asm/pgtable-3level.h~mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix arch/x86/include/asm/pgtable-3level.h
+> --- a/arch/x86/include/asm/pgtable-3level.h~mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix
+> +++ a/arch/x86/include/asm/pgtable-3level.h
+> @@ -121,9 +121,11 @@ static inline void native_pmd_clear(pmd_
+>  	*(tmp + 1) = 0;
+>  }
+>  
+> +#ifndef CONFIG_SMP
+>  static inline void native_pud_clear(pud_t *pudp)
+>  {
+>  }
+> +#endif
+>  
+>  static inline void pud_clear(pud_t *pudp)
+>  {
+> _
+> 
+> Patches currently in -mm which might be from dave.jiang@intel.com are
+> 
+> mm-dax-make-pmd_fault-and-friends-to-be-the-same-as-fault.patch
+> mm-dax-make-pmd_fault-and-friends-to-be-the-same-as-fault-v7.patch
+> mm-dax-move-pmd_fault-to-take-only-vmf-parameter.patch
+> mm-fs-reduce-fault-page_mkwrite-and-pfn_mkwrite-to-take-only-vmf.patch
+> mmfsdax-change-pmd_fault-to-huge_fault.patch
+> mmfsdax-change-pmd_fault-to-huge_fault-fix.patch
+> mm-x86-add-support-for-pud-sized-transparent-hugepages-fix.patch
+> mm-x86-add-support-for-pud-sized-transparent-hugepages-fix-fix.patch
+> dax-support-for-transparent-pud-pages-for-device-dax.patch
+> mm-replace-fault_flag_size-with-parameter-to-huge_fault.patch
+> 
 
-Hi,
+Just a quick note to let you know that the patch included in next-20170221 did fix the problem I reported.
 
-Thanks for testing. We probably need something like the following to 
-make sure we don't hit this on other arches. Steve - I will send 4 
-separate patches for this to get arch maintainers' acks for this?
-
-Thanks,
-
--Jason
-
-diff --git a/arch/arm/include/asm/jump_label.h 
-b/arch/arm/include/asm/jump_label.h
-index 34f7b6980d21..9720c2f1850b 100644
---- a/arch/arm/include/asm/jump_label.h
-+++ b/arch/arm/include/asm/jump_label.h
-@@ -13,6 +13,7 @@ static __always_inline bool arch_static_branch(struct 
-static_key *key, bool bran
-         asm_volatile_goto("1:\n\t"
-                  WASM(nop) "\n\t"
-                  ".pushsection __jump_table,  \"aw\"\n\t"
-+                ".balign 4 \n\t"
-                  ".word 1b, %l[l_yes], %c0\n\t"
-                  ".popsection\n\t"
-                  : :  "i" (&((char *)key)[branch]) :  : l_yes);
-@@ -27,6 +28,7 @@ static __always_inline bool 
-arch_static_branch_jump(struct static_key *key, bool
-         asm_volatile_goto("1:\n\t"
-                  WASM(b) " %l[l_yes]\n\t"
-                  ".pushsection __jump_table,  \"aw\"\n\t"
-+                ".balign 4 \n\t"
-                  ".word 1b, %l[l_yes], %c0\n\t"
-                  ".popsection\n\t"
-                  : :  "i" (&((char *)key)[branch]) :  : l_yes);
-diff --git a/arch/mips/include/asm/jump_label.h 
-b/arch/mips/include/asm/jump_label.h
-index e77672539e8e..51ce97dda3cc 100644
---- a/arch/mips/include/asm/jump_label.h
-+++ b/arch/mips/include/asm/jump_label.h
-@@ -31,6 +31,7 @@ static __always_inline bool arch_static_branch(struct 
-static_key *key, bool bran
-         asm_volatile_goto("1:\t" NOP_INSN "\n\t"
-                 "nop\n\t"
-                 ".pushsection __jump_table,  \"aw\"\n\t"
-+               ".balign 4 \n\t"
-                 WORD_INSN " 1b, %l[l_yes], %0\n\t"
-                 ".popsection\n\t"
-                 : :  "i" (&((char *)key)[branch]) : : l_yes);
-@@ -45,6 +46,7 @@ static __always_inline bool 
-arch_static_branch_jump(struct static_key *key, bool
-         asm_volatile_goto("1:\tj %l[l_yes]\n\t"
-                 "nop\n\t"
-                 ".pushsection __jump_table,  \"aw\"\n\t"
-+               ".balign 4 \n\t"
-                 WORD_INSN " 1b, %l[l_yes], %0\n\t"
-                 ".popsection\n\t"
-                 : :  "i" (&((char *)key)[branch]) : : l_yes);
-diff --git a/arch/powerpc/include/asm/jump_label.h 
-b/arch/powerpc/include/asm/jump_label.h
-index 9a287e0ac8b1..f870a85bac46 100644
---- a/arch/powerpc/include/asm/jump_label.h
-+++ b/arch/powerpc/include/asm/jump_label.h
-@@ -24,6 +24,7 @@ static __always_inline bool arch_static_branch(struct 
-static_key *key, bool bran
-         asm_volatile_goto("1:\n\t"
-                  "nop # arch_static_branch\n\t"
-                  ".pushsection __jump_table,  \"aw\"\n\t"
-+                ".balign 4 \n\t"
-                  JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
-                  ".popsection \n\t"
-                  : :  "i" (&((char *)key)[branch]) : : l_yes);
-@@ -38,6 +39,7 @@ static __always_inline bool 
-arch_static_branch_jump(struct static_key *key, bool
-         asm_volatile_goto("1:\n\t"
-                  "b %l[l_yes] # arch_static_branch_jump\n\t"
-                  ".pushsection __jump_table,  \"aw\"\n\t"
-+                ".balign 4 \n\t"
-                  JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
-                  ".popsection \n\t"
-                  : :  "i" (&((char *)key)[branch]) : : l_yes);
-@@ -63,6 +65,7 @@ struct jump_entry {
-  #define ARCH_STATIC_BRANCH(LABEL, KEY)         \
-  1098:  nop;                                    \
-         .pushsection __jump_table, "aw";        \
-+       .balign 4;                              \
-         FTR_ENTRY_LONG 1098b, LABEL, KEY;       \
-         .popsection
-  #endif
-diff --git a/arch/tile/include/asm/jump_label.h 
-b/arch/tile/include/asm/jump_label.h
-index cde7573f397b..c9f6125c41ef 100644
---- a/arch/tile/include/asm/jump_label.h
-+++ b/arch/tile/include/asm/jump_label.h
-@@ -25,6 +25,7 @@ static __always_inline bool arch_static_branch(struct 
-static_key *key,
-         asm_volatile_goto("1:\n\t"
-                 "nop" "\n\t"
-                 ".pushsection __jump_table,  \"aw\"\n\t"
-+               ".balign 4 \n\t"
-                 ".quad 1b, %l[l_yes], %0 + %1 \n\t"
-                 ".popsection\n\t"
-                 : :  "i" (key), "i" (branch) : : l_yes);
-@@ -39,6 +40,7 @@ static __always_inline bool 
-arch_static_branch_jump(struct static_key *key,
-         asm_volatile_goto("1:\n\t"
-                 "j %l[l_yes]" "\n\t"
-                 ".pushsection __jump_table,  \"aw\"\n\t"
-+               ".balign 4 \n\t"
-                 ".quad 1b, %l[l_yes], %0 + %1 \n\t"
-                 ".popsection\n\t"
-                 : :  "i" (key), "i" (branch) : : l_yes);
+Thanks once again.
