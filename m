@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the s390 tree
-Date: Wed, 22 Feb 2017 10:15:16 +1100
-Message-ID: <20170222101516.2f516e2d@canb.auug.org.au>
+Subject: linux-next: manual merge of the kspp tree with the net-next tree
+Date: Wed, 22 Feb 2017 10:51:32 +1100
+Message-ID: <20170222105132.4abc18e8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38791 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51007 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751754AbdBUXPY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 21 Feb 2017 18:15:24 -0500
+        id S1752000AbdBUXvf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 21 Feb 2017 18:51:35 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>
+To: Kees Cook <keescook@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, Laura Abbott <labbott@redhat.com>
 
-Hi all,
+Hi Kees,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the kspp tree got a conflict in:
 
-  arch/s390/net/bpf_jit_comp.c
+  arch/arm/Kconfig
 
 between commit:
 
-  9437964885f8 ("s390/bpf: remove redundant check for non-null image")
+  d2852a224050 ("arch: add ARCH_HAS_SET_MEMORY config")
 
-from the s390 tree and commit:
+from the net-next tree and commit:
 
-  9d876e79df6a ("bpf: fix unlocking of jited image when module ronx not set")
+  ad21fc4faa2a ("arch: Move CONFIG_DEBUG_RODATA and CONFIG_SET_MODULE_RONX to be common")
 
-from the net-next tree.
+from the kspp tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,27 +42,20 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/s390/net/bpf_jit_comp.c
-index b3b0af86b84e,b49c52a02087..000000000000
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@@ -1331,11 -1323,14 +1323,11 @@@ struct bpf_prog *bpf_int_jit_compile(st
-  	}
-  	if (bpf_jit_enable > 1) {
-  		bpf_jit_dump(fp->len, jit.size, pass, jit.prg_buf);
- -		if (jit.prg_buf)
- -			print_fn_code(jit.prg_buf, jit.size_prg);
- -	}
- -	if (jit.prg_buf) {
- -		bpf_jit_binary_lock_ro(header);
- -		fp->bpf_func = (void *) jit.prg_buf;
- -		fp->jited = 1;
- +		print_fn_code(jit.prg_buf, jit.size_prg);
-  	}
-- 	set_memory_ro((unsigned long)header, header->pages);
-++	bpf_jit_binary_lock_ro(header);
- +	fp->bpf_func = (void *) jit.prg_buf;
- +	fp->jited = 1;
-  free_addrs:
-  	kfree(jit.addrs);
-  out:
+diff --cc arch/arm/Kconfig
+index 08d6a701c4fd,8748353ed5e0..000000000000
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -2,10 -2,10 +2,12 @@@ config AR
+  	bool
+  	default y
+  	select ARCH_CLOCKSOURCE_DATA
+ +	select ARCH_HAS_DEBUG_VIRTUAL
+  	select ARCH_HAS_DEVMEM_IS_ALLOWED
+  	select ARCH_HAS_ELF_RANDOMIZE
+ +	select ARCH_HAS_SET_MEMORY
++ 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
++ 	select ARCH_HAS_STRICT_MODULE_RWX if MMU
+  	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+  	select ARCH_HAVE_CUSTOM_GPIO_H
+  	select ARCH_HAS_GCOV_PROFILE_ALL
