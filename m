@@ -1,95 +1,40 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: next-20170217 boot on POWER8 LPAR : WARNING @kernel/jump_label.c:287
-Date: Wed, 22 Feb 2017 16:38:12 +1100
-Message-ID: <877f4in5tn.fsf@concordia.ellerman.id.au>
-References: <E6A8A7A8-6A55-4989-BAE9-39274876CA3C@linux.vnet.ibm.com> <1dffdaac-be8b-0052-52d4-a65fed39f894@akamai.com> <02B52EFB-4608-47F3-A81C-B8B52DB11233@linux.vnet.ibm.com> <20c53e88-acf5-4c4f-cea9-4dd8745814b5@akamai.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the s390 tree
+Date: Wed, 22 Feb 2017 07:33:51 +0100
+Message-ID: <58AD30CF.6040507@iogearbox.net>
+References: <20170222101516.2f516e2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60559 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750863AbdBVFiU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 22 Feb 2017 00:38:20 -0500
-In-Reply-To: <20c53e88-acf5-4c4f-cea9-4dd8745814b5@akamai.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jason Baron <jbaron@akamai.com>, Sachin Sant <sachinp@linux.vnet.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@ozlabs.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170222101516.2f516e2d@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Jason Baron <jbaron@akamai.com> writes:
-
-> On 02/20/2017 10:05 PM, Sachin Sant wrote:
->>
->>> On 20-Feb-2017, at 8:27 PM, Jason Baron <jbaron@akamai.com
->>> <mailto:jbaron@akamai.com>> wrote:
->>>
->>> Hi,
->>>
->>> On 02/19/2017 09:07 AM, Sachin Sant wrote:
->>>> While booting next-20170217 on a POWER8 LPAR following
->>>> warning is displayed.
->>>>
->>>> Reverting the following commit helps boot cleanly.
->>>> commit 3821fd35b5 :  jump_label: Reduce the size of struct static_key
->>>>
->>>> [   11.393008] ------------[ cut here ]------------
->>>> [   11.393031] WARNING: CPU: 5 PID: 2890 at kernel/jump_label.c:287
->>>> static_key_set_entries.isra.10+0x3c/0x50
->>>
->>> Thanks for the report. So this is saying that the jump_entry table is
->>> not at least 4-byte aligned. I wonder if this fixes it up?
->>>
->>
->> Yes. With this patch the warning is gone.
+On 02/22/2017 12:15 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> Hi,
+> Today's linux-next merge of the net-next tree got a conflict in:
 >
-> Thanks for testing. We probably need something like the following to 
-> make sure we don't hit this on other arches. Steve - I will send 4 
-> separate patches for this to get arch maintainers' acks for this?
+>    arch/s390/net/bpf_jit_comp.c
+>
+> between commit:
+>
+>    9437964885f8 ("s390/bpf: remove redundant check for non-null image")
+>
+> from the s390 tree and commit:
+>
+>    9d876e79df6a ("bpf: fix unlocking of jited image when module ronx not set")
+>
+> from the net-next tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-What's the 4 byte alignment requirement from?
-
-On 64-bit our JUMP_ENTRY_TYPE is 8 bytes, should we be aligning to 8
-bytes?
-
-> diff --git a/arch/powerpc/include/asm/jump_label.h 
-> b/arch/powerpc/include/asm/jump_label.h
-> index 9a287e0ac8b1..f870a85bac46 100644
-> --- a/arch/powerpc/include/asm/jump_label.h
-> +++ b/arch/powerpc/include/asm/jump_label.h
-> @@ -24,6 +24,7 @@ static __always_inline bool arch_static_branch(struct 
-> static_key *key, bool bran
->          asm_volatile_goto("1:\n\t"
->                   "nop # arch_static_branch\n\t"
->                   ".pushsection __jump_table,  \"aw\"\n\t"
-> +                ".balign 4 \n\t"
-
-Can you line those up vertically?
-
-(That may just be an email artifact)
-
->                   JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
->                   ".popsection \n\t"
->                   : :  "i" (&((char *)key)[branch]) : : l_yes);
-> @@ -38,6 +39,7 @@ static __always_inline bool 
-> arch_static_branch_jump(struct static_key *key, bool
->          asm_volatile_goto("1:\n\t"
->                   "b %l[l_yes] # arch_static_branch_jump\n\t"
->                   ".pushsection __jump_table,  \"aw\"\n\t"
-> +                ".balign 4 \n\t"
->                   JUMP_ENTRY_TYPE "1b, %l[l_yes], %c0\n\t"
->                   ".popsection \n\t"
->                   : :  "i" (&((char *)key)[branch]) : : l_yes);
-> @@ -63,6 +65,7 @@ struct jump_entry {
->   #define ARCH_STATIC_BRANCH(LABEL, KEY)         \
->   1098:  nop;                                    \
->          .pushsection __jump_table, "aw";        \
-> +       .balign 4;                              \
->          FTR_ENTRY_LONG 1098b, LABEL, KEY;       \
->          .popsection
->   #endif
-
-Otherwise that looks fine assuming 4 bytes is the correct alignment.
-
-cheers
+Looks good, thanks!
