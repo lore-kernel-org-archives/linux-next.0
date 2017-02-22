@@ -1,38 +1,38 @@
-From: James Smart <jsmart2021@gmail.com>
-Subject: [PATCH] lpfc: add missing Kconfig NVME dependencies
-Date: Wed, 22 Feb 2017 08:20:47 -0800
-Message-ID: <58adba5f.BoP49Cv2S5zD9ZuD%jsmart2021@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: Please add extable branch to linux-next
+Date: Wed, 22 Feb 2017 13:19:36 -0500
+Message-ID: <20170222181936.GE8577@windriver.com>
+References: <20170124214207.GW29778@windriver.com>
+ <20170125095006.141e71c8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-Sender: linux-scsi-owner@vger.kernel.org
-To: hare@suse.com, martin.petersen@oracle.com, dick.kennedy@broadcom.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-nvme@lists.infradead.org, sagi@grimberg.me, linux-scsi@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail5.windriver.com ([192.103.53.11]:37108 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932716AbdBVSUN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 22 Feb 2017 13:20:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20170125095006.141e71c8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org
 
+[Re: Please add extable branch to linux-next] On 25/01/2017 (Wed 09:50) Stephen Rothwell wrote:
 
-add missing Kconfig NVME dependencies
+> Hi Paul,
+> 
+> On Tue, 24 Jan 2017 16:42:08 -0500 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> >
+> > Would you please add the "extable" branch to linux-next for a once around
+> > addition from this repo?
+> > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git
+> 
+> Added from today.  If I forget to remove it once it is merged, please
+> just remind me, thanks.
 
-Can't believe I missed posting this
+This has now been merged and can be removed.
 
--- james
-
-Signed-off-by: James Smart <james.smart@broadcom.com>
----
- drivers/scsi/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index d4023bf..2558434 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -1240,6 +1240,7 @@ config SCSI_LPFC
- 	tristate "Emulex LightPulse Fibre Channel Support"
- 	depends on PCI && SCSI
- 	depends on SCSI_FC_ATTRS
-+	depends on NVME_FC && NVME_TARGET_FC
- 	select CRC_T10DIF
- 	help
-           This lpfc driver supports the Emulex LightPulse
--- 
-2.5.0
+Thanks,
+Paul.
