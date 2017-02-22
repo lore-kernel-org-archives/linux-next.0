@@ -1,32 +1,88 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Wed, 22 Feb 2017 16:17:07 -0500
-Message-ID: <yq1poiax6wc.fsf@oracle.com>
-References: <20170222134119.42f26068@canb.auug.org.au>
-        <20170223080639.753ac411@canb.auug.org.au>
-        <yq1wpcix77a.fsf@oracle.com>
-        <1487797987.2376.31.camel@HansenPartnership.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Thu, 23 Feb 2017 10:34:02 +1100
+Message-ID: <20170223103402.4b0510d3@canb.auug.org.au>
+References: <20170110105927.29edcec0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:51937 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932760AbdBVVRZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Feb 2017 16:17:25 -0500
-In-Reply-To: <1487797987.2376.31.camel@HansenPartnership.com> (James
-        Bottomley's message of "Wed, 22 Feb 2017 16:13:07 -0500")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, Hannes Reinecke <hare@suse.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20170110105927.29edcec0@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Ursula Braun <ubraun@linux.vnet.ibm.com>, Utz Bacher <utz.bacher@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
->>>>> "James" == James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+Hi all,
 
-James> Perhaps it would be nice to rebase so we don't get bisect into a
-James> build failure.
+On Tue, 10 Jan 2017 10:59:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the net-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> net/smc/af_smc.c: In function 'smc_splice_read':
+> net/smc/af_smc.c:1258:39: error: passing argument 1 of 'smc->clcsock->ops->splice_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>    rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
+>                                        ^
+> net/smc/af_smc.c:1258:39: note: expected 'struct file *' but argument is of type 'struct socket *'
+> net/smc/af_smc.c: At top level:
+> net/smc/af_smc.c:1288:17: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .splice_read = smc_splice_read,   
+>                  ^
+> net/smc/af_smc.c:1288:17: note: (near initialization for 'smc_sock_ops.splice_read')
+> 
+> Caused by commit
+> 
+>   ac7138746e14 ("smc: establish new socket family")
+> 
+> interacting with commit
+> 
+>   15a8f657c71d ("switch socket ->splice_read() to struct file *")
+> 
+> from the vfs tree.
+> 
+> I applied the following merge fix patch which could well be incorrect ...
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 10 Jan 2017 10:52:38 +1100
+> Subject: [PATCH] smc: merge fix for "switch socket ->splice_read() to struct file *"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/smc/af_smc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 5d4208ad029e..4875e65f0c4a 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -1242,10 +1242,11 @@ static ssize_t smc_sendpage(struct socket *sock, struct page *page,
+>  	return rc;
+>  }
+>  
+> -static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
+> +static ssize_t smc_splice_read(struct file *file, loff_t *ppos,
+>  			       struct pipe_inode_info *pipe, size_t len,
+>  				    unsigned int flags)
+>  {
+> +	struct socket *sock = file->private_data;
+>  	struct sock *sk = sock->sk;
+>  	struct smc_sock *smc;
+>  	int rc = -ENOTCONN;
+> @@ -1255,7 +1256,7 @@ static ssize_t smc_splice_read(struct socket *sock, loff_t *ppos,
+>  	if ((sk->sk_state != SMC_ACTIVE) && (sk->sk_state != SMC_CLOSED))
+>  		goto out;
+>  	if (smc->use_fallback) {
+> -		rc = smc->clcsock->ops->splice_read(smc->clcsock, ppos,
+> +		rc = smc->clcsock->ops->splice_read(file, ppos,
+>  						    pipe, len, flags);
+>  	} else {
+>  		rc = -EOPNOTSUPP;
+> -- 
+> 2.10.2
 
-My plan was to start 4.11/scsi-fixes based on linus/master. I need block
-and net to satisfy dependencies for the remaining patches in the queue.
+This fix up is now needed when the vfs tree is merged with Linus' tree.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Cheers,
+Stephen Rothwell
