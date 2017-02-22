@@ -1,45 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add extable branch to linux-next
-Date: Thu, 23 Feb 2017 07:53:56 +1100
-Message-ID: <20170223075356.08c6a596@canb.auug.org.au>
-References: <20170124214207.GW29778@windriver.com>
-        <20170125095006.141e71c8@canb.auug.org.au>
-        <20170222181936.GE8577@windriver.com>
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+Date: Thu, 23 Feb 2017 08:06:39 +1100
+Message-ID: <20170223080639.753ac411@canb.auug.org.au>
+References: <20170222134119.42f26068@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59029 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49913 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934477AbdBVUyJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 22 Feb 2017 15:54:09 -0500
-In-Reply-To: <20170222181936.GE8577@windriver.com>
+        id S1755055AbdBVVJG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 22 Feb 2017 16:09:06 -0500
+In-Reply-To: <20170222134119.42f26068@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-next@vger.kernel.org
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, Hannes Reinecke <hare@suse.com>
 
-Hi Paul,
+Hi James,
 
-On Wed, 22 Feb 2017 13:19:36 -0500 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+On Wed, 22 Feb 2017 13:41:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> [Re: Please add extable branch to linux-next] On 25/01/2017 (Wed 09:50) Stephen Rothwell wrote:
+> After merging the scsi-mkp tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
 > 
-> > Hi Paul,
-> > 
-> > On Tue, 24 Jan 2017 16:42:08 -0500 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:  
-> > >
-> > > Would you please add the "extable" branch to linux-next for a once around
-> > > addition from this repo?
-> > > 
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/paulg/linux.git  
-> > 
-> > Added from today.  If I forget to remove it once it is merged, please
-> > just remind me, thanks.  
+> ERROR: ".nvme_fc_unregister_remoteport" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvme_fc_unregister_localport" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvmet_fc_rcv_ls_req" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvmet_fc_rcv_fcp_req" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvme_fc_register_localport" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvme_fc_register_remoteport" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvmet_fc_register_targetport" [drivers/scsi/lpfc/lpfc.ko] undefined!
+> ERROR: ".nvmet_fc_unregister_targetport" [drivers/scsi/lpfc/lpfc.ko] undefined!
 > 
-> This has now been merged and can be removed.
+> Caused by commit
+> 
+>   462896e1808c ("scsi: lpfc: NVME Initiator: bind to nvme_fc api")
+> 
+> # CONFIG_NVME_FC is not set
+> 
+> Presumably a missing dependency.
+> 
+> I have used the scsi-mkp from next-20170221 for today.
 
-Thanks for that.  I have removed it.
+Unfortunately, you have just merged this build failure into the scsi
+tree :-(
+
+James Smart has posted a fix:
+
+  "[PATCH v2] lpfc: add missing Kconfig NVME dependencies"
 
 -- 
 Cheers,
