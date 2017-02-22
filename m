@@ -1,90 +1,82 @@
-From: Wanpeng Li <kernellwp@gmail.com>
-Subject: Re: [tip:sched/core] sched/core: Add debugging code to catch missing
- update_rq_clock() calls
-Date: Wed, 22 Feb 2017 17:03:05 +0800
-Message-ID: <CANRm+CzSpr0psdn-ZoMV+S-Bq9s+JRADnnzT81ofwzNnkTqFVQ@mail.gmail.com>
-References: <20160921133813.31976-8-matt@codeblueprint.co.uk>
- <tip-cb42c9a3ebbbb23448c3f9a25417fae6309b1a92@git.kernel.org>
- <87tw8gutp6.fsf@concordia.ellerman.id.au> <20170130213435.GM31613@codeblueprint.co.uk>
- <33118425-8548-475A-8DED-9A2424C0BCCC@linux.vnet.ibm.com> <1485863317.4498.2.camel@gmx.de>
- <CAOxpaSW_GnndoxLBPtyTrqPJ9XOWvgXOQNDf8D+6OohWeObn5Q@mail.gmail.com> <20170202155506.GX6515@twins.programming.kicks-ass.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170222 build: 0 failures 9 warnings (next-20170222)
+Date: Wed, 22 Feb 2017 11:00:56 +0000
+Message-ID: <E1cgUfI-0003a0-Kz@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:35882 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751347AbdBVJDI (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Feb 2017 04:03:08 -0500
-In-Reply-To: <20170202155506.GX6515@twins.programming.kicks-ass.net>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37902 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754381AbdBVLBF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Feb 2017 06:01:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ross Zwisler <zwisler@gmail.com>, Mike Galbraith <efault@gmx.de>, Sachin Sant <sachinp@linux.vnet.ibm.com>, Matt Fleming <matt@codeblueprint.co.uk>, Michael Ellerman <mpe@ellerman.id.au>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-2017-02-02 23:55 GMT+08:00 Peter Zijlstra <peterz@infradead.org>:
-> On Tue, Jan 31, 2017 at 10:22:47AM -0700, Ross Zwisler wrote:
->> On Tue, Jan 31, 2017 at 4:48 AM, Mike Galbraith <efault@gmx.de> wrote:
->> > On Tue, 2017-01-31 at 16:30 +0530, Sachin Sant wrote:
->
->
-> Could some of you test this? It seems to cure things in my (very)
-> limited testing.
->
+Tree/Branch: next-20170222
+Git describe: next-20170222
+Commit: 9fb8cda4e9 Add linux-next specific files for 20170222
 
-Tested-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Build Time: 160 min 12 sec
 
-> ---
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 96e4ccc..b773821 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -5609,7 +5609,7 @@ static void migrate_tasks(struct rq *dead_rq)
->  {
->         struct rq *rq = dead_rq;
->         struct task_struct *next, *stop = rq->stop;
-> -       struct rq_flags rf, old_rf;
-> +       struct rq_flags rf;
->         int dest_cpu;
->
->         /*
-> @@ -5628,7 +5628,9 @@ static void migrate_tasks(struct rq *dead_rq)
->          * class method both need to have an up-to-date
->          * value of rq->clock[_task]
->          */
-> +       rq_pin_lock(rq, &rf);
->         update_rq_clock(rq);
-> +       rq_unpin_lock(rq, &rf);
->
->         for (;;) {
->                 /*
-> @@ -5641,7 +5643,7 @@ static void migrate_tasks(struct rq *dead_rq)
->                 /*
->                  * pick_next_task assumes pinned rq->lock.
->                  */
-> -               rq_pin_lock(rq, &rf);
-> +               rq_repin_lock(rq, &rf);
->                 next = pick_next_task(rq, &fake_task, &rf);
->                 BUG_ON(!next);
->                 next->sched_class->put_prev_task(rq, next);
-> @@ -5670,13 +5672,6 @@ static void migrate_tasks(struct rq *dead_rq)
->                         continue;
->                 }
->
-> -               /*
-> -                * __migrate_task() may return with a different
-> -                * rq->lock held and a new cookie in 'rf', but we need
-> -                * to preserve rf::clock_update_flags for 'dead_rq'.
-> -                */
-> -               old_rf = rf;
-> -
->                 /* Find suitable destination for @next, with force if needed. */
->                 dest_cpu = select_fallback_rq(dead_rq->cpu, next);
->
-> @@ -5685,7 +5680,6 @@ static void migrate_tasks(struct rq *dead_rq)
->                         raw_spin_unlock(&rq->lock);
->                         rq = dead_rq;
->                         raw_spin_lock(&rq->lock);
-> -                       rf = old_rf;
->                 }
->                 raw_spin_unlock(&next->pi_lock);
->         }
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 9
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      9 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 9
+	  2 ../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
