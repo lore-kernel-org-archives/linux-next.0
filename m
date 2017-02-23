@@ -1,55 +1,82 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Thu, 23 Feb 2017 09:19:57 -0500
-Message-ID: <yq1ino16lbm.fsf@oracle.com>
-References: <20170223141240.0c15a9aa@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170223 build: 0 failures 9 warnings (next-20170223)
+Date: Thu, 23 Feb 2017 14:56:00 +0000
+Message-ID: <E1cguoK-00010E-FH@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:33880 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750944AbdBWOU0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2017 09:20:26 -0500
-In-Reply-To: <20170223141240.0c15a9aa@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 23 Feb 2017 14:12:40 +1100")
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45022 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751034AbdBWO4L (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Feb 2017 09:56:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nilesh Javali <nilesh.javali@cavium.com>, Manish Rangankar <manish.rangankar@cavium.com>, Saurav Kashyap <saurav.kashyap@cavium.com>, Arun Easi <arun.easi@cavium.com>, Chad Dupuis <chad.dupuis@cavium.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
->>>>> "Stephen" == Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Tree/Branch: next-20170223
+Git describe: next-20170223
+Commit: 27fde840c0 Add linux-next specific files for 20170223
 
-Stephen,
+Build Time: 112 min 36 sec
 
-Stephen> Caused by commit
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Stephen>   61d8658b4a43 ("scsi: qedf: Add QLogic FastLinQ offload FCoE
-Stephen>   driver framework")
+Errors: 0
+Warnings: 9
+Section Mismatches: 0
 
-Stephen> being rebased on top of commit
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      9 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
 
-Stephen>   10383aea2f44 ("kref: Implement 'struct kref' using
-Stephen>   refcount_t")
+-------------------------------------------------------------------------------
 
-Stephen> and not using kref_read() to access the refcounts.
+Warnings Summary: 9
+	  2 ../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	  2 ../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
-*sigh*
-
-Chad: Please fix these up ASAP.
 
 
-Stephen> I don't understand why you would rebase you work onto Linus'
-Stephen> tree in the middle of the merge window in any case. :-(
+===============================================================================
+Detailed per-defconfig build reports below:
 
-I didn't rebase my existing patch queue. I started a new for-next based
-on linus/master. Half of this new QLogic driver lives under net so I had
-to wait for Linus to pull DaveM's tree before I could merge the SCSI
-portion :(
 
-We often have to do two-stage merge windows with SCSI because of
-dependencies on changes in both block and net (the latter increasingly
-so because of the popularity of converged adapters that do both networks
-and storage).
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Warnings:
+	../drivers/iio/adc/rcar-gyroadc.c:429:27: warning: 'num_channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:426:22: warning: 'sample_width' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:428:23: warning: 'channels' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/iio/adc/rcar-gyroadc.c:398:26: warning: 'adcmode' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+	../include/linux/device.h:1473:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/device.h:1478:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/sti/sti_vtg.c:392:22: warning: unused variable 'np' [-Wunused-variable]
+	../drivers/gpu/drm/sti/sti_drv.c:120:13: warning: 'sti_drm_dbg_cleanup' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
