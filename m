@@ -1,32 +1,49 @@
-From: James Smart <jsmart2021@gmail.com>
-Subject: Re: [PATCH] lpfc: add missing Kconfig NVME dependencies
-Date: Thu, 23 Feb 2017 07:51:35 -0800
-Message-ID: <523a2eb4-7d02-9ec8-8e81-9d1112cdc98e@gmail.com>
-References: <58adba5f.BoP49Cv2S5zD9ZuD%jsmart2021@gmail.com>
- <20170223100938.GA20495@infradead.org>
-Reply-To: jsmart2021@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Fri, 24 Feb 2017 10:25:35 +1100
+Message-ID: <20170224102535.6bd7a69a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <20170223100938.GA20495@infradead.org>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Christoph Hellwig <hch@infradead.org>
-Cc: hare@suse.com, martin.petersen@oracle.com, dick.kennedy@broadcom.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-nvme@lists.infradead.org, sagi@grimberg.me, linux-scsi@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Noralf =?UTF-8?B?VHLDuG5uZXM=?= <noralf@tronnes.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2/23/2017 2:09 AM, Christoph Hellwig wrote:
-> On Wed, Feb 22, 2017 at 08:20:47AM -0800, James Smart wrote:
->> add missing Kconfig NVME dependencies
->>
->> Can't believe I missed posting this
-> Oh.  I'm not sure everyone is happy having to drag in the whole
-> nvme and nvme target stack when building lpfc.  Is there a way
-> to make nvme optional?  And in the future scsi as well?
+Hi Dave,
 
-yes - I'll work on doing that.  Scsi is a little further off as the fc 
-transport has to be dealt with - moved out from under scsi and put above 
-scsi and nvme in the device tree.  The transport is where the hooks for 
-adapter mgmt are right now.
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
--- james
+drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:198:26: error: redefinition of 'tinydrm_of_find_backlight'
+ struct backlight_device *tinydrm_of_find_backlight(struct device *dev)
+                          ^
+In file included from drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:11:0:
+include/drm/tinydrm/tinydrm-helpers.h:53:1: note: previous definition of 'tinydrm_of_find_backlight' was here
+ tinydrm_of_find_backlight(struct device *dev)
+ ^
+drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:230:5: error: redefinition of 'tinydrm_enable_backlight'
+ int tinydrm_enable_backlight(struct backlight_device *backlight)
+     ^
+In file included from drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:11:0:
+include/drm/tinydrm/tinydrm-helpers.h:58:19: note: previous definition of 'tinydrm_enable_backlight' was here
+ static inline int tinydrm_enable_backlight(struct backlight_device *backlight)
+                   ^
+drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:258:5: error: redefinition of 'tinydrm_disable_backlight'
+ int tinydrm_disable_backlight(struct backlight_device *backlight)
+     ^
+In file included from drivers/gpu/drm/tinydrm/core/tinydrm-helpers.c:11:0:
+include/drm/tinydrm/tinydrm-helpers.h:64:1: note: previous definition of 'tinydrm_disable_backlight' was here
+ tinydrm_disable_backlight(struct backlight_device *backlight)
+ ^
+
+Caused by commit
+
+  9f69eb5c36a6 ("drm/tinydrm: Add helper functions")
+
+I have used the drm tree from next-20170223 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
