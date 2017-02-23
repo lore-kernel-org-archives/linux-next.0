@@ -1,415 +1,469 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Tree for Feb 23
-Date: Thu, 23 Feb 2017 16:00:51 +1100
-Message-ID: <20170223160051.385df698@canb.auug.org.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: mmotm git tree since-4.10 branch created (was: mmotm
+ 2017-02-22-16-28 uploaded)
+Date: Thu, 23 Feb 2017 10:56:26 +0100
+Message-ID: <20170223095625.d7sfk22jfra2e7kv@dhcp22.suse.cz>
+References: <58ae2cf1.5/S/liO1BdKf+3qG%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-next@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <58ae2cf1.5/S/liO1BdKf+3qG%akpm@linux-foundation.org>
+Sender: owner-linux-mm@kvack.org
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+I have just created since-4.10 branch in mm git tree
+(http://git.kernel.org/?p=linux/kernel/git/mhocko/mm.git;a=summary). It
+is based on v4.10 tag in Linus tree and mmotm-2017-02-22-16-28.
+I have pulled also Tejun's cgroup for-4.11 branch because he has
+reorganized the cgroup directory structure and this might cause
+pointless conflicts.
 
-Please do not add any material intended for v4.12 to your linux-next
-included branches until after v4.11-rc1 has been released.
+As usual mmotm trees are tagged with signed tag
+(finger print BB43 1E25 7FB8 660F F2F1 D22D 48E2 09A2 B310 E347)
 
-Changes since 20170222:
+The shortlog says:
+Adygzhy Ondar (1):
+      mm/bootmem.c: cosmetic improvement of code readability
 
-Removed tree: extable (all finished with)
+Andrea Arcangeli (19):
+      userfaultfd: document _IOR/_IOW
+      userfaultfd: correct comment about UFFD_FEATURE_PAGEFAULT_FLAG_WP
+      userfaultfd: convert BUG() to WARN_ON_ONCE()
+      userfaultfd: use vma_is_anonymous
+      userfaultfd: non-cooperative: report all available features to userland
+      userfaultfd: non-cooperative: optimize mremap_userfaultfd_complete()
+      userfaultfd: non-cooperative: avoid MADV_DONTNEED race condition
+      userfaultfd: non-cooperative: wake userfaults after UFFDIO_UNREGISTER
+      userfaultfd: hugetlbfs: gup: support VM_FAULT_RETRY
+      userfaultfd: hugetlbfs: UFFD_FEATURE_MISSING_HUGETLBFS
+      userfaultfd: shmem: add tlbflush.h header for microblaze
+      userfaultfd: shmem: lock the page before adding it to pagecache
+      userfaultfd: shmem: avoid a lockup resulting from corrupted page->flags
+      userfaultfd: shmem: avoid leaking blocks and used blocks in UFFDIO_COPY
+      userfaultfd: hugetlbfs: UFFD_FEATURE_MISSING_SHMEM
+      userfaultfd: selftest: test UFFDIO_ZEROPAGE on all memory types
+      mm: mprotect: use pmd_trans_unstable instead of taking the pmd_lock
+      userfaultfd-mcopy_atomic-return-enoent-when-no-compatible-vma-found-fix-2
+      userfaultfd-mcopy_atomic-return-enoent-when-no-compatible-vma-found-fix-2-fix-fix
 
-The md tree gained a conflict against Linus' tree.
+Andrew Morton (6):
+      mm-ksm-improve-deduplication-of-zero-pages-with-colouring-fix
+      mm/memory_hotplug.c: unexport __remove_pages()
+      z3fold-add-kref-refcounting-checkpatch-fixes
+      mm-convert-remove_migration_pte-to-use-page_vma_mapped_walk-checkpatch-fixes
+      userfaultfd-mcopy_atomic-return-enoent-when-no-compatible-vma-found-fix-2-fix
+      mm-autonuma-dont-use-set_pte_at-when-updating-protnone-ptes-fix
 
-The scsi tree inherited the build failure from the scsi-mkp tree, so I
-used the version from next-20170222.
+Aneesh Kumar K.V (8):
+      mm/autonuma: don't use set_pte_at when updating protnone ptes
+      mm/autonuma: let architecture override how the write bit should be stashed in a protnone pte.
+      mm-autonuma-let-architecture-override-how-the-write-bit-should-be-stashed-in-a-protnone-pte-v3
+      mm/ksm: Handle protnone saved writes when making page write protect
+      powerpc/mm/autonuma: switch ppc64 to its own implementation of saved write
+      powerpc-mm-autonuma-switch-ppc64-to-its-own-implementeation-of-saved-write-v3
+      mm/gup: check for protnone only if it is a PTE entry
+      mm/thp/autonuma: use TNF flag instead of vm fault
 
-The scsi-mkp tree lost its build failure but gained another, so I used
-the version from next-20170221.
+Arnd Bergmann (2):
+      fixup! mm, fs: reduce fault, page_mkwrite, and pfn_mkwrite to take only vmf
+      userfaultfd-non-cooperative-add-event-for-memory-unmaps-fix-2
 
-Non-merge commits (relative to Linus' tree): 4518
- 4498 files changed, 201762 insertions(+), 89036 deletions(-)
+Borislav Petkov (1):
+      mm/slub: add a dump_stack() to the unexpected GFP check
 
-----------------------------------------------------------------------------
+Claudio Imbrenda (2):
+      mm/ksm: improve deduplication of zero pages with colouring
+      mm/ksm: documentation for coloured zero pages deduplication
 
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
+Cong Wang (1):
+      9p: fix a potential acl leak
 
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There are also quilt-import.log and merge.log
-files in the Next directory.  Between each merge, the tree was built
-with a ppc64_defconfig for powerpc and an allmodconfig (with
-CONFIG_BUILD_DOCSRC=n) for x86_64, a multi_v7_defconfig for arm and a
-native build of tools/perf. After the final fixups (if any), I do an
-x86_64 modules_install followed by builds for x86_64 allnoconfig,
-powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
-and pseries_le_defconfig and i386, sparc and sparc64 defconfig.
+Dan Streetman (3):
+      zswap: allow initialization at boot without pool
+      zswap: clear compressor or zpool param if invalid at init
+      zswap: don't param_set_charp while holding spinlock
 
-Below is a summary of the state of the merge.
+Dan Williams (4):
+      mm, devm_memremap_pages: hold device_hotplug lock over mem_hotplug_{begin, done}
+      mm, devm_memremap_pages: hold device_hotplug lock over mem_hotplug_{begin, done}
+      mm: validate device_hotplug is held for memory hotplug
+      mm: fix get_user_pages() vs device-dax pud mappings
 
-I am currently merging 253 trees (counting Linus' and 37 trees of bug
-fix patches pending for the current merge release).
+Daniel Thompson (1):
+      tools/vm: add missing Makefile rules
 
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
+Dave Jiang (9):
+      mm, dax: make pmd_fault() and friends be the same as fault()
+      mm, dax: change pmd_fault() to take only vmf parameter
+      mm, fs: reduce fault, page_mkwrite, and pfn_mkwrite to take only vmf
+      mm,fs,dax: change ->pmd_fault to ->huge_fault
+      mm, dax: clear PMD or PUD size flags when in fall through path
+      mm,x86: native_pud_clear missing on i386 build
+      mm,x86: fix SMP x86 32bit build for native_pud_clear()
+      dax: support for transparent PUD pages for device DAX
+      mm: replace FAULT_FLAG_SIZE with parameter to huge_fault
 
-Status of my local build tests will be at
-http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-advice about cross compilers/configs that work, we are always open to add
-more builds.
+David Dillow (1):
+      scatterlist: don't overflow length field
 
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
+David Rientjes (6):
+      mm, compaction: add vmstats for kcompactd work
+      mm, thp: add new defer+madvise defrag option
+      mm, page_alloc: warn_alloc nodemask is NULL when cpusets are disabled
+      mm, oom: header nodemask is NULL when cpusets are disabled
+      mm, oom: header nodemask is NULL when cpusets are disabled fix
+      mm, madvise: fail with ENOMEM when splitting vma will hit max_map_count
+
+Davidlohr Bueso (4):
+      m32r: use generic current.h
+      score: remove asm/current.h
+      parisc: use generic current.h
+      mm,compaction: serialize waitqueue_active() checks
+
+Denys Vlasenko (1):
+      powerpc: do not make the entire heap executable
+
+Eric Ren (2):
+      ocfs2/dlmglue: prepare tracking logic to avoid recursive cluster lock
+      ocfs2: fix deadlock issue when taking inode lock at vfs entry points
+
+Fabian Frederick (1):
+      fs: add i_blocksize()
+
+Gavin Shan (1):
+      mm/page_alloc: fix nodes for reclaim in fast path
+
+Geliang Tang (6):
+      cgroup: fix a comment typo
+      mm/vmalloc.c: use rb_entry_safe
+      mm/backing-dev.c: use rb_entry()
+      truncate: use i_blocksize()
+      nilfs2: use nilfs_btree_node_size()
+      nilfs2: use i_blocksize()
+
+Greg Thelen (2):
+      kasan: drain quarantine of memcg slab objects
+      kasan: add memcg kmem_cache test
+
+Grygorii Maistrenko (1):
+      slub: do not merge cache if slub_debug contains a never-merge flag
+
+Hans Ragas (1):
+      cgroup: Add missing cgroup-v2 PID controller documentation.
+
+Heiko Carstens (3):
+      memblock: let memblock_type_name know about physmem type
+      memblock: also dump physmem list within __memblock_dump_all
+      memblock: embed memblock type name within struct memblock_type
+
+Huang Ying (1):
+      mm/swap: skip readahead only when swap slot cache is enabled
+
+Huang, Ying (3):
+      mm/swap: fix kernel message in swap_info_get()
+      mm/swap: add cluster lock
+      mm/swap: split swap cache into 64MB trunks
+
+Hugh Dickins (2):
+      tmpfs: change shmem_mapping() to test shmem_aops
+      mm: remove shmem_mapping() shmem_zero_setup() duplicates
+
+Jaewon Kim (1):
+      mm: cma: print allocation failure reason and bitmap status
+
+Johannes Weiner (7):
+      mm: vmscan: scan dirty pages even in laptop mode
+      mm: vmscan: kick flushers when we encounter dirty pages on the LRU
+      mm: vmscan: kick flushers when we encounter dirty pages on the LRU fix
+      mm: vmscan: remove old flusher wakeup from direct reclaim path
+      mm: vmscan: only write dirty pages that the scanner has seen twice
+      mm: vmscan: move dirty pages out of the way until they're flushed
+      mm: vmscan: move dirty pages out of the way until they're flushed fix
+
+Kani, Toshimitsu (1):
+      mm-fix-a-overflow-in-test_pages_in_a_zone-fix
+
+Kirill A. Shutemov (16):
+      mm: drop zap_details::ignore_dirty
+      mm: drop zap_details::check_swap_entries
+      mm: drop unused argument of zap_page_range()
+      oom-reaper: use madvise_dontneed() logic to decide if unmap the VMA
+      uprobes: split THPs before trying to replace them
+      mm: introduce page_vma_mapped_walk()
+      mm: fix handling PTE-mapped THPs in page_referenced()
+      mm: fix handling PTE-mapped THPs in page_idle_clear_pte_refs()
+      mm, rmap: check all VMAs that PTE-mapped THP can be part of
+      mm: convert page_mkclean_one() to use page_vma_mapped_walk()
+      mm: convert try_to_unmap_one() to use page_vma_mapped_walk()
+      mm, ksm: convert write_protect_page() to use page_vma_mapped_walk()
+      mm, uprobes: convert __replace_page() to use page_vma_mapped_walk()
+      mm: convert page_mapped_in_vma() to use page_vma_mapped_walk()
+      mm: drop page_check_address{,_transhuge}
+      mm: convert remove_migration_pte() to use page_vma_mapped_walk()
+
+Lucas Stach (3):
+      mm: alloc_contig_range: allow to specify GFP mask
+      mm: cma_alloc: allow to specify GFP mask
+      mm: wire up GFP flag passing in dma_alloc_from_contiguous
+
+Masanari Iida (1):
+      mm/page_alloc.c: remove duplicate inclusion of page_ext.h
+
+Matthew Wilcox (1):
+      mm, x86: add support for PUD-sized transparent hugepages
+
+Mel Gorman (8):
+      mm, page_alloc: split buffered_rmqueue()
+      mm, page_alloc: split buffered_rmqueue -fix
+      mm, page_alloc: split alloc_pages_nodemask()
+      mm, page_alloc: drain per-cpu pages from workqueue context
+      mm, page_alloc: only use per-cpu allocator for irq-safe requests
+      mm, page_alloc: only use per-cpu allocator for irq-safe requests -fix
+      mm, page_alloc: use static global work_struct for draining per-cpu pages
+      mm, vmscan: clear PGDAT_WRITEBACK when zone is balanced
+
+Michal Hocko (27):
+      mm: throttle show_mem() from warn_alloc()
+      mm, trace: extract COMPACTION_STATUS and ZONE_TYPE to a common header
+      oom, trace: add oom detection tracepoints
+      oom, trace: add compaction retry tracepoint
+      mm, vmscan: remove unused mm_vmscan_memcg_isolate
+      mm, vmscan: add active list aging tracepoint
+      mm, vmscan: show the number of skipped pages in mm_vmscan_lru_isolate
+      mm, vmscan: show LRU name in mm_vmscan_lru_isolate tracepoint
+      mm, vmscan: extract shrink_page_list reclaim counters into a struct
+      mm, vmscan: enhance mm_vmscan_lru_shrink_inactive tracepoint
+      mm, vmscan: add mm_vmscan_inactive_list_is_low tracepoint
+      trace-vmscan-postprocess: sync with tracepoints updates
+      mm, vmscan: do not count freed pages as PGDEACTIVATE
+      mm, vmscan: cleanup lru size claculations
+      mm, vmscan: consider eligible zones in get_scan_count
+      Revert "mm: bail out in shrink_inactive_list()"
+      mm, page_alloc: do not report all nodes in show_mem
+      mm, page_alloc: warn_alloc print nodemask
+      arch, mm: remove arch specific show_mem
+      lib/show_mem.c: teach show_mem to work with the given nodemask
+      mm: consolidate GFP_NOFAIL checks in the allocator slowpath
+      mm, oom: do not enforce OOM killer for __GFP_NOFAIL automatically
+      mm: help __GFP_NOFAIL allocations which do not trigger OOM killer
+      mm, page_alloc: do not depend on cpu hotplug locks inside the allocator
+      userfaultfd-non-cooperative-add-event-for-memory-unmaps-fix
+      vmalloc: back off when the current task is killed
+      Merge remote-tracking branch 'tj-cgroups/for-4.11' into mmotm-since-4.10
+
+Mike Kravetz (10):
+      userfaultfd: hugetlbfs: add copy_huge_page_from_user for hugetlb userfaultfd support
+      userfaultfd: hugetlbfs: add hugetlb_mcopy_atomic_pte for userfaultfd support
+      userfaultfd: hugetlbfs: add __mcopy_atomic_hugetlb for huge page UFFDIO_COPY
+      userfaultfd: hugetlbfs: fix __mcopy_atomic_hugetlb retry/error processing
+      userfaultfd: hugetlbfs: add userfaultfd hugetlb hook
+      userfaultfd: hugetlbfs: allow registration of ranges containing huge pages
+      userfaultfd: hugetlbfs: add userfaultfd_hugetlb test
+      userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges
+      userfaultfd: hugetlbfs: reserve count on error in __mcopy_atomic_hugetlb
+      userfaultfd: hugetlbfs: add UFFDIO_COPY support for shared mappings
+
+Mike Rapoport (22):
+      userfaultfd: non-cooperative: dup_userfaultfd: use mm_count instead of mm_users
+      userfaultfd: introduce vma_can_userfault
+      userfaultfd: shmem: add shmem_mcopy_atomic_pte for userfaultfd support
+      userfaultfd: shmem: introduce vma_is_shmem
+      userfaultfd: shmem: use shmem_mcopy_atomic_pte for shared memory
+      userfaultfd: shmem: add userfaultfd hook for shared memory faults
+      userfaultfd: shmem: allow registration of shared memory ranges
+      userfaultfd: shmem: add userfaultfd_shmem test
+      userfaultfd: non-cooperative: selftest: introduce userfaultfd_open
+      userfaultfd: non-cooperative: selftest: add ufd parameter to copy_page
+      userfaultfd: non-cooperative: selftest: add test for FORK, MADVDONTNEED and REMAP events
+      userfaultfd: non-cooperative: rename *EVENT_MADVDONTNEED to *EVENT_REMOVE
+      userfaultfd: non-cooperative: add madvise() event for MADV_REMOVE request
+      userfaultfd: non-cooperative: selftest: enable REMOVE event test for shmem
+      mm: call vm_munmap in munmap syscall instead of using open coded version
+      userfaultfd: non-cooperative: add event for memory unmaps
+      userfaultfd: non-cooperative: add event for exit() notification
+      userfaultfd-non-cooperative-add-event-for-exit-notification-fix
+      userfaultfd: mcopy_atomic: return -ENOENT when no compatible VMA found
+      userfaultfd: mcopy_atomic: update cases returning -ENOENT
+      userfaultfd_copy: return -ENOSPC in case mm has gone
+      userfaultfd: documentation update
+
+Miles Chen (3):
+      dma-debug: add comment for failed to check map error
+      mm/memblock.c: remove unnecessary log and clean up
+      mm: cleanups for printing phys_addr_t and dma_addr_t
+
+Minchan Kim (3):
+      zram: remove waitqueue for IO done
+      zram: do not free same element pages in zram_meta_free
+      mm: do not access page->mapping directly on page_endio
+
+Nicholas Piggin (2):
+      nfs: no PG_private waiters remain, remove waker
+      mm: un-export wake_up_page functions
+
+Parav Pandit (4):
+      rdmacg: Added rdma cgroup controller
+      IB/core: added support to use rdma cgroup controller
+      rdmacg: Added documentation for rdmacg
+      rdmacg: Fixed uninitialized current resource usage
+
+Paul Burton (1):
+      mm: page_alloc: skip over regions of invalid pfns where possible
+
+Pavel Emelyanov (5):
+      userfaultfd: non-cooperative: Split the find_userfault() routine
+      userfaultfd: non-cooperative: add ability to report non-PF events from uffd descriptor
+      userfaultfd: non-cooperative: Add fork() event
+      userfaultfd: non-cooperative: add mremap() event
+      userfaultfd: non-cooperative: add madvise() event for MADV_DONTNEED request
+
+Prarit Bhargava (1):
+      kernel/watchdog.c: do not hardcode CPU 0 as the initial thread
+
+Randy Dunlap (2):
+      mm: fix filemap.c kernel-doc warnings
+      mm: fix <linux/pagemap.h> stray kernel-doc notation
+
+Ross Zwisler (7):
+      tracing: add __print_flags_u64()
+      dax: add tracepoint infrastructure, PMD tracing
+      dax: update MAINTAINERS entries for FS DAX
+      dax: add tracepoints to dax_pmd_load_hole()
+      dax: add tracepoints to dax_pmd_insert_mapping()
+      ext4: Remove unused function ext4_dax_huge_fault()
+      drm: remove unnecessary fault wrappers
+
+Sergey Senozhatsky (1):
+      zram: remove obsolete sysfs attrs
+
+Steven Rostedt (1):
+      mm/mmzone.c: swap likely to unlikely as code logic is different for next_zones_zonelist()
+
+Steven Rostedt (VMware) (2):
+      mm/shmem.c: fix unlikely() test of info->seals to test only for WRITE and GROW
+      mm/page-writeback.c: place "not" inside of unlikely() statement in wb_domain_writeout_inc()
+
+Sudip Mukherjee (1):
+      m32r: fix build warning
+
+Tejun Heo (34):
+      kernfs: make kernfs_open_file->mmapped a bitfield
+      kernfs: add kernfs_ops->open/release() callbacks
+      cgroup add cftype->open/release() callbacks
+      cgroup: reimplement reading "cgroup.procs" on cgroup v2
+      cgroup: remove cgroup_pid_fry() and friends
+      cgroup: reorder css_set fields
+      cgroup: move cgroup files under kernel/cgroup/
+      cgroup: move cgroup v1 specific code to kernel/cgroup/cgroup-v1.c
+      cgroup: refactor mount path and clearly distinguish v1 and v2 paths
+      cgroup: separate out cgroup1_kf_syscall_ops
+      cgroup: move v1 mount functions to kernel/cgroup/cgroup-v1.c
+      cgroup: rename functions for consistency
+      cgroup: move namespace code to kernel/cgroup/namespace.c
+      cgroup: fix RCU related sparse warnings
+      cgroup: cosmetic update to cgroup_taskset_add()
+      cgroup: track migration context in cgroup_mgctx
+      cgroup: call subsys->*attach() only for subsystems which are actually affected by migration
+      Merge branch 'for-4.10-fixes' into for-4.11
+      cgroup: misc cleanups
+      cgroup, perf_event: make perf_event controller work on cgroup2 hierarchy
+      cgroup: drop the matching uid requirement on migration for cgroup v2
+      Merge branch 'cgroup/for-4.11-rdmacg' into cgroup/for-4.11
+      kernfs: fix locking around kernfs_ops->release() callback
+      Revert "slub: move synchronize_sched out of slab_mutex on shrink"
+      slub: separate out sysfs_slab_release() from sysfs_slab_remove()
+      slab: remove synchronous rcu_barrier() call in memcg cache release path
+      slab: reorganize memcg_cache_params
+      slab: link memcg kmem_caches on their associated memory cgroup
+      slab: implement slab_root_caches list
+      slab: introduce __kmemcg_cache_deactivate()
+      slab: remove synchronous synchronize_sched() from memcg cache deactivation path
+      slab: remove slub sysfs interface files early for empty memcg caches
+      slab: use memcg_kmem_cache_wq for slab destruction operations
+      slub: make sysfs directories for memcg sub-caches optional
+
+Tetsuo Handa (1):
+      block: use for_each_thread() in sys_ioprio_set()/sys_ioprio_get()
+
+Tim Chen (5):
+      mm/swap: skip readahead for unreferenced swap slots
+      mm/swap: allocate swap slots in batches
+      mm/swap: free swap slots in batch
+      mm/swap: add cache for swap slots allocation
+      mm/swap: enable swap slots cache usage
+
+Tobin C Harding (2):
+      mm/memory.c: use NULL instead of literal 0
+      mm: codgin-style fixes
+
+Vegard Nossum (4):
+      mm: add new mmgrab() helper
+      mm: add new mmget() helper
+      mm: use mmget_not_zero() helper
+      mm: clarify mm_struct.mm_{users,count} documentation
+
+Vinayak Menon (2):
+      mm: vmpressure: fix sending wrong events on underflow
+      mm: vmscan: do not pass reclaimed slab to vmpressure
+
+Vitaly Wool (5):
+      z3fold: make pages_nr atomic
+      z3fold: fix header size related issues
+      z3fold: extend compaction function
+      z3fold: use per-page spinlock
+      z3fold: add kref refcounting
+
+Vlastimil Babka (5):
+      mm, slab: rename kmalloc-node cache to kmalloc-<size>
+      mm, page_alloc: don't convert pfn to idx when merging
+      mm, page_alloc: avoid page_to_pfn() when merging buddies
+      mm, page_alloc: remove redundant checks from alloc fastpath
+      mm, page_alloc: don't check cpuset allowed twice in fast-path
+
+Wei Yang (4):
+      mm/memblock.c: trivial code refine in memblock_is_region_memory()
+      mm/memblock.c: check return value of memblock_reserve() in memblock_virt_alloc_internal()
+      mm/page_alloc: return 0 in case this node has no page within the zone
+      mm/page_alloc.c: remove redundant init code for ZONE_MOVABLE
+
+Xishi Qiu (1):
+      mm: fix some typos in mm/zsmalloc.c
+
+Yasuaki Ishimatsu (2):
+      mm/sparse: use page_private() to get page->private value
+      mm/memory_hotplug: set magic number to page->freelist instead of page->lru.next
+
+Yisheng Xie (7):
+      mm/migration: make isolate_movable_page() return int type
+      mm/migration: make isolate_movable_page() return int type
+      mm/migration: make isolate_movable_page always defined
+      HWPOISON: soft offlining for non-lru movable page
+      mm/hotplug: enable memory hotplug for non-lru movable pages
+      mm/zsmalloc: remove redundant SetPagePrivate2 in create_page_chain
+      mm/zsmalloc: fix comment in zsmalloc
+
+seokhoon.yoon (1):
+      mm: fix comments for mmap_init()
+
+zhong jiang (4):
+      mm/z3fold.c: limit first_num to the actual range of possible buddy indexes
+      mm/memory_hotplug.c: fix overflow in test_pages_in_a_zone()
+      mm/page_owner: align with pageblock_nr pages
+      mm/vmstat.c: walk the zone in pageblock_nr_pages steps
+
+zhouxianrong (1):
+      zram: extend zero pages to same element pages
+
 
 -- 
-Cheers,
-Stephen Rothwell
+Michal Hocko
+SUSE Labs
 
-$ git checkout master
-$ git reset --hard stable
-Merging origin/master (37c85961c3f8 Merge tag 'tty-4.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty)
-Merging fixes/master (c470abd4fde4 Linux 4.10)
-Merging kbuild-current/rc-fixes (c7858bf16c0b asm-prototypes: Clear any CPP defines before declaring the functions)
-Merging arc-current/for-curr (8ba605b607b7 ARC: [plat-*] ARC_HAS_COH_CACHES no longer relevant)
-Merging arm-current/fixes (9e3440481845 ARM: 8658/1: uaccess: fix zeroing of 64-bit get_user())
-Merging m68k-current/for-linus (3dfe33020ca8 m68k/sun3: Remove dead code in paging_init())
-Merging metag-fixes/fixes (35d04077ad96 metag: Only define atomic_dec_if_positive conditionally)
-Merging powerpc-fixes/fixes (3f91a89d424a powerpc/64: Disable use of radix under a hypervisor)
-Merging sparc/master (f9a42e0d58cf Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc)
-Merging fscrypt-current/for-stable (42d97eb0ade3 fscrypt: fix renaming and linking special files)
-Merging net/master (eee2faabc63d tcp: account for ts offset only if tsecr not zero)
-Merging ipsec/master (e3dc847a5f85 vti6: Don't report path MTU below IPV6_MIN_MTU.)
-Merging netfilter/master (3ef767e5cbd4 Merge branch 'master' of git://blackhole.kfki.hu/nf)
-Merging ipvs/master (045169816b31 Merge branch 'linus' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6)
-Merging wireless-drivers/master (52f5631a4c05 rtlwifi: rtl8192ce: Fix loading of incorrect firmware)
-Merging mac80211/master (8a96bb837818 mac80211: don't reorder frames with SN smaller than SSN)
-Merging sound-current/for-linus (7086b7b3d101 ALSA: usb-audio: Tidy up mixer_us16x08.c)
-Merging pci-current/for-linus (afe3e4d11bdf PCI/PME: Restore pcie_pme_driver.remove)
-Merging driver-core.current/driver-core-linus (49def1853334 Linux 4.10-rc4)
-Merging tty.current/tty-linus (49def1853334 Linux 4.10-rc4)
-Merging usb.current/usb-linus (d5adbfcd5f7b Linux 4.10-rc7)
-Merging usb-gadget-fixes/fixes (efe357f4633a usb: dwc2: host: fix Wmaybe-uninitialized warning)
-Merging usb-serial-fixes/usb-linus (d07830db1bdb USB: serial: pl2303: add ATEN device ID)
-Merging usb-chipidea-fixes/ci-for-usb-stable (c7fbb09b2ea1 usb: chipidea: move the lock initialization to core file)
-Merging phy/fixes (7ce7d89f4883 Linux 4.10-rc1)
-Merging staging.current/staging-linus (d5adbfcd5f7b Linux 4.10-rc7)
-Merging char-misc.current/char-misc-linus (d5adbfcd5f7b Linux 4.10-rc7)
-Merging input-current/for-linus (6e11617fcff3 Merge branch 'next' into for-linus)
-Merging crypto-current/master (7c2cf1c4615c crypto: chcr - Fix key length for RFC4106)
-Merging ide/master (da095587e6be Revert "ide: Fix interface autodetection in legacy IDE driver (trial #2)")
-Merging vfio-fixes/for-linus (930a42ded3fe vfio/spapr_tce: Set window when adding additional groups to container)
-Merging kselftest-fixes/fixes (7738789fba09 selftests: x86/pkeys: fix spelling mistake: "itertation" -> "iteration")
-Merging backlight-fixes/for-backlight-fixes (68feaca0b13e backlight: pwm: Handle EPROBE_DEFER while requesting the PWM)
-Merging ftrace-fixes/for-next-urgent (6224beb12e19 tracing: Have branch tracer use recursive field of task struct)
-Merging mfd-fixes/for-mfd-fixes (1a41741fd60b mfd: wm8994-core: Don't use managed regulator bulk get API)
-Merging v4l-dvb-fixes/fixes (9eeb0ed0f309 [media] mtk-vcodec: fix build warnings without DEBUG)
-Merging drm-intel-fixes/for-linux-next-fixes (c470abd4fde4 Linux 4.10)
-Merging drm-misc-fixes/for-linux-next-fixes (bb08c04dc867 drm/dp/mst: fix kernel oops when turning off secondary monitor)
-Merging kbuild/for-next (fde42bfcd232 genksyms: Regenerate parser)
-Merging asm-generic/master (de4be6b87b6b asm-generic: page.h: fix comment typo)
-CONFLICT (content): Merge conflict in include/asm-generic/percpu.h
-Merging arc/for-next (d5adbfcd5f7b Linux 4.10-rc7)
-Merging arm/for-next (85593554fb35 Merge branch 'fixes' into for-next)
-Merging arm-perf/for-next/perf (0c744ea4f77d Linux 4.10-rc2)
-Merging arm-soc/for-next (93f0a7522a39 arm-soc: document merges)
-CONFLICT (content): Merge conflict in arch/arm/mach-ux500/platsmp.c
-CONFLICT (content): Merge conflict in arch/arm/mach-exynos/suspend.c
-CONFLICT (content): Merge conflict in arch/arm/configs/aspeed_g5_defconfig
-Merging amlogic/for-next (2452b94d227c Merge v4.11/dt64)
-CONFLICT (content): Merge conflict in arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-Merging aspeed/for-next (ab15e12960f1 Merge branches 'defconfig-for-v4.11', 'soc-for-v4.11' and 'dt-for-v4.11' into for-next)
-Merging at91/at91-next (f5fde64706f0 Merge tag 'at91-ab-4.11-dt2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux into at91-next)
-Merging bcm2835/for-next (8d6e1b09237b Merge branch anholt/bcm2835-dt-next into for-next)
-Merging berlin/berlin/for-next (5153351425c9 Merge branch 'berlin/dt' into berlin/for-next)
-Merging cortex-m/for-next (f719a0d6a854 ARM: efm32: switch to vendor,device compatible strings)
-Merging imx-mxs/for-next (57aba12f97c2 Merge branch 'zte/pm-domains' into for-next)
-Merging keystone/next (9e07c85a01ec Merge branch 'for_4.11/keystone_dts' into next)
-Merging mvebu/for-next (e8ba6e4b2558 Merge branch 'mvebu/dt64' into mvebu/for-next)
-Merging omap/for-next (2b6a9eabd44e Merge branch 'omap-for-v4.10/fixes' into for-next)
-Merging omap-pending/for-next (c20c8f750d9f ARM: OMAP2+: hwmod: fix _idle() hwmod state sanity check sequence)
-Merging qcom/for-next (a844f941617c Merge tag 'qcom-arm64-for-4.11-2' into final-for-4.11)
-Merging renesas/next (59fd3e06b3d7 Merge branches 'arm64-dt-for-v4.11', 'dt-for-v4.11' and 'soc-for-v4.11' into next)
-Merging rockchip/for-next (0aab64671deb Merge branch 'v4.11-clk/next' into for-next)
-Merging rpi/for-rpi-next (bc0195aad0da Linux 4.2-rc2)
-Merging samsung/for-next (1001354ca341 Linux 4.9-rc1)
-Merging samsung-krzk/for-next (9689628ec120 Merge branch 'for-v4.11/drivers-soc-exynos-pmu-the-joy-never-ends' into for-next)
-Merging tegra/for-next (10e459de8497 Merge branch for-4.11/i2c into for-next)
-Merging arm64/for-next/core (ffe7afd17135 arm64/kprobes: consistently handle MRS/MSR with XZR)
-Merging clk/clk-next (f59de563358e clk: renesas: mstp: ensure register writes complete)
-Merging blackfin/for-linus (391e74a51ea2 eth: bf609 eth clock: add pclk clock for stmmac driver probe)
-CONFLICT (content): Merge conflict in arch/blackfin/mach-common/pm.c
-Merging c6x/for-linux-next (ca3060d39ae7 c6x: Use generic clkdev.h header)
-Merging cris/for-next (8f50f2a1b46a cris: No need to append -O2 and $(LINUXINCLUDE))
-Merging h8300/h8300-next (58c57526711f h8300: Add missing include file to asm/io.h)
-Merging hexagon/linux-next (02cc2ccfe771 Revert "Hexagon: fix signal.c compile error")
-Merging ia64/next (fbb0e4da96f4 ia64: salinfo: use a waitqueue instead a sema down/up combo)
-Merging m68k/for-next (3dfe33020ca8 m68k/sun3: Remove dead code in paging_init())
-Merging m68knommu/for-next (73ec49463f89 m68k/defconfig: amcore board defconfig tuning)
-Merging metag/for-next (f5d163aad31e metag: perf: fix build on Meta1)
-Merging microblaze/next (3400606d8ffd microblaze: Add new fpga families)
-Merging mips/mips-for-linux-next (cfd75c2db17e MIPS: VDSO: Explicitly use -fno-asynchronous-unwind-tables)
-Merging nios2/for-next (744606c76c4a nios2: add screen_info)
-Merging openrisc/for-next (20913e0a776d openrisc: head: Init r0 to 0 on start)
-CONFLICT (content): Merge conflict in arch/openrisc/include/asm/Kbuild
-Merging parisc-hd/for-next (69973b830859 Linux 4.9)
-Merging powerpc/next (3dbbaf200f53 powerpc/pseries: Advertise Hot Plug Event support to firmware)
-CONFLICT (content): Merge conflict in arch/powerpc/kernel/asm-offsets.c
-Merging fsl/next (75b824727680 powerpc/8xx: Perf events on PPC 8xx)
-Merging mpc5xxx/next (39e69f55f857 powerpc: Introduce the use of the managed version of kzalloc)
-Merging s390/features (d24b98e3a9c6 s390/syscall: fix single stepped system calls)
-Merging sparc-next/master (9f935675d41a Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input)
-Merging sh/for-next (e61c10e468a4 sh: add device tree source for J2 FPGA on Mimas v2 board)
-Merging tile/master (14e73e78ee98 tile: use __ro_after_init instead of tile-specific __write_once)
-Merging uml/linux-next (f88f0bdfc32f um: UBD Improvements)
-Merging unicore32/unicore32 (bc27113620ca unicore32-oldabi: add oldabi syscall interface)
-Merging xtensa/xtensa-for-next (6e72293ab0e9 xtensa: fix noMMU build on cores with MMU)
-Merging fscrypt/master (6f69f0ed6136 fscrypt: constify struct fscrypt_operations)
-Merging befs/for-next (7ce7d89f4883 Linux 4.10-rc1)
-Merging btrfs/next (8b8b08cbfb90 Btrfs: fix delalloc accounting after copy_from_user faults)
-Merging btrfs-kdave/for-next (d46996f6537a Merge branch 'for-next-current-v4.10-20170220' into for-next-20170220)
-Merging ceph/master (df963ea8a082 ceph: remove req from unsafe list when unregistering it)
-Merging cifs/for-next (2bfe01eff430 Merge branch 'for-next' of git://git.samba.org/sfrench/cifs-2.6)
-Merging configfs/for-next (e16769d4bca6 fs: configfs: don't return anything from drop_link)
-Merging ecryptfs/next (be280b25c328 ecryptfs: remove private bin2hex implementation)
-Merging ext3/for_next (6c71100db53e fanotify: simplify the code of fanotify_merge)
-Merging ext4/dev (e9be2ac7c09c ext4: rename EXT4_IOC_GOINGDOWN to EXT4_IOC_SHUTDOWN)
-Merging f2fs/dev (aacf533a90a7 f2fs: super: constify fscrypt_operations structure)
-CONFLICT (content): Merge conflict in fs/f2fs/super.c
-Merging freevxfs/for-next (bf1bb4b460c8 freevxfs: update Kconfig information)
-Merging fscache/fscache (d52bd54db8be Merge branch 'akpm' (patches from Andrew))
-Merging fuse/for-next (84588a93d097 fuse: fix uninitialized flags in pipe_buffer)
-Merging gfs2/for-next (329414f66965 gfs2: Add missing rcu locking for glock	lookup)
-Merging jfs/jfs-next (684666e51585 jfs: atomically read inode size)
-Merging nfs/linux-next (c470abd4fde4 Linux 4.10)
-Merging nfsd/nfsd-next (0e954b1e9d2c nfsd: special case truncates some more)
-Merging orangefs/for-next (eb68d0324dc4 orangefs: fix buffer size mis-match between kernel space and user space.)
-Merging overlayfs/overlayfs-next (51f8f3c4e225 ovl: drop CAP_SYS_RESOURCE from saved mounter's credentials)
-Merging v9fs/for-next (a333e4bf2556 fs/9p: use fscache mutex rather than spinlock)
-Merging ubifs/linux-next (1cb51a15b576 ubifs: Fix journal replay wrt. xattr nodes)
-Merging xfs/for-next (8d242e932fb7 xfs: remove XFS_ALLOCTYPE_ANY_AG and XFS_ALLOCTYPE_START_AG)
-Merging file-locks/linux-next (07d9a380680d Linux 4.9-rc2)
-Merging vfs/for-next (59479ae85e43 Merge branches 'work.sendmsg' and 'work.splice-net' into for-next)
-CONFLICT (content): Merge conflict in drivers/block/nbd.c
-Applying: smc: merge fix for "switch socket ->splice_read() to struct file *"
-Merging vfs-jk/vfs (030b533c4fd4 fs: Avoid premature clearing of capabilities)
-Merging vfs-miklos/next (0eb8af4916a5 vfs: use helper for calling f_op->fsync())
-Merging printk/for-next (d9c23523ed98 printk: drop call_console_drivers() unused param)
-Merging pci/next (c4d052ce970e Merge branch 'pci/virtualization' into next)
-Merging pstore/for-next/pstore (fc1b326efd27 MAINTAINERS: Adjust pstore git repo URI, add files)
-Merging hid/for-next (b03fa3ca9c90 Merge branch 'for-4.11/upstream-fixes' into for-next)
-Merging i2c/i2c/for-next (6d93e3babbd1 Merge branch 'i2c/for-4.11' into i2c/for-next)
-Merging jdelvare-hwmon/master (08d27eb20666 Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
-Merging dmi/master (0c744ea4f77d Linux 4.10-rc2)
-Merging hwmon-staging/hwmon-next (2f1736ff0664 hwmon: (sht15) Add device tree support)
-Merging jc_docs/docs-next (bd8562626c8e docs / driver-api: Fix structure references in device_link.rst)
-Merging v4l-dvb/master (e6b377dbbb94 Merge tag 'v4.10' into patchwork)
-Merging v4l-dvb-next/master (432ac2d4acef Merge branch 'v4l_for_linus' into to_next)
-Merging fbdev/fbdev-for-next (42f82367df2c video: fbdev: fsl-diu-fb: fix spelling mistake "palette")
-Merging pm/linux-next (14a05f0baaf1 Merge branch 'pm-cpufreq' into linux-next)
-Merging idle/next (306899f94804 x86 tsc: Add the Intel Denverton Processor to native_calibrate_tsc())
-Merging thermal/next (761bb99d2d44 Merge branches 'thermal-core', 'thermal-intel', 'thermal-soc' and 'ida-conversion' into next)
-Merging thermal-soc/next (4f47aff5201c Merge branch 'work-linus' into work-next)
-Merging ieee1394/for-next (72f3c27aa646 firewire: net: max MTU off by one)
-Merging dlm/next (c0ae14857677 dlm: Fix kernel memory disclosure)
-Merging swiotlb/linux-next (69369f52d28a swiotlb-xen: implement xen_swiotlb_get_sgtable callback)
-Merging net-next/master (ca78d3173cff Merge tag 'arm64-upstream' of git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux)
-Merging ipsec-next/master (7785bba299a8 esp: Add a software GRO codepath)
-Merging netfilter-next/master (8f9000a565d0 net:ethernet:aquantia: Add 2500/5000 mbit link modes support.)
-Merging ipvs-next/master (8d8e20e2d7bb ipvs: Decrement ttl)
-Merging wireless-drivers-next/master (4e33e3462510 tcp: use page_ref_inc() in tcp_sendmsg())
-Merging bluetooth/master (8f91566f99fa btmrvl: fix spelling mistake: "actived" -> "activated")
-Merging mac80211-next/master (40beeb3c9b01 mac80211: shorten debug message)
-Merging rdma/for-next (9294000d6d89 IB/srp: Drain the send queue before destroying a QP)
-Applying: RDMA/bnxt_re: fix for "bnxt_en: Update to firmware interface spec 1.7.0."
-Merging mtd/master (d91f6cee98b6 mtd: aspeed: remove redundant dev_err call in aspeed_smc_probe())
-Merging l2-mtd/master (d91f6cee98b6 mtd: aspeed: remove redundant dev_err call in aspeed_smc_probe())
-Merging nand/nand/next (a4077ce58713 mtd: nand: Add Winbond manufacturer id)
-Merging spi-nor/next (7fa2c7038cc0 mtd: spi-nor: cqspi: remove redundant dead code on error return check)
-Merging crypto/master (dcd36c436c9c crypto: brcm - Avoid double free in ahash_finup())
-Merging drm/drm-next (9ca70356a926 Revert "drm: Resurrect atomic rmfb code, v3")
-CONFLICT (content): Merge conflict in lib/Kconfig
-CONFLICT (content): Merge conflict in include/linux/kref.h
-CONFLICT (content): Merge conflict in include/drm/drm_connector.h
-CONFLICT (content): Merge conflict in include/drm/drm_atomic.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/ttm/ttm_bo.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_sprite.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_fbc.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/intel_display.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_drv.h
-CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_connector.c
-Merging drm-panel/drm/panel/for-next (eaeebffa90f3 drm/panel: simple: Specify bus width and flags for EDT displays)
-Merging drm-intel/for-linux-next (998d75730b40 drm/i915: Fix not finding the VBT when it overlaps with OPREGION_ASLE_EXT)
-Merging drm-tegra/drm/tegra/for-next (7b1d4185050d gpu: host1x: Set OF node for new host1x devices)
-Merging drm-misc/for-linux-next (2220fc1ab363 uapi: add missing install of dma-buf.h)
-Merging drm-exynos/exynos-drm/for-next (7d1e04231461 Merge tag 'usercopy-v4.8-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux)
-Merging drm-msm/msm-next (21c42da18ef1 drm/msm: return -EFAULT if copy_from_user() fails)
-Merging hdlcd/for-upstream/hdlcd (747e5a5ff2a2 drm: hdlcd: Fix cleanup order)
-Merging mali-dp/for-upstream/mali-dp (83d642ee6dbe drm: mali-dp: fix stride setting for multi-plane formats)
-Merging sunxi/sunxi/for-next (d5adbfcd5f7b Linux 4.10-rc7)
-Merging kspp/for-next/kspp (965049b782ec Merge branch 'for-next/usercopy' into for-next/kspp)
-Merging kconfig/for-next (5bcba792bb30 localmodconfig: Fix whitespace repeat count after "tristate")
-Merging regmap/for-next (bbbed1951704 Merge remote-tracking branches 'regmap/topic/doc' and 'regmap/topic/rbtree' into regmap-next)
-Merging sound/for-next (7086b7b3d101 ALSA: usb-audio: Tidy up mixer_us16x08.c)
-Merging sound-asoc/for-next (141dee78c40a Merge remote-tracking branches 'asoc/topic/wm8753' and 'asoc/topic/zte' into asoc-next)
-Merging modules/modules-next (0d4ec7849f5a MAINTAINERS: add tree for modules)
-Merging input/next (a1b5359271e5 Input: zet6223 - export OF device ID as module aliases)
-Merging block/for-next (3695539290d7 Merge branch 'for-4.11/block' into for-next)
-Merging lightnvm/for-next (e57ef816cf77 Merge branch 'for-4.11/block' into for-next)
-Merging device-mapper/for-next (d67a5f4b5947 dm: flush queued bios when process blocks to avoid deadlock)
-Merging pcmcia/master (e8e68fd86d22 pcmcia: do not break rsrc_nonstatic when handling anonymous cards)
-Merging mmc/next (8c7cdbf9272c mmc: core: add mmc prefix for blk_fixups)
-Merging kgdb/kgdb-next (7a6653fca500 kdb: Fix handling of kallsyms_symbol_next() return value)
-Merging md/for-next (08fbeca3ba8c md/raid1: fix write behind issues introduced by bio_clone_bioset_partial)
-CONFLICT (content): Merge conflict in drivers/md/raid1.c
-Merging mfd/for-mfd-next (e93c10211d03 mfd: lpc_ich: Enable watchdog on Intel Apollo Lake PCH)
-Merging backlight/for-backlight-next (80e5d455339a MAINTAINERS: Rework entry for Backlight)
-Merging battery/for-next (744cc304a18f power: supply: add AC power supply driver for AXP20X and AXP22X PMICs)
-Merging omap_dss2/for-next (c456a2f30de5 video: smscufx: remove unused variable)
-Merging regulator/for-next (877fe823a0ad Merge remote-tracking branches 'regulator/topic/s2mpa01', 'regulator/topic/supplies' and 'regulator/topic/tps65217' into regulator-next)
-Merging security/next (61841be6358c tpm: declare tpm2_get_pcr_allocation() as static)
-Merging integrity/next (20f482ab9e0f ima: allow to check MAY_APPEND)
-Merging keys/keys-next (ed51e44e914c Merge branch 'keys-asym-keyctl' into keys-next)
-Merging selinux/next (61841be6358c tpm: declare tpm2_get_pcr_allocation() as static)
-Merging tpmdd/next (61841be6358c tpm: declare tpm2_get_pcr_allocation() as static)
-Merging watchdog/master (00ea1ceebe0d ipv6: release dst on error in ip6_dst_lookup_tail)
-Merging iommu/next (8d2932dd0634 Merge branches 'iommu/fixes', 'arm/exynos', 'arm/renesas', 'arm/smmu', 'arm/mediatek', 'arm/core', 'x86/vt-d' and 'core' into next)
-Merging dwmw2-iommu/master (910170442944 iommu/vt-d: Fix PASID table allocation)
-Merging vfio/next (d9d84780f17c vfio: fix a typo in comment of function vfio_pin_pages)
-Merging trivial/for-next (74dcba3589fc NTB: correct ntb_spad_count comment typo)
-Merging audit/next (fe8e52b9b910 audit: remove unnecessary curly braces from switch/case statements)
-Merging devicetree/for-next (4e29ccdb240e DT: add Faraday Tec. as vendor)
-Merging mailbox/mailbox-for-next (db4d22c07e3e mailbox: mailbox-test: allow reserved areas in SRAM)
-Merging spi/for-next (827498a19804 Merge remote-tracking branches 'spi/topic/ti-qspi' and 'spi/topic/topcliff-pch' into spi-next)
-Merging tip/auto-latest (d6f6b3f1e69d Merge branch 'perf/urgent' into auto-latest)
-Merging clockevents/clockevents/next (f947ee147e08 clocksource/drivers/arm_arch_timer: Map frame with of_io_request_and_map())
-Merging edac/linux_next (9cae24b7b113 Merge commit 'daf34710a9e8849e04867d206692dc42d6d22263' into next)
-CONFLICT (content): Merge conflict in drivers/edac/edac_pci.c
-CONFLICT (add/add): Merge conflict in drivers/edac/edac_mc.h
-CONFLICT (content): Merge conflict in drivers/edac/edac_device.c
-CONFLICT (add/add): Merge conflict in Documentation/admin-guide/ras.rst
-CONFLICT (content): Merge conflict in Documentation/00-INDEX
-Merging edac-amd/for-next (75bf2f6478ca EDAC, mce_amd: Print IPID and Syndrome on a separate line)
-Merging irqchip/irqchip/for-next (88e20c74ee02 irqchip/mxs: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND)
-Merging ftrace/for-next (3962d9226404 Merge branch 'for-next/ftrace/core' into temp)
-Merging rcu/rcu/next (31945aa9f140 Merge branches 'doc.2017.01.15b', 'dyntick.2017.01.23a', 'fixes.2017.01.23a', 'srcu.2017.01.25a' and 'torture.2017.01.15b' into HEAD)
-Merging kvm/linux-next (dd0fd8bca185 x86/kvm: Provide optimized version of vcpu_is_preempted() for x86-64)
-Merging kvm-arm/next (7b6b46311a85 KVM: arm/arm64: Emulate the EL1 phys timer registers)
-Merging kvm-mips/next (12ed1faece3f KVM: MIPS: Allow multiple VCPUs to be created)
-Merging kvm-ppc/kvm-ppc-next (bcd3bb63dbc8 KVM: PPC: Book3S HV: Disable HPT resizing on POWER9 for now)
-Merging kvms390/next (260a1d6afe2e KVM: s390: log runtime instrumentation enablement)
-Merging xen-tip/linux-next (4610d240d691 xen/privcmd: add IOCTL_PRIVCMD_RESTRICT)
-Merging percpu/for-next (966d2b04e070 percpu-refcount: fix reference leak during percpu-atomic transition)
-Merging workqueues/for-next (a45463cbf3f9 workqueue: avoid clang warning)
-Merging drivers-x86/for-next (c14b56d69dc9 platform: intel_turbo_max_3: make it explicitly non-modular)
-Merging chrome-platform/for-next (31b764171cb5 Revert "platform/chrome: chromeos_laptop: Add Leon Touch")
-Merging hsi/for-next (7ac5d7b1a125 HSI: hsi_char.h: use __u32 from linux/types.h)
-Merging leds/for-next (fb3d769173d2 leds: ledtrig-heartbeat: Make top brightness adjustable)
-Merging ipmi/for-next (eb994594bc22 ipmi: bt-bmc: Use a regmap for register access)
-Merging driver-core/driver-core-next (17627157cda1 kernfs: handle null pointers while printing node name and path)
-Merging usb/usb-next (0df8a3dbacb5 Merge tag 'usb-serial-4.11-rc1-2' of git://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-next)
-Merging usb-gadget/next (e42a5dbb8a3d usb: dwc3: host: pass quirk-broken-port-ped property for known broken revisions)
-Merging usb-serial/usb-next (beabdc3cd3e3 USB: serial: keyspan: drop header file)
-Merging usb-chipidea-next/ci-for-usb-next (753dfd23612d usb: chipidea: msm: Fix return value check in ci_hdrc_msm_probe())
-Merging phy-next/next (0b10f64dbe60 phy: qcom-ufs: Fix misplaced jump label)
-Merging tty/tty-next (d8a4995bcea1 tty: pl011: Work around QDF2400 E44 stuck BUSY bit)
-Merging char-misc/char-misc-next (6cf18e6927c0 goldfish: Sanitize the broken interrupt handler)
-Merging extcon/extcon-next (3573d97d840c extcon: palmas: Don't miss GPIO events during suspend/resume)
-Merging staging/staging-next (0a441275018b Staging: vc04_services: Fix the "space prohibited" code style errors)
-Merging slave-dma/next (235840692925 Merge branch 'fixes' into next)
-Merging cgroup/for-next (f83f3c515654 kernfs: fix locking around kernfs_ops->release() callback)
-Merging scsi/for-next (9880e90e1ab8 Merge branch 'misc' into for-next)
-$ git reset --hard HEAD^
-Merging next-20170222 version of scsi
-Merging scsi-mkp/for-next (3949e2f04262 scsi: simplify scsi_execute_req_flags)
-$ git reset --hard HEAD^
-Merging next-20170221 version of scsi-mkp
-Merging target-updates/for-next (51ec502a3266 target: Delete tmr from list before processing)
-Merging target-merge/for-next-merge (2994a7518317 cxgb4: update Kconfig and Makefile)
-Merging target-bva/for-next (762b6f00a995 uapi: fix linux/target_core_user.h userspace compilation errors)
-Merging libata/for-next (428d57c1683a Merge branch 'for-4.11' into for-next)
-Merging binfmt_misc/for-next (4af75df6a410 binfmt_misc: add F option description to documentation)
-Merging vhost/linux-next (80363894995b virtio_mmio: expose header to userspace)
-Merging rpmsg/for-next (349709ba5bea Merge branches 'hwspinlock-next', 'rpmsg-next' and 'rproc-next' into for-next)
-Merging gpio/for-next (3498d8694d41 gpio: reintroduce devm_get_gpiod_from_child())
-Merging pinctrl/for-next (baafacab092e pinctrl: samsung: Fix return value check in samsung_pinctrl_get_soc_data())
-Merging dma-mapping/dma-mapping-next (1001354ca341 Linux 4.9-rc1)
-Merging pwm/for-next (38b0a526ec33 Merge branch 'for-4.11/drivers' into for-next)
-Merging dma-buf/for-next (194cad44c4e1 dma-buf/sync_file: improve Kconfig description for Sync Files)
-CONFLICT (content): Merge conflict in drivers/dma-buf/Kconfig
-Merging userns/for-next (ace0c791e6c3 proc/sysctl: Don't grab i_lock under sysctl_lock.)
-CONFLICT (content): Merge conflict in security/selinux/hooks.c
-Merging ktest/for-next (2dcd0af568b0 Linux 4.6)
-Merging random/dev (db61ffe3a71c random: move random_min_urandom_seed into CONFIG_SYSCTL ifdef block)
-Merging aio/master (b562e44f507e Linux 4.5)
-Merging kselftest/next (68bd42d97c30 selftests/powerpc: Fix remaining fallout from recent changes)
-CONFLICT (content): Merge conflict in tools/testing/selftests/bpf/Makefile
-Merging y2038/y2038 (69973b830859 Linux 4.9)
-Merging luto-misc/next (2dcd0af568b0 Linux 4.6)
-Merging borntraeger/linux-next (e76d21c40bd6 Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net)
-Merging livepatching/for-next (372e2db7210d livepatch: doc: remove the limitation for schedule() patching)
-Merging coresight/next (dc83e0549ea1 coresight: Fixes coresight DT parse to get correct output port ID.)
-Merging rtc/rtc-next (34f54f579a99 rtc: armada38x: Add support for Armada 7K/8K)
-Merging hwspinlock/for-next (bd5717a4632c hwspinlock: qcom: Correct msb in regmap_field)
-Merging nvdimm/libnvdimm-for-next (bfb34527a32a libnvdimm, pfn: fix memmap reservation size versus 4K alignment)
-Merging dax-misc/dax-misc (4d9a2c874667 dax: Remove i_mmap_lock protection)
-Merging idr/idr-4.11 (768dd325a382 radix tree test suite: Run iteration tests for longer)
-Merging akpm-current/current (39560276db66 scatterlist: do not disable IRQs in sg_copy_buffer)
-CONFLICT (content): Merge conflict in tools/testing/selftests/vm/Makefile
-CONFLICT (content): Merge conflict in include/linux/iomap.h
-CONFLICT (content): Merge conflict in include/linux/dax.h
-CONFLICT (content): Merge conflict in fs/iomap.c
-CONFLICT (content): Merge conflict in fs/dax.c
-CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_drv.h
-$ git checkout -b akpm remotes/origin/akpm/master
-Applying: fs: add i_blocksize()
-Applying: truncate: use i_blocksize()
-Applying: nilfs2: use nilfs_btree_node_size()
-Applying: nilfs2: use i_blocksize()
-Applying: scripts/spelling.txt: add "swith" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "swithc" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "an user" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "an union" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "an one" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "partiton" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "aligment" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "algined" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "efective" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "varible" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "embeded" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "againt" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "neded" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "unneded" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "intialization" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "initialiazation" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "intialise(d)" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "comsume(r)" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "disble(d)" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "overide" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "overrided" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "configuartion" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "applys" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "explictely" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "omited" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "disassocation" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "deintialize(d)" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "overwritting" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "overwriten" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "therfore" pattern and fix typo instances
-Applying: scripts/spelling.txt: add "followings" pattern and fix typo instances
-Applying: scripts/spelling.txt: add some typo-words
-Applying: lib/vsprintf.c: remove %Z support
-Applying: checkpatch: warn when formats use %Z and suggest %z
-Applying: checkpatchpl-warn-against-using-%z-fix
-Applying: mm: add new mmgrab() helper
-Applying: mm: add new mmget() helper
-Applying: mm: use mmget_not_zero() helper
-Applying: mm: clarify mm_struct.mm_{users,count} documentation
-Applying: mm: add arch-independent testcases for RODATA
-Applying: mm: testcases for RODATA: fix config dependency
-Merging akpm/master (69b0f2755a5d mm: testcases for RODATA: fix config dependency)
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
