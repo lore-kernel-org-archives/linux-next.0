@@ -1,73 +1,20 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Mon, 27 Feb 2017 07:25:41 -0800
-Message-ID: <1488209141.20926.1.camel@HansenPartnership.com>
-References: <20170222134119.42f26068@canb.auug.org.au>
-         <20170223080639.753ac411@canb.auug.org.au>
-         <20170227125445.77571c8b@canb.auug.org.au>
+From: Mrs Julie Leach <info@pmf.ni.ac.rs>
+Subject: BENEFIT
+Date: Mon, 27 Feb 2017 15:00:12 +0200
+Message-ID: <20170227130043.051DE2E39A0__1378.95734883404$1488211797$gmane$org@pmf.pmf.ni.ac.rs>
+Reply-To: julieleach913@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170227125445.77571c8b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, Hannes Reinecke <hare@suse.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from pmf.pmf.ni.ac.rs ([160.99.54.1]:50216 "EHLO pmf.pmf.ni.ac.rs"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751454AbdB0QJX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 27 Feb 2017 11:09:23 -0500
+Content-Description: Mail message body
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Recipients <info@pmf.ni.ac.rs>
 
-On Mon, 2017-02-27 at 12:54 +1100, Stephen Rothwell wrote:
-> Hi James,
-> 
-> On Thu, 23 Feb 2017 08:06:39 +1100 Stephen Rothwell <
-> sfr@canb.auug.org.au> wrote:
-> > 
-> > On Wed, 22 Feb 2017 13:41:19 +1100 Stephen Rothwell <
-> > sfr@canb.auug.org.au> wrote:
-> > > 
-> > > After merging the scsi-mkp tree, today's linux-next build
-> > > (powerpc
-> > > ppc64_defconfig) failed like this:
-> > > 
-> > > ERROR: ".nvme_fc_unregister_remoteport"
-> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
-> > > ERROR: ".nvme_fc_unregister_localport"
-> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
-> > > ERROR: ".nvmet_fc_rcv_ls_req" [drivers/scsi/lpfc/lpfc.ko]
-> > > undefined!
-> > > ERROR: ".nvmet_fc_rcv_fcp_req" [drivers/scsi/lpfc/lpfc.ko]
-> > > undefined!
-> > > ERROR: ".nvme_fc_register_localport" [drivers/scsi/lpfc/lpfc.ko]
-> > > undefined!
-> > > ERROR: ".nvme_fc_register_remoteport" [drivers/scsi/lpfc/lpfc.ko]
-> > > undefined!
-> > > ERROR: ".nvmet_fc_register_targetport"
-> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
-> > > ERROR: ".nvmet_fc_unregister_targetport"
-> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
-> > > 
-> > > Caused by commit
-> > > 
-> > >   462896e1808c ("scsi: lpfc: NVME Initiator: bind to nvme_fc
-> > > api")
-> > > 
-> > > # CONFIG_NVME_FC is not set
-> > > 
-> > > Presumably a missing dependency.
-> > > 
-> > > I have used the scsi-mkp from next-20170221 for today.  
-> > 
-> > Unfortunately, you have just merged this build failure into the 
-> > scsi tree :-(
-> > 
-> > James Smart has posted a fix:
-> > 
-> >   "[PATCH v2] lpfc: add missing Kconfig NVME dependencies"
-> 
-> I am still getting this failure in the scsi tree even though a fix 
-> has been merged into the scsi-mkp tree a few days ago.
-
-Sorry, was in meeting hell for the last part of last week.  Everything
-should be up to date now.  The final pull for all of this should go out
-Wed/Thu to give 0day a good run at the tree.
-
-James
+You are a recipient to Mrs Julie Leach Donation of $3 million USD. Contact(=
+julieleach93@gmail.com) for claims.
