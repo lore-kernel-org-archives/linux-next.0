@@ -1,48 +1,73 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: next-20170217 boot on POWER8 LPAR : WARNING
- @kernel/jump_label.c:287
-Date: Mon, 27 Feb 2017 10:22:43 -0500
-Message-ID: <20170227102243.2172a8ea@gandalf.local.home>
-References: <E6A8A7A8-6A55-4989-BAE9-39274876CA3C@linux.vnet.ibm.com>
- <1dffdaac-be8b-0052-52d4-a65fed39f894@akamai.com>
- <02B52EFB-4608-47F3-A81C-B8B52DB11233@linux.vnet.ibm.com>
- <20c53e88-acf5-4c4f-cea9-4dd8745814b5@akamai.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+Date: Mon, 27 Feb 2017 07:25:41 -0800
+Message-ID: <1488209141.20926.1.camel@HansenPartnership.com>
+References: <20170222134119.42f26068@canb.auug.org.au>
+         <20170223080639.753ac411@canb.auug.org.au>
+         <20170227125445.77571c8b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <20c53e88-acf5-4c4f-cea9-4dd8745814b5@akamai.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Jason Baron <jbaron@akamai.com>
-Cc: Sachin Sant <sachinp@linux.vnet.ibm.com>, linuxppc-dev@ozlabs.org, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170227125445.77571c8b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, Hannes Reinecke <hare@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 21 Feb 2017 11:37:21 -0500
-Jason Baron <jbaron@akamai.com> wrote:
-
-
-> Thanks for testing. We probably need something like the following to 
-> make sure we don't hit this on other arches. Steve - I will send 4 
-> separate patches for this to get arch maintainers' acks for this?
+On Mon, 2017-02-27 at 12:54 +1100, Stephen Rothwell wrote:
+> Hi James,
 > 
+> On Thu, 23 Feb 2017 08:06:39 +1100 Stephen Rothwell <
+> sfr@canb.auug.org.au> wrote:
+> > 
+> > On Wed, 22 Feb 2017 13:41:19 +1100 Stephen Rothwell <
+> > sfr@canb.auug.org.au> wrote:
+> > > 
+> > > After merging the scsi-mkp tree, today's linux-next build
+> > > (powerpc
+> > > ppc64_defconfig) failed like this:
+> > > 
+> > > ERROR: ".nvme_fc_unregister_remoteport"
+> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
+> > > ERROR: ".nvme_fc_unregister_localport"
+> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
+> > > ERROR: ".nvmet_fc_rcv_ls_req" [drivers/scsi/lpfc/lpfc.ko]
+> > > undefined!
+> > > ERROR: ".nvmet_fc_rcv_fcp_req" [drivers/scsi/lpfc/lpfc.ko]
+> > > undefined!
+> > > ERROR: ".nvme_fc_register_localport" [drivers/scsi/lpfc/lpfc.ko]
+> > > undefined!
+> > > ERROR: ".nvme_fc_register_remoteport" [drivers/scsi/lpfc/lpfc.ko]
+> > > undefined!
+> > > ERROR: ".nvmet_fc_register_targetport"
+> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
+> > > ERROR: ".nvmet_fc_unregister_targetport"
+> > > [drivers/scsi/lpfc/lpfc.ko] undefined!
+> > > 
+> > > Caused by commit
+> > > 
+> > >   462896e1808c ("scsi: lpfc: NVME Initiator: bind to nvme_fc
+> > > api")
+> > > 
+> > > # CONFIG_NVME_FC is not set
+> > > 
+> > > Presumably a missing dependency.
+> > > 
+> > > I have used the scsi-mkp from next-20170221 for today.  
+> > 
+> > Unfortunately, you have just merged this build failure into the 
+> > scsi tree :-(
+> > 
+> > James Smart has posted a fix:
+> > 
+> >   "[PATCH v2] lpfc: add missing Kconfig NVME dependencies"
+> 
+> I am still getting this failure in the scsi tree even though a fix 
+> has been merged into the scsi-mkp tree a few days ago.
 
-I just got back from ELC, so sorry for the late reply.
+Sorry, was in meeting hell for the last part of last week.  Everything
+should be up to date now.  The final pull for all of this should go out
+Wed/Thu to give 0day a good run at the tree.
 
-I think you can just send this as one patch, as it is a single fix. Cc
-each of the arch maintainers though. Unless you think it will have
-conflicts with other changes in those archs. But I'm assuming there
-wont be any conflicts.
-
-This is a fix for something that I just pushed to Linus, thus it can
-still get in after the merge window closes.
-
--- Steve
+James
