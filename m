@@ -1,115 +1,41 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170301 build: 0 failures 4 warnings (next-20170301)
-Date: Wed, 01 Mar 2017 08:31:21 +0000
-Message-ID: <E1cizfM-000637-JP@optimist>
+From: Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v3] staging: greybus: loop_backtest: fixed consistent
+ spacing style issue
+Date: Wed, 1 Mar 2017 11:16:37 +0100
+Message-ID: <20170301101637.GH2871@localhost>
+References: <20170301100943.GA9503@mod.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46374 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750941AbdCAKMT (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Mar 2017 05:12:19 -0500
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34298 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750941AbdCAKRH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Mar 2017 05:17:07 -0500
+Received: by mail-lf0-f66.google.com with SMTP id y193so1711158lfd.1
+        for <linux-next@vger.kernel.org>; Wed, 01 Mar 2017 02:16:40 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <20170301100943.GA9503@mod.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Jonathan Bowie <eudjtb@gmail.com>
+Cc: Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, greybus-dev@lists.linaro.org, linux-next@vger.kernel.org
 
-Tree/Branch: next-20170301
-Git describe: next-20170301
-Commit: 51788aebe7 Add linux-next specific files for 20170301
+On Wed, Mar 01, 2017 at 02:09:43AM -0800, Jonathan Bowie wrote:
+> Fixed incosistent spacing around arithmetic operator.
+> 
+> Signed-off-by: Jonathan Bowie <eudjtb@gmail.com>
+> ---
 
-Build Time: 192 min 1 sec
+This looks good except that you now dropped the changelog again (what
+changed in v2 and v3?), and you CC:d the linux-next rather than the
+staging list devel@driverdev.osuosl.org (I included the address in my
+response to v1).
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+You can use scripts/get_maintainer.pl on a patch to figure out which
+parties and lists to CC (you don't need to include LKML in this case).
 
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
+Since you're doing this to learn the process, you can send a v4 and get
+everything right.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      5 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 4
-	 13 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../include/linux/device.h:1479:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	  1 ../include/linux/device.h:1474:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	../include/linux/device.h:1474:20: warning: passing argument 1 of '__platform_driver_register' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/device.h:1479:15: warning: passing argument 1 of 'platform_driver_unregister' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks,
+Johan
