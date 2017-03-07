@@ -1,103 +1,90 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm tree
-Date: Tue, 7 Mar 2017 13:38:43 +1100
-Message-ID: <20170307133843.1e42787d@canb.auug.org.au>
+From: Chen-Yu Tsai <wens@csie.org>
+Subject: Re: linux-next: manual merge of the sunxi tree with the drm-misc tree
+Date: Tue, 7 Mar 2017 11:05:30 +0800
+Message-ID: <CAGb2v64AnGU=y7ZcOPV=ppNsxjiOHO3TgsBUgP5cp5=vfaTMaA@mail.gmail.com>
+References: <20170307105906.214e7bec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48187 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750993AbdCGCjJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 6 Mar 2017 21:39:09 -0500
+Received: from smtp.csie.ntu.edu.tw ([140.112.30.61]:56372 "EHLO
+        smtp.csie.ntu.edu.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754829AbdCGDIV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Mar 2017 22:08:21 -0500
+In-Reply-To: <20170307105906.214e7bec@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Maxime Ripard <maxime.ripard@free-electrons.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Chen-Yu Tsai <wens@csie.org>
 
-Hi Andrew,
+On Tue, Mar 7, 2017 at 7:59 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the sunxi tree got a conflict in:
+>
+>   drivers/gpu/drm/sun4i/sun4i_drv.c
+>
+> between commit:
+>
+>   50480a78e282 ("drm: sun4i: use vblank hooks in struct drm_crtc_funcs")
+>
+> from the drm-misc tree and commit:
+>
+>   1c313a69e3ea ("drm/sun4i: Move layers from sun4i_drv to sun4i_crtc")
+>
+> from the sunxi tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/gpu/drm/sun4i/sun4i_drv.c
+> index 9ccf7c4deb6d,1ec5b825aa64..000000000000
+> --- a/drivers/gpu/drm/sun4i/sun4i_drv.c
+> +++ b/drivers/gpu/drm/sun4i/sun4i_drv.c
+> @@@ -20,10 -21,31 +21,8 @@@
+>   #include <drm/drm_fb_helper.h>
+>   #include <drm/drm_of.h>
+>
+> - #include "sun4i_crtc.h"
+>   #include "sun4i_drv.h"
+>   #include "sun4i_framebuffer.h"
+> - #include "sun4i_layer.h"
+>  -#include "sun4i_tcon.h"
+>  -
+>  -static int sun4i_drv_enable_vblank(struct drm_device *drm, unsigned int pipe)
+>  -{
+>  -      struct sun4i_drv *drv = drm->dev_private;
+>  -      struct sun4i_tcon *tcon = drv->tcon;
+>  -
+>  -      DRM_DEBUG_DRIVER("Enabling VBLANK on pipe %d\n", pipe);
+>  -
+>  -      sun4i_tcon_enable_vblank(tcon, true);
+>  -
+>  -      return 0;
+>  -}
+>  -
+>  -static void sun4i_drv_disable_vblank(struct drm_device *drm, unsigned int pipe)
+>  -{
+>  -      struct sun4i_drv *drv = drm->dev_private;
+>  -      struct sun4i_tcon *tcon = drv->tcon;
+>  -
+>  -      DRM_DEBUG_DRIVER("Disabling VBLANK on pipe %d\n", pipe);
+>  -
+>  -      sun4i_tcon_enable_vblank(tcon, false);
+>  -}
+>
+>   static const struct file_operations sun4i_drv_fops = {
+>         .owner          = THIS_MODULE,
 
-After merging the akpm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Thanks. This looks correct when combined with the fix you sent out.
 
-arch/arm/kernel/machine_kexec.c: In function 'machine_kexec':
-arch/arm/kernel/machine_kexec.c:163:2: error: implicit declaration of function 'set_kernel_text_rw' [-Werror=implicit-function-declaration]
-  set_kernel_text_rw();
-  ^
+Maxime, how would you like to handle this?
 
-Caused by patches
-
-  treewide: move set_memory_* functions away from cacheflush.h
-  treewide: decouple cacheflush.h and set_memory.h
-
-I have added this fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 7 Mar 2017 13:28:38 +1100
-Subject: [PATCH] treewide-decouple-cacheflushh-and-set_memoryh-fix-7
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/arm/kernel/machine_kexec.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/kernel/machine_kexec.c b/arch/arm/kernel/machine_kexec.c
-index b18c1ea56bed..80f48f522b0c 100644
---- a/arch/arm/kernel/machine_kexec.c
-+++ b/arch/arm/kernel/machine_kexec.c
-@@ -14,6 +14,7 @@
- #include <asm/pgalloc.h>
- #include <asm/mmu_context.h>
- #include <asm/cacheflush.h>
-+#include <asm/set_memory.h>
- #include <asm/fncpy.h>
- #include <asm/mach-types.h>
- #include <asm/smp_plat.h>
--- 
-2.11.0
-
-Which lead to (again in the arm multi_v7_defconfig build):
-
-drivers/misc/sram-exec.c: In function 'sram_exec_copy':
-drivers/misc/sram-exec.c:93:2: error: implicit declaration of function 'set_memory_nx' [-Werror=implicit-function-declaration]
-  set_memory_nx((unsigned long)base, pages);
-  ^
-drivers/misc/sram-exec.c:94:2: error: implicit declaration of function 'set_memory_rw' [-Werror=implicit-function-declaration]
-  set_memory_rw((unsigned long)base, pages);
-  ^
-drivers/misc/sram-exec.c:98:2: error: implicit declaration of function 'set_memory_ro' [-Werror=implicit-function-declaration]
-  set_memory_ro((unsigned long)base, pages);
-  ^
-drivers/misc/sram-exec.c:99:2: error: implicit declaration of function 'set_memory_x' [-Werror=implicit-function-declaration]
-  set_memory_x((unsigned long)base, pages);
-  ^
-
-For which I added:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 7 Mar 2017 13:34:58 +1100
-Subject: [PATCH] treewide-decouple-cacheflushh-and-set_memoryh-fix-8
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/misc/sram-exec.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/misc/sram-exec.c b/drivers/misc/sram-exec.c
-index ac522417c462..225300bb5510 100644
---- a/drivers/misc/sram-exec.c
-+++ b/drivers/misc/sram-exec.c
-@@ -19,6 +19,7 @@
- #include <linux/sram.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/set_memory.h>
- 
- #include "sram.h"
- 
--- 
-2.11.0
-
--- 
-Cheers,
-Stephen Rothwell
+ChenYu
