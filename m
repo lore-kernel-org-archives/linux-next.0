@@ -1,108 +1,39 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: master build: 0 failures 2 warnings (v4.11-rc1-1541-g3c90632)
-Date: Tue, 07 Mar 2017 06:45:09 +0000
-Message-ID: <E1cl8rs-0006Ll-Ip@optimist>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 7 Mar 2017 09:47:29 +0100
+Message-ID: <20170307084729.GB20446@kroah.com>
+References: <20170307122542.49126980@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51856 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752322AbdCGHIA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 7 Mar 2017 02:08:00 -0500
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:47786 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754750AbdCGItQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 7 Mar 2017 03:49:16 -0500
+Content-Disposition: inline
+In-Reply-To: <20170307122542.49126980@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alan Cox <alan@linux.intel.com>
 
-Tree/Branch: master
-Git describe: v4.11-rc1-1541-g3c90632
-Commit: 3c90632cc1 Add linux-next specific files for 20170307
+On Tue, Mar 07, 2017 at 12:25:42PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/staging/media/atomisp/i2c/mt9m114.c:38:41: fatal error: linux/atomisp_gmin_platform.h: No such file or directory
+> drivers/staging/media/atomisp/i2c/gc2235.c:32:41: fatal error: linux/atomisp_gmin_platform.h: No such file or directory
+> drivers/staging/media/atomisp/i2c/ov2722.c:32:41: fatal error: linux/atomisp_gmin_platform.h: No such file or directory
 
-Build Time: 98 min 19 sec
+I really can't duplicate this here, but you and the kbuild bot are
+hitting this now.  in drivers/staging/media/atomisp/Makefile we have:
+	LINUXINCLUDE        += -I drivers/staging/media/atomisp/include/
+to point the include path at where atomisp_gmin_platform.h is at.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+So I don't understand what is going on here.  Alan, any hints?
 
-Errors: 0
-Warnings: 2
-Section Mismatches: 0
+thanks,
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 2
-	 13 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	  1 ../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	../include/linux/dynamic_debug.h:126:3: warning: 'ept_cfg' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+greg k-h
