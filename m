@@ -1,42 +1,77 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the sunxi
-	tree
-Date: Wed, 8 Mar 2017 10:49:51 +0100
-Message-ID: <20170308094951.qtvgv4x4bzjtqcoz@phenom.ffwll.local>
-References: <20170307111019.246a9629@canb.auug.org.au>
- <20170307213940.kcaedlhiua2r4lsq@lukather>
- <878togjhrl.fsf@intel.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Wed, 8 Mar 2017 11:13:38 +0100
+Message-ID: <20170308101338.sp4yekncbext7qzf@phenom.ffwll.local>
+References: <20170308121645.6160e711@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <878togjhrl.fsf@intel.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>, linux-next@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>
+In-Reply-To: <20170308121645.6160e711@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCBNYXIgMDgsIDIwMTcgYXQgMTA6MjY6NTRBTSArMDIwMCwgSmFuaSBOaWt1bGEgd3Jv
-dGU6Cj4gT24gVHVlLCAwNyBNYXIgMjAxNywgTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBm
-cmVlLWVsZWN0cm9ucy5jb20+IHdyb3RlOgo+ID4gSSBqdXN0IHJlYmFzZWQgbXkgdHJlZSBvbiB0
-b3Agb2YgdGhlIGxhdGVzdCBkcm0tbWlzYyB0YWcKPiA+IChkcm0tbWlzYy1uZXh0LTIwMTctMDMt
-MDYpLiBJdCBzaG91bGQgY29tcGlsZSwgYW5kIG5vdCBoYXZlIG1lcmdlCj4gPiBjb25mbGljdHMg
-YW55bW9yZS4KPiAKPiBDb25mbGljdHMgaGFwcGVuLiBSZWJhc2luZyBzaG91bGQgbm90IGJlIHRo
-ZSBzdGFuZGFyZCBvcGVyYXRpbmcKPiBwcm9jZWR1cmUgZm9yIGZpeGluZyB0aGVtLgoKSSB0aGlu
-ayBmb3IgdGhpcyBvbmUgaGVyZSBpdCdzIG9rLCB2ZXJ5IGVhcmx5IGluIHRoZSBmZWF0dXJlIGN5
-Y2xlLCBmZXcKcGF0Y2hlcywgbmFzdHkgY29uZmxpY3QuIEJ1dCB5ZWFoIHRoZSBzYW1lIHRoaW5n
-IHJpZ2h0IGJlZm9yZSB0aGUgbWVyZ2UKd2luZG93IG9wZW5zIHdvdWxkbid0IGJlIGNvb2wuCi1E
-YW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0
-aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2ludGVsLWdmeAo=
+T24gV2VkLCBNYXIgMDgsIDIwMTcgYXQgMTI6MTY6NDVQTSArMTEwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToKPiBIaSBQYXVsLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIHJjdSB0cmVlLCB0b2Rh
+eSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCj4gZmFpbGVkIGxpa2Ug
+dGhpczoKPiAKPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20gaW5jbHVkZS9saW51eC9yZXNvdXJjZV9l
+eHQuaDoxOTowLAo+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2xpbnV4L3BjaS5oOjMy
+LAo+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRlL2RybS9kcm1QLmg6NTAsCj4gICAgICAg
+ICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtLmM6Mjg6Cj4gZHJp
+dmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL21vY2tfZ2VtX2RldmljZS5jOiBJbiBmdW5jdGlv
+biAnbW9ja19nZW1fZGV2aWNlJzoKPiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvbW9j
+a19nZW1fZGV2aWNlLmM6MTc3Ojk6IGVycm9yOiAnU0xBQl9ERVNUUk9ZX0JZX1JDVScgdW5kZWNs
+YXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVuY3Rpb24pCj4gICAgICAgICAgU0xBQl9ERVNUUk9Z
+X0JZX1JDVSk7Cj4gICAgICAgICAgXgo+IGluY2x1ZGUvbGludXgvc2xhYi5oOjE0OTo0OiBub3Rl
+OiBpbiBkZWZpbml0aW9uIG9mIG1hY3JvICdLTUVNX0NBQ0hFJwo+ICAgIChfX2ZsYWdzKSwgTlVM
+TCkKPiAgICAgXgo+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZp
+Y2UuYzoxNzc6OTogbm90ZTogZWFjaCB1bmRlY2xhcmVkIGlkZW50aWZpZXIgaXMgcmVwb3J0ZWQg
+b25seSBvbmNlIGZvciBlYWNoIGZ1bmN0aW9uIGl0IGFwcGVhcnMgaW4KPiAgICAgICAgICBTTEFC
+X0RFU1RST1lfQllfUkNVKTsKPiAgICAgICAgICBeCj4gaW5jbHVkZS9saW51eC9zbGFiLmg6MTQ5
+OjQ6IG5vdGU6IGluIGRlZmluaXRpb24gb2YgbWFjcm8gJ0tNRU1fQ0FDSEUnCj4gICAgKF9fZmxh
+Z3MpLCBOVUxMKQo+ICAgICBeCj4gLwo+IAo+IENhdXNlZCBieSBjb21taXQKPiAKPiAgIDI0Yjdj
+YjI1YjhkMSAoIm1tOiBSZW5hbWUgU0xBQl9ERVNUUk9ZX0JZX1JDVSB0byBTTEFCX1RZUEVTQUZF
+X0JZX1JDVSIpCgpBd2Vzb21lIHJlbmFtZS4gQ291bnQgdXMgaW4gYW1vbmcgdGhlIHBlb3BsZSB3
+aG8gZmlyc3QgdGhvdWdodCB0aGlzCnByb3ZpZGVzIG1vcmUgZ3VhcmFudGVlcyB0aGFuIGl0IGRv
+ZXMuCgo+IGludGVyYWN0aW5nIHdpdGggY29tbWl0Cj4gCj4gICAwZGFmMDExM2NmZjYgKCJkcm0v
+aTkxNTogTW9jayBpbmZyYXN0cnVjdHVyZSBmb3IgcmVxdWVzdCBlbWlzc2lvbiIpCj4gCj4gZnJv
+bSB0aGUgZHJtLWludGVsIHRyZWUuCj4gCj4gSSBhZGRlZCB0aGUgZm9sbG93aW5nIG1lcmdlIGZp
+eCBwYXRjaDoKPiAKPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5h
+dT4KPiBEYXRlOiBXZWQsIDggTWFyIDIwMTcgMTI6MDk6NDkgKzExMDAKPiBTdWJqZWN0OiBbUEFU
+Q0hdIGRybS9pOTE1OiBtZXJnZSBmaXggZm9yICJtbTogUmVuYW1lIFNMQUJfREVTVFJPWV9CWV9S
+Q1UgdG8KPiAgU0xBQl9UWVBFU0FGRV9CWV9SQ1UiCj4gCj4gU2lnbmVkLW9mZi1ieTogU3RlcGhl
+biBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CgpTaG91bGQgd2UgaGFuZGxlIHRoaXMg
+d2l0aCBhIHRvcGljIGJyYW5jaD8gSXQncyB0cml2aWFsIHRvIHJlc29sdmUsIGJ1dCBJCmZlYXIg
+dGhlIG5vdGUgdGhhdCB0aGlzIGNvbmZsaWN0IGV4aXN0cyBtaWdodCBnZXQgbG9zdCBzb21ld2hl
+cmUgYmV0d2Vlbgpub3cgYW5kIHdoZW4gdGhlIGRybSBwdWxsIGxhbmRzIGluIExpbnVzJyBpbmJv
+eCBpbiAyIG1vbnRocyAuLi4KCk90b2ggaGUncyBwcm9iYWJseSBnb2luZyB0byBjb21waWxlIHRl
+c3QgZHJtIGV4dHJhIGNhcmVmdWxseSBhbmQgd2lsbApub3RpY2UgOi0pCi1EYW5pZWwKCj4gLS0t
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYyB8IDIg
+Ky0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4gCj4g
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZp
+Y2UuYyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYwo+
+IGluZGV4IDZhODI1OGVhY2RjYi4uOWYyNGM1ZGEzZjhkIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYwo+ICsrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYwo+IEBAIC0xNzQsNyArMTc0
+LDcgQEAgc3RydWN0IGRybV9pOTE1X3ByaXZhdGUgKm1vY2tfZ2VtX2RldmljZSh2b2lkKQo+ICAJ
+aTkxNS0+cmVxdWVzdHMgPSBLTUVNX0NBQ0hFKG1vY2tfcmVxdWVzdCwKPiAgCQkJCSAgICBTTEFC
+X0hXQ0FDSEVfQUxJR04gfAo+ICAJCQkJICAgIFNMQUJfUkVDTEFJTV9BQ0NPVU5UIHwKPiAtCQkJ
+CSAgICBTTEFCX0RFU1RST1lfQllfUkNVKTsKPiArCQkJCSAgICBTTEFCX1RZUEVTQUZFX0JZX1JD
+VSk7Cj4gIAlpZiAoIWk5MTUtPnJlcXVlc3RzKQo+ICAJCWdvdG8gZXJyX3ZtYXM7Cj4gIAo+IC0t
+IAo+IDIuMTEuMAo+IAo+IC0tIAo+IENoZWVycywKPiBTdGVwaGVuIFJvdGh3ZWxsCgotLSAKRGFu
+aWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Js
+b2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
