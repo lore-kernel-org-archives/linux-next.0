@@ -1,35 +1,41 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the sunxi
-	tree
-Date: Wed, 08 Mar 2017 10:26:54 +0200
-Message-ID: <878togjhrl.fsf@intel.com>
-References: <20170307111019.246a9629@canb.auug.org.au>
- <20170307213940.kcaedlhiua2r4lsq@lukather>
+From: Amir Goldstein <amir73il@gmail.com>
+Subject: Re: linux-next: build warnings after merge of the overlayfs tree
+Date: Wed, 8 Mar 2017 10:44:01 +0200
+Message-ID: <CAOQ4uxi4r+EEOgWGMZj7v32oxiNuOj1cMHu=y=ww86=4eoL6Mg@mail.gmail.com>
+References: <20170308101643.0bc34e88@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170307213940.kcaedlhiua2r4lsq@lukather>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Maxime Ripard <maxime.ripard@free-electrons.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:32934 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751786AbdCHIoD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Mar 2017 03:44:03 -0500
+In-Reply-To: <20170308101643.0bc34e88@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-next@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>
 
-T24gVHVlLCAwNyBNYXIgMjAxNywgTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVs
-ZWN0cm9ucy5jb20+IHdyb3RlOgo+IEkganVzdCByZWJhc2VkIG15IHRyZWUgb24gdG9wIG9mIHRo
-ZSBsYXRlc3QgZHJtLW1pc2MgdGFnCj4gKGRybS1taXNjLW5leHQtMjAxNy0wMy0wNikuIEl0IHNo
-b3VsZCBjb21waWxlLCBhbmQgbm90IGhhdmUgbWVyZ2UKPiBjb25mbGljdHMgYW55bW9yZS4KCkNv
-bmZsaWN0cyBoYXBwZW4uIFJlYmFzaW5nIHNob3VsZCBub3QgYmUgdGhlIHN0YW5kYXJkIG9wZXJh
-dGluZwpwcm9jZWR1cmUgZm9yIGZpeGluZyB0aGVtLgoKQlIsCkphbmkuCgotLSAKSmFuaSBOaWt1
-bGEsIEludGVsIE9wZW4gU291cmNlIFRlY2hub2xvZ3kgQ2VudGVyCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50
-ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+On Wed, Mar 8, 2017 at 1:16 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Miklos,
+>
+> After merging the overlayfs tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced these warnings:
+>
+> fs/overlayfs/inode.c:322:30: warning: 'ovl_i_mutex_key' defined but not used [-Wunused-variable]
+>  static struct lock_class_key ovl_i_mutex_key[FILESYSTEM_MAX_STACK_DEPTH];
+>                               ^
+> fs/overlayfs/inode.c:323:30: warning: 'ovl_i_mutex_dir_key' defined but not used [-Wunused-variable]
+>  static struct lock_class_key ovl_i_mutex_dir_key[FILESYSTEM_MAX_STACK_DEPTH];
+>                               ^
+>
+> Introduced by commit
+>
+>   a41471e8eff8 ("ovl: lockdep annotate of nested stacked overlayfs inode lock")
+>
+> CONFIG_LOCKDEP is not set for this build.
+>
+
+Thanks Stephen!
+
+Miklos, I posted v5 of the patch with a fix.
