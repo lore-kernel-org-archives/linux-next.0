@@ -1,110 +1,216 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: linux-next: build failure after merge of the sunxi tree
-Date: Tue, 7 Mar 2017 22:39:40 +0100
-Message-ID: <20170307213940.kcaedlhiua2r4lsq@lukather>
-References: <20170307111019.246a9629@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the powerpc-fixes
+ tree
+Date: Wed, 8 Mar 2017 11:36:23 +1100
+Message-ID: <20170308113623.4c7a5914@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1619843704=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170307111019.246a9629@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, linux-kernel@vger.kernel.org, DRI <dri-devel@lists.freedesktop.org>, Chen-Yu Tsai <wens@csie.org>, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
+Hi Paul,
 
---===============1619843704==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mcnsnp2mrug3tjf6"
-Content-Disposition: inline
+Today's linux-next merge of the rcu tree got a conflict in:
 
+  arch/powerpc/Kconfig
 
---mcnsnp2mrug3tjf6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+between commit:
 
-Hi Stephen, Daniel,
+  a7d2475af7ae ("powerpc: Sort the selects under CONFIG_PPC")
 
-On Tue, Mar 07, 2017 at 11:10:19AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> After merging the sunxi tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/gpu/drm/sun4i/sun4i_crtc.c: In function 'sun4i_crtc_enable_vblank=
-':
-> drivers/gpu/drm/sun4i/sun4i_crtc.c:109:31: error: 'struct sun4i_crtc' has=
- no member named 'drv'
->   struct sun4i_drv *drv =3D scrtc->drv;
->                                ^
-> drivers/gpu/drm/sun4i/sun4i_crtc.c: In function 'sun4i_crtc_disable_vblan=
-k':
-> drivers/gpu/drm/sun4i/sun4i_crtc.c:121:31: error: 'struct sun4i_crtc' has=
- no member named 'drv'
->   struct sun4i_drv *drv =3D scrtc->drv;
->                                ^
->=20
-> Caused by commit
->=20
->   50480a78e282 ("drm: sun4i: use vblank hooks in struct drm_crtc_funcs")
->=20
-> from the drm-misc tree interacting with commit
->=20
->   1b8d109585df ("drm/sun4i: Add backend and tcon pointers to sun4i_crtc")
->=20
-> from the sunxi tree.
+from the powerpc-fixes tree and commit:
 
-I just rebased my tree on top of the latest drm-misc tag
-(drm-misc-next-2017-03-06). It should compile, and not have merge
-conflicts anymore.
+  9252dd3a96a7 ("rcu: Make arch select smp_mb__after_unlock_lock() strength")
 
-Thanks!
-Maxime
+from the rcu tree.
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
---mcnsnp2mrug3tjf6
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Cheers,
+Stephen Rothwell
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJYvyiXAAoJEBx+YmzsjxAggsYP/2NolUXsvMvhbEO/7Bnn9/cj
-gBQAzqpAhVWM0aIeebvq/Jvd9nY/YEBmsIrmvpVtXwyBGiZ/Ucsqe1JgYAw54qdF
-mMbXFooh4S5NiPSAKJeH8uacN+QefM3doSoQuTrQFKEdMB1Wial75D0ZTzJEcQT1
-UiKUFcDjt5LOO43uYiWNDHBN1xW6CUBpspO394jrN18GYi3LUhB689OUCEAre27j
-yqonYutzVQSVeY/tX3W2X9j9pW04xqVE1tL0I/KLopnhjJ+I1lT6IRi1rxWZ8Edq
-0lpgA52MNB2fqhVCBiLuku75P1ACOIn4oN3+lEbngQ4xjA69CBNDSzXyWeKdCNW1
-FTXp5Ct/lmfI96IGHvRyiFtfSDTqZ7SzzUpFYtzTkh9jF6qxI1+eH5HoE48aKFfK
-vouhC8B58CzaL4JfGtrKNVAQyYAkMpkqQhV1AQkRTHY/S6yzGABB+aOvNdwLd7eb
-4GqPUWYUR87RAAmNTsb7l0w0YBa9F0Gseu+s3UkdSRMZ66rtteGLjzqzf75i2LxW
-00T7+mjzISBwLMOVkQkeWJ0d/BMWmOYIfkhX8uKgGAnq7WjDRt/fgSK+hkJ47J1Z
-MgRp9Ta3PpcUx8d4bmqqwkB5gjeFJZinNj3POOa5f7Bnz2gmQcp7Vmq8aftq+3Ai
-XlpXNxc3CWM2+9B4h0JG
-=eusP
------END PGP SIGNATURE-----
-
---mcnsnp2mrug3tjf6--
-
---===============1619843704==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1619843704==--
+diff --cc arch/powerpc/Kconfig
+index 97a8bc8a095c,9fecd004fee8..000000000000
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@@ -80,102 -80,95 +80,103 @@@ config ARCH_HAS_DMA_SET_COHERENT_MAS
+  config PPC
+  	bool
+  	default y
+ -	select BUILDTIME_EXTABLE_SORT
+ +	#
+ +	# Please keep this list sorted alphabetically.
+ +	#
+ +	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ +	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ +	select ARCH_HAS_ELF_RANDOMIZE
+ +	select ARCH_HAS_GCOV_PROFILE_ALL
+ +	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE
+ +	select ARCH_HAS_SG_CHAIN
+ +	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
+ +	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ +	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+  	select ARCH_MIGHT_HAVE_PC_PARPORT
+  	select ARCH_MIGHT_HAVE_PC_SERIO
+ +	select ARCH_SUPPORTS_ATOMIC_RMW
+ +	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
+ +	select ARCH_USE_BUILTIN_BSWAP
+ +	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
+ +	select ARCH_WANT_IPC_PARSE_VERSION
+++	select ARCH_WEAK_RELEASE_ACQUIRE
+  	select BINFMT_ELF
+ -	select ARCH_HAS_ELF_RANDOMIZE
+ -	select OF
+ -	select OF_EARLY_FLATTREE
+ -	select OF_RESERVED_MEM
+ -	select HAVE_FTRACE_MCOUNT_RECORD
+ +	select BUILDTIME_EXTABLE_SORT
+ +	select CLONE_BACKWARDS
+ +	select DCACHE_WORD_ACCESS		if PPC64 && CPU_LITTLE_ENDIAN
+ +	select EDAC_ATOMIC_SCRUB
+ +	select EDAC_SUPPORT
+ +	select GENERIC_ATOMIC64			if PPC32
+ +	select GENERIC_CLOCKEVENTS
+ +	select GENERIC_CLOCKEVENTS_BROADCAST	if SMP
+ +	select GENERIC_CMOS_UPDATE
+ +	select GENERIC_CPU_AUTOPROBE
+ +	select GENERIC_IRQ_SHOW
+ +	select GENERIC_IRQ_SHOW_LEVEL
+ +	select GENERIC_SMP_IDLE_THREAD
+ +	select GENERIC_STRNCPY_FROM_USER
+ +	select GENERIC_STRNLEN_USER
+ +	select GENERIC_TIME_VSYSCALL_OLD
+ +	select HAVE_ARCH_AUDITSYSCALL
+ +	select HAVE_ARCH_HARDENED_USERCOPY
+ +	select HAVE_ARCH_JUMP_LABEL
+ +	select HAVE_ARCH_KGDB
+ +	select HAVE_ARCH_SECCOMP_FILTER
+ +	select HAVE_ARCH_TRACEHOOK
+ +	select HAVE_CBPF_JIT			if !PPC64
+ +	select HAVE_CONTEXT_TRACKING		if PPC64
+ +	select HAVE_DEBUG_KMEMLEAK
+ +	select HAVE_DEBUG_STACKOVERFLOW
+ +	select HAVE_DMA_API_DEBUG
+  	select HAVE_DYNAMIC_FTRACE
+ -	select HAVE_DYNAMIC_FTRACE_WITH_REGS if MPROFILE_KERNEL
+ -	select HAVE_FUNCTION_TRACER
+ +	select HAVE_DYNAMIC_FTRACE_WITH_REGS	if MPROFILE_KERNEL
+ +	select HAVE_EBPF_JIT			if PPC64
+ +	select HAVE_EFFICIENT_UNALIGNED_ACCESS	if !(CPU_LITTLE_ENDIAN && POWER7_CPU)
+ +	select HAVE_FTRACE_MCOUNT_RECORD
+  	select HAVE_FUNCTION_GRAPH_TRACER
+ -	select SYSCTL_EXCEPTION_TRACE
+ -	select VIRT_TO_BUS if !PPC64
+ +	select HAVE_FUNCTION_TRACER
+ +	select HAVE_GCC_PLUGINS
+ +	select HAVE_GENERIC_RCU_GUP
+ +	select HAVE_HW_BREAKPOINT		if PERF_EVENTS && (PPC_BOOK3S || PPC_8xx)
+  	select HAVE_IDE
+  	select HAVE_IOREMAP_PROT
+ -	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !(CPU_LITTLE_ENDIAN && POWER7_CPU)
+ +	select HAVE_IRQ_EXIT_ON_IRQ_STACK
+ +	select HAVE_KERNEL_GZIP
+  	select HAVE_KPROBES
+ -	select HAVE_ARCH_KGDB
+  	select HAVE_KRETPROBES
+ -	select HAVE_ARCH_TRACEHOOK
+ +	select HAVE_LIVEPATCH			if HAVE_DYNAMIC_FTRACE_WITH_REGS
+  	select HAVE_MEMBLOCK
+  	select HAVE_MEMBLOCK_NODE_MAP
+ -	select HAVE_DMA_API_DEBUG
+ +	select HAVE_MOD_ARCH_SPECIFIC
+ +	select HAVE_NMI				if PERF_EVENTS
+  	select HAVE_OPROFILE
+ -	select HAVE_DEBUG_KMEMLEAK
+ -	select ARCH_HAS_SG_CHAIN
+ -	select GENERIC_ATOMIC64 if PPC32
+ +	select HAVE_OPTPROBES			if PPC64
+  	select HAVE_PERF_EVENTS
+ +	select HAVE_PERF_EVENTS_NMI		if PPC64
+  	select HAVE_PERF_REGS
+  	select HAVE_PERF_USER_STACK_DUMP
+ +	select HAVE_RCU_TABLE_FREE		if SMP
+  	select HAVE_REGS_AND_STACK_ACCESS_API
+ -	select HAVE_HW_BREAKPOINT if PERF_EVENTS && PPC_BOOK3S_64
+ -	select ARCH_WANT_IPC_PARSE_VERSION
+ -	select SPARSE_IRQ
+ +	select HAVE_SYSCALL_TRACEPOINTS
+ +	select HAVE_VIRT_CPU_ACCOUNTING
+  	select IRQ_DOMAIN
+ -	select GENERIC_IRQ_SHOW
+ -	select GENERIC_IRQ_SHOW_LEVEL
+  	select IRQ_FORCED_THREADING
+ -	select HAVE_RCU_TABLE_FREE if SMP
+ -	select HAVE_SYSCALL_TRACEPOINTS
+ -	select HAVE_CBPF_JIT if !PPC64
+ -	select HAVE_EBPF_JIT if PPC64
+ -	select HAVE_ARCH_JUMP_LABEL
+ -	select ARCH_HAVE_NMI_SAFE_CMPXCHG
+ -	select ARCH_HAS_GCOV_PROFILE_ALL
+ -	select GENERIC_SMP_IDLE_THREAD
+ -	select GENERIC_CMOS_UPDATE
+ -	select GENERIC_TIME_VSYSCALL_OLD
+ -	select GENERIC_CLOCKEVENTS
+ -	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
+ -	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ -	select GENERIC_STRNCPY_FROM_USER
+ -	select GENERIC_STRNLEN_USER
+ -	select HAVE_MOD_ARCH_SPECIFIC
+  	select MODULES_USE_ELF_RELA
+ -	select CLONE_BACKWARDS
+ -	select ARCH_USE_BUILTIN_BSWAP
+ -	select OLD_SIGSUSPEND
+ -	select OLD_SIGACTION if PPC32
+ -	select HAVE_DEBUG_STACKOVERFLOW
+ -	select HAVE_IRQ_EXIT_ON_IRQ_STACK
+ -	select ARCH_USE_CMPXCHG_LOCKREF if PPC64
+ -	select HAVE_ARCH_AUDITSYSCALL
+ -	select ARCH_SUPPORTS_ATOMIC_RMW
+ -	select DCACHE_WORD_ACCESS if PPC64 && CPU_LITTLE_ENDIAN
+  	select NO_BOOTMEM
+ -	select HAVE_GENERIC_RCU_GUP
+ -	select HAVE_PERF_EVENTS_NMI if PPC64
+ -	select HAVE_NMI if PERF_EVENTS
+ -	select EDAC_SUPPORT
+ -	select EDAC_ATOMIC_SCRUB
+ -	select ARCH_HAS_DMA_SET_COHERENT_MASK
+ -	select ARCH_HAS_DEVMEM_IS_ALLOWED
+ -	select HAVE_ARCH_SECCOMP_FILTER
+ -	select ARCH_HAS_UBSAN_SANITIZE_ALL
+ -	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
+ -	select HAVE_LIVEPATCH if HAVE_DYNAMIC_FTRACE_WITH_REGS
+ -	select GENERIC_CPU_AUTOPROBE
+ -	select HAVE_VIRT_CPU_ACCOUNTING
+ -	select ARCH_HAS_SCALED_CPUTIME if VIRT_CPU_ACCOUNTING_NATIVE
+ -	select HAVE_ARCH_HARDENED_USERCOPY
+ -	select HAVE_KERNEL_GZIP
+ -	select HAVE_CC_STACKPROTECTOR
+ -	select ARCH_WEAK_RELEASE_ACQUIRE
+ +	select OF
+ +	select OF_EARLY_FLATTREE
+ +	select OF_RESERVED_MEM
+ +	select OLD_SIGACTION			if PPC32
+ +	select OLD_SIGSUSPEND
+ +	select SPARSE_IRQ
+ +	select SYSCTL_EXCEPTION_TRACE
+ +	select VIRT_TO_BUS			if !PPC64
+ +	#
+ +	# Please keep this list sorted alphabetically.
+ +	#
+  
+  config GENERIC_CSUM
+ -	def_bool CPU_LITTLE_ENDIAN
+ +	def_bool n
+  
+  config EARLY_PRINTK
+  	bool
