@@ -1,122 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Wed, 8 Mar 2017 11:56:21 +1100
-Message-ID: <20170308115621.18f669ce@canb.auug.org.au>
-References: <20170308114633.42cc839c@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Wed, 8 Mar 2017 12:16:45 +1100
+Message-ID: <20170308121645.6160e711@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170308114633.42cc839c@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
-
-On Wed, 8 Mar 2017 11:46:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the rcu tree got a conflict in:
-> 
->   mm/slab_common.c
-> 
-> between commit:
-> 
->   657dc2f97220 ("slab: remove synchronous rcu_barrier() call in memcg cache release path")
-> 
-> from Linus' tree and commit:
-> 
->   24b7cb25b8d1 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
-> 
-> from the rcu tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-That resolution was obviously wrong, the correct one is this:
-
-diff --cc mm/slab_common.c
-index 09d0e849b07f,296413c2bbcd..000000000000
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@@ -494,55 -458,29 +494,55 @@@ out_unlock
-  }
-  EXPORT_SYMBOL(kmem_cache_create);
-  
- -static int shutdown_cache(struct kmem_cache *s,
- -		struct list_head *release, bool *need_rcu_barrier)
- +static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
-  {
- -	if (__kmem_cache_shutdown(s) != 0)
- -		return -EBUSY;
- +	LIST_HEAD(to_destroy);
- +	struct kmem_cache *s, *s2;
- +
- +	/*
-- 	 * On destruction, SLAB_DESTROY_BY_RCU kmem_caches are put on the
-++	 * On destruction, SLAB_TYPESAFE_BY_RCU kmem_caches are put on the
- +	 * @slab_caches_to_rcu_destroy list.  The slab pages are freed
- +	 * through RCU and and the associated kmem_cache are dereferenced
- +	 * while freeing the pages, so the kmem_caches should be freed only
- +	 * after the pending RCU operations are finished.  As rcu_barrier()
- +	 * is a pretty slow operation, we batch all pending destructions
- +	 * asynchronously.
- +	 */
- +	mutex_lock(&slab_mutex);
- +	list_splice_init(&slab_caches_to_rcu_destroy, &to_destroy);
- +	mutex_unlock(&slab_mutex);
- +
- +	if (list_empty(&to_destroy))
- +		return;
-  
- -	if (s->flags & SLAB_TYPESAFE_BY_RCU)
- -		*need_rcu_barrier = true;
- +	rcu_barrier();
-  
- -	list_move(&s->list, release);
- -	return 0;
- +	list_for_each_entry_safe(s, s2, &to_destroy, list) {
- +#ifdef SLAB_SUPPORTS_SYSFS
- +		sysfs_slab_release(s);
- +#else
- +		slab_kmem_cache_release(s);
- +#endif
- +	}
-  }
-  
- -static void release_caches(struct list_head *release, bool need_rcu_barrier)
- +static int shutdown_cache(struct kmem_cache *s)
-  {
- -	struct kmem_cache *s, *s2;
- +	/* free asan quarantined objects */
- +	kasan_cache_shutdown(s);
-  
- -	if (need_rcu_barrier)
- -		rcu_barrier();
- +	if (__kmem_cache_shutdown(s) != 0)
- +		return -EBUSY;
-  
- -	list_for_each_entry_safe(s, s2, release, list) {
- +	memcg_unlink_cache(s);
- +	list_del(&s->list);
- +
-- 	if (s->flags & SLAB_DESTROY_BY_RCU) {
-++	if (s->flags & SLAB_TYPESAFE_BY_RCU) {
- +		list_add_tail(&s->list, &slab_caches_to_rcu_destroy);
- +		schedule_work(&slab_caches_to_rcu_destroy_work);
- +	} else {
-  #ifdef SLAB_SUPPORTS_SYSFS
- -		sysfs_slab_remove(s);
- +		sysfs_slab_release(s);
-  #else
-  		slab_kmem_cache_release(s);
-  #endif
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgUGF1bCwKCkFmdGVyIG1lcmdpbmcgdGhlIHJjdSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCmZhaWxlZCBsaWtlIHRoaXM6CgpJbiBmaWxlIGlu
+Y2x1ZGVkIGZyb20gaW5jbHVkZS9saW51eC9yZXNvdXJjZV9leHQuaDoxOTowLAogICAgICAgICAg
+ICAgICAgIGZyb20gaW5jbHVkZS9saW51eC9wY2kuaDozMiwKICAgICAgICAgICAgICAgICBmcm9t
+IGluY2x1ZGUvZHJtL2RybVAuaDo1MCwKICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvZ3B1
+L2RybS9pOTE1L2k5MTVfZ2VtLmM6Mjg6CmRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9t
+b2NrX2dlbV9kZXZpY2UuYzogSW4gZnVuY3Rpb24gJ21vY2tfZ2VtX2RldmljZSc6CmRyaXZlcnMv
+Z3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYzoxNzc6OTogZXJyb3I6ICdT
+TEFCX0RFU1RST1lfQllfUkNVJyB1bmRlY2xhcmVkIChmaXJzdCB1c2UgaW4gdGhpcyBmdW5jdGlv
+bikKICAgICAgICAgU0xBQl9ERVNUUk9ZX0JZX1JDVSk7CiAgICAgICAgIF4KaW5jbHVkZS9saW51
+eC9zbGFiLmg6MTQ5OjQ6IG5vdGU6IGluIGRlZmluaXRpb24gb2YgbWFjcm8gJ0tNRU1fQ0FDSEUn
+CiAgIChfX2ZsYWdzKSwgTlVMTCkKICAgIF4KZHJpdmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3Rz
+L21vY2tfZ2VtX2RldmljZS5jOjE3Nzo5OiBub3RlOiBlYWNoIHVuZGVjbGFyZWQgaWRlbnRpZmll
+ciBpcyByZXBvcnRlZCBvbmx5IG9uY2UgZm9yIGVhY2ggZnVuY3Rpb24gaXQgYXBwZWFycyBpbgog
+ICAgICAgICBTTEFCX0RFU1RST1lfQllfUkNVKTsKICAgICAgICAgXgppbmNsdWRlL2xpbnV4L3Ns
+YWIuaDoxNDk6NDogbm90ZTogaW4gZGVmaW5pdGlvbiBvZiBtYWNybyAnS01FTV9DQUNIRScKICAg
+KF9fZmxhZ3MpLCBOVUxMKQogICAgXgovCgpDYXVzZWQgYnkgY29tbWl0CgogIDI0YjdjYjI1Yjhk
+MSAoIm1tOiBSZW5hbWUgU0xBQl9ERVNUUk9ZX0JZX1JDVSB0byBTTEFCX1RZUEVTQUZFX0JZX1JD
+VSIpCgppbnRlcmFjdGluZyB3aXRoIGNvbW1pdAoKICAwZGFmMDExM2NmZjYgKCJkcm0vaTkxNTog
+TW9jayBpbmZyYXN0cnVjdHVyZSBmb3IgcmVxdWVzdCBlbWlzc2lvbiIpCgpmcm9tIHRoZSBkcm0t
+aW50ZWwgdHJlZS4KCkkgYWRkZWQgdGhlIGZvbGxvd2luZyBtZXJnZSBmaXggcGF0Y2g6CgpGcm9t
+OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KRGF0ZTogV2VkLCA4IE1h
+ciAyMDE3IDEyOjA5OjQ5ICsxMTAwClN1YmplY3Q6IFtQQVRDSF0gZHJtL2k5MTU6IG1lcmdlIGZp
+eCBmb3IgIm1tOiBSZW5hbWUgU0xBQl9ERVNUUk9ZX0JZX1JDVSB0bwogU0xBQl9UWVBFU0FGRV9C
+WV9SQ1UiCgpTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9y
+Zy5hdT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvbW9ja19nZW1fZGV2aWNl
+LmMgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkK
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvbW9ja19nZW1fZGV2
+aWNlLmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvbW9ja19nZW1fZGV2aWNlLmMK
+aW5kZXggNmE4MjU4ZWFjZGNiLi45ZjI0YzVkYTNmOGQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
+L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYworKysgYi9kcml2ZXJzL2dwdS9k
+cm0vaTkxNS9zZWxmdGVzdHMvbW9ja19nZW1fZGV2aWNlLmMKQEAgLTE3NCw3ICsxNzQsNyBAQCBz
+dHJ1Y3QgZHJtX2k5MTVfcHJpdmF0ZSAqbW9ja19nZW1fZGV2aWNlKHZvaWQpCiAJaTkxNS0+cmVx
+dWVzdHMgPSBLTUVNX0NBQ0hFKG1vY2tfcmVxdWVzdCwKIAkJCQkgICAgU0xBQl9IV0NBQ0hFX0FM
+SUdOIHwKIAkJCQkgICAgU0xBQl9SRUNMQUlNX0FDQ09VTlQgfAotCQkJCSAgICBTTEFCX0RFU1RS
+T1lfQllfUkNVKTsKKwkJCQkgICAgU0xBQl9UWVBFU0FGRV9CWV9SQ1UpOwogCWlmICghaTkxNS0+
+cmVxdWVzdHMpCiAJCWdvdG8gZXJyX3ZtYXM7CiAKLS0gCjIuMTEuMAoKLS0gCkNoZWVycywKU3Rl
+cGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1n
+ZngK
