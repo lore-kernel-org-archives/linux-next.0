@@ -1,30 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the powerpc-fixes
- tree
-Date: Wed, 8 Mar 2017 11:36:23 +1100
-Message-ID: <20170308113623.4c7a5914@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Wed, 8 Mar 2017 11:46:33 +1100
+Message-ID: <20170308114633.42cc839c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54987 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933425AbdCHA4H (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 7 Mar 2017 19:56:07 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tejun Heo <tj@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
 
 Hi Paul,
 
 Today's linux-next merge of the rcu tree got a conflict in:
 
-  arch/powerpc/Kconfig
+  mm/slab_common.c
 
 between commit:
 
-  a7d2475af7ae ("powerpc: Sort the selects under CONFIG_PPC")
+  657dc2f97220 ("slab: remove synchronous rcu_barrier() call in memcg cache release path")
 
-from the powerpc-fixes tree and commit:
+from Linus' tree and commit:
 
-  9252dd3a96a7 ("rcu: Make arch select smp_mb__after_unlock_lock() strength")
+  24b7cb25b8d1 ("mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU")
 
 from the rcu tree.
 
@@ -39,178 +42,79 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/Kconfig
-index 97a8bc8a095c,9fecd004fee8..000000000000
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@@ -80,102 -80,95 +80,103 @@@ config ARCH_HAS_DMA_SET_COHERENT_MAS
-  config PPC
-  	bool
-  	default y
- -	select BUILDTIME_EXTABLE_SORT
- +	#
- +	# Please keep this list sorted alphabetically.
- +	#
- +	select ARCH_HAS_DEVMEM_IS_ALLOWED
- +	select ARCH_HAS_DMA_SET_COHERENT_MASK
- +	select ARCH_HAS_ELF_RANDOMIZE
- +	select ARCH_HAS_GCOV_PROFILE_ALL
- +	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE
- +	select ARCH_HAS_SG_CHAIN
- +	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
- +	select ARCH_HAS_UBSAN_SANITIZE_ALL
- +	select ARCH_HAVE_NMI_SAFE_CMPXCHG
-  	select ARCH_MIGHT_HAVE_PC_PARPORT
-  	select ARCH_MIGHT_HAVE_PC_SERIO
- +	select ARCH_SUPPORTS_ATOMIC_RMW
- +	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
- +	select ARCH_USE_BUILTIN_BSWAP
- +	select ARCH_USE_CMPXCHG_LOCKREF		if PPC64
- +	select ARCH_WANT_IPC_PARSE_VERSION
-++	select ARCH_WEAK_RELEASE_ACQUIRE
-  	select BINFMT_ELF
- -	select ARCH_HAS_ELF_RANDOMIZE
- -	select OF
- -	select OF_EARLY_FLATTREE
- -	select OF_RESERVED_MEM
- -	select HAVE_FTRACE_MCOUNT_RECORD
- +	select BUILDTIME_EXTABLE_SORT
- +	select CLONE_BACKWARDS
- +	select DCACHE_WORD_ACCESS		if PPC64 && CPU_LITTLE_ENDIAN
- +	select EDAC_ATOMIC_SCRUB
- +	select EDAC_SUPPORT
- +	select GENERIC_ATOMIC64			if PPC32
- +	select GENERIC_CLOCKEVENTS
- +	select GENERIC_CLOCKEVENTS_BROADCAST	if SMP
- +	select GENERIC_CMOS_UPDATE
- +	select GENERIC_CPU_AUTOPROBE
- +	select GENERIC_IRQ_SHOW
- +	select GENERIC_IRQ_SHOW_LEVEL
- +	select GENERIC_SMP_IDLE_THREAD
- +	select GENERIC_STRNCPY_FROM_USER
- +	select GENERIC_STRNLEN_USER
- +	select GENERIC_TIME_VSYSCALL_OLD
- +	select HAVE_ARCH_AUDITSYSCALL
- +	select HAVE_ARCH_HARDENED_USERCOPY
- +	select HAVE_ARCH_JUMP_LABEL
- +	select HAVE_ARCH_KGDB
- +	select HAVE_ARCH_SECCOMP_FILTER
- +	select HAVE_ARCH_TRACEHOOK
- +	select HAVE_CBPF_JIT			if !PPC64
- +	select HAVE_CONTEXT_TRACKING		if PPC64
- +	select HAVE_DEBUG_KMEMLEAK
- +	select HAVE_DEBUG_STACKOVERFLOW
- +	select HAVE_DMA_API_DEBUG
-  	select HAVE_DYNAMIC_FTRACE
- -	select HAVE_DYNAMIC_FTRACE_WITH_REGS if MPROFILE_KERNEL
- -	select HAVE_FUNCTION_TRACER
- +	select HAVE_DYNAMIC_FTRACE_WITH_REGS	if MPROFILE_KERNEL
- +	select HAVE_EBPF_JIT			if PPC64
- +	select HAVE_EFFICIENT_UNALIGNED_ACCESS	if !(CPU_LITTLE_ENDIAN && POWER7_CPU)
- +	select HAVE_FTRACE_MCOUNT_RECORD
-  	select HAVE_FUNCTION_GRAPH_TRACER
- -	select SYSCTL_EXCEPTION_TRACE
- -	select VIRT_TO_BUS if !PPC64
- +	select HAVE_FUNCTION_TRACER
- +	select HAVE_GCC_PLUGINS
- +	select HAVE_GENERIC_RCU_GUP
- +	select HAVE_HW_BREAKPOINT		if PERF_EVENTS && (PPC_BOOK3S || PPC_8xx)
-  	select HAVE_IDE
-  	select HAVE_IOREMAP_PROT
- -	select HAVE_EFFICIENT_UNALIGNED_ACCESS if !(CPU_LITTLE_ENDIAN && POWER7_CPU)
- +	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- +	select HAVE_KERNEL_GZIP
-  	select HAVE_KPROBES
- -	select HAVE_ARCH_KGDB
-  	select HAVE_KRETPROBES
- -	select HAVE_ARCH_TRACEHOOK
- +	select HAVE_LIVEPATCH			if HAVE_DYNAMIC_FTRACE_WITH_REGS
-  	select HAVE_MEMBLOCK
-  	select HAVE_MEMBLOCK_NODE_MAP
- -	select HAVE_DMA_API_DEBUG
- +	select HAVE_MOD_ARCH_SPECIFIC
- +	select HAVE_NMI				if PERF_EVENTS
-  	select HAVE_OPROFILE
- -	select HAVE_DEBUG_KMEMLEAK
- -	select ARCH_HAS_SG_CHAIN
- -	select GENERIC_ATOMIC64 if PPC32
- +	select HAVE_OPTPROBES			if PPC64
-  	select HAVE_PERF_EVENTS
- +	select HAVE_PERF_EVENTS_NMI		if PPC64
-  	select HAVE_PERF_REGS
-  	select HAVE_PERF_USER_STACK_DUMP
- +	select HAVE_RCU_TABLE_FREE		if SMP
-  	select HAVE_REGS_AND_STACK_ACCESS_API
- -	select HAVE_HW_BREAKPOINT if PERF_EVENTS && PPC_BOOK3S_64
- -	select ARCH_WANT_IPC_PARSE_VERSION
- -	select SPARSE_IRQ
- +	select HAVE_SYSCALL_TRACEPOINTS
- +	select HAVE_VIRT_CPU_ACCOUNTING
-  	select IRQ_DOMAIN
- -	select GENERIC_IRQ_SHOW
- -	select GENERIC_IRQ_SHOW_LEVEL
-  	select IRQ_FORCED_THREADING
- -	select HAVE_RCU_TABLE_FREE if SMP
- -	select HAVE_SYSCALL_TRACEPOINTS
- -	select HAVE_CBPF_JIT if !PPC64
- -	select HAVE_EBPF_JIT if PPC64
- -	select HAVE_ARCH_JUMP_LABEL
- -	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- -	select ARCH_HAS_GCOV_PROFILE_ALL
- -	select GENERIC_SMP_IDLE_THREAD
- -	select GENERIC_CMOS_UPDATE
- -	select GENERIC_TIME_VSYSCALL_OLD
- -	select GENERIC_CLOCKEVENTS
- -	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
- -	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- -	select GENERIC_STRNCPY_FROM_USER
- -	select GENERIC_STRNLEN_USER
- -	select HAVE_MOD_ARCH_SPECIFIC
-  	select MODULES_USE_ELF_RELA
- -	select CLONE_BACKWARDS
- -	select ARCH_USE_BUILTIN_BSWAP
- -	select OLD_SIGSUSPEND
- -	select OLD_SIGACTION if PPC32
- -	select HAVE_DEBUG_STACKOVERFLOW
- -	select HAVE_IRQ_EXIT_ON_IRQ_STACK
- -	select ARCH_USE_CMPXCHG_LOCKREF if PPC64
- -	select HAVE_ARCH_AUDITSYSCALL
- -	select ARCH_SUPPORTS_ATOMIC_RMW
- -	select DCACHE_WORD_ACCESS if PPC64 && CPU_LITTLE_ENDIAN
-  	select NO_BOOTMEM
- -	select HAVE_GENERIC_RCU_GUP
- -	select HAVE_PERF_EVENTS_NMI if PPC64
- -	select HAVE_NMI if PERF_EVENTS
- -	select EDAC_SUPPORT
- -	select EDAC_ATOMIC_SCRUB
- -	select ARCH_HAS_DMA_SET_COHERENT_MASK
- -	select ARCH_HAS_DEVMEM_IS_ALLOWED
- -	select HAVE_ARCH_SECCOMP_FILTER
- -	select ARCH_HAS_UBSAN_SANITIZE_ALL
- -	select ARCH_SUPPORTS_DEFERRED_STRUCT_PAGE_INIT
- -	select HAVE_LIVEPATCH if HAVE_DYNAMIC_FTRACE_WITH_REGS
- -	select GENERIC_CPU_AUTOPROBE
- -	select HAVE_VIRT_CPU_ACCOUNTING
- -	select ARCH_HAS_SCALED_CPUTIME if VIRT_CPU_ACCOUNTING_NATIVE
- -	select HAVE_ARCH_HARDENED_USERCOPY
- -	select HAVE_KERNEL_GZIP
- -	select HAVE_CC_STACKPROTECTOR
- -	select ARCH_WEAK_RELEASE_ACQUIRE
- +	select OF
- +	select OF_EARLY_FLATTREE
- +	select OF_RESERVED_MEM
- +	select OLD_SIGACTION			if PPC32
- +	select OLD_SIGSUSPEND
- +	select SPARSE_IRQ
- +	select SYSCTL_EXCEPTION_TRACE
- +	select VIRT_TO_BUS			if !PPC64
- +	#
- +	# Please keep this list sorted alphabetically.
- +	#
+diff --cc mm/slab_common.c
+index 09d0e849b07f,296413c2bbcd..000000000000
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@@ -494,55 -458,29 +494,56 @@@ out_unlock
+  }
+  EXPORT_SYMBOL(kmem_cache_create);
   
-  config GENERIC_CSUM
- -	def_bool CPU_LITTLE_ENDIAN
- +	def_bool n
+ -static int shutdown_cache(struct kmem_cache *s,
+ -		struct list_head *release, bool *need_rcu_barrier)
+ +static void slab_caches_to_rcu_destroy_workfn(struct work_struct *work)
+  {
+ -	if (__kmem_cache_shutdown(s) != 0)
+ -		return -EBUSY;
+ +	LIST_HEAD(to_destroy);
+ +	struct kmem_cache *s, *s2;
+ +
+ +	/*
+- 	 * On destruction, SLAB_DESTROY_BY_RCU kmem_caches are put on the
+++	 * On destruction, SLAB_TYPESAFE_BY_RCU kmem_caches are put on the
+ +	 * @slab_caches_to_rcu_destroy list.  The slab pages are freed
+ +	 * through RCU and and the associated kmem_cache are dereferenced
+ +	 * while freeing the pages, so the kmem_caches should be freed only
+ +	 * after the pending RCU operations are finished.  As rcu_barrier()
+ +	 * is a pretty slow operation, we batch all pending destructions
+ +	 * asynchronously.
+ +	 */
+ +	mutex_lock(&slab_mutex);
+ +	list_splice_init(&slab_caches_to_rcu_destroy, &to_destroy);
+ +	mutex_unlock(&slab_mutex);
+ +
+ +	if (list_empty(&to_destroy))
+ +		return;
   
-  config EARLY_PRINTK
-  	bool
+- 	rcu_barrier();
++ 	if (s->flags & SLAB_TYPESAFE_BY_RCU)
++ 		*need_rcu_barrier = true;
+  
+ -	list_move(&s->list, release);
+ -	return 0;
+ +	list_for_each_entry_safe(s, s2, &to_destroy, list) {
+ +#ifdef SLAB_SUPPORTS_SYSFS
+ +		sysfs_slab_release(s);
+ +#else
+ +		slab_kmem_cache_release(s);
+ +#endif
+ +	}
+  }
+  
+ -static void release_caches(struct list_head *release, bool need_rcu_barrier)
+ +static int shutdown_cache(struct kmem_cache *s)
+  {
+ -	struct kmem_cache *s, *s2;
+ +	/* free asan quarantined objects */
+ +	kasan_cache_shutdown(s);
+  
+ -	if (need_rcu_barrier)
+ -		rcu_barrier();
+ +	if (__kmem_cache_shutdown(s) != 0)
+ +		return -EBUSY;
+  
+ -	list_for_each_entry_safe(s, s2, release, list) {
+ +	memcg_unlink_cache(s);
+ +	list_del(&s->list);
+ +
+- 	if (s->flags & SLAB_DESTROY_BY_RCU) {
+++	if (s->flags & SLAB_TYPESAFE_BY_RCU) {
+ +		list_add_tail(&s->list, &slab_caches_to_rcu_destroy);
+ +		schedule_work(&slab_caches_to_rcu_destroy_work);
+ +	} else {
+  #ifdef SLAB_SUPPORTS_SYSFS
+ -		sysfs_slab_remove(s);
+ +		sysfs_slab_release(s);
+  #else
+  		slab_kmem_cache_release(s);
+  #endif
