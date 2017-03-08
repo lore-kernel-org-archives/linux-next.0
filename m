@@ -1,86 +1,40 @@
 From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu
-	tree
-Date: Wed, 8 Mar 2017 09:40:13 -0800
-Message-ID: <20170308174013.GH30506@linux.vnet.ibm.com>
-References: <20170308121645.6160e711@canb.auug.org.au>
- <20170308101338.sp4yekncbext7qzf@phenom.ffwll.local>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Wed, 8 Mar 2017 10:05:35 -0800
+Message-ID: <20170308180535.GI30506@linux.vnet.ibm.com>
+References: <20170119143445.6b65dc8b@canb.auug.org.au>
+ <CAJzB8QEdnVG8Gy-WOSu1pWTtkeVWgBzZvGCu0nobW3M-hBhpkw@mail.gmail.com>
+ <20170213132133.3795849e@canb.auug.org.au>
+ <20170213043748.GA30506@linux.vnet.ibm.com>
+ <20170213174324.47f1b4f5@canb.auug.org.au>
+ <20170308121605.555a945d@canb.auug.org.au>
 Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170308101338.sp4yekncbext7qzf@phenom.ffwll.local>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20170308121605.555a945d@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul McKenney <paulmckrcu@gmail.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCBNYXIgMDgsIDIwMTcgYXQgMTE6MTM6MzhBTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBXZWQsIE1hciAwOCwgMjAxNyBhdCAxMjoxNjo0NVBNICsxMTAwLCBTdGVwaGVu
-IFJvdGh3ZWxsIHdyb3RlOgo+ID4gSGkgUGF1bCwKPiA+IAo+ID4gQWZ0ZXIgbWVyZ2luZyB0aGUg
-cmN1IHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0IGFsbG1vZGNvbmZpZykK
-PiA+IGZhaWxlZCBsaWtlIHRoaXM6Cj4gPiAKPiA+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNs
-dWRlL2xpbnV4L3Jlc291cmNlX2V4dC5oOjE5OjAsCj4gPiAgICAgICAgICAgICAgICAgIGZyb20g
-aW5jbHVkZS9saW51eC9wY2kuaDozMiwKPiA+ICAgICAgICAgICAgICAgICAgZnJvbSBpbmNsdWRl
-L2RybS9kcm1QLmg6NTAsCj4gPiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJt
-L2k5MTUvaTkxNV9nZW0uYzoyODoKPiA+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9t
-b2NrX2dlbV9kZXZpY2UuYzogSW4gZnVuY3Rpb24gJ21vY2tfZ2VtX2RldmljZSc6Cj4gPiBkcml2
-ZXJzL2dwdS9kcm0vaTkxNS9zZWxmdGVzdHMvbW9ja19nZW1fZGV2aWNlLmM6MTc3Ojk6IGVycm9y
-OiAnU0xBQl9ERVNUUk9ZX0JZX1JDVScgdW5kZWNsYXJlZCAoZmlyc3QgdXNlIGluIHRoaXMgZnVu
-Y3Rpb24pCj4gPiAgICAgICAgICBTTEFCX0RFU1RST1lfQllfUkNVKTsKPiA+ICAgICAgICAgIF4K
-PiA+IGluY2x1ZGUvbGludXgvc2xhYi5oOjE0OTo0OiBub3RlOiBpbiBkZWZpbml0aW9uIG9mIG1h
-Y3JvICdLTUVNX0NBQ0hFJwo+ID4gICAgKF9fZmxhZ3MpLCBOVUxMKQo+ID4gICAgIF4KPiA+IGRy
-aXZlcnMvZ3B1L2RybS9pOTE1L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYzoxNzc6OTogbm90
-ZTogZWFjaCB1bmRlY2xhcmVkIGlkZW50aWZpZXIgaXMgcmVwb3J0ZWQgb25seSBvbmNlIGZvciBl
-YWNoIGZ1bmN0aW9uIGl0IGFwcGVhcnMgaW4KPiA+ICAgICAgICAgIFNMQUJfREVTVFJPWV9CWV9S
-Q1UpOwo+ID4gICAgICAgICAgXgo+ID4gaW5jbHVkZS9saW51eC9zbGFiLmg6MTQ5OjQ6IG5vdGU6
-IGluIGRlZmluaXRpb24gb2YgbWFjcm8gJ0tNRU1fQ0FDSEUnCj4gPiAgICAoX19mbGFncyksIE5V
-TEwpCj4gPiAgICAgXgo+ID4gLwo+ID4gCj4gPiBDYXVzZWQgYnkgY29tbWl0Cj4gPiAKPiA+ICAg
-MjRiN2NiMjViOGQxICgibW06IFJlbmFtZSBTTEFCX0RFU1RST1lfQllfUkNVIHRvIFNMQUJfVFlQ
-RVNBRkVfQllfUkNVIikKPiAKPiBBd2Vzb21lIHJlbmFtZS4gQ291bnQgdXMgaW4gYW1vbmcgdGhl
-IHBlb3BsZSB3aG8gZmlyc3QgdGhvdWdodCB0aGlzCj4gcHJvdmlkZXMgbW9yZSBndWFyYW50ZWVz
-IHRoYW4gaXQgZG9lcy4KCkdsYWQgeW91IGxpa2UgaXQhICA7LSkKCj4gPiBpbnRlcmFjdGluZyB3
-aXRoIGNvbW1pdAo+ID4gCj4gPiAgIDBkYWYwMTEzY2ZmNiAoImRybS9pOTE1OiBNb2NrIGluZnJh
-c3RydWN0dXJlIGZvciByZXF1ZXN0IGVtaXNzaW9uIikKPiA+IAo+ID4gZnJvbSB0aGUgZHJtLWlu
-dGVsIHRyZWUuCj4gPiAKPiA+IEkgYWRkZWQgdGhlIGZvbGxvd2luZyBtZXJnZSBmaXggcGF0Y2g6
-Cj4gPiAKPiA+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pgo+
-ID4gRGF0ZTogV2VkLCA4IE1hciAyMDE3IDEyOjA5OjQ5ICsxMTAwCj4gPiBTdWJqZWN0OiBbUEFU
-Q0hdIGRybS9pOTE1OiBtZXJnZSBmaXggZm9yICJtbTogUmVuYW1lIFNMQUJfREVTVFJPWV9CWV9S
-Q1UgdG8KPiA+ICBTTEFCX1RZUEVTQUZFX0JZX1JDVSIKPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTog
-U3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4gCj4gU2hvdWxkIHdlIGhh
-bmRsZSB0aGlzIHdpdGggYSB0b3BpYyBicmFuY2g/IEl0J3MgdHJpdmlhbCB0byByZXNvbHZlLCBi
-dXQgSQo+IGZlYXIgdGhlIG5vdGUgdGhhdCB0aGlzIGNvbmZsaWN0IGV4aXN0cyBtaWdodCBnZXQg
-bG9zdCBzb21ld2hlcmUgYmV0d2Vlbgo+IG5vdyBhbmQgd2hlbiB0aGUgZHJtIHB1bGwgbGFuZHMg
-aW4gTGludXMnIGluYm94IGluIDIgbW9udGhzIC4uLgo+IAo+IE90b2ggaGUncyBwcm9iYWJseSBn
-b2luZyB0byBjb21waWxlIHRlc3QgZHJtIGV4dHJhIGNhcmVmdWxseSBhbmQgd2lsbAo+IG5vdGlj
-ZSA6LSkKCklmIGl0IGdldHMgdG9vIHVnbHksIEkgY2FuIGFsd2F5cyBhbGxvdyBib3RoIFNMQUJf
-VFlQRVNBRkVfQllfUkNVCmFuZCBTTEFCX0RFU1RST1lfQllfUkNVIGFzIHN5bm9ueW1zIGluIDQu
-MTIsIGFuZCB0aGVuIHJlbW92ZQpTTEFCX0RFU1RST1lfQllfUkNVIGluIDQuMTMuCgoJCQkJCQkJ
-VGhhbngsIFBhdWwKCj4gLURhbmllbAo+IAo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL2k5
-MTUvc2VsZnRlc3RzL21vY2tfZ2VtX2RldmljZS5jIHwgMiArLQo+ID4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2k5MTUvc2VsZnRlc3RzL21vY2tfZ2VtX2RldmljZS5jIGIvZHJpdmVycy9n
-cHUvZHJtL2k5MTUvc2VsZnRlc3RzL21vY2tfZ2VtX2RldmljZS5jCj4gPiBpbmRleCA2YTgyNThl
-YWNkY2IuLjlmMjRjNWRhM2Y4ZCAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1
-L3NlbGZ0ZXN0cy9tb2NrX2dlbV9kZXZpY2UuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5
-MTUvc2VsZnRlc3RzL21vY2tfZ2VtX2RldmljZS5jCj4gPiBAQCAtMTc0LDcgKzE3NCw3IEBAIHN0
-cnVjdCBkcm1faTkxNV9wcml2YXRlICptb2NrX2dlbV9kZXZpY2Uodm9pZCkKPiA+ICAJaTkxNS0+
-cmVxdWVzdHMgPSBLTUVNX0NBQ0hFKG1vY2tfcmVxdWVzdCwKPiA+ICAJCQkJICAgIFNMQUJfSFdD
-QUNIRV9BTElHTiB8Cj4gPiAgCQkJCSAgICBTTEFCX1JFQ0xBSU1fQUNDT1VOVCB8Cj4gPiAtCQkJ
-CSAgICBTTEFCX0RFU1RST1lfQllfUkNVKTsKPiA+ICsJCQkJICAgIFNMQUJfVFlQRVNBRkVfQllf
-UkNVKTsKPiA+ICAJaWYgKCFpOTE1LT5yZXF1ZXN0cykKPiA+ICAJCWdvdG8gZXJyX3ZtYXM7Cj4g
-PiAgCj4gPiAtLSAKPiA+IDIuMTEuMAo+ID4gCj4gPiAtLSAKPiA+IENoZWVycywKPiA+IFN0ZXBo
-ZW4gUm90aHdlbGwKPiAKPiAtLSAKPiBEYW5pZWwgVmV0dGVyCj4gU29mdHdhcmUgRW5naW5lZXIs
-IEludGVsIENvcnBvcmF0aW9uCj4gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKPiAKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxp
-c3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+On Wed, Mar 08, 2017 at 12:16:05PM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> On Mon, 13 Feb 2017 17:43:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Sun, 12 Feb 2017 20:37:48 -0800 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > >
+> > > I chickened out on that commit for this merge window, so it will come
+> > > back at -rc1.  But I will cover that when I rebase to -rc1.  
+> > 
+> > OK, thanks.
+> 
+> [PATCH] smc: merge fix for "mm: Rename SLAB_DESTROY_BY_RCU to SLAB_TYPESAFE_BY_RCU"
+> is needed again ... maybe time to rebase?
+
+And I did rebase and push.  Passes light build testing, will be testing
+more vigorously later today.
+
+							Thanx, Paul
