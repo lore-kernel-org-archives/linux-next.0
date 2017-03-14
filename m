@@ -1,112 +1,93 @@
-From: <muirs@stolaf.edu>
-Subject: 27100 linux-next
-Date: Mon, 13 Mar 2017 21:27:26 -0000
-Message-ID: <148944044615.30067.3120216153892024930@rt.ru>
-Reply-To: <muirs@stolaf.edu>
+From: Xiong Zhou <xzhou@redhat.com>
+Subject: fsx tests on DAX started to fail with msync failure on 0307 -next
+ tree
+Date: Tue, 14 Mar 2017 10:56:42 +0800
+Message-ID: <20170314025642.nwpf7zxbc6655gum@XZHOUW.usersys.redhat.com>
 Mime-Version: 1.0
-Content-Type: application/zip; name="17279898715.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from b-internet.176.51.238.22.nsk.rt.ru ([176.51.238.22]:37023 "HELO
-        rt.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751687AbdCMV1a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Mar 2017 17:27:30 -0400
-Content-Disposition: attachment
+Received: from mx1.redhat.com ([209.132.183.28]:36686 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752012AbdCNC4o (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 13 Mar 2017 22:56:44 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
+To: linux-nvdimm@ml01.01.org
+Cc: linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
 
-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
-AAEAAQBSAAAAXBQAAAAA
+Hi,
+
+xfstests cases:
+generic/075 generic/112 generic/127 generic/231 generic/263
+
+fail with DAX, pass without it. Both xfs and ext4.
+
+It was okay on 0306 -next tree.
+
++ ./check generic/075
+FSTYP         -- xfs (non-debug)
+PLATFORM      -- Linux/x86_64 hp-dl360g9-12 4.11.0-rc1-linux-next-5be4921-next-20170310
+MKFS_OPTIONS  -- -f -bsize=4096 /dev/pmem0p2
+MOUNT_OPTIONS -- -o dax -o context=system_u:object_r:nfs_t:s0 /dev/pmem0p2 /daxsch
+
+generic/075 4s ... [failed, exit status 1] - output mismatch (see /root/xfstests/results//generic/075.out.bad)
+    --- tests/generic/075.out	2016-12-13 14:38:25.984557426 +0800
+    +++ /root/xfstests/results//generic/075.out.bad	2017-03-14 10:40:23.083052839 +0800
+    @@ -4,15 +4,4 @@
+     -----------------------------------------------
+     fsx.0 : -d -N numops -S 0
+     -----------------------------------------------
+    -
+    ------------------------------------------------
+    -fsx.1 : -d -N numops -S 0 -x
+    ------------------------------------------------
+    ...
+    (Run 'diff -u tests/generic/075.out /root/xfstests/results//generic/075.out.bad'  to see the entire diff)
+..
+
+$ diff -u xfstests/tests/generic/075.out /root/xfstests/results//generic/075.out.bad
+--- xfstests/tests/generic/075.out	2016-12-13 14:38:25.984557426 +0800
++++ /root/xfstests/results//generic/075.out.bad	2017-03-14 10:40:23.083052839 +0800
+@@ -4,15 +4,4 @@
+ -----------------------------------------------
+ fsx.0 : -d -N numops -S 0
+ -----------------------------------------------
+-
+------------------------------------------------
+-fsx.1 : -d -N numops -S 0 -x
+------------------------------------------------
+-
+------------------------------------------------
+-fsx.2 : -d -N numops -l filelen -S 0
+------------------------------------------------
+-
+------------------------------------------------
+-fsx.3 : -d -N numops -l filelen -S 0 -x
+------------------------------------------------
++    fsx (-d -N 1000 -S 0) failed, 0 - compare /root/xfstests/results//generic/075.0.{good,bad,fsxlog}
+
+$ diff -u /root/xfstests/results//generic/075.0.{good,fsxlog} | tail -20
+-03cb30 f903 da03 1103 7503 5403 8903 9f03 6b03
+-03cb40 bb03 fb03 5603 7e03 c503 ca03 0103 9603
+-03cb50 7f03 7c03 0c03 5103 ed03 dc03 a403 5c03
+-03cb60 5403 b903 4403 3c03 4b03 a903 2303 1a03
+-03cb70 2b03 5f03 fd03 ee03 1303 9703 2903 d303
+-03cb80 4e03 9903 f903 8003 b803 2503 2203 c903
+-03cb90 6803 7a03 0f03 6303 de03 ba03 6e03 6503
+-03cba0 db03
+-03cba2
++skipping zero size read
++skipping insert range behind EOF
++3 mapwrite	0x2e836 thru	0x3cba1	(0xe36c bytes)
++domapwrite: msync: Invalid argument
++LOG DUMP (3 total operations):
++1(  1 mod 256): SKIPPED (no operation)
++2(  2 mod 256): SKIPPED (no operation)
++3(  3 mod 256): MAPWRITE 0x2e836 thru 0x3cba1	(0xe36c bytes)
++Log of operations saved to "075.0.fsxops"; replay with --replay-ops
++Correct content saved for comparison
++(maybe hexdump "075.0" vs "075.0.fsxgood")
+
+https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/tests/generic/075
+https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/tree/ltp/fsx.c
