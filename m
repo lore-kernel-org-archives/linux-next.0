@@ -1,7 +1,7 @@
 From: akpm@linux-foundation.org
-Subject: mmotm 2017-03-16-16-37 uploaded
-Date: Thu, 16 Mar 2017 16:37:46 -0700
-Message-ID: <58cb21ca.8CSSX4l6iBqIvEnU%akpm@linux-foundation.org>
+Subject: mmotm 2017-03-17-15-26 uploaded
+Date: Fri, 17 Mar 2017 15:26:41 -0700
+Message-ID: <58cc62a1.IroITrn3CK9Mcrjy%akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
@@ -10,7 +10,7 @@ Sender: owner-linux-mm@kvack.org
 To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2017-03-16-16-37 has been uploaded to
+The mm-of-the-moment snapshot 2017-03-17-15-26 has been uploaded to
 
    http://www.ozlabs.org/~akpm/mmotm/
 
@@ -84,12 +84,7 @@ This mmotm tree contains the following patches against 4.11-rc2:
 
   origin.patch
   i-need-old-gcc.patch
-* z3fold-fix-spinlock-unlocking-in-page-reclaim.patch
-* kasan-add-a-prototype-of-task_struct-to-avoid-warning.patch
-* mm-x86-fix-native_pud_clear-build-error.patch
-* mm-dont-warn-when-vmalloc-fails-due-to-a-fatal-signal.patch
-* mm-add-private-lock-to-serialize-memory-hotplug-operations.patch
-* drivers-core-remove-assert_held_device_hotplug.patch
+* mm-migrate-fix-remove_migration_pte-for-ksm-pages.patch
 * mm-move-mm_percpu_wq-initialization-earlier.patch
 * arm-arch-arm-include-asm-pageh-needs-personalityh.patch
 * dax-add-tracepoints-to-dax_iomap_pte_fault.patch
@@ -188,23 +183,9 @@ This mmotm tree contains the following patches against 4.11-rc2:
 * mm-make-rmap_one-boolean-function.patch
 * mm-remove-swap_.patch
 * mm-remove-swap_-fix.patch
-* mm-memory-hotplug-convert-device-bool-to-int-to-allow-for-more-flags-v3.patch
-* mm-put_page-move-ref-decrement-to-put_zone_device_page.patch
-* mm-zone_device-free-page-callback-when-page-is-freed-v3.patch
-* mm-zone_device-unaddressable-add-support-for-un-addressable-device-memory-v3.patch
-* mm-zone_device-x86-add-support-for-un-addressable-device-memory.patch
-* mm-migrate-add-new-boolean-copy-flag-to-migratepage-callback.patch
-* mm-migrate-new-memory-migration-helper-for-use-with-device-memory-v4.patch
-* mm-migrate-migrate_vma-unmap-page-from-vma-while-collecting-pages.patch
-* mm-hmm-heterogeneous-memory-management-hmm-for-short.patch
-* mm-hmm-mirror-mirror-process-address-space-on-device-with-hmm-helpers.patch
-* mm-hmm-mirror-helper-to-snapshot-cpu-page-table-v2.patch
-* mm-hmm-mirror-device-page-fault-handler.patch
-* mm-hmm-migrate-support-un-addressable-zone_device-page-in-migration.patch
-* mm-hmm-migrate-support-un-addressable-zone_device-page-in-migration-fix.patch
-* mm-migrate-allow-migrate_vma-to-alloc-new-page-on-empty-entry.patch
-* mm-hmm-devmem-device-memory-hotplug-using-zone_device.patch
-* mm-hmm-devmem-dummy-hmm-device-for-zone_device-memory-v2.patch
+* mm-swap-fix-comment-in-__read_swap_cache_async.patch
+* mm-swap-improve-readability-via-make-spin_lock-unlock-balanced.patch
+* mm-swap-avoid-lock-swap_avail_lock-when-held-cluster-lock.patch
 * mm-page_alloc-return-0-in-case-this-node-has-no-page-within-the-zone.patch
 * mm-vmscan-do-not-pass-reclaimed-slab-to-vmpressure.patch
 * mm-page_owner-align-with-pageblock_nr-pages.patch
@@ -256,6 +237,8 @@ This mmotm tree contains the following patches against 4.11-rc2:
 * md-use-kvmalloc-rather-than-opencoded-variant.patch
 * bcache-use-kvmalloc.patch
 * mm-vmalloc-use-__gfp_highmem-implicitly.patch
+* scripts-spellingtxt-add-memory-pattern-and-fix-typos.patch
+* scripts-spellingtxt-add-regsiter-register-spelling-mistake.patch
 * scripts-spellingtxt-add-intialised-pattern-and-fix-typo-instances.patch
 * treewide-move-set_memory_-functions-away-from-cacheflushh.patch
 * arm-use-set_memoryh-header.patch
@@ -279,7 +262,6 @@ This mmotm tree contains the following patches against 4.11-rc2:
 * x86-atomic-move-__atomic_add_unless-out-of-line-fix.patch
 * sched-out-of-line-__update_load_avg.patch
 * kref-remove-warn_on-for-null-release-functions.patch
-* out-of-line-dma_alloc-free_attrs.patch
 * megasas-remove-expensive-inline-from-megasas_return_cmd.patch
 * remove-expensive-warn_on-in-pagefault_disabled_dec.patch
 * tracing-move-trace_handle_return-out-of-line.patch
