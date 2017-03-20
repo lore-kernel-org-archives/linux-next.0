@@ -1,83 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Mon, 20 Mar 2017 13:44:14 +1100
-Message-ID: <20170320134414.25f2e3d6@canb.auug.org.au>
+Subject: linux-next: manual merge of the gpio tree with the input tree
+Date: Mon, 20 Mar 2017 15:03:40 +1100
+Message-ID: <20170320150340.6d73c179@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46409 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47655 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751966AbdCTCok (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 19 Mar 2017 22:44:40 -0400
+        id S1750704AbdCTEGF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 20 Mar 2017 00:06:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyril Bur <cyrilbur@gmail.com>, Joel Stanley <joel@jms.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
 
-Hi all,
+Hi Linus,
 
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the gpio tree got a conflict in:
 
-drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_mmap':
-drivers/misc/aspeed-lpc-ctrl.c:51:9: error: implicit declaration of function 'pgprot_dmacoherent' [-Werror=implicit-function-declaration]
-  prot = pgprot_dmacoherent(prot);
-         ^
-drivers/misc/aspeed-lpc-ctrl.c:51:7: error: incompatible types when assigning to type 'pgprot_t {aka struct pgprot}' from type 'int'
-  prot = pgprot_dmacoherent(prot);
-       ^
-In file included from include/linux/miscdevice.h:6:0,
-                 from drivers/misc/aspeed-lpc-ctrl.c:11:
-drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_probe':
-drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'phys_addr_t {aka long long unsigned int}' [-Wformat=]
-   dev_info(dev, "Loaded at 0x%08x (0x%08x)\n",
-                 ^
-include/linux/device.h:1317:51: note: in definition of macro 'dev_info'
- #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-                                                   ^
-drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-   dev_info(dev, "Loaded at 0x%08x (0x%08x)\n",
-                 ^
-include/linux/device.h:1317:51: note: in definition of macro 'dev_info'
- #define dev_info(dev, fmt, arg...) _dev_info(dev, fmt, ##arg)
-                                                   ^
+  drivers/input/misc/soc_button_array.c
 
-Caused by commit
+between commit:
 
-  6c4e97678501 ("drivers/misc: Add Aspeed LPC control driver")
+  a01cd17000a4 ("Input: soc_button_array - use NULL for GPIO connection ID")
 
-Clearly this will only build on arm :-(  You can only use COMPILE_TEST
-if you can reasonably expect the build to work on all architectures
-and platforms.
+from the input tree and commit:
 
-I have added the following patch for today (the warnings should be fixed as well):
+  c5097538c86a ("Input: soc_button_array - Propagate error from gpiod_count()")
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 20 Mar 2017 13:38:10 +1100
-Subject: [PATCH] drivers/misc: Aspeed LPC control driver will only build on arm
+from the gpio tree.
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/misc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index fb933b0b9297..52a46b129214 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -773,7 +773,7 @@ config PANEL_BOOT_MESSAGE
- endif # PANEL
- 
- config ASPEED_LPC_CTRL
--	depends on (ARCH_ASPEED || COMPILE_TEST) && REGMAP && MFD_SYSCON
-+	depends on ARCH_ASPEED && REGMAP && MFD_SYSCON
- 	tristate "Aspeed ast2400/2500 HOST LPC to BMC bridge control"
- 	---help---
- 	  Control Aspeed ast2400/2500 HOST LPC to BMC mappings through
--- 
-2.11.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/input/misc/soc_button_array.c
+index 95b787a63560,c3b8e1fb4699..000000000000
+--- a/drivers/input/misc/soc_button_array.c
++++ b/drivers/input/misc/soc_button_array.c
+@@@ -312,17 -167,12 +312,18 @@@ static int soc_button_probe(struct plat
+  	if (!id)
+  		return -ENODEV;
+  
+ -	button_info = (struct soc_button_info *)id->driver_data;
+ +	if (!id->driver_data) {
+ +		button_info = soc_button_get_button_info(dev);
+ +		if (IS_ERR(button_info))
+ +			return PTR_ERR(button_info);
+ +	} else {
+ +		button_info = (struct soc_button_info *)id->driver_data;
+ +	}
+  
+- 	if (gpiod_count(dev, NULL) <= 0) {
++ 	error = gpiod_count(dev, NULL);
++ 	if (error < 0) {
+  		dev_dbg(dev, "no GPIO attached, ignoring...\n");
+- 		return -ENODEV;
++ 		return error;
+  	}
+  
+  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
