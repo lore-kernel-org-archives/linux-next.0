@@ -1,64 +1,86 @@
-From: Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: linux-next: build warnings after merge of the akpm-current tree
-Date: Mon, 20 Mar 2017 10:05:54 +0100
-Message-ID: <CACT4Y+b-dQYkeDg127hqRfVhTyxrDEP5vR07cH6=ei+9jtTNyg@mail.gmail.com>
-References: <20170320162226.47c6e3ed@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170320 build: 0 failures 3 warnings (next-20170320)
+Date: Mon, 20 Mar 2017 09:18:19 +0000
+Message-ID: <E1cptSF-0006Mz-B9@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f43.google.com ([209.85.213.43]:33789 "EHLO
-        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753409AbdCTJPW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Mar 2017 05:15:22 -0400
-Received: by mail-vk0-f43.google.com with SMTP id d188so66606487vka.0
-        for <linux-next@vger.kernel.org>; Mon, 20 Mar 2017 02:14:49 -0700 (PDT)
-In-Reply-To: <20170320162226.47c6e3ed@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36412 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753351AbdCTJS0 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Mar 2017 05:18:26 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Herbert Xu <herbert@gondor.apana.org.au>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Mahipal Challa <Mahipal.Challa@cavium.com>, Jan Glauber <jglauber@cavium.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, Mar 20, 2017 at 6:22 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andrew,
->
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
->
-> drivers/crypto/cavium/zip/zip_main.c: In function 'zip_show_stats':
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 4 has type 'long long int' [-Wformat=]
->     seq_printf(s, "        ZIP Device %d Stats\n"
->                   ^
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 5 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 6 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 7 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 10 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 11 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 12 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 13 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 14 has type 'long long int' [-Wformat=]
-> drivers/crypto/cavium/zip/zip_main.c:489:18: warning: format '%ld' expects argument of type 'long int', but argument 15 has type 'long long int' [-Wformat=]
->
-> Introduced by commit
->
->   09ae5d37e093 ("crypto: zip - Add Compression/Decompression statistics")
->
-> from the crypto tree interacting with commit
->
->   3f4ca3d25e1a ("asm-generic, x86: wrap atomic operations")
->
-> from the akpm-current tree.
->
-> This latter commit changed atomic64read() from "long" to "long long"
-> on x86_64.
+Tree/Branch: next-20170320
+Git describe: next-20170320
+Commit: f921b263d9 Add linux-next specific files for 20170320
 
-Hi,
+Build Time: 99 min 42 sec
 
-Previously atomic operations returned different types on 32/64 bits. I
-think that was pretty unfortunate and could actually lead to lots of
-such warnings (as there were no single format specifier that one could
-use portably), and was difficult to wrap. So I used "unsigned long
-long" for all operations.
-I actually suspect that the new zip_main.c code would cause a similar
-warning on 32 bits even without my change, because atomic ops already
-returned unsigned long long there.
-So I think we need to fix zip_main.c.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allnoconfig
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	  5 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	  4 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  2 ../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
