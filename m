@@ -1,54 +1,39 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the drm
-	tree
-Date: Mon, 20 Mar 2017 09:05:09 +0100
-Message-ID: <CAKMK7uGb2B+rvs90f9gGVTVXr8n0wUXuz1A6XcuLBRv=grQR0g@mail.gmail.com>
-References: <20170320115128.0bc3861b@canb.auug.org.au>
- <CAKMK7uEQ8HPZ3PkAiEEoDoWXQL27GzoNNsNeyNqYrhu_3TDUPQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the netfilter-next
+ tree
+Date: Mon, 20 Mar 2017 19:44:55 +1100
+Message-ID: <20170320194455.4352d15e@canb.auug.org.au>
+References: <20170320111236.77c5a05a@canb.auug.org.au>
+        <2236FBA76BA1254E88B949DDB74E612B41C5B0DC@IRSMSX102.ger.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <CAKMK7uEQ8HPZ3PkAiEEoDoWXQL27GzoNNsNeyNqYrhu_3TDUPQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Jani Nikula <jani.nikula@intel.com>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612B41C5B0DC@IRSMSX102.ger.corp.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans Liljestrand <ishkamiel@gmail.com>, Kees Cook <keescook@chromium.org>, David Windsor <dwindsor@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCBNYXIgMjAsIDIwMTcgYXQgOTowMyBBTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsLnZl
-dHRlckBmZndsbC5jaD4gd3JvdGU6Cj4gT24gTW9uLCBNYXIgMjAsIDIwMTcgYXQgMTo1MSBBTSwg
-U3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+IHdyb3RlOgo+PiBUaGlzIGNo
-ZXJyeSBwaWNraW5nIG9mIGZpeGVzIGZyb20gbmV3IGRldmVsb3BtZW50IGJhY2sgdG8gTGludXMn
-IHRyZWUKPj4gY2FuIGJlIGEgcmVhbCBwYWluIHdoZW4gc28gbWFueSBvdGhlciBjaGFuZ2VzIGhh
-cHBlbiBpbiB0aGUgc2FtZSBmaWxlcy4KPgo+IE9uZSBwb3NzaWJsZSBmaXggZm9yIHRoaXMgd291
-bGQgYmUgaWYgeW91IHJldXNlIG91ciByZXJlcmUgY2FjaGUuIFRoZQo+IG9ubHkgcmVhc29uIHdl
-IGRvbid0IGdvIGluc2FuZSB3aXRoIGFsbCB0aGUgZHJtIGNvbmZsaWN0cyBpcyB0aGF0IHdlCj4g
-Y29tcGxldGVseSBkaXN0cmlidXRlZCBjb25mbGljdCByZXNvbHV0aW9uLiBEZXZlbG9wZXJzIHB1
-c2ggYSBwYXRjaCwKPiBzY3JpcHQgdGVsbHMgdGhlbSB0aGVyZSdzIGEgY29uZmxpY3QsIHRoZXkg
-cmVzb2x2ZSBpdCwgbWFpbnRhaW5lcnMKPiBuZXZlciBldmVuIG5vdGljZS5XZSBvbmx5IG5vdGlj
-ZSB3aGVuIHdlIGRvdWJsZS1jaGVjayB0aGUgbWVyZ2UKPiByZXNvbHV0aW9uIHdoZW4gcmVyZXJl
-IHJlLWFwcGxpZXMgaXQgZm9yIHRoZSByZWFsIGJhY2ttZXJnZSA6LSkgVGhlCj4gbWVyZ2Ugb3Jk
-ZXIgaW4gZHJtLXRpcCBzaG91bGQgYWxzbyBtYXRjaCB3aGF0IHlvdSBoYXZlIGluIGxpbnV4LW5l
-eHQsCj4gc28geW91IHNob3VsZCBiZSBhYmxlIHRvIGVudGlyZWx5IHJldXNlIHRoZW0uCj4KPiBB
-bnl3YXksIGlmIHlvdSB0cnVzdCB1cyBlbm91Z2ggdG8gc2Nvb3AgdXAgcmFuZG9tIGdpdCByZXJl
-cmUgY2FjaGVzCj4gKG9yIGF0IGxlYXN0IHVzZSB0aGVtIHRvIGRvdWJsZS1jaGVjayB5b3VyIG93
-biksIHRoZXkncmUgYWxsIHB1YmxpYzoKPgo+IGdpdDovL2Fub25naXQuZnJlZWRlc2t0b3Aub3Jn
-L2RybS10aXAgcmVyZXJlLWNhY2hlCj4KPiBPcgo+Cj4gaHR0cHM6Ly9jZ2l0LmZyZWVkZXNrdG9w
-Lm9yZy9kcm0tdGlwL3RyZWUvcnItY2FjaGU/aD1yZXJlcmUtY2FjaGUKPgo+IFllcyB3ZSBzaG91
-bGQgcHJvYmFibHkgZ2MgdGhlbSwgYnV0IGRpc2sgc3BhY2UgaXMgY2hlYXAuCgpBbmQgdGhlIG1l
-cmdlIG9yZGVyLCBpbiBjYXNlIHlvdSB3YW50IHRvIGNoZWNrIHRoYXQuIFdlIGNhbiBhZGp1c3Qg
-aXQgb2ZjOgoKaHR0cHM6Ly9jZ2l0LmZyZWVkZXNrdG9wLm9yZy9kcm0tdGlwL3RyZWUvbmlnaHRs
-eS5jb25mP2g9cmVyZXJlLWNhY2hlCgpDaGVlcnMsIERhbmllbAotLSAKRGFuaWVsIFZldHRlcgpT
-b2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KKzQxICgwKSA3OSAzNjUgNTcgNDgg
-LSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9pbnRlbC1nZngK
+Hi Elena,
+
+On Mon, 20 Mar 2017 07:00:13 +0000 "Reshetova, Elena" <elena.reshetova@intel.com> wrote:
+>
+> > After merging the netfilter-next tree, today's linux-next build (x86_64
+> > allmodconfig) produced this warning:
+> > 
+> > net/netfilter/nfnetlink_acct.c: In function 'nfnl_acct_try_del':
+> > net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-
+> > Wunused-variable]
+> >   unsigned int refcount;
+> >                ^
+> > 
+> > Introduced by commit  
+> 
+> Ups, sorry about this, slipped through. Should I submit a fix or how do you want to handle this?
+
+That's up to Pablo, but presumably you should send him a followup patch.
+
+-- 
+Cheers,
+Stephen Rothwell
