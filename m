@@ -1,86 +1,104 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170320 build: 0 failures 3 warnings (next-20170320)
-Date: Mon, 20 Mar 2017 09:18:19 +0000
-Message-ID: <E1cptSF-0006Mz-B9@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36412 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753351AbdCTJS0 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Mar 2017 05:18:26 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: linux-next: manual merge of the tty tree with the tty.current tree
+Date: Mon, 20 Mar 2017 10:21:47 +0100
+Message-ID: <CACT4Y+arSk0nujZwvTNj2bYDByw+CDQjzCsWMVUGoFMFi=vr0g@mail.gmail.com>
+References: <20170320132839.72fac965@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170320132839.72fac965@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Peter Hurley <peter@hurleysoftware.com>, Michael Neuling <mikey@neuling.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170320
-Git describe: next-20170320
-Commit: f921b263d9 Add linux-next specific files for 20170320
+On Mon, Mar 20, 2017 at 3:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Greg,
+>
+> Today's linux-next merge of the tty tree got a conflict in:
+>
+>   drivers/tty/tty_ldisc.c
+>
+> between commit:
+>
+>   5362544bebe8 ("tty: don't panic on OOM in tty_set_ldisc()")
+>
+> from the tty.current tree and commit:
+>
+>   71472fa9c52b ("tty: Fix ldisc crash on reopened tty")
+>
+> from the tty tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc drivers/tty/tty_ldisc.c
+> index b0500a0a87b8,4ee7742dced3..000000000000
+> --- a/drivers/tty/tty_ldisc.c
+> +++ b/drivers/tty/tty_ldisc.c
+> @@@ -621,14 -669,17 +621,15 @@@ int tty_ldisc_reinit(struct tty_struct
+>                 tty_ldisc_put(tty->ldisc);
+>         }
+>
+> -       /* switch the line discipline */
+> -       tty->ldisc = ld;
+>         tty_set_termios_ldisc(tty, disc);
+> -       retval = tty_ldisc_open(tty, tty->ldisc);
+> +       retval = tty_ldisc_open(tty, ld);
+>         if (retval) {
+> -               tty_ldisc_put(tty->ldisc);
+> -               tty->ldisc = NULL;
+>  -              if (!WARN_ON(disc == N_TTY)) {
+>  -                      tty_ldisc_put(ld);
+>  -                      ld = NULL;
+>  -              }
+> ++              tty_ldisc_put(ld);
+> ++              ld = NULL;
+>         }
+> +
+> +       /* switch the line discipline */
+> +       smp_store_release(&tty->ldisc, ld);
+>         return retval;
+>   }
+>
 
-Build Time: 99 min 42 sec
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Peter,
 
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
+Looking at your patch "tty: Fix ldisc crash on reopened tty", I think
+there is a missed barrier in tty_ldisc_ref. A single barrier does not
+have any effect, they always need to be in pairs. So I think we also
+need at least:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm64-defconfig
+@@ -295,7 +295,8 @@ struct tty_ldisc *tty_ldisc_ref(struct tty_struct *tty)
+        struct tty_ldisc *ld = NULL;
 
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	  5 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	  4 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  2 ../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
+        if (ldsem_down_read_trylock(&tty->ldisc_sem)) {
+-               ld = tty->ldisc;
++               ld = READ_ONCE(tty->ldisc);
++               read_barrier_depends();
+                if (!ld)
+                        ldsem_up_read(&tty->ldisc_sem);
+        }
 
 
+Or simply:
 
-===============================================================================
-Detailed per-defconfig build reports below:
+@@ -295,7 +295,8 @@ struct tty_ldisc *tty_ldisc_ref(struct tty_struct *tty)
+        struct tty_ldisc *ld = NULL;
 
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+        if (ldsem_down_read_trylock(&tty->ldisc_sem)) {
+-               ld = tty->ldisc;
++               /* pairs with smp_store_release in tty_ldisc_reinit */
++               ld = smp_load_acquire(&tty->ldisc);
+                if (!ld)
+                        ldsem_up_read(&tty->ldisc_sem);
+        }
