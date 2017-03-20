@@ -1,56 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the net-next tree
-Date: Mon, 20 Mar 2017 17:07:13 +1100
-Message-ID: <20170320170713.71010326@canb.auug.org.au>
+From: "Reshetova, Elena" <elena.reshetova@intel.com>
+Subject: RE: linux-next: build warning after merge of the netfilter-next tree
+Date: Mon, 20 Mar 2017 07:00:13 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612B41C5B0DC@IRSMSX102.ger.corp.intel.com>
+References: <20170320111236.77c5a05a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40795 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752255AbdCTGHQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 20 Mar 2017 02:07:16 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Tomer Tayar <Tomer.Tayar@cavium.com>, Ram Amrani <Ram.Amrani@cavium.com>, Manish Rangankar <Manish.Rangankar@cavium.com>, Chad Dupuis <Chad.Dupuis@cavium.com>, Yuval Mintz <Yuval.Mintz@cavium.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <netfilter-devel-owner@vger.kernel.org>
+In-Reply-To: <20170320111236.77c5a05a@canb.auug.org.au>
+Content-Language: en-US
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Hans Liljestrand <ishkamiel@gmail.com>, Kees Cook <keescook@chromium.org>, David Windsor <dwindsor@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
 
-After merging the net-next tree, today's linux-next build (powerpc
-allyesconfig) produced thie warnings:
+> Hi all,
+>=20
+> After merging the netfilter-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>=20
+> net/netfilter/nfnetlink_acct.c: In function 'nfnl_acct_try_del':
+> net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount=
+' [-
+> Wunused-variable]
+>   unsigned int refcount;
+>                ^
+>=20
+> Introduced by commit
 
-In file included from include/linux/byteorder/big_endian.h:4:0,
-                 from arch/powerpc/include/uapi/asm/byteorder.h:13,
-                 from include/linux/qed/common_hsi.h:36,
-                 from drivers/scsi/qedf/drv_scsi_fw_funcs.h:10,
-                 from drivers/scsi/qedf/drv_fcoe_fw_funcs.h:10,
-                 from drivers/scsi/qedf/drv_fcoe_fw_funcs.c:8:
-drivers/scsi/qedf/drv_fcoe_fw_funcs.c: In function 'init_initiator_rw_fcoe_task':
-include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
- #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
-                          ^
-include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu_to_le32'
- #define cpu_to_le32 __cpu_to_le32
-                     ^
-drivers/scsi/qedf/drv_fcoe_fw_funcs.c:62:31: note: in expansion of macro 'cpu_to_le32'
-  t_st_ctx->read_write.rx_id = cpu_to_le32(FCOE_RX_ID);
-                               ^
-drivers/scsi/qedf/drv_fcoe_fw_funcs.c: In function 'init_initiator_midpath_unsolicited_fcoe_task':
-include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
- #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
-                          ^
-include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu_to_le32'
- #define cpu_to_le32 __cpu_to_le32
-                     ^
-drivers/scsi/qedf/drv_fcoe_fw_funcs.c:154:31: note: in expansion of macro 'cpu_to_le32'
-  t_st_ctx->read_write.rx_id = cpu_to_le32(FCOE_RX_ID);
-                               ^
+Ups, sorry about this, slipped through. Should I submit a fix or how do you=
+ want to handle this?
 
-Introduced by commit
+Best Regards,
+Elena.
 
-  be086e7c53f1 ("qed*: Utilize Firmware 8.15.3.0")
-
--- 
-Cheers,
-Stephen Rothwell
+>=20
+>   b54ab92b84b6 ("netfilter: refcounter conversions")
+>=20
+> --
+> Cheers,
+> Stephen Rothwell
