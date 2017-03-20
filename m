@@ -1,76 +1,72 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 20 Mar 2017 09:07:54 -0400
-Message-ID: <20170320130753.GA30053@dhcp22.suse.cz>
-References: <20170320163735.332e64b7@canb.auug.org.au>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: linux-next: manual merge of the renesas tree with the arm tree
+Date: Mon, 20 Mar 2017 09:07:01 +0100
+Message-ID: <20170320080659.GA20257@verge.net.au>
+References: <20170320100411.6970f7b1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170320163735.332e64b7@canb.auug.org.au>
+In-Reply-To: <20170320100411.6970f7b1@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jaegeuk Kim <jaegeuk@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Cc: Russell King <rmk@armlinux.org.uk>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon 20-03-17 16:37:35, Stephen Rothwell wrote:
-> Hi Andrew,
+On Mon, Mar 20, 2017 at 10:04:11AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> After merging the akpm tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Today's linux-next merge of the renesas tree got a conflict in:
 > 
-> fs/f2fs/node.c: In function 'init_free_nid_cache':
-> fs/f2fs/node.c:2634:25: error: implicit declaration of function 'f2fs_kvzalloc' [-Werror=implicit-function-declaration]
->   nm_i->free_nid_count = f2fs_kvzalloc(nm_i->nat_blocks *
->                          ^
-> fs/f2fs/node.c:2634:23: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->   nm_i->free_nid_count = f2fs_kvzalloc(nm_i->nat_blocks *
->                        ^
+>   arch/arm/boot/dts/r7s72100.dtsi
 > 
-> Caused by commit
+> between commit:
 > 
->   69e5e80117a3 ("mm: introduce kv[mz]alloc helpers")
+>   f08578e6da96 ("ARM: 8661/1: dts: r7s72100: add l2 cache")
 > 
-> interacting with commit
+> from the arm tree and commit:
 > 
->   c48b15867a2f ("f2fs: skip scanning free nid bitmap of full NAT blocks")
+>   69ed50de582e ("ARM: dts: r7s72100: Add watchdog timer")
 > 
-> from the f2fs tree.
+> from the renesas tree.
 > 
-> I applied the following fix patch:
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-yes this is correct. Thanks!
+Thanks Stephen,
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 20 Mar 2017 16:28:21 +1100
-> Subject: [PATCH] mm: introduce kv[mz]alloc helpers - f2fs fix up
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  fs/f2fs/node.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> index cdbb05745895..0ea1dca8a0e2 100644
-> --- a/fs/f2fs/node.c
-> +++ b/fs/f2fs/node.c
-> @@ -2631,7 +2631,7 @@ static int init_free_nid_cache(struct f2fs_sb_info *sbi)
->  	if (!nm_i->nat_block_bitmap)
->  		return -ENOMEM;
->  
-> -	nm_i->free_nid_count = f2fs_kvzalloc(nm_i->nat_blocks *
-> +	nm_i->free_nid_count = kvzalloc(nm_i->nat_blocks *
->  					sizeof(unsigned short), GFP_KERNEL);
->  	if (!nm_i->free_nid_count)
->  		return -ENOMEM;
-> -- 
-> 2.11.0
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+this looks correct to me.
 
--- 
-Michal Hocko
-SUSE Labs
+> diff --cc arch/arm/boot/dts/r7s72100.dtsi
+> index 1cf2bd038090,9b12d73e67dc..000000000000
+> --- a/arch/arm/boot/dts/r7s72100.dtsi
+> +++ b/arch/arm/boot/dts/r7s72100.dtsi
+> @@@ -369,16 -371,13 +372,23 @@@
+>   			<0xe8202000 0x1000>;
+>   	};
+>   
+>  +	L2: cache-controller@3ffff000 {
+>  +		compatible = "arm,pl310-cache";
+>  +		reg = <0x3ffff000 0x1000>;
+>  +		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+>  +		arm,early-bresp-disable;
+>  +		arm,full-line-zero-disable;
+>  +		cache-unified;
+>  +		cache-level = <2>;
+>  +	};
+>  +
+> + 	wdt: watchdog@fcfe0000 {
+> + 		compatible = "renesas,r7s72100-wdt", "renesas,rza-wdt";
+> + 		reg = <0xfcfe0000 0x6>;
+> + 		interrupts = <GIC_SPI 106 IRQ_TYPE_EDGE_RISING>;
+> + 		clocks = <&p0_clk>;
+> + 	};
+> + 
+>   	i2c0: i2c@fcfee000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+> 
