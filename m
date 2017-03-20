@@ -1,30 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the netfilter-next tree
-Date: Mon, 20 Mar 2017 11:12:36 +1100
-Message-ID: <20170320111236.77c5a05a@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Mon, 20 Mar 2017 11:51:28 +1100
+Message-ID: <20170320115128.0bc3861b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Elena Reshetova <elena.reshetova@intel.com>, Hans Liljestrand <ishkamiel@gmail.com>, Kees Cook <keescook@chromium.org>, David Windsor <dwindsor@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
-
-After merging the netfilter-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-net/netfilter/nfnetlink_acct.c: In function 'nfnl_acct_try_del':
-net/netfilter/nfnetlink_acct.c:329:15: warning: unused variable 'refcount' [-Wunused-variable]
-  unsigned int refcount;
-               ^
-
-Introduced by commit
-
-  b54ab92b84b6 ("netfilter: refcounter conversions")
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgRGF2ZSwKCkFmdGVyIG1lcmdpbmcgdGhlIGRybSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NCBhbGxtb2Rjb25maWcpCmZhaWxlZCBsaWtlIHRoaXM6Cgpkcml2ZXJzL2dw
+dS9kcm0vaTkxNS9pOTE1X2lycS5jOiBJbiBmdW5jdGlvbiAnZ2VuNl9ycHNfcmVzZXRfZWknOgpk
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5jOjExMTU6Mzg6IGVycm9yOiAnc3RydWN0IGlu
+dGVsX2dlbjZfcG93ZXJfbWdtdCcgaGFzIG5vIG1lbWJlciBuYW1lZCAnZG93bl9laScKICB2bHZf
+YzBfcmVhZChkZXZfcHJpdiwgJmRldl9wcml2LT5ycHMuZG93bl9laSk7CiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5j
+OjExMTY6MTU6IGVycm9yOiAnc3RydWN0IGludGVsX2dlbjZfcG93ZXJfbWdtdCcgaGFzIG5vIG1l
+bWJlciBuYW1lZCAndXBfZWknCiAgZGV2X3ByaXYtPnJwcy51cF9laSA9IGRldl9wcml2LT5ycHMu
+ZG93bl9laTsKICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2lycS5j
+OjExMTY6Mzc6IGVycm9yOiAnc3RydWN0IGludGVsX2dlbjZfcG93ZXJfbWdtdCcgaGFzIG5vIG1l
+bWJlciBuYW1lZCAnZG93bl9laScKICBkZXZfcHJpdi0+cnBzLnVwX2VpID0gZGV2X3ByaXYtPnJw
+cy5kb3duX2VpOwogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJz
+L2dwdS9kcm0vaTkxNS9pOTE1X2lycS5jOiBJbiBmdW5jdGlvbiAndmx2X3dhX2MwX2VpJzoKZHJp
+dmVycy9ncHUvZHJtL2k5MTUvaTkxNV9pcnEuYzoxMTMzOjIxOiBlcnJvcjogJ3N0cnVjdCBpbnRl
+bF9nZW42X3Bvd2VyX21nbXQnIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2Rvd25fZWknCiAgICAgICAm
+ZGV2X3ByaXYtPnJwcy5kb3duX2VpLCAmbm93LAogICAgICAgICAgICAgICAgICAgICBeCmRyaXZl
+cnMvZ3B1L2RybS9pOTE1L2k5MTVfaXJxLmM6MTEzNjoxNjogZXJyb3I6ICdzdHJ1Y3QgaW50ZWxf
+Z2VuNl9wb3dlcl9tZ210JyBoYXMgbm8gbWVtYmVyIG5hbWVkICdkb3duX2VpJwogICBkZXZfcHJp
+di0+cnBzLmRvd25fZWkgPSBub3c7CiAgICAgICAgICAgICAgICBeCmRyaXZlcnMvZ3B1L2RybS9p
+OTE1L2k5MTVfaXJxLmM6MTE0MToyMDogZXJyb3I6ICdzdHJ1Y3QgaW50ZWxfZ2VuNl9wb3dlcl9t
+Z210JyBoYXMgbm8gbWVtYmVyIG5hbWVkICd1cF9laScKICAgICAgJmRldl9wcml2LT5ycHMudXBf
+ZWksICZub3csCiAgICAgICAgICAgICAgICAgICAgXgpkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1
+X2lycS5jOjExNDQ6MTY6IGVycm9yOiAnc3RydWN0IGludGVsX2dlbjZfcG93ZXJfbWdtdCcgaGFz
+IG5vIG1lbWJlciBuYW1lZCAndXBfZWknCiAgIGRldl9wcml2LT5ycHMudXBfZWkgPSBub3c7CiAg
+ICAgICAgICAgICAgICBeCkNhdXNlZCBieSBjb21taXQKCiAgOGY2OGQ1OTFkNDc2ICgiZHJtL2k5
+MTU6IFN0b3AgdXNpbmcgUlBfRE9XTl9FSSBvbiBCYXl0cmFpbCIpCgpmcm9tIHRoZSBkcm0taW50
+ZWwtZml4ZXMgdHJlZSBhbmQgYSBiYWQgbWVyZ2UgcmVzb2x1dGlvbiBvbiBteSBwYXJ0LgoKSSBy
+ZWFwcGxpZWQgdGhhdCBjb21taXQgYnkgaGFuZC4gIEl0IHdvdWxkIGJlIG5pY2UgaWYgdGhpcyBj
+b25mbGljdCB3YXMKcmVzb2x2ZWQgaW4gdGhlIGRybSB0cmVlLgoKVGhpcyBjaGVycnkgcGlja2lu
+ZyBvZiBmaXhlcyBmcm9tIG5ldyBkZXZlbG9wbWVudCBiYWNrIHRvIExpbnVzJyB0cmVlCmNhbiBi
+ZSBhIHJlYWwgcGFpbiB3aGVuIHNvIG1hbnkgb3RoZXIgY2hhbmdlcyBoYXBwZW4gaW4gdGhlIHNh
+bWUgZmlsZXMuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
+Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
