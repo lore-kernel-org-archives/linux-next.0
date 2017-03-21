@@ -1,61 +1,71 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Date: Tue, 21 Mar 2017 11:18:02 +1100
-Message-ID: <1490055482.2504.43.camel@kernel.crashing.org>
-References: <20170320134414.25f2e3d6@canb.auug.org.au>
-         <CAK8P3a3G1qHa0UhMO_EUnC87kLOQR70wz5ne6j+ZFfbejR_RZg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
+Date: Tue, 21 Mar 2017 11:28:37 +1100
+Message-ID: <20170321112837.50d44897@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3G1qHa0UhMO_EUnC87kLOQR70wz5ne6j+ZFfbejR_RZg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cyril Bur <cyrilbur@gmail.com>, Joel Stanley <joel@jms.id.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: linux-next@vger.kernel.org, Tina Zhang <tina.zhang@intel.com>, linux-kernel@vger.kernel.org, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2017-03-20 at 13:23 +0100, Arnd Bergmann wrote:
-> On Mon, Mar 20, 2017 at 3:44 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> > 
-> > After merging the char-misc tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_mmap':
-> > drivers/misc/aspeed-lpc-ctrl.c:51:9: error: implicit declaration of function 'pgprot_dmacoherent' [-Werror=implicit-function-declaration]
-> >   prot = pgprot_dmacoherent(prot);
-> 
-> A lot of other drivers (including /dev/mem) just use pgprot_noncached() or
-> pgprot_writecombine(), which would make the code portable and might be
-> what you want here as well.
-> 
-> pgprot_dmacoherent() is meant specifically for mapping RAM that is used
-> for DMA buffers that come from dma_alloc_coherent(), which doesn't seem
-> to be the case here.
-> 
-> What kind of address range is this really?
-
-It's a piece of RAM that we reserve via a reserved region, which will
-be accessed by HW (sort-of-DMA, ie, the "host" system will access that
-using FW cycles on the LPC bus which we map to that reserved region of
-memory).
-
-Joel, Cyril, can you send a 1-liner patch to change that to
-pgprot_noncached() ?
-
-Cheers,
-Ben.
-
-> > drivers/misc/aspeed-lpc-ctrl.c:51:7: error: incompatible types when assigning to type 'pgprot_t {aka struct pgprot}' from type 'int'
-> >   prot = pgprot_dmacoherent(prot);
-> >        ^
-> > In file included from include/linux/miscdevice.h:6:0,
-> >                  from drivers/misc/aspeed-lpc-ctrl.c:11:
-> > drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_probe':
-> > drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'phys_addr_t {aka long long unsigned int}' [-Wformat=]
-> >    dev_info(dev, "Loaded at 0x%08x (0x%08x)\n",
-> 
-> This should just use the "%pap" for printing a phys_addr_t, otherwise we
-> get the same warning on ARM in some configurations.
-> 
->       Arnd
+SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
+Y29uZmxpY3QgaW46CgogIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9jbWRfcGFyc2VyLmMKCmJl
+dHdlZW4gY29tbWl0OgoKICA2OTVmYmMwOGQ4MGYgKCJkcm0vaTkxNS9ndnQ6IHJlcGxhY2UgdGhl
+IGd2dF9lcnIgd2l0aCBndnRfdmdwdV9lcnIiKQoKZnJvbSB0aGUgZHJtLWludGVsLWZpeGVzIHRy
+ZWUgYW5kIGNvbW1pdDoKCiAgNzNkZWM5NWU2YmEzICgiZHJtL2k5MTU6IEVtaXQgdG8gcmluZ2J1
+ZmZlciBkaXJlY3RseSIpCgpmcm9tIHRoZSBkcm0gdHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBi
+ZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwppcyBub3cgZml4
+ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFs
+CmNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5l
+ciB3aGVuIHlvdXIgdHJlZQppcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28g
+d2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZwp3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBj
+b25mbGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkKY29tcGxleCBjb25m
+bGljdHMuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCgpkaWZmIC0tY2MgZHJpdmVycy9n
+cHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJzZXIuYwppbmRleCAyYjkyY2M4YTdkMWEsODEwNzZkOGVj
+NDFhLi4wMDAwMDAwMDAwMDAKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvZ3Z0L2NtZF9wYXJz
+ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9ndnQvY21kX3BhcnNlci5jCkBAQCAtMTY3
+Myw4IC0xNjQ0LDggKzE2NzMsOCBAQEAgc3RhdGljIGludCBwZXJmb3JtX2JiX3NoYWRvdyhzdHJ1
+Y3QgcGFyCiAgCXJldCA9IGNvcHlfZ21hX3RvX2h2YShzLT52Z3B1LCBzLT52Z3B1LT5ndHQuZ2d0
+dF9tbSwKICAJCQkgICAgICBnbWEsIGdtYSArIGJiX3NpemUsCiAgCQkJICAgICAgZHN0KTsKLSAJ
+aWYgKHJldCkgeworIAlpZiAocmV0IDwgMCkgewogLQkJZ3Z0X2VycigiZmFpbCB0byBjb3B5IGd1
+ZXN0IHJpbmcgYnVmZmVyXG4iKTsKICsJCWd2dF92Z3B1X2VycigiZmFpbCB0byBjb3B5IGd1ZXN0
+IHJpbmcgYnVmZmVyXG4iKTsKICAJCWdvdG8gdW5tYXBfc3JjOwogIAl9CiAgCkBAQCAtMjY2OCwy
+NiAtMjYzMywyMyArMjY2NSwyNCBAQEAgc3RhdGljIGludCBzaGFkb3dfd29ya2xvYWRfcmluZ19i
+dWZmZXIoCiAgCS8qIGhlYWQgPiB0YWlsIC0tPiBjb3B5IGhlYWQgPC0+IHRvcCAqLwogIAlpZiAo
+Z21hX2hlYWQgPiBnbWFfdGFpbCkgewogIAkJcmV0ID0gY29weV9nbWFfdG9faHZhKHZncHUsIHZn
+cHUtPmd0dC5nZ3R0X21tLAotIAkJCQlnbWFfaGVhZCwgZ21hX3RvcCwKLSAJCQkJd29ya2xvYWQt
+PnNoYWRvd19yaW5nX2J1ZmZlcl92YSk7Ci0gCQlpZiAocmV0KSB7CisgCQkJCSAgICAgIGdtYV9o
+ZWFkLCBnbWFfdG9wLCBjcyk7CisgCQlpZiAocmV0IDwgMCkgeworIAkJCWd2dF9lcnIoImZhaWwg
+dG8gY29weSBndWVzdCByaW5nIGJ1ZmZlclxuIik7CiArCQkJZ3Z0X3ZncHVfZXJyKCJmYWlsIHRv
+IGNvcHkgZ3Vlc3QgcmluZyBidWZmZXJcbiIpOwogIAkJCXJldHVybiByZXQ7CiAgCQl9Ci0gCQlj
+b3B5X2xlbiA9IGdtYV90b3AgLSBnbWFfaGVhZDsKKyAJCWNzICs9IHJldCAvIHNpemVvZih1MzIp
+OwogIAkJZ21hX2hlYWQgPSB3b3JrbG9hZC0+cmJfc3RhcnQ7CiAgCX0KICAKICAJLyogY29weSBo
+ZWFkIG9yIHN0YXJ0IDwtPiB0YWlsICovCi0gCXJldCA9IGNvcHlfZ21hX3RvX2h2YSh2Z3B1LCB2
+Z3B1LT5ndHQuZ2d0dF9tbSwKLSAJCQlnbWFfaGVhZCwgZ21hX3RhaWwsCi0gCQkJd29ya2xvYWQt
+PnNoYWRvd19yaW5nX2J1ZmZlcl92YSArIGNvcHlfbGVuKTsKLSAJaWYgKHJldCkgeworIAlyZXQg
+PSBjb3B5X2dtYV90b19odmEodmdwdSwgdmdwdS0+Z3R0LmdndHRfbW0sIGdtYV9oZWFkLCBnbWFf
+dGFpbCwgY3MpOworIAlpZiAocmV0IDwgMCkgewogLQkJZ3Z0X2VycigiZmFpbCB0byBjb3B5IGd1
+ZXN0IHJpbmcgYnVmZmVyXG4iKTsKICsJCWd2dF92Z3B1X2VycigiZmFpbCB0byBjb3B5IGd1ZXN0
+IHJpbmcgYnVmZmVyXG4iKTsKICAJCXJldHVybiByZXQ7CiAgCX0KLSAJcmluZy0+dGFpbCArPSB3
+b3JrbG9hZC0+cmJfbGVuOwotIAlpbnRlbF9yaW5nX2FkdmFuY2UocmluZyk7CisgCWNzICs9IHJl
+dCAvIHNpemVvZih1MzIpOworIAlpbnRlbF9yaW5nX2FkdmFuY2Uod29ya2xvYWQtPnJlcSwgY3Mp
+OwogIAlyZXR1cm4gMDsKICB9CiAgCkBAQCAtMjc0Myw4IC0yNzAzLDggKzI3MzgsOCBAQEAgc3Rh
+dGljIGludCBzaGFkb3dfaW5kaXJlY3RfY3R4KHN0cnVjdCBpCiAgCQkJCXdhX2N0eC0+d29ya2xv
+YWQtPnZncHUtPmd0dC5nZ3R0X21tLAogIAkJCQlndWVzdF9nbWEsIGd1ZXN0X2dtYSArIGN0eF9z
+aXplLAogIAkJCQltYXApOwotIAlpZiAocmV0KSB7CisgCWlmIChyZXQgPCAwKSB7CiAtCQlndnRf
+ZXJyKCJmYWlsIHRvIGNvcHkgZ3Vlc3QgaW5kaXJlY3QgY3R4XG4iKTsKICsJCWd2dF92Z3B1X2Vy
+cigiZmFpbCB0byBjb3B5IGd1ZXN0IGluZGlyZWN0IGN0eFxuIik7CiAgCQlnb3RvIHVubWFwX3Ny
+YzsKICAJfQogIApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
