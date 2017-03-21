@@ -1,82 +1,53 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: linux-next: manual merge of the drm-tegra tree with the drm tree
-Date: Tue, 21 Mar 2017 15:10:31 +0100
-Message-ID: <20170321141031.GG30407@ulmo.ba.sec>
-References: <20170321114545.39fdd45a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the
+ drm-intel-fixes tree
+Date: Wed, 22 Mar 2017 10:57:24 +1100
+Message-ID: <20170322105724.0fbf52bc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GUPx2O/K0ibUojHx"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35142 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757680AbdCUOKk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 21 Mar 2017 10:10:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20170321114545.39fdd45a@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-
---GUPx2O/K0ibUojHx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Mar 21, 2017 at 11:45:45AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> Today's linux-next merge of the drm-tegra tree got a conflict in:
->=20
->   drivers/gpu/drm/tegra/drm.c
->=20
-> between commit:
->=20
->   10437d9b475e ("drm: tegra: use vblank hooks in struct drm_crtc_funcs")
->=20
-> from the drm tree and commit:
->=20
->   3f2ea8cee24f ("drm/tegra: Don't leak kernel pointer to userspace")
->=20
-> from the drm-tegra tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-Stephen,
-
-your resolution looks good to me.
-
-Dave,
-
-the conflict is fairly trivial to resolve, but if you prefer I can
-rebase the Tegra tree onto your -next to avoid it.
-
-Thierry
-
---GUPx2O/K0ibUojHx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljRNFcACgkQ3SOs138+
-s6H6xQ/+Ofad123Ok7Qz2j0YZnp3T0J6DWy1S098bU15Xz/J/DLb1MG3SfcFRdNs
-GzK8otUrH5jfTGnwIOOc8dt9WGXoojPOOpNVIzGVh835Um9K7YnKj2+U3wUPcFwL
-qk/W+YHqtxXFm4dXnA6kK19NNDvnofs22QSTePFHHfTkRpeEtruiq1F57A+Xvaci
-nY7SeNyjVdbv2A5CPbxdu619jyptkjWQeOga64UHpPk9Bv3kmzP+XLMWQFxDvnbT
-CemAn4RptBqQrKI6ctIjDDMdnV4C4NVqM0+cY83SUayIOMXUPb9gZdQUtP5C2FKp
-5H2q9+KgLV6A9JC9JTRrY5iB5AvED64Y9bIjCN1s4CAO+cvJdHjFyRXhvxpzz6LO
-cqzFq3CFezL2jzV8PDIxSsLuajtmp5QXeLUsLSSFiTe3ForlprlIobYLBOkAZIzI
-0kEJXih897LxJYY5hj49r5f0Zb0KLqNqHMQL0Kb8UREqwcr1W01gK2/FGbRbm29H
-a6k61rt8r/8Y2CXaJTln77DD0K/CCa2Z9cF3dL10RLTOvfpf9qczY0tGdlDE3EnG
-rzujHDm7axC6liFDmrfKIGhIMT/eqPNrXGnCa9/A0rqH3usFTyGRFGoLJe13x5aD
-em8vS7cHq3uBjFpocVoLHOQgbzdld84sl4JqRL1Hqnub8/llKow=
-=q5pN
------END PGP SIGNATURE-----
-
---GUPx2O/K0ibUojHx--
+SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
+Y29uZmxpY3QgaW46CgogIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYwoK
+YmV0d2VlbiBjb21taXQ6CgogIDU5MDM3OWFlZjJlMyAoImRybS9pOTE1OiBtYWtlIGNvbnRleHQg
+c3RhdHVzIG5vdGlmaWVyIGhlYWQgYmUgcGVyIGVuZ2luZSIpCgpmcm9tIHRoZSBkcm0taW50ZWwt
+Zml4ZXMgdHJlZSBhbmQgY29tbWl0czoKCiAgMjM1NWNmMDg4ZDQ2ICgiZHJtL2k5MTU6IENyZWF0
+ZSBjb250ZXh0IGRlc2MgdGVtcGxhdGUgd2hlbiBjb250ZXh0IGlzIGNyZWF0ZWQiKQogIDk0OWU4
+YWIzYTk0YiAoImRybS9pOTE1OiBVc2UgdGhlIHNpemUvdHlwZSBvZiBhZGRyZXNzIHNwYWNlIHRv
+IG1ha2UgZGVjaXNpb25zIikKCmZyb20gdGhlIGRybSB0cmVlLgoKSSBmaXhlZCBpdCB1cCAoc2Vl
+IGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCmlzIG5vdyBm
+aXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZp
+YWwKY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFp
+bmVyIHdoZW4geW91ciB0cmVlCmlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxz
+byB3YW50IHRvIGNvbnNpZGVyIGNvb3BlcmF0aW5nCndpdGggdGhlIG1haW50YWluZXIgb2YgdGhl
+IGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQpjb21wbGV4IGNv
+bmZsaWN0cy4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKCmRpZmYgLS1jYyBkcml2ZXJz
+L2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9jb250ZXh0LmMKaW5kZXggZTJkODNiNmQzNzZiLGJhY2Vj
+YTE0ZjVlMC4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2Vt
+X2NvbnRleHQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9jb250ZXh0LmMK
+QEBAIC0zMDksOCAtMzE2LDkgKzMxNiw4IEBAQCBfX2NyZWF0ZV9od19jb250ZXh0KHN0cnVjdCBk
+cm1faTkxNV9wcmkKICAKICAJaTkxNV9nZW1fY29udGV4dF9zZXRfYmFubmFibGUoY3R4KTsKICAJ
+Y3R4LT5yaW5nX3NpemUgPSA0ICogUEFHRV9TSVpFOwotIAljdHgtPmRlc2NfdGVtcGxhdGUgPSBH
+RU44X0NUWF9BRERSRVNTSU5HX01PREUoZGV2X3ByaXYpIDw8Ci0gCQkJICAgICBHRU44X0NUWF9B
+RERSRVNTSU5HX01PREVfU0hJRlQ7CisgCWN0eC0+ZGVzY190ZW1wbGF0ZSA9CisgCQlkZWZhdWx0
+X2Rlc2NfdGVtcGxhdGUoZGV2X3ByaXYsIGRldl9wcml2LT5tbS5hbGlhc2luZ19wcGd0dCk7CiAt
+CUFUT01JQ19JTklUX05PVElGSUVSX0hFQUQoJmN0eC0+c3RhdHVzX25vdGlmaWVyKTsKICAKICAJ
+LyogR3VDIHJlcXVpcmVzIHRoZSByaW5nIHRvIGJlIHBsYWNlZCBhYm92ZSBHVUNfV09QQ01fVE9Q
+LiBJZiBHdUMgaXMgbm90CiAgCSAqIHByZXNlbnQgb3Igbm90IGluIHVzZSB3ZSBzdGlsbCBuZWVk
+IGEgc21hbGwgYmlhcyBhcyByaW5nIHdyYXBhcm91bmQKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
