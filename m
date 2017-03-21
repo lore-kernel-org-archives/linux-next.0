@@ -1,57 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add pinctrl/samsung tree to linux-next
-Date: Tue, 21 Mar 2017 09:43:55 +1100
-Message-ID: <20170321094355.28e14d1a@canb.auug.org.au>
-References: <20170320170559.xojploiymqgm7dl4@kozik-lap>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Date: Tue, 21 Mar 2017 11:18:02 +1100
+Message-ID: <1490055482.2504.43.camel@kernel.crashing.org>
+References: <20170320134414.25f2e3d6@canb.auug.org.au>
+         <CAK8P3a3G1qHa0UhMO_EUnC87kLOQR70wz5ne6j+ZFfbejR_RZg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42051 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753860AbdCTWyF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 20 Mar 2017 18:54:05 -0400
-In-Reply-To: <20170320170559.xojploiymqgm7dl4@kozik-lap>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-next@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK8P3a3G1qHa0UhMO_EUnC87kLOQR70wz5ne6j+ZFfbejR_RZg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cyril Bur <cyrilbur@gmail.com>, Joel Stanley <joel@jms.id.au>
+List-Id: linux-next.vger.kernel.org
 
-Hi Krzysztof,
-
-On Mon, 20 Mar 2017 19:05:59 +0200 Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Could you add the branch "for-next" of repo:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
-> to linux-next?
+On Mon, 2017-03-20 at 13:23 +0100, Arnd Bergmann wrote:
+> On Mon, Mar 20, 2017 at 3:44 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> > 
+> > After merging the char-misc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_mmap':
+> > drivers/misc/aspeed-lpc-ctrl.c:51:9: error: implicit declaration of function 'pgprot_dmacoherent' [-Werror=implicit-function-declaration]
+> >   prot = pgprot_dmacoherent(prot);
 > 
-> Contact points for errors:
-> 1. Krzysztof Kozlowski <krzk@kernel.org>
-> 2. Sylwester Nawrocki <s.nawrocki@samsung.com>
-> (shared model)
+> A lot of other drivers (including /dev/mem) just use pgprot_noncached() or
+> pgprot_writecombine(), which would make the code portable and might be
+> what you want here as well.
 > 
-> The pull requests will be sent to Linus Walleij (pinctrl maintainer).
+> pgprot_dmacoherent() is meant specifically for mapping RAM that is used
+> for DMA buffers that come from dma_alloc_coherent(), which doesn't seem
+> to be the case here.
+> 
+> What kind of address range is this really?
 
-Added from today.  I notice that it is actually empty today (which is fine).
+It's a piece of RAM that we reserve via a reserved region, which will
+be accessed by HW (sort-of-DMA, ie, the "host" system will access that
+using FW cycles on the LPC bus which we map to that reserved region of
+memory).
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Joel, Cyril, can you send a 1-liner patch to change that to
+pgprot_noncached() ?
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
--- 
 Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Ben.
+
+> > drivers/misc/aspeed-lpc-ctrl.c:51:7: error: incompatible types when assigning to type 'pgprot_t {aka struct pgprot}' from type 'int'
+> >   prot = pgprot_dmacoherent(prot);
+> >        ^
+> > In file included from include/linux/miscdevice.h:6:0,
+> >                  from drivers/misc/aspeed-lpc-ctrl.c:11:
+> > drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_probe':
+> > drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 3 has type 'phys_addr_t {aka long long unsigned int}' [-Wformat=]
+> >    dev_info(dev, "Loaded at 0x%08x (0x%08x)\n",
+> 
+> This should just use the "%pap" for printing a phys_addr_t, otherwise we
+> get the same warning on ARM in some configurations.
+> 
+>       Arnd
