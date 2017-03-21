@@ -1,98 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-tegra tree with the drm tree
-Date: Tue, 21 Mar 2017 11:45:45 +1100
-Message-ID: <20170321114545.39fdd45a@canb.auug.org.au>
+From: Joel Stanley <joel@jms.id.au>
+Subject: Re: linux-next: build failure after merge of the char-misc tree
+Date: Tue, 21 Mar 2017 13:28:27 +1030
+Message-ID: <CACPK8XeqWH_CVFunF2Bhpuf=2LND8QzkCoTziR5wXaaG8dbCtA@mail.gmail.com>
+References: <20170320134414.25f2e3d6@canb.auug.org.au> <CAK8P3a3G1qHa0UhMO_EUnC87kLOQR70wz5ne6j+ZFfbejR_RZg@mail.gmail.com>
+ <1490055482.2504.43.camel@kernel.crashing.org> <1490056560.20591.1.camel@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33053 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750836AbdCUArv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 20 Mar 2017 20:47:51 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:36117 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755307AbdCUDAv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 20 Mar 2017 23:00:51 -0400
+In-Reply-To: <1490056560.20591.1.camel@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Dave Airlie <airlied@linux.ie>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>
+To: Cyril Bur <cyrilbur@gmail.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Tue, Mar 21, 2017 at 11:06 AM, Cyril Bur <cyrilbur@gmail.com> wrote:
+> On Tue, 2017-03-21 at 11:18 +1100, Benjamin Herrenschmidt wrote:
+>> On Mon, 2017-03-20 at 13:23 +0100, Arnd Bergmann wrote:
+>> > On Mon, Mar 20, 2017 at 3:44 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > > Hi all,
+>> > >
+>> > > After merging the char-misc tree, today's linux-next build (x86_64
+>> > > allmodconfig) failed like this:
+>> > >
+>> > > drivers/misc/aspeed-lpc-ctrl.c: In function 'aspeed_lpc_ctrl_mmap':
+>> > > drivers/misc/aspeed-lpc-ctrl.c:51:9: error: implicit declaration of function 'pgprot_dmacoherent' [-Werror=implicit-function-declaration]
+>> > >   prot = pgprot_dmacoherent(prot);
+>> >
+>> > A lot of other drivers (including /dev/mem) just use pgprot_noncached() or
+>> > pgprot_writecombine(), which would make the code portable and might be
+>> > what you want here as well.
+>> >
+>> > pgprot_dmacoherent() is meant specifically for mapping RAM that is used
+>> > for DMA buffers that come from dma_alloc_coherent(), which doesn't seem
+>> > to be the case here.
+>> >
+>> > What kind of address range is this really?
+>>
+>> It's a piece of RAM that we reserve via a reserved region, which will
+>> be accessed by HW (sort-of-DMA, ie, the "host" system will access that
+>> using FW cycles on the LPC bus which we map to that reserved region of
+>> memory).
+>>
+>> Joel, Cyril, can you send a 1-liner patch to change that to
+>> pgprot_noncached() ?
+>>
+>
+> Sure. Just to be clear - we want to keep COMPILE_TEST in kconfig?
 
-Today's linux-next merge of the drm-tegra tree got a conflict in:
+Yep. With the change that Ben suggested we should be ok.
 
-  drivers/gpu/drm/tegra/drm.c
+pgprot_noncached has a fall back definition in
+include/asm-generic/pgtable.h, so all platforms will compile.
 
-between commit:
-
-  10437d9b475e ("drm: tegra: use vblank hooks in struct drm_crtc_funcs")
-
-from the drm tree and commit:
-
-  3f2ea8cee24f ("drm/tegra: Don't leak kernel pointer to userspace")
-
-from the drm-tegra tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
 Cheers,
-Stephen Rothwell
 
-diff --cc drivers/gpu/drm/tegra/drm.c
-index dba4e090d3df,3f8bd7bd6532..000000000000
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@@ -804,6 -864,49 +864,15 @@@ static const struct file_operations teg
-  	.llseek = noop_llseek,
-  };
-  
- -static u32 tegra_drm_get_vblank_counter(struct drm_device *drm,
- -					unsigned int pipe)
- -{
- -	struct drm_crtc *crtc = drm_crtc_from_index(drm, pipe);
- -	struct tegra_dc *dc = to_tegra_dc(crtc);
- -
- -	if (!crtc)
- -		return 0;
- -
- -	return tegra_dc_get_vblank_counter(dc);
- -}
- -
- -static int tegra_drm_enable_vblank(struct drm_device *drm, unsigned int pipe)
- -{
- -	struct drm_crtc *crtc = drm_crtc_from_index(drm, pipe);
- -	struct tegra_dc *dc = to_tegra_dc(crtc);
- -
- -	if (!crtc)
- -		return -ENODEV;
- -
- -	tegra_dc_enable_vblank(dc);
- -
- -	return 0;
- -}
- -
- -static void tegra_drm_disable_vblank(struct drm_device *drm, unsigned int pipe)
- -{
- -	struct drm_crtc *crtc = drm_crtc_from_index(drm, pipe);
- -	struct tegra_dc *dc = to_tegra_dc(crtc);
- -
- -	if (crtc)
- -		tegra_dc_disable_vblank(dc);
- -}
- -
-+ static int tegra_drm_context_cleanup(int id, void *p, void *data)
-+ {
-+ 	struct tegra_drm_context *context = p;
-+ 
-+ 	tegra_drm_context_free(context);
-+ 
-+ 	return 0;
-+ }
-+ 
-  static void tegra_drm_preclose(struct drm_device *drm, struct drm_file *file)
-  {
-  	struct tegra_drm_file *fpriv = file->driver_priv;
+Joel
