@@ -1,47 +1,166 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
-Date: Wed, 22 Mar 2017 11:00:50 +1100
-Message-ID: <20170322110050.1e2ea77d@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the tpmdd tree
+Date: Wed, 22 Mar 2017 13:13:19 +1100
+Message-ID: <20170322131319.6278c15d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
-Y29uZmxpY3QgaW46CgogIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX3Nocmlua2VyLmMK
-CmJldHdlZW4gY29tbWl0OgoKICAzZDNkMThmMDg2Y2QgKCJkcm0vaTkxNTogQXZvaWQgcmN1X2Jh
-cnJpZXIoKSBmcm9tIHJlY2xhaW0gcGF0aHMgKHNocmlua2VyKSIpCgpmcm9tIHRoZSBkcm0taW50
-ZWwtZml4ZXMgdHJlZSBhbmQgY29tbWl0OgoKICA1MTlkNTI0OTgxNTYgKCJkcm0vaTkxNTogaTkx
-NV9nZW1fc2hyaW5rX2FsbCgpIG5lZWRzIGFuIGF3YWtlIGRldmljZSIpCgpmcm9tIHRoZSBkcm0g
-dHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFz
-IG5lY2Vzc2FyeS4gVGhpcwppcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29u
-Y2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCmNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVk
-IHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQppcyBzdWJtaXR0ZWQg
-Zm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZwp3
-aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFu
-eSBwYXJ0aWN1bGFybHkKY29tcGxleCBjb25mbGljdHMuCgotLSAKQ2hlZXJzLApTdGVwaGVuIFJv
-dGh3ZWxsCgpkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fc2hyaW5rZXIu
-YwppbmRleCBkNWQyYjRjNmVkMzgsMDA2YThiOTA4Zjc3Li4wMDAwMDAwMDAwMDAKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fc2hyaW5rZXIuYworKysgYi9kcml2ZXJzL2dwdS9k
-cm0vaTkxNS9pOTE1X2dlbV9zaHJpbmtlci5jCkBAQCAtMjYzLDcgLTI2NCw5ICsyNjQsOSBAQEAg
-dW5zaWduZWQgbG9uZyBpOTE1X2dlbV9zaHJpbmtfYWxsKHN0cnVjCiAgCQkJCUk5MTVfU0hSSU5L
-X0JPVU5EIHwKICAJCQkJSTkxNV9TSFJJTktfVU5CT1VORCB8CiAgCQkJCUk5MTVfU0hSSU5LX0FD
-VElWRSk7CisgCWludGVsX3J1bnRpbWVfcG1fcHV0KGRldl9wcml2KTsKKyAKIC0JcmN1X2JhcnJp
-ZXIoKTsgLyogd2FpdCB1bnRpbCBvdXIgUkNVIGRlbGF5ZWQgc2xhYiBmcmVlcyBhcmUgY29tcGxl
-dGVkICovCiArCXN5bmNocm9uaXplX3JjdSgpOyAvKiB3YWl0IGZvciBvdXIgZWFybGllciBSQ1Ug
-ZGVsYXllZCBzbGFiIGZyZWVzICovCiAgCiAgCXJldHVybiBmcmVlZDsKICB9Cl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi all,
+
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  drivers/char/tpm/tpm-chip.c
+
+between commit:
+
+  d7a97c3e6592 ("tpm: Use the right clean up after cdev_add completes")
+  5f6b4fbc12c8 ("tpm: infrastructure for TPM spaces")
+  1b50e13284d7 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
+  849246e7ce9c ("tpm2: add session handle context saving and restoring to the space code")
+
+from the tpmdd tree and commits:
+
+  8dbbf5825181 ("tpm-chip: utilize new cdev_device_add helper function")
+
+from the char-misc tree.
+
+I fixed it up (I hope, see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/char/tpm/tpm-chip.c
+index 27a76e706cfd,935f0e92ad61..000000000000
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@@ -214,22 -186,7 +214,20 @@@ struct tpm_chip *tpm_chip_alloc(struct 
+  		chip->flags |= TPM_CHIP_FLAG_VIRTUAL;
+  
+  	cdev_init(&chip->cdev, &tpm_fops);
+ +	cdev_init(&chip->cdevs, &tpmrm_fops);
+  	chip->cdev.owner = THIS_MODULE;
+ +	chip->cdevs.owner = THIS_MODULE;
+- 	chip->cdev.kobj.parent = &chip->dev.kobj;
+- 	chip->cdevs.kobj.parent = &chip->devs.kobj;
+ +
+ +	chip->work_space.context_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+ +	if (!chip->work_space.context_buf) {
+ +		rc = -ENOMEM;
+ +		goto out;
+ +	}
+ +	chip->work_space.session_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+ +	if (!chip->work_space.session_buf) {
+ +		rc = -ENOMEM;
+ +		goto out;
+ +	}
+  
+  	return chip;
+  
+@@@ -269,69 -225,17 +267,44 @@@ struct tpm_chip *tpmm_chip_alloc(struc
+  }
+  EXPORT_SYMBOL_GPL(tpmm_chip_alloc);
+  
+- static void tpm_del_char_device(struct tpm_chip *chip, bool with_device)
+++static void tpm_del_char_device(struct tpm_chip *chip)
+ +{
+- 	cdev_del(&chip->cdev);
+- 	if (with_device) {
+- 		device_del(&chip->dev);
+- 
+- 		/* Make the chip unavailable. */
+- 		mutex_lock(&idr_lock);
+- 		idr_replace(&dev_nums_idr, NULL, chip->dev_num);
+- 		mutex_unlock(&idr_lock);
+- 	}
+++	cdev_device_del(&chip->cdev, &chip->dev);
+++
+++	/* Make the chip unavailable. */
+++	mutex_lock(&idr_lock);
+++	idr_replace(&dev_nums_idr, NULL, chip->dev_num);
+++	mutex_unlock(&idr_lock);
+ +
+ +	/* Make the driver uncallable. */
+ +	down_write(&chip->ops_sem);
+ +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+ +		tpm2_shutdown(chip, TPM2_SU_CLEAR);
+ +	chip->ops = NULL;
+ +	up_write(&chip->ops_sem);
+ +}
+ +
+  static int tpm_add_char_device(struct tpm_chip *chip)
+  {
+  	int rc;
+  
+- 	rc = cdev_add(&chip->cdev, chip->dev.devt, 1);
+- 	if (rc) {
+- 		dev_err(&chip->dev,
+- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
+- 			dev_name(&chip->dev), MAJOR(chip->dev.devt),
+- 			MINOR(chip->dev.devt), rc);
+- 		return rc;
+- 	}
+- 
+- 	rc = device_add(&chip->dev);
++ 	rc = cdev_device_add(&chip->cdev, &chip->dev);
+  	if (rc) {
+  		dev_err(&chip->dev,
+- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
++ 			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
+  			dev_name(&chip->dev), MAJOR(chip->dev.devt),
+  			MINOR(chip->dev.devt), rc);
+- 		tpm_del_char_device(chip, false);
+ +		return rc;
+ +	}
+  
+ +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+- 		rc = cdev_add(&chip->cdevs, chip->devs.devt, 1);
+++		rc = cdev_device_add(&chip->cdevs, &chip->devs);
+ +	if (rc) {
+ +		dev_err(&chip->dev,
+- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
+++			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
+ +			dev_name(&chip->devs), MAJOR(chip->devs.devt),
+ +			MINOR(chip->devs.devt), rc);
+- 		tpm_del_char_device(chip, true);
+- 		return rc;
+- 	}
+- 
+- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+- 		rc = device_add(&chip->devs);
+- 	if (rc) {
+- 		dev_err(&chip->dev,
+- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
+- 			dev_name(&chip->devs), MAJOR(chip->devs.devt),
+- 			MINOR(chip->devs.devt), rc);
+- 		cdev_del(&chip->cdevs);
+- 		tpm_del_char_device(chip, true);
+++		tpm_del_char_device(chip);
+  		return rc;
+  	}
+  
+@@@ -450,10 -371,6 +423,8 @@@ void tpm_chip_unregister(struct tpm_chi
+  {
+  	tpm_del_legacy_sysfs(chip);
+  	tpm_bios_log_teardown(chip);
+- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+- 		cdev_del(&chip->cdevs);
+- 		device_del(&chip->devs);
+- 	}
+- 	tpm_del_char_device(chip, true);
+++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+++		cdev_device_del(&chip->cdevs, &chip->devs);
++ 	tpm_del_char_device(chip);
+  }
+  EXPORT_SYMBOL_GPL(tpm_chip_unregister);
