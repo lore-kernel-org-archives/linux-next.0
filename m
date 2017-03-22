@@ -1,37 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the char-misc tree with the tpmdd tree
-Date: Wed, 22 Mar 2017 13:13:19 +1100
-Message-ID: <20170322131319.6278c15d@canb.auug.org.au>
+Subject: linux-next: manual merge of the livepatching tree with the tip tree
+Date: Wed, 22 Mar 2017 13:41:23 +1100
+Message-ID: <20170322134123.73f29daa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, James Bottomley <James.Bottomley@HansenPartnership.com>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+To: Jiri Kosina <jikos@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Kyle Huey <me@kylehuey.com>, Josh Poimboeuf <jpoimboe@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+Today's linux-next merge of the livepatching tree got a conflict in:
 
-  drivers/char/tpm/tpm-chip.c
+  arch/x86/include/asm/thread_info.h
 
 between commit:
 
-  d7a97c3e6592 ("tpm: Use the right clean up after cdev_add completes")
-  5f6b4fbc12c8 ("tpm: infrastructure for TPM spaces")
-  1b50e13284d7 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
-  849246e7ce9c ("tpm2: add session handle context saving and restoring to the space code")
+  e9ea1e7f53b8 ("x86/arch_prctl: Add ARCH_[GET|SET]_CPUID")
 
-from the tpmdd tree and commits:
+from the tip tree and commit:
 
-  8dbbf5825181 ("tpm-chip: utilize new cdev_device_add helper function")
+  afb94c9e0b41 ("livepatch/x86: add TIF_PATCH_PENDING thread flag")
 
-from the char-misc tree.
+from the livepatching tree.
 
-I fixed it up (I hope, see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
@@ -41,126 +38,25 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/char/tpm/tpm-chip.c
-index 27a76e706cfd,935f0e92ad61..000000000000
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@@ -214,22 -186,7 +214,20 @@@ struct tpm_chip *tpm_chip_alloc(struct 
-  		chip->flags |= TPM_CHIP_FLAG_VIRTUAL;
-  
-  	cdev_init(&chip->cdev, &tpm_fops);
- +	cdev_init(&chip->cdevs, &tpmrm_fops);
-  	chip->cdev.owner = THIS_MODULE;
- +	chip->cdevs.owner = THIS_MODULE;
-- 	chip->cdev.kobj.parent = &chip->dev.kobj;
-- 	chip->cdevs.kobj.parent = &chip->devs.kobj;
- +
- +	chip->work_space.context_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
- +	if (!chip->work_space.context_buf) {
- +		rc = -ENOMEM;
- +		goto out;
- +	}
- +	chip->work_space.session_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
- +	if (!chip->work_space.session_buf) {
- +		rc = -ENOMEM;
- +		goto out;
- +	}
-  
-  	return chip;
-  
-@@@ -269,69 -225,17 +267,44 @@@ struct tpm_chip *tpmm_chip_alloc(struc
-  }
-  EXPORT_SYMBOL_GPL(tpmm_chip_alloc);
-  
-- static void tpm_del_char_device(struct tpm_chip *chip, bool with_device)
-++static void tpm_del_char_device(struct tpm_chip *chip)
- +{
-- 	cdev_del(&chip->cdev);
-- 	if (with_device) {
-- 		device_del(&chip->dev);
-- 
-- 		/* Make the chip unavailable. */
-- 		mutex_lock(&idr_lock);
-- 		idr_replace(&dev_nums_idr, NULL, chip->dev_num);
-- 		mutex_unlock(&idr_lock);
-- 	}
-++	cdev_device_del(&chip->cdev, &chip->dev);
-++
-++	/* Make the chip unavailable. */
-++	mutex_lock(&idr_lock);
-++	idr_replace(&dev_nums_idr, NULL, chip->dev_num);
-++	mutex_unlock(&idr_lock);
- +
- +	/* Make the driver uncallable. */
- +	down_write(&chip->ops_sem);
- +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
- +		tpm2_shutdown(chip, TPM2_SU_CLEAR);
- +	chip->ops = NULL;
- +	up_write(&chip->ops_sem);
- +}
- +
-  static int tpm_add_char_device(struct tpm_chip *chip)
-  {
-  	int rc;
-  
-- 	rc = cdev_add(&chip->cdev, chip->dev.devt, 1);
-- 	if (rc) {
-- 		dev_err(&chip->dev,
-- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
-- 			dev_name(&chip->dev), MAJOR(chip->dev.devt),
-- 			MINOR(chip->dev.devt), rc);
-- 		return rc;
-- 	}
-- 
-- 	rc = device_add(&chip->dev);
-+ 	rc = cdev_device_add(&chip->cdev, &chip->dev);
-  	if (rc) {
-  		dev_err(&chip->dev,
-- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
-+ 			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
-  			dev_name(&chip->dev), MAJOR(chip->dev.devt),
-  			MINOR(chip->dev.devt), rc);
-- 		tpm_del_char_device(chip, false);
- +		return rc;
- +	}
-  
- +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-- 		rc = cdev_add(&chip->cdevs, chip->devs.devt, 1);
-++		rc = cdev_device_add(&chip->cdevs, &chip->devs);
- +	if (rc) {
- +		dev_err(&chip->dev,
-- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
-++			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
- +			dev_name(&chip->devs), MAJOR(chip->devs.devt),
- +			MINOR(chip->devs.devt), rc);
-- 		tpm_del_char_device(chip, true);
-- 		return rc;
-- 	}
-- 
-- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-- 		rc = device_add(&chip->devs);
-- 	if (rc) {
-- 		dev_err(&chip->dev,
-- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
-- 			dev_name(&chip->devs), MAJOR(chip->devs.devt),
-- 			MINOR(chip->devs.devt), rc);
-- 		cdev_del(&chip->cdevs);
-- 		tpm_del_char_device(chip, true);
-++		tpm_del_char_device(chip);
-  		return rc;
-  	}
-  
-@@@ -450,10 -371,6 +423,8 @@@ void tpm_chip_unregister(struct tpm_chi
-  {
-  	tpm_del_legacy_sysfs(chip);
-  	tpm_bios_log_teardown(chip);
-- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-- 		cdev_del(&chip->cdevs);
-- 		device_del(&chip->devs);
-- 	}
-- 	tpm_del_char_device(chip, true);
-++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
-++		cdev_device_del(&chip->cdevs, &chip->devs);
-+ 	tpm_del_char_device(chip);
-  }
-  EXPORT_SYMBOL_GPL(tpm_chip_unregister);
+diff --cc arch/x86/include/asm/thread_info.h
+index 9fc44b95f7cb,83372dc43943..000000000000
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@@ -87,7 -84,7 +84,8 @@@ struct thread_info 
+  #define TIF_SECCOMP		8	/* secure computing */
+  #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+  #define TIF_UPROBE		12	/* breakpointed or singlestepping */
++ #define TIF_PATCH_PENDING	13	/* pending live patching update */
+ +#define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
+  #define TIF_NOTSC		16	/* TSC is not accessible in userland */
+  #define TIF_IA32		17	/* IA32 compatibility process */
+  #define TIF_NOHZ		19	/* in adaptive nohz mode */
+@@@ -111,7 -108,7 +109,8 @@@
+  #define _TIF_SECCOMP		(1 << TIF_SECCOMP)
+  #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+  #define _TIF_UPROBE		(1 << TIF_UPROBE)
++ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+ +#define _TIF_NOCPUID		(1 << TIF_NOCPUID)
+  #define _TIF_NOTSC		(1 << TIF_NOTSC)
+  #define _TIF_IA32		(1 << TIF_IA32)
+  #define _TIF_NOHZ		(1 << TIF_NOHZ)
