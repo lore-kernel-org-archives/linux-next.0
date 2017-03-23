@@ -1,152 +1,43 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170323 build: 2 failures 4 warnings (next-20170323)
-Date: Thu, 23 Mar 2017 07:56:49 +0000
-Message-ID: <E1cqxc1-0004Cs-Lx@optimist>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: manual merge of the gpio tree with the input tree
+Date: Thu, 23 Mar 2017 10:27:10 +0100
+Message-ID: <CACRpkdaDUUDkEqYRRp4St=uPs5Z2TRX1XT14+yvsdLiitBaCdg@mail.gmail.com>
+References: <20170320150340.6d73c179@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37162 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751252AbdCWH45 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Mar 2017 03:56:57 -0400
+Received: from mail-io0-f179.google.com ([209.85.223.179]:35480 "EHLO
+        mail-io0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753310AbdCWJ1M (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Mar 2017 05:27:12 -0400
+Received: by mail-io0-f179.google.com with SMTP id z13so79047255iof.2
+        for <linux-next@vger.kernel.org>; Thu, 23 Mar 2017 02:27:11 -0700 (PDT)
+In-Reply-To: <20170320150340.6d73c179@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
 
-Tree/Branch: next-20170323
-Git describe: next-20170323
-Commit: 6ec9c2f129 Add linux-next specific files for 20170323
+On Mon, Mar 20, 2017 at 5:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Linus,
+>
+> Today's linux-next merge of the gpio tree got a conflict in:
+>
+>   drivers/input/misc/soc_button_array.c
+>
+> between commit:
+>
+>   a01cd17000a4 ("Input: soc_button_array - use NULL for GPIO connection ID")
+>
+> from the input tree and commit:
+>
+>   c5097538c86a ("Input: soc_button_array - Propagate error from gpiod_count()")
+>
+> from the gpio tree.
 
-Build Time: 93 min 20 sec
+Dmitry, I could pick the commit from the input tree and apply
+Stephen's solution and put the result in the GPIO tree if you think
+it's a good idea.
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 3
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm64-defconfig
-
-Errors:
-
-	arm64-allmodconfig
-ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-ERROR: Input tree has errors, aborting (use -f to force output)
-ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-ERROR: Input tree has errors, aborting (use -f to force output)
-
-	arm64-defconfig
-ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-ERROR: Input tree has errors, aborting (use -f to force output)
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      2 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 3
-	  3 ERROR: Input tree has errors, aborting (use -f to force output)
-	  3 ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-	  3 ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-
-Warnings Summary: 4
-	 11 <stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	  4 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  3 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 6 errors, 5 warnings, 0 section mismatches
-
-Errors:
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-	ERROR: Input tree has errors, aborting (use -f to force output)
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-	ERROR: Input tree has errors, aborting (use -f to force output)
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : FAIL, 3 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
-	ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
-	ERROR: Input tree has errors, aborting (use -f to force output)
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+Yours,
+Linus Walleij
