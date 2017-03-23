@@ -1,44 +1,49 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: next-20170323 build: 2 failures 4 warnings (next-20170323)
-Date: Thu, 23 Mar 2017 08:44:07 -0700
-Message-ID: <m2a88cm20o.fsf@baylibre.com>
-References: <E1cqxc1-0004Cs-Lx@optimist>
-        <20170323110249.3tf3tjo6c2y5qbkh@sirena.org.uk>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: linux-next: manual merge of the gpio tree with the input tree
+Date: Thu, 23 Mar 2017 09:30:49 -0700
+Message-ID: <CAKdAkRS8QsxUVzg8DH67nbSNHu0fy_jWJStLGt-4fcxy34R30w@mail.gmail.com>
+References: <20170320150340.6d73c179@canb.auug.org.au> <CACRpkdaDUUDkEqYRRp4St=uPs5Z2TRX1XT14+yvsdLiitBaCdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f49.google.com ([74.125.83.49]:32914 "EHLO
-        mail-pg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935317AbdCWPoL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Mar 2017 11:44:11 -0400
-Received: by mail-pg0-f49.google.com with SMTP id w20so23074908pgc.0
-        for <linux-next@vger.kernel.org>; Thu, 23 Mar 2017 08:44:10 -0700 (PDT)
-In-Reply-To: <20170323110249.3tf3tjo6c2y5qbkh@sirena.org.uk> (Mark Brown's
-        message of "Thu, 23 Mar 2017 11:02:49 +0000")
+Received: from mail-ua0-f179.google.com ([209.85.217.179]:32789 "EHLO
+        mail-ua0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751336AbdCWQav (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 23 Mar 2017 12:30:51 -0400
+In-Reply-To: <CACRpkdaDUUDkEqYRRp4St=uPs5Z2TRX1XT14+yvsdLiitBaCdg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Neil Armstrong <narmstrong@baylibre.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
 
-Mark Brown <broonie@kernel.org> writes:
-
-> On Thu, Mar 23, 2017 at 07:56:49AM +0000, Build bot for Mark Brown wrote:
+On Thu, Mar 23, 2017 at 2:27 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Mar 20, 2017 at 5:03 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi Linus,
+>>
+>> Today's linux-next merge of the gpio tree got a conflict in:
+>>
+>>   drivers/input/misc/soc_button_array.c
+>>
+>> between commit:
+>>
+>>   a01cd17000a4 ("Input: soc_button_array - use NULL for GPIO connection ID")
+>>
+>> from the input tree and commit:
+>>
+>>   c5097538c86a ("Input: soc_button_array - Propagate error from gpiod_count()")
+>>
+>> from the gpio tree.
 >
-> Today's -next fails to build an arm64 allmodconfig and defconfig due to:
->
->> 	arm64-allmodconfig
->> 	arm64-defconfig
->> ERROR (phandle_references): Reference to non-existent node or label "pwm_f_clk_pins"
->> ERROR (phandle_references): Reference to non-existent node or label "pwm_ao_a_3_pins"
->> ERROR: Input tree has errors, aborting (use -f to force output)
->
-> The offending references are in 3224eaca966088b4cf4f1ca3 (ARM64: dts:
-> meson-gxl: add support for the Khadas VIM board), there doesn't seem to
-> be anything providing those phandles in either mainline or -next.
+> Dmitry, I could pick the commit from the input tree and apply
+> Stephen's solution and put the result in the GPIO tree if you think
+> it's a good idea.
 
-This was my fault, I backed it out soon after I committed, but it was
-picked up by -next before I removed it.
+I think the fix is trivial and if it does not both Stephen to carry it
+on we'll let the other Linus resolve it in his tree when merging. I
+think he prefers to have cross-tree merges only happen when it is
+needed for development, not simply to resolve conflicts.
 
-Sorry for the noise,
+Thanks.
 
-Kevin
+-- 
+Dmitry
