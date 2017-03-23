@@ -1,117 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 23 Mar 2017 11:00:09 +1100
-Message-ID: <20170323110009.15847147@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb-gadget-fixes
+ tree
+Date: Thu, 23 Mar 2017 13:16:33 +1100
+Message-ID: <20170323131633.44445bd0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59809 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751211AbdCWAAN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 22 Mar 2017 20:00:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Berger <opendmb@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Felipe Balbi <balbi@kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Romain Perier <romain.perier@collabora.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Greg,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the usb tree got a conflict in:
 
-  drivers/net/ethernet/broadcom/genet/bcmmii.c
+  drivers/usb/gadget/udc/pch_udc.c
 
 between commit:
 
-  31739eae738c ("net: bcmgenet: remove bcmgenet_internal_phy_setup()")
+  1f459262b0e1 ("usb: gadget: udc: remove pointer dereference after free")
 
-from the net tree and commit:
+from the usb-gadget-fixes tree and commit:
 
-  421380856d9c ("net: bcmgenet: add support for the GENETv5 hardware")
+  d293408ef303 ("usb: gadget: pch_udc: Replace PCI pool old API")
 
-from the net-next tree.
+from the usb tree.
 
-I fixed it up (I just removed the bcmgenet_internal_phy_setup() function)
-and can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 2f9281936f0e,8df47c90cfc5..000000000000
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@@ -195,31 -195,49 +195,33 @@@ void bcmgenet_phy_power_set(struct net_
-  	u32 reg = 0;
-  
-  	/* EXT_GPHY_CTRL is only valid for GENETv4 and onward */
-- 	if (!GENET_IS_V4(priv))
-- 		return;
-- 
-- 	reg = bcmgenet_ext_readl(priv, EXT_GPHY_CTRL);
-- 	if (enable) {
-- 		reg &= ~EXT_CK25_DIS;
-- 		bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-- 		mdelay(1);
-- 
-- 		reg &= ~(EXT_CFG_IDDQ_BIAS | EXT_CFG_PWR_DOWN);
-- 		reg |= EXT_GPHY_RESET;
-+ 	if (GENET_IS_V4(priv)) {
-+ 		reg = bcmgenet_ext_readl(priv, EXT_GPHY_CTRL);
-+ 		if (enable) {
-+ 			reg &= ~EXT_CK25_DIS;
-+ 			bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-+ 			mdelay(1);
-+ 
-+ 			reg &= ~(EXT_CFG_IDDQ_BIAS | EXT_CFG_PWR_DOWN);
-+ 			reg |= EXT_GPHY_RESET;
-+ 			bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-+ 			mdelay(1);
-+ 
-+ 			reg &= ~EXT_GPHY_RESET;
-+ 		} else {
-+ 			reg |= EXT_CFG_IDDQ_BIAS | EXT_CFG_PWR_DOWN |
-+ 			       EXT_GPHY_RESET;
-+ 			bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-+ 			mdelay(1);
-+ 			reg |= EXT_CK25_DIS;
-+ 		}
-  		bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-- 		mdelay(1);
-- 
-- 		reg &= ~EXT_GPHY_RESET;
-+ 		udelay(60);
-  	} else {
-- 		reg |= EXT_CFG_IDDQ_BIAS | EXT_CFG_PWR_DOWN | EXT_GPHY_RESET;
-- 		bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-  		mdelay(1);
-- 		reg |= EXT_CK25_DIS;
+diff --cc drivers/usb/gadget/udc/pch_udc.c
+index 8a365aad66fe,84dcbcd756f0..000000000000
+--- a/drivers/usb/gadget/udc/pch_udc.c
++++ b/drivers/usb/gadget/udc/pch_udc.c
+@@@ -1522,7 -1522,8 +1522,7 @@@ static void pch_udc_free_dma_chain(stru
+  		/* do not free first desc., will be done by free for request */
+  		td = phys_to_virt(addr);
+  		addr2 = (dma_addr_t)td->next;
+- 		pci_pool_free(dev->data_requests, td, addr);
++ 		dma_pool_free(dev->data_requests, td, addr);
+ -		td->next = 0x00;
+  		addr = addr2;
   	}
-- 	bcmgenet_ext_writel(priv, reg, EXT_GPHY_CTRL);
-- 	udelay(60);
-  }
-  
- -static void bcmgenet_internal_phy_setup(struct net_device *dev)
- -{
- -	struct bcmgenet_priv *priv = netdev_priv(dev);
- -	u32 reg;
- -
- -	/* Power up PHY */
- -	bcmgenet_phy_power_set(dev, true);
- -	if (!GENET_IS_V5(priv)) {
- -		/* enable APD */
- -		reg = bcmgenet_ext_readl(priv, EXT_EXT_PWR_MGMT);
- -		reg |= EXT_PWR_DN_EN_LD;
- -		bcmgenet_ext_writel(priv, reg, EXT_EXT_PWR_MGMT);
- -	}
- -	bcmgenet_mii_reset(dev);
- -}
- -
-  static void bcmgenet_moca_phy_setup(struct bcmgenet_priv *priv)
-  {
-  	u32 reg;
+  	req->chain_len = 1;
