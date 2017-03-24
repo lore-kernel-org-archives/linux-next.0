@@ -1,54 +1,49 @@
-From: Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: New pinctrl-samsung repo + fixes in my existing ones
-Date: Fri, 24 Mar 2017 09:18:19 +0800
-Message-ID: <20170324011819.5tsymiaca3m5l7hj@wfg-t540p.sh.intel.com>
-References: <20170323185531.5xpgzopemxqzu2es@kozik-lap>
+From: Alexei Starovoitov <ast@fb.com>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Thu, 23 Mar 2017 18:24:11 -0700
+Message-ID: <9414bc03-4b88-83e3-0cd7-9c227b756da9@fb.com>
+References: <20170324110514.0376c46f@canb.auug.org.au>
+ <20170323.171035.27948034948873194.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:13256 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752344AbdCXBSY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Mar 2017 21:18:24 -0400
-Content-Disposition: inline
-In-Reply-To: <20170323185531.5xpgzopemxqzu2es@kozik-lap>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: kbuild@lists.01.org, linux-next@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170323.171035.27948034948873194.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, kafai@fb.com
+List-Id: linux-next.vger.kernel.org
 
-Hi Krzysztof,
-
-On Thu, Mar 23, 2017 at 08:55:31PM +0200, Krzysztof Kozlowski wrote:
->Hi,
+On 3/23/17 5:10 PM, David Miller wrote:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 24 Mar 2017 11:05:14 +1100
 >
->Could you add a new repo to 0-day build testing service:
->	git://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git
+>> Hi all,
+>>
+>> Today's linux-next merge of the net-next tree got a conflict in:
+>>
+>>   kernel/bpf/hashtab.c
+>>
+>> between commit:
+>>
+>>   8c290e60fa2a ("bpf: fix hashmap extra_elems logic")
+>>
+>> from Linus' tree and commit:
+>>
+>>   bcc6b1b7ebf8 ("bpf: Add hash of maps support")
+>>
+>> from the net-next tree.
+>>
+>> I fixed it up (see below) and can carry the fix as necessary. This
+>> is now fixed as far as linux-next is concerned, but any non trivial
+>> conflicts should be mentioned to your upstream maintainer when your tree
+>> is submitted for merging.  You may also want to consider cooperating
+>> with the maintainer of the conflicting tree to minimise any particularly
+>> complex conflicts.
 >
->Details:
->	Owners: Krzysztof Kozlowski <krzk@kernel.org>
->		Sylwester Nawrocki <s.nawrocki@samsung.com>
->	integration_testing_branches: for-next
->	subsystems:
->	- pinctrl
->	- exynos
->
->If possible, building coverage for all branches and also push build
->notifications after every git push.
+> I did the same resolution just an hour ago when merging net into
+> net-next.
 
-OK, I just added this accordingly:
-
-https://github.com/fengguang/lkp-tests/blob/master/repo/linux/pinctrl-samsung
-
->I am also the owner of these:
-> - Samsung Exynos ARM maintainer tree:
->	https://github.com/01org/lkp-tests/blob/master/repo/linux/krzk
-> - My personal (work) tree:
->	https://github.com/01org/lkp-tests/blob/master/repo/linux/krzk-github
->Can you change my email address to krzk@kernel.org (my address
->@samsung.com does not work anymore)?
-
-Sure, done.
-
-Thanks,
-Fengguang
+yes. that's correct merge conflict resolution.
+Just rebuilt and retested. All looks good.
+Thanks!
