@@ -1,39 +1,114 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Fri, 24 Mar 2017 09:05:39 +0100
-Message-ID: <20170324080539.2bmioalq5hmcsz6f@hirez.programming.kicks-ass.net>
-References: <20170324164026.4f305846@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170324164026.4f305846@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170324 build: 0 failures 3 warnings (next-20170324)
+Date: Fri, 24 Mar 2017 09:31:27 +0000
+Message-ID: <E1crLZ9-00045f-20@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47034 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753031AbdCXJbe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 24 Mar 2017 05:31:34 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, Mar 24, 2017 at 04:40:26PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in:
-> 
->   arch/x86/include/asm/atomic.h
-> 
-> between commit:
-> 
->   e6790e4b5d5e ("locking/atomic/x86: Use atomic_try_cmpxchg()")
-> 
-> from the tip tree and patch:
-> 
->   "x86/atomic: move __arch_atomic_add_unless out of line"
-> 
-> from the akpm tree.
+Tree/Branch: next-20170324
+Git describe: next-20170324
+Commit: 65b2dc3829 Add linux-next specific files for 20170324
 
-Urgh, that patch shouldn't be in mm in any case. Also with the
-try_cmpxchg() change, the text gain is reduced (about half).
+Build Time: 100 min 15 sec
 
-Furthermore, micro-benchmarks show that turning cmpxchg loops like this
-into a function makes them more expensive; see:
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-  https://lkml.kernel.org/r/20170322165144.dtidvvbxey7w5pbd@hirez.programming.kicks-ass.net
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allnoconfig
+      5 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      4 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	 13 <stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	  5 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
+	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+x86_64-defconfig
