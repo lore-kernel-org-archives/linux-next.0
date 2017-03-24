@@ -1,114 +1,55 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170324 build: 0 failures 3 warnings (next-20170324)
-Date: Fri, 24 Mar 2017 09:31:27 +0000
-Message-ID: <E1crLZ9-00045f-20@optimist>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the audit tree with Linus' tree
+Date: Fri, 24 Mar 2017 12:39:04 -0400
+Message-ID: <CAHC9VhTg01RvbUAK6th6aYJuiyZFj4eoavHktyrsaEPfCuuJUA@mail.gmail.com>
+References: <20170324131810.0b70ebbf@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47034 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753031AbdCXJbe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 24 Mar 2017 05:31:34 -0400
+Received: from mail-vk0-f53.google.com ([209.85.213.53]:35747 "EHLO
+        mail-vk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751520AbdCXQjG (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 24 Mar 2017 12:39:06 -0400
+Received: by mail-vk0-f53.google.com with SMTP id r69so9320804vke.2
+        for <linux-next@vger.kernel.org>; Fri, 24 Mar 2017 09:39:05 -0700 (PDT)
+In-Reply-To: <20170324131810.0b70ebbf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>, Richard Guy Briggs <rgb@redhat.com>
 
-Tree/Branch: next-20170324
-Git describe: next-20170324
-Commit: 65b2dc3829 Add linux-next specific files for 20170324
+On Thu, Mar 23, 2017 at 10:18 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
+>
+> Today's linux-next merge of the audit tree got a conflict in:
+>
+>   net/netfilter/xt_AUDIT.c
+>
+> between commit:
+>
+>   613dbd95723a ("netfilter: x_tables: move hook state into xt_action_param structure")
+>
+> from Linus' tree and commit:
+>
+>   36fe46d172e5 ("audit: normalize NETFILTER_PKT")
+>
+> from the audit tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> P.S. You may want to consider a newer base for your tree ...
 
-Build Time: 100 min 15 sec
+FWIW, the audit/next tree's base is old-ish for a reason; it is that
+way out of awkwardness and not neglect.  Depending on how things go
+today/this-weekend there are some audit patches in the queue which
+will require a rebase to a much more current point in time (likely a
+4.11-rcX tag, which presents its own challenges, but oh well).
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allnoconfig
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      4 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	 13 <stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	  5 <stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
-	<stdin>:1325:2: warning: #warning syscall statx not implemented [-Wcpp]
-	<stdin>:1328:2: warning: #warning syscall arch_prctl not implemented [-Wcpp]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-x86_64-defconfig
+-- 
+paul moore
+www.paul-moore.com
