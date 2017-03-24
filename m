@@ -1,35 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the leds tree with the drivers-x86 tree
-Date: Fri, 24 Mar 2017 13:52:57 +1100
-Message-ID: <20170324135257.476144fa@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the tpmdd tree
+Date: Fri, 24 Mar 2017 14:33:02 +1100
+Message-ID: <20170324143302.33eed1a6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34749 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934882AbdCXCxA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Mar 2017 22:53:00 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jacek Anaszewski <j.anaszewski@samsung.com>, Darren Hart <dvhart@infradead.org>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>, Hans de Goede <hdegoede@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jacek,
+Hi all,
 
-Today's linux-next merge of the leds tree got a conflict in:
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-  drivers/platform/x86/dell-laptop.c
+  drivers/char/tpm/tpm-chip.c
 
-between commit:
+between commits:
 
-  573eedacfba3 ("platform/x86: dell-*: Call new led hw_changed API on kbd brightness change")
+  67b67480db8b ("tpm: infrastructure for TPM spaces")
+  b8e3586e8536 ("tpm: expose spaces via a device link /dev/tpmrm<n>")
 
-from the drivers-x86 tree and commit:
+from the tpmdd tree and commit:
 
-  44319ab7e0ed ("platform/x86: dell-laptop: import dell_micmute_led_set() from drivers/leds/dell-led.c")
+  8dbbf5825181 ("tpm-chip: utilize new cdev_device_add helper function")
 
-from the leds tree.
+from the char-misc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,59 +39,92 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/platform/x86/dell-laptop.c
-index 1cd258b790e8,2e237bad4995..000000000000
---- a/drivers/platform/x86/dell-laptop.c
-+++ b/drivers/platform/x86/dell-laptop.c
-@@@ -2026,26 -1981,31 +2029,51 @@@ static void kbd_led_exit(void
-  	led_classdev_unregister(&kbd_led);
-  }
+diff --cc drivers/char/tpm/tpm-chip.c
+index aade6995f310,935f0e92ad61..000000000000
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@@ -214,22 -186,7 +214,20 @@@ struct tpm_chip *tpm_chip_alloc(struct 
+  		chip->flags |= TPM_CHIP_FLAG_VIRTUAL;
   
- +static int dell_laptop_notifier_call(struct notifier_block *nb,
- +				     unsigned long action, void *data)
- +{
- +	switch (action) {
- +	case DELL_LAPTOP_KBD_BACKLIGHT_BRIGHTNESS_CHANGED:
- +		if (!kbd_led_present)
- +			break;
+  	cdev_init(&chip->cdev, &tpm_fops);
+ +	cdev_init(&chip->cdevs, &tpmrm_fops);
+  	chip->cdev.owner = THIS_MODULE;
+ +	chip->cdevs.owner = THIS_MODULE;
+- 	chip->cdev.kobj.parent = &chip->dev.kobj;
+- 	chip->cdevs.kobj.parent = &chip->devs.kobj;
  +
- +		led_classdev_notify_brightness_hw_changed(&kbd_led,
- +						kbd_led_level_get(&kbd_led));
- +		break;
+ +	chip->work_space.context_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+ +	if (!chip->work_space.context_buf) {
+ +		rc = -ENOMEM;
+ +		goto out;
  +	}
- +
- +	return NOTIFY_OK;
- +}
- +
- +static struct notifier_block dell_laptop_notifier = {
- +	.notifier_call = dell_laptop_notifier_call,
- +};
- +
-+ int dell_micmute_led_set(int state)
-+ {
-+ 	struct calling_interface_buffer *buffer;
-+ 	struct calling_interface_token *token;
-+ 
-+ 	if (state == 0)
-+ 		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
-+ 	else if (state == 1)
-+ 		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
-+ 	else
-+ 		return -EINVAL;
-+ 
-+ 	if (!token)
-+ 		return -ENODEV;
-+ 
-+ 	buffer = dell_smbios_get_buffer();
-+ 	buffer->input[0] = token->location;
-+ 	buffer->input[1] = token->value;
-+ 	dell_smbios_send_request(1, 0);
-+ 	dell_smbios_release_buffer();
-+ 
-+ 	return state;
-+ }
-+ EXPORT_SYMBOL_GPL(dell_micmute_led_set);
-+ 
-  static int __init dell_init(void)
+ +	chip->work_space.session_buf = kzalloc(PAGE_SIZE, GFP_KERNEL);
+ +	if (!chip->work_space.session_buf) {
+ +		rc = -ENOMEM;
+ +		goto out;
+ +	}
+  
+  	return chip;
+  
+@@@ -273,44 -229,13 +271,22 @@@ static int tpm_add_char_device(struct t
   {
-  	struct calling_interface_buffer *buffer;
+  	int rc;
+  
+- 	rc = cdev_add(&chip->cdev, chip->dev.devt, 1);
++ 	rc = cdev_device_add(&chip->cdev, &chip->dev);
+  	if (rc) {
+  		dev_err(&chip->dev,
+- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
++ 			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
+  			dev_name(&chip->dev), MAJOR(chip->dev.devt),
+  			MINOR(chip->dev.devt), rc);
+ +		return rc;
+ +	}
+  
+- 	rc = device_add(&chip->dev);
+- 	if (rc) {
+- 		dev_err(&chip->dev,
+- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
+- 			dev_name(&chip->dev), MAJOR(chip->dev.devt),
+- 			MINOR(chip->dev.devt), rc);
+- 
+- 		cdev_del(&chip->cdev);
+- 		return rc;
+- 	}
+- 
+- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+- 		rc = cdev_add(&chip->cdevs, chip->devs.devt, 1);
+- 	if (rc) {
+- 		dev_err(&chip->dev,
+- 			"unable to cdev_add() %s, major %d, minor %d, err=%d\n",
+- 			dev_name(&chip->devs), MAJOR(chip->devs.devt),
+- 			MINOR(chip->devs.devt), rc);
+- 		return rc;
+- 	}
+- 
+ +	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+- 		rc = device_add(&chip->devs);
+++		rc = cdev_device_add(&chip->cdevs, &chip->devs);
+ +	if (rc) {
+ +		dev_err(&chip->dev,
+- 			"unable to device_register() %s, major %d, minor %d, err=%d\n",
+++			"unable to cdev_device_add() %s, major %d, minor %d, err=%d\n",
+ +			dev_name(&chip->devs), MAJOR(chip->devs.devt),
+ +			MINOR(chip->devs.devt), rc);
+- 		cdev_del(&chip->cdevs);
+  		return rc;
+  	}
+  
+@@@ -447,10 -371,6 +422,8 @@@ void tpm_chip_unregister(struct tpm_chi
+  {
+  	tpm_del_legacy_sysfs(chip);
+  	tpm_bios_log_teardown(chip);
+- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+- 		cdev_del(&chip->cdevs);
+- 		device_del(&chip->devs);
+- 	}
+++	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+++		cdev_device_del(&chip->cdevs, &chip->devs);
+  	tpm_del_char_device(chip);
+  }
+  EXPORT_SYMBOL_GPL(tpm_chip_unregister);
