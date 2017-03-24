@@ -1,35 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the gpio tree with the input tree
-Date: Fri, 24 Mar 2017 09:49:42 +1100
-Message-ID: <20170324094942.2d5936c9@canb.auug.org.au>
-References: <20170320150340.6d73c179@canb.auug.org.au>
-        <CACRpkdaDUUDkEqYRRp4St=uPs5Z2TRX1XT14+yvsdLiitBaCdg@mail.gmail.com>
-        <CAKdAkRS8QsxUVzg8DH67nbSNHu0fy_jWJStLGt-4fcxy34R30w@mail.gmail.com>
+Subject: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Fri, 24 Mar 2017 11:05:14 +1100
+Message-ID: <20170324110514.0376c46f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42011 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46417 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751467AbdCWWtp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 23 Mar 2017 18:49:45 -0400
-In-Reply-To: <CAKdAkRS8QsxUVzg8DH67nbSNHu0fy_jWJStLGt-4fcxy34R30w@mail.gmail.com>
+        id S935049AbdCXAFS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 23 Mar 2017 20:05:18 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@fb.com>, Martin KaFai Lau <kafai@fb.com>
 
-Hi Dmitry,
+Hi all,
 
-On Thu, 23 Mar 2017 09:30:49 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->
-> I think the fix is trivial and if it does not both Stephen to carry it
-> on we'll let the other Linus resolve it in his tree when merging. I
-> think he prefers to have cross-tree merges only happen when it is
-> needed for development, not simply to resolve conflicts.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-I have no problem carrying the merge fix.
+  kernel/bpf/hashtab.c
+
+between commit:
+
+  8c290e60fa2a ("bpf: fix hashmap extra_elems logic")
+
+from Linus' tree and commit:
+
+  bcc6b1b7ebf8 ("bpf: Add hash of maps support")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc kernel/bpf/hashtab.c
+index 361a69dfe543,343fb5394c95..000000000000
+--- a/kernel/bpf/hashtab.c
++++ b/kernel/bpf/hashtab.c
+@@@ -582,7 -609,20 +616,15 @@@ static void htab_elem_free_rcu(struct r
+  
+  static void free_htab_elem(struct bpf_htab *htab, struct htab_elem *l)
+  {
++ 	struct bpf_map *map = &htab->map;
++ 
++ 	if (map->ops->map_fd_put_ptr) {
++ 		void *ptr = fd_htab_map_get_ptr(map, l);
++ 
++ 		map->ops->map_fd_put_ptr(ptr);
++ 	}
++ 
+ -	if (l->state == HTAB_EXTRA_ELEM_USED) {
+ -		l->state = HTAB_EXTRA_ELEM_FREE;
+ -		return;
+ -	}
+ -
+ -	if (!(htab->map.map_flags & BPF_F_NO_PREALLOC)) {
+ +	if (htab_is_prealloc(htab)) {
+  		pcpu_freelist_push(&htab->freelist, &l->fnode);
+  	} else {
+  		atomic_dec(&htab->count);
