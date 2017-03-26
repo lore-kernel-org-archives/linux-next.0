@@ -1,57 +1,83 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: unsigned commit in the rcu tree
-Date: Sun, 26 Mar 2017 16:18:13 -0700
-Message-ID: <20170326231813.GZ3637@linux.vnet.ibm.com>
-References: <20170327003327.3d5bf230@canb.auug.org.au>
- <20170326162204.GX3637@linux.vnet.ibm.com>
- <20170327094549.1868c8e5@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the gfs2 tree with the net tree
+Date: Mon, 27 Mar 2017 10:52:17 +1100
+Message-ID: <20170327105217.1c29fe0b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35254 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751576AbdCZXSm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Sun, 26 Mar 2017 19:18:42 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v2QNDiiD098278
-        for <linux-next@vger.kernel.org>; Sun, 26 Mar 2017 19:18:16 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 29dmpgv1tu-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Sun, 26 Mar 2017 19:18:15 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Sun, 26 Mar 2017 19:18:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20170327094549.1868c8e5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Steven Whitehouse <swhiteho@redhat.com>, Bob Peterson <rpeterso@redhat.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Hayes Wang <hayeswang@realtek.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 27, 2017 at 09:45:49AM +1100, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> On Sun, 26 Mar 2017 09:22:04 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
-> >
-> > On Mon, Mar 27, 2017 at 12:33:27AM +1100, Stephen Rothwell wrote:
-> > > Hi Paul,
-> > > 
-> > > Commit 08b35b89141a ("fixup! srcu: Create a tiny SRCU") has not
-> > > Signed-off-by tag at all :-(
-> > > 
-> > > Please do not put commits in your linux-next included branch that are
-> > > not signed.  
-> > 
-> > I should have done the rebase before pushing, which I have now done.
-> > Please accept my apologies for the noise!
-> 
-> Now worries, but I think you forgot to push (i.e. that commit is still
-> the top of the rcu tree as I see it) ...
+Hi all,
 
-Quite right!  I just pushed the new branch.
+Today's linux-next merge of the gfs2 tree got a conflict in:
 
-							Thanx, Paul
+  drivers/net/usb/r8152.c
+
+between commit:
+
+  2f25abe6bac5 ("r8152: prevent the driver from transmitting packets with carrier off")
+
+from the net tree and commit:
+
+  ce594e9824ab ("r8152: simply the arguments")
+
+from the gfs2 and net-next trees.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/usb/r8152.c
+index c34df33c6d72,3262a326aae6..000000000000
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@@ -3698,27 -3697,19 +3705,29 @@@ static int rtl8152_resume(struct usb_in
+  	if (!test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
+  		tp->rtl_ops.init(tp);
+  		queue_delayed_work(system_long_wq, &tp->hw_phy_work, 0);
+- 		netif_device_attach(tp->netdev);
++ 		netif_device_attach(netdev);
+  	}
+  
+- 	if (netif_running(tp->netdev) && tp->netdev->flags & IFF_UP) {
++ 	if (netif_running(netdev) && netdev->flags & IFF_UP) {
+  		if (test_bit(SELECTIVE_SUSPEND, &tp->flags)) {
++ 			struct napi_struct *napi = &tp->napi;
++ 
+  			tp->rtl_ops.autosuspend_en(tp, false);
+- 			napi_disable(&tp->napi);
++ 			napi_disable(napi);
+  			set_bit(WORK_ENABLE, &tp->flags);
+ -			if (netif_carrier_ok(netdev))
+ -				rtl_start_rx(tp);
+ +
+- 			if (netif_carrier_ok(tp->netdev)) {
+++			if (netif_carrier_ok(netdev)) {
+ +				if (rtl8152_get_speed(tp) & LINK_STATUS) {
+ +					rtl_start_rx(tp);
+ +				} else {
+- 					netif_carrier_off(tp->netdev);
+++					netif_carrier_off(netdev);
+ +					tp->rtl_ops.disable(tp);
+- 					netif_info(tp, link, tp->netdev,
+++					netif_info(tp, link, netdev,
+ +						   "linking down\n");
+ +				}
+ +			}
+ +
+- 			napi_enable(&tp->napi);
++ 			napi_enable(napi);
+  			clear_bit(SELECTIVE_SUSPEND, &tp->flags);
+  			smp_mb__after_atomic();
+  			if (!list_empty(&tp->rx_done))
