@@ -1,22 +1,28 @@
-From: "Garber Home" <gfh@ima.mg.gov.br>
-Subject: Funding
-Date: Sat, 25 Mar 2017 22:22:13 +0100
-Message-ID: <20170325212217.57ADC1FA328@mail.ima.mg.gov.br>
-Reply-To: bgfnhome@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unsigned commit in the rcu tree
+Date: Mon, 27 Mar 2017 00:33:27 +1100
+Message-ID: <20170327003327.3d5bf230@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from venus.ima.mg.gov.br ([200.198.43.35]:52622 "EHLO
-        mail.ima.mg.gov.br" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751114AbdCYVwh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 25 Mar 2017 17:52:37 -0400
-Content-Description: Mail message body
+Received: from ozlabs.org ([103.22.144.67]:39343 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751338AbdCZNdb (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 26 Mar 2017 09:33:31 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <gfh@ima.mg.gov.br>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: linux-next@vger.kernel.org
 
-Do you require funding? For Business or Personal loan without stress and Quick approval, email us for more Info.
+Hi Paul,
 
-Thanks
-Gaber Financial
+Commit 08b35b89141a ("fixup! srcu: Create a tiny SRCU") has not
+Signed-off-by tag at all :-(
+
+Please do not put commits in your linux-next included branch that are
+not signed.
+
+-- 
+Cheers,
+Stephen Rothwell
