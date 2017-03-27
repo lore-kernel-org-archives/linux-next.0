@@ -1,170 +1,44 @@
-From: Paul McKenney <paulmckrcu@gmail.com>
-Subject: Re: linux-next: manual merge of the drm tree with the drm-intel-fixes
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kbuild tree with the input-current
  tree
-Date: Mon, 27 Mar 2017 10:14:10 -0700
-Message-ID: <CAJzB8QG8bE1onedcBLJPcwQwVH4BrpNcWNzpH00JMfDqgyzObQ@mail.gmail.com>
-References: <20170322110050.1e2ea77d@canb.auug.org.au>
+Date: Tue, 28 Mar 2017 09:55:32 +1100
+Message-ID: <20170328095532.04abad61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0914391753=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170322110050.1e2ea77d@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Jani Nikula <jani.nikula@intel.com>, linux-next@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40665 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752503AbdC0W4U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 27 Mar 2017 18:56:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Naohiro Aota <naota@elisp.net>
 
---===============0914391753==
-Content-Type: multipart/alternative; boundary=001a11491230cb8844054bb978c0
+Hi Masahiro,
 
---001a11491230cb8844054bb978c0
-Content-Type: text/plain; charset=UTF-8
+Today's linux-next merge of the kbuild tree got a conflict in:
 
-> On Tue, Mar 21, 2017 at 5:00 PM, Stephen Rothwell <sfr@canb.auug.org.au>
-wrote:
-> Hi Dave,
->
-> Today's linux-next merge of the drm tree got a conflict in:
->
->   drivers/gpu/drm/i915/i915_gem_shrinker.c
->
-> between commit:
->
->   3d3d18f086cd ("drm/i915: Avoid rcu_barrier() from reclaim paths
-(shrinker)")
->
-> from the drm-intel-fixes tree and commit:
->
->   519d52498156 ("drm/i915: i915_gem_shrink_all() needs an awake device")
->
-> from the drm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/gpu/drm/i915/i915_gem_shrinker.c
-> index d5d2b4c6ed38,006a8b908f77..000000000000
-> --- a/drivers/gpu/drm/i915/i915_gem_shrinker.c
-> +++ b/drivers/gpu/drm/i915/i915_gem_shrinker.c
-> @@@ -263,7 -264,9 +264,9 @@@ unsigned long i915_gem_shrink_all(struc
->                                 I915_SHRINK_BOUND |
->                                 I915_SHRINK_UNBOUND |
->                                 I915_SHRINK_ACTIVE);
-> +       intel_runtime_pm_put(dev_priv);
-> +
->  -      rcu_barrier(); /* wait until our RCU delayed slab frees are
-completed */
->  +      synchronize_rcu(); /* wait for our earlier RCU delayed slab frees
-*/
+  include/uapi/linux/Kbuild
 
-Unless I am really confused, the RCU delayed slab frees are via call_rcu().
-This means that synchronize_rcu() is -not- guaranteed to wait on them.
-For example, CPU 0 might be making its way through a pile of callbacks,
-including some RCU delayed slab free callbacks.  If there are enough
-callbacks, it could take CPU 0 several grace periods to work through the
-backlog.  CPU 1 might have no callbacks queued, and might execute the
-above code.  Now synchronize_rcu() will wait for a grace period, but only
-one, and not necessarily for CPU 0's backlog to drain.
+between commit:
 
-I do not believe that the above fix is safe.
+  5659495a7a14 ("uapi: add missing install of userio.h")
 
->         return freed;
->   }
->
+from the input-current tree and commit:
 
---001a11491230cb8844054bb978c0
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+  65017bab8a9e ("uapi: export all headers under uapi directories")
 
-<div dir=3D"ltr"><div class=3D"gmail_extra"><div class=3D"gmail_quote"><div=
- class=3D"gmail_quote">&gt; On Tue, Mar 21, 2017 at 5:00 PM, Stephen Rothwe=
-ll &lt;<a href=3D"mailto:sfr@canb.auug.org.au">sfr@canb.auug.org.au</a>&gt;=
- wrote:</div><div class=3D"gmail_quote">&gt; Hi Dave,</div><div class=3D"gm=
-ail_quote">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; Today&#39;s linu=
-x-next merge of the drm tree got a conflict in:</div><div class=3D"gmail_qu=
-ote">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; =C2=A0 drivers/gpu/drm=
-/i915/i915_gem_shrinker.c</div><div class=3D"gmail_quote">&gt;=C2=A0</div><=
-div class=3D"gmail_quote">&gt; between commit:</div><div class=3D"gmail_quo=
-te">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; =C2=A0 3d3d18f086cd (&q=
-uot;drm/i915: Avoid rcu_barrier() from reclaim paths (shrinker)&quot;)</div=
-><div class=3D"gmail_quote">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt;=
- from the drm-intel-fixes tree and commit:</div><div class=3D"gmail_quote">=
-&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; =C2=A0 519d52498156 (&quot;=
-drm/i915: i915_gem_shrink_all() needs an awake device&quot;)</div><div clas=
-s=3D"gmail_quote">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; from the =
-drm tree.</div><div class=3D"gmail_quote">&gt;=C2=A0</div><div class=3D"gma=
-il_quote">&gt; I fixed it up (see below) and can carry the fix as necessary=
-. This</div><div class=3D"gmail_quote">&gt; is now fixed as far as linux-ne=
-xt is concerned, but any non trivial</div><div class=3D"gmail_quote">&gt; c=
-onflicts should be mentioned to your upstream maintainer when your tree</di=
-v><div class=3D"gmail_quote">&gt; is submitted for merging.=C2=A0 You may a=
-lso want to consider cooperating</div><div class=3D"gmail_quote">&gt; with =
-the maintainer of the conflicting tree to minimise any particularly</div><d=
-iv class=3D"gmail_quote">&gt; complex conflicts.</div><div class=3D"gmail_q=
-uote">&gt;=C2=A0</div><div class=3D"gmail_quote">&gt; --</div><div class=3D=
-"gmail_quote">&gt; Cheers,</div><div class=3D"gmail_quote">&gt; Stephen Rot=
-hwell</div><div class=3D"gmail_quote">&gt;=C2=A0</div><div class=3D"gmail_q=
-uote">&gt; diff --cc drivers/gpu/drm/i915/i915_gem_shrinker.c</div><div cla=
-ss=3D"gmail_quote">&gt; index d5d2b4c6ed38,006a8b908f77..000000000000</div>=
-<div class=3D"gmail_quote">&gt; --- a/drivers/gpu/drm/i915/i915_gem_shrinke=
-r.c</div><div class=3D"gmail_quote">&gt; +++ b/drivers/gpu/drm/i915/i915_ge=
-m_shrinker.c</div><div class=3D"gmail_quote">&gt; @@@ -263,7 -264,9 +264,9 =
-@@@ unsigned long i915_gem_shrink_all(struc</div><div class=3D"gmail_quote"=
->&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 I915_SHRINK_BOUND |</div><div cl=
-ass=3D"gmail_quote">&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 I915_SHRINK_=
-UNBOUND |</div><div class=3D"gmail_quote">&gt; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 I915_SHRINK_ACTIVE);</div><div class=3D"gmail_quote">&gt; + =C2=
-=A0 =C2=A0 =C2=A0 intel_runtime_pm_put(dev_priv);</div><div class=3D"gmail_=
-quote">&gt; +</div><div class=3D"gmail_quote">&gt; =C2=A0- =C2=A0 =C2=A0 =
-=C2=A0rcu_barrier(); /* wait until our RCU delayed slab frees are completed=
- */</div><div class=3D"gmail_quote">&gt; =C2=A0+ =C2=A0 =C2=A0 =C2=A0synchr=
-onize_rcu(); /* wait for our earlier RCU delayed slab frees */</div><div cl=
-ass=3D"gmail_quote"><br></div><div class=3D"gmail_quote">Unless I am really=
- confused, the RCU delayed slab frees are via call_rcu().</div><div class=
-=3D"gmail_quote">This means that synchronize_rcu() is -not- guaranteed to w=
-ait on them.</div><div class=3D"gmail_quote">For example, CPU 0 might be ma=
-king its way through a pile of callbacks,</div><div class=3D"gmail_quote">i=
-ncluding some RCU delayed slab free callbacks.=C2=A0 If there are enough</d=
-iv><div class=3D"gmail_quote">callbacks, it could take CPU 0 several grace =
-periods to work through the</div><div class=3D"gmail_quote">backlog.=C2=A0 =
-CPU 1 might have no callbacks queued, and might execute the</div><div class=
-=3D"gmail_quote">above code.=C2=A0 Now synchronize_rcu() will wait for a gr=
-ace period, but only</div><div class=3D"gmail_quote">one, and not necessari=
-ly for CPU 0&#39;s backlog to drain.</div><div class=3D"gmail_quote"><br></=
-div><div class=3D"gmail_quote">I do not believe that the above fix is safe.=
-</div><div class=3D"gmail_quote"><br></div><div class=3D"gmail_quote">&gt; =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return freed;</div><div class=3D"gmail_quote">&=
-gt; =C2=A0 }</div><div class=3D"gmail_quote">&gt;=C2=A0</div></div></div></=
-div>
+from the kbuild tree.
 
---001a11491230cb8844054bb978c0--
+I fixed it up (the latter supercedes the former, so I just used it) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
---===============0914391753==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0914391753==--
+-- 
+Cheers,
+Stephen Rothwell
