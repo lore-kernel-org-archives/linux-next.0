@@ -1,33 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unsigned commit in the rcu tree
-Date: Mon, 27 Mar 2017 11:31:35 +1100
-Message-ID: <20170327113135.65719545@canb.auug.org.au>
-References: <20170327003327.3d5bf230@canb.auug.org.au>
-        <20170326162204.GX3637@linux.vnet.ibm.com>
-        <20170327094549.1868c8e5@canb.auug.org.au>
-        <20170326231813.GZ3637@linux.vnet.ibm.com>
+Subject: linux-next: manual merge of the kspp tree with the drm-misc tree
+Date: Mon, 27 Mar 2017 12:26:11 +1100
+Message-ID: <20170327122611.1044b2a1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48489 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751577AbdC0Abj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 26 Mar 2017 20:31:39 -0400
-In-Reply-To: <20170326231813.GZ3637@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: linux-next@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kees Cook <keescook@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Emese Revfy <re.emese@gmail.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
-
-On Sun, 26 Mar 2017 16:18:13 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->
-> Quite right!  I just pushed the new branch.
-
-Excellent, thanks.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgS2VlcywKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUga3NwcCB0cmVlIGdvdCBh
+IGNvbmZsaWN0IGluOgoKICBpbmNsdWRlL2RybS9kcm1fZHJ2LmgKCmJldHdlZW4gY29tbWl0OgoK
+ICA5MWZhYTA0NzhiNTkgKCJkcm06IGRyb3AgZXh0ZXJuIGZyb20gZnVuY3Rpb24gZGVjbHMiKQoK
+ZnJvbSB0aGUgZHJtLW1pc2MgdHJlZSBhbmQgY29tbWl0OgoKICA2YmJhYWMxMTY1NTIgKCJpbml0
+aWZ5OiBNYXJrIGZ1bmN0aW9ucyB3aXRoIHRoZSBfX25vY2FwdHVyZSBhdHRyaWJ1dGUiKQoKZnJv
+bSB0aGUga3NwcCB0cmVlLgoKSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5
+IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCmlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgt
+bmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKY29uZmxpY3RzIHNob3VsZCBi
+ZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0cmVlCmlz
+IHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNv
+b3BlcmF0aW5nCndpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8g
+bWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQpjb21wbGV4IGNvbmZsaWN0cy4KCi0tIApDaGVlcnMs
+ClN0ZXBoZW4gUm90aHdlbGwKCmRpZmYgLS1jYyBpbmNsdWRlL2RybS9kcm1fZHJ2LmgKaW5kZXgg
+NTNiOTgzMjFkZjliLGFkZTk2MGM2NTkyOS4uMDAwMDAwMDAwMDAwCi0tLSBhL2luY2x1ZGUvZHJt
+L2RybV9kcnYuaAorKysgYi9pbmNsdWRlL2RybS9kcm1fZHJ2LmgKQEBAIC01MTAsMTkgLTQwMywx
+MSArNTEwLDE5IEBAQCBzdHJ1Y3QgZHJtX2RyaXZlciAKICAJaW50IG51bV9pb2N0bHM7CiAgCWNv
+bnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgKmZvcHM7CiAgCiArCS8qIEV2ZXJ5dGhpbmcgYmVs
+b3cgaGVyZSBpcyBmb3IgbGVnYWN5IGRyaXZlciwgbmV2ZXIgdXNlISAqLwogKwkvKiBwcml2YXRl
+OiAqLwogKwogIAkvKiBMaXN0IG9mIGRldmljZXMgaGFuZ2luZyBvZmYgdGhpcyBkcml2ZXIgd2l0
+aCBzdGVhbHRoIGF0dGFjaC4gKi8KICAJc3RydWN0IGxpc3RfaGVhZCBsZWdhY3lfZGV2X2xpc3Q7
+CiArCWludCAoKmZpcnN0b3BlbikgKHN0cnVjdCBkcm1fZGV2aWNlICopOwogKwlpbnQgKCpkbWFf
+aW9jdGwpIChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB2b2lkICpkYXRhLCBzdHJ1Y3QgZHJtX2Zp
+bGUgKmZpbGVfcHJpdik7CiArCWludCAoKmRtYV9xdWllc2NlbnQpIChzdHJ1Y3QgZHJtX2Rldmlj
+ZSAqKTsKICsJaW50ICgqY29udGV4dF9kdG9yKSAoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50
+IGNvbnRleHQpOwogKwlpbnQgZGV2X3ByaXZfc2l6ZTsKICB9OwogIAotIF9fcHJpbnRmKDYsIDcp
+CiAtZXh0ZXJuIF9fcHJpbnRmKDYsIDcpIF9fbm9jYXB0dXJlKDQpCisrX19wcmludGYoNiwgNykg
+X19ub2NhcHR1cmUoNCkKICB2b2lkIGRybV9kZXZfcHJpbnRrKGNvbnN0IHN0cnVjdCBkZXZpY2Ug
+KmRldiwgY29uc3QgY2hhciAqbGV2ZWwsCiAgCQkgICAgdW5zaWduZWQgaW50IGNhdGVnb3J5LCBj
+b25zdCBjaGFyICpmdW5jdGlvbl9uYW1lLAogIAkJICAgIGNvbnN0IGNoYXIgKnByZWZpeCwgY29u
+c3QgY2hhciAqZm9ybWF0LCAuLi4pOwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
