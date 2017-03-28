@@ -1,36 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the char-misc tree
-Date: Tue, 28 Mar 2017 14:31:34 +1100
-Message-ID: <20170328143134.186d91e1@canb.auug.org.au>
+Subject: linux-next: manual merge of the vhost tree with the kbuild tree
+Date: Tue, 28 Mar 2017 14:57:23 +1100
+Message-ID: <20170328145723.6345493c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50205 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753884AbdC1Dbm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 27 Mar 2017 23:31:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Cyril Bur <cyrilbur@gmail.com>, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Michael S. Tsirkin" <mst@redhat.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Nicolas Dichtel <nicolas.dichtel@6wind.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Michael,
 
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the vhost tree got a conflict in:
 
-./usr/include/linux/aspeed-lpc-ctrl.h:44: found __[us]{8,16,32,64} type without #include <linux/types.h>
+  include/uapi/linux/Kbuild
 
-Introduced by commit
-
-  6c4e97678501 ("drivers/misc: Add Aspeed LPC control driver")
-
-Probably exposed by commit
+between commit:
 
   65017bab8a9e ("uapi: export all headers under uapi directories")
 
-from the kbuild tree (since this header had not been explicitly exported).
+from the kbuild tree and commit:
+
+  80363894995b ("virtio_mmio: expose header to userspace")
+
+from the vhost tree.
+
+I fixed it up (the former supercedes the latter, so I used the former)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
