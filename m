@@ -1,91 +1,85 @@
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: Re: linux-next: manual merge of the livepatching tree with the security tree
-Date: Tue, 28 Mar 2017 20:23:04 +0900
-Message-ID: <201703282023.GHC34353.StLFOVOHQMJFOF@I-love.SAKURA.ne.jp>
-References: <20170328151341.7ab5a45b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170328 build: 0 failures 7 warnings (next-20170328)
+Date: Tue, 28 Mar 2017 12:58:21 +0100
+Message-ID: <E1csplU-0004EI-15@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www262.sakura.ne.jp ([202.181.97.72]:42639 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755372AbdC1LXX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 28 Mar 2017 07:23:23 -0400
-In-Reply-To: <20170328151341.7ab5a45b@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48866 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751460AbdC1L7O (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 28 Mar 2017 07:59:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, jikos@kernel.org, jmorris@namei.org
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jpoimboe@redhat.com
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Stephen Rothwell wrote:
-> Hi Jiri,
-> 
-> Today's linux-next merge of the livepatching tree got conflicts in:
-> 
->   include/linux/init_task.h
->   include/linux/sched.h
-> 
-> between commit:
-> 
->   e4e55b47ed9a ("LSM: Revive security_task_alloc() hook and per "struct task_struct" security blob.")
-> 
-> from the security tree and commit:
-> 
->   d83a7cb375ee ("livepatch: change to a per-task consistency model")
-> 
-> from the livepatching tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Tree/Branch: next-20170328
+Git describe: next-20170328
+Commit: 576190b30a Add linux-next specific files for 20170328
 
-Thank you for fixing.
-This is an append to "struct task_struct" race which is inevitable.
+Build Time: 197 min 12 sec
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc include/linux/init_task.h
-> index 926f2f553cc5,5a791055b176..000000000000
-> --- a/include/linux/init_task.h
-> +++ b/include/linux/init_task.h
-> @@@ -294,7 -296,7 +302,8 @@@ extern struct cred init_cred
->   	INIT_VTIME(tsk)							\
->   	INIT_NUMA_BALANCING(tsk)					\
->   	INIT_KASAN(tsk)							\
->  +	INIT_TASK_SECURITY						\
-> + 	INIT_LIVEPATCH(tsk)						\
->   }
->   
->   
-> diff --cc include/linux/sched.h
-> index 9ac23308c82c,e11032010318..000000000000
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@@ -1042,10 -1038,9 +1042,13 @@@ struct task_struct 
->   	/* A live task holds one reference: */
->   	atomic_t			stack_refcount;
->   #endif
->  +#ifdef CONFIG_SECURITY
->  +	/* Used by LSM modules for access restriction: */
->  +	void				*security;
->  +#endif
-> + #ifdef CONFIG_LIVEPATCH
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Just a comment to livepatch change. It seems that addition of
+Errors: 0
+Warnings: 7
+Section Mismatches: 0
 
-	/* A comment line for this variable: */
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
 
-line and indentation alignment is expected due to
-"Unscheduled maintenance for sched.h" work.
+-------------------------------------------------------------------------------
 
-> + 	int patch_state;
-> + #endif
->   	/* CPU-specific state of this task: */
->   	struct thread_struct		thread;
->   
-> 
+Warnings Summary: 7
+	  2 ../drivers/gpu/drm/arm/malidp_planes.c:98:23: warning: unused variable 'mp' [-Wunused-variable]
+	  1 arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	  1 arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/gpu/drm/arm/malidp_planes.c:98:23: warning: unused variable 'mp' [-Wunused-variable]
+	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/gpu/drm/arm/malidp_planes.c:98:23: warning: unused variable 'mp' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
