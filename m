@@ -1,82 +1,91 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: Re: linux-next: build warning after merge of the md tree
-Date: Tue, 28 Mar 2017 16:17:55 +0800
-Message-ID: <20170328081753.GA6743@ming.t460p>
-References: <20170328154022.4aad73b6@canb.auug.org.au>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: Re: linux-next: manual merge of the livepatching tree with the security tree
+Date: Tue, 28 Mar 2017 20:23:04 +0900
+Message-ID: <201703282023.GHC34353.StLFOVOHQMJFOF@I-love.SAKURA.ne.jp>
+References: <20170328151341.7ab5a45b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170328154022.4aad73b6@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Shaohua Li <shli@kernel.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from www262.sakura.ne.jp ([202.181.97.72]:42639 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755372AbdC1LXX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 28 Mar 2017 07:23:23 -0400
+In-Reply-To: <20170328151341.7ab5a45b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au, jikos@kernel.org, jmorris@namei.org
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, jpoimboe@redhat.com
 
-Hi,
-
-On Tue, Mar 28, 2017 at 03:40:22PM +1100, Stephen Rothwell wrote:
-> Hi Shaohua,
+Stephen Rothwell wrote:
+> Hi Jiri,
 > 
-> After merging the md tree, today's linux-next build (powerpc
-> pseries_le_defconfig) produced this warning:
+> Today's linux-next merge of the livepatching tree got conflicts in:
 > 
-> drivers/md/raid1.c: In function 'raid1d':
-> drivers/md/raid1.c:2172:9: warning: 'page_len$' may be used uninitialized in this function [-Wmaybe-uninitialized]
->      if (memcmp(page_address(ppages[j]),
->          ^
-> drivers/md/raid1.c:2160:7: note: 'page_len$' was declared here
->    int page_len[RESYNC_PAGES];
->        ^
+>   include/linux/init_task.h
+>   include/linux/sched.h
 > 
-> Introduced by commit
+> between commit:
 > 
->   60928a91b0b3 ("md: raid1: use bio helper in process_checks()")
+>   e4e55b47ed9a ("LSM: Revive security_task_alloc() hook and per "struct task_struct" security blob.")
+> 
+> from the security tree and commit:
+> 
+>   d83a7cb375ee ("livepatch: change to a per-task consistency model")
+> 
+> from the livepatching tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-It is a false positive, and looks we have to initialize it for killing
-the warning since I don't find a annotation for addressing uninitialized
-array.
+Thank you for fixing.
+This is an append to "struct task_struct" race which is inevitable.
 
-So how about the following patch?
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc include/linux/init_task.h
+> index 926f2f553cc5,5a791055b176..000000000000
+> --- a/include/linux/init_task.h
+> +++ b/include/linux/init_task.h
+> @@@ -294,7 -296,7 +302,8 @@@ extern struct cred init_cred
+>   	INIT_VTIME(tsk)							\
+>   	INIT_NUMA_BALANCING(tsk)					\
+>   	INIT_KASAN(tsk)							\
+>  +	INIT_TASK_SECURITY						\
+> + 	INIT_LIVEPATCH(tsk)						\
+>   }
+>   
+>   
+> diff --cc include/linux/sched.h
+> index 9ac23308c82c,e11032010318..000000000000
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@@ -1042,10 -1038,9 +1042,13 @@@ struct task_struct 
+>   	/* A live task holds one reference: */
+>   	atomic_t			stack_refcount;
+>   #endif
+>  +#ifdef CONFIG_SECURITY
+>  +	/* Used by LSM modules for access restriction: */
+>  +	void				*security;
+>  +#endif
+> + #ifdef CONFIG_LIVEPATCH
 
----
+Just a comment to livepatch change. It seems that addition of
 
->From 73fd5ba571465d764fc0cf73fc4169d222dd676a Mon Sep 17 00:00:00 2001
-From: Ming Lei <tom.leiming@gmail.com>
-Date: Tue, 28 Mar 2017 16:09:13 +0800
-Subject: [PATCH] md: raid1: kill warning on powerpc_pseries
+	/* A comment line for this variable: */
 
-This patch kills the warning reported on powerpc_pseries,
-and actually we don't need the initialization.
+line and indentation alignment is expected due to
+"Unscheduled maintenance for sched.h" work.
 
-	After merging the md tree, today's linux-next build (powerpc
-	pseries_le_defconfig) produced this warning:
-
-	drivers/md/raid1.c: In function 'raid1d':
-	drivers/md/raid1.c:2172:9: warning: 'page_len$' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	     if (memcmp(page_address(ppages[j]),
-	         ^
-	drivers/md/raid1.c:2160:7: note: 'page_len$' was declared here
-	   int page_len[RESYNC_PAGES];
-       ^
-
-Signed-off-by: Ming Lei <tom.leiming@gmail.com>
----
- drivers/md/raid1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index 3c13286190c1..7e6350334d8e 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -2172,7 +2172,7 @@ static void process_checks(struct r1bio *r1_bio)
- 		struct page **ppages = get_resync_pages(pbio)->pages;
- 		struct page **spages = get_resync_pages(sbio)->pages;
- 		struct bio_vec *bi;
--		int page_len[RESYNC_PAGES];
-+		int page_len[RESYNC_PAGES] = { 0 };
- 
- 		if (sbio->bi_end_io != end_sync_read)
- 			continue;
--- 
-2.9.3
+> + 	int patch_state;
+> + #endif
+>   	/* CPU-specific state of this task: */
+>   	struct thread_struct		thread;
+>   
+> 
