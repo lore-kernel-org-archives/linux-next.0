@@ -1,66 +1,52 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: manual merge of the kvms390 tree with the kvm-mips
- tree
-Date: Wed, 29 Mar 2017 11:47:30 +0200
-Message-ID: <f933eae5-7c48-8a1d-c748-a99f29acee2a@redhat.com>
-References: <20170329140832.5cbfb6ce@canb.auug.org.au>
- <20170329092112.GV31606@jhogan-linux.le.imgtec.org>
- <7115ff68-df06-10e0-6fff-e040a222a5e8@de.ibm.com>
+From: Juergen Gross <jgross@suse.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
+Date: Wed, 29 Mar 2017 11:54:57 +0200
+Message-ID: <04988941-7db8-1579-ce77-a1be25a55eb4@suse.com>
+References: <20170329143528.50c0f325@canb.auug.org.au>
+ <906e3014-881c-b1c7-4943-e0ed9845aab2@suse.com>
+ <20170329085945.GA11382@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7115ff68-df06-10e0-6fff-e040a222a5e8@de.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>, James Hogan <james.hogan@imgtec.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Cornelia Huck <cornelia.huck@de.ibm.com>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Fan Zhang <zhangfan@linux.vnet.ibm.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:55392 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755367AbdC2JzI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 29 Mar 2017 05:55:08 -0400
+In-Reply-To: <20170329085945.GA11382@gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Ingo Molnar <mingo@kernel.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>, Mathias Krause <minipli@googlemail.com>, Thomas Garnier <thgarnie@google.com>
 
-
-
-On 29/03/2017 11:29, Christian Borntraeger wrote:
->>>  -#define KVM_CAP_S390_GS 137
->>>  +#define KVM_CAP_MIPS_VZ 137
->>>  +#define KVM_CAP_MIPS_TE 138
->>>  +#define KVM_CAP_MIPS_64BIT 139
->>> ++#define KVM_CAP_S390_GS 140
->>>   
->>>   #ifdef KVM_CAP_IRQ_ROUTING
->> Thanks Stephen,
->>
->> Cc'ing Paulo and Radim.
->>
->> This does seem a bit of a conflict magnet, and they're part of the user
->> ABI so when the values change upon merge, the intermediate versions
->> before and after require different userland builds.
->>
->> Should the numbering be decided in advance somehow (i.e. in response to
->> conflicts in linux-next)? I don't particularly want to change the
->> numbering again as others would need rebuilds again, but I only just
->> pushed the MIPS changes, so if I change the MIPS numbering to 138-140,
->> can we expect other branches to continue at 141 so I don't need to
->> change them again?
-
-Yes, that can be expected.  If you don't do it, I'll bump the capability
-number as soon as I get the conflict.
-
-If it's an issue, the solution is topic branches: as soon as you need a
-capability, fire a pull request so that it gets in kvm/next.  But it
-doesn't happen too often, the last times were in 4.1, 4.6 and 4.8 (three
-times in 2 years).
-
->> Alternatively does it make sense to have different ranges reserved for
->> different architectures (like the get one reg numbers)?
+On 29/03/17 10:59, Ingo Molnar wrote:
 > 
-> I can live with a changing GS capability number, so keep your number.
-> In the end I think Radim/Paolo will do the assigment when merging.
+> * Juergen Gross <jgross@suse.com> wrote:
+> 
+>> On 29/03/17 05:35, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the xen-tip tree got a conflict in:
+>>>
+>>>   arch/x86/xen/enlighten.c
+>>>
+>>> between commits:
+>>>
+>>>   6415813bae75 ("x86/cpu: Drop wp_works_ok member of struct cpuinfo_x86")
+>>>   69218e47994d ("x86: Remap GDT tables in the fixmap section")
+>>>   b23adb7d3f7d ("x86/xen/gdt: Use X86_FEATURE_XENPV instead of globals for the GDT fixup")
+>>>
+>>> from the tip tree and commits:
+>>>
+>>>   75cd32d6093e ("x86/xen: split off enlighten_pv.c")
+>>>
+>>> from the xen-tip tree.
+>>>
+>>> I dropped the xen-tip tree for today (see other conflict reports),
+>>> please get together and sort these out, thanks.
 
-Yes---and in that case it's first come first served.
+Stephen, I have rewound the linux-next branch of xen-tip to its previous
+position. You can re-enable xen-tip.
 
-Same for ioctls, though those change even more rarely.
 
-Paolo
-
-> And no userspace should rely on this before this is at least in kvm/next
-> Yes, this will be a bit of pain for internal QA, but this worked ok
-> for the last 3 or 4 years on our side
+Juergen
