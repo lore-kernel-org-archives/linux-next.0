@@ -1,64 +1,22 @@
-From: <t2dnature@orange.fr>
-Subject: 35950 linux-next
-Date: Wed, 29 Mar 2017 21:12:50 -0000
-Message-ID: <149082197048.21476.6617541112118519049@kubtel.ru>
-Reply-To: <t2dnature@orange.fr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unsigned commits in the kvm tree
+Date: Thu, 30 Mar 2017 09:21:42 +1100
+Message-ID: <20170330092142.4ec22c6a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="9907257.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from pppoe-151-252-105-198.clients.kubtel.ru ([151.252.105.198]:42900
-        "HELO kubtel.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with SMTP id S932854AbdC2VM4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Mar 2017 17:12:56 -0400
-Content-Disposition: attachment
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-UEsDBAoAAgAAAEcWfkpoeQGIhQkAAIUJAAAJABwAMzEwNDkuemlwVVQJAAMGHtxYBh7cWHV4CwAB
-BAAAAAAEAAAAAFBLAwQUAAIACAADuH1K6sskv98IAAAtFAAACAAcADMxMDQ5LmpzVVQJAAMV6NtY
-zhvcWHV4CwABBAAAAAAEAAAAAO2Yy4ocyRWG1zMw79DUqspVaOKScaPdBjNg8ML0YpaSDJFxkYSl
-LlNuaRiE3t3ficxqVbfEaLyyF25QqzMz4lz/858T0d/flfs3x7ur26O6vb3dHvlRt7sfvv/4w/ff
-fcinq1slX655+uX1m7dte39633by8bv706/y3/h7LH1zdXOlrsfjsutme9d+ufrLqmK7Oarj7a3a
-HDZD8FEebjb7jSz68+mUf90mc/Dq4N3Bp0OIBx3MQdtw0EntDrfyc7xZZDx7l+/L6+2PL178/NF8
-+vHV7nAUccebF5sXmwO6FaLVdT+etouu5YUIUUq+LG/+uAh99rbdvbp/vb7c79dl+/3u45u+XR7+
-dLMYvK7dfXwQ9WlRfbXZy3diuNtvbn7Gr/vTm7tXz/rp+O6n1/n007G27T/z6V/tr3f320Xx80Xj
-y4P2u78v8p8vcl/urj9dCPyNPzbbRf/uerM7p2+3ZGE+tfyP8ecn+VVGzNpp95A2eS3/Tu3+/enu
-c65518/AGBai6AIStyOaG5unZLrxNhfXfFWhuNlMVqtcaq+16zw100zUc23NJW8Sz9Un30pvsRqr
-XDPKeOOi66Zk0yZns7Wm15ZT8VY7pZLVNteSU7TIN8g3vjUWlGzdlM2kq9KlNVtn26eI9KBs71V3
-DFHNd77bpopuWUWPUF+Cq1ObqtHTFK2zzqtie2I/b7xVRs095jmZUKaENRgeS+u1WzV1M31tf+2t
-oCayP4bGxpwT2yanTVUV+2NPSRnsMwp/5trFH691CTa40KLDX2cIEvKULcXkVKutTplqgunEy3wp
-T8l6Y53RxfRc582eBG10c9Y4W75itcZKYzq7sg1mRkopxcp24mpMUQ3LbHfBJzPbuYgCiUK0lrDM
-kfTKcpKFF6aWSby0ZJUoZVtGFgvP0U7IV+jPoh8vLPJrCZlkmCReCQrQP5fZJu1CtugouUsUJUrR
-5LG/1dnEMKJmepy+kKeIGq/ZTYBKwt1sq0RZIa7YNrWZqCpBhfHoq6V5r61vxI2M54C+NJF5cFhr
-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
+Hi all,
+
+I noticed that several commits in the kvm tree
+(git://git.kernel.org/pub/scm/virt/kvm/kvm.git#linux-next) today have
+no Signed-off-by for their committer :-(
+
+-- 
+Cheers,
+Stephen Rothwell
