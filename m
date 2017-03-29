@@ -1,74 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170329 build: 0 failures 6 warnings (next-20170329)
-Date: Wed, 29 Mar 2017 11:14:58 +0100
-Message-ID: <E1ctAd0-0005hl-SG@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55798 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755414AbdC2KPL (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Mar 2017 06:15:11 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20170329
-Git describe: next-20170329
-Commit: 8f8ab14f44 Add linux-next specific files for 20170329
-
-Build Time: 114 min 50 sec
-
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 6
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      4 warnings    0 mismatches  : arm-multi_v7_defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 6
-	  1 arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
-	  1 arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
-	  1 arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
-	  1 arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
+Date: Wed, 29 Mar 2017 12:41:52 +0200
+Message-ID: <20170329104152.GA28476@gmail.com>
+References: <20170329143528.50c0f325@canb.auug.org.au>
+ <906e3014-881c-b1c7-4943-e0ed9845aab2@suse.com>
+ <20170329085945.GA11382@gmail.com>
+ <04988941-7db8-1579-ce77-a1be25a55eb4@suse.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <04988941-7db8-1579-ce77-a1be25a55eb4@suse.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Juergen Gross <jgross@suse.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>, Mathias Krause <minipli@googlemail.com>, Thomas Garnier <thgarnie@google.com>
+List-Id: linux-next.vger.kernel.org
 
 
+* Juergen Gross <jgross@suse.com> wrote:
 
-===============================================================================
-Detailed per-defconfig build reports below:
+> On 29/03/17 10:59, Ingo Molnar wrote:
+> > 
+> > * Juergen Gross <jgross@suse.com> wrote:
+> > 
+> >> On 29/03/17 05:35, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Today's linux-next merge of the xen-tip tree got a conflict in:
+> >>>
+> >>>   arch/x86/xen/enlighten.c
+> >>>
+> >>> between commits:
+> >>>
+> >>>   6415813bae75 ("x86/cpu: Drop wp_works_ok member of struct cpuinfo_x86")
+> >>>   69218e47994d ("x86: Remap GDT tables in the fixmap section")
+> >>>   b23adb7d3f7d ("x86/xen/gdt: Use X86_FEATURE_XENPV instead of globals for the GDT fixup")
+> >>>
+> >>> from the tip tree and commits:
+> >>>
+> >>>   75cd32d6093e ("x86/xen: split off enlighten_pv.c")
+> >>>
+> >>> from the xen-tip tree.
+> >>>
+> >>> I dropped the xen-tip tree for today (see other conflict reports),
+> >>> please get together and sort these out, thanks.
+> 
+> Stephen, I have rewound the linux-next branch of xen-tip to its previous
+> position. You can re-enable xen-tip.
 
+Thank you!
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
-	arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
-	arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
-	arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+	Ingo
