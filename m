@@ -1,103 +1,74 @@
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Wed, 29 Mar 2017 12:06:11 +0200
-Message-ID: <87efxgpfcc.fsf@vitty.brq.redhat.com>
-References: <20170329143528.50c0f325@canb.auug.org.au>
-        <906e3014-881c-b1c7-4943-e0ed9845aab2@suse.com>
-        <20170329085945.GA11382@gmail.com>
-        <26fb88f9-dd20-c56b-e87d-6d454b4f7c71@suse.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170329 build: 0 failures 6 warnings (next-20170329)
+Date: Wed, 29 Mar 2017 11:14:58 +0100
+Message-ID: <E1ctAd0-0005hl-SG@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:40908 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755111AbdC2KGT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 29 Mar 2017 06:06:19 -0400
-In-Reply-To: <26fb88f9-dd20-c56b-e87d-6d454b4f7c71@suse.com> (Juergen Gross's
-        message of "Wed, 29 Mar 2017 11:28:13 +0200")
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55798 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755414AbdC2KPL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Mar 2017 06:15:11 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, Mathias Krause <minipli@googlemail.com>, Thomas Garnier <thgarnie@google.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Juergen Gross <jgross@suse.com> writes:
+Tree/Branch: next-20170329
+Git describe: next-20170329
+Commit: 8f8ab14f44 Add linux-next specific files for 20170329
 
-> On 29/03/17 10:59, Ingo Molnar wrote:
->> 
->> * Juergen Gross <jgross@suse.com> wrote:
->> 
->>> On 29/03/17 05:35, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Today's linux-next merge of the xen-tip tree got a conflict in:
->>>>
->>>>   arch/x86/xen/enlighten.c
->>>>
->>>> between commits:
->>>>
->>>>   6415813bae75 ("x86/cpu: Drop wp_works_ok member of struct cpuinfo_x86")
->>>>   69218e47994d ("x86: Remap GDT tables in the fixmap section")
->>>>   b23adb7d3f7d ("x86/xen/gdt: Use X86_FEATURE_XENPV instead of globals for the GDT fixup")
->>>>
->>>> from the tip tree and commits:
->>>>
->>>>   75cd32d6093e ("x86/xen: split off enlighten_pv.c")
->>>>
->>>> from the xen-tip tree.
->>>>
->>>> I dropped the xen-tip tree for today (see other conflict reports),
->>>> please get together and sort these out, thanks.
->>>>
->>>
->>> Hmm, seems to be a rather bad timing for the series of Vitaly.
->>>
->>> What is the best way to resolve those conflicts? A rebase of Vitaly's
->>> patches seems to be required in any case.
->>>
->>> Should I rebase the Xen tree on current tip? This seems to be rather
->>> easy, but I think this will work only if I can be sure the current tip
->>> tree contents will all be merged by Linus before the Xen tree.
->> 
->> That's certainly very likely, -tip trees all go in very early in the merge window.
->> 
->>> I could try to cherry pick the patches from tip where Vitaly's patches
->>> have conflicts with, but I think this could lead to a lot of patches
->>> to take.
->> 
->> Nor is it desirable as a workflow.
->> 
->> I'd suggest the following: in about a week I can guarantee a working tip:x86/mm 
->> base with most of the 5-level paging patches applied that you could base Xen 
->> patches on.
->> 
->> Unfortunately, right now there's at least one regression with those changes that 
->> needs to be properly fixed before it's a suitable base tree. The fix already 
->> exists, it just needs to be tested and the whole tree needs to cook for a few days 
->> to be dependable for Xen as a base.
->> 
->>> Or we could delay Vitaly's series until tip has been merged, but this
->>> will either delay some other Xen patches depending on (or conflicting
->>> with) Vitaly's patches or would make the rebase for Vitaly more
->>> difficult.
->> 
->> So my suggestion would be: could you delay 75cd32d6093e for a week, and then merge 
->> it on top of a pulled in tip:x86/mm? I'll send that tree to Linus on the first day 
->> of the merge window so there shouldn't be any ordering problems.
->
-> Okay, that's rather easy to do.
->
-> Boris, I renamed the current Xen for-linus-4.12 branch for easy
-> development of other Xen patches to for-linus-4.12-pre.
->
-> I'll create another branch for-linus-4.12 based on the tip tree next
-> week which will be subject to the pull request for Linus. As soon as
-> for-linus-4.12 is ready the for-linus-4.12-pre branch shouldn't be used
-> any longer.
+Build Time: 114 min 50 sec
 
-Please let me know if/when I need to rebase my series. I'll rebase, test
-and re-send.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Thanks!
+Errors: 0
+Warnings: 6
+Section Mismatches: 0
 
--- 
-  Vitaly
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-multi_v7_defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 6
+	  1 arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	  1 arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
