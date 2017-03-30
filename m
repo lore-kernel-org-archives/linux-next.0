@@ -1,56 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
 Subject: Re: next-20170330 build: 2 failures 8 warnings (next-20170330)
-Date: Thu, 30 Mar 2017 16:07:42 +0100
-Message-ID: <20170330150742.wflswzqhg53mozx2@sirena.org.uk>
+Date: Thu, 30 Mar 2017 17:39:27 +0200
+Message-ID: <20170330173927.5665a0da@bbrezillon>
 References: <E1ctZXC-0008DB-4g@optimist>
+        <20170330150742.wflswzqhg53mozx2@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hk4orzs4jlqwphpi"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39314 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933206AbdC3PH6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 30 Mar 2017 11:07:58 -0400
-Content-Disposition: inline
-In-Reply-To: <E1ctZXC-0008DB-4g@optimist>
+Received: from mail.free-electrons.com ([62.4.15.54]:45047 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934147AbdC3Pju (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 30 Mar 2017 11:39:50 -0400
+In-Reply-To: <20170330150742.wflswzqhg53mozx2@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, Nicolas Ferre <nicolas.ferre@microchip.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
 
+Hi Mark,
 
---hk4orzs4jlqwphpi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 30 Mar 2017 16:07:42 +0100
+Mark Brown <broonie@kernel.org> wrote:
 
-On Thu, Mar 30, 2017 at 01:50:39PM +0100, Build bot for Mark Brown wrote:
+> On Thu, Mar 30, 2017 at 01:50:39PM +0100, Build bot for Mark Brown wrote:
+> 
+> Today's -next fails to build an ARM allmodconfig due to:
+> 
+> > 	arm-allmodconfig
+> > ../drivers/mtd/nand/atmel/nand-controller.c:2126:25: error: 'atmel_nc_id_table' undeclared here (not in a function)
+> > ../include/linux/module.h:212:27: error: '__mod_of__atmel_nc_id_table_device_table' aliased to undefined symbol 'atmel_nc_id_table'  
+> 
+> caused by d09703f9459c94c78e029 (mtd: nand: Cleanup/rework the
+> atmel_nand driver), it tries to export atmel_nc_id_table as the DT ID
+> table but the variable is called atmel_nand_controller_of_ids. 
 
-Today's -next fails to build an ARM allmodconfig due to:
+Pushed a fixed version to nand/next.
 
-> 	arm-allmodconfig
-> ../drivers/mtd/nand/atmel/nand-controller.c:2126:25: error: 'atmel_nc_id_=
-table' undeclared here (not in a function)
-> ../include/linux/module.h:212:27: error: '__mod_of__atmel_nc_id_table_dev=
-ice_table' aliased to undefined symbol 'atmel_nc_id_table'
+Thanks for the report.
 
-caused by d09703f9459c94c78e029 (mtd: nand: Cleanup/rework the
-atmel_nand driver), it tries to export atmel_nc_id_table as the DT ID
-table but the variable is called atmel_nand_controller_of_ids.=20
-
---hk4orzs4jlqwphpi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljdHz0ACgkQJNaLcl1U
-h9DnyQf/SVMfg7/3Gq/sUge70caQaZF2EnyJA0cY9OKzTS8610B/k9xe+/3Q7RvK
-h1QKSuMM2V96ko6K4YmQZRPD34ElYQ9KPmIGCdxGMl9nZ1VnjUoQISI57YRF2jZX
-45ew1B+vNkx3NBm0clz9OlGI7cJ/S6SMEoJVYSYfFvALAYGju1I+/D9w4I9EGIpe
-wqR1x109AIR/5F8FE/6rLvFlbKnK4HMoT4y3N6UH9f+JcIiPGcz69hwmxuSlgmlD
-B2K0yqAlwhfFgNF+PFN+Box6Pbz4ZHVGYhVe6KOQ3N6rBeoRaphGTqTr4HusEO65
-OwMu8UK4RuOjitCCMkQhqOgrI9lfPw==
-=OdWn
------END PGP SIGNATURE-----
-
---hk4orzs4jlqwphpi--
+Boris
