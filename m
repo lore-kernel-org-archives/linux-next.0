@@ -1,91 +1,53 @@
-From: Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: linux-next: Tree for Mar 30
-Date: Thu, 30 Mar 2017 16:39:22 +0300
-Message-ID: <1490881162.30998.15.camel@nxp.com>
-References: <20170330165537.603eed3d@canb.auug.org.au>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: next-20170330 build: 2 failures 8 warnings (next-20170330)
+Date: Thu, 30 Mar 2017 15:57:50 +0100
+Message-ID: <20170330145750.w2yrq3z3bey4el4g@sirena.org.uk>
+References: <E1ctZXC-0008DB-4g@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170330165537.603eed3d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>, Shawn Guo <shawnguo@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Octavian Purdila <octavian.purdila@nxp.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ru5w525tgyif66gv"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <E1ctZXC-0008DB-4g@optimist>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2017-03-30 at 16:55 +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20170329:
-> 
-> Undropped tree: xen-tip
-> 
-> The vfs tree gained a conflict against Linus' tree.
-> 
-> The drm tree gained conflicts against the drm-intel-fixes tree.
-> 
-> The mailbox tree lost its build failure.
-> 
-> The phy-next tree gained a build failure, so I used the version from
-> next-20170329.
-> 
-> The vhost tree gained a build failure, so I used the version from
-> next-20170329.
-> 
-> Non-merge commits (relative to Linus' tree): 5728
->  6122 files changed, 441716 insertions(+), 108564 deletions(-)
-> 
-> ----------------------------------------------------------------------------
-> 
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
-> 
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc and an allmodconfig (with
-> CONFIG_BUILD_DOCSRC=n) for x86_64, a multi_v7_defconfig for arm and a
-> native build of tools/perf. After the final fixups (if any), I do an
-> x86_64 modules_install followed by builds for x86_64 allnoconfig,
-> powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
-> and pseries_le_defconfig and i386, sparc and sparc64 defconfig.
-> 
-> Below is a summary of the state of the merge.
-> 
-> I am currently merging 255 trees (counting Linus' and 37 trees of bug
-> fix patches pending for the current merge release).
-> 
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
-> 
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
 
-It seems there is a build error for imx_v6_v7_defconfig.
+--ru5w525tgyif66gv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Link: http://kisskb.ellerman.id.au/kisskb/buildresult/12980252/
-Error:
-drivers/built-in.o: In function `vblank_disable_and_save':
-imx-ocotp.c:(.text+0xb45e8): undefined reference to `__bad_cmpxchg'
-Makefile:986: recipe for target 'vmlinux' failed
+On Thu, Mar 30, 2017 at 01:50:39PM +0100, Build bot for Mark Brown wrote:
 
-This seems to be caused by something from drm:
-commit 43dc7fe2b211 ("drm: Mark up accesses of vblank->enabled outside of its spinlock")
+Today's -next fails to build an arm64 allmodconfig due to:
 
-It introduces a cmpxchg on a bool which is apparently not supported on
-ARM v6 (it only supports 32-bit values). The error looks legit to me
-(not caused by an infrastructure bug).
+> 	arm64-allmodconfig
+> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
+> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
 
-It seems the kbuild test robot also found a similar breakage on tilegx:
-https://lists.freedesktop.org/archives/dri-devel/2017-March/137322.html
+The driver uses DT interfaces but does not include linux/of.h, it seems
+that some reorganization in the headers has removed an implicit
+inclusion introducing the failure.  I sent a fix.
 
--- 
-Regards,
-Leonard
+--ru5w525tgyif66gv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljdHO0ACgkQJNaLcl1U
+h9BPjAf9GnQkndIosbvhk6mfwAvEthuBnd9j2x8zwhZ2WL35ZBmnbQgG/RzX6YeN
+2Rv9orwkWvMPFHRvSjDqeZ/76UGBlvKQNJXoWnZzl16kkXe1p/lCzx6SISUeDRU4
+wZHMJxdgCzrVuEbWtnMWaQeJ6EJW+OuEvT6ytKp2fPkFZWvwgWjStCwbTvX8CSec
+66JL/29tknJnf0DkamFC2OuY9zJhmk/d4zwAFlo4x5+TLYkSax2CGTEL7ewbXbXw
+45/7yRMy7nmYQMJdeHggITTvuuNr3wkywTVPnTerQpIvFbCCoULqUYymJ/1U6XBp
+/iL91YMHeSBgknmY/niMAkqlmykinA==
+=RPUe
+-----END PGP SIGNATURE-----
+
+--ru5w525tgyif66gv--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
