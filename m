@@ -1,33 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the phy-next tree
-Date: Thu, 30 Mar 2017 14:47:35 +1100
-Message-ID: <20170330144735.534101e7@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vhost tree
+Date: Thu, 30 Mar 2017 15:25:58 +1100
+Message-ID: <20170330152558.6c7d5261@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Meng Dongyang <daniel.meng@rock-chips.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Kishon,
+Hi Michael,
 
-After merging the phy-next tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the vhost tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-drivers/phy/phy-rockchip-inno-usb2.c:1148:3: error: unknown field 'phy_tuning' specified in initializer
-   .phy_tuning = rk3328_usb2phy_tuning,
-   ^
-drivers/phy/phy-rockchip-inno-usb2.c:1148:17: error: 'rk3328_usb2phy_tuning' undeclared here (not in a function)
-   .phy_tuning = rk3328_usb2phy_tuning,
-                 ^
+drivers/remoteproc/remoteproc_virtio.c: In function 'rproc_virtio_find_vqs':
+drivers/remoteproc/remoteproc_virtio.c:148:9: error: 'ctx' undeclared (first use in this function)
+         ctx ? ctx[i] : false);
+         ^
 
 Caused by commit
 
-  ffa0c278e89c ("phy: rockchip-inno-usb2: add support of u2phy for rk3328")
+  a965e977a103 ("virtio: add context flag to find vqs")
 
-I have used the phy-next tree from next-20170329 for today.
+I have used the vhost tree from next-20170329 for today.
 
 -- 
 Cheers,
