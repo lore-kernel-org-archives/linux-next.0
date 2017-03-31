@@ -1,46 +1,111 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Fri, 31 Mar 2017 08:42:28 +0200
-Message-ID: <20170331064228.2u6x3s4yp6xolsbw@hirez.programming.kicks-ass.net>
-References: <20170331164451.519d1d7e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170331 build: 3 failures 5 warnings (next-20170331)
+Date: Fri, 31 Mar 2017 08:57:21 +0100
+Message-ID: <E1ctrQv-0002hq-Jk@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:36253 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751527AbdCaGml (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 31 Mar 2017 02:42:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20170331164451.519d1d7e@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46048 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752999AbdCaH53 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 31 Mar 2017 03:57:29 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andi Kleen <ak@linux.intel.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, Mar 31, 2017 at 04:44:51PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the akpm tree got a conflict in:
-> 
->   kernel/sched/fair.c
-> 
-> between commit:
-> 
->   0ccb977f4c80 ("sched/fair: Explicitly generate __update_load_avg() instances")
-> 
-> from the tip tree and patch:
-> 
->    "kernel/sched/fair.c: uninline __update_load_avg()"
-> 
-> from the akpm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Tree/Branch: next-20170331
+Git describe: next-20170331
+Commit: 6af2434b00 Add linux-next specific files for 20170331
 
-Argh!
+Build Time: 1 min 31 sec
 
-Andrew, please drop that patch. And the x86 out-of-line of __atomic_add_unless().
+Passed:    7 / 10   ( 70.00 %)
+Failed:    3 / 10   ( 30.00 %)
+
+Errors: 4
+Warnings: 5
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm-allmodconfig
+	arm64-defconfig
+
+Errors:
+
+	arm64-allmodconfig
+../arch/arm64/include/asm/bug.h:62:29: error: implicit declaration of function '_BUG_FLAGS' [-Werror=implicit-function-declaration]
+
+	arm-allmodconfig
+../drivers/net/ethernet/faraday/ftgmac100.c:153:9: error: implicit declaration of function 'device_get_mac_address' [-Werror=implicit-function-declaration]
+../drivers/net/ethernet/faraday/ftgmac100.c:1262:6: error: implicit declaration of function 'of_machine_is_compatible' [-Werror=implicit-function-declaration]
+../drivers/net/ethernet/faraday/ftgmac100.c:1406:6: error: implicit declaration of function 'of_get_property' [-Werror=implicit-function-declaration]
+
+	arm64-defconfig
+../arch/arm64/include/asm/bug.h:62:29: error: implicit declaration of function '_BUG_FLAGS' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 4
+	  2 ../arch/arm64/include/asm/bug.h:62:29: error: implicit declaration of function '_BUG_FLAGS' [-Werror=implicit-function-declaration]
+	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:153:9: error: implicit declaration of function 'device_get_mac_address' [-Werror=implicit-function-declaration]
+	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:1406:6: error: implicit declaration of function 'of_get_property' [-Werror=implicit-function-declaration]
+	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:1262:6: error: implicit declaration of function 'of_machine_is_compatible' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 5
+	  1 arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	  1 arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	  1 arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:153:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/bug.h:62:29: error: implicit declaration of function '_BUG_FLAGS' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
+	arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
+	arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
+	arch/arm/configs/multi_v7_defconfig:600:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 3 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/net/ethernet/faraday/ftgmac100.c:153:9: error: implicit declaration of function 'device_get_mac_address' [-Werror=implicit-function-declaration]
+	../drivers/net/ethernet/faraday/ftgmac100.c:1262:6: error: implicit declaration of function 'of_machine_is_compatible' [-Werror=implicit-function-declaration]
+	../drivers/net/ethernet/faraday/ftgmac100.c:1406:6: error: implicit declaration of function 'of_get_property' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../drivers/net/ethernet/faraday/ftgmac100.c:153:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
+
+Errors:
+	../arch/arm64/include/asm/bug.h:62:29: error: implicit declaration of function '_BUG_FLAGS' [-Werror=implicit-function-declaration]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
