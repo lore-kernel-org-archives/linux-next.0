@@ -1,88 +1,42 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170403 build: 1 failures 4 warnings (next-20170403)
-Date: Mon, 03 Apr 2017 12:47:07 +0100
-Message-ID: <E1cv0Rv-00022p-9c@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40580 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751981AbdDCLrO (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Apr 2017 07:47:14 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 03 Apr 2017 15:14:12 +0200
+Message-ID: <58E24AA4.9080204@iogearbox.net>
+References: <20170403120748.2d11f2b0@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170403120748.2d11f2b0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@fb.com>, Martin KaFai Lau <kafai@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170403
-Git describe: next-20170403
-Commit: 58e756c897 Add linux-next specific files for 20170403
+On 04/03/2017 04:07 AM, Stephen Rothwell wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net-next tree got conflicts in:
+>
+>    tools/testing/selftests/bpf/Makefile
+>    tools/testing/selftests/bpf/test_verifier.c
+>
+> between commit:
+>
+>    02ea80b1850e ("bpf: add various verifier test cases for self-tests")
+>
+> from the net tree and commits:
+>
+>    6882804c916b ("selftests/bpf: add a test for overlapping packet range checks")
+>    fb30d4b71214 ("bpf: Add tests for map-in-map")
+>
+> from the net-next tree.
+>
+> I fixed it up (see below - though there are probably more fixups needed)
+> and can carry the fix as necessary. This is now fixed as far as
+> linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
-Build Time: 102 min 12 sec
-
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 2
-Warnings: 4
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 4
-	  2 ../fs/nfsd/nfs4state.c:1917:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-
-Warnings:
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../fs/nfsd/nfs4state.c:1917:6: warning: unused variable 'ret' [-Wunused-variable]
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/nfsd/nfs4state.c:1917:6: warning: unused variable 'ret' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Looks fine, thanks Stephen!
