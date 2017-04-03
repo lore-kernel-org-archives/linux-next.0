@@ -1,37 +1,76 @@
-From: "J. Bruce Fields" <bfields@fieldses.org>
-Subject: Re: linux-next: build warning after merge of the nfsd tree
-Date: Sun, 2 Apr 2017 22:39:34 -0400
-Message-ID: <20170403023934.GB19658@fieldses.org>
-References: <20170403110948.3ca5ab8b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the
+	drm tree
+Date: Mon, 3 Apr 2017 13:18:23 +1000
+Message-ID: <20170403131823.043427a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fieldses.org ([173.255.197.46]:36546 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751280AbdDCCjf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Apr 2017 22:39:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20170403110948.3ca5ab8b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sinclair Yeh <syeh@vmware.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 03, 2017 at 11:09:48AM +1000, Stephen Rothwell wrote:
-> Hi,
-> 
-> After merging the nfsd tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
-> 
-> fs/nfsd/nfs4state.c: In function 'copy_cred':
-> fs/nfsd/nfs4state.c:1917:6: warning: unused variable 'ret' [-Wunused-variable]
->   int ret;
->       ^
-> 
-> Introduced by commit
-> 
->   d39662236bf8 ("nfsd4: remove pointless strdup_if_nonnull")
-> 
-> Also, that commit has no Signed-off-by from its Author.
-
-Both fixed, thanks.--b.
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBjb25mbGljdHMgaW46CgogIGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N0ZHUuYwog
+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYwogIGRyaXZlcnMvZ3B1L2RybS92
+bXdnZngvdm13Z2Z4X2xkdS5jCgpiZXR3ZWVuIGNvbW1pdHM6CgogIDkwNGJiNWU1ODE3ZiAoImRy
+bS92bXdnZng6IFN3aXRjaCBvdmVyIHRvIGludGVybmFsIGF0b21pYyBBUEkgZm9yIFNURFUiKQog
+IGIwMTE5Y2I5MjI5ZCAoImRybS92bXdnZng6IFN3aXRjaCBvdmVyIHRvIGludGVybmFsIGF0b21p
+YyBBUEkgZm9yIFNPVSBhbmQgTERVIikKCmZyb20gdGhlIGRybSB0cmVlIGFuZCBjb21taXQ6Cgog
+IGE0ZWZmOWFhNmRiOCAoImRybTogQWRkIGFjcXVpcmUgY3R4IHBhcmFtZXRlciB0byAtPnNldF9j
+b25maWciKQoKZnJvbSB0aGUgZHJtLW1pc2MgdHJlZS4KCkkgZml4ZWQgaXQgdXAgKHNlZSBiZWxv
+dykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwppcyBub3cgZml4ZWQg
+YXMgZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCmNv
+bmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3
+aGVuIHlvdXIgdHJlZQppcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2Fu
+dCB0byBjb25zaWRlciBjb29wZXJhdGluZwp3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25m
+bGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkKY29tcGxleCBjb25mbGlj
+dHMuCgpGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KRGF0ZTog
+TW9uLCAzIEFwciAyMDE3IDEzOjA0OjM2ICsxMDAwClN1YmplY3Q6IFtQQVRDSF0gZHJtL3Ztd2dm
+eDogbWVyZ2UgZml4dXAgZm9yIHNldF9jb25maWcgQVBJIGNoYW5nZQoKU2lnbmVkLW9mZi1ieTog
+U3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Ci0tLQogZHJpdmVycy9ncHUv
+ZHJtL3Ztd2dmeC92bXdnZnhfa21zLmMgfCA2ICsrKystLQogZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfa21zLmggfCA1ICsrKystCiAyIGZpbGVzIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygr
+KSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Zt
+d2dmeF9rbXMuYyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5jCmluZGV4IGMx
+OGM4MWY2M2FjMy4uMjUxN2RlYmYyMTRkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdm13
+Z2Z4L3Ztd2dmeF9rbXMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9rbXMu
+YwpAQCAtMjk0MCw2ICsyOTQwLDcgQEAgdm13X2ttc19jcmVhdGVfaW1wbGljaXRfcGxhY2VtZW50
+X3Byb3BlcnR5KHN0cnVjdCB2bXdfcHJpdmF0ZSAqZGV2X3ByaXYsCiAgKiB2bXdfa21zX3NldF9j
+b25maWcgLSBXcmFwcGVyIGFyb3VuZCBkcm1fYXRvbWljX2hlbHBlcl9zZXRfY29uZmlnCiAgKgog
+ICogQHNldDogVGhlIGNvbmZpZ3VyYXRpb24gdG8gc2V0LgorICogQGN0eDogbG9jayBhY3F1aXNp
+dGlvbiBjb250ZXh0CiAgKgogICogVGhlIHZtd2dmeCBYb3JnIGRyaXZlciBkb2Vzbid0IGFzc2ln
+biB0aGUgbW9kZTo6dHlwZSBtZW1iZXIsIHdoaWNoCiAgKiB3aGVuIGRybV9tb2RlX3NldF9jcnRj
+aW5mbyBpcyBjYWxsZWQgYXMgcGFydCBvZiB0aGUgY29uZmlndXJhdGlvbiBzZXR0aW5nCkBAIC0y
+OTQ3LDEwICsyOTQ4LDExIEBAIHZtd19rbXNfY3JlYXRlX2ltcGxpY2l0X3BsYWNlbWVudF9wcm9w
+ZXJ0eShzdHJ1Y3Qgdm13X3ByaXZhdGUgKmRldl9wcml2LAogICogdGhlIHZtd2dmeCBtb2Rlc2V0
+dGluZy4gU28gZXhwbGljaXRseSBjbGVhciB0aGF0IG1lbWJlciBiZWZvcmUgY2FsbGluZwogICog
+aW50byBkcm1fYXRvbWljX2hlbHBlcl9zZXRfY29uZmlnLgogICovCi1pbnQgdm13X2ttc19zZXRf
+Y29uZmlnKHN0cnVjdCBkcm1fbW9kZV9zZXQgKnNldCkKK2ludCB2bXdfa21zX3NldF9jb25maWco
+c3RydWN0IGRybV9tb2RlX3NldCAqc2V0LAorCQkgICAgICAgc3RydWN0IGRybV9tb2Rlc2V0X2Fj
+cXVpcmVfY3R4ICpjdHgpCiB7CiAJaWYgKHNldCAmJiBzZXQtPm1vZGUpCiAJCXNldC0+bW9kZS0+
+dHlwZSA9IDA7CiAKLQlyZXR1cm4gZHJtX2F0b21pY19oZWxwZXJfc2V0X2NvbmZpZyhzZXQpOwor
+CXJldHVybiBkcm1fYXRvbWljX2hlbHBlcl9zZXRfY29uZmlnKHNldCwgY3R4KTsKIH0KZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5oIGIvZHJpdmVycy9ncHUv
+ZHJtL3Ztd2dmeC92bXdnZnhfa21zLmgKaW5kZXggOWMxNjFkMjlhYWViLi5lY2FmYTlhNzY0OGUg
+MTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5oCisrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X2ttcy5oCkBAIC00NTMsNiArNDUzLDkgQEAgaW50
+IHZtd19rbXNfc3RkdV9kbWEoc3RydWN0IHZtd19wcml2YXRlICpkZXZfcHJpdiwKIAkJICAgICBi
+b29sIHRvX3N1cmZhY2UsCiAJCSAgICAgYm9vbCBpbnRlcnJ1cHRpYmxlKTsKIAotaW50IHZtd19r
+bXNfc2V0X2NvbmZpZyhzdHJ1Y3QgZHJtX21vZGVfc2V0ICpzZXQpOworc3RydWN0IGRybV9tb2Rl
+c2V0X2FjcXVpcmVfY3R4OworCitpbnQgdm13X2ttc19zZXRfY29uZmlnKHN0cnVjdCBkcm1fbW9k
+ZV9zZXQgKnNldCwKKwkJICAgICAgIHN0cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eCAqY3R4
+KTsKIAogI2VuZGlmCi0tIAoyLjExLjAKCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1h
+aWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
