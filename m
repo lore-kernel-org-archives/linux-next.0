@@ -1,48 +1,48 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Mon, 3 Apr 2017 16:38:25 +0200
-Message-ID: <20170403143825.GA1124@gmail.com>
+From: Juergen Gross <jgross@suse.com>
+Subject: Re: linux-next: manual merge of the xen-tip tree with
+	the tip tree
+Date: Mon, 3 Apr 2017 16:55:59 +0200
+Message-ID: <03587cc8-67db-e6be-468a-54072a5db5fa@suse.com>
 References: <20170329143528.50c0f325@canb.auug.org.au>
  <906e3014-881c-b1c7-4943-e0ed9845aab2@suse.com>
  <20170329085945.GA11382@gmail.com>
  <26fb88f9-dd20-c56b-e87d-6d454b4f7c71@suse.com>
+ <20170403143825.GA1124@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:35362 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751716AbdDCOia (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Apr 2017 10:38:30 -0400
-Content-Disposition: inline
-In-Reply-To: <26fb88f9-dd20-c56b-e87d-6d454b4f7c71@suse.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>, Andy Lutomirski <luto@kernel.org>, Mathias Krause <minipli@googlemail.com>, Thomas Garnier <thgarnie@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <xen-devel-bounces@lists.xen.org>
+In-Reply-To: <20170403143825.GA1124@gmail.com>
+List-Unsubscribe: <https://lists.xen.org/cgi-bin/mailman/options/xen-devel>,
+ <mailto:xen-devel-request@lists.xen.org?subject=unsubscribe>
+List-Post: <mailto:xen-devel@lists.xen.org>
+List-Help: <mailto:xen-devel-request@lists.xen.org?subject=help>
+List-Subscribe: <https://lists.xen.org/cgi-bin/mailman/listinfo/xen-devel>,
+ <mailto:xen-devel-request@lists.xen.org?subject=subscribe>
+Errors-To: xen-devel-bounces@lists.xen.org
+Sender: "Xen-devel" <xen-devel-bounces@lists.xen.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Stefano Stabellini <sstabellini@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Garnier <thgarnie@google.com>, Ingo Molnar <mingo@elte.hu>, linux-kernel@vger.kernel.org, Mathias Krause <minipli@googlemail.com>, Vitaly Kuznetsov <vkuznets@redhat.com>, Xen Devel <Xen-devel@lists.xensource.com>, linux-next@vger.kernel.org, Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Thomas Gleixner <tglx@linutronix.de>
+List-Id: linux-next.vger.kernel.org
 
-
-* Juergen Gross <jgross@suse.com> wrote:
-
-> > So my suggestion would be: could you delay 75cd32d6093e for a week, and then 
-> > merge it on top of a pulled in tip:x86/mm? I'll send that tree to Linus on the 
-> > first day of the merge window so there shouldn't be any ordering problems.
-> 
-> Okay, that's rather easy to do.
-> 
-> Boris, I renamed the current Xen for-linus-4.12 branch for easy development of 
-> other Xen patches to for-linus-4.12-pre.
-> 
-> I'll create another branch for-linus-4.12 based on the tip tree next week which 
-> will be subject to the pull request for Linus. As soon as for-linus-4.12 is 
-> ready the for-linus-4.12-pre branch shouldn't be used any longer.
-
-I've created a tip:x86-mm-for-xen branch with the following head:
-
-  7f75540ff2ca ("Merge tag 'v4.11-rc5' into x86/mm, to refresh the branch")
-
-... which should be a reasonable base that includes a working version of the 
-5-level pagetable changes.
-
-Thanks,
-
-	Ingo
+T24gMDMvMDQvMTcgMTY6MzgsIEluZ28gTW9sbmFyIHdyb3RlOgo+IAo+ICogSnVlcmdlbiBHcm9z
+cyA8amdyb3NzQHN1c2UuY29tPiB3cm90ZToKPiAKPj4+IFNvIG15IHN1Z2dlc3Rpb24gd291bGQg
+YmU6IGNvdWxkIHlvdSBkZWxheSA3NWNkMzJkNjA5M2UgZm9yIGEgd2VlaywgYW5kIHRoZW4gCj4+
+PiBtZXJnZSBpdCBvbiB0b3Agb2YgYSBwdWxsZWQgaW4gdGlwOng4Ni9tbT8gSSdsbCBzZW5kIHRo
+YXQgdHJlZSB0byBMaW51cyBvbiB0aGUgCj4+PiBmaXJzdCBkYXkgb2YgdGhlIG1lcmdlIHdpbmRv
+dyBzbyB0aGVyZSBzaG91bGRuJ3QgYmUgYW55IG9yZGVyaW5nIHByb2JsZW1zLgo+Pgo+PiBPa2F5
+LCB0aGF0J3MgcmF0aGVyIGVhc3kgdG8gZG8uCj4+Cj4+IEJvcmlzLCBJIHJlbmFtZWQgdGhlIGN1
+cnJlbnQgWGVuIGZvci1saW51cy00LjEyIGJyYW5jaCBmb3IgZWFzeSBkZXZlbG9wbWVudCBvZiAK
+Pj4gb3RoZXIgWGVuIHBhdGNoZXMgdG8gZm9yLWxpbnVzLTQuMTItcHJlLgo+Pgo+PiBJJ2xsIGNy
+ZWF0ZSBhbm90aGVyIGJyYW5jaCBmb3ItbGludXMtNC4xMiBiYXNlZCBvbiB0aGUgdGlwIHRyZWUg
+bmV4dCB3ZWVrIHdoaWNoIAo+PiB3aWxsIGJlIHN1YmplY3QgdG8gdGhlIHB1bGwgcmVxdWVzdCBm
+b3IgTGludXMuIEFzIHNvb24gYXMgZm9yLWxpbnVzLTQuMTIgaXMgCj4+IHJlYWR5IHRoZSBmb3It
+bGludXMtNC4xMi1wcmUgYnJhbmNoIHNob3VsZG4ndCBiZSB1c2VkIGFueSBsb25nZXIuCj4gCj4g
+SSd2ZSBjcmVhdGVkIGEgdGlwOng4Ni1tbS1mb3IteGVuIGJyYW5jaCB3aXRoIHRoZSBmb2xsb3dp
+bmcgaGVhZDoKPiAKPiAgIDdmNzU1NDBmZjJjYSAoIk1lcmdlIHRhZyAndjQuMTEtcmM1JyBpbnRv
+IHg4Ni9tbSwgdG8gcmVmcmVzaCB0aGUgYnJhbmNoIikKPiAKPiAuLi4gd2hpY2ggc2hvdWxkIGJl
+IGEgcmVhc29uYWJsZSBiYXNlIHRoYXQgaW5jbHVkZXMgYSB3b3JraW5nIHZlcnNpb24gb2YgdGhl
+IAo+IDUtbGV2ZWwgcGFnZXRhYmxlIGNoYW5nZXMuCgpUaGFua3MsCgoKSnVlcmdlbgoKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fClhlbi1kZXZlbCBtYWls
+aW5nIGxpc3QKWGVuLWRldmVsQGxpc3RzLnhlbi5vcmcKaHR0cHM6Ly9saXN0cy54ZW4ub3JnL3hl
+bi1kZXZlbAo=
