@@ -1,75 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Date: Mon, 3 Apr 2017 13:31:29 +1000
-Message-ID: <20170403133129.357df27f@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the vhost tree
+Date: Mon, 3 Apr 2017 16:21:19 +1000
+Message-ID: <20170403162119.1a2de489@canb.auug.org.au>
+References: <20170330152558.6c7d5261@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40167 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750992AbdDCGVX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 3 Apr 2017 02:21:23 -0400
+In-Reply-To: <20170330152558.6c7d5261@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Michael S. Tsirkin" <mst@redhat.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
-ZXh0IGJ1aWxkICh4ODZfNjQKYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKZHJpdmVy
-cy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jOiBJbiBmdW5jdGlvbiAndm13X3NvdV9jcnRj
-X3BhZ2VfZmxpcCc6CmRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYzozMjc6ODog
-ZXJyb3I6IHRvbyBmZXcgYXJndW1lbnRzIHRvIGZ1bmN0aW9uICdkcm1fYXRvbWljX2hlbHBlcl9w
-YWdlX2ZsaXAnCiAgcmV0ID0gZHJtX2F0b21pY19oZWxwZXJfcGFnZV9mbGlwKGNydGMsIG5ld19m
-YiwgTlVMTCwgZmxhZ3MpOwogICAgICAgIF4KSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMv
-Z3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYzozMTowOgppbmNsdWRlL2RybS9kcm1fYXRvbWlj
-X2hlbHBlci5oOjEyNjo1OiBub3RlOiBkZWNsYXJlZCBoZXJlCiBpbnQgZHJtX2F0b21pY19oZWxw
-ZXJfcGFnZV9mbGlwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKICAgICBeCmRyaXZlcnMvZ3B1L2Ry
-bS92bXdnZngvdm13Z2Z4X3N0ZHUuYzogSW4gZnVuY3Rpb24gJ3Ztd19zdGR1X2NydGNfcGFnZV9m
-bGlwJzoKZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jOjUwODo4OiBlcnJvcjog
-dG9vIGZldyBhcmd1bWVudHMgdG8gZnVuY3Rpb24gJ2RybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxp
-cCcKICByZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxM
-LCBmbGFncyk7CiAgICAgICAgXgpJbiBmaWxlIGluY2x1ZGVkIGZyb20gZHJpdmVycy9ncHUvZHJt
-L3Ztd2dmeC92bXdnZnhfc3RkdS5jOjMyOjA6CmluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVy
-Lmg6MTI2OjU6IG5vdGU6IGRlY2xhcmVkIGhlcmUKIGludCBkcm1fYXRvbWljX2hlbHBlcl9wYWdl
-X2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAogICAgIF4KCkNhdXNlZCBieSBjb21taXQKCiAg
-NDEyOTJiMWZhMTNhICgiZHJtOiBBZGQgYWNxdWlyZSBjdHggcGFyYW1ldGVyIHRvIC0+cGFnZV9m
-bGlwKF90YXJnZXQpIikKCmludGVyYWN0aW5nIHdpdGggY29tbWl0cwoKICA5MDRiYjVlNTgxN2Yg
-KCJkcm0vdm13Z2Z4OiBTd2l0Y2ggb3ZlciB0byBpbnRlcm5hbCBhdG9taWMgQVBJIGZvciBTVERV
-IikKICBiMDExOWNiOTIyOWQgKCJkcm0vdm13Z2Z4OiBTd2l0Y2ggb3ZlciB0byBpbnRlcm5hbCBh
-dG9taWMgQVBJIGZvciBTT1UgYW5kIExEVSIpCgpmcm9tIHRoZSBkcm0gdHJlZS4KCkkgYWRkZWQg
-dGhpcyBtZXJnZSBmaXggcGF0Y2ggZm9yIHRvZGF5OgoKRnJvbTogU3RlcGhlbiBSb3Rod2VsbCA8
-c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+CkRhdGU6IE1vbiwgMyBBcHIgMjAxNyAxMzoyNTo1NSArMTAw
-MApTdWJqZWN0OiBbUEFUQ0hdIGRybS92bXdnZng6IG1lcmdlIGZpeHVwIGZvciBwYWdlX2ZsaXAg
-QVBJIGNoYW5nZQoKU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1
-Zy5vcmcuYXU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jIHwgMiAr
-LQogZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jIHwgMiArLQogMiBmaWxlcyBj
-aGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dm
-eC92bXdnZnhfc2Nybi5jCmluZGV4IDAyYjhmMjU0MWRjYS4uOGQ3ZGM5ZGVmN2MyIDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vdm13Z2Z4L3Ztd2dmeF9zY3JuLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCkBAIC0zMjQsNyArMzI0LDcgQEAgc3RhdGljIGlu
-dCB2bXdfc291X2NydGNfcGFnZV9mbGlwKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywKIAkJcmV0dXJu
-IC1FSU5WQUw7CiAKIAlmbGFncyAmPSB+RFJNX01PREVfUEFHRV9GTElQX0FTWU5DOwotCXJldCA9
-IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZsYWdzKTsK
-KwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxMLCBm
-bGFncywgY3R4KTsKIAlpZiAocmV0KSB7CiAJCURSTV9FUlJPUigiUGFnZSBmbGlwIGVycm9yICVk
-LlxuIiwgcmV0KTsKIAkJcmV0dXJuIHJldDsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92
-bXdnZngvdm13Z2Z4X3N0ZHUuYyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N0ZHUu
-YwppbmRleCBlNTliYmNkOGIyMjYuLmJhZDMxYmRmMDliNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS92bXdnZngv
-dm13Z2Z4X3N0ZHUuYwpAQCAtNTA1LDcgKzUwNSw3IEBAIHN0YXRpYyBpbnQgdm13X3N0ZHVfY3J0
-Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAogCSAqIGRvbid0IGhhbmQgaXQgdG8g
-dGhlIGhlbHBlci4KIAkgKi8KIAlmbGFncyAmPSB+RFJNX01PREVfUEFHRV9GTElQX0FTWU5DOwot
-CXJldCA9IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZs
-YWdzKTsKKwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBO
-VUxMLCBmbGFncywgY3R4KTsKIAlpZiAocmV0KSB7CiAJCURSTV9FUlJPUigiUGFnZSBmbGlwIGVy
-cm9yICVkLlxuIiwgcmV0KTsKIAkJcmV0dXJuIHJldDsKLS0gCjIuMTEuMAoKLS0gCkNoZWVycywK
-U3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+Hi Michael,
+
+On Thu, 30 Mar 2017 15:25:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the vhost tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> drivers/remoteproc/remoteproc_virtio.c: In function 'rproc_virtio_find_vqs':
+> drivers/remoteproc/remoteproc_virtio.c:148:9: error: 'ctx' undeclared (first use in this function)
+>          ctx ? ctx[i] : false);
+>          ^
+> 
+> Caused by commit
+> 
+>   a965e977a103 ("virtio: add context flag to find vqs")
+> 
+> I have used the vhost tree from next-20170329 for today.
+
+I am still getting this.
+-- 
+Cheers,
+Stephen Rothwell
