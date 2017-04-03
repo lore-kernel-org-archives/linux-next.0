@@ -1,34 +1,55 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: unsigned commits in the gfs2 tree
-Date: Tue, 4 Apr 2017 01:54:41 +1000
-Message-ID: <20170404015441.6e1ada59@canb.auug.org.au>
-References: <20170327002220.0b800d75@canb.auug.org.au>
-        <201585065.10432946.1491226464555.JavaMail.zimbra@redhat.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 3 (scsi/lpfc)
+Date: Mon, 3 Apr 2017 10:20:58 -0700
+Message-ID: <79805f28-6d5c-fa04-4335-60a51b274250@infradead.org>
+References: <20170403181304.13b3160f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57855 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752144AbdDCPyp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 3 Apr 2017 11:54:45 -0400
-In-Reply-To: <201585065.10432946.1491226464555.JavaMail.zimbra@redhat.com>
+Received: from bombadil.infradead.org ([65.50.211.133]:43081 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752301AbdDCRVA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Apr 2017 13:21:00 -0400
+In-Reply-To: <20170403181304.13b3160f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bob Peterson <rpeterso@redhat.com>
-Cc: Steven Whitehouse <swhiteho@redhat.com>, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, james smart <james.smart@broadcom.com>, dick kennedy <dick.kennedy@broadcom.com>
 
-Hi Bob,
-
-On Mon, 3 Apr 2017 09:34:24 -0400 (EDT) Bob Peterson <rpeterso@redhat.com> wrote:
->
-> As per your suggestion, I added a comment to the merge commit:
-> https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/commit/?h=for-next&id=df029f7bc32dd76ca85ecddc90e7e6a051192f2d
+On 04/03/17 01:13, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Let me know if you see a problem.
+> Changes since 20170331:
+> 
 
-Looks good, thanks.
+on i386:
+
+when SCSI_LPFC=y and
+CONFIG_NVME_CORE=m
+CONFIG_BLK_DEV_NVME=m
+CONFIG_BLK_DEV_NVME_SCSI=y
+CONFIG_NVME_FABRICS=m
+CONFIG_NVME_FC=m
+CONFIG_NVME_TARGET=m
+
+drivers/built-in.o: In function `lpfc_nvme_create_localport':
+(.text+0x28ce6b): undefined reference to `nvme_fc_register_localport'
+drivers/built-in.o: In function `lpfc_nvme_destroy_localport':
+(.text+0x28d263): undefined reference to `nvme_fc_unregister_remoteport'
+drivers/built-in.o: In function `lpfc_nvme_destroy_localport':
+(.text+0x28d2d3): undefined reference to `nvme_fc_unregister_localport'
+drivers/built-in.o: In function `lpfc_nvme_register_port':
+(.text+0x28d576): undefined reference to `nvme_fc_register_remoteport'
+drivers/built-in.o: In function `lpfc_nvme_unregister_port':
+(.text+0x28d93c): undefined reference to `nvme_fc_unregister_remoteport'
+
+
+so SCSI_LPFC depends on NVME_FC...
+
+
+
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
 
 -- 
-Cheers,
-Stephen Rothwell
+~Randy
