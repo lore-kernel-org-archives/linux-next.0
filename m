@@ -1,55 +1,84 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 3 (scsi/lpfc)
-Date: Mon, 3 Apr 2017 10:20:58 -0700
-Message-ID: <79805f28-6d5c-fa04-4335-60a51b274250@infradead.org>
-References: <20170403181304.13b3160f@canb.auug.org.au>
+From: Sinclair Yeh <syeh@vmware.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Date: Mon, 3 Apr 2017 10:26:52 -0700
+Message-ID: <20170403172652.GB61621@syeh-m02>
+References: <20170403133129.357df27f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:43081 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752301AbdDCRVA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Apr 2017 13:21:00 -0400
-In-Reply-To: <20170403181304.13b3160f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, james smart <james.smart@broadcom.com>, dick kennedy <dick.kennedy@broadcom.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <20170403133129.357df27f@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 04/03/17 01:13, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20170331:
-> 
-
-on i386:
-
-when SCSI_LPFC=y and
-CONFIG_NVME_CORE=m
-CONFIG_BLK_DEV_NVME=m
-CONFIG_BLK_DEV_NVME_SCSI=y
-CONFIG_NVME_FABRICS=m
-CONFIG_NVME_FC=m
-CONFIG_NVME_TARGET=m
-
-drivers/built-in.o: In function `lpfc_nvme_create_localport':
-(.text+0x28ce6b): undefined reference to `nvme_fc_register_localport'
-drivers/built-in.o: In function `lpfc_nvme_destroy_localport':
-(.text+0x28d263): undefined reference to `nvme_fc_unregister_remoteport'
-drivers/built-in.o: In function `lpfc_nvme_destroy_localport':
-(.text+0x28d2d3): undefined reference to `nvme_fc_unregister_localport'
-drivers/built-in.o: In function `lpfc_nvme_register_port':
-(.text+0x28d576): undefined reference to `nvme_fc_register_remoteport'
-drivers/built-in.o: In function `lpfc_nvme_unregister_port':
-(.text+0x28d93c): undefined reference to `nvme_fc_unregister_remoteport'
-
-
-so SCSI_LPFC depends on NVME_FC...
-
-
-
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-
--- 
-~Randy
+VGhhbmtzIGZvciB0aGlzLiAgIFRoaXMgYW5kICJkcm0vdm13Z2Z4OiBtZXJnZSBmaXh1cCBmb3Ig
+c2V0X2NvbmZpZyBBUEkgY2hhbmdlIjoKClJldmlld2VkLWJ5OiBTaW5jbGFpciBZZWggPHN5ZWhA
+dm13YXJlLmNvbT4KCk9uIE1vbiwgQXByIDAzLCAyMDE3IGF0IDAxOjMxOjI5UE0gKzEwMDAsIFN0
+ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIGRy
+bS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0Cj4gYWxsbW9kY29u
+ZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4
+X3Njcm4uYzogSW4gZnVuY3Rpb24gJ3Ztd19zb3VfY3J0Y19wYWdlX2ZsaXAnOgo+IGRyaXZlcnMv
+Z3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYzozMjc6ODogZXJyb3I6IHRvbyBmZXcgYXJndW1l
+bnRzIHRvIGZ1bmN0aW9uICdkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAnCj4gICByZXQgPSBk
+cm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxMLCBmbGFncyk7Cj4g
+ICAgICAgICBeCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS92bXdnZngv
+dm13Z2Z4X3Njcm4uYzozMTowOgo+IGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmg6MTI2
+OjU6IG5vdGU6IGRlY2xhcmVkIGhlcmUKPiAgaW50IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxp
+cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfc3RkdS5jOiBJbiBmdW5jdGlvbiAndm13X3N0ZHVfY3J0Y19wYWdlX2ZsaXAnOgo+
+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N0ZHUuYzo1MDg6ODogZXJyb3I6IHRvbyBm
+ZXcgYXJndW1lbnRzIHRvIGZ1bmN0aW9uICdkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAnCj4g
+ICByZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxMLCBm
+bGFncyk7Cj4gICAgICAgICBeCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2Ry
+bS92bXdnZngvdm13Z2Z4X3N0ZHUuYzozMjowOgo+IGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVs
+cGVyLmg6MTI2OjU6IG5vdGU6IGRlY2xhcmVkIGhlcmUKPiAgaW50IGRybV9hdG9taWNfaGVscGVy
+X3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gICAgICBeCj4gCj4gQ2F1c2VkIGJ5
+IGNvbW1pdAo+IAo+ICAgNDEyOTJiMWZhMTNhICgiZHJtOiBBZGQgYWNxdWlyZSBjdHggcGFyYW1l
+dGVyIHRvIC0+cGFnZV9mbGlwKF90YXJnZXQpIikKPiAKPiBpbnRlcmFjdGluZyB3aXRoIGNvbW1p
+dHMKPiAKPiAgIDkwNGJiNWU1ODE3ZiAoImRybS92bXdnZng6IFN3aXRjaCBvdmVyIHRvIGludGVy
+bmFsIGF0b21pYyBBUEkgZm9yIFNURFUiKQo+ICAgYjAxMTljYjkyMjlkICgiZHJtL3Ztd2dmeDog
+U3dpdGNoIG92ZXIgdG8gaW50ZXJuYWwgYXRvbWljIEFQSSBmb3IgU09VIGFuZCBMRFUiKQo+IAo+
+IGZyb20gdGhlIGRybSB0cmVlLgo+IAo+IEkgYWRkZWQgdGhpcyBtZXJnZSBmaXggcGF0Y2ggZm9y
+IHRvZGF5Ogo+IAo+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1
+Pgo+IERhdGU6IE1vbiwgMyBBcHIgMjAxNyAxMzoyNTo1NSArMTAwMAo+IFN1YmplY3Q6IFtQQVRD
+SF0gZHJtL3Ztd2dmeDogbWVyZ2UgZml4dXAgZm9yIHBhZ2VfZmxpcCBBUEkgY2hhbmdlCj4gCj4g
+U2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4g
+LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYyB8IDIgKy0KPiAgZHJp
+dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jIHwgMiArLQo+ICAyIGZpbGVzIGNoYW5n
+ZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dm
+eC92bXdnZnhfc2Nybi5jCj4gaW5kZXggMDJiOGYyNTQxZGNhLi44ZDdkYzlkZWY3YzIgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCj4gQEAgLTMyNCw3ICszMjQsNyBAQCBz
+dGF0aWMgaW50IHZtd19zb3VfY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+
+ICAJCXJldHVybiAtRUlOVkFMOwo+ICAKPiAgCWZsYWdzICY9IH5EUk1fTU9ERV9QQUdFX0ZMSVBf
+QVNZTkM7Cj4gLQlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2Zi
+LCBOVUxMLCBmbGFncyk7Cj4gKwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0
+YywgbmV3X2ZiLCBOVUxMLCBmbGFncywgY3R4KTsKPiAgCWlmIChyZXQpIHsKPiAgCQlEUk1fRVJS
+T1IoIlBhZ2UgZmxpcCBlcnJvciAlZC5cbiIsIHJldCk7Cj4gIAkJcmV0dXJuIHJldDsKPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jIGIvZHJpdmVycy9n
+cHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCj4gaW5kZXggZTU5YmJjZDhiMjI2Li5iYWQzMWJk
+ZjA5YjYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5j
+Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCj4gQEAgLTUwNSw3
+ICs1MDUsNyBAQCBzdGF0aWMgaW50IHZtd19zdGR1X2NydGNfcGFnZV9mbGlwKHN0cnVjdCBkcm1f
+Y3J0YyAqY3J0YywKPiAgCSAqIGRvbid0IGhhbmQgaXQgdG8gdGhlIGhlbHBlci4KPiAgCSAqLwo+
+ICAJZmxhZ3MgJj0gfkRSTV9NT0RFX1BBR0VfRkxJUF9BU1lOQzsKPiAtCXJldCA9IGRybV9hdG9t
+aWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZsYWdzKTsKPiArCXJldCA9
+IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZsYWdzLCBj
+dHgpOwo+ICAJaWYgKHJldCkgewo+ICAJCURSTV9FUlJPUigiUGFnZSBmbGlwIGVycm9yICVkLlxu
+IiwgcmV0KTsKPiAgCQlyZXR1cm4gcmV0Owo+IC0tIAo+IDIuMTEuMAo+IAo+IC0tIAo+IENoZWVy
+cywKPiBTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
