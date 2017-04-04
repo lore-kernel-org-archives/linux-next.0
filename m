@@ -1,40 +1,24 @@
-From: Simon Horman <simon.horman@netronome.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 4 Apr 2017 10:48:35 -0400
-Message-ID: <20170404144833.GC32295@vergenet.net>
-References: <20170404111357.26975ab4@canb.auug.org.au>
+From: "Nguyen Van Thang" <nguyenvanthang1819@gmail.com>
+Subject: Help spread the word and save a life today
+Date: Tue, 04 Apr 2017 13:09:41 +0100
+Message-ID: <19740414213608.C5320B234C61B74C@st-relay2.essexschools.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170404111357.26975ab4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from st-relay2.essexschools.org.uk ([94.101.167.248]:54224 "EHLO
+        st-relay2.essexschools.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753029AbdDDTKX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Apr 2017 15:10:23 -0400
+Content-Description: Mail message body
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Recipients <nguyenvanthang1819@gmail.com>
 
-On Tue, Apr 04, 2017 at 11:13:57AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the net-next tree got a conflict in:
-> 
->   net/core/flow_dissector.c
-> 
-> between commit:
-> 
->   ac6a3722fed6 ("flow dissector: correct size of storage for ARP")
-> 
-> from the net tree and commit:
-> 
->   9bf881ffc5c0 ("flow_dissector: Move ARP dissection into a separate function")
-> 
-> from the net-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Please help to donate any amount to safe this baby's life, I just donated now. 
 
-Thanks Stephen, the fix looks correct to me.
+To read more and donate use the link below. 
+
+https://www.gofundme.com/baby-tue-minh-medical-fund/ 
+
+Thank you
