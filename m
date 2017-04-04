@@ -1,59 +1,51 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Tue, 04 Apr 2017 15:31:15 +0300
-Message-ID: <1491309075.708.125.camel@linux.intel.com>
-References: <20170404164453.677dc74a@canb.auug.org.au>
-         <20170404081937.npgk3cwx7bv5igzg@dell>
-         <20170404082156.yhepja5bveahlegr@dell>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170404 build: 1 failures 3 warnings (next-20170404)
+Date: Tue, 4 Apr 2017 13:36:04 +0100
+Message-ID: <20170404123604.hhiajnks7i2gifsa@sirena.org.uk>
+References: <E1cvMgy-00057J-Hs@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170404082156.yhepja5bveahlegr@dell>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tknrapelwoz6tozr"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44892 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751031AbdDDMgW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Apr 2017 08:36:22 -0400
+Content-Disposition: inline
+In-Reply-To: <E1cvMgy-00057J-Hs@optimist>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-rdma@vger.kernel.org
 
-On Tue, 2017-04-04 at 09:21 +0100, Lee Jones wrote:
-> On Tue, 04 Apr 2017, Lee Jones wrote:
-> 
-> > On Tue, 04 Apr 2017, Stephen Rothwell wrote:
-> > 
-> > > Hi Lee,
-> > > 
-> > > After merging the mfd tree, today's linux-next build (powerpc
-> > > allyesconfig) failed like this:
-> > > 
-> > > /home/sfr/next/next/drivers/mfd/intel_soc_pmic_bxtwc.c:25:31:
-> > > fatal error: asm/intel_pmc_ipc.h: No such file or directory
-> > > 
-> > > Caused by commit
-> > > 
-> > >   eb2a445f7d8f ("mfd: intel_soc_pmic: Fix a mess with compilation
-> > > units")
-> > > 
-> > > I have reverted that commit for today.
-> > 
-> > Andy,
-> > 
-> > I'm pulling this commit.  Despite you thinking the error is
-> > unrelated
-> > to your patch, something is clearly wrong and I don't have time to
-> > investigate.
-> > 
-> > Ball is in your court.
-> 
-> Okay, I've had a *very* quick looks.
 
-> Seems as if you should be depending on INTEL_PMC_IPC.
+--tknrapelwoz6tozr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-As a quick fix, yes. As a proper fix the PMC/SCU mess should be fixed in
-a way to provide a header in include/platform_data/x86.
+On Tue, Apr 04, 2017 at 12:32:08PM +0100, Build bot for Mark Brown wrote:
 
-I will prepare v4.
-Thanks.
+This failure from last week is still present in -next today:
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+> 	arm64-allmodconfig
+> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
+> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
+
+I sent a fix at the time: https://patchwork.kernel.org/patch/9654357/
+
+--tknrapelwoz6tozr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljjkzMACgkQJNaLcl1U
+h9DmNAf/c6U8LRwpYiv2yTUxJLTlaVx4nLZOaNHeTLnAoeY7KtNernulmfXbmxt5
+969iIIVqjTYNeMDoF72o+VDDfRr6FF/bRgRXlPT0knlcHikQTbFTP+aypXU0iPGv
+W/9155+Q8xXzwl+CyNwat8+iYzHIOquPHKpmGnQczFfD8S1B8OtdvDbqziI425GY
+1grruIDrc50gYGht8eYjz98XjNqh9L6Z0Sv9ea5OTGD/x30la9sqrf2WLMfqjjs1
+DK0Q1Exj/BA9kEIcNK3Sf6nHIdDelN8AWhmInQ33T5veKu5zgNVVbcDeKaqG789p
+ik9IM6mNikBz3GaluxwuW5L8MBRg2w==
+=zl4S
+-----END PGP SIGNATURE-----
+
+--tknrapelwoz6tozr--
