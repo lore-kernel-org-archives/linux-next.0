@@ -1,84 +1,266 @@
-From: Sinclair Yeh <syeh@vmware.com>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Mon, 3 Apr 2017 10:26:52 -0700
-Message-ID: <20170403172652.GB61621@syeh-m02>
-References: <20170403133129.357df27f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 4 Apr 2017 11:13:57 +1000
+Message-ID: <20170404111357.26975ab4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170403133129.357df27f@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37215 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751362AbdDDBOB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 3 Apr 2017 21:14:01 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simon Horman <simon.horman@netronome.com>, Jiri Pirko <jiri@mellanox.com>
 
-VGhhbmtzIGZvciB0aGlzLiAgIFRoaXMgYW5kICJkcm0vdm13Z2Z4OiBtZXJnZSBmaXh1cCBmb3Ig
-c2V0X2NvbmZpZyBBUEkgY2hhbmdlIjoKClJldmlld2VkLWJ5OiBTaW5jbGFpciBZZWggPHN5ZWhA
-dm13YXJlLmNvbT4KCk9uIE1vbiwgQXByIDAzLCAyMDE3IGF0IDAxOjMxOjI5UE0gKzEwMDAsIFN0
-ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIGRy
-bS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0Cj4gYWxsbW9kY29u
-ZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4
-X3Njcm4uYzogSW4gZnVuY3Rpb24gJ3Ztd19zb3VfY3J0Y19wYWdlX2ZsaXAnOgo+IGRyaXZlcnMv
-Z3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYzozMjc6ODogZXJyb3I6IHRvbyBmZXcgYXJndW1l
-bnRzIHRvIGZ1bmN0aW9uICdkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAnCj4gICByZXQgPSBk
-cm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxMLCBmbGFncyk7Cj4g
-ICAgICAgICBeCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2RybS92bXdnZngv
-dm13Z2Z4X3Njcm4uYzozMTowOgo+IGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVscGVyLmg6MTI2
-OjU6IG5vdGU6IGRlY2xhcmVkIGhlcmUKPiAgaW50IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxp
-cChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gICAgICBeCj4gZHJpdmVycy9ncHUvZHJtL3Ztd2dm
-eC92bXdnZnhfc3RkdS5jOiBJbiBmdW5jdGlvbiAndm13X3N0ZHVfY3J0Y19wYWdlX2ZsaXAnOgo+
-IGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3N0ZHUuYzo1MDg6ODogZXJyb3I6IHRvbyBm
-ZXcgYXJndW1lbnRzIHRvIGZ1bmN0aW9uICdkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAnCj4g
-ICByZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2ZiLCBOVUxMLCBm
-bGFncyk7Cj4gICAgICAgICBeCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tIGRyaXZlcnMvZ3B1L2Ry
-bS92bXdnZngvdm13Z2Z4X3N0ZHUuYzozMjowOgo+IGluY2x1ZGUvZHJtL2RybV9hdG9taWNfaGVs
-cGVyLmg6MTI2OjU6IG5vdGU6IGRlY2xhcmVkIGhlcmUKPiAgaW50IGRybV9hdG9taWNfaGVscGVy
-X3BhZ2VfZmxpcChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsCj4gICAgICBeCj4gCj4gQ2F1c2VkIGJ5
-IGNvbW1pdAo+IAo+ICAgNDEyOTJiMWZhMTNhICgiZHJtOiBBZGQgYWNxdWlyZSBjdHggcGFyYW1l
-dGVyIHRvIC0+cGFnZV9mbGlwKF90YXJnZXQpIikKPiAKPiBpbnRlcmFjdGluZyB3aXRoIGNvbW1p
-dHMKPiAKPiAgIDkwNGJiNWU1ODE3ZiAoImRybS92bXdnZng6IFN3aXRjaCBvdmVyIHRvIGludGVy
-bmFsIGF0b21pYyBBUEkgZm9yIFNURFUiKQo+ICAgYjAxMTljYjkyMjlkICgiZHJtL3Ztd2dmeDog
-U3dpdGNoIG92ZXIgdG8gaW50ZXJuYWwgYXRvbWljIEFQSSBmb3IgU09VIGFuZCBMRFUiKQo+IAo+
-IGZyb20gdGhlIGRybSB0cmVlLgo+IAo+IEkgYWRkZWQgdGhpcyBtZXJnZSBmaXggcGF0Y2ggZm9y
-IHRvZGF5Ogo+IAo+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1
-Pgo+IERhdGU6IE1vbiwgMyBBcHIgMjAxNyAxMzoyNTo1NSArMTAwMAo+IFN1YmplY3Q6IFtQQVRD
-SF0gZHJtL3Ztd2dmeDogbWVyZ2UgZml4dXAgZm9yIHBhZ2VfZmxpcCBBUEkgY2hhbmdlCj4gCj4g
-U2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4g
-LS0tCj4gIGRyaXZlcnMvZ3B1L2RybS92bXdnZngvdm13Z2Z4X3Njcm4uYyB8IDIgKy0KPiAgZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jIHwgMiArLQo+ICAyIGZpbGVzIGNoYW5n
-ZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dm
-eC92bXdnZnhfc2Nybi5jCj4gaW5kZXggMDJiOGYyNTQxZGNhLi44ZDdkYzlkZWY3YzIgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCj4gKysrIGIvZHJp
-dmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc2Nybi5jCj4gQEAgLTMyNCw3ICszMjQsNyBAQCBz
-dGF0aWMgaW50IHZtd19zb3VfY3J0Y19wYWdlX2ZsaXAoc3RydWN0IGRybV9jcnRjICpjcnRjLAo+
-ICAJCXJldHVybiAtRUlOVkFMOwo+ICAKPiAgCWZsYWdzICY9IH5EUk1fTU9ERV9QQUdFX0ZMSVBf
-QVNZTkM7Cj4gLQlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0YywgbmV3X2Zi
-LCBOVUxMLCBmbGFncyk7Cj4gKwlyZXQgPSBkcm1fYXRvbWljX2hlbHBlcl9wYWdlX2ZsaXAoY3J0
-YywgbmV3X2ZiLCBOVUxMLCBmbGFncywgY3R4KTsKPiAgCWlmIChyZXQpIHsKPiAgCQlEUk1fRVJS
-T1IoIlBhZ2UgZmxpcCBlcnJvciAlZC5cbiIsIHJldCk7Cj4gIAkJcmV0dXJuIHJldDsKPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jIGIvZHJpdmVycy9n
-cHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCj4gaW5kZXggZTU5YmJjZDhiMjI2Li5iYWQzMWJk
-ZjA5YjYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5j
-Cj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3Ztd2dmeC92bXdnZnhfc3RkdS5jCj4gQEAgLTUwNSw3
-ICs1MDUsNyBAQCBzdGF0aWMgaW50IHZtd19zdGR1X2NydGNfcGFnZV9mbGlwKHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywKPiAgCSAqIGRvbid0IGhhbmQgaXQgdG8gdGhlIGhlbHBlci4KPiAgCSAqLwo+
-ICAJZmxhZ3MgJj0gfkRSTV9NT0RFX1BBR0VfRkxJUF9BU1lOQzsKPiAtCXJldCA9IGRybV9hdG9t
-aWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZsYWdzKTsKPiArCXJldCA9
-IGRybV9hdG9taWNfaGVscGVyX3BhZ2VfZmxpcChjcnRjLCBuZXdfZmIsIE5VTEwsIGZsYWdzLCBj
-dHgpOwo+ICAJaWYgKHJldCkgewo+ICAJCURSTV9FUlJPUigiUGFnZSBmbGlwIGVycm9yICVkLlxu
-IiwgcmV0KTsKPiAgCQlyZXR1cm4gcmV0Owo+IC0tIAo+IDIuMTEuMAo+IAo+IC0tIAo+IENoZWVy
-cywKPiBTdGVwaGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+Hi all,
+
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  net/core/flow_dissector.c
+
+between commit:
+
+  ac6a3722fed6 ("flow dissector: correct size of storage for ARP")
+
+from the net tree and commit:
+
+  9bf881ffc5c0 ("flow_dissector: Move ARP dissection into a separate function")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc net/core/flow_dissector.c
+index d98d4998213d,5f3ae922fcd1..000000000000
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@@ -113,6 -113,216 +113,216 @@@ __be32 __skb_flow_get_ports(const struc
+  }
+  EXPORT_SYMBOL(__skb_flow_get_ports);
+  
++ enum flow_dissect_ret {
++ 	FLOW_DISSECT_RET_OUT_GOOD,
++ 	FLOW_DISSECT_RET_OUT_BAD,
++ 	FLOW_DISSECT_RET_OUT_PROTO_AGAIN,
++ };
++ 
++ static enum flow_dissect_ret
++ __skb_flow_dissect_mpls(const struct sk_buff *skb,
++ 			struct flow_dissector *flow_dissector,
++ 			void *target_container, void *data, int nhoff, int hlen)
++ {
++ 	struct flow_dissector_key_keyid *key_keyid;
++ 	struct mpls_label *hdr, _hdr[2];
++ 
++ 	if (!dissector_uses_key(flow_dissector,
++ 				FLOW_DISSECTOR_KEY_MPLS_ENTROPY))
++ 		return FLOW_DISSECT_RET_OUT_GOOD;
++ 
++ 	hdr = __skb_header_pointer(skb, nhoff, sizeof(_hdr), data,
++ 				   hlen, &_hdr);
++ 	if (!hdr)
++ 		return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 	if ((ntohl(hdr[0].entry) & MPLS_LS_LABEL_MASK) >>
++ 	    MPLS_LS_LABEL_SHIFT == MPLS_LABEL_ENTROPY) {
++ 		key_keyid = skb_flow_dissector_target(flow_dissector,
++ 						      FLOW_DISSECTOR_KEY_MPLS_ENTROPY,
++ 						      target_container);
++ 		key_keyid->keyid = hdr[1].entry & htonl(MPLS_LS_LABEL_MASK);
++ 	}
++ 	return FLOW_DISSECT_RET_OUT_GOOD;
++ }
++ 
++ static enum flow_dissect_ret
++ __skb_flow_dissect_arp(const struct sk_buff *skb,
++ 		       struct flow_dissector *flow_dissector,
++ 		       void *target_container, void *data, int nhoff, int hlen)
++ {
++ 	struct flow_dissector_key_arp *key_arp;
++ 	struct {
++ 		unsigned char ar_sha[ETH_ALEN];
++ 		unsigned char ar_sip[4];
++ 		unsigned char ar_tha[ETH_ALEN];
++ 		unsigned char ar_tip[4];
++ 	} *arp_eth, _arp_eth;
++ 	const struct arphdr *arp;
+ -	struct arphdr *_arp;
+++	struct arphdr _arp;
++ 
++ 	if (!dissector_uses_key(flow_dissector, FLOW_DISSECTOR_KEY_ARP))
++ 		return FLOW_DISSECT_RET_OUT_GOOD;
++ 
++ 	arp = __skb_header_pointer(skb, nhoff, sizeof(_arp), data,
++ 				   hlen, &_arp);
++ 	if (!arp)
++ 		return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 	if (arp->ar_hrd != htons(ARPHRD_ETHER) ||
++ 	    arp->ar_pro != htons(ETH_P_IP) ||
++ 	    arp->ar_hln != ETH_ALEN ||
++ 	    arp->ar_pln != 4 ||
++ 	    (arp->ar_op != htons(ARPOP_REPLY) &&
++ 	     arp->ar_op != htons(ARPOP_REQUEST)))
++ 		return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 	arp_eth = __skb_header_pointer(skb, nhoff + sizeof(_arp),
++ 				       sizeof(_arp_eth), data,
++ 				       hlen, &_arp_eth);
++ 	if (!arp_eth)
++ 		return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 	key_arp = skb_flow_dissector_target(flow_dissector,
++ 					    FLOW_DISSECTOR_KEY_ARP,
++ 					    target_container);
++ 
++ 	memcpy(&key_arp->sip, arp_eth->ar_sip, sizeof(key_arp->sip));
++ 	memcpy(&key_arp->tip, arp_eth->ar_tip, sizeof(key_arp->tip));
++ 
++ 	/* Only store the lower byte of the opcode;
++ 	 * this covers ARPOP_REPLY and ARPOP_REQUEST.
++ 	 */
++ 	key_arp->op = ntohs(arp->ar_op) & 0xff;
++ 
++ 	ether_addr_copy(key_arp->sha, arp_eth->ar_sha);
++ 	ether_addr_copy(key_arp->tha, arp_eth->ar_tha);
++ 
++ 	return FLOW_DISSECT_RET_OUT_GOOD;
++ }
++ 
++ static enum flow_dissect_ret
++ __skb_flow_dissect_gre(const struct sk_buff *skb,
++ 		       struct flow_dissector_key_control *key_control,
++ 		       struct flow_dissector *flow_dissector,
++ 		       void *target_container, void *data,
++ 		       __be16 *p_proto, int *p_nhoff, int *p_hlen,
++ 		       unsigned int flags)
++ {
++ 	struct flow_dissector_key_keyid *key_keyid;
++ 	struct gre_base_hdr *hdr, _hdr;
++ 	int offset = 0;
++ 	u16 gre_ver;
++ 
++ 	hdr = __skb_header_pointer(skb, *p_nhoff, sizeof(_hdr),
++ 				   data, *p_hlen, &_hdr);
++ 	if (!hdr)
++ 		return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 	/* Only look inside GRE without routing */
++ 	if (hdr->flags & GRE_ROUTING)
++ 		return FLOW_DISSECT_RET_OUT_GOOD;
++ 
++ 	/* Only look inside GRE for version 0 and 1 */
++ 	gre_ver = ntohs(hdr->flags & GRE_VERSION);
++ 	if (gre_ver > 1)
++ 		return FLOW_DISSECT_RET_OUT_GOOD;
++ 
++ 	*p_proto = hdr->protocol;
++ 	if (gre_ver) {
++ 		/* Version1 must be PPTP, and check the flags */
++ 		if (!(*p_proto == GRE_PROTO_PPP && (hdr->flags & GRE_KEY)))
++ 			return FLOW_DISSECT_RET_OUT_GOOD;
++ 	}
++ 
++ 	offset += sizeof(struct gre_base_hdr);
++ 
++ 	if (hdr->flags & GRE_CSUM)
++ 		offset += sizeof(((struct gre_full_hdr *) 0)->csum) +
++ 			  sizeof(((struct gre_full_hdr *) 0)->reserved1);
++ 
++ 	if (hdr->flags & GRE_KEY) {
++ 		const __be32 *keyid;
++ 		__be32 _keyid;
++ 
++ 		keyid = __skb_header_pointer(skb, *p_nhoff + offset,
++ 					     sizeof(_keyid),
++ 					     data, *p_hlen, &_keyid);
++ 		if (!keyid)
++ 			return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 		if (dissector_uses_key(flow_dissector,
++ 				       FLOW_DISSECTOR_KEY_GRE_KEYID)) {
++ 			key_keyid = skb_flow_dissector_target(flow_dissector,
++ 							      FLOW_DISSECTOR_KEY_GRE_KEYID,
++ 							      target_container);
++ 			if (gre_ver == 0)
++ 				key_keyid->keyid = *keyid;
++ 			else
++ 				key_keyid->keyid = *keyid & GRE_PPTP_KEY_MASK;
++ 		}
++ 		offset += sizeof(((struct gre_full_hdr *) 0)->key);
++ 	}
++ 
++ 	if (hdr->flags & GRE_SEQ)
++ 		offset += sizeof(((struct pptp_gre_header *) 0)->seq);
++ 
++ 	if (gre_ver == 0) {
++ 		if (*p_proto == htons(ETH_P_TEB)) {
++ 			const struct ethhdr *eth;
++ 			struct ethhdr _eth;
++ 
++ 			eth = __skb_header_pointer(skb, *p_nhoff + offset,
++ 						   sizeof(_eth),
++ 						   data, *p_hlen, &_eth);
++ 			if (!eth)
++ 				return FLOW_DISSECT_RET_OUT_BAD;
++ 			*p_proto = eth->h_proto;
++ 			offset += sizeof(*eth);
++ 
++ 			/* Cap headers that we access via pointers at the
++ 			 * end of the Ethernet header as our maximum alignment
++ 			 * at that point is only 2 bytes.
++ 			 */
++ 			if (NET_IP_ALIGN)
++ 				*p_hlen = *p_nhoff + offset;
++ 		}
++ 	} else { /* version 1, must be PPTP */
++ 		u8 _ppp_hdr[PPP_HDRLEN];
++ 		u8 *ppp_hdr;
++ 
++ 		if (hdr->flags & GRE_ACK)
++ 			offset += sizeof(((struct pptp_gre_header *) 0)->ack);
++ 
++ 		ppp_hdr = __skb_header_pointer(skb, *p_nhoff + offset,
++ 					       sizeof(_ppp_hdr),
++ 					       data, *p_hlen, _ppp_hdr);
++ 		if (!ppp_hdr)
++ 			return FLOW_DISSECT_RET_OUT_BAD;
++ 
++ 		switch (PPP_PROTOCOL(ppp_hdr)) {
++ 		case PPP_IP:
++ 			*p_proto = htons(ETH_P_IP);
++ 			break;
++ 		case PPP_IPV6:
++ 			*p_proto = htons(ETH_P_IPV6);
++ 			break;
++ 		default:
++ 			/* Could probably catch some more like MPLS */
++ 			break;
++ 		}
++ 
++ 		offset += PPP_HDRLEN;
++ 	}
++ 
++ 	*p_nhoff += offset;
++ 	key_control->flags |= FLOW_DIS_ENCAPSULATION;
++ 	if (flags & FLOW_DISSECTOR_F_STOP_AT_ENCAP)
++ 		return FLOW_DISSECT_RET_OUT_GOOD;
++ 
++ 	return FLOW_DISSECT_RET_OUT_PROTO_AGAIN;
++ }
++ 
+  /**
+   * __skb_flow_dissect - extract the flow_keys struct and return it
+   * @skb: sk_buff to extract the flow from, can be NULL if the rest are specified
