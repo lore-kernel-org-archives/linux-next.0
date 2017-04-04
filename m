@@ -1,85 +1,80 @@
-From: <muirs@stolaf.edu>
-Subject: 28607 linux-next
-Date: Tue, 04 Apr 2017 10:34:32 -0000
-Message-ID: <149130207276.6121.4255257191956940570@hinet.net>
-Reply-To: <muirs@stolaf.edu>
-Mime-Version: 1.0
-Content-Type: application/zip; name="342506.zip"
-Content-Transfer-Encoding: base64
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170404 build: 1 failures 3 warnings (next-20170404)
+Date: Tue, 04 Apr 2017 12:32:08 +0100
+Message-ID: <E1cvMgy-00057J-Hs@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 114-39-141-85.dynamic.hinet.net ([114.39.141.85]:50173 "HELO
-        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1753403AbdDDKek (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 4 Apr 2017 06:34:40 -0400
-Content-Disposition: attachment
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44532 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753215AbdDDLcP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Apr 2017 07:32:15 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-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
+Tree/Branch: next-20170404
+Git describe: next-20170404
+Commit: b6937029f6 Add linux-next specific files for 20170404
+
+Build Time: 102 min 12 sec
+
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
+
+Errors: 2
+Warnings: 3
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
+../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
+	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 3
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
+	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
+
+Warnings:
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
