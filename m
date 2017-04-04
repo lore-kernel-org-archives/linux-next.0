@@ -1,51 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170404 build: 1 failures 3 warnings (next-20170404)
-Date: Tue, 4 Apr 2017 13:36:04 +0100
-Message-ID: <20170404123604.hhiajnks7i2gifsa@sirena.org.uk>
-References: <E1cvMgy-00057J-Hs@optimist>
+From: Simon Horman <simon.horman@netronome.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 4 Apr 2017 10:48:35 -0400
+Message-ID: <20170404144833.GC32295@vergenet.net>
+References: <20170404111357.26975ab4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="tknrapelwoz6tozr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44892 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751031AbdDDMgW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Apr 2017 08:36:22 -0400
-Content-Disposition: inline
-In-Reply-To: <E1cvMgy-00057J-Hs@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Lijun Ou <oulijun@huawei.com>, Wei Hu <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-rdma@vger.kernel.org
-
-
---tknrapelwoz6tozr
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20170404111357.26975ab4@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@mellanox.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 04, 2017 at 12:32:08PM +0100, Build bot for Mark Brown wrote:
+On Tue, Apr 04, 2017 at 11:13:57AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   net/core/flow_dissector.c
+> 
+> between commit:
+> 
+>   ac6a3722fed6 ("flow dissector: correct size of storage for ARP")
+> 
+> from the net tree and commit:
+> 
+>   9bf881ffc5c0 ("flow_dissector: Move ARP dissection into a separate function")
+> 
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-This failure from last week is still present in -next today:
-
-> 	arm64-allmodconfig
-> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-> ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-
-I sent a fix at the time: https://patchwork.kernel.org/patch/9654357/
-
---tknrapelwoz6tozr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljjkzMACgkQJNaLcl1U
-h9DmNAf/c6U8LRwpYiv2yTUxJLTlaVx4nLZOaNHeTLnAoeY7KtNernulmfXbmxt5
-969iIIVqjTYNeMDoF72o+VDDfRr6FF/bRgRXlPT0knlcHikQTbFTP+aypXU0iPGv
-W/9155+Q8xXzwl+CyNwat8+iYzHIOquPHKpmGnQczFfD8S1B8OtdvDbqziI425GY
-1grruIDrc50gYGht8eYjz98XjNqh9L6Z0Sv9ea5OTGD/x30la9sqrf2WLMfqjjs1
-DK0Q1Exj/BA9kEIcNK3Sf6nHIdDelN8AWhmInQ33T5veKu5zgNVVbcDeKaqG789p
-ik9IM6mNikBz3GaluxwuW5L8MBRg2w==
-=zl4S
------END PGP SIGNATURE-----
-
---tknrapelwoz6tozr--
+Thanks Stephen, the fix looks correct to me.
