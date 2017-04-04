@@ -1,80 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170404 build: 1 failures 3 warnings (next-20170404)
-Date: Tue, 04 Apr 2017 12:32:08 +0100
-Message-ID: <E1cvMgy-00057J-Hs@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44532 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753215AbdDDLcP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Apr 2017 07:32:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Tue, 04 Apr 2017 15:31:15 +0300
+Message-ID: <1491309075.708.125.camel@linux.intel.com>
+References: <20170404164453.677dc74a@canb.auug.org.au>
+         <20170404081937.npgk3cwx7bv5igzg@dell>
+         <20170404082156.yhepja5bveahlegr@dell>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170404082156.yhepja5bveahlegr@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170404
-Git describe: next-20170404
-Commit: b6937029f6 Add linux-next specific files for 20170404
+On Tue, 2017-04-04 at 09:21 +0100, Lee Jones wrote:
+> On Tue, 04 Apr 2017, Lee Jones wrote:
+> 
+> > On Tue, 04 Apr 2017, Stephen Rothwell wrote:
+> > 
+> > > Hi Lee,
+> > > 
+> > > After merging the mfd tree, today's linux-next build (powerpc
+> > > allyesconfig) failed like this:
+> > > 
+> > > /home/sfr/next/next/drivers/mfd/intel_soc_pmic_bxtwc.c:25:31:
+> > > fatal error: asm/intel_pmc_ipc.h: No such file or directory
+> > > 
+> > > Caused by commit
+> > > 
+> > >   eb2a445f7d8f ("mfd: intel_soc_pmic: Fix a mess with compilation
+> > > units")
+> > > 
+> > > I have reverted that commit for today.
+> > 
+> > Andy,
+> > 
+> > I'm pulling this commit.  Despite you thinking the error is
+> > unrelated
+> > to your patch, something is clearly wrong and I don't have time to
+> > investigate.
+> > 
+> > Ball is in your court.
+> 
+> Okay, I've had a *very* quick looks.
 
-Build Time: 102 min 12 sec
+> Seems as if you should be depending on INTEL_PMC_IPC.
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+As a quick fix, yes. As a proper fix the PMC/SCU mess should be fixed in
+a way to provide a header in include/platform_data/x86.
 
-Errors: 2
-Warnings: 3
-Section Mismatches: 0
+I will prepare v4.
+Thanks.
 
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 3
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
-	  1 ../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 2 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:15: error: implicit declaration of function 'of_parse_phandle' [-Werror=implicit-function-declaration]
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1389:22: error: dereferencing pointer to incomplete type 'struct device_node'
-
-Warnings:
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/infiniband/hw/hns/hns_roce_hw_v1.c:1384:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-	../drivers/misc/aspeed-lpc-ctrl.c:232:17: warning: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Wformat=]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
