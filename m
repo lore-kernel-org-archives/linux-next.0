@@ -1,44 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Wed, 5 Apr 2017 10:30:17 +1000
-Message-ID: <20170405103017.16b320b1@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drm-misc tree
+Date: Wed, 5 Apr 2017 10:41:13 +1000
+Message-ID: <20170405104113.051b731c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45337 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752934AbdDEAaU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 4 Apr 2017 20:30:20 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Thomas Hellstrom <thellstrom@vmware.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Neil Armstrong <narmstrong@baylibre.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
-
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-
-between commit:
-
-  f7652afa8ead ("drm/vmwgfx: Type-check lookups of fence objects")
-
-from Linus' tree and commit:
-
-  8dfe162ac74f ("gpu: drm: drivers: Convert printk(KERN_<LEVEL> to pr_<level>")
-
-from the drm tree.
-
-I fixed it up (the former moved and updated the code updated by
-the latter, so I just used the former) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
+ZXh0IGJ1aWxkCihhcm1fbXVsdGlfdjdfZGVmY29uZmlnKSBwcm9kdWNlZCB0aGlzIHdhcm5pbmc6
+Cgpkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3N5bm9wc3lzL2R3LWhkbWkuYzo2MDg6MTM6IHdhcm5p
+bmc6ICdoZG1pX2J1c19mbXRfaXNfeXV2NDIwJyBkZWZpbmVkIGJ1dCBub3QgdXNlZCBbLVd1bnVz
+ZWQtZnVuY3Rpb25dCiBzdGF0aWMgYm9vbCBoZG1pX2J1c19mbXRfaXNfeXV2NDIwKHVuc2lnbmVk
+IGludCBidXNfZm9ybWF0KQogICAgICAgICAgICAgXgoKSW50cm9kdWNlZCBieSBjb21taXQKCiAg
+ZGVmMjNhYTdlOTgyICgiZHJtOiBicmlkZ2U6IGR3LWhkbWk6IFN3aXRjaCB0byBWNEwgYnVzIGZv
+cm1hdCBhbmQgZW5jb2RpbmdzIikKCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
