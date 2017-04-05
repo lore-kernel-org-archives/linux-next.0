@@ -1,33 +1,44 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH] fixup! gpu: host1x: Add IOMMU support
-Date: Wed,  5 Apr 2017 10:45:44 +0300
-Message-ID: <20170405074544.29464-1-mperttunen@nvidia.com>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kapsi.fi ([217.30.184.167]:39245 "EHLO mail.kapsi.fi"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751960AbdDEHqy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 5 Apr 2017 03:46:54 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: thierry.reding@gmail.com
-Cc: sfr@canb.auug.org.au, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com, Mikko Perttunen <mperttunen@nvidia.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the amlogic tree
+Date: Wed, 5 Apr 2017 18:35:24 +0800
+Message-ID: <20170405103524.GA25944@gondor.apana.org.au>
+References: <20170405102138.3ac22175@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170405102138.3ac22175@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Neil Armstrong <narmstrong@baylibre.com>
+List-Id: linux-next.vger.kernel.org
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
----
- drivers/gpu/host1x/dev.c | 1 +
- 1 file changed, 1 insertion(+)
+On Wed, Apr 05, 2017 at 10:21:38AM +1000, Stephen Rothwell wrote:
+> Hi Herbert,
+> 
+> Today's linux-next merge of the crypto tree got a conflict in:
+> 
+>   arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> 
+> between commit:
+> 
+>   6939db7e0dbf ("ARM64: dts: meson-gx: Add support for HDMI output")
+> 
+> from the amlogic tree and commit:
+> 
+>   1b3f6d148692 ("ARM64: dts: meson-gx: add clock CLKID_RNG0 to hwrng node")
+> 
+> from the crypto tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
-index f8fda446a6a6..f05ebb14fa63 100644
---- a/drivers/gpu/host1x/dev.c
-+++ b/drivers/gpu/host1x/dev.c
-@@ -27,6 +27,7 @@
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/host1x.h>
-+#undef CREATE_TRACE_POINTS
- 
- #include "bus.h"
- #include "channel.h"
+Looks good to me.  Thanks Stephen.
 -- 
-2.11.1
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
