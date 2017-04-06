@@ -1,45 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the v4l-dvb tree
-Date: Thu, 6 Apr 2017 13:34:20 +1000
-Message-ID: <20170406133420.3e231d2a@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Thu, 6 Apr 2017 14:04:55 +1000
+Message-ID: <20170406140455.0ee0058f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39079 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36529 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753260AbdDFDeX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 5 Apr 2017 23:34:23 -0400
+        id S1750862AbdDFEE6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 6 Apr 2017 00:04:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Derek Robson <robsonde@gmail.com>, Sean Young <sean@mess.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fam Zheng <famz@redhat.com>
 
-Hi all,
+Hi James,
 
-Today's linux-next merge of the staging tree got conflicts in:
+After merging the scsi tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  drivers/staging/media/lirc/lirc_sasem.c
-  drivers/staging/media/lirc/lirc_sir.c
+In file included from include/linux/list.h:8:0,
+                 from include/linux/module.h:9,
+                 from drivers/scsi/sd.c:35:
+drivers/scsi/sd.c: In function 'sd_revalidate_disk':
+include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+  (void) (&min1 == &min2);   \
+                ^
+include/linux/kernel.h:758:2: note: in expansion of macro '__min'
+  __min(typeof(x), typeof(y),   \
+  ^
+include/linux/kernel.h:783:39: note: in expansion of macro 'min'
+  __x == 0 ? __y : ((__y == 0) ? __x : min(__x, __y)); })
+                                       ^
+drivers/scsi/sd.c:2959:12: note: in expansion of macro 'min_not_zero'
+   rw_max = min_not_zero(logical_to_sectors(sdp, dev_max),
+            ^
 
-between commits:
+Introduced by commit
 
-  e66267161971 ("[media] rc: promote lirc_sir out of staging")
-  51bb3fd788cb ("[media] staging: lirc_sasem: remove")
+  c3e62673ee20 ("scsi: sd: Consider max_xfer_blocks if opt_xfer_blocks is unusable")
 
-from the v4l-dvb tree and commit:
-
-  87ddb91067b9 ("Staging: media: lirc - style fix")
-
-from the staging tree.
-
-I fixed it up (I removed both files - the updates to lirc_sir.c were
-also done in the v4l-dvb tree) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+logical_to_sectors() is a sector_t and BLK_DEF_MAX_SECTORS is an "enum
+blk_default_limits" (i.e. int).
 
 -- 
 Cheers,
