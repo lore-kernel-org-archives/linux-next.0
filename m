@@ -1,53 +1,80 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] fixup! gpu: host1x: Add IOMMU support
-Date: Wed, 5 Apr 2017 18:20:28 +0200
-Message-ID: <20170405162028.GA8083@ulmo.ba.sec>
-References: <20170405074544.29464-1-mperttunen@nvidia.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the input tree with the jc_docs tree
+Date: Thu, 6 Apr 2017 11:06:12 +1000
+Message-ID: <20170406110612.7156f854@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170405074544.29464-1-mperttunen@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: sfr@canb.auug.org.au, tglx@linutronix.de, mingo@elte.hu, hpa@zytor.com, peterz@infradead.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, amerilainen@nvidia.com
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36357 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755924AbdDFBGO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 5 Apr 2017 21:06:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Kepplinger <martink@posteo.de>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
+Hi all,
 
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Today's linux-next merge of the input tree got a conflict in:
 
-On Wed, Apr 05, 2017 at 10:45:44AM +0300, Mikko Perttunen wrote:
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/host1x/dev.c | 1 +
->  1 file changed, 1 insertion(+)
+  Documentation/input/ff.rst
 
-Applied this to the drm/tegra tree and pushed it out. Verified that
-merging it into linux-next builds fine on various configurations.
+between commit:
 
-Thierry
+  1e4390ae1015 ("Documentation: input: fix path to struct ff_effect's definition")
 
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
+from the jc_docs tree and commit:
 
------BEGIN PGP SIGNATURE-----
+  deeb1e902fbc ("Input: use svg files instead of xfig in force feedback documentation")
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAljlGUcACgkQ3SOs138+
-s6GvmRAAr9YHKc4tLR/C3qM+gHzLLortjQRA55qup0QMoEDgjhUhlY7M8LdV5TD4
-3VCR1p9lWXmeK5xnDvZK3RzXz7CxEbzJxkHJAe0O7GN1FwWnor0kWnDd6H1XBJdH
-p7ZEpuG7bNC0fyT7e6sPBgNkPj5jmQOJGamPKCQO71hDNjWdNzMLHoP9vFeLTsSe
-XLJbJDwJAnmT9xtr1QjZ33yrAK9x8IJQkvuIBppDag9230EgaGBRSpepR37SfX/h
-flzKoZzqzopStjDq8E2fbLwekwOJIoi/yVDSeTg2fgbbzZAgeoO4Quy0d06vaANc
-bOZetxtcQsz3Mx7nx9NH4MsJYeuo0WC1/s0dkAovUwKcnkUTT+iUHBwoiM1Otopm
-baL+Lj1tXs8iX+B8f31DkRkN7Oq7T83rPSeGlLmDYCmYDKTmlfHcPMCP7aFVQLPR
-9P2Wkpf+GzhZ+0NAnA/GKvKYhssGh4P9U6KNKt5ID+MZU5vVoC38IdvFzwWemXbx
-dDT+wjV81EhzS+URliwChl6ND1xsLoIbAmqUX9rNAD71bSu9glohFl+jYRAGnKyM
-IRv1iPGhyZbeaejLLkjJ0bGCaKZaPY9ZlzdbPAMSc/TmIZG33BGl2t4JYHqNH2WU
-MLwDlHzjpn7rgyKBOncfQ+m6btfE57aMFUHRLtsk2Q8oyO1Ell4=
-=NieO
------END PGP SIGNATURE-----
+from the input tree.
 
---xHFwDpU9dbj6ez1V--
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/input/ff.rst
+index be742eec7aab,c30f185216a0..000000000000
+--- a/Documentation/input/ff.rst
++++ b/Documentation/input/ff.rst
+@@@ -106,13 -126,24 +126,24 @@@ allocate a new effect
+  
+  Effects are file descriptor specific.
+  
+- See <uapi/linux/input.h> for a description of the ff_effect struct. You should
+- also find help in a few sketches, contained in files shape.fig and
+- interactive.fig. You need xfig to visualize these files.
+ -See <linux/input.h> for a description of the ff_effect struct. You should also
+++See <uapi/linux/input.h> for a description of the ff_effect struct. You should also
++ find help in a few sketches, contained in files shape.svg and interactive.svg:
++ 
++ .. figure:: shape.svg
+  
+- 3.3 Removing an effect from the device
+- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+- int ioctl(int fd, EVIOCRMFF, effect.id);
++     Shape
++ 
++ .. figure:: interactive.svg
++ 
++     Interactive
++ 
++ 
++ Removing an effect from the device
++ ----------------------------------
++ 
++ ::
++ 
++     int ioctl(int fd, EVIOCRMFF, effect.id);
+  
+  This makes room for new effects in the device's memory. Note that this also
+  stops the effect if it was playing.
