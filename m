@@ -1,38 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvms390 tree with the kvm and
- kvm-ppc trees
-Date: Fri, 7 Apr 2017 14:14:38 +1000
-Message-ID: <20170407141438.6c88509c@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Fri, 7 Apr 2017 14:41:10 +1000
+Message-ID: <20170407144110.09617e71@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <kvm-owner@vger.kernel.org>
-Sender: kvm-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Paul Mackerras <paulus@ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yi Min Zhao <zyimin@linux.vnet.ibm.com>, Fei Li <sherrylf@linux.vnet.ibm.com>, Fan Zhang <zhangfan@linux.vnet.ibm.com>, James Hogan <james.hogan@imgtec.com>, Alexey Kardashevskiy <aik@ozlabs.ru>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39727 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750705AbdDGElN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 7 Apr 2017 00:41:13 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@kernel.org>, Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, yuan linyu <Linyu.Yuan@alcatel-sbell.com.cn>, Raviteja Garimella <raviteja.garimella@broadcom.com>
 
-Hi all,
+Hi Felipe,
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
+Today's linux-next merge of the usb-gadget tree got conflicts in:
 
-  include/uapi/linux/kvm.h
+  drivers/usb/gadget/udc/Kconfig
 
-between commits:
+between commit:
 
-  a8a3c426772e ("KVM: MIPS: Add VZ & TE capabilities")
-  578fd61d2d21 ("KVM: MIPS: Add 64BIT capability")
+  2c93e790e825 ("usb: add CONFIG_USB_PCI for system have both PCI HW and non-PCI based USB HW")
 
-from the kvm tree, commit:
+from the usb tree and commit:
 
-  2e60acebefd8 ("KVM: PPC: Reserve KVM_CAP_SPAPR_TCE_VFIO capability number")
+  5dbc49aebd0a ("usb: gadget: udc: amd5536: split core and PCI layer")
 
-from the kvm-ppc tree and commits
-
-  4e0b1ab72b8a ("KVM: s390: gs support for kvm guests")
-  1721ee7d57c4 ("KVM: s390: introduce AIS capability")
-
-from the kvms390 tree.
+from the usb-gadget tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,23 +42,17 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/linux/kvm.h
-index 1c7418d8f404,acfee5f4b5b2..000000000000
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@@ -887,10 -883,9 +887,13 @@@ struct kvm_ppc_resize_hpt 
-  #define KVM_CAP_PPC_MMU_RADIX 134
-  #define KVM_CAP_PPC_MMU_HASH_V3 135
-  #define KVM_CAP_IMMEDIATE_EXIT 136
- -#define KVM_CAP_S390_GS 137
- -#define KVM_CAP_S390_AIS 138
- +#define KVM_CAP_MIPS_VZ 137
- +#define KVM_CAP_MIPS_TE 138
- +#define KVM_CAP_MIPS_64BIT 139
- +#define KVM_CAP_SPAPR_TCE_VFIO 140
-++#define KVM_CAP_S390_GS 141
-++#define KVM_CAP_S390_AIS 142
-+ #define KVM_CAP_S390_CMMA_MIGRATION 216
+diff --cc drivers/usb/gadget/udc/Kconfig
+index c6cc9d3270ac,707814da6000..000000000000
+--- a/drivers/usb/gadget/udc/Kconfig
++++ b/drivers/usb/gadget/udc/Kconfig
+@@@ -277,7 -292,8 +292,8 @@@ source "drivers/usb/gadget/udc/bdc/Kcon
   
-  #ifdef KVM_CAP_IRQ_ROUTING
-  
+  config USB_AMD5536UDC
+  	tristate "AMD5536 UDC"
+ -	depends on PCI
+ +	depends on USB_PCI
++ 	select USB_SNP_CORE
+  	help
+  	   The AMD5536 UDC is part of the AMD Geode CS5536, an x86 southbridge.
+  	   It is a USB Highspeed DMA capable USB device controller. Beside ep0
