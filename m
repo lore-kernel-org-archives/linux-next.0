@@ -1,43 +1,19 @@
-From: Bart Van Assche <Bart.VanAssche@sandisk.com>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the char-misc
- tree
-Date: Fri, 7 Apr 2017 19:50:58 +0000
-Message-ID: <1491594657.2559.24.camel@sandisk.com>
-References: <20170407153351.0ecafd59@canb.auug.org.au>
-         <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
-         <ba19c6cf-a762-f7f7-6e27-ef64e3e578c1@deltatee.com>
+From: <muirs@stolaf.edu>
+Subject: 64993 linux-next
+Date: Fri, 07 Apr 2017 19:52:06 -0000
+Message-ID: <149159472649.19121.7577749243217947615@hinet.net>
+Reply-To: <muirs@stolaf.edu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: application/zip; name="9693372287544.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa1.hgst.iphmx.com ([68.232.141.245]:47942 "EHLO
-        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933995AbdDGTvC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 15:51:02 -0400
-In-Reply-To: <ba19c6cf-a762-f7f7-6e27-ef64e3e578c1@deltatee.com>
-Content-Language: en-US
-Content-ID: <830232C872956D4280080F23832D69D7@namprd04.prod.outlook.com>
+Received: from 114-36-132-204.dynamic.hinet.net ([114.36.132.204]:36498 "HELO
+        hinet.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S932813AbdDGTwM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 7 Apr 2017 15:52:12 -0400
+Content-Disposition: attachment
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "logang@deltatee.com" <logang@deltatee.com>, "greg@kroah.com" <greg@kroah.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ooo@electrozaur.com" <ooo@electrozaur.com>, "openosd@gmail.com" <openosd@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>
 
-On Fri, 2017-04-07 at 13:29 -0600, Logan Gunthorpe wrote:
-> On 07/04/17 09:49 AM, Bart Van Assche wrote:
-> > Sorry that I had not yet noticed Logan's patch series. Should my two
-> > patches that conflict with Logan's patch series be dropped and reworked
-> > after Logan's patches are upstream?
->=20
-> Yeah, Greg took my patchset around a few maintainers relatively quickly.
-> This is the second conflict, so sorry about that. Looks like the easiest
-> thing would be to just base your change off of mine. It doesn't look too
-> difficult. If you can do it before my patch hits upstream, I'd
-> appreciate some testing and/or review as no one from the scsi side
-> responded and that particular patch was a bit more involved than I would
-> have liked.
-
-Boaz, had you noticed Logan's osd patch? If not, can you have a look?
-
-Thanks,
-
-Bart.=
+File 'attachments/hqcrypt.zip' not found
