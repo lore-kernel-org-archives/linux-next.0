@@ -1,54 +1,39 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: Tree for Apr 7 (btrfs)
-Date: Fri, 7 Apr 2017 18:05:02 +0200
-Message-ID: <20170407160502.GV4781@twin.jikos.cz>
-References: <20170407182732.455c5c90@canb.auug.org.au>
- <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
- <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
-Reply-To: dsterba@suse.cz
+From: Logan Gunthorpe <logang@deltatee.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the char-misc
+ tree
+Date: Fri, 7 Apr 2017 13:29:20 -0600
+Message-ID: <ba19c6cf-a762-f7f7-6e27-ef64e3e578c1@deltatee.com>
+References: <20170407153351.0ecafd59@canb.auug.org.au>
+ <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:57267 "EHLO mx2.suse.de"
+Received: from ale.deltatee.com ([207.54.116.67]:44642 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754148AbdDGQFF (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 7 Apr 2017 12:05:05 -0400
-Content-Disposition: inline
-In-Reply-To: <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
+        id S933390AbdDGT3Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 7 Apr 2017 15:29:24 -0400
+In-Reply-To: <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
+To: Bart Van Assche <bart.vanassche@sandisk.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 
-On Fri, Apr 07, 2017 at 08:10:48AM -0700, Randy Dunlap wrote:
-> On 04/07/17 08:08, Randy Dunlap wrote:
-> > On 04/07/17 01:27, Stephen Rothwell wrote:
-> >> Hi all,
-> >>
-> >> Changes since 20170406:
-> >>
-> > 
-> > on i386:
-> > 
-> > ERROR: "__udivdi3" [fs/btrfs/btrfs.ko] undefined!
-> > 
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > 
-> 
-> or when built-in:
-> 
-> fs/built-in.o: In function `scrub_bio_end_io_worker':
-> scrub.c:(.text+0x3d1908): undefined reference to `__udivdi3'
-> fs/built-in.o: In function `scrub_raid56_parity':
-> scrub.c:(.text+0x3d23cc): undefined reference to `__udivdi3'
-> scrub.c:(.text+0x3d3342): undefined reference to `__udivdi3'
-> scrub.c:(.text+0x3d3755): undefined reference to `__udivdi3'
+Hi Bart,
 
-Sorry, I can't reproduce it here, I've also tried my other for-next
-snapshot branches, same. We have some recent patches that could trigger
-the __udivdi3 build check,
+On 07/04/17 09:49 AM, Bart Van Assche wrote:
+> Sorry that I had not yet noticed Logan's patch series. Should my two
+> patches that conflict with Logan's patch series be dropped and reworked
+> after Logan's patches are upstream?
 
-"Btrfs: update scrub_parity to use u64 stripe_len" (7d0ef8b4dbbd22)
+Yeah, Greg took my patchset around a few maintainers relatively quickly.
+This is the second conflict, so sorry about that. Looks like the easiest
+thing would be to just base your change off of mine. It doesn't look too
+difficult. If you can do it before my patch hits upstream, I'd
+appreciate some testing and/or review as no one from the scsi side
+responded and that particular patch was a bit more involved than I would
+have liked.
 
-manual check or with help of coccinell didn't show me any instances of
-64bit division with / .
+Thanks,
+
+Logan
