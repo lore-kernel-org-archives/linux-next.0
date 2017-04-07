@@ -1,46 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Apr 7 (btrfs)
-Date: Fri, 7 Apr 2017 08:10:48 -0700
-Message-ID: <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
-References: <20170407182732.455c5c90@canb.auug.org.au>
- <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Fri, 7 Apr 2017 08:46:30 -0700
+Message-ID: <CAM_iQpWYP4cVr6xeWUnL08uLNDRDU_mAhiN7SinftTg+ZG293g@mail.gmail.com>
+References: <20170407101202.30ec5a4e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:59194 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbdDGPKu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 11:10:50 -0400
-In-Reply-To: <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:37141 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933179AbdDGPqw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 11:46:52 -0400
+In-Reply-To: <20170407101202.30ec5a4e@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>
 
-On 04/07/17 08:08, Randy Dunlap wrote:
-> On 04/07/17 01:27, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20170406:
->>
-> 
-> on i386:
-> 
-> ERROR: "__udivdi3" [fs/btrfs/btrfs.ko] undefined!
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> 
-
-or when built-in:
-
-fs/built-in.o: In function `scrub_bio_end_io_worker':
-scrub.c:(.text+0x3d1908): undefined reference to `__udivdi3'
-fs/built-in.o: In function `scrub_raid56_parity':
-scrub.c:(.text+0x3d23cc): undefined reference to `__udivdi3'
-scrub.c:(.text+0x3d3342): undefined reference to `__udivdi3'
-scrub.c:(.text+0x3d3755): undefined reference to `__udivdi3'
+On Thu, Apr 6, 2017 at 5:12 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> diff --cc net/sched/sch_generic.c
+> index 1a2f9e964330,3e64d23e098c..000000000000
+> --- a/net/sched/sch_generic.c
+> +++ b/net/sched/sch_generic.c
+> @@@ -794,8 -794,8 +794,8 @@@ static void attach_default_qdiscs(struc
+>                 }
+>         }
+>   #ifdef CONFIG_NET_SCHED
+>  -      if (dev->qdisc)
+>  +      if (dev->qdisc != &noop_qdisc)
+> -               qdisc_hash_add(dev->qdisc);
+> +               qdisc_hash_add(dev->qdisc, false);
+>   #endif
+>   }
 
 
--- 
-~Randy
+Looks good to me.
+
+Thanks.
