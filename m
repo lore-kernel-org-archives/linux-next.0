@@ -1,38 +1,57 @@
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 7 Apr 2017 08:46:30 -0700
-Message-ID: <CAM_iQpWYP4cVr6xeWUnL08uLNDRDU_mAhiN7SinftTg+ZG293g@mail.gmail.com>
-References: <20170407101202.30ec5a4e@canb.auug.org.au>
+From: Bart Van Assche <bart.vanassche@sandisk.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the char-misc
+ tree
+Date: Fri, 7 Apr 2017 08:49:14 -0700
+Message-ID: <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
+References: <20170407153351.0ecafd59@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:37141 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933179AbdDGPqw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 11:46:52 -0400
-In-Reply-To: <20170407101202.30ec5a4e@canb.auug.org.au>
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:64092 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753208AbdDGPtW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 11:49:22 -0400
+In-Reply-To: <20170407153351.0ecafd59@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Kosina <jkosina@suse.cz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <Bart.VanAssche@sandisk.com>, Logan Gunthorpe <logang@deltatee.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
 
-On Thu, Apr 6, 2017 at 5:12 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> diff --cc net/sched/sch_generic.c
-> index 1a2f9e964330,3e64d23e098c..000000000000
-> --- a/net/sched/sch_generic.c
-> +++ b/net/sched/sch_generic.c
-> @@@ -794,8 -794,8 +794,8 @@@ static void attach_default_qdiscs(struc
->                 }
->         }
->   #ifdef CONFIG_NET_SCHED
->  -      if (dev->qdisc)
->  +      if (dev->qdisc != &noop_qdisc)
-> -               qdisc_hash_add(dev->qdisc);
-> +               qdisc_hash_add(dev->qdisc, false);
->   #endif
->   }
+On 04/06/2017 10:33 PM, Stephen Rothwell wrote:
+> Hi Martin,
+> 
+> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> 
+>   drivers/scsi/osd/osd_uld.c
+> 
+> between commit:
+> 
+>   ac1ddc584e98 ("scsi: utilize new cdev_device_add helper function")
+> 
+> from the char-misc tree and commit:
+> 
+>   c02465fa13b6 ("scsi: osd_uld: Check scsi_device_get() return value")
+> 
+> from the scsi-mkp tree.
+> 
+> I am not sure how to resolve this, so I have just effectively recerted
+> the latter commit fo today.  Better suggestions welcome.
+> 
+> I fixed it up and can carry the fix as necessary. This is now fixed as
+> far as linux-next is concerned, but any non trivial conflicts should be
+> mentioned to your upstream maintainer when your tree is submitted for
+> merging.  You may also want to consider cooperating with the maintainer
+> of the conflicting tree to minimise any particularly complex conflicts.
 
+(+linux-scsi)
 
-Looks good to me.
+Hello Martin,
 
-Thanks.
+Sorry that I had not yet noticed Logan's patch series. Should my two
+patches that conflict with Logan's patch series be dropped and reworked
+after Logan's patches are upstream?
+
+Thanks,
+
+Bart.
