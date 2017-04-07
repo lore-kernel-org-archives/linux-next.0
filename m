@@ -1,57 +1,54 @@
-From: Bart Van Assche <bart.vanassche@sandisk.com>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the char-misc
- tree
-Date: Fri, 7 Apr 2017 08:49:14 -0700
-Message-ID: <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
-References: <20170407153351.0ecafd59@canb.auug.org.au>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: Tree for Apr 7 (btrfs)
+Date: Fri, 7 Apr 2017 18:05:02 +0200
+Message-ID: <20170407160502.GV4781@twin.jikos.cz>
+References: <20170407182732.455c5c90@canb.auug.org.au>
+ <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
+ <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:64092 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753208AbdDGPtW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Apr 2017 11:49:22 -0400
-In-Reply-To: <20170407153351.0ecafd59@canb.auug.org.au>
+Received: from mx2.suse.de ([195.135.220.15]:57267 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754148AbdDGQFF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 7 Apr 2017 12:05:05 -0400
+Content-Disposition: inline
+In-Reply-To: <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <Bart.VanAssche@sandisk.com>, Logan Gunthorpe <logang@deltatee.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
 
-On 04/06/2017 10:33 PM, Stephen Rothwell wrote:
-> Hi Martin,
+On Fri, Apr 07, 2017 at 08:10:48AM -0700, Randy Dunlap wrote:
+> On 04/07/17 08:08, Randy Dunlap wrote:
+> > On 04/07/17 01:27, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Changes since 20170406:
+> >>
+> > 
+> > on i386:
+> > 
+> > ERROR: "__udivdi3" [fs/btrfs/btrfs.ko] undefined!
+> > 
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > 
 > 
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> or when built-in:
 > 
->   drivers/scsi/osd/osd_uld.c
-> 
-> between commit:
-> 
->   ac1ddc584e98 ("scsi: utilize new cdev_device_add helper function")
-> 
-> from the char-misc tree and commit:
-> 
->   c02465fa13b6 ("scsi: osd_uld: Check scsi_device_get() return value")
-> 
-> from the scsi-mkp tree.
-> 
-> I am not sure how to resolve this, so I have just effectively recerted
-> the latter commit fo today.  Better suggestions welcome.
-> 
-> I fixed it up and can carry the fix as necessary. This is now fixed as
-> far as linux-next is concerned, but any non trivial conflicts should be
-> mentioned to your upstream maintainer when your tree is submitted for
-> merging.  You may also want to consider cooperating with the maintainer
-> of the conflicting tree to minimise any particularly complex conflicts.
+> fs/built-in.o: In function `scrub_bio_end_io_worker':
+> scrub.c:(.text+0x3d1908): undefined reference to `__udivdi3'
+> fs/built-in.o: In function `scrub_raid56_parity':
+> scrub.c:(.text+0x3d23cc): undefined reference to `__udivdi3'
+> scrub.c:(.text+0x3d3342): undefined reference to `__udivdi3'
+> scrub.c:(.text+0x3d3755): undefined reference to `__udivdi3'
 
-(+linux-scsi)
+Sorry, I can't reproduce it here, I've also tried my other for-next
+snapshot branches, same. We have some recent patches that could trigger
+the __udivdi3 build check,
 
-Hello Martin,
+"Btrfs: update scrub_parity to use u64 stripe_len" (7d0ef8b4dbbd22)
 
-Sorry that I had not yet noticed Logan's patch series. Should my two
-patches that conflict with Logan's patch series be dropped and reworked
-after Logan's patches are upstream?
-
-Thanks,
-
-Bart.
+manual check or with help of coccinell didn't show me any instances of
+64bit division with / .
