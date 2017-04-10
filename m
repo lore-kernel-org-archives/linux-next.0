@@ -1,37 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
-Date: Mon, 10 Apr 2017 14:02:08 +1000
-Message-ID: <20170410140208.058f9938@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-ppc tree with the kvm and
+ kvm-arm trees
+Date: Mon, 10 Apr 2017 14:10:16 +1000
+Message-ID: <20170410141016.23c1cd81@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56521 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50639 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750711AbdDJECL (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Apr 2017 00:02:11 -0400
+        id S1750722AbdDJEKU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Apr 2017 00:10:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Paul Mackerras <paulus@ozlabs.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Kardashevskiy <aik@ozlabs.ru>, Alexander Graf <agraf@suse.de>, James Hogan <james.hogan@imgtec.com>
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the kvm-arm tree got conflicts in:
+Today's linux-next merge of the kvm-ppc tree got a conflict in:
 
-  virt/kvm/arm/vgic/vgic-v2.c
-  virt/kvm/arm/vgic/vgic.h
+  include/uapi/linux/kvm.h
 
-between commit:
+between commits:
 
-  5b0d2cc28058 ("KVM: arm64: Ensure LRs are clear when they should be")
+  a8a3c426772e ("KVM: MIPS: Add VZ & TE capabilities")
+  578fd61d2d21 ("KVM: MIPS: Add 64BIT capability")
+  3fe17e682616 ("KVM: arm/arm64: Add ARM user space interrupt signaling ABI")
 
-from Linus' tree and commits:
+from the kvm and kvm-arm trees and commit:
 
-  328e56647944 ("KVM: arm/arm64: vgic: Defer touching GICH_VMCR to vcpu_load/put")
-  af0614991ab6 ("KVM: arm/arm64: vgic: Get rid of unnecessary process_maintenance operation")
+  2e60acebefd8 ("KVM: PPC: Reserve KVM_CAP_SPAPR_TCE_VFIO capability number")
 
-from the kvm-arm tree.
+from the kvm-ppc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -44,73 +45,20 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc virt/kvm/arm/vgic/vgic-v2.c
-index b637d9c7afe3,025b57d5787e..000000000000
---- a/virt/kvm/arm/vgic/vgic-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-v2.c
-@@@ -22,36 -22,7 +22,22 @@@
+diff --cc include/uapi/linux/kvm.h
+index f46b8e317f84,0f8a5e6528aa..000000000000
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@@ -887,10 -883,7 +887,11 @@@ struct kvm_ppc_resize_hpt 
+  #define KVM_CAP_PPC_MMU_RADIX 134
+  #define KVM_CAP_PPC_MMU_HASH_V3 135
+  #define KVM_CAP_IMMEDIATE_EXIT 136
+ -#define KVM_CAP_SPAPR_TCE_VFIO 137
+ +#define KVM_CAP_MIPS_VZ 137
+ +#define KVM_CAP_MIPS_TE 138
+ +#define KVM_CAP_MIPS_64BIT 139
+ +#define KVM_CAP_ARM_USER_IRQ 140
+++#define KVM_CAP_SPAPR_TCE_VFIO 141
   
-  #include "vgic.h"
+  #ifdef KVM_CAP_IRQ_ROUTING
   
-- /*
--  * Call this function to convert a u64 value to an unsigned long * bitmask
--  * in a way that works on both 32-bit and 64-bit LE and BE platforms.
--  *
--  * Warning: Calling this function may modify *val.
--  */
-- static unsigned long *u64_to_bitmask(u64 *val)
-- {
-- #if defined(CONFIG_CPU_BIG_ENDIAN) && BITS_PER_LONG == 32
-- 	*val = (*val >> 32) | (*val << 32);
-- #endif
-- 	return (unsigned long *)val;
-- }
-- 
- +static inline void vgic_v2_write_lr(int lr, u32 val)
- +{
- +	void __iomem *base = kvm_vgic_global_state.vctrl_base;
- +
- +	writel_relaxed(val, base + GICH_LR0 + (lr * 4));
- +}
- +
- +void vgic_v2_init_lrs(void)
- +{
- +	int i;
- +
- +	for (i = 0; i < kvm_vgic_global_state.nr_lr; i++)
- +		vgic_v2_write_lr(i, 0);
- +}
- +
-- void vgic_v2_process_maintenance(struct kvm_vcpu *vcpu)
-+ void vgic_v2_set_underflow(struct kvm_vcpu *vcpu)
-  {
-  	struct vgic_v2_cpu_if *cpuif = &vcpu->arch.vgic_cpu.vgic_v2;
-  
-@@@ -206,10 -160,10 +175,10 @@@ void vgic_v2_set_vmcr(struct kvm_vcpu *
-  		GICH_VMCR_ALIAS_BINPOINT_MASK;
-  	vmcr |= (vmcrp->bpr << GICH_VMCR_BINPOINT_SHIFT) &
-  		GICH_VMCR_BINPOINT_MASK;
- -	vmcr |= (vmcrp->pmr << GICH_VMCR_PRIMASK_SHIFT) &
- -		GICH_VMCR_PRIMASK_MASK;
- +	vmcr |= ((vmcrp->pmr >> GICV_PMR_PRIORITY_SHIFT) <<
- +		 GICH_VMCR_PRIMASK_SHIFT) & GICH_VMCR_PRIMASK_MASK;
-  
-- 	vcpu->arch.vgic_cpu.vgic_v2.vgic_vmcr = vmcr;
-+ 	cpu_if->vgic_vmcr = vmcr;
-  }
-  
-  void vgic_v2_get_vmcr(struct kvm_vcpu *vcpu, struct vgic_vmcr *vmcrp)
-diff --cc virt/kvm/arm/vgic/vgic.h
-index 6cf557e9f718,44445dac0835..000000000000
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@@ -137,7 -129,8 +136,9 @@@ int vgic_v2_map_resources(struct kvm *k
-  int vgic_register_dist_iodev(struct kvm *kvm, gpa_t dist_base_address,
-  			     enum vgic_type);
-  
- +void vgic_v2_init_lrs(void);
-+ void vgic_v2_load(struct kvm_vcpu *vcpu);
-+ void vgic_v2_put(struct kvm_vcpu *vcpu);
-  
-  static inline void vgic_get_irq_kref(struct vgic_irq *irq)
-  {
