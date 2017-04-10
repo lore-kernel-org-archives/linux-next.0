@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the md tree with the block tree
-Date: Mon, 10 Apr 2017 12:03:46 +1000
-Message-ID: <20170410120346.12076998@canb.auug.org.au>
+Date: Mon, 10 Apr 2017 12:08:44 +1000
+Message-ID: <20170410120844.77f25779@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40233 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50815 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbdDJCDs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 9 Apr 2017 22:03:48 -0400
+        id S1751004AbdDJCIr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 9 Apr 2017 22:08:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Ming Lei <tom.leiming@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>
 
 Hi Shaohua,
 
 Today's linux-next merge of the md tree got a conflict in:
 
-  drivers/md/md.h
+  drivers/md/raid5.c
 
 between commit:
 
-  3deff1a70d59 ("md: support REQ_OP_WRITE_ZEROES")
+  48920ff2a5a9 ("block: remove the discard_zeroes_data flag")
 
-from the block tree and commits:
+from the block tree and commit:
 
-  d8e29fbc3bed ("md: move two macros into md.h")
-  513e2faa0138 ("md: prepare for managing resync I/O pages in clean way")
+  97d53438081e ("Revert "md/raid5: limit request size according to implementation limits"")
 
 from the md tree.
 
@@ -43,73 +42,30 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/md/md.h
-index 1e76d64ce180,0418b29945e7..000000000000
---- a/drivers/md/md.h
-+++ b/drivers/md/md.h
-@@@ -710,10 -719,58 +719,65 @@@ static inline void mddev_check_writesam
-  		mddev->queue->limits.max_write_same_sectors = 0;
-  }
+diff --cc drivers/md/raid5.c
+index 2efdb0d67460,6036d5e41ddd..000000000000
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@@ -7253,17 -7361,13 +7358,9 @@@ static int raid5_run(struct mddev *mdde
+  			stripe = (stripe | (stripe-1)) + 1;
+  		mddev->queue->limits.discard_alignment = stripe;
+  		mddev->queue->limits.discard_granularity = stripe;
+ -		/*
+ -		 * unaligned part of discard request will be ignored, so can't
+ -		 * guarantee discard_zeroes_data
+ -		 */
+ -		mddev->queue->limits.discard_zeroes_data = 0;
   
- +static inline void mddev_check_write_zeroes(struct mddev *mddev, struct bio *bio)
- +{
- +	if (bio_op(bio) == REQ_OP_WRITE_ZEROES &&
- +	    !bdev_get_queue(bio->bi_bdev)->limits.max_write_zeroes_sectors)
- +		mddev->queue->limits.max_write_zeroes_sectors = 0;
- +}
-++
-+ /* Maximum size of each resync request */
-+ #define RESYNC_BLOCK_SIZE (64*1024)
-+ #define RESYNC_PAGES ((RESYNC_BLOCK_SIZE + PAGE_SIZE-1) / PAGE_SIZE)
-+ 
-+ /* for managing resync I/O pages */
-+ struct resync_pages {
-+ 	unsigned	idx;	/* for get/put page from the pool */
-+ 	void		*raid_bio;
-+ 	struct page	*pages[RESYNC_PAGES];
-+ };
-+ 
-+ static inline int resync_alloc_pages(struct resync_pages *rp,
-+ 				     gfp_t gfp_flags)
-+ {
-+ 	int i;
-+ 
-+ 	for (i = 0; i < RESYNC_PAGES; i++) {
-+ 		rp->pages[i] = alloc_page(gfp_flags);
-+ 		if (!rp->pages[i])
-+ 			goto out_free;
-+ 	}
-+ 
-+ 	return 0;
-+ 
-+ out_free:
-+ 	while (--i >= 0)
-+ 		put_page(rp->pages[i]);
-+ 	return -ENOMEM;
-+ }
-+ 
-+ static inline void resync_free_pages(struct resync_pages *rp)
-+ {
-+ 	int i;
-+ 
-+ 	for (i = 0; i < RESYNC_PAGES; i++)
-+ 		put_page(rp->pages[i]);
-+ }
-+ 
-+ static inline void resync_get_all_pages(struct resync_pages *rp)
-+ {
-+ 	int i;
-+ 
-+ 	for (i = 0; i < RESYNC_PAGES; i++)
-+ 		get_page(rp->pages[i]);
-+ }
-+ 
-+ static inline struct page *resync_fetch_page(struct resync_pages *rp,
-+ 					     unsigned idx)
-+ {
-+ 	if (WARN_ON_ONCE(idx >= RESYNC_PAGES))
-+ 		return NULL;
-+ 	return rp->pages[idx];
-+ }
-+ 
-  #endif /* _MD_MD_H */
+- 		/*
+- 		 * We use 16-bit counter of active stripes in bi_phys_segments
+- 		 * (minus one for over-loaded initialization)
+- 		 */
+- 		blk_queue_max_hw_sectors(mddev->queue, 0xfffe * STRIPE_SECTORS);
+- 		blk_queue_max_discard_sectors(mddev->queue,
+- 					      0xfffe * STRIPE_SECTORS);
+- 
+  		blk_queue_max_write_same_sectors(mddev->queue, 0);
+ +		blk_queue_max_write_zeroes_sectors(mddev->queue, 0);
+  
+  		rdev_for_each(rdev, mddev) {
+  			disk_stack_limits(mddev->gendisk, rdev->bdev,
