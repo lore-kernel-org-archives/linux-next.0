@@ -1,52 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170410 build: 2 failures 3 warnings (next-20170410)
-Date: Mon, 10 Apr 2017 14:13:22 +0100
-Message-ID: <20170410131322.iriugmcym4zbqceg@sirena.org.uk>
-References: <E1cxXQe-0006cv-TG@optimist>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 10 Apr 2017 14:06:06 -0700
+Message-ID: <20170410140606.cf357748173361bceb5b10ef@linux-foundation.org>
+References: <20170410164557.4a7880b4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xis4wekxcxevmxqi"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35420 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbdDJNNl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Apr 2017 09:13:41 -0400
-Content-Disposition: inline
-In-Reply-To: <E1cxXQe-0006cv-TG@optimist>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55002 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbdDJVGI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Apr 2017 17:06:08 -0400
+In-Reply-To: <20170410164557.4a7880b4@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Evgeny Baskakov <ebaskakov@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Mark Hairgrove <mhairgrove@nvidia.com>, Sherry Cheung <SCheung@nvidia.com>, Subhash Gutti <sgutti@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
 
+On Mon, 10 Apr 2017 16:45:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
---xis4wekxcxevmxqi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> mm/swap_slots.c: In function 'alloc_swap_slot_cache':
+> mm/swap_slots.c:126:10: error: implicit declaration of function 'kvzalloc' [-Werror=implicit-function-declaration]
+>   slots = kvzalloc(sizeof(swp_entry_t) * SWAP_SLOTS_CACHE_SIZE,
+>           ^
+> mm/swap_slots.c:126:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>   slots = kvzalloc(sizeof(swp_entry_t) * SWAP_SLOTS_CACHE_SIZE,
+>         ^
+> mm/swap_slots.c:131:12: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>   slots_ret = kvzalloc(sizeof(swp_entry_t) * SWAP_SLOTS_CACHE_SIZE,
+>             ^
+> 
+> Caused by commit
+> 
+>   22cf2f4616c6 ("mm, swap: U=use kvzalloc to allocate some swap data structure")
+> 
+> The patches adding kvzalloc seem to have vanished :-(
+> 
+> I have reverted that commit for today.
+> 
 
-On Mon, Apr 10, 2017 at 12:24:17PM +0100, Build bot for Mark Brown wrote:
-
-Today's -next fails to build an arm64 allmodconfig due to:
-
-> 	arm64-allmodconfig
-> ../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
-
-due to the recently added HMM support.  There's no such function for
-arm64 but HMM is unconditionally available for all 64 bit architectures
-with a MMU.
-
---xis4wekxcxevmxqi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljrhPEACgkQJNaLcl1U
-h9AR1Af/d2lIb5CH19uu+QkgHUsv48P0ze+Ta1E6Le9cmAbTTgyazrEVt0m7hGdV
-xlDYjTvXnewoOD3ui5CRJ9Nq8SORcEN/npC9zJhg1Q+MRY86N+ULGZwPM3pWuO+h
-B4xU+zVdzlKdDPYM6tMzS8YMlaBYCrfpRNI+nUApW4ZwZRoVcgo9JY1hAJ3Qjbv8
-PxYyuH8xOHf+pZPUnpt18BKnmfjw8yKPjnF0P5T8ogN8T1SrqXEPBHvSbySS6DXn
-2ZlQLEahEuPyCmWJApXfMcN2DCv8f6WbIRZkGrSNS464s7Ik6Ome90glY6/liFfq
-aFNbMriQNq4SlB5T9nDpMc0tRKxcjw==
-=+55b
------END PGP SIGNATURE-----
-
---xis4wekxcxevmxqi--
+No, mm-introduce-kvalloc-helpers.patch is still in there but I had it
+staged after
+mm-swap-use-kvzalloc-to-allocate-some-swap-data-structure.patch.  ANd
+after linux-next.patch which is presumably what tricked you.
