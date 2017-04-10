@@ -1,57 +1,52 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: Tree for Apr 7 (btrfs)
-Date: Mon, 10 Apr 2017 13:50:11 +0200
-Message-ID: <20170410115011.GY4781@suse.cz>
-References: <20170407182732.455c5c90@canb.auug.org.au>
- <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
- <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
- <20170407160502.GV4781@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170410 build: 2 failures 3 warnings (next-20170410)
+Date: Mon, 10 Apr 2017 14:13:22 +0100
+Message-ID: <20170410131322.iriugmcym4zbqceg@sirena.org.uk>
+References: <E1cxXQe-0006cv-TG@optimist>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xis4wekxcxevmxqi"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:38325 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752746AbdDJLuO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Apr 2017 07:50:14 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35420 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752760AbdDJNNl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Apr 2017 09:13:41 -0400
 Content-Disposition: inline
-In-Reply-To: <20170407160502.GV4781@twin.jikos.cz>
+In-Reply-To: <E1cxXQe-0006cv-TG@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
+To: =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Evgeny Baskakov <ebaskakov@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Mark Hairgrove <mhairgrove@nvidia.com>, Sherry Cheung <SCheung@nvidia.com>, Subhash Gutti <sgutti@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Apr 07, 2017 at 06:05:02PM +0200, David Sterba wrote:
-> On Fri, Apr 07, 2017 at 08:10:48AM -0700, Randy Dunlap wrote:
-> > On 04/07/17 08:08, Randy Dunlap wrote:
-> > > On 04/07/17 01:27, Stephen Rothwell wrote:
-> > >> Hi all,
-> > >>
-> > >> Changes since 20170406:
-> > >>
-> > > 
-> > > on i386:
-> > > 
-> > > ERROR: "__udivdi3" [fs/btrfs/btrfs.ko] undefined!
-> > > 
-> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > 
-> > 
-> > or when built-in:
-> > 
-> > fs/built-in.o: In function `scrub_bio_end_io_worker':
-> > scrub.c:(.text+0x3d1908): undefined reference to `__udivdi3'
-> > fs/built-in.o: In function `scrub_raid56_parity':
-> > scrub.c:(.text+0x3d23cc): undefined reference to `__udivdi3'
-> > scrub.c:(.text+0x3d3342): undefined reference to `__udivdi3'
-> > scrub.c:(.text+0x3d3755): undefined reference to `__udivdi3'
-> 
-> Sorry, I can't reproduce it here, I've also tried my other for-next
-> snapshot branches, same. We have some recent patches that could trigger
-> the __udivdi3 build check,
-> 
-> "Btrfs: update scrub_parity to use u64 stripe_len" (7d0ef8b4dbbd22)
-> 
-> manual check or with help of coccinell didn't show me any instances of
-> 64bit division with / .
 
-Fixed and updated for-next pushed to my k.org repository.
+--xis4wekxcxevmxqi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Apr 10, 2017 at 12:24:17PM +0100, Build bot for Mark Brown wrote:
+
+Today's -next fails to build an arm64 allmodconfig due to:
+
+> 	arm64-allmodconfig
+> ../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
+
+due to the recently added HMM support.  There's no such function for
+arm64 but HMM is unconditionally available for all 64 bit architectures
+with a MMU.
+
+--xis4wekxcxevmxqi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAljrhPEACgkQJNaLcl1U
+h9AR1Af/d2lIb5CH19uu+QkgHUsv48P0ze+Ta1E6Le9cmAbTTgyazrEVt0m7hGdV
+xlDYjTvXnewoOD3ui5CRJ9Nq8SORcEN/npC9zJhg1Q+MRY86N+ULGZwPM3pWuO+h
+B4xU+zVdzlKdDPYM6tMzS8YMlaBYCrfpRNI+nUApW4ZwZRoVcgo9JY1hAJ3Qjbv8
+PxYyuH8xOHf+pZPUnpt18BKnmfjw8yKPjnF0P5T8ogN8T1SrqXEPBHvSbySS6DXn
+2ZlQLEahEuPyCmWJApXfMcN2DCv8f6WbIRZkGrSNS464s7Ik6Ome90glY6/liFfq
+aFNbMriQNq4SlB5T9nDpMc0tRKxcjw==
+=+55b
+-----END PGP SIGNATURE-----
+
+--xis4wekxcxevmxqi--
