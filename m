@@ -1,116 +1,57 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170410 build: 2 failures 3 warnings (next-20170410)
-Date: Mon, 10 Apr 2017 12:24:17 +0100
-Message-ID: <E1cxXQe-0006cv-TG@optimist>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: Tree for Apr 7 (btrfs)
+Date: Mon, 10 Apr 2017 13:50:11 +0200
+Message-ID: <20170410115011.GY4781@suse.cz>
+References: <20170407182732.455c5c90@canb.auug.org.au>
+ <3f143e53-652b-8690-d71c-dae42ab14a09@infradead.org>
+ <b8b42950-e775-398d-1364-8bb7c117aa12@infradead.org>
+ <20170407160502.GV4781@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:34400 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753436AbdDJLY2 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Apr 2017 07:24:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38325 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752746AbdDJLuO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Apr 2017 07:50:14 -0400
+Content-Disposition: inline
+In-Reply-To: <20170407160502.GV4781@twin.jikos.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-btrfs@vger.kernel.org
 
-Tree/Branch: next-20170410
-Git describe: next-20170410
-Commit: f8c97bdb49 Add linux-next specific files for 20170410
+On Fri, Apr 07, 2017 at 06:05:02PM +0200, David Sterba wrote:
+> On Fri, Apr 07, 2017 at 08:10:48AM -0700, Randy Dunlap wrote:
+> > On 04/07/17 08:08, Randy Dunlap wrote:
+> > > On 04/07/17 01:27, Stephen Rothwell wrote:
+> > >> Hi all,
+> > >>
+> > >> Changes since 20170406:
+> > >>
+> > > 
+> > > on i386:
+> > > 
+> > > ERROR: "__udivdi3" [fs/btrfs/btrfs.ko] undefined!
+> > > 
+> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > > 
+> > 
+> > or when built-in:
+> > 
+> > fs/built-in.o: In function `scrub_bio_end_io_worker':
+> > scrub.c:(.text+0x3d1908): undefined reference to `__udivdi3'
+> > fs/built-in.o: In function `scrub_raid56_parity':
+> > scrub.c:(.text+0x3d23cc): undefined reference to `__udivdi3'
+> > scrub.c:(.text+0x3d3342): undefined reference to `__udivdi3'
+> > scrub.c:(.text+0x3d3755): undefined reference to `__udivdi3'
+> 
+> Sorry, I can't reproduce it here, I've also tried my other for-next
+> snapshot branches, same. We have some recent patches that could trigger
+> the __udivdi3 build check,
+> 
+> "Btrfs: update scrub_parity to use u64 stripe_len" (7d0ef8b4dbbd22)
+> 
+> manual check or with help of coccinell didn't show me any instances of
+> 64bit division with / .
 
-Build Time: 102 min 50 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 2
-Warnings: 3
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-	arm-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [fs/btrfs/btrfs.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 2
-	  1 ERROR: "__aeabi_uldivmod" [fs/btrfs/btrfs.ko] undefined!
-	  1 ../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 3
-	  6 ../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../mm/hmm.c:34:0: warning: "SECTION_SIZE" redefined
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../mm/hmm.c:34:0: warning: "SECTION_SIZE" redefined
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [fs/btrfs/btrfs.ko] undefined!
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
+Fixed and updated for-next pushed to my k.org repository.
