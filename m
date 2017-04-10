@@ -1,71 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the md tree with the block tree
-Date: Mon, 10 Apr 2017 12:08:44 +1000
-Message-ID: <20170410120844.77f25779@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Mon, 10 Apr 2017 12:11:07 +1000
+Message-ID: <20170410121107.69b83963@canb.auug.org.au>
+References: <20170404164453.677dc74a@canb.auug.org.au>
+        <20170404081937.npgk3cwx7bv5igzg@dell>
+        <20170404082156.yhepja5bveahlegr@dell>
+        <1491309075.708.125.camel@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50815 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34001 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbdDJCIr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 9 Apr 2017 22:08:47 -0400
+        id S1751200AbdDJCLJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 9 Apr 2017 22:11:09 -0400
+In-Reply-To: <1491309075.708.125.camel@linux.intel.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, NeilBrown <neilb@suse.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Shaohua,
+Hi all,
 
-Today's linux-next merge of the md tree got a conflict in:
+On Tue, 04 Apr 2017 15:31:15 +0300 Andy Shevchenko <andriy.shevchenko@linux=
+.intel.com> wrote:
+>
+> On Tue, 2017-04-04 at 09:21 +0100, Lee Jones wrote:
+> > On Tue, 04 Apr 2017, Lee Jones wrote:
+> >  =20
+> > > On Tue, 04 Apr 2017, Stephen Rothwell wrote:
+> > >  =20
+> > > > After merging the mfd tree, today's linux-next build (powerpc
+> > > > allyesconfig) failed like this:
+> > > >=20
+> > > > /home/sfr/next/next/drivers/mfd/intel_soc_pmic_bxtwc.c:25:31:
+> > > > fatal error: asm/intel_pmc_ipc.h: No such file or directory
+> > > >=20
+> > > > Caused by commit
+> > > >=20
+> > > > =C2=A0 eb2a445f7d8f ("mfd: intel_soc_pmic: Fix a mess with compilat=
+ion
+> > > > units")
+> > > >=20
+> > > > I have reverted that commit for today. =20
+> > >=20
+> > > Andy,
+> > >=20
+> > > I'm pulling this commit.=C2=A0=C2=A0Despite you thinking the error is=
+ unrelated
+> > > to your patch, something is clearly wrong and I don't have time to
+> > > investigate.
+> > >=20
+> > > Ball is in your court. =20
+> >=20
+> > Okay, I've had a *very* quick looks. =20
+>=20
+> > Seems as if you should be depending on INTEL_PMC_IPC. =20
+>=20
+> As a quick fix, yes. As a proper fix the PMC/SCU mess should be fixed in
+> a way to provide a header in include/platform_data/x86.
+>=20
+> I will prepare v4.
+> Thanks.
 
-  drivers/md/raid5.c
+Ping?
 
-between commit:
-
-  48920ff2a5a9 ("block: remove the discard_zeroes_data flag")
-
-from the block tree and commit:
-
-  97d53438081e ("Revert "md/raid5: limit request size according to implementation limits"")
-
-from the md tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
+--=20
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/md/raid5.c
-index 2efdb0d67460,6036d5e41ddd..000000000000
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@@ -7253,17 -7361,13 +7358,9 @@@ static int raid5_run(struct mddev *mdde
-  			stripe = (stripe | (stripe-1)) + 1;
-  		mddev->queue->limits.discard_alignment = stripe;
-  		mddev->queue->limits.discard_granularity = stripe;
- -		/*
- -		 * unaligned part of discard request will be ignored, so can't
- -		 * guarantee discard_zeroes_data
- -		 */
- -		mddev->queue->limits.discard_zeroes_data = 0;
-  
-- 		/*
-- 		 * We use 16-bit counter of active stripes in bi_phys_segments
-- 		 * (minus one for over-loaded initialization)
-- 		 */
-- 		blk_queue_max_hw_sectors(mddev->queue, 0xfffe * STRIPE_SECTORS);
-- 		blk_queue_max_discard_sectors(mddev->queue,
-- 					      0xfffe * STRIPE_SECTORS);
-- 
-  		blk_queue_max_write_same_sectors(mddev->queue, 0);
- +		blk_queue_max_write_zeroes_sectors(mddev->queue, 0);
-  
-  		rdev_for_each(rdev, mddev) {
-  			disk_stack_limits(mddev->gendisk, rdev->bdev,
