@@ -1,59 +1,108 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the rtc tree
-Date: Tue, 11 Apr 2017 17:52:20 +1000
-Message-ID: <20170411175220.43cd5280@canb.auug.org.au>
-References: <20170410160454.3741cce8@canb.auug.org.au>
-        <e5cb6b88-ea66-c874-272e-183bba1a2d7a@redhat.com>
-        <20170411102238.24477c5d@canb.auug.org.au>
-        <20170411055509.o2ob2z3kavteykqh@piout.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170411 build: 1 failures 3 warnings (next-20170411)
+Date: Tue, 11 Apr 2017 10:18:11 +0100
+Message-ID: <E1cxrwA-0007CS-Uo@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58209 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753322AbdDKHwY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 11 Apr 2017 03:52:24 -0400
-In-Reply-To: <20170411055509.o2ob2z3kavteykqh@piout.net>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40872 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754456AbdDKJSR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 11 Apr 2017 05:18:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Alexandre,
+Tree/Branch: next-20170411
+Git describe: next-20170411
+Commit: c4e7b35a33 Add linux-next specific files for 20170411
 
-On Tue, 11 Apr 2017 07:55:09 +0200 Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
->
-> On 11/04/2017 at 10:22:38 +1000, Stephen Rothwell wrote:
-> > 
-> > On Mon, 10 Apr 2017 09:45:45 +0200 Hans de Goede <hdegoede@redhat.com> wrote:  
-> > >
-> > > On 10-04-17 08:04, Stephen Rothwell wrote:  
-> > > >
-> > > > After merging the rtc tree, today's linux-next build (x86_64 allmodconfig)
-> > > > failed like this:
-> > > >
-> > > > ERROR: "legacy_pic" [drivers/rtc/rtc-cmos.ko] undefined!
-> > > >
-> > > > Caused by commit
-> > > >
-> > > >   d3e3a65c6a96 ("rtc: cmos: Do not assume irq 8 for rtc when there are no legacy irqs")
-> > > >
-> > > > "legacy_pic" is not exported to modules.
-> > > >
-> > > > I have used the rtc tree from next-20170407 for today.    
-> > > 
-> > > I already send out a patch to fix this yesterday. I've attached a copy.  
-> > 
-> > I will add that to linux-next today and will drop it when Alexandre
-> > adds it (or some other fix).
-> 
-> I think the x86 maintainers will take it as it is fairly independent.
+Build Time: 103 min 14 sec
 
-But it is a fix for a build failure caused by a commit in your tree ...
-so you should probably get an ack from the x86 maintainers and add it
-to your tree.  Or do some other fix in your tree.
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
 
--- 
-Cheers,
-Stephen Rothwell
+Errors: 1
+Warnings: 3
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+
+Errors:
+
+	arm64-allmodconfig
+../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 3
+	  6 ../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../mm/hmm.c:34:0: warning: "SECTION_SIZE" redefined
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../mm/hmm.c:816:2: error: implicit declaration of function 'arch_remove_memory' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../mm/hmm.c:34:0: warning: "SECTION_SIZE" redefined
+	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v4t_defconfig
