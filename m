@@ -1,58 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the v4l-dvb tree
-Date: Tue, 11 Apr 2017 10:27:19 +1000
-Message-ID: <20170411102719.17042877@canb.auug.org.au>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: linux-next: manual merge of the crypto tree with the kbuild tree
+Date: Tue, 11 Apr 2017 10:42:15 +0800
+Message-ID: <20170411024215.GA10664@gondor.apana.org.au>
+References: <20170411102119.102f4675@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53793 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752187AbdDKA1V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Apr 2017 20:27:21 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:57958 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752433AbdDKCmZ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Apr 2017 22:42:25 -0400
+Content-Disposition: inline
+In-Reply-To: <20170411102119.102f4675@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Shawn Guo <shawn.guo@linaro.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-Hi all,
+On Tue, Apr 11, 2017 at 10:21:19AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the crypto tree got a conflict in:
+> 
+>   include/linux/crypto.h
+> 
+> between commit:
+> 
+>   c394d1683e7c ("cryptouser.h: fix include from userland")
+> 
+> from the kbuild tree and commit:
+> 
+>   f437a3f477cc ("crypto: api - Extend algorithm name limit to 128 bytes")
+> 
+> from the crypto tree.
+> 
+> I fixed it up (I used the former version of this file and added the
+> following merge fix patch) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Today's linux-next merge of the drm tree got a conflict in:
+Actually the patch in the kbuild tree should be reverted because
+we have now increased the in-kernel length limit and this must not
+be directly exposed to user-space or it'll break compatibility.
 
-  drivers/gpu/drm/exynos/exynos_hdmi.c
-
-between commit:
-
-  278c811c5d05 ("[media] exynos_hdmi: add CEC notifier support")
-
-from the v4l-dvb tree and commit:
-
-  64b0e1d6c6a1 ("drm: exynos: use vblank hooks in struct drm_crtc_funcs")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+Thanks,
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/exynos/exynos_hdmi.c
-index bc4c8d0a66f4,52438404c8c9..000000000000
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@@ -43,9 -43,6 +43,8 @@@
-  
-  #include <drm/exynos_drm.h>
-  
- +#include <media/cec-notifier.h>
- +
-- #include "exynos_drm_drv.h"
-  #include "exynos_drm_crtc.h"
-  
-  #define HOTPLUG_DEBOUNCE_MS		1100
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
