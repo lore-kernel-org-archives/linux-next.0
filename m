@@ -1,56 +1,92 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Please add imx-drm/next and etnaviv/next to linux-next
-Date: Thu, 13 Apr 2017 01:21:52 +1000
-Message-ID: <20170413012152.0e39a94c@canb.auug.org.au>
-References: <1492005584.15082.20.camel@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170412 build: 0 failures 2 warnings (next-20170412)
+Date: Wed, 12 Apr 2017 17:00:36 +0100
+Message-ID: <E1cyKh9-0004kZ-E7@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48027 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752513AbdDLPV4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Apr 2017 11:21:56 -0400
-In-Reply-To: <1492005584.15082.20.camel@pengutronix.de>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35992 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754538AbdDLQAo (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Apr 2017 12:00:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: linux-next@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel@pengutronix.de, Philipp Zabel <p.zabel@pengutronix.de>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Lucas,
+Tree/Branch: next-20170412
+Git describe: next-20170412
+Commit: 1267f8fa29 Add linux-next specific files for 20170412
 
-On Wed, 12 Apr 2017 15:59:44 +0200 Lucas Stach <l.stach@pengutronix.de> wrote:
->
-> can you please add imx-drm/next and etnaviv/next to the linux-next tree?
-> 
-> Both trees stage patches which will eventually feed into Dave Airlie's
-> drm-next tree.
-> 
-> https://git.pengutronix.de/git/pza/linux imx-drm/next
-> 
-> https://git.pengutronix.de/git/lst/linux etnaviv/next
+Build Time: 280 min 43 sec
 
-Added from tomorrow with just you as contact.  Let me know if there
-should be other contacts.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window. 
+Errors: 0
+Warnings: 2
+Section Mismatches: 0
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and 
-     * destined for the current or next Linux merge window.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+-------------------------------------------------------------------------------
 
--- 
-Cheers,
-Stephen Rothwell 
-sfr@canb.auug.org.au
+Warnings Summary: 2
+	  6 ../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+arm-multi_v4t_defconfig
