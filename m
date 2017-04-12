@@ -1,92 +1,44 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170412 build: 0 failures 2 warnings (next-20170412)
-Date: Wed, 12 Apr 2017 17:00:36 +0100
-Message-ID: <E1cyKh9-0004kZ-E7@optimist>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 5/8] arm64: defconfig: enable EFI_VARS and EFI_CAPSULE_LOADER
+Date: Wed, 12 Apr 2017 11:02:57 -0500
+Message-ID: <1492012980-11650-6-git-send-email-timur@codeaurora.org>
+References: <1492012980-11650-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35992 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754538AbdDLQAo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Apr 2017 12:00:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57848 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752731AbdDLQDK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 12 Apr 2017 12:03:10 -0400
+In-Reply-To: <1492012980-11650-1-git-send-email-timur@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, maxime.ripard@free-electrons.com, olof@lixom.net, Wei Xu <xuwei5@hisilicon.com>
 
-Tree/Branch: next-20170412
-Git describe: next-20170412
-Commit: 1267f8fa29 Add linux-next specific files for 20170412
+Many ARM64 server systems boot via EFI, so enable support for some EFI
+options to allow applications to interact with EFI.
 
-Build Time: 280 min 43 sec
+CONFIG_EFI_VARS enables sysfs support for reading and writing variables
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+CONFIG_EFI_CAPSULE_LOADER allows the user to update the EFI firmware.
 
-Errors: 0
-Warnings: 2
-Section Mismatches: 0
+Signed-off-by: Timur Tabi <timur@codeaurora.org>
+---
+ arch/arm64/configs/defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 2
-	  6 ../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 1e5c516..cdc8698 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -485,6 +485,8 @@ CONFIG_PHY_XGENE=y
+ CONFIG_PHY_TEGRA_XUSB=y
+ CONFIG_ARM_SCPI_PROTOCOL=y
+ CONFIG_RASPBERRYPI_FIRMWARE=y
++CONFIG_EFI_VARS=y
++CONFIG_EFI_CAPSULE_LOADER=y
+ CONFIG_ACPI=y
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
