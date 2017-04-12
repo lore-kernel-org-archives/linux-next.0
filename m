@@ -1,72 +1,39 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the char-misc tree
-Date: Wed, 12 Apr 2017 12:33:33 +0200
-Message-ID: <20170412103333.GD11657@kroah.com>
-References: <20170412151859.38f188a2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the mvebu tree with the arm-soc
+ tree
+Date: Wed, 12 Apr 2017 20:51:13 +1000
+Message-ID: <20170412205113.5d96637c@canb.auug.org.au>
+References: <20170412083404.76cda3b3@canb.auug.org.au>
+        <87a87mhw5w.fsf@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:60854 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752450AbdDLKdn (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Apr 2017 06:33:43 -0400
-Content-Disposition: inline
-In-Reply-To: <20170412151859.38f188a2@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:56007 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751620AbdDLKvQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Apr 2017 06:51:16 -0400
+In-Reply-To: <87a87mhw5w.fsf@free-electrons.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Escande <thierry.escande@collabora.com>
+To: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>, Eric Anholt <eric@anholt.net>
 
-On Wed, Apr 12, 2017 at 03:18:59PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the char-misc tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> In file included from drivers/firmware/google/memconsole-x86-legacy.c:23:0:
-> arch/x86/include/uapi/asm/e820.h:66:23: error: 'E820_X_MAX' undeclared here (not in a function)
->   struct e820entry map[E820_X_MAX];
->                        ^
-> 
-> Caused by commit
-> 
->   afe9dba4f9ae ("firmware: google memconsole: Move specific EBDA parts")
-> 
-> interacting with commit
-> 
->   66441bd3cfdc ("x86/boot/e820: Move asm/e820.h to asm/e820/api.h")
-> 
-> from the tip tree.
-> 
-> I applied the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 12 Apr 2017 15:12:12 +1000
-> Subject: [PATCH] firmware: google memconsole: merge fix for e820.h move
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/firmware/google/memconsole-x86-legacy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/firmware/google/memconsole-x86-legacy.c b/drivers/firmware/google/memconsole-x86-legacy.c
-> index 529078c62488..99df2749c4c5 100644
-> --- a/drivers/firmware/google/memconsole-x86-legacy.c
-> +++ b/drivers/firmware/google/memconsole-x86-legacy.c
-> @@ -20,7 +20,7 @@
->  #include <linux/dmi.h>
->  #include <linux/mm.h>
->  #include <asm/bios_ebda.h>
-> -#include <asm/e820.h>
-> +#include <asm/e820/api.h>
->  #include <linux/acpi.h>
->  
->  #include "memconsole.h"
-> -- 
-> 2.11.0
+Hi Gregory,
 
-Thanks for the patch, I'll keep it around for when things get merged to
-Linus if needed.
+On Wed, 12 Apr 2017 10:23:07 +0200 Gregory CLEMENT <gregory.clement@free-electrons.com> wrote:
+>
+> How do you want to proceed with this conflict?
+> 
+> Do you want that I merged arm-soc/next/arm64 in my mvebu/defconfig64
+> branch before applying my patch ?
+> 
+> Or do you prefer that I continue to base my branch on v4.11-rc1 and then
+> you will take care of the conflict when pulling the branch?
 
-greg k-h
+The conflict is trivial, I would hope that it will be handled when they
+merge your tree.
+
+-- 
+Cheers,
+Stephen Rothwell
