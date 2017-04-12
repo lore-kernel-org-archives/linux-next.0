@@ -1,67 +1,58 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the char-misc tree
-Date: Wed, 12 Apr 2017 15:18:59 +1000
-Message-ID: <20170412151859.38f188a2@canb.auug.org.au>
+From: <t2dnature@orange.fr>
+Subject: 5109 linux-next
+Date: Wed, 12 Apr 2017 05:55:11 -0000
+Message-ID: <149197651149.21476.10798496882144644908@telenet.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: application/zip; name="20095.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32991 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750899AbdDLFTC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Apr 2017 01:19:02 -0400
+Received: from 187.189-73-188.telenet.ru ([188.73.189.187]:42626 "HELO
+        telenet.ru" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750915AbdDLFzP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Apr 2017 01:55:15 -0400
+Content-Disposition: attachment
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Escande <thierry.escande@collabora.com>
+To: linux-next@vger.kernel.org
 
-Hi all,
-
-After merging the char-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-In file included from drivers/firmware/google/memconsole-x86-legacy.c:23:0:
-arch/x86/include/uapi/asm/e820.h:66:23: error: 'E820_X_MAX' undeclared here (not in a function)
-  struct e820entry map[E820_X_MAX];
-                       ^
-
-Caused by commit
-
-  afe9dba4f9ae ("firmware: google memconsole: Move specific EBDA parts")
-
-interacting with commit
-
-  66441bd3cfdc ("x86/boot/e820: Move asm/e820.h to asm/e820/api.h")
-
-from the tip tree.
-
-I applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 12 Apr 2017 15:12:12 +1000
-Subject: [PATCH] firmware: google memconsole: merge fix for e820.h move
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/firmware/google/memconsole-x86-legacy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/google/memconsole-x86-legacy.c b/drivers/firmware/google/memconsole-x86-legacy.c
-index 529078c62488..99df2749c4c5 100644
---- a/drivers/firmware/google/memconsole-x86-legacy.c
-+++ b/drivers/firmware/google/memconsole-x86-legacy.c
-@@ -20,7 +20,7 @@
- #include <linux/dmi.h>
- #include <linux/mm.h>
- #include <asm/bios_ebda.h>
--#include <asm/e820.h>
-+#include <asm/e820/api.h>
- #include <linux/acpi.h>
- 
- #include "memconsole.h"
--- 
-2.11.0
-
--- 
-Cheers,
-Stephen Rothwell
+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
+AAAAAFBLBQYAAAAAAQABAE0AAACfCAAAAAA=
