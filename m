@@ -1,27 +1,34 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 3/8] arm64: defconfig: enable TCG_TPM and TCG_CRB
-Date: Wed, 12 Apr 2017 17:09:08 +0100
-Message-ID: <20170412160907.GA7153@leverpostej>
+From: Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH 5/8] arm64: defconfig: enable EFI_VARS and
+ EFI_CAPSULE_LOADER
+Date: Wed, 12 Apr 2017 17:13:20 +0100
+Message-ID: <a80a1b2f-e5fa-36c7-5175-8a9718584720@arm.com>
 References: <1492012980-11650-1-git-send-email-timur@codeaurora.org>
- <1492012980-11650-4-git-send-email-timur@codeaurora.org>
+ <1492012980-11650-6-git-send-email-timur@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:46184 "EHLO foss.arm.com"
+Received: from foss.arm.com ([217.140.101.70]:46322 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752928AbdDLQJf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 12 Apr 2017 12:09:35 -0400
-Content-Disposition: inline
-In-Reply-To: <1492012980-11650-4-git-send-email-timur@codeaurora.org>
+        id S1753333AbdDLQNX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 12 Apr 2017 12:13:23 -0400
+In-Reply-To: <1492012980-11650-6-git-send-email-timur@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Timur Tabi <timur@codeaurora.org>
-Cc: linux-arm-kernel@lists.infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, maxime.ripard@free-electrons.com, olof@lixom.net, Wei Xu <xuwei5@hisilicon.com>
+To: Timur Tabi <timur@codeaurora.org>, linux-arm-kernel@lists.infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org, maxime.ripard@free-electrons.com, olof@lixom.net, Wei Xu <xuwei5@hisilicon.com>
 
-On Wed, Apr 12, 2017 at 11:02:55AM -0500, Timur Tabi wrote:
-> Some ARM64 server systems have a Trusted Platform Module security chip
-> on the board, and the chip is used to validate the operating system,
-> among other things.
+On 12/04/17 17:02, Timur Tabi wrote:
+> Many ARM64 server systems boot via EFI, so enable support for some EFI
+> options to allow applications to interact with EFI.
+> 
+> CONFIG_EFI_VARS enables sysfs support for reading and writing variables
+
+Isn't efivarfs preferred for that these days, or have I imagined that?
+
+Robin.
+
+> CONFIG_EFI_CAPSULE_LOADER allows the user to update the EFI firmware.
 > 
 > Signed-off-by: Timur Tabi <timur@codeaurora.org>
 > ---
@@ -29,25 +36,16 @@ On Wed, Apr 12, 2017 at 11:02:55AM -0500, Timur Tabi wrote:
 >  1 file changed, 2 insertions(+)
 > 
 > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index a684c92..99e9964 100644
+> index 1e5c516..cdc8698 100644
 > --- a/arch/arm64/configs/defconfig
 > +++ b/arch/arm64/configs/defconfig
-> @@ -240,6 +240,8 @@ CONFIG_SERIAL_XILINX_PS_UART=y
->  CONFIG_SERIAL_XILINX_PS_UART_CONSOLE=y
->  CONFIG_SERIAL_MVEBU_UART=y
->  CONFIG_VIRTIO_CONSOLE=y
-> +CONFIG_TCG_TPM=y
-> +CONFIG_TCG_CRB=y
-
-I see there are patches queued in linux-next enabling some arm64 TPM CRB
-support, which I believe are related.
-
-As I have commented elsewhere [1], I think those have been taken
-prematurely, and I'm not sure it's a good idea to enable this just yet,
-due to that. There are spec issues to be addressed in the draft that is
-still open.
-
-[1] https://lkml.kernel.org/r/20170411113652.GB32267@leverpostej
-
-Thanks,
-Mark.
+> @@ -485,6 +485,8 @@ CONFIG_PHY_XGENE=y
+>  CONFIG_PHY_TEGRA_XUSB=y
+>  CONFIG_ARM_SCPI_PROTOCOL=y
+>  CONFIG_RASPBERRYPI_FIRMWARE=y
+> +CONFIG_EFI_VARS=y
+> +CONFIG_EFI_CAPSULE_LOADER=y
+>  CONFIG_ACPI=y
+>  CONFIG_EXT2_FS=y
+>  CONFIG_EXT3_FS=y
+> 
