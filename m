@@ -1,63 +1,42 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH 4/4] mm/hmm: exclude 64 bit arch that explicitly fail to
- work.
-Date: Thu, 13 Apr 2017 08:03:06 -0400
-Message-ID: <20170413120305.GT16239@windriver.com>
-References: <20170413003014.4052-1-paul.gortmaker@windriver.com>
- <20170413003014.4052-5-paul.gortmaker@windriver.com>
- <20170413132701.633a22a9@canb.auug.org.au>
- <87poggao2b.fsf@concordia.ellerman.id.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 0/8][v2] arm64: defconfig: enable several options useful for ARM64 server platforms
+Date: Thu, 13 Apr 2017 15:51:15 -0500
+Message-ID: <1492116683-26399-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:53853 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752534AbdDMMDV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2017 08:03:21 -0400
-Content-Disposition: inline
-In-Reply-To: <87poggao2b.fsf@concordia.ellerman.id.au>
+Received: from smtp.codeaurora.org ([198.145.29.96]:59884 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932102AbdDMUve (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2017 16:51:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Evgeny Baskakov <ebaskakov@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Mark Hairgrove <mhairgrove@nvidia.com>, Sherry Cheung <SCheung@nvidia.com>, Subhash Gutti <sgutti@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
+To: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, maxime.ripard@free-electrons.com, olof@lixom.ne, Wei Xu <xuwei5@hisilicon.com>, Mark Rutland <mark.rutland@arm.com>, robin.murphy@arm.com, ard.biesheuvel@linaro.org, leif.lindholm@arm.com
 
-[Re: [PATCH 4/4] mm/hmm: exclude 64 bit arch that explicitly fail to work.] On 13/04/2017 (Thu 15:12) Michael Ellerman wrote:
+ACPI-based ARM64 server platforms based, like the Qualcomm Datacenter
+Technologies QDF2400, need several features and drivers enabled for
+full functionality.  This patchset enables many of those features.
 
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> 
-> > Hi Paul,
-> >
-> > On Wed, 12 Apr 2017 20:30:14 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
-> >>
-> >> Since ia64 and ppc64 don't set CONFIG_64BIT, they were already
-> >> excluded by the original dependency.
-> >
-> > My powerpc ppc64_defconfig builds have CONFIG_64BIT set ...
-> >
-> > $ grep CONFIG_64BIT ~/next/powerpc_ppc64_defconfig/.config
-> > CONFIG_64BIT=y
-> 
-> Yeah, arch/powerpc/Kconfig:
-> 
-> config 64BIT
-> 	bool
-> 	default y if PPC64
+The first patch, "resynchronize the defconfig" refreshes the ARM64
+defconfig so that it's aligned with savedefconfig.  This needs to be
+done periodically, so that new patches avoid merge conflicts.  
 
-Yep, as I said to Stephen earlier in this thread, I think I mistakenly
-searched for 64_BIT; unfortunately I can't tell since all history has is:
+If the first patch does not apply cleanly, I ask the maintainer to 
+refresh it himself manually, following the instructions in the commit
+message.  The remaining 7 patches should apply cleanly on top of that.
 
-   16  make  O=../ppc-build/ pasemi_defconfig
-   17  vi ../ppc-build/.config
+Timur Tabi (8):
+  [v2] arm64: defconfig: resynchronize the defconfig
+  arm64: defconfig: enable ACPI_CPPC_CPUFREQ
+  arm64: defconfig: enable BLK_DEV_NVME
+  [v2] arm64: defconfig: enable EFI_CAPSULE_LOADER
+  arm64: defconfig: enable support for PCIe hotplug
+  arm64: defconfig: enable APEI and GHES features
+  [v2] arm64: defconfig: enable EDAC options
+  arm64: defconfig: enable QCOM_L2_PMU and QCOM_L3_PMU
 
-Anyway, that mis-documentation in the commit log aside, it seems like
-the driver has been pulled from the linux-next content for today;
-presumably to be reworked and resubmitted with better arch coverage
-to address all the issues raised here.  That is probably the right
-approach - we don't need to pollute git history with all that..
+ arch/arm64/configs/defconfig | 114 ++++++++++++++++++++-----------------------
+ 1 file changed, 54 insertions(+), 60 deletions(-)
 
-Thanks,
-Paul.
---
-
-> 
-> cheers
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
