@@ -1,94 +1,63 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170413 build: 0 failures 3 warnings (next-20170413)
-Date: Thu, 13 Apr 2017 12:58:30 +0100
-Message-ID: <E1cydOP-0006l9-Fv@optimist>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 4/4] mm/hmm: exclude 64 bit arch that explicitly fail to
+ work.
+Date: Thu, 13 Apr 2017 08:03:06 -0400
+Message-ID: <20170413120305.GT16239@windriver.com>
+References: <20170413003014.4052-1-paul.gortmaker@windriver.com>
+ <20170413003014.4052-5-paul.gortmaker@windriver.com>
+ <20170413132701.633a22a9@canb.auug.org.au>
+ <87poggao2b.fsf@concordia.ellerman.id.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42808 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751349AbdDML6h (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2017 07:58:37 -0400
+Received: from mail.windriver.com ([147.11.1.11]:53853 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752534AbdDMMDV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Apr 2017 08:03:21 -0400
+Content-Disposition: inline
+In-Reply-To: <87poggao2b.fsf@concordia.ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>, Evgeny Baskakov <ebaskakov@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Mark Hairgrove <mhairgrove@nvidia.com>, Sherry Cheung <SCheung@nvidia.com>, Subhash Gutti <sgutti@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>
 
-Tree/Branch: next-20170413
-Git describe: next-20170413
-Commit: f4fa27cbc0 Add linux-next specific files for 20170413
+[Re: [PATCH 4/4] mm/hmm: exclude 64 bit arch that explicitly fail to work.] On 13/04/2017 (Thu 15:12) Michael Ellerman wrote:
 
-Build Time: 218 min 26 sec
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> 
+> > Hi Paul,
+> >
+> > On Wed, 12 Apr 2017 20:30:14 -0400 Paul Gortmaker <paul.gortmaker@windriver.com> wrote:
+> >>
+> >> Since ia64 and ppc64 don't set CONFIG_64BIT, they were already
+> >> excluded by the original dependency.
+> >
+> > My powerpc ppc64_defconfig builds have CONFIG_64BIT set ...
+> >
+> > $ grep CONFIG_64BIT ~/next/powerpc_ppc64_defconfig/.config
+> > CONFIG_64BIT=y
+> 
+> Yeah, arch/powerpc/Kconfig:
+> 
+> config 64BIT
+> 	bool
+> 	default y if PPC64
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Yep, as I said to Stephen earlier in this thread, I think I mistakenly
+searched for 64_BIT; unfortunately I can't tell since all history has is:
 
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
+   16  make  O=../ppc-build/ pasemi_defconfig
+   17  vi ../ppc-build/.config
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+Anyway, that mis-documentation in the commit log aside, it seems like
+the driver has been pulled from the linux-next content for today;
+presumably to be reworked and resubmitted with better arch coverage
+to address all the issues raised here.  That is probably the right
+approach - we don't need to pollute git history with all that..
 
--------------------------------------------------------------------------------
+Thanks,
+Paul.
+--
 
-Warnings Summary: 3
-	  6 ../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:1048:12: warning: 'ftgmac100_nway_reset' defined but not used [-Wunused-function]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/faraday/ftgmac100.c:1048:12: warning: 'ftgmac100_nway_reset' defined but not used [-Wunused-function]
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:755:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
+> 
+> cheers
