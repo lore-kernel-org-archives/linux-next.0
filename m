@@ -1,37 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the rtc tree
-Date: Sat, 15 Apr 2017 02:33:56 +1000
-Message-ID: <20170415023356.015db2bc@canb.auug.org.au>
-References: <20170410160454.3741cce8@canb.auug.org.au>
-        <e5cb6b88-ea66-c874-272e-183bba1a2d7a@redhat.com>
-        <20170411102238.24477c5d@canb.auug.org.au>
-        <20170411055509.o2ob2z3kavteykqh@piout.net>
-        <20170411175220.43cd5280@canb.auug.org.au>
-        <20170414100947.bean3zdjqfmtsmbj@piout.net>
+From: <muirs@stolaf.edu>
+Subject: (unknown)
+Date: Sun, 16 Apr 2017 23:57:57 -0000
+Message-ID: <149238707727.20709.14400966174701159281@cox.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170414100947.bean3zdjqfmtsmbj@piout.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: application/zip; name="DOLLARS-47818843-linux-next.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from wsip-184-176-146-75.ph.ph.cox.net ([184.176.146.75]:58954 "HELO
+        cox.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1751295AbdDPX6B (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 16 Apr 2017 19:58:01 -0400
+Content-Disposition: attachment
+Subject: 
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next <linux-next@vger.kernel.org>
 
-Hi Alexandre,
-
-On Fri, 14 Apr 2017 12:09:47 +0200 Alexandre Belloni <alexandre.belloni@free-electrons.com> wrote:
->
-> On 11/04/2017 at 17:52:20 +1000, Stephen Rothwell wrote:
-> > But it is a fix for a build failure caused by a commit in your tree ...
-> > so you should probably get an ack from the x86 maintainers and add it
-> > to your tree.  Or do some other fix in your tree.
-> >   
-> 
-> It is now in my tree.
-
-Thanks.
-
--- 
-Cheers,
-Stephen Rothwell
+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
