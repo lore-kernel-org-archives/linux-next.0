@@ -1,54 +1,92 @@
-From: <muirs@stolaf.edu>
-Subject: (unknown)
-Date: Sun, 16 Apr 2017 23:57:57 -0000
-Message-ID: <149238707727.20709.14400966174701159281@cox.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the thermal-soc tree with the pm tree
+Date: Tue, 18 Apr 2017 09:59:19 +1000
+Message-ID: <20170418095919.6caec943@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="DOLLARS-47818843-linux-next.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from wsip-184-176-146-75.ph.ph.cox.net ([184.176.146.75]:58954 "HELO
-        cox.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1751295AbdDPX6B (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 16 Apr 2017 19:58:01 -0400
-Content-Disposition: attachment
-Subject: 
+Received: from ozlabs.org ([103.22.144.67]:51689 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932323AbdDQX7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 17 Apr 2017 19:59:23 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next <linux-next@vger.kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Steve Twiss <stwiss.opensource@diasemi.com>
 
-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
+Hi Eduardo,
+
+Today's linux-next merge of the thermal-soc tree got conflicts in:
+
+  drivers/thermal/Kconfig
+  drivers/thermal/Makefile
+
+between commit:
+
+  19678ffb9fd6 ("cpufreq: dbx500: Manage cooling device from cpufreq driver")
+
+from the pm tree and commit:
+
+  608567aac320 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
+
+from the thermal-soc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/thermal/Kconfig
+index 0a16cf4bed39,6699843918fa..000000000000
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@@ -290,7 -290,29 +290,17 @@@ config ARMADA_THERMA
+  	help
+  	  Enable this option if you want to have support for thermal management
+  	  controller present in Armada 370 and Armada XP SoC.
+ -
+ -config DB8500_CPUFREQ_COOLING
+ -	tristate "DB8500 cpufreq cooling"
+ -	depends on ARCH_U8500 || COMPILE_TEST
+ -	depends on HAS_IOMEM
+ -	depends on CPU_THERMAL
+ -	default y
+ -	help
+ -	  Adds DB8500 cpufreq cooling devices, and these cooling devices can be
+ -	  bound to thermal zone trip points. When a trip point reached, the
+ -	  bound cpufreq cooling device turns active to set CPU frequency low to
+ -	  cool down the CPU.
+  
++ config DA9062_THERMAL
++ 	tristate "DA9062/DA9061 Dialog Semiconductor thermal driver"
++ 	depends on MFD_DA9062 || COMPILE_TEST
++ 	depends on OF
++ 	help
++ 	  Enable this for the Dialog Semiconductor thermal sensor driver.
++ 	  This will report PMIC junction over-temperature for one thermal trip
++ 	  zone.
++ 	  Compatible with the DA9062 and DA9061 PMICs.
++ 
+  config INTEL_POWERCLAMP
+  	tristate "Intel PowerClamp idle injection driver"
+  	depends on THERMAL
+diff --cc drivers/thermal/Makefile
+index c2372f10dae5,a1e9b8b4e897..000000000000
+--- a/drivers/thermal/Makefile
++++ b/drivers/thermal/Makefile
+@@@ -41,6 -42,8 +42,7 @@@ obj-$(CONFIG_TANGO_THERMAL)	+= tango_th
+  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
+  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
+  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
+ -obj-$(CONFIG_DB8500_CPUFREQ_COOLING)	+= db8500_cpufreq_cooling.o
++ obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
+  obj-$(CONFIG_INTEL_POWERCLAMP)	+= intel_powerclamp.o
+  obj-$(CONFIG_X86_PKG_TEMP_THERMAL)	+= x86_pkg_temp_thermal.o
+  obj-$(CONFIG_INTEL_SOC_DTS_IOSF_CORE)	+= intel_soc_dts_iosf.o
