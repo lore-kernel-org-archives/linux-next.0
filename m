@@ -1,92 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Tue, 18 Apr 2017 13:02:29 +1000
-Message-ID: <20170418130229.04289bd6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the staging tree
+Date: Tue, 18 Apr 2017 15:32:20 +1000
+Message-ID: <20170418153220.734e83f4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>, Johannes Berg <johannes.berg@intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42493 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750723AbdDRFcX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 18 Apr 2017 01:32:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alan Cox <alan@linux.intel.com>
 
-Hi all,
+Hi Greg,
 
-After merging the block tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-drivers/block/nbd.c: In function 'nbd_genl_connect':
-drivers/block/nbd.c:1662:10: error: too few arguments to function 'nla_parse_nested'
-    ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
-          ^
-In file included from include/net/rtnetlink.h:5:0,
-                 from include/net/sch_generic.h:12,
-                 from include/linux/filter.h:20,
-                 from include/net/sock.h:64,
-                 from drivers/block/nbd.c:32:
-include/net/netlink.h:754:19: note: declared here
- static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
-                   ^
-drivers/block/nbd.c: In function 'nbd_genl_reconfigure':
-drivers/block/nbd.c:1818:10: error: too few arguments to function 'nla_parse_nested'
-    ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
-          ^
-In file included from include/net/rtnetlink.h:5:0,
-                 from include/net/sch_generic.h:12,
-                 from include/linux/filter.h:20,
-                 from include/net/sock.h:64,
-                 from drivers/block/nbd.c:32:
-include/net/netlink.h:754:19: note: declared here
- static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
-                   ^
+make[7]: *** No rule to make target 'drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/uds/uds_1.0/ia_css_uds.host.o', needed by 'drivers/staging/media/atomisp/pci/atomisp2/atomisp.o'.  Stop.
 
-Caused by commits
+Caused by commit
 
-  e46c7287b1c2 ("nbd: add a basic netlink interface")
-  b7aa3d39385d ("nbd: add a reconfigure netlink command")
+  7afe8f84f793 ("atomisp: remove UDS kernel code")
 
-interacting with commit
-
-  fceb6435e852 ("netlink: pass extended ACK struct to parsing functions")
-
-from the net-next tree.
-
-I have applied the following merge fix patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 18 Apr 2017 12:59:05 +1000
-Subject: [PATCH] nbd: fix up for nla_parse_nested() API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/block/nbd.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index b78f23ce2395..5049d19f3940 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1660,7 +1660,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
- 				goto out;
- 			}
- 			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
--					       nbd_sock_policy);
-+					       nbd_sock_policy, NULL);
- 			if (ret != 0) {
- 				printk(KERN_ERR "nbd: error processing sock list\n");
- 				ret = -EINVAL;
-@@ -1816,7 +1816,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
- 				goto out;
- 			}
- 			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
--					       nbd_sock_policy);
-+					       nbd_sock_policy, NULL);
- 			if (ret != 0) {
- 				printk(KERN_ERR "nbd: error processing sock list\n");
- 				ret = -EINVAL;
--- 
-2.11.0
+I have used the staging tree from next-20170413 for today.
 
 -- 
 Cheers,
