@@ -1,88 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the
- kselftest tree
-Date: Tue, 18 Apr 2017 17:04:41 +1000
-Message-ID: <20170418170441.26c037b1@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 18 Apr 2017 09:04:44 +0200
+Message-ID: <1492499084.2472.0.camel@sipsolutions.net>
+References: <20170418155348.69ee48c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuahkh@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, SeongJae Park <sj38.park@gmail.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from s3.sipsolutions.net ([5.9.151.49]:44136 "EHLO sipsolutions.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751641AbdDRHE5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 18 Apr 2017 03:04:57 -0400
+In-Reply-To: <20170418155348.69ee48c4@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
 
-Hi all,
+On Tue, 2017-04-18 at 15:53 +1000, Stephen Rothwell wrote:
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+> Caused by commit
+> 
+>   554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
 
-  tools/testing/selftests/vm/run_vmtests
+Oh, another new driver :)
 
-between commit:
+> interacting with commit
+> 
+>   818a986e4eba ("cfg80211: move add/change interface monitor flags
+> into params")
+> 
+> from the mac80211-next tree.
+> 
+> I have added the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 18 Apr 2017 15:43:43 +1000
+> Subject: [PATCH] staging: merge fix for add/change_virtual-intf API
+> change
 
-  2b8713e14be5 ("selftests/vm/run_vmtests: Polish output text")
+That looks good, evidently it doesn't care about the parameter then.
 
-from the kselftest tree and commit:
+Thanks!
 
-  7b7c7dac4437 ("userfaultfd: selftest: combine all cases into a single executable")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc tools/testing/selftests/vm/run_vmtests
-index 0091bde3f25f,3214a6456d13..000000000000
---- a/tools/testing/selftests/vm/run_vmtests
-+++ b/tools/testing/selftests/vm/run_vmtests
-@@@ -92,10 -92,10 +92,10 @@@ echo "NOTE: The above hugetlb tests pro
-  echo "      https://github.com/libhugetlbfs/libhugetlbfs.git for"
-  echo "      hugetlb regression testing."
-  
- -echo "--------------------"
- +echo "-------------------"
-  echo "running userfaultfd"
- -echo "--------------------"
- +echo "-------------------"
-- ./userfaultfd 128 32
-+ ./userfaultfd anon 128 32
-  if [ $? -ne 0 ]; then
-  	echo "[FAIL]"
-  	exitcode=1
-@@@ -103,11 -103,11 +103,11 @@@ els
-  	echo "[PASS]"
-  fi
-  
- -echo "----------------------------"
- +echo "---------------------------"
-  echo "running userfaultfd_hugetlb"
- -echo "----------------------------"
- +echo "---------------------------"
-  # 258MB total huge pages == 128MB src and 128MB dst
-- ./userfaultfd_hugetlb 128 32 $mnt/ufd_test_file
-+ ./userfaultfd hugetlb 128 32 $mnt/ufd_test_file
-  if [ $? -ne 0 ]; then
-  	echo "[FAIL]"
-  	exitcode=1
-@@@ -116,10 -116,10 +116,10 @@@ els
-  fi
-  rm -f $mnt/ufd_test_file
-  
- -echo "----------------------------"
- +echo "-------------------------"
-  echo "running userfaultfd_shmem"
- -echo "----------------------------"
- +echo "-------------------------"
-- ./userfaultfd_shmem 128 32
-+ ./userfaultfd shmem 128 32
-  if [ $? -ne 0 ]; then
-  	echo "[FAIL]"
-  	exitcode=1
+johannes
