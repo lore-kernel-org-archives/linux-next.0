@@ -1,46 +1,85 @@
-From: Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Tue, 18 Apr 2017 09:04:44 +0200
-Message-ID: <1492499084.2472.0.camel@sipsolutions.net>
-References: <20170418155348.69ee48c4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Tue, 18 Apr 2017 18:09:03 +1000
+Message-ID: <20170418180903.10300fd3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from s3.sipsolutions.net ([5.9.151.49]:44136 "EHLO sipsolutions.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbdDRHE5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 18 Apr 2017 03:04:57 -0400
-In-Reply-To: <20170418155348.69ee48c4@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, Laura Abbott <labbott@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2017-04-18 at 15:53 +1000, Stephen Rothwell wrote:
+Hi all,
 
-> Caused by commit
-> 
->   554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
+After merging the akpm tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Oh, another new driver :)
+arch/x86/kernel/kprobes/opt.c: In function 'arch_prepare_optimized_kprobe':
+arch/x86/kernel/kprobes/opt.c:357:2: error: implicit declaration of function 'set_memory_rw' [-Werror=implicit-function-declaration]
+  set_memory_rw((unsigned long)buf & PAGE_MASK, 1);
+  ^
+arch/x86/kernel/kprobes/opt.c:380:2: error: implicit declaration of function 'set_memory_ro' [-Werror=implicit-function-declaration]
+  set_memory_ro((unsigned long)buf & PAGE_MASK, 1);
+  ^
+arch/x86/kernel/kprobes/core.c: In function 'arch_copy_kprobe':
+arch/x86/kernel/kprobes/core.c:424:2: error: implicit declaration of function 'set_memory_rw' [-Werror=implicit-function-declaration]
+  set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
+  ^
+arch/x86/kernel/kprobes/core.c:437:2: error: implicit declaration of function 'set_memory_ro' [-Werror=implicit-function-declaration]
+  set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
+  ^
 
-> interacting with commit
-> 
->   818a986e4eba ("cfg80211: move add/change interface monitor flags
-> into params")
-> 
-> from the mac80211-next tree.
-> 
-> I have added the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 18 Apr 2017 15:43:43 +1000
-> Subject: [PATCH] staging: merge fix for add/change_virtual-intf API
-> change
+Probably caused by commit
 
-That looks good, evidently it doesn't care about the parameter then.
+  f276e80d1e7b ("treewide: decouple cacheflush.h and set_memory.h")
 
-Thanks!
+interacting with commit
 
-johannes
+  d0381c81c2f7 ("kprobes/x86: Set kprobes pages read-only")
+
+from the tip tree.
+
+I applied this merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Apr 2017 17:59:09 +1000
+Subject: [PATCH] kprobes/x86: merge fix for set_memory.h decoupling
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/kernel/kprobes/core.c | 1 +
+ arch/x86/kernel/kprobes/opt.c  | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+index 19e1f2a6d7b0..5b2bbfbb3712 100644
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -61,6 +61,7 @@
+ #include <asm/alternative.h>
+ #include <asm/insn.h>
+ #include <asm/debugreg.h>
++#include <asm/set_memory.h>
+ 
+ #include "common.h"
+ 
+diff --git a/arch/x86/kernel/kprobes/opt.c b/arch/x86/kernel/kprobes/opt.c
+index 9aadff3d0902..901c640d152f 100644
+--- a/arch/x86/kernel/kprobes/opt.c
++++ b/arch/x86/kernel/kprobes/opt.c
+@@ -37,6 +37,7 @@
+ #include <asm/alternative.h>
+ #include <asm/insn.h>
+ #include <asm/debugreg.h>
++#include <asm/set_memory.h>
+ 
+ #include "common.h"
+ 
+-- 
+2.11.0
+
+-- 
+Cheers,
+Stephen Rothwell
