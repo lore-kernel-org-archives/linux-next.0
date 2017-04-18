@@ -1,92 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the thermal-soc tree with the pm tree
-Date: Tue, 18 Apr 2017 09:59:19 +1000
-Message-ID: <20170418095919.6caec943@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 18 Apr 2017 10:18:35 +1000
+Message-ID: <20170418101835.745d2576@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51689 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932323AbdDQX7X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 17 Apr 2017 19:59:23 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Eduardo Valentin <edubezval@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Steve Twiss <stwiss.opensource@diasemi.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Eduardo,
+Hi all,
 
-Today's linux-next merge of the thermal-soc tree got conflicts in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/thermal/Kconfig
-  drivers/thermal/Makefile
+  kernel/bpf/syscall.c
 
-between commit:
+between commits:
 
-  19678ffb9fd6 ("cpufreq: dbx500: Manage cooling device from cpufreq driver")
+  6b1bb01bcc5b ("bpf: fix cb access in socket filter programs on tail calls")
+  c2002f983767 ("bpf: fix checking xdp_adjust_head on tail calls")
 
-from the pm tree and commit:
+from the net tree and commit:
 
-  608567aac320 ("thermal: da9062/61: Thermal junction temperature monitoring driver")
+  e245c5c6a565 ("bpf: move fixup_bpf_calls() function")
+  79741b3bdec0 ("bpf: refactor fixup_bpf_calls()")
 
-from the thermal-soc tree.
+from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the latter moved and changed teh code modified by the
+former  - I added the following fix up patch) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Apr 2017 10:16:03 +1000
+Subject: [PATCH] bpf: merge fix for move of fixup_bpf_calls()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/bpf/verifier.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 62e1e447ded9..5939b4c81fe1 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3349,6 +3349,14 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
+ 		if (insn->imm == BPF_FUNC_xdp_adjust_head)
+ 			prog->xdp_adjust_head = 1;
+ 		if (insn->imm == BPF_FUNC_tail_call) {
++			/* If we tail call into other programs, we
++			 * cannot make any assumptions since they
++			 * can be replaced dynamically during runtime
++			 * in the program array.
++			 */
++			prog->cb_access = 1;
++			prog->xdp_adjust_head = 1;
++
+ 			/* mark bpf_tail_call as different opcode to avoid
+ 			 * conditional branch in the interpeter for every normal
+ 			 * call and to prevent accidental JITing by JIT compiler
+-- 
+2.11.0
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/thermal/Kconfig
-index 0a16cf4bed39,6699843918fa..000000000000
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@@ -290,7 -290,29 +290,17 @@@ config ARMADA_THERMA
-  	help
-  	  Enable this option if you want to have support for thermal management
-  	  controller present in Armada 370 and Armada XP SoC.
- -
- -config DB8500_CPUFREQ_COOLING
- -	tristate "DB8500 cpufreq cooling"
- -	depends on ARCH_U8500 || COMPILE_TEST
- -	depends on HAS_IOMEM
- -	depends on CPU_THERMAL
- -	default y
- -	help
- -	  Adds DB8500 cpufreq cooling devices, and these cooling devices can be
- -	  bound to thermal zone trip points. When a trip point reached, the
- -	  bound cpufreq cooling device turns active to set CPU frequency low to
- -	  cool down the CPU.
-  
-+ config DA9062_THERMAL
-+ 	tristate "DA9062/DA9061 Dialog Semiconductor thermal driver"
-+ 	depends on MFD_DA9062 || COMPILE_TEST
-+ 	depends on OF
-+ 	help
-+ 	  Enable this for the Dialog Semiconductor thermal sensor driver.
-+ 	  This will report PMIC junction over-temperature for one thermal trip
-+ 	  zone.
-+ 	  Compatible with the DA9062 and DA9061 PMICs.
-+ 
-  config INTEL_POWERCLAMP
-  	tristate "Intel PowerClamp idle injection driver"
-  	depends on THERMAL
-diff --cc drivers/thermal/Makefile
-index c2372f10dae5,a1e9b8b4e897..000000000000
---- a/drivers/thermal/Makefile
-+++ b/drivers/thermal/Makefile
-@@@ -41,6 -42,8 +42,7 @@@ obj-$(CONFIG_TANGO_THERMAL)	+= tango_th
-  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
-  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
-  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
- -obj-$(CONFIG_DB8500_CPUFREQ_COOLING)	+= db8500_cpufreq_cooling.o
-+ obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-  obj-$(CONFIG_INTEL_POWERCLAMP)	+= intel_powerclamp.o
-  obj-$(CONFIG_X86_PKG_TEMP_THERMAL)	+= x86_pkg_temp_thermal.o
-  obj-$(CONFIG_INTEL_SOC_DTS_IOSF_CORE)	+= intel_soc_dts_iosf.o
