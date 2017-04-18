@@ -1,77 +1,93 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 18 Apr 2017 02:39:01 +0200
-Message-ID: <58F56025.40904@iogearbox.net>
-References: <20170418101835.745d2576@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Tue, 18 Apr 2017 13:02:29 +1000
+Message-ID: <20170418130229.04289bd6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from www62.your-server.de ([213.133.104.62]:56605 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756529AbdDRAjJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 17 Apr 2017 20:39:09 -0400
-In-Reply-To: <20170418101835.745d2576@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@fb.com>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>, Johannes Berg <johannes.berg@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 04/18/2017 02:18 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->
->    kernel/bpf/syscall.c
->
-> between commits:
->
->    6b1bb01bcc5b ("bpf: fix cb access in socket filter programs on tail calls")
->    c2002f983767 ("bpf: fix checking xdp_adjust_head on tail calls")
->
-> from the net tree and commit:
->
->    e245c5c6a565 ("bpf: move fixup_bpf_calls() function")
->    79741b3bdec0 ("bpf: refactor fixup_bpf_calls()")
->
-> from the net-next tree.
->
-> I fixed it up (the latter moved and changed teh code modified by the
-> former  - I added the following fix up patch) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 18 Apr 2017 10:16:03 +1000
-> Subject: [PATCH] bpf: merge fix for move of fixup_bpf_calls()
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   kernel/bpf/verifier.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 62e1e447ded9..5939b4c81fe1 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -3349,6 +3349,14 @@ static int fixup_bpf_calls(struct bpf_verifier_env *env)
->   		if (insn->imm == BPF_FUNC_xdp_adjust_head)
->   			prog->xdp_adjust_head = 1;
->   		if (insn->imm == BPF_FUNC_tail_call) {
-> +			/* If we tail call into other programs, we
-> +			 * cannot make any assumptions since they
-> +			 * can be replaced dynamically during runtime
-> +			 * in the program array.
-> +			 */
-> +			prog->cb_access = 1;
-> +			prog->xdp_adjust_head = 1;
-> +
->   			/* mark bpf_tail_call as different opcode to avoid
->   			 * conditional branch in the interpeter for every normal
->   			 * call and to prevent accidental JITing by JIT compiler
->
+Hi all,
 
-Looks good, thanks.
+After merging the block tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+drivers/block/nbd.c: In function 'nbd_genl_connect':
+drivers/block/nbd.c:1662:10: error: too few arguments to function 'nla_parse_nested'
+    ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+          ^
+In file included from include/net/rtnetlink.h:5:0,
+                 from include/net/sch_generic.h:12,
+                 from include/linux/filter.h:20,
+                 from include/net/sock.h:64,
+                 from drivers/block/nbd.c:32:
+include/net/netlink.h:754:19: note: declared here
+ static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
+                   ^
+drivers/block/nbd.c: In function 'nbd_genl_reconfigure':
+drivers/block/nbd.c:1818:10: error: too few arguments to function 'nla_parse_nested'
+    ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+          ^
+In file included from include/net/rtnetlink.h:5:0,
+                 from include/net/sch_generic.h:12,
+                 from include/linux/filter.h:20,
+                 from include/net/sock.h:64,
+                 from drivers/block/nbd.c:32:
+include/net/netlink.h:754:19: note: declared here
+ static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
+                   ^
+
+Caused by commits
+
+  e46c7287b1c2 ("nbd: add a basic netlink interface")
+  b7aa3d39385d ("nbd: add a reconfigure netlink command")
+
+interacting with commit
+
+  fceb6435e852 ("netlink: pass extended ACK struct to parsing functions")
+
+from the net-next tree.
+
+I have applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 18 Apr 2017 12:59:05 +1000
+Subject: [PATCH] nbd: fix up for nla_parse_nested() API change
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/block/nbd.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index b78f23ce2395..5049d19f3940 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1660,7 +1660,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+ 				goto out;
+ 			}
+ 			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+-					       nbd_sock_policy);
++					       nbd_sock_policy, NULL);
+ 			if (ret != 0) {
+ 				printk(KERN_ERR "nbd: error processing sock list\n");
+ 				ret = -EINVAL;
+@@ -1816,7 +1816,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 				goto out;
+ 			}
+ 			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+-					       nbd_sock_policy);
++					       nbd_sock_policy, NULL);
+ 			if (ret != 0) {
+ 				printk(KERN_ERR "nbd: error processing sock list\n");
+ 				ret = -EINVAL;
+-- 
+2.11.0
+
+-- 
+Cheers,
+Stephen Rothwell
