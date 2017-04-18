@@ -1,78 +1,58 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: manual merge of the mux tree with the i2c tree
-Date: Tue, 18 Apr 2017 10:54:04 +0200
-Message-ID: <20170418085404.GA5578@kroah.com>
-References: <20170418155958.73116b94@canb.auug.org.au>
- <ca40279d-4b8c-b139-4d52-77ff67c5eb70@axentia.se>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Date: Tue, 18 Apr 2017 13:16:18 +0200
+Message-ID: <20170418111618.GA14997@kroah.com>
+References: <20170418153220.734e83f4@canb.auug.org.au>
+ <20170418055440.GA31928@kroah.com>
+ <20170418162652.556077f3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58183 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751111AbdDRLQ1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 18 Apr 2017 07:16:27 -0400
 Content-Disposition: inline
-In-Reply-To: <ca40279d-4b8c-b139-4d52-77ff67c5eb70@axentia.se>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Rosin <peda@axentia.se>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, Philipp Zabel <p.zabel@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20170418162652.556077f3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alan Cox <alan@linux.intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Apr 18, 2017 at 08:52:16AM +0200, Peter Rosin wrote:
-> On 2017-04-18 07:59, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the mux tree got conflicts in:
-> > 
-> >   drivers/i2c/muxes/Makefile
-> >   drivers/i2c/muxes/Kconfig
-> > 
-> > between commit:
-> > 
-> >   dbed8a803bd3 ("i2c: mux: ltc4306: LTC4306 and LTC4305 I2C multiplexer/switch")
-> > 
-> > from the i2c tree and commit:
-> > 
-> >   69c689cbeefa ("i2c: i2c-mux-gpmux: new driver")
-> > 
-> > from the mux tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+On Tue, Apr 18, 2017 at 04:26:52PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> This is trivial IMHO, and I see no need to juggle with immutable branches
-> etc. Or maybe the whole thing is moot since it is getting late for the mux
-> series anyway, but the only one who can answer that is Greg.
+> On Tue, 18 Apr 2017 07:54:40 +0200 Greg KH <greg@kroah.com> wrote:
+> >
+> > On Tue, Apr 18, 2017 at 03:32:20PM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > After merging the staging tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > make[7]: *** No rule to make target 'drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/uds/uds_1.0/ia_css_uds.host.o', needed by 'drivers/staging/media/atomisp/pci/atomisp2/atomisp.o'.  Stop.
+> > > 
+> > > Caused by commit
+> > > 
+> > >   7afe8f84f793 ("atomisp: remove UDS kernel code")
+> > > 
+> > > I have used the staging tree from next-20170413 for today.  
+> > 
+> > Ok, the 0-day bot reported something odd like this, with Alan's original
+> > patches, but I couldn't reproduce it, and then when I applied them, the
+> > 0-day bot worked just fine.  But now you are having the same issue.
+> > 
+> > I'm totally confused, Alan, any ideas?
 > 
-> So Greg, any news on the timeline for the mux series? BTW, other people are
-> starting to take an interest, see
+> Well, drivers/staging/media/atomisp/pci/atomisp2/Makefile lists
+> css2400/isp/kernels/uds/uds_1.0/ia_css_uds.host.o in atomisp-objs.
 > 
->   http://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1377069.html
-> 
-> They apparently need to mux video with either gpio pins or a syscon/mmio
-> register and the new mux subsystem abstracts this nicely for them.
+> The above commit deleted
+> drivers/staging/media/atomisp/pci/atomisp2/css2400/isp/kernels/uds/uds_1.0/ia_css_uds.host.c
 
-I've now provided some review comments on what I had questions/comments
-on.  So I can't take the current series.
-
-> Also Greg, if it indeed is too late for the mux series to hit 4.12, should
-> I then remove it from linux-next? And then simply wait for it to hit -next
-> when you take it? I only had it added to -next in the first place since I
-> was deluded and thought you would pull it from my mux repo, and wanted early
-> feedback from autobuilders etc before making the pull request. But as it
-> turned out, you wanted raw patches...
-
-I want patches that are reviewed and correct, this isn't an issue of me
-taking a pull request or not.  I wanted to review the code, so you need
-patches for that.
-
-> However, I'm reluctant to take it out of -next, since that may cause
-> trouble for the above new users?
-
-As I doubt this is going to make 4.12, I don't know how you are having
-dependant users without them also being in your tree.  It's not wise of
-those developers to put them in a different tree.
-
-thanks,
+{sigh} It was a long last week...  My tree had a "stale" .o file laying
+around from the previous build, I can reproduce this now, sorry for the
+noise.  I'll go fix it...
 
 greg k-h
