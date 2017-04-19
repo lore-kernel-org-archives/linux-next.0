@@ -1,65 +1,43 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170419 build: 0 failures 1 warnings (next-20170419)
-Date: Wed, 19 Apr 2017 11:02:57 +0100
-Message-ID: <E1d0mRt-0007Bl-Kj@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the at91 tree with the arm-soc tree
+Date: Thu, 20 Apr 2017 08:38:17 +1000
+Message-ID: <20170420083817.5a44b69c@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60686 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1762047AbdDSKDF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 19 Apr 2017 06:03:05 -0400
+Received: from ozlabs.org ([103.22.144.67]:46497 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S940275AbdDSWiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 19 Apr 2017 18:38:25 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Tree/Branch: next-20170419
-Git describe: next-20170419
-Commit: 3ea52566d0 Add linux-next specific files for 20170419
+Hi Nicolas,
 
-Build Time: 116 min 53 sec
+Today's linux-next merge of the at91 tree got a conflict in:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+  arch/arm/boot/dts/at91-tse850-3.dts
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
+  e67cedc92812 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
 
--------------------------------------------------------------------------------
+from the arm-soc tree and commit:
 
-Warnings Summary: 1
-	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
+  29dd89418007 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
 
+from the at91 tree.
 
+I fixed it up (I used the arm-soc tree version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Cheers,
+Stephen Rothwell
