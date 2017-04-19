@@ -1,41 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rcu tree
-Date: Wed, 19 Apr 2017 13:50:16 +1000
-Message-ID: <20170419135016.259c2d59@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Tue, 18 Apr 2017 21:06:20 -0700
+Message-ID: <20170419040620.GI3956@linux.vnet.ibm.com>
+References: <20170419135016.259c2d59@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51943 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1759423AbdDSDuT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 18 Apr 2017 23:50:19 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170419135016.259c2d59@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Wed, Apr 19, 2017 at 01:50:16PM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> kernel/rcu/rcutorture.c: In function 'rcu_torture_stats_print':
+> kernel/rcu/rcutorture.c:1369:3: error: implicit declaration of function 'srcutorture_get_gp_data' [-Werror=implicit-function-declaration]
+>    srcutorture_get_gp_data(cur_ops->ttype, srcu_ctlp,
+>    ^
+> 
+> Caused by commit
+> 
+>   b4d55cac0a93 ("srcu: Make rcutorture writer stalls print SRCU GP state")
+> 
+> This config has CONFIG_CLASSIC_SRCU=y and CONFIG_RCU_TORTURE_TEST=m, so
+> CONFIG_RCU_TORTURE_TEST is not defined - CONFIG_RCU_TORTURE_TEST_MODULE
+> is defined.  You probably want to protect srcutorture_get_gp_data() with
+> IS_ENABLED(CONFIG_RCU_TORTURE_TEST) instead.
+> 
+> I have used the rcu tree from next-20170418 for today.
 
-After merging the rcu tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Please accept my apologies!  I forgot about the state of -rcu while
+chasing another bug, and only a few minutes ago made the transition
+from "Why doesn't this code work?" to "Why didn't my brain work?".  :-/
 
-kernel/rcu/rcutorture.c: In function 'rcu_torture_stats_print':
-kernel/rcu/rcutorture.c:1369:3: error: implicit declaration of function 'srcutorture_get_gp_data' [-Werror=implicit-function-declaration]
-   srcutorture_get_gp_data(cur_ops->ttype, srcu_ctlp,
-   ^
+Will be fixed for tomorrow's -next.  Or at least broken in a more subtle
+and creative way.  ;-)
 
-Caused by commit
-
-  b4d55cac0a93 ("srcu: Make rcutorture writer stalls print SRCU GP state")
-
-This config has CONFIG_CLASSIC_SRCU=y and CONFIG_RCU_TORTURE_TEST=m, so
-CONFIG_RCU_TORTURE_TEST is not defined - CONFIG_RCU_TORTURE_TEST_MODULE
-is defined.  You probably want to protect srcutorture_get_gp_data() with
-IS_ENABLED(CONFIG_RCU_TORTURE_TEST) instead.
-
-I have used the rcu tree from next-20170418 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+							Thanx, Paul
