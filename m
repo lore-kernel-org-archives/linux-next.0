@@ -1,67 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170418 build: 0 failures 2 warnings (next-20170418)
-Date: Tue, 18 Apr 2017 16:01:26 +0100
-Message-ID: <E1d0UdB-000284-5L@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the sparc tree
+Date: Wed, 19 Apr 2017 10:14:56 +1000
+Message-ID: <20170419101456.3c3fc713@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55496 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752531AbdDRPBd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 18 Apr 2017 11:01:33 -0400
+Received: from ozlabs.org ([103.22.144.67]:38375 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751977AbdDSAPA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 18 Apr 2017 20:15:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Jordan <daniel.m.jordan@oracle.com>
 
-Tree/Branch: next-20170418
-Git describe: next-20170418
-Commit: 495ff9e5a9 Add linux-next specific files for 20170418
+Hi Al,
 
-Build Time: 196 min 49 sec
+Today's linux-next merge of the vfs tree got a conflict in:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+  arch/sparc/Kconfig
 
-Errors: 0
-Warnings: 2
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
+  395102db441a ("sparc64: Use LOCKDEP_SMALL, not PROVE_LOCKING_SMALL")
 
--------------------------------------------------------------------------------
+from the sparc tree and commit:
 
-Warnings Summary: 2
-	  2 ../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/net/ethernet/faraday/ftgmac100.c:1048:12: warning: 'ftgmac100_nway_reset' defined but not used [-Wunused-function]
+  28fa21828dbd ("HAVE_ARCH_HARDENED_USERCOPY is unconditional now")
 
+from the vfs tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Cheers,
+Stephen Rothwell
 
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/ethernet/faraday/ftgmac100.c:1048:12: warning: 'ftgmac100_nway_reset' defined but not used [-Wunused-function]
-	../drivers/scsi/osd/osd_uld.c:457:2: warning: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Wunused-result]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+diff --cc arch/sparc/Kconfig
+index a59deaef21e5,b577dbff5efb..000000000000
+--- a/arch/sparc/Kconfig
++++ b/arch/sparc/Kconfig
+@@@ -42,8 -42,7 +42,7 @@@ config SPAR
+  	select OLD_SIGSUSPEND
+  	select ARCH_HAS_SG_CHAIN
+  	select CPU_NO_EFFICIENT_FFS
+- 	select HAVE_ARCH_HARDENED_USERCOPY
+ -	select PROVE_LOCKING_SMALL if PROVE_LOCKING
+ +	select LOCKDEP_SMALL if LOCKDEP
+  	select ARCH_WANT_RELAX_ORDER
+  
+  config SPARC32
