@@ -1,42 +1,56 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Thu, 20 Apr 2017 08:38:17 +1000
-Message-ID: <20170420083817.5a44b69c@canb.auug.org.au>
+Subject: Re: [PATCH] scsi: osd_uld: fix mismerge
+Date: Thu, 20 Apr 2017 09:26:13 +1000
+Message-ID: <20170420092613.1ac7c403@canb.auug.org.au>
+References: <20170419174415.4029467-1-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46497 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S940275AbdDSWiZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 19 Apr 2017 18:38:25 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Rosin <peda@axentia.se>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <20170419174415.4029467-1-arnd@arndb.de>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Boaz Harrosh <ooo@electrozaur.com>, Benny Halevy <bhalevy@primarydata.com>, "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Dan Carpenter <dan.carpenter@oracle.com>, Bart Van Assche <Bart.VanAssche@sandisk.com>, linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Nicolas,
+Hi Arnd,
 
-Today's linux-next merge of the at91 tree got a conflict in:
+On Wed, 19 Apr 2017 19:44:01 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> A mismerge between two branches in linux-next reintroduced a warning that was
+> previously resolved:
+> 
+> drivers/scsi/osd/osd_uld.c: In function 'osd_probe':
+> drivers/scsi/osd/osd_uld.c:457:2: error: ignoring return value of 'scsi_device_get', declared with attribute warn_unused_result [-Werror=unused-result]
+> 
+> The original fix had more complex error unrolling, but as far as I
+> can tell, this simpler version is now sufficient.
+> 
+> Fixes: c02465fa13b6 ("scsi: osd_uld: Check scsi_device_get() return value")
+> Fixes: ac1ddc584e98 ("scsi: utilize new cdev_device_add helper function")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/scsi/osd/osd_uld.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+> index 8b9941a5687a..0e56f1eb05dc 100644
+> --- a/drivers/scsi/osd/osd_uld.c
+> +++ b/drivers/scsi/osd/osd_uld.c
+> @@ -454,7 +454,8 @@ static int osd_probe(struct device *dev)
+>  	/* hold one more reference to the scsi_device that will get released
+>  	 * in __release, in case a logout is happening while fs is mounted
+>  	 */
+> -	scsi_device_get(scsi_device);
+> +	if (scsi_device_get(scsi_device))
+> +		goto err_retract_minor;
+>  	osd_dev_init(&oud->od, scsi_device);
+>  
+>  	/* allocate a disk and set it up */
 
-  arch/arm/boot/dts/at91-tse850-3.dts
-
-between commit:
-
-  e67cedc92812 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
-
-from the arm-soc tree and commit:
-
-  29dd89418007 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
-
-from the at91 tree.
-
-I fixed it up (I used the arm-soc tree version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I will add this as a merge fix patch for the merge of the char-misc and
+scsi trees today.  Someone needs to let Linus know when these trees are
+merged.
 
 -- 
 Cheers,
