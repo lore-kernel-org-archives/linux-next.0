@@ -1,50 +1,48 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170420 build: 0 failures 0 warnings (next-20170420)
-Date: Thu, 20 Apr 2017 11:31:21 +0100
-Message-ID: <E1d19Mv-0005j1-3P@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:44314 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S942216AbdDTKb2 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Apr 2017 06:31:28 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Boaz Harrosh <ooo@electrozaur.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the char-misc
+ tree
+Date: Thu, 20 Apr 2017 16:31:17 +0300
+Message-ID: <1102ca05-a6ea-156e-eddf-1073aa082e66@electrozaur.com>
+References: <20170407153351.0ecafd59@canb.auug.org.au>
+ <47b500d6-0700-812f-dda3-44a14014b66e@sandisk.com>
+ <ba19c6cf-a762-f7f7-6e27-ef64e3e578c1@deltatee.com>
+ <1491594657.2559.24.camel@sandisk.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1491594657.2559.24.camel@sandisk.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Bart Van Assche <Bart.VanAssche@sandisk.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "logang@deltatee.com" <logang@deltatee.com>, "greg@kroah.com" <greg@kroah.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "openosd@gmail.com" <openosd@gmail.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170420
-Git describe: next-20170420
-Commit: 2fbd8a8f11 Add linux-next specific files for 20170420
+On 04/07/2017 10:50 PM, Bart Van Assche wrote:
+> On Fri, 2017-04-07 at 13:29 -0600, Logan Gunthorpe wrote:
+>> On 07/04/17 09:49 AM, Bart Van Assche wrote:
+>>> Sorry that I had not yet noticed Logan's patch series. Should my two
+>>> patches that conflict with Logan's patch series be dropped and reworked
+>>> after Logan's patches are upstream?
+>>
+>> Yeah, Greg took my patchset around a few maintainers relatively quickly.
+>> This is the second conflict, so sorry about that. Looks like the easiest
+>> thing would be to just base your change off of mine. It doesn't look too
+>> difficult. If you can do it before my patch hits upstream, I'd
+>> appreciate some testing and/or review as no one from the scsi side
+>> responded and that particular patch was a bit more involved than I would
+>> have liked.
+> 
+> Boaz, had you noticed Logan's osd patch? If not, can you have a look?
+> 
 
-Build Time: 115 min 14 sec
+I did look, I even sent an ACK on one of the early versions.
+The merge breakage is more of a build issue because I never
+had get_device fail for me in my testing so it is more
+academic.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Yes they both look fine BTW
+Boaz
 
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+> Thanks,
+> Bart.
+> 
