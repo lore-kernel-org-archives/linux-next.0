@@ -1,48 +1,40 @@
-From: <Nicolas.Ferre@microchip.com>
-Subject: RE: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Thu, 20 Apr 2017 14:50:57 +0000
-Message-ID: <56448E9475A7CD4F97A754616F76B45780C65F@CHN-SV-EXMX07.mchp-main.com>
-References: <20170420083817.5a44b69c@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 20 (bfq)
+Date: Thu, 20 Apr 2017 08:24:06 -0700
+Message-ID: <83a9471d-08d3-6c78-f778-0896896faafa@infradead.org>
+References: <20170420164341.77790320@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:61207 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S946492AbdDTOvD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Apr 2017 10:51:03 -0400
-In-Reply-To: <20170420083817.5a44b69c@canb.auug.org.au>
-Content-Language: en-US
+Received: from merlin.infradead.org ([205.233.59.134]:54338 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S970516AbdDTPYM (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Apr 2017 11:24:12 -0400
+In-Reply-To: <20170420164341.77790320@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au, nicolas.ferre@atmel.com, olof@lixom.net, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
-Cc: linux-next@vger.kernel.org, alexandre.belloni@free-electrons.com, linux-kernel@vger.kernel.org, peda@axentia.se
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, axboe <axboe@kernel.dk>, Paolo Valente <paolo.valente@linaro.org>
 
-> Hi Nicolas,
->
-> Today's linux-next merge of the at91 tree got a conflict in:
+On 04/19/17 23:43, Stephen Rothwell wrote:
+> Hi all,
 > 
->  arch/arm/boot/dts/at91-tse850-3.dts
-> between commit:
->
-> e67cedc92812 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
->
-> from the arm-soc tree and commit:
->
->  29dd89418007 ("ARM: dts: at91: add envelope detector mux to the Axentia TSE-850")
->
-> from the at91 tree.
->
-> I fixed it up (I used the arm-soc tree version) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> Changes since 20170419:
+> 
 
-Stephen,
+on i386:
+when CONFIG_CGROUPS is not enabled:
 
-Yes, the use of arm-soc version was the way to go. I now have updated my at91-next tree to match Alexandre's pull-request and hope it is not in conflict anymore.
+In file included from ../block/bfq-iosched.c:105:0:
+../block/bfq-iosched.h:819:22: error: array type has incomplete element type
+ extern struct cftype bfq_blkcg_legacy_files[];
+                      ^
+../block/bfq-iosched.h:820:22: error: array type has incomplete element type
+ extern struct cftype bfq_blkg_files[];
+                      ^
 
-Thanks for your fix.
-Best regards,
+
+
+-- 
+~Randy
