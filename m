@@ -1,18 +1,16 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Fri, 21 Apr 2017 14:54:22 -0700
-Message-ID: <c3dfaceb-41ba-b13d-f47e-a279c3e2f6b9@oracle.com>
-References: <20170421105405.6a690b35@canb.auug.org.au>
- <CAK8P3a3kHO1NZFJXvDwWO625aEmXoo2540FRKe+YYzoYE9NCSg@mail.gmail.com>
- <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
- <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
- <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
- <CAK8P3a1mPgM4XmS398DPsSbyCyD=12xQfUrF_HRqyd52_21o7Q@mail.gmail.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
+Subject: Re: linux-next: build failure after merge of the arm tree
+Date: Sat, 22 Apr 2017 00:43:16 +0100
+Message-ID: <20170421234315.GO17774@n2100.armlinux.org.uk>
+References: <20170421084033.5c987e13@canb.auug.org.au>
+ <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
+ <20170421181230.05dcf937@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAK8P3a1mPgM4XmS398DPsSbyCyD=12xQfUrF_HRqyd52_21o7Q@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20170421181230.05dcf937@canb.auug.org.au>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,37 +20,32 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Nishanth Menon <nm@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Gerlach <d-gerlach@ti.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: arm-soc <arm@kernel.org>, Mason <slash.tmp@free.fr>, Vinod Koul <vinod.koul@intel.com>, LKML <linux-kernel@vger.kernel.org>, Emilio Lopez <emilio.lopez@collabora.co.uk>, Chen-Yu Tsai <wens@csie.org>, linux-next <linux-next@vger.kernel.org>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Linux ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-+Dave,
+On Fri, Apr 21, 2017 at 06:12:30PM +1000, Stephen Rothwell wrote:
+> Hi Mason,
+> 
+> On Fri, 21 Apr 2017 09:58:58 +0200 Mason <slash.tmp@free.fr> wrote:
+> >
+> > Anyway, the fix is trivial.
+> > 
+> > The "pchans_used" field is an unsigned long array.
+> > for_each_clear_bit_from() expects an unsigned long pointer,
+> > not an array address.
+> > 
+> > I'll send a patch to the drivers/dma maintainers.
+> 
+> The fix really needs to go into the arm tree (as well?) since that is
+> the tree that has the patch that causes the build to break (even if the
+> actual bug was preexisting).
 
-On 4/21/2017 2:44 PM, Arnd Bergmann wrote:
-> On Fri, Apr 21, 2017 at 11:02 PM, santosh.shilimkar@oracle.com
-> <santosh.shilimkar@oracle.com> wrote:
->> On 4/21/17 2:31 AM, Arnd Bergmann wrote:
+Or I drop the offending patch (done) and we get the DMA subsystem fixed
+first.  Given how long it's been this way, I doubt there's any hurry to
+get this change in for the next merge window.
 
-[...]
-
->>> arm-soc/next/drivers:
->>> ae3874cc931b ARM: keystone: Drop PM domain support for k2g
->>> 52835d59fc6c soc: ti: Add ti_sci_pm_domains driver
->>> 7cc119f29b19 dt-bindings: Add TI SCI PM Domains
->>> 213ec7fed302 PM / Domains: Do not check if simple providers have phandle
->>> cells
->>> a5ea7a0fcbd7 PM / Domains: Add generic data pointer to genpd data struct
->>>
->> Above are the correct git object for which I sent pull request for.
->
-> Ok, good, thanks for checking! They are however the commits that
-> contain the silly https://urldefense.proofpoint.com URLs. Can you
-> send a follow-up patch to fix these and use the regular https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ti.org&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=vFHOEb7p2FxbH00YRQq4WnRiu2BKHADn0gl6e6DoNFQ&s=7mfiIp2Ywy9_ppWKjEGlrswiKRndv8_I7zGVF9uyT0w&e=
-> URL that is in linux-next?
->
-Dave,
-Any reason you changed these URLs in last version ?
-Can you please fixup these URLs to along with DT defines.
-
-Regards,
-Santosh
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
