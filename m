@@ -1,48 +1,60 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Thu, 20 Apr 2017 18:58:55 -0700
-Message-ID: <1492739935.30293.20.camel@perches.com>
-References: <20170421114216.7878bee4@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-misc
+	tree
+Date: Fri, 21 Apr 2017 12:10:14 +1000
+Message-ID: <20170421121014.3ee14a83@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170421114216.7878bee4@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2017-04-21 at 11:42 +1000, Stephen Rothwell wrote:
-> Hi Doug,
-> 
-> After merging the rdma tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> drivers/infiniband/hw/cxgb4/cm.c: In function 'send_connect':
-> drivers/infiniband/hw/cxgb4/cm.c:830:5: error: implicit declaration of function 'PDBG' [-Werror=implicit-function-declaration]
->      PDBG("%s snd_isn %u\n", __func__, t6req->rsvd);
->      ^
-> 
-> Caused by commit
-> 
->   a9a42886d0b3 ("cxgb4: Convert PDBG to pr_debug")
-> 
-> I have used the rdma tree from next-20170420 for today.
-> 
-> There was another PDBG() missed in that file as well.
-
-Pretty sure there were crossing commits adding PDBG()
-as the original patches were written against next-20170209
-
->From my tree:
-
-$ git log --pretty=oneline -5 747edc68212781296de30dd2b4e63711240da7a9
-747edc68212781296de30dd2b4e63711240da7a9 cxgb4: Convert PDBG to pr_debug
-d054cd530aeef452c7c252504f7d4d6ebba31ae3 cxgb4: Use more common logging style
-41a74ceecd35cf2f38e2a1a1a394c7718547deb6 cxgb3: Convert PDBG to pr_debug
-15772862930dfd2f2e10574b86c063d781976a89 cxgb3: Use more common logging style
-9f7e70ff42dbf3af7ed0699906b699c41930b265 Add linux-next specific files for 20170209
-
-$ git grep -w PDBG 747edc68212781296de30dd2b4e63711240da7a9
-$
+SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
+ZXh0IGJ1aWxkICh4ODZfNjQKYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKZHJpdmVy
+cy90ZWUvdGVlX3NobS5jOjg3OjI6IGVycm9yOiB1bmtub3duIGZpZWxkICdrbWFwX2F0b21pYycg
+c3BlY2lmaWVkIGluIGluaXRpYWxpemVyCiAgLmttYXBfYXRvbWljID0gdGVlX3NobV9vcF9rbWFw
+X2F0b21pYywKICBeCmRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4NzoxNzogZXJyb3I6IGluaXRpYWxp
+emF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbLVdlcnJvcj1pbmNvbXBhdGli
+bGUtcG9pbnRlci10eXBlc10KICAua21hcF9hdG9taWMgPSB0ZWVfc2htX29wX2ttYXBfYXRvbWlj
+LAogICAgICAgICAgICAgICAgIF4KZHJpdmVycy90ZWUvdGVlX3NobS5jOjg3OjE3OiBub3RlOiAo
+bmVhciBpbml0aWFsaXphdGlvbiBmb3IgJ3RlZV9zaG1fZG1hX2J1Zl9vcHMuYmVnaW5fY3B1X2Fj
+Y2VzcycpCmRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4ODoyOiBlcnJvcjogdW5rbm93biBmaWVsZCAn
+a21hcCcgc3BlY2lmaWVkIGluIGluaXRpYWxpemVyCiAgLmttYXAgPSB0ZWVfc2htX29wX2ttYXAs
+CiAgXgpkcml2ZXJzL3RlZS90ZWVfc2htLmM6ODg6MTA6IGVycm9yOiBpbml0aWFsaXphdGlvbiBm
+cm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9aW5jb21wYXRpYmxlLXBvaW50
+ZXItdHlwZXNdCiAgLmttYXAgPSB0ZWVfc2htX29wX2ttYXAsCiAgICAgICAgICBeCmRyaXZlcnMv
+dGVlL3RlZV9zaG0uYzo4ODoxMDogbm90ZTogKG5lYXIgaW5pdGlhbGl6YXRpb24gZm9yICd0ZWVf
+c2htX2RtYV9idWZfb3BzLmVuZF9jcHVfYWNjZXNzJykKCkNhdXNlZCBieSBjb21taXQKCiAgZjli
+NjdmMDAxNGNiICgiZG1hLWJ1ZjogUmVuYW1lIGRtYS1vcHMgdG8gcHJldmVudCBjb25mbGljdCB3
+aXRoIGt1bm1hcF9hdG9taWMgbWFjcm8iKQoKaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKCiAgOTY3
+YzljY2EyY2M1ICgidGVlOiBnZW5lcmljIFRFRSBzdWJzeXN0ZW0iKQoKZnJvbSB0aGUgYXJtLXNv
+YyB0cmVlLgoKSSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoIGZvciB0b2Rh
+eToKCkZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PgpEYXRlOiBG
+cmksIDIxIEFwciAyMDE3IDEyOjA2OjMyICsxMDAwClN1YmplY3Q6IFtQQVRDSF0gdGVlOiBtZXJn
+ZSBmaXggZm9yIGRtYS1vcHMgZmllbGQgbmFtZSBjaGFuZ2VzCgpTaWduZWQtb2ZmLWJ5OiBTdGVw
+aGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KLS0tCiBkcml2ZXJzL3RlZS90ZWVf
+c2htLmMgfCA0ICsrLS0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRp
+b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy90ZWUvdGVlX3NobS5jIGIvZHJpdmVycy90ZWUv
+dGVlX3NobS5jCmluZGV4IDBiZTFlM2U5M2JlZS4uNGUxNGM5YzljYjFjIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL3RlZS90ZWVfc2htLmMKKysrIGIvZHJpdmVycy90ZWUvdGVlX3NobS5jCkBAIC04NCw4
+ICs4NCw4IEBAIHN0YXRpYyBzdHJ1Y3QgZG1hX2J1Zl9vcHMgdGVlX3NobV9kbWFfYnVmX29wcyA9
+IHsKIAkubWFwX2RtYV9idWYgPSB0ZWVfc2htX29wX21hcF9kbWFfYnVmLAogCS51bm1hcF9kbWFf
+YnVmID0gdGVlX3NobV9vcF91bm1hcF9kbWFfYnVmLAogCS5yZWxlYXNlID0gdGVlX3NobV9vcF9y
+ZWxlYXNlLAotCS5rbWFwX2F0b21pYyA9IHRlZV9zaG1fb3Bfa21hcF9hdG9taWMsCi0JLmttYXAg
+PSB0ZWVfc2htX29wX2ttYXAsCisJLm1hcF9hdG9taWMgPSB0ZWVfc2htX29wX2ttYXBfYXRvbWlj
+LAorCS5tYXAgPSB0ZWVfc2htX29wX2ttYXAsCiAJLm1tYXAgPSB0ZWVfc2htX29wX21tYXAsCiB9
+OwogCi0tIAoyLjExLjAKCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlz
+dApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
