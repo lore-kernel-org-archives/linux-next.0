@@ -1,28 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Fri, 21 Apr 2017 12:23:37 +1000
-Message-ID: <20170421122337.40f52635@canb.auug.org.au>
-References: <20170421114216.7878bee4@canb.auug.org.au>
-        <1492739935.30293.20.camel@perches.com>
-        <1492741275.3041.21.camel@redhat.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging: rtl8188eu: style fixes
+Date: Fri, 21 Apr 2017 06:21:56 +0200
+Message-ID: <20170421042156.GA11495@kroah.com>
+References: <20170420214226.GB1347@lear>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1492741275.3041.21.camel@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Joe Perches <joe@perches.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53384 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751214AbdDUEWJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Apr 2017 00:22:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20170420214226.GB1347@lear>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Galo Navarro <anglor@varoa.net>
+Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-Hi Doug,
+On Thu, Apr 20, 2017 at 11:42:26PM +0200, Galo Navarro wrote:
+> Signed-off-by: Galo Navarro <anglor@varoa.net>
 
-On Thu, 20 Apr 2017 22:21:15 -0400 Doug Ledford <dledford@redhat.com> wrote:
->
-> I created a fix and added it to my tree.
+I can't take patches without any changelog text.
 
-Thanks.
+Also please use scripts/get_maintainer.pl to determine who, and what
+mailing lists, to send patches too.
 
--- 
-Cheers,
-Stephen Rothwell
+good luck!
+
+greg k-h
