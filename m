@@ -1,51 +1,108 @@
-From: Mason <slash.tmp@free.fr>
-Subject: [PATCH v2] dmaengine: sun4i: fix invalid argument
-Date: Fri, 21 Apr 2017 10:43:20 +0200
-Message-ID: <3e98596a-0322-e4f1-7cc2-9b0eaceb4465@free.fr>
-References: <20170421084033.5c987e13@canb.auug.org.au>
- <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
- <584a2c53-100b-945b-d665-cef3fa856526@free.fr>
- <20170421082417.7cqtevwuhjvfgjcx@lukather>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
+Date: Fri, 21 Apr 2017 11:31:03 +0200
+Message-ID: <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
+References: <20170421105405.6a690b35@canb.auug.org.au> <CAK8P3a3kHO1NZFJXvDwWO625aEmXoo2540FRKe+YYzoYE9NCSg@mail.gmail.com>
+ <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170421082417.7cqtevwuhjvfgjcx@lukather>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@armlinux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, dmaengine@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:33720 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S970509AbdDUJbE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Apr 2017 05:31:04 -0400
+In-Reply-To: <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Gerlach <d-gerlach@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
 
-From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+On Fri, Apr 21, 2017 at 8:39 AM, santosh.shilimkar@oracle.com
+<santosh.shilimkar@oracle.com> wrote:
+> On 4/20/17 10:53 PM, Arnd Bergmann wrote:
+>>
+>> On Fri, Apr 21, 2017 at 2:54 AM, Stephen Rothwell <sfr@canb.auug.org.au>
+>> wrote:
+>>>
+>>> Hi all,
+>>>
+>>> Today's linux-next merge of the pm tree got a conflict in:
+>>>
+>>>   include/dt-bindings/genpd/k2g.h
+>>>
+>>> between commit:
+>>>
+>>>   7cc119f29b19 ("dt-bindings: Add TI SCI PM Domains")
+>>>
+>>> from the arm-soc tree and commit:
+>>>
+>>>   45da8edd1741 ("dt-bindings: Add TI SCI PM Domains")
+>>>
+>>> from the pm tree.
+>>>
+>>> I fixed it up (I just used the pm tree version) and can carry the fix a=
+s
+>>> necessary. This is now fixed as far as linux-next is concerned, but any
+>>> non trivial conflicts should be mentioned to your upstream maintainer
+>>> when your tree is submitted for merging.  You may also want to consider
+>>> cooperating with the maintainer of the conflicting tree to minimise any
+>>> particularly complex conflicts.
+>>
+>>
+>> Dave, Santosh,
+>>
+>> any idea what happened here? It seems that we picked up the wrong
+>> version of the tree, do we need to drop this from arm-soc?
+>>
+> Nope. Its because this series was in my 'next' branch for a week or
+> so and now it made it via arm-soc tree next as well.
+>
+> I just cleaned up my next head so it linux-next next tag should have
+> only arm-soc copy.
 
-The "pchans_used" field is an unsigned long array.
+I still see two conflicting trees in linux-next as of today, neither of
+them is your keystone tree:
 
-for_each_clear_bit_from() expects an unsigned long pointer,
-not an array address.
+arm-soc/next/drivers:
+ae3874cc931b ARM: keystone: Drop PM domain support for k2g
+52835d59fc6c soc: ti: Add ti_sci_pm_domains driver
+7cc119f29b19 dt-bindings: Add TI SCI PM Domains
+213ec7fed302 PM / Domains: Do not check if simple providers have phandle ce=
+lls
+a5ea7a0fcbd7 PM / Domains: Add generic data pointer to genpd data struct
 
-$ make C=2 drivers/dma/sun4i-dma.o
-  CHECK   drivers/dma/sun4i-dma.c
-drivers/dma/sun4i-dma.c:241:9: warning: incorrect type in argument 1 (different base types)
-drivers/dma/sun4i-dma.c:241:9:    expected unsigned long const *p
-drivers/dma/sun4i-dma.c:241:9:    got unsigned long ( *<noident> )[1]
+pm/pm-domains:
+9da73c55f95f ARM: keystone: Drop PM domain support for k2g
+112572283742 soc: ti: Add ti_sci_pm_domains driver
+45da8edd1741 dt-bindings: Add TI SCI PM Domains
+b1013fa55589 PM / Domains: Do not check if simple providers have phandle ce=
+lls
+7030fc004df9 PM / Domains: Add generic data pointer to genpd data struct
+b539cc82d493 PM / Domains: Ignore domain-idle-states that are not compatibl=
+e
+075c37d59ecd PM / Domains: Don't warn about IRQ safe device for an
+always on PM domain
+1c14967c6ea0 PM / Domains: Respect errors from genpd's ->power_off() callba=
+ck
+ffaa42e8a40b PM / Domains: Enable users of genpd to specify always on PM do=
+mains
+41e2c8e0060d PM / Domains: Clean up code validating genpd's status
+8ce95844c853 PM / Domain: remove conditional from error case
 
-Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
----
- drivers/dma/sun4i-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For all I can tell (and matching what Stephen found), the version in
+the 'pm' tree
+is the one you intended to send, while the version we merged into arm-soc
+has not only a different git commit ID but also some odd comments that
+are not present in the PM version:
 
-diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-index 57aa227bfadb..f4ed3f17607c 100644
---- a/drivers/dma/sun4i-dma.c
-+++ b/drivers/dma/sun4i-dma.c
-@@ -238,7 +238,7 @@ static struct sun4i_dma_pchan *find_and_use_pchan(struct sun4i_dma_dev *priv,
- 	}
- 
- 	spin_lock_irqsave(&priv->lock, flags);
--	for_each_clear_bit_from(i, &priv->pchans_used, max) {
-+	for_each_clear_bit_from(i, priv->pchans_used, max) {
- 		pchan = &pchans[i];
- 		pchan->vchan = vchan;
- 		set_bit(i, priv->pchans_used);
--- 
-3.14159
++/*
++ * TI SCI Generic Power Domain Driver
++ *
++ * Copyright (C) 2015-2017 Texas Instruments Incorporated -
+https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__www.ti.com_&d=3DDwIBA=
+g&c=3DRoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=3DXBn1JQGPwR8CsE7xpP3wP=
+lG6DQU7qw8ym65xieNZ4hY&m=3DR6qGiR9DbG1C3EF_0mL-m-qkmSO64GklbFWpUzqt8fY&s=3D=
+YTWcQCWi5lnIf4XHDLq1XDd4JbZv9xpqOwdPD8xEdZE&e=3D
+
+      Arnd
