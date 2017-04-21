@@ -1,39 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Fri, 21 Apr 2017 18:12:30 +1000
-Message-ID: <20170421181230.05dcf937@canb.auug.org.au>
-References: <20170421084033.5c987e13@canb.auug.org.au>
-        <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging: rtl8188eu: style fixes
+Date: Fri, 21 Apr 2017 10:18:49 +0200
+Message-ID: <20170421081849.GA20003@kroah.com>
+References: <20170420214226.GB1347@lear>
+ <20170421042156.GA11495@kroah.com>
+ <20170421080623.GA2553@lear>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52647 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1032187AbdDUIMe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 21 Apr 2017 04:12:34 -0400
-In-Reply-To: <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38958 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1036399AbdDUITA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Apr 2017 04:19:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20170421080623.GA2553@lear>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mason <slash.tmp@free.fr>
-Cc: Russell King <rmk@armlinux.org.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio.lopez@collabora.co.uk>, dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+To: Galo <anglor@varoa.net>
+Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-Hi Mason,
-
-On Fri, 21 Apr 2017 09:58:58 +0200 Mason <slash.tmp@free.fr> wrote:
->
-> Anyway, the fix is trivial.
+On Fri, Apr 21, 2017 at 10:06:25AM +0200, Galo wrote:
+> On 21-04, Greg Kroah-Hartman wrote:
+> > On Thu, Apr 20, 2017 at 11:42:26PM +0200, Galo Navarro wrote:
+> > > Signed-off-by: Galo Navarro <anglor@varoa.net>
+> > 
+> > I can't take patches without any changelog text.
+> > 
+> > Also please use scripts/get_maintainer.pl to determine who, and what
+> > mailing lists, to send patches too.
+> > 
+> > good luck!
+> > 
+> > greg k-h
 > 
-> The "pchans_used" field is an unsigned long array.
-> for_each_clear_bit_from() expects an unsigned long pointer,
-> not an array address.
-> 
-> I'll send a patch to the drivers/dma maintainers.
+> Sorry, changelog and patch included below.
 
-The fix really needs to go into the arm tree (as well?) since that is
-the tree that has the patch that causes the build to break (even if the
-actual bug was preexisting).
+That's not how to submit a v2 patch.  Please read
+Documentation/SubmittingPatches for how to do it properly.
 
--- 
-Cheers,
-Stephen Rothwell
+thanks,
+
+greg k-h
