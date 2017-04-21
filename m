@@ -1,43 +1,51 @@
 From: Mason <slash.tmp@free.fr>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Fri, 21 Apr 2017 10:30:11 +0200
-Message-ID: <216e8509-e7e8-5a5c-918c-a1a6e0e5285d@free.fr>
+Subject: [PATCH v2] dmaengine: sun4i: fix invalid argument
+Date: Fri, 21 Apr 2017 10:43:20 +0200
+Message-ID: <3e98596a-0322-e4f1-7cc2-9b0eaceb4465@free.fr>
 References: <20170421084033.5c987e13@canb.auug.org.au>
  <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
- <20170421181230.05dcf937@canb.auug.org.au>
+ <584a2c53-100b-945b-d665-cef3fa856526@free.fr>
+ <20170421082417.7cqtevwuhjvfgjcx@lukather>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170421181230.05dcf937@canb.auug.org.au>
+In-Reply-To: <20170421082417.7cqtevwuhjvfgjcx@lukather>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Russell King <rmk@armlinux.org.uk>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+To: Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@armlinux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, dmaengine@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-next.vger.kernel.org
 
-On 21/04/2017 10:12, Stephen Rothwell wrote:
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
 
-> Mason wrote:
->
->> Anyway, the fix is trivial.
->>
->> The "pchans_used" field is an unsigned long array.
->> for_each_clear_bit_from() expects an unsigned long pointer,
->> not an array address.
->>
->> I'll send a patch to the drivers/dma maintainers.
-> 
-> The fix really needs to go into the arm tree (as well?) since that is
-> the tree that has the patch that causes the build to break (even if the
-> actual bug was preexisting).
+The "pchans_used" field is an unsigned long array.
 
-Hello Stephen,
+for_each_clear_bit_from() expects an unsigned long pointer,
+not an array address.
 
-Since it's a trivial patch, and since Vinod is on vacation
-until Monday, I suppose Russell could push the patch through
-his own tree? (Maybe after an ACK from a sunxi maintainer.)
+$ make C=2 drivers/dma/sun4i-dma.o
+  CHECK   drivers/dma/sun4i-dma.c
+drivers/dma/sun4i-dma.c:241:9: warning: incorrect type in argument 1 (different base types)
+drivers/dma/sun4i-dma.c:241:9:    expected unsigned long const *p
+drivers/dma/sun4i-dma.c:241:9:    got unsigned long ( *<noident> )[1]
 
-I am currently building an allyesconfig next-20170420 kernel.
-Considering the speed of this system, this will take a while.
+Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+---
+ drivers/dma/sun4i-dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards.
+diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
+index 57aa227bfadb..f4ed3f17607c 100644
+--- a/drivers/dma/sun4i-dma.c
++++ b/drivers/dma/sun4i-dma.c
+@@ -238,7 +238,7 @@ static struct sun4i_dma_pchan *find_and_use_pchan(struct sun4i_dma_dev *priv,
+ 	}
+ 
+ 	spin_lock_irqsave(&priv->lock, flags);
+-	for_each_clear_bit_from(i, &priv->pchans_used, max) {
++	for_each_clear_bit_from(i, priv->pchans_used, max) {
+ 		pchan = &pchans[i];
+ 		pchan->vchan = vchan;
+ 		set_bit(i, priv->pchans_used);
+-- 
+3.14159
