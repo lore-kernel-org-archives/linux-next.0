@@ -1,37 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the kbuild tree
-Date: Fri, 21 Apr 2017 10:20:18 +1000
-Message-ID: <20170421102018.1d11b30f@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the arm-soc tree
+Date: Fri, 21 Apr 2017 10:50:53 +1000
+Message-ID: <20170421105053.5df25205@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54919 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1031504AbdDUAUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Apr 2017 20:20:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicolas Dichtel <nicolas.dichtel@6wind.com>, Kishon Vijay Abraham I <kishon@ti.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Nishanth Menon <nm@ti.com>, Dave Gerlach <d-gerlach@ti.com>, Keerthy <j-keerthy@ti.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Rafael,
 
-Today's linux-next merge of the pci tree got a conflict in:
+Today's linux-next merge of the pm tree got a conflict in:
 
-  include/uapi/linux/Kbuild
+  drivers/soc/ti/ti_sci_pm_domains.c
 
 between commit:
 
-  65017bab8a9e ("uapi: export all headers under uapi directories")
+  52835d59fc6c ("soc: ti: Add ti_sci_pm_domains driver")
 
-from the kbuild tree and commit:
+from the arm-soc tree and commit:
 
-  58c89c8aa0e8 ("misc: Add host side PCI driver for PCI test function device")
+  112572283742 ("soc: ti: Add ti_sci_pm_domains driver")
 
-from the pci tree.
+from the pm tree.
 
-I fixed it up (I just dropped the latter change to this file) and can
+I fixed it up (I used the pm tree version, but it was an arbitrary
+choice as the only difference is the URL in the Copyright line) and can
 carry the fix as necessary. This is now fixed as far as linux-next is
 concerned, but any non trivial conflicts should be mentioned to your
 upstream maintainer when your tree is submitted for merging.  You may
