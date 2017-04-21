@@ -1,31 +1,53 @@
-From: Mason <slash.tmp@free.fr>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Fri, 21 Apr 2017 13:27:27 +0200
-Message-ID: <935aedd3-b80e-dd2a-150e-84af1115539d@free.fr>
-References: <20170421084033.5c987e13@canb.auug.org.au>
- <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Russell King <rmk@armlinux.org.uk>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170421 build: 0 failures 0 warnings (next-20170421)
+Date: Fri, 21 Apr 2017 13:48:22 +0100
+Message-ID: <E1d1Xz4-0000sh-JN@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53746 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1038461AbdDUMs3 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Apr 2017 08:48:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 21/04/2017 09:58, Mason wrote:
+Tree/Branch: next-20170421
+Git describe: next-20170421
+Commit: 26e01a6fde Add linux-next specific files for 20170421
 
-> Weird that I didn't catch this when I ran make allyesconfig.
+Build Time: 207 min 46 sec
 
-Doh! make allyesconfig builds for BE systems.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-CONFIG_CPU_BIG_ENDIAN=y
-CONFIG_CPU_ENDIAN_BE8=y
+Errors: 0
+Warnings: 0
+Section Mismatches: 0
 
-But the patch I originally tested with only updated the LE bitops.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
 
-With the complete patch, I didn't see any build issues, other than
-drivers/dma/sun4i-dma.c
+-------------------------------------------------------------------------------
 
-Regards.
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
