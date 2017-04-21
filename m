@@ -1,125 +1,76 @@
-From: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
 Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Fri, 21 Apr 2017 14:02:35 -0700
-Message-ID: <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
-References: <20170421105405.6a690b35@canb.auug.org.au>
- <CAK8P3a3kHO1NZFJXvDwWO625aEmXoo2540FRKe+YYzoYE9NCSg@mail.gmail.com>
- <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
- <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
+Date: Fri, 21 Apr 2017 23:31:25 +0200
+Message-ID: <1721375.qoxY63CZOC@aspire.rjw.lan>
+References: <20170421105405.6a690b35@canb.auug.org.au> <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com> <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Nishanth Menon <nm@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Dave Gerlach <d-gerlach@ti.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from cloudserver094114.home.net.pl ([79.96.170.134]:49361 "EHLO
+        cloudserver094114.home.net.pl" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1162784AbdDUVhk (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 21 Apr 2017 17:37:40 -0400
+In-Reply-To: <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Gerlach <d-gerlach@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
 
+On Friday, April 21, 2017 02:02:35 PM santosh.shilimkar@oracle.com wrote:
+> 
+> On 4/21/17 2:31 AM, Arnd Bergmann wrote:
+> > On Fri, Apr 21, 2017 at 8:39 AM, santosh.shilimkar@oracle.com
+> > <santosh.shilimkar@oracle.com> wrote:
+> >> On 4/20/17 10:53 PM, Arnd Bergmann wrote:
+> >>>
+> >>> On Fri, Apr 21, 2017 at 2:54 AM, Stephen Rothwell <sfr@canb.auug.org.au>
+> >>> wrote:
+> >>>>
+> >>>> Hi all,
+> >>>>
+> >>>> Today's linux-next merge of the pm tree got a conflict in:
+> >>>>
+> >>>>   include/dt-bindings/genpd/k2g.h
+> >>>>
+> >>>> between commit:
+> >>>>
+> >>>>   7cc119f29b19 ("dt-bindings: Add TI SCI PM Domains")
+> >>>>
+> >>>> from the arm-soc tree and commit:
+> >>>>
+> >>>>   45da8edd1741 ("dt-bindings: Add TI SCI PM Domains")
+> >>>>
+> >>>> from the pm tree.
+> >>>>
+> >>>> I fixed it up (I just used the pm tree version) and can carry the fix as
+> >>>> necessary. This is now fixed as far as linux-next is concerned, but any
+> >>>> non trivial conflicts should be mentioned to your upstream maintainer
+> >>>> when your tree is submitted for merging.  You may also want to consider
+> >>>> cooperating with the maintainer of the conflicting tree to minimise any
+> >>>> particularly complex conflicts.
+> >>>
+> >>>
+> >>> Dave, Santosh,
+> >>>
+> >>> any idea what happened here? It seems that we picked up the wrong
+> >>> version of the tree, do we need to drop this from arm-soc?
+> >>>
+> >> Nope. Its because this series was in my 'next' branch for a week or
+> >> so and now it made it via arm-soc tree next as well.
+> >>
+> >> I just cleaned up my next head so it linux-next next tag should have
+> >> only arm-soc copy.
+> >
+> > I still see two conflicting trees in linux-next as of today, neither of
+> > them is your keystone tree:
+> >
+> In the list it was agreed that the patchset goes via arm-soc tree.
 
+OK, I missed that when I looked at it again a couple of days ago, sorry.
 
-On 4/21/17 2:31 AM, Arnd Bergmann wrote:
-> On Fri, Apr 21, 2017 at 8:39 AM, santosh.shilimkar@oracle.com
-> <santosh.shilimkar@oracle.com> wrote:
->> On 4/20/17 10:53 PM, Arnd Bergmann wrote:
->>>
->>> On Fri, Apr 21, 2017 at 2:54 AM, Stephen Rothwell <sfr@canb.auug.org.au>
->>> wrote:
->>>>
->>>> Hi all,
->>>>
->>>> Today's linux-next merge of the pm tree got a conflict in:
->>>>
->>>>   include/dt-bindings/genpd/k2g.h
->>>>
->>>> between commit:
->>>>
->>>>   7cc119f29b19 ("dt-bindings: Add TI SCI PM Domains")
->>>>
->>>> from the arm-soc tree and commit:
->>>>
->>>>   45da8edd1741 ("dt-bindings: Add TI SCI PM Domains")
->>>>
->>>> from the pm tree.
->>>>
->>>> I fixed it up (I just used the pm tree version) and can carry the fix as
->>>> necessary. This is now fixed as far as linux-next is concerned, but any
->>>> non trivial conflicts should be mentioned to your upstream maintainer
->>>> when your tree is submitted for merging.  You may also want to consider
->>>> cooperating with the maintainer of the conflicting tree to minimise any
->>>> particularly complex conflicts.
->>>
->>>
->>> Dave, Santosh,
->>>
->>> any idea what happened here? It seems that we picked up the wrong
->>> version of the tree, do we need to drop this from arm-soc?
->>>
->> Nope. Its because this series was in my 'next' branch for a week or
->> so and now it made it via arm-soc tree next as well.
->>
->> I just cleaned up my next head so it linux-next next tag should have
->> only arm-soc copy.
->
-> I still see two conflicting trees in linux-next as of today, neither of
-> them is your keystone tree:
->
-In the list it was agreed that the patchset goes via arm-soc tree.
+I'll drop it from the pm-domains branch.
 
-ae3874c ARM: keystone: Drop PM domain support for k2g
-52835d5 soc: ti: Add ti_sci_pm_domains driver
-7cc119f dt-bindings: Add TI SCI PM Domains
-213ec7f PM / Domains: Do not check if simple providers have phandle cells
-a5ea7a0 PM / Domains: Add generic data pointer to genpd data struct
-
-> arm-soc/next/drivers:
-> ae3874cc931b ARM: keystone: Drop PM domain support for k2g
-> 52835d59fc6c soc: ti: Add ti_sci_pm_domains driver
-> 7cc119f29b19 dt-bindings: Add TI SCI PM Domains
-> 213ec7fed302 PM / Domains: Do not check if simple providers have phandle cells
-> a5ea7a0fcbd7 PM / Domains: Add generic data pointer to genpd data struct
->
-Above are the correct git object for which I sent pull request for.
-
-> pm/pm-domains:
-> 9da73c55f95f ARM: keystone: Drop PM domain support for k2g
-> 112572283742 soc: ti: Add ti_sci_pm_domains driver
-> 45da8edd1741 dt-bindings: Add TI SCI PM Domains
-> b1013fa55589 PM / Domains: Do not check if simple providers have phandle cells
-> 7030fc004df9 PM / Domains: Add generic data pointer to genpd data struct
-The above git object don't exist in my tree so am not sure about these
-objects. I Just checked Rafael's pm-domains head and that also don't
-have these objects.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=pm-domains
-
-
-> b539cc82d493 PM / Domains: Ignore domain-idle-states that are not compatible
-> 075c37d59ecd PM / Domains: Don't warn about IRQ safe device for an
-> always on PM domain
-> 1c14967c6ea0 PM / Domains: Respect errors from genpd's ->power_off() callback
-> ffaa42e8a40b PM / Domains: Enable users of genpd to specify always on PM domains
-> 41e2c8e0060d PM / Domains: Clean up code validating genpd's status
-> 8ce95844c853 PM / Domain: remove conditional from error case
->
-> For all I can tell (and matching what Stephen found), the version in
-> the 'pm' tree
-> is the one you intended to send, while the version we merged into arm-soc
-> has not only a different git commit ID but also some odd comments that
-> are not present in the PM version:
->
-See above. The one in arm-soc tree is what I sent as pull request. Am
-also confused for the git objects you pointed out in pm/pm-domains.
-If they are not on the source pm-domains tree then how they landed
-up in linux-next ?
-
-Regards,
-Santosh
+Thanks,
+Rafael
