@@ -1,69 +1,65 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the char-misc tree with the pci tree
-Date: Fri, 21 Apr 2017 06:55:22 +0200
-Message-ID: <20170421045522.GA15613@kroah.com>
-References: <20170421144540.2635313f@canb.auug.org.au>
+From: Logan Gunthorpe <logang@deltatee.com>
+Subject: Re: linux-next: build failure after merge of the
+	drm-misc tree
+Date: Thu, 20 Apr 2017 23:03:42 -0600
+Message-ID: <3805ce0d-bb1a-03b5-3f8f-93043306fa82@deltatee.com>
+References: <20170421121014.3ee14a83@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:51665 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752210AbdDUEze (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 21 Apr 2017 00:55:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20170421144540.2635313f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Cyril Bur <cyrilbur@gmail.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20170421121014.3ee14a83@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Apr 21, 2017 at 02:45:40PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the char-misc tree got a conflict in:
-> 
->   drivers/misc/Makefile
-> 
-> between commit:
-> 
->   58c89c8aa0e8 ("misc: Add host side PCI driver for PCI test function device")
-> 
-> from the pci tree and commits:
-> 
->   6c4e97678501 ("drivers/misc: Add Aspeed LPC control driver")
->   51c1e9b554c9 ("auxdisplay: Move panel.c to drivers/auxdisplay folder")
-> 
-> from the char-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/misc/Makefile
-> index 6e139cd70421,4fb10af2ea1c..000000000000
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@@ -53,8 -52,7 +52,8 @@@ obj-$(CONFIG_GENWQE)		+= genwqe
->   obj-$(CONFIG_ECHO)		+= echo/
->   obj-$(CONFIG_VEXPRESS_SYSCFG)	+= vexpress-syscfg.o
->   obj-$(CONFIG_CXL_BASE)		+= cxl/
-> - obj-$(CONFIG_PANEL)             += panel.o
-> + obj-$(CONFIG_ASPEED_LPC_CTRL)	+= aspeed-lpc-ctrl.o
->  +obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
->   
->   lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
->   lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
-
-Looks good to me!
-
-thanks,
-
-greg k-h
+VGhhbmtzIFN0ZXBoZW4uIExvb2tzIGdvb2QgdG8gbWUuCgpMb2dhbgoKT24gMjAvMDQvMTcgMDg6
+MTAgUE0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+IEFmdGVyIG1lcmdp
+bmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0Cj4g
+YWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+IGRyaXZlcnMvdGVlL3RlZV9zaG0u
+Yzo4NzoyOiBlcnJvcjogdW5rbm93biBmaWVsZCAna21hcF9hdG9taWMnIHNwZWNpZmllZCBpbiBp
+bml0aWFsaXplcgo+ICAgLmttYXBfYXRvbWljID0gdGVlX3NobV9vcF9rbWFwX2F0b21pYywKPiAg
+IF4KPiBkcml2ZXJzL3RlZS90ZWVfc2htLmM6ODc6MTc6IGVycm9yOiBpbml0aWFsaXphdGlvbiBm
+cm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9aW5jb21wYXRpYmxlLXBvaW50
+ZXItdHlwZXNdCj4gICAua21hcF9hdG9taWMgPSB0ZWVfc2htX29wX2ttYXBfYXRvbWljLAo+ICAg
+ICAgICAgICAgICAgICAgXgo+IGRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4NzoxNzogbm90ZTogKG5l
+YXIgaW5pdGlhbGl6YXRpb24gZm9yICd0ZWVfc2htX2RtYV9idWZfb3BzLmJlZ2luX2NwdV9hY2Nl
+c3MnKQo+IGRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4ODoyOiBlcnJvcjogdW5rbm93biBmaWVsZCAn
+a21hcCcgc3BlY2lmaWVkIGluIGluaXRpYWxpemVyCj4gICAua21hcCA9IHRlZV9zaG1fb3Bfa21h
+cCwKPiAgIF4KPiBkcml2ZXJzL3RlZS90ZWVfc2htLmM6ODg6MTA6IGVycm9yOiBpbml0aWFsaXph
+dGlvbiBmcm9tIGluY29tcGF0aWJsZSBwb2ludGVyIHR5cGUgWy1XZXJyb3I9aW5jb21wYXRpYmxl
+LXBvaW50ZXItdHlwZXNdCj4gICAua21hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiAgICAgICAgICAg
+Xgo+IGRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4ODoxMDogbm90ZTogKG5lYXIgaW5pdGlhbGl6YXRp
+b24gZm9yICd0ZWVfc2htX2RtYV9idWZfb3BzLmVuZF9jcHVfYWNjZXNzJykKPiAKPiBDYXVzZWQg
+YnkgY29tbWl0Cj4gCj4gICBmOWI2N2YwMDE0Y2IgKCJkbWEtYnVmOiBSZW5hbWUgZG1hLW9wcyB0
+byBwcmV2ZW50IGNvbmZsaWN0IHdpdGgga3VubWFwX2F0b21pYyBtYWNybyIpCj4gCj4gaW50ZXJh
+Y3Rpbmcgd2l0aCBjb21taXQKPiAKPiAgIDk2N2M5Y2NhMmNjNSAoInRlZTogZ2VuZXJpYyBURUUg
+c3Vic3lzdGVtIikKPiAKPiBmcm9tIHRoZSBhcm0tc29jIHRyZWUuCj4gCj4gSSBhcHBsaWVkIHRo
+ZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoIGZvciB0b2RheToKPiAKPiBGcm9tOiBTdGVwaGVu
+IFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPiBEYXRlOiBGcmksIDIxIEFwciAyMDE3
+IDEyOjA2OjMyICsxMDAwCj4gU3ViamVjdDogW1BBVENIXSB0ZWU6IG1lcmdlIGZpeCBmb3IgZG1h
+LW9wcyBmaWVsZCBuYW1lIGNoYW5nZXMKPiAKPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3
+ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPiAtLS0KPiAgZHJpdmVycy90ZWUvdGVlX3NobS5j
+IHwgNCArKy0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdGVlL3RlZV9zaG0uYyBiL2RyaXZlcnMvdGVl
+L3RlZV9zaG0uYwo+IGluZGV4IDBiZTFlM2U5M2JlZS4uNGUxNGM5YzljYjFjIDEwMDY0NAo+IC0t
+LSBhL2RyaXZlcnMvdGVlL3RlZV9zaG0uYwo+ICsrKyBiL2RyaXZlcnMvdGVlL3RlZV9zaG0uYwo+
+IEBAIC04NCw4ICs4NCw4IEBAIHN0YXRpYyBzdHJ1Y3QgZG1hX2J1Zl9vcHMgdGVlX3NobV9kbWFf
+YnVmX29wcyA9IHsKPiAgCS5tYXBfZG1hX2J1ZiA9IHRlZV9zaG1fb3BfbWFwX2RtYV9idWYsCj4g
+IAkudW5tYXBfZG1hX2J1ZiA9IHRlZV9zaG1fb3BfdW5tYXBfZG1hX2J1ZiwKPiAgCS5yZWxlYXNl
+ID0gdGVlX3NobV9vcF9yZWxlYXNlLAo+IC0JLmttYXBfYXRvbWljID0gdGVlX3NobV9vcF9rbWFw
+X2F0b21pYywKPiAtCS5rbWFwID0gdGVlX3NobV9vcF9rbWFwLAo+ICsJLm1hcF9hdG9taWMgPSB0
+ZWVfc2htX29wX2ttYXBfYXRvbWljLAo+ICsJLm1hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiAgCS5t
+bWFwID0gdGVlX3NobV9vcF9tbWFwLAo+ICB9Owo+ICAKPiAKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1n
+ZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
