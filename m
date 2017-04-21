@@ -1,30 +1,55 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: rtl8188eu: style fixes
-Date: Fri, 21 Apr 2017 06:21:56 +0200
-Message-ID: <20170421042156.GA11495@kroah.com>
-References: <20170420214226.GB1347@lear>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the jc_docs tree
+Date: Fri, 21 Apr 2017 14:28:23 +1000
+Message-ID: <20170421142823.16997ef9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53384 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751214AbdDUEWJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Apr 2017 00:22:09 -0400
-Content-Disposition: inline
-In-Reply-To: <20170420214226.GB1347@lear>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Galo Navarro <anglor@varoa.net>
-Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 20, 2017 at 11:42:26PM +0200, Galo Navarro wrote:
-> Signed-off-by: Galo Navarro <anglor@varoa.net>
+Hi all,
 
-I can't take patches without any changelog text.
+Today's linux-next merge of the usb tree got a conflict in:
 
-Also please use scripts/get_maintainer.pl to determine who, and what
-mailing lists, to send patches too.
+  Documentation/media/v4l-drivers/philips.rst
 
-good luck!
+between commit:
 
-greg k-h
+  9b06f754133c ("convert philips.txt to ReST and add to media docs")
+
+from the jc_docs tree and commit:
+
+  21470e32ca7f ("usb: fix some references for /proc/bus/usb")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/media/v4l-drivers/philips.rst
+index 620bcfea7af0,be8c80eff374..000000000000
+--- a/Documentation/media/v4l-drivers/philips.rst
++++ b/Documentation/media/v4l-drivers/philips.rst
+@@@ -145,8 -140,8 +145,8 @@@ dev_hin
+  
+     A camera is specified by its type (the number from the camera model,
+     like PCA645, PCVC750VC, etc) and optionally the serial number (visible
+-    in /proc/bus/usb/devices). A hint consists of a string with the following
++    in /sys/kernel/debug/usb/devices). A hint consists of a string with the following
+ -   format:
+ +   format::
+  
+        [type[.serialnumber]:]node
+  
