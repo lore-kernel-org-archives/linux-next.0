@@ -1,44 +1,53 @@
-From: <t2dnature@orange.fr>
-Subject: 22578 linux-next
-Date: Sun, 23 Apr 2017 06:50:21 -0000
-Message-ID: <149293022104.20066.15142788063837144598@muravlenko.ru>
+From: Galo <anglor@varoa.net>
+Subject: Re: [PATCH] staging: rtl8188eu: style fixes
+Date: Sun, 23 Apr 2017 21:00:47 +0200
+Message-ID: <20170423190046.GA7641@lear>
+References: <20170420214226.GB1347@lear>
+ <20170421042156.GA11495@kroah.com>
+ <20170421080623.GA2553@lear>
+ <20170421182449.475cc6ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="152387673366.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from adsl-178-46-2-114.muravlenko.ru ([178.46.2.114]:39817 "HELO
-        muravlenko.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1427692AbdDWGuZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Apr 2017 02:50:25 -0400
-Content-Disposition: attachment
+Received: from fnsib-smtp02.srv.cat ([46.16.60.193]:54453 "EHLO
+        fnsib-smtp02.srv.cat" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1163238AbdDWTA4 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Apr 2017 15:00:56 -0400
+Content-Disposition: inline
+In-Reply-To: <20170421182449.475cc6ea@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-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
-AVBLBQYAAAAAAQABAFoAAABxBQAAAAA=
+On 21-04, Stephen Rothwell wrote:
+> Hi Galo,
+> 
+> On Fri, 21 Apr 2017 10:06:25 +0200 Galo <anglor@varoa.net> wrote:
+> >
+> > @@ -1461,7 +1460,7 @@ static int rtw_check_join_candidate(struct mlme_priv *pmlmepriv
+> >  			goto exit;
+> >  	}
+> >  
+> > -	if (*candidate == NULL || (*candidate)->network.Rssi < competitor->network.Rssi) {
+> > +	if (!candidate || (*candidate)->network.Rssi < competitor->network.Rssi) {
+> 
+> These are not equivalent.  It should be "!*candidate"
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+
+Thanks a lot for catching this.  I blindly copied from the checkpatch
+suggestion, which is indeed wrong:
+
+    CHECK: Comparison to NULL could be written "!candidate"
+    #216: FILE: drivers/staging/rtl8188eu/core/rtw_mlme.c:1463:
+    +       if (*candidate == NULL || (*candidate)->network.Rssi <
+    competitor->network.Rssi)  {}
+
+Fixing this in a new version of the patch, I'll report the issue in
+checkpatch separately.
+
+Galo
