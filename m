@@ -1,115 +1,73 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: linux-next: Tree for Apr 24
-Date: Mon, 24 Apr 2017 11:44:13 -0400
-Message-ID: <CAP=VYLrEVMbEnnLkOvjmJ5pw2YO0Cwbdq2oF_LJexeHJqhW=jg@mail.gmail.com>
-References: <20170424181011.04e3f8e0@canb.auug.org.au>
+From: Dave Gerlach <d-gerlach@ti.com>
+Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
+Date: Mon, 24 Apr 2017 13:02:58 -0500
+Message-ID: <c97828b4-7f19-93d1-6f23-d86e089cea87@ti.com>
+References: <20170421105405.6a690b35@canb.auug.org.au>
+ <CAK8P3a3kHO1NZFJXvDwWO625aEmXoo2540FRKe+YYzoYE9NCSg@mail.gmail.com>
+ <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
+ <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
+ <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
+ <CAK8P3a1mPgM4XmS398DPsSbyCyD=12xQfUrF_HRqyd52_21o7Q@mail.gmail.com>
+ <c3dfaceb-41ba-b13d-f47e-a279c3e2f6b9@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:36165 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S972067AbdDXPoo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Apr 2017 11:44:44 -0400
-In-Reply-To: <20170424181011.04e3f8e0@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <c3dfaceb-41ba-b13d-f47e-a279c3e2f6b9@oracle.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Nishanth Menon <nm@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 24, 2017 at 4:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wr=
-ote:
-> Hi all,
+On 04/21/2017 04:54 PM, Santosh Shilimkar wrote:
+> +Dave,
 >
-> News: there will be no linux-next release tomorrow.
+> On 4/21/2017 2:44 PM, Arnd Bergmann wrote:
+>> On Fri, Apr 21, 2017 at 11:02 PM, santosh.shilimkar@oracle.com
+>> <santosh.shilimkar@oracle.com> wrote:
+>>> On 4/21/17 2:31 AM, Arnd Bergmann wrote:
 >
-> Changes since 20170421:
+> [...]
 >
-> The arm tree lost its build failure.
->
-> The rdma tree lost its build failure.
->
-> The tip tree gained a build failure for which I reverted a commit.
+>>>> arm-soc/next/drivers:
+>>>> ae3874cc931b ARM: keystone: Drop PM domain support for k2g
+>>>> 52835d59fc6c soc: ti: Add ti_sci_pm_domains driver
+>>>> 7cc119f29b19 dt-bindings: Add TI SCI PM Domains
+>>>> 213ec7fed302 PM / Domains: Do not check if simple providers have phandle
+>>>> cells
+>>>> a5ea7a0fcbd7 PM / Domains: Add generic data pointer to genpd data struct
+>>>>
+>>> Above are the correct git object for which I sent pull request for.
+>>
+>> Ok, good, thanks for checking! They are however the commits that
+>> contain the silly https://urldefense.proofpoint.com URLs. Can you
+>> send a follow-up patch to fix these and use the regular
+>> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ti.org&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=vFHOEb7p2FxbH00YRQq4WnRiu2BKHADn0gl6e6DoNFQ&s=7mfiIp2Ywy9_ppWKjEGlrswiKRndv8_I7zGVF9uyT0w&e=
+>>
+>> URL that is in linux-next?
+>>
+> Dave,
+> Any reason you changed these URLs in last version ?
+> Can you please fixup these URLs to along with DT defines.
 
-There are also some new fails around kernel/events/core.c in arm32/arm64
+I didn't change any of the URLs in the patches, I am not sure what those URLs 
+are. In the patches I sent the URLs are fine, and I see them normal on patchwork 
+too: https://patchwork.kernel.org/patch/9660785/
 
-include/linux/jump_label.h: In function
-=E2=80=98static_key_disable_cpuslocked.constprop.66=E2=80=99:
-include/linux/jump_label.h:260:20: error: inlining failed in call to
-always_inline =E2=80=98static_key_disable_cpuslocked.constprop.66=E2=80=99:=
- recursive
-inlining
- static inline void static_key_disable_cpuslocked(struct static_key *key)
-                    ^
+Is there something that automatically changes those? I don't want to send 
+another patch for it to just get mangled again.
 
-http://kisskb.ellerman.id.au/kisskb/buildresult/13011884/
-http://kisskb.ellerman.id.au/kisskb/buildresult/13011947/
-...and others.
-
-A mindless automated bisect run came back with this:
-
-924726b2b5e5000dfb8eb6032651baed1b1bdc6c is the first bad commit
-commit 924726b2b5e5000dfb8eb6032651baed1b1bdc6c
-Author: Thomas Gleixner <tglx@linutronix.de>
-Date:   Sun Apr 23 12:13:09 2017 +0200
-
-    perf: Cure hotplug lock ordering issues
-
-I gave tglx and peterz a heads up on irc.
-
-P.
---
+Regards,
+Dave
 
 >
-> The nvdimm tree gained conflicts against the block tree and a build
-> failure due to an interaction with the vfs tree for which I applied a
-> fix patch.
->
-> The akpm-current tree gained conflicts against Linus', the kselftest
-> and nvdimm trees.
->
-> Non-merge commits (relative to Linus' tree): 11126
->  10396 files changed, 1176561 insertions(+), 214871 deletions(-)
->
-> -------------------------------------------------------------------------=
----
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
->
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc and an allmodconfig (with
-> CONFIG_BUILD_DOCSRC=3Dn) for x86_64, a multi_v7_defconfig for arm and a
-> native build of tools/perf. After the final fixups (if any), I do an
-> x86_64 modules_install followed by builds for x86_64 allnoconfig,
-> powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
-> and pseries_le_defconfig and i386, sparc and sparc64 defconfig.
->
-> Below is a summary of the state of the merge.
->
-> I am currently merging 258 trees (counting Linus' and 37 trees of bug
-> fix patches pending for the current merge release).
->
-> Stats about the size of the tree over time can be seen at
-> http://neuling.org/linux-next-size.html .
->
-> Status of my local build tests will be at
-> http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
-> advice about cross compilers/configs that work, we are always open to add
-> more builds.
->
-> Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-> Gortmaker for triage and bug fixes.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
->
+> Regards,
+> Santosh
