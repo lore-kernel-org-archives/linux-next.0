@@ -1,69 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nvdimm tree
-Date: Mon, 24 Apr 2017 16:11:30 +1000
-Message-ID: <20170424161130.762d71a8@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ kselftest tree
+Date: Mon, 24 Apr 2017 16:30:10 +1000
+Message-ID: <20170424163010.532ac045@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56611 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55123 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1046455AbdDXGLc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 24 Apr 2017 02:11:32 -0400
+        id S1165435AbdDXGaM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 24 Apr 2017 02:30:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, SeongJae Park <sj38.park@gmail.com>, Mike Rapoport <rppt@linux.vnet.ibm.com>
 
-Hi Dan,
+Hi Andrew,
 
-After merging the nvdimm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/nvdimm/x86.c: In function 'pmem_from_user':
-drivers/nvdimm/x86.c:115:11: error: implicit declaration of function '__copy_from_user_nocache' [-Werror=implicit-function-declaration]
-  int rc = __copy_from_user_nocache(dst, src, size);
-           ^
+  tools/testing/selftests/vm/run_vmtests
 
-Caused by commit
+between commit:
 
-  6e704ff67315 ("uio, libnvdimm, pmem: implement cache bypass for all copy_from_iter() operations")
+  ff80d9152fd7 ("selftests/vm/run_vmtests: Fix wrong comment")
 
-interacting with commit
+from the kselftest tree and commit:
 
-  3f763453e6f2 ("kill __copy_from_user_nocache()")
+  7b7c7dac4437 ("userfaultfd: selftest: combine all cases into a single executable")
 
-from the vfs tree.
+from the akpm-current tree.
 
-I have no idea why Al removed that function, so I just applied the
-following fix patch for now:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Apr 2017 16:03:09 +1000
-Subject: [PATCH] uio, libnvdimm, pmem: implement cache bypass for all
- copy_from_iter() operations fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/nvdimm/x86.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvdimm/x86.c b/drivers/nvdimm/x86.c
-index bc145d760d43..4c15cc103713 100644
---- a/drivers/nvdimm/x86.c
-+++ b/drivers/nvdimm/x86.c
-@@ -112,7 +112,7 @@ EXPORT_SYMBOL_GPL(arch_memcpy_to_pmem);
- static int pmem_from_user(void *dst, const void __user *src, unsigned size)
- {
- 	unsigned long flushed, dest = (unsigned long) dest;
--	int rc = __copy_from_user_nocache(dst, src, size);
-+	int rc = __copy_from_user(dst, src, size);
- 
- 	/*
- 	 * On x86_64 __copy_from_user_nocache() uses non-temporal stores
--- 
-2.11.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc tools/testing/selftests/vm/run_vmtests
+index 2ed05ad00daa,3214a6456d13..000000000000
+--- a/tools/testing/selftests/vm/run_vmtests
++++ b/tools/testing/selftests/vm/run_vmtests
+@@@ -92,10 -92,10 +92,10 @@@ echo "NOTE: The above hugetlb tests pro
+  echo "      https://github.com/libhugetlbfs/libhugetlbfs.git for"
+  echo "      hugetlb regression testing."
+  
+ -echo "--------------------"
+ +echo "-------------------"
+  echo "running userfaultfd"
+ -echo "--------------------"
+ +echo "-------------------"
+- ./userfaultfd 128 32
++ ./userfaultfd anon 128 32
+  if [ $? -ne 0 ]; then
+  	echo "[FAIL]"
+  	exitcode=1
+@@@ -103,11 -103,11 +103,11 @@@ els
+  	echo "[PASS]"
+  fi
+  
+ -echo "----------------------------"
+ +echo "---------------------------"
+  echo "running userfaultfd_hugetlb"
+ -echo "----------------------------"
+ -# 258MB total huge pages == 128MB src and 128MB dst
+ +echo "---------------------------"
+ +# 256MB total huge pages == 128MB src and 128MB dst
+- ./userfaultfd_hugetlb 128 32 $mnt/ufd_test_file
++ ./userfaultfd hugetlb 128 32 $mnt/ufd_test_file
+  if [ $? -ne 0 ]; then
+  	echo "[FAIL]"
+  	exitcode=1
+@@@ -116,10 -116,10 +116,10 @@@ els
+  fi
+  rm -f $mnt/ufd_test_file
+  
+ -echo "----------------------------"
+ +echo "-------------------------"
+  echo "running userfaultfd_shmem"
+ -echo "----------------------------"
+ +echo "-------------------------"
+- ./userfaultfd_shmem 128 32
++ ./userfaultfd shmem 128 32
+  if [ $? -ne 0 ]; then
+  	echo "[FAIL]"
+  	exitcode=1
