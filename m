@@ -1,63 +1,70 @@
-From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: linux-next: manual merge of the pm tree with the arm-soc tree
-Date: Mon, 24 Apr 2017 11:22:34 -0700
-Message-ID: <9d60286d-86ae-93a0-04ce-0037d1105bba@oracle.com>
-References: <20170421105405.6a690b35@canb.auug.org.au>
- <CAK8P3a3kHO1NZFJXvDwWO625aEmXoo2540FRKe+YYzoYE9NCSg@mail.gmail.com>
- <4b58d5ab-c924-97af-728f-b9f524e62a53@oracle.com>
- <CAK8P3a0cVMt3y_oYH70V-ekPvUMeeBApSvybpRftSupzYy1FWQ@mail.gmail.com>
- <e2f9efab-291f-1436-2176-0fff3f2aae3f@oracle.com>
- <CAK8P3a1mPgM4XmS398DPsSbyCyD=12xQfUrF_HRqyd52_21o7Q@mail.gmail.com>
- <c3dfaceb-41ba-b13d-f47e-a279c3e2f6b9@oracle.com>
- <c97828b4-7f19-93d1-6f23-d86e089cea87@ti.com>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+Date: Mon, 24 Apr 2017 16:29:36 -0700
+Message-ID: <CAPcyv4g9giDXEwsGjchyjxwyxxX0HghWmaJfbB5DPsCcZ5a5xA@mail.gmail.com>
+References: <20170424161130.762d71a8@canb.auug.org.au> <20170424083908.GW29622@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <c97828b4-7f19-93d1-6f23-d86e089cea87@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dave Gerlach <d-gerlach@ti.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Nishanth Menon <nm@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-oi0-f54.google.com ([209.85.218.54]:34187 "EHLO
+        mail-oi0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1174562AbdDXX3h (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Apr 2017 19:29:37 -0400
+Received: by mail-oi0-f54.google.com with SMTP id x184so154496901oia.1
+        for <linux-next@vger.kernel.org>; Mon, 24 Apr 2017 16:29:37 -0700 (PDT)
+In-Reply-To: <20170424083908.GW29622@ZenIV.linux.org.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 4/24/2017 11:02 AM, Dave Gerlach wrote:
-> On 04/21/2017 04:54 PM, Santosh Shilimkar wrote:
->> +Dave,
+On Mon, Apr 24, 2017 at 1:39 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Mon, Apr 24, 2017 at 04:11:30PM +1000, Stephen Rothwell wrote:
+>> Hi Dan,
 >>
-
-[...]
-
->>> Ok, good, thanks for checking! They are however the commits that
->>> contain the silly https://urldefense.proofpoint.com URLs. Can you
->>> send a follow-up patch to fix these and use the regular
->>> https://urldefense.proofpoint.com/v2/url?u=http-3A__www.ti.org&d=DwIBaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=vFHOEb7p2FxbH00YRQq4WnRiu2BKHADn0gl6e6DoNFQ&s=7mfiIp2Ywy9_ppWKjEGlrswiKRndv8_I7zGVF9uyT0w&e=
->>>
->>>
->>> URL that is in linux-next?
->>>
->> Dave,
->> Any reason you changed these URLs in last version ?
->> Can you please fixup these URLs to along with DT defines.
+>> After merging the nvdimm tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/nvdimm/x86.c: In function 'pmem_from_user':
+>> drivers/nvdimm/x86.c:115:11: error: implicit declaration of function '__copy_from_user_nocache' [-Werror=implicit-function-declaration]
+>>   int rc = __copy_from_user_nocache(dst, src, size);
+>>            ^
+>>
+>> Caused by commit
+>>
+>>   6e704ff67315 ("uio, libnvdimm, pmem: implement cache bypass for all copy_from_iter() operations")
+>>
+>> interacting with commit
+>>
+>>   3f763453e6f2 ("kill __copy_from_user_nocache()")
+>>
+>> from the vfs tree.
+>>
+>> I have no idea why Al removed that function,
 >
-> I didn't change any of the URLs in the patches, I am not sure what those
-> URLs are. In the patches I sent the URLs are fine, and I see them normal
-> on patchwork too:
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__patchwork.kernel.org_patch_9660785_&d=DwICaQ&c=RoP1YumCXCgaWHvlZYR8PQcxBKCX5YTpkKY057SbK10&r=XBn1JQGPwR8CsE7xpP3wPlG6DQU7qw8ym65xieNZ4hY&m=eK4-xq3xbWwYHfuVa6ee48pvTCWUv5X5PHM285eHMLQ&s=uCfKZ0Z0T8Aaf4ircFilcu8zRVDU8XyGdbsq4OW3GaE&e=
+> Because the entire nocache pile is messy and misguided and the fewer of
+> those we have, the easier it will be to untangle the damn thing.  This
+> particular turdlet had no users in mainline.  Unfortunately, it has
+> grown one in nvdimm, so we'll probably have to drop that removal for now
+> and hope that it won't be too painful to untangle come next cycle.
 >
-> Is there something that automatically changes those? I don't want to
-> send another patch for it to just get mangled again.
->
-Looks like thats the case as one of my Oracle colleague pointed out.
-I will send you off-list an email to get correct URL and update the git 
-tree accordingly.
+> Oh, well...  Guess we'll need to resurrect memcpy_nocache() threads from
+> December and deal witht that mess for good.
 
-Regards,
-Santosh
+Hi Al, this conflict is hitting my attempt to "deal with that mess for good".
+
+Can you give me your take on the sanity of the patches I cc'd you on
+in the thread called "[resend PATCH v2 00/33] dax: introduce
+dax_operations"
+
+Here are some links:
+[resend PATCH v2 00/33] dax: introduce dax_operations:
+https://lists.01.org/pipermail/linux-nvdimm/2017-April/009711.html
+[resend PATCH v2 19/33] dax, pmem: introduce 'copy_from_iter' dax
+operation: https://lists.01.org/pipermail/linux-nvdimm/2017-April/009730.html
+[resend PATCH v2 28/33] x86, libnvdimm, dax: stop abusing
+__copy_user_nocache:
+https://lists.01.org/pipermail/linux-nvdimm/2017-April/009738.html
+[resend PATCH v2 29/33] uio, libnvdimm, pmem: implement cache bypass
+for all copy_from_iter() operations:
+https://lists.01.org/pipermail/linux-nvdimm/2017-April/009739.html
