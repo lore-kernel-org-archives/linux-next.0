@@ -1,35 +1,52 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Mon, 24 Apr 2017 09:50:33 +0530
-Message-ID: <20170424042033.GC6263@localhost>
-References: <20170421084033.5c987e13@canb.auug.org.au>
- <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
- <20170421181230.05dcf937@canb.auug.org.au>
- <20170421234315.GO17774@n2100.armlinux.org.uk>
- <f89b6045-8c09-f6c4-3893-84f172260926@free.fr>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Mon, 24 Apr 2017 07:31:45 +0200
+Message-ID: <20170424053145.xj3ftc2oujpcjdwx@gmail.com>
+References: <20170424133255.0a75cff1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wr0-f181.google.com ([209.85.128.181]:33846 "EHLO
+        mail-wr0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1758931AbdDXFbt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 24 Apr 2017 01:31:49 -0400
 Content-Disposition: inline
-In-Reply-To: <f89b6045-8c09-f6c4-3893-84f172260926@free.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mason <slash.tmp@free.fr>
-Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20170424133255.0a75cff1@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>
 
-On Sat, Apr 22, 2017 at 10:41:37AM +0200, Mason wrote:
-> On 22/04/2017 01:43, Russell King - ARM Linux wrote:
-> 
-> > Or I drop the offending patch (done) and we get the DMA subsystem fixed
-> > first.  Given how long it's been this way, I doubt there's any hurry to
-> > get this change in for the next merge window.
-> 
-> Your solution makes sense.
-> 
-> Vinod, could you apply [PATCH v2] dmaengine: sun4i: fix invalid argument
-> to your tree when you have the time?
 
-Done now..
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
--- 
-~Vinod
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+> 
+> kernel/tracepoint.c: In function 'tracepoint_remove_func':
+> kernel/tracepoint.c:253:4: error: implicit declaration of function 'static_key_slow_dec_cpuslocked' [-Werror=implicit-function-declaration]
+>     static_key_slow_dec_cpuslocked(&tp->key);
+>     ^
+> 
+> Caused by commit
+> 
+>   24db7a671bd5 ("trace/perf: Cure hotplug lock ordering issues")
+> 
+> static_key_slow_dec_cpuslocked() is only defined if HAVE_JUMP_LABEL is
+> set - which is only defined if defined(CC_HAVE_ASM_GOTO) &&
+> defined(CONFIG_JUMP_LABEL).  CONFIG_JUMP_LABEL is not set for this build.
+> 
+> I wasn't sure if just adding
+> 
+>   #define static_key_slow_dec_cpuslocked static_key_slow_dec
+> 
+> in the !HAVE_JUMP_LABEL case in include/linux/jump_label.h would be
+> sufficient, so I have reverted that commit for today.
+
+Both are fine, thanks Stephen! It's all fixed up in tip:auto-latest as well.
+
+Thanks,
+
+	Ingo
