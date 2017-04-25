@@ -1,53 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20170424 build: 1 failures 0 warnings (next-20170424)
-Date: Tue, 25 Apr 2017 21:57:10 +0200
-Message-ID: <CAK8P3a2sFSojMioTmF06eSgQiAJNurhDLCzSAF6W0Qd4XOe=KA@mail.gmail.com>
-References: <E1d2ca0-0002cs-HH@optimist>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+Date: Tue, 25 Apr 2017 15:22:15 -0700
+Message-ID: <CAPcyv4iszMZ60gbjTHjY5gSuieQTD9wEoUmHSWMfeb6KMS4tWQ@mail.gmail.com>
+References: <20170424161130.762d71a8@canb.auug.org.au> <20170424083908.GW29622@ZenIV.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:36391 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1433194AbdDYT5L (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Apr 2017 15:57:11 -0400
-In-Reply-To: <E1d2ca0-0002cs-HH@optimist>
+Received: from mail-oi0-f42.google.com ([209.85.218.42]:32803 "EHLO
+        mail-oi0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1951691AbdDYWWQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 25 Apr 2017 18:22:16 -0400
+Received: by mail-oi0-f42.google.com with SMTP id y11so156987291oie.0
+        for <linux-next@vger.kernel.org>; Tue, 25 Apr 2017 15:22:16 -0700 (PDT)
+In-Reply-To: <20170424083908.GW29622@ZenIV.linux.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Build bot for Mark Brown <broonie@kernel.org>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Liviu Dudau <liviu.dudau@arm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, Apr 24, 2017 at 1:54 PM, Build bot for Mark Brown
-<broonie@kernel.org> wrote:
-> Tree/Branch: next-20170424
-> Git describe: next-20170424
-> Commit: ee91aaf669 Add linux-next specific files for 20170424
+On Mon, Apr 24, 2017 at 1:39 AM, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> On Mon, Apr 24, 2017 at 04:11:30PM +1000, Stephen Rothwell wrote:
+>> Hi Dan,
+>>
+>> After merging the nvdimm tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> drivers/nvdimm/x86.c: In function 'pmem_from_user':
+>> drivers/nvdimm/x86.c:115:11: error: implicit declaration of function '__copy_from_user_nocache' [-Werror=implicit-function-declaration]
+>>   int rc = __copy_from_user_nocache(dst, src, size);
+>>            ^
+>>
+>> Caused by commit
+>>
+>>   6e704ff67315 ("uio, libnvdimm, pmem: implement cache bypass for all copy_from_iter() operations")
+>>
+>> interacting with commit
+>>
+>>   3f763453e6f2 ("kill __copy_from_user_nocache()")
+>>
+>> from the vfs tree.
+>>
+>> I have no idea why Al removed that function,
 >
-> Build Time: 116 min 41 sec
+> Because the entire nocache pile is messy and misguided and the fewer of
+> those we have, the easier it will be to untangle the damn thing.  This
+> particular turdlet had no users in mainline.  Unfortunately, it has
+> grown one in nvdimm, so we'll probably have to drop that removal for now
+> and hope that it won't be too painful to untangle come next cycle.
 >
-> Passed:    9 / 10   ( 90.00 %)
-> Failed:    1 / 10   ( 10.00 %)
->
-> Errors: 1
-> Warnings: 0
-> Section Mismatches: 0
->
-> Failed defconfigs:
->         arm-allmodconfig
->
-> Errors:
->
->         arm-allmodconfig
-> ERROR: "__aeabi_uldivmod" [drivers/gpu/drm/arm/mali-dp.ko] undefined!
->
-> -------------------------------------------------------------------------------
-> defconfigs with issues (other than build errors):
->
-> -------------------------------------------------------------------------------
->
-> Errors summary: 1
->           1 ERROR: "__aeabi_uldivmod" [drivers/gpu/drm/arm/mali-dp.ko] undefined!
->
+> Oh, well...  Guess we'll need to resurrect memcpy_nocache() threads from
+> December and deal witht that mess for good.
 
-The regression just appeared with this release, I sent a patch now.
-
-        Arnd
+Al, I've kicked this new usage of __copy_from_user_nocache out of
+-next and I'll rebase my pmem vs uaccess work on vfs.git/for-next.
