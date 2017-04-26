@@ -1,69 +1,40 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170426 build: 1 failures 0 warnings (next-20170426)
-Date: Wed, 26 Apr 2017 12:39:48 +0100
-Message-ID: <E1d3LIS-00084l-QO@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39962 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1954174AbdDZLjz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 26 Apr 2017 07:39:55 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Apr 26 (net/can/bcm.c)
+Date: Wed, 26 Apr 2017 07:53:24 -0700
+Message-ID: <05bd24d8-6840-3551-a529-c464f3b26d0a@infradead.org>
+References: <20170426180321.3c8c16a2@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170426180321.3c8c16a2@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-can@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170426
-Git describe: next-20170426
-Commit: e0a8aa40bd Add linux-next specific files for 20170426
+On 04/26/17 01:03, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20170424:
+> 
 
-Build Time: 116 min 51 sec
+on x86_64:
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+when CONFIG_PROC_FS is not enabled:
 
-Errors: 1
-Warnings: 0
-Section Mismatches: 0
+../net/can/bcm.c:1541:14: error: 'struct netns_can' has no member named 'bcmproc_dir'
+../net/can/bcm.c:1601:14: error: 'struct netns_can' has no member named 'bcmproc_dir'
+../net/can/bcm.c:1696:11: error: 'struct netns_can' has no member named 'bcmproc_dir'
+../net/can/bcm.c:1707:15: error: 'struct netns_can' has no member named 'bcmproc_dir'
 
-Failed defconfigs:
-	arm-allmodconfig
+2 of those are "protected" by
+	if (IS_ENABLED(CONFIG_PROC_FS)) {
+but that doesn't seem to help/work here.
 
-Errors:
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [drivers/gpu/drm/arm/mali-dp.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__aeabi_uldivmod" [drivers/gpu/drm/arm/mali-dp.ko] undefined!
+gcc v4.8.5
 
 
 
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 0 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [drivers/gpu/drm/arm/mali-dp.ko] undefined!
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+~Randy
