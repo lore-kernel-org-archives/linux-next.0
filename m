@@ -1,53 +1,72 @@
-From: Oliver Hartkopp <socketcan@hartkopp.net>
-Subject: Re: linux-next: Tree for Apr 26 (net/can/bcm.c)
-Date: Wed, 26 Apr 2017 20:18:33 +0200
-Message-ID: <9e4a2928-73b7-8ab0-c851-79fcb27569f4@hartkopp.net>
-References: <20170426180321.3c8c16a2@canb.auug.org.au>
- <05bd24d8-6840-3551-a529-c464f3b26d0a@infradead.org>
+From: Mason <slash.tmp@free.fr>
+Subject: [PATCH v2] arm: bitops: Align prototypes to generic API
+Date: Thu, 27 Apr 2017 00:34:01 +0200
+Message-ID: <f3eb1c46-a413-955a-0cfa-c297691e2b23@free.fr>
+References: <20170421084033.5c987e13@canb.auug.org.au>
+ <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
+ <20170421181230.05dcf937@canb.auug.org.au>
+ <20170421234315.GO17774@n2100.armlinux.org.uk>
+ <f89b6045-8c09-f6c4-3893-84f172260926@free.fr>
+ <20170424042033.GC6263@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-can-owner@vger.kernel.org>
-In-Reply-To: <05bd24d8-6840-3551-a529-c464f3b26d0a@infradead.org>
-Sender: linux-can-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, linux-can@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170424042033.GC6263@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc: Vinod Koul <vinod.koul@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio@elopez.com.ar>, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+From: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
 
-thanks for the report!
+include/asm-generic/bitops/find.h declares:
 
-Some fallout of my namespace support integration %-)
+extern unsigned long
+find_first_zero_bit(const unsigned long *addr, unsigned long size);
 
-I posted a patch for it:
+while arch/arm/include/asm/bitops.h declares:
 
-http://marc.info/?l=linux-can&m=149323049630039&w=2
+#define find_first_zero_bit(p,sz)	_find_first_zero_bit_le(p,sz)
+extern int _find_first_zero_bit_le(const void * p, unsigned size);
 
-Many thanks & best regards,
-Oliver
+Align the arm prototypes to the generic API, to have gcc report
+inadequate arguments, such as pointer to u32.
 
-On 04/26/2017 04:53 PM, Randy Dunlap wrote:
-> On 04/26/17 01:03, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20170424:
->>
->
-> on x86_64:
->
-> when CONFIG_PROC_FS is not enabled:
->
-> ../net/can/bcm.c:1541:14: error: 'struct netns_can' has no member named 'bcmproc_dir'
-> ../net/can/bcm.c:1601:14: error: 'struct netns_can' has no member named 'bcmproc_dir'
-> ../net/can/bcm.c:1696:11: error: 'struct netns_can' has no member named 'bcmproc_dir'
-> ../net/can/bcm.c:1707:15: error: 'struct netns_can' has no member named 'bcmproc_dir'
->
-> 2 of those are "protected" by
-> 	if (IS_ENABLED(CONFIG_PROC_FS)) {
-> but that doesn't seem to help/work here.
->
-> gcc v4.8.5
->
->
->
+Signed-off-by: Marc Gonzalez <marc_gonzalez@sigmadesigns.com>
+---
+The patch fixing drivers/dma/sun4i-dma.c
+("dmaengine: sun4i: fix invalid argument")
+has landed on linux-next (thanks Vinod)
+as 57192245bc074710ea1a128d39ecc429455ac815
+---
+ arch/arm/include/asm/bitops.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/include/asm/bitops.h b/arch/arm/include/asm/bitops.h
+index e943e6cee254..f308c8c40cb9 100644
+--- a/arch/arm/include/asm/bitops.h
++++ b/arch/arm/include/asm/bitops.h
+@@ -159,16 +159,16 @@ extern int _test_and_change_bit(int nr, volatile unsigned long * p);
+ /*
+  * Little endian assembly bitops.  nr = 0 -> byte 0 bit 0.
+  */
+-extern int _find_first_zero_bit_le(const void * p, unsigned size);
+-extern int _find_next_zero_bit_le(const void * p, int size, int offset);
++extern int _find_first_zero_bit_le(const unsigned long *p, unsigned size);
++extern int _find_next_zero_bit_le(const unsigned long *p, int size, int offset);
+ extern int _find_first_bit_le(const unsigned long *p, unsigned size);
+ extern int _find_next_bit_le(const unsigned long *p, int size, int offset);
+ 
+ /*
+  * Big endian assembly bitops.  nr = 0 -> byte 3 bit 0.
+  */
+-extern int _find_first_zero_bit_be(const void * p, unsigned size);
+-extern int _find_next_zero_bit_be(const void * p, int size, int offset);
++extern int _find_first_zero_bit_be(const unsigned long *p, unsigned size);
++extern int _find_next_zero_bit_be(const unsigned long *p, int size, int offset);
+ extern int _find_first_bit_be(const unsigned long *p, unsigned size);
+ extern int _find_next_bit_be(const unsigned long *p, int size, int offset);
+ 
+-- 
+2.11.0
