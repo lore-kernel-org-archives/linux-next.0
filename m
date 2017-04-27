@@ -1,44 +1,54 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: build warning after merge of the sound-asoc tree
-Date: Thu, 27 Apr 2017 07:57:01 +0530
-Message-ID: <20170427022701.GI6263@localhost>
-References: <20170427112920.3c51a6e0@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvms390 tree with the s390 tree
+Date: Thu, 27 Apr 2017 13:29:17 +1000
+Message-ID: <20170427132917.3843cedc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170427112920.3c51a6e0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, G Kranthi <gudishax.kranthikumar@intel.com>, "Subhransu S. Prusty" <subhransu.s.prusty@intel.com>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Harald Freudenberger <freude@linux.vnet.ibm.com>, "Jason J. Herne" <jjherne@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 27, 2017 at 11:29:20AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the sound-asoc tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> sound/soc/intel/skylake/bxt-sst.c: In function 'bxt_sst_dsp_init':
-> sound/soc/intel/skylake/bxt-sst.c:567:14: warning: 'skl' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    dev_err(skl->dev, "%s: no device\n", __func__);
->               ^
-> 
+Hi all,
 
-Yeah looks like that is the case, fortunately fix is quite simple, I will
-send out soon
+Today's linux-next merge of the kvms390 tree got a conflict in:
 
-Thanks for reporting
+  arch/s390/include/asm/cpacf.h
 
-> Introduced by commit
-> 
->   9fe9c7119283 ("ASoC: Intel: Skylake: Move sst common initialization to a helper function")
-> 
-> This looks like an actual bug ...
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+between commit:
+
+  985a9d20daa6 ("s390/crypto: Renaming PPNO to PRNO.")
+
+from the s390 tree and commit:
+
+  152c1c8d60eb ("s390/cpacf: Introduce kma instruction")
+
+from the kvms390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-~Vinod
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/s390/include/asm/cpacf.h
+index 7707a35176c4,31cac7d17b48..000000000000
+--- a/arch/s390/include/asm/cpacf.h
++++ b/arch/s390/include/asm/cpacf.h
+@@@ -25,7 -25,8 +25,8 @@@
+  #define CPACF_KMO		0xb92b		/* MSA4 */
+  #define CPACF_PCC		0xb92c		/* MSA4 */
+  #define CPACF_KMCTR		0xb92d		/* MSA4 */
+ -#define CPACF_PPNO		0xb93c		/* MSA5 */
+ +#define CPACF_PRNO		0xb93c		/* MSA5 */
++ #define CPACF_KMA		0xb929		/* MSA8 */
+  
+  /*
+   * En/decryption modifier bits
