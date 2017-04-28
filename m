@@ -1,93 +1,45 @@
-From: <t2dnature@orange.fr>
-Subject: 52759 linux-next
-Date: Fri, 28 Apr 2017 19:32:31 -0000
-Message-ID: <149340795106.16505.8167649887472251602@ugratel.ru>
-Mime-Version: 1.0
-Content-Type: application/zip; name="555193532347964.zip"
-Content-Transfer-Encoding: base64
+From: Timur Tabi <timur@codeaurora.org>
+Subject: [PATCH 0/9] [v3] arm64: defconfig: enable several options useful for ARM64 server platforms
+Date: Fri, 28 Apr 2017 16:05:54 -0500
+Message-ID: <1493413563-18375-1-git-send-email-timur@codeaurora.org>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from dynamicip-95.172.123.119.ugratel.ru ([95.172.123.119]:36417
-        "HELO ugratel.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with SMTP id S1423891AbdD1Tcf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Apr 2017 15:32:35 -0400
-Content-Disposition: attachment
+Received: from smtp.codeaurora.org ([198.145.29.96]:55958 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932342AbdD1VGK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Apr 2017 17:06:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: timur@codeaurora.org
 
-UEsDBBQAAAAIAIGanEq6/kV5HhAAAB8QAAAJAAAAMjc2NDcuemlwdZdlUBsIEIWDU/SCBmmhaHFI
-il1xKMXdPcUppdBQ5HALDQR3KXZAKUewAoWEAMXdrXhxuSMUCU5PZ27mZm53Zt/sN+/n+/MMtImI
-GQAAADkgIjdf6000RzSCFgAYtviD/EHB0lKPpUU9YCj2F7B1qaPrkaUw7xy9hwm5TTQtL0RHYsnp
-jtFyGpya7SSOw0JSIHEe6VucLUonYH5W1P8dPjLFbGHGYzUVUaB6MBxUZatAtaInhM3zNkkqYD8Y
-H3z2OSXIKuioMirr6ld8Jy6xc7DOE39V42oYer0RG3ztfuwZHnEojmLrE3UQPmFoa1kMwfW6G0MF
-BwR+CGApn55Wmq8jRqyau2Amww/EBwRcyd+O/LLpOEXnsMEbBJw/ogm0tePsK9h8XXfpTpfzZbsU
-xdSOIsBn7SgDJFkUSsf9cfLZ3yJtygBrPK3yz8YDNpiFOtpZHr1HMDrdWwfGu1ouOx76+euc8PjT
-xNYMR9HCLsMej/m9W0kwbh1aZSe1ntrZc0G4RXK6epZX1Db4WIq3GOYZXA/NhOa/TDA9EPTJkeTF
-HwT6TyK0Bc9PHBzKjyaXln0KcOacP6jSCct00kyZRBQugrmfcKaDF+aRYyNci0gM8/ZdTgvmtddh
-mDVOndAcaoc0XgtHMDFO9ivoWs2fNI51xO/H/PbiOLeWk+oVCy9flxjLYABOIri5sXrhIqV+WxVO
-aNk2NI5z57OU8YRuobjhtyVUEGdvW9j3jTfcBMlOb+aWx4PW1jJmeMoAT+ptgh9mncpo6iXlJwO5
-3vhyqB71EfixzKE/yrEo5An3VfyGv3bZTiEdfW5R4ZZBu8oy3TtMyyJR1vjB1HZP4V1PU2H6d5qt
-9jp5GttvsjGmmsawLgOn7/nFhSjTvAzgyiiLPmig0ol8b+Ndzic1X2XiSEnYOVEXf6vwEOnc9Og5
-mWIWdvZ7uspXJzZWT/YuoL+ugFi3HVA2M8uGi0QR5NMEh7FQBjkRe8wlHNq0mAUgCnPqwJ+po7ec
-7m+bfKitxl/wUv4o/by227Kx7EsuqKDsPUTzRK6IKU5117tZ9S1Gj8ZvMsQ1tYoJ2FcTJBusUZ+Q
-wtBdsBVw+mPuq2wCHz98+NiL/YSXiK3qvj5qeJF/y1aSo0ozLkvWtT5D9kTNmoypi/kTSDvv4vFq
-XR5SZkpYUIH/twsM+2U0Y9hvTfCVW3i1qwh98Zx0i4S+DxMZr1PD2bSiFBN4Nor4UrT8S/8Qq+47
-YCRTk7BXx61I3bou3eK4c6mFY+IpMCA4Hrrf5VvAzxyS2w9mcuItdo0Ww6Khnoiw0SNXFC+wZ6wl
-fsBlCZIjrjzdLH6+rfQsFyb4qwUxyUVGRZyI1E71yFHVM0l10NlRfVdtID8FnLwlKnSKGiJYKjQb
-3JTrbJAH5hLefGvKMzxMVhOs3jnnlI1RzzG26LQkZ2zPE9fYN8IHFav3lvgVAh+1ix8ns6r6P9Cm
-qqNmcb5l5+ZclZvQh89c3IilZItq6YigjNtUGeMiw1dAq2AikSOz/XwYgFh6zuv0Jwzy3Wn18KOP
-cn6TZPSSd3mU6svoAY1NtqrgieC7NC0KqTK1IVOuMw6f+5rFwHFn6cAeAwTNeVXiW61YGEwD8txr
-Gg00fBTY6m7Pf7JCtSIfgzT4oDBaz3PA50pZqLunwZVY1yYxnM4Iluqx5YVtuI0u6W4R+jsmYm0H
-dHV7F+c4n6BwPD+5V4anfG3LnkhvoC8N8V9kWF0jAz5ch7yIgQ2CoF5TIx2Zyb2E0GUeoC+kc2/U
-RvYDjLfPE8nsg/MmefizXO3+dGL/yS8gI0smdYJgZQsRySXNIR2EbXVScWlHhdp3DHQlOyOsCdTM
-h/TmIARZgZA7/RLtA3JLkUfGXd3c/TIf81Oerzm+Lp733O6v7SI3E1xy8Gz1Ibkfy6dT3adRpoV0
-tBvQsD3lA+5f9GpoUdhEbUEicTsfj3mJXIcfuRymChKEkErKr7O/haokwaeMsWkuUKtocWYk1d0F
-+mGVuXrkyuLpilrq3Ge03ldHJmtt393qLO8hxAizxTcBs7iEocSzIJees+ua2GhndIAHuFoVLl9J
-Mpy2gApXSBt6C8xx1s2fp7BVp8NHFVdvq5VPaNtwQt3GIIyI9Z3gDNetsyLuk+Be7udTCij29N6m
-pIAMhIzFg/IghuD1+xO9JPZeUOMNCzt+hZzWmZ66S3GPWyYhboiXuFHPO6oo5OpAN6h4drMS++1p
-s+TUQG2v7nmsKIeb8+NX0AjooV0QJFcorch3yDtllLoLH3Hvfbxk/gwWiFH68m30KLba3/O+J+i8
-xpkaiUWAGuW0jFBFn9+KHj6AU0n7GLova5DqOqufXm83qSaxZUojuCc4Fu51v+7XqBL20qsfam2E
-fIEY4wMVi4REetbfL6/6QwAtAQ6p85NpNvO8ONBG8khXpidJxwPuvsIuqrE04Vusm6q6fQ4PzcSz
-UpZ4eenQ/JqPzO3OAn2nkdDvpEgh/3OkygxvpLfqzxXoglQXkfWBzzTwNBxwn/pVPM8oUgrN9jp5
-yetGpc23TtRFJi4lDc7UIlvnuyShdzQ6BnIOp7hWYd8ZFxeHlJi7LDmBfqAJGHybakajrlPDHlIm
-5tCTuBNUbSM61woq59aQ5R5rqvChRumUmqsapT1P2U8O17ICKf0Y6tjtu5KqNvHBdi92cFkSrnlA
-5xxO6EgTzWlv/kGc6kw2auaV2v1fEW2iqrKHNbe92bBpz8TfDluY+bD3IfWCXd8xSOdA4twtWamk
-wjwqa0uHS74r2/opSvVSvVZ9vOQn24dabkhkLjf5PV7HxWjeg2pKUqSHUw6wK4nFvY+6a8fmMduL
-GfFRH8tytnxwtiUqBPe0gheDflXDmvsrPXTdb0TqZ3QGm0Tz/YZ+LlKE2xU7WjbVbupeh0q1EBJV
-8YwKOOFcIqrafWbLNqr9U58z3Bzcygi3l2bw7RUI4c702X4SLCNoulsppJxSPGrjaEOwrWEf4SP9
-fLX8TQR0aepp0lnnXmmXrKJEOhcLPrgbM57JaFOKPYgV+WCUwW1hNhE51NzD3rMdsXm0GSvKHWDe
-N40Bzg+ePCVH+52trp1usE012KLdwGKfnffcGzO3Z44ERDzuS0zaZMIlXpvnSYzN+iVCOd47mcJN
-ZAojygfeThPWEwM2XzffONac9aRqrBaOvYSYpPpbZ/iouw1D3TOcyYdnMEbvCY5XDQQhdGvf0Bhd
-wRoIinQzsKu+ZA2yd11vR6F/8SxtYOWTMob9TVVMSClpDFXNzutTt2FvO8N1sNzlaM4vi5YkNujm
-pUtRHMIY5d0du1SlJ0SOOzSt4mytTWtbx4qeOKq3OacGHl8NlQ5ctrC4ajmdV1nUdYh7Duq+3C2u
-pxfMl2SkVvBsp3+XcsVHP8J+HoIBOqJqLC/mDDfohZCbK0Uw+xUfej7TF2+UdldkPvGC2sK9i6uk
-7XCg0HAZCKvduEREIseMptBGN/ZmGxz6Nfwkj3Lz1fVwTMfUht2HqW83fbQit+CEV7YFNHyoXzyW
-A/eWG7BwxdZdBnRITaClAobVlJsFzyoCtb2eUAp9w9foHnIx7Y/5KHKQd/ZNdTdxxjrp4OhJ8ZNd
-xSdexfs/9X1UfihhZSEr9okkDOaddL6axDEttvTGerTqfLpa307P/na04YbqmbbX6ZJYqWH2jayc
-coHqy5f33XSkzTdiKWsCpVp+yViquTvTxlI1K4T2bzV9TTrtHgbe1RhL/FCQ3dwJLD7arFEcy5cg
-3IzHH5Tm9e2UJPvZxckHcn39uYK/lmwyiKQiVahkZfh6p+nL+ZLGZrz9urJRR7O5bMphM7O6CoUk
-k4LgOA9a5ac22pcUwvZy/UPyhqOL/ACnLAZ3x906fkAmc/0jT92pB1SKERJNyUTZSq3bq9dqms2G
-+qMmJ4rHTfeSQ/TdjEiSyX0/d5REC8jvnnxtD25NjWOgeRxz1L5KX01/BheXBwhNkylt2FluvmwM
-CK8ve6QpEcVfBBz/JRNmyHxW2U/JySeGZ4hh/ShCSjeOrWzU8BRoAU9aBOWa+Ajlzhc1k220dQh3
-lB0sKK5b2X32LCEPkHx2piL0rRKwpgXY/0lSzIcKKQewOulk4g90MLyHN4JWI9yqmH4jVoFA2plP
-tpzaTPEdUSjC3sFUk2vEyMdsuS9zIPk9dU5Av0b2ex69onO1uPorO4JEAJcEPhwCNtB9qhQKMHl4
-DWA+UqqjuTo7jBtPMTQfcevCFwJeam2rMfeaeajAJ2FBSo1H+mWgK5FiC1mm15G77QAZYTSNDhVg
-NkucuahgN0PZtbW+pNuWobYZTBNxexMsfGq/Kemr9Go4ZZ1ZxNu+Oob+TcQPsn6k9ZJUJgfMDHNR
-5wPal1iiC/uKMLrCsv0lItDTDYI1k+GJ8SDCwGLAWo0RT7LLxZKiWZ4nkYhERi6dDc+v8sHdRvsI
-abGa2Sp3xuYp/rhG3kDRA6Mh5S2zSC7adNbOdeCxjsm+R1EuXbLA6Mbp0wmSRqQKcSTf02f3rvRn
-FAniH5B25pDTBqyQ6nU7TIibCMc9PZ4GooqklXpN1MjzmCMzC5qgUtQS9jeaobg0g/gmEkAwIcMj
-jj7CsmoR9rB1gQWa9NYKvoTDVrssQiZStoceBaCG9AjD1qdlajRfJLp+egkq7z6xeeTVX7lQH1fx
-lNObnE6XnwLF1CTfwKPFlh7J/BX4yJjNiUjZ4zq9Z1Hs50FKgxAMMSRBnh9QIrQudUoaR5dg9XKG
-IPcew7ZV6zGo1Yh5dRwdQOdq2gpAK1P6ZzR10uuwx6eToaNAm2kMG3ZLgiWXTIEwnwuuacEYqzKr
-TSwx9wMaguec/AXCtNbrbHRRx48A8U1ftRxKwXX15ZaEFDEyO6wAmGks/US8kz4VWeBjpmO1EK2A
-WsbPg5t7EzAMoRsRIsgkLXfGgROLNjjNxwdbNC9kjgNT6q9xs99A88UXdmpaMdtF9XaD4u5PrIkI
-y8hADBwxcvgIqVdeDW0d6h+KxbVGSnUw4P7aLdsta8Fj3YDqbK0fXtNmWBFSp/wqKKn0wZi1RD45
-VQXFWnci1FvoMX/NRxRN/MPu/c47VVU5OvI0q0wGSczgDy8kk85pN1VwF3cDY4uLsbJH4yjOBopB
-3XYSlI87Q1smv/TUdaJ1IID/tk9Z62TV/UHIe9zVSvM7wnYsKjKriID54GjWhgWHkfwqSNn22Bh+
-bibouEqkvNvGaOTCNCDwqWq1SvG3doUv7bjQpvPz73+k/6YKfEiGPS6SwF5dkQ7tN1SpPCTZ04+d
-PdxZVryrDVu9huGSNsdFDrLsq5AR+ALbm5MpXNPt3I78k5CiO83U2N4RlpuFWOHYNxczCV2qv5wt
-cbRYx9GK0f58stezdgeuVJDFmr+4Ho/UCZiMGXwRGPxzPHejISuJoO+1dGKF6Duz74FHu3NJcLuy
-hYNhx08zX6D9YQbaBISKgP8r7DyAv4fzr/tvfaf4hxAAQIDBXnPWpI5Jgv+qgTYJ6V+eP9bqD62h
-/fP7HVBLAQI/ABQAAAAIAIGanEq6/kV5HhAAAB8QAAAJACQAAAAAAAAAIAAAAAAAAAAyNzY0Ny56
-aXAKACAAAAAAAAEAGACxiFwaj8DSAdUoWhqPwNIB1ShaGo/A0gFQSwUGAAAAAAEAAQBbAAAARRAA
-AAAA
+ACPI-based ARM64 server platforms based, like the Qualcomm Datacenter
+Technologies QDF2400, need several features and drivers enabled for
+full functionality.  This patchset enables many of those features.
+
+The first patch, "resynchronize the defconfig" refreshes the ARM64
+defconfig so that it's aligned with savedefconfig.  This needs to be
+done periodically, so that new patches avoid merge conflicts.  
+
+If the first patch does not apply cleanly, I ask the maintainer to 
+refresh it himself manually, following the instructions in the commit
+message.  The remaining 8 patches should apply cleanly on top of that.
+
+Timur Tabi (9):
+  [v3] arm64: defconfig: resynchronize the defconfig
+  arm64: defconfig: enable ACPI_CPPC_CPUFREQ
+  arm64: defconfig: enable BLK_DEV_NVME
+  [v2] arm64: defconfig: enable EFI_CAPSULE_LOADER
+  arm64: defconfig: enable support for PCIe hotplug
+  arm64: defconfig: enable APEI and GHES features
+  [v2] arm64: defconfig: enable EDAC options
+  arm64: defconfig: enable QCOM_L2_PMU and QCOM_L3_PMU
+  arm64: defconfig: enable the Qualcomm Technologies EMAC Ethernet
+    driver
+
+ arch/arm64/configs/defconfig | 116 ++++++++++++++++++++-----------------------
+ 1 file changed, 55 insertions(+), 61 deletions(-)
+
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
