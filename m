@@ -1,68 +1,38 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170428 build: 0 failures 1 warnings (next-20170428)
-Date: Fri, 28 Apr 2017 12:04:38 +0100
-Message-ID: <E1d43hW-0005Qv-HE@optimist>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: rhashtable - Cap total number of entries to 2^31
+Date: Fri, 28 Apr 2017 19:31:45 +0800
+Message-ID: <20170428113145.GA7843@gondor.apana.org.au>
+References: <20170427054451.GA529@gondor.apana.org.au>
+ <0cd0286d-b81d-7bf4-d345-7ef098b9a998@broadcom.com>
+ <56843a86-9a09-16e8-acec-05a80396f282@gmail.com>
+ <acb22f3f-8286-01f2-e536-0ab44eb06b34@de.ibm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:55334 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755472AbdD1LEp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Apr 2017 07:04:45 -0400
+Received: from [198.176.57.175] ([198.176.57.175]:53158 "EHLO
+        deadmen.hmeau.com" rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1425800AbdD1Ldp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Apr 2017 07:33:45 -0400
+Content-Disposition: inline
+In-Reply-To: <acb22f3f-8286-01f2-e536-0ab44eb06b34@de.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, David Miller <davem@davemloft.net>, fw@strlen.de, netdev@vger.kernel.org, Thomas Graf <tgraf@suug.ch>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20170428
-Git describe: next-20170428
-Commit: 14cfc5d3ee Add linux-next specific files for 20170428
+On Fri, Apr 28, 2017 at 12:23:15PM +0200, Christian Borntraeger wrote:
+>
+> I can reproduce this boot failure on s390 bisected to 
+> commit 6d684e54690caef45cf14051ddeb7c71beeb681b
+>    rhashtable: Cap total number of entries to 2^31
+> in linux-next from Apr 28
 
-Build Time: 116 min 55 sec
+It should go away with
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+https://patchwork.ozlabs.org/patch/756233/
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  2 ../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
