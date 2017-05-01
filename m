@@ -1,73 +1,58 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Sun, 30 Apr 2017 14:15:40 +0200
-Message-ID: <20170430121540.GA24235@kroah.com>
-References: <20170427142021.1ae68aa9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the spi tree with the pm tree
+Date: Mon, 1 May 2017 12:50:20 +1000
+Message-ID: <20170501125020.721afc5a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:60253 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753434AbdD3M3F (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Sun, 30 Apr 2017 08:29:05 -0400
-Content-Disposition: inline
-In-Reply-To: <20170427142021.1ae68aa9@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:45143 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S637843AbdEACuY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 30 Apr 2017 22:50:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hanjun Guo <hanjun.guo@linaro.org>, Jayachandran C <jnair@caviumnetworks.com>
 
-On Thu, Apr 27, 2017 at 02:20:21PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c: In function 'rtw_cfg80211_preinit_wiphy':
-> drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c:3409:18: error: 'WIPHY_FLAG_SUPPORTS_SCHED_SCAN' undeclared (first use in this function)
->   wiphy->flags |= WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
->                   ^
-> 
-> Caused by commit
-> 
->   554c0a3abf21 ("staging: Add rtl8723bs sdio wifi driver")
-> 
-> interacting with commit
-> 
->   ca986ad9bcd3 ("nl80211: allow multiple active scheduled scan requests")
-> 
-> from the mac80211-next tree.
-> 
-> I applied the below merge fix patch.
-> 
-> Also, I noticed that CONFIG_PNO_SUPPORT is checked for in several
-> files, but there is no such Kconfig option ...
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 27 Apr 2017 14:12:12 +1000
-> Subject: [PATCH] staging: merge fix for "nl80211: allow multiple active
->  scheduled scan requests"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-> index f17f4fbd3396..c1977b11b6ac 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-> @@ -3406,7 +3406,7 @@ static void rtw_cfg80211_preinit_wiphy(struct adapter *padapter, struct wiphy *w
->  	wiphy->flags |= WIPHY_FLAG_OFFCHAN_TX | WIPHY_FLAG_HAVE_AP_SME;
->  
->  #if defined(CONFIG_PM)
-> -	wiphy->flags |= WIPHY_FLAG_SUPPORTS_SCHED_SCAN;
-> +	wiphy->max_sched_scan_reqs = 1;
->  #ifdef CONFIG_PNO_SUPPORT
->  	wiphy->max_sched_scan_ssids = MAX_PNO_LIST_COUNT;
->  #endif
+Hi Mark,
 
-Thanks for the patch, looks good to me.
+Today's linux-next merge of the spi tree got a conflict in:
 
-greg k-h
+  drivers/acpi/acpi_apd.c
+
+between commit:
+
+  6e14cf361a0c ("ACPI / APD: Add clock frequency for Hisilicon Hip07/08 I2C controller")
+
+from the pm tree and commit:
+
+  251831bd4f49 ("spi: xlp: update for ARCH_VULCAN2")
+
+from the spi tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/acpi/acpi_apd.c
+index 8f57648f318b,17a1eb14847a..000000000000
+--- a/drivers/acpi/acpi_apd.c
++++ b/drivers/acpi/acpi_apd.c
+@@@ -179,8 -169,7 +179,9 @@@ static const struct acpi_device_id acpi
+  #ifdef CONFIG_ARM64
+  	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
+  	{ "BRCM900D", APD_ADDR(vulcan_spi_desc) },
++ 	{ "CAV900D",  APD_ADDR(vulcan_spi_desc) },
+ +	{ "HISI0A21", APD_ADDR(hip07_i2c_desc) },
+ +	{ "HISI0A22", APD_ADDR(hip08_i2c_desc) },
+  #endif
+  	{ }
+  };
