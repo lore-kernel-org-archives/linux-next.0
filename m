@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the ftrace tree
-Date: Mon, 1 May 2017 13:18:51 +1000
-Message-ID: <20170501131851.677c8799@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the usb tree
+Date: Mon, 1 May 2017 14:09:49 +1000
+Message-ID: <20170501140949.2c07b08d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41997 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35193 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1164162AbdEADSy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 30 Apr 2017 23:18:54 -0400
+        id S1750811AbdEAEJx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 May 2017 00:09:53 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <groeck@chromium.org>, Gilad Ben-Yossef <gilad@benyossef.com>, Michael Zoran <mzoran@crowfest.net>
 
-Hi Paul,
+Hi Greg,
 
-Today's linux-next merge of the rcu tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  kernel/rcu/tree.c
+  drivers/staging/Makefile
 
 between commit:
 
-  a278d4718988 ("rcu: Fix dyntick-idle tracing")
+  f0690a25a140 ("staging: typec: USB Type-C Port Manager (tcpm)")
 
-from the ftrace tree and commit:
+from the usb tree and commit:
 
-  e83d58dc7de2 ("rcu: Add lockdep_assert_held() teeth to tree.c")
+  051420a997a5 ("staging: bcm2835-audio: Move driver under vc04_services")
+  abefd6741d54 ("staging: ccree: introduce CryptoCell HW driver")
 
-from the rcu tree.
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,20 +43,14 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/rcu/tree.c
-index ea2da0b22a6f,e180eea5061e..000000000000
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@@ -792,9 -785,10 +799,10 @@@ static void rcu_eqs_enter_common(bool u
-  {
-  	struct rcu_state *rsp;
-  	struct rcu_data *rdp;
- -	RCU_TRACE(struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);)
- +	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
-  
-+ 	RCU_LOCKDEP_WARN(!irqs_disabled(), "rcu_eqs_enter_common() invoked with irqs enabled!!!");
- -	trace_rcu_dyntick(TPS("Start"), oldval, rdtp->dynticks_nesting);
- +	trace_rcu_dyntick(TPS("Start"), rdtp->dynticks_nesting, 0);
-  	if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG) &&
-  	    !user && !is_idle_task(current)) {
-  		struct task_struct *idle __maybe_unused =
+diff --cc drivers/staging/Makefile
+index 682127c20da5,422fae4ea0f3..000000000000
+--- a/drivers/staging/Makefile
++++ b/drivers/staging/Makefile
+@@@ -41,4 -42,5 +43,4 @@@ obj-$(CONFIG_MOST)		+= most
+  obj-$(CONFIG_KS7010)		+= ks7010/
+  obj-$(CONFIG_GREYBUS)		+= greybus/
+  obj-$(CONFIG_BCM2835_VCHIQ)	+= vc04_services/
+- obj-$(CONFIG_SND_BCM2835)	+= bcm2835-audio/
++ obj-$(CONFIG_CRYPTO_DEV_CCREE)	+= ccree/
+ -
