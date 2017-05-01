@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the pm tree
-Date: Mon, 1 May 2017 12:50:20 +1000
-Message-ID: <20170501125020.721afc5a@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the ftrace tree
+Date: Mon, 1 May 2017 13:18:51 +1000
+Message-ID: <20170501131851.677c8799@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45143 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41997 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S637843AbdEACuY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 30 Apr 2017 22:50:24 -0400
+        id S1164162AbdEADSy (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 30 Apr 2017 23:18:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hanjun Guo <hanjun.guo@linaro.org>, Jayachandran C <jnair@caviumnetworks.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Mark,
+Hi Paul,
 
-Today's linux-next merge of the spi tree got a conflict in:
+Today's linux-next merge of the rcu tree got a conflict in:
 
-  drivers/acpi/acpi_apd.c
+  kernel/rcu/tree.c
 
 between commit:
 
-  6e14cf361a0c ("ACPI / APD: Add clock frequency for Hisilicon Hip07/08 I2C controller")
+  a278d4718988 ("rcu: Fix dyntick-idle tracing")
 
-from the pm tree and commit:
+from the ftrace tree and commit:
 
-  251831bd4f49 ("spi: xlp: update for ARCH_VULCAN2")
+  e83d58dc7de2 ("rcu: Add lockdep_assert_held() teeth to tree.c")
 
-from the spi tree.
+from the rcu tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,17 +42,20 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/acpi/acpi_apd.c
-index 8f57648f318b,17a1eb14847a..000000000000
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@@ -179,8 -169,7 +179,9 @@@ static const struct acpi_device_id acpi
-  #ifdef CONFIG_ARM64
-  	{ "APMC0D0F", APD_ADDR(xgene_i2c_desc) },
-  	{ "BRCM900D", APD_ADDR(vulcan_spi_desc) },
-+ 	{ "CAV900D",  APD_ADDR(vulcan_spi_desc) },
- +	{ "HISI0A21", APD_ADDR(hip07_i2c_desc) },
- +	{ "HISI0A22", APD_ADDR(hip08_i2c_desc) },
-  #endif
-  	{ }
-  };
+diff --cc kernel/rcu/tree.c
+index ea2da0b22a6f,e180eea5061e..000000000000
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@@ -792,9 -785,10 +799,10 @@@ static void rcu_eqs_enter_common(bool u
+  {
+  	struct rcu_state *rsp;
+  	struct rcu_data *rdp;
+ -	RCU_TRACE(struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);)
+ +	struct rcu_dynticks *rdtp = this_cpu_ptr(&rcu_dynticks);
+  
++ 	RCU_LOCKDEP_WARN(!irqs_disabled(), "rcu_eqs_enter_common() invoked with irqs enabled!!!");
+ -	trace_rcu_dyntick(TPS("Start"), oldval, rdtp->dynticks_nesting);
+ +	trace_rcu_dyntick(TPS("Start"), rdtp->dynticks_nesting, 0);
+  	if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG) &&
+  	    !user && !is_idle_task(current)) {
+  		struct task_struct *idle __maybe_unused =
