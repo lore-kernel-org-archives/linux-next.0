@@ -1,37 +1,31 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warnings
-Date: Tue, 02 May 2017 19:53:25 +1000
-Message-ID: <878tmfega2.fsf@concordia.ellerman.id.au>
+Date: Tue, 2 May 2017 21:17:01 +1000
+Message-ID: <20170502211701.6e84c10e@canb.auug.org.au>
 References: <20170502160530.34b680b7@canb.auug.org.au>
+        <878tmfega2.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50465 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47109 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751420AbdEBJxb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 2 May 2017 05:53:31 -0400
-In-Reply-To: <20170502160530.34b680b7@canb.auug.org.au>
+        id S1750709AbdEBLRE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 2 May 2017 07:17:04 -0400
+In-Reply-To: <878tmfega2.fsf@concordia.ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Paul Mackerras <paulus@ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Paul Mackerras <paulus@ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Michael,
 
-> Hi all,
+On Tue, 02 May 2017 19:53:25 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
 >
-> The linux-next build (powerpc allyesconfig) produced these warnings
-> (and have for a while):
->
-> arch/powerpc/kvm/book3s_pr_papr.c: In function 'kvmppc_h_pr_enter':
-> arch/powerpc/kvm/book3s_pr_papr.c:53:2: warning: ignoring return value of 'copy_from_user', declared with attribute warn_unused_result [-Wunused-result]
->   copy_from_user(pteg, (void __user *)pteg_addr, sizeof(pteg));
->   ^
+> Though we are supposed to be building with -Werror, so those should be
+> breaking the build. I assume you have turned Werror off?
 
-Thanks, I had seen them, but they're KVM so I'll leave them to Paul to
-fix up.
-
-Though we are supposed to be building with -Werror, so those should be
-breaking the build. I assume you have turned Werror off?
-
-cheers
+I assume that allyesconfig turns on CONFIG_PPC_DISABLE_WERROR ...
+-- 
+Cheers,
+Stephen Rothwell
