@@ -1,43 +1,57 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kbuild tree with Linus' tree
-Date: Wed, 3 May 2017 08:14:25 +1000
-Message-ID: <20170503081425.3b4199b5@canb.auug.org.au>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH -next] soc/qbman: fix implicit header dependency now causing build fails
+Date: Tue, 2 May 2017 18:21:12 -0400
+Message-ID: <20170502222112.16720-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43761 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751270AbdEBWO3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 2 May 2017 18:14:29 -0400
+Received: from mail.windriver.com ([147.11.1.11]:44131 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751478AbdEBWZH (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 May 2017 18:25:07 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans-Christian Noren Egtvedt <egtvedt@samfundet.no>, =?UTF-8?B?SMOldmFyZA==?= Skinnemoen <hskinnemoen@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Nicolas Dichtel <nicolas.dichtel@6wind.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Joerg Roedel <jroedel@suse.de>, Scott Wood <oss@buserror.net>, linuxppc-dev@lists.ozlabs.org
 
-Hi Masahiro,
+In commit 461a6946b1f9 ("iommu: Remove pci.h include from
+trace/events/iommu.h") that header shuffle uncovered an implicit
+include in this driver, manifesting as:
 
-Today's linux-next merge of the kbuild tree got a conflict in:
+    CC      drivers/soc/fsl/qbman/qman_portal.o
+    drivers/soc/fsl/qbman/qman_portal.c: In function 'qman_portal_probe':
+    drivers/soc/fsl/qbman/qman_portal.c:299:2: error: implicit declaration of function 'dma_set_mask'
+    drivers/soc/fsl/qbman/qman_portal.c:299:2: error: implicit declaration of function 'DMA_BIT_MASK'
+        if (dma_set_mask(dev, DMA_BIT_MASK(40))) {
+        ^
 
-  arch/avr32/include/uapi/asm/Kbuild
+on the corenet32_smp_defconfig (and 64 bit respectively.)  The above
+commit was singled out via git bisect.
 
-between commit:
+The header it was implictly relying on getting was dma-mapping.h - so
+we explicitly add it here.
 
-  26202873bb51 ("avr32: remove support for AVR32 architecture")
+Fixes: 461a6946b1f9 ("iommu: Remove pci.h include from trace/events/iommu.h")
+Cc: Joerg Roedel <jroedel@suse.de>
+Cc: Scott Wood <oss@buserror.net>
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/soc/fsl/qbman/qman_portal.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-from Linus' tree and commit:
-
-  65017bab8a9e ("uapi: export all headers under uapi directories")
-
-from the kbuild tree.
-
-I fixed it up (I removed the file) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+diff --git a/drivers/soc/fsl/qbman/qman_portal.c b/drivers/soc/fsl/qbman/qman_portal.c
+index adbaa30d3c5a..4a6a8ae5e0aa 100644
+--- a/drivers/soc/fsl/qbman/qman_portal.c
++++ b/drivers/soc/fsl/qbman/qman_portal.c
+@@ -30,6 +30,8 @@
+ 
+ #include "qman_priv.h"
+ 
++#include <linux/dma-mapping.h>
++
+ struct qman_portal *qman_dma_portal;
+ EXPORT_SYMBOL(qman_dma_portal);
+ 
 -- 
-Cheers,
-Stephen Rothwell
+2.11.0
