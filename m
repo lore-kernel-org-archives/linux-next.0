@@ -1,57 +1,104 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: [PATCH cgroup/for-4.12] cgroup: mark cgroup_get() with __maybe_unused
-Date: Mon, 1 May 2017 15:41:32 -0400
-Message-ID: <20170501194132.GF8921@htj.duckdns.org>
-References: <20170501145340.17e8ef86@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 2 May 2017 11:07:04 +1000
+Message-ID: <20170502110704.79bb7760@canb.auug.org.au>
+References: <20170418130229.04289bd6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:33800 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750899AbdEATlf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 1 May 2017 15:41:35 -0400
-Content-Disposition: inline
-In-Reply-To: <20170501145340.17e8ef86@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:55593 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750796AbdEBBHH (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 May 2017 21:07:07 -0400
+In-Reply-To: <20170418130229.04289bd6@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josef Bacik <josef@toxicpanda.com>, Johannes Berg <johannes.berg@intel.com>, Linus <torvalds@linux-foundation.org>
 
->From 310b4816a5d8082416b4ab83e5a7b3cb92883a4d Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Mon, 1 May 2017 15:24:14 -0400
+Hi all,
 
-a590b90d472f ("cgroup: fix spurious warnings on cgroup_is_dead() from
-cgroup_sk_alloc()") converted most cgroup_get() usages to
-cgroup_get_live() leaving cgroup_sk_alloc() the sole user of
-cgroup_get().  When !CONFIG_SOCK_CGROUP_DATA, this ends up triggering
-unused warning for cgroup_get().
+On Tue, 18 Apr 2017 13:02:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the block tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> drivers/block/nbd.c: In function 'nbd_genl_connect':
+> drivers/block/nbd.c:1662:10: error: too few arguments to function 'nla_parse_nested'
+>     ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+>           ^
+> In file included from include/net/rtnetlink.h:5:0,
+>                  from include/net/sch_generic.h:12,
+>                  from include/linux/filter.h:20,
+>                  from include/net/sock.h:64,
+>                  from drivers/block/nbd.c:32:
+> include/net/netlink.h:754:19: note: declared here
+>  static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
+>                    ^
+> drivers/block/nbd.c: In function 'nbd_genl_reconfigure':
+> drivers/block/nbd.c:1818:10: error: too few arguments to function 'nla_parse_nested'
+>     ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+>           ^
+> In file included from include/net/rtnetlink.h:5:0,
+>                  from include/net/sch_generic.h:12,
+>                  from include/linux/filter.h:20,
+>                  from include/net/sock.h:64,
+>                  from drivers/block/nbd.c:32:
+> include/net/netlink.h:754:19: note: declared here
+>  static inline int nla_parse_nested(struct nlattr *tb[], int maxtype,
+>                    ^
+> 
+> Caused by commits
+> 
+>   e46c7287b1c2 ("nbd: add a basic netlink interface")
+>   b7aa3d39385d ("nbd: add a reconfigure netlink command")
+> 
+> interacting with commit
+> 
+>   fceb6435e852 ("netlink: pass extended ACK struct to parsing functions")
+> 
+> from the net-next tree.
+> 
+> I have applied the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 18 Apr 2017 12:59:05 +1000
+> Subject: [PATCH] nbd: fix up for nla_parse_nested() API change
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/block/nbd.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index b78f23ce2395..5049d19f3940 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -1660,7 +1660,7 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+>  				goto out;
+>  			}
+>  			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+> -					       nbd_sock_policy);
+> +					       nbd_sock_policy, NULL);
+>  			if (ret != 0) {
+>  				printk(KERN_ERR "nbd: error processing sock list\n");
+>  				ret = -EINVAL;
+> @@ -1816,7 +1816,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+>  				goto out;
+>  			}
+>  			ret = nla_parse_nested(socks, NBD_SOCK_MAX, attr,
+> -					       nbd_sock_policy);
+> +					       nbd_sock_policy, NULL);
+>  			if (ret != 0) {
+>  				printk(KERN_ERR "nbd: error processing sock list\n");
+>  				ret = -EINVAL;
+> -- 
+> 2.11.0
 
-Silence the warning by adding __maybe_unused to cgroup_get().
+So, this merge fix is now needed when the net-next tree is merged (as
+Linus has merged the block tree).
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Link: http://lkml.kernel.org/r/20170501145340.17e8ef86@canb.auug.org.au
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
-Applied to cgroup/for-4.12.
-
-Thanks!
-
- kernel/cgroup/cgroup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 38d9386..f2bcc11 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -436,7 +436,7 @@ struct cgroup_subsys_state *cgroup_get_e_css(struct cgroup *cgrp,
- 	return css;
- }
- 
--static void cgroup_get(struct cgroup *cgrp)
-+static void __maybe_unused cgroup_get(struct cgroup *cgrp)
- {
- 	css_get(&cgrp->self);
- }
 -- 
-2.9.3
+Cheers,
+Stephen Rothwell
