@@ -1,73 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Date: Tue, 2 May 2017 10:25:18 +0200
-Message-ID: <20170502082518.jdk5tqjhvlsqntny@phenom.ffwll.local>
+Date: Tue, 2 May 2017 18:41:32 +1000
+Message-ID: <20170502184132.2c1b0299@canb.auug.org.au>
 References: <20170421121014.3ee14a83@canb.auug.org.au>
- <20170424112512.582d04da@canb.auug.org.au>
+        <20170424112512.582d04da@canb.auug.org.au>
+        <20170502082518.jdk5tqjhvlsqntny@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20170424112512.582d04da@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Jens Wiklander <jens.wiklander@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, ARM <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:32969 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750955AbdEBIlg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 2 May 2017 04:41:36 -0400
+In-Reply-To: <20170502082518.jdk5tqjhvlsqntny@phenom.ffwll.local>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Sumit Semwal <sumit.semwal@linaro.org>, Jens Wiklander <jens.wiklander@linaro.org>
 
-T24gTW9uLCBBcHIgMjQsIDIwMTcgYXQgMTE6MjU6MTJBTSArMTAwMCwgU3RlcGhlbiBSb3Rod2Vs
-bCB3cm90ZToKPiBIaSBhbGwsCj4gCj4gT24gRnJpLCAyMSBBcHIgMjAxNyAxMjoxMDoxNCArMTAw
-MCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4gPgo+ID4g
-QWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxk
-ICh4ODZfNjQKPiA+IGFsbG1vZGNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoKPiA+IAo+ID4gZHJp
-dmVycy90ZWUvdGVlX3NobS5jOjg3OjI6IGVycm9yOiB1bmtub3duIGZpZWxkICdrbWFwX2F0b21p
-Yycgc3BlY2lmaWVkIGluIGluaXRpYWxpemVyCj4gPiAgIC5rbWFwX2F0b21pYyA9IHRlZV9zaG1f
-b3Bfa21hcF9hdG9taWMsCj4gPiAgIF4KPiA+IGRyaXZlcnMvdGVlL3RlZV9zaG0uYzo4NzoxNzog
-ZXJyb3I6IGluaXRpYWxpemF0aW9uIGZyb20gaW5jb21wYXRpYmxlIHBvaW50ZXIgdHlwZSBbLVdl
-cnJvcj1pbmNvbXBhdGlibGUtcG9pbnRlci10eXBlc10KPiA+ICAgLmttYXBfYXRvbWljID0gdGVl
-X3NobV9vcF9rbWFwX2F0b21pYywKPiA+ICAgICAgICAgICAgICAgICAgXgo+ID4gZHJpdmVycy90
-ZWUvdGVlX3NobS5jOjg3OjE3OiBub3RlOiAobmVhciBpbml0aWFsaXphdGlvbiBmb3IgJ3RlZV9z
-aG1fZG1hX2J1Zl9vcHMuYmVnaW5fY3B1X2FjY2VzcycpCj4gPiBkcml2ZXJzL3RlZS90ZWVfc2ht
-LmM6ODg6MjogZXJyb3I6IHVua25vd24gZmllbGQgJ2ttYXAnIHNwZWNpZmllZCBpbiBpbml0aWFs
-aXplcgo+ID4gICAua21hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiA+ICAgXgo+ID4gZHJpdmVycy90
-ZWUvdGVlX3NobS5jOjg4OjEwOiBlcnJvcjogaW5pdGlhbGl6YXRpb24gZnJvbSBpbmNvbXBhdGli
-bGUgcG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJsZS1wb2ludGVyLXR5cGVzXQo+ID4g
-ICAua21hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiA+ICAgICAgICAgICBeCj4gPiBkcml2ZXJzL3Rl
-ZS90ZWVfc2htLmM6ODg6MTA6IG5vdGU6IChuZWFyIGluaXRpYWxpemF0aW9uIGZvciAndGVlX3No
-bV9kbWFfYnVmX29wcy5lbmRfY3B1X2FjY2VzcycpCj4gPiAKPiA+IENhdXNlZCBieSBjb21taXQK
-PiA+IAo+ID4gICBmOWI2N2YwMDE0Y2IgKCJkbWEtYnVmOiBSZW5hbWUgZG1hLW9wcyB0byBwcmV2
-ZW50IGNvbmZsaWN0IHdpdGgga3VubWFwX2F0b21pYyBtYWNybyIpCj4gPiAKPiA+IGludGVyYWN0
-aW5nIHdpdGggY29tbWl0Cj4gPiAKPiA+ICAgOTY3YzljY2EyY2M1ICgidGVlOiBnZW5lcmljIFRF
-RSBzdWJzeXN0ZW0iKQo+ID4gCj4gPiBmcm9tIHRoZSBhcm0tc29jIHRyZWUuCj4gPiAKPiA+IEkg
-YXBwbGllZCB0aGUgZm9sbG93aW5nIG1lcmdlIGZpeCBwYXRjaCBmb3IgdG9kYXk6Cj4gPiAKPiA+
-IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pgo+ID4gRGF0ZTog
-RnJpLCAyMSBBcHIgMjAxNyAxMjowNjozMiArMTAwMAo+ID4gU3ViamVjdDogW1BBVENIXSB0ZWU6
-IG1lcmdlIGZpeCBmb3IgZG1hLW9wcyBmaWVsZCBuYW1lIGNoYW5nZXMKPiA+IAo+ID4gU2lnbmVk
-LW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4gPiAtLS0K
-PiA+ICBkcml2ZXJzL3RlZS90ZWVfc2htLmMgfCA0ICsrLS0KPiA+ICAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy90ZWUvdGVlX3NobS5jIGIvZHJpdmVycy90ZWUvdGVlX3NobS5jCj4gPiBpbmRleCAwYmUx
-ZTNlOTNiZWUuLjRlMTRjOWM5Y2IxYyAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvdGVlL3RlZV9z
-aG0uYwo+ID4gKysrIGIvZHJpdmVycy90ZWUvdGVlX3NobS5jCj4gPiBAQCAtODQsOCArODQsOCBA
-QCBzdGF0aWMgc3RydWN0IGRtYV9idWZfb3BzIHRlZV9zaG1fZG1hX2J1Zl9vcHMgPSB7Cj4gPiAg
-CS5tYXBfZG1hX2J1ZiA9IHRlZV9zaG1fb3BfbWFwX2RtYV9idWYsCj4gPiAgCS51bm1hcF9kbWFf
-YnVmID0gdGVlX3NobV9vcF91bm1hcF9kbWFfYnVmLAo+ID4gIAkucmVsZWFzZSA9IHRlZV9zaG1f
-b3BfcmVsZWFzZSwKPiA+IC0JLmttYXBfYXRvbWljID0gdGVlX3NobV9vcF9rbWFwX2F0b21pYywK
-PiA+IC0JLmttYXAgPSB0ZWVfc2htX29wX2ttYXAsCj4gPiArCS5tYXBfYXRvbWljID0gdGVlX3No
-bV9vcF9rbWFwX2F0b21pYywKPiA+ICsJLm1hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiA+ICAJLm1t
-YXAgPSB0ZWVfc2htX29wX21tYXAsCj4gPiAgfTsKClNpbmNlIHRoaXMgaXMgYW4gYWxsLW5ldyBk
-cml2ZXIgaXQgbWlnaHQgYmUgYmVzdCB0byBzdGFnZ2VyIHRoZSBwdWxsCnJlcXVlc3RzIGFuZCBt
-ZXJnZSB0aGUgbmV3IHRlZSBzdWJzeXN0ZW0gKG9yIHdoYXRldmVyIGl0IGlzKSBhZnRlciBkcm0/
-CgpOb3Qgc3VyZSB3aGF0IHRvIGJlc3QgZG8gaGVyZSAuLi4KLURhbmllbAotLSAKRGFuaWVsIFZl
-dHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3
-bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Daniel,
+
+On Tue, 2 May 2017 10:25:18 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+> Since this is an all-new driver it might be best to stagger the pull
+> requests and merge the new tee subsystem (or whatever it is) after drm?
+> 
+> Not sure what to best do here ...
+
+This will merge via Dave, so Dave just needs to let Linus know that a
+fix up is needed when this merges with the arm-soc stuff in Linus' tree.
+
+-- 
+Cheers,
+Stephen Rothwell
