@@ -1,37 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm tree
-Date: Thu, 4 May 2017 08:33:36 +1000
-Message-ID: <20170504083336.35ed36ee@canb.auug.org.au>
+Subject: linux-next: manual merge of the f2fs tree with the fscrypt tree
+Date: Thu, 4 May 2017 09:40:40 +1000
+Message-ID: <20170504094040.56b36c73@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44909 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51587 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751908AbdECWdj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 May 2017 18:33:39 -0400
+        id S1751233AbdECXkm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 May 2017 19:40:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: ": Dave Airlie" <airlied@linux.ie>, Jeffy Chen <jeffy.chen@rock-chips.com>, Sean Paul <seanpaul@chromium.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tomohiro Kusumi <tkusumi@tuxera.com>
 
-Hi all,
+Hi Jaegeuk,
 
-Sorry that I did not notice this at the time ... This is now in Linus'
-tree.
+Today's linux-next merge of the f2fs tree got a conflict in:
 
-After merging the drm tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+  fs/f2fs/inline.c
 
-arch/arm/configs/multi_v7_defconfig:596:warning: symbol value 'm' invalid for ROCKCHIP_ANALOGIX_DP
-arch/arm/configs/multi_v7_defconfig:597:warning: symbol value 'm' invalid for ROCKCHIP_DW_HDMI
-arch/arm/configs/multi_v7_defconfig:598:warning: symbol value 'm' invalid for ROCKCHIP_DW_MIPI_DSI
-arch/arm/configs/multi_v7_defconfig:599:warning: symbol value 'm' invalid for ROCKCHIP_INNO_HDMI
+between commit:
 
-Introduced by commit
+  5fc36386d220 ("f2fs: check entire encrypted bigname when finding a dentry")
 
-  8820b68bd378 ("drm/rockchip: Refactor the component match logic.")
+from the fscrypt tree and commit:
+
+  64c24ecb3cff ("f2fs: split make_dentry_ptr() into block and inline versions")
+
+from the f2fs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc fs/f2fs/inline.c
+index fa729ff6b2f9,0ccdefe9fdba..000000000000
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@@ -533,8 -533,8 +533,8 @@@ int f2fs_add_inline_entry(struct inode 
+  
+  	f2fs_wait_on_page_writeback(ipage, NODE, true);
+  
+ -	name_hash = f2fs_dentry_hash(new_name);
+ +	name_hash = f2fs_dentry_hash(new_name, NULL);
+- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 2);
++ 	make_dentry_ptr_inline(NULL, &d, dentry_blk);
+  	f2fs_update_dentry(ino, mode, &d, new_name, name_hash, bit_pos);
+  
+  	set_page_dirty(ipage);
