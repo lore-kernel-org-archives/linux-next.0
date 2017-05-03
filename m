@@ -1,49 +1,25 @@
-From: Timur Tabi <timur@codeaurora.org>
-Subject: [PATCH 6/9] arm64: defconfig: enable APEI and GHES features
-Date: Wed,  3 May 2017 11:17:57 -0500
-Message-ID: <1493828280-6620-7-git-send-email-timur@codeaurora.org>
-References: <1493828280-6620-1-git-send-email-timur@codeaurora.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: incomplete commits in the ceph tree
+Date: Thu, 4 May 2017 07:48:37 +1000
+Message-ID: <20170504074837.608e72d3@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:53042 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751803AbdECQSK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 3 May 2017 12:18:10 -0400
-In-Reply-To: <1493828280-6620-1-git-send-email-timur@codeaurora.org>
+Received: from ozlabs.org ([103.22.144.67]:39847 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751974AbdECVsl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 May 2017 17:48:41 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: timur@codeaurora.org
+To: Sage Weil <sage@newdream.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ilya Dryomov <idryomov@gmail.com>
 
-ARM64 server platforms can support ACPI Platform Error Interface (APEI)
-and Generic Hardware Error Source (GHES) features, so enable them.
+Hi Sage,
 
-Platforms which support the firmware-first RAS error reporting model
-require APEI and GHES functionality for the OS to receive and report
-error records provided by the platform.
+I noticed several new commits in the ceph tree today that have no
+Singn-off-by from their committer (Ilya). :-(
 
-PCIe AER functionality is required for PCIe AER errors to be properly
-reported and recovered from.
-
-Signed-off-by: Timur Tabi <timur@codeaurora.org>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f6b86a1..389f97f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -488,6 +488,9 @@ CONFIG_ARM_SCPI_PROTOCOL=y
- CONFIG_RASPBERRYPI_FIRMWARE=y
- CONFIG_EFI_CAPSULE_LOADER=y
- CONFIG_ACPI=y
-+CONFIG_ACPI_APEI=y
-+CONFIG_ACPI_APEI_GHES=y
-+CONFIG_ACPI_APEI_PCIEAER=y
- CONFIG_EXT2_FS=y
- CONFIG_EXT3_FS=y
- CONFIG_EXT4_FS_POSIX_ACL=y
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
-Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Cheers,
+Stephen Rothwell
