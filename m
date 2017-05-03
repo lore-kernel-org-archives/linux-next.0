@@ -1,40 +1,39 @@
-From: Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH -next] soc/qbman: fix implicit header dependency now
- causing build fails
-Date: Wed, 3 May 2017 12:26:54 +0200
-Message-ID: <20170503102654.GD5077@suse.de>
-References: <20170502222112.16720-1-paul.gortmaker@windriver.com>
- <20170503084240.GC5077@suse.de>
- <20170503191524.41e16fa5@canb.auug.org.au>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+Date: Wed, 3 May 2017 07:12:27 -0500
+Message-ID: <CAL_Jsq+oDXJVDvLSmPQVcm7QB1cwOeTdELeACB=9FtLkszhKdA@mail.gmail.com>
+References: <20170428124503.172ce783@canb.auug.org.au> <20170503154433.25ea1d10@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:52937 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752586AbdECK06 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 3 May 2017 06:26:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20170503191524.41e16fa5@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170503154433.25ea1d10@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Scott Wood <oss@buserror.net>, linuxppc-dev@lists.ozlabs.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Frank Rowand <frank.rowand@sony.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On Wed, May 3, 2017 at 12:44 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Rob,
+>
+> On Fri, 28 Apr 2017 12:45:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the devicetree tree, today's linux-next build (x86_64
+>> allmodconfig) produced this warning:
+>>
+>> drivers/of/unittest.c: In function 'of_unittest':
+>> drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>>    last_sibling->sibling = overlay_base_root->child;
+>>                          ^
+>> drivers/of/unittest.c:2122:22: note: 'last_sibling' was declared here
+>>   struct device_node *last_sibling;
+>>                       ^
+>>
+>> Introduced by commit
+>>
+>>   81d0848fc8d2 ("of: Add unit tests for applying overlays")
+>
+> Ping?
 
-On Wed, May 03, 2017 at 07:15:24PM +1000, Stephen Rothwell wrote:
-> It looks like there is at least one more:
-> 
-> drivers/soc/fsl/qbman/qman.c: In function 'qman_init_fq':
-> drivers/soc/fsl/qbman/qman.c:1787:4: error: implicit declaration of function 'dma_map_single' [-Werror=implicit-function-declaration]
-> drivers/soc/fsl/qbman/qman.c:1788:21: error: 'DMA_TO_DEVICE' undeclared (first use in this function)
-> drivers/soc/fsl/qbman/qman.c:1789:4: error: implicit declaration of function 'dma_mapping_error' [-Werror=implicit-function-declaration]
-> 
-> This is from a powerpc orenet64_smp_defconfig build of today's
-> linux-next.
+Sorry, forgot to push out the fix. Now done.
 
-Thanks, I'll fix that up too later today. Please let me know if you find
-more of that in your compile-testing.
-
-
-	Joerg
+Rob
