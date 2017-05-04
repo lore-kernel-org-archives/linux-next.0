@@ -1,67 +1,68 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the
-	drm-misc tree
-Date: Thu, 4 May 2017 09:50:12 +1000
-Message-ID: <20170504095012.2c109448@canb.auug.org.au>
-References: <20170421121014.3ee14a83@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170421121014.3ee14a83@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Logan Gunthorpe <logang@deltatee.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170503 build: 0 failures 1 warnings (next-20170503)
+Date: Thu, 04 May 2017 01:46:32 +0100
+Message-ID: <E1d64uc-0003KI-Ad@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49202 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752225AbdEDAqi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 3 May 2017 20:46:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-SGkgYWxsLAoKT24gRnJpLCAyMSBBcHIgMjAxNyAxMjoxMDoxNCArMTAwMCBTdGVwaGVuIFJvdGh3
-ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBBZnRlciBtZXJnaW5nIHRoZSBk
-cm0tbWlzYyB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NAo+IGFsbG1vZGNv
-bmZpZykgZmFpbGVkIGxpa2UgdGhpczoKPiAKPiBkcml2ZXJzL3RlZS90ZWVfc2htLmM6ODc6Mjog
-ZXJyb3I6IHVua25vd24gZmllbGQgJ2ttYXBfYXRvbWljJyBzcGVjaWZpZWQgaW4gaW5pdGlhbGl6
-ZXIKPiAgIC5rbWFwX2F0b21pYyA9IHRlZV9zaG1fb3Bfa21hcF9hdG9taWMsCj4gICBeCj4gZHJp
-dmVycy90ZWUvdGVlX3NobS5jOjg3OjE3OiBlcnJvcjogaW5pdGlhbGl6YXRpb24gZnJvbSBpbmNv
-bXBhdGlibGUgcG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJsZS1wb2ludGVyLXR5cGVz
-XQo+ICAgLmttYXBfYXRvbWljID0gdGVlX3NobV9vcF9rbWFwX2F0b21pYywKPiAgICAgICAgICAg
-ICAgICAgIF4KPiBkcml2ZXJzL3RlZS90ZWVfc2htLmM6ODc6MTc6IG5vdGU6IChuZWFyIGluaXRp
-YWxpemF0aW9uIGZvciAndGVlX3NobV9kbWFfYnVmX29wcy5iZWdpbl9jcHVfYWNjZXNzJykKPiBk
-cml2ZXJzL3RlZS90ZWVfc2htLmM6ODg6MjogZXJyb3I6IHVua25vd24gZmllbGQgJ2ttYXAnIHNw
-ZWNpZmllZCBpbiBpbml0aWFsaXplcgo+ICAgLmttYXAgPSB0ZWVfc2htX29wX2ttYXAsCj4gICBe
-Cj4gZHJpdmVycy90ZWUvdGVlX3NobS5jOjg4OjEwOiBlcnJvcjogaW5pdGlhbGl6YXRpb24gZnJv
-bSBpbmNvbXBhdGlibGUgcG9pbnRlciB0eXBlIFstV2Vycm9yPWluY29tcGF0aWJsZS1wb2ludGVy
-LXR5cGVzXQo+ICAgLmttYXAgPSB0ZWVfc2htX29wX2ttYXAsCj4gICAgICAgICAgIF4KPiBkcml2
-ZXJzL3RlZS90ZWVfc2htLmM6ODg6MTA6IG5vdGU6IChuZWFyIGluaXRpYWxpemF0aW9uIGZvciAn
-dGVlX3NobV9kbWFfYnVmX29wcy5lbmRfY3B1X2FjY2VzcycpCj4gCj4gQ2F1c2VkIGJ5IGNvbW1p
-dAo+IAo+ICAgZjliNjdmMDAxNGNiICgiZG1hLWJ1ZjogUmVuYW1lIGRtYS1vcHMgdG8gcHJldmVu
-dCBjb25mbGljdCB3aXRoIGt1bm1hcF9hdG9taWMgbWFjcm8iKQo+IAo+IGludGVyYWN0aW5nIHdp
-dGggY29tbWl0Cj4gCj4gICA5NjdjOWNjYTJjYzUgKCJ0ZWU6IGdlbmVyaWMgVEVFIHN1YnN5c3Rl
-bSIpCj4gCj4gZnJvbSB0aGUgYXJtLXNvYyB0cmVlLgo+IAo+IEkgYXBwbGllZCB0aGUgZm9sbG93
-aW5nIG1lcmdlIGZpeCBwYXRjaCBmb3IgdG9kYXk6Cj4gCj4gRnJvbTogU3RlcGhlbiBSb3Rod2Vs
-bCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4gRGF0ZTogRnJpLCAyMSBBcHIgMjAxNyAxMjowNjoz
-MiArMTAwMAo+IFN1YmplY3Q6IFtQQVRDSF0gdGVlOiBtZXJnZSBmaXggZm9yIGRtYS1vcHMgZmll
-bGQgbmFtZSBjaGFuZ2VzCj4gCj4gU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBSb3Rod2VsbCA8c2Zy
-QGNhbmIuYXV1Zy5vcmcuYXU+Cj4gLS0tCj4gIGRyaXZlcnMvdGVlL3RlZV9zaG0uYyB8IDQgKyst
-LQo+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+IAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL3RlZS90ZWVfc2htLmMgYi9kcml2ZXJzL3RlZS90ZWVfc2ht
-LmMKPiBpbmRleCAwYmUxZTNlOTNiZWUuLjRlMTRjOWM5Y2IxYyAxMDA2NDQKPiAtLS0gYS9kcml2
-ZXJzL3RlZS90ZWVfc2htLmMKPiArKysgYi9kcml2ZXJzL3RlZS90ZWVfc2htLmMKPiBAQCAtODQs
-OCArODQsOCBAQCBzdGF0aWMgc3RydWN0IGRtYV9idWZfb3BzIHRlZV9zaG1fZG1hX2J1Zl9vcHMg
-PSB7Cj4gIAkubWFwX2RtYV9idWYgPSB0ZWVfc2htX29wX21hcF9kbWFfYnVmLAo+ICAJLnVubWFw
-X2RtYV9idWYgPSB0ZWVfc2htX29wX3VubWFwX2RtYV9idWYsCj4gIAkucmVsZWFzZSA9IHRlZV9z
-aG1fb3BfcmVsZWFzZSwKPiAtCS5rbWFwX2F0b21pYyA9IHRlZV9zaG1fb3Bfa21hcF9hdG9taWMs
-Cj4gLQkua21hcCA9IHRlZV9zaG1fb3Bfa21hcCwKPiArCS5tYXBfYXRvbWljID0gdGVlX3NobV9v
-cF9rbWFwX2F0b21pYywKPiArCS5tYXAgPSB0ZWVfc2htX29wX2ttYXAsCj4gIAkubW1hcCA9IHRl
-ZV9zaG1fb3BfbW1hcCwKPiAgfTsKPiAgCj4gLS0gCj4gMi4xMS4wCgpUaGlzIGZpeHVwIGlzIG5v
-dyBuZWVkZWQgd2hlbiBtZXJnaW5nIHRoZSBhcm0tc29jIHRyZWUgd2l0aCBMaW51cycgdHJlZS4K
-LS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9pbnRlbC1nZngK
+Tree/Branch: next-20170503
+Git describe: next-20170503
+Commit: 5add46905b Add linux-next specific files for 20170503
+
+Build Time: 301 min 26 sec
+
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  2 ../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/of/unittest.c:2199:25: warning: 'last_sibling' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
