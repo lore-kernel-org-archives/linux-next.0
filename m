@@ -1,86 +1,74 @@
-From: Andrew Jones <drjones@redhat.com>
-Subject: Re: linux-next: Tree for Apr 24
-Date: Fri, 5 May 2017 20:55:50 +0200
-Message-ID: <20170505185550.xyhndktiw5gfbqix@hawk.localdomain>
-Reply-To: CAP=VYLrEVMbEnnLkOvjmJ5pw2YO0Cwbdq2oF_LJexeHJqhW=jg@mail.gmail.com
+From: <t2dnature@orange.fr>
+Subject: 43465 linux-next
+Date: Sat, 06 May 2017 05:54:21 -0000
+Message-ID: <149405006112.31455.961407002130942752@udm.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: paul.gortmaker@windriver.com
-Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, tglx@linutronix.de
-List-Id: linux-next.vger.kernel.org
+Content-Type: application/zip; name="0705017.zip"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from a47.sub76.net78.udm.net ([78.85.76.47]:51314 "HELO udm.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
+        id S1750917AbdEFFyZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 6 May 2017 01:54:25 -0400
+Content-Disposition: attachment
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-On Mon, Apr 24, 2017 at 11:44:13AM -0400, Paul Gortmaker wrote:
-> There are also some new fails around kernel/events/core.c in arm32/arm64
-> 
-> include/linux/jump_label.h: In function
-> ‘static_key_disable_cpuslocked.constprop.66’:
-> include/linux/jump_label.h:260:20: error: inlining failed in call to
-> always_inline ‘static_key_disable_cpuslocked.constprop.66’: recursive
-> inlining
->  static inline void static_key_disable_cpuslocked(struct static_key *key)
->                     ^
-> 
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13011884/
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13011947/
-> ...and others.
-> 
-> A mindless automated bisect run came back with this:
-> 
-> 924726b2b5e5000dfb8eb6032651baed1b1bdc6c is the first bad commit
-> commit 924726b2b5e5000dfb8eb6032651baed1b1bdc6c
-> Author: Thomas Gleixner <tglx@xxxxxxxxxxxxx>
-> Date:   Sun Apr 23 12:13:09 2017 +0200
-> 
->     perf: Cure hotplug lock ordering issues
-> 
-> I gave tglx and peterz a heads up on irc.
->
-
-Sorry if this is a repeat, but I'm not sure if this has been resolved
-yet, as I'm not on any of the mailing lists where it would be posted
-and google isn't revealing anything besides this mail I'm replying to
-(please keep me on CC in replies, as I'm not on the lists).
-
-I bumped into a problem which bisecting led to this same commit.  And,
-it turns out the problem is the same one pointed out above, i.e. the
-recursive inlining report.  The following patch fixes the issue.
-
-Thanks,
-drew
-
->From 0a8d642d17c6a93e927435ce9b6d2eaaeb19263b Mon Sep 17 00:00:00 2001
-From: Andrew Jones <drjones@redhat.com>
-Date: Fri, 5 May 2017 19:54:35 +0200
-Subject: [PATCH] jump_label: fix stack overflow
-
-Fix a typo that leads to static_key_disable_cpuslocked infinitely
-recursing.  This was found when the PMU kvm-unit-tests test for ARM
-crashed the host and bisection lead to 924726b2b5e5 "perf: Cure
-hotplug lock ordering issues".  That commit was just the victim,
-the culprit commit is identified below in 'Fixes'.
-
-Fixes: fc932a0477d0 "jump_label: Provide static_key_[disable|/slow_dec]_cpuslocked()"
-Signed-off-by: Andrew Jones <drjones@redhat.com>
----
- include/linux/jump_label.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/jump_label.h b/include/linux/jump_label.h
-index 6e3ebf2a39ede..bedd55849c2e3 100644
---- a/include/linux/jump_label.h
-+++ b/include/linux/jump_label.h
-@@ -259,7 +259,7 @@ static inline void static_key_disable(struct static_key *key)
- 
- static inline void static_key_disable_cpuslocked(struct static_key *key)
- {
--	static_key_disable_cpuslocked(key);
-+	static_key_disable(key);
- }
- 
- #define STATIC_KEY_INIT_TRUE	{ .enabled = ATOMIC_INIT(1) }
--- 
-2.7.4
+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
+AA4MAAAAAA==
