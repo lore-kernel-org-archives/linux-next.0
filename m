@@ -1,74 +1,87 @@
-From: <t2dnature@orange.fr>
-Subject: 43465 linux-next
-Date: Sat, 06 May 2017 05:54:21 -0000
-Message-ID: <149405006112.31455.961407002130942752@udm.net>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with the bluetooth tree
+Date: Sat, 6 May 2017 19:54:01 -0700
+Message-ID: <20170507025400.GA16391@kroah.com>
+References: <20170413133631.2fcefdfa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="0705017.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from a47.sub76.net78.udm.net ([78.85.76.47]:51314 "HELO udm.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with SMTP
-        id S1750917AbdEFFyZ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 6 May 2017 01:54:25 -0400
-Content-Disposition: attachment
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170413133631.2fcefdfa@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Gustavo Padovan <gustavo@padovan.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, Andrey Smirnov <andrew.smirnov@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-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
-AA4MAAAAAA==
+On Thu, Apr 13, 2017 at 01:36:31PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in:
+> 
+>   include/linux/serdev.h
+> 
+> between commits:
+> 
+>   b3f80c8f75ef ("serdev: add serdev_device_wait_until_sent")
+>   5659dab26f09 ("serdev: implement get/set tiocm")
+> 
+> from the bluetooth tree and commit:
+> 
+>   6fe729c4bdae ("serdev: Add serdev_device_write subroutine")
+> 
+> from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc include/linux/serdev.h
+> index 37395b8eb8f1,0beaff886992..000000000000
+> --- a/include/linux/serdev.h
+> +++ b/include/linux/serdev.h
+> @@@ -191,10 -190,8 +195,11 @@@ int serdev_device_open(struct serdev_de
+>   void serdev_device_close(struct serdev_device *);
+>   unsigned int serdev_device_set_baudrate(struct serdev_device *, unsigned int);
+>   void serdev_device_set_flow_control(struct serdev_device *, bool);
+>  +void serdev_device_wait_until_sent(struct serdev_device *, long);
+>  +int serdev_device_get_tiocm(struct serdev_device *);
+>  +int serdev_device_set_tiocm(struct serdev_device *, int, int);
+> - int serdev_device_write_buf(struct serdev_device *, const unsigned char *, size_t);
+> + void serdev_device_write_wakeup(struct serdev_device *);
+> + int serdev_device_write(struct serdev_device *, const unsigned char *, size_t, unsigned long);
+>   void serdev_device_write_flush(struct serdev_device *);
+>   int serdev_device_write_room(struct serdev_device *);
+>   
+> @@@ -231,16 -228,8 +236,17 @@@ static inline unsigned int serdev_devic
+>   	return 0;
+>   }
+>   static inline void serdev_device_set_flow_control(struct serdev_device *sdev, bool enable) {}
+>  +static inline void serdev_device_wait_until_sent(struct serdev_device *sdev, long timeout) {}
+>  +static inline int serdev_device_get_tiocm(struct serdev_device *serdev)
+>  +{
+>  +	return -ENOTSUPP;
+>  +}
+>  +static inline int serdev_device_set_tiocm(struct serdev_device *serdev, int set, int clear)
+>  +{
+>  +	return -ENOTSUPP;
+>  +}
+> - static inline int serdev_device_write_buf(struct serdev_device *sdev, const unsigned char *buf, size_t count)
+> + static inline int serdev_device_write(struct serdev_device *sdev, const unsigned char *buf,
+> + 				      size_t count, unsigned long timeout)
+>   {
+>   	return -ENODEV;
+>   }
+
+Thanks for the fix, it looks correct to me.  I'll forward this on to
+Linus when I send him the pull request.
+
+thanks,
+
+greg k-h
