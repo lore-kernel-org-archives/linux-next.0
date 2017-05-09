@@ -1,53 +1,46 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170509 build: 0 failures 0 warnings (next-20170509)
-Date: Tue, 09 May 2017 11:52:50 +0100
-Message-ID: <E1d82l6-0001rn-Tj@optimist>
+From: Timur Tabi <timur@codeaurora.org>
+Subject: Re: [PATCH 1/9] [v3] arm64: defconfig: resynchronize the defconfig
+Date: Tue, 9 May 2017 09:12:41 -0500
+Message-ID: <a92fa867-d9ec-f209-ed75-1e1c9cb28308@codeaurora.org>
+References: <1493828280-6620-1-git-send-email-timur@codeaurora.org>
+ <1493828280-6620-2-git-send-email-timur@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45550 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751210AbdEIKw7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 9 May 2017 06:52:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:45640 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751210AbdEIOMq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 9 May 2017 10:12:46 -0400
+In-Reply-To: <1493828280-6620-2-git-send-email-timur@codeaurora.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-next@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Andy Gross <agross@codeaurora.org>, Russell King <linux@arm.linux.org.uk>
 
-Tree/Branch: next-20170509
-Git describe: next-20170509
-Commit: fd76df310b Add linux-next specific files for 20170509
+On 05/03/2017 11:17 AM, Timur Tabi wrote:
+> Defconfig files become unsynchronized over time as Kconfig entries are
+> added, removed, or changed.  Making specific changes to the defconfig
+> becomes difficult as unrelated differences can interfere.  This problem
+> is easily remedied:
+> 
+> 	make defconfig
+> 	make savedefconfig
+> 	cp defconfig arch/arm64/configs/defconfig
+> 	git add arch/arm64/configs/defconfig
+> 	git commit -s <sha>
+> 
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
 
-Build Time: 209 min 1 sec
+At the very least, could SOMEONE please clean up the defconfig in time for
+4.12, so that future merges are easier?  Like I said earlier, it's very much
+out of sync.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+I will re-sumbit my defconfig changes for 4.13, but it would be a lot easier
+for me to do so if the defconfig is in sync by then.
 
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
+Thanks.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm
+Technologies, Inc.  Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
