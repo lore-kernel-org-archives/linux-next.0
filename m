@@ -1,98 +1,75 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170510 build: 0 failures 1 warnings (next-20170510)
-Date: Wed, 10 May 2017 12:49:10 +0100
-Message-ID: <E1d8Q7A-0001Nr-U6@optimist>
+From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: Re: linux-next: build failure after merge of the tpmdd tree
+Date: Wed, 10 May 2017 15:51:57 +0300
+Message-ID: <20170510125157.dfv7dg7fbrmtbkzq@intel.com>
+References: <20170510132327.599ddc02@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50208 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751123AbdEJLtR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 10 May 2017 07:49:17 -0400
+Received: from mga02.intel.com ([134.134.136.20]:54540 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752931AbdEJMwA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 10 May 2017 08:52:00 -0400
+Content-Disposition: inline
+In-Reply-To: <20170510132327.599ddc02@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
 
-Tree/Branch: next-20170510
-Git describe: next-20170510
-Commit: 5cbfaeb840 Add linux-next specific files for 20170510
+Hi
 
-Build Time: 214 min 45 sec
+On Wed, May 10, 2017 at 01:23:27PM +1000, Stephen Rothwell wrote:
+> Hi Jarkko,
+> 
+> After merging the tpmdd tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_init':
+> drivers/char/tpm/tpm_tis.c:193:23: error: passing argument 1 of 'check_acpi_tpm2' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   rc = check_acpi_tpm2(dev);
+>                        ^
+> drivers/char/tpm/tpm_tis.c:129:12: note: expected 'struct acpi_device *' but argument is of type 'struct device *'
+>  static int check_acpi_tpm2(struct acpi_device *dev)
+>             ^
+> 
+> Caused by commit
+> 
+>   e3b975d27b46 ("tpm_tis: Consolidate the platform and acpi probe flow")
+> 
+> CONFIG_ACPI is not set for this build.
+> 
+> I have added the following patch for today.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 10 May 2017 13:15:35 +1000
+> Subject: [PATCH] tpm_tis: fixup for CONFIG_ACPI not set
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/char/tpm/tpm_tis.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
+> index 54d90e31a7b6..b14d4aa97af8 100644
+> --- a/drivers/char/tpm/tpm_tis.c
+> +++ b/drivers/char/tpm/tpm_tis.c
+> @@ -126,7 +126,7 @@ static int check_acpi_tpm2(struct device *dev)
+>  	return 0;
+>  }
+>  #else
+> -static int check_acpi_tpm2(struct acpi_device *dev)
+> +static int check_acpi_tpm2(struct device *dev)
+>  {
+>  	return 0;
+>  }
+> -- 
+> 2.11.0
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Thank you! I'll squash this.
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  7 ../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+/Jarkko
