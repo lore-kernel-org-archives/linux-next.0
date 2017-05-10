@@ -1,60 +1,98 @@
-From: Markus Trippelsdorf <markus@trippelsdorf.de>
-Subject: Re: linux-next: build warning after merge of the block tree
-Date: Wed, 10 May 2017 08:19:27 +0200
-Message-ID: <20170510061927.GA294@x4>
-References: <20170510112411.1e785033@canb.auug.org.au>
- <20170510022054.GA23014@x4>
- <90588794-4b7a-e89b-84aa-db93cfbd9be4@kernel.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <90588794-4b7a-e89b-84aa-db93cfbd9be4@kernel.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@sandisk.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170510 build: 0 failures 1 warnings (next-20170510)
+Date: Wed, 10 May 2017 12:49:10 +0100
+Message-ID: <E1d8Q7A-0001Nr-U6@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:50208 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751123AbdEJLtR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 10 May 2017 07:49:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 2017.05.09 at 21:00 -0600, Jens Axboe wrote:
-> On 05/09/2017 08:20 PM, Markus Trippelsdorf wrote:
-> > On 2017.05.10 at 11:24 +1000, Stephen Rothwell wrote:
-> >> Hi Jens,
-> >>
-> >> After merging the block tree, today's linux-next build (arm
-> >> multi_v7_defconfig) produced this warning:
-> >>
-> >> block/elevator.c: In function 'elv_iosched_store':
-> >> block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
-> >>   strstrip(elevator_name);
-> >>   ^
-> >>
-> >> Introduced by commit
-> >>
-> >>   d0f6e2da5871 ("block: Remove leading whitespace and trailing newline in elevator switch error message")
-> > 
-> > Yes, it was missing a (void) like "(void)strlcpy(...)". But Jens
-> > unfortunately removed both warnings, so the following patch should now
-> > be enough:
-> > 
-> > diff --git a/block/elevator.c b/block/elevator.c
-> > index fda6be933130..dd0ed19e4fb7 100644
-> > --- a/block/elevator.c
-> > +++ b/block/elevator.c
-> > @@ -1099,8 +1099,7 @@ ssize_t elv_iosched_store(struct request_queue *q, const char *name,
-> >  		return count;
-> >  
-> >  	strlcpy(elevator_name, skip_spaces(name), sizeof(elevator_name));
-> > -	strstrip(elevator_name);
-> > -	ret = __elevator_change(q, elevator_name);
-> > +	ret = __elevator_change(q, strstrip(elevator_name));
-> >  	if (!ret)
-> >  		return count;
-> 
-> Care to send that as a proper patch? I don't see that warning here, fwiw.
+Tree/Branch: next-20170510
+Git describe: next-20170510
+Commit: 5cbfaeb840 Add linux-next specific files for 20170510
 
-I don't see it either. But no, I don't want to send a proper patch.
-Please just drop my original patch (d0f6e2da5871), because its only
-reason was to improve the two debug printks that you have removed later.
+Build Time: 214 min 45 sec
 
--- 
-Markus
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      1 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  7 ../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../block/elevator.c:1102:2: warning: ignoring return value of 'strstrip', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
