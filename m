@@ -1,66 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the tpmdd tree
-Date: Wed, 10 May 2017 13:23:27 +1000
-Message-ID: <20170510132327.599ddc02@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the block tree
+Date: Wed, 10 May 2017 13:26:09 +1000
+Message-ID: <20170510132609.1f92e89f@canb.auug.org.au>
+References: <20170510112411.1e785033@canb.auug.org.au>
+        <20170510022054.GA23014@x4>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59473 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59595 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751177AbdEJDXa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 9 May 2017 23:23:30 -0400
+        id S1751491AbdEJD0M (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 May 2017 23:26:12 -0400
+In-Reply-To: <20170510022054.GA23014@x4>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
+To: Markus Trippelsdorf <markus@trippelsdorf.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@sandisk.com>
 
-Hi Jarkko,
+Hi Markus,
 
-After merging the tpmdd tree, today's linux-next build (powerpc
-allyesconfig) failed like this:
+On Wed, 10 May 2017 04:20:54 +0200 Markus Trippelsdorf <markus@trippelsdorf.de> wrote:
+>
+> Yes, it was missing a (void) like "(void)strlcpy(...)". But Jens
+> unfortunately removed both warnings, so the following patch should now
+> be enough:
+> 
+> diff --git a/block/elevator.c b/block/elevator.c
+> index fda6be933130..dd0ed19e4fb7 100644
+> --- a/block/elevator.c
+> +++ b/block/elevator.c
+> @@ -1099,8 +1099,7 @@ ssize_t elv_iosched_store(struct request_queue *q, const char *name,
+>  		return count;
+>  
+>  	strlcpy(elevator_name, skip_spaces(name), sizeof(elevator_name));
+> -	strstrip(elevator_name);
+> -	ret = __elevator_change(q, elevator_name);
+> +	ret = __elevator_change(q, strstrip(elevator_name));
+>  	if (!ret)
+>  		return count;
 
-drivers/char/tpm/tpm_tis.c: In function 'tpm_tis_init':
-drivers/char/tpm/tpm_tis.c:193:23: error: passing argument 1 of 'check_acpi_tpm2' from incompatible pointer type [-Werror=incompatible-pointer-types]
-  rc = check_acpi_tpm2(dev);
-                       ^
-drivers/char/tpm/tpm_tis.c:129:12: note: expected 'struct acpi_device *' but argument is of type 'struct device *'
- static int check_acpi_tpm2(struct acpi_device *dev)
-            ^
-
-Caused by commit
-
-  e3b975d27b46 ("tpm_tis: Consolidate the platform and acpi probe flow")
-
-CONFIG_ACPI is not set for this build.
-
-I have added the following patch for today.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 10 May 2017 13:15:35 +1000
-Subject: [PATCH] tpm_tis: fixup for CONFIG_ACPI not set
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/char/tpm/tpm_tis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/tpm/tpm_tis.c b/drivers/char/tpm/tpm_tis.c
-index 54d90e31a7b6..b14d4aa97af8 100644
---- a/drivers/char/tpm/tpm_tis.c
-+++ b/drivers/char/tpm/tpm_tis.c
-@@ -126,7 +126,7 @@ static int check_acpi_tpm2(struct device *dev)
- 	return 0;
- }
- #else
--static int check_acpi_tpm2(struct acpi_device *dev)
-+static int check_acpi_tpm2(struct device *dev)
- {
- 	return 0;
- }
--- 
-2.11.0
-
+I think you (or someone) needs to do a proper patch submission to Jens,
+please.
 -- 
 Cheers,
 Stephen Rothwell
