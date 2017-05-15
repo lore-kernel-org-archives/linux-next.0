@@ -1,29 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Mon, 15 May 2017 15:07:09 +1000
-Message-ID: <20170515150709.27aba242@canb.auug.org.au>
-References: <20170515115602.30e05989@canb.auug.org.au>
-        <5919284A.4050202@redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5919284A.4050202@redhat.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Xunlei Pang <xpang@redhat.com>
-Cc: xlpang@redhat.com, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170515 build: 1 failures 2 warnings (next-20170515)
+Date: Mon, 15 May 2017 07:40:38 +0100
+Message-ID: <E1dA9gM-0000Hx-Ro@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48056 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1759481AbdEOGkp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 15 May 2017 02:40:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Xunlei,
+Tree/Branch: next-20170515
+Git describe: next-20170515
+Commit: ecf5e3d45a Add linux-next specific files for 20170515
 
-On Mon, 15 May 2017 12:02:18 +0800 Xunlei Pang <xpang@redhat.com> wrote:
->
-> The following patch will fix it, do you want to me to send it out separately? or help merge it into
-> fc7d2b44367f ("powerpc/fadump: use the correct VMCOREINFO_NOTE_SIZE for phdr") directly?
+Build Time: 117 min 57 sec
 
-Andrew normally takes these as separate patches and then merges them
-before sending them on.
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
 
--- 
-Cheers,
-Stephen Rothwell
+Errors: 7
+Warnings: 2
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
+../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
+../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
+../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
+../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
+../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
+../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 7
+	  1 ../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
+	  1 ../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
+	  1 ../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
+	  1 ../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
+	  1 ../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
+	  1 ../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
+	  1 ../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 2
+	  2 ../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
+	  1 ../sound/atmel/ac97c.c:133:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 7 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
+	../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
+	../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
+	../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
+	../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
+	../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
+	../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
+	../sound/atmel/ac97c.c:133:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
