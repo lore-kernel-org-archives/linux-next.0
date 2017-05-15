@@ -1,99 +1,61 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170515 build: 1 failures 2 warnings (next-20170515)
-Date: Mon, 15 May 2017 07:40:38 +0100
-Message-ID: <E1dA9gM-0000Hx-Ro@optimist>
+From: Xunlei Pang <xlpang@redhat.com>
+Subject: [PATCH] crash: Fix linux-next build warning
+Date: Mon, 15 May 2017 14:43:26 +0800
+Message-ID: <1494830606-27736-1-git-send-email-xlpang@redhat.com>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48056 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1759481AbdEOGkp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 15 May 2017 02:40:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38480 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1758037AbdEOGon (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 15 May 2017 02:44:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: linux-next@vger.kernel.org, akpm@linux-foundation.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-kernel@vger.kernel.org, Xunlei Pang <xlpang@redhat.com>
 
-Tree/Branch: next-20170515
-Git describe: next-20170515
-Commit: ecf5e3d45a Add linux-next specific files for 20170515
+linux-next build (arm multi_v7_defconfig) produced this warning:
 
-Build Time: 117 min 57 sec
+In file included from include/asm-generic/bug.h:15:0,
+                 from arch/arm/include/asm/bug.h:59,
+                 from include/linux/bug.h:4,
+                 from include/linux/elfcore.h:5,
+                 from include/linux/crash_core.h:5,
+                 from kernel/crash_core.c:9:
+kernel/crash_core.c: In function 'vmcoreinfo_append_str':
+include/linux/kernel.h:757:16: warning: comparison of distinct pointer
+types lacks a cast
+  (void) (&min1 == &min2);   \
+                ^
+include/linux/kernel.h:760:2: note: in expansion of macro '__min'
+  __min(typeof(x), typeof(y),   \
+  ^
+kernel/crash_core.c:360:6: note: in expansion of macro 'min'
+  r = min(r, VMCOREINFO_BYTES - vmcoreinfo_size);
+      ^
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+This patch fixes it with an explicit "size_t" type-casting on
+VMCOREINFO_BYTES.
 
-Errors: 7
-Warnings: 2
-Section Mismatches: 0
+Andrew will help merge it into commit fc7d2b44367f ("powerpc/fadump:
+use the correct VMCOREINFO_NOTE_SIZE for phdr") before sending it to
+stable.
 
-Failed defconfigs:
-	arm-allmodconfig
+Signed-off-by: Xunlei Pang <xlpang@redhat.com>
+---
+ kernel/crash_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Errors:
-
-	arm-allmodconfig
-../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
-../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
-../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
-../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
-../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
-../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
-../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 7
-	  1 ../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
-	  1 ../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
-	  1 ../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
-	  1 ../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
-	  1 ../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
-	  1 ../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
-	  1 ../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 2
-	  2 ../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-	  1 ../sound/atmel/ac97c.c:133:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 7 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	../sound/atmel/ac97c.c:133:10: error: implicit declaration of function 'dw_dma_cyclic_prep' [-Werror=implicit-function-declaration]
-	../sound/atmel/ac97c.c:141:8: error: dereferencing pointer to incomplete type 'struct dw_cyclic_desc'
-	../sound/atmel/ac97c.c:262:5: error: implicit declaration of function 'dw_dma_cyclic_free' [-Werror=implicit-function-declaration]
-	../sound/atmel/ac97c.c:513:13: error: implicit declaration of function 'dw_dma_cyclic_start' [-Werror=implicit-function-declaration]
-	../sound/atmel/ac97c.c:525:4: error: implicit declaration of function 'dw_dma_cyclic_stop' [-Werror=implicit-function-declaration]
-	../sound/atmel/ac97c.c:597:11: error: implicit declaration of function 'dw_dma_get_src_addr' [-Werror=implicit-function-declaration]
-	../sound/atmel/ac97c.c:617:11: error: implicit declaration of function 'dw_dma_get_dst_addr' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
-	../sound/atmel/ac97c.c:133:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/kernel.h:757:16: warning: comparison of distinct pointer types lacks a cast
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index 4a4a4ba..6db80fc 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -357,7 +357,7 @@ void vmcoreinfo_append_str(const char *fmt, ...)
+ 	r = vscnprintf(buf, sizeof(buf), fmt, args);
+ 	va_end(args);
+ 
+-	r = min(r, VMCOREINFO_BYTES - vmcoreinfo_size);
++	r = min(r, (size_t)VMCOREINFO_BYTES - vmcoreinfo_size);
+ 
+ 	memcpy(&vmcoreinfo_data[vmcoreinfo_size], buf, r);
+ 
+-- 
+1.8.3.1
