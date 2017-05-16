@@ -1,103 +1,43 @@
-From: <labraceria@yahoo.com.sg>
-Subject: 47330 linux-next
-Date: Mon, 15 May 2017 12:53:58 -0000
-Message-ID: <149485283842.31455.16068007234047806851@jamal.ru>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the imx-mxs tree
+Date: Tue, 16 May 2017 11:00:09 +1000
+Message-ID: <20170516110009.2b7cae50@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="54.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from adsl-90-151-49-200.jamal.ru ([90.151.49.200]:50521 "HELO
-        jamal.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1758657AbdEOMyE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 15 May 2017 08:54:04 -0400
-Content-Disposition: attachment
+Received: from ozlabs.org ([103.22.144.67]:60267 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751413AbdEPBAM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 15 May 2017 21:00:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Shawn Guo <shawn.guo@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>
 
-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
-AAAAhRIAAAAA
+Hi Andrew,
+
+Today's linux-next merge of the akpm tree got a conflict in:
+
+  drivers/soc/imx/Kconfig
+
+between commit:
+
+  e23c7f7d5783 ("soc: imx: add PM dependency for IMX7_PM_DOMAINS")
+
+from the imx-mxs tree and patch:
+
+  "imx7: fix Kconfig warning and build errors"
+
+from the akpm tree.
+
+I fixed it up (these both do the same thing, I just used the former) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
