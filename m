@@ -1,64 +1,29 @@
-From: Eric Dumazet <edumazet@google.com>
-Subject: Re: linux-next: Tree for May 16 (net/core)
-Date: Tue, 16 May 2017 13:12:44 -0700
-Message-ID: <CANn89i+SLtR4LpBmEPD4fZum=3gv_t6OfhvfJfLUpq5u6BbzDA@mail.gmail.com>
-References: <20170516112125.517607f8@canb.auug.org.au> <f63533e7-edd3-4c0d-ddff-e3409d15abc6@infradead.org>
- <CAP=VYLoYkz1HE4yOHVGQvBanDtpkWhtHBMvbeuyd8PtNFCivRQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: error while fetching the c6x tree
+Date: Wed, 17 May 2017 07:51:55 +1000
+Message-ID: <20170517075155.583be93b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAP=VYLoYkz1HE4yOHVGQvBanDtpkWhtHBMvbeuyd8PtNFCivRQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34709 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752848AbdEPVv7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 16 May 2017 17:51:59 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Salter <msalter@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, May 16, 2017 at 12:44 PM, Paul Gortmaker
-<paul.gortmaker@windriver.com> wrote:
-> On Tue, May 16, 2017 at 12:28 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 05/15/17 18:21, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20170515:
->>>
->>
->> on i386 or x86_64:
->>
->> when CONFIG_INET is not enabled:
->>
->> ../net/core/sock.c: In function 'skb_orphan_partial':
->> ../net/core/sock.c:1810:2: error: implicit declaration of function 'skb_is_tcp_pure_ack' [-Werror=implicit-function-declaration]
->>   if (skb_is_tcp_pure_ack(skb))
->
-> Automated bisect on an ARM build with the same issue reveals:
->
-> f6ba8d33cfbb46df569972e64dbb5bb7e929bfd9 is the first bad commit
-> commit f6ba8d33cfbb46df569972e64dbb5bb7e929bfd9
-> Author: Eric Dumazet <edumazet@google.com>
-> Date:   Thu May 11 15:24:41 2017 -0700
->
->     netem: fix skb_orphan_partial()
->
->     I should have known that lowering skb->truesize was dangerous :/
->
->     In case packets are not leaving the host via a standard Ethernet device,
->     but looped back to local sockets, bad things can happen, as reported
->     by Michael Madsen ( https://bugzilla.kernel.org/show_bug.cgi?id=195713 )
->
->     So instead of tweaking skb->truesize, lets change skb->destructor
->     and keep a reference on the owner socket via its sk_refcnt.
->
->     Fixes: f2f872f9272a ("netem: Introduce skb_orphan_partial() helper")
->     Signed-off-by: Eric Dumazet <edumazet@google.com>
->     Reported-by: Michael Madsen <mkm@nabto.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
->
-> :040000 040000 7bfb7a6f5e12373b1c50ede2455b6ddd6d79cee0
-> b45b7255322f1dff5e3ab8d3d707cf38a91c76ce M      net
-> bisect run success
->
-> http://kisskb.ellerman.id.au/kisskb/buildresult/13033081/
->
-> I'm guessing Eric already knows about this but I've Cc'd him just in case.
+Hi Mark,
 
-I was not aware of this, I will submit a fix, thanks.
+Fetching the c6x tree profuces this error:
+
+fatal: unable to connect to linux-c6x.org:
+linux-c6x.org[0: 184.73.195.71]: errno=Connection timed out
+
+I wll keep using the version I have already fetched.
+
+-- 
+Cheers,
+Stephen Rothwell
