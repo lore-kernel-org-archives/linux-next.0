@@ -1,28 +1,32 @@
-From: Corey Minyard <cminyard@mvista.com>
-Subject: Re: linux-next: unsigned commit in the ipmi tree
-Date: Wed, 17 May 2017 18:31:22 -0500
-Message-ID: <ea5462fa-dffa-3ed9-eb5f-c247aed15f84@mvista.com>
-References: <20170518081742.1e00b117@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the btrfs-kdave tree
+Date: Thu, 18 May 2017 09:41:46 +1000
+Message-ID: <20170518094146.7a1d9a2d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170518081742.1e00b117@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:44809 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752037AbdEQXlt (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 17 May 2017 19:41:49 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Liu Bo <bo.li.liu@oracle.com>
 
-On 05/17/2017 05:17 PM, Stephen Rothwell wrote:
-> Hi Corey,
->
-> I noticed a commit with no Signed-off-by from you (as the committer)
-> in the ipmi tree today:
->
-> a40b8d591d4c ipmi_ssif: remove redundant null check on array client->adapter->name
->
-> Please fix it up.
->
-Got it, thanks.
+Hi David,
 
--corey
+After merging the btrfs-kdave tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
+
+fs/btrfs/inode.c: In function 'btrfs_submit_direct':
+fs/btrfs/inode.c:8467:14: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  struct bio *bio;
+              ^
+
+I can't tell if it is a false positive or not.
+
+-- 
+Cheers,
+Stephen Rothwell
