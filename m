@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the file-locks tree
-Date: Wed, 17 May 2017 11:48:05 +1000
-Message-ID: <20170517114805.57714a7a@canb.auug.org.au>
-References: <20170517102752.3bd4da91@canb.auug.org.au>
-        <1494983403.21644.8.camel@poochiereds.net>
+Subject: linux-next: build failure after merge of the scsi-mkp tree
+Date: Wed, 17 May 2017 12:57:51 +1000
+Message-ID: <20170517125751.7c381e10@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55209 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43179 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751716AbdEQBsH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 16 May 2017 21:48:07 -0400
-In-Reply-To: <1494983403.21644.8.camel@poochiereds.net>
+        id S1751368AbdEQC5y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 16 May 2017 22:57:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jeff Layton <jlayton@poochiereds.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Smart <jsmart2021@gmail.com>, Dick Kennedy <dick.kennedy@broadcom.com>, Hannes Reinecke <hare@suse.com>
 
-Hi Jeff,
+Hi Martin,
 
-On Tue, 16 May 2017 21:10:03 -0400 Jeff Layton <jlayton@poochiereds.net> wrote:
->
-> I think this patch will probably fix it, but I don't have a 32-bit host
-> set up to build on just now. I'll go ahead and merge this into the
-> branch, and will plan to test it tomorrow (hopefully before the next
-> fetch).
+After merging the scsi-mkp tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Thanks.  If you don't get around to testing, I will let you know if it
-still fails tomorrow :-)
+ERROR: ".nvmet_fc_rcv_fcp_req" [drivers/scsi/lpfc/lpfc.ko] undefined!
+
+Caused by commit
+
+  a8cf5dfeb4d8 ("scsi: lpfc: Added recovery logic for running out of NVMET IO context resources")
+
+CONFIG_NVME_TARGET_FC is not set for this build.
+
+I have used the scsi-mkp tree from next-20170516 for today.
 
 -- 
 Cheers,
