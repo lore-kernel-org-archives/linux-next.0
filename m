@@ -1,32 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the netfilter tree
-Date: Thu, 18 May 2017 09:10:00 +1000
-Message-ID: <20170518091000.20411af6@canb.auug.org.au>
-References: <20170517134536.3ce21d47@canb.auug.org.au>
-        <CA+FuTSfKpNj6kAfEGVnE=SN-OK0+8vbFiZTr1kaHd1x+9HEYdw@mail.gmail.com>
-        <CA+FuTScZAee2BDVn0DFdQ99bt3SoVgmUiENMHDfMyoyb-iVnKA@mail.gmail.com>
+From: Corey Minyard <cminyard@mvista.com>
+Subject: Re: linux-next: unsigned commit in the ipmi tree
+Date: Wed, 17 May 2017 18:31:22 -0500
+Message-ID: <ea5462fa-dffa-3ed9-eb5f-c247aed15f84@mvista.com>
+References: <20170518081742.1e00b117@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48519 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753143AbdEQXKE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 17 May 2017 19:10:04 -0400
-In-Reply-To: <CA+FuTScZAee2BDVn0DFdQ99bt3SoVgmUiENMHDfMyoyb-iVnKA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170518081742.1e00b117@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Willem,
-
-On Wed, 17 May 2017 11:29:19 -0400 Willem de Bruijn <willemdebruijn.kernel@gmail.com> wrote:
+On 05/17/2017 05:17 PM, Stephen Rothwell wrote:
+> Hi Corey,
 >
-> Full patch out for review at http://patchwork.ozlabs.org/patch/763655/
+> I noticed a commit with no Signed-off-by from you (as the committer)
+> in the ipmi tree today:
+>
+> a40b8d591d4c ipmi_ssif: remove redundant null check on array client->adapter->name
+>
+> Please fix it up.
+>
+Got it, thanks.
 
-I have used that in linux-next today instead of my cludge.
-
--- 
-Cheers,
-Stephen Rothwell
+-corey
