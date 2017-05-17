@@ -1,36 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the overlayfs tree
-Date: Wed, 17 May 2017 10:19:56 +1000
-Message-ID: <20170517101956.69c03d78@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the file-locks tree
+Date: Wed, 17 May 2017 10:27:52 +1000
+Message-ID: <20170517102752.3bd4da91@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:38319 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36115 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751181AbdEQAUA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 16 May 2017 20:20:00 -0400
+        id S1751181AbdEQA1z (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 16 May 2017 20:27:55 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>
+To: Jeff Layton <jlayton@poochiereds.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 
-Hi Miklos,
+Hi Jeff,
 
-After merging the overlayfs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the file-locks tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-fs/overlayfs/dir.c: In function 'ovl_rename':
-fs/overlayfs/dir.c:1060:2: warning: 'newdentry' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  dput(newdentry);
-  ^
-fs/overlayfs/dir.c:1062:2: warning: 'olddentry' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  dput(olddentry);
-  ^
+fs/fcntl.c: In function 'SYSC_fcntl64':
+fs/fcntl.c:414:30: error: 'argp' undeclared (first use in this function)
+   if (copy_from_user(&flock, argp, sizeof(flock)))
+                              ^
+fs/fcntl.c:414:30: note: each undeclared identifier is reported only once for each function it appears in
+fs/fcntl.c:416:23: error: 'filp' undeclared (first use in this function)
+   err = fcntl_getlk64(filp, cmd, &flock);
+                       ^
 
-Introduced by commit
+Caused by commit
 
-  02cac3227a28 ("ovl: mark upper dir with type origin entries "impure"")
+  0416b792294c ("fs/locks: pass kernel struct flock to fcntl_getlk/setlk")
+
+This build has BITS_PER_LONG == 32.
+
+I have used the file-locks tree from next-20170516 for today.
 
 -- 
 Cheers,
