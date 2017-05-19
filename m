@@ -1,33 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm tree
-Date: Fri, 19 May 2017 12:10:01 +1000
-Message-ID: <20170519121001.0515391c@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 19 May 2017 13:23:17 +1000
+Message-ID: <20170519132317.5dc47b24@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44863 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35549 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752954AbdESCKD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 18 May 2017 22:10:03 -0400
+        id S1752916AbdESDXU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 18 May 2017 23:23:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <garsilva@embeddedor.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ritesh Raj Sarraf <rrs@debian.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi Dave,
+Hi Darren,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-produced this warning:
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-drivers/gpu/drm/gma500/mdfld_tpo_vid.c: In function 'tpo_vid_get_config_mode':
-drivers/gpu/drm/gma500/mdfld_tpo_vid.c:34:31: warning: unused variable 'ti' [-Wunused-variable]
-  struct oaktrail_timing_info *ti = &dev_priv->gct_data.DTD;
-                               ^
+drivers/platform/x86/ideapad-laptop.c:438:16: warning: 'touchpad_store' defined but not used [-Wunused-function]
+ static ssize_t touchpad_store(struct device *dev,
+                ^
 
 Introduced by commit
 
-  94d7fb4982d2 ("gpu: drm: gma500: remove dead code")
+  7f363145992c ("platform/x86: ideapad-laptop: Switch touchpad attribute to be RO")
 
 -- 
 Cheers,
