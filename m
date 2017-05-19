@@ -1,44 +1,42 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: git merges of tags
-Date: Fri, 19 May 2017 11:30:55 -0700
-Message-ID: <CA+55aFwaxsNZ0ACQkASdDTbSrdcHMJpFPtswK485tEWRBVVYrA@mail.gmail.com>
-References: <20170519092202.6b0f9a57@canb.auug.org.au>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 19 May 2017 15:09:31 -0700
+Message-ID: <20170519220931.GA24990@fury>
+References: <20170519132317.5dc47b24@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170519092202.6b0f9a57@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([65.50.211.133]:43900 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbdESWJe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 19 May 2017 18:09:34 -0400
+Content-Disposition: inline
+In-Reply-To: <20170519132317.5dc47b24@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Git Mailing list <git@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ritesh Raj Sarraf <rrs@debian.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Thu, May 18, 2017 at 4:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Just a reminder that if you are merging Linus' tree (or any tree
-> really) via a tag, git was changed some time ago so that merging a tag
-> will not do a fast forward (there is a good reason for this - I just
-> can't recall it ATM).
+On Fri, May 19, 2017 at 01:23:17PM +1000, Stephen Rothwell wrote:
+> Hi Darren,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/platform/x86/ideapad-laptop.c:438:16: warning: 'touchpad_store' defined but not used [-Wunused-function]
+>  static ssize_t touchpad_store(struct device *dev,
+>                 ^
+> 
+> Introduced by commit
+> 
+>   7f363145992c ("platform/x86: ideapad-laptop: Switch touchpad attribute to be RO")
 
-The reason is that when you merge a signed tag, git squirrels away t
-he signature into the merge commit, so that you can see and verify the
-signage later (use "git log --show-signatures" to see the signatures
-on the commits).
+Thank you Stephen,
 
-If you fast-forward, there isn't any new commit to add the signing data to.
+Andy, you warned me about this and I had forgotten before I included it in next.
 
-> To do the fast forward, try "git merge <tag>^{}" ...
+Would you like to drop this change, or drop the touchpad_store function?
 
-A slightly simpler syntax might be just "tag^0", but yes, the "^{}"
-thing peels off any tags.
-
->   (unfortunately
-> doing "git merge --ff <tag>" also does not do a fast forward - it also
-> doesn't fail, it unexpectedly just creates a merge commit :-().
-
-"--ff" is the default behavior, and means "allow fast forward", but
-note that it is about "allowing", not "forcing".
-
-You can use "--ff-only" to say that you will _only_ accept a
-fast-forward, and git will error out  if it needs to create a merge.
-
-                  Linus
+-- 
+Darren Hart
+VMware Open Source Technology Center
