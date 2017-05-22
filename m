@@ -1,65 +1,56 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Mon, 22 May 2017 10:17:15 -0400 (EDT)
-Message-ID: <20170522.101715.189946031965146268.davem@davemloft.net>
-References: <20170522111605.14f93676@canb.auug.org.au>
-        <20170521.231410.1999783448679718181.davem@davemloft.net>
-        <20170522134300.0bfd175a@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: next-20170522 build: 2 failures 7 warnings (next-20170522)
+Date: Mon, 22 May 2017 16:06:00 +0100
+Message-ID: <20170522150600.ewzu55g4ootbt7tm@sirena.org.uk>
+References: <E1dCmcB-0007CC-3W@optimist>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ipbdkvjrhejocudr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from shards.monkeyblade.net ([184.105.139.130]:52290 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934564AbdEVORW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 22 May 2017 10:17:22 -0400
-In-Reply-To: <20170522134300.0bfd175a@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37406 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934539AbdEVPGT (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 22 May 2017 11:06:19 -0400
+Content-Disposition: inline
+In-Reply-To: <E1dCmcB-0007CC-3W@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mlichvar@redhat.com, willemb@google.com
+To: Simon Horman <horms+renesas@verge.net.au>, Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infreadead.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 22 May 2017 13:43:00 +1000
 
-> Hi Dave,
-> 
-> On Sun, 21 May 2017 23:14:10 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Mon, 22 May 2017 11:16:05 +1000
->> 
->> > After merging the net-next tree, today's linux-next build (powerpc
->> > ppc64_defconfig) failed like this:
->> > 
->> > net/socket.c: In function 'put_ts_pktinfo':
->> > net/socket.c:695:28: error: 'SCM_TIMESTAMPING_PKTINFO' undeclared (first use in this function)
->> >   put_cmsg(msg, SOL_SOCKET, SCM_TIMESTAMPING_PKTINFO,
->> >                             ^
->> > Caused by commit
->> > 
->> >   aad9c8c470f2 ("net: add new control message for incoming HW-timestamped packets")
->> > 
->> > This probably broke every architecture that has its own
->> > arch/<arch>/include/uapi/asm/socket.h that does not include
->> > include/uapi/asm-generic/socket.h :-(
->> > 
->> > I have used the net-next tree from next-20170519 for today.  
->> 
->> I've just pushed the following, thanks for the report:
-> 
-> Looks good except:
-> 
->> diff --git a/arch/parisc/include/uapi/asm/socket.h b/arch/parisc/include/uapi/asm/socket.h
->> index 5147018..784b871 100644
->> --- a/arch/parisc/include/uapi/asm/socket.h
->> +++ b/arch/parisc/include/uapi/asm/socket.h
->> @@ -97,4 +97,6 @@
->>  
->>  #define SO_COOKIE		0x4032
->>  
->> +#define SCM_TIMESTAMPING_PKTINFO	58
-> 
-> Does this need to be 0x4033 (or something)?
+--ipbdkvjrhejocudr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Good catch, I'll fix this up!
+On Mon, May 22, 2017 at 01:39:11PM +0100, Build bot for Mark Brown wrote:
+
+Today's -next fails to build both arm and arm64 allmodconfig due to:
+
+> 	arm64-allmodconfig
+> ERROR: "renesas_sdhi_remove" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+> ERROR: "renesas_sdhi_probe" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+
+> 	arm-allmodconfig
+> ERROR: "renesas_sdhi_remove" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+> ERROR: "renesas_sdhi_probe" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
+
+caused by the recent refactoring which created renesas_sdhi_core.c -
+those symbols aren't exported.
+
+--ipbdkvjrhejocudr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlki/lcACgkQJNaLcl1U
+h9Bsowf9E3D/8NrsWiAzHeBc+PahoeEvLNAslmc9JKz45Pfm3bhmgfaUoxhrzRfP
+Ej08sMYNRjzhbvqaHLHoNJql43lxAf2rhmbQGTO2HB8ttsbODCUcs2EpgSS8ib1u
+Afqp4Y0miyv38e3cWvVXTuGqSKDDlLw+sC/9f/Mr4nncbA1KhCHo50FAeQwQCh6Q
+wDaT1HBvzsbLlLMYg9CmJ22lyS9ZRyxsNnd4pp0dH+YBVz5d9EpfPd5mlDkN37jy
+4hZ2ch4TicaifYiLfo+BtQFj/ai+8uCULPCo9gdrqaRh5KGIrTV5xKGYYISJjTIY
+dI7BhdD9x96/qnXAs5+0bXQcm29T/w==
+=B85o
+-----END PGP SIGNATURE-----
+
+--ipbdkvjrhejocudr--
