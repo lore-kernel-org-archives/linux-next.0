@@ -1,40 +1,65 @@
-From: Mark Salter <msalter@redhat.com>
-Subject: Re: linux-next: error while fetching the c6x tree
-Date: Mon, 22 May 2017 10:14:50 -0400
-Message-ID: <1495462490.3376.8.camel@redhat.com>
-References: <20170517075155.583be93b@canb.auug.org.au>
-         <20170519093430.38bde87d@canb.auug.org.au>
-         <1495198074.3376.3.camel@redhat.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Mon, 22 May 2017 10:17:15 -0400 (EDT)
+Message-ID: <20170522.101715.189946031965146268.davem@davemloft.net>
+References: <20170522111605.14f93676@canb.auug.org.au>
+        <20170521.231410.1999783448679718181.davem@davemloft.net>
+        <20170522134300.0bfd175a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:56734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933734AbdEVOO6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 22 May 2017 10:14:58 -0400
-In-Reply-To: <1495198074.3376.3.camel@redhat.com>
+Received: from shards.monkeyblade.net ([184.105.139.130]:52290 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934564AbdEVORW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 22 May 2017 10:17:22 -0400
+In-Reply-To: <20170522134300.0bfd175a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mlichvar@redhat.com, willemb@google.com
 
-On Fri, 2017-05-19 at 08:47 -0400, Mark Salter wrote:
-> On Fri, 2017-05-19 at 09:34 +1000, Stephen Rothwell wrote:
-> > Hi Mark,
-> > 
-> > On Wed, 17 May 2017 07:51:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > Fetching the c6x tree profuces this error:
-> > > 
-> > > fatal: unable to connect to linux-c6x.org:
-> > > linux-c6x.org[0: 184.73.195.71]: errno=Connection timed out
-> > > 
-> > > I wll keep using the version I have already fetched.
-> > 
-> > ping?
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 22 May 2017 13:43:00 +1000
+
+> Hi Dave,
 > 
-> Sorry. I'm trying to find out what is happening with it but
-> haven't heard back from TI.
+> On Sun, 21 May 2017 23:14:10 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Mon, 22 May 2017 11:16:05 +1000
+>> 
+>> > After merging the net-next tree, today's linux-next build (powerpc
+>> > ppc64_defconfig) failed like this:
+>> > 
+>> > net/socket.c: In function 'put_ts_pktinfo':
+>> > net/socket.c:695:28: error: 'SCM_TIMESTAMPING_PKTINFO' undeclared (first use in this function)
+>> >   put_cmsg(msg, SOL_SOCKET, SCM_TIMESTAMPING_PKTINFO,
+>> >                             ^
+>> > Caused by commit
+>> > 
+>> >   aad9c8c470f2 ("net: add new control message for incoming HW-timestamped packets")
+>> > 
+>> > This probably broke every architecture that has its own
+>> > arch/<arch>/include/uapi/asm/socket.h that does not include
+>> > include/uapi/asm-generic/socket.h :-(
+>> > 
+>> > I have used the net-next tree from next-20170519 for today.  
+>> 
+>> I've just pushed the following, thanks for the report:
+> 
+> Looks good except:
+> 
+>> diff --git a/arch/parisc/include/uapi/asm/socket.h b/arch/parisc/include/uapi/asm/socket.h
+>> index 5147018..784b871 100644
+>> --- a/arch/parisc/include/uapi/asm/socket.h
+>> +++ b/arch/parisc/include/uapi/asm/socket.h
+>> @@ -97,4 +97,6 @@
+>>  
+>>  #define SO_COOKIE		0x4032
+>>  
+>> +#define SCM_TIMESTAMPING_PKTINFO	58
+> 
+> Does this need to be 0x4033 (or something)?
 
-It's back up, now.
+Good catch, I'll fix this up!
