@@ -1,47 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Mon, 22 May 2017 13:27:11 +1000
-Message-ID: <20170522132711.22b80ff5@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Mon, 22 May 2017 13:43:00 +1000
+Message-ID: <20170522134300.0bfd175a@canb.auug.org.au>
+References: <20170522111605.14f93676@canb.auug.org.au>
+        <20170521.231410.1999783448679718181.davem@davemloft.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58585 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41637 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751002AbdEVDfP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 21 May 2017 23:35:15 -0400
+        id S1756798AbdEVDnC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 21 May 2017 23:43:02 -0400
+In-Reply-To: <20170521.231410.1999783448679718181.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mlichvar@redhat.com, willemb@google.com
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Sun, 21 May 2017 23:14:10 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 22 May 2017 11:16:05 +1000
+> 
+> > After merging the net-next tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> > 
+> > net/socket.c: In function 'put_ts_pktinfo':
+> > net/socket.c:695:28: error: 'SCM_TIMESTAMPING_PKTINFO' undeclared (first use in this function)
+> >   put_cmsg(msg, SOL_SOCKET, SCM_TIMESTAMPING_PKTINFO,
+> >                             ^
+> > Caused by commit
+> > 
+> >   aad9c8c470f2 ("net: add new control message for incoming HW-timestamped packets")
+> > 
+> > This probably broke every architecture that has its own
+> > arch/<arch>/include/uapi/asm/socket.h that does not include
+> > include/uapi/asm-generic/socket.h :-(
+> > 
+> > I have used the net-next tree from next-20170519 for today.  
+> 
+> I've just pushed the following, thanks for the report:
 
-  arch/arm64/include/asm/cpufeature.h
+Looks good except:
 
-between commit:
+> diff --git a/arch/parisc/include/uapi/asm/socket.h b/arch/parisc/include/uapi/asm/socket.h
+> index 5147018..784b871 100644
+> --- a/arch/parisc/include/uapi/asm/socket.h
+> +++ b/arch/parisc/include/uapi/asm/socket.h
+> @@ -97,4 +97,6 @@
+>  
+>  #define SO_COOKIE		0x4032
+>  
+> +#define SCM_TIMESTAMPING_PKTINFO	58
 
-  63a1e1c95e60 ("arm64/cpufeature: don't use mutex in bringup path")
-
-from Linus' tree and commit:
-
-  d54bb72551b9 ("arm64/cpufeature: Use static_branch_enable_cpuslocked()")
-
-from the tip tree.
-
-I have no idea what the correct resolution is here, so I have just gone
-with the former for now (i.e. removed the
-static_branch_enable_cpuslocked() call).  This will probably need a
-better (or even correct :-)) fix.
-
-I fixed it up (see above) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Does this need to be 0x4033 (or something)?
 
 -- 
 Cheers,
