@@ -1,42 +1,40 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
-Date: Fri, 19 May 2017 15:09:31 -0700
-Message-ID: <20170519220931.GA24990@fury>
-References: <20170519132317.5dc47b24@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 22 May 2017 11:16:05 +1000
+Message-ID: <20170522111605.14f93676@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:43900 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbdESWJe (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 19 May 2017 18:09:34 -0400
-Content-Disposition: inline
-In-Reply-To: <20170519132317.5dc47b24@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:49173 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932479AbdEVBQJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 21 May 2017 21:16:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ritesh Raj Sarraf <rrs@debian.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miroslav Lichvar <mlichvar@redhat.com>, Willem de Bruijn <willemb@google.com>
 
-On Fri, May 19, 2017 at 01:23:17PM +1000, Stephen Rothwell wrote:
-> Hi Darren,
-> 
-> After merging the drivers-x86 tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/platform/x86/ideapad-laptop.c:438:16: warning: 'touchpad_store' defined but not used [-Wunused-function]
->  static ssize_t touchpad_store(struct device *dev,
->                 ^
-> 
-> Introduced by commit
-> 
->   7f363145992c ("platform/x86: ideapad-laptop: Switch touchpad attribute to be RO")
+Hi all,
 
-Thank you Stephen,
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Andy, you warned me about this and I had forgotten before I included it in next.
+net/socket.c: In function 'put_ts_pktinfo':
+net/socket.c:695:28: error: 'SCM_TIMESTAMPING_PKTINFO' undeclared (first use in this function)
+  put_cmsg(msg, SOL_SOCKET, SCM_TIMESTAMPING_PKTINFO,
+                            ^
 
-Would you like to drop this change, or drop the touchpad_store function?
+Caused by commit
+
+  aad9c8c470f2 ("net: add new control message for incoming HW-timestamped packets")
+
+This probably broke every architecture that has its own
+arch/<arch>/include/uapi/asm/socket.h that does not include
+include/uapi/asm-generic/socket.h :-(
+
+I have used the net-next tree from next-20170519 for today.
 
 -- 
-Darren Hart
-VMware Open Source Technology Center
+Cheers,
+Stephen Rothwell
