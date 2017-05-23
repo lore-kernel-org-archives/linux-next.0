@@ -1,40 +1,40 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: next-20170522 build: 2 failures 7 warnings (next-20170522)
-Date: Tue, 23 May 2017 07:28:28 +0200
-Message-ID: <20170523052828.GB25840@verge.net.au>
-References: <E1dCmcB-0007CC-3W@optimist>
- <20170522150600.ewzu55g4ootbt7tm@sirena.org.uk>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 23 May 2017 09:37:22 +0100
+Message-ID: <20170523083721.GA14542@leverpostej>
+References: <20170522132711.22b80ff5@canb.auug.org.au>
+ <20170522083214.GA1478@leverpostej>
+ <20170523074456.353423fb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:58066 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933158AbdEWF2d (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 23 May 2017 01:28:33 -0400
+Received: from foss.arm.com ([217.140.101.70]:47792 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933001AbdEWIiQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 23 May 2017 04:38:16 -0400
 Content-Disposition: inline
-In-Reply-To: <20170522150600.ewzu55g4ootbt7tm@sirena.org.uk>
+In-Reply-To: <20170523074456.353423fb@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Ulf Hansson <ulf.hansson@linaro.org>, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infreadead.org, kernel-build-reports@lists.linaro.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
 
-On Mon, May 22, 2017 at 04:06:00PM +0100, Mark Brown wrote:
-> On Mon, May 22, 2017 at 01:39:11PM +0100, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build both arm and arm64 allmodconfig due to:
-> 
-> > 	arm64-allmodconfig
-> > ERROR: "renesas_sdhi_remove" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
-> > ERROR: "renesas_sdhi_probe" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
-> 
-> > 	arm-allmodconfig
-> > ERROR: "renesas_sdhi_remove" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
-> > ERROR: "renesas_sdhi_probe" [drivers/mmc/host/renesas_sdhi_sys_dmac.ko] undefined!
-> 
-> caused by the recent refactoring which created renesas_sdhi_core.c -
-> those symbols aren't exported.
+Hi Stephen,
 
-Sorry about that. I believe Arnd (CCed) posted a patch to resolve
-this problem which Ulf has applied.
+On Tue, May 23, 2017 at 07:44:56AM +1000, Stephen Rothwell wrote:
+> On Mon, 22 May 2017 09:32:15 +0100 Mark Rutland <mark.rutland@arm.com> wrote:
+> >
+> > Just to check, is your copy of tip up-to-date?
+> 
+> Yes, it was fetched just before being merged.  I use the auto-latest
+> branch of the tip tree which may not be as up to date as the master
+> branch.
 
-The patch is "[PATCH] mmc: renesas-sdhi: export renesas_sdhi_probe"
+Thanks for the pointer; there was a stale copy there, which has now been
+zapped.
+
+Hopefully we're conflict-free for next-20170524.
+
+Thanks for the heads-up!
+
+Mark.
