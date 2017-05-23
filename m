@@ -1,40 +1,86 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 23 May 2017 09:37:22 +0100
-Message-ID: <20170523083721.GA14542@leverpostej>
-References: <20170522132711.22b80ff5@canb.auug.org.au>
- <20170522083214.GA1478@leverpostej>
- <20170523074456.353423fb@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170523 build: 0 failures 4 warnings (next-20170523)
+Date: Tue, 23 May 2017 12:47:52 +0100
+Message-ID: <E1dD8I2-0007RH-CK@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:47792 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933001AbdEWIiQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 23 May 2017 04:38:16 -0400
-Content-Disposition: inline
-In-Reply-To: <20170523074456.353423fb@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41064 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933875AbdEWLr6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 23 May 2017 07:47:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Stephen,
+Tree/Branch: next-20170523
+Git describe: next-20170523
+Commit: f482797714 Add linux-next specific files for 20170523
 
-On Tue, May 23, 2017 at 07:44:56AM +1000, Stephen Rothwell wrote:
-> On Mon, 22 May 2017 09:32:15 +0100 Mark Rutland <mark.rutland@arm.com> wrote:
-> >
-> > Just to check, is your copy of tip up-to-date?
-> 
-> Yes, it was fetched just before being merged.  I use the auto-latest
-> branch of the tip tree which may not be as up to date as the master
-> branch.
+Build Time: 217 min 26 sec
 
-Thanks for the pointer; there was a stale copy there, which has now been
-zapped.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Hopefully we're conflict-free for next-20170524.
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
 
-Thanks for the heads-up!
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
 
-Mark.
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  3 ../fs/btrfs/inode.c:8467:14: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../drivers/tty/serial/meson_uart.c:127:13: warning: 'meson_uart_enable_tx_engine' defined but not used [-Wunused-function]
+	  1 ../net/ipv4/arp.c:880:35: warning: 'addr_type' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../arch/x86/kernel/tsc.c:189:13: warning: 'set_cyc2ns_scale' defined but not used [-Wunused-function]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../arch/x86/kernel/tsc.c:189:13: warning: 'set_cyc2ns_scale' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/inode.c:8467:14: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/ipv4/arp.c:880:35: warning: 'addr_type' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/meson_uart.c:127:13: warning: 'meson_uart_enable_tx_engine' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/inode.c:8467:14: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/tty/serial/meson_uart.c:127:13: warning: 'meson_uart_enable_tx_engine' defined but not used [-Wunused-function]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/inode.c:8467:14: warning: 'bio' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
