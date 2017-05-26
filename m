@@ -1,46 +1,49 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
-Date: Fri, 26 May 2017 12:52:59 +0300
-Message-ID: <CAHp75Vc6MQwHJC_gms=r35Poo1iKu+V_rushWTOxThujjQKz=A@mail.gmail.com>
-References: <20170519132317.5dc47b24@canb.auug.org.au> <20170519220931.GA24990@fury>
- <CAHp75VcJ0eWgiRnsxqEVJjEtsNWzkH2+vRGuT6NmeHsH8NbyQQ@mail.gmail.com>
- <20170526093412.3af222e6@canb.auug.org.au> <CAK8P3a15oS2wsw32b15fSHJ3QZB6guGdLahZoOBLJt=PBD++mw@mail.gmail.com>
- <20170526183541.2cf1f92c@canb.auug.org.au> <CAHp75Vf_JqM-TEewus706+aJ+5AydpDfrYMjgp-sN23zep6Ydw@mail.gmail.com>
- <20170526190748.211181ba@canb.auug.org.au>
+From: Jeff Layton <jlayton@redhat.com>
+Subject: Re: linux-next: build warning after merge of the akpm-current tree
+Date: Fri, 26 May 2017 06:16:28 -0400
+Message-ID: <1495793788.2926.4.camel@redhat.com>
+References: <20170526124324.058c3d2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:35197 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S940156AbdEZJxF (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 26 May 2017 05:53:05 -0400
-In-Reply-To: <20170526190748.211181ba@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Darren Hart <dvhart@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ritesh Raj Sarraf <rrs@debian.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170526124324.058c3d2a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Dave Kleikamp <dave.kleikamp@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>, Matthew Wilcox <mawilcox@microsoft.com>, Christoph Hellwig <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, May 26, 2017 at 12:07 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andy,
->
-> On Fri, 26 May 2017 12:04:47 +0300 Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
->>
->> On Fri, May 26, 2017 at 11:35 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> > On Fri, 26 May 2017 10:25:36 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->> >>
->> >> Andy wrote that he committed an updated patch on May 23. The git tree
->> >> at git://git.infradead.org/users/dvhart/linux-platform-drivers-x86.git#for-next
->> >> appears to currently contain an older state from May 15.
->> >
->> > So just not pushed out yet.  That's fine, I will hopefully notice when
->> > it turns up.  Just checking that it wasn't forgotten.
->>
->> No, it wasn't, it it in testing branch, I 'm about to push to for-next.
->
-> Thanks.  No rush.
+On Fri, 2017-05-26 at 12:43 +1000, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm-current tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+> 
+> fs/jfs/jfs_metapage.c: In function 'force_metapage':
+> fs/jfs/jfs_metapage.c:714:2: warning: ignoring return value of 'write_one_page', declared with attribute warn_unused_result [-Wunused-result]
+>   write_one_page(page);
+>   ^
+> fs/jfs/jfs_metapage.c: In function 'release_metapage':
+> fs/jfs/jfs_metapage.c:759:4: warning: ignoring return value of 'write_one_page', declared with attribute warn_unused_result [-Wunused-result]
+>     write_one_page(page);
+>     ^
+> 
+> Introduced by commit
+> 
+>   f8652aebee02 ("mm: drop "wait" parameter from write_one_page()")
+> 
+> These call sites were updated for the droppping of the argument, but
+> not for the addition of __must_check :-(
+> 
 
-Pushed.
+(cc'ing Dave...)
+
+Yeah, that's a known issue. When Willy reviewed the patch originally he
+asked me to add a __must_check there so that JFS would pick up some
+warnings for this.
+
+JFS really ought to check the return code there and do something sane
+with it. Dave?
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Jeff Layton <jlayton@redhat.com>
