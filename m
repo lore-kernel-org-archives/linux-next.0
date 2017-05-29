@@ -1,34 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the gpio tree
-Date: Mon, 29 May 2017 15:39:47 +1000
-Message-ID: <20170529153947.458e2297@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Mon, 29 May 2017 16:02:09 +1000
+Message-ID: <20170529160209.5230c05b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46727 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37637 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750837AbdE2Fjv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 May 2017 01:39:51 -0400
+        id S1750825AbdE2GCM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 May 2017 02:02:12 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Mike Frysinger <vapier@gentoo.org>, Steven Miao <realmz6@gmail.com>
 
-Hi Linus,
+Hi Paul,
 
-After merging the gpio tree, today's linux-next build (arm
-orion5x_defconfig) failed like this:
+After merging the rcu tree, today's linux-next build (bfin
+BF526-EZBRD_defconfig and several other bfin configs) failed like this:
 
-drivers/gpio/gpio-mvebu.c:1062: undefined reference to `__devm_regmap_init_mmio_clk'
-drivers/gpio/gpio-mvebu.c:1078: undefined reference to `__devm_regmap_init_mmio_clk'
+In file included from include/linux/srcu.h:60:0,
+                 from include/linux/notifier.h:15,
+                 from include/linux/memory_hotplug.h:6,
+                 from include/linux/mmzone.h:777,
+                 from include/linux/gfp.h:5,
+                 from include/linux/kmod.h:22,
+                 from include/linux/module.h:13,
+                 from include/linux/moduleloader.h:5,
+                 from arch/blackfin/kernel/module.c:9:
+include/linux/srcutiny.h: In function 'srcu_torture_stats_print':
+include/linux/srcutiny.h:96:2: error: 'mod' undeclared (first use in this function)
 
 Caused by commit
 
-  2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
+  54ffb22bd841 ("rcutorture: Move SRCU status printing to SRCU implementations")
 
-Presumably a missing Kconfig dependency.  Yeah, CONFIG_REGMAP_MMIO is
-not set for this build.
+arch/blackfin/kernel/module.c includes this:
+
+#define pr_fmt(fmt) "module %s: " fmt, mod->name
+
+added by commit
+
+  b75a9e6bfba5 ("Blackfin: use more standard pr_fmt in the module loader")
+
+before v2.6.39-rc2 ...
 
 -- 
 Cheers,
