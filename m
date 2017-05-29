@@ -1,33 +1,29 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 29 May 2017 10:11:11 +0200
-Message-ID: <CACRpkdZU-=woez67rErz58GZFLqOn_Y0phKwZysZhu1R5Z=TyQ@mail.gmail.com>
-References: <20170529153947.458e2297@canb.auug.org.au>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Please add reset/next and reset/fixes to linux-next
+Date: Mon, 29 May 2017 15:23:17 +0200
+Message-ID: <1496064197.17695.72.camel@pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170529153947.458e2297@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from metis.ext.4.pengutronix.de ([92.198.50.35]:37163 "EHLO
+        metis.ext.4.pengutronix.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750913AbdE2NXU (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 29 May 2017 09:23:20 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>
-List-Id: linux-next.vger.kernel.org
+Cc: linux-next@vger.kernel.org, kernel@pengutronix.de
 
-On Mon, May 29, 2017 at 7:39 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Stephen,
 
-> After merging the gpio tree, today's linux-next build (arm
-> orion5x_defconfig) failed like this:
->
-> drivers/gpio/gpio-mvebu.c:1062: undefined reference to `__devm_regmap_init_mmio_clk'
-> drivers/gpio/gpio-mvebu.c:1078: undefined reference to `__devm_regmap_init_mmio_clk'
->
-> Caused by commit
->
->   2233bf7a92e7 ("gpio: mvebu: switch to regmap for register access")
->
-> Presumably a missing Kconfig dependency.  Yeah, CONFIG_REGMAP_MMIO is
-> not set for this build.
+could you add the reset/next and reset/fixes branches to the linux-next
+tree? I use those to stage reset framework and driver patches before
+sending them off to be merged via arm-soc.
 
-Yup Gregory sent a patch for this, I applied it, will be there tomorrow.
+https://git.pengutronix.de/git/pza/linux reset/fixes
+https://git.pengutronix.de/git/pza/linux reset/next
 
-Yours,
-Linus Walleij
+regards
+Philipp
