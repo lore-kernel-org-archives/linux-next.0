@@ -1,51 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rcu tree
-Date: Mon, 29 May 2017 16:02:09 +1000
-Message-ID: <20170529160209.5230c05b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170529 build: 0 failures 0 warnings (next-20170529)
+Date: Mon, 29 May 2017 09:07:40 +0100
+Message-ID: <E1dFFiG-0006dn-8k@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37637 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750825AbdE2GCM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 May 2017 02:02:12 -0400
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56592 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750837AbdE2IHr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 29 May 2017 04:07:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Mike Frysinger <vapier@gentoo.org>, Steven Miao <realmz6@gmail.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Paul,
+Tree/Branch: next-20170529
+Git describe: next-20170529
+Commit: 62d5d79210 Add linux-next specific files for 20170529
 
-After merging the rcu tree, today's linux-next build (bfin
-BF526-EZBRD_defconfig and several other bfin configs) failed like this:
+Build Time: 119 min 6 sec
 
-In file included from include/linux/srcu.h:60:0,
-                 from include/linux/notifier.h:15,
-                 from include/linux/memory_hotplug.h:6,
-                 from include/linux/mmzone.h:777,
-                 from include/linux/gfp.h:5,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from include/linux/moduleloader.h:5,
-                 from arch/blackfin/kernel/module.c:9:
-include/linux/srcutiny.h: In function 'srcu_torture_stats_print':
-include/linux/srcutiny.h:96:2: error: 'mod' undeclared (first use in this function)
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Caused by commit
+Errors: 0
+Warnings: 0
+Section Mismatches: 0
 
-  54ffb22bd841 ("rcutorture: Move SRCU status printing to SRCU implementations")
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
 
-arch/blackfin/kernel/module.c includes this:
+-------------------------------------------------------------------------------
 
-#define pr_fmt(fmt) "module %s: " fmt, mod->name
 
-added by commit
 
-  b75a9e6bfba5 ("Blackfin: use more standard pr_fmt in the module loader")
+===============================================================================
+Detailed per-defconfig build reports below:
 
-before v2.6.39-rc2 ...
+-------------------------------------------------------------------------------
 
--- 
-Cheers,
-Stephen Rothwell
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
