@@ -1,197 +1,180 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Joe Perches <joe@perches.com>
 Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Tue, 30 May 2017 11:40:50 +1000
-Message-ID: <20170530114050.2b702cc1@canb.auug.org.au>
+Date: Mon, 29 May 2017 18:54:26 -0700
+Message-ID: <1496109266.2618.5.camel@perches.com>
 References: <20170529160209.5230c05b@canb.auug.org.au>
-        <20170529211505.GP3956@linux.vnet.ibm.com>
+         <20170529211505.GP3956@linux.vnet.ibm.com>
+         <20170530114050.2b702cc1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49735 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750798AbdE3Bkx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 29 May 2017 21:40:53 -0400
-In-Reply-To: <20170529211505.GP3956@linux.vnet.ibm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Mike Frysinger <vapier@gentoo.org>, Steven Miao <realmz6@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170530114050.2b702cc1@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Frysinger <vapier@gentoo.org>, Steven Miao <realmz6@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Paul,
+On Tue, 2017-05-30 at 11:40 +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> > On Mon, 29 May 2017 14:15:05 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > 
+> > Anyone see any other options?
 
-On Mon, 29 May 2017 14:15:05 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
->
-> Anyone see any other options?
-
-I will add the following to linux-next today.  If the Blackfin guys
-agree (or come up with something better), you should get their acks and
-then add it to your tree.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 30 May 2017 09:21:05 +1000
-Subject: [PATCH] Revert "Blackfin: use more standard pr_fmt in the module loader"
-
-This reverts commit b75a9e6bfba5c7343391ac1bacd44d6652dde8da.
-
-It turns out (after all this time) that referencing a function parameter
-from a global macro was a bit fragile.
-
-This could probably be done better, but this fixes a build failure due
-to a commit that adds a use of pr_alert in an include file.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+My preferred option would be removing pr_fmt
+and adding a couple new macros.
 ---
- arch/blackfin/kernel/module.c | 41 +++++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
+ arch/blackfin/kernel/module.c | 39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
 diff --git a/arch/blackfin/kernel/module.c b/arch/blackfin/kernel/module.c
-index 0188c933b155..adbbccc91fa1 100644
+index 0188c933b155..e43aec7eb8d3 100644
 --- a/arch/blackfin/kernel/module.c
 +++ b/arch/blackfin/kernel/module.c
-@@ -4,7 +4,7 @@
-  * Licensed under the GPL-2 or later
-  */
- 
+@@ -4,8 +4,6 @@
+  * Licensed under the GPL-2 or later
+  */
+ 
 -#define pr_fmt(fmt) "module %s: " fmt, mod->name
-+#define pr_fmt(fmt) "module %s: " fmt
- 
- #include <linux/moduleloader.h>
- #include <linux/elf.h>
-@@ -44,7 +44,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l1_inst_sram_alloc(s->sh_size);
- 			mod->arch.text_l1 = dest;
- 			if (dest == NULL) {
+-
+ #include <linux/moduleloader.h>
+ #include <linux/elf.h>
+ #include <linux/vmalloc.h>
+@@ -16,6 +14,11 @@
+ #include <asm/cacheflush.h>
+ #include <linux/uaccess.h>
+ 
++#define mod_err(mod, fmt, ...)						\
++	pr_err("module %s: " fmt, (mod)->name, ##__VA_ARGS__)
++#define mod_debug(mod, ...)						\
++	pr_debug("module %s: " fmt, (mod)->name, ##__VA_ARGS__)
++
+ /* Transfer the section to the L1 memory */
+ int
+ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+@@ -44,7 +47,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_inst_sram_alloc(s->sh_size);
+ 			mod->arch.text_l1 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L1 inst memory allocation failed\n");
-+				pr_err("L1 inst memory allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			dma_memcpy(dest, (void *)s->sh_addr, s->sh_size);
-@@ -56,7 +57,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l1_data_sram_alloc(s->sh_size);
- 			mod->arch.data_a_l1 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L1 inst memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			dma_memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -56,7 +59,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_sram_alloc(s->sh_size);
+ 			mod->arch.data_a_l1 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L1 data memory allocation failed\n");
-+				pr_err("L1 data memory allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
-@@ -68,7 +70,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l1_data_sram_zalloc(s->sh_size);
- 			mod->arch.bss_a_l1 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -68,7 +71,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_sram_zalloc(s->sh_size);
+ 			mod->arch.bss_a_l1 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L1 data memory allocation failed\n");
-+				pr_err("L1 data memory allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 
-@@ -77,7 +80,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l1_data_B_sram_alloc(s->sh_size);
- 			mod->arch.data_b_l1 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 
+@@ -77,7 +80,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_B_sram_alloc(s->sh_size);
+ 			mod->arch.data_b_l1 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L1 data memory allocation failed\n");
-+				pr_err("L1 data memory allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
-@@ -87,7 +91,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l1_data_B_sram_alloc(s->sh_size);
- 			mod->arch.bss_b_l1 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -87,7 +90,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_B_sram_alloc(s->sh_size);
+ 			mod->arch.bss_b_l1 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L1 data memory allocation failed\n");
-+				pr_err("L1 data memory allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			memset(dest, 0, s->sh_size);
-@@ -99,7 +104,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l2_sram_alloc(s->sh_size);
- 			mod->arch.text_l2 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memset(dest, 0, s->sh_size);
+@@ -99,7 +102,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_alloc(s->sh_size);
+ 			mod->arch.text_l2 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L2 SRAM allocation failed\n");
-+				pr_err("L2 SRAM allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
-@@ -111,7 +117,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l2_sram_alloc(s->sh_size);
- 			mod->arch.data_l2 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -111,7 +114,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_alloc(s->sh_size);
+ 			mod->arch.data_l2 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L2 SRAM allocation failed\n");
-+				pr_err("L2 SRAM allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
-@@ -123,7 +130,8 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
- 			dest = l2_sram_zalloc(s->sh_size);
- 			mod->arch.bss_l2 = dest;
- 			if (dest == NULL) {
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -123,7 +126,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_zalloc(s->sh_size);
+ 			mod->arch.bss_l2 = dest;
+ 			if (dest == NULL) {
 -				pr_err("L2 SRAM allocation failed\n");
-+				pr_err("L2 SRAM allocation failed\n",
-+					mod->name);
- 				return -1;
- 			}
- 
-@@ -157,7 +165,7 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
- 	Elf32_Sym *sym;
- 	unsigned long location, value, size;
- 
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 
+@@ -157,8 +160,8 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 	Elf32_Sym *sym;
+ 	unsigned long location, value, size;
+ 
 -	pr_debug("applying relocate section %u to %u\n",
-+	pr_debug("applying relocate section %u to %u\n", mod->name,
- 		relsec, sechdrs[relsec].sh_info);
- 
- 	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
-@@ -174,14 +182,14 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
- 
- #ifdef CONFIG_SMP
- 		if (location >= COREB_L1_DATA_A_START) {
+-		relsec, sechdrs[relsec].sh_info);
++	mod_debug(mod, "applying relocate section %u to %u\n",
++		  relsec, sechdrs[relsec].sh_info);
+ 
+ 	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
+ 		/* This is where to make the change */
+@@ -174,14 +177,14 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 
+ #ifdef CONFIG_SMP
+ 		if (location >= COREB_L1_DATA_A_START) {
 -			pr_err("cannot relocate in L1: %u (SMP kernel)\n",
--				ELF32_R_TYPE(rel[i].r_info));
-+			pr_err("cannot relocate in L1: %u (SMP kernel)",
-+				mod->name, ELF32_R_TYPE(rel[i].r_info));
- 			return -ENOEXEC;
- 		}
- #endif
- 
- 		pr_debug("location is %lx, value is %lx type is %d\n",
++			mod_err(mod, "cannot relocate in L1: %u (SMP kernel)\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 		}
+ #endif
+ 
+-		pr_debug("location is %lx, value is %lx type is %d\n",
 -			location, value, ELF32_R_TYPE(rel[i].r_info));
-+			mod->name, location, value, ELF32_R_TYPE(rel[i].r_info));
- 
- 		switch (ELF32_R_TYPE(rel[i].r_info)) {
- 
-@@ -201,11 +209,11 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
- 		case R_BFIN_PCREL12_JUMP_S:
- 		case R_BFIN_PCREL10:
- 			pr_err("unsupported relocation: %u (no -mlong-calls?)\n",
--				ELF32_R_TYPE(rel[i].r_info));
-+				mod->name, ELF32_R_TYPE(rel[i].r_info));
- 			return -ENOEXEC;
- 
- 		default:
++		mod_debug(mod, "location is %lx, value is %lx type is %d\n",
++			  location, value, ELF32_R_TYPE(rel[i].r_info));
+ 
+ 		switch (ELF32_R_TYPE(rel[i].r_info)) {
+ 
+@@ -200,12 +203,12 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 		case R_BFIN_PCREL12_JUMP:
+ 		case R_BFIN_PCREL12_JUMP_S:
+ 		case R_BFIN_PCREL10:
+-			pr_err("unsupported relocation: %u (no -mlong-calls?)\n",
++			mod_err(mod, "unsupported relocation: %u (no -mlong-calls?)\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 
+ 		default:
 -			pr_err("unknown relocation: %u\n",
-+			pr_err("unknown relocation: %u\n", mod->name,
- 				ELF32_R_TYPE(rel[i].r_info));
- 			return -ENOEXEC;
- 		}
-@@ -222,7 +230,8 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
- 			isram_memcpy((void *)location, &value, size);
- 			break;
- 		default:
++			mod_err(mod, "unknown relocation: %u\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 		}
+@@ -222,7 +225,7 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 			isram_memcpy((void *)location, &value, size);
+ 			break;
+ 		default:
 -			pr_err("invalid relocation for %#lx\n", location);
-+			pr_err("invalid relocation for %#lx\n",
-+				mod->name, location);
- 			return -ENOEXEC;
- 		}
- 	}
--- 
-2.11.0
-
--- 
-Cheers,
-Stephen Rothwell
++			mod_err(mod, "invalid relocation for %#lx\n", location);
+ 			return -ENOEXEC;
+ 		}
+ 	}
