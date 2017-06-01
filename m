@@ -1,37 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
 Subject: Re: linux-next: Tree for May 31
-Date: Thu, 1 Jun 2017 16:13:15 +1000
-Message-ID: <20170601161315.6ec8e08e@canb.auug.org.au>
-References: <20170531153227.7098f0a1@canb.auug.org.au>
-        <8737bk44w8.fsf@concordia.ellerman.id.au>
+Date: Thu, 01 Jun 2017 17:02:39 +1000
+Message-ID: <87zids2nsg.fsf@concordia.ellerman.id.au>
+References: <20170531153227.7098f0a1@canb.auug.org.au> <8737bk44w8.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34141 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751091AbdFAHCm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Jun 2017 03:02:42 -0400
 In-Reply-To: <8737bk44w8.fsf@concordia.ellerman.id.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Andrew Morton <akpm@linux-foundation.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Michael,
+Michael Ellerman <mpe@ellerman.id.au> writes:
 
-On Thu, 01 Jun 2017 16:07:51 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->
 > Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> 
-> > Changes since 20170530:
-> >
-> > Non-merge commits (relative to Linus' tree): 3325
-> >  3598 files changed, 135000 insertions(+), 72065 deletions(-)  
-> 
+>
+>> Hi all,
+>>
+>> Changes since 20170530:
+>>
+>> The mfd tree gained a build failure so I used the version from
+>> next-20170530.
+>>
+>> The drivers-x86 tree gained the same build failure as the mfd tree so
+>> I used the version from next-20170530.
+>>
+>> The rtc tree gained a build failure so I used the version from
+>> next-20170530.
+>>
+>> The akpm tree lost a patch that turned up elsewhere.
+>>
+>> Non-merge commits (relative to Linus' tree): 3325
+>>  3598 files changed, 135000 insertions(+), 72065 deletions(-)
+>
 > More or less all my powerpc boxes failed to boot this.
-
-Good timing :-)  How about the linux-next I just released.  It has had
-a few of the mm changes removed since yesterday.
-
+>
 > All the stack traces point to new_slab():
-> 
+>
 >   PID hash table entries: 4096 (order: -1, 32768 bytes)
 >   Memory: 127012480K/134217728K available (12032K kernel code, 1920K rwdata, 2916K rodata, 1088K init, 14065K bss, 487808K reserved, 6717440K cma-reserved)
 >   Unable to handle kernel paging request for data at address 0x000004f0
@@ -73,6 +83,58 @@ a few of the mm changes removed since yesterday.
 >   Kernel panic - not syncing: Attempted to kill the idle task!
 >   Rebooting in 10 seconds..
 
--- 
-Cheers,
-Stephen Rothwell
+Bisect says:
+
+commit b6bc6724488ac9a149f4ee50d9f036b0fe2420c5
+Author: Johannes Weiner <hannes@cmpxchg.org>
+Date:   Wed May 31 09:17:23 2017 +1000
+
+    mm: vmstat: move slab statistics from zone to node counters
+    
+    Patch series "mm: per-lruvec slab stats"
+    
+    Josef is working on a new approach to balancing slab caches and the page
+    cache.  For this to work, he needs slab cache statistics on the lruvec
+    level.  These patches implement that by adding infrastructure that allows
+    updating and reading generic VM stat items per lruvec, then switches some
+    existing VM accounting sites, including the slab accounting ones, to this
+    new cgroup-aware API.
+    
+    I'll follow up with more patches on this, because there is actually
+    substantial simplification that can be done to the memory controller when
+    we replace private memcg accounting with making the existing VM accounting
+    sites cgroup-aware.  But this is enough for Josef to base his slab reclaim
+    work on, so here goes.
+    
+    This patch (of 5):
+    
+    To re-implement slab cache vs.  page cache balancing, we'll need the slab
+    counters at the lruvec level, which, ever since lru reclaim was moved from
+    the zone to the node, is the intersection of the node, not the zone, and
+    the memcg.
+    
+    We could retain the per-zone counters for when the page allocator dumps
+    its memory information on failures, and have counters on both levels -
+    which on all but NUMA node 0 is usually redundant.  But let's keep it
+    simple for now and just move them.  If anybody complains we can restore
+    the per-zone counters.
+    
+    Link: http://lkml.kernel.org/r/20170530181724.27197-3-hannes@cmpxchg.org
+    Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+    Cc: Josef Bacik <josef@toxicpanda.com>
+    Cc: Michal Hocko <mhocko@suse.com>
+    Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+    Cc: Rik van Riel <riel@redhat.com>
+    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+
+ drivers/base/node.c    | 10 +++++-----
+ include/linux/mmzone.h |  4 ++--
+ mm/page_alloc.c        |  4 ----
+ mm/slab.c              |  8 ++++----
+ mm/slub.c              |  4 ++--
+ mm/vmscan.c            |  2 +-
+ mm/vmstat.c            |  4 ++--
+ 7 files changed, 16 insertions(+), 20 deletions(-)
+
+
+cheers
