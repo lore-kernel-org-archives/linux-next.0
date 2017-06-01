@@ -1,247 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 1 Jun 2017 11:30:00 +1000
-Message-ID: <20170601113000.7458d252@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-bva tree with the
+ target-updates tree
+Date: Thu, 1 Jun 2017 14:10:55 +1000
+Message-ID: <20170601141055.3b64fefc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51213 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43491 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751004AbdFABaD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 31 May 2017 21:30:03 -0400
+        id S1751091AbdFAEK7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Jun 2017 00:10:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>
+To: Bart Van Assche <bart.vanassche@gmail.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Bart,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the target-bva tree got a conflict in:
 
-  drivers/net/phy/marvell.c
+  drivers/target/target_core_transport.c
 
 between commit:
 
-  898805e0cdf7 ("net: phy: fix marvell phy status reading")
+  4ff83daa0200 ("target: Re-add check to reject control WRITEs with overflow data")
 
-from the net tree and commit:
+from the target-updates tree and commit:
 
-  e1dde8dc5b27 ("net: phy: marvell: Refactor some bigger functions")
+  2c66660df665 ("target: Fix overflow/underflow handling of commands with a Data-Out buffer")
 
-from the net-next tree.
+from the target-bva tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I think (guidance appreciated), see below) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/phy/marvell.c
-index 57297ba23987,1a72bebc588a..000000000000
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@@ -1082,119 -1133,106 +1133,104 @@@ static int marvell_update_link(struct p
-  	return 0;
-  }
-  
-- /* marvell_read_status_page
--  *
--  * Description:
--  *   Check the link, then figure out the current state
--  *   by comparing what we advertise with what the link partner
--  *   advertises.  Start by checking the gigabit possibilities,
--  *   then move on to 10/100.
--  */
-- static int marvell_read_status_page(struct phy_device *phydev, int page)
-+ static int marvell_read_status_page_an(struct phy_device *phydev,
-+ 				       int fiber)
-  {
-- 	int adv;
-- 	int err;
-+ 	int status;
-  	int lpa;
-  	int lpagb;
-- 	int status = 0;
-- 	int fiber;
-+ 	int adv;
-  
-- 	/* Detect and update the link, but return if there
-- 	 * was an error */
-- 	if (page == MII_M1111_FIBER)
-- 		fiber = 1;
-- 	else
-- 		fiber = 0;
-+ 	status = phy_read(phydev, MII_M1011_PHY_STATUS);
-+ 	if (status < 0)
-+ 		return status;
-  
-- 	err = marvell_update_link(phydev, fiber);
-- 	if (err)
-- 		return err;
-+ 	lpa = phy_read(phydev, MII_LPA);
-+ 	if (lpa < 0)
-+ 		return lpa;
-  
-- 	if (AUTONEG_ENABLE == phydev->autoneg) {
-- 		status = phy_read(phydev, MII_M1011_PHY_STATUS);
-- 		if (status < 0)
-- 			return status;
-+ 	lpagb = phy_read(phydev, MII_STAT1000);
-+ 	if (lpagb < 0)
-+ 		return lpagb;
-  
-- 		lpa = phy_read(phydev, MII_LPA);
-- 		if (lpa < 0)
-- 			return lpa;
-+ 	adv = phy_read(phydev, MII_ADVERTISE);
-+ 	if (adv < 0)
-+ 		return adv;
-  
-- 		lpagb = phy_read(phydev, MII_STAT1000);
-- 		if (lpagb < 0)
-- 			return lpagb;
- -	lpa &= adv;
- -
-+ 	if (status & MII_M1011_PHY_STATUS_FULLDUPLEX)
-+ 		phydev->duplex = DUPLEX_FULL;
-+ 	else
-+ 		phydev->duplex = DUPLEX_HALF;
-  
-- 		adv = phy_read(phydev, MII_ADVERTISE);
-- 		if (adv < 0)
-- 			return adv;
-+ 	status = status & MII_M1011_PHY_STATUS_SPD_MASK;
-+ 	phydev->pause = 0;
-+ 	phydev->asym_pause = 0;
-  
-- 		if (status & MII_M1011_PHY_STATUS_FULLDUPLEX)
-- 			phydev->duplex = DUPLEX_FULL;
-- 		else
-- 			phydev->duplex = DUPLEX_HALF;
-+ 	switch (status) {
-+ 	case MII_M1011_PHY_STATUS_1000:
-+ 		phydev->speed = SPEED_1000;
-+ 		break;
-  
-- 		status = status & MII_M1011_PHY_STATUS_SPD_MASK;
-- 		phydev->pause = phydev->asym_pause = 0;
-+ 	case MII_M1011_PHY_STATUS_100:
-+ 		phydev->speed = SPEED_100;
-+ 		break;
-  
-- 		switch (status) {
-- 		case MII_M1011_PHY_STATUS_1000:
-- 			phydev->speed = SPEED_1000;
-- 			break;
-+ 	default:
-+ 		phydev->speed = SPEED_10;
-+ 		break;
-+ 	}
-  
-- 		case MII_M1011_PHY_STATUS_100:
-- 			phydev->speed = SPEED_100;
-- 			break;
-+ 	if (!fiber) {
-+ 		phydev->lp_advertising =
-+ 			mii_stat1000_to_ethtool_lpa_t(lpagb) |
-+ 			mii_lpa_to_ethtool_lpa_t(lpa);
-  
-- 		default:
-- 			phydev->speed = SPEED_10;
-- 			break;
-+ 		if (phydev->duplex == DUPLEX_FULL) {
-+ 			phydev->pause = lpa & LPA_PAUSE_CAP ? 1 : 0;
-+ 			phydev->asym_pause = lpa & LPA_PAUSE_ASYM ? 1 : 0;
-  		}
-- 
-- 		if (!fiber) {
-- 			phydev->lp_advertising = mii_stat1000_to_ethtool_lpa_t(lpagb) |
-- 					 mii_lpa_to_ethtool_lpa_t(lpa);
-- 
-- 			if (phydev->duplex == DUPLEX_FULL) {
-- 				phydev->pause = lpa & LPA_PAUSE_CAP ? 1 : 0;
-- 				phydev->asym_pause = lpa & LPA_PAUSE_ASYM ? 1 : 0;
+diff --cc drivers/target/target_core_transport.c
+index 6025935036c9,6cd49fe578a7..000000000000
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@@ -1164,37 -1164,7 +1164,21 @@@ target_cmd_size_check(struct se_cmd *cm
+  			" %u does not match SCSI CDB Length: %u for SAM Opcode:"
+  			" 0x%02x\n", cmd->se_tfo->get_fabric_name(),
+  				cmd->data_length, size, cmd->t_task_cdb[0]);
+ +
+ +		if (cmd->data_direction == DMA_TO_DEVICE) {
+- 			if (cmd->se_cmd_flags & SCF_SCSI_DATA_CDB) {
+- 				pr_err_ratelimited("Rejecting underflow/overflow"
+- 						   " for WRITE data CDB\n");
+- 				return TCM_INVALID_CDB_FIELD;
 - 			}
-- 		} else {
-- 			/* The fiber link is only 1000M capable */
-- 			phydev->lp_advertising = fiber_lpa_to_ethtool_lpa_t(lpa);
-- 
-- 			if (phydev->duplex == DUPLEX_FULL) {
-- 				if (!(lpa & LPA_PAUSE_FIBER)) {
-- 					phydev->pause = 0;
-- 					phydev->asym_pause = 0;
-- 				} else if ((lpa & LPA_PAUSE_ASYM_FIBER)) {
-- 					phydev->pause = 1;
-- 					phydev->asym_pause = 1;
-- 				} else {
-- 					phydev->pause = 1;
-- 					phydev->asym_pause = 0;
-- 				}
-+ 	} else {
-+ 		/* The fiber link is only 1000M capable */
-+ 		phydev->lp_advertising = fiber_lpa_to_ethtool_lpa_t(lpa);
-+ 
-+ 		if (phydev->duplex == DUPLEX_FULL) {
-+ 			if (!(lpa & LPA_PAUSE_FIBER)) {
-+ 				phydev->pause = 0;
-+ 				phydev->asym_pause = 0;
-+ 			} else if ((lpa & LPA_PAUSE_ASYM_FIBER)) {
-+ 				phydev->pause = 1;
-+ 				phydev->asym_pause = 1;
-+ 			} else {
-+ 				phydev->pause = 1;
-+ 				phydev->asym_pause = 0;
-  			}
-  		}
-- 	} else {
-- 		int bmcr = phy_read(phydev, MII_BMCR);
-+ 	}
-+ 	return 0;
-+ }
-  
-- 		if (bmcr < 0)
-- 			return bmcr;
-+ static int marvell_read_status_page_fixed(struct phy_device *phydev)
-+ {
-+ 	int bmcr = phy_read(phydev, MII_BMCR);
-  
-- 		if (bmcr & BMCR_FULLDPLX)
-- 			phydev->duplex = DUPLEX_FULL;
-- 		else
-- 			phydev->duplex = DUPLEX_HALF;
-+ 	if (bmcr < 0)
-+ 		return bmcr;
-  
-- 		if (bmcr & BMCR_SPEED1000)
-- 			phydev->speed = SPEED_1000;
-- 		else if (bmcr & BMCR_SPEED100)
-- 			phydev->speed = SPEED_100;
-- 		else
-- 			phydev->speed = SPEED_10;
-+ 	if (bmcr & BMCR_FULLDPLX)
-+ 		phydev->duplex = DUPLEX_FULL;
-+ 	else
-+ 		phydev->duplex = DUPLEX_HALF;
-  
-- 		phydev->pause = phydev->asym_pause = 0;
-- 		phydev->lp_advertising = 0;
-- 	}
-+ 	if (bmcr & BMCR_SPEED1000)
-+ 		phydev->speed = SPEED_1000;
-+ 	else if (bmcr & BMCR_SPEED100)
-+ 		phydev->speed = SPEED_100;
-+ 	else
-+ 		phydev->speed = SPEED_10;
-+ 
-+ 	phydev->pause = 0;
-+ 	phydev->asym_pause = 0;
-+ 	phydev->lp_advertising = 0;
-  
-  	return 0;
-  }
+ +			/*
+ +			 * Some fabric drivers like iscsi-target still expect to
+ +			 * always reject overflow writes.  Reject this case until
+ +			 * full fabric driver level support for overflow writes
+ +			 * is introduced tree-wide.
+ +			 */
+ +			if (size > cmd->data_length) {
+ +				pr_err_ratelimited("Rejecting overflow for"
+ +						   " WRITE control CDB\n");
+ +				return TCM_INVALID_CDB_FIELD;
+ +			}
+ +		}
+  		/*
+- 		 * Reject READ_* or WRITE_* with overflow/underflow for
+- 		 * type SCF_SCSI_DATA_CDB.
+- 		 */
+- 		if (dev->dev_attrib.block_size != 512)  {
+- 			pr_err("Failing OVERFLOW/UNDERFLOW for LBA op"
+- 				" CDB on non 512-byte sector setup subsystem"
+- 				" plugin: %s\n", dev->transport->name);
+- 			/* Returns CHECK_CONDITION + INVALID_CDB_FIELD */
+- 			return TCM_INVALID_CDB_FIELD;
+- 		}
+- 		/*
+  		 * For the overflow case keep the existing fabric provided
+  		 * ->data_length.  Otherwise for the underflow case, reset
+  		 * ->data_length to the smaller SCSI expected data transfer
