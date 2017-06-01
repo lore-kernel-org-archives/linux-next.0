@@ -1,39 +1,53 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Tree for May 31
-Date: Thu, 01 Jun 2017 17:03:33 +1000
-Message-ID: <87wp8w2nqy.fsf@concordia.ellerman.id.au>
-References: <20170531153227.7098f0a1@canb.auug.org.au> <8737bk44w8.fsf@concordia.ellerman.id.au> <20170601161315.6ec8e08e@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170601 build: 0 failures 0 warnings (next-20170601)
+Date: Thu, 01 Jun 2017 13:14:55 +0100
+Message-ID: <E1dGP0B-00072Z-Oi@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58587 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751047AbdFAHDf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 1 Jun 2017 03:03:35 -0400
-In-Reply-To: <20170601161315.6ec8e08e@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53124 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751054AbdFAMPD (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Jun 2017 08:15:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Andrew Morton <akpm@linux-foundation.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Tree/Branch: next-20170601
+Git describe: next-20170601
+Commit: 3ab334ebe8 Add linux-next specific files for 20170601
 
-> Hi Michael,
->
-> On Thu, 01 Jun 2017 16:07:51 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->>
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->> 
->> > Changes since 20170530:
->> >
->> > Non-merge commits (relative to Linus' tree): 3325
->> >  3598 files changed, 135000 insertions(+), 72065 deletions(-)  
->> 
->> More or less all my powerpc boxes failed to boot this.
->
-> Good timing :-)  How about the linux-next I just released.  It has had
-> a few of the mm changes removed since yesterday.
+Build Time: 183 min 50 sec
 
-Yep, the offending patch seems to have been dropped.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-cheers
+Errors: 0
+Warnings: 0
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+
+-------------------------------------------------------------------------------
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
