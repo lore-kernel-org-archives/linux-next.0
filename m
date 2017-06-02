@@ -1,49 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the target-bva tree with the
- target-updates tree
-Date: Fri, 2 Jun 2017 14:11:59 +1000
-Message-ID: <20170602141159.197ec84f@canb.auug.org.au>
-References: <20170602140535.17d87d58@canb.auug.org.au>
+From: Bart Van Assche <bvanassche@acm.org>
+Subject: Re: linux-next: upcoming conflict between the target-updates and
+        target-bva trees
+Date: Thu, 1 Jun 2017 21:55:47 -0700
+Message-ID: <1e3679b7-2812-8916-92f8-09d9cbd6deea@acm.org>
+References: <20170602133928.2afa3e7a@canb.auug.org.au>
+        <1496376224.27407.228.camel@haakon3.risingtidesystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60445 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751124AbdFBEMC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 2 Jun 2017 00:12:02 -0400
-In-Reply-To: <20170602140535.17d87d58@canb.auug.org.au>
+Received: from bxl-001.se.1eurohost.be ([87.238.167.208]:55107 "EHLO
+        bxl-001.se.1eurohost.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750747AbdFBFMK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Jun 2017 01:12:10 -0400
+In-Reply-To: <1496376224.27407.228.camel@haakon3.risingtidesystems.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bart Van Assche <bart.vanassche@gmail.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On 06/01/17 21:03, Nicholas A. Bellinger wrote:
+> On Fri, 2017-06-02 at 13:39 +1000, Stephen Rothwell wrote:
+>> Last night the target-bva tree was rebased on top of the target-updates
+>> tree.  Just now, part of the target-updates tree has been rewritten.
+>> So now I expect to get conflict(s) when I merge these trees since the
+>> commits in the target-updates tree are no longer the same as those that
+>> the target-bva tree was rebased on top of.
+>>
+>> Please take a little time to sort out your development process.
+> 
+> Unfortunately, this is going to continue to be a problem once these
+> patches are list reviewed, and included in target-updates.
+> 
+> Bart, can you please drop the patches?
+Hello Stephen and Nic,
 
-On Fri, 2 Jun 2017 14:05:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the target-bva tree got a conflict in:
-> 
->   drivers/target/target_core_tpg.c
-> 
-> between commits:
-> 
->   06fd91ce633d ("target/configfs: Kill se_lun->lun_link_magic")
->   4f61e1e687c4 ("target: Avoid target_shutdown_sessions loop during queue_depth change")
-> 
-> from the target-updates tree and commits:
-> 
->   ba438d7c8d39 ("target: Avoid target_shutdown_sessions loop during queue_depth change")
->   b968ec8ff101 ("target/configfs: Kill se_lun->lun_link_magic")
-> 
-> from the target-bva tree.
-> 
-> I fixed it up (I used the version from the target-updates tree) and can
+I have just reset that branch to v4.12-rc1. Sorry for the inconvenience.
 
-Which turned out to be the wrong thing to do (or more was needed) as
-the result does not build :-(.
-
-I have just dropped the target-bva tree for today.
--- 
-Cheers,
-Stephen Rothwell
+Bart.
