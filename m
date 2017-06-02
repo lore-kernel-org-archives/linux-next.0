@@ -1,25 +1,18 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: rtl8188eu: style fixes
-Date: Sat, 3 Jun 2017 17:18:27 +0900
-Message-ID: <20170603081827.GA1556@kroah.com>
-References: <20170602143643.GA9038@lear>
+From: "Seydou Thieba" <seydouthieba@tiscali.co.uk>
+Subject: Investment Interest & Offer
+Date: Sat, 03 Jun 2017 00:01:51 +0100
+Message-ID: <201706022301.v52MWdAM028763__21153.73789934$1496579119$gmane$org@www.brfliseberg.se>
+Reply-To: seydouthiebaconsultant@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53742 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750997AbdFCOG6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 3 Jun 2017 10:06:58 -0400
-Content-Disposition: inline
-In-Reply-To: <20170602143643.GA9038@lear>
+Received: from www.brfliseberg.se ([213.242.162.1]:59516 "EHLO
+        www.brfliseberg.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751045AbdFDMZK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 4 Jun 2017 08:25:10 -0400
+Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Galo <anglor@varoa.net>
-Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
+To: Recipients <seydouthieba@tiscali.co.uk>
 
-On Fri, Jun 02, 2017 at 04:36:44PM +0200, Galo wrote:
-> Fix several "CHECK: spaces preferred around that .." checks.
-> 
-> Signed-off-by: Galo Navarro <anglor@varoa.net>
-
-This name doesn't match the name in your "From:" line in your email :(
