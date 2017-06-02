@@ -1,120 +1,235 @@
-From: Nicholas Mc Guire <der.herr@hofr.at>
-Subject: Re: [PATCH] staging: rtl8188eu: style fixes
-Date: Fri, 2 Jun 2017 17:41:22 +0000
-Message-ID: <20170602174122.GB16574@osadl.at>
-References: <20170602143643.GA9038@lear>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 2 Jun 2017 10:51:36 -0700
+Message-ID: <20170602175136.GA3721@linux.vnet.ibm.com>
+References: <20170529160209.5230c05b@canb.auug.org.au>
+ <20170529211505.GP3956@linux.vnet.ibm.com>
+ <874lw36l3h.fsf@concordia.ellerman.id.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 92-243-34-74.adsl.nanet.at ([92.243.34.74]:41021 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1751164AbdFBRvA (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Jun 2017 13:51:00 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170602143643.GA9038@lear>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Galo <anglor@varoa.net>
-Cc: linux-next@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Larry Finger <Larry.Finger@lwfinger.net>
+In-Reply-To: <874lw36l3h.fsf@concordia.ellerman.id.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Mike Frysinger <vapier@gentoo.org>, Steven Miao <realmz6@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 02, 2017 at 04:36:44PM +0200, Galo wrote:
-> Fix several "CHECK: spaces preferred around that .." checks.
+On Tue, May 30, 2017 at 02:10:26PM +1000, Michael Ellerman wrote:
+> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
 > 
-> Signed-off-by: Galo Navarro <anglor@varoa.net>
-
-cleanup patches are ok - but if you do cleanups you should also
-run checkpatch.pl on your patch. This would have shown you that
-two of the lines you fixed are over 80 char and should be broken
-
-Also I do not see much sense in picking out individual lines for
-space fixing and leaving other adjacent lines out e.g.:
-
-        ss_final = ((u32)(src->PhyInfo.SignalStrength)+(u32)(dst->PhyInfo.SignalStrength)*4)/5;
-        sq_final = ((u32)(src->PhyInfo.SignalQuality)+(u32)(dst->PhyInfo.SignalQuality)*4)/5;
-        rssi_final = (src->Rssi+dst->Rssi*4)/5;
-
-All three lines have the same spacing issue - but your patch addresses
-the last line only. While it is ok not to fix all spacing issues in a
-file at once I think that at least within a basic block one should keep
-it consistent. style cleanup intends to make code more readable but if
-styles are mixed on a line-by-line basis this goal is hardly achieved
-
-I would prefere you redo this patch and ensure at least local consistency
-
+> > On Mon, May 29, 2017 at 04:02:09PM +1000, Stephen Rothwell wrote:
+> >> Hi Paul,
+> >> 
+> >> After merging the rcu tree, today's linux-next build (bfin
+> >> BF526-EZBRD_defconfig and several other bfin configs) failed like this:
+> >> 
+> >> In file included from include/linux/srcu.h:60:0,
+> >>                  from include/linux/notifier.h:15,
+> >>                  from include/linux/memory_hotplug.h:6,
+> >>                  from include/linux/mmzone.h:777,
+> >>                  from include/linux/gfp.h:5,
+> >>                  from include/linux/kmod.h:22,
+> >>                  from include/linux/module.h:13,
+> >>                  from include/linux/moduleloader.h:5,
+> >>                  from arch/blackfin/kernel/module.c:9:
+> >> include/linux/srcutiny.h: In function 'srcu_torture_stats_print':
+> >> include/linux/srcutiny.h:96:2: error: 'mod' undeclared (first use in this function)
+> >> 
+> >> Caused by commit
+> >> 
+> >>   54ffb22bd841 ("rcutorture: Move SRCU status printing to SRCU implementations")
+> >
+> > And of course this is nothing but a printk().
 > 
-> ---
->  drivers/staging/rtl8188eu/core/rtw_mlme.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+> Ah but it's not, it's a pr_alert():
 > 
-> diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> index de9ab59..92f7297 100644
-> --- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> +++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-> @@ -370,14 +370,14 @@ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
->  		sq_final = padapter->recvpriv.signal_qual;
->  		/* the rssi value here is undecorated, and will be used for antenna diversity */
->  		if (sq_smp != 101) /* from the right channel */
-> -			rssi_final = (src->Rssi+dst->Rssi*4)/5;
-> +			rssi_final = (src->Rssi + dst->Rssi * 4) / 5;
->  		else
->  			rssi_final = rssi_ori;
->  	} else {
->  		if (sq_smp != 101) { /* from the right channel */
->  			ss_final = ((u32)(src->PhyInfo.SignalStrength)+(u32)(dst->PhyInfo.SignalStrength)*4)/5;
->  			sq_final = ((u32)(src->PhyInfo.SignalQuality)+(u32)(dst->PhyInfo.SignalQuality)*4)/5;
-> -			rssi_final = (src->Rssi+dst->Rssi*4)/5;
-> +			rssi_final = (src->Rssi + dst->Rssi * 4) / 5;
->  		} else {
->  			/* bss info not receiving from the right channel, use the original RX signal infos */
->  			ss_final = dst->PhyInfo.SignalStrength;
-> @@ -1926,7 +1926,7 @@ unsigned int rtw_restructure_ht_ie(struct adapter *padapter, u8 *in_ie, u8 *out_
->  
->  		if (pqospriv->qos_option == 0) {
->  			out_len = *pout_len;
-> -			rtw_set_ie(out_ie+out_len, _VENDOR_SPECIFIC_IE_,
-> +			rtw_set_ie(out_ie + out_len, _VENDOR_SPECIFIC_IE_,
->  				   _WMM_IE_Length_, WMM_IE, pout_len);
->  
->  			pqospriv->qos_option = 1;
-> @@ -1964,10 +1964,10 @@ unsigned int rtw_restructure_ht_ie(struct adapter *padapter, u8 *in_ie, u8 *out_
->  
->  		phtpriv->ht_option = true;
->  
-> -		p = rtw_get_ie(in_ie+12, _HT_ADD_INFO_IE_, &ielen, in_len-12);
-> +		p = rtw_get_ie(in_ie + 12, _HT_ADD_INFO_IE_, &ielen, in_len - 12);
-
-		p = rtw_get_ie(in_ie + 12, _HT_ADD_INFO_IE_, &ielen,
-			       in_len - 12);
-
->  		if (p && (ielen == sizeof(struct ieee80211_ht_addt_info))) {
->  			out_len = *pout_len;
-> -			rtw_set_ie(out_ie+out_len, _HT_ADD_INFO_IE_, ielen, p+2, pout_len);
-> +			rtw_set_ie(out_ie + out_len, _HT_ADD_INFO_IE_, ielen, p + 2, pout_len);
-
- 			rtw_set_ie(out_ie + out_len, _HT_ADD_INFO_IE_, ielen,
- 				   p + 2, pout_len);
-
->  		}
->  	}
->  	return phtpriv->ht_option;
-> @@ -2058,8 +2058,8 @@ void rtw_issue_addbareq_cmd(struct adapter *padapter, struct xmit_frame *pxmitfr
->  	phtpriv = &psta->htpriv;
->  
->  	if ((phtpriv->ht_option) && (phtpriv->ampdu_enable)) {
-> -		issued = (phtpriv->agg_enable_bitmap>>priority)&0x1;
-> -		issued |= (phtpriv->candidate_tid_bitmap>>priority)&0x1;
-> +		issued = (phtpriv->agg_enable_bitmap >> priority) & 0x1;
-> +		issued |= (phtpriv->candidate_tid_bitmap >> priority) & 0x1;
->  
->  		if (issued == 0) {
->  			DBG_88E("rtw_issue_addbareq_cmd, p=%d\n", priority);
-> -- 
-> 2.1.4
+> +       pr_alert("%s%s Tiny SRCU per-CPU(idx=%d): (%hd,%hd)\n",
+> +                tt, tf, idx,
+> +                READ_ONCE(sp->srcu_lock_nesting[!idx]),
+> +                READ_ONCE(sp->srcu_lock_nesting[idx]));
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Where pr_alert() is:
+> 
+> #define pr_alert(fmt, ...) \
+> 	printk(KERN_ALERT pr_fmt(fmt), ##__VA_ARGS__)
+> 
+> 
+> So that's where pr_fmt() is coming into it.
+> 
+> And if any code in module.c called srcu_torture_stats_print(), it would
+> actually claim to come from "module: ", which would be confusing.
+> 
+> I don't think you use pr_fmt() in the RCU code, so you could skip using
+> pr_alert() and just use printk(KERN_ALERT "...") and get the same
+> result, without any interactions with pr_fmt().
 
-thx!
-hofrat
+Does the following patch fix things for you?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 7eb8d998d3f66851c0d25abcdb2d737edc6a21ed
+Author: Joe Perches <joe@perches.com>
+Date:   Tue May 30 15:20:37 2017 -0700
+
+    module: Fix pr_fmt() bug for header use of printk
+    
+    This commit removes the pr_fmt() macro, replacing it with mod_err() and
+    mod_debug() macros to avoid errors when using printk() from header files.
+    
+    Signed-off-by: Joe Perches <joe@perches.com>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/arch/blackfin/kernel/module.c b/arch/blackfin/kernel/module.c
+index 0188c933b155..15af5768c403 100644
+--- a/arch/blackfin/kernel/module.c
++++ b/arch/blackfin/kernel/module.c
+@@ -4,8 +4,6 @@
+  * Licensed under the GPL-2 or later
+  */
+ 
+-#define pr_fmt(fmt) "module %s: " fmt, mod->name
+-
+ #include <linux/moduleloader.h>
+ #include <linux/elf.h>
+ #include <linux/vmalloc.h>
+@@ -16,6 +14,11 @@
+ #include <asm/cacheflush.h>
+ #include <linux/uaccess.h>
+ 
++#define mod_err(mod, fmt, ...)						\
++	pr_err("module %s: " fmt, (mod)->name, ##__VA_ARGS__)
++#define mod_debug(mod, fmt, ...)					\
++	pr_debug("module %s: " fmt, (mod)->name, ##__VA_ARGS__)
++
+ /* Transfer the section to the L1 memory */
+ int
+ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+@@ -44,7 +47,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_inst_sram_alloc(s->sh_size);
+ 			mod->arch.text_l1 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L1 inst memory allocation failed\n");
++				mod_err(mod, "L1 inst memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			dma_memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -56,7 +59,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_sram_alloc(s->sh_size);
+ 			mod->arch.data_a_l1 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L1 data memory allocation failed\n");
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -68,7 +71,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_sram_zalloc(s->sh_size);
+ 			mod->arch.bss_a_l1 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L1 data memory allocation failed\n");
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 
+@@ -77,7 +80,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_B_sram_alloc(s->sh_size);
+ 			mod->arch.data_b_l1 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L1 data memory allocation failed\n");
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -87,7 +90,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l1_data_B_sram_alloc(s->sh_size);
+ 			mod->arch.bss_b_l1 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L1 data memory allocation failed\n");
++				mod_err(mod, "L1 data memory allocation failed\n");
+ 				return -1;
+ 			}
+ 			memset(dest, 0, s->sh_size);
+@@ -99,7 +102,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_alloc(s->sh_size);
+ 			mod->arch.text_l2 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L2 SRAM allocation failed\n");
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -111,7 +114,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_alloc(s->sh_size);
+ 			mod->arch.data_l2 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L2 SRAM allocation failed\n");
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 			memcpy(dest, (void *)s->sh_addr, s->sh_size);
+@@ -123,7 +126,7 @@ module_frob_arch_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+ 			dest = l2_sram_zalloc(s->sh_size);
+ 			mod->arch.bss_l2 = dest;
+ 			if (dest == NULL) {
+-				pr_err("L2 SRAM allocation failed\n");
++				mod_err(mod, "L2 SRAM allocation failed\n");
+ 				return -1;
+ 			}
+ 
+@@ -157,8 +160,8 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 	Elf32_Sym *sym;
+ 	unsigned long location, value, size;
+ 
+-	pr_debug("applying relocate section %u to %u\n",
+-		relsec, sechdrs[relsec].sh_info);
++	mod_debug(mod, "applying relocate section %u to %u\n",
++		  relsec, sechdrs[relsec].sh_info);
+ 
+ 	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
+ 		/* This is where to make the change */
+@@ -174,14 +177,14 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 
+ #ifdef CONFIG_SMP
+ 		if (location >= COREB_L1_DATA_A_START) {
+-			pr_err("cannot relocate in L1: %u (SMP kernel)\n",
++			mod_err(mod, "cannot relocate in L1: %u (SMP kernel)\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 		}
+ #endif
+ 
+-		pr_debug("location is %lx, value is %lx type is %d\n",
+-			location, value, ELF32_R_TYPE(rel[i].r_info));
++		mod_debug(mod, "location is %lx, value is %lx type is %d\n",
++			  location, value, ELF32_R_TYPE(rel[i].r_info));
+ 
+ 		switch (ELF32_R_TYPE(rel[i].r_info)) {
+ 
+@@ -200,12 +203,12 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 		case R_BFIN_PCREL12_JUMP:
+ 		case R_BFIN_PCREL12_JUMP_S:
+ 		case R_BFIN_PCREL10:
+-			pr_err("unsupported relocation: %u (no -mlong-calls?)\n",
++			mod_err(mod, "unsupported relocation: %u (no -mlong-calls?)\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 
+ 		default:
+-			pr_err("unknown relocation: %u\n",
++			mod_err(mod, "unknown relocation: %u\n",
+ 				ELF32_R_TYPE(rel[i].r_info));
+ 			return -ENOEXEC;
+ 		}
+@@ -222,7 +225,7 @@ apply_relocate_add(Elf_Shdr *sechdrs, const char *strtab,
+ 			isram_memcpy((void *)location, &value, size);
+ 			break;
+ 		default:
+-			pr_err("invalid relocation for %#lx\n", location);
++			mod_err(mod, "invalid relocation for %#lx\n", location);
+ 			return -ENOEXEC;
+ 		}
+ 	}
