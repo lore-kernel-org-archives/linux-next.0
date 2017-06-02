@@ -1,38 +1,46 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: upcoming conflict between the target-updates and
- target-bva trees
-Date: Thu, 01 Jun 2017 21:03:44 -0700
-Message-ID: <1496376224.27407.228.camel@haakon3.risingtidesystems.com>
-References: <20170602133928.2afa3e7a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the target-bva tree with the
+ target-updates tree
+Date: Fri, 2 Jun 2017 14:05:35 +1000
+Message-ID: <20170602140535.17d87d58@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:52310 "EHLO
-        linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750710AbdFBEDr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 2 Jun 2017 00:03:47 -0400
-In-Reply-To: <20170602133928.2afa3e7a@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:41605 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750710AbdFBEFi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 2 Jun 2017 00:05:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bart Van Assche <bart.vanassche@gmail.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bart Van Assche <bart.vanassche@gmail.com>, "Nicholas A. Bellinger" <nab@linux-iscsi.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, 2017-06-02 at 13:39 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Last night the tagret-bva tree was rebased on top of the target-updates
-> tree.  Just now, part of the target-updates tree has been rewritten.
-> So now I expect to get conflict(s) when I merge these trees since the
-> commits in the target-updates tree are no longer the same as those that
-> the target-bva tree was rebased on top of.
-> 
-> Please take a little time to sort out your development process.
-> 
+Hi Bart,
 
-Unfortunately, this is going to continue to be a problem once these
-patches are list reviewed, and included in target-updates.
+Today's linux-next merge of the target-bva tree got a conflict in:
 
-Bart, can you please drop the patches until they are list reviewed so
-there isn't a constant stream of merge conflicts in linux-next for your
-un-reviewed code..?
+  drivers/target/target_core_tpg.c
+
+between commits:
+
+  06fd91ce633d ("target/configfs: Kill se_lun->lun_link_magic")
+  4f61e1e687c4 ("target: Avoid target_shutdown_sessions loop during queue_depth change")
+
+from the target-updates tree and commits:
+
+  ba438d7c8d39 ("target: Avoid target_shutdown_sessions loop during queue_depth change")
+  b968ec8ff101 ("target/configfs: Kill se_lun->lun_link_magic")
+
+from the target-bva tree.
+
+I fixed it up (I used the version from the target-updates tree) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
