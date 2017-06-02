@@ -1,57 +1,86 @@
-From: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Subject: Re: linux-next: manual merge of the target-bva tree with the
- target-updates tree
-Date: Thu, 01 Jun 2017 20:58:07 -0700
-Message-ID: <1496375887.27407.223.camel@haakon3.risingtidesystems.com>
-References: <20170601141055.3b64fefc@canb.auug.org.au>
-         <1496293179.16453.1.camel@sandisk.com>
-         <1496293444.27407.184.camel@haakon3.risingtidesystems.com>
-         <aff8f6fa-89b4-3dee-2c3f-68eae613fbba@sandisk.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the drm tree
+Date: Fri, 2 Jun 2017 13:59:25 +1000
+Message-ID: <20170602135925.70272f31@canb.auug.org.au>
+References: <20170519120729.597f5a9e@canb.auug.org.au>
+        <87y3tsg2jx.fsf@eliezer.anholt.net>
+        <20170525114933.1e1dea04@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linux-iscsi.org ([67.23.28.174]:60049 "EHLO
-        linux-iscsi.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751122AbdFBD6J (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 1 Jun 2017 23:58:09 -0400
-In-Reply-To: <aff8f6fa-89b4-3dee-2c3f-68eae613fbba@sandisk.com>
+Received: from ozlabs.org ([103.22.144.67]:59455 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751120AbdFBD72 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Jun 2017 23:59:28 -0400
+In-Reply-To: <20170525114933.1e1dea04@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bart Van Assche <bart.vanassche@sandisk.com>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: Eric Anholt <eric@anholt.net>
+Cc: Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Cooksey <tom.cooksey@arm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Thu, 2017-06-01 at 14:14 -0700, Bart Van Assche wrote:
-> On 05/31/17 22:04, Nicholas A. Bellinger wrote:
-> > Go ahead and get list review on drivers/target/ changes before pushing
-> > them into linux-next, please.
+Hi all,
+
+On Thu, 25 May 2017 11:49:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> On Fri, 19 May 2017 10:49:06 -0700 Eric Anholt <eric@anholt.net> wrote:
+> >
+> > Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> >   
+> > > After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+> > > produced these warnings:
+> > >
+> > > drivers/gpu/drm/pl111/pl111_drv.c:81:12: warning: 'pl111_modeset_init' defined but not used [-Wunused-function]
+> > >  static int pl111_modeset_init(struct drm_device *dev)
+> > >             ^
+> > > drivers/gpu/drm/pl111/pl111_drv.c:149:26: warning: 'pl111_drm_driver' defined but not used [-Wunused-variable]
+> > >  static struct drm_driver pl111_drm_driver = {
+> > >                           ^    
 > > 
-> > Btw, I don't care if you queue up one's that do have at least two
-> > Reviewed-bys into your tree, but everything that doesn't have
-> > Reviewed-bys or Acked-by should not be going into linux-next.
+> > Sorry about that -- I thought that kbuild test robot would give me
+> > notification of new warnings.
+> > 
+> > Patch incoming.  
 > 
-> It is not your job to rewrite the rules for linux-next. I'm following
-> the guidelines I received from Stephen in December 2016. You were copied
-> on the e-mail with guidelines Stephen sent to me. See also
-> https://www.spinics.net/lists/linux-next/msg38488.html.
-> 
-> Stephen, if anything would have changed in the meantime that I'm not
-> aware of please let me know.
-> 
+> I saw the patch, but it doesn't seem to have been applied anywhere yet.
 
-The point is you're not sending PULL requests.
+So these warnings went away yesterday, but are back today after quite a
+few patches were dropped from the drm-misc tree.
 
-But like I said earlier, I really don't care if you put patches that
-have been reviewed into your tree for linux-next before I get a chance
-to review and pick them up for target-pending.
+Yesterday it contained theses (relative to the drm tree):
 
-However, you putting random un-reviewed changes is where I have to draw
-the line, especially considering what happened earlier in year where
-what you had in linux-next close to the merge window was completely and
-utterly broken.
+9a8d5e4a53dc drm/vc4: Fix comment in vc4_drv.h
+66d6dd45eee2 drm/pl111: fix warnings without CONFIG_ARM_AMBA
+91110a4b64fe drm/atomic: Consitfy mode parameter to drm_atomic_set_mode_for_crtc()
+fb51cbfd4b2e drm/arcgpu: Drop drm_vblank_cleanup
+e3ec0e1e38a5 drm/atmel: Drop drm_vblank_cleanup
+85769cf7cd7f drm/imx: Drop drm_vblank_cleanup
+a360b39b5137 drm/meson: Drop drm_vblank_cleanup
+25b905fe4323 drm/stm: Drop drm_vblank_cleanup
+d79373bd4d7e drm/sun4i: Drop drm_vblank_cleanup
+8938d13585bc drm: better document how to send out the crtc disable event
+46466b0dac3f drm: Use vsnprintf extension %ph
+99cdb35e787b drm/doc: move printf helpers out of drmP.h
+e7cc23de3e4e drm/pl111: select DRM_PANEL
+7dbcbce9f551 drm/bridge: analogix-anx78xx: Use bridge->mode_valid() callback
+faf94a0883ce drm: Use mode_valid() in atomic modeset
+97f973d65260 drm: Use new mode_valid() helpers in connector probe helper
+b1240f81a186 drm: Introduce drm_bridge_mode_valid()
+da251bf8f935 drm: Add drm_{crtc/encoder/connector}_mode_valid()
+18e51064c42c drm: Remove drm_device->virtdev
+a301b1118615 drm: todo: remove task about switch to drm_connector_list_iter
+eb53a46be597 drm: remove unsafe drm_for_each_connector()
+4894bf711d19 drm/vc4: use drm_for_each_connector_iter()
+875dd62697fe drm/nouveau: use drm_for_each_connector_iter()
+c8bf8b968adb drm/mediatek: use drm_for_each_connector_iter()
+2fd96b4116bf drm/i915: use drm_for_each_connector_iter()
+2cbeb64f6c70 drm/rockchip: use drm_for_each_connector_iter()
+48a92916729b drm/exynos: use drm_for_each_connector_iter()
 
-Would you put un-reviewed block and scsi changes into linux-next..?
+Today it only has:
 
-What would those subsystem maintainers say about that..?
+2d7b56378d32 drm/rockchip: gem: add the lacks lock and trivial changes
 
-Why is drivers/target any different..?
+-- 
+Cheers,
+Stephen Rothwell
