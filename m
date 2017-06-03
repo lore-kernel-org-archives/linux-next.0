@@ -1,49 +1,25 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the drm tree
-Date: Sat, 3 Jun 2017 11:26:29 +1000
-Message-ID: <20170603112621.0dcdf427@canb.auug.org.au>
-References: <20170519120729.597f5a9e@canb.auug.org.au>
-        <87y3tsg2jx.fsf@eliezer.anholt.net>
-        <20170525114933.1e1dea04@canb.auug.org.au>
-        <20170602135925.70272f31@canb.auug.org.au>
-        <87poem85it.fsf@eliezer.anholt.net>
-        <20170603094037.7aa077d9@canb.auug.org.au>
-        <8737bhlx0p.fsf@eliezer.anholt.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] staging: rtl8188eu: style fixes
+Date: Sat, 3 Jun 2017 17:18:27 +0900
+Message-ID: <20170603081827.GA1556@kroah.com>
+References: <20170602143643.GA9038@lear>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8737bhlx0p.fsf@eliezer.anholt.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Anholt <eric@anholt.net>
-Cc: Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Cooksey <tom.cooksey@arm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Caesar Wang <wxt@rock-chips.com>, Mark Yao <mark.yao@rock-chips.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:53742 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbdFCOG6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 3 Jun 2017 10:06:58 -0400
+Content-Disposition: inline
+In-Reply-To: <20170602143643.GA9038@lear>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Galo <anglor@varoa.net>
+Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-Hi Eric,
-
-On Fri, 02 Jun 2017 17:45:10 -0700 Eric Anholt <eric@anholt.net> wrote:
->
-> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Fri, Jun 02, 2017 at 04:36:44PM +0200, Galo wrote:
+> Fix several "CHECK: spaces preferred around that .." checks.
 > 
-> > On Fri, 02 Jun 2017 14:05:14 -0700 Eric Anholt <eric@anholt.net> wrote:  
-> >>
-> >> Not sure what's going on.  I see your "yesterday" list present, and not
-> >> your "today" commit.  
-> >
-> > I just refetched the drm-misc tree and received no changes.  It is
-> > still as I said in the previous email.  This tree is fetched from the
-> > drm-misc-next branch of git://anongit.freedesktop.org/drm/drm-misc
-> >
-> > The single commit currently in that branch was authored by "Caesar Wang
-> > <wxt@rock-chips.com>" and committed by "Mark Yao
-> > <mark.yao@rock-chips.com>" (both now cc'd).  
-> 
-> I see that commit in drm-misc-next-fixes, but not drm-misc-next.
+> Signed-off-by: Galo Navarro <anglor@varoa.net>
 
-I see it in the drm-misc-fixes tree (branch for-linux-next-fixes) as
-well (along with another commit).
-
-I made a mistake above, the drm-misc tree is branch for-linux-next.
--- 
-Cheers,
-Stephen Rothwell
+This name doesn't match the name in your "From:" line in your email :(
