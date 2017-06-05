@@ -1,48 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Mon, 5 Jun 2017 13:28:36 +1000
-Message-ID: <20170605132836.33588ec5@canb.auug.org.au>
-References: <20170531122332.3f573f1d@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the tty tree
+Date: Mon, 5 Jun 2017 14:57:49 +1000
+Message-ID: <20170605145749.4d6df5cd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46497 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:47027 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751224AbdFED2k (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 4 Jun 2017 23:28:40 -0400
-In-Reply-To: <20170531122332.3f573f1d@canb.auug.org.au>
+        id S1751258AbdFEE5w (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Jun 2017 00:57:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Okash Khawaja <okash.khawaja@gmail.com>, Alan Cox <alan@llwyncelyn.cymru>
 
-Hi Lee,
+Hi Greg,
 
-On Wed, 31 May 2017 12:23:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/usb/typec/typec_wcove.c: In function 'wcove_typec_pr
-> obe':
-> drivers/usb/typec/typec_wcove.c:306:32: error: 'struct intel_soc_pmic' has no member named 'irq_chip_data_level2'
->   ret = regmap_irq_get_virq(pmic->irq_chip_data_level2,
->                                 ^
-> 
-> Caused by commit
-> 
->   aa32452e6ef9 ("mfd: intel_soc_pmic_bxtwc: Use chained irqs for second level irq chips")
-> 
-> interacting with commit
-> 
->   d2061f9cc32d ("usb: typec: add driver for Intel Whiskey Cove PMIC USB Type-C PHY")
-> 
-> from Linus' tree (v4.12-rc1).  grep is your friend. :-)
-> 
-> I have used the mfd tree from next-20170530 for today.
+Today's linux-next merge of the staging tree got a conflict in:
 
-I am still getting this failure.
+  include/uapi/linux/tty.h
+
+between commit:
+
+  8a8dabf2dd68 ("tty: handle the case where we cannot restore a line discipline")
+
+from the tty tree and commit:
+
+  1ab92da32e37 ("staging: speakup: add tty-based comms functions")
+
+from the staging tree.
+
+I fixed it up (I used the tty tree version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
 -- 
 Cheers,
 Stephen Rothwell
