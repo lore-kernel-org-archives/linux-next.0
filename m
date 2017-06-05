@@ -1,49 +1,60 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the tty tree
-Date: Mon, 5 Jun 2017 08:50:03 +0200
-Message-ID: <20170605065003.GG14680@kroah.com>
-References: <20170605145749.4d6df5cd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 5 Jun 2017 17:01:17 +1000
+Message-ID: <20170605170117.6a1fc15e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:50851 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751297AbdFEGuG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 5 Jun 2017 02:50:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20170605145749.4d6df5cd@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:54091 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751274AbdFEHBV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 5 Jun 2017 03:01:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Okash Khawaja <okash.khawaja@gmail.com>, Alan Cox <alan@llwyncelyn.cymru>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>, Kees Cook <keescook@chromium.org>
 
-On Mon, Jun 05, 2017 at 02:57:49PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   include/uapi/linux/tty.h
-> 
-> between commit:
-> 
->   8a8dabf2dd68 ("tty: handle the case where we cannot restore a line discipline")
-> 
-> from the tty tree and commit:
-> 
->   1ab92da32e37 ("staging: speakup: add tty-based comms functions")
-> 
-> from the staging tree.
-> 
-> I fixed it up (I used the tty tree version) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+Hi Andrew,
 
-I'm the maintainer of both, I knew this would happen and made it so it
-was obvious what version to take :)
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-thanks,
+sound/pcmcia/pdaudiocf/pdaudiocf.o: warning: objtool: .text: unexpected end of section
+arch/x86/ras/mce_amd_inj.o: warning: objtool: inj_readme_read() falls through to next function extcpu_fops_open()
+sound/sound_core.o: warning: objtool: register_sound_special_device() falls through to next function register_sound_special()
 
-greg k-h
+and many more like those. Also:
+
+In file included from /home/sfr/next/next/include/linux/bitmap.h:8:0,
+                 from /home/sfr/next/next/include/linux/cpumask.h:11,
+                 from /home/sfr/next/next/arch/x86/include/asm/cpumask.h:4,
+                 from /home/sfr/next/next/arch/x86/include/asm/msr.h:10,
+                 from /home/sfr/next/next/arch/x86/include/asm/processor.h:20,
+                 from /home/sfr/next/next/arch/x86/include/asm/cpufeature.h:4,
+                 from /home/sfr/next/next/arch/x86/include/asm/thread_info.h:52,
+                 from /home/sfr/next/next/include/linux/thread_info.h:37,
+                 from /home/sfr/next/next/arch/x86/include/asm/preempt.h:6,
+                 from /home/sfr/next/next/include/linux/preempt.h:80,
+                 from /home/sfr/next/next/include/linux/spinlock.h:50,
+                 from /home/sfr/next/next/include/linux/mmzone.h:7,
+                 from /home/sfr/next/next/include/linux/gfp.h:5,
+                 from /home/sfr/next/next/arch/x86/power/hibernate_64.c:11:
+In function 'memcpy',
+    inlined from 'relocate_restore_code' at /home/sfr/next/next/arch/x86/power/hibernate_64.c:150:2,
+    inlined from 'swsusp_arch_resume' at /home/sfr/next/next/arch/x86/power/hibernate_64.c:185:8:
+/home/sfr/next/next/include/linux/string.h:309:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+    __read_overflow2();
+    ^
+
+Caused by commit
+
+  088a5ecf7581 ("include/linux/string.h: add the option of fortified string.h functions")
+
+We really need to fix all the known problems it detects *before*
+merging this commit ...
+
+I have reverted it for today.
+-- 
+Cheers,
+Stephen Rothwell
