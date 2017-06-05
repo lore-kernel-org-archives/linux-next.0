@@ -1,57 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the at91 tree with the arm-soc tree
-Date: Mon, 5 Jun 2017 09:48:03 +1000
-Message-ID: <20170605094803.466a6132@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the clk tree
+Date: Mon, 5 Jun 2017 10:14:44 +1000
+Message-ID: <20170605101444.0d89b151@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56093 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:49101 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751147AbdFDXsH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 4 Jun 2017 19:48:07 -0400
+        id S1751161AbdFEAOr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Jun 2017 20:14:47 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicolas Ferre <nicolas.ferre@atmel.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>, =?UTF-8?B?U3plbXrFkSBBbmRyw6Fz?= <sza@esh.hu>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Nicolas,
+Hi all,
 
-Today's linux-next merge of the at91 tree got a conflict in:
+After merging the clk tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  arch/arm/mach-at91/Kconfig
+drivers/clk/at91/clk-generated.c: In function 'at91_clk_register_generated':
+drivers/clk/at91/clk-generated.c:273:20: error: invalid storage class for function 'of_sama5d2_clk_generated_setup'
+ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+                    ^
+drivers/clk/at91/clk-generated.c:273:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static void __init of_sama5d2_clk_generated_setup(struct device_node *np)
+ ^
+In file included from include/linux/clk-provider.h:15:0,
+                 from drivers/clk/at91/clk-generated.c:14:
+include/linux/of.h:1132:16: error: initializer element is not constant
+        .data = (fn == (fn_type)NULL) ? fn : fn  }
+                ^
+include/linux/of.h:1146:3: note: in expansion of macro '_OF_DECLARE'
+   _OF_DECLARE(table, name, compat, fn, of_init_fn_1)
+   ^
+include/linux/clk-provider.h:791:42: note: in expansion of macro 'OF_DECLARE_1'
+ #define CLK_OF_DECLARE(name, compat, fn) OF_DECLARE_1(clk, name, compat, fn)
+                                          ^
+drivers/clk/at91/clk-generated.c:321:1: note: in expansion of macro 'CLK_OF_DECLARE'
+ CLK_OF_DECLARE(of_sama5d2_clk_generated_setup, "atmel,sama5d2-clk-generated",
+ ^
+include/linux/of.h:1132:16: note: (near initialization for '__of_table_of_sama5d2_clk_generated_setup.data')
+        .data = (fn == (fn_type)NULL) ? fn : fn  }
+                ^
+include/linux/of.h:1146:3: note: in expansion of macro '_OF_DECLARE'
+   _OF_DECLARE(table, name, compat, fn, of_init_fn_1)
+   ^
+include/linux/clk-provider.h:791:42: note: in expansion of macro 'OF_DECLARE_1'
+ #define CLK_OF_DECLARE(name, compat, fn) OF_DECLARE_1(clk, name, compat, fn)
+                                          ^
+drivers/clk/at91/clk-generated.c:321:1: note: in expansion of macro 'CLK_OF_DECLARE'
+ CLK_OF_DECLARE(of_sama5d2_clk_generated_setup, "atmel,sama5d2-clk-generated",
+ ^
+include/linux/of.h:1129:22: error: expected declaration or statement at end of input
+  static const struct of_device_id __of_table_##name  \
+                      ^
+include/linux/of.h:1146:3: note: in expansion of macro '_OF_DECLARE'
+   _OF_DECLARE(table, name, compat, fn, of_init_fn_1)
+   ^
+include/linux/clk-provider.h:791:42: note: in expansion of macro 'OF_DECLARE_1'
+ #define CLK_OF_DECLARE(name, compat, fn) OF_DECLARE_1(clk, name, compat, fn)
+                                          ^
+drivers/clk/at91/clk-generated.c:321:1: note: in expansion of macro 'CLK_OF_DECLARE'
+ CLK_OF_DECLARE(of_sama5d2_clk_generated_setup, "atmel,sama5d2-clk-generated",
+ ^
 
-between commit:
+Caused by commit
 
-  cc7a938f5f30 ("ARM: at91: select CONFIG_ARM_CPU_SUSPEND")
+  8e56133e5c7b ("clk: at91: fix clk-generated parenting")
 
-from the arm-soc tree and commit:
+A closing brace was lost ...
 
-  81c0bb0b6ad1 ("ARM: at91: Add armv7m support")
-
-from the at91 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+I have used the clk tree from next-20170602 for today.
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/arm/mach-at91/Kconfig
-index cbd959b73654,7497a28a79d1..000000000000
---- a/arch/arm/mach-at91/Kconfig
-+++ b/arch/arm/mach-at91/Kconfig
-@@@ -1,7 -1,6 +1,7 @@@
-  menuconfig ARCH_AT91
-  	bool "Atmel SoCs"
-- 	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V7
-+ 	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V7 || ARM_SINGLE_ARMV7M
- +	select ARM_CPU_SUSPEND if PM
-  	select COMMON_CLK_AT91
-  	select GPIOLIB
-  	select PINCTRL
