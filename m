@@ -1,89 +1,69 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the uuid tree
-Date: Thu, 08 Jun 2017 14:30:43 +0300
-Message-ID: <1496921443.22624.53.camel@linux.intel.com>
-References: <20170608160415.007d1800@canb.auug.org.au>
-         <20170608070414.GA12961@lst.de>
+From: Sebastian Reichel <sre@kernel.org>
+Subject: Re: next-20170608 build: 1 failures 4 warnings (next-20170608)
+Date: Thu, 8 Jun 2017 13:33:26 +0200
+Message-ID: <20170608113326.zo3nqwkbx3k42owz@earth>
+References: <E1dIuCM-0000cQ-QM@optimist>
+ <20170608103231.gmqx6qluzcjwzrst@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gsowus6vtznnoya2"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga04.intel.com ([192.55.52.120]:48298 "EHLO mga04.intel.com"
+Received: from mail.kernel.org ([198.145.29.99]:36078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750914AbdFHLas (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Jun 2017 07:30:48 -0400
-In-Reply-To: <20170608070414.GA12961@lst.de>
+        id S1751422AbdFHLd3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Jun 2017 07:33:29 -0400
+Content-Disposition: inline
+In-Reply-To: <20170608103231.gmqx6qluzcjwzrst@sirena.org.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org
 
-On Thu, 2017-06-08 at 09:04 +0200, Christoph Hellwig wrote:
-> On Thu, Jun 08, 2017 at 04:04:15PM +1000, Stephen Rothwell wrote:
-> > Hi Christoph,
-> > 
-> > After merging the uuid tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> > 
-> > In file included from drivers/base/cpu.c:16:0:
-> > include/linux/acpi.h:744:16: error: unknown type name 'guid_t'
-> >           const guid_t *guid,
-> >                 ^
-> > 
-> > Caused by commit
-> > 
-> >   94116f8126de ("ACPI: Switch to use generic guid_t in
-> > acpi_evaluate_dsm()")
-> > 
-> > linux/uuid.h is only include for the CONFIG_ACPI case (in commit
-> > 41c8bdb3ab10 "acpi, nfit: Switch to use new generic UUID
-> > API").  This
-> > build does not have CONFIG_ACPI set.
-> 
-> Meh.  Fix below:
 
-Oh, indeed.
-Thanks for taking care!
+--gsowus6vtznnoya2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hi,
 
-> 
-> ---
-> From bcbc2265f269cc57924371e3bce8c3220d0270c5 Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Thu, 8 Jun 2017 09:02:20 +0200
-> Subject: acpi: always include uuid.h
-> 
-> Without this the build will fail for !CONFIG_ACPI builds on x86.
-> 
-> Fixes: 94116f81 ("ACPI: Switch to use generic guid_t in
-> acpi_evaluate_dsm()")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/acpi.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index ab19365c905f..cafdfb84ca28 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -26,6 +26,7 @@
->  #include <linux/resource_ext.h>
->  #include <linux/device.h>
->  #include <linux/property.h>
-> +#include <linux/uuid.h>
->  
->  #ifndef _LINUX
->  #define _LINUX
-> @@ -39,7 +40,6 @@
->  #include <linux/dynamic_debug.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
-> -#include <linux/uuid.h>
->  
->  #include <acpi/acpi_bus.h>
->  #include <acpi/acpi_drivers.h>
+On Thu, Jun 08, 2017 at 11:32:31AM +0100, Mark Brown wrote:
+> On Thu, Jun 08, 2017 at 10:57:50AM +0100, Build bot for Mark Brown wrote:
+>=20
+> Today's -next fails to build an ARM allmodconfig due to:
+>=20
+> > 	arm-allmodconfig
+> > ../drivers/hsi/clients/ssi_protocol.c:1069:5: error: 'struct net_device=
+' has no member named 'destructor'
+>=20
+> due to cf124db566e6 (net: Fix inconsistent teardown and release of
+> private netdev state.) which missed this instance, presumably due to a
+> combination of it not being in one of the normal networking driver
+> directories and only being buildable on ARM.
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+I assume, that this will be fixed via the net tree.
+If you Cc me on updated/new patch I will provide Acked-by.
+
+-- Sebastian
+
+--gsowus6vtznnoya2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlk5NgYACgkQ2O7X88g7
++poAExAAhU/w20E5WhOsW34q9cKL636imVqYv9A0LVTD3DSINy01J0u3Nh30tOGN
+hy/8hn5XJ5m/J2BnPSdfmXlEskJozOJ/xtoUb30cfOftB4Aq0Kr38jcfwxSXgVCd
+NdZgS+aQxCPuw69nP7qbyXKWEVel55cQKSSARP3xcnY2JgaBdOK0xUn9VLy0o1bl
+NSdxP24zvnkXi0Yk31uR5FrTIujw4E4Tzomrpure6oVZmU/K9QqfdbeoH8Bpgu4e
+AQz6/baMGED8hAJJ7e5o1B3KlI4INs6CjqxKxXsgJrdAui3b7Stokq9TQc3RiUqR
+R374rKQBHYjwF6WQI2ZFB2yQ7OzKaCeVEH87wpapvvDJ3EL69QmLqGY+uzih8n+l
+gXh5BdLUO9ZRU+xtTDixFCyDKVrPi06dUbl9U/dQyu0jazIOwp0j7GSQGpLtV+/N
+Dq+lGsQyzYZhZzz7nZE8W2WrX3yNHeV/SqDLWQhdH6sS2kXfTvTwhbozfk+TEPm+
+sB2BjcDf6mZf16gSWZrTeODG8lCvnhNd/qwT9C9ZThzxwBmdy0weuixGcYfN4n5P
+j5ajbFCx0iDHk7HrWTF8cJ3j1GpdPvDLR564uVlh5gl7B/o5TuvDuc6+267Y32xN
+QRnBKnV4ziMSguBhN9K1Y2xRQvx3rJzJGnFXnSl5tKFkviOQ17w=
+=5Ssi
+-----END PGP SIGNATURE-----
+
+--gsowus6vtznnoya2--
