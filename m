@@ -1,48 +1,24 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 8 (drivers/media/i2c/adv7604.c)
-Date: Thu, 8 Jun 2017 08:36:38 -0700
-Message-ID: <6eaaa02b-7940-bb4b-33c8-ce449ce27bda@infradead.org>
-References: <20170608175055.6bb6fb21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the xen-tip tree
+Date: Fri, 9 Jun 2017 07:59:10 +1000
+Message-ID: <20170609075910.66c300b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:48060 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751615AbdFHPgr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Jun 2017 11:36:47 -0400
-In-Reply-To: <20170608175055.6bb6fb21@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>, Mats Randgaard <mats.randgaard@cisco.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 06/08/17 00:50, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20170607:
-> 
+Hi all,
 
-on x86_64: (randconfig)
+The current top commit of the xen-tip tree
 
-CONFIG_VIDEO_ADV7604=y
-# CONFIG_VIDEO_ADV7604_CEC is not set
-CONFIG_COMPILE_TEST=y
+  9e925824eccd ("xen: avoid type warning in xchg_xen_ulong")
 
-
-drivers/built-in.o: In function `adv76xx_unregistered':
-adv7604.c:(.text+0x43ad91): undefined reference to `cec_unregister_adapter'
-drivers/built-in.o: In function `adv76xx_registered':
-adv7604.c:(.text+0x43adc4): undefined reference to `cec_register_adapter'
-adv7604.c:(.text+0x43adef): undefined reference to `cec_delete_adapter'
-drivers/built-in.o: In function `adv76xx_set_edid':
-adv7604.c:(.text+0x43daab): undefined reference to `cec_get_edid_phys_addr'
-adv7604.c:(.text+0x43dabd): undefined reference to `cec_phys_addr_validate'
-adv7604.c:(.text+0x43df5d): undefined reference to `cec_s_phys_addr'
-
-
-
+has no Signed-off-by for its committer.
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
