@@ -1,33 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm-intel-fixes tree
-Date: Thu, 8 Jun 2017 10:20:31 +1000
-Message-ID: <20170608102031.456ce4d3@canb.auug.org.au>
+Subject: linux-next: state of the asm-generic tree
+Date: Thu, 8 Jun 2017 10:28:53 +1000
+Message-ID: <20170608102853.07b94811@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34977 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44177 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751049AbdFHAUe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Jun 2017 20:20:34 -0400
+        id S1751260AbdFHA24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 7 Jun 2017 20:28:56 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>, Jani Nikula <jani.nikula@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Arnd,
 
-After merging the drm-misc-fixes tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+The asm-generic tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git#master)
+hasn't been updated since last September and currently contains 2 commits:
 
-drivers/gpu/drm/i915/intel_engine_cs.c: In function 'intel_engine_is_idle':
-drivers/gpu/drm/i915/intel_engine_cs.c:1103:27: warning: unused variable 'dev_priv' [-Wunused-variable]
-  struct drm_i915_private *dev_priv = engine->i915;
-                           ^
+de4be6b87b6b asm-generic: page.h: fix comment typo
+acbdf0e98066 percpu: make this_cpu_generic_read notrace
 
-Introduced by commit
+The first is trivial but hasn't been applied to Linus' tree.  The latter
+has been applied to Linus' tree as a different commit (7f8d61f00522
+"percpu: use notrace variant of preempt_disable/preempt_enable").
 
-  d9533f19d840 ("drm/i915: Hold a wakeref for probing the ring registers")
+Could you please tidy this up?
 
 -- 
 Cheers,
