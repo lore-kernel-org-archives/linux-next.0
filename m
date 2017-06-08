@@ -1,34 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: state of the asm-generic tree
-Date: Thu, 8 Jun 2017 10:28:53 +1000
-Message-ID: <20170608102853.07b94811@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the wireless-drivers-next
+ tree
+Date: Thu, 8 Jun 2017 12:27:59 +1000
+Message-ID: <20170608122759.7ffda0c3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44177 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36101 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751260AbdFHA24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Jun 2017 20:28:56 -0400
+        id S1751433AbdFHC2C (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 7 Jun 2017 22:28:02 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Igor Mitsyanko <igor.mitsyanko.os@quantenna.com>, Dmitrii Lebed <dlebed@quantenna.com>, Sergei Maksimenko <smaksimenko@quantenna.com>, Sergey Matyukevich <smatyukevich@quantenna.com>, Bindu Therthala <btherthala@quantenna.com>, Huizhao Wang <hwang@quantenna.com>, Kamlesh Rath <krath@quantenna.com>, Avinash Patil <avinashp@quantenna.com>
 
-Hi Arnd,
+Hi all,
 
-The asm-generic tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git#master)
-hasn't been updated since last September and currently contains 2 commits:
+After merging the wireless-drivers-next tree, today's linux-next build
+(x86_64 allmodconfig) failed like this:
 
-de4be6b87b6b asm-generic: page.h: fix comment typo
-acbdf0e98066 percpu: make this_cpu_generic_read notrace
+drivers/net/wireless/quantenna/qtnfmac/core.c: In function 'qtnf_core_net_attach':
+drivers/net/wireless/quantenna/qtnfmac/core.c:319:5: error: 'struct net_device' has no member named 'destructor'
+  dev->destructor = free_netdev;
+     ^
 
-The first is trivial but hasn't been applied to Linus' tree.  The latter
-has been applied to Linus' tree as a different commit (7f8d61f00522
-"percpu: use notrace variant of preempt_disable/preempt_enable").
+Caused by commit
 
-Could you please tidy this up?
+  98f44cb0655c ("qtnfmac: introduce new FullMAC driver for Quantenna chipsets")
+
+interacting with commit
+
+  cf124db566e6 ("net: Fix inconsistent teardown and release of private netdev state.")
+
+from the net tree.
+
+I applied this merge fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 8 Jun 2017 12:24:08 +1000
+Subject: [PATCH] qtnfmac: fix up for "net: Fix inconsistent teardown and
+ release of private netdev state."
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/net/wireless/quantenna/qtnfmac/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/core.c b/drivers/net/wireless/quantenna/qtnfmac/core.c
+index c5ac252464f4..f053532c0e87 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/core.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/core.c
+@@ -316,7 +316,7 @@ int qtnf_core_net_attach(struct qtnf_wmac *mac, struct qtnf_vif *vif,
+ 	vif->netdev = dev;
+ 
+ 	dev->netdev_ops = &qtnf_netdev_ops;
+-	dev->destructor = free_netdev;
++	dev->needs_free_netdev = true;
+ 	dev_net_set(dev, wiphy_net(wiphy));
+ 	dev->ieee80211_ptr = &vif->wdev;
+ 	dev->ieee80211_ptr->iftype = iftype;
+-- 
+2.11.0
 
 -- 
 Cheers,
