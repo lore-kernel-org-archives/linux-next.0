@@ -1,102 +1,76 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the random
- tree
-Date: Thu, 8 Jun 2017 16:28:12 +1000
-Message-ID: <20170608162812.640fb3ab@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build failure after merge of the uuid tree
+Date: Thu, 8 Jun 2017 09:04:14 +0200
+Message-ID: <20170608070414.GA12961@lst.de>
+References: <20170608160415.007d1800@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57189 "EHLO ozlabs.org"
+Received: from verein.lst.de ([213.95.11.211]:57173 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751490AbdFHG2P (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Jun 2017 02:28:15 -0400
+        id S1751035AbdFHHEQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Jun 2017 03:04:16 -0400
+Content-Disposition: inline
+In-Reply-To: <20170608160415.007d1800@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Rik van Riel <riel@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi all,
+On Thu, Jun 08, 2017 at 04:04:15PM +1000, Stephen Rothwell wrote:
+> Hi Christoph,
+> 
+> After merging the uuid tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> In file included from drivers/base/cpu.c:16:0:
+> include/linux/acpi.h:744:16: error: unknown type name 'guid_t'
+>           const guid_t *guid,
+>                 ^
+> 
+> Caused by commit
+> 
+>   94116f8126de ("ACPI: Switch to use generic guid_t in acpi_evaluate_dsm()")
+> 
+> linux/uuid.h is only include for the CONFIG_ACPI case (in commit
+> 41c8bdb3ab10 "acpi, nfit: Switch to use new generic UUID API").  This
+> build does not have CONFIG_ACPI set.
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Meh.  Fix below:
 
-  include/linux/random.h
+---
+>From bcbc2265f269cc57924371e3bce8c3220d0270c5 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Thu, 8 Jun 2017 09:02:20 +0200
+Subject: acpi: always include uuid.h
 
-between commit:
+Without this the build will fail for !CONFIG_ACPI builds on x86.
 
-  60473a13020f ("random: add get_random_{bytes,u32,u64,int,long,once}_wait family")
+Fixes: 94116f81 ("ACPI: Switch to use generic guid_t in acpi_evaluate_dsm()")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/acpi.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-from the random tree and commit:
-
-  d7802aa82f66 ("random,stackprotect: introduce get_random_canary function")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+index ab19365c905f..cafdfb84ca28 100644
+--- a/include/linux/acpi.h
++++ b/include/linux/acpi.h
+@@ -26,6 +26,7 @@
+ #include <linux/resource_ext.h>
+ #include <linux/device.h>
+ #include <linux/property.h>
++#include <linux/uuid.h>
+ 
+ #ifndef _LINUX
+ #define _LINUX
+@@ -39,7 +40,6 @@
+ #include <linux/dynamic_debug.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+-#include <linux/uuid.h>
+ 
+ #include <acpi/acpi_bus.h>
+ #include <acpi/acpi_drivers.h>
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/random.h
-index 4aecc339558d,1fa0dc880bd7..000000000000
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@@ -58,31 -57,27 +58,52 @@@ static inline unsigned long get_random_
-  #endif
-  }
-  
- +/* Calls wait_for_random_bytes() and then calls get_random_bytes(buf, nbytes).
- + * Returns the result of the call to wait_for_random_bytes. */
- +static inline int get_random_bytes_wait(void *buf, int nbytes)
- +{
- +	int ret = wait_for_random_bytes();
- +	if (unlikely(ret))
- +		return ret;
- +	get_random_bytes(buf, nbytes);
- +	return 0;
- +}
- +
- +#define declare_get_random_var_wait(var) \
- +	static inline int get_random_ ## var ## _wait(var *out) { \
- +		int ret = wait_for_random_bytes(); \
- +		if (unlikely(ret)) \
- +			return ret; \
- +		*out = get_random_ ## var(); \
- +		return 0; \
- +	}
- +declare_get_random_var_wait(u32)
- +declare_get_random_var_wait(u64)
- +declare_get_random_var_wait(int)
- +declare_get_random_var_wait(long)
- +#undef declare_get_random_var
- +
-+ /*
-+  * On 64-bit architectures, protect against non-terminated C string overflows
-+  * by zeroing out the first byte of the canary; this leaves 56 bits of entropy.
-+  */
-+ #ifdef CONFIG_64BIT
-+ # ifdef __LITTLE_ENDIAN
-+ #  define CANARY_MASK 0xffffffffffffff00UL
-+ # else /* big endian, 64 bits: */
-+ #  define CANARY_MASK 0x00ffffffffffffffUL
-+ # endif
-+ #else /* 32 bits: */
-+ # define CANARY_MASK 0xffffffffUL
-+ #endif
-+ 
-+ static inline unsigned long get_random_canary(void)
-+ {
-+ 	unsigned long val = get_random_long();
-+ 
-+ 	return val & CANARY_MASK;
-+ }
-+ 
-  unsigned long randomize_page(unsigned long start, unsigned long range);
-  
-  u32 prandom_u32(void);
+2.11.0
