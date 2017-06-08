@@ -1,44 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with the
- drm-intel-fixes tree
-Date: Thu, 8 Jun 2017 13:07:40 +1000
-Message-ID: <20170608130740.1bbc8db9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 8 Jun 2017 13:37:48 +1000
+Message-ID: <20170608133748.0a283924@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44481 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751444AbdFHDHm (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 7 Jun 2017 23:07:42 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chris Wilson <chris@chris-wilson.co.uk>, Jani Nikula <jani.nikula@intel.com>, Dave Airlie <airlied@linux.ie>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/i915/intel_engine_cs.c
+sound/soc/soc-topology.c: In function 'soc_tplg_widget_ready':
+sound/soc/soc-topology.c:352:42: error: 'struct snd_soc_tplg_ops' has no member named 'widget_ready'
+  if (tplg->comp && tplg->ops && tplg->ops->widget_ready)
+                                          ^
+sound/soc/soc-topology.c:353:19: error: 'struct snd_soc_tplg_ops' has no member named 'widget_ready'
+   return tplg->ops->widget_ready(tplg->comp, w, tplg_w);
+                   ^
+sound/soc/soc-topology.c: In function 'soc_tplg_dai_load':
+sound/soc/soc-topology.c:364:10: error: too many arguments to function 'tplg->ops->dai_load'
+   return tplg->ops->dai_load(tplg->comp, dai_drv, pcm, dai);
+          ^
+sound/soc/soc-topology.c: In function 'soc_tplg_dai_create':
+sound/soc/soc-topology.c:1722:8: error: too few arguments to function 'soc_tplg_dai_load'
+  ret = soc_tplg_dai_load(tplg, dai_drv);
+        ^
+sound/soc/soc-topology.c:359:12: note: declared here
+ static int soc_tplg_dai_load(struct soc_tplg *tplg,
+            ^
+sound/soc/soc-topology.c: In function 'soc_tplg_dai_config':
+sound/soc/soc-topology.c:2205:8: error: too few arguments to function 'soc_tplg_dai_load'
+  ret = soc_tplg_dai_load(tplg, dai_drv);
+        ^
+sound/soc/soc-topology.c:359:12: note: declared here
+ static int soc_tplg_dai_load(struct soc_tplg *tplg,
+            ^
 
-between commit:
+Caused by commit
 
-  d9533f19d840 ("drm/i915: Hold a wakeref for probing the ring registers")
-(which is also commit a091d4ee931b in the drm-intel tree)
+  c8597af855f3 ("ASoC: topology: Allow bespoke configuration post widget creation")
 
-from the drm-intel-fixes tree and commit:
+Forgotten commit of an include file update?
 
-  aed2fc102ffa ("drm/i915: Check the ring is empty when declaring the engines are idle")
-
-from the drm-intel tree.
-
-I fixed it up (I just used the drm-intel tree version) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
+I have used the sound-asoc tree from next-20170607 for today.
 
 -- 
 Cheers,
