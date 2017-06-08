@@ -1,40 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the uuid tree
-Date: Thu, 8 Jun 2017 16:04:15 +1000
-Message-ID: <20170608160415.007d1800@canb.auug.org.au>
+From: Jean Delvare <jdelvare@suse.de>
+Subject: Re: linux-next: bad base for the dmi quilt series
+Date: Thu, 8 Jun 2017 08:07:20 +0200
+Message-ID: <20170608080720.52ebcad7@endymion>
+References: <20170607092908.57059982@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49561 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750752AbdFHGES (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Jun 2017 02:04:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39710 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750752AbdFHGHX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Jun 2017 02:07:23 -0400
+In-Reply-To: <20170607092908.57059982@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Christoph,
+On Wed, 7 Jun 2017 09:29:08 +1000, Stephen Rothwell wrote:
+> Hi Jean,
+> 
+> The current version of the dmi quilt series
+> (http://jdelvare.nerim.net/devel/linux/jdelvare-dmi/) has a base of
+> 4.11.3 ... it must be base on somewhere in Linus' tree.   I have used
+> v4.11 as a base for today (the patches applied cleanly).
 
-After merging the uuid tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
-
-In file included from drivers/base/cpu.c:16:0:
-include/linux/acpi.h:744:16: error: unknown type name 'guid_t'
-          const guid_t *guid,
-                ^
-
-Caused by commit
-
-  94116f8126de ("ACPI: Switch to use generic guid_t in acpi_evaluate_dsm()")
-
-linux/uuid.h is only include for the CONFIG_ACPI case (in commit
-41c8bdb3ab10 "acpi, nfit: Switch to use new generic UUID API").  This
-build does not have CONFIG_ACPI set.
-
-I have used the uuid tree from next-20170607 for today.
+Oops, sorry about that. Fixed.
 
 -- 
-Cheers,
-Stephen Rothwell
+Jean Delvare
+SUSE L3 Support
