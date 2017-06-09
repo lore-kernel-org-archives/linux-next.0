@@ -1,54 +1,69 @@
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] thermal: int340x_thermal: Switch to use new generic UUID API
-Date: Fri,  9 Jun 2017 11:33:06 +0300
-Message-ID: <20170609083306.83431-1-andriy.shevchenko@linux.intel.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170609 build: 0 failures 5 warnings (next-20170609)
+Date: Fri, 09 Jun 2017 10:10:43 +0100
+Message-ID: <E1dJFwJ-0004qo-LG@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38376 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751531AbdFIJKv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Jun 2017 05:10:51 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-There are new types and helpers that are supposed to be used in
-new code.
+Tree/Branch: next-20170609
+Git describe: next-20170609
+Commit: fc11440fe1 Add linux-next specific files for 20170609
 
-As a preparation to get rid of legacy types and API functions do
-the conversion here.
+Build Time: 0 min 10 sec
 
-The conversion fixes a potential bug in int340x_thermal as well
-since we have to use memcmp() on binary data.
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
 
-Acked-by: Zhang Rui <rui.zhang@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/thermal/int340x_thermal/int3400_thermal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Errors: 0
+Warnings: 5
+Section Mismatches: 0
 
-diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
-index 9413c4abf0b9..fb7284153878 100644
---- a/drivers/thermal/int340x_thermal/int3400_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
-@@ -23,7 +23,7 @@ enum int3400_thermal_uuid {
- 	INT3400_THERMAL_MAXIMUM_UUID,
- };
- 
--static u8 *int3400_thermal_uuids[INT3400_THERMAL_MAXIMUM_UUID] = {
-+static const char *int3400_thermal_uuids[INT3400_THERMAL_MAXIMUM_UUID] = {
- 	"42A441D6-AE6A-462b-A84B-4A8CE79027D3",
- 	"3A95C389-E4B8-4629-A526-C52C88626BAE",
- 	"97C68AE7-15FA-499c-B8C9-5DA81D606E0A",
-@@ -141,10 +141,10 @@ static int int3400_thermal_get_uuids(struct int3400_thermal_priv *priv)
- 		}
- 
- 		for (j = 0; j < INT3400_THERMAL_MAXIMUM_UUID; j++) {
--			u8 uuid[16];
-+			guid_t guid;
- 
--			acpi_str_to_uuid(int3400_thermal_uuids[j], uuid);
--			if (!strncmp(uuid, objb->buffer.pointer, 16)) {
-+			guid_parse(int3400_thermal_uuids[j], &guid);
-+			if (guid_equal(objb->buffer.pointer, &guid)) {
- 				priv->uuid_bitmap |= (1 << j);
- 				break;
- 			}
--- 
-2.11.0
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 5
+	  1 ../drivers/scsi/qla2xxx/qla_init.c:6709:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
+	  1 ../drivers/scsi/qla2xxx/qla_init.c:6407:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
+	  1 ../drivers/mtd/nand/fsl_ifc_nand.c:696:7: warning: unused variable 'res' [-Wunused-variable]
+	  1 ../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
+	  1 ../drivers/block/loop.c:1149:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
+	../drivers/mtd/nand/fsl_ifc_nand.c:696:7: warning: unused variable 'res' [-Wunused-variable]
+	../drivers/scsi/qla2xxx/qla_init.c:6407:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
+	../drivers/scsi/qla2xxx/qla_init.c:6709:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/block/loop.c:1149:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm-multi_v7_defconfig
+arm-allnoconfig
+arm-multi_v4t_defconfig
+arm-multi_v5_defconfig
