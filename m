@@ -1,54 +1,65 @@
-From: Damien Le Moal <damien.lemoal@wdc.com>
-Subject: Re: linux-next: build failure after merge of the device-mapper tree
-Date: Fri, 9 Jun 2017 13:28:20 +0900
-Message-ID: <e56ef218-bbbd-2445-3cd4-4ff1dd05d3e7@wdc.com>
-References: <20170609131237.41b77828@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvms390 tree with the kvm-arm tree
+Date: Fri, 9 Jun 2017 14:28:56 +1000
+Message-ID: <20170609142856.461a9d28@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:55916 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751043AbdFIE23 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Jun 2017 00:28:29 -0400
-In-Reply-To: <20170609131237.41b77828@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:53523 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750934AbdFIE3A (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 9 Jun 2017 00:29:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Jones <drjones@redhat.com>, Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
 
-Stephen,
+Hi all,
 
-On 6/9/17 12:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the device-mapper tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> drivers/md/dm-zoned-target.c:947:2: error: unknown field 'suspend' specified in initializer
->   .suspend  = dmz_suspend,
->   ^
-> drivers/md/dm-zoned-target.c:947:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .suspend  = dmz_suspend,
->               ^
-> 
-> Caused by commit
-> 
->   02da2e15e81f ("dm zoned: drive-managed zoned block device target")
-> 
-> I have used the device-mapper tree from next-20170608 for today.
+Today's linux-next merge of the kvms390 tree got a conflict in:
 
-My apologies for that. My mistake.
-I just posted a patch to dm-devel to fix this.
-Everything should come in order after Mike's review.
+  arch/s390/include/asm/kvm_host.h
 
-Best regards.
+between commit:
+
+  2387149eade2 ("KVM: improve arch vcpu request defining")
+
+from the kvm-arm tree and commit:
+
+  8611a6a64661 ("KVM: s390: CMMA tracking, ESSA emulation, migration mode")
+
+from the kvms390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Damien Le Moal, Ph.D.
-Sr Manager, System Software Group,
-Western Digital Research
-Damien.LeMoal@wdc.com
-Tel: (+81) 0466-98-3593 (Ext. 51-3593)
-1 kirihara-cho, Fujisawa, Kanagawa, 252-0888 Japan
-www.wdc.com, www.hgst.com
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/s390/include/asm/kvm_host.h
+index 9c3bd94204ac,a8cafed79eb4..000000000000
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@@ -42,9 -42,11 +42,11 @@@
+  #define KVM_HALT_POLL_NS_DEFAULT 80000
+  
+  /* s390-specific vcpu->requests bit members */
+ -#define KVM_REQ_ENABLE_IBS         8
+ -#define KVM_REQ_DISABLE_IBS        9
+ -#define KVM_REQ_ICPT_OPEREXC       10
+ -#define KVM_REQ_START_MIGRATION   11
+ -#define KVM_REQ_STOP_MIGRATION    12
+ +#define KVM_REQ_ENABLE_IBS	KVM_ARCH_REQ(0)
+ +#define KVM_REQ_DISABLE_IBS	KVM_ARCH_REQ(1)
+ +#define KVM_REQ_ICPT_OPEREXC	KVM_ARCH_REQ(2)
+++#define KVM_REQ_START_MIGRATION	KVM_ARCH_REQ(3)
+++#define KVM_REQ_STOP_MIGRATION	KVM_ARCH_REQ(4)
+  
+  #define SIGP_CTRL_C		0x80
+  #define SIGP_CTRL_SCN_MASK	0x3f
