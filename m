@@ -1,69 +1,37 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170609 build: 0 failures 5 warnings (next-20170609)
-Date: Fri, 09 Jun 2017 10:10:43 +0100
-Message-ID: <E1dJFwJ-0004qo-LG@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: next-20170609 build: 0 failures 5 warnings (next-20170609)
+Date: Fri, 9 Jun 2017 21:38:19 +1000
+Message-ID: <20170609213819.57130789@canb.auug.org.au>
+References: <E1dJFwJ-0004qo-LG@optimist>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38376 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbdFIJKv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Jun 2017 05:10:51 -0400
+Received: from ozlabs.org ([103.22.144.67]:53965 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751524AbdFILiW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 9 Jun 2017 07:38:22 -0400
+In-Reply-To: <E1dJFwJ-0004qo-LG@optimist>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Hannes Reinecke <hare@suse.com>
 
-Tree/Branch: next-20170609
-Git describe: next-20170609
-Commit: fc11440fe1 Add linux-next specific files for 20170609
+Hi All,
 
-Build Time: 0 min 10 sec
+On Fri, 09 Jun 2017 10:10:43 +0100 Build bot for Mark Brown <broonie@kernel.org> wrote:
+>
+> -------------------------------------------------------------------------------
+> x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+> 
+> Warnings:
+> 	../drivers/block/loop.c:1149:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+> -------------------------------------------------------------------------------
 
-Passed:    7 / 7   (100.00 %)
-Failed:    0 / 7   (  0.00 %)
+Caused by commit
 
-Errors: 0
-Warnings: 5
-Section Mismatches: 0
+  f2c6df7dbf9a ("loop: support 4k physical blocksize")
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 5
-	  1 ../drivers/scsi/qla2xxx/qla_init.c:6709:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
-	  1 ../drivers/scsi/qla2xxx/qla_init.c:6407:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
-	  1 ../drivers/mtd/nand/fsl_ifc_nand.c:696:7: warning: unused variable 'res' [-Wunused-variable]
-	  1 ../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
-	  1 ../drivers/block/loop.c:1149:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
-	../drivers/mtd/nand/fsl_ifc_nand.c:696:7: warning: unused variable 'res' [-Wunused-variable]
-	../drivers/scsi/qla2xxx/qla_init.c:6407:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
-	../drivers/scsi/qla2xxx/qla_init.c:6709:7: warning: format '%lx' expects argument of type 'long unsigned int', but argument 5 has type 'unsigned int' [-Wformat=]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/block/loop.c:1149:3: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-multi_v7_defconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
-arm-multi_v5_defconfig
+-- 
+Cheers,
+Stephen Rothwell
