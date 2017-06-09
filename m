@@ -1,38 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Date: Fri, 9 Jun 2017 13:12:37 +1000
-Message-ID: <20170609131237.41b77828@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the renesas
+ tree
+Date: Fri, 9 Jun 2017 13:53:04 +1000
+Message-ID: <20170609135304.6c1108aa@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34255 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:35715 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751470AbdFIDMj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Jun 2017 23:12:39 -0400
+        id S1751622AbdFIDxG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Jun 2017 23:53:06 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Damien Le Moal <damien.lemoal@wdc.com>
+To: Rob Herring <robherring2@gmail.com>, Simon Horman <horms@verge.net.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marcus Cooper <codekipper@gmail.com>, Biju Das <biju.das@bp.renesas.com>
 
-Hi all,
+Hi Rob,
 
-After merging the device-mapper tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-drivers/md/dm-zoned-target.c:947:2: error: unknown field 'suspend' specified in initializer
-  .suspend  = dmz_suspend,
-  ^
-drivers/md/dm-zoned-target.c:947:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .suspend  = dmz_suspend,
-              ^
+  Documentation/devicetree/bindings/vendor-prefixes.txt
 
-Caused by commit
+between commit:
 
-  02da2e15e81f ("dm zoned: drive-managed zoned block device target")
+  d795f15618b8 ("of: Add vendor prefix for iWave Systems Technologies Pvt. Ltd")
 
-I have used the device-mapper tree from next-20170608 for today.
+from the renesas tree and commit:
+
+  97a0268e764c ("devicetree: add Itead vendor prefix")
+
+from the devicetree tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc Documentation/devicetree/bindings/vendor-prefixes.txt
+index b946fc4b172a,b81092afe76d..000000000000
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@@ -158,7 -159,7 +159,8 @@@ iom	Iomega Corporatio
+  isee	ISEE 2007 S.L.
+  isil	Intersil
+  issi	Integrated Silicon Solutions Inc.
++ itead	ITEAD Intelligent Systems Co.Ltd
+ +iwave	iWave Systems Technologies Pvt. Ltd.
+  jdi	Japan Display Inc.
+  jedec	JEDEC Solid State Technology Association
+  karo	Ka-Ro electronics GmbH
