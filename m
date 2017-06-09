@@ -1,43 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Fri, 9 Jun 2017 12:26:57 +1000
-Message-ID: <20170609122657.70a65d1e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the device-mapper tree
+Date: Fri, 9 Jun 2017 13:12:37 +1000
+Message-ID: <20170609131237.41b77828@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57957 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34255 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751452AbdFIC07 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 8 Jun 2017 22:26:59 -0400
+        id S1751470AbdFIDMj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 8 Jun 2017 23:12:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Damien Le Moal <damien.lemoal@wdc.com>
 
-Hi Dave,
+Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+After merging the device-mapper tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  drivers/gpu/drm/i915/intel_engine_cs.c
+drivers/md/dm-zoned-target.c:947:2: error: unknown field 'suspend' specified in initializer
+  .suspend  = dmz_suspend,
+  ^
+drivers/md/dm-zoned-target.c:947:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .suspend  = dmz_suspend,
+              ^
 
-between commit:
+Caused by commit
 
-  ef6c4d75e353 ("drm/i915: fix warning for unused variable")
+  02da2e15e81f ("dm zoned: drive-managed zoned block device target")
 
-from the drm-intel-fixes tree and commit:
-
-  a8e9a419c337 ("drm/i915: Lie and treat all engines as idle if wedged")
-
-from the drm tree.
-
-I fixed it up (I used the drm tree version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I have used the device-mapper tree from next-20170608 for today.
 
 -- 
 Cheers,
