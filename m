@@ -1,65 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvms390 tree with the kvm-arm tree
-Date: Fri, 9 Jun 2017 14:28:56 +1000
-Message-ID: <20170609142856.461a9d28@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the uuid tree
+Date: Fri, 9 Jun 2017 15:44:33 +1000
+Message-ID: <20170609154433.1452fccf@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53523 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40857 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750934AbdFIE3A (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 9 Jun 2017 00:29:00 -0400
+        id S1751499AbdFIFof (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 9 Jun 2017 01:44:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Jones <drjones@redhat.com>, Claudio Imbrenda <imbrenda@linux.vnet.ibm.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Hi all,
+Hi Christoph,
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
+After merging the uuid tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  arch/s390/include/asm/kvm_host.h
+/home/sfr/next/next/drivers/thermal/int340x_thermal/int3400_thermal.c: In function 'int3400_thermal_get_uuids':
+/home/sfr/next/next/drivers/thermal/int340x_thermal/int3400_thermal.c:146:4: error: implicit declaration of function 'acpi_str_to_uuid' [-Werror=implicit-function-declaration]
+    acpi_str_to_uuid(int3400_thermal_uuids[j], uuid);
+    ^
 
-between commit:
+Caused by commit
 
-  2387149eade2 ("KVM: improve arch vcpu request defining")
+  94116f8126de ("ACPI: Switch to use generic guid_t in acpi_evaluate_dsm()")
 
-from the kvm-arm tree and commit:
-
-  8611a6a64661 ("KVM: s390: CMMA tracking, ESSA emulation, migration mode")
-
-from the kvms390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the uuid tree from next-20170607 again today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/s390/include/asm/kvm_host.h
-index 9c3bd94204ac,a8cafed79eb4..000000000000
---- a/arch/s390/include/asm/kvm_host.h
-+++ b/arch/s390/include/asm/kvm_host.h
-@@@ -42,9 -42,11 +42,11 @@@
-  #define KVM_HALT_POLL_NS_DEFAULT 80000
-  
-  /* s390-specific vcpu->requests bit members */
- -#define KVM_REQ_ENABLE_IBS         8
- -#define KVM_REQ_DISABLE_IBS        9
- -#define KVM_REQ_ICPT_OPEREXC       10
- -#define KVM_REQ_START_MIGRATION   11
- -#define KVM_REQ_STOP_MIGRATION    12
- +#define KVM_REQ_ENABLE_IBS	KVM_ARCH_REQ(0)
- +#define KVM_REQ_DISABLE_IBS	KVM_ARCH_REQ(1)
- +#define KVM_REQ_ICPT_OPEREXC	KVM_ARCH_REQ(2)
-++#define KVM_REQ_START_MIGRATION	KVM_ARCH_REQ(3)
-++#define KVM_REQ_STOP_MIGRATION	KVM_ARCH_REQ(4)
-  
-  #define SIGP_CTRL_C		0x80
-  #define SIGP_CTRL_SCN_MASK	0x3f
