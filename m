@@ -1,26 +1,58 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the block tree with the s390 tree
-Date: Tue, 13 Jun 2017 08:20:55 +0200
-Message-ID: <20170613062055.GA30813@lst.de>
-References: <20170613130649.6bcede94@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the jc_docs
+ tree
+Date: Tue, 13 Jun 2017 16:23:41 +1000
+Message-ID: <20170613162341.627e2095@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:53533 "EHLO newverein.lst.de"
+Received: from ozlabs.org ([103.22.144.67]:55235 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752601AbdFMGU5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Jun 2017 02:20:57 -0400
-Content-Disposition: inline
-In-Reply-To: <20170613130649.6bcede94@canb.auug.org.au>
+        id S1752294AbdFMGXn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 13 Jun 2017 02:23:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Sebastian Ott <sebott@linux.vnet.ibm.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andreas Noever <andreas.noever@gmail.com>
 
-Btw, scm_blk.c blk-mq conversion seems odd if not broken.  It should
-always call blk_mq_complete_request from scm_request_finish and
-then pass the error to blk_mq_end_request frin
-there.
+Hi all,
 
-It would be great if such major block driver changes were Cc'ed to
-linux-block.
+Today's linux-next merge of the char-misc tree got a conflict in:
+
+  Documentation/admin-guide/index.rst
+
+between commit:
+
+  504f231cda56 ("doc: ReSTify and split LSM.txt")
+
+from the jc_docs tree and commit:
+
+  163f15115203 ("thunderbolt: Add documentation how Thunderbolt bus can be used")
+
+from the char-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/admin-guide/index.rst
+index e14c374aaf60,6d99a7ce6e21..000000000000
+--- a/Documentation/admin-guide/index.rst
++++ b/Documentation/admin-guide/index.rst
+@@@ -61,7 -61,7 +61,8 @@@ configure specific aspects of kernel be
+     java
+     ras
+     pm/index
+ +   LSM/index
++    thunderbolt
+  
+  .. only::  subproject and html
+  
