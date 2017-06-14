@@ -1,61 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 14 Jun 2017 10:25:30 +1000
-Message-ID: <20170614102530.2db9f65c@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
+ tree
+Date: Wed, 14 Jun 2017 10:50:41 +1000
+Message-ID: <20170614105041.5fccf277@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37341 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34459 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753217AbdFNAZc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Jun 2017 20:25:32 -0400
+        id S1753311AbdFNAun (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 13 Jun 2017 20:50:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Pape <apape@phoenixcontact.com>, Simon Wunderlich <sw@simonwunderlich.de>, Sven Eckelmann <sven@narfation.org>
+To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>, Robert Foss <robert.foss@collabora.com>
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  net/batman-adv/routing.c
+  drivers/gpu/drm/i915/intel_display.c
 
 between commit:
 
-  a1a745ef980a ("batman-adv: fix memory leak when dropping packet from other gateway")
+  9a775e0308b5 ("drm/i915: Fix scaling check for 90/270 degree plane rotation")
 
-from the net tree and commit:
+from the drm-intel-fixes tree and commit:
 
-  22f0502ed9f3 ("batman-adv: Print correct function names in dbg messages")
+  c2c446ad2943 ("drm: Add DRM_MODE_ROTATE_ and DRM_MODE_REFLECT_ to UAPI")
 
-from the net-next tree.
+from the drm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the former removed an instance of that was changed by the
+latter) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc net/batman-adv/routing.c
-index ae9f4d37d34f,1338b9221613..000000000000
---- a/net/batman-adv/routing.c
-+++ b/net/batman-adv/routing.c
-@@@ -985,9 -985,9 +985,9 @@@ int batadv_recv_unicast_packet(struct s
-  			batadv_orig_node_put(orig_node_gw);
-  			if (is_gw) {
-  				batadv_dbg(BATADV_DBG_BLA, bat_priv,
-- 					   "recv_unicast_packet(): Dropped unicast pkt received from another backbone gw %pM.\n",
-- 					   orig_addr_gw);
-+ 					   "%s(): Dropped unicast pkt received from another backbone gw %pM.\n",
-+ 					   __func__, orig_addr_gw);
- -				return NET_RX_DROP;
- +				goto free_skb;
-  			}
-  		}
-  
