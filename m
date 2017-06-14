@@ -1,44 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes
- tree
-Date: Wed, 14 Jun 2017 10:50:41 +1000
-Message-ID: <20170614105041.5fccf277@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-intel-fixes tree
+Date: Wed, 14 Jun 2017 10:56:45 +1000
+Message-ID: <20170614105645.12390dfb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34459 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753311AbdFNAun (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Jun 2017 20:50:43 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Jani Nikula <jani.nikula@intel.com>, Robert Foss <robert.foss@collabora.com>
+Cc: Jani Nikula <jani.nikula@intel.com>, Mahesh Kumar <mahesh1.kumar@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
-
-Today's linux-next merge of the drm tree got a conflict in:
-
-  drivers/gpu/drm/i915/intel_display.c
-
-between commit:
-
-  9a775e0308b5 ("drm/i915: Fix scaling check for 90/270 degree plane rotation")
-
-from the drm-intel-fixes tree and commit:
-
-  c2c446ad2943 ("drm: Add DRM_MODE_ROTATE_ and DRM_MODE_REFLECT_ to UAPI")
-
-from the drm tree.
-
-I fixed it up (the former removed an instance of that was changed by the
-latter) and can carry the fix as necessary. This is now fixed as far as
-linux-next is concerned, but any non trivial conflicts should be mentioned
-to your upstream maintainer when your tree is submitted for merging.
-You may also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgRGF2ZSwKClRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBvZiB0aGUgZHJtIHRyZWUgZ290IGEg
+Y29uZmxpY3QgaW46CgogIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3BtLmMKCmJldHdlZW4g
+Y29tbWl0OgoKICAxYzJkNmJiZjA0MzMgKCJkcm0vaTkxNTogRml4IFNLTCsgd2F0ZXJtYXJrcyBm
+b3IgOTAvMjcwIHJvdGF0aW9uIikKCmZyb20gdGhlIGRybS1pbnRlbC1maXhlcyB0cmVlIGFuZCBj
+b21taXQ6CgogIDcwODRiNTBiZGQ4ZiAoImRybS9pOTE1L3NrbCs6IGNhbGN1bGF0ZSBwaXhlbF9y
+YXRlICYgcmVsYXRpdmVfZGF0YV9yYXRlIGluIGZpeGVkIHBvaW50IikKCmZyb20gdGhlIGRybSB0
+cmVlLgoKSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMg
+bmVjZXNzYXJ5LiBUaGlzCmlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25j
+ZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKY29uZmxpY3RzIHNob3VsZCBiZSBtZW50aW9uZWQg
+dG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0cmVlCmlzIHN1Ym1pdHRlZCBm
+b3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNvb3BlcmF0aW5nCndp
+dGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55
+IHBhcnRpY3VsYXJseQpjb21wbGV4IGNvbmZsaWN0cy4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90
+aHdlbGwKCmRpZmYgLS1jYyBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9wbS5jCmluZGV4IDA3
+OGZkMWJmYTVlYSw5MzZlZWYxNjM0YzcuLjAwMDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vaTkxNS9pbnRlbF9wbS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3BtLmMK
+QEBAIC0zMzczLDMxIC0zODQxLDI2ICszODQxLDMyIEBAQCBza2xfcGxhbmVfZG93bnNjYWxlX2Ft
+b3VudChjb25zdCBzdHJ1YwogIAogIAkvKiBuLmIuLCBzcmMgaXMgMTYuMTYgZml4ZWQgcG9pbnQs
+IGRzdCBpcyB3aG9sZSBpbnRlZ2VyICovCiAgCWlmIChwbGFuZS0+aWQgPT0gUExBTkVfQ1VSU09S
+KSB7CiArCQkvKgogKwkJICogQ3Vyc29ycyBvbmx5IHN1cHBvcnQgMC8xODAgZGVncmVlIHJvdGF0
+aW9uLAogKwkJICogaGVuY2Ugbm8gbmVlZCB0byBhY2NvdW50IGZvciByb3RhdGlvbiBoZXJlLgog
+KwkJICovCi0gCQlzcmNfdyA9IHBzdGF0ZS0+YmFzZS5zcmNfdzsKLSAJCXNyY19oID0gcHN0YXRl
+LT5iYXNlLnNyY19oOworIAkJc3JjX3cgPSBwc3RhdGUtPmJhc2Uuc3JjX3cgPj4gMTY7CisgCQlz
+cmNfaCA9IHBzdGF0ZS0+YmFzZS5zcmNfaCA+PiAxNjsKICAJCWRzdF93ID0gcHN0YXRlLT5iYXNl
+LmNydGNfdzsKICAJCWRzdF9oID0gcHN0YXRlLT5iYXNlLmNydGNfaDsKICAJfSBlbHNlIHsKICsJ
+CS8qCiArCQkgKiBTcmMgY29vcmRpbmF0ZXMgYXJlIGFscmVhZHkgcm90YXRlZCBieSAyNzAgZGVn
+cmVlcyBmb3IKICsJCSAqIHRoZSA5MC8yNzAgZGVncmVlIHBsYW5lIHJvdGF0aW9uIGNhc2VzICh0
+byBtYXRjaCB0aGUKICsJCSAqIEdUVCBtYXBwaW5nKSwgaGVuY2Ugbm8gbmVlZCB0byBhY2NvdW50
+IGZvciByb3RhdGlvbiBoZXJlLgogKwkJICovCi0gCQlzcmNfdyA9IGRybV9yZWN0X3dpZHRoKCZw
+c3RhdGUtPmJhc2Uuc3JjKTsKLSAJCXNyY19oID0gZHJtX3JlY3RfaGVpZ2h0KCZwc3RhdGUtPmJh
+c2Uuc3JjKTsKKyAJCXNyY193ID0gZHJtX3JlY3Rfd2lkdGgoJnBzdGF0ZS0+YmFzZS5zcmMpID4+
+IDE2OworIAkJc3JjX2ggPSBkcm1fcmVjdF9oZWlnaHQoJnBzdGF0ZS0+YmFzZS5zcmMpID4+IDE2
+OwogIAkJZHN0X3cgPSBkcm1fcmVjdF93aWR0aCgmcHN0YXRlLT5iYXNlLmRzdCk7CiAgCQlkc3Rf
+aCA9IGRybV9yZWN0X2hlaWdodCgmcHN0YXRlLT5iYXNlLmRzdCk7CiAgCX0KICAKLSAJZG93bnNj
+YWxlX2ggPSBtYXgoc3JjX2ggLyBkc3RfaCwgKHVpbnQzMl90KURSTV9QTEFORV9IRUxQRVJfTk9f
+U0NBTElORyk7Ci0gCWRvd25zY2FsZV93ID0gbWF4KHNyY193IC8gZHN0X3csICh1aW50MzJfdClE
+Uk1fUExBTkVfSEVMUEVSX05PX1NDQUxJTkcpOwogLQlpZiAoZHJtX3JvdGF0aW9uXzkwX29yXzI3
+MChwc3RhdGUtPmJhc2Uucm90YXRpb24pKQogLQkJc3dhcChkc3RfdywgZHN0X2gpOwogLQorIAlm
+cF93X3JhdGlvID0gZml4ZWRfMTZfMTZfZGl2KHNyY193LCBkc3Rfdyk7CisgCWZwX2hfcmF0aW8g
+PSBmaXhlZF8xNl8xNl9kaXYoc3JjX2gsIGRzdF9oKTsKKyAJZG93bnNjYWxlX3cgPSBtYXhfZml4
+ZWRfMTZfMTYoZnBfd19yYXRpbywgdTMyX3RvX2ZpeGVkXzE2XzE2KDEpKTsKKyAJZG93bnNjYWxl
+X2ggPSBtYXhfZml4ZWRfMTZfMTYoZnBfaF9yYXRpbywgdTMyX3RvX2ZpeGVkXzE2XzE2KDEpKTsK
+ICAKLSAJLyogUHJvdmlkZSByZXN1bHQgaW4gMTYuMTYgZml4ZWQgcG9pbnQgKi8KLSAJcmV0dXJu
+ICh1aW50NjRfdClkb3duc2NhbGVfdyAqIGRvd25zY2FsZV9oID4+IDE2OworIAlyZXR1cm4gbXVs
+X2ZpeGVkMTYoZG93bnNjYWxlX3csIGRvd25zY2FsZV9oKTsKICB9CiAgCiAgc3RhdGljIHVuc2ln
+bmVkIGludApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
