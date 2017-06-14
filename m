@@ -1,59 +1,29 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170614 build: 0 failures 1 warnings (next-20170614)
-Date: Wed, 14 Jun 2017 09:05:33 +0100
-Message-ID: <E1dL3Iz-00020U-3i@optimist>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2] staging: rtl8188eu: style fixes
+Date: Wed, 14 Jun 2017 12:26:20 +0200
+Message-ID: <20170614102620.GC8485@kroah.com>
+References: <20170602143643.GA9038@lear>
+ <20170613190518.GA2144@lear>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58640 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754278AbdFNIFi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Jun 2017 04:05:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:40262 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750728AbdFNK02 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Jun 2017 06:26:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20170613190518.GA2144@lear>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Galo Navarro <anglor@varoa.net>
+Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
 
-Tree/Branch: next-20170614
-Git describe: next-20170614
-Commit: b14746170b Add linux-next specific files for 20170614
+On Tue, Jun 13, 2017 at 09:05:19PM +0200, Galo Navarro wrote:
+> Fix multiple style issues (CHECK spaces preferred around that $thing).
 
-Build Time: 0 min 13 sec
+That's not the only thing you did here.  Please only do one type of fix
+per patch.  Break this up into multiple patches please.
 
-Passed:    7 / 7   (100.00 %)
-Failed:    0 / 7   (  0.00 %)
+thanks,
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+greg k-h
