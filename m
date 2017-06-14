@@ -1,148 +1,107 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the sound-asoc
+Subject: linux-next: manual merge of the char-misc tree with the jc_docs
  tree
-Date: Wed, 14 Jun 2017 12:54:23 +1000
-Message-ID: <20170614125423.48266e23@canb.auug.org.au>
+Date: Wed, 14 Jun 2017 14:04:16 +1000
+Message-ID: <20170614140416.26b97944@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42865 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750717AbdFNEES (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Jun 2017 00:04:18 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, "Andrew F. Davis" <afd@ti.com>
 
 Hi all,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-  drivers/of/base.c
+  Documentation/DocBook/w1.tmpl
 
-between commits:
+between commit:
 
-  4c9c3d595f1b ("of_graph: add of_graph_get_remote_endpoint()")
-  0ef472a973eb ("of_graph: add of_graph_get_port_parent()")
-  ac1e6958d3be ("of_graph: add of_graph_get_endpoint_count()")
+  b4c1064a76e7 ("docs-rst: convert w1 book to ReST")
 
-from the sound-asoc tree and commit:
+from the jc_docs tree and commit:
 
-  1df09bc66f9b ("of: Move OF property and graph API from base.c to property.c")
+  f85e8813b2c9 ("DocBook: w1: Update W1 file locations and names in DocBook")
 
-from the devicetree tree.
+from the char-misc tree.
 
-I fixed it up (I used the latter version of drivers/of/base.c and then
-added the patch below) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I removed the file and added the patch below) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 14 Jun 2017 12:45:29 +1000
-Subject: [PATCH] of_graph: merge fix up for creating of drivers/of/property.c
+Date: Wed, 14 Jun 2017 14:01:14 +1000
+Subject: [PATCH] docs-rst: merge fix for "DocBook: w1: Update W1 file
+ locations and names in DocBook"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/of/property.c | 60 ++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 50 insertions(+), 10 deletions(-)
+ Documentation/driver-api/w1.rst | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index 457c313a8924..07c7c36c5ca8 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -684,6 +684,41 @@ struct device_node *of_graph_get_endpoint_by_regs(
- EXPORT_SYMBOL(of_graph_get_endpoint_by_regs);
+diff --git a/Documentation/driver-api/w1.rst b/Documentation/driver-api/w1.rst
+index c1da8f0cb476..64826ceba2de 100644
+--- a/Documentation/driver-api/w1.rst
++++ b/Documentation/driver-api/w1.rst
+@@ -10,12 +10,12 @@ W1 API internal to the kernel
+ W1 API internal to the kernel
+ -----------------------------
  
- /**
-+ * of_graph_get_remote_endpoint() - get remote endpoint node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: Remote endpoint node associated with remote endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_remote_endpoint(const struct device_node *node)
-+{
-+	/* Get remote endpoint node. */
-+	return of_parse_phandle(node, "remote-endpoint", 0);
-+}
-+EXPORT_SYMBOL(of_graph_get_remote_endpoint);
-+
-+/**
-+ * of_graph_get_port_parent() - get port's parent node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: device node associated with endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_port_parent(struct device_node *node)
-+{
-+	unsigned int depth;
-+
-+	/* Walk 3 levels up only if there is 'ports' node. */
-+	for (depth = 3; depth && node; depth--) {
-+		node = of_get_next_parent(node);
-+		if (depth == 2 && of_node_cmp(node->name, "ports"))
-+			break;
-+	}
-+	return node;
-+}
-+EXPORT_SYMBOL(of_graph_get_port_parent);
-+
-+/**
-  * of_graph_get_remote_port_parent() - get remote port's parent node
-  * @node: pointer to a local endpoint device_node
-  *
-@@ -694,18 +729,11 @@ struct device_node *of_graph_get_remote_port_parent(
- 			       const struct device_node *node)
- {
- 	struct device_node *np;
--	unsigned int depth;
+-drivers/w1/w1.h
+-~~~~~~~~~~~~~~~
++include/linux/w1.h
++~~~~~~~~~~~~~~~~~~
  
- 	/* Get remote endpoint node. */
--	np = of_parse_phandle(node, "remote-endpoint", 0);
-+	np = of_graph_get_remote_endpoint(node);
+-W1 core functions.
++W1 kernel API functions.
  
--	/* Walk 3 levels up only if there is 'ports' node. */
--	for (depth = 3; depth && np; depth--) {
--		np = of_get_next_parent(np);
--		if (depth == 2 && of_node_cmp(np->name, "ports"))
--			break;
--	}
--	return np;
-+	return of_graph_get_port_parent(np);
- }
- EXPORT_SYMBOL(of_graph_get_remote_port_parent);
+-.. kernel-doc:: drivers/w1/w1.h
++.. kernel-doc:: include/linux/w1.h
+    :internal:
  
-@@ -721,13 +749,25 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
- 	struct device_node *np;
+ drivers/w1/w1.c
+@@ -26,20 +26,20 @@ W1 core functions.
+ .. kernel-doc:: drivers/w1/w1.c
+    :internal:
  
- 	/* Get remote endpoint node. */
--	np = of_parse_phandle(node, "remote-endpoint", 0);
-+	np = of_graph_get_remote_endpoint(node);
- 	if (!np)
- 		return NULL;
- 	return of_get_next_parent(np);
- }
- EXPORT_SYMBOL(of_graph_get_remote_port);
+-drivers/w1/w1_family.h
++drivers/w1/w1_family.c
+ ~~~~~~~~~~~~~~~~~~~~~~~
  
-+int of_graph_get_endpoint_count(const struct device_node *np)
-+{
-+	struct device_node *endpoint;
-+	int num = 0;
-+
-+	for_each_endpoint_of_node(np, endpoint)
-+		num++;
-+
-+	return num;
-+}
-+EXPORT_SYMBOL(of_graph_get_endpoint_count);
-+
- /**
-  * of_graph_get_remote_node() - get remote parent device_node for given port/endpoint
-  * @node: pointer to parent device_node containing graph port/endpoint
+ Allows registering device family operations.
+ 
+-.. kernel-doc:: drivers/w1/w1_family.h
+-   :internal:
++.. kernel-doc:: drivers/w1/w1_family.c
++   :export:
+ 
+-drivers/w1/w1_family.c
+-~~~~~~~~~~~~~~~~~~~~~~~
++drivers/w1/w1_internal.h
++~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-Allows registering device family operations.
++W1 internal initialization for master devices.
+ 
+-.. kernel-doc:: drivers/w1/w1_family.c
++.. kernel-doc:: drivers/w1/w1_internal.h
+    :export:
+ 
+ drivers/w1/w1_int.c
 -- 
 2.11.0
+
+
 
 -- 
 Cheers,
