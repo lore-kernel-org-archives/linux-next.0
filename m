@@ -1,50 +1,65 @@
-From: Mason <slash.tmp@free.fr>
-Subject: Re: linux-next: build failure after merge of the arm tree
-Date: Wed, 14 Jun 2017 21:23:07 +0200
-Message-ID: <b5189473-bfdd-4e4e-711f-0f48ac9da5c8@free.fr>
-References: <20170421084033.5c987e13@canb.auug.org.au>
- <9858a4ed-bdd9-bd6c-d8a4-e9e6bd539904@free.fr>
- <20170421181230.05dcf937@canb.auug.org.au>
- <20170421234315.GO17774@n2100.armlinux.org.uk>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: linux-next: manual merge of the devicetree tree with the
+ sound-asoc tree
+Date: Wed, 14 Jun 2017 23:52:37 +0300
+Message-ID: <c142b783-c2dd-3e9a-344b-b78dcc38867f@linux.intel.com>
+References: <20170614125423.48266e23@canb.auug.org.au>
+ <CAL_Jsq+h8Bx9Ks8K8f6G7JJcouqChUEX40T4xosBdk+1GJiQiQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp2-g21.free.fr ([212.27.42.2]:33147 "EHLO smtp2-g21.free.fr"
+Received: from mga06.intel.com ([134.134.136.31]:3230 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751714AbdFNTXn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Jun 2017 15:23:43 -0400
-In-Reply-To: <20170421234315.GO17774@n2100.armlinux.org.uk>
+        id S1751754AbdFNUwo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Jun 2017 16:52:44 -0400
+In-Reply-To: <CAL_Jsq+h8Bx9Ks8K8f6G7JJcouqChUEX40T4xosBdk+1GJiQiQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux ARM <linux-arm-kernel@lists.infradead.org>, arm-soc <arm@kernel.org>, Emilio Lopez <emilio.lopez@collabora.co.uk>, dmaengine@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+To: Rob Herring <robherring2@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On 22/04/2017 01:43, Russell King - ARM Linux wrote:
-> On Fri, Apr 21, 2017 at 06:12:30PM +1000, Stephen Rothwell wrote:
->> Hi Mason,
+Hi Rob,
+
+Rob Herring wrote:
+> On Tue, Jun 13, 2017 at 9:54 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
 >>
->> On Fri, 21 Apr 2017 09:58:58 +0200 Mason <slash.tmp@free.fr> wrote:
->>>
->>> Anyway, the fix is trivial.
->>>
->>> The "pchans_used" field is an unsigned long array.
->>> for_each_clear_bit_from() expects an unsigned long pointer,
->>> not an array address.
->>>
->>> I'll send a patch to the drivers/dma maintainers.
+>> Today's linux-next merge of the devicetree tree got a conflict in:
 >>
->> The fix really needs to go into the arm tree (as well?) since that is
->> the tree that has the patch that causes the build to break (even if the
->> actual bug was preexisting).
-> 
-> Or I drop the offending patch (done) and we get the DMA subsystem fixed
-> first.  Given how long it's been this way, I doubt there's any hurry to
-> get this change in for the next merge window.
+>>   drivers/of/base.c
+>>
+>> between commits:
+>>
+>>   4c9c3d595f1b ("of_graph: add of_graph_get_remote_endpoint()")
+>>   0ef472a973eb ("of_graph: add of_graph_get_port_parent()")
+>>   ac1e6958d3be ("of_graph: add of_graph_get_endpoint_count()")
+>>
+>> from the sound-asoc tree and commit:
+>>
+>>   1df09bc66f9b ("of: Move OF property and graph API from base.c to property.c")
+>>
+>> from the devicetree tree.
+>
+> Sakari, I forgot about these other changes and the resolution is more
+> complex than I want to pass on to Linus. Has the branch I provided
+> been pulled in (I guess not since this is the first I've seen of the
+> conflict)? We should drop the move for now and do it late in the merge
+> window or post -rc1. It can be after your other changes.
 
-Hello Russell,
+Good that this came up now --- I was about to send a pull request to 
+Rafael. :-) So no, nothing has been pulled yet that would have included 
+the immutable branch you provided.
 
-Is it safe to apply the patch now?
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=8679/1
+Regarding the fwnode cleanups through linux-pm on the dt/property-move 
+branch --- I'm ok waiting for the next rc1.
 
-Regards.
+After that I'd like to get them in for I have patches for media-tree (of 
+which not all are mine) that in turn depend on the fwnode cleanups. 
+There still have been surprisingly few conflicts so far.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
