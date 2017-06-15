@@ -1,43 +1,51 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 15 Jun 2017 08:19:46 -0700
-Message-ID: <CAGXu5jK0o1xJRZ6XZpM0hLrOnHUn-9JG=ZYwkk94axHrx_t67g@mail.gmail.com>
-References: <20170605170117.6a1fc15e@canb.auug.org.au> <20170615113548.3e4edcf4@canb.auug.org.au>
- <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
- <20170615120631.121c6c9b@canb.auug.org.au> <CAGXu5jK2N349VCRb6ROAa=mMvF7bPqjEs3HofXVjzPQqWzRD3A@mail.gmail.com>
- <1497496709.1435.7.camel@gmail.com> <87k24dpzer.fsf@concordia.ellerman.id.au>
+From: aconcernedfossdev@airmail.cc
+Subject: Why does no one care that Brad Spengler of GRSecurity is blatantly
+ violating the intention of the rightsholders to the Linux Kernel?
+Date: Thu, 15 Jun 2017 15:41:56 +0000
+Message-ID: <9f8302ee8dbe7687a4c768cacd9c5591@airmail.cc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f42.google.com ([209.85.214.42]:37407 "EHLO
-        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752409AbdFOPTr (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Jun 2017 11:19:47 -0400
-Received: by mail-it0-f42.google.com with SMTP id m47so12785860iti.0
-        for <linux-next@vger.kernel.org>; Thu, 15 Jun 2017 08:19:47 -0700 (PDT)
-In-Reply-To: <87k24dpzer.fsf@concordia.ellerman.id.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Daniel Micay <danielmicay@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-lugnuts-owner@vger.kernel.org>
+Sender: linux-lugnuts-owner@vger.kernel.org
+To: debian-user@lists.debian.org, debian-project@lists.debian.org, linux-japanese@vger.kernel.org, linux-laptop@vger.kernel.org, linux-lugnuts@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-]
+Why does no one care that Brad Spengler of GRSecurity is blatantly 
+violating the intention of the rightsholders to the Linux Kernel?
+He is also violating the license grant, Courts would not be fooled by 
+his scheme to prevent redistribution.
 
-On Wed, Jun 14, 2017 at 10:56 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
-> Daniel Micay <danielmicay@gmail.com> writes:
->> ...
->>
->> The arch mailing list was pinged about this which is how the powerpc
->> folks got involved and fixed the issues there, including at least one
->> runtime one. Not sure where (if anywhere) those are queued up, but Kees
->> could pick those up too.
->
-> I was expecting Kees to pick them up.
+The license grant the Linux Kernel is distributed under disallows the 
+imposition of additional terms. The making of an understanding that the 
+derivative work must not be redistributed (lest there be retaliation) is 
+the imposition of an additional term. The communication of this threat 
+is the moment that GRSecurity violates the license grant. Thence-forth 
+modification, making of derivative works, and distribution of such is a 
+violation of the Copyright statute. The concoction of the transparent 
+scheme shows that it is a willful violation, one taken in full knowledge 
+by GRSecurity of the intention of the original grantor.
 
-Okay, cool. I'll get them into the kspp tree.
 
--Kees
+Why does not one person here care?
+Just want to forget what holds Libre Software together and go the way of 
+BSD?
 
--- 
-Kees Cook
-Pixel Security
+
+(Note: last month the GRSecurity Team removed the public testing patch,
+they prevent the distribution of the patch by paying customers by a
+threat of no further business: they have concocted a transparent scheme
+to make sure the intention of the Linux rights-holders (thousands of
+entities) are defeated) (This is unlike RedHat who do distribute their
+patches in the form the rights-holders prefer: source code, RedHat does
+not attempt to stymie the redistribution of their derivative works,
+GRSecurity does.).
+
+------
+( This song is about GRSecurity's violation of Linus et al's 
+copyright**:
+youtube.com/watch?v=CYnhI3wUej8
+(A Boat Sails Away 2016 17) )
+
+
