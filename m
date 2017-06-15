@@ -1,27 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: bad commit in the mvebu tree
-Date: Fri, 16 Jun 2017 05:57:32 +1000
-Message-ID: <20170616055732.4114daed@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the wireless-drivers tree
+Date: Fri, 16 Jun 2017 08:25:07 +1000
+Message-ID: <20170616082507.1e824796@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33865 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42885 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752099AbdFOT5g (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 15:57:36 -0400
+        id S1751644AbdFOWZK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 18:25:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>
 
 Hi all,
 
-I noticed that commit
+After merging the wireless-drivers tree, today's linux-next build
+(x86_64 allmodconfig) produced this warning:
 
-  c6f4e66bd0f4 ("arm64: marvell: dts: add xmdio nodes for 7k/8k")
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c: In function 'brcmf_usb_probe_phase2':
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2: warning: 'devinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  mutex_unlock(&devinfo->dev_init_lock);
+  ^
 
-has no Signed-off-by for its comitter.
+Introduced by commit
+
+  6d0507a777fb ("brcmfmac: add parameter to pass error code in firmware callback")
 
 -- 
 Cheers,
