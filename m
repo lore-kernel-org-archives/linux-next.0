@@ -1,40 +1,28 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 15 Jun 2017 12:12:20 -0700
-Message-ID: <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
-References: <20170605170117.6a1fc15e@canb.auug.org.au>
-        <20170615113548.3e4edcf4@canb.auug.org.au>
-        <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: bad commit in the mvebu tree
+Date: Fri, 16 Jun 2017 05:57:32 +1000
+Message-ID: <20170616055732.4114daed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33865 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752099AbdFOT5g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 15:57:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 14 Jun 2017 18:56:30 -0700 Kees Cook <keescook@chromium.org> wrote:
+Hi all,
 
-> >> Caused by commit
-> >>
-> >>   088a5ecf7581 ("include/linux/string.h: add the option of fortified string.h functions")
-> >>
-> >> We really need to fix all the known problems it detects *before*
-> >> merging this commit ...
-> >>
-> >> I have reverted it for today.
-> >
-> > I am still needing to revert this every day ...
-> 
-> I sent a series for -mm (or maintainers) to merge that should catch
-> everything. Do you want me to carry it in my kspp tree instead? (My
-> original intention was to carry all the fixes and the fortify patch in
-> kspp but akpm took it into -mm somewhat unexpectedly, not that I'm
-> complaining.)
+I noticed that commit
 
-This is all getting a bit foggy in my mind.  Can we please have a full
-resend of everything?  Sufficient to hopefully produce a tree which has
-no build-time or run-time regressions?  Including the buildbot's
-recently-reported alpha and xtensa issues?
+  c6f4e66bd0f4 ("arm64: marvell: dts: add xmdio nodes for 7k/8k")
+
+has no Signed-off-by for its comitter.
+
+-- 
+Cheers,
+Stephen Rothwell
