@@ -1,105 +1,36 @@
-From: <muirs@stolaf.edu>
-Subject: (unknown)
-Date: Wed, 14 Jun 2017 22:19:50 -0000
-Message-ID: <149747879011.14225.4197829641281931194@cm-84.211.17.113.getinternet.no>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the i2c tree
+Date: Thu, 15 Jun 2017 11:34:52 +1000
+Message-ID: <20170615113452.1fa1dc67@canb.auug.org.au>
+References: <20170605111131.3a113eaa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="96799833.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from cm-84.211.17.113.getinternet.no ([84.211.17.113]:47063 "HELO
-        cm-84.211.17.113.getinternet.no" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1752097AbdFNWTw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 14 Jun 2017 18:19:52 -0400
-Content-Disposition: attachment
-Subject: 
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170605111131.3a113eaa@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-UEsDBAoAAAAAAKWxzkqppFMJWhIAAFoSAAAJAAAAMTg2MzAuemlwUEsDBBQAAAAIAKWxzkrznFnU
-xBEAAPhbAAAIAAAAMTg2MzAuanONXFlzGkcQfk9V/sOGVG3AGzvGENvC8cNwSbJuCUlQqTwIwQoQ
-LOcKSan898AsMD1f94BeYO6j7+6ZneLdVRS/DnqV5o2qPd8eeN+91EPq288/sYpgUdOeNZZ14fT5
-Pq6OGuPj2VH9cLLs8+mjUKH7ZF0VX9zTOGvuJsuqbuilo/bcK9/N2unM39jyn3TG+/7dW7ZQk8nd
-Sxpmz/z98Z+M9+/PP9Xa1Yvbs7v+6Pnx5uUk7BSni6381j74Lfj5p98qh8fN+lP/9PD1JG4frHOl
-Trl4dWTyo6SxKZicNy9ext53KPZ0PmpD8dwzaQV195ukrjidmaruk07rcl3QNnV1WP+ZqWqapG7S
-W+d1bjHKvWkwS5t0yiSvlkndnKysg9vqi8kPi6RuuMrfmarzEd2Q/rP7dhEad/aUFnRMcpisbJOP
-dBYKUxmzMDP5N4I8e9OnL0mVLgEQN44ik7lIJrI7l6qwk9B0qDwBiK5/PAPObi6hwIP8dzOEWaGX
-rAppZW6SlBApGRi8IGyfxCHrZ80eVph13IsIS6fIQqaE2QhbdUek6wfSHHDTaVPi0xVmC0jNGZP8
-5rU7JndDmAYI7QrgPTZ5gqtXkyya5MmdSKUDk6yZ5BmS/JTgiMmXqA1UPbdb6JyF5XWSY0W33YZ0
-g9BkklW9zmga0ClDCIJo0S0c8oVjH7ZxOFoJOWuYms50CanvmyQhmZDspw9Lb18BPTUIqc2gcYUg
-bgh1i82TrYjCilHjupXZlE6BLDL7iKN7S4LbUlAXQf0w8m4nZWCIC9KpUesQBrzcfyWgemyZTHUO
-OFTAFukW7LkJHYaA0zqZ9gfB4UBXExF7SiAAkxKQPzwxUBiOHJUzIkT/FUsnBl5I+LPY1K3a6rRh
-kg1BRGTsK0IKwLYTyFNyfvgQAhAnhAAHhN5gkM6dvRvOYUPdoYVQXGERNtkk/eqAxssfwAjRwK0t
-T0NJ7VMsWpJHN+Dcof8YjiVDheiQsqwFzHqQCv5z8KDFYat5ovut5ogtYRYsGYHQOSR9DrhW0i3X
-u59ra5QJq1ZFanxtGiCenl7Jms+Oa4QIyAwvFXUoKo46QO4gLPfjSfuRiM/rFQataYlMucjQJQFn
-Ih0alTZBK5YwF9jC8STy3JZzJzGwmlfjDZdxve7S5gNYRQ3o8UyE2vQDEamMTuyV9gmo2jYhMc6u
-PHdFi2omlqZBXOjckf59IWPanE4l/iHI4Xv96yIO/Z9QCNB9jMJQNDEpTXGVaRF56yLzzfvPEzVG
-bJKRbAt1h5HE3WS4OpFtQCmXHULZJmnx6CN0Hx7P0LPTqWSbvSXt8T2m+0RJ99oA0hmZYgP6bhMm
-nh6K4FWnz41jWNAPwPXvwGPeOs8hPhKp78Qkb4l46jw91wn63cT22OqWyHYA3gtH3xOV30J3T2Br
-EcqfPpD8K7o23PdEVTklC39UzIoBomlIEu7YJbT1r2Xa3gPwO7ABhx0wbIn7UjPgrLTISCNoNT0B
-DN1C/gdhjadn6F1PZACY5UmLR9heCwbulqg20UUL9gfJ7FXqVy2R4c9FSiSLTTBzMz57qRES876T
-NEyWCufEBA4k9A4yxFSFFqdDBSIxFMmuJQZ5FLDFmKAvY9K/zhXpNIUJfbK4XJZkGAEbLwTEfxfQ
-5kO9wlENcHKmSp7bB/LR6TxpqkCD6QZsXj9QZCoVEMjB3ENxGSFJKxsyHI45ysWoTtf57Bb4GMbQ
-/0UkBFMfk649Ms5chQ3dhkJqgyb9R0YJzu9JOzeBPRIA6z+EElloTMfxxeFzwAzBXkBRJkXtcrS3
-LhTRst6pw3klnLXhP/3H2W0qoqknI2+MG1IUPw4gVGeWkcNbdG0y5L7qQFzNwA0fn+B1B8p1IsdI
-iQoNOjBJ5wo+hrzzwKAlSiJZsoqKhUCdtCWVgZb+ww1mQWIVAyigG8CYPRWWfi6pziIFdTcr4OwP
-A2Yd0OXikI6StwWboSLYSU4WJMNQybKcFBv8OFgsyBpMb4BogLBNGMkMAvjvAYkGc8k6VqFrBJ2w
-3OLz+00DakLq38UwLi5Xsa5wELJbreyRHm65lpPhQtIzNHRID6p6BhTiMNxA1p85JbqgzbGbA3R2
-PNAL5AKvpURjJN4pHvWwwUimyyGlS6qqc8houcKihKkwWbjmTbLkU2DJZkfFbRtlMf7ERjP4ngOL
-0qZNDPpTGwWJjjNQFjlG8JvsCYF4rwEf1xcSwwTKR0tE5bIK1CpaUSiaqJkmCjOF5OxTxPMgCSen
-7BDWtOF0bqEtNmU3tqzPorjYFp7fiq1iGLeHknJOVDgax41zE07hHnrI/XtJcvm5PTKnxUtbxLsu
-A/yfijusIRtLCrqxS/4nfcXQgE+5NrfI7HQm1szltgirQSOg2zmBUTgLuXn6OrjWGeSn4CJAqlI5
-dHIseVxA6yuvNnYQ56GsyDi+w2MAa4PQ9Nzdownrn8qKxO25qayqEWbgpLIZ2aHWmuKMkaj2OYG7
-zT4/j9iq8I5b/L/Qbbk9K0tYkU6W/VSEFek/lJuGpvBQqSVZ4wTAqKJ1vRXEnaPUMlRsfDarR8Pt
-N5zDzLqhIzT1SP3Clps8Ek3DBfLeFp+R29lGQAPEio5QAayC7oyZFxYBsv4lsPy4rVWTBpehMSVA
-43wKB0uUlgPpxGDlvMhyw33AaztLLlukIIUqUKNzJx4MNJiq5PCX0f9yyMKsARGXgKg4mgnEEbU7
-6U7J6xq7bfNm3LXXy70Dk8/KWpRpjYpFH2jqb+iBS7hnvHgms0jXknC5KiOYmhqHiR/Yo3uFVQ0C
-KqT2yQQjt1CXfZl2Mt0U18+iPXJwE/C/Z7GPcsuVRPEzZcCYcLyxj/kumiqmnD2ja0ST3m1y5nJv
-sPFX25OlUkHGtRhW8ncY4GDmuAQh0o0VLwJi+WyqylinYJzPAW2sAoSVpDqDDW65Uqb2QEnJNpDU
-26G+Al8uP2VXIjYxqV0GUSxSYJeUGpRxqyWBPVFL0yZV50Nx8DZaB5K7NQoiF0qNwaH/HDEVmxkD
-RvaBKri1E7b23WYjxhKKaKqi/+8OyuYL4ox5WEwh8PO7vKICbsBNYGQsChIlhhGBvPKgZwqENt7i
-aOULW0IevtvoX6He6T0UkMS2xNTMBFSplBxupHQroaCEi0O2rSHdIc5TlCqfZin26a62By7ojF/L
-iHE8UGP2ez5rNeFdKHzsqIoZqmCpgF1gN5cct2oZA1NaxV0TqytpWw1hihe6yBBZMkf9LfTEOesZ
-ZYUbybrj7TwknTh2PGpwfW3SFzJsWZACZNR5QI9xN5XipUoX0pA792iBQYBCWGKs6KCKtsmWc5Pr
-9k65uYlB7TSsmfIXO1ALAH3qN5xJ6yLHORgchfMzaHYOYx2JJVTSjYOYxtkXqo2QZJFaHPvBW46S
-T/ebaDQPibLepWmmAIRnPI4iUNP/GBEZ2UeNXLwmWXPLXKJ/Q/ooE/E8STqXGOGax1DgOHdeb41j
-PQdhUB7f0P8GB/TGh9oRTm1HPWSGITs6dNtrIhqrSMvM9VRdBK3+pbS4MpgthRlQKnxwi/rAdtud
-4f2AOa10oWDPrJZDtmxLdluzcV+ivFOZMXOQNMuCyHwIpKvLTQTrAKnEnBBLeiNcGehO0eGwKoFi
-tkjhkq9ybobIUl0lJoMLYyC90TAIqpTlamaHZgnhmvtcC6NSzHGshPwQ7KG17jaIc05DgBtqsiXo
-YFnuuuVFli0B4bhEfHLo3iNciJrQov6saOlTHtojyzmEVV/LMa1r/H4EBQEjMDRuq+LAtZVj5w6B
-BtTvjcVP0WYOqwoGzSoUsvmgsuWyBZFf2NG+D+E2UfL8JApMcnnpFgfDOFlJvPjUiMj6gZu4+QFr
-wfAhPwTZYlwGX0s7xatCn6TiZ+UPNnhQnJM4Jw7r9AhJsBlEOx0eFVTFG5rnAQ3iyffZhrtvswWK
-RjFE/ZErbAn2yedJ+Z0nDXpE1F81AFBMoIfAa9JDN8stW9n/TvRcv8J+xmiahKLBuJt/kQtVPpBO
-wiuBRTxbjkZX8pJZLp+QZTC+ZAVwJHioErtXkKViL56G8vXdyKIk2TDG7dWnEl31WKE7chiigrMk
-HCV/VLCHVElcuz20C9/aDG7hyh0rCmeEE835gHDxwHaLGRUEkiMzY4h0OtqlEdKJ+yukV4tlCj7l
-WObuZ9lVSuYsuyVyhczEbgLhwWeNHjlQ7scvNaMtB2AqyEkkXyXIHs1glb0YY1GIDbPKHplrNETl
-hONYV9VZsCdQbkhWrBsD6/U4JRMA3vZ9tuBryzUF2dbKU+0kfNGt7fmseJQco22Azr7baaAiAEUT
-P1pGY7qqamKnuRQ4DZEur5mAHbnt9v2efCioQvF0R3K5fGT1XNJWWixV4GqcDNR2chhhr65sEW05
-VCxvCaRKHkeW0Sw1X3feRFl51+Lt7i32o/4tgLxmzk8eVYH7UN+nLOIOOeFm8WJmgj3rynhRvm8R
-B1NJjYQyxJoR7jXHLrpUyyJJjmZhYKlzBMqepSYMZDnVUAXyBvNmswf5OgGpm2GQtCufnFghBMdl
-Fl0nfHwfEuisTmoIlKoviH/pQBFtcH6DpAXdntSuE9PQcbkbBtqTXFQMMSJJNBN0SsyFvBBDvmuH
-hy1TrEyWvIILIibLoglvkj7BlvM6c5VI/wmxOCJAtwXj+f3zrAX5QE6zwDqd2o24si9vPRu4nDLp
-MizOLT2XokbGSdSl4Cn6aAVY93IQKYoBdkuwz3Jmy8wyM8eZ+t+KFL3pkkyeFH/i/hYTP9z+WBrA
-NJahWIDS4UirhUX31eQr0O1Xk3wHtPvurxR9QGUG1U/iWwsnQ5O+rJj0/BTAH2NgGLBbl86Tm+IN
-8oF4ZliUvs7vWx+dmmQq9c3Dj9KPYAD51m/5VKLlkbi6qHMifenXFCEZV4/pE1cecAbdx8tZ40g0
-Mi9KAOVqaArEW39P7u8afoi3/28uP1y2Hy7F07I7EV3yC2kHZAfJ/CekHWHv9UM87A0ek2zUnN9z
-n04v903mVTKS+qb+sYWvjs1FYZjek64+fdK/GVQEqSl+rCx/nGymsr8/l95w0ulUcGtGBgEzAeiW
-HZAzSfeLRsmQ1o41qOYoeNNivPxTRj46MvuwmYev8n4i3ZEdwljTRcH2z79T0qNRKyAa9pysALZ4
-5MkmBpusTJoSWB9w/ej+5riKnzvZNo4TnNANoMs5bb4mIA7YCGZsDed4yp3CaLadX7LnBd0Yoy+L
-brdAVBdYJAjy+NViVIkrqnNKjHh545Opy6AhmtrQEtoA9zHhRfouRjTbPLXEJSFpOIW5uuytsVSi
-229Jp/IFiDduu3cQU5f7MJP9KFlVlDTqjTzLqKob0RffJFP3zvXQ5XZ4pcSZb8W2ZcAAQo2flXYW
-+gDLGXGZ5AZqm2eklE7slHnQzQFOC4hrJHO5dQfb7K+bvhGmCSX3h/eihmHfYA+JgEhlYG5qIgLf
-Tyrip6uzB2hXO0aux/gRoe3SJUHHmf0YEY9gv3iShv/u1YktAy8O8be2Eq2oc8yYecRbJ8eINvSo
-pSOFqQgo+m4RIav6EQxZRJpEXQ9LSkrp7aNIfLblBNo1LesUKgkOQ4L33731MRq/qZj59tviVeLe
-oBHdTpv1yrjfnZ0+L54S5u8Lf5iOFpXpFGGVzIfesBulUyn9UlX0PK3cz3rVm/EwPi9fHi5GaT/d
-9dMweGb5pvJw4qWf7ibe00DNetFhu1NpHc1vi7WHRaeP34Tiv/TTN/fnt53j5A2bD/129DDrCG2D
-YPlwUq/Rrd0+nd30w0mpPX15bC5GxiHuO3eT5QNCapZmo2S8917u4+cv7/78nMu/S3/a+/Lx4+f3
-f35cZCaV3uyhdjxVnQUjnMXRS+aPZfkfy+Z/LJuv3nlO8zX88t3TQ6QXbRcDvl/+SeMty/WgGc/3
-PXkg3Tf9+euXXP7r+8W08sI+rxaWDHQbHXYPbuZHjVbl+sfi2bzFY3np+lFxXl4SYOekebD0eCr6
-DerZJG67O7GpdJ/wrj9tZ5bgnz0dnAwvK/PT+KHebA0Oi/3lI9hXs0k3WjwFORkOSivYC5tbUtN/
-Ce3wYTLf/gdQSwECPwAUAAAACAClsc5K85xZ1MQRAAD4WwAACAAkAAAAAAAAACAAAAAAAAAAMTg2
-MzAuanMKACAAAAAAAAEAGAB1yIkUluXSAXXIiRSW5dIB9EEjFJbl0gFQSwUGAAAAAAEAAQBaAAAA
-6hEAAAAAUEsBAj8ACgAAAAAApbHOSqmkUwlaEgAAWhIAAAkAJAAAAAAAAAAgAAAAAAAAADE4NjMw
-LnppcAoAIAAAAAAAAQAYAJ6MjhSW5dIBnoyOFJbl0gH8piUUluXSAVBLBQYAAAAAAQABAFsAAACB
-EgAAAAA=
+Hi Wolfram,
+
+On Mon, 5 Jun 2017 11:11:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/i2c/i2c-stub.c:18:0: warning: "DEBUG" redefined
+>  #define DEBUG
+>  ^
+> <command-line>:0:0: note: this is the location of the previous definition
+> 
+> Introduced by commit
+> 
+>   6c42778780c4 ("i2c: stub: use pr_fmt")
+
+I am still getting this ...
+
+-- 
+Cheers,
+Stephen Rothwell
