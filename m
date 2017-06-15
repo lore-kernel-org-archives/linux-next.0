@@ -1,36 +1,62 @@
-From: "Rowand, Frank" <Frank.Rowand@sony.com>
-Subject: RE: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU:
- 12 PID: 0 at mm/memblock.c
-Date: Thu, 15 Jun 2017 17:06:56 +0000
-Message-ID: <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
-References: <1497506437.15415.60.camel@abdul.in.ibm.com>
- <1497518696.15415.68.camel@abdul.in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the
+ wireless-drivers-next tree
+Date: Fri, 16 Jun 2017 04:25:19 +1000
+Message-ID: <20170616042519.40f63561@canb.auug.org.au>
+References: <20170608122759.7ffda0c3@canb.auug.org.au>
+        <20170613120024.2a1ce31b@canb.auug.org.au>
+        <20170615.120808.1402317729827497353.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-co1nam03on0099.outbound.protection.outlook.com ([104.47.40.99]:9543
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750803AbdFORHD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 13:07:03 -0400
-In-Reply-To: <1497518696.15415.68.camel@abdul.in.ibm.com>
-Content-Language: en-US
+Received: from ozlabs.org ([103.22.144.67]:33325 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752884AbdFOSZa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 14:25:30 -0400
+In-Reply-To: <20170615.120808.1402317729827497353.davem@davemloft.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, mpe <mpe@ellerman.id.au>
+To: David Miller <davem@davemloft.net>
+Cc: netdev@vger.kernel.org, kvalo@codeaurora.org, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, igor.mitsyanko.os@quantenna.com, dlebed@quantenna.com, smaksimenko@quantenna.com, smatyukevich@quantenna.com, btherthala@quantenna.com, hwang@quantenna.com, krath@quantenna.com, avinashp@quantenna.com
 
-T24gVGh1cnNkYXksIEp1bmUgMTUsIDIwMTcgMjoyNSBBTSwgQWJkdWwgSGFsZWVtIFttYWlsdG86
-YWJkaGFsZWVAbGludXgudm5ldC5pYm0uY29tXSAgd3JvdGU6DQo+DQo+IE9uIFRodSwgMjAxNy0w
-Ni0xNSBhdCAxMTozMCArMDUzMCwgQWJkdWwgSGFsZWVtIHdyb3RlOg0KPj4gSGksDQo+Pg0KPj4g
-bGludXgtbmV4dCBmYWlscyB0byBib290IG9uIHBvd2VycGMgQmFyZS1tZXRhbCB3aXRoIHRoZXNl
-IHdhcm5pbmdzLg0KPj4NCj4+IG1hY2hpbmUgYm9vdGVkIGZpbmUgb24gbmV4dC0yMDE3MDYxMw0K
-Pg0KPiBUaGFua3MgTWljaGFlbCwgWWVzIGl0IGlzICg3NWZlMDRlNTkgb2Y6IHJlbW92ZSAqcGhh
-bmRsZSBwcm9wZXJ0aWVzIGZyb20NCj4gZXhwYW5kZWQgZGV2aWNlIHRyZWUpDQo+DQo+IEZyYW5r
-LCB3b3VsZCB5b3UgcGxlYXNlIHRha2UgYSBsb29rIGF0IHRoZSB0cmFjZS4NCj4NCj4gVGhhbmtz
-DQoNCjwgc25pcCA+DQoNCk15IHBhdGNoIHNlcmllcyAnb2Y6IHJlbW92ZSAqcGhhbmRsZSBwcm9w
-ZXJ0aWVzIGZyb20gZXhwYW5kZWQgZGV2aWNlIHRyZWUnDQppbiAtbmV4dCBzZWVtcyB0byBoYXZl
-IGJyb2tlbiBib290IGZvciBhIHNpZ25pZmljYW50IG51bWJlciBvZiBwb3dlcnBjDQpzeXN0ZW1z
-LiAgSSBhbSBhY3RpdmVseSB3b3JraW5nIG9uIHVuZGVyc3RhbmRpbmcgYW5kIGZpeGluZyB0aGUg
-cHJvYmxlbS4NCg0KLUZyYW5rDQo=
+Hi Dave,
+
+On Thu, 15 Jun 2017 12:08:08 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 13 Jun 2017 12:00:24 +1000
+> 
+> > On Thu, 8 Jun 2017 12:27:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
+> >>
+> >> After merging the wireless-drivers-next tree, today's linux-next build
+> >> (x86_64 allmodconfig) failed like this:
+> >> 
+> >> drivers/net/wireless/quantenna/qtnfmac/core.c: In function 'qtnf_core_net_attach':
+> >> drivers/net/wireless/quantenna/qtnfmac/core.c:319:5: error: 'struct net_device' has no member named 'destructor'
+> >>   dev->destructor = free_netdev;
+> >>      ^
+> >> 
+> >> Caused by commit
+> >> 
+> >>   98f44cb0655c ("qtnfmac: introduce new FullMAC driver for Quantenna chipsets")  
+> > 
+> > This commit is now in the net-next tree ...
+> >   
+> >> interacting with commit
+> >> 
+> >>   cf124db566e6 ("net: Fix inconsistent teardown and release of private netdev state.")
+> >> 
+> >> from the net tree.
+> >> 
+> >> I applied this merge fix patch for today.  
+> > 
+> > So this merge fix patch is needed when the net and net-next trees are merged.  
+> 
+> This is now all resolved, thanks!
+
+Thanks for letting me know.
+
+-- 
+Cheers,
+Stephen Rothwell
