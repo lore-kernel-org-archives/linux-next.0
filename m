@@ -1,53 +1,43 @@
-From: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 15 Jun 2017 16:50:48 +0200 (CEST)
-Message-ID: <alpine.LFD.2.20.1706151649160.1848@schleppi>
-References: <20170613205409.4b7e06f9@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 15 Jun 2017 08:19:46 -0700
+Message-ID: <CAGXu5jK0o1xJRZ6XZpM0hLrOnHUn-9JG=ZYwkk94axHrx_t67g@mail.gmail.com>
+References: <20170605170117.6a1fc15e@canb.auug.org.au> <20170615113548.3e4edcf4@canb.auug.org.au>
+ <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+ <20170615120631.121c6c9b@canb.auug.org.au> <CAGXu5jK2N349VCRb6ROAa=mMvF7bPqjEs3HofXVjzPQqWzRD3A@mail.gmail.com>
+ <1497496709.1435.7.camel@gmail.com> <87k24dpzer.fsf@concordia.ellerman.id.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47832 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752548AbdFOOu4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 10:50:56 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v5FEmgKH063963
-        for <linux-next@vger.kernel.org>; Thu, 15 Jun 2017 10:50:55 -0400
-Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2b3ujvtbya-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 15 Jun 2017 10:50:55 -0400
-Received: from localhost
-        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <sebott@linux.vnet.ibm.com>;
-        Thu, 15 Jun 2017 15:50:53 +0100
-In-Reply-To: <20170613205409.4b7e06f9@canb.auug.org.au>
+Received: from mail-it0-f42.google.com ([209.85.214.42]:37407 "EHLO
+        mail-it0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752409AbdFOPTr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Jun 2017 11:19:47 -0400
+Received: by mail-it0-f42.google.com with SMTP id m47so12785860iti.0
+        for <linux-next@vger.kernel.org>; Thu, 15 Jun 2017 08:19:47 -0700 (PDT)
+In-Reply-To: <87k24dpzer.fsf@concordia.ellerman.id.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Daniel Micay <danielmicay@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, 13 Jun 2017, Stephen Rothwell wrote:
-> After merging the block tree, today's linux-next build (s390x
-> s390-defconfig) failed like this:
-> 
-> drivers/s390/block/scm_blk.c:293:10: error: 'BLK_MQ_RQ_QUEUE_BUSY' undeclared (first use in this function)
-> drivers/s390/block/scm_blk.c:327:9: error: 'BLK_MQ_RQ_QUEUE_OK' undeclared (first use in this function)
-> 
-> Caused by commit
-> 
->   fc17b6534eb8 ("blk-mq: switch ->queue_rq return value to blk_status_t")
-> 
-> interacting with commit
-> 
->   12d907626539 ("s390/scm: convert to blk-mq")
-> 
-> from the s390 tree.
-> 
-> Is the following the correct merge fixup?
+]
 
-Yes, that looks good!
+On Wed, Jun 14, 2017 at 10:56 PM, Michael Ellerman <mpe@ellerman.id.au> wrote:
+> Daniel Micay <danielmicay@gmail.com> writes:
+>> ...
+>>
+>> The arch mailing list was pinged about this which is how the powerpc
+>> folks got involved and fixed the issues there, including at least one
+>> runtime one. Not sure where (if anywhere) those are queued up, but Kees
+>> could pick those up too.
+>
+> I was expecting Kees to pick them up.
 
-Thanks,
-Sebastian
+Okay, cool. I'll get them into the kspp tree.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
