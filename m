@@ -1,62 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the
- wireless-drivers-next tree
-Date: Fri, 16 Jun 2017 04:25:19 +1000
-Message-ID: <20170616042519.40f63561@canb.auug.org.au>
-References: <20170608122759.7ffda0c3@canb.auug.org.au>
-        <20170613120024.2a1ce31b@canb.auug.org.au>
-        <20170615.120808.1402317729827497353.davem@davemloft.net>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 15 Jun 2017 12:12:20 -0700
+Message-ID: <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
+References: <20170605170117.6a1fc15e@canb.auug.org.au>
+        <20170615113548.3e4edcf4@canb.auug.org.au>
+        <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33325 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752884AbdFOSZa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 14:25:30 -0400
-In-Reply-To: <20170615.120808.1402317729827497353.davem@davemloft.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, kvalo@codeaurora.org, linux-wireless@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, igor.mitsyanko.os@quantenna.com, dlebed@quantenna.com, smaksimenko@quantenna.com, smatyukevich@quantenna.com, btherthala@quantenna.com, hwang@quantenna.com, krath@quantenna.com, avinashp@quantenna.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@chromium.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
+On Wed, 14 Jun 2017 18:56:30 -0700 Kees Cook <keescook@chromium.org> wrote:
 
-On Thu, 15 Jun 2017 12:08:08 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 13 Jun 2017 12:00:24 +1000
-> 
-> > On Thu, 8 Jun 2017 12:27:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> >>
-> >> After merging the wireless-drivers-next tree, today's linux-next build
-> >> (x86_64 allmodconfig) failed like this:
-> >> 
-> >> drivers/net/wireless/quantenna/qtnfmac/core.c: In function 'qtnf_core_net_attach':
-> >> drivers/net/wireless/quantenna/qtnfmac/core.c:319:5: error: 'struct net_device' has no member named 'destructor'
-> >>   dev->destructor = free_netdev;
-> >>      ^
-> >> 
 > >> Caused by commit
-> >> 
-> >>   98f44cb0655c ("qtnfmac: introduce new FullMAC driver for Quantenna chipsets")  
-> > 
-> > This commit is now in the net-next tree ...
-> >   
-> >> interacting with commit
-> >> 
-> >>   cf124db566e6 ("net: Fix inconsistent teardown and release of private netdev state.")
-> >> 
-> >> from the net tree.
-> >> 
-> >> I applied this merge fix patch for today.  
-> > 
-> > So this merge fix patch is needed when the net and net-next trees are merged.  
+> >>
+> >>   088a5ecf7581 ("include/linux/string.h: add the option of fortified string.h functions")
+> >>
+> >> We really need to fix all the known problems it detects *before*
+> >> merging this commit ...
+> >>
+> >> I have reverted it for today.
+> >
+> > I am still needing to revert this every day ...
 > 
-> This is now all resolved, thanks!
+> I sent a series for -mm (or maintainers) to merge that should catch
+> everything. Do you want me to carry it in my kspp tree instead? (My
+> original intention was to carry all the fixes and the fortify patch in
+> kspp but akpm took it into -mm somewhat unexpectedly, not that I'm
+> complaining.)
 
-Thanks for letting me know.
-
--- 
-Cheers,
-Stephen Rothwell
+This is all getting a bit foggy in my mind.  Can we please have a full
+resend of everything?  Sufficient to hopefully produce a tree which has
+no build-time or run-time regressions?  Including the buildbot's
+recently-reported alpha and xtensa issues?
