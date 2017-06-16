@@ -1,58 +1,62 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU: 12 PID: 0 at mm/memblock.c
-Date: Fri, 16 Jun 2017 20:35:49 +1000
-Message-ID: <8737b0w77e.fsf@concordia.ellerman.id.au>
-References: <1497506437.15415.60.camel@abdul.in.ibm.com> <1497518696.15415.68.camel@abdul.in.ibm.com> <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com> <87injwwxzh.fsf@concordia.ellerman.id.au> <20170616111335.4e1a818a@canb.auug.org.au> <20170616133258.74900bc3@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 16 Jun 2017 10:17:43 -0700
+Message-ID: <20170616101743.f2e5c255612b2e3e7ee596e2@linux-foundation.org>
+References: <20170605170117.6a1fc15e@canb.auug.org.au>
+        <20170615113548.3e4edcf4@canb.auug.org.au>
+        <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+        <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
+        <CAGXu5jJJPZYnhcubfWrjj8XROAycEYsgK_AhBF-rQydeZyCwCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57861 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752574AbdFPKfx (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 16 Jun 2017 06:35:53 -0400
-In-Reply-To: <20170616133258.74900bc3@canb.auug.org.au>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51916 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750854AbdFPRRo (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 13:17:44 -0400
+In-Reply-To: <CAGXu5jJJPZYnhcubfWrjj8XROAycEYsgK_AhBF-rQydeZyCwCg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
-> On Fri, 16 Jun 2017 11:13:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> On Fri, 16 Jun 2017 10:57:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->> > "Rowand, Frank" <Frank.Rowand@sony.com> writes:
->> > > On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:    
->> > >> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:    
->> > >>>
->> > >>> linux-next fails to boot on powerpc Bare-metal with these warnings.
->> > >>>
->> > >>> machine booted fine on next-20170613    
->> > >>
->> > >> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
->> > >> expanded device tree)
->> > >>
->> > >> Frank, would you please take a look at the trace.
->> > >>
->> > >> Thanks    
->> > >
->> > > < snip >
->> > >
->> > > My patch series 'of: remove *phandle properties from expanded device tree'
->> > > in -next seems to have broken boot for a significant number of powerpc
->> > > systems.  I am actively working on understanding and fixing the problem.    
->> > 
->> > Thanks.
->> > 
->> > At least for me reverting that patch on top of linux-next gets things
->> > booting again.
->> > 
->> > Stephen can you revert that patch in linux-next today?  
->> 
->> OK.
->
-> Actually, Rob removed it from his tree before I merged it.
+On Thu, 15 Jun 2017 16:46:33 -0700 Kees Cook <keescook@chromium.org> wrote:
 
-Yep, just noticed that.
+> On Thu, Jun 15, 2017 at 12:12 PM, Andrew Morton
+> <akpm@linux-foundation.org> wrote:
+> > On Wed, 14 Jun 2017 18:56:30 -0700 Kees Cook <keescook@chromium.org> wrote:
+> >
+> >> >> Caused by commit
+> >> >>
+> >> >>   088a5ecf7581 ("include/linux/string.h: add the option of fortified string.h functions")
+> >> >>
+> >> >> We really need to fix all the known problems it detects *before*
+> >> >> merging this commit ...
+> >> >>
+> >> >> I have reverted it for today.
+> >> >
+> >> > I am still needing to revert this every day ...
+> >>
+> >> I sent a series for -mm (or maintainers) to merge that should catch
+> >> everything. Do you want me to carry it in my kspp tree instead? (My
+> >> original intention was to carry all the fixes and the fortify patch in
+> >> kspp but akpm took it into -mm somewhat unexpectedly, not that I'm
+> >> complaining.)
+> >
+> > This is all getting a bit foggy in my mind.  Can we please have a full
+> > resend of everything?  Sufficient to hopefully produce a tree which has
+> > no build-time or run-time regressions?  Including the buildbot's
+> > recently-reported alpha and xtensa issues?
+> 
+> It's been sent a few times (and a few fixes have been collected in
+> other trees already). What I've got in my for-next/kspp tree right now
+> is all the fixes that haven't already been picked up by other tree
+> maintainers, and I added the fortify patch itself to the end of the
+> tree too now since sfr asked for that a few hours ago.
 
-Thanks all.
+I think it's best to try to keep everything in a single tree, with
+maintainer acks where possible.
 
-cheers
+I do this stuff all the time - please just send everything at me when
+we think we have all the fixes and I'll sort it out.
