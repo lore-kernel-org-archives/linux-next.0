@@ -1,90 +1,50 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 15 Jun 2017 17:35:43 -0700
-Message-ID: <CAGXu5jKXNuZOqWB6pa+1L6x0k6qwXyFzba0nECCpvb07XcW+zg@mail.gmail.com>
-References: <20170605170117.6a1fc15e@canb.auug.org.au> <20170615113548.3e4edcf4@canb.auug.org.au>
- <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
- <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
- <CAGXu5jJJPZYnhcubfWrjj8XROAycEYsgK_AhBF-rQydeZyCwCg@mail.gmail.com> <1497571513.17727.2.camel@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: RE: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU: 12 PID: 0 at mm/memblock.c
+Date: Fri, 16 Jun 2017 10:57:22 +1000
+Message-ID: <87injwwxzh.fsf@concordia.ellerman.id.au>
+References: <1497506437.15415.60.camel@abdul.in.ibm.com> <1497518696.15415.68.camel@abdul.in.ibm.com> <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f44.google.com ([209.85.214.44]:37311 "EHLO
-        mail-it0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751946AbdFPAfp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Jun 2017 20:35:45 -0400
-Received: by mail-it0-f44.google.com with SMTP id m47so19534316iti.0
-        for <linux-next@vger.kernel.org>; Thu, 15 Jun 2017 17:35:45 -0700 (PDT)
-In-Reply-To: <1497571513.17727.2.camel@gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:47025 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751761AbdFPA51 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 20:57:27 -0400
+In-Reply-To: <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Daniel Micay <danielmicay@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
 
-On Thu, Jun 15, 2017 at 5:05 PM, Daniel Micay <danielmicay@gmail.com> wrote:
-> On Thu, 2017-06-15 at 16:46 -0700, Kees Cook wrote:
->> On Thu, Jun 15, 2017 at 12:12 PM, Andrew Morton
->> <akpm@linux-foundation.org> wrote:
->> > On Wed, 14 Jun 2017 18:56:30 -0700 Kees Cook <keescook@chromium.org>
->> > wrote:
->> >
->> > > > > Caused by commit
->> > > > >
->> > > > >   088a5ecf7581 ("include/linux/string.h: add the option of
->> > > > > fortified string.h functions")
->> > > > >
->> > > > > We really need to fix all the known problems it detects
->> > > > > *before*
->> > > > > merging this commit ...
->> > > > >
->> > > > > I have reverted it for today.
->> > > >
->> > > > I am still needing to revert this every day ...
->> > >
->> > > I sent a series for -mm (or maintainers) to merge that should
->> > > catch
->> > > everything. Do you want me to carry it in my kspp tree instead?
->> > > (My
->> > > original intention was to carry all the fixes and the fortify
->> > > patch in
->> > > kspp but akpm took it into -mm somewhat unexpectedly, not that I'm
->> > > complaining.)
->> >
->> > This is all getting a bit foggy in my mind.  Can we please have a
->> > full
->> > resend of everything?  Sufficient to hopefully produce a tree which
->> > has
->> > no build-time or run-time regressions?  Including the buildbot's
->> > recently-reported alpha and xtensa issues?
+"Rowand, Frank" <Frank.Rowand@sony.com> writes:
+
+> On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:
 >>
->> It's been sent a few times (and a few fixes have been collected in
->> other trees already). What I've got in my for-next/kspp tree right now
->> is all the fixes that haven't already been picked up by other tree
->> maintainers, and I added the fortify patch itself to the end of the
->> tree too now since sfr asked for that a few hours ago.
+>> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:
+>>> Hi,
+>>>
+>>> linux-next fails to boot on powerpc Bare-metal with these warnings.
+>>>
+>>> machine booted fine on next-20170613
 >>
->> Merged with latest -next, this passes x86_64, i386, arm64, and powerpc
->> allmodconfig builds for me. It doesn't pass arm, though. Perhaps we
->> need to add an ARCH_HAS_FORTIFY_SOURCE to gate the all*config builds?
+>> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
+>> expanded device tree)
 >>
->> Should we let the dust settle first? I'm happy to do whatever makes
->> the most sense, I'm just following what (I understand) sfr suggested
->> most recently. :)
+>> Frank, would you please take a look at the trace.
 >>
->> -Kees
->>
+>> Thanks
 >
-> If it needs to build and boot on every architecture, I think we should
-> gate it on i386, x86_64, arm64 or powerpc where it has been tested.
+> < snip >
 >
-> I think I know what has to be fixed for alpha and xtensa but there might
-> be more problems. It's better to wait for someone willing / able to do
-> it properly by building it themselves and doing basic runtime testing.
+> My patch series 'of: remove *phandle properties from expanded device tree'
+> in -next seems to have broken boot for a significant number of powerpc
+> systems.  I am actively working on understanding and fixing the problem.
 
-Sounds good. I've added ARCH_HAS_FORTIFY_SOURCE to the patch (and noted it).
+Thanks.
 
--Kees
+At least for me reverting that patch on top of linux-next gets things
+booting again.
 
--- 
-Kees Cook
-Pixel Security
+Stephen can you revert that patch in linux-next today?
+
+cheers
