@@ -1,46 +1,59 @@
-From: Gregory CLEMENT <gregory.clement@free-electrons.com>
-Subject: Re: linux-next: bad commit in the mvebu tree
-Date: Fri, 16 Jun 2017 08:59:13 +0200
-Message-ID: <87tw3g5sfy.fsf@free-electrons.com>
-References: <20170616055732.4114daed@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170616 build: 0 failures 1 warnings (next-20170616)
+Date: Fri, 16 Jun 2017 09:18:10 +0100
+Message-ID: <E1dLmSI-00032J-97@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:53150 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752441AbdFPG7P (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 02:59:15 -0400
-In-Reply-To: <20170616055732.4114daed@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 16 Jun 2017 05:57:32 +1000")
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51106 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752352AbdFPIST (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 04:18:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Stephen,
- 
- On jeu., juin 15 2017, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Tree/Branch: next-20170616
+Git describe: next-20170616
+Commit: 82341321f2 Add linux-next specific files for 20170616
 
-> Hi all,
->
-> I noticed that commit
->
->   c6f4e66bd0f4 ("arm64: marvell: dts: add xmdio nodes for 7k/8k")
->
-> has no Signed-off-by for its comitter.
+Build Time: 0 min 14 sec
 
-Thanks for the warning, I fix it right now.
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
 
-Gregory
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  1 ../drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2: warning: 'devinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
->
-> -- 
-> Cheers,
-> Stephen Rothwell
 
--- 
-Gregory Clement, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2: warning: 'devinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
