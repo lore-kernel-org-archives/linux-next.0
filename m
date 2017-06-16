@@ -1,58 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the kspp tree
-Date: Fri, 16 Jun 2017 11:30:32 +1000
-Message-ID: <20170616113032.306720bf@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 16 Jun 2017 12:04:57 +1000
+Message-ID: <20170616120457.721794b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55367 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46741 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbdFPBaf (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 21:30:35 -0400
+        id S1751667AbdFPCE7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 22:04:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christophe Jaillet <christophe.jaillet@wanadoo.fr>
 
-Hi Kees,
+Hi all,
 
-After merging the kspp tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-In file included from include/linux/bitmap.h:8:0,
-                 from include/linux/cpumask.h:11,
-                 from arch/x86/include/asm/cpumask.h:4,
-                 from arch/x86/include/asm/msr.h:10,
-                 from arch/x86/include/asm/processor.h:20,
-                 from arch/x86/include/asm/cpufeature.h:4,
-                 from arch/x86/include/asm/thread_info.h:52,
-                 from include/linux/thread_info.h:37,
-                 from arch/x86/include/asm/preempt.h:6,
-                 from include/linux/preempt.h:80,
-                 from include/linux/spinlock.h:50,
-                 from include/linux/mmzone.h:7,
-                 from include/linux/gfp.h:5,
-                 from include/linux/slab.h:14,
-                 from drivers/scsi/csiostor/csio_lnode.c:37:
-In function 'memcpy',
-    inlined from 'csio_append_attrib' at drivers/scsi/csiostor/csio_lnode.c:248:2,
-    inlined from 'csio_ln_fdmi_dprt_cbfn' at drivers/scsi/csiostor/csio_lnode.c:471:2:
-include/linux/string.h:309:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
-    __read_overflow2();
-    ^
-In function 'memcpy',
-    inlined from 'csio_append_attrib' at drivers/scsi/csiostor/csio_lnode.c:248:2,
-    inlined from 'csio_ln_fdmi_rhba_cbfn' at drivers/scsi/csiostor/csio_lnode.c:337:2:
-include/linux/string.h:309:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
-    __read_overflow2();
-    ^
+sound/soc/rockchip/rockchip_i2s.c: In function 'rockchip_i2s_probe':
+sound/soc/rockchip/rockchip_i2s.c:649:3: error: 'err' undeclared (first use in this function)
+   err = -ENOMEM;
+   ^
 
 Caused by commit
 
-  b90d6eba50d7 ("include/linux/string.h: add the option of fortified string.h functions")
+  c3a3d3c41b74 ("ASoC: rockchip: Fix an error handling in 'rockchip_i2s_probe'")
 
-I have reverted that commit for today.
+I have used the sound-asoc tree from next-20170615 for today.
 
 -- 
 Cheers,
