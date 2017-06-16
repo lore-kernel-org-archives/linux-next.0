@@ -1,61 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU:
- 12 PID: 0 at mm/memblock.c
-Date: Fri, 16 Jun 2017 11:13:35 +1000
-Message-ID: <20170616111335.4e1a818a@canb.auug.org.au>
-References: <1497506437.15415.60.camel@abdul.in.ibm.com>
-        <1497518696.15415.68.camel@abdul.in.ibm.com>
-        <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
-        <87injwwxzh.fsf@concordia.ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 16 Jun 2017 11:20:19 +1000
+Message-ID: <20170616112019.27a29a04@canb.auug.org.au>
+References: <20170605170117.6a1fc15e@canb.auug.org.au>
+        <20170615113548.3e4edcf4@canb.auug.org.au>
+        <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+        <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
+        <CAGXu5jJJPZYnhcubfWrjj8XROAycEYsgK_AhBF-rQydeZyCwCg@mail.gmail.com>
+        <1497571513.17727.2.camel@gmail.com>
+        <CAGXu5jKXNuZOqWB6pa+1L6x0k6qwXyFzba0nECCpvb07XcW+zg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52971 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52191 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbdFPBNi (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 21:13:38 -0400
-In-Reply-To: <87injwwxzh.fsf@concordia.ellerman.id.au>
+        id S1751641AbdFPBUV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 21:20:21 -0400
+In-Reply-To: <CAGXu5jKXNuZOqWB6pa+1L6x0k6qwXyFzba0nECCpvb07XcW+zg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Daniel Micay <danielmicay@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Michael,
+Hi Kees,
 
-On Fri, 16 Jun 2017 10:57:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
+On Thu, 15 Jun 2017 17:35:43 -0700 Kees Cook <keescook@chromium.org> wrote:
 >
-> "Rowand, Frank" <Frank.Rowand@sony.com> writes:
-> 
-> > On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:  
-> >>
-> >> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:  
-> >>>
-> >>> linux-next fails to boot on powerpc Bare-metal with these warnings.
-> >>>
-> >>> machine booted fine on next-20170613  
-> >>
-> >> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
-> >> expanded device tree)
-> >>
-> >> Frank, would you please take a look at the trace.
-> >>
-> >> Thanks  
-> >
-> > < snip >
-> >
-> > My patch series 'of: remove *phandle properties from expanded device tree'
-> > in -next seems to have broken boot for a significant number of powerpc
-> > systems.  I am actively working on understanding and fixing the problem.  
-> 
-> Thanks.
-> 
-> At least for me reverting that patch on top of linux-next gets things
-> booting again.
-> 
-> Stephen can you revert that patch in linux-next today?
+> Sounds good. I've added ARCH_HAS_FORTIFY_SOURCE to the patch (and noted it).
 
-OK.
+And that just made it in time for today's linux-next.  I have removed
+the patches from Andrew's tree.
 
 -- 
 Cheers,
