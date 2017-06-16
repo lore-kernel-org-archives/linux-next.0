@@ -1,59 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170616 build: 0 failures 1 warnings (next-20170616)
-Date: Fri, 16 Jun 2017 09:18:10 +0100
-Message-ID: <E1dLmSI-00032J-97@optimist>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU: 12 PID: 0 at mm/memblock.c
+Date: Fri, 16 Jun 2017 20:35:49 +1000
+Message-ID: <8737b0w77e.fsf@concordia.ellerman.id.au>
+References: <1497506437.15415.60.camel@abdul.in.ibm.com> <1497518696.15415.68.camel@abdul.in.ibm.com> <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com> <87injwwxzh.fsf@concordia.ellerman.id.au> <20170616111335.4e1a818a@canb.auug.org.au> <20170616133258.74900bc3@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:51106 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752352AbdFPIST (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 04:18:19 -0400
+Received: from ozlabs.org ([103.22.144.67]:57861 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752574AbdFPKfx (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 16 Jun 2017 06:35:53 -0400
+In-Reply-To: <20170616133258.74900bc3@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
 
-Tree/Branch: next-20170616
-Git describe: next-20170616
-Commit: 82341321f2 Add linux-next specific files for 20170616
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
+> On Fri, 16 Jun 2017 11:13:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> On Fri, 16 Jun 2017 10:57:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
+>> > "Rowand, Frank" <Frank.Rowand@sony.com> writes:
+>> > > On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:    
+>> > >> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:    
+>> > >>>
+>> > >>> linux-next fails to boot on powerpc Bare-metal with these warnings.
+>> > >>>
+>> > >>> machine booted fine on next-20170613    
+>> > >>
+>> > >> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
+>> > >> expanded device tree)
+>> > >>
+>> > >> Frank, would you please take a look at the trace.
+>> > >>
+>> > >> Thanks    
+>> > >
+>> > > < snip >
+>> > >
+>> > > My patch series 'of: remove *phandle properties from expanded device tree'
+>> > > in -next seems to have broken boot for a significant number of powerpc
+>> > > systems.  I am actively working on understanding and fixing the problem.    
+>> > 
+>> > Thanks.
+>> > 
+>> > At least for me reverting that patch on top of linux-next gets things
+>> > booting again.
+>> > 
+>> > Stephen can you revert that patch in linux-next today?  
+>> 
+>> OK.
+>
+> Actually, Rob removed it from his tree before I merged it.
 
-Build Time: 0 min 14 sec
+Yep, just noticed that.
 
-Passed:    7 / 7   (100.00 %)
-Failed:    0 / 7   (  0.00 %)
+Thanks all.
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  1 ../drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2: warning: 'devinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2: warning: 'devinfo' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+cheers
