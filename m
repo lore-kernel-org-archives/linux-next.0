@@ -1,67 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU:
- 12 PID: 0 at mm/memblock.c
-Date: Fri, 16 Jun 2017 13:32:58 +1000
-Message-ID: <20170616133258.74900bc3@canb.auug.org.au>
-References: <1497506437.15415.60.camel@abdul.in.ibm.com>
-        <1497518696.15415.68.camel@abdul.in.ibm.com>
-        <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
-        <87injwwxzh.fsf@concordia.ellerman.id.au>
-        <20170616111335.4e1a818a@canb.auug.org.au>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: build warning after merge of the wireless-drivers tree
+Date: Fri, 16 Jun 2017 08:07:21 +0300
+Message-ID: <87a858ed12.fsf@codeaurora.org>
+References: <20170616082507.1e824796@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44333 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751739AbdFPDdA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 23:33:00 -0400
-In-Reply-To: <20170616111335.4e1a818a@canb.auug.org.au>
+Received: from smtp.codeaurora.org ([198.145.29.96]:49930 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750760AbdFPFH1 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 01:07:27 -0400
+In-Reply-To: <20170616082507.1e824796@canb.auug.org.au> (Stephen Rothwell's
+        message of "Fri, 16 Jun 2017 08:25:07 +1000")
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>
 
-Hi all,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-On Fri, 16 Jun 2017 11:13:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> After merging the wireless-drivers tree, today's linux-next build
+> (x86_64 allmodconfig) produced this warning:
 >
-> On Fri, 16 Jun 2017 10:57:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
-> >
-> > "Rowand, Frank" <Frank.Rowand@sony.com> writes:
-> >   
-> > > On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:    
-> > >>
-> > >> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:    
-> > >>>
-> > >>> linux-next fails to boot on powerpc Bare-metal with these warnings.
-> > >>>
-> > >>> machine booted fine on next-20170613    
-> > >>
-> > >> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
-> > >> expanded device tree)
-> > >>
-> > >> Frank, would you please take a look at the trace.
-> > >>
-> > >> Thanks    
-> > >
-> > > < snip >
-> > >
-> > > My patch series 'of: remove *phandle properties from expanded device tree'
-> > > in -next seems to have broken boot for a significant number of powerpc
-> > > systems.  I am actively working on understanding and fixing the problem.    
-> > 
-> > Thanks.
-> > 
-> > At least for me reverting that patch on top of linux-next gets things
-> > booting again.
-> > 
-> > Stephen can you revert that patch in linux-next today?  
-> 
-> OK.
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c: In function
+> 'brcmf_usb_probe_phase2':
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2:
+> warning: 'devinfo' may be used uninitialized in this function
+> [-Wmaybe-uninitialized]
+>   mutex_unlock(&devinfo->dev_init_lock);
+>   ^
+>
+> Introduced by commit
+>
+>   6d0507a777fb ("brcmfmac: add parameter to pass error code in firmware callback")
 
-Actually, Rob removed it from his tree before I merged it.
+Thanks, for the report. I also noticed this, only after I had applied
+the patch, but hopefully Arend sends a patch to fix this soon.
 
 -- 
-Cheers,
-Stephen Rothwell
+Kalle Valo
