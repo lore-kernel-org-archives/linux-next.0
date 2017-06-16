@@ -1,41 +1,48 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the wireless-drivers tree
-Date: Fri, 16 Jun 2017 08:07:21 +0300
-Message-ID: <87a858ed12.fsf@codeaurora.org>
-References: <20170616082507.1e824796@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the uuid tree with the arm64 tree
+Date: Fri, 16 Jun 2017 15:21:36 +1000
+Message-ID: <20170616152136.161630bf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:49930 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750760AbdFPFH1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 16 Jun 2017 01:07:27 -0400
-In-Reply-To: <20170616082507.1e824796@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 16 Jun 2017 08:25:07 +1000")
+Received: from ozlabs.org ([103.22.144.67]:53535 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750827AbdFPFVj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 16 Jun 2017 01:21:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Christoph Hellwig <hch@lst.de>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi all,
 
-> After merging the wireless-drivers tree, today's linux-next build
-> (x86_64 allmodconfig) produced this warning:
->
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c: In function
-> 'brcmf_usb_probe_phase2':
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c:1198:2:
-> warning: 'devinfo' may be used uninitialized in this function
-> [-Wmaybe-uninitialized]
->   mutex_unlock(&devinfo->dev_init_lock);
->   ^
->
-> Introduced by commit
->
->   6d0507a777fb ("brcmfmac: add parameter to pass error code in firmware callback")
+Today's linux-next merge of the uuid tree got conflicts in:
 
-Thanks, for the report. I also noticed this, only after I had applied
-the patch, but hopefully Arend sends a patch to fix this soon.
+  drivers/acpi/apei/ghes.c
+  include/uapi/linux/uuid.h
+
+between commits:
+
+  f4dccde3f9b9 ("ras: acpi/apei: cper: add support for generic data v3 structure")
+  476e4940c251 ("ras: acpi / apei: generate trace event for unrecognized CPER section")
+  8a0456ea3dec ("trace, ras: add ARM processor error trace event")
+
+from the arm64 tree and commit:
+
+  60927bc31436 ("uuid: remove uuid_be defintions from the uapi header")
+  f9727a17db9b ("uuid: rename uuid types")
+  5b53696a30d5 ("ACPI / APEI: Switch to use new generic UUID API")
+
+from the uuid tree.
+
+I really can't fix this up, so can you guys get together and sort this
+out, please.
+
+For today, I have just dropped the uuid tree, sorry.
+
+
 
 -- 
-Kalle Valo
+Cheers,
+Stephen Rothwell
