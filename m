@@ -1,50 +1,57 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: RE: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU: 12 PID: 0 at mm/memblock.c
-Date: Fri, 16 Jun 2017 10:57:22 +1000
-Message-ID: <87injwwxzh.fsf@concordia.ellerman.id.au>
-References: <1497506437.15415.60.camel@abdul.in.ibm.com> <1497518696.15415.68.camel@abdul.in.ibm.com> <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-tegra tree with the drm tree
+Date: Fri, 16 Jun 2017 11:12:02 +1000
+Message-ID: <20170616111202.7b9076aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47025 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:34545 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751761AbdFPA51 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 20:57:27 -0400
-In-Reply-To: <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
+        id S1751578AbdFPBMF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 21:12:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Cooksey <tom.cooksey@arm.com>, Eric Anholt <eric@anholt.net>
 
-"Rowand, Frank" <Frank.Rowand@sony.com> writes:
+Hi Thierry,
 
-> On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:
->>
->> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:
->>> Hi,
->>>
->>> linux-next fails to boot on powerpc Bare-metal with these warnings.
->>>
->>> machine booted fine on next-20170613
->>
->> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
->> expanded device tree)
->>
->> Frank, would you please take a look at the trace.
->>
->> Thanks
->
-> < snip >
->
-> My patch series 'of: remove *phandle properties from expanded device tree'
-> in -next seems to have broken boot for a significant number of powerpc
-> systems.  I am actively working on understanding and fixing the problem.
+Today's linux-next merge of the drm-tegra tree got a conflict in:
 
-Thanks.
+  Documentation/gpu/index.rst
 
-At least for me reverting that patch on top of linux-next gets things
-booting again.
+between commit:
 
-Stephen can you revert that patch in linux-next today?
+  bed41005e617 ("drm/pl111: Initial drm/kms driver for pl111")
 
-cheers
+from the drm tree and commit:
+
+  fa6d095eb23a ("drm/tegra: Add driver documentation")
+
+from the drm-tegra tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/gpu/index.rst
+index 037a39ac1807,feae37fa7ca3..000000000000
+--- a/Documentation/gpu/index.rst
++++ b/Documentation/gpu/index.rst
+@@@ -12,7 -12,7 +12,8 @@@ Linux GPU Driver Developer's Guid
+     drm-uapi
+     i915
+     meson
+ +   pl111
++    tegra
+     tinydrm
+     vc4
+     vga-switcheroo
