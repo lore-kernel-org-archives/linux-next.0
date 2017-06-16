@@ -1,36 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Fri, 16 Jun 2017 13:31:44 +1000
-Message-ID: <20170616133144.535aa23a@canb.auug.org.au>
-References: <20170616113032.306720bf@canb.auug.org.au>
-        <1497581467.17727.7.camel@gmail.com>
-        <CAGXu5j+gcoqVT6sA-_Eu-Nm5P+58FuVfW=yof1ufpXaZeXC8zA@mail.gmail.com>
+Subject: Re: [Oops][next-20170614][] powerpc boot fails with WARNING: CPU:
+ 12 PID: 0 at mm/memblock.c
+Date: Fri, 16 Jun 2017 13:32:58 +1000
+Message-ID: <20170616133258.74900bc3@canb.auug.org.au>
+References: <1497506437.15415.60.camel@abdul.in.ibm.com>
+        <1497518696.15415.68.camel@abdul.in.ibm.com>
+        <ED290C750E1B324E972B0017C9D4BAB02E5A7EAF@USCULXMSG03.am.sony.com>
+        <87injwwxzh.fsf@concordia.ellerman.id.au>
+        <20170616111335.4e1a818a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41167 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44333 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751835AbdFPDbr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Jun 2017 23:31:47 -0400
-In-Reply-To: <CAGXu5j+gcoqVT6sA-_Eu-Nm5P+58FuVfW=yof1ufpXaZeXC8zA@mail.gmail.com>
+        id S1751739AbdFPDdA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Jun 2017 23:33:00 -0400
+In-Reply-To: <20170616111335.4e1a818a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: Daniel Micay <danielmicay@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Rowand, Frank" <Frank.Rowand@sony.com>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Rob Herring <robh@kernel.org>
 
-Hi Kees,
+Hi all,
 
-On Thu, 15 Jun 2017 20:20:47 -0700 Kees Cook <keescook@google.com> wrote:
+On Fri, 16 Jun 2017 11:13:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> I'm so confused -- isn't this in next? All the build tests I did were
-> against yesterday's -next which includes this from what I can see...
+> On Fri, 16 Jun 2017 10:57:22 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
+> >
+> > "Rowand, Frank" <Frank.Rowand@sony.com> writes:
+> >   
+> > > On Thursday, June 15, 2017 2:25 AM, Abdul Haleem [mailto:abdhalee@linux.vnet.ibm.com]  wrote:    
+> > >>
+> > >> On Thu, 2017-06-15 at 11:30 +0530, Abdul Haleem wrote:    
+> > >>>
+> > >>> linux-next fails to boot on powerpc Bare-metal with these warnings.
+> > >>>
+> > >>> machine booted fine on next-20170613    
+> > >>
+> > >> Thanks Michael, Yes it is (75fe04e59 of: remove *phandle properties from
+> > >> expanded device tree)
+> > >>
+> > >> Frank, would you please take a look at the trace.
+> > >>
+> > >> Thanks    
+> > >
+> > > < snip >
+> > >
+> > > My patch series 'of: remove *phandle properties from expanded device tree'
+> > > in -next seems to have broken boot for a significant number of powerpc
+> > > systems.  I am actively working on understanding and fixing the problem.    
+> > 
+> > Thanks.
+> > 
+> > At least for me reverting that patch on top of linux-next gets things
+> > booting again.
+> > 
+> > Stephen can you revert that patch in linux-next today?  
+> 
+> OK.
 
-It is in next, but gets merged after the kspp tree ... so, this is when
-inter-tree dependencies are a pain - I can merge the kspp tree later,
-but then you have to remember which trees Linus must merge before you
-send your pull request.  That's why we like to have all trees be
-effectively stand alone (as much as possible).
+Actually, Rob removed it from his tree before I merged it.
 
 -- 
 Cheers,
