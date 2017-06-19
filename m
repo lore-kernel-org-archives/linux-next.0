@@ -1,34 +1,42 @@
-From: "VS  -  .41" <mspway@municomas.gob.pe>
-Subject: [*Working with you |18.1*]
-Date: Wed, 14 Jun 2017 03:37:44 +0200
-Message-ID: <20170614013814.3DCB03CE5DB@mail.municomas.gob.pe>
-Reply-To: mspway@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Date: Mon, 19 Jun 2017 10:23:07 +1000
+Message-ID: <20170619102307.32daa88d@canb.auug.org.au>
+References: <20170616113032.306720bf@canb.auug.org.au>
+        <1497581467.17727.7.camel@gmail.com>
+        <CAGXu5j+gcoqVT6sA-_Eu-Nm5P+58FuVfW=yof1ufpXaZeXC8zA@mail.gmail.com>
+        <20170616133144.535aa23a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.municomas.gob.pe ([161.132.216.41]:41782 "EHLO
-        mail.municomas.gob.pe" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752933AbdFRXco (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 18 Jun 2017 19:32:44 -0400
-Content-Description: Mail message body
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: mspway@municomas.gob.pe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170616133144.535aa23a@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kees Cook <keescook@google.com>
+Cc: Daniel Micay <danielmicay@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+List-Id: linux-next.vger.kernel.org
 
-[*Hello and good day.
+Hi Stephen,
 
-I am looking to work with a reputable individual/firm to engage in a profit oriented ventures in your country and perhaps with your assistance, we could get low tax rates.
+On Fri, 16 Jun 2017 13:31:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Kees,
+> 
+> On Thu, 15 Jun 2017 20:20:47 -0700 Kees Cook <keescook@google.com> wrote:
+> >
+> > I'm so confused -- isn't this in next? All the build tests I did were
+> > against yesterday's -next which includes this from what I can see...  
+> 
+> It is in next, but gets merged after the kspp tree ... so, this is when
+> inter-tree dependencies are a pain - I can merge the kspp tree later,
+> but then you have to remember which trees Linus must merge before you
+> send your pull request.  That's why we like to have all trees be
+> effectively stand alone (as much as possible).
 
-I have the directive of Mr. Mikhail Khodorkovsky to source for partner abroad who can accommodate and manage 150M & 350M USD respectively. The sums are derived from an executed project with Yukos Oil Company before the company was merged with Rosneft Oil Corporation in Russia.
+OK, for now I have moved the merging of the kspp tree to after
+everything else (except Andrew's quilt series).  This will
+(unfortunately) hide some dependencies between trees.
 
-We shall apply for the necessary paper work required to re-profile your name as the receipient and also ensure payment is carried out by Rosneft into a bank account in your name. I guaranty we would execute this business under a legitimate arrangement without breach of the law.
-
-Further details will follow upon your positive reply.
-
-Regards,
-
-Vladimir Stankov*].
-
---
-This message has been scanned for viruses and dangerous content by MailScanner, and is believed to be clean.
+-- 
+Cheers,
+Stephen Rothwell
