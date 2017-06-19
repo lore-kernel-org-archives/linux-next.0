@@ -1,36 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the uuid tree with the arm64 tree
-Date: Mon, 19 Jun 2017 10:28:49 +1000
-Message-ID: <20170619102849.6b4bb740@canb.auug.org.au>
-References: <20170616152136.161630bf@canb.auug.org.au>
-        <20170616060901.GA6320@lst.de>
+Subject: linux-next: build warning after merge of the drm tree
+Date: Mon, 19 Jun 2017 11:40:28 +1000
+Message-ID: <20170619114028.704e6438@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47805 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753141AbdFSA2v (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 18 Jun 2017 20:28:51 -0400
-In-Reply-To: <20170616060901.GA6320@lst.de>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Tyler Baicar <tbaicar@codeaurora.org>, Will Deacon <will.deacon@arm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jani Nikula <jani.nikula@intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Dave,
 
-On Fri, 16 Jun 2017 08:09:01 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> The uuid-types tree in uuid.git is immutable, please work on top
-> of that for ACPI - in fact ACPI was on the of trees we explicitly did this
-> for.   So don't sneak any acpi bits in through the arm64 tree.
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-OK, I have moved the merging of the uuid tree to very early so the
-conflicts against the arm64 tree appear when I merge the arm64 tree.
-For today, I have merged the arm64 tree from next-20170615 (head commit
-c484f2564db1 "arm64: kconfig: allow support for memory failure
-handling").
+drivers/gpu/drm/i915/intel_dp.c:1551:12: warning: 'rate_to_index' defined but not used [-Wunused-function]
+ static int rate_to_index(int find, const int *rates)
+            ^
+
+Introduced by commit
+
+  925344ccc91d ("BackMerge tag 'v4.12-rc5' into drm-next")
+
+This commit reintroduced the above function after it was renamed and
+moved by commit
+
+  8001b7541aa7 ("drm/i915/dp: rename rate_to_index() to intel_dp_rate_index() and reuse")
 
 -- 
 Cheers,
