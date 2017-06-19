@@ -1,69 +1,72 @@
-From: "Baicar, Tyler" <tbaicar@codeaurora.org>
-Subject: Re: linux-next: manual merge of the uuid tree with the arm64 tree
-Date: Mon, 19 Jun 2017 13:22:03 -0600
-Message-ID: <2c0228e4-f235-f97b-880a-e331d164b3ce@codeaurora.org>
-References: <20170616152136.161630bf@canb.auug.org.au>
- <20170619091942.GA2702@arm.com> <1497866790.22624.164.camel@linux.intel.com>
- <20170619102240.GC2702@arm.com>
- <afe3af71-36d4-df49-07a9-2e3fba3a5c16@codeaurora.org>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 19 Jun 2017 13:28:48 -0700
+Message-ID: <CAGXu5j+b1JwD50A__DFO7FMf871fY=1d9HpDntAt7gfOasp3sA@mail.gmail.com>
+References: <20170605170117.6a1fc15e@canb.auug.org.au> <20170615113548.3e4edcf4@canb.auug.org.au>
+ <CAGXu5jJyjymPfRNcKrRruYzZFUR-W8H7EWUnYR-6PJi3HcQ+-A@mail.gmail.com>
+ <20170615121220.4331a37b0fb736ec9da4e423@linux-foundation.org>
+ <CAGXu5jJJPZYnhcubfWrjj8XROAycEYsgK_AhBF-rQydeZyCwCg@mail.gmail.com> <20170616101743.f2e5c255612b2e3e7ee596e2@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:60448 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753148AbdFSTW3 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Jun 2017 15:22:29 -0400
-In-Reply-To: <afe3af71-36d4-df49-07a9-2e3fba3a5c16@codeaurora.org>
-Content-Language: en-US
+Received: from mail-it0-f51.google.com ([209.85.214.51]:36261 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbdFSU2t (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 19 Jun 2017 16:28:49 -0400
+Received: by mail-it0-f51.google.com with SMTP id m47so2465157iti.1
+        for <linux-next@vger.kernel.org>; Mon, 19 Jun 2017 13:28:49 -0700 (PDT)
+In-Reply-To: <20170616101743.f2e5c255612b2e3e7ee596e2@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Will Deacon <will.deacon@arm.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>
 
-On 6/19/2017 12:41 PM, Baicar, Tyler wrote:
-> On 6/19/2017 4:22 AM, Will Deacon wrote:
->> On Mon, Jun 19, 2017 at 01:06:30PM +0300, Andy Shevchenko wrote:
->>> On Mon, 2017-06-19 at 10:19 +0100, Will Deacon wrote:
->>>> Hi Stephen, Christoph, Tyler,
->>>> On Fri, Jun 16, 2017 at 03:21:36PM +1000, Stephen Rothwell wrote:
->>>> Apologies for this: I've just dropped the offending merge from the
->>>> arm64
->>>> tree so you can include the uuid tree in -next again.
->>>>
->>>> Tyler: please rebase your patches on top of Christoph's uuid-types
->>>> branch
->>>> and send me a new series.
->>> To have better coordination, please, look at my WIP branch regarding
->>> UUID stuff:
->>> http://bitbucket.org/andy-shev/linux/branch/topic%2Fuuid
->> That link doesn't work for me. Is there anything specific Tyler 
->> should be
->> paying attention to on that branch?
-> That link doesn't work for me either, but I assume it is the 
-> topic/uuid branch here:
+On Fri, Jun 16, 2017 at 10:17 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Thu, 15 Jun 2017 16:46:33 -0700 Kees Cook <keescook@chromium.org> wrote:
 >
-> https://bitbucket.org/andy-shev/linux/branches/
+>> On Thu, Jun 15, 2017 at 12:12 PM, Andrew Morton
+>> <akpm@linux-foundation.org> wrote:
+>> > On Wed, 14 Jun 2017 18:56:30 -0700 Kees Cook <keescook@chromium.org> wrote:
+>> >
+>> >> >> Caused by commit
+>> >> >>
+>> >> >>   088a5ecf7581 ("include/linux/string.h: add the option of fortified string.h functions")
+>> >> >>
+>> >> >> We really need to fix all the known problems it detects *before*
+>> >> >> merging this commit ...
+>> >> >>
+>> >> >> I have reverted it for today.
+>> >> >
+>> >> > I am still needing to revert this every day ...
+>> >>
+>> >> I sent a series for -mm (or maintainers) to merge that should catch
+>> >> everything. Do you want me to carry it in my kspp tree instead? (My
+>> >> original intention was to carry all the fixes and the fortify patch in
+>> >> kspp but akpm took it into -mm somewhat unexpectedly, not that I'm
+>> >> complaining.)
+>> >
+>> > This is all getting a bit foggy in my mind.  Can we please have a full
+>> > resend of everything?  Sufficient to hopefully produce a tree which has
+>> > no build-time or run-time regressions?  Including the buildbot's
+>> > recently-reported alpha and xtensa issues?
+>>
+>> It's been sent a few times (and a few fixes have been collected in
+>> other trees already). What I've got in my for-next/kspp tree right now
+>> is all the fixes that haven't already been picked up by other tree
+>> maintainers, and I added the fortify patch itself to the end of the
+>> tree too now since sfr asked for that a few hours ago.
 >
-> I'll rebase my patches on top of this branch and send them to you Will.
-I'm trying to rebase my patches; however, this branch does not compile 
-as is. It seems that the UUID changes in the APEI code are wrong:
+> I think it's best to try to keep everything in a single tree, with
+> maintainer acks where possible.
+>
+> I do this stuff all the time - please just send everything at me when
+> we think we have all the fixes and I'll sort it out.
 
-drivers/acpi/apei/ghes.c: In function 'ghes_do_proc':
-drivers/acpi/apei/ghes.c:438:12: error: assignment from incompatible 
-pointer type [-Werror=incompatible-pointer-types]
-    sec_type = gdata->section_type;
-             ^
-I am just trying to compile the tip code in the topic/uuid branch from 
-above. Tip commit is currently:
+I'll send you the series now and remove it from my kspp tree.
 
-commit ab4ea80ef9dc97878d60a4a3487fe9dacd0e6b3a
-Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Fri Apr 21 16:36:06 2017 +0300
-
-     ASoC: Intel: Skylake: Use recently introduced uuid_le_cmp_p{p}()
+-Kees
 
 -- 
-Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Kees Cook
+Pixel Security
