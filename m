@@ -1,100 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the arm-soc tree
-Date: Tue, 20 Jun 2017 13:52:42 +1000
-Message-ID: <20170620135242.14ecdcb4@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kspp tree
+Date: Tue, 20 Jun 2017 14:56:55 +1000
+Message-ID: <20170620145655.4b7f3efb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41957 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37779 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750947AbdFTDwp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 19 Jun 2017 23:52:45 -0400
+        id S1750929AbdFTE46 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Jun 2017 00:56:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Kees Cook <keescook@google.com>, James Morris <jmorris@namei.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Johansen <john.johansen@canonical.com>
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the tty tree got a conflict in:
+After merging the kspp tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  include/linux/platform_data/atmel.h
+security/apparmor/file.c: In function 'aa_path_link':
+security/apparmor/file.c:475:23: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+  struct path link = { new_dir->mnt, new_dentry };
+                       ^
+security/apparmor/file.c:475:23: note: (near initialization for 'link')
+security/apparmor/file.c:475:37: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+  struct path link = { new_dir->mnt, new_dentry };
+                                     ^
+security/apparmor/file.c:475:37: note: (near initialization for 'link')
+security/apparmor/file.c:476:25: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+  struct path target = { new_dir->mnt, old_dentry };
+                         ^
+security/apparmor/file.c:476:25: note: (near initialization for 'target')
+security/apparmor/file.c:476:39: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+  struct path target = { new_dir->mnt, old_dentry };
+                                       ^
+security/apparmor/file.c:476:39: note: (near initialization for 'target')
 
-between commit:
+Caused by commit
 
-  8a3d809373c6 ("ARM: at91: remove atmel_nand_data")
+  1a12979f61e4 ("randstruct: Mark various structs for randomization")
 
-from the arm-soc tree and commit:
+interacting with commit
 
-  92c8f7c0e109 ("tty/serial: atmel: make the driver DT only")
+  8014370f1257 ("apparmor: move path_link mediation to using labels")
 
-from the tty tree.
+from the security tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I added the following merge fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 20 Jun 2017 14:50:36 +1000
+Subject: [PATCH] apparmor: put back designators in struct initialisers
+
+Fixes: 8014370f1257 ("apparmor: move path_link mediation to using labels")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ security/apparmor/file.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+index b6e8e5b11e05..3382518b87fa 100644
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -472,8 +472,8 @@ static int profile_path_link(struct aa_profile *profile,
+ int aa_path_link(struct aa_label *label, struct dentry *old_dentry,
+ 		 const struct path *new_dir, struct dentry *new_dentry)
+ {
+-	struct path link = { new_dir->mnt, new_dentry };
+-	struct path target = { new_dir->mnt, old_dentry };
++	struct path link = { .mnt = new_dir->mnt, .dentry = new_dentry };
++	struct path target = { .mnt = new_dir->mnt, .dentry = old_dentry };
+ 	struct path_cond cond = {
+ 		d_backing_inode(old_dentry)->i_uid,
+ 		d_backing_inode(old_dentry)->i_mode
+-- 
+2.11.0
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/linux/platform_data/atmel.h
-index 70c5c766628e,d36bc8d17e97..000000000000
---- a/include/linux/platform_data/atmel.h
-+++ b/include/linux/platform_data/atmel.h
-@@@ -7,8 -7,9 +7,6 @@@
-  #ifndef __ATMEL_H__
-  #define __ATMEL_H__
-  
-- #include <linux/serial.h>
- -#include <linux/mtd/nand.h>
- -#include <linux/mtd/partitions.h>
---
-   /* Compact Flash */
-  struct at91_cf_data {
-  	int	irq_pin;		/* I/O IRQ */
-@@@ -21,23 -22,26 +19,14 @@@
-  #define AT91_IDE_SWAP_A0_A2	0x02
-  };
-  
--  /* Serial */
-- struct atmel_uart_data {
-- 	int			num;		/* port num */
-- 	short			use_dma_tx;	/* use transmit DMA? */
-- 	short			use_dma_rx;	/* use receive DMA? */
-- 	void __iomem		*regs;		/* virt. base address, if any */
-- 	struct serial_rs485	rs485;		/* rs485 settings */
- - /* NAND / SmartMedia */
- -struct atmel_nand_data {
- -	int		enable_pin;		/* chip enable */
- -	int		det_pin;		/* card detect */
- -	int		rdy_pin;		/* ready/busy */
- -	u8		rdy_pin_active_low;	/* rdy_pin value is inverted */
- -	u8		ale;			/* address line number connected to ALE */
- -	u8		cle;			/* address line number connected to CLE */
- -	u8		bus_width_16;		/* buswidth is 16 bit */
- -	u8		ecc_mode;		/* ecc mode */
- -	u8		on_flash_bbt;		/* bbt on flash */
- -	struct mtd_partition *parts;
- -	unsigned int	num_parts;
- -	bool		has_dma;		/* support dma transfer */
- -
- -	/* default is false, only for at32ap7000 chip is true */
- -	bool		need_reset_workaround;
---};
---
-  /* FIXME: this needs a better location, but gets stuff building again */
- +#ifdef CONFIG_ATMEL_PM
-  extern int at91_suspend_entering_slow_clock(void);
- +#else
- +static inline int at91_suspend_entering_slow_clock(void)
- +{
- +	return 0;
- +}
- +#endif
-  
-  #endif /* __ATMEL_H__ */
