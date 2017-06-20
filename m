@@ -1,16 +1,16 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the kspp
  tree
-Date: Tue, 20 Jun 2017 15:15:49 +1000
-Message-ID: <20170620151549.3380276f@canb.auug.org.au>
+Date: Tue, 20 Jun 2017 15:18:49 +1000
+Message-ID: <20170620151849.4551ac16@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60287 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59363 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750826AbdFTFPw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 20 Jun 2017 01:15:52 -0400
+        id S1750863AbdFTFSw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Jun 2017 01:18:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>
@@ -20,7 +20,7 @@ Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  include/linux/sem.h
+  include/linux/ipc.h
 
 between commit:
 
@@ -28,7 +28,7 @@ between commit:
 
 from the kspp tree and commit:
 
-  337e62a32a54 ("ipc/sem.c: remove sem_base, embed struct sem")
+  893106d6be17 ("ipc: merge ipc_rcu and kern_ipc_perm")
 
 from the akpm-current tree.
 
@@ -43,18 +43,18 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/sem.h
-index 23bcbdfad4a6,be5cf2ea14ad..000000000000
---- a/include/linux/sem.h
-+++ b/include/linux/sem.h
-@@@ -21,7 -39,9 +39,9 @@@ struct sem_array 
-  	int			sem_nsems;	/* no. of semaphores in array */
-  	int			complex_count;	/* pending complex operations */
-  	unsigned int		use_global_lock;/* >0: global lock required */
+diff --cc include/linux/ipc.h
+index ea0eb0b5f98c,5591f055e13f..000000000000
+--- a/include/linux/ipc.h
++++ b/include/linux/ipc.h
+@@@ -20,6 -20,9 +20,9 @@@ struct kern_ipc_perm 
+  	umode_t		mode;
+  	unsigned long	seq;
+  	void		*security;
 + 
-+ 	struct sem		sems[];
- -};
- +} __randomize_layout;
++ 	struct rcu_head rcu;
++ 	atomic_t refcount;
+ -} ____cacheline_aligned_in_smp;
+ +} ____cacheline_aligned_in_smp __randomize_layout;
   
-  #ifdef CONFIG_SYSVIPC
-  
+  #endif /* _LINUX_IPC_H */
