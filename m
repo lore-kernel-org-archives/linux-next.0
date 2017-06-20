@@ -1,112 +1,100 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Tue, 20 Jun 2017 11:45:17 +1000
-Message-ID: <20170620114517.7f0090b9@canb.auug.org.au>
-References: <20170613205409.4b7e06f9@canb.auug.org.au>
-        <alpine.LFD.2.20.1706151649160.1848@schleppi>
-        <alpine.LFD.2.20.1706191056510.1794@schleppi>
+Subject: linux-next: manual merge of the tty tree with the arm-soc tree
+Date: Tue, 20 Jun 2017 13:52:42 +1000
+Message-ID: <20170620135242.14ecdcb4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.LFD.2.20.1706191056510.1794@schleppi>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41957 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750947AbdFTDwp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 19 Jun 2017 23:52:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Hi Sebastian,
+Hi Greg,
 
-On Mon, 19 Jun 2017 11:00:23 +0200 (CEST) Sebastian Ott <sebott@linux.vnet.ibm.com> wrote:
->
-> Ok, we should also adjust the return code to fix this:
-> 
-> drivers/s390/block/scm_blk.c:426:2: warning: initialization from incompatible pointer type [enabled by default]
->   .queue_rq = scm_blk_request,
->   ^
-> 
-> diff --git a/drivers/s390/block/scm_blk.c b/drivers/s390/block/scm_blk.c
-> index 2cd6123c8f18..4279685901bf 100644
-> --- a/drivers/s390/block/scm_blk.c
-> +++ b/drivers/s390/block/scm_blk.c
-> @@ -278,8 +278,8 @@ struct scm_queue {
->  	spinlock_t lock;
->  };
->  
-> -static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
-> -			   const struct blk_mq_queue_data *qd)
-> +static blk_status_t scm_blk_request(struct blk_mq_hw_ctx *hctx,
-> +				    const struct blk_mq_queue_data *qd)
->  {
->  	struct scm_device *scmdev = hctx->queue->queuedata;
->  	struct scm_blk_dev *bdev = dev_get_drvdata(&scmdev->dev);
-> 
+Today's linux-next merge of the tty tree got a conflict in:
 
-Good point, I have done that today.  The complete fix up patch now
-looks like this:
+  include/linux/platform_data/atmel.h
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 13 Jun 2017 20:51:32 +1000
-Subject: [PATCH] s390: fix up for "blk-mq: switch ->queue_rq return value to
- blk_status_t"
+between commit:
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/s390/block/scm_blk.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+  8a3d809373c6 ("ARM: at91: remove atmel_nand_data")
 
-diff --git a/drivers/s390/block/scm_blk.c b/drivers/s390/block/scm_blk.c
-index 42018a20f2b7..0071febac9e6 100644
---- a/drivers/s390/block/scm_blk.c
-+++ b/drivers/s390/block/scm_blk.c
-@@ -278,7 +278,7 @@ struct scm_queue {
- 	spinlock_t lock;
- };
- 
--static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
-+static blk_status_t scm_blk_request(struct blk_mq_hw_ctx *hctx,
- 			   const struct blk_mq_queue_data *qd)
- {
- 	struct scm_device *scmdev = hctx->queue->queuedata;
-@@ -290,7 +290,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
- 	spin_lock(&sq->lock);
- 	if (!scm_permit_request(bdev, req)) {
- 		spin_unlock(&sq->lock);
--		return BLK_MQ_RQ_QUEUE_BUSY;
-+		return BLK_STS_RESOURCE;
- 	}
- 
- 	scmrq = sq->scmrq;
-@@ -299,7 +299,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
- 		if (!scmrq) {
- 			SCM_LOG(5, "no request");
- 			spin_unlock(&sq->lock);
--			return BLK_MQ_RQ_QUEUE_BUSY;
-+			return BLK_STS_RESOURCE;
- 		}
- 		scm_request_init(bdev, scmrq);
- 		sq->scmrq = scmrq;
-@@ -315,7 +315,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
- 
- 		sq->scmrq = NULL;
- 		spin_unlock(&sq->lock);
--		return BLK_MQ_RQ_QUEUE_BUSY;
-+		return BLK_STS_RESOURCE;
- 	}
- 	blk_mq_start_request(req);
- 
-@@ -324,7 +324,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
- 		sq->scmrq = NULL;
- 	}
- 	spin_unlock(&sq->lock);
--	return BLK_MQ_RQ_QUEUE_OK;
-+	return BLK_STS_OK;
- }
- 
- static int scm_blk_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
--- 
-2.11.0
+from the arm-soc tree and commit:
+
+  92c8f7c0e109 ("tty/serial: atmel: make the driver DT only")
+
+from the tty tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/linux/platform_data/atmel.h
+index 70c5c766628e,d36bc8d17e97..000000000000
+--- a/include/linux/platform_data/atmel.h
++++ b/include/linux/platform_data/atmel.h
+@@@ -7,8 -7,9 +7,6 @@@
+  #ifndef __ATMEL_H__
+  #define __ATMEL_H__
+  
+- #include <linux/serial.h>
+ -#include <linux/mtd/nand.h>
+ -#include <linux/mtd/partitions.h>
+--
+   /* Compact Flash */
+  struct at91_cf_data {
+  	int	irq_pin;		/* I/O IRQ */
+@@@ -21,23 -22,26 +19,14 @@@
+  #define AT91_IDE_SWAP_A0_A2	0x02
+  };
+  
+-  /* Serial */
+- struct atmel_uart_data {
+- 	int			num;		/* port num */
+- 	short			use_dma_tx;	/* use transmit DMA? */
+- 	short			use_dma_rx;	/* use receive DMA? */
+- 	void __iomem		*regs;		/* virt. base address, if any */
+- 	struct serial_rs485	rs485;		/* rs485 settings */
+ - /* NAND / SmartMedia */
+ -struct atmel_nand_data {
+ -	int		enable_pin;		/* chip enable */
+ -	int		det_pin;		/* card detect */
+ -	int		rdy_pin;		/* ready/busy */
+ -	u8		rdy_pin_active_low;	/* rdy_pin value is inverted */
+ -	u8		ale;			/* address line number connected to ALE */
+ -	u8		cle;			/* address line number connected to CLE */
+ -	u8		bus_width_16;		/* buswidth is 16 bit */
+ -	u8		ecc_mode;		/* ecc mode */
+ -	u8		on_flash_bbt;		/* bbt on flash */
+ -	struct mtd_partition *parts;
+ -	unsigned int	num_parts;
+ -	bool		has_dma;		/* support dma transfer */
+ -
+ -	/* default is false, only for at32ap7000 chip is true */
+ -	bool		need_reset_workaround;
+--};
+--
+  /* FIXME: this needs a better location, but gets stuff building again */
+ +#ifdef CONFIG_ATMEL_PM
+  extern int at91_suspend_entering_slow_clock(void);
+ +#else
+ +static inline int at91_suspend_entering_slow_clock(void)
+ +{
+ +	return 0;
+ +}
+ +#endif
+  
+  #endif /* __ATMEL_H__ */
