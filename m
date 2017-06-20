@@ -1,79 +1,52 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170620 build: 1 failures 3 warnings (next-20170620)
-Date: Tue, 20 Jun 2017 08:41:22 +0100
-Message-ID: <E1dNDms-0006If-IG@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48724 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750957AbdFTHni (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 20 Jun 2017 03:43:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: manual merge of the uuid tree with the arm64 tree
+Date: Tue, 20 Jun 2017 09:40:08 +0100
+Message-ID: <20170620084007.GA30664@arm.com>
+References: <20170616152136.161630bf@canb.auug.org.au>
+ <20170619091942.GA2702@arm.com>
+ <1497866790.22624.164.camel@linux.intel.com>
+ <20170619102240.GC2702@arm.com>
+ <afe3af71-36d4-df49-07a9-2e3fba3a5c16@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <afe3af71-36d4-df49-07a9-2e3fba3a5c16@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Baicar, Tyler" <tbaicar@codeaurora.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Christoph Hellwig <hch@lst.de>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170620
-Git describe: next-20170620
-Commit: ac1d73c21f Add linux-next specific files for 20170620
+On Mon, Jun 19, 2017 at 12:41:38PM -0600, Baicar, Tyler wrote:
+> On 6/19/2017 4:22 AM, Will Deacon wrote:
+> >On Mon, Jun 19, 2017 at 01:06:30PM +0300, Andy Shevchenko wrote:
+> >>On Mon, 2017-06-19 at 10:19 +0100, Will Deacon wrote:
+> >>>Hi Stephen, Christoph, Tyler,
+> >>>On Fri, Jun 16, 2017 at 03:21:36PM +1000, Stephen Rothwell wrote:
+> >>>Apologies for this: I've just dropped the offending merge from the
+> >>>arm64
+> >>>tree so you can include the uuid tree in -next again.
+> >>>
+> >>>Tyler: please rebase your patches on top of Christoph's uuid-types
+> >>>branch
+> >>>and send me a new series.
+> >>To have better coordination, please, look at my WIP branch regarding
+> >>UUID stuff:
+> >>http://bitbucket.org/andy-shev/linux/branch/topic%2Fuuid
+> >That link doesn't work for me. Is there anything specific Tyler should be
+> >paying attention to on that branch?
+> That link doesn't work for me either, but I assume it is the topic/uuid
+> branch here:
+> 
+> https://bitbucket.org/andy-shev/linux/branches/
+> 
+> I'll rebase my patches on top of this branch and send them to you Will.
 
-Build Time: 0 min 10 sec
+The conflict in -next came from Christoph's tree:
 
-Passed:    6 / 7   ( 85.71 %)
-Failed:    1 / 7   ( 14.29 %)
+  http://git.infradead.org/users/hch/uuid.git/heads
 
-Errors: 1
-Warnings: 3
-Section Mismatches: 0
+hence why I mentioned the uuid-types branch above. It's not clear to me
+how Andy's branch fits in with this.
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [fs/ufs/ufs.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__aeabi_uldivmod" [fs/ufs/ufs.ko] undefined!
-
-Warnings Summary: 3
-	  1 ../drivers/gpu/drm/i915/intel_dp.c:1551:12: warning: 'rate_to_index' defined but not used [-Wunused-function]
-	  1 ../drivers/gpu/drm/arm/hdlcd_crtc.c:264:6: warning: unused variable 'src_x' [-Wunused-variable]
-	  1 ../drivers/gpu/drm/arm/hdlcd_crtc.c:264:13: warning: unused variable 'src_y' [-Wunused-variable]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [fs/ufs/ufs.ko] undefined!
-
-Warnings:
-	../drivers/gpu/drm/arm/hdlcd_crtc.c:264:13: warning: unused variable 'src_y' [-Wunused-variable]
-	../drivers/gpu/drm/arm/hdlcd_crtc.c:264:6: warning: unused variable 'src_x' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/gpu/drm/i915/intel_dp.c:1551:12: warning: 'rate_to_index' defined but not used [-Wunused-function]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-multi_v7_defconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
-arm-multi_v5_defconfig
+Will
