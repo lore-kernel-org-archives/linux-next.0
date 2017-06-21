@@ -1,33 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the file-locks tree
-Date: Wed, 21 Jun 2017 12:48:42 +1000
-Message-ID: <20170621124842.48adbc08@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with the pci tree
+Date: Wed, 21 Jun 2017 12:58:07 +1000
+Message-ID: <20170621125807.490bc780@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45121 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33465 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753012AbdFUCsp (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 20 Jun 2017 22:48:45 -0400
+        id S1753108AbdFUC6K (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Jun 2017 22:58:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@poochiereds.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Goldwyn Rodrigues <rgoldwyn@suse.com>
+To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 
-Hi Jens,
+Hi all,
 
 Today's linux-next merge of the block tree got a conflict in:
 
-  mm/filemap.c
+  drivers/nvme/host/pci.c
 
 between commit:
 
-  0771875ac195 ("mm: don't TestClearPageError in __filemap_fdatawait_range")
+  c336cc0ee4eb ("PCI: Split ->reset_notify() method into ->reset_prepare() and ->reset_done()")
 
-from the file-locks tree and commit:
+from the pci tree and commit:
 
-  7fc9e4722435 ("fs: Introduce filemap_range_has_page()")
+  d86c4d8ef31b ("nvme: move reset workqueue handling to common code")
 
 from the block tree.
 
@@ -42,48 +42,30 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc mm/filemap.c
-index d10017cc00de,742034e56100..000000000000
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@@ -386,7 -376,39 +386,39 @@@ int filemap_flush(struct address_space 
+diff --cc drivers/nvme/host/pci.c
+index 06f014d1a99a,0f09a2d5cf7a..000000000000
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@@ -2150,14 -2281,14 +2281,15 @@@ static int nvme_probe(struct pci_dev *p
+  	return result;
   }
-  EXPORT_SYMBOL(filemap_flush);
   
-+ /**
-+  * filemap_range_has_page - check if a page exists in range.
-+  * @mapping:           address space within which to check
-+  * @start_byte:        offset in bytes where the range starts
-+  * @end_byte:          offset in bytes where the range ends (inclusive)
-+  *
-+  * Find at least one page in the range supplied, usually used to check if
-+  * direct writing in this range will trigger a writeback.
-+  */
-+ bool filemap_range_has_page(struct address_space *mapping,
-+ 			   loff_t start_byte, loff_t end_byte)
-+ {
-+ 	pgoff_t index = start_byte >> PAGE_SHIFT;
-+ 	pgoff_t end = end_byte >> PAGE_SHIFT;
-+ 	struct pagevec pvec;
-+ 	bool ret;
-+ 
-+ 	if (end_byte < start_byte)
-+ 		return false;
-+ 
-+ 	if (mapping->nrpages == 0)
-+ 		return false;
-+ 
-+ 	pagevec_init(&pvec, 0);
-+ 	if (!pagevec_lookup(&pvec, mapping, index, 1))
-+ 		return false;
-+ 	ret = (pvec.pages[0]->index <= end);
-+ 	pagevec_release(&pvec);
-+ 	return ret;
-+ }
-+ EXPORT_SYMBOL(filemap_range_has_page);
-+ 
- -static int __filemap_fdatawait_range(struct address_space *mapping,
- +static void __filemap_fdatawait_range(struct address_space *mapping,
-  				     loff_t start_byte, loff_t end_byte)
+ -static void nvme_reset_notify(struct pci_dev *pdev, bool prepare)
+ +static void nvme_reset_prepare(struct pci_dev *pdev)
   {
-  	pgoff_t index = start_byte >> PAGE_SHIFT;
+ -	struct nvme_dev *dev = pci_get_drvdata(pdev);
+ +	nvme_dev_disable(pci_get_drvdata(pdev), false);
+ +}
+  
+ -	if (prepare)
+ -		nvme_dev_disable(dev, false);
+ -	else
+ -		nvme_reset_ctrl(&dev->ctrl);
+ +static void nvme_reset_done(struct pci_dev *pdev)
+ +{
+- 	nvme_reset(pci_get_drvdata(pdev));
+++	struct nvme_dev *dev = pci_get_drvdata(pdev);
+++	nvme_reset_ctrl(&dev->ctrl);
+  }
+  
+  static void nvme_shutdown(struct pci_dev *pdev)
