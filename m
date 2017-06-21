@@ -1,33 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the v4l-dvb tree
-Date: Wed, 21 Jun 2017 11:25:20 +1000
-Message-ID: <20170621112520.1ffc0709@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Wed, 21 Jun 2017 11:47:30 +1000
+Message-ID: <20170621114730.4e8724fd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>, Hans Verkuil <hans.verkuil@cisco.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34389 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752969AbdFUBrd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 20 Jun 2017 21:47:33 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Serhey Popovych <serhe.popovych@gmail.com>, Vlad Yasevich <vyasevich@gmail.com>
 
-Hi Mauro,
+Hi all,
 
-After merging the v4l-dvb tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-ERROR: "qcom_scm_is_available" [drivers/media/platform/qcom/venus/venus-core.ko] undefined!
-ERROR: "qcom_scm_pas_shutdown" [drivers/media/platform/qcom/venus/venus-core.ko] undefined!
-ERROR: "qcom_scm_set_remote_state" [drivers/media/platform/qcom/venus/venus-core.ko] undefined!
+  net/core/rtnetlink.c
 
-Caused by commits
+between commit:
 
-  af2c3834c8ca ("[media] media: venus: adding core part and helper functions")
-  d96d3f30c0f2 ("[media] media: venus: hfi: add Venus HFI files")
-  703528005e58 ("[media] media: venus: enable building of Venus video driver")
+  db833d40ad32 ("rtnetlink: add IFLA_GROUP to ifla_policy")
 
-I have merged the 4vl-dvb tree from next-20170620 for today.
+from the net tree and commit:
+
+  3d3ea5af5c0b ("rtnl: Add support for netdev event to link messages")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc net/core/rtnetlink.c
+index 467a2f4510a7,3aa57848a895..000000000000
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@@ -1469,7 -1519,7 +1520,8 @@@ static const struct nla_policy ifla_pol
+  	[IFLA_LINK_NETNSID]	= { .type = NLA_S32 },
+  	[IFLA_PROTO_DOWN]	= { .type = NLA_U8 },
+  	[IFLA_XDP]		= { .type = NLA_NESTED },
+ +	[IFLA_GROUP]		= { .type = NLA_U32 },
++ 	[IFLA_EVENT]		= { .type = NLA_U32 },
+  };
+  
+  static const struct nla_policy ifla_info_policy[IFLA_INFO_MAX+1] = {
