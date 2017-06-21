@@ -1,100 +1,171 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the uuid tree with the arm64 tree
-Date: Wed, 21 Jun 2017 10:21:59 +0100
-Message-ID: <20170621092158.GF3768@arm.com>
-References: <20170619091942.GA2702@arm.com>
- <1497866790.22624.164.camel@linux.intel.com>
- <20170619102240.GC2702@arm.com>
- <afe3af71-36d4-df49-07a9-2e3fba3a5c16@codeaurora.org>
- <20170620084007.GA30664@arm.com>
- <20170620084307.GA9703@lst.de>
- <1497948465.22624.167.camel@linux.intel.com>
- <25d08c14-eea7-8b58-675a-1124200b50a6@codeaurora.org>
- <20170620182034.GF28035@arm.com>
- <3a8d87ae-93ac-09a1-b653-94862ebdfb39@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170621 build: 1 failures 7 warnings (next-20170621)
+Date: Wed, 21 Jun 2017 10:56:07 +0100
+Message-ID: <E1dNcMp-0005RN-1w@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:49190 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752037AbdFUJVr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 21 Jun 2017 05:21:47 -0400
-Content-Disposition: inline
-In-Reply-To: <3a8d87ae-93ac-09a1-b653-94862ebdfb39@codeaurora.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56356 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751434AbdFUJ6Y (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 21 Jun 2017 05:58:24 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Baicar, Tyler" <tbaicar@codeaurora.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hi Tyler,
+Tree/Branch: next-20170621
+Git describe: next-20170621
+Commit: be285968cc Add linux-next specific files for 20170621
 
-On Tue, Jun 20, 2017 at 12:26:01PM -0600, Baicar, Tyler wrote:
-> On 6/20/2017 12:20 PM, Will Deacon wrote:
-> >On Tue, Jun 20, 2017 at 12:13:13PM -0600, Baicar, Tyler wrote:
-> >>I have sent you the rebased patches. I took Christoph's uuid-types tree and
-> >>added this patch onto it:
-> >>
-> >>7bf130e4a065 ("ACPI/APEI: Handle GSIV and GPIO notification types")
-> >>
-> >>And then added my patches onto that. This will hopefully now avoid conflicts
-> >>with any other patch.
-> >No, patch 6 fails to apply:
-> >
-> >On Tue, Jun 20, 2017 at 12:07:27PM -0600, Tyler Baicar wrote:
-> >>diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> >>index 7e3ddbe..81ebb9b 100644
-> >>--- a/drivers/acpi/apei/ghes.c
-> >>+++ b/drivers/acpi/apei/ghes.c
-> >>@@ -116,11 +116,7 @@ static inline bool is_hest_type_generic_v2(struct ghes *ghes)
-> >>   * Two virtual pages are used, one for IRQ/PROCESS context, the other for
-> >>   * NMI context (optionally).
-> >>   */
-> >>-#ifdef CONFIG_HAVE_ACPI_APEI_NMI
-> >>  #define GHES_IOREMAP_PAGES           2
-> >>-#else
-> >>-#define GHES_IOREMAP_PAGES           1
-> >>-#endif
-> >>  #define GHES_IOREMAP_IRQ_PAGE(base)	(base)
-> >>  #define GHES_IOREMAP_NMI_PAGE(base)	((base) + PAGE_SIZE)
-> >>@@ -159,10 +155,14 @@ static void ghes_ioremap_exit(void)
-> >>  static void __iomem *ghes_ioremap_pfn_nmi(u64 pfn)
-> >>  {
-> >>  	unsigned long vaddr;
-> >>+	phys_addr_t paddr;
-> >>+	pgprot_t prot;
-> >>  	vaddr = (unsigned long)GHES_IOREMAP_NMI_PAGE(ghes_ioremap_area->addr);
-> >>-	ioremap_page_range(vaddr, vaddr + PAGE_SIZE,
-> >>-			   pfn << PAGE_SHIFT, PAGE_KERNEL);
-> >>+
-> >>+	paddr = pfn << PAGE_SHIFT;
-> >>+	prot = arch_apei_get_mem_attribute(paddr);
-> >>+	ioremap_page_range(vaddr, vaddr + PAGE_SIZE, paddr, prot);
-> >>  	return (void __iomem *)vaddr;
-> >>  }
-> >>@@ -774,6 +774,50 @@ static int ghes_notify_hed(struct notifier_block *this, unsigned long event,
-> >>  	.notifier_call = ghes_notify_hed,
-> >In Christoph's tree, this line is:
-> >
-> >	.notifier_call = ghes_notify_sci,
-> >
-> >http://git.infradead.org/users/hch/uuid.git/blob/refs/heads/uuid-types:/drivers/acpi/apei/ghes.c#l720
-> >
-> >so something still isn't right. What did you actually base your patches
-> >on?
-> Yes, that line is changed in this patch 7bf130e4a065 ("ACPI/APEI: Handle
-> GSIV and GPIO notification types")
+Build Time: 0 min 10 sec
 
-Ok, but that's not in mainline, not in the arm64 tree and not in Christoph's
-branch. I don't want to pull in random cherry-picks that are already in
--next via some other means (looks like this is via -tip?).
+Passed:    6 / 7   ( 85.71 %)
+Failed:    1 / 7   ( 14.29 %)
 
-> It is the other patch that was conflicting with this patch series when we
-> tried to marge although it was a trivial conflict. I applied this patch to
-> Christoph's tree and then put my patches on top of that.
+Errors: 2
+Warnings: 7
+Section Mismatches: 14
 
-If the conflicts are trivial, just base on uuid-types (which I've merged
-into the arm64 for-next/ras-apei branch). If they're not trivial, then you
-need to co-ordinate better with other developers and I think this will have
-to wait another release.
+Failed defconfigs:
+	arm-allmodconfig
 
-Will
+Errors:
+
+	arm-allmodconfig
+../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+     10 warnings   14 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : x86_64-allnoconfig
+      2 warnings    0 mismatches  : arm-multi_v4t_defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  6 ../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	  1 ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 7
+	  7 ../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+	  5 ../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+	  4 ../kernel/cpu.c:1778:6: warning: unused variable 'cpu' [-Wunused-variable]
+	  3 ../include/linux/printk.h:303:2: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' used but never defined
+	  1 ../drivers/gpu/drm/arm/hdlcd_crtc.c:264:6: warning: unused variable 'src_x' [-Wunused-variable]
+	  1 ../drivers/gpu/drm/arm/hdlcd_crtc.c:264:13: warning: unused variable 'src_y' [-Wunused-variable]
+
+Section Mismatch Summary: 14
+	  1 WARNING: drivers/clk/built-in.o(.text+0x150a4): Section mismatch in reference from the function sr_genpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x15054): Section mismatch in reference from the function sr_genpll4_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x14ffc): Section mismatch in reference from the function sr_genpll5_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x14fa8): Section mismatch in reference from the function sr_lcpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x14f58): Section mismatch in reference from the function sr_lcpll1_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x14f08): Section mismatch in reference from the function sr_lcpll_pcie_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/built-in.o(.text+0x14ebc): Section mismatch in reference from the function sr_genpll3_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x46c4): Section mismatch in reference from the function sr_genpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x4674): Section mismatch in reference from the function sr_genpll4_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x461c): Section mismatch in reference from the function sr_genpll5_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x45c8): Section mismatch in reference from the function sr_lcpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x4578): Section mismatch in reference from the function sr_lcpll1_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x4528): Section mismatch in reference from the function sr_lcpll_pcie_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	  1 WARNING: drivers/clk/bcm/built-in.o(.text+0x44dc): Section mismatch in reference from the function sr_genpll3_clk_init() to the function .init.text:iproc_pll_clk_setup()
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/cpu.c:1778:6: warning: unused variable 'cpu' [-Wunused-variable]
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+	../include/linux/printk.h:303:2: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+	../include/linux/printk.h:303:2: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 7 errors, 10 warnings, 14 section mismatches
+
+Errors:
+	../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+	../include/linux/qed/qede_rdma.h:85:1: error: expected identifier or '(' before '{' token
+
+Warnings:
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+	../include/linux/printk.h:303:2: warning: 'err' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/arm/hdlcd_crtc.c:264:13: warning: unused variable 'src_y' [-Wunused-variable]
+	../drivers/gpu/drm/arm/hdlcd_crtc.c:264:6: warning: unused variable 'src_x' [-Wunused-variable]
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' used but never defined
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+	../include/linux/qed/qede_rdma.h:84:19: warning: 'qede_rdma_dev_add' declared 'static' but never defined [-Wunused-function]
+
+Section Mismatches:
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x44dc): Section mismatch in reference from the function sr_genpll3_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x4528): Section mismatch in reference from the function sr_lcpll_pcie_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x4578): Section mismatch in reference from the function sr_lcpll1_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x45c8): Section mismatch in reference from the function sr_lcpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x461c): Section mismatch in reference from the function sr_genpll5_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x4674): Section mismatch in reference from the function sr_genpll4_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/bcm/built-in.o(.text+0x46c4): Section mismatch in reference from the function sr_genpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x14ebc): Section mismatch in reference from the function sr_genpll3_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x14f08): Section mismatch in reference from the function sr_lcpll_pcie_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x14f58): Section mismatch in reference from the function sr_lcpll1_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x14fa8): Section mismatch in reference from the function sr_lcpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x14ffc): Section mismatch in reference from the function sr_genpll5_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x15054): Section mismatch in reference from the function sr_genpll4_clk_init() to the function .init.text:iproc_pll_clk_setup()
+	WARNING: drivers/clk/built-in.o(.text+0x150a4): Section mismatch in reference from the function sr_genpll0_clk_init() to the function .init.text:iproc_pll_clk_setup()
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/cpu.c:1778:6: warning: unused variable 'cpu' [-Wunused-variable]
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/cpu.c:1778:6: warning: unused variable 'cpu' [-Wunused-variable]
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/cpu.c:1778:6: warning: unused variable 'cpu' [-Wunused-variable]
+	../mm/page-writeback.c:2380:15: warning: unused variable 'ret2' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
