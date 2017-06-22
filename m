@@ -1,101 +1,104 @@
 From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [next-20170619][a28e46f] WARNING: CPU: 5 PID: 1 at arch/powerpc/lib/feature-fixups.c:214 .check_features+0xa0/0xbc
-Date: Thu, 22 Jun 2017 20:12:30 +1000
-Message-ID: <87fuess54h.fsf@concordia.ellerman.id.au>
-References: <1497972897.21025.9.camel@abdul>
+Subject: DNS (?) not working on G5 (64-bit powerpc) (was [net-next, v3,
+ 3/3] udp: try to avoid 2 cache miss on dequeue)
+Date: Thu, 22 Jun 2017 23:06:32 +1000
+Message-ID: <87shisqihz.fsf@concordia.ellerman.id.au>
+References: <07dec63bc32dc574202e8e981292f0bdb2c144b0.1497026892.git.pabeni@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44855 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752672AbdFVKMj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 22 Jun 2017 06:12:39 -0400
-In-Reply-To: <1497972897.21025.9.camel@abdul>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <07dec63bc32dc574202e8e981292f0bdb2c144b0.1497026892.git.pabeni@redhat.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, linux-next <linux-next@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
-Thanks for testing this configuration Abdul.
+Paolo wrote:
+> when udp_recvmsg() is executed, on x86_64 and other archs, most skb
+> fields are on cold cachelines.
+> If the skb are linear and the kernel don't need to compute the udp
+> csum, only a handful of skb fields are required by udp_recvmsg().
+> Since we already use skb->dev_scratch to cache hot data, and
+> there are 32 bits unused on 64 bit archs, use such field to cache
+> as much data as we can, and try to prefetch on dequeue the relevant
+> fields that are left out.
+>=20
+> This can save up to 2 cache miss per packet.
+>=20
+> v1 -> v2:
+>   - changed udp_dev_scratch fields types to u{32,16} variant,
+>     replaced bitfiled with bool
+>=20
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> Acked-by: Eric Dumazet <edumazet@google.com>
+> ---
+>  net/ipv4/udp.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++=
+------
+>  1 file changed, 103 insertions(+), 11 deletions(-)
 
-Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
-> Hi Michael,
->
-> linux-next booted with warnings on a Power LPAR with CMO feature
-> enabled.
->
-> Test : boot with CMO enabled 
-> Kernel: 4.12.0-rc5-next-20170619
-> gcc : 4.8.5
-> Machine : Power 8 Power VM LPAR (Big Endian)
->
-> Steps to recreate:
->
-> 1. Enable Shared Memory/CPU Mode for LPAR in HMC (lpar profile)
-> 2. Build the kernel for the attached config
-> 3. Boot the kernel, boot messages shows below warning
->
-> Firmware features changed after feature patching!
-> ------------[ cut here ]------------
-> WARNING: CPU: 5 PID: 1 at
-> arch/powerpc/lib/feature-fixups.c:214 .check_features+0xa0/0xbc
-> Modules linked in:
-> CPU: 5 PID: 1 Comm: swapper/5 Not tainted 4.12.0-rc5-next-20170619-autotest #1
-> task: c0000003bbc20000 task.stack: c0000003bbc80000
-> NIP: c000000000ce599c LR: c000000000ce5998 CTR: 00000000006338e4
-> REGS: c0000003bbc83910 TRAP: 0700   Not tainted  (4.12.0-rc5-next-20170619-autotest)
-> MSR: 800000000282b032 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI>
->   CR: 22000022  XER: 00000002  
-> CFAR: c00000000024368c SOFTE: 1 
-> GPR00: c000000000ce5998 c0000003bbc83b90 c00000000132e800 0000000000000031 
-> GPR04: 0000000000000000 800000380fe53ec0 ffffffffffffffff 0000000000000000 
-> GPR08: 0000000000000000 c0000000011999f8 c0000000011999f8 0000000000003ff0 
-> GPR12: 0000000028000024 c00000000e743480 c00000000000d380 0000000000000000 
-> GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-> GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-> GPR24: 0000000000000000 c0000000012aad08 c000000000cc0b88 00000000000000e8 
-> GPR28: c000000000d3ea38 0000000000000007 0000000000000000 c000000001375d20 
-> NIP [c000000000ce599c] .check_features+0xa0/0xbc
-> LR [c000000000ce5998] .check_features+0x9c/0xbc
-> Call Trace:
-> [c0000003bbc83b90] [c000000000ce5998] .check_features+0x9c/0xbc
-> (unreliable)
-> [c0000003bbc83c10] [c00000000000cb1c] .do_one_initcall+0x5c/0x1c0
-> [c0000003bbc83ce0] [c000000000cd47d0] .kernel_init_freeable+0x270/0x350
-> [c0000003bbc83db0] [c00000000000d39c] .kernel_init+0x1c/0x140
-> [c0000003bbc83e30] [c00000000000b3e4] .ret_from_kernel_thread+0x58/0x74
-> Instruction dump:
-> 0fe00000 60000000 3d02ffa1 e92296e0 e94851d0 e9290000 7faa4800 41fe0018 
-> 3c62ff89 3863e6f0 4b55dcb9 60000000 <0fe00000> 38210080 38600000
-> e8010010 
-> random: 0x600000003d22001e get_random_bytes called with crng_init=0
-> ---[ end trace c0f890377edaeb14 ]---
-> Running MSI bitmap self-tests ... 
->
-> Possible bad commit looks to be:
+This appears to break wget on one of my machines.
 
-That's not the bad commit ...
+Networking in general is working, I'm able to SSH in, but then I can't
+do a wget.
 
-> commit a28e46f109c9637b2539b9995078d5df4f7f6c09
-> Author: Michael Ellerman <mpe@ellerman.id.au>
-> Date:   Tue Jul 26 22:29:18 2016 +1000
->
->     powerpc/kernel: Check features don't change after patching
->     
->     Early in boot we binary patch some sections of code based on the CPU and
->     MMU feature bits. But it is a one-time patching, there is no facility
->     for repatching the code later if the set of features change.
->     
->     It is a major bug if the set of features changes after we've done the
->     code patching - so add a check for it.
+eg:
 
-... it's the commit that adds the warning that something is dodgy.
+$ wget google.com
+--2017-06-22 22:45:39--  http://google.com/
+Resolving proxy.pmdw.com (proxy.pmdw.com)... failed: Temporary failure in n=
+ame resolution.
+wget: unable to resolve host address =E2=80=98proxy.pmdw.com=E2=80=99
 
-In this case it's a false positive, FW_FEATURE_CMO is not used in
-assembly, so it's OK (but a bit dicey) that we change it after
-do_feature_fixups().
+$ host proxy.pmdw.com
+proxy.pmdw.com is an alias for raven.pmdw.com.
+raven.pmdw.com has address 10.1.2.3
 
-But we should still fix it so that we enable/disable FW_FEATURE_CMO
-before patching.
+$ wget google.com
+--2017-06-22 22:52:08--  http://google.com/
+Resolving proxy.pmdw.com (proxy.pmdw.com)... failed: Temporary failure in n=
+ame resolution.
+wget: unable to resolve host address =E2=80=98proxy.pmdw.com=E2=80=99
+
+Maybe host is using TCP but the man page says it doesn't?
+
+
+Everything is OK if I boot back to the previous commit 0a463c78d25b
+("udp: avoid a cache miss on dequeue"):
+
+$ wget google.com
+--2017-06-22 23:00:01--  http://google.com/
+Resolving proxy.pmdw.com (proxy.pmdw.com)... 10.1.2.3
+Connecting to proxy.pmdw.com (proxy.pmdw.com)|10.1.2.3|:3128... connected.
+Proxy request sent, awaiting response... 302 Found
+Location: http://www.google.com.au/?gfe_rd=3Dcr&ei=3DUb9LWbPbLujDXrH1uPgE [=
+following]
+--2017-06-22 23:00:01--  http://www.google.com.au/?gfe_rd=3Dcr&ei=3DUb9LWbP=
+bLujDXrH1uPgE
+Reusing existing connection to proxy.pmdw.com:3128.
+Proxy request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: =E2=80=98index.html=E2=80=99
+
+index.html                      [ <=3D>                                    =
+   ]  11.37K  --.-KB/s    in 0.001s=20=20
+
+2017-06-22 23:00:01 (22.0 MB/s) - =E2=80=98index.html=E2=80=99 saved [11640]
+
+$ uname -a
+Linux 4.12.0-rc4-gcc6-00988-g0a463c7 #88 SMP Thu Jun 22 22:55:12 AEST 2017 =
+ppc64 GNU/Linux
+
+
+Haven't had time to debug any further. Any ideas?
 
 cheers
