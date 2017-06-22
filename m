@@ -1,73 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvms390 tree with the s390 tree
-Date: Thu, 22 Jun 2017 12:59:28 +1000
-Message-ID: <20170622125928.76918255@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 7 (arch/x86/mm/tlb.c: events)
+Date: Wed, 21 Jun 2017 20:58:38 -0700
+Message-ID: <1fd32483-427e-5cb2-9af0-75b1cf2c0fa7@infradead.org>
+References: <20170607160734.0de4e056@canb.auug.org.au>
+ <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
+ <20170622103527.781f7761@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56853 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752403AbdFVC7b (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 21 Jun 2017 22:59:31 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170622103527.781f7761@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On 06/21/2017 05:35 PM, Stephen Rothwell wrote:
+> Hi Randy,
+> 
+> On Wed, 7 Jun 2017 09:26:26 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>>
+>> on i386:
+>>
+>>   CC      arch/x86/mm/tlb.o
+>> In file included from ../include/linux/mm.h:1032:0,
+>>                  from ../arch/x86/mm/tlb.c:3:
+>> ../arch/x86/mm/tlb.c: In function 'flush_tlb_func_remote':
+>> ../arch/x86/mm/tlb.c:251:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
+>>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>>                      ^
+>> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>>                                                  ^
+>> ../arch/x86/mm/tlb.c:251:21: note: each undeclared identifier is reported only once for each function it appears in
+>>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>>                      ^
+>> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>>                                                  ^
+>> ../arch/x86/mm/tlb.c: In function 'native_flush_tlb_others':
+>> ../arch/x86/mm/tlb.c:258:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
+>>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+>>                      ^
+>> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>>                                                  ^
+>> ../arch/x86/mm/tlb.c: In function 'do_flush_tlb_all':
+>> ../arch/x86/mm/tlb.c:326:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
+>>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>>                      ^
+>> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>>                                                  ^
+>> ../arch/x86/mm/tlb.c: In function 'flush_tlb_all':
+>> ../arch/x86/mm/tlb.c:334:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
+>>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+>>                      ^
+>> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>>  #define count_vm_tlb_event(x)    count_vm_event(x)
+> 
+> Do you know if this has been fixed?
+> 
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
-
-  arch/s390/kvm/gaccess.c
-
-between commit:
-
-  a75259825401 ("s390: rename struct psw_bits members")
-
-from the s390 tree and commit:
-
-  8993df124642 ("KVM: s390: implement instruction execution protection for emulated")
-
-from the kvms390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I cannot repro it on linux-next of 20170621.
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/s390/kvm/gaccess.c
-index e0f7d5fc7efd,6fda095f1a99..000000000000
---- a/arch/s390/kvm/gaccess.c
-+++ b/arch/s390/kvm/gaccess.c
-@@@ -790,8 -808,8 +808,8 @@@ static int guest_page_range(struct kvm_
-  			return trans_exc(vcpu, PGM_PROTECTION, ga, ar, mode,
-  					 PROT_TYPE_LA);
-  		ga &= PAGE_MASK;
- -		if (psw_bits(*psw).t) {
- +		if (psw_bits(*psw).dat) {
-- 			rc = guest_translate(vcpu, ga, pages, asce, mode);
-+ 			rc = guest_translate(vcpu, ga, pages, asce, mode, &prot);
-  			if (rc < 0)
-  				return rc;
-  		} else {
-@@@ -899,10 -918,10 +918,10 @@@ int guest_translate_address(struct kvm_
-  					 mode, PROT_TYPE_LA);
-  	}
-  
- -	if (psw_bits(*psw).t && !asce.r) {	/* Use DAT? */
- +	if (psw_bits(*psw).dat && !asce.r) {	/* Use DAT? */
-- 		rc = guest_translate(vcpu, gva, gpa, asce, mode);
-+ 		rc = guest_translate(vcpu, gva, gpa, asce, mode, &prot);
-  		if (rc > 0)
-- 			return trans_exc(vcpu, rc, gva, 0, mode, PROT_TYPE_DAT);
-+ 			return trans_exc(vcpu, rc, gva, 0, mode, prot);
-  	} else {
-  		*gpa = kvm_s390_real_to_abs(vcpu, gva);
-  		if (kvm_is_error_gpa(vcpu->kvm, *gpa))
+~Randy
