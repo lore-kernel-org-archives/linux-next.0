@@ -1,86 +1,25 @@
-From: David Miller <davem@davemloft.net>
+From: Alan Modra <amodra@gmail.com>
 Subject: Re: linux-next: build failure after merge of most trees
-Date: Thu, 22 Jun 2017 10:13:06 -0400 (EDT)
-Message-ID: <20170622.101306.2121302610489503804.davem@davemloft.net>
+Date: Thu, 22 Jun 2017 23:43:10 +0930
+Message-ID: <20170622141310.GF8406@bubble.grove.modra.org>
 References: <20170622152441.3704b3d9@canb.auug.org.au>
-        <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+ <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: npiggin@gmail.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com, amodra@gmail.com
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 List-Id: linux-next.vger.kernel.org
 
-From: Nicholas Piggin <npiggin@gmail.com>
-Date: Thu, 22 Jun 2017 18:41:16 +1000
-
+On Thu, Jun 22, 2017 at 06:41:16PM +1000, Nicholas Piggin wrote:
 > Is there any way for the linker to place the inputs to avoid unresolvable
 > relocations where possible?
 
-I don't think so.
+Not without quite a lot of work writing support for that feature.
 
-> A way to work around this is to make arch/sparc/lib/hweight.o an obj-y
-> rather than lib-y. That's a hack because it just serves to move the
-> input location, but not really any more of a hack than the current code
-> that also only works because of input locations...
-
-I could adjust those branches in the sparc code into indirect calls
-but it's going to perform a bit poorly on older cpus.
-
-Something like this:
-
-diff --git a/arch/sparc/lib/hweight.S b/arch/sparc/lib/hweight.S
-index f9985f1..d21cf20 100644
---- a/arch/sparc/lib/hweight.S
-+++ b/arch/sparc/lib/hweight.S
-@@ -4,9 +4,9 @@
- 	.text
- 	.align	32
- ENTRY(__arch_hweight8)
--	ba,pt	%xcc, __sw_hweight8
-+	sethi	%hi(__sw_hweight8), %g1
-+	jmpl	%g1 + %lo(__sw_hweight8), %g0
- 	 nop
--	nop
- ENDPROC(__arch_hweight8)
- EXPORT_SYMBOL(__arch_hweight8)
- 	.section	.popc_3insn_patch, "ax"
-@@ -17,9 +17,9 @@ EXPORT_SYMBOL(__arch_hweight8)
- 	.previous
- 
- ENTRY(__arch_hweight16)
--	ba,pt	%xcc, __sw_hweight16
-+	sethi	%hi(__sw_hweight16), %g1
-+	jmpl	%g1 + %lo(__sw_hweight16), %g0
- 	 nop
--	nop
- ENDPROC(__arch_hweight16)
- EXPORT_SYMBOL(__arch_hweight16)
- 	.section	.popc_3insn_patch, "ax"
-@@ -30,9 +30,9 @@ EXPORT_SYMBOL(__arch_hweight16)
- 	.previous
- 
- ENTRY(__arch_hweight32)
--	ba,pt	%xcc, __sw_hweight32
-+	sethi	%hi(__sw_hweight32), %g1
-+	jmpl	%g1 + %lo(__sw_hweight32), %g0
- 	 nop
--	nop
- ENDPROC(__arch_hweight32)
- EXPORT_SYMBOL(__arch_hweight32)
- 	.section	.popc_3insn_patch, "ax"
-@@ -43,9 +43,9 @@ EXPORT_SYMBOL(__arch_hweight32)
- 	.previous
- 
- ENTRY(__arch_hweight64)
--	ba,pt	%xcc, __sw_hweight64
-+	sethi	%hi(__sw_hweight16), %g1
-+	jmpl	%g1 + %lo(__sw_hweight16), %g0
- 	 nop
--	nop
- ENDPROC(__arch_hweight64)
- EXPORT_SYMBOL(__arch_hweight64)
- 	.section	.popc_3insn_patch, "ax"
+-- 
+Alan Modra
+Australia Development Lab, IBM
