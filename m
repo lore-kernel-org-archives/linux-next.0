@@ -1,38 +1,108 @@
-From: Nicholas Piggin <npiggin@gmail.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: build failure after merge of most trees
-Date: Fri, 23 Jun 2017 00:43:10 +1000
-Message-ID: <20170623004310.76b79cbb@roar.ozlabs.ibm.com>
-References: <20170622152441.3704b3d9@canb.auug.org.au>
-        <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
-        <20170622141310.GF8406@bubble.grove.modra.org>
+Date: Thu, 22 Jun 2017 10:56:48 -0400 (EDT)
+Message-ID: <20170622.105648.1780325804771154563.davem@davemloft.net>
+References: <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+        <20170622.101306.2121302610489503804.davem@davemloft.net>
+        <20170623003339.11cbc062@roar.ozlabs.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:36441 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752138AbdFVOnZ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 22 Jun 2017 10:43:25 -0400
-In-Reply-To: <20170622141310.GF8406@bubble.grove.modra.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Alan Modra <amodra@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170623003339.11cbc062@roar.ozlabs.ibm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: npiggin@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com, amodra@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-On Thu, 22 Jun 2017 23:43:10 +0930
-Alan Modra <amodra@gmail.com> wrote:
+From: Nicholas Piggin <npiggin@gmail.com>
+Date: Fri, 23 Jun 2017 00:33:39 +1000
 
-> On Thu, Jun 22, 2017 at 06:41:16PM +1000, Nicholas Piggin wrote:
-> > Is there any way for the linker to place the inputs to avoid unresolvable
-> > relocations where possible?  
+> On Thu, 22 Jun 2017 10:13:06 -0400 (EDT)
+> David Miller <davem@davemloft.net> wrote:
 > 
-> Not without quite a lot of work writing support for that feature.
+>> From: Nicholas Piggin <npiggin@gmail.com>
+>> Date: Thu, 22 Jun 2017 18:41:16 +1000
+>> 
+>> > Is there any way for the linker to place the inputs to avoid unresolvable
+>> > relocations where possible?  
+>> 
+>> I don't think so.
+>> 
+>> > A way to work around this is to make arch/sparc/lib/hweight.o an obj-y
+>> > rather than lib-y. That's a hack because it just serves to move the
+>> > input location, but not really any more of a hack than the current code
+>> > that also only works because of input locations...  
+>> 
+>> I could adjust those branches in the sparc code into indirect calls
+>> but it's going to perform a bit poorly on older cpus.
 > 
+> The build succeeds with your patch. That should solve it properly
+> so it won't come back to bite again.
+> 
+> If you can tolerate the slowdown on old CPUs I'd be grateful if
+> we could merge it for linux-next to get this thin archives tree
+> unblocked.
 
-Okay, just wondering if I'd missed something. It'd probably wouldn't
-be enough benefit to justify a significant amount of work. We'd be
-better off looking at link time optimisation if we wanted to go that
-way.
+Feel free to merge it into your series:
 
-Thanks,
-Nick
+====================
+sparc64: Use indirect calls in hamming weight stubs.
+
+Otherwise, depending upon link order, the branch relocation
+limits could be exceeded.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+
+diff --git a/arch/sparc/lib/hweight.S b/arch/sparc/lib/hweight.S
+index f9985f1..d21cf20 100644
+--- a/arch/sparc/lib/hweight.S
++++ b/arch/sparc/lib/hweight.S
+@@ -4,9 +4,9 @@
+ 	.text
+ 	.align	32
+ ENTRY(__arch_hweight8)
+-	ba,pt	%xcc, __sw_hweight8
++	sethi	%hi(__sw_hweight8), %g1
++	jmpl	%g1 + %lo(__sw_hweight8), %g0
+ 	 nop
+-	nop
+ ENDPROC(__arch_hweight8)
+ EXPORT_SYMBOL(__arch_hweight8)
+ 	.section	.popc_3insn_patch, "ax"
+@@ -17,9 +17,9 @@ EXPORT_SYMBOL(__arch_hweight8)
+ 	.previous
+ 
+ ENTRY(__arch_hweight16)
+-	ba,pt	%xcc, __sw_hweight16
++	sethi	%hi(__sw_hweight16), %g1
++	jmpl	%g1 + %lo(__sw_hweight16), %g0
+ 	 nop
+-	nop
+ ENDPROC(__arch_hweight16)
+ EXPORT_SYMBOL(__arch_hweight16)
+ 	.section	.popc_3insn_patch, "ax"
+@@ -30,9 +30,9 @@ EXPORT_SYMBOL(__arch_hweight16)
+ 	.previous
+ 
+ ENTRY(__arch_hweight32)
+-	ba,pt	%xcc, __sw_hweight32
++	sethi	%hi(__sw_hweight32), %g1
++	jmpl	%g1 + %lo(__sw_hweight32), %g0
+ 	 nop
+-	nop
+ ENDPROC(__arch_hweight32)
+ EXPORT_SYMBOL(__arch_hweight32)
+ 	.section	.popc_3insn_patch, "ax"
+@@ -43,9 +43,9 @@ EXPORT_SYMBOL(__arch_hweight32)
+ 	.previous
+ 
+ ENTRY(__arch_hweight64)
+-	ba,pt	%xcc, __sw_hweight64
++	sethi	%hi(__sw_hweight16), %g1
++	jmpl	%g1 + %lo(__sw_hweight16), %g0
+ 	 nop
+-	nop
+ ENDPROC(__arch_hweight64)
+ EXPORT_SYMBOL(__arch_hweight64)
+ 	.section	.popc_3insn_patch, "ax"
