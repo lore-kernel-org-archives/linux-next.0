@@ -1,63 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Jun 7 (arch/x86/mm/tlb.c: events)
-Date: Thu, 22 Jun 2017 10:35:27 +1000
-Message-ID: <20170622103527.781f7761@canb.auug.org.au>
-References: <20170607160734.0de4e056@canb.auug.org.au>
-        <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
+Subject: linux-next: build failure after merge of the md tree
+Date: Thu, 22 Jun 2017 11:44:56 +1000
+Message-ID: <20170622114456.329ec8ca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+To: Shaohua Li <shli@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Randy,
+Hi Shaohua,
 
-On Wed, 7 Jun 2017 09:26:26 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> on i386:
-> 
->   CC      arch/x86/mm/tlb.o
-> In file included from ../include/linux/mm.h:1032:0,
->                  from ../arch/x86/mm/tlb.c:3:
-> ../arch/x86/mm/tlb.c: In function 'flush_tlb_func_remote':
-> ../arch/x86/mm/tlb.c:251:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
->   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->                      ^
-> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->  #define count_vm_tlb_event(x)    count_vm_event(x)
->                                                  ^
-> ../arch/x86/mm/tlb.c:251:21: note: each undeclared identifier is reported only once for each function it appears in
->   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->                      ^
-> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->  #define count_vm_tlb_event(x)    count_vm_event(x)
->                                                  ^
-> ../arch/x86/mm/tlb.c: In function 'native_flush_tlb_others':
-> ../arch/x86/mm/tlb.c:258:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
->   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
->                      ^
-> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->  #define count_vm_tlb_event(x)    count_vm_event(x)
->                                                  ^
-> ../arch/x86/mm/tlb.c: In function 'do_flush_tlb_all':
-> ../arch/x86/mm/tlb.c:326:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
->   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->                      ^
-> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->  #define count_vm_tlb_event(x)    count_vm_event(x)
->                                                  ^
-> ../arch/x86/mm/tlb.c: In function 'flush_tlb_all':
-> ../arch/x86/mm/tlb.c:334:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
->   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
->                      ^
-> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->  #define count_vm_tlb_event(x)    count_vm_event(x)
+After merging the md tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Do you know if this has been fixed?
+drivers/md/md.c: In function 'md_run':
+drivers/md/md.c:5449:21: error: too few arguments to function 'bioset_create'
+   mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0);
+                     ^
+In file included from include/linux/blkdev.h:20:0,
+                 from drivers/md/md.c:49:
+include/linux/bio.h:375:24: note: declared here
+ extern struct bio_set *bioset_create(unsigned int, unsigned int, int flags);
+                        ^
+
+Caused by commit
+
+  5a85071c2cbc ("md: use a separate bio_set for synchronous IO.")
+
+interacting with commit
+
+  011067b05668 ("blk: replace bioset_create_nobvec() with a flags arg to bioset_create()")
+
+from the block tree.
+
+I applied the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 22 Jun 2017 11:42:02 +1000
+Subject: [PATCH] md: fix up for "blk: replace bioset_create_nobvec() with a
+ flags arg to bioset_create()"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/md/md.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index c5d9cac4760c..ffccee45af8c 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -5446,7 +5446,7 @@ int md_run(struct mddev *mddev)
+ 			return -ENOMEM;
+ 	}
+ 	if (mddev->sync_set == NULL) {
+-		mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0);
++		mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
+ 		if (!mddev->sync_set)
+ 			return -ENOMEM;
+ 	}
+-- 
+2.11.0
 
 -- 
 Cheers,
