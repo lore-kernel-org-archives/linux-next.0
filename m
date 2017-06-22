@@ -1,25 +1,51 @@
-From: Alan Modra <amodra@gmail.com>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: build failure after merge of most trees
-Date: Thu, 22 Jun 2017 23:43:10 +0930
-Message-ID: <20170622141310.GF8406@bubble.grove.modra.org>
+Date: Thu, 22 Jun 2017 10:29:23 -0400 (EDT)
+Message-ID: <20170622.102923.1704137848607888832.davem@davemloft.net>
 References: <20170622152441.3704b3d9@canb.auug.org.au>
- <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+        <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+        <20170622.101306.2121302610489503804.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+In-Reply-To: <20170622.101306.2121302610489503804.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+To: npiggin@gmail.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com, amodra@gmail.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 22, 2017 at 06:41:16PM +1000, Nicholas Piggin wrote:
-> Is there any way for the linker to place the inputs to avoid unresolvable
-> relocations where possible?
+From: David Miller <davem@davemloft.net>
+Date: Thu, 22 Jun 2017 10:13:06 -0400 (EDT)
 
-Not without quite a lot of work writing support for that feature.
+> From: Nicholas Piggin <npiggin@gmail.com>
+> Date: Thu, 22 Jun 2017 18:41:16 +1000
+> 
+>> Is there any way for the linker to place the inputs to avoid unresolvable
+>> relocations where possible?
+> 
+> I don't think so.
+> 
+>> A way to work around this is to make arch/sparc/lib/hweight.o an obj-y
+>> rather than lib-y. That's a hack because it just serves to move the
+>> input location, but not really any more of a hack than the current code
+>> that also only works because of input locations...
+> 
+> I could adjust those branches in the sparc code into indirect calls
+> but it's going to perform a bit poorly on older cpus.
+> 
+> Something like this:
 
--- 
-Alan Modra
-Australia Development Lab, IBM
+I just wanted to mention something in passing.
+
+On sparc64 we patch the first two instructions of memcpy, memset,
+bzero, etc. in order to vector them to cpu optimized routines.
+
+And we use the same kind of branch there.
+
+Now because the branches are to routines in the same directory it
+should never exceed the relocation limits.
+
+However, if the relocation limits were exceeded in this case, the
+build would still succeed and the kernel would be simply broken and
+not bootup properly.
