@@ -1,27 +1,64 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [next-20170609] WARNING: CPU: 3 PID: 71167 at lib/idr.c:157 idr_replace
-Date: Thu, 22 Jun 2017 00:31:35 +0100
-Message-ID: <149808789548.17054.471609626305557642@mail.alporthouse.com>
-References: <1497278454.15415.50.camel@abdul.in.ibm.com>
- <20170613135849.GB28327@htj.duckdns.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Jun 7 (arch/x86/mm/tlb.c: events)
+Date: Thu, 22 Jun 2017 10:35:27 +1000
+Message-ID: <20170622103527.781f7761@canb.auug.org.au>
+References: <20170607160734.0de4e056@canb.auug.org.au>
+        <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170613135849.GB28327@htj.duckdns.org>
+In-Reply-To: <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, David Airlie <airlied@linux.ie>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Quoting Tejun Heo (2017-06-13 14:58:49)
-> Cc'ing David Airlie.
-> 
-> This is from drm driver calling in idr_replace() w/ a negative id.
-> Probably a silly bug in error handling path?
+Hi Randy,
 
-No, this is the validation of an invalid userspace handle. The drm ABI
-for handles is supposed to be a full u32 range with 0 reserved for an
-invalid handle (constrained by the idr_alloc ofc). The WARN was
-introduced by 0a835c4f090a.
--Chris
+On Wed, 7 Jun 2017 09:26:26 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> on i386:
+> 
+>   CC      arch/x86/mm/tlb.o
+> In file included from ../include/linux/mm.h:1032:0,
+>                  from ../arch/x86/mm/tlb.c:3:
+> ../arch/x86/mm/tlb.c: In function 'flush_tlb_func_remote':
+> ../arch/x86/mm/tlb.c:251:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
+>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>                      ^
+> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>                                                  ^
+> ../arch/x86/mm/tlb.c:251:21: note: each undeclared identifier is reported only once for each function it appears in
+>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>                      ^
+> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>                                                  ^
+> ../arch/x86/mm/tlb.c: In function 'native_flush_tlb_others':
+> ../arch/x86/mm/tlb.c:258:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
+>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+>                      ^
+> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>                                                  ^
+> ../arch/x86/mm/tlb.c: In function 'do_flush_tlb_all':
+> ../arch/x86/mm/tlb.c:326:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
+>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+>                      ^
+> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>  #define count_vm_tlb_event(x)    count_vm_event(x)
+>                                                  ^
+> ../arch/x86/mm/tlb.c: In function 'flush_tlb_all':
+> ../arch/x86/mm/tlb.c:334:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
+>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+>                      ^
+> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
+>  #define count_vm_tlb_event(x)    count_vm_event(x)
+
+Do you know if this has been fixed?
+
+-- 
+Cheers,
+Stephen Rothwell
