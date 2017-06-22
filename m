@@ -1,69 +1,46 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 7 (arch/x86/mm/tlb.c: events)
-Date: Wed, 21 Jun 2017 20:58:38 -0700
-Message-ID: <1fd32483-427e-5cb2-9af0-75b1cf2c0fa7@infradead.org>
-References: <20170607160734.0de4e056@canb.auug.org.au>
- <fc67a1fe-28b7-59fd-b702-2ff4854c9703@infradead.org>
- <20170622103527.781f7761@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of most trees
+Date: Thu, 22 Jun 2017 15:24:41 +1000
+Message-ID: <20170622152441.3704b3d9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170622103527.781f7761@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58521 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751064AbdFVFYp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 22 Jun 2017 01:24:45 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Nicholas Piggin <npiggin@gmail.com>
 
-On 06/21/2017 05:35 PM, Stephen Rothwell wrote:
-> Hi Randy,
-> 
-> On Wed, 7 Jun 2017 09:26:26 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> on i386:
->>
->>   CC      arch/x86/mm/tlb.o
->> In file included from ../include/linux/mm.h:1032:0,
->>                  from ../arch/x86/mm/tlb.c:3:
->> ../arch/x86/mm/tlb.c: In function 'flush_tlb_func_remote':
->> ../arch/x86/mm/tlb.c:251:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
->>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->>                      ^
->> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->>  #define count_vm_tlb_event(x)    count_vm_event(x)
->>                                                  ^
->> ../arch/x86/mm/tlb.c:251:21: note: each undeclared identifier is reported only once for each function it appears in
->>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->>                      ^
->> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->>  #define count_vm_tlb_event(x)    count_vm_event(x)
->>                                                  ^
->> ../arch/x86/mm/tlb.c: In function 'native_flush_tlb_others':
->> ../arch/x86/mm/tlb.c:258:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
->>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
->>                      ^
->> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->>  #define count_vm_tlb_event(x)    count_vm_event(x)
->>                                                  ^
->> ../arch/x86/mm/tlb.c: In function 'do_flush_tlb_all':
->> ../arch/x86/mm/tlb.c:326:21: error: 'NR_TLB_REMOTE_FLUSH_RECEIVED' undeclared (first use in this function)
->>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
->>                      ^
->> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->>  #define count_vm_tlb_event(x)    count_vm_event(x)
->>                                                  ^
->> ../arch/x86/mm/tlb.c: In function 'flush_tlb_all':
->> ../arch/x86/mm/tlb.c:334:21: error: 'NR_TLB_REMOTE_FLUSH' undeclared (first use in this function)
->>   count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
->>                      ^
->> ../include/linux/vmstat.h:90:49: note: in definition of macro 'count_vm_tlb_event'
->>  #define count_vm_tlb_event(x)    count_vm_event(x)
-> 
-> Do you know if this has been fixed?
-> 
+Hi Dave,
 
-I cannot repro it on linux-next of 20170621.
+After merging almost all the trees, today's linux-next build (sparc64
+defconfig) failed like this:
+
+arch/sparc/lib/hweight.o: In function `__arch_hweight8':
+(.text+0x0): relocation truncated to fit: R_SPARC_WDISP19 against symbol `__sw_hweight8' defined in .text section in lib/hweight.o
+arch/sparc/lib/hweight.o: In function `__arch_hweight16':
+(.text+0xc): relocation truncated to fit: R_SPARC_WDISP19 against symbol `__sw_hweight16' defined in .text section in lib/hweight.o
+arch/sparc/lib/hweight.o: In function `__arch_hweight32':
+(.text+0x18): relocation truncated to fit: R_SPARC_WDISP19 against symbol `__sw_hweight32' defined in .text section in lib/hweight.o
+arch/sparc/lib/hweight.o: In function `__arch_hweight64':
+(.text+0x24): relocation truncated to fit: R_SPARC_WDISP19 against symbol `__sw_hweight64' defined in .text section in lib/hweight.o
+
+I though it may have been caused by the thin archive changes, but
+disabling CONFIG_THIN_ARCHIVE did not fix it. I have cc'd Nick and
+Masahiro just in case.
+
+I am using powerpc-le hosted cross compilers:
+	gcc 5.2.0
+	binutsila 2.25.2
+
+I have left it broken for now.
+
+32 bit sparc is not affected.
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
