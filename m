@@ -1,37 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Fri, 23 Jun 2017 14:22:00 +1000
-Message-ID: <20170623142200.3df2515d@canb.auug.org.au>
-References: <20170623135834.49322610@canb.auug.org.au>
-        <20170623140006.26585989@canb.auug.org.au>
-        <87efubqr7y.fsf@concordia.ellerman.id.au>
+From: =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+Subject: Re: linux-next: build warning after merge of the l2-mtd tree
+Date: Fri, 23 Jun 2017 06:56:53 +0200
+Message-ID: <c9987333f5d8485043e42c17947c59de@milecki.pl>
+References: <20170623113206.29042011@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55101 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751107AbdFWEWD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 23 Jun 2017 00:22:03 -0400
-In-Reply-To: <87efubqr7y.fsf@concordia.ellerman.id.au>
+Received: from 6.mo69.mail-out.ovh.net ([46.105.50.107]:42744 "EHLO
+        6.mo69.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754089AbdFWFeS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 23 Jun 2017 01:34:18 -0400
+Received: from player738.ha.ovh.net (b6.ovh.net [213.186.33.56])
+        by mo69.mail-out.ovh.net (Postfix) with ESMTP id 016AB2C020
+        for <linux-next@vger.kernel.org>; Fri, 23 Jun 2017 06:56:57 +0200 (CEST)
+In-Reply-To: <20170623113206.29042011@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, John Stultz <john.stultz@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Brian Norris <computersforpeace@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Michael,
+On 2017-06-23 03:32, Stephen Rothwell wrote:
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 
-On Fri, 23 Jun 2017 14:10:25 +1000 Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Fixed in my next today by:
-> 
->   d4cfb11387ee ("powerpc: Convert VDSO update function to use new update_vsyscall interface")
-> 
-> But you must have pulled before I pushed that, so the warning will go
-> away tomorrow.
+This code has been just moved, so the warning was already there before.
 
-Excellent, thanks.
-
--- 
-Cheers,
-Stephen Rothwell
+But it's of course a good opportunity to fix it :)
