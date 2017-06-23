@@ -1,73 +1,53 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170623 build: 1 failures 1 warnings (next-20170623)
-Date: Fri, 23 Jun 2017 09:54:03 +0100
-Message-ID: <E1dOKLr-0007Eu-Le@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40696 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754051AbdFWI4V (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 23 Jun 2017 04:56:21 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Ryder Lee <ryder.lee@mediatek.com>
+Subject: Re: next-20170621 build: 1 failures 7 warnings (next-20170621)
+Date: Fri, 23 Jun 2017 17:13:16 +0800
+Message-ID: <1498209196.26313.71.camel@mtkswgap22>
+References: <E1dNcMp-0005RN-1w@optimist>
+         <20170621100440.vcaxagg4yjca2cv4@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20170621100440.vcaxagg4yjca2cv4@sirena.org.uk>
+Sender: linux-pci-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, LorenzoPieralisi <lorenzo.pieralisi@arm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "kernel-build-reports@lists.linaro.org" <kernel-build-reports@lists.linaro.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170623
-Git describe: next-20170623
-Commit: a73468728f Add linux-next specific files for 20170623
+Sorry for late reply, 
 
-Build Time: 0 min 10 sec
++Lorenzo
 
-Passed:    6 / 7   ( 85.71 %)
-Failed:    1 / 7   ( 14.29 %)
-
-Errors: 1
-Warnings: 1
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
-
-Warnings Summary: 1
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+On Wed, 2017-06-21 at 18:04 +0800, Mark Brown wrote:
+> On Wed, Jun 21, 2017 at 10:56:07AM +0100, Build bot for Mark Brown wrote:
+> 
+> Today's -next fails to build an arm allmodconfig due to:
+> 
+> > 	arm-allmodconfig
+> > ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+> 
+> caused by eaf3023b0498a (PCI: mediatek: Add MediaTek PCIe host
+> controller support).
 
 
+Hi Lorenzo,
 
-===============================================================================
-Detailed per-defconfig build reports below:
+I picked up your changes and had some modifications like what you did
+for other platforms:
+
+9f8e3a5 PCI: Add devm_pci_alloc_host_bridge() interface 
+35a1a84 PCI: Add pci_free_host_bridge() interface
+e33aafd PCI: Initialize bridge release function at bridge allocation
+
+...and it looks Okay.
+
+I have also noticed that you continue sending patches for other
+platforms but I have not yet had a look in detail. I'm quite busy these
+days and don't have time to dig it, hence it is becoming a little
+unmanageable for me.
+
+Did you have a chance to send the same patches for MediaTek?  I
+appreciate that and I can help to test it on our platforms.
 
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
-
-Errors:
-	../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Ryder.
