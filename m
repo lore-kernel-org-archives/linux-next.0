@@ -1,75 +1,60 @@
-From: Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: linux-next: build failure after merge of most trees
-Date: Fri, 23 Jun 2017 13:40:49 +1000
-Message-ID: <20170623134049.72cd0d95@roar.ozlabs.ibm.com>
-References: <20170622152441.3704b3d9@canb.auug.org.au>
-        <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
-        <20170622.101306.2121302610489503804.davem@davemloft.net>
-        <20170622.102923.1704137848607888832.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the kbuild tree
+Date: Fri, 23 Jun 2017 13:50:17 +1000
+Message-ID: <20170623135017.01837f77@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34594 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754035AbdFWDlB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 22 Jun 2017 23:41:01 -0400
-In-Reply-To: <20170622.102923.1704137848607888832.davem@davemloft.net>
+Received: from ozlabs.org ([103.22.144.67]:36923 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754035AbdFWDuT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 22 Jun 2017 23:50:19 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com, amodra@gmail.com
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 
-On Thu, 22 Jun 2017 10:29:23 -0400 (EDT)
-David Miller <davem@davemloft.net> wrote:
+Hi all,
 
-> From: David Miller <davem@davemloft.net>
-> Date: Thu, 22 Jun 2017 10:13:06 -0400 (EDT)
-> 
-> > From: Nicholas Piggin <npiggin@gmail.com>
-> > Date: Thu, 22 Jun 2017 18:41:16 +1000
-> >   
-> >> Is there any way for the linker to place the inputs to avoid unresolvable
-> >> relocations where possible?  
-> > 
-> > I don't think so.
-> >   
-> >> A way to work around this is to make arch/sparc/lib/hweight.o an obj-y
-> >> rather than lib-y. That's a hack because it just serves to move the
-> >> input location, but not really any more of a hack than the current code
-> >> that also only works because of input locations...  
-> > 
-> > I could adjust those branches in the sparc code into indirect calls
-> > but it's going to perform a bit poorly on older cpus.
-> > 
-> > Something like this:  
-> 
-> I just wanted to mention something in passing.
-> 
-> On sparc64 we patch the first two instructions of memcpy, memset,
-> bzero, etc. in order to vector them to cpu optimized routines.
-> 
-> And we use the same kind of branch there.
-> 
-> Now because the branches are to routines in the same directory it
-> should never exceed the relocation limits.
-> 
-> However, if the relocation limits were exceeded in this case, the
-> build would still succeed and the kernel would be simply broken and
-> not bootup properly.
+Today's linux-next merge of the tip tree got a conflict in:
 
-Powerpc has similar problems with linking, particularly in patch
-code. What it does is to actually link the patch code into the kernel
-as well in another section, so the branch target is resolved by the
-linker. When moving the patch code at runtime, the branch offset is
-adjusted. So it does get a link error if things don't work there.
+  arch/arm/include/uapi/asm/Kbuild
 
-I guess the other thing you could do is a build-time check over your
-patch code with a custom script or tool.
+between commit:
 
-If you're in the same directory it should be okay, unless it is split
-between obj-y/built-in.o and lib-y/lib.a then you might have a
-problem.
+  ae3f4151737d ("kbuild: replace genhdr-y with generated-y")
 
-Thanks,
-Nick
+from the kbuild tree and commit:
+
+  6bc51cbaa9d7 ("signal: Remove non-uapi <asm/siginfo.h>")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/include/uapi/asm/Kbuild
+index 424935e4515d,e9b098d6b766..000000000000
+--- a/arch/arm/include/uapi/asm/Kbuild
++++ b/arch/arm/include/uapi/asm/Kbuild
+@@@ -1,6 -1,8 +1,8 @@@
+  # UAPI Header export list
+  include include/uapi/asm-generic/Kbuild.asm
+  
+ -genhdr-y += unistd-common.h
+ -genhdr-y += unistd-oabi.h
+ -genhdr-y += unistd-eabi.h
+ +generated-y += unistd-common.h
+ +generated-y += unistd-oabi.h
+ +generated-y += unistd-eabi.h
++ 
++ generic-y += siginfo.h
