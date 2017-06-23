@@ -1,52 +1,90 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: enabling COMPILE_TEST support for GCC plugins in v4.11
-Date: Fri, 23 Jun 2017 15:43:58 +1000
-Message-ID: <871sqbqmw1.fsf@concordia.ellerman.id.au>
-References: <CAGXu5jLEg_4oOyT-rB8QaaYos854xp39_hNf7haNp=8frcPS0Q@mail.gmail.com> <CAP=VYLrOu8Yjzds2cHcii=kX5-i5xV3GUkLR9yhxBdJBw31F0Q@mail.gmail.com> <CAGXu5jLuuoCpaQ82nK=pFWEeRrm86=vozyS=3nPN=Lw+2uUHQg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of most trees
+Date: Fri, 23 Jun 2017 16:43:23 +1000
+Message-ID: <20170623164323.2ff81b19@canb.auug.org.au>
+References: <20170622184116.0ebaabd9@roar.ozlabs.ibm.com>
+        <20170622.101306.2121302610489503804.davem@davemloft.net>
+        <20170623003339.11cbc062@roar.ozlabs.ibm.com>
+        <20170622.105648.1780325804771154563.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43081 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754396AbdFWFoA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 23 Jun 2017 01:44:00 -0400
-In-Reply-To: <CAGXu5jLuuoCpaQ82nK=pFWEeRrm86=vozyS=3nPN=Lw+2uUHQg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Tony Breeds <tony@bakeyournoodle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Randy Dunlap <rdunlap@infradead.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, info@kernelci.org, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Will Deacon <will.deacon@arm.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, LKML <linux-kernel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Fengguang Wu <fengguang.wu@intel.com>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, Laura Abbott <labbott@redhat.com>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170622.105648.1780325804771154563.davem@davemloft.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>
+Cc: npiggin@gmail.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com, amodra@gmail.com
+List-Id: linux-next.vger.kernel.org
 
-[Old thread just popped up in my inbox]
+Hi all,
 
-Kees Cook <keescook@google.com> writes:
-> On Thu, Dec 8, 2016 at 5:52 PM, Paul Gortmaker
-> <paul.gortmaker@windriver.com> wrote:
->> On Thu, Dec 8, 2016 at 2:00 PM, Kees Cook <keescook@google.com> wrote:
->>> Hi,
->>>
->>> I'd like to get the GCC plugins building under
->>> allyesconfig/allmodconfig for -next soon (with the intention of
->>> landing the change in v4.11). Specifically, I intend to revert
->>> a519167e753e ("gcc-plugins: disable under COMPILE_TEST").
->>
->> If I recall correctly, I noted that the plugins broke the kernel.org
->> cross compiler toolchains which led to the above disable.
+On Thu, 22 Jun 2017 10:56:48 -0400 (EDT) David Miller <davem@davemloft.net> wrote:
 >
-> Do you mean these?
-> https://www.kernel.org/pub/tools/crosstool/
+> Feel free to merge it into your series:
+> 
+> ====================
+> sparc64: Use indirect calls in hamming weight stubs.
+> 
+> Otherwise, depending upon link order, the branch relocation
+> limits could be exceeded.
+> 
+> Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> diff --git a/arch/sparc/lib/hweight.S b/arch/sparc/lib/hweight.S
+> index f9985f1..d21cf20 100644
+> --- a/arch/sparc/lib/hweight.S
+> +++ b/arch/sparc/lib/hweight.S
+> @@ -4,9 +4,9 @@
+>  	.text
+>  	.align	32
+>  ENTRY(__arch_hweight8)
+> -	ba,pt	%xcc, __sw_hweight8
+> +	sethi	%hi(__sw_hweight8), %g1
+> +	jmpl	%g1 + %lo(__sw_hweight8), %g0
+>  	 nop
+> -	nop
+>  ENDPROC(__arch_hweight8)
+>  EXPORT_SYMBOL(__arch_hweight8)
+>  	.section	.popc_3insn_patch, "ax"
+> @@ -17,9 +17,9 @@ EXPORT_SYMBOL(__arch_hweight8)
+>  	.previous
+>  
+>  ENTRY(__arch_hweight16)
+> -	ba,pt	%xcc, __sw_hweight16
+> +	sethi	%hi(__sw_hweight16), %g1
+> +	jmpl	%g1 + %lo(__sw_hweight16), %g0
+>  	 nop
+> -	nop
+>  ENDPROC(__arch_hweight16)
+>  EXPORT_SYMBOL(__arch_hweight16)
+>  	.section	.popc_3insn_patch, "ax"
+> @@ -30,9 +30,9 @@ EXPORT_SYMBOL(__arch_hweight16)
+>  	.previous
+>  
+>  ENTRY(__arch_hweight32)
+> -	ba,pt	%xcc, __sw_hweight32
+> +	sethi	%hi(__sw_hweight32), %g1
+> +	jmpl	%g1 + %lo(__sw_hweight32), %g0
+>  	 nop
+> -	nop
+>  ENDPROC(__arch_hweight32)
+>  EXPORT_SYMBOL(__arch_hweight32)
+>  	.section	.popc_3insn_patch, "ax"
+> @@ -43,9 +43,9 @@ EXPORT_SYMBOL(__arch_hweight32)
+>  	.previous
+>  
+>  ENTRY(__arch_hweight64)
+> -	ba,pt	%xcc, __sw_hweight64
+> +	sethi	%hi(__sw_hweight16), %g1
+> +	jmpl	%g1 + %lo(__sw_hweight16), %g0
+>  	 nop
+> -	nop
+>  ENDPROC(__arch_hweight64)
+>  EXPORT_SYMBOL(__arch_hweight64)
+>  	.section	.popc_3insn_patch, "ax"
 
-I think those are the ones Paul is talking about.
+I added that to linux-next today and it fixed the build problem.
 
-Those were mostly built by Tony, who is know, sadly, an Openstack
-developer and for some reason doesn't seem to have time to build
-toolchains for kernel hackers :P
-
-
-As folks may have seen on LWN, there are now pre-built toolchains for
-many architectures available from the Free Electrons guys, so that may
-help to unblock this situation somewhat:
-
-http://toolchains.free-electrons.com/
-
-
-cheers
+-- 
+Cheers,
+Stephen Rothwell
