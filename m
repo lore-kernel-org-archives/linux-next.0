@@ -1,63 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 23 Jun 2017 11:12:07 +1000
-Message-ID: <20170623111207.4c1663fa@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the l2-mtd tree
+Date: Fri, 23 Jun 2017 11:32:06 +1000
+Message-ID: <20170623113206.29042011@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vlad Yasevich <vyasevich@gmail.com>, Zhang Shengju <zhangshengju@cmss.chinamobile.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57197 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753833AbdFWBcJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 22 Jun 2017 21:32:09 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?UmFmYcWCIE1pxYJl?= =?UTF-8?B?Y2tp?= <rafal@milecki.pl>
 
-Hi all,
+Hi Brian,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the l2-mtd tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  drivers/net/macvlan.c
+In file included from include/linux/printk.h:6:0,
+                 from include/linux/kernel.h:13,
+                 from include/linux/list.h:8,
+                 from include/linux/module.h:9,
+                 from drivers/mtd/parsers/parser_trx.c:12:
+drivers/mtd/parsers/parser_trx.c: In function 'parser_trx_data_part_name':
+include/linux/kern_levels.h:4:18: warning: format '%X' expects argument of type 'unsigned int', but argument 2 has type 'size_t {aka long unsigned int}' [-Wformat=]
+ #define KERN_SOH "\001"  /* ASCII Start Of Header */
+                  ^
+include/linux/kern_levels.h:10:18: note: in expansion of macro 'KERN_SOH'
+ #define KERN_ERR KERN_SOH "3" /* error conditions */
+                  ^
+include/linux/printk.h:301:9: note: in expansion of macro 'KERN_ERR'
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         ^
+drivers/mtd/parsers/parser_trx.c:42:3: note: in expansion of macro 'pr_err'
+   pr_err("mtd_read error while parsing (offset: 0x%X): %d\n",
+   ^
 
-between commits:
+Introduced by commit
 
-  e26f43faa0d7 ("macvlan: Do not return error when setting the same mac address")
-  18c8c54de9a6 ("macvlan: Let passthru macvlan correctly restore lower mac address")
-
-from the net tree and commit:
-
-  a88e2676a6cd ("macvlan: propagate the mac address change status for lowerdev")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  99352afe8f16 ("mtd: extract TRX parser out of bcm47xxpart into a separated module")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/macvlan.c
-index 72b801803aa4,8ca274c6df3d..000000000000
---- a/drivers/net/macvlan.c
-+++ b/drivers/net/macvlan.c
-@@@ -743,15 -703,8 +743,14 @@@ static int macvlan_set_mac_address(stru
-  	if (!is_valid_ether_addr(addr->sa_data))
-  		return -EADDRNOTAVAIL;
-  
- -	if (vlan->mode == MACVLAN_MODE_PASSTHRU)
- +	/* If the addresses are the same, this is a no-op */
- +	if (ether_addr_equal(dev->dev_addr, addr->sa_data))
- +		return 0;
- +
- +	if (vlan->mode == MACVLAN_MODE_PASSTHRU) {
- +		macvlan_set_addr_change(vlan->port);
-- 		dev_set_mac_address(vlan->lowerdev, addr);
-- 		return 0;
-+ 		return dev_set_mac_address(vlan->lowerdev, addr);
- +	}
-  
-  	return macvlan_sync_address(dev, addr->sa_data);
-  }
