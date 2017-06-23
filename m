@@ -1,149 +1,182 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the pm tree
-Date: Fri, 23 Jun 2017 12:25:34 +1000
-Message-ID: <20170623122534.3303f515@canb.auug.org.au>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Date: Fri, 23 Jun 2017 13:06:32 +1000
+Message-ID: <20170623130632.03bc60af@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Rob Herring <robh@kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60883 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753925AbdFWDGg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 22 Jun 2017 23:06:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 
-Hi all,
+Hi Jens,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in:
+Today's linux-next merge of the block tree got a conflict in:
 
-  drivers/of/base.c
+  block/blk-mq-sched.c
 
 between commit:
 
-  1df09bc66f9b ("of: Move OF property and graph API from base.c to property.c")
+  8e8320c9315c ("blk-mq: fix performance regression with shared tags")
 
-from the pm tree and commits:
+from Linus' tree and commits:
 
-  4c9c3d595f1b ("of_graph: add of_graph_get_remote_endpoint()")
-  0ef472a973eb ("of_graph: add of_graph_get_port_parent()")
-  ac1e6958d3be ("of_graph: add of_graph_get_endpoint_count()")
+  d2c0d3832469 ("blk-mq: move blk_mq_sched_{get,put}_request to blk-mq.c")
+  44e8c2bff80b ("blk-mq: refactor blk_mq_sched_assign_ioc")
 
-from the sound-asoc tree.
+from the block tree.
 
-This pm tree commit appeared briefly in the devicetree tree 9 days ago,
-so I have done the same resolution as I did then.
-
-I added the merge fix patch below. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 23 Jun 2017 12:22:19 +1000
-Subject: [PATCH] of_graph: merge fix up for creating of drivers/of/property.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/of/property.c | 60 ++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 50 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/of/property.c b/drivers/of/property.c
-index c96389b7c6b3..eda50b4be934 100644
---- a/drivers/of/property.c
-+++ b/drivers/of/property.c
-@@ -684,6 +684,41 @@ struct device_node *of_graph_get_endpoint_by_regs(
- EXPORT_SYMBOL(of_graph_get_endpoint_by_regs);
- 
- /**
-+ * of_graph_get_remote_endpoint() - get remote endpoint node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: Remote endpoint node associated with remote endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_remote_endpoint(const struct device_node *node)
-+{
-+	/* Get remote endpoint node. */
-+	return of_parse_phandle(node, "remote-endpoint", 0);
-+}
-+EXPORT_SYMBOL(of_graph_get_remote_endpoint);
-+
-+/**
-+ * of_graph_get_port_parent() - get port's parent node
-+ * @node: pointer to a local endpoint device_node
-+ *
-+ * Return: device node associated with endpoint node linked
-+ *	   to @node. Use of_node_put() on it when done.
-+ */
-+struct device_node *of_graph_get_port_parent(struct device_node *node)
-+{
-+	unsigned int depth;
-+
-+	/* Walk 3 levels up only if there is 'ports' node. */
-+	for (depth = 3; depth && node; depth--) {
-+		node = of_get_next_parent(node);
-+		if (depth == 2 && of_node_cmp(node->name, "ports"))
-+			break;
-+	}
-+	return node;
-+}
-+EXPORT_SYMBOL(of_graph_get_port_parent);
-+
-+/**
-  * of_graph_get_remote_port_parent() - get remote port's parent node
-  * @node: pointer to a local endpoint device_node
-  *
-@@ -694,18 +729,11 @@ struct device_node *of_graph_get_remote_port_parent(
- 			       const struct device_node *node)
- {
- 	struct device_node *np;
--	unsigned int depth;
- 
- 	/* Get remote endpoint node. */
--	np = of_parse_phandle(node, "remote-endpoint", 0);
-+	np = of_graph_get_remote_endpoint(node);
- 
--	/* Walk 3 levels up only if there is 'ports' node. */
--	for (depth = 3; depth && np; depth--) {
--		np = of_get_next_parent(np);
--		if (depth == 2 && of_node_cmp(np->name, "ports"))
--			break;
--	}
--	return np;
-+	return of_graph_get_port_parent(np);
- }
- EXPORT_SYMBOL(of_graph_get_remote_port_parent);
- 
-@@ -721,13 +749,25 @@ struct device_node *of_graph_get_remote_port(const struct device_node *node)
- 	struct device_node *np;
- 
- 	/* Get remote endpoint node. */
--	np = of_parse_phandle(node, "remote-endpoint", 0);
-+	np = of_graph_get_remote_endpoint(node);
- 	if (!np)
- 		return NULL;
- 	return of_get_next_parent(np);
- }
- EXPORT_SYMBOL(of_graph_get_remote_port);
- 
-+int of_graph_get_endpoint_count(const struct device_node *np)
-+{
-+	struct device_node *endpoint;
-+	int num = 0;
-+
-+	for_each_endpoint_of_node(np, endpoint)
-+		num++;
-+
-+	return num;
-+}
-+EXPORT_SYMBOL(of_graph_get_endpoint_count);
-+
- /**
-  * of_graph_get_remote_node() - get remote parent device_node for given port/endpoint
-  * @node: pointer to parent device_node containing graph port/endpoint
--- 
-2.11.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc block/blk-mq-sched.c
+index 0ded5e846335,191bf82d185e..000000000000
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@@ -47,131 -46,10 +46,49 @@@ void blk_mq_sched_assign_ioc(struct req
+  		if (!icq)
+  			return;
+  	}
+- 
++ 	get_io_context(icq->ioc);
+  	rq->elv.icq = icq;
+- 	if (!blk_mq_sched_get_rq_priv(q, rq, bio)) {
+- 		rq->rq_flags |= RQF_ELVPRIV;
+- 		get_io_context(icq->ioc);
+- 		return;
+- 	}
+- 
+- 	rq->elv.icq = NULL;
+- }
+- 
+- static void blk_mq_sched_assign_ioc(struct request_queue *q,
+- 				    struct request *rq, struct bio *bio)
+- {
+- 	struct io_context *ioc;
+- 
+- 	ioc = rq_ioc(bio);
+- 	if (ioc)
+- 		__blk_mq_sched_assign_ioc(q, rq, bio, ioc);
+  }
+  
+ +/*
+ + * Mark a hardware queue as needing a restart. For shared queues, maintain
+ + * a count of how many hardware queues are marked for restart.
+ + */
+ +static void blk_mq_sched_mark_restart_hctx(struct blk_mq_hw_ctx *hctx)
+ +{
+ +	if (test_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state))
+ +		return;
+ +
+ +	if (hctx->flags & BLK_MQ_F_TAG_SHARED) {
+ +		struct request_queue *q = hctx->queue;
+ +
+ +		if (!test_and_set_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state))
+ +			atomic_inc(&q->shared_hctx_restart);
+ +	} else
+ +		set_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state);
+ +}
+ +
+ +static bool blk_mq_sched_restart_hctx(struct blk_mq_hw_ctx *hctx)
+ +{
+ +	if (!test_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state))
+ +		return false;
+ +
+ +	if (hctx->flags & BLK_MQ_F_TAG_SHARED) {
+ +		struct request_queue *q = hctx->queue;
+ +
+ +		if (test_and_clear_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state))
+ +			atomic_dec(&q->shared_hctx_restart);
+ +	} else
+ +		clear_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state);
+ +
+ +	if (blk_mq_hctx_has_pending(hctx)) {
+ +		blk_mq_run_hw_queue(hctx, true);
+ +		return true;
+ +	}
+ +
+ +	return false;
+ +}
+ +
+- struct request *blk_mq_sched_get_request(struct request_queue *q,
+- 					 struct bio *bio,
+- 					 unsigned int op,
+- 					 struct blk_mq_alloc_data *data)
+- {
+- 	struct elevator_queue *e = q->elevator;
+- 	struct request *rq;
+- 
+- 	blk_queue_enter_live(q);
+- 	data->q = q;
+- 	if (likely(!data->ctx))
+- 		data->ctx = blk_mq_get_ctx(q);
+- 	if (likely(!data->hctx))
+- 		data->hctx = blk_mq_map_queue(q, data->ctx->cpu);
+- 
+- 	if (e) {
+- 		data->flags |= BLK_MQ_REQ_INTERNAL;
+- 
+- 		/*
+- 		 * Flush requests are special and go directly to the
+- 		 * dispatch list.
+- 		 */
+- 		if (!op_is_flush(op) && e->type->ops.mq.get_request) {
+- 			rq = e->type->ops.mq.get_request(q, op, data);
+- 			if (rq)
+- 				rq->rq_flags |= RQF_QUEUED;
+- 		} else
+- 			rq = __blk_mq_alloc_request(data, op);
+- 	} else {
+- 		rq = __blk_mq_alloc_request(data, op);
+- 	}
+- 
+- 	if (rq) {
+- 		if (!op_is_flush(op)) {
+- 			rq->elv.icq = NULL;
+- 			if (e && e->type->icq_cache)
+- 				blk_mq_sched_assign_ioc(q, rq, bio);
+- 		}
+- 		data->hctx->queued++;
+- 		return rq;
+- 	}
+- 
+- 	blk_queue_exit(q);
+- 	return NULL;
+- }
+- 
+- void blk_mq_sched_put_request(struct request *rq)
+- {
+- 	struct request_queue *q = rq->q;
+- 	struct elevator_queue *e = q->elevator;
+- 
+- 	if (rq->rq_flags & RQF_ELVPRIV) {
+- 		blk_mq_sched_put_rq_priv(rq->q, rq);
+- 		if (rq->elv.icq) {
+- 			put_io_context(rq->elv.icq->ioc);
+- 			rq->elv.icq = NULL;
+- 		}
+- 	}
+- 
+- 	if ((rq->rq_flags & RQF_QUEUED) && e && e->type->ops.mq.put_request)
+- 		e->type->ops.mq.put_request(rq);
+- 	else
+- 		blk_mq_finish_request(rq);
+- }
+- 
+  void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx)
+  {
+  	struct request_queue *q = hctx->queue;
