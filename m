@@ -1,80 +1,79 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Mon, 26 Jun 2017 11:19:15 -0700
-Message-ID: <CAGXu5jLneuMbmEOvYNKU1Q0wwe55uV7hCzQ+jCGFQ35_Zd=eeA@mail.gmail.com>
-References: <20170620145655.4b7f3efb@canb.auug.org.au> <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Tue, 27 Jun 2017 07:48:02 +1000
+Message-ID: <20170627074802.75ddeea9@canb.auug.org.au>
+References: <20170626165343.46285c95@canb.auug.org.au>
+        <20170626071346.GA11534@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f174.google.com ([209.85.223.174]:34459 "EHLO
-        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbdFZSTQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 26 Jun 2017 14:19:16 -0400
-Received: by mail-io0-f174.google.com with SMTP id r36so5482014ioi.1
-        for <linux-next@vger.kernel.org>; Mon, 26 Jun 2017 11:19:16 -0700 (PDT)
-In-Reply-To: <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com>
+Received: from ozlabs.org ([103.22.144.67]:53141 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752002AbdFZVsF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 26 Jun 2017 17:48:05 -0400
+In-Reply-To: <20170626071346.GA11534@dhcp22.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Morris <jmorris@namei.org>
-Cc: John Johansen <john.johansen@canonical.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jag Raman <jag.raman@oracle.com>
 
-On Mon, Jun 19, 2017 at 10:39 PM, John Johansen
-<john.johansen@canonical.com> wrote:
-> On 06/19/2017 09:56 PM, Stephen Rothwell wrote:
->> Hi all,
->>
->> After merging the kspp tree, today's linux-next build (x86_64
->> allmodconfig) failed like this:
->>
->> security/apparmor/file.c: In function 'aa_path_link':
->> security/apparmor/file.c:475:23: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
->>   struct path link = { new_dir->mnt, new_dentry };
->>                        ^
->> security/apparmor/file.c:475:23: note: (near initialization for 'link')
->> security/apparmor/file.c:475:37: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
->>   struct path link = { new_dir->mnt, new_dentry };
->>                                      ^
->> security/apparmor/file.c:475:37: note: (near initialization for 'link')
->> security/apparmor/file.c:476:25: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
->>   struct path target = { new_dir->mnt, old_dentry };
->>                          ^
->> security/apparmor/file.c:476:25: note: (near initialization for 'target')
->> security/apparmor/file.c:476:39: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
->>   struct path target = { new_dir->mnt, old_dentry };
->>                                        ^
->> security/apparmor/file.c:476:39: note: (near initialization for 'target')
->>
->> Caused by commit
->>
->>   1a12979f61e4 ("randstruct: Mark various structs for randomization")
->>
->> interacting with commit
->>
->>   8014370f1257 ("apparmor: move path_link mediation to using labels")
->>
->> from the security tree.
->>
->> I added the following merge fix patch for today:
->>
->> From: Stephen Rothwell <sfr@canb.auug.org.au>
->> Date: Tue, 20 Jun 2017 14:50:36 +1000
->> Subject: [PATCH] apparmor: put back designators in struct initialisers
->>
->> Fixes: 8014370f1257 ("apparmor: move path_link mediation to using labels")
->> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Acked-by: John Johansen <john.johansen@canonical.com>
+Hi Michal,
 
-Hi James,
+On Mon, 26 Jun 2017 09:13:46 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Mon 26-06-17 16:53:43, Stephen Rothwell wrote:
+> > 
+> > After merging the akpm tree, today's linux-next build (sparc64 defconfig)
+> > failed like this:
+> > 
+> > arch/sparc/kernel/mdesc.c: In function 'mdesc_kmalloc':
+> > arch/sparc/kernel/mdesc.c:208:48: error: '__GFP_REPEAT' undeclared (first use in this function)
+> >   base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
+> >                                                 ^
+> > 
+> > Caused by commit
+> > 
+> >   726ad49b664b ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
+> > 
+> > interacting with commit
+> > 
+> >   0ab2fcd69dbf ("sparc64: mdesc: use __GFP_REPEAT action modifier for VM allocation")
+> > 
+> > from the sparc-next tree.
+> > 
+> > For now I have applied the following (I expect it to be replaced with
+> > something better):  
+> 
+> You simply want s@__GFP_REPEAT@__GFP_RETRY_MAYFAIL@
 
-Just a ping; this needs to get into -next to avoid build errors.
-Please consider it also:
+OK, I have replaced the patch with this:
 
-Acked-by: Kees Cook <keescook@chromium.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Jun 2017 16:47:46 +1000
+Subject: [PATCH] paper over the removal of __GFP_REPEAT for now
 
-Thanks!
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/mdesc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--Kees
+diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
+index e4b4e790bf89..c9ecd5abf5bf 100644
+--- a/arch/sparc/kernel/mdesc.c
++++ b/arch/sparc/kernel/mdesc.c
+@@ -205,7 +205,7 @@ static struct mdesc_handle *mdesc_kmalloc(unsigned int mdesc_size)
+ 	handle_size = (sizeof(struct mdesc_handle) -
+ 		       sizeof(struct mdesc_hdr) +
+ 		       mdesc_size);
+-	base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
++	base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_RETRY_MAYFAIL);
+ 	if (!base)
+ 		return NULL;
+ 
+-- 
+2.11.0
 
 -- 
-Kees Cook
-Pixel Security
+Cheers,
+Stephen Rothwell
