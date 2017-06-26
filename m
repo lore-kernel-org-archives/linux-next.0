@@ -1,64 +1,68 @@
-From: Galo Navarro <anglor@varoa.net>
-Subject: [PATCH v3] staging: rtl8188eu: style fixes
-Date: Sat, 24 Jun 2017 20:32:55 +0200
-Message-ID: <20170624183255.GA21826@lear>
-References: <20170602143643.GA9038@lear>
- <20170613190518.GA2144@lear>
- <20170614102620.GC8485@kroah.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build warning after merge of the cifs tree
+Date: Mon, 26 Jun 2017 10:07:28 +1000
+Message-ID: <20170626100728.0494601c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fnsib-smtp01.srv.cat ([46.16.60.187]:49444 "EHLO
-        fnsib-smtp01.srv.cat" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751081AbdFXSdJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 24 Jun 2017 14:33:09 -0400
-Content-Disposition: inline
-In-Reply-To: <20170614102620.GC8485@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-next@vger.kernel.org, Larry Finger <Larry.Finger@lwfinger.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?QXVyw6lsaWVu?= Aptel <aaptel-IBi9RG/b67k@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-Fix multiple style issues (CHECK spaces preferred around that $operator).
+Hi all,
 
-Signed-off-by: Galo Navarro <anglor@varoa.net>
+After merging the cifs tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
----
- drivers/staging/rtl8188eu/core/rtw_mlme.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+In file included from include/linux/kernel.h:13:0,
+                 from include/linux/list.h:8,
+                 from include/linux/wait.h:6,
+                 from include/linux/fs.h:5,
+                 from fs/cifs/smb2transport.c:25:
+fs/cifs/smb2transport.c: In function 'generate_smb3signingkey':
+fs/cifs/cifs_debug.h:55:24: warning: field width specifier '*' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
+   pr_debug_ratelimited("%s: "    \
+                        ^
+include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
+ #define pr_fmt(fmt) fmt
+                     ^
+fs/cifs/cifs_debug.h:55:3: note: in expansion of macro 'pr_debug_ratelimited'
+   pr_debug_ratelimited("%s: "    \
+   ^
+fs/cifs/smb2transport.c:352:2: note: in expansion of macro 'cifs_dbg'
+  cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
+  ^
+In file included from fs/cifs/smb2transport.c:39:0:
+fs/cifs/smb2transport.c:352:16: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
+  cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
+                ^
+fs/cifs/cifs_debug.h:58:16: note: in definition of macro 'cifs_dbg'
+   cifs_vfs_err(fmt, ##__VA_ARGS__);   \
+                ^
+In file included from include/linux/kernel.h:13:0,
+                 from include/linux/list.h:8,
+                 from include/linux/wait.h:6,
+                 from include/linux/fs.h:5,
+                 from fs/cifs/smb2transport.c:25:
+fs/cifs/smb2transport.c:352:16: warning: field width specifier '*' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
+  cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
+                ^
+include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
+ #define pr_fmt(fmt) fmt
+                     ^
+fs/cifs/cifs_debug.h:60:3: note: in expansion of macro 'pr_debug_ratelimited'
+   pr_debug_ratelimited(fmt, ##__VA_ARGS__);  \
+   ^
+fs/cifs/smb2transport.c:352:2: note: in expansion of macro 'cifs_dbg'
+  cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
+  ^
 
-diff --git a/drivers/staging/rtl8188eu/core/rtw_mlme.c b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-index de9ab59..fde3060 100644
---- a/drivers/staging/rtl8188eu/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8188eu/core/rtw_mlme.c
-@@ -370,7 +370,7 @@ void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
- 		sq_final = padapter->recvpriv.signal_qual;
- 		/* the rssi value here is undecorated, and will be used for antenna diversity */
- 		if (sq_smp != 101) /* from the right channel */
--			rssi_final = (src->Rssi+dst->Rssi*4)/5;
-+			rssi_final = (src->Rssi + dst->Rssi * 4) / 5;
- 		else
- 			rssi_final = rssi_ori;
- 	} else {
-@@ -1926,7 +1926,7 @@ unsigned int rtw_restructure_ht_ie(struct adapter *padapter, u8 *in_ie, u8 *out_
- 
- 		if (pqospriv->qos_option == 0) {
- 			out_len = *pout_len;
--			rtw_set_ie(out_ie+out_len, _VENDOR_SPECIFIC_IE_,
-+			rtw_set_ie(out_ie + out_len, _VENDOR_SPECIFIC_IE_,
- 				   _WMM_IE_Length_, WMM_IE, pout_len);
- 
- 			pqospriv->qos_option = 1;
-@@ -2058,8 +2058,8 @@ void rtw_issue_addbareq_cmd(struct adapter *padapter, struct xmit_frame *pxmitfr
- 	phtpriv = &psta->htpriv;
- 
- 	if ((phtpriv->ht_option) && (phtpriv->ampdu_enable)) {
--		issued = (phtpriv->agg_enable_bitmap>>priority)&0x1;
--		issued |= (phtpriv->candidate_tid_bitmap>>priority)&0x1;
-+		issued = (phtpriv->agg_enable_bitmap >> priority) & 0x1;
-+		issued |= (phtpriv->candidate_tid_bitmap >> priority) & 0x1;
- 
- 		if (issued == 0) {
- 			DBG_88E("rtw_issue_addbareq_cmd, p=%d\n", priority);
+Introduced by commit
+
+  ba4f2a8b205f ("CIFS: add CONFIG_CIFS_DEBUG_KEYS to dump encryption keys")
+
 -- 
-2.1.4
+Cheers,
+Stephen Rothwell
