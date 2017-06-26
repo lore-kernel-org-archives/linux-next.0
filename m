@@ -1,33 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm tree
-Date: Mon, 26 Jun 2017 16:30:12 +1000
-Message-ID: <20170626163012.67294296@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm tree
+Date: Mon, 26 Jun 2017 16:53:43 +1000
+Message-ID: <20170626165343.46285c95@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:55975 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56629 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751035AbdFZGaP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 26 Jun 2017 02:30:15 -0400
+        id S1751437AbdFZGxw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 26 Jun 2017 02:53:52 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wei Yang <richard.weiyang@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jag Raman <jag.raman@oracle.com>, Michal Hocko <mhocko@suse.com>
 
 Hi Andrew,
 
-After merging the akpm tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the akpm tree, today's linux-next build (sparc64 defconfig)
+failed like this:
 
-mm/memory_hotplug.c: In function 'move_pfn_range_to_zone':
-mm/memory_hotplug.c:891:16: warning: unused variable 'i' [-Wunused-variable]
-  unsigned long i;
-                ^
+arch/sparc/kernel/mdesc.c: In function 'mdesc_kmalloc':
+arch/sparc/kernel/mdesc.c:208:48: error: '__GFP_REPEAT' undeclared (first use in this function)
+  base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
+                                                ^
 
-Introduced by commit
+Caused by commit
 
-  7fb537987bb3 ("mm/memory_hotplug: remove duplicate call for set_page_links")
+  726ad49b664b ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
+
+interacting with commit
+
+  0ab2fcd69dbf ("sparc64: mdesc: use __GFP_REPEAT action modifier for VM allocation")
+
+from the sparc-next tree.
+
+For now I have applied the following (I expect it to be replaced with
+something better):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Jun 2017 16:47:46 +1000
+Subject: [PATCH] paper over the removal of __GFP_REPEAT for now
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/sparc/kernel/mdesc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
+index e4b4e790bf89..c9ecd5abf5bf 100644
+--- a/arch/sparc/kernel/mdesc.c
++++ b/arch/sparc/kernel/mdesc.c
+@@ -205,7 +205,7 @@ static struct mdesc_handle *mdesc_kmalloc(unsigned int mdesc_size)
+ 	handle_size = (sizeof(struct mdesc_handle) -
+ 		       sizeof(struct mdesc_hdr) +
+ 		       mdesc_size);
+-	base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
++	base = kmalloc(handle_size + 15, GFP_KERNEL /* | __GFP_REPEAT */);
+ 	if (!base)
+ 		return NULL;
+ 
+-- 
+2.11.0
 
 -- 
 Cheers,
