@@ -1,47 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb-next tree with the
- v4l-dvb-fixes tree
-Date: Mon, 26 Jun 2017 11:29:58 +1000
-Message-ID: <20170626112958.53c2d463@canb.auug.org.au>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the i2c tree
+Date: Mon, 26 Jun 2017 10:04:50 +0800
+Message-ID: <20170626020448.GA15243@dragon>
+References: <20170626110907.5c4950da@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37373 "EHLO ozlabs.org"
+Received: from mail.kernel.org ([198.145.29.99]:47212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751486AbdFZBaB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 25 Jun 2017 21:30:01 -0400
+        id S1751521AbdFZCFL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 25 Jun 2017 22:05:11 -0400
+Content-Disposition: inline
+In-Reply-To: <20170626110907.5c4950da@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baoyou Xie <baoyou.xie@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Jun Nie <jun.nie@linaro.org>
 
-Hi Mauro,
+Hi Stephen,
 
-Today's linux-next merge of the v4l-dvb-next tree got conflicts in:
+On Mon, Jun 26, 2017 at 11:09:07AM +1000, Stephen Rothwell wrote:
+> Hi Wolfram,
+> 
+> After merging the i2c tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> drivers/i2c/busses/i2c-zx2967.c: In function 'zx2967_i2c_writesb':
+> drivers/i2c/busses/i2c-zx2967.c:87:2: error: implicit declaration of function 'writesb' [-Werror=implicit-function-declaration]
+>   writesb(i2c->reg_base + reg, data, len);
+>   ^
+> drivers/i2c/busses/i2c-zx2967.c: In function 'zx2967_i2c_readsb':
+> drivers/i2c/busses/i2c-zx2967.c:93:2: error: implicit declaration of function 'readsb' [-Werror=implicit-function-declaration]
+>   readsb(i2c->reg_base + reg, data, len);
+>   ^
+> 
+> Caused by commit
+> 
+>   9615a01f71ca ("i2c: zx2967: add i2c controller driver for ZTE's zx2967 family")
+> 
+> Forgotten some include file, presumably.  And COMPILE_TEST may have
+> been a bit hopeful :-)
 
-  Documentation/media/uapi/dvb/fe-diseqc-send-burst.rst
-  Documentation/media/uapi/dvb/fe-set-tone.rst
-  Documentation/media/uapi/dvb/fe-set-voltage.rst
+Thanks for reporting it.  I have sent a fix [1] for it yesterday, which
+hopefully will be applied soon.
 
-between commit:
+Shawn
 
-  affd250dec17 ("[media] dvb uapi docs: enums are passed by value, not reference")
-
-from the v4l-dvb-fixes tree and commit:
-
-  d9c4615854ec ("[media] dvb uapi docs: enums are passed by value, not reference")
-
-from the v4l-dvb-next tree.
-
-I fixed it up (I used the version from the former tree since it was
-committed more recently) and can carry the fix as necessary. This is now
-fixed as far as linux-next is concerned, but any non trivial conflicts
-should be mentioned to your upstream maintainer when your tree is
-submitted for merging.  You may also want to consider cooperating with
-the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+[1] https://patchwork.ozlabs.org/patch/780357/
