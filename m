@@ -1,80 +1,80 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Mon, 26 Jun 2017 11:57:46 -0500
-Message-ID: <CAH2r5mstCdHYdaJ1kQEDO5SiJP1gDNTQiXqZ3s3mW==XfCx7mw@mail.gmail.com>
-References: <20170626100728.0494601c@canb.auug.org.au>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Date: Mon, 26 Jun 2017 11:19:15 -0700
+Message-ID: <CAGXu5jLneuMbmEOvYNKU1Q0wwe55uV7hCzQ+jCGFQ35_Zd=eeA@mail.gmail.com>
+References: <20170620145655.4b7f3efb@canb.auug.org.au> <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170626100728.0494601c-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?Q?Aur=C3=A9lien_Aptel?= <aaptel-IBi9RG/b67k@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-io0-f174.google.com ([209.85.223.174]:34459 "EHLO
+        mail-io0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbdFZSTQ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 26 Jun 2017 14:19:16 -0400
+Received: by mail-io0-f174.google.com with SMTP id r36so5482014ioi.1
+        for <linux-next@vger.kernel.org>; Mon, 26 Jun 2017 11:19:16 -0700 (PDT)
+In-Reply-To: <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: John Johansen <john.johansen@canonical.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-I just merged an updated version of this patch to remove the warning
-to cifs-2.6.git for-next
+On Mon, Jun 19, 2017 at 10:39 PM, John Johansen
+<john.johansen@canonical.com> wrote:
+> On 06/19/2017 09:56 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> After merging the kspp tree, today's linux-next build (x86_64
+>> allmodconfig) failed like this:
+>>
+>> security/apparmor/file.c: In function 'aa_path_link':
+>> security/apparmor/file.c:475:23: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+>>   struct path link = { new_dir->mnt, new_dentry };
+>>                        ^
+>> security/apparmor/file.c:475:23: note: (near initialization for 'link')
+>> security/apparmor/file.c:475:37: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+>>   struct path link = { new_dir->mnt, new_dentry };
+>>                                      ^
+>> security/apparmor/file.c:475:37: note: (near initialization for 'link')
+>> security/apparmor/file.c:476:25: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+>>   struct path target = { new_dir->mnt, old_dentry };
+>>                          ^
+>> security/apparmor/file.c:476:25: note: (near initialization for 'target')
+>> security/apparmor/file.c:476:39: error: positional initialization of field in 'struct' declared with 'designated_init' attribute [-Werror=designated-init]
+>>   struct path target = { new_dir->mnt, old_dentry };
+>>                                        ^
+>> security/apparmor/file.c:476:39: note: (near initialization for 'target')
+>>
+>> Caused by commit
+>>
+>>   1a12979f61e4 ("randstruct: Mark various structs for randomization")
+>>
+>> interacting with commit
+>>
+>>   8014370f1257 ("apparmor: move path_link mediation to using labels")
+>>
+>> from the security tree.
+>>
+>> I added the following merge fix patch for today:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Tue, 20 Jun 2017 14:50:36 +1000
+>> Subject: [PATCH] apparmor: put back designators in struct initialisers
+>>
+>> Fixes: 8014370f1257 ("apparmor: move path_link mediation to using labels")
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Acked-by: John Johansen <john.johansen@canonical.com>
 
-On Sun, Jun 25, 2017 at 7:07 PM, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
-> Hi all,
->
-> After merging the cifs tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->
-> In file included from include/linux/kernel.h:13:0,
->                  from include/linux/list.h:8,
->                  from include/linux/wait.h:6,
->                  from include/linux/fs.h:5,
->                  from fs/cifs/smb2transport.c:25:
-> fs/cifs/smb2transport.c: In function 'generate_smb3signingkey':
-> fs/cifs/cifs_debug.h:55:24: warning: field width specifier '*' expects argument of type 'int', but argument 4 has type 'long unsigned int' [-Wformat=]
->    pr_debug_ratelimited("%s: "    \
->                         ^
-> include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
->  #define pr_fmt(fmt) fmt
->                      ^
-> fs/cifs/cifs_debug.h:55:3: note: in expansion of macro 'pr_debug_ratelimited'
->    pr_debug_ratelimited("%s: "    \
->    ^
-> fs/cifs/smb2transport.c:352:2: note: in expansion of macro 'cifs_dbg'
->   cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
->   ^
-> In file included from fs/cifs/smb2transport.c:39:0:
-> fs/cifs/smb2transport.c:352:16: warning: field width specifier '*' expects argument of type 'int', but argument 2 has type 'long unsigned int' [-Wformat=]
->   cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
->                 ^
-> fs/cifs/cifs_debug.h:58:16: note: in definition of macro 'cifs_dbg'
->    cifs_vfs_err(fmt, ##__VA_ARGS__);   \
->                 ^
-> In file included from include/linux/kernel.h:13:0,
->                  from include/linux/list.h:8,
->                  from include/linux/wait.h:6,
->                  from include/linux/fs.h:5,
->                  from fs/cifs/smb2transport.c:25:
-> fs/cifs/smb2transport.c:352:16: warning: field width specifier '*' expects argument of type 'int', but argument 3 has type 'long unsigned int' [-Wformat=]
->   cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
->                 ^
-> include/linux/printk.h:285:21: note: in definition of macro 'pr_fmt'
->  #define pr_fmt(fmt) fmt
->                      ^
-> fs/cifs/cifs_debug.h:60:3: note: in expansion of macro 'pr_debug_ratelimited'
->    pr_debug_ratelimited(fmt, ##__VA_ARGS__);  \
->    ^
-> fs/cifs/smb2transport.c:352:2: note: in expansion of macro 'cifs_dbg'
->   cifs_dbg(VFS, "Session Id    %*ph\n", sizeof(ses->Suid), &ses->Suid);
->   ^
->
-> Introduced by commit
->
->   ba4f2a8b205f ("CIFS: add CONFIG_CIFS_DEBUG_KEYS to dump encryption keys")
->
-> --
-> Cheers,
-> Stephen Rothwell
+Hi James,
 
+Just a ping; this needs to get into -next to avoid build errors.
+Please consider it also:
 
+Acked-by: Kees Cook <keescook@chromium.org>
+
+Thanks!
+
+-Kees
 
 -- 
-Thanks,
-
-Steve
+Kees Cook
+Pixel Security
