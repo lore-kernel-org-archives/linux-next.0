@@ -1,78 +1,73 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Mon, 26 Jun 2017 09:13:46 +0200
-Message-ID: <20170626071346.GA11534@dhcp22.suse.cz>
-References: <20170626165343.46285c95@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170626 build: 1 failures 1 warnings (next-20170626)
+Date: Mon, 26 Jun 2017 09:47:36 +0100
+Message-ID: <E1dPPgG-0002pe-3A@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:37998 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751252AbdFZHNu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 26 Jun 2017 03:13:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20170626165343.46285c95@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49688 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751302AbdFZIrn (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 26 Jun 2017 04:47:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jag Raman <jag.raman@oracle.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon 26-06-17 16:53:43, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm tree, today's linux-next build (sparc64 defconfig)
-> failed like this:
-> 
-> arch/sparc/kernel/mdesc.c: In function 'mdesc_kmalloc':
-> arch/sparc/kernel/mdesc.c:208:48: error: '__GFP_REPEAT' undeclared (first use in this function)
->   base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
->                                                 ^
-> 
-> Caused by commit
-> 
->   726ad49b664b ("mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic")
-> 
-> interacting with commit
-> 
->   0ab2fcd69dbf ("sparc64: mdesc: use __GFP_REPEAT action modifier for VM allocation")
-> 
-> from the sparc-next tree.
-> 
-> For now I have applied the following (I expect it to be replaced with
-> something better):
+Tree/Branch: next-20170626
+Git describe: next-20170626
+Commit: 875cf0958e Add linux-next specific files for 20170626
 
-You simply want s@__GFP_REPEAT@__GFP_RETRY_MAYFAIL@
+Build Time: 0 min 9 sec
 
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 26 Jun 2017 16:47:46 +1000
-> Subject: [PATCH] paper over the removal of __GFP_REPEAT for now
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  arch/sparc/kernel/mdesc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/sparc/kernel/mdesc.c b/arch/sparc/kernel/mdesc.c
-> index e4b4e790bf89..c9ecd5abf5bf 100644
-> --- a/arch/sparc/kernel/mdesc.c
-> +++ b/arch/sparc/kernel/mdesc.c
-> @@ -205,7 +205,7 @@ static struct mdesc_handle *mdesc_kmalloc(unsigned int mdesc_size)
->  	handle_size = (sizeof(struct mdesc_handle) -
->  		       sizeof(struct mdesc_hdr) +
->  		       mdesc_size);
-> -	base = kmalloc(handle_size + 15, GFP_KERNEL | __GFP_REPEAT);
-> +	base = kmalloc(handle_size + 15, GFP_KERNEL /* | __GFP_REPEAT */);
->  	if (!base)
->  		return NULL;
->  
-> -- 
-> 2.11.0
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+Passed:    6 / 7   ( 85.71 %)
+Failed:    1 / 7   ( 14.29 %)
 
--- 
-Michal Hocko
-SUSE Labs
+Errors: 1
+Warnings: 1
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+
+Warnings Summary: 1
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
