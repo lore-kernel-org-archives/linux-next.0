@@ -1,76 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with the jc_docs tree
-Date: Tue, 27 Jun 2017 14:29:31 +1000
-Message-ID: <20170627142931.538a2a4e@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rpmsg tree
+Date: Tue, 27 Jun 2017 14:43:39 +1000
+Message-ID: <20170627144339.614f7236@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43939 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36643 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750829AbdF0E3e (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 27 Jun 2017 00:29:34 -0400
+        id S1750829AbdF0Enm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 27 Jun 2017 00:43:42 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suman Anna <s-anna@ti.com>
 
-Hi all,
+Hi Bjorn,
 
-Today's linux-next merge of the scsi tree got a conflict in:
+After merging the rpmsg tree, today's linux-next build
+(arm_multi_v7_defconfig) produced this warning:
 
-  drivers/scsi/scsi_transport_fc.c
+drivers/i2c/Kconfig:7:error: recursive dependency detected!
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/i2c/Kconfig:7:	symbol I2C is selected by FB_DDC
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/video/fbdev/Kconfig:63:	symbol FB_DDC is selected by FB_CYBER2000_DDC
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/video/fbdev/Kconfig:390:	symbol FB_CYBER2000_DDC depends on FB_CYBER2000
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/video/fbdev/Kconfig:378:	symbol FB_CYBER2000 depends on FB
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/video/fbdev/Kconfig:5:	symbol FB is selected by DRM_KMS_FB_HELPER
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/gpu/drm/Kconfig:72:	symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/gpu/drm/Kconfig:66:	symbol DRM_KMS_HELPER is selected by DRM_VIRTIO_GPU
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/gpu/drm/virtio/Kconfig:1:	symbol DRM_VIRTIO_GPU depends on VIRTIO
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/virtio/Kconfig:1:	symbol VIRTIO is selected by RPMSG_VIRTIO
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/rpmsg/Kconfig:35:	symbol RPMSG_VIRTIO is selected by KEYSTONE_REMOTEPROC
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/remoteproc/Kconfig:74:	symbol KEYSTONE_REMOTEPROC depends on RESET_CONTROLLER
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by QCOM_SCM
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/firmware/Kconfig:205:	symbol QCOM_SCM is selected by VIDEO_QCOM_VENUS
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/media/platform/Kconfig:474:	symbol VIDEO_QCOM_VENUS depends on V4L_MEM2MEM_DRIVERS
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/media/platform/Kconfig:162:	symbol V4L_MEM2MEM_DRIVERS depends on VIDEO_V4L2
+For a resolution refer to Documentation/kbuild/kconfig-language.txt
+subsection "Kconfig recursive dependency limitations"
+drivers/media/v4l2-core/Kconfig:6:	symbol VIDEO_V4L2 depends on I2C
 
-between commit:
+and more ...
 
-  739aca06a2d2 ("scsi: fix some kernel-doc markups")
+Probably introduced by commit
 
-from the jc_docs tree and commit:
-
-  134699d2a896 ("scsi: fix typos and grammar in comments of scsi_transport_fc.c")
-
-from the scsi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  e88bb8f7a12c ("remoteproc/keystone: Add a remoteproc driver for Keystone 2 DSPs")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/scsi/scsi_transport_fc.c
-index 1df77453f6b6,6dd0922a499d..000000000000
---- a/drivers/scsi/scsi_transport_fc.c
-+++ b/drivers/scsi/scsi_transport_fc.c
-@@@ -2914,18 -2914,16 +2914,18 @@@ EXPORT_SYMBOL(fc_remote_port_add)
-   * port is no longer part of the topology. Note: Although a port
-   * may no longer be part of the topology, it may persist in the remote
-   * ports displayed by the fc_host. We do this under 2 conditions:
- + *
-   * 1) If the port was a scsi target, we delay its deletion by "blocking" it.
- - *   This allows the port to temporarily disappear, then reappear without
- - *   disrupting the SCSI device tree attached to it. During the "blocked"
- - *   period the port will still exist.
- + *    This allows the port to temporarily disappear, then reappear without
- + *    disrupting the SCSI device tree attached to it. During the "blocked"
- + *    period the port will still exist.
- + *
-   * 2) If the port was a scsi target and disappears for longer than we
- - *   expect, we'll delete the port and the tear down the SCSI device tree
- - *   attached to it. However, we want to semi-persist the target id assigned
- - *   to that port if it eventually does exist. The port structure will
- - *   remain (although with minimal information) so that the target id
- - *   bindings also remain.
- + *    expect, we'll delete the port and the tear down the SCSI device tree
- + *    attached to it. However, we want to semi-persist the target id assigned
- + *    to that port if it eventually does exist. The port structure will
- + *    remain (although with minimal information) so that the target id
--  *    bindings remails.
-++ *    bindings also remain.
-   *
-   * If the remote port is not an FCP Target, it will be fully torn down
-   * and deallocated, including the fc_remote_port class device.
