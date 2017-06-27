@@ -1,40 +1,54 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: mmotm 2017-06-23-15-03 uploaded
-Date: Tue, 27 Jun 2017 09:38:09 +0200
-Message-ID: <CAKwiHFjfrWqa+0NhL1EHKJwmghrL52Xzn-tYJsOi1B41shCsTg@mail.gmail.com>
-References: <594d905d.geNp0UO7DULvNDPS%akpm@linux-foundation.org>
- <CAC=cRTNJe5Bo-1E+3oJEbWM8Yt5SyZOhnUiC9U5OK0GWrp1E0g@mail.gmail.com>
- <c3caa911-6e40-42a8-da4d-45243fb7f4ad@suse.cz> <13ab3968-a7e4-add3-b050-438d462f7fc4@suse.cz>
+From: Ryder Lee <ryder.lee@mediatek.com>
+Subject: Re: next-20170626 build: 1 failures 1 warnings (next-20170626)
+Date: Tue, 27 Jun 2017 17:21:39 +0800
+Message-ID: <1498555299.1745.2.camel@mtkswgap22>
+References: <E1dPPgG-0002pe-3A@optimist>
+         <20170626115653.e4xs4lk4paibuphx@sirena.org.uk>
+         <1498481507.6075.10.camel@mtkswgap22>
+         <CAK8P3a31MDiyhvDhyfRG0EZFG7VfUpsy1J-=cJePHefvtWfadQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <13ab3968-a7e4-add3-b050-438d462f7fc4@suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: huang ying <huang.ying.caritas@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, mhocko@suse.cz, Mark Brown <broonie@kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <CAK8P3a31MDiyhvDhyfRG0EZFG7VfUpsy1J-=cJePHefvtWfadQ@mail.gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Mark Brown <broonie@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, linux-pci <linux-pci@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linaro-kernel@lists.linaro.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
 List-Id: linux-next.vger.kernel.org
 
->>
->> However, the patch in mmotm seems to be missing this crucial hunk that
->> Rasmus had in the patch he sent [1]:
->>
->> -__rmqueue_fallback(struct zone *zone, unsigned int order, int
->> start_migratetype)
->> +__rmqueue_fallback(struct zone *zone, int order, int start_migratetype)
->>
->> which makes this a signed vs signed comparison.
->>
->> What happened to it? Andrew?
+On Tue, 2017-06-27 at 09:36 +0200, Arnd Bergmann wrote:
+> On Mon, Jun 26, 2017 at 2:51 PM, Ryder Lee <ryder.lee@mediatek.com> wrote:
+> > On Mon, 2017-06-26 at 12:56 +0100, Mark Brown wrote:
+> >> On Mon, Jun 26, 2017 at 09:47:36AM +0100, Build bot for Mark Brown wrote:
+> >>
+> >> This build failure is still present in -next:
+> >>
+> >> >     arm-allmodconfig
+> >> > ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+> >>
+> >> and we're at -rc7 now.
+> >
+> > Hi Mark,
+> >
+> > This is due to we are in different branch but merge together...
+> >
+> > Anyway, I could send a critical patch, but I need Bjorn help to apply to
+> > -next. Seems he didn't response these days.
+> >
+> > Not sure how could I send it?
+> 
+> It's really something that Bjorn needs to fix by applying your patch,
+> but if he's currently not able to do that for some reason, a possible
+> workaround would be for either Stephen Rothwell to apply your fixup
+> on linux-next, or Andrew Morton to add it to his mmotm tree, either
+> way it will be part of linux-next and on top of the pci-next tree,
+> until Bjorn applies it.
+> 
+> Please re-send your patch to both of them, with Bjorn on Cc.
+> 
+>         Arnd
 
-This is really odd. Checking, I see that it was also absent from the
-'this patch has been added to -mm' mail, but I admit I don't proofread
-those to see they match what I sent. Oh well. Let me know if I need to
-do anything.
 
-Rasmus
+Okay, Thanks for your suggestion!
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Ryder
