@@ -1,56 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: mmotm 2017-06-23-15-03 uploaded
-Date: Wed, 28 Jun 2017 08:00:18 +1000
-Message-ID: <20170628080018.186aace8@canb.auug.org.au>
-References: <594d905d.geNp0UO7DULvNDPS%akpm@linux-foundation.org>
-	<CAC=cRTNJe5Bo-1E+3oJEbWM8Yt5SyZOhnUiC9U5OK0GWrp1E0g@mail.gmail.com>
-	<c3caa911-6e40-42a8-da4d-45243fb7f4ad@suse.cz>
-	<13ab3968-a7e4-add3-b050-438d462f7fc4@suse.cz>
-	<CAKwiHFjfrWqa+0NhL1EHKJwmghrL52Xzn-tYJsOi1B41shCsTg@mail.gmail.com>
-	<20170627134033.d6df2435117d52721d37a748@linux-foundation.org>
-	<20170628075642.6b3934f0@canb.auug.org.au>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Date: Tue, 27 Jun 2017 15:16:40 -0700
+Message-ID: <CAGXu5jLW9Hnng=bS11g98sXUiEk7fE6mizemD_au974hb-qJVQ@mail.gmail.com>
+References: <20170620145655.4b7f3efb@canb.auug.org.au> <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com>
+ <CAGXu5jLneuMbmEOvYNKU1Q0wwe55uV7hCzQ+jCGFQ35_Zd=eeA@mail.gmail.com> <alpine.LRH.2.20.1706271333010.11229@namei.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20170628075642.6b3934f0@canb.auug.org.au>
-Sender: owner-linux-mm@kvack.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, Vlastimil Babka <vbabka@suse.cz>, huang ying <huang.ying.caritas@gmail.com>, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, Mark Brown <broonie@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-it0-f47.google.com ([209.85.214.47]:32903 "EHLO
+        mail-it0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752923AbdF0WQm (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 27 Jun 2017 18:16:42 -0400
+Received: by mail-it0-f47.google.com with SMTP id x12so4087908itb.0
+        for <linux-next@vger.kernel.org>; Tue, 27 Jun 2017 15:16:41 -0700 (PDT)
+In-Reply-To: <alpine.LRH.2.20.1706271333010.11229@namei.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: John Johansen <john.johansen@canonical.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Andrew,
-
-On Wed, 28 Jun 2017 07:56:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, Jun 26, 2017 at 8:33 PM, James Morris <jmorris@namei.org> wrote:
+> On Mon, 26 Jun 2017, Kees Cook wrote:
 >
-> On Tue, 27 Jun 2017 13:40:33 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > oops, that was me manually fixing rejects - I missed a bit.
-> > 
-> > --- a/mm/page_alloc.c~mm-page_allocc-eliminate-unsigned-confusion-in-__rmqueue_fallback-fix
-> > +++ a/mm/page_alloc.c
-> > @@ -2212,7 +2212,7 @@ static bool unreserve_highatomic_pageblo
-> >   * condition simpler.
-> >   */
-> >  static inline bool
-> > -__rmqueue_fallback(struct zone *zone, unsigned int order, int start_migratetype)
-> > +__rmqueue_fallback(struct zone *zone, int order, int start_migratetype)
-> >  {
-> >  	struct free_area *area;
-> >  	int current_order;
-> > _
-> >   
-> 
-> I have pushed that into the original patch in linux-next for today.
+>> >> Fixes: 8014370f1257 ("apparmor: move path_link mediation to using labels")
+>> >> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> > Acked-by: John Johansen <john.johansen@canonical.com>
+>>
+>> Hi James,
+>>
+>> Just a ping; this needs to get into -next to avoid build errors.
+>
+> Surely Linus will resolve this when he pulls the trees in?
 
-But I guess that is irrelevant now :-)
+It's not a merge glitch, it's a refactoring glitch. John's commit in
+security-next ("apparmor: move path_link mediation to using labels")
+undid an earlier commit 8486adf0d755 ("apparmor: use designated
+initializers") from v4.11. This patch is needed for security-next.
+
+-Kees
 
 -- 
-Cheers,
-Stephen Rothwell
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Kees Cook
+Pixel Security
