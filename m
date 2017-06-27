@@ -1,54 +1,97 @@
-From: Ryder Lee <ryder.lee@mediatek.com>
-Subject: Re: next-20170626 build: 1 failures 1 warnings (next-20170626)
-Date: Tue, 27 Jun 2017 17:21:39 +0800
-Message-ID: <1498555299.1745.2.camel@mtkswgap22>
-References: <E1dPPgG-0002pe-3A@optimist>
-         <20170626115653.e4xs4lk4paibuphx@sirena.org.uk>
-         <1498481507.6075.10.camel@mtkswgap22>
-         <CAK8P3a31MDiyhvDhyfRG0EZFG7VfUpsy1J-=cJePHefvtWfadQ@mail.gmail.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: next-20170621 build: 1 failures 7 warnings (next-20170621)
+Date: Tue, 27 Jun 2017 14:58:15 -0500
+Message-ID: <20170627195815.GA17844@bhelgaas-glaptop.roam.corp.google.com>
+References: <E1dNcMp-0005RN-1w@optimist>
+ <20170621100440.vcaxagg4yjca2cv4@sirena.org.uk>
+ <1498209196.26313.71.camel@mtkswgap22>
+ <20170623094356.GA5337@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a31MDiyhvDhyfRG0EZFG7VfUpsy1J-=cJePHefvtWfadQ@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <20170623094356.GA5337@red-moon>
 Sender: linux-pci-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Mark Brown <broonie@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, linux-pci <linux-pci@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, linaro-kernel@lists.linaro.org, Linux ARM <linux-arm-kernel@lists.infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Ryder Lee <ryder.lee@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "kernel-build-reports@lists.linaro.org" <kernel-build-reports@lists.linaro.org>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2017-06-27 at 09:36 +0200, Arnd Bergmann wrote:
-> On Mon, Jun 26, 2017 at 2:51 PM, Ryder Lee <ryder.lee@mediatek.com> wrote:
-> > On Mon, 2017-06-26 at 12:56 +0100, Mark Brown wrote:
-> >> On Mon, Jun 26, 2017 at 09:47:36AM +0100, Build bot for Mark Brown wrote:
-> >>
-> >> This build failure is still present in -next:
-> >>
-> >> >     arm-allmodconfig
-> >> > ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
-> >>
-> >> and we're at -rc7 now.
-> >
-> > Hi Mark,
-> >
-> > This is due to we are in different branch but merge together...
-> >
-> > Anyway, I could send a critical patch, but I need Bjorn help to apply to
-> > -next. Seems he didn't response these days.
-> >
-> > Not sure how could I send it?
+On Fri, Jun 23, 2017 at 10:43:56AM +0100, Lorenzo Pieralisi wrote:
+> On Fri, Jun 23, 2017 at 05:13:16PM +0800, Ryder Lee wrote:
+> > Sorry for late reply, 
+> > 
+> > +Lorenzo
+> > 
+> > On Wed, 2017-06-21 at 18:04 +0800, Mark Brown wrote:
+> > > On Wed, Jun 21, 2017 at 10:56:07AM +0100, Build bot for Mark Brown wrote:
+> > > 
+> > > Today's -next fails to build an arm allmodconfig due to:
+> > > 
+> > > > 	arm-allmodconfig
+> > > > ../drivers/pci/host/pcie-mediatek.c:485:8: error: implicit declaration of function 'pci_register_host_bridge' [-Werror=implicit-function-declaration]
+> > > 
+> > > caused by eaf3023b0498a (PCI: mediatek: Add MediaTek PCIe host
+> > > controller support).
+> > 
+> > 
+> > Hi Lorenzo,
+> > 
+> > I picked up your changes and had some modifications like what you did
+> > for other platforms:
+> > 
+> > 9f8e3a5 PCI: Add devm_pci_alloc_host_bridge() interface 
+> > 35a1a84 PCI: Add pci_free_host_bridge() interface
+> > e33aafd PCI: Initialize bridge release function at bridge allocation
+> > 
+> > ...and it looks Okay.
+> > 
+> > I have also noticed that you continue sending patches for other
+> > platforms but I have not yet had a look in detail. I'm quite busy these
+> > days and don't have time to dig it, hence it is becoming a little
+> > unmanageable for me.
 > 
-> It's really something that Bjorn needs to fix by applying your patch,
-> but if he's currently not able to do that for some reason, a possible
-> workaround would be for either Stephen Rothwell to apply your fixup
-> on linux-next, or Andrew Morton to add it to his mmotm tree, either
-> way it will be part of linux-next and on top of the pci-next tree,
-> until Bjorn applies it.
+> If it is unmanageable you don't add yourself as a maintainer of that
+> PCI host bridge driver, you know, we are all busy.
 > 
-> Please re-send your patch to both of them, with Bjorn on Cc.
+> Your driver in the PCI tree as it stands contains already two bugs:
 > 
->         Arnd
+> 1) It leaks memory on the probe failure path
+> 2) pci_fixup_irqs() is broken on configurations with multiple host
+>    bridges
+> 
+> And we keep copy'n'pasting that code.
+> 
+> > Did you have a chance to send the same patches for MediaTek?  I
+> > appreciate that and I can help to test it on our platforms.
+> 
+> No, how could I have sent them ? It is not upstream and it is a separate
+> branch in the PCI tree. As I mentioned in another thread it is probably
+> best to drop my pci_fixup_irqs() removal patches since it is impossible
+> to work on them without a stable branch to apply them against, in the
+> interim we keep adding PCI host bridges that use the wrong interfaces by
+> copy'n'pasting code that I have been trying to remove.
+> 
+> I think the best solution is to repost my series when v4.13-rc1 appears
+> and ask all new crop of host bridge drivers to rebase against it.
+> 
+> I won't be able to follow mailing lists till end of next week, which
+> is bad timing.
+> 
+> Bjorn, is the plan above ok ? Please let me know how you want to
+> proceed.
 
+Sorry, I was on vacation myself most of last week, and you're
+unavailable most of this week, but I'd still like to try to get this
+into v4.13.
 
-Okay, Thanks for your suggestion!
+We may not get every host tested, but I'm not sure that will happen
+even if we wait for the next cycle.  If we trip over something it will
+likely be something small or for a relatively rare platform, so we can
+fix it up after the fact.
 
-Ryder
+I haven't looked at everything yet, but my plan is to try to
+incorporate the fixes people have posted and keep pushing forward.  If
+that turns out not to work, I'll drop the pci_fixup_irqs() series, but
+I'll at least give it a try.
+
+Bjorn
