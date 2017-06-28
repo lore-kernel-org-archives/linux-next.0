@@ -1,58 +1,105 @@
-From: Jeff Layton <jlayton@poochiereds.net>
-Subject: Re: linux-next: manual merge of the block tree with the file-locks
- tree
-Date: Wed, 28 Jun 2017 05:54:00 -0400
-Message-ID: <1498643640.4644.1.camel@poochiereds.net>
-References: <20170628115721.3e594e2c@canb.auug.org.au>
-         <4feec680-6d4f-abbe-c025-61b462612dde@kernel.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170628 build: 0 failures 7 warnings (next-20170628)
+Date: Wed, 28 Jun 2017 12:02:47 +0100
+Message-ID: <E1dQAkB-0006b7-ES@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35099 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751531AbdF1JyD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Jun 2017 05:54:03 -0400
-Received: by mail-qt0-f194.google.com with SMTP id w12so6823704qta.2
-        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2017 02:54:03 -0700 (PDT)
-In-Reply-To: <4feec680-6d4f-abbe-c025-61b462612dde@kernel.dk>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48522 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751498AbdF1LCy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Jun 2017 07:02:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Stephen Rothwell <sfr@canb.auug.org.au>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tue, 2017-06-27 at 20:01 -0600, Jens Axboe wrote:
-> On 06/27/2017 07:57 PM, Stephen Rothwell wrote:
-> > Hi Jens,
-> > 
-> > Today's linux-next merge of the block tree got a conflict in:
-> > 
-> >   include/linux/fs.h
-> > 
-> > between commit:
-> > 
-> >   3f64df8a51ce ("fs: new infrastructure for writeback error handling and reporting")
-> > 
-> > from the file-locks tree and commit:
-> > 
-> >   c75b1d9421f8 ("fs: add fcntl() interface for setting/getting write life time hints")
-> > 
-> > from the block tree.
-> 
-> Looks like we stole the same hole! Let's just merge it like this, then
-> post merge I (or Jeff) can move the member to a better location.
-> 
+Tree/Branch: next-20170628
+Git describe: next-20170628
+Commit: a51166ce71 Add linux-next specific files for 20170628
 
-(cc'ing Al since he might pick these up...)
+Build Time: 0 min 11 sec
 
-Indeed!
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
 
-I'll plan to move f_wb_err to the end of the struct.
+Errors: 0
+Warnings: 7
+Section Mismatches: 0
 
-I have some later patches that add a second 32-bit errseq_t field to
-struct file for tracking metadata writeback errors. That would make them
-adjacent to one another which at least looks a little cleaner.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      4 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      2 warnings    0 mismatches  : arm-multi_v4t_defconfig
 
-Cheers,
--- 
-Jeff Layton <jlayton@poochiereds.net>
+-------------------------------------------------------------------------------
+
+Warnings Summary: 7
+	  4 ../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+	  3 ../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+	  3 ../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	  2 ../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	  1 ../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
