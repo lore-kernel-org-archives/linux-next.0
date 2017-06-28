@@ -1,97 +1,63 @@
-From: jeffy <jeffy.chen@rock-chips.com>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 28 Jun 2017 12:00:19 +0800
-Message-ID: <595329D3.7080808@rock-chips.com>
-References: <20170628134310.3a605636@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the xen-tip tree with the tip tree
+Date: Wed, 28 Jun 2017 14:21:36 +1000
+Message-ID: <20170628142136.3cd8dfb4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from regular1.263xmail.com ([211.150.99.136]:39477 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750842AbdF1EAc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Jun 2017 00:00:32 -0400
-In-Reply-To: <20170628134310.3a605636@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:34169 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751548AbdF1EVk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 00:21:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Gustavo Padovan <gustavo@padovan.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anoob Soman <anoob.soman@citrix.com>
 
-Hi Stephen,
+Hi all,
 
-On 06/28/2017 11:43 AM, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> net/bluetooth/hidp/core.c:1241:39: error: unknown type name 'wait_queue_t'
->   static int hidp_session_wake_function(wait_queue_t *wait,
->                                         ^
-> In file included from include/linux/mmzone.h:9:0,
->                   from include/linux/gfp.h:5,
->                   from include/linux/kmod.h:22,
->                   from include/linux/module.h:13,
->                   from net/bluetooth/hidp/core.c:25:
-> net/bluetooth/hidp/core.c: In function 'hidp_session_thread':
-> net/bluetooth/hidp/core.c:1259:30: error: 'hidp_session_wake_function' undeclared (first use in this function)
->    DEFINE_WAIT_FUNC(ctrl_wait, hidp_session_wake_function);
->                                ^
-> include/linux/wait.h:954:12: note: in definition of macro 'DEFINE_WAIT_FUNC'
->     .func  = function,     \
->              ^
-> net/bluetooth/hidp/core.c:1259:30: note: each undeclared identifier is reported only once for each function it appears in
->    DEFINE_WAIT_FUNC(ctrl_wait, hidp_session_wake_function);
->                                ^
-> include/linux/wait.h:954:12: note: in definition of macro 'DEFINE_WAIT_FUNC'
->     .func  = function,     \
->              ^
->
-> Caused by commit
->
->    ac6424b981bc ("sched/wait: Rename wait_queue_t => wait_queue_entry_t")
->
-> interacting with commit
->
->    5da8e47d849d ("Bluetooth: hidp: fix possible might sleep error in hidp_session_thread")
->
-> from the bluetooth tree.  I should have fixed this up in the merge, sorry.
-> I added the following merge fix for today.
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 28 Jun 2017 13:36:04 +1000
-> Subject: [PATCH] Bluetooth: hidp: fix for "sched/wait: Rename wait_queue_t =>
->   wait_queue_entry_t"
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->   net/bluetooth/hidp/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/bluetooth/hidp/core.c b/net/bluetooth/hidp/core.c
-> index 472b3907b1b0..002743ea509c 100644
-> --- a/net/bluetooth/hidp/core.c
-> +++ b/net/bluetooth/hidp/core.c
-> @@ -1238,7 +1238,7 @@ static void hidp_session_run(struct hidp_session *session)
->   	smp_mb__after_atomic();
->   }
->
-> -static int hidp_session_wake_function(wait_queue_t *wait,
-> +static int hidp_session_wake_function(wait_queue_entry_t *wait,
+Today's linux-next merge of the xen-tip tree got a conflict in:
 
-thanx for fixing this. and i saw
+  drivers/xen/events/events_base.c
 
-commit 50816c48997af857d4bab3dca1aba90339705e96
-Author: Ingo Molnar <mingo@kernel.org>
-Date:   Sun Mar 5 10:33:16 2017 +0100
+between commit:
 
-     sched/wait: Standardize internal naming of wait-queue entries
+  ef1c2cc88531 ("xen/events: Add support for effective affinity mask")
 
+from the tip tree and commit:
 
-changed wait_queue_entry_t to struct wait_queue_entry, and also wait to 
-wq_entry, maybe we should do it too?
+  c48f64ab4723 ("xen-evtchn: Bind dyn evtchn:qemu-dm interrupt to next online VCPU")
 
->   				      unsigned int mode,
->   				      int sync, void *key)
->   {
->
+from the xen-tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/xen/events/events_base.c
+index 2e567d8433b3,813f1e86a599..000000000000
+--- a/drivers/xen/events/events_base.c
++++ b/drivers/xen/events/events_base.c
+@@@ -1343,12 -1343,8 +1343,12 @@@ static int set_affinity_irq(struct irq_
+  			    bool force)
+  {
+  	unsigned tcpu = cpumask_first_and(dest, cpu_online_mask);
+- 	int ret = rebind_irq_to_cpu(data->irq, tcpu);
+++	int ret = xen_rebind_evtchn_to_cpu(evtchn_from_irq(data->irq), tcpu);
+  
+ -	return xen_rebind_evtchn_to_cpu(evtchn_from_irq(data->irq), tcpu);
+ +	if (!ret)
+ +		irq_data_update_effective_affinity(data, cpumask_of(tcpu));
+ +
+ +	return ret;
+  }
+  
+  static void enable_dynirq(struct irq_data *data)
