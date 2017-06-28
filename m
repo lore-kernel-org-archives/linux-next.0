@@ -1,114 +1,101 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- random tree
-Date: Wed, 28 Jun 2017 16:03:48 +1000
-Message-ID: <20170628160348.16d15d02@canb.auug.org.au>
-References: <20170608162812.640fb3ab@canb.auug.org.au>
+Subject: Re: arm64: build is broken on next-20170609 with merge-commit
+ 9afca2c4e379 (arm64: allwinner: sun50i-a64: add dwmac-sun8i Ethernet
+ driver)
+Date: Wed, 28 Jun 2017 16:07:11 +1000
+Message-ID: <20170628160711.08763ee7@canb.auug.org.au>
+References: <20170609124325.p7b6fhdbwtki4w2z@yury-thinkpad>
+        <20170610092944.4022d550@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58611 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51875 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751747AbdF1GDv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 02:03:51 -0400
-In-Reply-To: <20170608162812.640fb3ab@canb.auug.org.au>
+        id S1750934AbdF1GHN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 02:07:13 -0400
+In-Reply-To: <20170610092944.4022d550@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Rik van Riel <riel@redhat.com>
+To: Yury Norov <ynorov@caviumnetworks.com>, Sumit Semwal <sumit.semwal@linaro.org>, "David S. Miller" <davem@davemloft.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, LABBE Corentin <clabbe.montjoie@gmail.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 
-Hi Andrew,
+Hi all,
 
-[Yes, top posting :-)]
+[Yes, top posted :-)]
 
-With the merge window approaching, just a reminder that this conflict
-still exists.
+With the merge window approaching, this is just a reminder that this
+merge problem still exists.  I assume that the sunxi tree will be
+merged into the arm-soc tree before going to Linus.
 
-On Thu, 8 Jun 2017 16:28:12 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Sat, 10 Jun 2017 09:29:44 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the akpm-current tree got a conflict in:
+> On Fri, 9 Jun 2017 15:43:25 +0300 Yury Norov <ynorov@caviumnetworks.com> wrote:
+> >
+> > Today's linux-next breaks build with:
+> >   DTC     arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dtb
+> > arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dtb: ERROR (duplicate_node_names): Duplicate node name /soc/ethernet@1c30000
+> > ERROR: Input tree has errors, aborting (use -f to force output)
+> > scripts/Makefile.lib:325: recipe for target 'arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dtb' failed
+> > make[2]: *** [arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dtb] Error 2
+> > scripts/Makefile.build:561: recipe for target 'arch/arm64/boot/dts/allwinner' failed
+> > make[1]: *** [arch/arm64/boot/dts/allwinner] Error 2 arch/arm64/Makefile:130: recipe for target 'dtbs' failed
+> > make: *** [dtbs] Error 2
+> > 
+> > It seems, it's due to duplication error in merge-commit 9afca2c4e379.
+> > Removing it fixes the build.  
 > 
->   include/linux/random.h
+> Thanks for the reports Yury and Sumit.  I will apply the following
+> merge fixup patch when I next build linux-next (unless one of the
+> patches is removed in the mean time).
 > 
-> between commit:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Sat, 10 Jun 2017 09:18:14 +1000
+> Subject: [PATCH] remove duplicate ethernet noce intruduced by merge
 > 
->   60473a13020f ("random: add get_random_{bytes,u32,u64,int,long,once}_wait family")
+> caused by patch "arm64: allwinner: sun50i-a64: add dwmac-sun8i Ethernet
+> driver" being merged into the sunxi and net-next trees as different
+> commits (e53f67e981bc and 103aefa01c1b respectively). Presumably the
+> former will turn up in the arm-soc tree before being sent to Linus.
 > 
-> from the random tree and commit:
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 20 --------------------
+>  1 file changed, 20 deletions(-)
 > 
->   d7802aa82f66 ("random,stackprotect: introduce get_random_canary function")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> index 1b36aab5afb6..9d00622ce845 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -469,26 +469,6 @@
+>  			};
+>  		};
+>  
+> -		emac: ethernet@1c30000 {
+> -			compatible = "allwinner,sun50i-a64-emac";
+> -			syscon = <&syscon>;
+> -			reg = <0x01c30000 0x100>;
+> -			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
+> -			interrupt-names = "macirq";
+> -			resets = <&ccu RST_BUS_EMAC>;
+> -			reset-names = "stmmaceth";
+> -			clocks = <&ccu CLK_BUS_EMAC>;
+> -			clock-names = "stmmaceth";
+> -			status = "disabled";
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -
+> -			mdio: mdio {
+> -				#address-cells = <1>;
+> -				#size-cells = <0>;
+> -			};
+> -		};
+> -
+>  		gic: interrupt-controller@1c81000 {
+>  			compatible = "arm,gic-400";
+>  			reg = <0x01c81000 0x1000>,
 > -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc include/linux/random.h
-> index 4aecc339558d,1fa0dc880bd7..000000000000
-> --- a/include/linux/random.h
-> +++ b/include/linux/random.h
-> @@@ -58,31 -57,27 +58,52 @@@ static inline unsigned long get_random_
->   #endif
->   }
->   
->  +/* Calls wait_for_random_bytes() and then calls get_random_bytes(buf, nbytes).
->  + * Returns the result of the call to wait_for_random_bytes. */
->  +static inline int get_random_bytes_wait(void *buf, int nbytes)
->  +{
->  +	int ret = wait_for_random_bytes();
->  +	if (unlikely(ret))
->  +		return ret;
->  +	get_random_bytes(buf, nbytes);
->  +	return 0;
->  +}
->  +
->  +#define declare_get_random_var_wait(var) \
->  +	static inline int get_random_ ## var ## _wait(var *out) { \
->  +		int ret = wait_for_random_bytes(); \
->  +		if (unlikely(ret)) \
->  +			return ret; \
->  +		*out = get_random_ ## var(); \
->  +		return 0; \
->  +	}
->  +declare_get_random_var_wait(u32)
->  +declare_get_random_var_wait(u64)
->  +declare_get_random_var_wait(int)
->  +declare_get_random_var_wait(long)
->  +#undef declare_get_random_var
->  +
-> + /*
-> +  * On 64-bit architectures, protect against non-terminated C string overflows
-> +  * by zeroing out the first byte of the canary; this leaves 56 bits of entropy.
-> +  */
-> + #ifdef CONFIG_64BIT
-> + # ifdef __LITTLE_ENDIAN
-> + #  define CANARY_MASK 0xffffffffffffff00UL
-> + # else /* big endian, 64 bits: */
-> + #  define CANARY_MASK 0x00ffffffffffffffUL
-> + # endif
-> + #else /* 32 bits: */
-> + # define CANARY_MASK 0xffffffffUL
-> + #endif
-> + 
-> + static inline unsigned long get_random_canary(void)
-> + {
-> + 	unsigned long val = get_random_long();
-> + 
-> + 	return val & CANARY_MASK;
-> + }
-> + 
->   unsigned long randomize_page(unsigned long start, unsigned long range);
->   
->   u32 prandom_u32(void);
+> 2.11.0
 
 -- 
 Cheers,
