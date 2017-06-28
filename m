@@ -1,88 +1,49 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the target-updates tree with the
- scsi tree
-Date: Wed, 28 Jun 2017 15:46:34 +1000
-Message-ID: <20170628154634.6807e0b3@canb.auug.org.au>
-References: <20170628154059.21dbfda2@canb.auug.org.au>
+From: James Morris <jmorris@namei.org>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Date: Wed, 28 Jun 2017 15:48:23 +1000 (AEST)
+Message-ID: <alpine.LRH.2.20.1706281548090.32070@namei.org>
+References: <20170620145655.4b7f3efb@canb.auug.org.au> <fbcb7bd9-ca6e-eab1-350e-974c9df2875a@canonical.com> <CAGXu5jLneuMbmEOvYNKU1Q0wwe55uV7hCzQ+jCGFQ35_Zd=eeA@mail.gmail.com> <alpine.LRH.2.20.1706271333010.11229@namei.org>
+ <CAGXu5jLW9Hnng=bS11g98sXUiEk7fE6mizemD_au974hb-qJVQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43865 "EHLO ozlabs.org"
+Received: from namei.org ([65.99.196.166]:41069 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750945AbdF1Fqh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 01:46:37 -0400
-In-Reply-To: <20170628154059.21dbfda2@canb.auug.org.au>
+        id S1751010AbdF1Fse (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 01:48:34 -0400
+In-Reply-To: <CAGXu5jLW9Hnng=bS11g98sXUiEk7fE6mizemD_au974hb-qJVQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Quinn Tran <quinn.tran@cavium.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Himanshu Madhani <himanshu.madhani@cavium.com>
+To: Kees Cook <keescook@google.com>
+Cc: John Johansen <john.johansen@canonical.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Tue, 27 Jun 2017, Kees Cook wrote:
 
-On Wed, 28 Jun 2017 15:40:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the target-updates tree got a conflict in:
+> On Mon, Jun 26, 2017 at 8:33 PM, James Morris <jmorris@namei.org> wrote:
+> > On Mon, 26 Jun 2017, Kees Cook wrote:
+> >
+> >> >> Fixes: 8014370f1257 ("apparmor: move path_link mediation to using labels")
+> >> >> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >> > Acked-by: John Johansen <john.johansen@canonical.com>
+> >>
+> >> Hi James,
+> >>
+> >> Just a ping; this needs to get into -next to avoid build errors.
+> >
+> > Surely Linus will resolve this when he pulls the trees in?
 > 
->   drivers/scsi/qla2xxx/qla_target.c
+> It's not a merge glitch, it's a refactoring glitch. John's commit in
+> security-next ("apparmor: move path_link mediation to using labels")
+> undid an earlier commit 8486adf0d755 ("apparmor: use designated
+> initializers") from v4.11. This patch is needed for security-next.
 > 
-> between commits:
-> 
->   f775bd14e44d ("scsi: qla2xxx: Convert 32-bit LUN usage to 64-bit")
->   82de802ad46e ("scsi: qla2xxx: Preparation for Target MQ.")
-> 
-> from the scsi tree and commit:
-> 
->   6b26726af699 ("qla2xxx: Convert QLA_TGT_ABTS to TARGET_SCF_LOOKUP_LUN_FROM_TAG")
-> 
-> from the target-updates tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as
 
-OK, that was no right :-(
+Thanks.
 
-I have added the following fix patch as well (I suggest someone provide me with the correct fixup for tomorrow, please).
+Applied to
+git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Jun 2017 15:44:27 +1000
-Subject: [PATCH] qla2xxx: fix up for bad merge fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/scsi/qla2xxx/qla_target.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-index 9a054439560d..42a3f5be818c 100644
---- a/drivers/scsi/qla2xxx/qla_target.c
-+++ b/drivers/scsi/qla2xxx/qla_target.c
-@@ -1875,7 +1875,6 @@ static int __qlt_24xx_handle_abts(struct scsi_qla_host *vha,
- {
- 	struct qla_hw_data *ha = vha->hw;
- 	struct qla_tgt_mgmt_cmd *mcmd;
--	struct qla_tgt_cmd *cmd;
- 	int rc;
- 
- 	if (abort_cmd_for_tag(vha, abts->exchange_addr_to_abort)) {
-@@ -1898,14 +1897,13 @@ static int __qlt_24xx_handle_abts(struct scsi_qla_host *vha,
- 	}
- 	memset(mcmd, 0, sizeof(*mcmd));
- 
--	cmd = container_of(se_cmd, struct qla_tgt_cmd, se_cmd);
- 	mcmd->sess = sess;
- 	memcpy(&mcmd->orig_iocb.abts, abts, sizeof(mcmd->orig_iocb.abts));
- 	mcmd->reset_count = ha->base_qpair->chip_reset;
- 	mcmd->tmr_func = QLA_TGT_ABTS;
- 	mcmd->qpair = ha->base_qpair;
- 
--	rc = ha->tgt.tgt_ops->handle_tmr(mcmd, cmd->unpacked_lun, mcmd->tmr_func,
-+	rc = ha->tgt.tgt_ops->handle_tmr(mcmd, 0, mcmd->tmr_func,
- 	    abts->exchange_addr_to_abort);
- 	if (rc != 0) {
- 		ql_dbg(ql_dbg_tgt_mgt, vha, 0xf052,
--- 
-2.11.0
 
 -- 
-Cheers,
-Stephen Rothwell
+James Morris
+<jmorris@namei.org>
