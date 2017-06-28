@@ -1,33 +1,85 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Wed, 28 Jun 2017 17:15:39 +1000
-Message-ID: <20170628171539.328fe417@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the block tree
+Date: Wed, 28 Jun 2017 18:04:56 +1000
+Message-ID: <20170628180456.30cb9242@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35543 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42407 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751225AbdF1HPn (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 03:15:43 -0400
+        id S1750829AbdF1IFA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 04:05:00 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 
-Hi all,
+Hi Jens,
 
-After merging the tip tree, today's linux-next build (x86_64 allnoconfig)
-produced this warning:
+After merging the block tree, today's linux-next build (powerpc
+allnoconfig) failed like this:
 
-kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
-         int prev_cpu, int sync)
-         ^
-/home/sfr/next/next/kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+fs/fcntl.o: In function `do_fcntl': 
+fcntl.c:(.text+0x6d4): undefined reference to `__get_user_bad'
+fcntl.c:(.text+0x730): undefined reference to `__get_user_bad'
 
-Introduced by commit
+Probably caused by commit
 
-  3fed382b46ba ("sched/numa: Implement NUMA node level wake_affine()")
+  c75b1d9421f8 ("fs: add fcntl() interface for setting/getting write life time hints")
+
+On powerpc (at least) you cannot use get_user() to fetch anything larger
+than "unsigned long" i.e. 32 bits on 32 bit powerpc.
+
+This has been discussed before (and, I think, a fix attempted).
+
+For now I have applied the following patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Jun 2017 17:50:31 +1000
+Subject: [PATCH] fs: don't read an enum directly from a u64 __user *
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/fcntl.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index 24e233c75a33..19825eb7c40d 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -277,6 +277,7 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+ {
+ 	struct inode *inode = file_inode(file);
+ 	u64 *argp = (u64 __user *)arg;
++	u64 h;
+ 	enum rw_hint hint;
+ 
+ 	switch (cmd) {
+@@ -285,8 +286,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+ 			return -EFAULT;
+ 		return 0;
+ 	case F_SET_FILE_RW_HINT:
+-		if (get_user(hint, argp))
++		if (copy_from_user(&h, argp, sizeof(h)))
+ 			return -EFAULT;
++		hint = (enum rw_hint)h;
+ 		if (!rw_hint_valid(hint))
+ 			return -EINVAL;
+ 
+@@ -299,8 +301,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+ 			return -EFAULT;
+ 		return 0;
+ 	case F_SET_RW_HINT:
+-		if (get_user(hint, argp))
++		if (copy_from_user(&h, argp, sizeof(h)))
+ 			return -EFAULT;
++		hint = (enum rw_hint)h;
+ 		if (!rw_hint_valid(hint))
+ 			return -EINVAL;
+ 
+-- 
+2.11.0
 
 -- 
 Cheers,
