@@ -1,50 +1,36 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Wed, 28 Jun 2017 09:11:32 -0600
-Message-ID: <2c4503f8-8284-2578-3622-03529cc8bffe@kernel.dk>
-References: <20170628180456.30cb9242@canb.auug.org.au>
- <664cc88d-18a5-18c4-5bce-4d4352d15f4f@kernel.dk>
- <2bd17edb-4a5b-5bf8-7074-1156a5249325@kernel.dk>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build warning after merge of the libata tree
+Date: Wed, 28 Jun 2017 14:28:41 -0400
+Message-ID: <20170628182841.GA27503@htj.duckdns.org>
+References: <20170628155117.5bfbf545@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2bd17edb-4a5b-5bf8-7074-1156a5249325@kernel.dk>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20170628155117.5bfbf545@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Minwoo Im <dn3108@gmail.com>, Bart Van Assche <bart.vanassche@wdc.com>
 List-Id: linux-next.vger.kernel.org
 
-On 06/28/2017 08:01 AM, Jens Axboe wrote:
-> On 06/28/2017 06:43 AM, Jens Axboe wrote:
->> On 06/28/2017 02:04 AM, Stephen Rothwell wrote:
->>> Hi Jens,
->>>
->>> After merging the block tree, today's linux-next build (powerpc
->>> allnoconfig) failed like this:
->>>
->>> fs/fcntl.o: In function `do_fcntl': 
->>> fcntl.c:(.text+0x6d4): undefined reference to `__get_user_bad'
->>> fcntl.c:(.text+0x730): undefined reference to `__get_user_bad'
->>>
->>> Probably caused by commit
->>>
->>>   c75b1d9421f8 ("fs: add fcntl() interface for setting/getting write life time hints")
->>>
->>> On powerpc (at least) you cannot use get_user() to fetch anything larger
->>> than "unsigned long" i.e. 32 bits on 32 bit powerpc.
->>>
->>> This has been discussed before (and, I think, a fix attempted).
->>
->> Gah, thanks for letting me know. I'll test your patch and queue it
->> up to fix this issue.
+On Wed, Jun 28, 2017 at 03:51:17PM +1000, Stephen Rothwell wrote:
+> Hi Tejun,
 > 
-> But put_user() is fine? Just checking here, since the change adds
-> both a u64 put and get user.
+> After merging the libata tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/ata/libata-scsi.c: In function 'ata_scsi_var_len_cdb_xlat':
+> drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
+>  unspprt_sa:
+>  ^
+> 
+> Introduced by commit
+> 
+>   b1ffbf854e08 ("libata: Support for an ATA PASS-THROUGH(32) command.")
 
-I just changed all 4, at least that provides some symmetry in how
-we copy things in and out for that set of fcntls.
+Fixed up.  Sorry about that.
+
+Thanks.
 
 -- 
-Jens Axboe
+tejun
