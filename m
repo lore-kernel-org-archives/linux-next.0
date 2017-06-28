@@ -1,105 +1,46 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170628 build: 0 failures 7 warnings (next-20170628)
-Date: Wed, 28 Jun 2017 12:02:47 +0100
-Message-ID: <E1dQAkB-0006b7-ES@optimist>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Wed, 28 Jun 2017 06:43:41 -0600
+Message-ID: <664cc88d-18a5-18c4-5bce-4d4352d15f4f@kernel.dk>
+References: <20170628180456.30cb9242@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48522 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751498AbdF1LCy (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Jun 2017 07:02:54 -0400
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:33295 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751489AbdF1Mno (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 28 Jun 2017 08:43:44 -0400
+Received: by mail-pf0-f176.google.com with SMTP id e7so33029911pfk.0
+        for <linux-next@vger.kernel.org>; Wed, 28 Jun 2017 05:43:43 -0700 (PDT)
+In-Reply-To: <20170628180456.30cb9242@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 
-Tree/Branch: next-20170628
-Git describe: next-20170628
-Commit: a51166ce71 Add linux-next specific files for 20170628
+On 06/28/2017 02:04 AM, Stephen Rothwell wrote:
+> Hi Jens,
+> 
+> After merging the block tree, today's linux-next build (powerpc
+> allnoconfig) failed like this:
+> 
+> fs/fcntl.o: In function `do_fcntl': 
+> fcntl.c:(.text+0x6d4): undefined reference to `__get_user_bad'
+> fcntl.c:(.text+0x730): undefined reference to `__get_user_bad'
+> 
+> Probably caused by commit
+> 
+>   c75b1d9421f8 ("fs: add fcntl() interface for setting/getting write life time hints")
+> 
+> On powerpc (at least) you cannot use get_user() to fetch anything larger
+> than "unsigned long" i.e. 32 bits on 32 bit powerpc.
+> 
+> This has been discussed before (and, I think, a fix attempted).
 
-Build Time: 0 min 11 sec
+Gah, thanks for letting me know. I'll test your patch and queue it
+up to fix this issue.
 
-Passed:    7 / 7   (100.00 %)
-Failed:    0 / 7   (  0.00 %)
-
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm-multi_v5_defconfig
-      2 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      4 warnings    0 mismatches  : arm-allmodconfig
-      2 warnings    0 mismatches  : arm-allnoconfig
-      1 warnings    0 mismatches  : x86_64-allnoconfig
-      2 warnings    0 mismatches  : arm-multi_v4t_defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 7
-	  4 ../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
-	  3 ../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
-	  3 ../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
-	  2 ../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
-	  1 ../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
-	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
-	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
-	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
-	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/ata/libata-scsi.c:4194:1: warning: label 'unspprt_sa' defined but not used [-Wunused-label]
-	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
-	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
-	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
-
--------------------------------------------------------------------------------
-arm-multi_v4t_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
-	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
+-- 
+Jens Axboe
