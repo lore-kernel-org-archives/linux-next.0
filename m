@@ -1,63 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Wed, 28 Jun 2017 14:21:36 +1000
-Message-ID: <20170628142136.3cd8dfb4@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Wed, 28 Jun 2017 14:24:43 +1000
+Message-ID: <20170628142443.0f78ee27@canb.auug.org.au>
+References: <20170628134310.3a605636@canb.auug.org.au>
+        <595329D3.7080808@rock-chips.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34169 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40509 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751548AbdF1EVk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 00:21:40 -0400
+        id S1751581AbdF1EYp (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 00:24:45 -0400
+In-Reply-To: <595329D3.7080808@rock-chips.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anoob Soman <anoob.soman@citrix.com>
+To: jeffy <jeffy.chen@rock-chips.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Gustavo Padovan <gustavo@padovan.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi jeffy,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+On Wed, 28 Jun 2017 12:00:19 +0800 jeffy <jeffy.chen@rock-chips.com> wrote:
+>
+> commit 50816c48997af857d4bab3dca1aba90339705e96
+> Author: Ingo Molnar <mingo@kernel.org>
+> Date:   Sun Mar 5 10:33:16 2017 +0100
+> 
+>      sched/wait: Standardize internal naming of wait-queue entries
+> 
+> 
+> changed wait_queue_entry_t to struct wait_queue_entry, and also wait to 
+> wq_entry, maybe we should do it too?
 
-  drivers/xen/events/events_base.c
-
-between commit:
-
-  ef1c2cc88531 ("xen/events: Add support for effective affinity mask")
-
-from the tip tree and commit:
-
-  c48f64ab4723 ("xen-evtchn: Bind dyn evtchn:qemu-dm interrupt to next online VCPU")
-
-from the xen-tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Sure, but that can be done later.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/xen/events/events_base.c
-index 2e567d8433b3,813f1e86a599..000000000000
---- a/drivers/xen/events/events_base.c
-+++ b/drivers/xen/events/events_base.c
-@@@ -1343,12 -1343,8 +1343,12 @@@ static int set_affinity_irq(struct irq_
-  			    bool force)
-  {
-  	unsigned tcpu = cpumask_first_and(dest, cpu_online_mask);
-- 	int ret = rebind_irq_to_cpu(data->irq, tcpu);
-++	int ret = xen_rebind_evtchn_to_cpu(evtchn_from_irq(data->irq), tcpu);
-  
- -	return xen_rebind_evtchn_to_cpu(evtchn_from_irq(data->irq), tcpu);
- +	if (!ret)
- +		irq_data_update_effective_affinity(data, cpumask_of(tcpu));
- +
- +	return ret;
-  }
-  
-  static void enable_dynirq(struct irq_data *data)
