@@ -1,85 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the block tree
-Date: Wed, 28 Jun 2017 18:04:56 +1000
-Message-ID: <20170628180456.30cb9242@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ kselftest tree
+Date: Wed, 28 Jun 2017 18:31:11 +1000
+Message-ID: <20170628183111.05680b34@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42407 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54133 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750829AbdF1IFA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 04:05:00 -0400
+        id S1751650AbdF1IbR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 04:31:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Orson Zhai <orson.zhai@linaro.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>
 
-Hi Jens,
+Hi all,
 
-After merging the block tree, today's linux-next build (powerpc
-allnoconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
-fs/fcntl.o: In function `do_fcntl': 
-fcntl.c:(.text+0x6d4): undefined reference to `__get_user_bad'
-fcntl.c:(.text+0x730): undefined reference to `__get_user_bad'
+  tools/testing/selftests/sysctl/common_tests
+  tools/testing/selftests/sysctl/run_numerictests
+  tools/testing/selftests/sysctl/run_stringtests
 
-Probably caused by commit
+between commit:
 
-  c75b1d9421f8 ("fs: add fcntl() interface for setting/getting write life time hints")
+  d644437a1dc6 ("tools/testing/selftests/sysctl: Add pre-check to the value of writes_strict")
 
-On powerpc (at least) you cannot use get_user() to fetch anything larger
-than "unsigned long" i.e. 32 bits on 32 bit powerpc.
+from the kselftest tree and commit:
 
-This has been discussed before (and, I think, a fix attempted).
+  fed7038685f3 ("test_sysctl: add generic script to expand on tests")
 
-For now I have applied the following patch:
+from the akpm-current tree.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 28 Jun 2017 17:50:31 +1000
-Subject: [PATCH] fs: don't read an enum directly from a u64 __user *
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/fcntl.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 24e233c75a33..19825eb7c40d 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -277,6 +277,7 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
- {
- 	struct inode *inode = file_inode(file);
- 	u64 *argp = (u64 __user *)arg;
-+	u64 h;
- 	enum rw_hint hint;
- 
- 	switch (cmd) {
-@@ -285,8 +286,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
- 			return -EFAULT;
- 		return 0;
- 	case F_SET_FILE_RW_HINT:
--		if (get_user(hint, argp))
-+		if (copy_from_user(&h, argp, sizeof(h)))
- 			return -EFAULT;
-+		hint = (enum rw_hint)h;
- 		if (!rw_hint_valid(hint))
- 			return -EINVAL;
- 
-@@ -299,8 +301,9 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
- 			return -EFAULT;
- 		return 0;
- 	case F_SET_RW_HINT:
--		if (get_user(hint, argp))
-+		if (copy_from_user(&h, argp, sizeof(h)))
- 			return -EFAULT;
-+		hint = (enum rw_hint)h;
- 		if (!rw_hint_valid(hint))
- 			return -EINVAL;
- 
--- 
-2.11.0
+I fixed it up (I removed the files and so, for now I have effectively
+dropped the kselftest tree patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
