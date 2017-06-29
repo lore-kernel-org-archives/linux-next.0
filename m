@@ -1,28 +1,43 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the tip tree with the pci tree
-Date: Thu, 29 Jun 2017 02:14:39 +0200
-Message-ID: <20170629001439.GB21758@lst.de>
-References: <20170628131534.1d549e19@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 29 Jun 2017 11:54:00 +1000
+Message-ID: <20170629115400.3f52c9aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:52111 "EHLO newverein.lst.de"
+Received: from ozlabs.org ([103.22.144.67]:34693 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751541AbdF2AOl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 28 Jun 2017 20:14:41 -0400
-Content-Disposition: inline
-In-Reply-To: <20170628131534.1d549e19@canb.auug.org.au>
+        id S1751666AbdF2ByD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 28 Jun 2017 21:54:03 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Hernandez <michael.hernandez@cavium.com>, Himanshu Madhani <himanshu.madhani@cavium.com>, Christoph Hellwig <hch@lst.de>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bard Liao <bardliao@realtek.com>
 
-On Wed, Jun 28, 2017 at 01:15:34PM +1000, Stephen Rothwell wrote:
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi all,
 
-The merge looks fine to me.
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+sound/soc/codecs/rt5670.c: In function 'rt5670_set_codec_sysclk':
+sound/soc/codecs/rt5670.c:2448:57: error: 'codec' undeclared (first use in this function)
+  struct rt5670_priv *rt5670 = snd_soc_codec_get_drvdata(codec);
+                                                         ^
+sound/soc/codecs/rt5670.c:2448:57: note: each undeclared identifier is reported only once for each function it appears in
+sound/soc/codecs/rt5670.c: At top level:
+sound/soc/codecs/rt5670.c:2775:16: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .set_sysclk = rt5670_set_codec_sysclk,
+                ^
+sound/soc/codecs/rt5670.c:2775:16: note: (near initialization for 'soc_codec_dev_rt5670.set_sysclk')
+cc1: some warnings being treated as errors
+
+Caused by commit
+
+  6c28ce3c425e ("ASoC: rt5670: move set_sysclk to codec level")
+
+I have used the sound-asoc tree from next-20170628 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
