@@ -1,74 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the scsi-mkp tree
-Date: Thu, 29 Jun 2017 15:07:52 +1000
-Message-ID: <20170629150752.4ef9a713@canb.auug.org.au>
-References: <20170628155510.10f4ccfb@canb.auug.org.au>
+Subject: linux-next: manual merge of the kspp tree with the file-locks tree
+Date: Thu, 29 Jun 2017 15:34:34 +1000
+Message-ID: <20170629153434.2f0bd790@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:43069 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40179 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751591AbdF2FHz (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Jun 2017 01:07:55 -0400
-In-Reply-To: <20170628155510.10f4ccfb@canb.auug.org.au>
+        id S1751595AbdF2Fei (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Jun 2017 01:34:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Trapp <darren.trapp@cavium.com>, Duane Grigsby <duane.grigsby@cavium.com>, Anil Gurumurthy <anil.gurumurhty@cavium.com>, Giridhar Malavali <giridhar.malavali@cavium.com>, Himanshu Madhani <himanshu.madhani@cavium.com>, Hannes Reinecke <hare@suse.com>
+To: Kees Cook <keescook@google.com>, Jeff Layton <jlayton@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi James,
+Hi Kees,
 
-This has now migrated to the scsi tree.
+Today's linux-next merge of the kspp tree got a conflict in:
 
-On Wed, 28 Jun 2017 15:55:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the scsi-mkp tree, today's linux-next build
-> (powerpc_ppc64_defconfig) produced these warnings:
-> 
-> In file included from include/linux/byteorder/big_endian.h:4:0,
->                  from arch/powerpc/include/uapi/asm/byteorder.h:13,
->                  from include/asm-generic/bitops/le.h:5,
->                  from arch/powerpc/include/asm/bitops.h:246,
->                  from include/linux/bitops.h:36,
->                  from include/linux/kernel.h:10,
->                  from include/asm-generic/bug.h:15,
->                  from arch/powerpc/include/asm/bug.h:127,
->                  from include/linux/bug.h:4,
->                  from arch/powerpc/include/asm/mmu.h:125,
->                  from arch/powerpc/include/asm/lppaca.h:36,
->                  from arch/powerpc/include/asm/paca.h:21,
->                  from arch/powerpc/include/asm/current.h:16,
->                  from include/linux/sched.h:11,
->                  from include/linux/blkdev.h:4,
->                  from include/linux/blk-mq.h:4,
->                  from drivers/scsi/qla2xxx/qla_nvme.h:10,
->                  from drivers/scsi/qla2xxx/qla_nvme.c:7:
-> drivers/scsi/qla2xxx/qla_nvme.c: In function 'qla2x00_start_nvme_mq':
-> include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
->  #define __cpu_to_le32(x) ((__force __le32)__swab32((x)))
->                           ^
-> include/linux/byteorder/generic.h:87:21: note: in expansion of macro '__cpu_to_le32'
->  #define cpu_to_le32 __cpu_to_le32
->                      ^
-> drivers/scsi/qla2xxx/qla_nvme.c:444:27: note: in expansion of macro 'cpu_to_le32'
->     cont_pkt->entry_type = cpu_to_le32(CONTINUE_A64_TYPE);
->                            ^
-> drivers/scsi/qla2xxx/qla_nvme.c: At top level:
-> drivers/scsi/qla2xxx/qla_nvme.c:667:13: warning: 'qla_nvme_unregister_remote_port' defined but not used [-Wunused-function]
->  static void qla_nvme_unregister_remote_port(struct work_struct *work)
->              ^
-> drivers/scsi/qla2xxx/qla_nvme.c:604:12: warning: 'qla_nvme_wait_on_rport_del' defined but not used [-Wunused-function]
->  static int qla_nvme_wait_on_rport_del(fc_port_t *fcport)
->             ^
-> drivers/scsi/qla2xxx/qla_nvme.c:634:13: warning: 'qla_nvme_abort_all' defined but not used [-Wunused-function]
->  static void qla_nvme_abort_all(fc_port_t *fcport)
->              ^
-> 
-> Introduced by commit
-> 
->   e84067d74301 ("scsi: qla2xxx: Add FC-NVMe F/W initialization and transport registration")
+  include/linux/fs.h
+
+between commit:
+
+  1844a66c1c89 ("fs: new infrastructure for writeback error handling and reporting")
+
+from the file-locks tree and commit:
+
+  3abc2b3fcf5c ("randstruct: Mark various structs for randomization")
+
+from the kspp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/linux/fs.h
+index 000cf03ec441,8f28143486c4..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -293,8 -275,7 +293,8 @@@ struct kiocb 
+  	void (*ki_complete)(struct kiocb *iocb, long ret, long ret2);
+  	void			*private;
+  	int			ki_flags;
+ +	enum rw_hint		ki_hint;
+- };
++ } __randomize_layout;
+  
+  static inline bool is_sync_kiocb(struct kiocb *kiocb)
+  {
+@@@ -401,8 -392,7 +401,8 @@@ struct address_space 
+  	gfp_t			gfp_mask;	/* implicit gfp mask for allocations */
+  	struct list_head	private_list;	/* ditto */
+  	void			*private_data;	/* ditto */
+ +	errseq_t		wb_err;
+- } __attribute__((aligned(sizeof(long))));
++ } __attribute__((aligned(sizeof(long)))) __randomize_layout;
+  	/*
+  	 * On most architectures that alignment is already the case; but
+  	 * must be enforced here for CRIS, to let the least significant bit
+@@@ -880,9 -868,8 +880,10 @@@ struct file 
+  	struct list_head	f_tfile_llink;
+  #endif /* #ifdef CONFIG_EPOLL */
+  	struct address_space	*f_mapping;
+ +	errseq_t		f_wb_err; /* data writeback error tracking */
+ +	errseq_t		f_md_wb_err; /* metadata wb error tracking */
+- } __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
++ } __randomize_layout
++   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
+  
+  struct file_handle {
+  	__u32 handle_bytes;
