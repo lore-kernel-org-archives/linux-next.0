@@ -1,74 +1,96 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: arm64: build is broken on next-20170609 with merge-commit
- 9afca2c4e379 (arm64: allwinner: sun50i-a64: add dwmac-sun8i Ethernet driver)
-Date: Thu, 29 Jun 2017 09:48:25 +0200
-Message-ID: <20170629074825.pgeg2ut3nb3tj36u@flea>
-References: <20170609124325.p7b6fhdbwtki4w2z@yury-thinkpad>
- <20170610092944.4022d550@canb.auug.org.au>
- <20170628160711.08763ee7@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qrfx4bxeq4fkaby5"
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170629 build: 0 failures 6 warnings (next-20170629)
+Date: Thu, 29 Jun 2017 09:33:33 +0100
+Message-ID: <E1dQUtJ-0004eo-Iy@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:56450 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751638AbdF2Hsh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Jun 2017 03:48:37 -0400
-Content-Disposition: inline
-In-Reply-To: <20170628160711.08763ee7@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54912 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752136AbdF2Ifv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 29 Jun 2017 04:35:51 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Yury Norov <ynorov@caviumnetworks.com>, Sumit Semwal <sumit.semwal@linaro.org>, "David S. Miller" <davem@davemloft.net>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, LABBE Corentin <clabbe.montjoie@gmail.com>, Chen-Yu Tsai <wens@csie.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20170629
+Git describe: next-20170629
+Commit: 3fb8ba638d Add linux-next specific files for 20170629
+
+Build Time: 0 min 10 sec
+
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
+
+Errors: 0
+Warnings: 6
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      2 warnings    0 mismatches  : arm-multi_v4t_defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 6
+	  3 ../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+	  3 ../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	  2 ../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	  1 ../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
+	  1 ../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
 
 
---qrfx4bxeq4fkaby5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+===============================================================================
+Detailed per-defconfig build reports below:
 
-On Wed, Jun 28, 2017 at 04:07:11PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> [Yes, top posted :-)]
->=20
-> With the merge window approaching, this is just a reminder that this
-> merge problem still exists.  I assume that the sunxi tree will be
-> merged into the arm-soc tree before going to Linus.
 
-It's already been merged in arm-soc. I haven't had any news from Dave
-on this despite my mails, so I don't really know how to solve this.
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
-Those patches really should never have been in net-next in the first
-place.
+Warnings:
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
 
-Maxime
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Warnings:
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
 
---qrfx4bxeq4fkaby5
-Content-Type: application/pgp-signature; name="signature.asc"
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
 
------BEGIN PGP SIGNATURE-----
+Warnings:
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../include/uapi/linux/byteorder/big_endian.h:32:26: warning: large integer implicitly truncated to unsigned type [-Woverflow]
 
-iQIcBAEBAgAGBQJZVLDJAAoJEBx+YmzsjxAgimUP/imEFGm+PLqFR1DXmUYcc8EC
-jSOn0GWbU0C4Z1IjURkK5mu69IlaYces8vXOg8GtnrrOjVhgUgDtzp/cpZGAJlwW
-WS/ouOWhN0Vh226MEQGxlAsG5dNVXdAAbTd0tG25Y3b9YD5EEtQT3ybRmbjHh8WI
-j8ORKinCI5ABPcGUDRXzlKJFe3tFXLE9Z+avarKIY2+ZsWppQ6YHCFU6Uxb5Y0Xr
-ccDDjTo4HsUCGeu53K44w1fFkQxXdRYQfv1QPZrRAdE8YOSrKFPuVSM+KbDaDjwl
-lDBgKf7wn6WN+1EitFsnl0JYdR3Xp/YlxBvUnC3MWE18lBzFmVo3uPijCdiggh/P
-6mAkBJ+/lOKx2NsVP7lV2+QE6AiDEEBzh61g0zU2jNCUk2VvrF3OBEtQjbYaqs5C
-pciZtrU4GDRa2BaHztOPg9yHSqDZhyDcD9/CHdMy96eoKYPTyb0wmMmGPK2eb68q
-GgrfbPJH3t2jwlZZ/kf5l0HlR1Wml/sSzALX/xk02recbd7TIPDcbNI6IRLQBpDh
-Ks7Lb8Jm+wVikS4K85zeBXGGLpnZSyw/48Uy+cU3SQDPSDA6ZGs2PLqWIy75bTu9
-ajoVVwXQAU612pm6gFHIm0Oqz9G+XYO9dFjiNYMQ8lf7qOFXvz7FJqzI5VlGEZM1
-QT/6h/bIkw5Un4twXejg
-=FLU9
------END PGP SIGNATURE-----
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
---qrfx4bxeq4fkaby5--
+Warnings:
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/sched/fair.c:2655:44: warning: 'struct sched_domain' declared inside parameter list will not be visible outside of this definition or declaration
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../kernel/sched/fair.c:2657:9: warning: 'struct sched_domain' declared inside parameter list
+	../kernel/sched/fair.c:2657:9: warning: its scope is only this definition or declaration, which is probably not what you want
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-defconfig
