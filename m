@@ -1,77 +1,68 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: cpus stalls detected few hours after booting next
- kernel
-Date: Fri, 30 Jun 2017 11:15:11 -0700
-Message-ID: <20170630181511.GC2393@linux.vnet.ibm.com>
-References: <1498728106.19484.21.camel@abdul>
- <20170629193614.376e27e6@roar.ozlabs.ibm.com>
- <20170629202305.6187367f@roar.ozlabs.ibm.com>
- <20170630004534.228f7c08@roar.ozlabs.ibm.com>
- <1498800138.19484.25.camel@abdul>
- <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ kselftest tree
+Date: Sat, 1 Jul 2017 00:43:26 +0200
+Message-ID: <20170630224326.GW21846@wotan.suse.de>
+References: <20170628183111.05680b34@canb.auug.org.au>
+ <20170629123527.2196820e70818aeab51338e5@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59404 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751810AbdF3SPP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 30 Jun 2017 14:15:15 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v5UIE6cv092739
-        for <linux-next@vger.kernel.org>; Fri, 30 Jun 2017 14:15:15 -0400
-Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2bdm4wtsey-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Fri, 30 Jun 2017 14:15:14 -0400
-Received: from localhost
-        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 30 Jun 2017 14:15:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57221 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753130AbdF3Wn3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 30 Jun 2017 18:43:29 -0400
 Content-Disposition: inline
-In-Reply-To: <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
+In-Reply-To: <20170629123527.2196820e70818aeab51338e5@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <Paul.McKenney@us.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, paulus@samba.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Shuah Khan <shuahkh@osg.samsung.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Orson Zhai <orson.zhai@linaro.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>
 
-On Fri, Jun 30, 2017 at 05:28:02PM +1000, Nicholas Piggin wrote:
-> On Fri, 30 Jun 2017 10:52:18 +0530
-> Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
+On Thu, Jun 29, 2017 at 12:35:27PM -0700, Andrew Morton wrote:
+> On Wed, 28 Jun 2017 18:31:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > 
-> > On Fri, 2017-06-30 at 00:45 +1000, Nicholas Piggin wrote:
-> > > On Thu, 29 Jun 2017 20:23:05 +1000
-> > > Nicholas Piggin <npiggin@gmail.com> wrote:
-> > > 
-> > > > On Thu, 29 Jun 2017 19:36:14 +1000
-> > > > Nicholas Piggin <npiggin@gmail.com> wrote:
-> > > 
-> > > > > I don't *think* the replay-wakeup-interrupt patch is directly involved, but
-> > > > > it's likely to be one of the idle patches.  
-> > > 
-> > > Okay this turned out to be misconfigured sleep states I added for the
-> > > simulator, sorry for the false alarm.
-> > > 
-> > > > Although you have this in the backtrace. I wonder if that's a stuck
-> > > > lock in rcu_process_callbacks?
-> > > 
-> > > So this spinlock becomes top of the list of suspects. Can you try
-> > > enabling lockdep and try to reproduce it?
+> > Hi all,
 > > 
-> > Yes, recreated again with CONFIG_LOCKDEP=y & CONFIG_DEBUG_LOCKDEP=y set.
-> > I do not see any difference in trace messages with and without LOCKDEP
-> > enabled.
+> > Today's linux-next merge of the akpm-current tree got conflicts in:
 > > 
-> > Please find the attached log file.
+> >   tools/testing/selftests/sysctl/common_tests
+> >   tools/testing/selftests/sysctl/run_numerictests
+> >   tools/testing/selftests/sysctl/run_stringtests
+> > 
+> > between commit:
+> > 
+> >   d644437a1dc6 ("tools/testing/selftests/sysctl: Add pre-check to the value of writes_strict")
+> > 
+> > from the kselftest tree and commit:
+> > 
+> >   fed7038685f3 ("test_sysctl: add generic script to expand on tests")
+> > 
+> > from the akpm-current tree.
+> > 
+> > I fixed it up (I removed the files and so, for now I have effectively
+> > dropped the kselftest tree patch) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> > 
 > 
-> Can you get an rcu_invoke_callback event trace that Paul suggested?
+> urgh.
 > 
-> Does this bug show up with just the powerpc next branch?
+> I'll drop 
+> 
+> test_sysctl-add-dedicated-proc-sysctl-test-driver.patch
+> test_sysctl-add-generic-script-to-expand-on-tests.patch
+> test_sysctl-test-against-page_size-for-int.patch
+> test_sysctl-add-simple-proc_dointvec-case.patch
+> test_sysctl-add-simple-proc_douintvec-case.patch
+> test_sysctl-test-against-int-proc_dointvec-array-support.patch
+> 
+> Luis, could you please redo these against the changes in linux-next and
+> resend?
 
-And I must say that those RCU CPU stall warnings are spectacular!
+Coming right up!
 
-Did you by chance boot with a small subset of the CPUs online, and
-bring the rest online later on?
-
-							Thanx, Paul
+  Luis
