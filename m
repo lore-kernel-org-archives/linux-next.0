@@ -1,207 +1,237 @@
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v2 6/6] test_sysctl: test against int proc_dointvec() array support
-Date: Fri, 30 Jun 2017 15:44:31 -0700
-Message-ID: <20170630224431.17374-7-mcgrof@kernel.org>
+Subject: [PATCH v2 1/6] test_sysctl: add dedicated proc sysctl test driver
+Date: Fri, 30 Jun 2017 15:44:26 -0700
+Message-ID: <20170630224431.17374-2-mcgrof@kernel.org>
 References: <20170629123527.2196820e70818aeab51338e5@linux-foundation.org>
  <20170630224431.17374-1-mcgrof@kernel.org>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:33322 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753275AbdF3Woh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 30 Jun 2017 18:44:37 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170630224431.17374-1-mcgrof@kernel.org>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: akpm@linux-foundation.org
 Cc: keescook@chromium.org, shuahkh@osg.samsung.com, shuah@kernel.org, sfr@canb.auug.org.au, orson.zhai@linaro.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
+List-Id: linux-next.vger.kernel.org
 
-Add a few initial respective tests for an array:
+The existing tools/testing/selftests/sysctl/ tests include two test cases,
+but these use existing production kernel sysctl interfaces. We want to
+expand test coverage but we can't just be looking for random safe production
+values to poke at, that's just insane!
 
-  o Echoing values separated by spaces works
-  o Echoing only first elements will set first elements
-  o Confirm PAGE_SIZE limit still applies even if an array is used
+Instead just dedicate a test driver for debugging purposes and port the
+existing scripts to use it. This will make it easier for further tests to
+be added.
 
-Cc: Kees Cook <keescook@chromium.org>
+Subsequent patches will extend our test coverage for sysctl.
+
+The stress test driver uses a new license (GPL on Linux, copyleft-next
+outside of Linux).  Linus was fine with this [0] and later due to Ted's
+and Alans's request ironed out an "or" language clause to use [1] which is
+already present upstream.
+
+[0] https://lkml.kernel.org/r/CA+55aFyhxcvD+q7tp+-yrSFDKfR0mOHgyEAe=f_94aKLsOu0Og@mail.gmail.com
+[1] https://lkml.kernel.org/r/1495234558.7848.122.camel@linux.intel.com
+
+Acked-by: Kees Cook <keescook@chromium.org>
 Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- lib/test_sysctl.c                        | 13 +++++
- tools/testing/selftests/sysctl/sysctl.sh | 89 ++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
+ lib/Kconfig.debug                               |  11 +++
+ lib/Makefile                                    |   1 +
+ lib/test_sysctl.c                               | 113 ++++++++++++++++++++++++
+ tools/testing/selftests/sysctl/config           |   1 +
+ tools/testing/selftests/sysctl/run_numerictests |   4 +-
+ tools/testing/selftests/sysctl/run_stringtests  |   4 +-
+ 6 files changed, 130 insertions(+), 4 deletions(-)
+ create mode 100644 lib/test_sysctl.c
+ create mode 100644 tools/testing/selftests/sysctl/config
 
-diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
-index 53db3513ab08..3dd801c1c85b 100644
---- a/lib/test_sysctl.c
-+++ b/lib/test_sysctl.c
-@@ -42,6 +42,7 @@ static int i_one_hundred = 100;
- struct test_sysctl_data {
- 	int int_0001;
- 	int int_0002;
-+	int int_0003[4];
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index b0c35e0667df..dfa50b54f017 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1824,6 +1824,17 @@ config TEST_FIRMWARE
  
- 	unsigned int uint_0001;
+ 	  If unsure, say N.
  
-@@ -52,6 +53,11 @@ static struct test_sysctl_data test_data = {
- 	.int_0001 = 60,
- 	.int_0002 = 1,
- 
-+	.int_0003[0] = 0,
-+	.int_0003[1] = 1,
-+	.int_0003[2] = 2,
-+	.int_0003[3] = 3,
++config TEST_SYSCTL
++	tristate "sysctl test driver"
++	default n
++	depends on PROC_SYSCTL
++	help
++	  This builds the "test_sysctl" module. This driver enables to test the
++	  proc sysctl interfaces available to drivers safely without affecting
++	  production knobs which might alter system functionality.
 +
- 	.uint_0001 = 314,
- 
- 	.string_0001 = "(none)",
-@@ -76,6 +82,13 @@ static struct ctl_table test_table[] = {
- 		.proc_handler	= proc_dointvec,
- 	},
- 	{
-+		.procname	= "int_0003",
-+		.data		= &test_data.int_0003,
-+		.maxlen		= sizeof(test_data.int_0003),
++	  If unsure, say N.
++
+ config TEST_UDELAY
+ 	tristate "udelay test driver"
+ 	default n
+diff --git a/lib/Makefile b/lib/Makefile
+index 678c6c38a991..40c18372b301 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -46,6 +46,7 @@ obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
+ obj-y += kstrtox.o
+ obj-$(CONFIG_TEST_BPF) += test_bpf.o
+ obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
++obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
+ obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
+ obj-$(CONFIG_TEST_KASAN) += test_kasan.o
+ obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
+diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
+new file mode 100644
+index 000000000000..b2163bfb6eb2
+--- /dev/null
++++ b/lib/test_sysctl.c
+@@ -0,0 +1,113 @@
++/*
++ * proc sysctl test driver
++ *
++ * Copyright (C) 2017 Luis R. Rodriguez <mcgrof@kernel.org>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the Free
++ * Software Foundation; either version 2 of the License, or at your option any
++ * later version; or, when distributed separately from the Linux kernel or
++ * when incorporated into other software packages, subject to the following
++ * license:
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of copyleft-next (version 0.3.1 or later) as published
++ * at http://copyleft-next.org/.
++ */
++
++/*
++ * This module provides an interface to the the proc sysctl interfaces.  This
++ * driver requires CONFIG_PROC_SYSCTL. It will not normally be loaded by the
++ * system unless explicitly requested by name. You can also build this driver
++ * into your kernel.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/init.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/printk.h>
++#include <linux/fs.h>
++#include <linux/miscdevice.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/async.h>
++#include <linux/delay.h>
++#include <linux/vmalloc.h>
++
++static int i_zero;
++static int i_one_hundred = 100;
++
++struct test_sysctl_data {
++	int int_0001;
++	char string_0001[65];
++};
++
++static struct test_sysctl_data test_data = {
++	.int_0001 = 60,
++	.string_0001 = "(none)",
++};
++
++/* These are all under /proc/sys/debug/test_sysctl/ */
++static struct ctl_table test_table[] = {
++	{
++		.procname	= "int_0001",
++		.data		= &test_data.int_0001,
++		.maxlen		= sizeof(int),
 +		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &i_zero,
++		.extra2         = &i_one_hundred,
 +	},
 +	{
- 		.procname	= "uint_0001",
- 		.data		= &test_data.uint_0001,
- 		.maxlen		= sizeof(unsigned int),
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index abeef675a884..ec232c3cfcaa 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -33,6 +33,7 @@ ALL_TESTS="0001:1:1"
- ALL_TESTS="$ALL_TESTS 0002:1:1"
- ALL_TESTS="$ALL_TESTS 0003:1:1"
- ALL_TESTS="$ALL_TESTS 0004:1:1"
-+ALL_TESTS="$ALL_TESTS 0005:3:1"
- 
- test_modprobe()
- {
-@@ -108,6 +109,10 @@ test_reqs()
- 		echo "$0: You need getconf installed"
- 		exit 1
- 	fi
-+	if ! which diff 2> /dev/null > /dev/null; then
-+		echo "$0: You need diff installed"
-+		exit 1
-+	fi
- }
- 
- function load_req_mod()
-@@ -167,6 +172,12 @@ verify()
- 	return 0
- }
- 
-+verify_diff_w()
++		.procname	= "string_0001",
++		.data		= &test_data.string_0001,
++		.maxlen		= sizeof(test_data.string_0001),
++		.mode		= 0644,
++		.proc_handler	= proc_dostring,
++	},
++	{ }
++};
++
++static struct ctl_table test_sysctl_table[] = {
++	{
++		.procname	= "test_sysctl",
++		.maxlen		= 0,
++		.mode		= 0555,
++		.child		= test_table,
++	},
++	{ }
++};
++
++static struct ctl_table test_sysctl_root_table[] = {
++	{
++		.procname	= "debug",
++		.maxlen		= 0,
++		.mode		= 0555,
++		.child		= test_sysctl_table,
++	},
++	{ }
++};
++
++static struct ctl_table_header *test_sysctl_header;
++
++static int __init test_sysctl_init(void)
 +{
-+	echo "$TEST_STR" | diff -q -w -u - $1
-+	return $?
++	test_sysctl_header = register_sysctl_table(test_sysctl_root_table);
++	if (!test_sysctl_header)
++		return -ENOMEM;
++	return 0;
++}
++late_initcall(test_sysctl_init);
++
++static void __exit test_sysctl_exit(void)
++{
++	if (test_sysctl_header)
++		unregister_sysctl_table(test_sysctl_header);
 +}
 +
- test_rc()
- {
- 	if [[ $rc != 0 ]]; then
-@@ -352,6 +363,74 @@ run_limit_digit_int()
- 	test_rc
- }
++module_exit(test_sysctl_exit);
++
++MODULE_AUTHOR("Luis R. Rodriguez <mcgrof@kernel.org>");
++MODULE_LICENSE("GPL");
+diff --git a/tools/testing/selftests/sysctl/config b/tools/testing/selftests/sysctl/config
+new file mode 100644
+index 000000000000..6ca14800d755
+--- /dev/null
++++ b/tools/testing/selftests/sysctl/config
+@@ -0,0 +1 @@
++CONFIG_TEST_SYSCTL=y
+diff --git a/tools/testing/selftests/sysctl/run_numerictests b/tools/testing/selftests/sysctl/run_numerictests
+index e6e76c93d948..c375ce0f4c15 100755
+--- a/tools/testing/selftests/sysctl/run_numerictests
++++ b/tools/testing/selftests/sysctl/run_numerictests
+@@ -1,7 +1,7 @@
+ #!/bin/sh
  
-+# You used an int array
-+run_limit_digit_int_array()
-+{
-+	echo -n "Testing array works as expected ... "
-+	TEST_STR="4 3 2 1"
-+	echo -n $TEST_STR > $TARGET
-+
-+	if ! verify_diff_w "${TARGET}"; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+	fi
-+	test_rc
-+
-+	echo -n "Testing skipping trailing array elements works ... "
-+	# Do not reset_vals, carry on the values from the last test.
-+	# If we only echo in two digits the last two are left intact
-+	TEST_STR="100 101"
-+	echo -n $TEST_STR > $TARGET
-+	# After we echo in, to help diff we need to set on TEST_STR what
-+	# we expect the result to be.
-+	TEST_STR="100 101 2 1"
-+
-+	if ! verify_diff_w "${TARGET}"; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+	fi
-+	test_rc
-+
-+	echo -n "Testing PAGE_SIZE limit on array works ... "
-+	# Do not reset_vals, carry on the values from the last test.
-+	# Even if you use an int array, you are still restricted to
-+	# MAX_DIGITS, this is a known limitation. Test limit works.
-+	LIMIT=$((MAX_DIGITS -1))
-+	TEST_STR="9"
-+	(perl -e 'print " " x '$LIMIT';'; echo "${TEST_STR}") | \
-+		dd of="${TARGET}" 2>/dev/null
-+
-+	TEST_STR="9 101 2 1"
-+	if ! verify_diff_w "${TARGET}"; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+	fi
-+	test_rc
-+
-+	echo -n "Testing exceeding PAGE_SIZE limit fails as expected ... "
-+	# Do not reset_vals, carry on the values from the last test.
-+	# Now go over limit.
-+	LIMIT=$((MAX_DIGITS))
-+	TEST_STR="7"
-+	(perl -e 'print " " x '$LIMIT';'; echo "${TEST_STR}") | \
-+		dd of="${TARGET}" 2>/dev/null
-+
-+	TEST_STR="7 101 2 1"
-+	if verify_diff_w "${TARGET}"; then
-+		echo "FAIL" >&2
-+		rc=1
-+	else
-+		echo "ok"
-+	fi
-+	test_rc
-+}
-+
- # You are using an unsigned int
- run_limit_digit_uint()
- {
-@@ -512,6 +591,15 @@ sysctl_test_0004()
- 	run_limit_digit_uint
- }
+-SYSCTL="/proc/sys"
+-TARGET="${SYSCTL}/vm/swappiness"
++SYSCTL="/proc/sys/debug/test_sysctl/"
++TARGET="${SYSCTL}/int_0001"
+ ORIG=$(cat "${TARGET}")
+ TEST_STR=$(( $ORIG + 1 ))
  
-+sysctl_test_0005()
-+{
-+	TARGET="${SYSCTL}/int_0003"
-+	reset_vals
-+	ORIG=$(cat "${TARGET}")
-+
-+	run_limit_digit_int_array
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -524,6 +612,7 @@ list_tests()
- 	echo "0002 x $(get_test_count 0002) - tests proc_dostring()"
- 	echo "0003 x $(get_test_count 0003) - tests proc_dointvec()"
- 	echo "0004 x $(get_test_count 0004) - tests proc_douintvec()"
-+	echo "0005 x $(get_test_count 0005) - tests proc_douintvec() array"
- }
+diff --git a/tools/testing/selftests/sysctl/run_stringtests b/tools/testing/selftests/sysctl/run_stringtests
+index 857ec667fb02..a6f2618afeaa 100755
+--- a/tools/testing/selftests/sysctl/run_stringtests
++++ b/tools/testing/selftests/sysctl/run_stringtests
+@@ -1,7 +1,7 @@
+ #!/bin/sh
  
- test_reqs
+-SYSCTL="/proc/sys"
+-TARGET="${SYSCTL}/kernel/domainname"
++SYSCTL="/proc/sys/debug/test_sysctl/"
++TARGET="${SYSCTL}/string_0001"
+ ORIG=$(cat "${TARGET}")
+ TEST_STR="Testing sysctl"
+ 
 -- 
 2.11.0
