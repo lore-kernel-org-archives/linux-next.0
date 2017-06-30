@@ -1,63 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Date: Fri, 30 Jun 2017 12:08:06 +1000
-Message-ID: <20170630120806.78d8af49@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 30 Jun 2017 14:00:54 +1000
+Message-ID: <20170630140054.38f98968@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35679 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751886AbdF3CIK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 29 Jun 2017 22:08:10 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jens,
+Hi Darren,
 
-Today's linux-next merge of the block tree got a conflict in:
+After merging the drivers-x86 tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  fs/block_dev.c
+drivers/platform/x86/sony-laptop.c: In function 'sony_laptop_setup_input':
+drivers/platform/x86/sony-laptop.c:494:19: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-array-qualifiers]
+  key_dev->keycode = &sony_laptop_input_keycode_map;
+                   ^
 
-between commit:
+Introduced by commit
 
-  9ae3b3f52c62 ("block: provide bio_uninit() free freeing integrity/task associations")
-
-from Linus' tree and commit:
-
-  4e4cbee93d56 ("block: switch bios to blk_status_t")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  a0f0a5e1978b ("platform/x86: sony-laptop: constify few static structures")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/block_dev.c
-index 9e9f25dc69bc,2c5f08696fff..000000000000
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@@ -262,11 -263,8 +263,11 @@@ __blkdev_direct_IO_simple(struct kiocb 
-  	if (vecs != inline_vecs)
-  		kfree(vecs);
-  
-- 	if (unlikely(bio.bi_error))
-- 		ret = bio.bi_error;
-+ 	if (unlikely(bio.bi_status))
- -		return blk_status_to_errno(bio.bi_status);
-++		ret = blk_status_to_errno(bio.bi_status);
- +
- +	bio_uninit(&bio);
- +
-  	return ret;
-  }
-  
