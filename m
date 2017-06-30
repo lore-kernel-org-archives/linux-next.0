@@ -1,58 +1,112 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Fri, 30 Jun 2017 10:57:51 +1000
-Message-ID: <20170630105751.543eb510@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 30 Jun 2017 11:51:35 +1000
+Message-ID: <20170630115135.2696f717@canb.auug.org.au>
+References: <20170629115400.3f52c9aa@canb.auug.org.au>
+        <ABFD875FF5FB574BA706497D987D48D70267BA04@RTITMBSV02.realtek.com.tw>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="MP_/Kc7fk42RHCn8a9eTr8tRhpf"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54413 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751333AbdF3Bvi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 29 Jun 2017 21:51:38 -0400
+In-Reply-To: <ABFD875FF5FB574BA706497D987D48D70267BA04@RTITMBSV02.realtek.com.tw>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bard Liao <bardliao@realtek.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+
+--MP_/Kc7fk42RHCn8a9eTr8tRhpf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@oracle.com>, Arkadi Sharshevsky <arkadis@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Content-Disposition: inline
 
-Hi all,
+Hi Bard,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+On Thu, 29 Jun 2017 02:01:16 +0000 Bard Liao <bardliao@realtek.com> wrote:
+>
+> > -----Original Message-----
+> > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > Sent: Thursday, June 29, 2017 9:54 AM
+> > To: Mark Brown; Liam Girdwood
+> > Cc: Linux-Next Mailing List; Linux Kernel Mailing List; Bard Liao
+> > Subject: linux-next: build failure after merge of the sound-asoc tree
+> > 
+> > Hi all,
+> > 
+> > After merging the sound-asoc tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> > 
+> > sound/soc/codecs/rt5670.c: In function 'rt5670_set_codec_sysclk':
+> > sound/soc/codecs/rt5670.c:2448:57: error: 'codec' undeclared (first use in this
+> > function)
+> >   struct rt5670_priv *rt5670 = snd_soc_codec_get_drvdata(codec);
+> >                                                          ^
+> > sound/soc/codecs/rt5670.c:2448:57: note: each undeclared identifier is
+> > reported only once for each function it appears in
+> > sound/soc/codecs/rt5670.c: At top level:
+> > sound/soc/codecs/rt5670.c:2775:16: error: initialization from incompatible
+> > pointer type [-Werror=incompatible-pointer-types]
+> >   .set_sysclk = rt5670_set_codec_sysclk,
+> >                 ^
+> > sound/soc/codecs/rt5670.c:2775:16: note: (near initialization for
+> > 'soc_codec_dev_rt5670.set_sysclk')
+> > cc1: some warnings being treated as errors
+> > 
+> > Caused by commit
+> > 
+> >   6c28ce3c425e ("ASoC: rt5670: move set_sysclk to codec level")
+> > 
+> > I have used the sound-asoc tree from next-20170628 for today.  
+> 
+> Sorry about that. I just sent a patch to fix it. Please check the attached.
 
-  drivers/net/ethernet/rocker/rocker_ofdpa.c
+I have applied your patch (attached) for today.
 
-between commit:
+Mark, Liam, please apply.
 
-  acb4b7df48b5 ("rocker: move dereference before free")
-
-from Linus' tree and commit:
-
-  00fc0c51e35b ("rocker: Change world_ops API and implementation to be switchdev independant")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/rocker/rocker_ofdpa.c
-index a9ce82d3e9cf,bd0e3f157e9e..000000000000
---- a/drivers/net/ethernet/rocker/rocker_ofdpa.c
-+++ b/drivers/net/ethernet/rocker/rocker_ofdpa.c
-@@@ -1505,10 -1409,10 +1409,10 @@@ static int ofdpa_port_ipv4_nh(struct of
-  		*index = entry->index;
-  		resolved = false;
-  	} else if (removing) {
- -		ofdpa_neigh_del(found);
-  		*index = found->index;
-- 		ofdpa_neigh_del(trans, found);
-++		ofdpa_neigh_del(found);
-  	} else if (updating) {
-- 		ofdpa_neigh_update(found, trans, NULL, false);
-+ 		ofdpa_neigh_update(found, NULL, false);
-  		resolved = !is_zero_ether_addr(found->eth_dst);
-  		*index = found->index;
-  	} else {
+--MP_/Kc7fk42RHCn8a9eTr8tRhpf
+Content-Type: text/x-patch
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename=0001-ASoC-rt5670-fix-incompatible-pointer-type-of-set_sys.patch
+
+>From edd2464c74be57ee7b5f5d08b539a0de0b3ecfc8 Mon Sep 17 00:00:00 2001
+From: Bard Liao <bardliao@realtek.com>
+Date: Thu, 29 Jun 2017 09:37:24 +0800
+Subject: [PATCH] ASoC: rt5670: fix incompatible pointer type of set_sysclk
+
+The first parameter is codec not dai.
+
+Signed-off-by: Bard Liao <bardliao@realtek.com>
+---
+Sorry for missing it in the "move set_sysclk to codec level" patch
+---
+ sound/soc/codecs/rt5670.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/sound/soc/codecs/rt5670.c b/sound/soc/codecs/rt5670.c
+index 7fa63ad..64756dc 100644
+--- a/sound/soc/codecs/rt5670.c
++++ b/sound/soc/codecs/rt5670.c
+@@ -2442,7 +2442,7 @@ static int rt5670_set_dai_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	return 0;
+ }
+ 
+-static int rt5670_set_codec_sysclk(struct snd_soc_dai *dai, int clk_id,
++static int rt5670_set_codec_sysclk(struct snd_soc_codec *codec, int clk_id,
+ 				   int source, unsigned int freq, int dir)
+ {
+ 	struct rt5670_priv *rt5670 = snd_soc_codec_get_drvdata(codec);
+-- 
+2.7.4
+
+
+--MP_/Kc7fk42RHCn8a9eTr8tRhpf--
