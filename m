@@ -1,43 +1,77 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build warning after merge of the pinctrl tree
-Date: Fri, 30 Jun 2017 15:48:10 +0200
-Message-ID: <CACRpkdbNFJTodJT6Cu5cwKz-2ey5X67Bygr_j-mGTUYGCtBQjQ@mail.gmail.com>
-References: <20170630145601.441b4994@canb.auug.org.au> <CAMuHMdVHkg3vs9XVthMoZzyV37KgNcWBj9RN3s6XATY3Eux0qw@mail.gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: cpus stalls detected few hours after booting next
+ kernel
+Date: Fri, 30 Jun 2017 11:15:11 -0700
+Message-ID: <20170630181511.GC2393@linux.vnet.ibm.com>
+References: <1498728106.19484.21.camel@abdul>
+ <20170629193614.376e27e6@roar.ozlabs.ibm.com>
+ <20170629202305.6187367f@roar.ozlabs.ibm.com>
+ <20170630004534.228f7c08@roar.ozlabs.ibm.com>
+ <1498800138.19484.25.camel@abdul>
+ <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f173.google.com ([209.85.223.173]:33876 "EHLO
-        mail-io0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751964AbdF3NsM (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 30 Jun 2017 09:48:12 -0400
-Received: by mail-io0-f173.google.com with SMTP id r36so24289972ioi.1
-        for <linux-next@vger.kernel.org>; Fri, 30 Jun 2017 06:48:12 -0700 (PDT)
-In-Reply-To: <CAMuHMdVHkg3vs9XVthMoZzyV37KgNcWBj9RN3s6XATY3Eux0qw@mail.gmail.com>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59404 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751810AbdF3SPP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 30 Jun 2017 14:15:15 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.20/8.16.0.20) with SMTP id v5UIE6cv092739
+        for <linux-next@vger.kernel.org>; Fri, 30 Jun 2017 14:15:15 -0400
+Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2bdm4wtsey-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Fri, 30 Jun 2017 14:15:14 -0400
+Received: from localhost
+        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 30 Jun 2017 14:15:13 -0400
+Content-Disposition: inline
+In-Reply-To: <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <Paul.McKenney@us.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, paulus@samba.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 
-On Fri, Jun 30, 2017 at 8:59 AM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Jun 30, 2017 at 6:56 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> After merging the pinctrl tree, today's linux-next build (x86_64
->> allmodconfig) produced this warning:
->>
->> drivers/pinctrl/pinctrl-rza1.c: In function 'rza1_pinctrl_probe':
->> drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
->>   if (ret)
->>      ^
->>
->> Introduced by commit
->>
->>   5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
->
-> Doh, 0day doesn't use compilers that report uninitialized variables?
+On Fri, Jun 30, 2017 at 05:28:02PM +1000, Nicholas Piggin wrote:
+> On Fri, 30 Jun 2017 10:52:18 +0530
+> Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
+> 
+> > On Fri, 2017-06-30 at 00:45 +1000, Nicholas Piggin wrote:
+> > > On Thu, 29 Jun 2017 20:23:05 +1000
+> > > Nicholas Piggin <npiggin@gmail.com> wrote:
+> > > 
+> > > > On Thu, 29 Jun 2017 19:36:14 +1000
+> > > > Nicholas Piggin <npiggin@gmail.com> wrote:
+> > > 
+> > > > > I don't *think* the replay-wakeup-interrupt patch is directly involved, but
+> > > > > it's likely to be one of the idle patches.  
+> > > 
+> > > Okay this turned out to be misconfigured sleep states I added for the
+> > > simulator, sorry for the false alarm.
+> > > 
+> > > > Although you have this in the backtrace. I wonder if that's a stuck
+> > > > lock in rcu_process_callbacks?
+> > > 
+> > > So this spinlock becomes top of the list of suspects. Can you try
+> > > enabling lockdep and try to reproduce it?
+> > 
+> > Yes, recreated again with CONFIG_LOCKDEP=y & CONFIG_DEBUG_LOCKDEP=y set.
+> > I do not see any difference in trace messages with and without LOCKDEP
+> > enabled.
+> > 
+> > Please find the attached log file.
+> 
+> Can you get an rcu_invoke_callback event trace that Paul suggested?
+> 
+> Does this bug show up with just the powerpc next branch?
 
-The real problem is that 0day is not working right now.
+And I must say that those RCU CPU stall warnings are spectacular!
 
-I only get timeouts from it for the moment.
+Did you by chance boot with a small subset of the CPUs online, and
+bring the rest online later on?
 
-Yours,
-Linus Walleij
+							Thanx, Paul
