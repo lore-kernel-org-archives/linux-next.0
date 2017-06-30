@@ -1,58 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the target-updates tree with the
- scsi-mkp tree
-Date: Fri, 30 Jun 2017 15:11:07 +1000
-Message-ID: <20170630151107.60753385@canb.auug.org.au>
-References: <20170613164742.7308e4dd@canb.auug.org.au>
+From: Arvind Yadav <arvind.yadav.cs@gmail.com>
+Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 30 Jun 2017 10:42:25 +0530
+Message-ID: <d0b99e22-b379-22fa-aaab-d712c54354e0@gmail.com>
+References: <20170630140054.38f98968@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56837 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751333AbdF3FLJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 30 Jun 2017 01:11:09 -0400
-In-Reply-To: <20170613164742.7308e4dd@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Nicholas A. Bellinger" <nab@linux-iscsi.org>, James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Quinn Tran <quinn.tran@cavium.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170630140054.38f98968@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Darren Hart <dvhart@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi,
+      I have push one more patch which does not have this warning.
+please avoid my first patch.
 
-With the merge window approaching, this is just a reminder that the
-following conflict still exists.  No action is necessarily needed
-except to maybe mention this to Linus at the appropriate time.
+Thanks
+~ arvind
 
-James, you have been added since you merged the scsi-mkp tree int the
-scsi tree.
-
-On Tue, 13 Jun 2017 16:47:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Friday 30 June 2017 09:30 AM, Stephen Rothwell wrote:
+> Hi Darren,
 >
-> Hi Nicholas,
-> 
-> Today's linux-next merge of the target-updates tree got a conflict in:
-> 
->   drivers/scsi/qla2xxx/qla_target.c
-> 
-> between commit:
-> 
->   f775bd14e44d ("scsi: qla2xxx: Convert 32-bit LUN usage to 64-bit")
-> 
-> from the scsi-mkp tree and commit:
-> 
->   6b26726af699 ("qla2xxx: Convert QLA_TGT_ABTS to TARGET_SCF_LOOKUP_LUN_FROM_TAG")
-> 
-> from the target-updates tree.
-> 
-> I fixed it up (I basically used the latter verion of
-> __qlt_24xx_handle_abts()) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/platform/x86/sony-laptop.c: In function 'sony_laptop_setup_input':
+> drivers/platform/x86/sony-laptop.c:494:19: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-array-qualifiers]
+>    key_dev->keycode = &sony_laptop_input_keycode_map;
+>                     ^
+>
+> Introduced by commit
+>
+>    a0f0a5e1978b ("platform/x86: sony-laptop: constify few static structures")
+>
