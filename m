@@ -1,53 +1,44 @@
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: rza1: Remove unneeded wrong check for wrong variable
-Date: Fri, 30 Jun 2017 08:57:39 +0200
-Message-ID: <1498805859-4136-1-git-send-email-geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build warning after merge of the pinctrl tree
+Date: Fri, 30 Jun 2017 08:59:37 +0200
+Message-ID: <CAMuHMdVHkg3vs9XVthMoZzyV37KgNcWBj9RN3s6XATY3Eux0qw@mail.gmail.com>
+References: <20170630145601.441b4994@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Chris Brandt <chris.brandt@renesas.com>, linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-next@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170630145601.441b4994@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Depending on compiler version:
+Hi Stephen,
 
-    drivers/pinctrl/pinctrl-rza1.c: In function ‘rza1_pinctrl_probe’:
-    drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: ‘ret’ may be used uninitialized in this function [-Wmaybe-uninitialized]
-      if (ret)
-	 ^
+On Fri, Jun 30, 2017 at 6:56 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> After merging the pinctrl tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/pinctrl/pinctrl-rza1.c: In function 'rza1_pinctrl_probe':
+> drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>   if (ret)
+>      ^
+>
+> Introduced by commit
+>
+>   5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
 
-Indeed, the result returned by platform_get_resource() was stored in
-"res", not "ret".  In addition, the correct error check would be
-"if (!res)", as platform_get_resource() does not return an error code,
-but returns NULL on failure.
+Doh, 0day doesn't use compilers that report uninitialized variables?
+Patch sent.
 
-However, as devm_ioremap_resource() verifies the validity of the passed
-resource pointer anyway, the check can just be removed.
+Thanks for reporting!
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Compile-tested only.
----
- drivers/pinctrl/pinctrl-rza1.c | 3 ---
- 1 file changed, 3 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
-index 614a043f3038d5d3..1188e6881e52ba7a 100644
---- a/drivers/pinctrl/pinctrl-rza1.c
-+++ b/drivers/pinctrl/pinctrl-rza1.c
-@@ -1257,9 +1257,6 @@ static int rza1_pinctrl_probe(struct platform_device *pdev)
- 	rza1_pctl->dev = &pdev->dev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (ret)
--		return -ENODEV;
--
- 	rza1_pctl->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(rza1_pctl->base))
- 		return PTR_ERR(rza1_pctl->base);
--- 
-2.7.4
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
