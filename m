@@ -1,7 +1,7 @@
 From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v2 3/6] test_sysctl: test against PAGE_SIZE for int
-Date: Fri, 30 Jun 2017 15:44:28 -0700
-Message-ID: <20170630224431.17374-4-mcgrof@kernel.org>
+Subject: [PATCH v2 4/6] test_sysctl: add simple proc_dointvec() case
+Date: Fri, 30 Jun 2017 15:44:29 -0700
+Message-ID: <20170630224431.17374-5-mcgrof@kernel.org>
 References: <20170629123527.2196820e70818aeab51338e5@linux-foundation.org>
  <20170630224431.17374-1-mcgrof@kernel.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -11,95 +11,96 @@ To: akpm@linux-foundation.org
 Cc: keescook@chromium.org, shuahkh@osg.samsung.com, shuah@kernel.org, sfr@canb.auug.org.au, orson.zhai@linaro.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
 List-Id: linux-next.vger.kernel.org
 
-Add the following tests to ensure we do not regress:
-
-  o Test using a buffer full of space (PAGE_SIZE-1) followed by a
-    single digit works
-
-  o Test using a buffer full of spaces (PAGE_SIZE or over) will fail
-
-As tests increase instead of unloading the module and reloading it
-we can just do a shell reset_vals() with a reset to values we know
-are set at init on the driver.
+Test against a simple proc_dointvec() case.  While at it, add a test
+against INT_MAX.  Make sure INT_MAX works, and INT_MAX+1 will fail.  Also
+test negative values work.
 
 Cc: Kees Cook <keescook@chromium.org>
 Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
 ---
- tools/testing/selftests/sysctl/sysctl.sh | 66 ++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+ lib/test_sysctl.c                        | 11 ++++++
+ tools/testing/selftests/sysctl/sysctl.sh | 62 ++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+)
 
+diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
+index b2163bfb6eb2..1472e1ae4931 100644
+--- a/lib/test_sysctl.c
++++ b/lib/test_sysctl.c
+@@ -41,11 +41,15 @@ static int i_one_hundred = 100;
+ 
+ struct test_sysctl_data {
+ 	int int_0001;
++	int int_0002;
++
+ 	char string_0001[65];
+ };
+ 
+ static struct test_sysctl_data test_data = {
+ 	.int_0001 = 60,
++	.int_0002 = 1,
++
+ 	.string_0001 = "(none)",
+ };
+ 
+@@ -61,6 +65,13 @@ static struct ctl_table test_table[] = {
+ 		.extra2         = &i_one_hundred,
+ 	},
+ 	{
++		.procname	= "int_0002",
++		.data		= &test_data.int_0002,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++	{
+ 		.procname	= "string_0001",
+ 		.data		= &test_data.string_0001,
+ 		.maxlen		= sizeof(test_data.string_0001),
 diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index cbe1345d7c1d..6ec807576f7c 100755
+index 6ec807576f7c..7ba3fa2bbd54 100755
 --- a/tools/testing/selftests/sysctl/sysctl.sh
 +++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -75,6 +75,13 @@ function check_production_sysctl_writes_strict()
- 			echo "1" > ${WRITES_STRICT}
- 		fi
+@@ -31,6 +31,7 @@ TEST_FILE=$(mktemp)
+ # we have tons of space.
+ ALL_TESTS="0001:1:1"
+ ALL_TESTS="$ALL_TESTS 0002:1:1"
++ALL_TESTS="$ALL_TESTS 0003:1:1"
+ 
+ test_modprobe()
+ {
+@@ -82,6 +83,9 @@ function check_production_sysctl_writes_strict()
+ 	if [ -z $MAX_DIGITS ]; then
+ 		MAX_DIGITS=$(($PAGE_SIZE/8))
  	fi
-+
-+	if [ -z $PAGE_SIZE ]; then
-+		PAGE_SIZE=$(getconf PAGESIZE)
-+	fi
-+	if [ -z $MAX_DIGITS ]; then
-+		MAX_DIGITS=$(($PAGE_SIZE/8))
++	if [ -z $INT_MAX ]; then
++		INT_MAX=$(getconf INT_MAX)
 +	fi
  }
  
  test_reqs()
-@@ -89,6 +96,10 @@ test_reqs()
- 		echo "$0: You need perl installed"
- 		exit 1
- 	fi
-+	if ! which getconf 2> /dev/null > /dev/null; then
-+		echo "$0: You need getconf installed"
-+		exit 1
-+	fi
+@@ -122,6 +126,9 @@ reset_vals()
+ 		int_0001)
+ 			VAL="60"
+ 			;;
++		int_0002)
++			VAL="1"
++			;;
+ 		string_0001)
+ 			VAL="(none)"
+ 			;;
+@@ -296,6 +303,48 @@ run_limit_digit()
+ 	test_rc
  }
  
- function load_req_mod()
-@@ -103,6 +114,23 @@ function load_req_mod()
- 	fi
- }
- 
-+reset_vals()
++# You are using an int
++run_limit_digit_int()
 +{
-+	VAL=""
-+	TRIGGER=$(basename ${TARGET})
-+	case "$TRIGGER" in
-+		int_0001)
-+			VAL="60"
-+			;;
-+		string_0001)
-+			VAL="(none)"
-+			;;
-+		*)
-+			;;
-+	esac
-+	echo -n $VAL > $TARGET
-+}
-+
- set_orig()
- {
- 	if [ ! -z $TARGET ]; then
-@@ -229,7 +257,42 @@ run_numerictests()
- 	else
- 		echo "ok"
- 	fi
-+	test_rc
-+}
-+
-+# Your test must accept digits 3 and 4 to use this
-+run_limit_digit()
-+{
-+	echo -n "Checking ignoring spaces up to PAGE_SIZE works on write ..."
++	echo -n "Testing INT_MAX works ..."
 +	reset_vals
- 
-+	LIMIT=$((MAX_DIGITS -1))
-+	TEST_STR="3"
-+	(perl -e 'print " " x '$LIMIT';'; echo "${TEST_STR}") | \
-+		dd of="${TARGET}" 2>/dev/null
++	TEST_STR="$INT_MAX"
++	echo -n $TEST_STR > $TARGET
 +
 +	if ! verify "${TARGET}"; then
 +		echo "FAIL" >&2
@@ -109,13 +110,10 @@ index cbe1345d7c1d..6ec807576f7c 100755
 +	fi
 +	test_rc
 +
-+	echo -n "Checking passing PAGE_SIZE of spaces fails on write ..."
++	echo -n "Testing INT_MAX + 1 will fail as expected..."
 +	reset_vals
-+
-+	LIMIT=$((MAX_DIGITS))
-+	TEST_STR="4"
-+	(perl -e 'print " " x '$LIMIT';'; echo "${TEST_STR}") | \
-+		dd of="${TARGET}" 2>/dev/null
++	let TEST_STR=$INT_MAX+1
++	echo -n $TEST_STR > $TARGET 2> /dev/null
 +
 +	if verify "${TARGET}"; then
 +		echo "FAIL" >&2
@@ -123,27 +121,50 @@ index cbe1345d7c1d..6ec807576f7c 100755
 +	else
 +		echo "ok"
 +	fi
- 	test_rc
++	test_rc
++
++	echo -n "Testing negative values will work as expected..."
++	reset_vals
++	TEST_STR="-3"
++	echo -n $TEST_STR > $TARGET 2> /dev/null
++	if ! verify "${TARGET}"; then
++		echo "FAIL" >&2
++		rc=1
++	else
++		echo "ok"
++	fi
++	test_rc
++}
++
+ run_stringtests()
+ {
+ 	echo -n "Writing entire sysctl in short writes ... "
+@@ -389,6 +438,18 @@ sysctl_test_0002()
+ 	run_stringtests
  }
  
-@@ -305,15 +368,18 @@ run_stringtests()
- sysctl_test_0001()
- {
- 	TARGET="${SYSCTL}/int_0001"
++sysctl_test_0003()
++{
++	TARGET="${SYSCTL}/int_0002"
 +	reset_vals
- 	ORIG=$(cat "${TARGET}")
- 	TEST_STR=$(( $ORIG + 1 ))
- 
- 	run_numerictests
++	ORIG=$(cat "${TARGET}")
++	TEST_STR=$(( $ORIG + 1 ))
++
++	run_numerictests
 +	run_limit_digit
++	run_limit_digit_int
++}
++
+ list_tests()
+ {
+ 	echo "Test ID list:"
+@@ -399,6 +460,7 @@ list_tests()
+ 	echo
+ 	echo "0001 x $(get_test_count 0001) - tests proc_dointvec_minmax()"
+ 	echo "0002 x $(get_test_count 0002) - tests proc_dostring()"
++	echo "0003 x $(get_test_count 0003) - tests proc_dointvec()"
  }
  
- sysctl_test_0002()
- {
- 	TARGET="${SYSCTL}/string_0001"
-+	reset_vals
- 	ORIG=$(cat "${TARGET}")
- 	TEST_STR="Testing sysctl"
- 	# Only string sysctls support seeking/appending.
+ test_reqs
 -- 
 2.11.0
