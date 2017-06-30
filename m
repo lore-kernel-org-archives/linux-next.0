@@ -1,44 +1,58 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build warning after merge of the pinctrl tree
-Date: Fri, 30 Jun 2017 08:59:37 +0200
-Message-ID: <CAMuHMdVHkg3vs9XVthMoZzyV37KgNcWBj9RN3s6XATY3Eux0qw@mail.gmail.com>
-References: <20170630145601.441b4994@canb.auug.org.au>
+From: Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: cpus stalls detected few hours after booting next
+ kernel
+Date: Fri, 30 Jun 2017 17:28:02 +1000
+Message-ID: <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
+References: <1498728106.19484.21.camel@abdul>
+        <20170629193614.376e27e6@roar.ozlabs.ibm.com>
+        <20170629202305.6187367f@roar.ozlabs.ibm.com>
+        <20170630004534.228f7c08@roar.ozlabs.ibm.com>
+        <1498800138.19484.25.camel@abdul>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170630145601.441b4994@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:32875 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751683AbdF3H2T (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 30 Jun 2017 03:28:19 -0400
+In-Reply-To: <1498800138.19484.25.camel@abdul>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <Paul.McKenney@us.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, paulus@samba.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, paulmck@linux.vnet.ibm.com
 
-Hi Stephen,
+On Fri, 30 Jun 2017 10:52:18 +0530
+Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
 
-On Fri, Jun 30, 2017 at 6:56 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> After merging the pinctrl tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->
-> drivers/pinctrl/pinctrl-rza1.c: In function 'rza1_pinctrl_probe':
-> drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
->   if (ret)
->      ^
->
-> Introduced by commit
->
->   5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+> On Fri, 2017-06-30 at 00:45 +1000, Nicholas Piggin wrote:
+> > On Thu, 29 Jun 2017 20:23:05 +1000
+> > Nicholas Piggin <npiggin@gmail.com> wrote:
+> > 
+> > > On Thu, 29 Jun 2017 19:36:14 +1000
+> > > Nicholas Piggin <npiggin@gmail.com> wrote:
+> > 
+> > > > I don't *think* the replay-wakeup-interrupt patch is directly involved, but
+> > > > it's likely to be one of the idle patches.  
+> > 
+> > Okay this turned out to be misconfigured sleep states I added for the
+> > simulator, sorry for the false alarm.
+> > 
+> > > Although you have this in the backtrace. I wonder if that's a stuck
+> > > lock in rcu_process_callbacks?
+> > 
+> > So this spinlock becomes top of the list of suspects. Can you try
+> > enabling lockdep and try to reproduce it?
+> 
+> Yes, recreated again with CONFIG_LOCKDEP=y & CONFIG_DEBUG_LOCKDEP=y set.
+> I do not see any difference in trace messages with and without LOCKDEP
+> enabled.
+> 
+> Please find the attached log file.
 
-Doh, 0day doesn't use compilers that report uninitialized variables?
-Patch sent.
+Can you get an rcu_invoke_callback event trace that Paul suggested?
 
-Thanks for reporting!
+Does this bug show up with just the powerpc next branch?
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
+Nick
