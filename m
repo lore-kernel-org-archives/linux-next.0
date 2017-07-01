@@ -1,237 +1,41 @@
-From: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: [PATCH v2 1/6] test_sysctl: add dedicated proc sysctl test driver
-Date: Fri, 30 Jun 2017 15:44:26 -0700
-Message-ID: <20170630224431.17374-2-mcgrof@kernel.org>
-References: <20170629123527.2196820e70818aeab51338e5@linux-foundation.org>
- <20170630224431.17374-1-mcgrof@kernel.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170630224431.17374-1-mcgrof@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: keescook@chromium.org, shuahkh@osg.samsung.com, shuah@kernel.org, sfr@canb.auug.org.au, orson.zhai@linaro.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, "Luis R. Rodriguez" <mcgrof@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
-List-Id: linux-next.vger.kernel.org
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: build warning after merge of the drivers-x86 tree
+Date: Fri, 30 Jun 2017 20:32:06 -0700
+Message-ID: <20170701033206.GB24772@fury>
+References: <20170630140054.38f98968@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bombadil.infradead.org ([65.50.211.133]:56326 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751657AbdGADcJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 30 Jun 2017 23:32:09 -0400
+Content-Disposition: inline
+In-Reply-To: <20170630140054.38f98968@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arvind Yadav <arvind.yadav.cs@gmail.com>
 
-The existing tools/testing/selftests/sysctl/ tests include two test cases,
-but these use existing production kernel sysctl interfaces. We want to
-expand test coverage but we can't just be looking for random safe production
-values to poke at, that's just insane!
+On Fri, Jun 30, 2017 at 02:00:54PM +1000, Stephen Rothwell wrote:
+> Hi Darren,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/platform/x86/sony-laptop.c: In function 'sony_laptop_setup_input':
+> drivers/platform/x86/sony-laptop.c:494:19: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-array-qualifiers]
+>   key_dev->keycode = &sony_laptop_input_keycode_map;
+>                    ^
+> 
+> Introduced by commit
+> 
+>   a0f0a5e1978b ("platform/x86: sony-laptop: constify few static structures")
 
-Instead just dedicate a test driver for debugging purposes and port the
-existing scripts to use it. This will make it easier for further tests to
-be added.
+Apologies, and thanks for the catch. Rolled the fix from Arnd together with this
+and the new one from Arvind. for-next had to be rebased to avoid introducing
+this error into mainline.
 
-Subsequent patches will extend our test coverage for sysctl.
-
-The stress test driver uses a new license (GPL on Linux, copyleft-next
-outside of Linux).  Linus was fine with this [0] and later due to Ted's
-and Alans's request ironed out an "or" language clause to use [1] which is
-already present upstream.
-
-[0] https://lkml.kernel.org/r/CA+55aFyhxcvD+q7tp+-yrSFDKfR0mOHgyEAe=f_94aKLsOu0Og@mail.gmail.com
-[1] https://lkml.kernel.org/r/1495234558.7848.122.camel@linux.intel.com
-
-Acked-by: Kees Cook <keescook@chromium.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Luis R. Rodriguez <mcgrof@kernel.org>
----
- lib/Kconfig.debug                               |  11 +++
- lib/Makefile                                    |   1 +
- lib/test_sysctl.c                               | 113 ++++++++++++++++++++++++
- tools/testing/selftests/sysctl/config           |   1 +
- tools/testing/selftests/sysctl/run_numerictests |   4 +-
- tools/testing/selftests/sysctl/run_stringtests  |   4 +-
- 6 files changed, 130 insertions(+), 4 deletions(-)
- create mode 100644 lib/test_sysctl.c
- create mode 100644 tools/testing/selftests/sysctl/config
-
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index b0c35e0667df..dfa50b54f017 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1824,6 +1824,17 @@ config TEST_FIRMWARE
- 
- 	  If unsure, say N.
- 
-+config TEST_SYSCTL
-+	tristate "sysctl test driver"
-+	default n
-+	depends on PROC_SYSCTL
-+	help
-+	  This builds the "test_sysctl" module. This driver enables to test the
-+	  proc sysctl interfaces available to drivers safely without affecting
-+	  production knobs which might alter system functionality.
-+
-+	  If unsure, say N.
-+
- config TEST_UDELAY
- 	tristate "udelay test driver"
- 	default n
-diff --git a/lib/Makefile b/lib/Makefile
-index 678c6c38a991..40c18372b301 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -46,6 +46,7 @@ obj-$(CONFIG_TEST_HEXDUMP) += test_hexdump.o
- obj-y += kstrtox.o
- obj-$(CONFIG_TEST_BPF) += test_bpf.o
- obj-$(CONFIG_TEST_FIRMWARE) += test_firmware.o
-+obj-$(CONFIG_TEST_SYSCTL) += test_sysctl.o
- obj-$(CONFIG_TEST_HASH) += test_hash.o test_siphash.o
- obj-$(CONFIG_TEST_KASAN) += test_kasan.o
- obj-$(CONFIG_TEST_KSTRTOX) += test-kstrtox.o
-diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
-new file mode 100644
-index 000000000000..b2163bfb6eb2
---- /dev/null
-+++ b/lib/test_sysctl.c
-@@ -0,0 +1,113 @@
-+/*
-+ * proc sysctl test driver
-+ *
-+ * Copyright (C) 2017 Luis R. Rodriguez <mcgrof@kernel.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License as published by the Free
-+ * Software Foundation; either version 2 of the License, or at your option any
-+ * later version; or, when distributed separately from the Linux kernel or
-+ * when incorporated into other software packages, subject to the following
-+ * license:
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of copyleft-next (version 0.3.1 or later) as published
-+ * at http://copyleft-next.org/.
-+ */
-+
-+/*
-+ * This module provides an interface to the the proc sysctl interfaces.  This
-+ * driver requires CONFIG_PROC_SYSCTL. It will not normally be loaded by the
-+ * system unless explicitly requested by name. You can also build this driver
-+ * into your kernel.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/init.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/fs.h>
-+#include <linux/miscdevice.h>
-+#include <linux/slab.h>
-+#include <linux/uaccess.h>
-+#include <linux/async.h>
-+#include <linux/delay.h>
-+#include <linux/vmalloc.h>
-+
-+static int i_zero;
-+static int i_one_hundred = 100;
-+
-+struct test_sysctl_data {
-+	int int_0001;
-+	char string_0001[65];
-+};
-+
-+static struct test_sysctl_data test_data = {
-+	.int_0001 = 60,
-+	.string_0001 = "(none)",
-+};
-+
-+/* These are all under /proc/sys/debug/test_sysctl/ */
-+static struct ctl_table test_table[] = {
-+	{
-+		.procname	= "int_0001",
-+		.data		= &test_data.int_0001,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &i_zero,
-+		.extra2         = &i_one_hundred,
-+	},
-+	{
-+		.procname	= "string_0001",
-+		.data		= &test_data.string_0001,
-+		.maxlen		= sizeof(test_data.string_0001),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dostring,
-+	},
-+	{ }
-+};
-+
-+static struct ctl_table test_sysctl_table[] = {
-+	{
-+		.procname	= "test_sysctl",
-+		.maxlen		= 0,
-+		.mode		= 0555,
-+		.child		= test_table,
-+	},
-+	{ }
-+};
-+
-+static struct ctl_table test_sysctl_root_table[] = {
-+	{
-+		.procname	= "debug",
-+		.maxlen		= 0,
-+		.mode		= 0555,
-+		.child		= test_sysctl_table,
-+	},
-+	{ }
-+};
-+
-+static struct ctl_table_header *test_sysctl_header;
-+
-+static int __init test_sysctl_init(void)
-+{
-+	test_sysctl_header = register_sysctl_table(test_sysctl_root_table);
-+	if (!test_sysctl_header)
-+		return -ENOMEM;
-+	return 0;
-+}
-+late_initcall(test_sysctl_init);
-+
-+static void __exit test_sysctl_exit(void)
-+{
-+	if (test_sysctl_header)
-+		unregister_sysctl_table(test_sysctl_header);
-+}
-+
-+module_exit(test_sysctl_exit);
-+
-+MODULE_AUTHOR("Luis R. Rodriguez <mcgrof@kernel.org>");
-+MODULE_LICENSE("GPL");
-diff --git a/tools/testing/selftests/sysctl/config b/tools/testing/selftests/sysctl/config
-new file mode 100644
-index 000000000000..6ca14800d755
---- /dev/null
-+++ b/tools/testing/selftests/sysctl/config
-@@ -0,0 +1 @@
-+CONFIG_TEST_SYSCTL=y
-diff --git a/tools/testing/selftests/sysctl/run_numerictests b/tools/testing/selftests/sysctl/run_numerictests
-index e6e76c93d948..c375ce0f4c15 100755
---- a/tools/testing/selftests/sysctl/run_numerictests
-+++ b/tools/testing/selftests/sysctl/run_numerictests
-@@ -1,7 +1,7 @@
- #!/bin/sh
- 
--SYSCTL="/proc/sys"
--TARGET="${SYSCTL}/vm/swappiness"
-+SYSCTL="/proc/sys/debug/test_sysctl/"
-+TARGET="${SYSCTL}/int_0001"
- ORIG=$(cat "${TARGET}")
- TEST_STR=$(( $ORIG + 1 ))
- 
-diff --git a/tools/testing/selftests/sysctl/run_stringtests b/tools/testing/selftests/sysctl/run_stringtests
-index 857ec667fb02..a6f2618afeaa 100755
---- a/tools/testing/selftests/sysctl/run_stringtests
-+++ b/tools/testing/selftests/sysctl/run_stringtests
-@@ -1,7 +1,7 @@
- #!/bin/sh
- 
--SYSCTL="/proc/sys"
--TARGET="${SYSCTL}/kernel/domainname"
-+SYSCTL="/proc/sys/debug/test_sysctl/"
-+TARGET="${SYSCTL}/string_0001"
- ORIG=$(cat "${TARGET}")
- TEST_STR="Testing sysctl"
- 
 -- 
-2.11.0
+Darren Hart
+VMware Open Source Technology Center
