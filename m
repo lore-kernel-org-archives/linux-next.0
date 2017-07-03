@@ -1,44 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kspp tree with the file-locks
- tree
-Date: Mon, 3 Jul 2017 11:48:07 +1000
-Message-ID: <20170703114807.70d7624d@canb.auug.org.au>
-References: <20170621163211.35abbb57@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the net-next tree with the pci tree
+Date: Mon, 3 Jul 2017 11:49:38 +1000
+Message-ID: <20170703114938.2fb359d8@canb.auug.org.au>
+References: <20170621115443.3e10f0bc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39787 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:54049 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752100AbdGCBsK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Jul 2017 21:48:10 -0400
-In-Reply-To: <20170621163211.35abbb57@canb.auug.org.au>
+        id S1752100AbdGCBtl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Jul 2017 21:49:41 -0400
+In-Reply-To: <20170621115443.3e10f0bc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>, Jeff Layton <jlayton@poochiereds.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Brian Norris <briannorris@chromium.org>, Kalle Valo <kvalo@codeaurora.org>
 
 Hi all,
 
 With the merge window opening, just a reminder that this conflict still
 exists.
 
-On Wed, 21 Jun 2017 16:32:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, 21 Jun 2017 11:54:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the kspp tree got a conflict in:
+> Today's linux-next merge of the net-next tree got a conflict in:
 > 
->   include/linux/fs.h
+>   drivers/net/wireless/marvell/mwifiex/pcie.c
 > 
-> between commits:
+> between commit:
 > 
->   7356fd927059 ("fs: new infrastructure for writeback error handling and reporting")
->   c7fe314be636 ("fs: add f_md_wb_err field to struct file for tracking metadata errors")
+>   c336cc0ee4eb ("PCI: Split ->reset_notify() method into ->reset_prepare() and ->reset_done()")
 > 
-> from the file-locks tree and commit:
+> from the pci tree and commit:
 > 
->   1a12979f61e4 ("randstruct: Mark various structs for randomization")
+>   68efd0386988 ("mwifiex: pcie: stop setting/clearing 'surprise_removed'")
 > 
-> from the kspp tree.
+> from the net-next tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -51,31 +49,85 @@ On Wed, 21 Jun 2017 16:32:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc include/linux/fs.h
-> index 39e4603cd17a,8f28143486c4..000000000000
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@@ -397,8 -392,7 +397,8 @@@ struct address_space 
->   	gfp_t			gfp_mask;	/* implicit gfp mask for allocations */
->   	struct list_head	private_list;	/* ditto */
->   	void			*private_data;	/* ditto */
->  +	errseq_t		wb_err;
-> - } __attribute__((aligned(sizeof(long))));
-> + } __attribute__((aligned(sizeof(long)))) __randomize_layout;
->   	/*
->   	 * On most architectures that alignment is already the case; but
->   	 * must be enforced here for CRIS, to let the least significant bit
-> @@@ -875,8 -868,8 +875,9 @@@ struct file 
->   	struct list_head	f_tfile_llink;
->   #endif /* #ifdef CONFIG_EPOLL */
->   	struct address_space	*f_mapping;
->  +	errseq_t		f_md_wb_err; /* metadata wb error tracking */
-> - } __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
-> + } __randomize_layout
-> +   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
+> diff --cc drivers/net/wireless/marvell/mwifiex/pcie.c
+> index 279adf124fc9,b53ecf1eddda..000000000000
+> --- a/drivers/net/wireless/marvell/mwifiex/pcie.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/pcie.c
+> @@@ -361,48 -359,35 +361,46 @@@ static void mwifiex_pcie_reset_prepare(
+>   	}
 >   
->   struct file_handle {
->   	__u32 handle_bytes;
+>   	mwifiex_dbg(adapter, INFO,
+>  -		    "%s: vendor=0x%4.04x device=0x%4.04x rev=%d %s\n",
+>  -		    __func__, pdev->vendor, pdev->device,
+>  -		    pdev->revision,
+>  -		    prepare ? "Pre-FLR" : "Post-FLR");
+>  -
+>  -	if (prepare) {
+>  -		/* Kernel would be performing FLR after this notification.
+>  -		 * Cleanup all software without cleaning anything related to
+>  -		 * PCIe and HW.
+>  -		 */
+>  -		mwifiex_shutdown_sw(adapter);
+>  -		clear_bit(MWIFIEX_IFACE_WORK_DEVICE_DUMP, &card->work_flags);
+>  -		clear_bit(MWIFIEX_IFACE_WORK_CARD_RESET, &card->work_flags);
+>  -	} else {
+>  -		/* Kernel stores and restores PCIe function context before and
+>  -		 * after performing FLR respectively. Reconfigure the software
+>  -		 * and firmware including firmware redownload
+>  -		 */
+>  -		ret = mwifiex_reinit_sw(adapter);
+>  -		if (ret) {
+>  -			dev_err(&pdev->dev, "reinit failed: %d\n", ret);
+>  -			return;
+>  -		}
+>  -	}
+>  +		    "%s: vendor=0x%4.04x device=0x%4.04x rev=%d Pre-FLR\n",
+>  +		    __func__, pdev->vendor, pdev->device, pdev->revision);
+>  +
+>  +	mwifiex_shutdown_sw(adapter);
+> - 	adapter->surprise_removed = true;
+>  +	clear_bit(MWIFIEX_IFACE_WORK_DEVICE_DUMP, &card->work_flags);
+>  +	clear_bit(MWIFIEX_IFACE_WORK_CARD_RESET, &card->work_flags);
+>   	mwifiex_dbg(adapter, INFO, "%s, successful\n", __func__);
+>   }
+>   
+>  -static const struct pci_error_handlers mwifiex_pcie_err_handler[] = {
+>  -		{ .reset_notify = mwifiex_pcie_reset_notify, },
+>  +/*
+>  + * Kernel stores and restores PCIe function context before and after performing
+>  + * FLR respectively. Reconfigure the software and firmware including firmware
+>  + * redownload.
+>  + */
+>  +static void mwifiex_pcie_reset_done(struct pci_dev *pdev)
+>  +{
+>  +	struct pcie_service_card *card = pci_get_drvdata(pdev);
+>  +	struct mwifiex_adapter *adapter = card->adapter;
+>  +	int ret;
+>  +
+>  +	if (!adapter) {
+>  +		dev_err(&pdev->dev, "%s: adapter structure is not valid\n",
+>  +			__func__);
+>  +		return;
+>  +	}
+>  +
+>  +	mwifiex_dbg(adapter, INFO,
+>  +		    "%s: vendor=0x%4.04x device=0x%4.04x rev=%d Post-FLR\n",
+>  +		    __func__, pdev->vendor, pdev->device, pdev->revision);
+>  +
+> - 	adapter->surprise_removed = false;
+>  +	ret = mwifiex_reinit_sw(adapter);
+>  +	if (ret)
+>  +		dev_err(&pdev->dev, "reinit failed: %d\n", ret);
+>  +	else
+>  +		mwifiex_dbg(adapter, INFO, "%s, successful\n", __func__);
+>  +}
+>  +
+>  +static const struct pci_error_handlers mwifiex_pcie_err_handler = {
+>  +	.reset_prepare		= mwifiex_pcie_reset_prepare,
+>  +	.reset_done		= mwifiex_pcie_reset_done,
+>   };
+>   
+>   #ifdef CONFIG_PM_SLEEP
 
 -- 
 Cheers,
