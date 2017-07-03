@@ -1,82 +1,67 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvms390 tree with the s390 tree
-Date: Mon, 3 Jul 2017 11:55:42 +1000
-Message-ID: <20170703115542.4b95127f@canb.auug.org.au>
-References: <20170622125928.76918255@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the vfs tree
+Date: Mon, 3 Jul 2017 12:07:44 +1000
+Message-ID: <20170703120744.645d9fda@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170622125928.76918255@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Dave,
 
-[cc'ing kvm tree maintainers]
+Today's linux-next merge of the drm tree got a conflict in:
 
-Withe the merge window opening, just a reminder that this conflict
-still exists.
+  drivers/gpu/drm/drm_internal.h
 
-On Thu, 22 Jun 2017 12:59:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the kvms390 tree got a conflict in:
-> 
->   arch/s390/kvm/gaccess.c
-> 
-> between commit:
-> 
->   a75259825401 ("s390: rename struct psw_bits members")
-> 
-> from the s390 tree and commit:
-> 
->   8993df124642 ("KVM: s390: implement instruction execution protection for emulated")
-> 
-> from the kvms390 tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc arch/s390/kvm/gaccess.c
-> index e0f7d5fc7efd,6fda095f1a99..000000000000
-> --- a/arch/s390/kvm/gaccess.c
-> +++ b/arch/s390/kvm/gaccess.c
-> @@@ -790,8 -808,8 +808,8 @@@ static int guest_page_range(struct kvm_
->   			return trans_exc(vcpu, PGM_PROTECTION, ga, ar, mode,
->   					 PROT_TYPE_LA);
->   		ga &= PAGE_MASK;
->  -		if (psw_bits(*psw).t) {
->  +		if (psw_bits(*psw).dat) {
-> - 			rc = guest_translate(vcpu, ga, pages, asce, mode);
-> + 			rc = guest_translate(vcpu, ga, pages, asce, mode, &prot);
->   			if (rc < 0)
->   				return rc;
->   		} else {
-> @@@ -899,10 -918,10 +918,10 @@@ int guest_translate_address(struct kvm_
->   					 mode, PROT_TYPE_LA);
->   	}
->   
->  -	if (psw_bits(*psw).t && !asce.r) {	/* Use DAT? */
->  +	if (psw_bits(*psw).dat && !asce.r) {	/* Use DAT? */
-> - 		rc = guest_translate(vcpu, gva, gpa, asce, mode);
-> + 		rc = guest_translate(vcpu, gva, gpa, asce, mode, &prot);
->   		if (rc > 0)
-> - 			return trans_exc(vcpu, rc, gva, 0, mode, PROT_TYPE_DAT);
-> + 			return trans_exc(vcpu, rc, gva, 0, mode, prot);
->   	} else {
->   		*gpa = kvm_s390_real_to_abs(vcpu, gva);
->   		if (kvm_is_error_gpa(vcpu->kvm, *gpa))
+between commits:
+
+  012c6741c6aa ("switch compat_drm_version() to drm_ioctl_kernel()")
+  17e3dade62d6 ("switch compat_drm_getunique() to drm_ioctl_kernel()")
+  9e92662d01d8 ("switch compat_drm_getclient() to drm_ioctl_kernel()")
+
+from the vfs tree and commit:
+
+  e9083420bbac ("drm: introduce sync objects (v4)")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/gpu/drm/drm_internal.h
+index 14dfa9c83d1d,5cecc974d2f9..000000000000
+--- a/drivers/gpu/drm/drm_internal.h
++++ b/drivers/gpu/drm/drm_internal.h
+@@@ -142,7 -143,17 +143,20 @@@ static inline int drm_debugfs_crtc_crc_
+  {
+  	return 0;
+  }
++ 
+  #endif
+ +drm_ioctl_t drm_version;
+ +drm_ioctl_t drm_getunique;
+ +drm_ioctl_t drm_getclient;
++ 
++ /* drm_syncobj.c */
++ void drm_syncobj_open(struct drm_file *file_private);
++ void drm_syncobj_release(struct drm_file *file_private);
++ int drm_syncobj_create_ioctl(struct drm_device *dev, void *data,
++ 			     struct drm_file *file_private);
++ int drm_syncobj_destroy_ioctl(struct drm_device *dev, void *data,
++ 			      struct drm_file *file_private);
++ int drm_syncobj_handle_to_fd_ioctl(struct drm_device *dev, void *data,
++ 				   struct drm_file *file_private);
++ int drm_syncobj_fd_to_handle_ioctl(struct drm_device *dev, void *data,
++ 				   struct drm_file *file_private);
