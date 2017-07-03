@@ -1,70 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the kspp
- tree
-Date: Mon, 3 Jul 2017 11:31:17 +1000
-Message-ID: <20170703113117.0ae8b7f9@canb.auug.org.au>
-References: <20170620151549.3380276f@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the jc_docs tree
+Date: Mon, 3 Jul 2017 11:33:10 +1000
+Message-ID: <20170703113310.33a6348f@canb.auug.org.au>
+References: <20170621141809.11103aab@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46023 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33097 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752220AbdGCBbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Jul 2017 21:31:19 -0400
-In-Reply-To: <20170620151549.3380276f@canb.auug.org.au>
+        id S1752128AbdGCBdM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Jul 2017 21:33:12 -0400
+In-Reply-To: <20170621141809.11103aab@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Manfred Spraul <manfred@colorfullife.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>
 
 Hi all,
 
 With the merge window opening, just a reminder that this conflict still
 exists.
 
-On Tue, 20 Jun 2017 15:15:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Wed, 21 Jun 2017 14:18:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the akpm-current tree got a conflict in:
+> Today's linux-next merge of the tip tree got a conflict in:
 > 
->   include/linux/sem.h
+>   Documentation/DocBook/kernel-hacking.tmpl
 > 
 > between commit:
 > 
->   1a12979f61e4 ("randstruct: Mark various structs for randomization")
+>   c4fcd7cabb83 ("docs-rst: convert kernel-hacking to ReST")
 > 
-> from the kspp tree and commit:
+> from the jc_docs tree and commit:
 > 
->   337e62a32a54 ("ipc/sem.c: remove sem_base, embed struct sem")
+>   ac6424b981bc ("sched/wait: Rename wait_queue_t => wait_queue_entry_t")
 > 
-> from the akpm-current tree.
+> from the tip tree.
 > 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
+> I deleted the file and added the following fixup patch.
+> 
+> This is now fixed as far as linux-next is concerned, but any non trivial
 > conflicts should be mentioned to your upstream maintainer when your tree
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 21 Jun 2017 14:14:45 +1000
+> Subject: [PATCH] sched/wait: fix up for "docs-rst: convert kernel-hacking to
+>  ReST"
 > 
-> diff --cc include/linux/sem.h
-> index 23bcbdfad4a6,be5cf2ea14ad..000000000000
-> --- a/include/linux/sem.h
-> +++ b/include/linux/sem.h
-> @@@ -21,7 -39,9 +39,9 @@@ struct sem_array 
->   	int			sem_nsems;	/* no. of semaphores in array */
->   	int			complex_count;	/* pending complex operations */
->   	unsigned int		use_global_lock;/* >0: global lock required */
-> + 
-> + 	struct sem		sems[];
->  -};
->  +} __randomize_layout;
->   
->   #ifdef CONFIG_SYSVIPC
->   
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  Documentation/kernel-hacking/hacking.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/kernel-hacking/hacking.rst b/Documentation/kernel-hacking/hacking.rst
+> index 1a456b60a7cf..daf3883b2694 100644
+> --- a/Documentation/kernel-hacking/hacking.rst
+> +++ b/Documentation/kernel-hacking/hacking.rst
+> @@ -498,7 +498,7 @@ Wait Queues ``include/linux/wait.h``
+>  A wait queue is used to wait for someone to wake you up when a certain
+>  condition is true. They must be used carefully to ensure there is no
+>  race condition. You declare a :c:type:`wait_queue_head_t`, and then processes
+> -which want to wait for that condition declare a :c:type:`wait_queue_t`
+> +which want to wait for that condition declare a :c:type:`wait_queue_entry_t`
+>  referring to themselves, and place that in the queue.
+>  
+>  Declaring
+> -- 
+> 2.11.0
 
 -- 
 Cheers,
