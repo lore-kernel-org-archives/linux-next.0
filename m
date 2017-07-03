@@ -1,93 +1,86 @@
-From: Jeff Layton <jlayton@poochiereds.net>
-Subject: Re: linux-next: manual merge of the kspp tree with the file-locks
- tree
-Date: Mon, 03 Jul 2017 06:27:27 -0400
-Message-ID: <1499077647.4737.2.camel@poochiereds.net>
-References: <20170621163211.35abbb57@canb.auug.org.au>
-         <20170703114807.70d7624d@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170703114807.70d7624d@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170703 build: 1 failures 6 warnings (next-20170703)
+Date: Mon, 03 Jul 2017 11:46:04 +0100
+Message-ID: <E1dRyrk-00005X-U6@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58820 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752579AbdGCKsV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Jul 2017 06:48:21 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon, 2017-07-03 at 11:48 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> With the merge window opening, just a reminder that this conflict still
-> exists.
-> 
-> On Wed, 21 Jun 2017 16:32:11 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > Today's linux-next merge of the kspp tree got a conflict in:
-> > 
-> >   include/linux/fs.h
-> > 
-> > between commits:
-> > 
-> >   7356fd927059 ("fs: new infrastructure for writeback error handling and reporting")
-> >   c7fe314be636 ("fs: add f_md_wb_err field to struct file for tracking metadata errors")
-> > 
-> > from the file-locks tree and commit:
-> > 
-> >   1a12979f61e4 ("randstruct: Mark various structs for randomization")
-> > 
-> > from the kspp tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc include/linux/fs.h
-> > index 39e4603cd17a,8f28143486c4..000000000000
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@@ -397,8 -392,7 +397,8 @@@ struct address_space 
-> >   	gfp_t			gfp_mask;	/* implicit gfp mask for allocations */
-> >   	struct list_head	private_list;	/* ditto */
-> >   	void			*private_data;	/* ditto */
-> >  +	errseq_t		wb_err;
-> > - } __attribute__((aligned(sizeof(long))));
-> > + } __attribute__((aligned(sizeof(long)))) __randomize_layout;
-> >   	/*
-> >   	 * On most architectures that alignment is already the case; but
-> >   	 * must be enforced here for CRIS, to let the least significant bit
-> > @@@ -875,8 -868,8 +875,9 @@@ struct file 
-> >   	struct list_head	f_tfile_llink;
-> >   #endif /* #ifdef CONFIG_EPOLL */
-> >   	struct address_space	*f_mapping;
-> >  +	errseq_t		f_md_wb_err; /* metadata wb error tracking */
-> > - } __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
-> > + } __randomize_layout
-> > +   __attribute__((aligned(4)));	/* lest something weird decides that 2 is OK */
-> >   
-> >   struct file_handle {
-> >   	__u32 handle_bytes;
-> 
-> 
+Tree/Branch: next-20170703
+Git describe: next-20170703
+Commit: b18ea5c460 Add linux-next specific files for 20170703
 
-Thanks.
+Build Time: 0 min 10 sec
 
-I think this is fairly trivial conflict -- Kees is adding the
-__randomize_layout attribute here, and I'm just adding a field to each
-of these structs.
+Passed:    6 / 7   ( 85.71 %)
+Failed:    1 / 7   ( 14.29 %)
 
-The main catch is that both of these branches have a fair number of
-preparatory patches before the above changes occur, so pulling one into
-the other is not trivial.
+Errors: 1
+Warnings: 6
+Section Mismatches: 0
 
-Would it be best to just send the PRs to Linus and have him fix this up
-in the final merge?
--- 
-Jeff Layton <jlayton@poochiereds.net>
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      6 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v7_defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  1 ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
+
+Warnings Summary: 6
+	  2 ../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	  1 <command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 6 warnings, 0 section mismatches
+
+Errors:
+	ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
+
+Warnings:
+	<command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
+	../drivers/pinctrl/pinctrl-rza1.c:1260:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/rtc/rtc-brcmstb-waketimer.c:142:6: warning: unused variable 'ret' [-Wunused-variable]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
+x86_64-defconfig
