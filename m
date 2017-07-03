@@ -1,100 +1,84 @@
-From: Saeed Mahameed <saeedm@dev.mellanox.co.il>
-Subject: Re: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 3 Jul 2017 10:59:40 +0300
-Message-ID: <CALzJLG8BHxa993P6Uayz79=N6R4Gs8n3U+j3N93bgTSCJoeTBA@mail.gmail.com>
-References: <20170703114320.6d2130f8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Mon, 3 Jul 2017 18:14:55 +1000
+Message-ID: <20170703181455.2d5a7600@canb.auug.org.au>
+References: <20170630163241.0ac5c0e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qt0-f177.google.com ([209.85.216.177]:36657 "EHLO
-        mail-qt0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752890AbdGCIAC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 3 Jul 2017 04:00:02 -0400
-Received: by mail-qt0-f177.google.com with SMTP id i2so137340826qta.3
-        for <linux-next@vger.kernel.org>; Mon, 03 Jul 2017 01:00:01 -0700 (PDT)
-In-Reply-To: <20170703114320.6d2130f8@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:59483 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750814AbdGCIO7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 3 Jul 2017 04:14:59 -0400
+In-Reply-To: <20170630163241.0ac5c0e5@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mohamad Haj Yahia <mohamad@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Moshe Shemesh <moshe@mellanox.com>, Ilan Tayari <ilant@mellanox.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Micay <danielmicay@gmail.com>, Ilan Tayari <ilant@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 
-On Mon, Jul 3, 2017 at 4:43 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+Hi all,
+
+On Fri, 30 Jun 2017 16:32:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the net-next tree got conflicts in:
->
->   drivers/net/ethernet/mellanox/mlx5/core/health.c
->   include/linux/mlx5/driver.h
->
-> between commit:
->
->   2a0165a034ac ("net/mlx5: Cancel delayed recovery work when unloading the driver")
->
-> from the net tree and commit:
->
->   0179720d6be2 ("Introduce new function for entering bad-health state.")
->
+> After merging the akpm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> In file included from include/linux/bitmap.h:8:0,
+>                  from include/linux/cpumask.h:11,
+>                  from include/linux/mm_types_task.h:13,
+>                  from include/linux/mm_types.h:4,
+>                  from include/linux/kmemcheck.h:4,
+>                  from include/linux/skbuff.h:18,
+>                  from include/linux/if_ether.h:23,
+>                  from include/linux/etherdevice.h:25,
+>                  from drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c:33:
+> In function 'memcpy',
+>     inlined from 'mlx5_fpga_query_qp' at drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c:194:2:
+> include/linux/string.h:315:4: error: call to '__read_overflow2' declared with attribute error: detected read beyond size of object passed as 2nd parameter
+>     __read_overflow2();
+>     ^
+> 
+> Caused by commit
+> 
+>   c151149cc4db ("include/linux/string.h: add the option of fortified string.h functions")
+> 
+> interacting with commit
+> 
+>   6062118d5cd2 ("net/mlx5: FPGA, Add FW commands for FPGA QPs")
+> 
 > from the net-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/net/ethernet/mellanox/mlx5/core/health.c
-> index 8a8b5f0e497c,0648a659b21d..000000000000
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/health.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/health.c
-> @@@ -193,8 -193,8 +194,8 @@@ static void health_care(struct work_str
->         mlx5_core_warn(dev, "handling bad device here\n");
->         mlx5_handle_bad_state(dev);
->
-> -       spin_lock(&health->wq_lock);
-> +       spin_lock_irqsave(&health->wq_lock, flags);
->  -      if (!test_bit(MLX5_DROP_NEW_HEALTH_WORK, &health->flags))
->  +      if (!test_bit(MLX5_DROP_NEW_RECOVERY_WORK, &health->flags))
->                 schedule_delayed_work(&health->recover_work, recover_delay);
->         else
->                 dev_err(&dev->pdev->dev,
-> @@@ -334,11 -341,11 +343,12 @@@ void mlx5_stop_health_poll(struct mlx5_
->   void mlx5_drain_health_wq(struct mlx5_core_dev *dev)
->   {
->         struct mlx5_core_health *health = &dev->priv.health;
-> +       unsigned long flags;
->
-> -       spin_lock(&health->wq_lock);
-> +       spin_lock_irqsave(&health->wq_lock, flags);
->         set_bit(MLX5_DROP_NEW_HEALTH_WORK, &health->flags);
->  +      set_bit(MLX5_DROP_NEW_RECOVERY_WORK, &health->flags);
-> -       spin_unlock(&health->wq_lock);
-> +       spin_unlock_irqrestore(&health->wq_lock, flags);
->         cancel_delayed_work_sync(&health->recover_work);
->         cancel_work_sync(&health->work);
->   }
-> diff --cc include/linux/mlx5/driver.h
-> index ba260330ce5e,2ab4ae3e3a1a..000000000000
-> --- a/include/linux/mlx5/driver.h
-> +++ b/include/linux/mlx5/driver.h
-> @@@ -925,7 -945,7 +945,8 @@@ int mlx5_health_init(struct mlx5_core_d
->   void mlx5_start_health_poll(struct mlx5_core_dev *dev);
->   void mlx5_stop_health_poll(struct mlx5_core_dev *dev);
->   void mlx5_drain_health_wq(struct mlx5_core_dev *dev);
->  +void mlx5_drain_health_recovery(struct mlx5_core_dev *dev);
-> + void mlx5_trigger_health_work(struct mlx5_core_dev *dev);
->   int mlx5_buf_alloc_node(struct mlx5_core_dev *dev, int size,
->                         struct mlx5_buf *buf, int node);
->   int mlx5_buf_alloc(struct mlx5_core_dev *dev, int size, struct mlx5_buf *buf);
+> 
+> I took a guess and tried the following patch which seemed to work.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 30 Jun 2017 16:24:35 +1000
+> Subject: [PATCH] net/mlx5: fix memcpy limit?
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c
+> index 5cb855fd618f..e37453d838db 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/cmd.c
+> @@ -191,7 +191,7 @@ int mlx5_fpga_query_qp(struct mlx5_core_dev *dev,
+>  	if (ret)
+>  		return ret;
+>  
+> -	memcpy(fpga_qpc, MLX5_ADDR_OF(fpga_query_qp_out, in, fpga_qpc),
+> +	memcpy(fpga_qpc, MLX5_ADDR_OF(fpga_query_qp_out, out, fpga_qpc),
+>  	       MLX5_FLD_SZ_BYTES(fpga_query_qp_out, fpga_qpc));
+>  	return ret;
+>  }
+> -- 
+> 2.11.0
 
-Hi Stephen,
+Again today ... so is the fix correct?  if so, Dave should apply it, if
+not someone should supply a correct fix for Dave.
 
-The fix up looks good, I already notified Dave about this on net
-submission and he approved.
-
-Thanks,
-Saeed.
+-- 
+Cheers,
+Stephen Rothwell
