@@ -1,42 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tty tree with the arm-soc tree
-Date: Mon, 3 Jul 2017 11:30:19 +1000
-Message-ID: <20170703113019.40637587@canb.auug.org.au>
-References: <20170620135242.14ecdcb4@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the kspp
+ tree
+Date: Mon, 3 Jul 2017 11:31:17 +1000
+Message-ID: <20170703113117.0ae8b7f9@canb.auug.org.au>
+References: <20170620151549.3380276f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59405 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46023 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752212AbdGCBaV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Jul 2017 21:30:21 -0400
-In-Reply-To: <20170620135242.14ecdcb4@canb.auug.org.au>
+        id S1752220AbdGCBbT (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Jul 2017 21:31:19 -0400
+In-Reply-To: <20170620151549.3380276f@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Kees Cook <keescook@chromium.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Manfred Spraul <manfred@colorfullife.com>
 
 Hi all,
 
 With the merge window opening, just a reminder that this conflict still
 exists.
 
-On Tue, 20 Jun 2017 13:52:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 20 Jun 2017 15:15:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the tty tree got a conflict in:
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 > 
->   include/linux/platform_data/atmel.h
+>   include/linux/sem.h
 > 
 > between commit:
 > 
->   8a3d809373c6 ("ARM: at91: remove atmel_nand_data")
+>   1a12979f61e4 ("randstruct: Mark various structs for randomization")
 > 
-> from the arm-soc tree and commit:
+> from the kspp tree and commit:
 > 
->   92c8f7c0e109 ("tty/serial: atmel: make the driver DT only")
+>   337e62a32a54 ("ipc/sem.c: remove sem_base, embed struct sem")
 > 
-> from the tty tree.
+> from the akpm-current tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -49,62 +50,21 @@ On Tue, 20 Jun 2017 13:52:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc include/linux/platform_data/atmel.h
-> index 70c5c766628e,d36bc8d17e97..000000000000
-> --- a/include/linux/platform_data/atmel.h
-> +++ b/include/linux/platform_data/atmel.h
-> @@@ -7,8 -7,9 +7,6 @@@
->   #ifndef __ATMEL_H__
->   #define __ATMEL_H__
+> diff --cc include/linux/sem.h
+> index 23bcbdfad4a6,be5cf2ea14ad..000000000000
+> --- a/include/linux/sem.h
+> +++ b/include/linux/sem.h
+> @@@ -21,7 -39,9 +39,9 @@@ struct sem_array 
+>   	int			sem_nsems;	/* no. of semaphores in array */
+>   	int			complex_count;	/* pending complex operations */
+>   	unsigned int		use_global_lock;/* >0: global lock required */
+> + 
+> + 	struct sem		sems[];
+>  -};
+>  +} __randomize_layout;
 >   
-> - #include <linux/serial.h>
->  -#include <linux/mtd/nand.h>
->  -#include <linux/mtd/partitions.h>
-> --
->    /* Compact Flash */
->   struct at91_cf_data {
->   	int	irq_pin;		/* I/O IRQ */
-> @@@ -21,23 -22,26 +19,14 @@@
->   #define AT91_IDE_SWAP_A0_A2	0x02
->   };
+>   #ifdef CONFIG_SYSVIPC
 >   
-> -  /* Serial */
-> - struct atmel_uart_data {
-> - 	int			num;		/* port num */
-> - 	short			use_dma_tx;	/* use transmit DMA? */
-> - 	short			use_dma_rx;	/* use receive DMA? */
-> - 	void __iomem		*regs;		/* virt. base address, if any */
-> - 	struct serial_rs485	rs485;		/* rs485 settings */
->  - /* NAND / SmartMedia */
->  -struct atmel_nand_data {
->  -	int		enable_pin;		/* chip enable */
->  -	int		det_pin;		/* card detect */
->  -	int		rdy_pin;		/* ready/busy */
->  -	u8		rdy_pin_active_low;	/* rdy_pin value is inverted */
->  -	u8		ale;			/* address line number connected to ALE */
->  -	u8		cle;			/* address line number connected to CLE */
->  -	u8		bus_width_16;		/* buswidth is 16 bit */
->  -	u8		ecc_mode;		/* ecc mode */
->  -	u8		on_flash_bbt;		/* bbt on flash */
->  -	struct mtd_partition *parts;
->  -	unsigned int	num_parts;
->  -	bool		has_dma;		/* support dma transfer */
->  -
->  -	/* default is false, only for at32ap7000 chip is true */
->  -	bool		need_reset_workaround;
-> --};
-> --
->   /* FIXME: this needs a better location, but gets stuff building again */
->  +#ifdef CONFIG_ATMEL_PM
->   extern int at91_suspend_entering_slow_clock(void);
->  +#else
->  +static inline int at91_suspend_entering_slow_clock(void)
->  +{
->  +	return 0;
->  +}
->  +#endif
->   
->   #endif /* __ATMEL_H__ */
 
 -- 
 Cheers,
