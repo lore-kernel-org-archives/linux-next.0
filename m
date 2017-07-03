@@ -1,79 +1,81 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the md tree
-Date: Mon, 3 Jul 2017 11:52:48 +1000
-Message-ID: <20170703115248.5907f426@canb.auug.org.au>
-References: <20170622114456.329ec8ca@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvms390 tree with the s390 tree
+Date: Mon, 3 Jul 2017 11:55:42 +1000
+Message-ID: <20170703115542.4b95127f@canb.auug.org.au>
+References: <20170622125928.76918255@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45071 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752124AbdGCBwu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Jul 2017 21:52:50 -0400
-In-Reply-To: <20170622114456.329ec8ca@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Shaohua Li <shli@kernel.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170622125928.76918255@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cornelia.huck@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-With the merge window opening, just a reminder that this merge fixup is
-still required.
+[cc'ing kvm tree maintainers]
 
-On Thu, 22 Jun 2017 11:44:56 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Withe the merge window opening, just a reminder that this conflict
+still exists.
+
+On Thu, 22 Jun 2017 12:59:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> After merging the md tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> Today's linux-next merge of the kvms390 tree got a conflict in:
 > 
-> drivers/md/md.c: In function 'md_run':
-> drivers/md/md.c:5449:21: error: too few arguments to function 'bioset_create'
->    mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0);
->                      ^
-> In file included from include/linux/blkdev.h:20:0,
->                  from drivers/md/md.c:49:
-> include/linux/bio.h:375:24: note: declared here
->  extern struct bio_set *bioset_create(unsigned int, unsigned int, int flags);
->                         ^
+>   arch/s390/kvm/gaccess.c
 > 
-> Caused by commit
+> between commit:
 > 
->   5a85071c2cbc ("md: use a separate bio_set for synchronous IO.")
+>   a75259825401 ("s390: rename struct psw_bits members")
 > 
-> interacting with commit
+> from the s390 tree and commit:
 > 
->   011067b05668 ("blk: replace bioset_create_nobvec() with a flags arg to bioset_create()")
+>   8993df124642 ("KVM: s390: implement instruction execution protection for emulated")
 > 
-> from the block tree.
+> from the kvms390 tree.
 > 
-> I applied the following merge fix patch:
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 > 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 22 Jun 2017 11:42:02 +1000
-> Subject: [PATCH] md: fix up for "blk: replace bioset_create_nobvec() with a
->  flags arg to bioset_create()"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/md/md.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index c5d9cac4760c..ffccee45af8c 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -5446,7 +5446,7 @@ int md_run(struct mddev *mddev)
->  			return -ENOMEM;
->  	}
->  	if (mddev->sync_set == NULL) {
-> -		mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0);
-> +		mddev->sync_set = bioset_create(BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
->  		if (!mddev->sync_set)
->  			return -ENOMEM;
->  	}
 > -- 
-> 2.11.0
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc arch/s390/kvm/gaccess.c
+> index e0f7d5fc7efd,6fda095f1a99..000000000000
+> --- a/arch/s390/kvm/gaccess.c
+> +++ b/arch/s390/kvm/gaccess.c
+> @@@ -790,8 -808,8 +808,8 @@@ static int guest_page_range(struct kvm_
+>   			return trans_exc(vcpu, PGM_PROTECTION, ga, ar, mode,
+>   					 PROT_TYPE_LA);
+>   		ga &= PAGE_MASK;
+>  -		if (psw_bits(*psw).t) {
+>  +		if (psw_bits(*psw).dat) {
+> - 			rc = guest_translate(vcpu, ga, pages, asce, mode);
+> + 			rc = guest_translate(vcpu, ga, pages, asce, mode, &prot);
+>   			if (rc < 0)
+>   				return rc;
+>   		} else {
+> @@@ -899,10 -918,10 +918,10 @@@ int guest_translate_address(struct kvm_
+>   					 mode, PROT_TYPE_LA);
+>   	}
+>   
+>  -	if (psw_bits(*psw).t && !asce.r) {	/* Use DAT? */
+>  +	if (psw_bits(*psw).dat && !asce.r) {	/* Use DAT? */
+> - 		rc = guest_translate(vcpu, gva, gpa, asce, mode);
+> + 		rc = guest_translate(vcpu, gva, gpa, asce, mode, &prot);
+>   		if (rc > 0)
+> - 			return trans_exc(vcpu, rc, gva, 0, mode, PROT_TYPE_DAT);
+> + 			return trans_exc(vcpu, rc, gva, 0, mode, prot);
+>   	} else {
+>   		*gpa = kvm_s390_real_to_abs(vcpu, gva);
+>   		if (kvm_is_error_gpa(vcpu->kvm, *gpa))
 
 -- 
 Cheers,
