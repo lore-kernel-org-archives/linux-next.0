@@ -1,96 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Mon, 3 Jul 2017 13:01:50 +1000
-Message-ID: <20170703130150.6d4fd543@canb.auug.org.au>
-References: <20170628134310.3a605636@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Mon, 3 Jul 2017 13:21:01 +1000
+Message-ID: <20170703132101.72121ab0@canb.auug.org.au>
+References: <20170629115400.3f52c9aa@canb.auug.org.au>
+        <ABFD875FF5FB574BA706497D987D48D70267BA04@RTITMBSV02.realtek.com.tw>
+        <20170630115135.2696f717@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53403 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41265 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752110AbdGCDBw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 2 Jul 2017 23:01:52 -0400
-In-Reply-To: <20170628134310.3a605636@canb.auug.org.au>
+        id S1752152AbdGCDVE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 2 Jul 2017 23:21:04 -0400
+In-Reply-To: <20170630115135.2696f717@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Gustavo Padovan <gustavo@padovan.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jeffy Chen <jeffy.chen@rock-chips.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Bard Liao <bardliao@realtek.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 Hi all,
 
-With the merge window opening, just a reminder that this semantic
-conflict still exists.
-
-On Wed, 28 Jun 2017 13:43:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 30 Jun 2017 11:51:35 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
+> On Thu, 29 Jun 2017 02:01:16 +0000 Bard Liao <bardliao@realtek.com> wrote:
+> >  
+> > > -----Original Message-----
+> > > From: Stephen Rothwell [mailto:sfr@canb.auug.org.au]
+> > > Sent: Thursday, June 29, 2017 9:54 AM
+> > > To: Mark Brown; Liam Girdwood
+> > > Cc: Linux-Next Mailing List; Linux Kernel Mailing List; Bard Liao
+> > > Subject: linux-next: build failure after merge of the sound-asoc tree
+> > > 
+> > > Hi all,
+> > > 
+> > > After merging the sound-asoc tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > sound/soc/codecs/rt5670.c: In function 'rt5670_set_codec_sysclk':
+> > > sound/soc/codecs/rt5670.c:2448:57: error: 'codec' undeclared (first use in this
+> > > function)
+> > >   struct rt5670_priv *rt5670 = snd_soc_codec_get_drvdata(codec);
+> > >                                                          ^
+> > > sound/soc/codecs/rt5670.c:2448:57: note: each undeclared identifier is
+> > > reported only once for each function it appears in
+> > > sound/soc/codecs/rt5670.c: At top level:
+> > > sound/soc/codecs/rt5670.c:2775:16: error: initialization from incompatible
+> > > pointer type [-Werror=incompatible-pointer-types]
+> > >   .set_sysclk = rt5670_set_codec_sysclk,
+> > >                 ^
+> > > sound/soc/codecs/rt5670.c:2775:16: note: (near initialization for
+> > > 'soc_codec_dev_rt5670.set_sysclk')
+> > > cc1: some warnings being treated as errors
+> > > 
+> > > Caused by commit
+> > > 
+> > >   6c28ce3c425e ("ASoC: rt5670: move set_sysclk to codec level")
+> > > 
+> > > I have used the sound-asoc tree from next-20170628 for today.    
+> > 
+> > Sorry about that. I just sent a patch to fix it. Please check the attached.  
 > 
-> net/bluetooth/hidp/core.c:1241:39: error: unknown type name 'wait_queue_t'
->  static int hidp_session_wake_function(wait_queue_t *wait,
->                                        ^
-> In file included from include/linux/mmzone.h:9:0,
->                  from include/linux/gfp.h:5,
->                  from include/linux/kmod.h:22,
->                  from include/linux/module.h:13,
->                  from net/bluetooth/hidp/core.c:25:
-> net/bluetooth/hidp/core.c: In function 'hidp_session_thread':
-> net/bluetooth/hidp/core.c:1259:30: error: 'hidp_session_wake_function' undeclared (first use in this function)
->   DEFINE_WAIT_FUNC(ctrl_wait, hidp_session_wake_function);
->                               ^
-> include/linux/wait.h:954:12: note: in definition of macro 'DEFINE_WAIT_FUNC'
->    .func  = function,     \
->             ^
-> net/bluetooth/hidp/core.c:1259:30: note: each undeclared identifier is reported only once for each function it appears in
->   DEFINE_WAIT_FUNC(ctrl_wait, hidp_session_wake_function);
->                               ^
-> include/linux/wait.h:954:12: note: in definition of macro 'DEFINE_WAIT_FUNC'
->    .func  = function,     \
->             ^
+> I have applied your patch (attached) for today.
 > 
-> Caused by commit
+> Mark, Liam, please apply.
 > 
->   ac6424b981bc ("sched/wait: Rename wait_queue_t => wait_queue_entry_t")
-> 
-> interacting with commit
-> 
->   5da8e47d849d ("Bluetooth: hidp: fix possible might sleep error in hidp_session_thread")
-> 
-> from the bluetooth tree.  I should have fixed this up in the merge, sorry.
-> I added the following merge fix for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 28 Jun 2017 13:36:04 +1000
-> Subject: [PATCH] Bluetooth: hidp: fix for "sched/wait: Rename wait_queue_t =>
->  wait_queue_entry_t"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  net/bluetooth/hidp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/bluetooth/hidp/core.c b/net/bluetooth/hidp/core.c
-> index 472b3907b1b0..002743ea509c 100644
-> --- a/net/bluetooth/hidp/core.c
-> +++ b/net/bluetooth/hidp/core.c
-> @@ -1238,7 +1238,7 @@ static void hidp_session_run(struct hidp_session *session)
->  	smp_mb__after_atomic();
->  }
->  
-> -static int hidp_session_wake_function(wait_queue_t *wait,
-> +static int hidp_session_wake_function(wait_queue_entry_t *wait,
->  				      unsigned int mode,
->  				      int sync, void *key)
->  {
-> -- 
-> 2.11.0
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+> Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-
+Ping?
 
 -- 
 Cheers,
