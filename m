@@ -1,112 +1,96 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: Re: [linux-next] cpus stalls detected few hours after booting next
- kernel
-Date: Tue, 04 Jul 2017 19:44:58 +0530
-Message-ID: <1499177698.19784.7.camel@abdul.in.ibm.com>
-References: <1498728106.19484.21.camel@abdul>
-         <20170629193614.376e27e6@roar.ozlabs.ibm.com>
-         <20170629202305.6187367f@roar.ozlabs.ibm.com>
-         <20170630004534.228f7c08@roar.ozlabs.ibm.com>
-         <1498800138.19484.25.camel@abdul>
-         <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: linux-next: build failure after merge of the block tree
+Date: Tue, 4 Jul 2017 08:15:57 -0700
+Message-ID: <20170704151557.GA22088@roeck-us.net>
+References: <20170613205409.4b7e06f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170630172802.6d4ddca2@roar.ozlabs.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Paul McKenney <Paul.McKenney@us.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, paulus@samba.org, paulmck@linux.vnet.ibm.com, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bh-25.webhostbox.net ([208.91.199.152]:40606 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752342AbdGDPQC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 4 Jul 2017 11:16:02 -0400
+Content-Disposition: inline
+In-Reply-To: <20170613205409.4b7e06f9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jens Axboe <axboe@kernel.dk>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Sebastian Ott <sebott@linux.vnet.ibm.com>
 
-On Fri, 2017-06-30 at 17:28 +1000, Nicholas Piggin wrote:
-> On Fri, 30 Jun 2017 10:52:18 +0530
-> Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
+On Tue, Jun 13, 2017 at 08:54:09PM +1000, Stephen Rothwell wrote:
+> Hi Jall,
 > 
-> > On Fri, 2017-06-30 at 00:45 +1000, Nicholas Piggin wrote:
-> > > On Thu, 29 Jun 2017 20:23:05 +1000
-> > > Nicholas Piggin <npiggin@gmail.com> wrote:
-> > > 
-> > > > On Thu, 29 Jun 2017 19:36:14 +1000
-> > > > Nicholas Piggin <npiggin@gmail.com> wrote:
-> > > 
-> > > > > I don't *think* the replay-wakeup-interrupt patch is directly involved, but
-> > > > > it's likely to be one of the idle patches.  
-> > > 
-> > > Okay this turned out to be misconfigured sleep states I added for the
-> > > simulator, sorry for the false alarm.
-> > > 
-> > > > Although you have this in the backtrace. I wonder if that's a stuck
-> > > > lock in rcu_process_callbacks?
-> > > 
-> > > So this spinlock becomes top of the list of suspects. Can you try
-> > > enabling lockdep and try to reproduce it?
-> > 
-> > Yes, recreated again with CONFIG_LOCKDEP=y & CONFIG_DEBUG_LOCKDEP=y set.
-> > I do not see any difference in trace messages with and without LOCKDEP
-> > enabled.
-> > 
-> > Please find the attached log file.
+> After merging the block tree, today's linux-next build (s390x
+> s390-defconfig) failed like this:
 > 
-> Can you get an rcu_invoke_callback event trace that Paul suggested?
-
-I could not reproduce the issue with the latest next kernel
-(4.12.0-rc7-next-20170703).
-
-> Does this bug show up with just the powerpc next branch?
-
-Perhaps, stress-ng test on today's mainline kernel (4.12.0) triggered a
-different trace message and this not reproducible all the time.
-
-
-stress-ng --io 100  --vm 10 --vm-bytes 100g --timeout 1h --oomable
-
-INFO: rcu_sched self-detected stall on CPU
-        8-...: (2099 ticks this GP) idle=37e/140000000000001/0
-softirq=1404131/1404131 fqs=932 
-         (t=2100 jiffies g=394894 c=394893 q=21997)
-Task dump for CPU 8:
-kworker/u162:2  R  running task    11168 28468      2 0x00000884   
-Workqueue: writeback wb_workfn (flush-253:1)
-Call Trace:
-[c00000036e3eb340] [c000000000114480] sched_show_task+0xf0/0x160
-(unreliable)
-[c00000036e3eb3b0] [c0000000009adc2c] rcu_dump_cpu_stacks+0xd0/0x134
-[c00000036e3eb400] [c00000000015e4d0] rcu_check_callbacks+0x8f0/0xaf0
-[c00000036e3eb530] [c000000000165e2c] update_process_times+0x3c/0x90
-[c00000036e3eb560] [c00000000017b73c] tick_sched_handle.isra.13
-+0x2c/0xc0
-[c00000036e3eb590] [c00000000017b828] tick_sched_timer+0x58/0xb0
-[c00000036e3eb5d0] [c0000000001669e8] __hrtimer_run_queues+0xf8/0x330
-[c00000036e3eb650] [c000000000167744] hrtimer_interrupt+0xe4/0x280
-[c00000036e3eb710] [c000000000022620] __timer_interrupt+0x90/0x270
-[c00000036e3eb760] [c000000000022cf0] timer_interrupt+0xa0/0xe0
-[c00000036e3eb790] [c0000000000091e8] decrementer_common+0x158/0x160
---- interrupt: 901 at move_expired_inodes+0x30/0x200
-    LR = queue_io+0x8c/0x190
-[c00000036e3eba80] [c00000036e3ebac0] 0xc00000036e3ebac0 (unreliable)
-[c00000036e3ebac0] [c000000000319b24] wb_writeback+0x2b4/0x420
-[c00000036e3ebb90] [c00000000031a980] wb_workfn+0xf0/0x4b0
-[c00000036e3ebca0] [c0000000000fa160] process_one_work+0x180/0x470
-[c00000036e3ebd30] [c0000000000fa6d4] worker_thread+0x284/0x500
-[c00000036e3ebdc0] [c000000000101fc0] kthread+0x160/0x1a0
-[c00000036e3ebe30] [c00000000000bb60] ret_from_kernel_thread+0x5c/0x7c
-INFO: rcu_sched self-detected stall on CPU
-        51-...: (2099 ticks this GP) idle=7c2/140000000000001/0
-softirq=1272749/1272749 fqs=995 
-         (t=2100 jiffies g=394900 c=394899 q=32186)
-~                                                   
-
-stress-ng : http://kernel.ubuntu.com/git/cking/stress-ng.git
-
+> drivers/s390/block/scm_blk.c:293:10: error: 'BLK_MQ_RQ_QUEUE_BUSY' undeclared (first use in this function)
+> drivers/s390/block/scm_blk.c:327:9: error: 'BLK_MQ_RQ_QUEUE_OK' undeclared (first use in this function)
 > 
-> Thanks,
-> Nick
+> Caused by commit
+> 
+>   fc17b6534eb8 ("blk-mq: switch ->queue_rq return value to blk_status_t")
+> 
+> interacting with commit
+> 
+>   12d907626539 ("s390/scm: convert to blk-mq")
+> 
+> from the s390 tree.
+> 
+> Is the following the correct merge fixup?
 > 
 
+The failure made int into Linus' tree, but the fix didn't. Is the fix pending
+in some other queue or does it have to be (re-)submitted ?
 
--- 
-Regard's
+Guenter
 
-Abdul Haleem
-IBM Linux Technology Centre
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 13 Jun 2017 20:51:32 +1000
+> Subject: [PATCH] s390: fix up for "blk-mq: switch ->queue_rq return value to
+>  blk_status_t"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/s390/block/scm_blk.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/s390/block/scm_blk.c b/drivers/s390/block/scm_blk.c
+> index 42018a20f2b7..2cd6123c8f18 100644
+> --- a/drivers/s390/block/scm_blk.c
+> +++ b/drivers/s390/block/scm_blk.c
+> @@ -290,7 +290,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
+>  	spin_lock(&sq->lock);
+>  	if (!scm_permit_request(bdev, req)) {
+>  		spin_unlock(&sq->lock);
+> -		return BLK_MQ_RQ_QUEUE_BUSY;
+> +		return BLK_STS_RESOURCE;
+>  	}
+>  
+>  	scmrq = sq->scmrq;
+> @@ -299,7 +299,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
+>  		if (!scmrq) {
+>  			SCM_LOG(5, "no request");
+>  			spin_unlock(&sq->lock);
+> -			return BLK_MQ_RQ_QUEUE_BUSY;
+> +			return BLK_STS_RESOURCE;
+>  		}
+>  		scm_request_init(bdev, scmrq);
+>  		sq->scmrq = scmrq;
+> @@ -315,7 +315,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
+>  
+>  		sq->scmrq = NULL;
+>  		spin_unlock(&sq->lock);
+> -		return BLK_MQ_RQ_QUEUE_BUSY;
+> +		return BLK_STS_RESOURCE;
+>  	}
+>  	blk_mq_start_request(req);
+>  
+> @@ -324,7 +324,7 @@ static int scm_blk_request(struct blk_mq_hw_ctx *hctx,
+>  		sq->scmrq = NULL;
+>  	}
+>  	spin_unlock(&sq->lock);
+> -	return BLK_MQ_RQ_QUEUE_OK;
+> +	return BLK_STS_OK;
+>  }
+>  
+>  static int scm_blk_init_hctx(struct blk_mq_hw_ctx *hctx, void *data,
