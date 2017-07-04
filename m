@@ -1,519 +1,458 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: btrfs merge resolution
-Date: Tue, 4 Jul 2017 09:44:55 +1000
-Message-ID: <20170704094455.71972260@canb.auug.org.au>
+Subject: linux-next: Tree for Jul 4
+Date: Tue, 4 Jul 2017 15:44:54 +1000
+Message-ID: <20170704154454.520bd246@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37159 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:33447 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750835AbdGCXo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 3 Jul 2017 19:44:57 -0400
+        id S1751734AbdGDFo5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 4 Jul 2017 01:44:57 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linus Trovalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 Hi all,
 
-Since the block tree has been merged into Linus' tree, here is the
-merge resolution from my merge of the btrfs-kdave tree today:
+Please do not add any v4.14 material to you linux-next included branches
+until after v4.13-rc1 has been released.
 
-36c639d65d6a6e596d73ccf285adf9fffc9097b8
-diff --cc fs/btrfs/disk-io.c
-index 6036d15b47b8,b6758892874f..7065201bedcf
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@@ -87,9 -87,8 +87,8 @@@ struct btrfs_end_io_wq 
-  	bio_end_io_t *end_io;
-  	void *private;
-  	struct btrfs_fs_info *info;
- -	int error;
- +	blk_status_t status;
-  	enum btrfs_wq_endio_type metadata;
-- 	struct list_head list;
-  	struct btrfs_work work;
-  };
-  
-@@@ -868,10 -867,10 +867,10 @@@ unsigned long btrfs_async_submit_limit(
-  static void run_one_async_start(struct btrfs_work *work)
-  {
-  	struct async_submit_bio *async;
- -	int ret;
- +	blk_status_t ret;
-  
-  	async = container_of(work, struct  async_submit_bio, work);
-- 	ret = async->submit_bio_start(async->inode, async->bio,
-+ 	ret = async->submit_bio_start(async->private_data, async->bio,
-  				      async->mirror_num, async->bio_flags,
-  				      async->bio_offset);
-  	if (ret)
-@@@ -916,19 -915,20 +915,20 @@@ static void run_one_async_free(struct b
-  	kfree(async);
-  }
-  
-- blk_status_t btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info,
-- 		struct inode *inode, struct bio *bio, int mirror_num,
-- 		unsigned long bio_flags, u64 bio_offset,
-- 		extent_submit_bio_hook_t *submit_bio_start,
-- 		extent_submit_bio_hook_t *submit_bio_done)
- -int btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
-++blk_status_t btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
-+ 			int mirror_num, unsigned long bio_flags,
-+ 			u64 bio_offset, void *private_data,
-+ 			extent_submit_bio_hook_t *submit_bio_start,
-+ 			extent_submit_bio_hook_t *submit_bio_done)
-  {
-  	struct async_submit_bio *async;
-  
-  	async = kmalloc(sizeof(*async), GFP_NOFS);
-  	if (!async)
- -		return -ENOMEM;
- +		return BLK_STS_RESOURCE;
-  
-- 	async->inode = inode;
-+ 	async->private_data = private_data;
-+ 	async->fs_info = fs_info;
-  	async->bio = bio;
-  	async->mirror_num = mirror_num;
-  	async->submit_bio_start = submit_bio_start;
-@@@ -971,12 -971,12 +971,12 @@@ static blk_status_t btree_csum_one_bio(
-  			break;
-  	}
-  
- -	return ret;
- +	return errno_to_blk_status(ret);
-  }
-  
-- static blk_status_t __btree_submit_bio_start(struct inode *inode,
-- 		struct bio *bio, int mirror_num, unsigned long bio_flags,
-- 		u64 bio_offset)
- -static int __btree_submit_bio_start(void *private_data, struct bio *bio,
-++static blk_status_t __btree_submit_bio_start(void *private_data, struct bio *bio,
-+ 				    int mirror_num, unsigned long bio_flags,
-+ 				    u64 bio_offset)
-  {
-  	/*
-  	 * when we're called for a write, we're already in the async
-@@@ -985,11 -985,12 +985,12 @@@
-  	return btree_csum_one_bio(bio);
-  }
-  
-- static blk_status_t __btree_submit_bio_done(struct inode *inode,
-- 		struct bio *bio, int mirror_num, unsigned long bio_flags,
-- 		u64 bio_offset)
- -static int __btree_submit_bio_done(void *private_data, struct bio *bio,
-++static blk_status_t __btree_submit_bio_done(void *private_data, struct bio *bio,
-+ 				 int mirror_num, unsigned long bio_flags,
-+ 				 u64 bio_offset)
-  {
-+ 	struct inode *inode = private_data;
- -	int ret;
- +	blk_status_t ret;
-  
-  	/*
-  	 * when we're called for a write, we're already in the async
-@@@ -1014,13 -1015,14 +1015,14 @@@ static int check_async_write(unsigned l
-  	return 1;
-  }
-  
-- static blk_status_t btree_submit_bio_hook(struct inode *inode, struct bio *bio,
- -static int btree_submit_bio_hook(void *private_data, struct bio *bio,
-++static blk_status_t btree_submit_bio_hook(void *private_data, struct bio *bio,
-  				 int mirror_num, unsigned long bio_flags,
-  				 u64 bio_offset)
-  {
-+ 	struct inode *inode = private_data;
-  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-  	int async = check_async_write(bio_flags);
- -	int ret;
- +	blk_status_t ret;
-  
-  	if (bio_op(bio) != REQ_OP_WRITE) {
-  		/*
-@@@ -3490,59 -3485,57 +3485,57 @@@ static void btrfs_end_empty_barrier(str
-  }
-  
-  /*
--  * trigger flushes for one the devices.  If you pass wait == 0, the flushes are
--  * sent down.  With wait == 1, it waits for the previous flush.
--  *
--  * any device where the flush fails with eopnotsupp are flagged as not-barrier
--  * capable
-+  * Submit a flush request to the device if it supports it. Error handling is
-+  * done in the waiting counterpart.
-   */
-- static blk_status_t write_dev_flush(struct btrfs_device *device, int wait)
-+ static void write_dev_flush(struct btrfs_device *device)
-  {
-  	struct request_queue *q = bdev_get_queue(device->bdev);
-- 	struct bio *bio;
-- 	blk_status_t ret = 0;
-+ 	struct bio *bio = device->flush_bio;
-  
-  	if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
-- 		return 0;
-+ 		return;
-  
-- 	if (wait) {
-- 		bio = device->flush_bio;
-- 		if (!bio)
-- 			return 0;
-+ 	bio_reset(bio);
-+ 	bio->bi_end_io = btrfs_end_empty_barrier;
-+ 	bio->bi_bdev = device->bdev;
-+ 	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
-+ 	init_completion(&device->flush_wait);
-+ 	bio->bi_private = &device->flush_wait;
-  
-- 		wait_for_completion(&device->flush_wait);
-+ 	submit_bio(bio);
-+ 	device->flush_bio_sent = 1;
-+ }
-  
-- 		if (bio->bi_status) {
-- 			ret = bio->bi_status;
-- 			btrfs_dev_stat_inc_and_print(device,
-- 				BTRFS_DEV_STAT_FLUSH_ERRS);
-- 		}
-+ /*
-+  * If the flush bio has been submitted by write_dev_flush, wait for it.
-+  */
- -static int wait_dev_flush(struct btrfs_device *device)
-++static blk_status_t wait_dev_flush(struct btrfs_device *device)
-+ {
-+ 	struct bio *bio = device->flush_bio;
-  
-- 		/* drop the reference from the wait == 0 run */
-- 		bio_put(bio);
-- 		device->flush_bio = NULL;
-+ 	if (!device->flush_bio_sent)
-+ 		return 0;
-  
-- 		return ret;
-- 	}
-+ 	device->flush_bio_sent = 0;
-+ 	wait_for_completion_io(&device->flush_wait);
-  
-- 	/*
-- 	 * one reference for us, and we leave it for the
-- 	 * caller
-- 	 */
-- 	device->flush_bio = NULL;
-- 	bio = btrfs_io_bio_alloc(GFP_NOFS, 0);
-- 	if (!bio)
-- 		return BLK_STS_RESOURCE;
- -	return bio->bi_error;
-++	return bio->bi_status;
-+ }
-  
-- 	bio->bi_end_io = btrfs_end_empty_barrier;
-- 	bio->bi_bdev = device->bdev;
-- 	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC | REQ_PREFLUSH;
-- 	init_completion(&device->flush_wait);
-- 	bio->bi_private = &device->flush_wait;
-- 	device->flush_bio = bio;
-+ static int check_barrier_error(struct btrfs_fs_devices *fsdevs)
-+ {
-+ 	int dev_flush_error = 0;
-+ 	struct btrfs_device *dev;
-  
-- 	bio_get(bio);
-- 	btrfsic_submit_bio(bio);
-+ 	list_for_each_entry_rcu(dev, &fsdevs->devices, dev_list) {
-+ 		if (!dev->bdev || dev->last_flush_error)
-+ 			dev_flush_error++;
-+ 	}
-+ 
-+ 	if (dev_flush_error >
-+ 	    fsdevs->fs_info->num_tolerated_disk_barrier_failures)
-+ 		return -EIO;
-  
-  	return 0;
-  }
-@@@ -3555,9 -3548,8 +3548,8 @@@ static int barrier_all_devices(struct b
-  {
-  	struct list_head *head;
-  	struct btrfs_device *dev;
-- 	int errors_send = 0;
-  	int errors_wait = 0;
- -	int ret;
- +	blk_status_t ret;
-  
-  	/* send down all the barriers */
-  	head = &info->fs_devices->devices;
-diff --cc fs/btrfs/disk-io.h
-index c581927555f3,4654d129aa76..0a634d3ffc16
---- a/fs/btrfs/disk-io.h
-+++ b/fs/btrfs/disk-io.h
-@@@ -118,16 -118,16 +118,16 @@@ int btrfs_buffer_uptodate(struct extent
-  int btrfs_read_buffer(struct extent_buffer *buf, u64 parent_transid);
-  u32 btrfs_csum_data(const char *data, u32 seed, size_t len);
-  void btrfs_csum_final(u32 crc, u8 *result);
- -int btrfs_bio_wq_end_io(struct btrfs_fs_info *info, struct bio *bio,
- +blk_status_t btrfs_bio_wq_end_io(struct btrfs_fs_info *info, struct bio *bio,
-  			enum btrfs_wq_endio_type metadata);
-- blk_status_t btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info,
-- 		struct inode *inode, struct bio *bio, int mirror_num,
-- 		unsigned long bio_flags, u64 bio_offset,
-- 		extent_submit_bio_hook_t *submit_bio_start,
-- 		extent_submit_bio_hook_t *submit_bio_done);
- -int btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
-++blk_status_t btrfs_wq_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
-+ 			int mirror_num, unsigned long bio_flags,
-+ 			u64 bio_offset, void *private_data,
-+ 			extent_submit_bio_hook_t *submit_bio_start,
-+ 			extent_submit_bio_hook_t *submit_bio_done);
-  unsigned long btrfs_async_submit_limit(struct btrfs_fs_info *info);
-  int btrfs_write_tree_block(struct extent_buffer *buf);
-- int btrfs_wait_tree_block_writeback(struct extent_buffer *buf);
-+ void btrfs_wait_tree_block_writeback(struct extent_buffer *buf);
-  int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
-  			     struct btrfs_fs_info *fs_info);
-  int btrfs_add_log_tree(struct btrfs_trans_handle *trans,
-diff --cc fs/btrfs/extent_io.c
-index d1cd60140817,2e6f69908303..7a18b5762ac9
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@@ -2398,9 -2369,9 +2370,10 @@@ static int bio_readpage_error(struct bi
-  	struct io_failure_record *failrec;
-  	struct inode *inode = page->mapping->host;
-  	struct extent_io_tree *tree = &BTRFS_I(inode)->io_tree;
-+ 	struct extent_io_tree *failure_tree = &BTRFS_I(inode)->io_failure_tree;
-  	struct bio *bio;
-  	int read_mode = 0;
- +	blk_status_t status;
-  	int ret;
-  
-  	BUG_ON(bio_op(failed_bio) == REQ_OP_WRITE);
-@@@ -2433,12 -2404,11 +2406,12 @@@
-  		"Repair Read Error: submitting new read[%#x] to this_mirror=%d, in_validation=%d",
-  		read_mode, failrec->this_mirror, failrec->in_validation);
-  
-- 	status = tree->ops->submit_bio_hook(inode, bio, failrec->this_mirror,
- -	ret = tree->ops->submit_bio_hook(tree->private_data, bio, failrec->this_mirror,
-++	status = tree->ops->submit_bio_hook(tree->private_data, bio, failrec->this_mirror,
-  					 failrec->bio_flags, 0);
- -	if (ret) {
- +	if (status) {
-- 		free_io_failure(BTRFS_I(inode), failrec);
-+ 		free_io_failure(failure_tree, tree, failrec);
-  		bio_put(bio);
- +		ret = blk_status_to_errno(status);
-  	}
-  
-  	return ret;
-@@@ -2540,9 -2509,9 +2513,9 @@@ endio_readpage_release_extent(struct ex
-  static void end_bio_extent_readpage(struct bio *bio)
-  {
-  	struct bio_vec *bvec;
- -	int uptodate = !bio->bi_error;
- +	int uptodate = !bio->bi_status;
-  	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
-- 	struct extent_io_tree *tree;
-+ 	struct extent_io_tree *tree, *failure_tree;
-  	u64 offset = 0;
-  	u64 start;
-  	u64 end;
-@@@ -2560,9 -2529,10 +2533,10 @@@
-  
-  		btrfs_debug(fs_info,
-  			"end_bio_extent_readpage: bi_sector=%llu, err=%d, mirror=%u",
- -			(u64)bio->bi_iter.bi_sector, bio->bi_error,
- +			(u64)bio->bi_iter.bi_sector, bio->bi_status,
-  			io_bio->mirror_num);
-  		tree = &BTRFS_I(inode)->io_tree;
-+ 		failure_tree = &BTRFS_I(inode)->io_failure_tree;
-  
-  		/* We always issue full-page reads, but if some block
-  		 * in a page fails to read, blk_update_request() will
-diff --cc fs/btrfs/extent_io.h
-index 487ca0207cb6,aeafdb35d90b..d4942d94a16b
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@@ -92,9 -92,9 +92,9 @@@ struct btrfs_inode
-  struct btrfs_io_bio;
-  struct io_failure_record;
-  
-- typedef	blk_status_t (extent_submit_bio_hook_t)(struct inode *inode,
- -typedef	int (extent_submit_bio_hook_t)(void *private_data, struct bio *bio,
- -				       int mirror_num, unsigned long bio_flags,
- -				       u64 bio_offset);
-++typedef	blk_status_t (extent_submit_bio_hook_t)(void *private_data,
- +		struct bio *bio, int mirror_num, unsigned long bio_flags,
- +		u64 bio_offset);
-  struct extent_io_ops {
-  	/*
-  	 * The following callbacks must be allways defined, the function
-diff --cc fs/btrfs/inode.c
-index 556c93060606,5d3c6ac960fd..8d050314591c
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@@ -1900,11 -1900,12 +1899,12 @@@ int btrfs_merge_bio_hook(struct page *p
-   * At IO completion time the cums attached on the ordered extent record
-   * are inserted into the btree
-   */
-- static blk_status_t __btrfs_submit_bio_start(struct inode *inode,
-- 		struct bio *bio, int mirror_num, unsigned long bio_flags,
-- 		u64 bio_offset)
- -static int __btrfs_submit_bio_start(void *private_data, struct bio *bio,
-++static blk_status_t __btrfs_submit_bio_start(void *private_data, struct bio *bio,
-+ 				    int mirror_num, unsigned long bio_flags,
-+ 				    u64 bio_offset)
-  {
-+ 	struct inode *inode = private_data;
- -	int ret = 0;
- +	blk_status_t ret = 0;
-  
-  	ret = btrfs_csum_one_bio(inode, bio, 0, 0);
-  	BUG_ON(ret); /* -ENOMEM */
-@@@ -1919,12 -1920,13 +1919,13 @@@
-   * At IO completion time the cums attached on the ordered extent record
-   * are inserted into the btree
-   */
-- static blk_status_t __btrfs_submit_bio_done(struct inode *inode,
-- 		struct bio *bio, int mirror_num, unsigned long bio_flags,
-- 		u64 bio_offset)
- -static int __btrfs_submit_bio_done(void *private_data, struct bio *bio,
-++static blk_status_t __btrfs_submit_bio_done(void *private_data, struct bio *bio,
-+ 			  int mirror_num, unsigned long bio_flags,
-+ 			  u64 bio_offset)
-  {
-+ 	struct inode *inode = private_data;
-  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
- -	int ret;
- +	blk_status_t ret;
-  
-  	ret = btrfs_map_bio(fs_info, bio, mirror_num, 1);
-  	if (ret) {
-@@@ -1938,10 -1940,11 +1939,11 @@@
-   * extent_io.c submission hook. This does the right thing for csum calculation
-   * on write, or reading the csums from the tree before a read
-   */
-- static blk_status_t btrfs_submit_bio_hook(struct inode *inode, struct bio *bio,
-- 			  int mirror_num, unsigned long bio_flags,
-- 			  u64 bio_offset)
- -static int btrfs_submit_bio_hook(void *private_data, struct bio *bio,
-++static blk_status_t btrfs_submit_bio_hook(void *private_data, struct bio *bio,
-+ 				 int mirror_num, unsigned long bio_flags,
-+ 				 u64 bio_offset)
-  {
-+ 	struct inode *inode = private_data;
-  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-  	struct btrfs_root *root = BTRFS_I(inode)->root;
-  	enum btrfs_wq_endio_type metadata = BTRFS_WQ_ENDIO_DATA;
-@@@ -8033,10 -8046,12 +8045,12 @@@ struct btrfs_retry_complete 
-  static void btrfs_retry_endio_nocsum(struct bio *bio)
-  {
-  	struct btrfs_retry_complete *done = bio->bi_private;
-+ 	struct inode *inode = done->inode;
-  	struct bio_vec *bvec;
-+ 	struct extent_io_tree *io_tree, *failure_tree;
-  	int i;
-  
- -	if (bio->bi_error)
- +	if (bio->bi_status)
-  		goto end;
-  
-  	ASSERT(bio->bi_vcnt == 1);
-@@@ -8140,11 -8171,12 +8170,12 @@@ end
-  	bio_put(bio);
-  }
-  
- -static int __btrfs_subio_endio_read(struct inode *inode,
- -				    struct btrfs_io_bio *io_bio, int err)
- +static blk_status_t __btrfs_subio_endio_read(struct inode *inode,
- +		struct btrfs_io_bio *io_bio, blk_status_t err)
-  {
-  	struct btrfs_fs_info *fs_info;
-- 	struct bio_vec *bvec;
-+ 	struct bio_vec bvec;
-+ 	struct bvec_iter iter;
-  	struct btrfs_retry_complete done;
-  	u64 start;
-  	u64 offset = 0;
-@@@ -8231,10 -8265,13 +8264,13 @@@ static void btrfs_endio_direct_read(str
-  	struct inode *inode = dip->inode;
-  	struct bio *dio_bio;
-  	struct btrfs_io_bio *io_bio = btrfs_io_bio(bio);
- -	int err = bio->bi_error;
- +	blk_status_t err = bio->bi_status;
-  
-- 	if (dip->flags & BTRFS_DIO_ORIG_BIO_SUBMITTED)
-+ 	if (dip->flags & BTRFS_DIO_ORIG_BIO_SUBMITTED) {
-  		err = btrfs_subio_endio_read(inode, io_bio, err);
-+ 		if (!err)
- -			bio->bi_error = 0;
-++			bio->bi_status = 0;
-+ 	}
-  
-  	unlock_extent(&BTRFS_I(inode)->io_tree, dip->logical_offset,
-  		      dip->logical_offset + dip->bytes - 1);
-@@@ -8307,11 -8344,12 +8343,12 @@@ static void btrfs_endio_direct_write(st
-  	bio_put(bio);
-  }
-  
-- static blk_status_t __btrfs_submit_bio_start_direct_io(struct inode *inode,
- -static int __btrfs_submit_bio_start_direct_io(void *private_data,
-++static blk_status_t __btrfs_submit_bio_start_direct_io(void *private_data,
-  				    struct bio *bio, int mirror_num,
-  				    unsigned long bio_flags, u64 offset)
-  {
-+ 	struct inode *inode = private_data;
- -	int ret;
- +	blk_status_t ret;
-  	ret = btrfs_csum_one_bio(inode, bio, offset, 1);
-  	BUG_ON(ret); /* -ENOMEM */
-  	return 0;
-@@@ -8357,17 -8395,7 +8394,7 @@@ out
-  	bio_put(bio);
-  }
-  
-- static struct bio *btrfs_dio_bio_alloc(struct block_device *bdev,
-- 				       u64 first_sector, gfp_t gfp_flags)
-- {
-- 	struct bio *bio;
-- 	bio = btrfs_bio_alloc(bdev, first_sector, BIO_MAX_PAGES, gfp_flags);
-- 	if (bio)
-- 		bio_associate_current(bio);
-- 	return bio;
-- }
-- 
- -static inline int btrfs_lookup_and_bind_dio_csum(struct inode *inode,
- +static inline blk_status_t btrfs_lookup_and_bind_dio_csum(struct inode *inode,
-  						 struct btrfs_dio_private *dip,
-  						 struct bio *bio,
-  						 u64 file_offset)
-@@@ -8672,10 -8675,10 +8674,10 @@@ free_ordered
-  		 * Releases and cleans up our dio_bio, no need to bio_put()
-  		 * nor bio_endio()/bio_io_error() against dio_bio.
-  		 */
- -		dio_end_io(dio_bio, ret);
- +		dio_end_io(dio_bio);
-  	}
-- 	if (io_bio)
-- 		bio_put(io_bio);
-+ 	if (bio)
-+ 		bio_put(bio);
-  	kfree(dip);
-  }
-  
-@@@ -8754,11 -8758,9 +8757,12 @@@ static ssize_t btrfs_direct_IO(struct k
-  			dio_data.overwrite = 1;
-  			inode_unlock(inode);
-  			relock = true;
- +		} else if (iocb->ki_flags & IOCB_NOWAIT) {
- +			ret = -EAGAIN;
- +			goto out;
-  		}
-- 		ret = btrfs_delalloc_reserve_space(inode, offset, count);
-+ 		ret = btrfs_delalloc_reserve_space(inode, &data_reserved,
-+ 						   offset, count);
-  		if (ret)
-  			goto out;
-  		dio_data.outstanding_extents = count_max_extents(count);
+Changes since 20170703:
+
+The sound-asoc tree lost its build failure.
+
+The spi tree lost its build failure.
+
+Non-merge commits (relative to Linus' tree): 10374
+ 9398 files changed, 767022 insertions(+), 194071 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with a ppc64_defconfig for powerpc and an allmodconfig (with
+CONFIG_BUILD_DOCSRC=n) for x86_64, a multi_v7_defconfig for arm and a
+native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+powerpc allnoconfig (32 and 64 bit), ppc44x_defconfig, allyesconfig
+and pseries_le_defconfig and i386, sparc and sparc64 defconfig. And
+finally, a simple boot test of the powerpc pseries_le_defconfig kernel
+in qemu.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 266 trees (counting Linus' and 41 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+$ git checkout master
+$ git reset --hard stable
+Merging origin/master (c6b1e36c8fa0 Merge branch 'for-4.13/block' of git://git.kernel.dk/linux-block)
+Merging fixes/master (97da3854c526 Linux 4.11-rc3)
+Merging kbuild-current/fixes (ad8181060788 kconfig: fix sparse warnings in nconfig)
+Merging arc-current/for-curr (c0bc126f97fb Linux 4.12-rc7)
+Merging arm-current/fixes (9e25ebfe56ec ARM: 8685/1: ensure memblock-limit is pmd-aligned)
+Merging m68k-current/for-linus (204a2be30a7a m68k: Remove ptrace_signal_deliver)
+Merging metag-fixes/fixes (b884a190afce metag/usercopy: Add missing fixups)
+Merging powerpc-fixes/fixes (d6bd8194e286 powerpc/32: Avoid miscompilation w/GCC 4.6.3 - don't inline copy_to/from_user())
+Merging sparc/master (dbd2667a4fb9 sparc64: Fix gup_huge_pmd)
+Merging fscrypt-current/for-stable (42d97eb0ade3 fscrypt: fix renaming and linking special files)
+Merging net/master (ea23b42739a2 Merge tag 'mlx5-fixes-2017-06-28' of git://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux)
+Merging ipsec/master (ca3a1b856636 esp6_offload: Fix IP6CB(skb)->nhoff for ESP GRO)
+Merging netfilter/master (91af6ba7ff16 netfilter: ebt_nflog: fix unexpected truncated packet)
+Merging ipvs/master (3c5ab3f395d6 ipvs: SNAT packet replies only for NATed connections)
+Merging wireless-drivers/master (35abcd4f9f30 brcmfmac: fix uninitialized warning in brcmf_usb_probe_phase2())
+Merging mac80211/master (4b153ca989a9 Merge tag 'mac80211-for-davem-2017-06-16' of git://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211)
+Merging sound-current/for-linus (a178232ddab5 ALSA: hda/realtek - Remove GPIO_MASK)
+Merging pci-current/for-linus (98dbf5af4fdd PCI: endpoint: Select CRC32 to fix test build error)
+Merging driver-core.current/driver-core-linus (08332893e37a Linux 4.12-rc2)
+Merging tty.current/tty-linus (3c2993b8c614 Linux 4.12-rc4)
+Merging usb.current/usb-linus (dec08194ffec xhci: Limit USB2 port wake support for AMD Promontory hosts)
+Merging usb-gadget-fixes/fixes (f50b878fed33 USB: gadget: fix GPF in gadgetfs)
+Merging usb-serial-fixes/usb-linus (996fab55d864 USB: serial: qcserial: new Sierra Wireless EM7305 device ID)
+Merging usb-chipidea-fixes/ci-for-usb-stable (cbb22ebcfb99 usb: chipidea: core: check before accessing ci_role in ci_role_show)
+Merging phy/fixes (9605bc46433d phy: qualcomm: phy-qcom-qmp: fix application of sizeof to pointer)
+Merging staging.current/staging-linus (41f1830f5a7a Linux 4.12-rc6)
+Merging char-misc.current/char-misc-linus (32c1431eea48 Linux 4.12-rc5)
+Merging input-current/for-linus (9768935264c4 Input: synaptics-rmi4 - only read the F54 query registers which are used)
+Merging crypto-current/master (019d62db5401 crypto: caam - fix gfp allocation flags (part II))
+Merging ide/master (acfead32f3f9 ide: don't call memcpy with the same source and destination)
+Merging vfio-fixes/for-linus (39da7c509acf Linux 4.11-rc6)
+Merging kselftest-fixes/fixes (2ea659a9ef48 Linux 4.12-rc1)
+Merging backlight-fixes/for-backlight-fixes (68feaca0b13e backlight: pwm: Handle EPROBE_DEFER while requesting the PWM)
+Merging ftrace-fixes/for-next-urgent (6224beb12e19 tracing: Have branch tracer use recursive field of task struct)
+Merging nand-fixes/nand/fixes (d4ed3b9015b5 mtd: nand: make nand_ooblayout_lp_hamming_ops static)
+Merging spi-nor-fixes/spi-nor/fixes (2ea659a9ef48 Linux 4.12-rc1)
+Merging mfd-fixes/for-mfd-fixes (9e69672e90cc dt-bindings: mfd: Update STM32 timers clock names)
+Merging v4l-dvb-fixes/fixes (2a2599c66368 [media] media: entity: Catch unbalanced media_pipeline_stop calls)
+Merging reset-fixes/reset/fixes (4497a224f759 reset: hi6220: Set module license so that it can be loaded)
+Merging drm-intel-fixes/for-linux-next-fixes (611cdf3695a3 drm/i915: Disable EXEC_OBJECT_ASYNC when doing relocations)
+Merging drm-misc-fixes/for-linux-next-fixes (e94ac3510b6a drm: Fix GETCONNECTOR regression)
+Merging kbuild/for-next (6d4f39f66570 Merge branches 'kbuild' and 'misc' into for-next)
+Merging uuid/for-next (b86a496a4206 ACPI: hns_dsaf_acpi_dsm_guid can be static)
+Merging dma-mapping/for-next (1655cf8829d8 ARM: dma-mapping: Remove traces of NOMMU code)
+Merging asm-generic/master (a351e9b9fc24 Linux 4.11)
+Merging arc/for-next (6f8119230ed0 ARC: set boot print log level to PR_INFO)
+Merging arm/for-next (fc256ee00f0c Merge branches 'fixes' and 'misc' into for-next)
+Merging arm-perf/for-next/perf (c0f7f7acdecd perf: xgene: Add support for SoC PMU version 3)
+Merging arm-soc/for-next (ebc5ff9e87f6 Merge branch 'next/dt64' into for-next)
+Merging actions/for-next (8ba75fbb148a Merge branch 'v4.13/arm+sps' into next)
+Merging alpine/alpine/for-next (a1144b2b1ec4 ARM: dts: alpine: add valid clock-frequency values)
+Merging amlogic/for-next (f99503e956ae Merge branch 'v4.13/defconfig' into tmp/aml-rebuild)
+Merging aspeed/for-next (4944e5dbb215 Merge branches 'dt-for-v4.12' and 'defconfig-for-v4.12' into for-next)
+Merging at91/at91-next (630efea351f0 Merge branch 'at91-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux into at91-next)
+CONFLICT (add/add): Merge conflict in arch/arm/mach-at91/samv7.c
+CONFLICT (content): Merge conflict in arch/arm/mach-at91/Kconfig
+Merging bcm2835/for-next (652fb0c6435c Merge branch anholt/bcm2835-defconfig-next into for-next)
+Merging berlin/berlin/for-next (5153351425c9 Merge branch 'berlin/dt' into berlin/for-next)
+Merging cortex-m/for-next (f719a0d6a854 ARM: efm32: switch to vendor,device compatible strings)
+Merging imx-mxs/for-next (bf6e15ed7f86 Merge branch 'zte/dt64' into for-next)
+Merging keystone/next (b45371147f9d Merge branch 'for_4.13/keystone_dts' into next)
+Merging mvebu/for-next (cf79eb3aab84 Merge branch 'mvebu/dt64' into mvebu/for-next)
+Merging omap/for-next (b0b111c5f599 Merge branch 'omap-for-v4.13/soc-v4' into for-next)
+Merging omap-pending/for-next (c20c8f750d9f ARM: OMAP2+: hwmod: fix _idle() hwmod state sanity check sequence)
+Merging reset/reset/next (dfeac250c429 reset: zx2967: constify zx2967_reset_ops.)
+Merging qcom/for-next (9c60544280d4 Merge tag 'qcom-drivers-for-4.13' into all-for-4.13-revised)
+Merging realtek/for-next (007e6304223c Merge branch 'v4.13/dt64' into next)
+Merging renesas/next (d75d45bfffd5 Merge branch 'fixes-for-v4.13' into next)
+Merging rockchip/for-next (dd3f24b9ff88 Merge branch 'v4.13-clk/next' into for-next)
+Merging rpi/for-rpi-next (bc0195aad0da Linux 4.2-rc2)
+Merging samsung/for-next (2ea659a9ef48 Linux 4.12-rc1)
+Merging samsung-krzk/for-next (005537e095a6 Merge branch 'fixes' into for-next)
+Merging sunxi/sunxi/for-next (efb85d294c2a Merge branches 'sunxi/h3-for-4.13', 'sunxi/dt-for-4.13' and 'sunxi/dt64-for-4.13' into sunxi/for-next)
+Merging tegra/for-next (07bb9460b188 Merge branch for-4.13/arm64/dt into for-next)
+Merging arm64/for-next/core (425e1ed73e65 arm64: fix endianness annotation for 'struct jit_ctx' and friends)
+Merging clk/clk-next (3cf50f6b13a2 Merge branch 'binding-doc-cp110-ap806' of git://git.infradead.org/linux-mvebu into clk-next)
+CONFLICT (content): Merge conflict in MAINTAINERS
+Merging c6x/for-linux-next (91ebcd1b97ae MAINTAINERS: update email address for C6x maintainer)
+Merging cris/for-next (8f50f2a1b46a cris: No need to append -O2 and $(LINUXINCLUDE))
+Merging h8300/h8300-next (58c57526711f h8300: Add missing include file to asm/io.h)
+Merging hexagon/linux-next (02cc2ccfe771 Revert "Hexagon: fix signal.c compile error")
+Merging ia64/next (fbb0e4da96f4 ia64: salinfo: use a waitqueue instead a sema down/up combo)
+Merging m68k/for-next (204a2be30a7a m68k: Remove ptrace_signal_deliver)
+Merging m68knommu/for-next (354b6382847d m68k: defconfig: Cleanup from old Kconfig options)
+Merging metag/for-next (e3cd7f013bac metag/mm: Drop pointless increment)
+Merging microblaze/next (14ef905bb2ee microblaze: Fix MSR flags when returning from exception)
+Merging mips/mips-for-linux-next (bdb94f6e824d MIPS: VDSO: Fix a mismatch between comment and preprocessor constant)
+Merging nios2/for-next (e118c3fec9c0 nios2: remove custom early console implementation)
+Merging openrisc/for-next (9d15eb228b10 openrisc: defconfig: Cleanup from old Kconfig options)
+Merging parisc-hd/for-next (33f9e02495d1 parisc: DMA API: return error instead of BUG_ON for dma ops on non dma devs)
+Merging powerpc/next (bfaa7834b60e powerpc/perf/hv-24x7: Aggregate result elements on POWER9 SMT8)
+Merging fsl/next (61baf1555512 powerpc/64e: Don't place the stack beyond TASK_SIZE)
+Merging mpc5xxx/next (39e69f55f857 powerpc: Introduce the use of the managed version of kzalloc)
+Merging s390/features (9e293b5a7062 Merge tag 'nmiforkvm' of git://git.kernel.org/pub/scm/linux/kernel/git/kvms390/linux into features)
+CONFLICT (content): Merge conflict in drivers/s390/block/scm_blk.h
+CONFLICT (content): Merge conflict in drivers/s390/block/scm_blk.c
+Merging sparc-next/master (0cd52df8a782 sparc: kernel: pmc: make of_device_ids const.)
+Merging sh/for-next (6e2fbfdd585f sh: fix futex FUTEX_OP_SET op on userspace addresses)
+Merging tile/master (0af0bc38175d mm, tile: drop arch_{add,remove}_memory)
+Merging uml/linux-next (ce4586063f1a um: Add missing NR_CPUS include)
+Merging unicore32/unicore32 (bc27113620ca unicore32-oldabi: add oldabi syscall interface)
+Merging xtensa/xtensa-for-next (bdf3b55fde37 Merge branch 'xtensa-fixes' into xtensa-for-next)
+Merging fscrypt/master (c250b7dd8e73 fscrypt: make ->dummy_context() return bool)
+Merging befs/for-next (0bbabf98dd76 befs: make export work with cold dcache)
+Merging btrfs/next (8b8b08cbfb90 Btrfs: fix delalloc accounting after copy_from_user faults)
+Merging btrfs-kdave/for-next (848c23b78faf btrfs: Remove false alert when fiemap range is smaller than on-disk extent)
+CONFLICT (content): Merge conflict in fs/btrfs/inode.c
+CONFLICT (content): Merge conflict in fs/btrfs/extent_io.h
+CONFLICT (content): Merge conflict in fs/btrfs/extent_io.c
+CONFLICT (content): Merge conflict in fs/btrfs/disk-io.h
+CONFLICT (content): Merge conflict in fs/btrfs/disk-io.c
+CONFLICT (content): Merge conflict in fs/btrfs/compression.c
+Merging ceph/master (fd9c2ce9b11e libceph: advertise support for NEW_OSDOP_ENCODING and SERVER_LUMINOUS)
+Merging cifs/for-next (b978e6f38ce0 cifs: Do not modify mid entry after submitting I/O in cifs_call_async)
+Merging configfs/for-next (19e72d3abb63 configfs: Introduce config_item_get_unless_zero())
+Merging ecryptfs/next (be280b25c328 ecryptfs: remove private bin2hex implementation)
+Merging ext3/for_next (08db141b5313 reiserfs: fix race in prealloc discard)
+Merging ext4/dev (037ee4110538 ext4: require key for truncate(2) of encrypted file)
+Merging f2fs/dev (a8a294ed390c f2fs: avoid migratepage for atomic written page)
+Merging freevxfs/for-next (bf1bb4b460c8 freevxfs: update Kconfig information)
+Merging fscache/fscache (d52bd54db8be Merge branch 'akpm' (patches from Andrew))
+Merging fuse/for-next (68227c03cba8 fuse: initialize the flock flag in fuse_file on allocation)
+Merging jfs/jfs-next (684666e51585 jfs: atomically read inode size)
+Merging nfs/linux-next (6f7da290413b Linux 4.12)
+Merging nfsd/nfsd-next (bb2a8b0cd116 nfsd4: const-ify nfsd4_ops)
+Merging orangefs/for-next (2f713b5c7d2a orangefs: count directory pieces correctly)
+Merging overlayfs/overlayfs-next (fbaf94ee3cd5 ovl: don't set origin on broken lower hardlink)
+Merging v9fs/for-next (a333e4bf2556 fs/9p: use fscache mutex rather than spinlock)
+Merging ubifs/linux-next (7bccd12d27b7 ubi: Add debugfs file for tracking PEB state)
+Merging xfs/for-next (9b2970aacfd9 xfs: Switch to iomap for SEEK_HOLE / SEEK_DATA)
+Merging file-locks/linux-next (d997cba55291 btrfs: minimal conversion to errseq_t writeback error reporting on fsync)
+CONFLICT (content): Merge conflict in mm/filemap.c
+CONFLICT (content): Merge conflict in include/linux/fs.h
+Merging vfs/for-next (f55d61bfd7cc Merge branches 'work.misc' and 'work.uaccess' into for-next)
+CONFLICT (content): Merge conflict in arch/unicore32/include/asm/Kbuild
+CONFLICT (content): Merge conflict in arch/arm/include/uapi/asm/Kbuild
+Merging vfs-jk/vfs (030b533c4fd4 fs: Avoid premature clearing of capabilities)
+Merging vfs-miklos/next (0eb8af4916a5 vfs: use helper for calling f_op->fsync())
+Merging printk/for-next (f4e981cba2de printk: add __printf attributes to internal functions)
+Merging pci/next (885f5f5cf574 Merge branch 'pci/host-xilinx' into next)
+CONFLICT (content): Merge conflict in drivers/nvme/host/pci.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/radeon/radeon_device.c
+Merging pstore/for-next/pstore (0752e4028c00 powerpc/nvram: use memdup_user)
+Merging hid/for-next (8b454744e88d Merge branch 'for-4.13/ish' into for-next)
+Merging i2c/i2c/for-next (25c34d08744f Merge branch 'i2c/for-4.13' into i2c/for-next)
+Merging jdelvare-hwmon/master (08d27eb20666 Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs)
+Merging dmi/master (8efa050f19fe firmware: dmi_scan: Check DMI structure length)
+Merging hwmon-staging/hwmon-next (44b413661b57 hwmon: (aspeed-pwm-tacho) Poll with short sleeps.)
+Merging jc_docs/docs-next (1cb566ba5634 scripts/kernel-doc: handle DECLARE_HASHTABLE)
+CONFLICT (modify/delete): scripts/kernel-doc-xml-ref deleted in jc_docs/docs-next and modified in HEAD. Version HEAD of scripts/kernel-doc-xml-ref left in tree.
+$ git rm -f scripts/kernel-doc-xml-ref
+Merging v4l-dvb/master (2748e76ddb29 media: staging: cxd2099: Activate cxd2099 buffer mode)
+Merging v4l-dvb-next/master (d9c4615854ec [media] dvb uapi docs: enums are passed by value, not reference)
+CONFLICT (content): Merge conflict in Documentation/media/uapi/dvb/fe-set-voltage.rst
+CONFLICT (content): Merge conflict in Documentation/media/uapi/dvb/fe-set-tone.rst
+CONFLICT (content): Merge conflict in Documentation/media/uapi/dvb/fe-diseqc-send-burst.rst
+Merging fbdev/fbdev-for-next (a8feae091106 uvesafb: Fix continuation printks without KERN_LEVEL to pr_cont, neatening)
+Merging pm/linux-next (3a355360331f Merge branch 'device-properties' into linux-next)
+Merging idle/next (306899f94804 x86 tsc: Add the Intel Denverton Processor to native_calibrate_tsc())
+Merging thermal/next (cb15c81a0c1c Merge branch 'thermal-soc' into next)
+Merging thermal-soc/next (aa647852c32a Merge branch 'work-linus' into work-next)
+Merging ieee1394/for-next (72f3c27aa646 firewire: net: max MTU off by one)
+Merging dlm/next (591c3beb86c4 dlm: Delete an unnecessary variable initialisation in dlm_ls_start())
+Merging swiotlb/linux-next (69369f52d28a swiotlb-xen: implement xen_swiotlb_get_sgtable callback)
+Merging net-next/master (25f4535a94c2 qed: initialize ll2_syn_handle at start of function)
+CONFLICT (content): Merge conflict in drivers/net/wireless/marvell/mwifiex/pcie.c
+CONFLICT (content): Merge conflict in arch/arm64/net/bpf_jit_comp.c
+Merging ipsec-next/master (8bafd73093f2 xfrm: add UDP encapsulation port in migrate message)
+Merging netfilter-next/master (04ba724b659c netfilter: nfnetlink: extended ACK reporting)
+Merging nfc-next/master (bd751808f9ff NFC: trf7970a: Correct register settings for 27MHz clock)
+Merging ipvs-next/master (fb90e8dedb46 ipvs: change comparison on sync_refresh_period)
+Merging wireless-drivers-next/master (17d9aa66b08d Merge tag 'iwlwifi-next-for-kalle-2017-06-30' of git://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next)
+Merging bluetooth/master (a5192c52377e bpf: fix to bpf_setsockops)
+Merging mac80211-next/master (3dc02251f43f Merge branch 'skb-accessor-cleanups')
+Merging rdma/for-next (bc5214ee2922 IB/hfi1: Handle missing magic values in config file)
+Merging gfs2/for-next (1fc2e8712c81 GFS2: constify attribute_group structures.)
+Merging mtd/master (05e97a9eda72 Merge tag 'nand/fixes-for-4.12-rc3' of git://git.infradead.org/linux-mtd into MTD)
+Merging l2-mtd/master (c169e3d3c049 mtd: partitions: fixup some allocate_partition() whitespace)
+Merging nand/nand/next (81667e9c8ad8 mtd: nand: mtk: release lock on error path)
+Merging spi-nor/spi-nor/next (1a18915b4971 mtd: spi-nor: parse Serial Flash Discoverable Parameters (SFDP) tables)
+Merging crypto/master (bcf741cb7792 crypto: testmgr - Reenable sha1/aes in FIPS mode)
+Merging drm/drm-next (12d016626f99 Merge tag 'drm-amdkfd-next-2017-06-25' of git://people.freedesktop.org/~gabbayo/linux into drm-next)
+CONFLICT (content): Merge conflict in drivers/gpu/drm/i915/i915_gem_execbuffer.c
+CONFLICT (content): Merge conflict in drivers/gpu/drm/drm_internal.h
+Merging drm-panel/drm/panel/for-next (e4bac408b084 drm/panel: simple: Add support for Winstar WF35LTIACD)
+Merging drm-intel/for-linux-next (04941829b004 drm/i915: Hold RPM wakelock while initializing OA buffer)
+Merging drm-tegra/drm/tegra/for-next (43240bbd871e gpu: host1x: At first try a non-blocking allocation for the gather copy)
+Merging drm-misc/for-linux-next (4086d90cffb8 drm/atomic: Add missing drm_atomic_state_clear to atomic_remove_fb)
+Merging drm-exynos/exynos-drm/for-next (7d1e04231461 Merge tag 'usercopy-v4.8-rc8' of git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux)
+Merging drm-msm/msm-next (4a630fadbb29 drm/msm: Fix potential buffer overflow issue)
+Merging hdlcd/for-upstream/hdlcd (fee4964f0a6c drm/arm: hdlcd: remove unused variables)
+Merging mali-dp/for-upstream/mali-dp (e40eda3dda1e drm/arm: mali-dp: Use CMA helper for plane buffer address calculation)
+Merging sunxi-drm/sunxi-drm/for-next (110d33dd428e drm/sun4i: Add compatible for the A10s pipeline)
+Merging imx-drm/imx-drm/next (994fc62e1d04 drm/imx: lock scanout transfers for consecutive bursts)
+Merging etnaviv/etnaviv/next (8cc47b3ea082 drm/etnaviv: populate GEM objects on cpu_prep)
+Merging kconfig/for-next (5bcba792bb30 localmodconfig: Fix whitespace repeat count after "tristate")
+Merging regmap/for-next (2a40f9421cb7 Merge remote-tracking branches 'regmap/topic/1wire', 'regmap/topic/irq' and 'regmap/topic/lzo' into regmap-next)
+Merging sound/for-next (a178232ddab5 ALSA: hda/realtek - Remove GPIO_MASK)
+Merging sound-asoc/for-next (b821d298f886 Merge remote-tracking branch 'asoc/topic/inte' into asoc-next)
+CONFLICT (content): Merge conflict in drivers/of/base.c
+Applying: of_graph: merge fix up for creating of drivers/of/property.c
+Merging modules/modules-next (96b5b19459b3 module: make the modinfo name const)
+Merging input/next (65938133784a MAINTAINERS: update input subsystem patterns)
+Merging block/for-next (02d1b34a3cb3 Merge branch 'for-4.13/block' into for-next)
+Merging lightnvm/for-next (1c6286f26301 lightnvm: fix some error code in pblk-init.c)
+Merging device-mapper/for-next (4d49f1b4a1fc dm raid: stop using BUG() in __rdev_sectors())
+Merging pcmcia/master (e8e68fd86d22 pcmcia: do not break rsrc_nonstatic when handling anonymous cards)
+Merging mmc/next (e47c0b96678c mmc: dw_mmc: remove the unnecessary slot variable)
+CONFLICT (content): Merge conflict in drivers/mmc/core/block.c
+Merging kgdb/kgdb-next (7a6653fca500 kdb: Fix handling of kallsyms_symbol_next() return value)
+Merging md/for-next (7184ef8bab0c MD: fix sleep in atomic)
+Applying: md: fix up for "blk: replace bioset_create_nobvec() with a flags arg to bioset_create()"
+Merging mfd/for-mfd-next (799f64aa55ac mfd: madera: Add register definitions for Cirrus Logic Madera codecs)
+Merging backlight/for-backlight-next (7e715c2d9c27 backlight: Report error on failure)
+Merging battery/for-next (7bb5a650f347 power: supply: twl4030-charger: add deferred probing for phy and iio)
+Merging omap_dss2/for-next (c456a2f30de5 video: smscufx: remove unused variable)
+Merging regulator/for-next (e52c01d5bcfd Merge remote-tracking branches 'regulator/topic/settle', 'regulator/topic/tps65910' and 'regulator/topic/tps65917' into regulator-next)
+Merging security/next (c4758fa59285 apparmor: put back designators in struct initialisers)
+Merging integrity/next (fc26bd50539b IMA: update IMA policy documentation to include pcr= option)
+Merging keys/keys-next (3088c2ad40cf Merge remote-tracking branch 'origin/keys-fixes' into keys-next)
+CONFLICT (content): Merge conflict in security/keys/dh.c
+Merging selinux/next (6a3911837da0 selinux: enable genfscon labeling for tracefs)
+Merging tpmdd/next (65bbcc19ab70 tpm: do not suspend/resume if power stays on)
+Merging watchdog/master (c013b65ad8a1 watchdog: introduce watchdog_worker_should_ping helper)
+Merging iommu/next (6a7086431fa1 Merge branches 'iommu/fixes', 'arm/rockchip', 'arm/renesas', 'arm/smmu', 'arm/core', 'x86/vt-d', 'x86/amd', 's390' and 'core' into next)
+Merging dwmw2-iommu/master (910170442944 iommu/vt-d: Fix PASID table allocation)
+Merging vfio/next (5d6dee80a1e9 vfio: New external user group/file match)
+Merging trivial/for-next (6fbc8798d946 tty: fix comment for __tty_alloc_driver())
+Merging audit/next (cd33f5f2cbfa audit: make sure we never skip the multicast broadcast)
+Merging devicetree/for-next (5e1743c0af9d of: document /sys/firmware/fdt)
+CONFLICT (content): Merge conflict in Documentation/devicetree/bindings/net/ethernet.txt
+Merging mailbox/mailbox-for-next (25bfee16d5a3 mailbox: Introduce Qualcomm APCS IPC driver)
+Merging spi/for-next (082f6968bb20 Merge remote-tracking branches 'spi/topic/spidev', 'spi/topic/st-ssc4' and 'spi/topic/stm32' into spi-next)
+Merging tip/auto-latest (bb4002145867 Merge branch 'x86/urgent')
+CONFLICT (content): Merge conflict in net/bluetooth/hidp/core.c
+CONFLICT (content): Merge conflict in net/bluetooth/cmtp/core.c
+CONFLICT (content): Merge conflict in net/bluetooth/bnep/core.c
+CONFLICT (content): Merge conflict in kernel/irq/affinity.c
+CONFLICT (content): Merge conflict in drivers/acpi/apei/ghes.c
+CONFLICT (content): Merge conflict in block/blk-mq-cpumap.c
+CONFLICT (modify/delete): Documentation/DocBook/kernel-hacking.tmpl deleted in HEAD and modified in tip/auto-latest. Version tip/auto-latest of Documentation/DocBook/kernel-hacking.tmpl left in tree.
+$ git rm -f Documentation/DocBook/kernel-hacking.tmpl
+Applying: sched/wait: fix up for "docs-rst: convert kernel-hacking to ReST"
+Merging clockevents/clockevents/next (d9569035d594 clocksource: Add an alias macro CLOCKSOURCE_OF_DECLARE)
+CONFLICT (content): Merge conflict in include/asm-generic/vmlinux.lds.h
+CONFLICT (content): Merge conflict in drivers/clocksource/timer-fttmr010.c
+CONFLICT (content): Merge conflict in drivers/clocksource/Makefile
+CONFLICT (content): Merge conflict in drivers/clocksource/Kconfig
+CONFLICT (content): Merge conflict in arch/arm/mach-moxart/Kconfig
+Merging edac/linux_next (345fb0a9a634 Merge tag 'edac_for_4.11' of git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp)
+Merging edac-amd/for-next (164c29244d4b EDAC, pnd2: Fix Apollo Lake DIMM detection)
+Merging irqchip/irqchip/for-next (c1ae3cfa0e89 Linux 4.11-rc1)
+Merging ftrace/for-next (681bec0367c2 tracing: Rename update the enum_map file)
+Merging rcu/rcu/next (49729e9a4e67 torture: Fix typo suppressing CPU-hotplug statistics)
+Merging kvm/linux-next (995f00a61958 x86: kvm: mmu: use ept a/d in vmcs02 iff used in vmcs12)
+CONFLICT (content): Merge conflict in arch/s390/kvm/gaccess.c
+CONFLICT (content): Merge conflict in Documentation/arm64/silicon-errata.txt
+Merging kvm-arm/next (d38338e396ee arm64: Remove a redundancy in sysreg.h)
+Merging kvm-mips/next (dc44abd6aad2 KVM: MIPS/Emulate: Properly implement TLBR for T&E)
+Merging kvm-ppc/kvm-ppc-next (8b24e69fc47e KVM: PPC: Book3S HV: Close race with testing for signals on guest entry)
+Merging kvms390/next (d52cd2076eb2 KVM: s390: Inject machine check into the nested guest)
+Merging xen-tip/linux-next (c54590cac51d x86/xen: allow userspace access during hypercalls)
+CONFLICT (content): Merge conflict in drivers/xen/events/events_base.c
+Merging percpu/for-next (e3efe3db932b percpu: fix static checker warnings in pcpu_destroy_chunk)
+Merging workqueues/for-next (bacb71fc9187 Merge branch 'for-4.12' into for-next)
+Merging drivers-x86/for-next (d791db9a57ab platform/x86: sony-laptop: constify attribute_group and input index array)
+Merging chrome-platform/for-next (5d6a312e8f99 platform/chrome: cros_ec_lightbar - hide unused PM functions)
+Merging hsi/for-next (67ddd75771b6 HSI: core: Use kcalloc() in two functions)
+Merging leds/for-next (4d1707c1c690 leds: lp55xx: make various arrays static const)
+Merging ipmi/for-next (1e7a75f74a19 char: ipmi: constify bmc_dev_attr_group and bmc_device_type)
+Merging driver-core/driver-core-next (d565ed38d045 arm: mach-rpc: ecard: fix build error)
+Merging usb/usb-next (6836796de401 Add USB quirk for HVR-950q to avoid intermittent device resets)
+CONFLICT (modify/delete): drivers/usb/misc/ucsi.c deleted in usb/usb-next and modified in HEAD. Version HEAD of drivers/usb/misc/ucsi.c left in tree.
+$ git rm -f drivers/usb/misc/ucsi.c
+Applying: usb: typec: fix for "ACPI: Switch to use generic guid_t in acpi_evaluate_dsm()"
+Merging usb-gadget/next (0591bc236015 usb: gadget: add f_uac1 variant based on a new u_audio api)
+Merging usb-serial/usb-next (c22ac6d29f18 USB: serial: propagate late probe errors)
+Merging usb-chipidea-next/ci-for-usb-next (c4a0bbbdb7f6 usb: chipidea: properly handle host or gadget initialization failure)
+Merging phy-next/next (af850e14a7ae phy: bcm-ns-usb3: add MDIO driver using proper bus layer)
+Merging tty/tty-next (a6d7514b14a6 tty: serial: lpuart: add a more accurate baud rate calculation method)
+CONFLICT (content): Merge conflict in include/linux/platform_data/atmel.h
+Merging char-misc/char-misc-next (cbbdc6082917 misc: apds990x: Use sysfs_match_string() helper)
+CONFLICT (content): Merge conflict in Documentation/admin-guide/index.rst
+CONFLICT (modify/delete): Documentation/DocBook/w1.tmpl deleted in HEAD and modified in char-misc/char-misc-next. Version char-misc/char-misc-next of Documentation/DocBook/w1.tmpl left in tree.
+$ git rm -f Documentation/DocBook/w1.tmpl
+Applying: docs-rst: merge fix for "DocBook: w1: Update W1 file locations and names in DocBook"
+Merging extcon/extcon-next (1f4be24786b8 extcon: int3496: Switch to devm_acpi_dev_add_driver_gpios())
+Merging staging/staging-next (9b326dfce12a staging: lustre: replace kmalloc with kmalloc_array)
+CONFLICT (content): Merge conflict in include/uapi/linux/tty.h
+Merging mux/for-next (a351e9b9fc24 Linux 4.11)
+Merging slave-dma/next (56cede404f4f Merge branch 'for-linus' into next)
+Merging cgroup/for-next (5136f6365ce3 cgroup: implement "nsdelegate" mount option)
+Merging scsi/for-next (48d9c49d7106 Merge branch 'misc' into for-next)
+CONFLICT (content): Merge conflict in drivers/scsi/scsi_transport_fc.c
+CONFLICT (content): Merge conflict in drivers/scsi/scsi_lib.c
+Merging scsi-mkp/for-next (c345c6ca1382 qla2xxx: Fix NVMe entry_type for iocb packet on BE system)
+Merging target-updates/for-next (1e1ddaf2de5a tcmu: Fix flushing cmd entry dcache page)
+CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/tcm_qla2xxx.c
+CONFLICT (content): Merge conflict in drivers/scsi/qla2xxx/qla_target.c
+Merging target-merge/for-next-merge (2994a7518317 cxgb4: update Kconfig and Makefile)
+Merging target-bva/for-next (2ea659a9ef48 Linux 4.12-rc1)
+Merging libata/for-next (af62e4938e3c Merge branch 'for-4.13' into for-next)
+Merging binfmt_misc/for-next (4af75df6a410 binfmt_misc: add F option description to documentation)
+Merging vhost/linux-next (e41b1355508d virtio_balloon: disable VIOMMU support)
+Merging rpmsg/for-next (9ef2b6cc595a Merge branches 'hwspinlock-next', 'rpmsg-next' and 'rproc-next' into for-next)
+Merging gpio/for-next (8d2c6297aec9 Merge branch 'devel' into for-next)
+Merging pinctrl/for-next (ece5946c2eed Merge branch 'devel' into for-next)
+Merging pinctrl-samsung/for-next (a453f3693f2a pinctrl: samsung: Explicitly cast pointer returned by of_iomap() to iomem)
+Merging pwm/for-next (97512ceafaac Merge branch 'for-4.12/drivers' into for-next)
+Merging dma-buf/for-next (194cad44c4e1 dma-buf/sync_file: improve Kconfig description for Sync Files)
+CONFLICT (content): Merge conflict in drivers/dma-buf/Kconfig
+Merging userns/for-next (296990deb389 mnt: Make propagate_umount less slow for overlapping mount propagation trees)
+Merging ktest/for-next (f7c6401ff84a ktest: Make sure wait_for_input does honor the timeout)
+Merging random/dev (e2682130931f random: suppress spammy warnings about unseeded randomness)
+Merging aio/master (b562e44f507e Linux 4.5)
+Merging kselftest/next (e67f85fb96ca selftests: membarrier: use ksft_* var arg msg api)
+CONFLICT (content): Merge conflict in MAINTAINERS
+CONFLICT (content): Merge conflict in Documentation/dev-tools/index.rst
+Merging y2038/y2038 (69973b830859 Linux 4.9)
+Merging luto-misc/next (2dcd0af568b0 Linux 4.6)
+Merging borntraeger/linux-next (e76d21c40bd6 Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net)
+Merging livepatching/for-next (26d8d1e9bb48 Merge branch 'for-4.12/upstream-fixes' into for-next)
+Merging coresight/next (92cd7037795e arm64: dts: qcom: msm8916: Add debug unit)
+Merging rtc/rtc-next (9f4ad359c801 rtc: brcmstb-waketimer: Add Broadcom STB wake-timer)
+Merging hwspinlock/for-next (bd5717a4632c hwspinlock: qcom: Correct msb in regmap_field)
+Merging nvdimm/libnvdimm-for-next (6f4991d511f8 Merge branch 'for-4.13/dax' into libnvdimm-for-next)
+CONFLICT (content): Merge conflict in lib/iov_iter.c
+CONFLICT (content): Merge conflict in include/linux/uio.h
+Merging dax-misc/dax-misc (4d9a2c874667 dax: Remove i_mmap_lock protection)
+Merging idr/idr-4.11 (f0f3f2d0a3e0 radix tree test suite: Specify -m32 in LDFLAGS too)
+Merging kspp/for-next/kspp (cb00e6b58abb Merge branch 'for-next/gcc-plugin/randstruct' into for-next/kspp)
+CONFLICT (content): Merge conflict in include/linux/fs.h
+Merging akpm-current/current (f33857ea9f81 ipc/util.h: update documentation for ipc_getref() and ipc_putref())
+CONFLICT (content): Merge conflict in kernel/power/snapshot.c
+CONFLICT (content): Merge conflict in include/linux/sem.h
+CONFLICT (content): Merge conflict in include/linux/ipc.h
+$ git checkout -b akpm remotes/origin/akpm/master
+Applying: net/netfilter/x_tables.c: use kvmalloc() in xt_alloc_table_info()
+Applying: kernel/watchdog: remove unused declaration
+Applying: kernel/watchdog: introduce arch_touch_nmi_watchdog()
+Applying: kernel/watchdog: split up config options
+Applying: watchdog-split-up-config-options-fix
+Applying: kernel/watchdog: provide watchdog_nmi_reconfigure() for arch watchdogs
+Applying: watchdog-provide-watchdog_reconfigure-for-arch-watchdogs-fix
+Applying: kernel/watchdog: hide unused function
+Applying: powerpc/64s: implement arch-specific hardlockup watchdog
+Applying: powerpc/64s: watchdog honor watchdog disable at boot/hotplug
+Applying: powerpc-64s-implement-arch-specific-hardlockup-watchdog-checkpatch-fixes
+Applying: efi: avoid fortify checks in EFI stub
+Applying: kexec_file: adjust declaration of kexec_purgatory
+Applying: IB/rxe: do not copy extra stack memory to skb
+Applying: powerpc: don't fortify prom_init
+Applying: powerpc: make feature-fixup tests fortify-safe
+Applying: include/linux/string.h: add the option of fortified string.h functions
+Applying: x86: fix fortified memcpy
+Applying: fortify: avoid panic() in favor of BUG()
+Applying: sh: mark end of BUG() implementation as unreachable
+Applying: random,stackprotect: introduce get_random_canary function
+Applying: fork,random: use get_random_canary() to set tsk->stack_canary
+Applying: x86: ascii armor the x86_64 boot init stack canary
+Applying: arm64: ascii armor the arm64 boot init stack canary
+Applying: sh64: ascii armor the sh64 boot init stack canary
+Applying: x86/mmap: properly account for stack randomization in mmap_base
+Applying: arm64/mmap: properly account for stack randomization in mmap_base
+Applying: powerpc,mmap: properly account for stack randomization in mmap_base
+Applying: MIPS: do not use __GFP_REPEAT for order-0 request
+Applying: mm, tree wide: replace __GFP_REPEAT by __GFP_RETRY_MAYFAIL with more useful semantic
+Applying: mm-tree-wide-replace-__gfp_repeat-by-__gfp_retry_mayfail-with-more-useful-semantic-fix
+Applying: mm-tree-wide-replace-__gfp_repeat-by-__gfp_retry_mayfail-with-more-useful-semantic-fix
+Applying: mm-tree-wide-replace-__gfp_repeat-by-__gfp_retry_mayfail-with-more-useful-semantic-fix-3
+Applying: xfs: map KM_MAYFAIL to __GFP_RETRY_MAYFAIL
+Applying: mm: kvmalloc support __GFP_RETRY_MAYFAIL for all sizes
+Applying: drm/i915: use __GFP_RETRY_MAYFAIL
+Applying: mm, migration: do not trigger OOM killer when migrating memory
+Applying: mm/memory-hotplug: switch locking to a percpu rwsem
+Applying: sparc64: NG4 memset 32 bits overflow
+Applying: xtensa: use generic fb.h
+Applying: MAINTAINERS: give kmod some maintainer love
+Applying: kmod: add test driver to stress test the module loader
+Applying: kmod: throttle kmod thread limit
+Applying: writeback: rework wb_[dec|inc]_stat family of functions
+Applying: lib/crc-ccitt: add CCITT-FALSE CRC16 variant
+Merging akpm/master (d98dfe64a759 lib/crc-ccitt: add CCITT-FALSE CRC16 variant)
