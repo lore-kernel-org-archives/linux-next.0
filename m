@@ -1,83 +1,45 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170706 build: 1 failures 5 warnings (next-20170706)
-Date: Thu, 06 Jul 2017 08:40:17 +0100
-Message-ID: <E1dT1Ob-0004Bx-Dp@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53552 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752684AbdGFHmd (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 6 Jul 2017 03:42:33 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] i2c: Provide a stub for i2c_detect_slave_mode()
+Date: Thu,  6 Jul 2017 20:26:17 +0300
+Message-ID: <20170706172617.39817-1-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org, Luis.Oliveira@synopsys.com, linux-next <linux-next@vger.kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170706
-Git describe: next-20170706
-Commit: 7e2e9ba3bf Add linux-next specific files for 20170706
+Drivers would like to call i2c_detect_slave_mode() even if !I2C_SLAVE.
+Give them what they want to,
 
-Build Time: 0 min 10 sec
+Otherwise kernel will not compile:
+drivers/i2c/busses/i2c-designware-platdrv.c: In function ‘dw_i2c_plat_probe’:
+drivers/i2c/busses/i2c-designware-platdrv.c:331:6: error: implicit declaration of function ‘i2c_detect_slave_mode’ [-Werror=implicit-function-declaration]
+  if (i2c_detect_slave_mode(&pdev->dev))
+      ^~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
 
-Passed:    6 / 7   ( 85.71 %)
-Failed:    1 / 7   ( 14.29 %)
+Fixes: 6e38cf3b4421 ("i2c: designware: Let slave adapter support be optional")
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ include/linux/i2c.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Errors: 1
-Warnings: 5
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
-
-Warnings Summary: 5
-	  1 <command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/rtc/rtc-ds1307.c:342:26: warning: unused variable 'chip' [-Wunused-variable]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 4 warnings, 0 section mismatches
-
-Errors:
-	ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko] undefined!
-
-Warnings:
-	<command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
-	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
-	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/rtc/rtc-ds1307.c:342:26: warning: unused variable 'chip' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index 72d0ece70ed3..00ca5b86a753 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -295,6 +295,8 @@ static inline int i2c_slave_event(struct i2c_client *client,
+ {
+ 	return client->slave_cb(client, event, val);
+ }
++#else
++static inline bool i2c_detect_slave_mode(struct device *dev) { return false; }
+ #endif
+ 
+ /**
+-- 
+2.11.0
