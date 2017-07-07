@@ -1,69 +1,354 @@
 From: Vitaly Kuzmichev <vitaly_kuzmichev@mentor.com>
-Subject: [PATCH v2 1/2] drivers: dma-coherent: Fix dev->cma_area vs dev->dma_mem breakage
-Date: Fri, 7 Jul 2017 16:22:59 +0300
-Message-ID: <1499433779-16437-1-git-send-email-vitaly_kuzmichev@mentor.com>
+Subject: [PATCH v2 2/2] drivers: dma-coherent: show per-device DMA region utilization via procfs
+Date: Fri, 7 Jul 2017 16:23:17 +0300
+Message-ID: <1499433797-16516-1-git-send-email-vitaly_kuzmichev@mentor.com>
 References: <1499433759-16397-1-git-send-email-vitaly_kuzmichev@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from relay1.mentorg.com ([192.94.38.131]:41346 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752455AbdGGNXK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 7 Jul 2017 09:23:10 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1499433759-16397-1-git-send-email-vitaly_kuzmichev@mentor.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: gregkh@linuxfoundation.org
 Cc: hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "George G. Davis" <george_davis@mentor.com>
+List-Id: linux-next.vger.kernel.org
 
 From: "George G. Davis" <george_davis@mentor.com>
 
-When a "linux,dma-default" DMA coherent region is defined, the
-dma_coherent_default_memory pointer is returned by function
-dev_get_coherent_memory() for any struct device *dev which has not
-explicitly assigned a dev->dma_mem memory region, i.e. dev->dma_mem is
-the NULL pointer. Unfortunately this overlooks the fact that for the
-CONFIG_DMA_CMA case, it is also possible that a device may have assigned
-a CMA memory region via the dev->cma_area pointer in which case,
-the "linux,dma-default" DMA coherent region should not be used.
-Since the current code did not consider this case, dev->cma_area regions
-are not used when a "linux,dma-default" DMA coherent region is defined.
-Instead, memory is allocated from the "linux,dma-default" DMA coherent
-region.  This omission could lead to DMA memory allocation failures for
-devices such as the "viv,galcore" which require a large contiguous
-address space which cannot be supplied by the "linux,dma-default" region
-IFF it has been reconfigured to use a CMA memory region. Similar DMA
-allocation failures are likely to occur for other devices which require
-large memory regions and/or overall allocation requests exceed the size
-of the "linux,dma-default" DMA coherent region size.
+Add hooks to allow displaying per-device DMA region utilization via
+/proc/dmainfo similar to how free blocks are displayed in
+/proc/pagetypeinfo.
 
-Fix this by updating the dev_get_coherent_memory() function to return
-the NULL pointer if a dev->cma_area region is assigned to a device.
+This also adds /proc/dmainfo reporting for regions defined via
+dma_declare_coherent_memory().
 
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Christoph Hellwig <hch@lst.de>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: George G. Davis <george_davis@mentor.com>
+Signed-off-by: Mark Craske <Mark_Craske@mentor.com>
 Signed-off-by: Vitaly Kuzmichev <vitaly_kuzmichev@mentor.com>
 ---
- drivers/base/dma-coherent.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/base/dma-coherent.c | 224 ++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 215 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/base/dma-coherent.c b/drivers/base/dma-coherent.c
-index 2ae24c2..acfe140 100644
+index acfe140..2692e6d 100644
 --- a/drivers/base/dma-coherent.c
 +++ b/drivers/base/dma-coherent.c
-@@ -25,6 +25,10 @@ static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *de
- {
- 	if (dev && dev->dma_mem)
- 		return dev->dma_mem;
-+#ifdef CONFIG_DMA_CMA
-+	if (dev && dev->cma_area)
-+		return NULL;
+@@ -8,6 +8,12 @@
+ #include <linux/module.h>
+ #include <linux/dma-mapping.h>
+ 
++#ifdef CONFIG_PROC_FS
++#include <linux/fs.h>
++#include <linux/proc_fs.h>
++#include <linux/seq_file.h>
 +#endif
- 	return dma_coherent_default_memory;
++
+ struct dma_coherent_mem {
+ 	void		*virt_base;
+ 	dma_addr_t	device_base;
+@@ -17,8 +23,57 @@ struct dma_coherent_mem {
+ 	unsigned long	*bitmap;
+ 	spinlock_t	spinlock;
+ 	bool		use_dev_dma_pfn_offset;
++	int		used;
++	int		highwatermark;
++	int		errs;
+ };
+ 
++#ifdef CONFIG_PROC_FS
++struct dmacoherent_region {
++	struct list_head list;
++	struct device *dev;
++};
++
++static LIST_HEAD(dmacoherent_region_list);
++static DEFINE_MUTEX(dmacoherent_region_list_lock);
++
++static int dmacoherent_region_add(struct device *dev)
++{
++	struct dmacoherent_region *rp;
++
++	rp = kzalloc(sizeof(*rp), GFP_KERNEL);
++	if (!rp)
++		return -ENOMEM;
++
++	rp->dev = dev;
++
++	mutex_lock(&dmacoherent_region_list_lock);
++	list_add(&rp->list, &dmacoherent_region_list);
++	mutex_unlock(&dmacoherent_region_list_lock);
++	dev_info(dev, "Registered DMA-coherent pool with /proc/dmainfo accounting\n");
++
++	return 0;
++}
++
++static void dmacoherent_region_del(struct device *dev)
++{
++	struct dmacoherent_region *rp;
++
++	mutex_lock(&dmacoherent_region_list_lock);
++	list_for_each_entry(rp, &dmacoherent_region_list, list) {
++		if (rp->dev == dev) {
++			list_del(&rp->list);
++			kfree(rp);
++			break;
++		}
++	}
++	mutex_unlock(&dmacoherent_region_list_lock);
++}
++#else
++static int dmacoherent_region_add(struct device *dev) { return 0; }
++static void dmacoherent_region_del(struct device *dev) { return; }
++#endif
++
+ static struct dma_coherent_mem *dma_coherent_default_memory __ro_after_init;
+ 
+ static inline struct dma_coherent_mem *dev_get_coherent_memory(struct device *dev)
+@@ -122,14 +177,22 @@ int dma_declare_coherent_memory(struct device *dev, phys_addr_t phys_addr,
+ 				dma_addr_t device_addr, size_t size, int flags)
+ {
+ 	struct dma_coherent_mem *mem;
++	int ret;
+ 
+ 	if (!dma_init_coherent_memory(phys_addr, device_addr, size, flags,
+ 				      &mem))
+ 		return 0;
+ 
+-	if (dma_assign_coherent_memory(dev, mem) == 0)
+-		return flags & DMA_MEMORY_MAP ? DMA_MEMORY_MAP : DMA_MEMORY_IO;
++	if (dma_assign_coherent_memory(dev, mem) != 0)
++		goto errout;
++
++	ret = (flags & DMA_MEMORY_MAP ? DMA_MEMORY_MAP : DMA_MEMORY_IO);
+ 
++	if (dmacoherent_region_add(dev) == 0)
++		return ret;
++
++	dev->dma_mem = NULL;
++errout:
+ 	dma_release_coherent_memory(mem);
+ 	return 0;
+ }
+@@ -141,6 +204,8 @@ void dma_release_declared_memory(struct device *dev)
+ 
+ 	if (!mem)
+ 		return;
++
++	dmacoherent_region_del(dev);
+ 	dma_release_coherent_memory(mem);
+ 	dev->dma_mem = NULL;
+ }
+@@ -152,19 +217,25 @@ void *dma_mark_declared_memory_occupied(struct device *dev,
+ 	struct dma_coherent_mem *mem = dev->dma_mem;
+ 	unsigned long flags;
+ 	int pos, err;
+-
+-	size += device_addr & ~PAGE_MASK;
++	int order;
+ 
+ 	if (!mem)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	spin_lock_irqsave(&mem->spinlock, flags);
++	size += device_addr & ~PAGE_MASK;
++	order = get_order(size);
+ 	pos = PFN_DOWN(device_addr - dma_get_device_base(dev, mem));
+-	err = bitmap_allocate_region(mem->bitmap, pos, get_order(size));
+-	spin_unlock_irqrestore(&mem->spinlock, flags);
+ 
+-	if (err != 0)
++	spin_lock_irqsave(&mem->spinlock, flags);
++	err = bitmap_allocate_region(mem->bitmap, pos, order);
++	if (err != 0) {
++		spin_unlock_irqrestore(&mem->spinlock, flags);
+ 		return ERR_PTR(err);
++	}
++	mem->used += 1 << order;
++	if (mem->highwatermark < mem->used)
++		mem->highwatermark = mem->used;
++	spin_unlock_irqrestore(&mem->spinlock, flags);
+ 	return mem->virt_base + (pos << PAGE_SHIFT);
+ }
+ EXPORT_SYMBOL(dma_mark_declared_memory_occupied);
+@@ -206,6 +277,10 @@ int dma_alloc_from_coherent(struct device *dev, ssize_t size,
+ 	if (unlikely(pageno < 0))
+ 		goto err;
+ 
++	mem->used += 1 << order;
++	if (mem->highwatermark < mem->used)
++		mem->highwatermark = mem->used;
++
+ 	/*
+ 	 * Memory was found in the per-device area.
+ 	 */
+@@ -221,6 +296,7 @@ int dma_alloc_from_coherent(struct device *dev, ssize_t size,
+ 	return 1;
+ 
+ err:
++	mem->errs++;
+ 	spin_unlock_irqrestore(&mem->spinlock, flags);
+ 	/*
+ 	 * In the case where the allocation can not be satisfied from the
+@@ -255,6 +331,7 @@ int dma_release_from_coherent(struct device *dev, int order, void *vaddr)
+ 
+ 		spin_lock_irqsave(&mem->spinlock, flags);
+ 		bitmap_release_region(mem->bitmap, page, order);
++		mem->used -= 1 << order;
+ 		spin_unlock_irqrestore(&mem->spinlock, flags);
+ 		return 1;
+ 	}
+@@ -326,6 +403,10 @@ static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
+ 	}
+ 	mem->use_dev_dma_pfn_offset = true;
+ 	rmem->priv = mem;
++
++	if (dmacoherent_region_add(dev))
++		return -ENOMEM;
++
+ 	dma_assign_coherent_memory(dev, mem);
+ 	return 0;
+ }
+@@ -333,8 +414,10 @@ static int rmem_dma_device_init(struct reserved_mem *rmem, struct device *dev)
+ static void rmem_dma_device_release(struct reserved_mem *rmem,
+ 				    struct device *dev)
+ {
+-	if (dev)
++	if (dev) {
++		dmacoherent_region_del(dev);
+ 		dev->dma_mem = NULL;
++	}
  }
  
+ static const struct reserved_mem_ops rmem_dma_ops = {
+@@ -396,3 +479,126 @@ static int __init dma_init_reserved_memory(void)
+ 
+ RESERVEDMEM_OF_DECLARE(dma, "shared-dma-pool", rmem_dma_setup);
+ #endif
++
++#ifdef CONFIG_PROC_FS
++
++static int dmainfo_proc_show_dma_mem(struct seq_file *m, void *v,
++				     struct device *dev)
++{
++	struct dma_coherent_mem *mem = dev_get_coherent_memory(dev);
++	int offset;
++	int start;
++	int end;
++	int pages;
++	int order;
++	int free = 0;
++	int blocks[MAX_ORDER];
++
++	memset(blocks, 0, sizeof(blocks));
++
++	spin_lock(&mem->spinlock);
++
++	for (offset = 0; offset < mem->size; offset = end) {
++		start = find_next_zero_bit(mem->bitmap, mem->size, offset);
++		if (start >= mem->size)
++			break;
++		end = find_next_bit(mem->bitmap, mem->size, start + 1);
++		pages = end - start;
++
++		/* Align start: */
++		for (order = 0; order < MAX_ORDER; order += 1) {
++			if (start >= end)
++				break;
++			if (pages < (1 << order))
++				break;
++			if (start & (1 << order)) {
++				blocks[order] += 1;
++				start += 1 << order;
++				pages -= 1 << order;
++				free += 1 << order;
++			}
++		}
++
++		if (start >= end)
++			continue;
++
++		/* Align middle and end: */
++		order = MAX_ORDER - 1;
++		while (order >= 0) {
++			if (start >= end)
++				break;
++			if (pages >= (1 << order)) {
++				blocks[order] += 1;
++				start += 1 << order;
++				pages -= 1 << order;
++				free += 1 << order;
++			} else {
++				order -= 1;
++			}
++		}
++	}
++
++	seq_printf(m, "%-30s", dev_name(dev));
++
++	for (order = 0; order < MAX_ORDER; order += 1)
++		seq_printf(m, " %6d", blocks[order]);
++
++	seq_printf(m, " %6d %6d %6d %6d %6d\n",
++		   mem->size,
++		   mem->used,
++		   free,
++		   mem->highwatermark,
++		   mem->errs);
++
++	spin_unlock(&mem->spinlock);
++
++	return 0;
++}
++
++static int dmainfo_proc_show(struct seq_file *m, void *v)
++{
++	struct dmacoherent_region *rp;
++	int order;
++
++	seq_puts(m, "DMA-coherent region information:\n");
++	seq_printf(m, "%-30s", "Free block count at order");
++
++	for (order = 0; order < MAX_ORDER; ++order)
++		seq_printf(m, " %6d", order);
++
++	seq_printf(m, " %6s %6s %6s %6s %6s\n",
++		   "Size",
++		   "Used",
++		   "Free",
++		   "High",
++		   "Errs");
++
++	mutex_lock(&dmacoherent_region_list_lock);
++	list_for_each_entry(rp, &dmacoherent_region_list, list) {
++		dmainfo_proc_show_dma_mem(m, v, rp->dev);
++	}
++	mutex_unlock(&dmacoherent_region_list_lock);
++
++	return 0;
++}
++
++static int dmainfo_proc_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, dmainfo_proc_show, NULL);
++}
++
++static const struct file_operations dmainfo_proc_fops = {
++	.open		= dmainfo_proc_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
++static int __init proc_dmainfo_init(void)
++{
++	proc_create("dmainfo", 0, NULL, &dmainfo_proc_fops);
++	return 0;
++}
++module_init(proc_dmainfo_init);
++
++#endif
 -- 
 1.9.1
