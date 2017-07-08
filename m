@@ -1,116 +1,68 @@
-From: Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v2 1/2] drivers: dma-coherent: Fix dev->cma_area vs
- dev->dma_mem breakage
-Date: Fri, 7 Jul 2017 18:55:16 +0100
-Message-ID: <fb080997-5f7b-7f85-7a4a-f68f689dff55@arm.com>
-References: <1499433759-16397-1-git-send-email-vitaly_kuzmichev@mentor.com>
- <1499433779-16437-1-git-send-email-vitaly_kuzmichev@mentor.com>
- <20170707142746.GB10818@lst.de>
- <c9677667-e4c1-1384-04e4-e06a962feed9@arm.com>
- <6f26f0d9-506a-76bf-1410-19b00162c4a1@arm.com>
- <451e9f50-3e47-1554-ae62-be5244cc1869@arm.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v1] i2c: Provide a stub for i2c_detect_slave_mode()
+Date: Sat, 8 Jul 2017 21:55:45 +0200
+Message-ID: <20170708195545.az4vgxqptrtdjv54@ninjato>
+References: <20170706172617.39817-1-andriy.shevchenko@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from foss.arm.com ([217.140.101.70]:50094 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750848AbdGGRzU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 7 Jul 2017 13:55:20 -0400
-In-Reply-To: <451e9f50-3e47-1554-ae62-be5244cc1869@arm.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vladimir Murzin <vladimir.murzin@arm.com>, Christoph Hellwig <hch@lst.de>, Vitaly Kuzmichev <vitaly_kuzmichev@mentor.com>
-Cc: gregkh@linuxfoundation.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, "George G. Davis" <george_davis@mentor.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="u7t2akpeeoktg7a2"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170706172617.39817-1-andriy.shevchenko@linux.intel.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, Luis.Oliveira@synopsys.com, linux-next <linux-next@vger.kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
+List-Id: linux-next.vger.kernel.org
 
-On 07/07/17 17:44, Vladimir Murzin wrote:
-> On 07/07/17 17:06, Robin Murphy wrote:
->> On 07/07/17 16:40, Vladimir Murzin wrote:
->>> Christoph,
->>>
->>> On 07/07/17 15:27, Christoph Hellwig wrote:
->>>> Vladimir,
->>>>
->>>> this is why I really didn't like overloading the current
->>>> dma coherent infrastructure with the global pool.
->>>>
->>>> And this new patch seems like piling hacks over hacks.  I think we
->>>> should go back and make sure allocations from the global coherent
->>>> pool are done by the dma ops implementation, and not before calling
->>>> into them - preferably still reusing the common code for it.
->>>>
->>>> Vladimir or Vitaly - can you look into that?
->>>>
->>>
->>> It is really sad that Vitaly and George did not join to discussions earlier,
->>> so we could avoid being in situation like this.
->>>
->>> Likely I'm missing something, but what should happen if device relies on
->>> dma_contiguous_default_area?
->>>
->>> Originally, intention behind dma-default was to simplify things, so instead of 
->>>
->>>        reserved-memory {
->>>                 #address-cells = <1>;
->>>                 #size-cells = <1>;
->>>                 ranges;
->>>
->>>                 coherent_dma: linux,dma {
->>>                         compatible = "shared-dma-pool";
->>>                         no-map;
->>>                         reg = <0x78000000 0x800000>;
->>>                 };
->>>         };
->>>
->>>   
->>>         dev0: dev@12300000 {
->>>                 memory-region = <&coherent_dma>;
->>>                 /* ... */
->>>         };
->>>
->>>         dev1: dev@12500000 {
->>>                 memory-region = <&coherent_dma>;
->>>                 /* ... */
->>>         };
->>>
->>>         dev2: dev@12600000 {
->>>                 memory-region = <&coherent_dma>;
->>>                 /* ... */
->>>         };
->>>
->>> in device tree we could simply have
->>>
->>>        reserved-memory {
->>>                 #address-cells = <1>;
->>>                 #size-cells = <1>;
->>>                 ranges;
->>>
->>>                 coherent_dma: linux,dma {
->>>                         compatible = "shared-dma-pool";
->>>                         no-map;
->>>                         reg = <0x78000000 0x800000>;
->>>                         linux,dma-default;
->>>                 };
->>>         };
->>>
->>> and that just work in my (NOMMU) case because there is no CMA there...
->>>
->>> However, given that dma-default is being overloaded and there are no device
->>> tree users merged yet, I would not object stepping back, reverting "drivers:
->>> dma-coherent: Introduce default DMA pool" and cooperatively rethinking
->>> design/implementation, so every party gets happy.
->>
->> I don't think we need to go that far, I reckon it would be clear enough
->> to just split the per-device vs. global pool interfaces, something like
->> I've sketched out below (such that the ops->alloc implementation calls
->> dma_alloc_from_global_coherent() if dma_alloc_from_contiguous() fails).
-> 
-> Would not we need also release and mmap variants?
 
-Sure, that was just bashed out in 2 minutes and diffed into an email on
-the assumption that code would help illustrate the general idea I had in
-mind more clearly than prose alone. I'm certain it won't even compile
-as-is ;)
+--u7t2akpeeoktg7a2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Robin.
+On Thu, Jul 06, 2017 at 08:26:17PM +0300, Andy Shevchenko wrote:
+> Drivers would like to call i2c_detect_slave_mode() even if !I2C_SLAVE.
+> Give them what they want to,
+>=20
+> Otherwise kernel will not compile:
+> drivers/i2c/busses/i2c-designware-platdrv.c: In function =E2=80=98dw_i2c_=
+plat_probe=E2=80=99:
+> drivers/i2c/busses/i2c-designware-platdrv.c:331:6: error: implicit declar=
+ation of function =E2=80=98i2c_detect_slave_mode=E2=80=99 [-Werror=3Dimplic=
+it-function-declaration]
+>   if (i2c_detect_slave_mode(&pdev->dev))
+>       ^~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+>=20
+> Fixes: 6e38cf3b4421 ("i2c: designware: Let slave adapter support be optio=
+nal")
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+I'll apply it and push out. Buildbot found this issue as well and should
+give me a success report...
+
+Thanks!
+
+
+--u7t2akpeeoktg7a2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllhOL0ACgkQFA3kzBSg
+KbYd9w//WWmKkrb0wrA3qxBqTEf5I+GXB3jIZE21wOnCM3sHzUnEA0LSGy0fB8Ed
++tcCCiLzaPC2dlaqtt0c31dmjlthNgLV0mVSLhy9iVIBydTVtzy8UdewRdcWFP7K
+Dlc18l73gntFMhiDeDAgZjQzpFBdl6LV02BhNha9GZExKKhCSYeIR7fW90K1B6nh
+qgUyrGbEHrlMw8yNXrsU6vok1mLfDWyGk4/hqPjpNfqsZVlVclaANSzNAWsnXqvq
+p1vpA6rWfj3G/PCMboHmD8h15I5iRW3yFR+cr/9X8ck8CO/d6jo9vr8AbGvG1Qtk
+3KxZmFJR2gZv4Z34+VGlGQVwQHHBZm8X625rAx+nTIDHj9W9teTKcw5xPWtNL0QL
+hJKk/1RMB33mNNxkLiZEHh8Y1984caDGaO70Wqtbvk8esr178Dk76pAGd0BX/c4z
+6mXBgrflY07AWAw088+afPuvokFahofr3TBwKB6W2WRx2/LBLFmCsfZJKsdamUmQ
+krguzZn4bROMpHZmd1vpbEpEklqqjQ8vGyJ1HWrror1fqum7dqC5XcHJddFCWCtY
+ITi+Nv2WMVr9mGZqwAA9ic7GCGt8j7XRwsqUzhuM772p3Kut1cQLTLyn7NeKP433
+PXyzZv8U+wKlVvpGyiwM7OcNsDMkvfadVb6+tJt3X0+9lw+d5ck=
+=dGqX
+-----END PGP SIGNATURE-----
+
+--u7t2akpeeoktg7a2--
