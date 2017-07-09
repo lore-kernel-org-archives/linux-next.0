@@ -1,68 +1,43 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v1] i2c: Provide a stub for i2c_detect_slave_mode()
-Date: Sat, 8 Jul 2017 21:55:45 +0200
-Message-ID: <20170708195545.az4vgxqptrtdjv54@ninjato>
-References: <20170706172617.39817-1-andriy.shevchenko@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the vfs tree
+Date: Mon, 10 Jul 2017 09:34:30 +1000
+Message-ID: <20170710093430.2bec2f96@canb.auug.org.au>
+References: <20170703105347.0ebf12a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="u7t2akpeeoktg7a2"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170706172617.39817-1-andriy.shevchenko@linux.intel.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, Luis.Oliveira@synopsys.com, linux-next <linux-next@vger.kernel.org>, Jarkko Nikula <jarkko.nikula@linux.intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59289 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752749AbdGIXed (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 9 Jul 2017 19:34:33 -0400
+In-Reply-To: <20170703105347.0ebf12a3@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+Hi Al,
 
---u7t2akpeeoktg7a2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 3 Jul 2017 10:53:47 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+> produced this warning:
+> 
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c: In function 'kiblnd_send':
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+>   copy_from_iter(&ibmsg->ibm_u.immediate.ibim_payload, IBLND_MSG_SIZE,
+>   ^
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c: In function 'kiblnd_recv':
+> drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+>    copy_to_iter(&rxmsg->ibm_u.immediate.ibim_payload,
+>    ^
+> 
+> Introduced by commit
+> 
+>   aa28de275a24 ("iov_iter/hardening: move object size checks to inlined part")
 
-On Thu, Jul 06, 2017 at 08:26:17PM +0300, Andy Shevchenko wrote:
-> Drivers would like to call i2c_detect_slave_mode() even if !I2C_SLAVE.
-> Give them what they want to,
->=20
-> Otherwise kernel will not compile:
-> drivers/i2c/busses/i2c-designware-platdrv.c: In function =E2=80=98dw_i2c_=
-plat_probe=E2=80=99:
-> drivers/i2c/busses/i2c-designware-platdrv.c:331:6: error: implicit declar=
-ation of function =E2=80=98i2c_detect_slave_mode=E2=80=99 [-Werror=3Dimplic=
-it-function-declaration]
->   if (i2c_detect_slave_mode(&pdev->dev))
->       ^~~~~~~~~~~~~~~~~~~~~
-> cc1: some warnings being treated as errors
->=20
-> Fixes: 6e38cf3b4421 ("i2c: designware: Let slave adapter support be optio=
-nal")
-> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-I'll apply it and push out. Buildbot found this issue as well and should
-give me a success report...
-
-Thanks!
-
-
---u7t2akpeeoktg7a2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAllhOL0ACgkQFA3kzBSg
-KbYd9w//WWmKkrb0wrA3qxBqTEf5I+GXB3jIZE21wOnCM3sHzUnEA0LSGy0fB8Ed
-+tcCCiLzaPC2dlaqtt0c31dmjlthNgLV0mVSLhy9iVIBydTVtzy8UdewRdcWFP7K
-Dlc18l73gntFMhiDeDAgZjQzpFBdl6LV02BhNha9GZExKKhCSYeIR7fW90K1B6nh
-qgUyrGbEHrlMw8yNXrsU6vok1mLfDWyGk4/hqPjpNfqsZVlVclaANSzNAWsnXqvq
-p1vpA6rWfj3G/PCMboHmD8h15I5iRW3yFR+cr/9X8ck8CO/d6jo9vr8AbGvG1Qtk
-3KxZmFJR2gZv4Z34+VGlGQVwQHHBZm8X625rAx+nTIDHj9W9teTKcw5xPWtNL0QL
-hJKk/1RMB33mNNxkLiZEHh8Y1984caDGaO70Wqtbvk8esr178Dk76pAGd0BX/c4z
-6mXBgrflY07AWAw088+afPuvokFahofr3TBwKB6W2WRx2/LBLFmCsfZJKsdamUmQ
-krguzZn4bROMpHZmd1vpbEpEklqqjQ8vGyJ1HWrror1fqum7dqC5XcHJddFCWCtY
-ITi+Nv2WMVr9mGZqwAA9ic7GCGt8j7XRwsqUzhuM772p3Kut1cQLTLyn7NeKP433
-PXyzZv8U+wKlVvpGyiwM7OcNsDMkvfadVb6+tJt3X0+9lw+d5ck=
-=dGqX
------END PGP SIGNATURE-----
-
---u7t2akpeeoktg7a2--
+These are now in Linus' tree ...
+-- 
+Cheers,
+Stephen Rothwell
