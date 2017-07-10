@@ -1,50 +1,41 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
 Subject: Re: Today's linux-next build fail on powerpc
-Date: Mon, 10 Jul 2017 20:07:58 +0530
-Message-ID: <1499697478.19784.42.camel@abdul.in.ibm.com>
-References: <1499320823.19784.17.camel@abdul.in.ibm.com>
-         <CAHp75VdfjatKMWXzHLr7s3CCAh_-Gd=a2K72pFDdtt1X9Kk7Rw@mail.gmail.com>
+Date: Mon, 10 Jul 2017 18:17:00 +0300
+Message-ID: <CAHp75VdSgpviH9U1nh7HVL-t9kHHQeAdDSnAGjsXtFaXXTNnXQ@mail.gmail.com>
+References: <1499320823.19784.17.camel@abdul.in.ibm.com> <CAHp75VdfjatKMWXzHLr7s3CCAh_-Gd=a2K72pFDdtt1X9Kk7Rw@mail.gmail.com>
+ <1499697478.19784.42.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VdfjatKMWXzHLr7s3CCAh_-Gd=a2K72pFDdtt1X9Kk7Rw@mail.gmail.com>
+In-Reply-To: <1499697478.19784.42.camel@abdul.in.ibm.com>
 Sender: linux-i2c-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel <linux-kernel@vger.kernel.org>, Luis Oliveira <Luis.Oliveira@synopsys.com>, linux-next <linux-next@vger.kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2017-07-07 at 19:36 +0300, Andy Shevchenko wrote:
-> On Thu, Jul 6, 2017 at 9:00 AM, Abdul Haleem
-> <abdhalee@linux.vnet.ibm.com> wrote:
-> > Hi Luis,
-> >
-> > next-20170705 fails to build on powerpc with below errors.
-> 
-> Hi,
-> 
-> I had sent a fix yesterday. Had you chance to test it?
-> 
-> 
+On Mon, Jul 10, 2017 at 5:37 PM, Abdul Haleem
+<abdhalee@linux.vnet.ibm.com> wrote:
+> On Fri, 2017-07-07 at 19:36 +0300, Andy Shevchenko wrote:
+>> On Thu, Jul 6, 2017 at 9:00 AM, Abdul Haleem
+>> <abdhalee@linux.vnet.ibm.com> wrote:
+>> > next-20170705 fails to build on powerpc with below errors.
+>> I had sent a fix yesterday. Had you chance to test it?
 
-Are these the one you are referring to ?
+> drivers/i2c/busses/i2c-designware-platdrv.c:331:6: error: implicit
+> declaration of function
+> =E2=80=98i2c_detect_slave_mode=E2=80=99 [-Werror=3Dimplicit-function-decl=
+aration]
+>   if (i2c_detect_slave_mode(&pdev->dev))
+>       ^
+>   CC [M]  fs/jffs2/scan.o
+>
+> Please point me to the correct patch you are referring to ?
 
-[v1,2/2] ACPI / boot: Don't define unused variables 
-[v1,1/2] ACPI / boot: Correct address space of __acpi_map_table()
+commit 8f1a357d41a22009150cf404b5aa5876efdb59b1
 
-Applying above patches did not fix the build failure.
+   i2c: Provide a stub for i2c_detect_slave_mode()
 
-drivers/i2c/busses/i2c-designware-platdrv.c:331:6: error: implicit
-declaration of function
-‘i2c_detect_slave_mode’ [-Werror=implicit-function-declaration]
-  if (i2c_detect_slave_mode(&pdev->dev))
-      ^
-  CC [M]  fs/jffs2/scan.o
-
-Please point me to the correct patch you are referring to ?
-
--- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+--=20
+With Best Regards,
+Andy Shevchenko
