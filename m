@@ -1,46 +1,43 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: next-20170710 build: 2 failures 5 warnings (next-20170710)
-Date: Mon, 10 Jul 2017 11:31:02 +0200
-Message-ID: <20170710093102.6mujx2p5od7gaa5k@piout.net>
-References: <E1dUTPU-0005oi-5M@optimist>
- <20170710192234.143c255f@canb.auug.org.au>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: linux-next: please clean up the clockevents tree
+Date: Mon, 10 Jul 2017 12:36:02 +0200
+Message-ID: <9d117bb1-6836-c5d0-197b-92c8bdc2bad8@linaro.org>
+References: <20170710133017.241fd98d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:33663 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752317AbdGJJbE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Jul 2017 05:31:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20170710192234.143c255f@canb.auug.org.au>
+Received: from mail-lf0-f50.google.com ([209.85.215.50]:35856 "EHLO
+        mail-lf0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753539AbdGJKgF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 10 Jul 2017 06:36:05 -0400
+Received: by mail-lf0-f50.google.com with SMTP id h22so56507317lfk.3
+        for <linux-next@vger.kernel.org>; Mon, 10 Jul 2017 03:36:04 -0700 (PDT)
+In-Reply-To: <20170710133017.241fd98d@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Build bot for Mark Brown <broonie@kernel.org>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, heiko.carstens@de.ibm.com
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi,
+On 10/07/2017 05:30, Stephen Rothwell wrote:
+> Hi Daniel,
+> 
+> Please clean up the clockevents tree
+> (git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next)
+> as all its commits have been merged into other tree(s) as different
+> commits (so all it is doing is adding lots of conflicts :-().
 
-On 10/07/2017 at 19:22:34 +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Mon, 10 Jul 2017 08:47:12 +0100 Build bot for Mark Brown <broonie@kernel.org> wrote:
-> >
-> > ../include/linux/nvmem-provider.h:51:9: error: implicit declaration of function 'ERR_PTR' [-Werror=implicit-function-declaration]
-> 
-> Possibly caused by commit
-> 
->   697e5a47aa12 ("rtc: add generic nvmem support")
-> 
-> from the rtc tree.  include/linux/nvmem-provider.h uses ERR_PTR, but
-> does not include err.h :-(
-> 
+Sorry for that.
 
-I'll fix it up. I was kind of relying on the kbuild test robot to catch
-those. That code has been in a tree that they should be building for
-more than two months but it seems to be timeouting a lot recently.
+It is fixed now.
+
+  -- Daniel
 
 
 -- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
