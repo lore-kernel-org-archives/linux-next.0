@@ -1,92 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 10 Jul 2017 15:21:34 +1000
-Message-ID: <20170710152134.0f78c1e6@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the kbuild tree
+Date: Mon, 10 Jul 2017 15:30:18 +1000
+Message-ID: <20170710153018.3d4fd9b2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44901 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51749 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750969AbdGJFVh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 10 Jul 2017 01:21:37 -0400
+        id S1750924AbdGJFaU (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Jul 2017 01:30:20 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ian Abbott <abbotti@mev.co.uk>
+To: Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tobias Klauser <tklauser@distanz.ch>
 
 Hi all,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the akpm tree got a conflict in:
 
-In file included from include/uapi/linux/stddef.h:1:0,
-                 from include/linux/stddef.h:4,
-                 from include/uapi/linux/posix_types.h:4,
-                 from include/uapi/linux/types.h:13,
-                 from include/linux/types.h:5,
-                 from include/linux/syscalls.h:71,
-                 from fs/dcache.c:17:
-fs/dcache.c: In function 'release_dentry_name_snapshot':
-include/linux/compiler.h:542:38: error: call to '__compiletime_assert_305' declared with attribute error: pointer type mismatch in container_of()
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:525:4: note: in definition of macro '__compiletime_assert'
-    prefix ## suffix();    \
-    ^
-include/linux/compiler.h:542:2: note: in expansion of macro '_compiletime_assert'
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-include/linux/build_bug.h:46:37: note: in expansion of macro 'compiletime_assert'
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-include/linux/kernel.h:860:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-  BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
-  ^
-fs/dcache.c:305:7: note: in expansion of macro 'container_of'
-   p = container_of(name->name, struct external_name, name[0]);
-       ^
+  arch/xtensa/include/asm/Kbuild
 
-Caused by commit
+between commit:
 
-  2f23633e9c84 ("kernel.h: handle pointers to arrays better in container_of()")
+  35ff5ae79f85 ("xtensa: move generic-y of exported headers to uapi/asm/Kbuild")
 
-interacting with commit
+from the kbuild tree and patch:
 
-  49d31c2f389a ("dentry name snapshots")
+  "xtensa: use generic fb.h"
 
-from the vfs tree.
+from the akpm tree.
 
-I applied the following fix patch.  I hope it is ok.  If so, please
-apply to the vfs tree.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 10 Jul 2017 15:09:12 +1000
-Subject: [PATCH] fix type for "dentry name snapshots"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/dcache.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index fcaba2d8638a..aae1cdb76851 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -597,8 +597,8 @@ static inline struct inode *d_real_inode(const struct dentry *dentry)
- }
- 
- struct name_snapshot {
--	const char *name;
--	char inline_name[DNAME_INLINE_LEN];
-+	const unsigned char *name;
-+	unsigned char inline_name[DNAME_INLINE_LEN];
- };
- void take_dentry_name_snapshot(struct name_snapshot *, struct dentry *);
- void release_dentry_name_snapshot(struct name_snapshot *);
--- 
-2.13.2
+diff --cc arch/xtensa/include/asm/Kbuild
+index c04efde775a5,bdc12d426b24..000000000000
+--- a/arch/xtensa/include/asm/Kbuild
++++ b/arch/xtensa/include/asm/Kbuild
+@@@ -3,9 -4,13 +3,10 @@@ generic-y += clkdev.
+  generic-y += div64.h
+  generic-y += dma-contiguous.h
+  generic-y += emergency-restart.h
+ -generic-y += errno.h
+  generic-y += exec.h
+  generic-y += extable.h
++ generic-y += fb.h
+ -generic-y += fcntl.h
+  generic-y += hardirq.h
+ -generic-y += ioctl.h
+  generic-y += irq_regs.h
+  generic-y += irq_work.h
+  generic-y += kdebug.h
