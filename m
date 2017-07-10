@@ -1,88 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the unicore32 tree with the kbuild tree
-Date: Mon, 10 Jul 2017 10:18:17 +1000
-Message-ID: <20170710101817.70d13542@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Mon, 10 Jul 2017 12:15:11 +1000
+Message-ID: <20170710121511.1995914e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33503 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752749AbdGJAST (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 9 Jul 2017 20:18:19 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Xuetao Guan <epip.guan@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Jeremy Kerr <jk@ozlabs.org>, Linux PPC Development List <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Xuetao,
+Hi Al,
 
-Today's linux-next merge of the unicore32 tree got a conflict in:
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  arch/unicore32/include/asm/Kbuild
+arch/powerpc/platforms/cell/spufs/inode.c: In function 'spufs_show_options':
+arch/powerpc/platforms/cell/spufs/inode.c:612:18: error: 'struct dentry' has no member named 'i_uid'
+  if (!uid_eq(root->i_uid, GLOBAL_ROOT_UID))
+                  ^
+arch/powerpc/platforms/cell/spufs/inode.c:614:43: error: 'struct dentry' has no member named 'i_uid'
+       from_kuid_munged(&init_user_ns, root->i_uid));
+                                           ^
+arch/powerpc/platforms/cell/spufs/inode.c:615:18: error: 'struct dentry' has no member named 'i_gid'
+  if (!gid_eq(root->i_gid, GLOBAL_ROOT_GID))
+                  ^
+arch/powerpc/platforms/cell/spufs/inode.c:617:43: error: 'struct dentry' has no member named 'i_gid'
+       from_kgid_munged(&init_user_ns, root->i_gid));
+                                           ^
+arch/powerpc/platforms/cell/spufs/inode.c:618:10: error: 'struct dentry' has no member named 'i_mode'
+  if (root->i_mode & S_IALLUGO != 0775)
+          ^
+arch/powerpc/platforms/cell/spufs/inode.c:619:33: error: 'struct dentry' has no member named 'i_mode'
+   seq_printf(m, ",mode=%o", root->i_mode);
+                                 ^
 
-between commits:
+Caused by commit
 
-  e8c83e6b045c ("unicore32: move generic-y of exported headers to uapi/asm/Kbuild")
+  4f9365d9e2e7 ("spufs: Implement show_options")
 
-from the kbuild tree and commits:
+A bit hard to revert this, so I added the below patch for now ... please
+fix it up.
 
-  bb3d836a8767 ("unicore32-oldabi: add stat.h support for UNICORE32_OLDABI")
-  bc27113620ca ("unicore32-oldabi: add oldabi syscall interface")
+Also, isn't this a bit late for this merge window?
 
-from the unicore32 tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 10 Jul 2017 11:05:31 +1000
+Subject: [PATCH] disable the spufs show options for now
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/platforms/cell/spufs/inode.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Actually, signal.h and stat.h should be removed from
-arch/unicore32/include/uapi/asm/Kbuild as well ...
+diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
+index 27a51a60bc33..fafbf88326d8 100644
+--- a/arch/powerpc/platforms/cell/spufs/inode.c
++++ b/arch/powerpc/platforms/cell/spufs/inode.c
+@@ -609,6 +609,7 @@ static int spufs_show_options(struct seq_file *m, struct dentry *root)
+ {
+ 	struct spufs_sb_info *sbi = spufs_get_sb_info(root->d_sb);
+ 
++#if 0
+ 	if (!uid_eq(root->i_uid, GLOBAL_ROOT_UID))
+ 		seq_printf(m, ",uid=%u",
+ 			   from_kuid_munged(&init_user_ns, root->i_uid));
+@@ -617,6 +618,7 @@ static int spufs_show_options(struct seq_file *m, struct dentry *root)
+ 			   from_kgid_munged(&init_user_ns, root->i_gid));
+ 	if (root->i_mode & S_IALLUGO != 0775)
+ 		seq_printf(m, ",mode=%o", root->i_mode);
++#endif
+ 	if (sbi->debug)
+ 		seq_puts(m, ",debug");
+ 	return 0;
+-- 
+2.13.2
+
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/unicore32/include/asm/Kbuild
-index fda7e2153086,8578702d4998..000000000000
---- a/arch/unicore32/include/asm/Kbuild
-+++ b/arch/unicore32/include/asm/Kbuild
-@@@ -20,17 -27,35 +20,16 @@@ generic-y += kprobes.
-  generic-y += local.h
-  generic-y += mcs_spinlock.h
-  generic-y += mm-arch-hooks.h
- -generic-y += mman.h
-  generic-y += module.h
- -generic-y += msgbuf.h
- -generic-y += param.h
-  generic-y += parport.h
-  generic-y += percpu.h
- -generic-y += poll.h
- -generic-y += posix_types.h
-  generic-y += preempt.h
- -generic-y += resource.h
-  generic-y += sections.h
-  generic-y += segment.h
- -generic-y += sembuf.h
-  generic-y += serial.h
- -generic-y += setup.h
- -generic-y += shmbuf.h
- -generic-y += shmparam.h
- -generic-y += siginfo.h
-  generic-y += sizes.h
-- generic-y += syscalls.h
- -generic-y += socket.h
- -generic-y += sockios.h
- -generic-y += statfs.h
- -generic-y += swab.h
- -generic-y += termbits.h
- -generic-y += termios.h
-  generic-y += topology.h
-  generic-y += trace_clock.h
- -generic-y += types.h
- -generic-y += ucontext.h
-  generic-y += unaligned.h
-  generic-y += user.h
-  generic-y += vga.h
