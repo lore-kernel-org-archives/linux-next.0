@@ -1,53 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mips tree with Linus' tree
-Date: Tue, 11 Jul 2017 10:04:25 +1000
-Message-ID: <20170711100425.3faaf38b@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the vfs tree
+Date: Tue, 11 Jul 2017 10:55:32 +1000
+Message-ID: <20170711105532.045d0148@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@imgtec.com>, Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:55215 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750939AbdGKAzf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 10 Jul 2017 20:55:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the mips tree got a conflict in:
+After merging the vfs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  drivers/clk/Kconfig
+arch/powerpc/platforms/cell/spufs/inode.c: In function 'spufs_show_options':
+arch/powerpc/platforms/cell/spufs/inode.c:619:20: error: suggest parentheses around comparison in operand of '&' [-Werror=parentheses]
+  if (inode->i_mode & S_IALLUGO != 0775)
+                    ^
+cc1: all warnings being treated as errors
 
-between commit:
+Caused by commit
 
-  b745c0794e2f ("clk: keystone: Add sci-clk driver support")
+  86b1b993671d ("spufs: Implement show_options")
 
-from Linus' tree and commit:
+I applied the following patch:
 
-  5e2722808156 ("clk: boston: Add a driver for MIPS Boston board clocks")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 11 Jul 2017 10:44:55 +1000
+Subject: [PATCH] spufs: always parenthesise bitwise expressions
 
-from the mips tree.
+arch/powerpc/platforms/cell/spufs/inode.c: In function 'spufs_show_options':
+arch/powerpc/platforms/cell/spufs/inode.c:619:20: error: suggest parentheses around comparison in operand of '&' [-Werror=parentheses]
+  if (inode->i_mode & S_IALLUGO != 0775)
+                    ^
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Fixes: 86b1b993671d "spufs: Implement show_options"
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/platforms/cell/spufs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/cell/spufs/inode.c b/arch/powerpc/platforms/cell/spufs/inode.c
+index e210d69beeee..9558d725a99b 100644
+--- a/arch/powerpc/platforms/cell/spufs/inode.c
++++ b/arch/powerpc/platforms/cell/spufs/inode.c
+@@ -616,7 +616,7 @@ static int spufs_show_options(struct seq_file *m, struct dentry *root)
+ 	if (!gid_eq(inode->i_gid, GLOBAL_ROOT_GID))
+ 		seq_printf(m, ",gid=%u",
+ 			   from_kgid_munged(&init_user_ns, inode->i_gid));
+-	if (inode->i_mode & S_IALLUGO != 0775)
++	if ((inode->i_mode & S_IALLUGO) != 0775)
+ 		seq_printf(m, ",mode=%o", inode->i_mode);
+ 	if (sbi->debug)
+ 		seq_puts(m, ",debug");
+-- 
+2.13.2
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/clk/Kconfig
-index d406b087553f,251a22139e73..000000000000
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@@ -221,7 -219,7 +221,8 @@@ config COMMON_CLK_VC
-  
-  source "drivers/clk/bcm/Kconfig"
-  source "drivers/clk/hisilicon/Kconfig"
-+ source "drivers/clk/imgtec/Kconfig"
- +source "drivers/clk/keystone/Kconfig"
-  source "drivers/clk/mediatek/Kconfig"
-  source "drivers/clk/meson/Kconfig"
-  source "drivers/clk/mvebu/Kconfig"
