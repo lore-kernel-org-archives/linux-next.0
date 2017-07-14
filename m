@@ -1,80 +1,65 @@
-From: Leon Romanovsky <leon@kernel.org>
-Subject: Re: linux-next: manual merge of the rdma tree with Linus' tree
-Date: Fri, 14 Jul 2017 07:55:46 +0300
-Message-ID: <20170714045546.GV1528@mtr-leonro.local>
-References: <20170714111437.69a6b100@canb.auug.org.au>
- <1499995033.2936.12.camel@redhat.com>
- <20170714033416.GS1528@mtr-leonro.local>
- <20170714135018.5c849c1c@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dvv5THrRrdqidt0E"
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170714 build: 0 failures 4 warnings (next-20170714)
+Date: Fri, 14 Jul 2017 06:59:29 +0100
+Message-ID: <E1dVtdR-0007vX-Jj@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:47612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751387AbdGNEzu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 14 Jul 2017 00:55:50 -0400
-Content-Disposition: inline
-In-Reply-To: <20170714135018.5c849c1c@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59706 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750786AbdGNGBq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 14 Jul 2017 02:01:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Paul Moore <paul@paul-moore.com>, Parav Pandit <parav@mellanox.com>, Eli Cohen <eli@mellanox.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20170714
+Git describe: next-20170714
+Commit: 674b585feb Add linux-next specific files for 20170714
+
+Build Time: 0 min 14 sec
+
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
+
+Errors: 0
+Warnings: 4
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 4
+	  1 <command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
 
 
---dvv5THrRrdqidt0E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Fri, Jul 14, 2017 at 01:50:26PM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> On Fri, 14 Jul 2017 06:34:16 +0300 Leon Romanovsky <leon@kernel.org> wrote:
-> >
-> > Sorry Doug, but it is not expected at all for the code which will go to 4.14.
-> >
-> > Both patches in question were targeted for 4.13 and you was expected to
-> > see the merge conflicts during last month or so, prior to merge window of 4.13.
-> >
-> > In 4.14, you should base your tree on Linus's tree and don't have ANY
-> > conflicts in your subsystem, between ANY subsystems and especially
-> > Linus, so we will be able to develop and test.
-> >
-> > For me, this merge conflict puts a large sign, that your tree is not ready for 4.14.
-> >
-> > Please base your tree on Linus's tree.
->
-> And if these commits are destined for v4.14, then they should not have
-> been in linux-next yet.
+===============================================================================
+Detailed per-defconfig build reports below:
 
-See, this announcement,
-http://marc.info/?l=linux-rdma&m=149980130008834&w=2
 
-Thanks
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+Warnings:
+	<command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
 
---dvv5THrRrdqidt0E
-Content-Type: application/pgp-signature; name="signature.asc"
+Passed with no errors, warnings or mismatches:
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlloTtIACgkQ5GN7iDZy
-WKd7dA//c2zgj7f24YMrmJDIm0IqTtDF4UwWpIrgFShWqfDMiutSBFgtLGgMQ2Go
-HldMBDsHHinMOoh5uuz38WifRCeypznzddX6L8t24CfYLZqtC/J/4/Y4XDAAvt3b
-MHxZmZpeK5VgJs0XbxHERe4yn6ccUNmBWH1VttnvU8zy8uewZIVri+tbcE/l6jfa
-ERmZi5xx21cbZy0JbQZzkdvO4cqNqO+3ZmmjBUKQIqNrIJIb7qDH9MvkFNasPMcJ
-2ICaltdKpJeKtFM3o44obi4w6I1Oeo1073LBvOHFqW5wv5TlpWhCEF/Um1xYouNE
-mpft5yIzlKXI3CHH8DwDR+WbwAjLtX0KB+XmwGEH8YeEQbdoAm5cXD9bkiXbfxxV
-LsVajbEXiJKuNsUrK9L9M9KQSrpw6wra7dH0DLSsUTphPApQagr9K4eaQqQ3rFa7
-7TGklUMcPofgSzzG4qBtW6utEloKAAjSk/bMBnkGJZflywhtf+grphPf9LrlU+pD
-CZ2BGuskFNfw3I4C/wlKJDjLTh20HocISONIJXwukm7ljcpKmEK7NiD//Gks9NCy
-VGP1LrMRn9inonE5z2uzgqtXAOuzTVcES3MElwNOPWqhrTbrMAq7P1WPXAneJTEM
-cQAPAELW/YTSM/O7mHeYyOWrlLXV4oi9BsrCJN0whHTV0EOTmdY=
-=hQLg
------END PGP SIGNATURE-----
-
---dvv5THrRrdqidt0E--
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
