@@ -1,62 +1,68 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170713 build: 0 failures 4 warnings (next-20170713)
-Date: Thu, 13 Jul 2017 08:03:59 +0100
-Message-ID: <E1dVYAJ-0004Wq-Nv@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with Linus' tree
+Date: Fri, 14 Jul 2017 11:14:37 +1000
+Message-ID: <20170714111437.69a6b100@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54394 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750831AbdGMHEH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 13 Jul 2017 03:04:07 -0400
+Received: from ozlabs.org ([103.22.144.67]:41373 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752456AbdGNBOk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 13 Jul 2017 21:14:40 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Doug Ledford <dledford@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Paul Moore <paul@paul-moore.com>, Parav Pandit <parav@mellanox.com>, Leon Romanovsky <leon@kernel.org>, Eli Cohen <eli@mellanox.com>
 
-Tree/Branch: next-20170713
-Git describe: next-20170713
-Commit: ad59509d80 Add linux-next specific files for 20170713
+Hi Doug,
 
-Build Time: 0 min 32 sec
+Today's linux-next merge of the rdma tree got conflicts in:
 
-Passed:    7 / 7   (100.00 %)
-Failed:    0 / 7   (  0.00 %)
+  drivers/infiniband/core/uverbs_cmd.c
+  drivers/infiniband/core/verbs.c
 
-Errors: 0
-Warnings: 4
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      4 warnings    0 mismatches  : arm-allmodconfig
+  d291f1a65232 ("IB/core: Enforce PKey security on QPs")
 
--------------------------------------------------------------------------------
+from Linus' tree and commits:
 
-Warnings Summary: 4
-	  1 <command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
-	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+  c7c0fb974caa ("IB/core: Introduce modify QP operation with udata")
+  5f4bc420f35f ("IB/uverbs: Make use of ib_modify_qp variant to avoid resolving DMAC")
 
+from the rdma tree.
 
+I fixed it up (I used the latter version of uverbs_cmd.c and see below)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+-- 
+Cheers,
+Stephen Rothwell
 
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
-
-Warnings:
-	<command-line>:0:16: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'u32 {aka unsigned int}' [-Wformat=]
-	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
-	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+diff --cc drivers/infiniband/core/verbs.c
+index c973a83c898b,8ece2aae033d..000000000000
+--- a/drivers/infiniband/core/verbs.c
++++ b/drivers/infiniband/core/verbs.c
+@@@ -1280,8 -1283,15 +1298,15 @@@ int ib_modify_qp_with_udata(struct ib_q
+  		if (ret)
+  			return ret;
+  	}
+ -	return qp->device->modify_qp(qp->real_qp, attr, attr_mask, udata);
+++	return ib_security_modify_qp(qp->real_qp, attr, attr_mask, udata);
++ }
++ EXPORT_SYMBOL(ib_modify_qp_with_udata);
+  
+- 	return ib_security_modify_qp(qp->real_qp, qp_attr, qp_attr_mask, NULL);
++ int ib_modify_qp(struct ib_qp *qp,
++ 		 struct ib_qp_attr *qp_attr,
++ 		 int qp_attr_mask)
++ {
++ 	return ib_modify_qp_with_udata(qp, qp_attr, qp_attr_mask, NULL);
+  }
+  EXPORT_SYMBOL(ib_modify_qp);
+  
