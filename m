@@ -1,51 +1,63 @@
-From: John Fastabend <john.fastabend@gmail.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Mon, 17 Jul 2017 21:59:01 -0700
-Message-ID: <596D9595.1010704@gmail.com>
-References: <20170718110927.0f9974f6@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170718 build: 0 failures 3 warnings (next-20170718)
+Date: Tue, 18 Jul 2017 06:58:12 +0100
+Message-ID: <E1dXLWO-0007b7-Fs@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f178.google.com ([209.85.192.178]:36399 "EHLO
-        mail-pf0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750931AbdGRE7Q (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 18 Jul 2017 00:59:16 -0400
-In-Reply-To: <20170718110927.0f9974f6@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52320 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751203AbdGRGAa (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 18 Jul 2017 02:00:30 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jesper Dangaard Brouer <brouer@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 07/17/2017 06:09 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> net/core/filter.o: In function `xdp_do_flush_map':
-> filter.c:(.text+0x3770): undefined reference to `__dev_map_flush'
-> net/core/filter.o: In function `__bpf_tx_xdp':
-> filter.c:(.text+0x56dc): undefined reference to `__dev_map_insert_ctx'
-> net/core/filter.o: In function `xdp_do_redirect_map':
-> filter.c:(.text+0x5e24): undefined reference to `__dev_map_lookup_elem'
-> 
-> Caused by commit
-> 
->   11393cc9b9be ("xdp: Add batching support to redirect map")
-> 
-> This build has
-> 
-> CONFIG_BPF=y
-> # CONFIG_BPF_SYSCALL is not set
-> 
-> I have used the net-next tree from next-20170717 for today.
-> 
+Tree/Branch: next-20170718
+Git describe: next-20170718
+Commit: ac3a2daf12 Add linux-next specific files for 20170718
 
-I missed testing without CONFIG_BPF_SYSCALL. Patch is posted to netdev
-and on patchworks at,
+Build Time: 0 min 11 sec
 
-https://patchwork.ozlabs.org/patch/789862/
+Passed:    7 / 7   (100.00 %)
+Failed:    0 / 7   (  0.00 %)
 
-Thanks,
-John
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1643:2: warning: ignoring return value of 'copy_from_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lnet/klnds/o2iblnd/o2iblnd_cb.c:1744:3: warning: ignoring return value of 'copy_to_iter', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
