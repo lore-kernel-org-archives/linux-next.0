@@ -1,59 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
-Date: Tue, 18 Jul 2017 10:18:02 +1000
-Message-ID: <20170718101802.720dab22@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Tue, 18 Jul 2017 11:09:27 +1000
+Message-ID: <20170718110927.0f9974f6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:43885 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751943AbdGRBJ3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 17 Jul 2017 21:09:29 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Fastabend <john.fastabend@gmail.com>, Jesper Dangaard Brouer <brouer@redhat.com>, Daniel Borkmann <daniel@iogearbox.net>
 
-Hi David,
+Hi all,
 
-Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  fs/btrfs/extent_io.c
+net/core/filter.o: In function `xdp_do_flush_map':
+filter.c:(.text+0x3770): undefined reference to `__dev_map_flush'
+net/core/filter.o: In function `__bpf_tx_xdp':
+filter.c:(.text+0x56dc): undefined reference to `__dev_map_insert_ctx'
+net/core/filter.o: In function `xdp_do_redirect_map':
+filter.c:(.text+0x5e24): undefined reference to `__dev_map_lookup_elem'
 
-between commit:
+Caused by commit
 
-  e6959b9350c6 ("btrfs: add support for passing in write hints for buffered writes")
+  11393cc9b9be ("xdp: Add batching support to redirect map")
 
-from Linus' tree and commit:
+This build has
 
-  41a3f2a7c062 ("btrfs: merge REQ_OP and REQ_ flags to one parameter in submit_extent_page")
+CONFIG_BPF=y
+# CONFIG_BPF_SYSCALL is not set
 
-from the btrfs-kdave tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-You should probably consider rebasing your for-next branch onto (at
-least v4.13-rc1) (or merging v4.13-rc1) to save these sort of
-(unnecessary) conflicts being ongoing during development and the next
-merge window.
+I have used the net-next tree from next-20170717 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/btrfs/extent_io.c
-index 0aff9b278c19,ead9e731e01b..000000000000
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@@ -2803,8 -2801,7 +2805,8 @@@ static int submit_extent_page(unsigned 
-  	bio_add_page(bio, page, page_size, offset);
-  	bio->bi_end_io = end_io_func;
-  	bio->bi_private = tree;
- +	bio->bi_write_hint = page->mapping->host->i_write_hint;
-- 	bio_set_op_attrs(bio, op, op_flags);
-+ 	bio->bi_opf = opf;
-  	if (wbc) {
-  		wbc_init_bio(wbc, bio);
-  		wbc_account_io(wbc, page, page_size);
