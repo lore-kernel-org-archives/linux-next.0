@@ -1,44 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Wed, 19 Jul 2017 11:30:54 +1000
-Message-ID: <20170719113004.457469b1@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Date: Wed, 19 Jul 2017 11:46:57 +1000
+Message-ID: <20170719114657.245537cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37267 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbdGSBa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 18 Jul 2017 21:30:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, "Navare, Manasi D" <manasi.d.navare@intel.com>, Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Greg KH <greg@kroah.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
-
-Today's linux-next merge of the drm-misc tree got a conflict in:
-
-  drivers/gpu/drm/i915/i915_reg.h
-
-between commit:
-
-  c379b897ba1a ("drm/i915/cnl: Fix the CURSOR_COEFF_MASK used in DDI Vswing Programming")
-
-from Linus' tree and commit:
-
-  5a8dd2af31a7 ("drm/i915/cnl: Fix RMW on ddi vswing sequence.")
-(which is also commit 33b92c1e1f27 in Linus' tree)
-
-from the drm-misc tree.
-
-I fixed it up (I just used the version from Linus' tree) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgYWxsLAoKQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1u
+ZXh0IGJ1aWxkICh4ODZfNjQKYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKZHJpdmVy
+cy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jOjIzNToyOiBlcnJvcjogdW5rbm93biBmaWVs
+ZCAnc2V0X2J1c2lkJyBzcGVjaWZpZWQgaW4gaW5pdGlhbGl6ZXIKICAuc2V0X2J1c2lkID0gZHJt
+X3BjaV9zZXRfYnVzaWQsCiAgXgpkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6
+MjM1OjE1OiBlcnJvcjogJ2RybV9wY2lfc2V0X2J1c2lkJyB1bmRlY2xhcmVkIGhlcmUgKG5vdCBp
+biBhIGZ1bmN0aW9uKQogIC5zZXRfYnVzaWQgPSBkcm1fcGNpX3NldF9idXNpZCwKICAgICAgICAg
+ICAgICAgXgpkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6IEluIGZ1bmN0aW9u
+ICd2Ym94X2luaXQnOgpkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6MjczOjk6
+IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnZHJtX3BjaV9pbml0JyBb
+LVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0KICByZXR1cm4gZHJtX3BjaV9p
+bml0KCZkcml2ZXIsICZ2Ym94X3BjaV9kcml2ZXIpOwogICAgICAgICBeCmRyaXZlcnMvc3RhZ2lu
+Zy92Ym94dmlkZW8vdmJveF9kcnYuYzogSW4gZnVuY3Rpb24gJ3Zib3hfZXhpdCc6CmRyaXZlcnMv
+c3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYzoyNzg6MjogZXJyb3I6IGltcGxpY2l0IGRlY2xh
+cmF0aW9uIG9mIGZ1bmN0aW9uICdkcm1fcGNpX2V4aXQnIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0
+aW9uLWRlY2xhcmF0aW9uXQogIGRybV9wY2lfZXhpdCgmZHJpdmVyLCAmdmJveF9wY2lfZHJpdmVy
+KTsKICBeCgpDYXVzZWQgYnkgY29tbWl0cwoKICA1YzQ4NGNlZTdlZjkgKCJkcm06IFJlbW92ZSBk
+cm1fZHJpdmVyLT5zZXRfYnVzaWQgaG9vayIpCiAgMTA2MzFkNzI0ZGVmICgiZHJtL3BjaTogRGVw
+cmVjYXRlIGRybV9wY2lfaW5pdC9leGl0IGNvbXBsZXRlbHkiKQoKaW50ZXJhY3Rpbmcgd2l0aCBj
+b21taXQKCiAgZGQ1NWQ0NGY0MDg0ICgic3RhZ2luZzogdmJveHZpZGVvOiBBZGQgdmJveHZpZGVv
+IHRvIGRyaXZlcnMvc3RhZ2luZyIpCgpmcm9tIHRoZSBzdGFnaW5nLmN1cnJlbnQgdHJlZS4KCkkg
+aGF2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoIC0gcGxlYXNlIGNoZWNr
+IHRoYXQgaXQKaXMgY29ycmVjdC4KCkZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1
+dWcub3JnLmF1PgpEYXRlOiBXZWQsIDE5IEp1bCAyMDE3IDExOjQxOjAxICsxMDAwClN1YmplY3Q6
+IFtQQVRDSF0gZHJtOiBmaXhlcyBmb3Igc3RhZ2luZyBkdWUgdG8gQVBJIGNoYW5nZXMgaW4gdGhl
+IGRybSBjb3JlCgpTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVn
+Lm9yZy5hdT4KLS0tCiBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmMgfCA1ICsr
+LS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYyBiL2RyaXZlcnMv
+c3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYwppbmRleCA5MmFlMTU2MGExNmQuLjZkMDYwMGMz
+N2MwYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jCisr
+KyBiL2RyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYwpAQCAtMjMyLDcgKzIzMiw2
+IEBAIHN0YXRpYyBzdHJ1Y3QgZHJtX2RyaXZlciBkcml2ZXIgPSB7CiAJLmxhc3RjbG9zZSA9IHZi
+b3hfZHJpdmVyX2xhc3RjbG9zZSwKIAkubWFzdGVyX3NldCA9IHZib3hfbWFzdGVyX3NldCwKIAku
+bWFzdGVyX2Ryb3AgPSB2Ym94X21hc3Rlcl9kcm9wLAotCS5zZXRfYnVzaWQgPSBkcm1fcGNpX3Nl
+dF9idXNpZCwKIAogCS5mb3BzID0gJnZib3hfZm9wcywKIAkuaXJxX2hhbmRsZXIgPSB2Ym94X2ly
+cV9oYW5kbGVyLApAQCAtMjcwLDEyICsyNjksMTIgQEAgc3RhdGljIGludCBfX2luaXQgdmJveF9p
+bml0KHZvaWQpCiAJaWYgKHZib3hfbW9kZXNldCA9PSAwKQogCQlyZXR1cm4gLUVJTlZBTDsKIAot
+CXJldHVybiBkcm1fcGNpX2luaXQoJmRyaXZlciwgJnZib3hfcGNpX2RyaXZlcik7CisJcmV0dXJu
+IHBjaV9yZWdpc3Rlcl9kcml2ZXIoJnZib3hfcGNpX2RyaXZlcik7CiB9CiAKIHN0YXRpYyB2b2lk
+IF9fZXhpdCB2Ym94X2V4aXQodm9pZCkKIHsKLQlkcm1fcGNpX2V4aXQoJmRyaXZlciwgJnZib3hf
+cGNpX2RyaXZlcik7CisJcGNpX3VucmVnaXN0ZXJfZHJpdmVyKCZ2Ym94X3BjaV9kcml2ZXIpOwog
+fQogCiBtb2R1bGVfaW5pdCh2Ym94X2luaXQpOwotLSAKMi4xMy4yCgotLSAKQ2hlZXJzLApTdGVw
+aGVuIFJvdGh3ZWxsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
