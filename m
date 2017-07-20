@@ -1,102 +1,44 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170720 build: 1 failures 4 warnings (next-20170720)
-Date: Thu, 20 Jul 2017 07:26:32 +0100
-Message-ID: <E1dY4uu-0008Od-2S@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47530 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933017AbdGTG0i (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jul 2017 02:26:38 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Thu, 20 Jul 2017 10:19:02 +0200
+Message-ID: <20170720081902.GB11963@kroah.com>
+References: <20170719130728.3adcae81@canb.auug.org.au>
+ <20170719060702.GA9423@kroah.com>
+ <1472208905.102271.1500453043823@ox.hosteurope.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1472208905.102271.1500453043823@ox.hosteurope.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcus Wolf <marcus.wolf@wolf-entwicklungen.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170720
-Git describe: next-20170720
-Commit: f80addb9cf Add linux-next specific files for 20170720
+On Wed, Jul 19, 2017 at 10:30:43AM +0200, Marcus Wolf wrote:
+> Hi Greg,
+>  
+> I am surprised and happy about getting all the feedback and ideas how to
+> improve. Wow!
+>  
+> Can you tell me, how this is going on? Do I need to collect all those patches,
+> evaluate and test them or is it done automatically?
 
-Build Time: 0 min 11 sec
+If you want to collect and test, that's great, otherwise I'll just take
+them like any other staging patch and apply them to my tree.  If you can
+review them and reply with a:
+	Reviewed-by: your name <email@...>
+I'll be glad to add that to the patches when I apply them.
 
-Passed:    6 / 7   ( 85.71 %)
-Failed:    1 / 7   ( 14.29 %)
+> Concerning the error on M68k and the warning on sh I have an idea, but I am not
+> 100% sure how to fix that. If I need to find a solution I would appreciate
+> having the option to have a short discusion with someone a little bit more
+> experienced....
 
-Errors: 5
-Warnings: 4
-Section Mismatches: 0
+I don't remember what the warning is, perhaps respond to the thread that
+it showed up in?
 
-Failed defconfigs:
-	arm-allmodconfig
+thanks,
 
-Errors:
-
-	arm-allmodconfig
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      2 warnings    0 mismatches  : x86_64-allnoconfig
-      3 warnings    0 mismatches  : arm-allmodconfig
-      3 warnings    0 mismatches  : x86_64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-
-Warnings Summary: 4
-	  5 ../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
-	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
-
-Warnings:
-	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
-	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
-	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v4t_defconfig
-arm-multi_v7_defconfig
-arm-allnoconfig
-arm-multi_v5_defconfig
+greg k-h
