@@ -1,43 +1,102 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Thu, 20 Jul 2017 07:13:24 +0200
-Message-ID: <20170720051324.GA8168@kroah.com>
-References: <20170720141203.53dff686@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170720 build: 1 failures 4 warnings (next-20170720)
+Date: Thu, 20 Jul 2017 07:26:32 +0100
+Message-ID: <E1dY4uu-0008Od-2S@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:48155 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932563AbdGTFNc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jul 2017 01:13:32 -0400
-Content-Disposition: inline
-In-Reply-To: <20170720141203.53dff686@canb.auug.org.au>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:47530 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933017AbdGTG0i (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jul 2017 02:26:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Jul 20, 2017 at 02:12:03PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the char-misc tree, yesterday's linux-next build (i386
-> defconfig) produced this warning:
-> 
-> In file included from /home/sfr/next/next/arch/x86/entry/vdso/vma.c:25:0:
-> /home/sfr/next/next/arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]  
->  static inline hyperv_cleanup(void) {}
->                ^
-> 
-> Introduced by commit
-> 
->   2e252fbf777d ("x86/hyper-v: include hyperv/ only when CONFIG_HYPERV is set")
+Tree/Branch: next-20170720
+Git describe: next-20170720
+Commit: f80addb9cf Add linux-next specific files for 20170720
 
-Ugh, KY, can you send me a fix for this?
+Build Time: 0 min 11 sec
 
-All of these gcc-7 warnings are keeping me from seeing the "real"
-problems now :(
+Passed:    6 / 7   ( 85.71 %)
+Failed:    1 / 7   ( 14.29 %)
 
-thanks,
+Errors: 5
+Warnings: 4
+Section Mismatches: 0
 
-greg k-h
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm-allmodconfig
+      3 warnings    0 mismatches  : x86_64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 5
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+
+Warnings Summary: 4
+	  5 ../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+	../arch/x86/include/asm/mshyperv.h:181:15: warning: return type defaults to 'int' [-Wreturn-type]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v4t_defconfig
+arm-multi_v7_defconfig
+arm-allnoconfig
+arm-multi_v5_defconfig
