@@ -1,49 +1,62 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: build failure after merge of the userns tree
-Date: Thu, 20 Jul 2017 07:17:03 -0500
-Message-ID: <87h8y79ubk.fsf@xmission.com>
-References: <20170720132549.0f086e4a@canb.auug.org.au>
+From: KY Srinivasan <kys@microsoft.com>
+Subject: RE: linux-next: build warning after merge of the char-misc tree
+Date: Thu, 20 Jul 2017 14:52:38 +0000
+Message-ID: <DM5PR21MB04766E7EE73ABDD8E17CFF7AA0A70@DM5PR21MB0476.namprd21.prod.outlook.com>
+References: <20170720141203.53dff686@canb.auug.org.au>
+ <20170720051324.GA8168@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170720132549.0f086e4a@canb.auug.org.au> (Stephen Rothwell's
-        message of "Thu, 20 Jul 2017 13:25:49 +1000")
+In-Reply-To: <20170720051324.GA8168@kroah.com>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kirill Tkhai <ktkhai@virtuozzo.com>
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>, Andy Shevchenko <andy.shevchenko@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Hi Eric,
->
-> After merging the userns tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> kernel/pid_namespace.c: In function 'create_pid_namespace':
-> kernel/pid_namespace.c:105:7: error: too many arguments to function 'in_userns'
->   if (!in_userns(parent_pid_ns->user_ns, user_ns))
->        ^
-> In file included from kernel/pid_namespace.c:13:0:
-> include/linux/user_namespace.h:148:20: note: declared here
->  static inline bool in_userns(const struct user_namespace *target_ns)
->                     ^
->
-> Caused by commit
->
->   1f1b28d80cd9 ("userns,pidns: Verify the userns for new pid namespaces")
->
-> I have used the userns tree from next-20170719 for today.
 
-*scratches my head*
+> -----Original Message-----
+> From: Greg KH [mailto:greg@kroah.com]
+> Sent: Wednesday, July 19, 2017 10:13 PM
+> To: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Arnd Bergmann <arnd@arndb.de>; Linux-Next Mailing List <linux-
+> next@vger.kernel.org>; Linux Kernel Mailing List <linux-
+> kernel@vger.kernel.org>; Vitaly Kuznetsov <vkuznets@redhat.com>; KY
+> Srinivasan <kys@microsoft.com>; Andy Shevchenko
+> <andy.shevchenko@gmail.com>
+> Subject: Re: linux-next: build warning after merge of the char-misc tree
+>=20
+> On Thu, Jul 20, 2017 at 02:12:03PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the char-misc tree, yesterday's linux-next build (i386
+> > defconfig) produced this warning:
+> >
+> > In file included from
+> /home/sfr/next/next/arch/x86/entry/vdso/vma.c:25:0:
+> > /home/sfr/next/next/arch/x86/include/asm/mshyperv.h:181:15: warning:
+> return type defaults to 'int' [-Wreturn-type]
+> >  static inline hyperv_cleanup(void) {}
+> >                ^
+> >
+> > Introduced by commit
+> >
+> >   2e252fbf777d ("x86/hyper-v: include hyperv/ only when CONFIG_HYPERV
+> is set")
+>=20
+> Ugh, KY, can you send me a fix for this?
 
-Yes.  That isn't a powerpc specific bug.
+I just saw that you reverted the patch. We will fix this up and resend.
 
-This has been in my for-testing branch forever.  I thought this had
-received plenty of build testing but apparently not.
+Thanks,
 
-I will get this sorted out.
-
-Thank you very much.
-
-Eric
+K. Y
+>=20
+> All of these gcc-7 warnings are keeping me from seeing the "real"
+> problems now :(
+>=20
+> thanks,
+>=20
+> greg k-h
