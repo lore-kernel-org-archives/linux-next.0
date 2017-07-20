@@ -1,56 +1,49 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170720 build: 1 failures 4 warnings (next-20170720)
-Date: Thu, 20 Jul 2017 11:06:46 +0100
-Message-ID: <20170720100645.de6v27yczsqptcij@sirena.org.uk>
-References: <E1dY4uu-0008Od-2S@optimist>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Thu, 20 Jul 2017 07:17:03 -0500
+Message-ID: <87h8y79ubk.fsf@xmission.com>
+References: <20170720132549.0f086e4a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="55ggle5w7kpafvon"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:53092 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933887AbdGTKGz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 20 Jul 2017 06:06:55 -0400
-Content-Disposition: inline
-In-Reply-To: <E1dY4uu-0008Od-2S@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Felix Fietkau <nbd@openwrt.org>, John Crispin <blogic@openwrt.org>, "David S. Miller" <davem@davemloft.net>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, netdev@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170720132549.0f086e4a@canb.auug.org.au> (Stephen Rothwell's
+        message of "Thu, 20 Jul 2017 13:25:49 +1000")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kirill Tkhai <ktkhai@virtuozzo.com>
+List-Id: linux-next.vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
---55ggle5w7kpafvon
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> Hi Eric,
+>
+> After merging the userns tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> kernel/pid_namespace.c: In function 'create_pid_namespace':
+> kernel/pid_namespace.c:105:7: error: too many arguments to function 'in_userns'
+>   if (!in_userns(parent_pid_ns->user_ns, user_ns))
+>        ^
+> In file included from kernel/pid_namespace.c:13:0:
+> include/linux/user_namespace.h:148:20: note: declared here
+>  static inline bool in_userns(const struct user_namespace *target_ns)
+>                     ^
+>
+> Caused by commit
+>
+>   1f1b28d80cd9 ("userns,pidns: Verify the userns for new pid namespaces")
+>
+> I have used the userns tree from next-20170719 for today.
 
-On Thu, Jul 20, 2017 at 07:26:32AM +0100, Build bot for Mark Brown wrote:
+*scratches my head*
 
-Today's -next fails to build an arm allmodconfig due to:
+Yes.  That isn't a powerpc specific bug.
 
-> 	arm-allmodconfig
-> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-> ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+This has been in my for-testing branch forever.  I thought this had
+received plenty of build testing but apparently not.
 
-There's no obvious relevant change in the driver, some other header
-change will have broken the implicit inclusion it's relying on.  I just
-sent a patch.
+I will get this sorted out.
 
---55ggle5w7kpafvon
-Content-Type: application/pgp-signature; name="signature.asc"
+Thank you very much.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAllwgLUACgkQJNaLcl1U
-h9AZlAf+O8dty7xSw1qiRDsxvXSTHxsqSZ9zummTghc7S7ze7UfZOPVrDqtSDzxD
-RzlIa0U5TMUl0Jed946+4ei7yAbtDwbmyqC9tB8NBTVj+r1IFenhpKGourEuR+1P
-fngr1KK7y4mBWVgGzDwn7qIshsBvJnFa/2SCBTuZQQlN3DNTjtCw52rgSli0y4mC
-M2EUxS+xN7WigxsUqZvsAjSVkld1UI32pcj5fr/7OvVS6ELt4wRHyDre1nEgUwWu
-GcQeA8T8bhtPoOuOx/jFBZdN7kD8AVtqQlwVmhjvnfYJXeD69RGZhcUIgcMolOo+
-CbnMJ6CR7ObpSQ7SuaVnhBtOA6k9Ww==
-=3IZg
------END PGP SIGNATURE-----
-
---55ggle5w7kpafvon--
+Eric
