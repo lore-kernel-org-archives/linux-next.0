@@ -1,45 +1,59 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 19 (drivers/sfi)
-Date: Wed, 19 Jul 2017 17:08:13 -0700
-Message-ID: <219ef40d-029a-bad0-1926-f6f332b581f8@infradead.org>
-References: <20170719145410.3f527a45@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with the drm-intel
+ tree
+Date: Thu, 20 Jul 2017 11:23:33 +1000
+Message-ID: <20170720112333.010b9ac8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170719145410.3f527a45@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56455 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932205AbdGTBXf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 19 Jul 2017 21:23:35 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 07/18/2017 09:54 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20170718:
-> 
+Hi all,
 
-on i386:
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-../drivers/sfi/sfi_core.c: In function 'sfi_map_memory':
-../drivers/sfi/sfi_core.c:104:3: error: implicit declaration of function 'memremap' [-Werror=implicit-function-declaration]
-   return memremap(phys, size, MEMREMAP_WB);
-   ^
-../drivers/sfi/sfi_core.c:104:31: error: 'MEMREMAP_WB' undeclared (first use in this function)
-   return memremap(phys, size, MEMREMAP_WB);
-                               ^
-../drivers/sfi/sfi_core.c:104:31: note: each undeclared identifier is reported only once for each function it appears in
-../drivers/sfi/sfi_core.c: In function 'sfi_unmap_memory':
-../drivers/sfi/sfi_core.c:115:3: error: implicit declaration of function 'memunmap' [-Werror=implicit-function-declaration]
-   memunmap(virt);
-   ^
-../drivers/sfi/sfi_core.c: In function 'sfi_map_memory':
-../drivers/sfi/sfi_core.c:107:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
+  drivers/gpu/drm/i915/i915_drv.c
 
+between commit:
 
+  99c539bef538 ("drm/i915: unregister interfaces first in unload")
+
+from the drm-intel tree and commit:
+
+  baf54385af78 ("drm/i915: Drop drm_vblank_cleanup")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/i915/i915_drv.c
+index f406aec8a499,04d9bd84ee43..000000000000
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@@ -1386,8 -1367,8 +1384,6 @@@ void i915_driver_unload(struct drm_devi
+  
+  	intel_gvt_cleanup(dev_priv);
+  
+- 	drm_vblank_cleanup(dev);
+ -	i915_driver_unregister(dev_priv);
+--
+  	intel_modeset_cleanup(dev);
+  
+  	/*
