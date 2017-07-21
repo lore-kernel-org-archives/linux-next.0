@@ -1,31 +1,41 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 21 (drivers/media: use of __WARN())
-Date: Fri, 21 Jul 2017 09:12:12 -0700
-Message-ID: <33fa1f04-8262-e18e-9f86-89d3e254554c@infradead.org>
-References: <20170721141019.5776e9a0@canb.auug.org.au>
+From: Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Date: Fri, 21 Jul 2017 21:01:59 +0200
+Message-ID: <0e9187d2-7c7c-d531-0df6-839be9410eb9@redhat.com>
+References: <20170719114657.245537cd@canb.auug.org.au>
+ <20170721100833.48c8fa9d@canb.auug.org.au>
+ <CAKMK7uHLY7jriTrZpxRFbjVf2mbdHymMw6HpW0NS0azf7Ea4Yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170721141019.5776e9a0@canb.auug.org.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:47594 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751504AbdGUTCC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 21 Jul 2017 15:02:02 -0400
+In-Reply-To: <CAKMK7uHLY7jriTrZpxRFbjVf2mbdHymMw6HpW0NS0azf7Ea4Yw@mail.gmail.com>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, linux-media <linux-media@vger.kernel.org>, Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 07/20/2017 09:10 PM, Stephen Rothwell wrote:
-> Hi all,
+Hi,
+
+On 21-07-17 09:24, Daniel Vetter wrote:
+> Hi Greg&Hans,
 > 
-> Changes since 20170720:
+> How are we going to handle this now? The refactor is deeply burried in
+> drm-misc, I guess you could cherry-pick the relevant patches over. But
+> that'll probably lead to more conflicts because git will get confused.
 > 
+> Or you could just delete the set_busid hook in -staging, which renders
+> the driver unbisectable since it'll only work when merged together
+> with the drm trees.
 
-on x86_64:
-when CONFIG_BUG is not enabled:
+Removing the set_busid hook in staging (but only for -next, not
+for -linus) is fine with me.
 
-../drivers/media/platform/pxa_camera.c:642:3: error: implicit declaration of function ‘__WARN’ [-Werror=implicit-function-declaration]
-../drivers/media/platform/soc_camera/soc_mediabus.c:512:3: error: implicit declaration of function ‘__WARN’ [-Werror=implicit-function-declaration]
+Regards,
 
-
--- 
-~Randy
+Hans
