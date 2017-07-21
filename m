@@ -1,86 +1,72 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170721 build: 1 failures 3 warnings (next-20170721)
-Date: Fri, 21 Jul 2017 09:00:04 +0100
-Message-ID: <E1dYSqy-0005pF-1U@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38160 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752871AbdGUIAK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jul 2017 04:00:10 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
+Date: Fri, 21 Jul 2017 15:49:31 +0200
+Message-ID: <20170721134931.GH2866@suse.cz>
+References: <20170718101802.720dab22@canb.auug.org.au>
+Reply-To: dsterba@suse.cz
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170718101802.720dab22@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170721
-Git describe: next-20170721
-Commit: 83d9512f12 Add linux-next specific files for 20170721
+On Tue, Jul 18, 2017 at 10:18:02AM +1000, Stephen Rothwell wrote:
+> Hi David,
+> 
+> Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+> 
+>   fs/btrfs/extent_io.c
+> 
+> between commit:
+> 
+>   e6959b9350c6 ("btrfs: add support for passing in write hints for buffered writes")
+> 
+> from Linus' tree and commit:
+> 
+>   41a3f2a7c062 ("btrfs: merge REQ_OP and REQ_ flags to one parameter in submit_extent_page")
+> 
+> from the btrfs-kdave tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> You should probably consider rebasing your for-next branch onto (at
+> least v4.13-rc1) (or merging v4.13-rc1) to save these sort of
+> (unnecessary) conflicts being ongoing during development and the next
+> merge window.
 
-Build Time: 0 min 13 sec
+tl;dr I'm going to rebase for-next to 4.12 again
 
-Passed:    6 / 7   ( 85.71 %)
-Failed:    1 / 7   ( 14.29 %)
+I've started rebasing on top of rc1 but found that several tests double
+the run time. I've observed something similar already during the merge
+window when testing master + pull request branch. The submit bio calls
+were particularly visible in the stacks so I'm suspecting some block
+layer related change or my system is misconfigured.
 
-Errors: 5
-Warnings: 3
-Section Mismatches: 0
+In order to be able to debug the problems further, I need a branch that
+will reproduce the good results. For that reason I'll rebase back my
+for-next branche to the 4.12-rc7. The following merge conflict will
+reappear.
 
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      3 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-
-Warnings Summary: 3
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
-	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
-
-Errors:
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
-
-Warnings:
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+> diff --cc fs/btrfs/extent_io.c
+> index 0aff9b278c19,ead9e731e01b..000000000000
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@@ -2803,8 -2801,7 +2805,8 @@@ static int submit_extent_page(unsigned 
+>   	bio_add_page(bio, page, page_size, offset);
+>   	bio->bi_end_io = end_io_func;
+>   	bio->bi_private = tree;
+>  +	bio->bi_write_hint = page->mapping->host->i_write_hint;
+> - 	bio_set_op_attrs(bio, op, op_flags);
+> + 	bio->bi_opf = opf;
+>   	if (wbc) {
+>   		wbc_init_bio(wbc, bio);
+>   		wbc_account_io(wbc, page, page_size);
