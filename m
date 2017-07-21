@@ -1,180 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the
- drm-misc-fixes tree
-Date: Fri, 21 Jul 2017 10:03:23 +1000
-Message-ID: <20170721100323.799d683a@canb.auug.org.au>
-References: <20170718113946.47f64522@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Date: Fri, 21 Jul 2017 10:08:33 +1000
+Message-ID: <20170721100833.48c8fa9d@canb.auug.org.au>
+References: <20170719114657.245537cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42933 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966037AbdGUAD0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 20 Jul 2017 20:03:26 -0400
-In-Reply-To: <20170718113946.47f64522@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170719114657.245537cd@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dave Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Eric Anholt <eric@anholt.net>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Greg KH <greg@kroah.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Dave,
-
-The conflict below now exists between the drm-misc-fixes tree and the
-drm tree.
-
-On Tue, 18 Jul 2017 11:39:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the drm-misc tree got a conflict in:
-> 
->   drivers/gpu/drm/vc4/vc4_crtc.c
-> 
-> between commit:
-> 
->   1ed134e6526b ("drm/vc4: Fix VBLANK handling in crtc->enable() path")
-> 
-> from the drm-misc-fixes tree and commit:
-> 
->   0b20a0f8c3cb ("drm: Add old state pointer to CRTC .enable() helper function")
-> 
-> from the drm-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/gpu/drm/vc4/vc4_crtc.c
-> index a12cc7ea99b6,9e0c1500375c..000000000000
-> --- a/drivers/gpu/drm/vc4/vc4_crtc.c
-> +++ b/drivers/gpu/drm/vc4/vc4_crtc.c
-> @@@ -518,37 -519,23 +519,51 @@@ static void vc4_crtc_atomic_disable(str
->   	WARN_ON_ONCE((HVS_READ(SCALER_DISPSTATX(chan)) &
->   		      (SCALER_DISPSTATX_FULL | SCALER_DISPSTATX_EMPTY)) !=
->   		     SCALER_DISPSTATX_EMPTY);
-> + 
-> + 	/*
-> + 	 * Make sure we issue a vblank event after disabling the CRTC if
-> + 	 * someone was waiting it.
-> + 	 */
-> + 	if (crtc->state->event) {
-> + 		unsigned long flags;
-> + 
-> + 		spin_lock_irqsave(&dev->event_lock, flags);
-> + 		drm_crtc_send_vblank_event(crtc, crtc->state->event);
-> + 		crtc->state->event = NULL;
-> + 		spin_unlock_irqrestore(&dev->event_lock, flags);
-> + 	}
->   }
->   
->  +static void vc4_crtc_update_dlist(struct drm_crtc *crtc)
->  +{
->  +	struct drm_device *dev = crtc->dev;
->  +	struct vc4_dev *vc4 = to_vc4_dev(dev);
->  +	struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
->  +	struct vc4_crtc_state *vc4_state = to_vc4_crtc_state(crtc->state);
->  +
->  +	if (crtc->state->event) {
->  +		unsigned long flags;
->  +
->  +		crtc->state->event->pipe = drm_crtc_index(crtc);
->  +
->  +		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
->  +
->  +		spin_lock_irqsave(&dev->event_lock, flags);
->  +		vc4_crtc->event = crtc->state->event;
->  +		crtc->state->event = NULL;
->  +
->  +		HVS_WRITE(SCALER_DISPLISTX(vc4_crtc->channel),
->  +			  vc4_state->mm.start);
->  +
->  +		spin_unlock_irqrestore(&dev->event_lock, flags);
->  +	} else {
->  +		HVS_WRITE(SCALER_DISPLISTX(vc4_crtc->channel),
->  +			  vc4_state->mm.start);
->  +	}
->  +}
->  +
-> - static void vc4_crtc_enable(struct drm_crtc *crtc)
-> + static void vc4_crtc_atomic_enable(struct drm_crtc *crtc,
-> + 				   struct drm_crtc_state *old_state)
->   {
->   	struct drm_device *dev = crtc->dev;
->   	struct vc4_dev *vc4 = to_vc4_dev(dev);
-> @@@ -575,20 -556,22 +590,19 @@@
->   	/* Turn on the pixel valve, which will emit the vstart signal. */
->   	CRTC_WRITE(PV_V_CONTROL,
->   		   CRTC_READ(PV_V_CONTROL) | PV_VCONTROL_VIDEN);
->  -
->  -	/* Enable vblank irq handling after crtc is started. */
->  -	drm_crtc_vblank_on(crtc);
->   }
->   
-> - static bool vc4_crtc_mode_fixup(struct drm_crtc *crtc,
-> - 				const struct drm_display_mode *mode,
-> - 				struct drm_display_mode *adjusted_mode)
-> + static enum drm_mode_status vc4_crtc_mode_valid(struct drm_crtc *crtc,
-> + 						const struct drm_display_mode *mode)
->   {
->   	/* Do not allow doublescan modes from user space */
-> - 	if (adjusted_mode->flags & DRM_MODE_FLAG_DBLSCAN) {
-> + 	if (mode->flags & DRM_MODE_FLAG_DBLSCAN) {
->   		DRM_DEBUG_KMS("[CRTC:%d] Doublescan mode rejected.\n",
->   			      crtc->base.id);
-> - 		return false;
-> + 		return MODE_NO_DBLESCAN;
->   	}
->   
-> - 	return true;
-> + 	return MODE_OK;
->   }
->   
->   static int vc4_crtc_atomic_check(struct drm_crtc *crtc,
-> @@@ -650,15 -634,25 +664,15 @@@ static void vc4_crtc_atomic_flush(struc
->   
->   	WARN_ON_ONCE(dlist_next - dlist_start != vc4_state->mm.size);
->   
->  -	if (crtc->state->event) {
->  -		unsigned long flags;
->  -
->  -		crtc->state->event->pipe = drm_crtc_index(crtc);
->  -
->  -		WARN_ON(drm_crtc_vblank_get(crtc) != 0);
->  -
->  -		spin_lock_irqsave(&dev->event_lock, flags);
->  -		vc4_crtc->event = crtc->state->event;
->  -		crtc->state->event = NULL;
->  -
->  -		HVS_WRITE(SCALER_DISPLISTX(vc4_crtc->channel),
->  -			  vc4_state->mm.start);
->  -
->  -		spin_unlock_irqrestore(&dev->event_lock, flags);
->  -	} else {
->  -		HVS_WRITE(SCALER_DISPLISTX(vc4_crtc->channel),
->  -			  vc4_state->mm.start);
->  -	}
->  +	/* Only update DISPLIST if the CRTC was already running and is not
->  +	 * being disabled.
-> - 	 * vc4_crtc_enable() takes care of updating the dlist just after
-> ++	 * vc4_crtc_atomic_enable() takes care of updating the dlist just after
->  +	 * re-enabling VBLANK interrupts and before enabling the engine.
->  +	 * If the CRTC is being disabled, there's no point in updating this
->  +	 * information.
->  +	 */
->  +	if (crtc->state->active && old_state->active)
->  +		vc4_crtc_update_dlist(crtc);
->   
->   	if (debug_dump_regs) {
->   		DRM_INFO("CRTC %d HVS after:\n", drm_crtc_index(crtc));
-
-
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgaXMgbm93IGFwcGxpY2FibGUgdG8gdGhlIGRybSBhbmQg
+c3RhZ2luZy5jdXJyZW50IHRyZWVzIC4uLgoKT24gV2VkLCAxOSBKdWwgMjAxNyAxMTo0Njo1NyAr
+MTAwMCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBB
+ZnRlciBtZXJnaW5nIHRoZSBkcm0tbWlzYyB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQg
+KHg4Nl82NAo+IGFsbG1vZGNvbmZpZykgZmFpbGVkIGxpa2UgdGhpczoKPiAKPiBkcml2ZXJzL3N0
+YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6MjM1OjI6IGVycm9yOiB1bmtub3duIGZpZWxkICdz
+ZXRfYnVzaWQnIHNwZWNpZmllZCBpbiBpbml0aWFsaXplcgo+ICAgLnNldF9idXNpZCA9IGRybV9w
+Y2lfc2V0X2J1c2lkLAo+ICAgXgo+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYu
+YzoyMzU6MTU6IGVycm9yOiAnZHJtX3BjaV9zZXRfYnVzaWQnIHVuZGVjbGFyZWQgaGVyZSAobm90
+IGluIGEgZnVuY3Rpb24pCj4gICAuc2V0X2J1c2lkID0gZHJtX3BjaV9zZXRfYnVzaWQsCj4gICAg
+ICAgICAgICAgICAgXgo+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYzogSW4g
+ZnVuY3Rpb24gJ3Zib3hfaW5pdCc6Cj4gZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Ry
+di5jOjI3Mzo5OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2RybV9w
+Y2lfaW5pdCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4gICByZXR1
+cm4gZHJtX3BjaV9pbml0KCZkcml2ZXIsICZ2Ym94X3BjaV9kcml2ZXIpOwo+ICAgICAgICAgIF4K
+PiBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6IEluIGZ1bmN0aW9uICd2Ym94
+X2V4aXQnOgo+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYzoyNzg6MjogZXJy
+b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdkcm1fcGNpX2V4aXQnIFstV2Vy
+cm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+ICAgZHJtX3BjaV9leGl0KCZkcml2
+ZXIsICZ2Ym94X3BjaV9kcml2ZXIpOwo+ICAgXgo+IAo+IENhdXNlZCBieSBjb21taXRzCj4gCj4g
+ICA1YzQ4NGNlZTdlZjkgKCJkcm06IFJlbW92ZSBkcm1fZHJpdmVyLT5zZXRfYnVzaWQgaG9vayIp
+Cj4gICAxMDYzMWQ3MjRkZWYgKCJkcm0vcGNpOiBEZXByZWNhdGUgZHJtX3BjaV9pbml0L2V4aXQg
+Y29tcGxldGVseSIpCj4gCj4gaW50ZXJhY3Rpbmcgd2l0aCBjb21taXQKPiAKPiAgIGRkNTVkNDRm
+NDA4NCAoInN0YWdpbmc6IHZib3h2aWRlbzogQWRkIHZib3h2aWRlbyB0byBkcml2ZXJzL3N0YWdp
+bmciKQo+IAo+IGZyb20gdGhlIHN0YWdpbmcuY3VycmVudCB0cmVlLgo+IAo+IEkgaGF2ZSBhcHBs
+aWVkIHRoZSBmb2xsb3dpbmcgbWVyZ2UgZml4IHBhdGNoIC0gcGxlYXNlIGNoZWNrIHRoYXQgaXQK
+PiBpcyBjb3JyZWN0Lgo+IAo+IEZyb206IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcu
+b3JnLmF1Pgo+IERhdGU6IFdlZCwgMTkgSnVsIDIwMTcgMTE6NDE6MDEgKzEwMDAKPiBTdWJqZWN0
+OiBbUEFUQ0hdIGRybTogZml4ZXMgZm9yIHN0YWdpbmcgZHVlIHRvIEFQSSBjaGFuZ2VzIGluIHRo
+ZSBkcm0gY29yZQo+IAo+IFNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5i
+LmF1dWcub3JnLmF1Pgo+IC0tLQo+ICBkcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2
+LmMgfCA1ICsrLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKyksIDMgZGVsZXRp
+b25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9k
+cnYuYyBiL2RyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYwo+IGluZGV4IDkyYWUx
+NTYwYTE2ZC4uNmQwNjAwYzM3YzBjIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvc3RhZ2luZy92Ym94
+dmlkZW8vdmJveF9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9k
+cnYuYwo+IEBAIC0yMzIsNyArMjMyLDYgQEAgc3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZl
+ciA9IHsKPiAgCS5sYXN0Y2xvc2UgPSB2Ym94X2RyaXZlcl9sYXN0Y2xvc2UsCj4gIAkubWFzdGVy
+X3NldCA9IHZib3hfbWFzdGVyX3NldCwKPiAgCS5tYXN0ZXJfZHJvcCA9IHZib3hfbWFzdGVyX2Ry
+b3AsCj4gLQkuc2V0X2J1c2lkID0gZHJtX3BjaV9zZXRfYnVzaWQsCj4gIAo+ICAJLmZvcHMgPSAm
+dmJveF9mb3BzLAo+ICAJLmlycV9oYW5kbGVyID0gdmJveF9pcnFfaGFuZGxlciwKPiBAQCAtMjcw
+LDEyICsyNjksMTIgQEAgc3RhdGljIGludCBfX2luaXQgdmJveF9pbml0KHZvaWQpCj4gIAlpZiAo
+dmJveF9tb2Rlc2V0ID09IDApCj4gIAkJcmV0dXJuIC1FSU5WQUw7Cj4gIAo+IC0JcmV0dXJuIGRy
+bV9wY2lfaW5pdCgmZHJpdmVyLCAmdmJveF9wY2lfZHJpdmVyKTsKPiArCXJldHVybiBwY2lfcmVn
+aXN0ZXJfZHJpdmVyKCZ2Ym94X3BjaV9kcml2ZXIpOwo+ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCBf
+X2V4aXQgdmJveF9leGl0KHZvaWQpCj4gIHsKPiAtCWRybV9wY2lfZXhpdCgmZHJpdmVyLCAmdmJv
+eF9wY2lfZHJpdmVyKTsKPiArCXBjaV91bnJlZ2lzdGVyX2RyaXZlcigmdmJveF9wY2lfZHJpdmVy
+KTsKPiAgfQo+ICAKPiAgbW9kdWxlX2luaXQodmJveF9pbml0KTsKPiAtLSAKPiAyLjEzLjIKCi0t
+IApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
