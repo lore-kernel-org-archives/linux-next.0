@@ -1,92 +1,86 @@
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: Re: linux-next: build failure after merge of the
-	drm-misc tree
-Date: Fri, 21 Jul 2017 09:24:49 +0200
-Message-ID: <CAKMK7uHLY7jriTrZpxRFbjVf2mbdHymMw6HpW0NS0azf7Ea4Yw@mail.gmail.com>
-References: <20170719114657.245537cd@canb.auug.org.au>
- <20170721100833.48c8fa9d@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20170721100833.48c8fa9d@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Greg KH <greg@kroah.com>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170721 build: 1 failures 3 warnings (next-20170721)
+Date: Fri, 21 Jul 2017 09:00:04 +0100
+Message-ID: <E1dYSqy-0005pF-1U@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38160 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752871AbdGUIAK (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 21 Jul 2017 04:00:10 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-SGkgR3JlZyZIYW5zLAoKSG93IGFyZSB3ZSBnb2luZyB0byBoYW5kbGUgdGhpcyBub3c/IFRoZSBy
-ZWZhY3RvciBpcyBkZWVwbHkgYnVycmllZCBpbgpkcm0tbWlzYywgSSBndWVzcyB5b3UgY291bGQg
-Y2hlcnJ5LXBpY2sgdGhlIHJlbGV2YW50IHBhdGNoZXMgb3Zlci4gQnV0CnRoYXQnbGwgcHJvYmFi
-bHkgbGVhZCB0byBtb3JlIGNvbmZsaWN0cyBiZWNhdXNlIGdpdCB3aWxsIGdldCBjb25mdXNlZC4K
-Ck9yIHlvdSBjb3VsZCBqdXN0IGRlbGV0ZSB0aGUgc2V0X2J1c2lkIGhvb2sgaW4gLXN0YWdpbmcs
-IHdoaWNoIHJlbmRlcnMKdGhlIGRyaXZlciB1bmJpc2VjdGFibGUgc2luY2UgaXQnbGwgb25seSB3
-b3JrIHdoZW4gbWVyZ2VkIHRvZ2V0aGVyCndpdGggdGhlIGRybSB0cmVlcy4KClRoaXMgaXMgcHJl
-dHR5IG11Y2ggd2h5IEkgZG9uJ3QgbGlrZSAtc3RhZ2luZywgaXQgbWFrZXMgY3Jvc3MKc3Vic3lz
-dGVtIHJlZmFjdG9yaW5ncyAod2hpY2ggaXMgYWxyZWFkeSBoYXJkLCBnZXR0aW5nIDIwKyBkcml2
-ZXIKZm9sa3MgdG8gYWdyZWUgb24gc3R1ZmYgc29tZXRpbWVzKSB1bmVjZXNzYXJpbHkgaGFyZGVy
-LgoKQ2hlZXJzLCBEYW5pZWwKCk9uIEZyaSwgSnVsIDIxLCAyMDE3IGF0IDI6MDggQU0sIFN0ZXBo
-ZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPiBIaSBEYXZlLAo+Cj4g
-VGhlIGZvbGxvd2luZyBpcyBub3cgYXBwbGljYWJsZSB0byB0aGUgZHJtIGFuZCBzdGFnaW5nLmN1
-cnJlbnQgdHJlZXMgLi4uCj4KPiBPbiBXZWQsIDE5IEp1bCAyMDE3IDExOjQ2OjU3ICsxMDAwIFN0
-ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPj4KPj4gQWZ0ZXIg
-bWVyZ2luZyB0aGUgZHJtLW1pc2MgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZf
-NjQKPj4gYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+Pgo+PiBkcml2ZXJzL3N0YWdp
-bmcvdmJveHZpZGVvL3Zib3hfZHJ2LmM6MjM1OjI6IGVycm9yOiB1bmtub3duIGZpZWxkICdzZXRf
-YnVzaWQnIHNwZWNpZmllZCBpbiBpbml0aWFsaXplcgo+PiAgIC5zZXRfYnVzaWQgPSBkcm1fcGNp
-X3NldF9idXNpZCwKPj4gICBeCj4+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYu
-YzoyMzU6MTU6IGVycm9yOiAnZHJtX3BjaV9zZXRfYnVzaWQnIHVuZGVjbGFyZWQgaGVyZSAobm90
-IGluIGEgZnVuY3Rpb24pCj4+ICAgLnNldF9idXNpZCA9IGRybV9wY2lfc2V0X2J1c2lkLAo+PiAg
-ICAgICAgICAgICAgICBeCj4+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJveF9kcnYuYzog
-SW4gZnVuY3Rpb24gJ3Zib3hfaW5pdCc6Cj4+IGRyaXZlcnMvc3RhZ2luZy92Ym94dmlkZW8vdmJv
-eF9kcnYuYzoyNzM6OTogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdk
-cm1fcGNpX2luaXQnIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+PiAg
-IHJldHVybiBkcm1fcGNpX2luaXQoJmRyaXZlciwgJnZib3hfcGNpX2RyaXZlcik7Cj4+ICAgICAg
-ICAgIF4KPj4gZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jOiBJbiBmdW5jdGlv
-biAndmJveF9leGl0JzoKPj4gZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jOjI3
-ODoyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ2RybV9wY2lfZXhp
-dCcgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4+ICAgZHJtX3BjaV9l
-eGl0KCZkcml2ZXIsICZ2Ym94X3BjaV9kcml2ZXIpOwo+PiAgIF4KPj4KPj4gQ2F1c2VkIGJ5IGNv
-bW1pdHMKPj4KPj4gICA1YzQ4NGNlZTdlZjkgKCJkcm06IFJlbW92ZSBkcm1fZHJpdmVyLT5zZXRf
-YnVzaWQgaG9vayIpCj4+ICAgMTA2MzFkNzI0ZGVmICgiZHJtL3BjaTogRGVwcmVjYXRlIGRybV9w
-Y2lfaW5pdC9leGl0IGNvbXBsZXRlbHkiKQo+Pgo+PiBpbnRlcmFjdGluZyB3aXRoIGNvbW1pdAo+
-Pgo+PiAgIGRkNTVkNDRmNDA4NCAoInN0YWdpbmc6IHZib3h2aWRlbzogQWRkIHZib3h2aWRlbyB0
-byBkcml2ZXJzL3N0YWdpbmciKQo+Pgo+PiBmcm9tIHRoZSBzdGFnaW5nLmN1cnJlbnQgdHJlZS4K
-Pj4KPj4gSSBoYXZlIGFwcGxpZWQgdGhlIGZvbGxvd2luZyBtZXJnZSBmaXggcGF0Y2ggLSBwbGVh
-c2UgY2hlY2sgdGhhdCBpdAo+PiBpcyBjb3JyZWN0Lgo+Pgo+PiBGcm9tOiBTdGVwaGVuIFJvdGh3
-ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPj4gRGF0ZTogV2VkLCAxOSBKdWwgMjAxNyAxMTo0
-MTowMSArMTAwMAo+PiBTdWJqZWN0OiBbUEFUQ0hdIGRybTogZml4ZXMgZm9yIHN0YWdpbmcgZHVl
-IHRvIEFQSSBjaGFuZ2VzIGluIHRoZSBkcm0gY29yZQo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBTdGVw
-aGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPj4gLS0tCj4+ICBkcml2ZXJzL3N0
-YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmMgfCA1ICsrLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwg
-MiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jIGIvZHJpdmVycy9zdGFnaW5nL3Zib3h2aWRl
-by92Ym94X2Rydi5jCj4+IGluZGV4IDkyYWUxNTYwYTE2ZC4uNmQwNjAwYzM3YzBjIDEwMDY0NAo+
-PiAtLS0gYS9kcml2ZXJzL3N0YWdpbmcvdmJveHZpZGVvL3Zib3hfZHJ2LmMKPj4gKysrIGIvZHJp
-dmVycy9zdGFnaW5nL3Zib3h2aWRlby92Ym94X2Rydi5jCj4+IEBAIC0yMzIsNyArMjMyLDYgQEAg
-c3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZlciA9IHsKPj4gICAgICAgLmxhc3RjbG9zZSA9
-IHZib3hfZHJpdmVyX2xhc3RjbG9zZSwKPj4gICAgICAgLm1hc3Rlcl9zZXQgPSB2Ym94X21hc3Rl
-cl9zZXQsCj4+ICAgICAgIC5tYXN0ZXJfZHJvcCA9IHZib3hfbWFzdGVyX2Ryb3AsCj4+IC0gICAg
-IC5zZXRfYnVzaWQgPSBkcm1fcGNpX3NldF9idXNpZCwKPj4KPj4gICAgICAgLmZvcHMgPSAmdmJv
-eF9mb3BzLAo+PiAgICAgICAuaXJxX2hhbmRsZXIgPSB2Ym94X2lycV9oYW5kbGVyLAo+PiBAQCAt
-MjcwLDEyICsyNjksMTIgQEAgc3RhdGljIGludCBfX2luaXQgdmJveF9pbml0KHZvaWQpCj4+ICAg
-ICAgIGlmICh2Ym94X21vZGVzZXQgPT0gMCkKPj4gICAgICAgICAgICAgICByZXR1cm4gLUVJTlZB
-TDsKPj4KPj4gLSAgICAgcmV0dXJuIGRybV9wY2lfaW5pdCgmZHJpdmVyLCAmdmJveF9wY2lfZHJp
-dmVyKTsKPj4gKyAgICAgcmV0dXJuIHBjaV9yZWdpc3Rlcl9kcml2ZXIoJnZib3hfcGNpX2RyaXZl
-cik7Cj4+ICB9Cj4+Cj4+ICBzdGF0aWMgdm9pZCBfX2V4aXQgdmJveF9leGl0KHZvaWQpCj4+ICB7
-Cj4+IC0gICAgIGRybV9wY2lfZXhpdCgmZHJpdmVyLCAmdmJveF9wY2lfZHJpdmVyKTsKPj4gKyAg
-ICAgcGNpX3VucmVnaXN0ZXJfZHJpdmVyKCZ2Ym94X3BjaV9kcml2ZXIpOwo+PiAgfQo+Pgo+PiAg
-bW9kdWxlX2luaXQodmJveF9pbml0KTsKPj4gLS0KPj4gMi4xMy4yCj4KPiAtLQo+IENoZWVycywK
-PiBTdGVwaGVuIFJvdGh3ZWxsCgoKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVy
-LCBJbnRlbCBDb3Jwb3JhdGlvbgorNDEgKDApIDc5IDM2NSA1NyA0OCAtIGh0dHA6Ly9ibG9nLmZm
-d2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCklu
-dGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+Tree/Branch: next-20170721
+Git describe: next-20170721
+Commit: 83d9512f12 Add linux-next specific files for 20170721
+
+Build Time: 0 min 13 sec
+
+Passed:    6 / 7   ( 85.71 %)
+Failed:    1 / 7   ( 14.29 %)
+
+Errors: 5
+Warnings: 3
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm-allmodconfig
+
+Errors:
+
+	arm-allmodconfig
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      3 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 5
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+
+Warnings Summary: 3
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
+	  1 ../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 5 errors, 3 warnings, 0 section mismatches
+
+Errors:
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1685:8: error: unknown type name 'irqreturn_t'
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1694:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1697:8: error: unknown type name 'irqreturn_t'
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1706:9: error: 'IRQ_HANDLED' undeclared (first use in this function)
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:2475:8: error: implicit declaration of function 'devm_request_irq' [-Werror=implicit-function-declaration]
+
+Warnings:
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1695:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../drivers/net/ethernet/mediatek/mtk_eth_soc.c:1707:1: warning: control reaches end of non-void function [-Wreturn-type]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
