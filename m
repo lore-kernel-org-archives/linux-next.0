@@ -1,52 +1,50 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH-next] bus: fsl-mc: fix implicit irq include causing build fails
-Date: Sun, 23 Jul 2017 10:36:52 -0400
-Message-ID: <20170723143652.16445-1-paul.gortmaker@windriver.com>
+Subject: [PATCH-next] liquidio: fix implicit irq include causing build failures
+Date: Sun, 23 Jul 2017 10:44:52 -0400
+Message-ID: <20170723144452.16556-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.windriver.com ([147.11.1.11]:41867 "EHLO
-        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751625AbdGWOhJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Jul 2017 10:37:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: netdev@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Derek Chickles <derek.chickles@caviumnetworks.com>, Satanand Burla <satananda.burla@caviumnetworks.com>, Felix Manlunas <felix.manlunas@caviumnetworks.com>, Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>
+List-Id: linux-next.vger.kernel.org
 
-To fix:
+To fix
 
-In file included from drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h:39:0,
-                 from drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c:34:
-drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name ‘irqreturn_t’
- irqreturn_t dpaa2_io_irq(struct dpaa2_io *obj);
- ^
+In file included from drivers/net/ethernet/cavium/liquidio/octeon_mem_ops.c:24:0:
+drivers/net/ethernet/cavium/liquidio/octeon_device.h:216:2: error: expected specifier-qualifier-list before ‘irqreturn_t’
+  irqreturn_t (*process_interrupt_regs)(void *);
+  ^
 
 as seen on arm64 allmodconfig builds.
 
-Cc: Stuart Yoder <stuyoder@gmail.com>
-Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Derek Chickles <derek.chickles@caviumnetworks.com>
+Cc: Satanand Burla <satananda.burla@caviumnetworks.com>
+Cc: Felix Manlunas <felix.manlunas@caviumnetworks.com>
+Cc: Raghu Vatsavayi <raghu.vatsavayi@caviumnetworks.com>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
 
-[Seen on current linux-next tree.]
+[Seen on current linux-next, where similar implicit irq includes
+ were recently revealed by some header shuffle somewhere.]
 
- drivers/staging/fsl-mc/include/dpaa2-io.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/cavium/liquidio/octeon_device.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/fsl-mc/include/dpaa2-io.h b/drivers/staging/fsl-mc/include/dpaa2-io.h
-index 002829cecd75..afc5d5bb1698 100644
---- a/drivers/staging/fsl-mc/include/dpaa2-io.h
-+++ b/drivers/staging/fsl-mc/include/dpaa2-io.h
-@@ -34,6 +34,7 @@
+diff --git a/drivers/net/ethernet/cavium/liquidio/octeon_device.h b/drivers/net/ethernet/cavium/liquidio/octeon_device.h
+index c90ed48ae8ab..ad464788c923 100644
+--- a/drivers/net/ethernet/cavium/liquidio/octeon_device.h
++++ b/drivers/net/ethernet/cavium/liquidio/octeon_device.h
+@@ -22,6 +22,8 @@
+ #ifndef _OCTEON_DEVICE_H_
+ #define  _OCTEON_DEVICE_H_
  
- #include <linux/types.h>
- #include <linux/cpumask.h>
 +#include <linux/interrupt.h>
- 
- #include "dpaa2-fd.h"
- #include "dpaa2-global.h"
++
+ /** PCI VendorId Device Id */
+ #define  OCTEON_CN68XX_PCIID          0x91177d
+ #define  OCTEON_CN66XX_PCIID          0x92177d
 -- 
 2.11.0
