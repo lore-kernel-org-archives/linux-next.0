@@ -1,64 +1,52 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH-next] IB/hns: fix implicit irq include causing build fails in roce_eq
-Date: Sun, 23 Jul 2017 09:53:45 -0400
-Message-ID: <20170723135345.14467-1-paul.gortmaker@windriver.com>
+Subject: [PATCH-next] bus: fsl-mc: fix implicit irq include causing build fails
+Date: Sun, 23 Jul 2017 10:36:52 -0400
+Message-ID: <20170723143652.16445-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail1.windriver.com ([147.11.146.13]:36126 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbdGWNyS (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Jul 2017 09:54:18 -0400
+Received: from mail.windriver.com ([147.11.1.11]:41867 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751625AbdGWOhJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 23 Jul 2017 10:37:09 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: linux-kernel@vger.kernel.org
-Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Lijun Ou <oulijun@huawei.com>, "Wei Hu(Xavier)" <xavier.huwei@huawei.com>, Doug Ledford <dledford@redhat.com>, Sean Hefty <sean.hefty@intel.com>, Hal Rosenstock <hal.rosenstock@gmail.com>, linux-rdma@vger.kernel.org
+Cc: linux-next@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 To fix:
 
-drivers/infiniband/hw/hns/hns_roce_eq.c:477:1: error: unknown type name ‘irqreturn_t’
- static irqreturn_t hns_roce_msi_x_interrupt(int irq, void *eq_ptr)
+In file included from drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h:39:0,
+                 from drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c:34:
+drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name ‘irqreturn_t’
+ irqreturn_t dpaa2_io_irq(struct dpaa2_io *obj);
  ^
-drivers/infiniband/hw/hns/hns_roce_eq.c: In function ‘hns_roce_msi_x_interrupt’:
-drivers/infiniband/hw/hns/hns_roce_eq.c:485:2: error: implicit declaration of function ‘IRQ_RETVAL’ [-Werror=implicit-function-declaration]
-  return IRQ_RETVAL(int_work);
-  ^
-drivers/infiniband/hw/hns/hns_roce_eq.c: In function ‘hns_roce_init_eq_table’:
-drivers/infiniband/hw/hns/hns_roce_eq.c:711:3: error: implicit declaration of function ‘request_irq’ [-Werror=implicit-function-declaration]
-   ret = request_irq(eq_table->eq[j].irq, hns_roce_msi_x_interrupt,
-   ^
-drivers/infiniband/hw/hns/hns_roce_eq.c:726:3: error: implicit declaration of function ‘free_irq’ [-Werror=implicit-function-declaration]
-   free_irq(eq_table->eq[j].irq, eq_table->eq + j);
-   ^
 
 as seen on arm64 allmodconfig builds.
 
-Cc: Lijun Ou <oulijun@huawei.com>
-Cc: "Wei Hu(Xavier)" <xavier.huwei@huawei.com>
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Sean Hefty <sean.hefty@intel.com>
-Cc: Hal Rosenstock <hal.rosenstock@gmail.com>
-Cc: linux-rdma@vger.kernel.org
+Cc: Stuart Yoder <stuyoder@gmail.com>
+Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
 ---
 
-[ Seen on current linux-next tree. ]
+[Seen on current linux-next tree.]
 
- drivers/infiniband/hw/hns/hns_roce_eq.c | 1 +
+ drivers/staging/fsl-mc/include/dpaa2-io.h | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_eq.c b/drivers/infiniband/hw/hns/hns_roce_eq.c
-index 50f864935a0e..e1e4c16ca3d5 100644
---- a/drivers/infiniband/hw/hns/hns_roce_eq.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_eq.c
-@@ -30,6 +30,7 @@
-  * SOFTWARE.
-  */
+diff --git a/drivers/staging/fsl-mc/include/dpaa2-io.h b/drivers/staging/fsl-mc/include/dpaa2-io.h
+index 002829cecd75..afc5d5bb1698 100644
+--- a/drivers/staging/fsl-mc/include/dpaa2-io.h
++++ b/drivers/staging/fsl-mc/include/dpaa2-io.h
+@@ -34,6 +34,7 @@
  
+ #include <linux/types.h>
+ #include <linux/cpumask.h>
 +#include <linux/interrupt.h>
- #include <linux/platform_device.h>
- #include "hns_roce_common.h"
- #include "hns_roce_device.h"
+ 
+ #include "dpaa2-fd.h"
+ #include "dpaa2-global.h"
 -- 
 2.11.0
