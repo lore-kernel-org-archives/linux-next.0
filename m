@@ -1,35 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the clk tree with Linus' tree
-Date: Mon, 24 Jul 2017 10:37:34 +1000
-Message-ID: <20170724103734.6316c868@canb.auug.org.au>
+Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
+Date: Mon, 24 Jul 2017 10:54:31 +1000
+Message-ID: <20170724105431.675fb3a3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56163 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751768AbdGXAhg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 23 Jul 2017 20:37:36 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>, Randy Dunlap <rdunlap@infradead.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi David,
 
-Today's linux-next merge of the clk tree got a conflict in:
+Today's linux-next merge of the btrfs-kdave tree got a conflict in:
 
-  MAINTAINERS
+  fs/btrfs/scrub.c
 
 between commit:
 
-  82abbea734d6 ("MAINTAINERS: fix alphabetical ordering")
+  4e4cbee93d56 ("block: switch bios to blk_status_t")
 
 from Linus' tree and commit:
 
-  6d7489c74a6e ("clk: axs10x: introduce AXS10X pll driver")
+  26397a4ad1d5 ("btrfs: account that we're waiting for IO in scrub_submit_raid56_bio_wait")
 
-from the clk tree.
+from the btrfs-kdave tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,26 +34,22 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-BTW, Linus, I am using your perl script to check my resolution results
-(thanks), but could you please make it executable?
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index fdbe3da4d5de,c571fcf62740..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -12599,6 -12738,6 +12599,12 @@@ F:	drivers/clocksource/arc_timer.
-  F:	drivers/tty/serial/arc_uart.c
-  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/vgupta/arc.git
+diff --cc fs/btrfs/scrub.c
+index 6f1e4c984b94,7bce7b43c48b..000000000000
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@@ -1704,8 -1704,8 +1704,8 @@@ static int scrub_submit_raid56_bio_wait
+  	if (ret)
+  		return ret;
   
-++SYNOPSYS ARC SDP clock driver
-++M:	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-++S:	Supported
-++F:	drivers/clk/axs10x/*
-++F:	Documentation/devicetree/bindings/clock/snps,pll-clock.txt
-++
-  SYNOPSYS ARC SDP platform support
-  M:	Alexey Brodkin <abrodkin@synopsys.com>
-  S:	Supported
+- 	wait_for_completion(&done.event);
++ 	wait_for_completion_io(&done.event);
+ -	if (done.error)
+ +	if (done.status)
+  		return -EIO;
+  
+  	return 0;
