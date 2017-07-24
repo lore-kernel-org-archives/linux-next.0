@@ -1,55 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the btrfs-kdave tree with Linus' tree
-Date: Mon, 24 Jul 2017 10:54:31 +1000
-Message-ID: <20170724105431.675fb3a3@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the l2-mtd tree
+Date: Mon, 24 Jul 2017 11:48:36 +1000
+Message-ID: <20170724114836.08a7da64@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34919 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751782AbdGXBsi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 23 Jul 2017 21:48:38 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Brian Norris <computersforpeace@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Rugiero <mrugiero@gmail.com>
 
-Hi David,
+Hi Brian,
 
-Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+After merging the l2-mtd tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  fs/btrfs/scrub.c
+drivers/mtd/mtdswap.c: In function 'mtdswap_add_debugfs':
+drivers/mtd/mtdswap.c:1317:17: warning: unused variable 'dev' [-Wunused-variable]
+  struct device *dev = disk_to_dev(gd);
+                 ^
 
-between commit:
+Introduced by commit
 
-  4e4cbee93d56 ("block: switch bios to blk_status_t")
-
-from Linus' tree and commit:
-
-  26397a4ad1d5 ("btrfs: account that we're waiting for IO in scrub_submit_raid56_bio_wait")
-
-from the btrfs-kdave tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  e8e3edb95ce6 ("mtd: create per-device and module-scope debugfs entries")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/btrfs/scrub.c
-index 6f1e4c984b94,7bce7b43c48b..000000000000
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@@ -1704,8 -1704,8 +1704,8 @@@ static int scrub_submit_raid56_bio_wait
-  	if (ret)
-  		return ret;
-  
-- 	wait_for_completion(&done.event);
-+ 	wait_for_completion_io(&done.event);
- -	if (done.error)
- +	if (done.status)
-  		return -EIO;
-  
-  	return 0;
