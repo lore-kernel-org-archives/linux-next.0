@@ -1,32 +1,29 @@
-From: "Mrs  Liz" <erv17@my.fsu.edu>
-Subject: Hello
-Date: Tue, 25 Jul 2017 15:15:15 -0700
-Message-ID: <BLUPR0501MB20029D253A7D595013CBCE719DB80@BLUPR0501MB2002.namprd05.prod.outlook.com>
-Reply-To: mrslizclayton345@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unsigned commits in the coresight tree
+Date: Wed, 26 Jul 2017 09:32:56 +1000
+Message-ID: <20170726093256.460cf864@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-co1nam03hn0235.outbound.protection.outlook.com ([104.47.40.235]:46912
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752155AbdGYPT2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 25 Jul 2017 11:19:28 -0400
-Content-Description: Mail message body
+Received: from ozlabs.org ([103.22.144.67]:35163 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751601AbdGYXc6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 25 Jul 2017 19:32:58 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <erv17@my.fsu.edu>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Dear Sir/Madam
+Hi Mathieu,
 
-Greetings of the session July, My name is Mrs. Liz Clayton I am 63 years ol=
-d, I am a dying woman who has decided to donate what I have to you/churches=
-/ motherless babies/less privileged/widows.I was diagnosed with cancer for =
-about 2 years ago. I have been touched by God to donate from what I have in=
-herited from my late husband to you for good work of God. Please if you are=
- ready to assist me to distribute my funds of Twenty Million Dollars to cha=
-rity. Awaiting your reply.
+I noticed that commits
 
+  ee0c4a55a06c ("perf: cs-etm: Fix ETMv4 CONFIGR entry in perf.data file")
+  45d8dfdde64b ("coresight tmc: Support for save-restore in ETR")
 
-Your sister in Christ,
-Mrs. Liz Clayton.
+have no Signed-off-by from you as the committer.
+
+-- 
+Cheers,
+Stephen Rothwell
