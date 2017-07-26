@@ -1,28 +1,26 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unsigned commit in the v4l-dvb-fixes tree
-Date: Wed, 26 Jul 2017 11:02:08 +1000
-Message-ID: <20170726110208.03d9a32b@canb.auug.org.au>
+From: Lars Reichardt <lars@paradoxon.info>
+Subject: [Kein Betreff]
+Date: Wed, 26 Jul 2017 07:59:42 +0200 (CEST)
+Message-ID: <44352033.6711.1501048783127@office.mailbox.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51951 "EHLO ozlabs.org"
+Received: from mx2.mailbox.org ([80.241.60.215]:53255 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751047AbdGZBCK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 25 Jul 2017 21:02:10 -0400
+        id S1751078AbdGZF7q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 26 Jul 2017 01:59:46 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 023134586E
+        for <linux-next@vger.kernel.org>; Wed, 26 Jul 2017 07:59:44 +0200 (CEST)
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
+        with ESMTP id gHPlC0DveSfm for <linux-next@vger.kernel.org>;
+        Wed, 26 Jul 2017 07:59:43 +0200 (CEST)
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Javier Martinez Canillas <javierm@redhat.com>
+To: linux-next@vger.kernel.org
 
-Hi Mauro,
-
-I noticed that commit
-
-  bb3abbb74efd ("media: vimc: set id_table for platform drivers")
-
-has no Signed-off-by for you as the committer.
-
--- 
-Cheers,
-Stephen Rothwell
+unsubscribe linux-next
