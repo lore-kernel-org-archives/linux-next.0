@@ -1,31 +1,24 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: linux-next: Tree for Jul 26
-Date: Wed, 26 Jul 2017 22:18:30 +0900
-Message-ID: <20170726131829.GA874@jagdpanzerIV.localdomain>
-References: <20170726161203.1dfbcff9@canb.auug.org.au>
- <20170726104856.GA5755@jagdpanzerIV.localdomain>
- <9B0331B6EBBD0E4684FBFAEDA55776F93DA513FA@HASMSX110.ger.corp.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: missing Signed-off-by in commit in the drm tree
+Date: Thu, 27 Jul 2017 09:24:20 +1000
+Message-ID: <20170727092420.52eff20b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:34288 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751575AbdGZNST (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 26 Jul 2017 09:18:19 -0400
-Content-Disposition: inline
-In-Reply-To: <9B0331B6EBBD0E4684FBFAEDA55776F93DA513FA@HASMSX110.ger.corp.intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Rosen, Rami" <rami.rosen@intel.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Paolo Abeni <pabeni@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Moore <paul@paul-moore.com>, "David S. Miller" <davem@davemloft.net>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philippe CORNU <philippe.cornu@st.com>, Archit Taneja <architt@codeaurora.org>, Eric Anholt <eric@anholt.net>
+List-Id: linux-next.vger.kernel.org
 
-Hello,
+Hi all,
 
-On (07/26/17 13:09), Rosen, Rami wrote:
-> Hi Sergey,
-> Paolo Abeni had sent a patch:
-> https://www.mail-archive.com/netdev@vger.kernel.org/msg179192.html
+Commit
 
-yep, this should do the trick. thanks.
+  cea3a330ee20 ("drm/stm: ltdc: Fix leak of px clk enable in some error paths")
 
-	-ss
+is missing a Signed-off-by for its author.
+
+-- 
+Cheers,
+Stephen Rothwell
