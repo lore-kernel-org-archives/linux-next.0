@@ -1,24 +1,27 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing from commit in the qcom tree
-Date: Fri, 28 Jul 2017 01:24:54 +1000
-Message-ID: <20170728012454.69959b81@canb.auug.org.au>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: linux-next: Signed-off-by missing from a commit in the tip tree
+Date: Thu, 27 Jul 2017 14:56:07 -0300
+Message-ID: <20170727175607.GF24815@redhat.com>
+References: <20170727094834.371f005e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170727094834.371f005e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bjorn Andersson <bjorn.andersson@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Taeung Song <treeze.taeung@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Em Thu, Jul 27, 2017 at 09:48:34AM +1000, Stephen Rothwell escreveu:
+> Hi all,
+> 
+> Commit
+> 
+>   585d93c5ffcc ("perf annotate stdio: Fix --show-total-period")
+> 
+> has no Signed-off-by for its author.
 
-I noticed that commit
+Ouch, my bad, will have this added to my git hooks...
 
-  f46a1bb0750a ("soc: qcom: mdt_loader: Use request_firmware_into_buf()")
-
-has no Signed-off-by from its committer.
-
--- 
-Cheers,
-Stephen Rothwell
+- Arnaldo
