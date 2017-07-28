@@ -1,96 +1,56 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170728 build: 1 failures 2 warnings (next-20170728)
-Date: Fri, 28 Jul 2017 11:28:54 +0100
-Message-ID: <E1db2Vq-0000IU-Ew@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:32838 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751776AbdG1K3A (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jul 2017 06:29:00 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20170728
-Git describe: next-20170728
-Commit: b2cf822e07 Add linux-next specific files for 20170728
-
-Build Time: 103 min 27 sec
-
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 5
-Warnings: 2
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
-	arm64-allmodconfig
-../drivers/infiniband/hw/hns/hns_roce_eq.c:477:8: error: unknown type name 'irqreturn_t'
-../drivers/infiniband/hw/hns/hns_roce_eq.c:485:9: error: implicit declaration of function 'IRQ_RETVAL' [-Werror=implicit-function-declaration]
-../drivers/infiniband/hw/hns/hns_roce_eq.c:711:9: error: implicit declaration of function 'request_irq' [-Werror=implicit-function-declaration]
-../drivers/infiniband/hw/hns/hns_roce_eq.c:726:3: error: implicit declaration of function 'free_irq' [-Werror=implicit-function-declaration]
-../drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name 'irqreturn_t'
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 5
-	  1 ../drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name 'irqreturn_t'
-	  1 ../drivers/infiniband/hw/hns/hns_roce_eq.c:726:3: error: implicit declaration of function 'free_irq' [-Werror=implicit-function-declaration]
-	  1 ../drivers/infiniband/hw/hns/hns_roce_eq.c:711:9: error: implicit declaration of function 'request_irq' [-Werror=implicit-function-declaration]
-	  1 ../drivers/infiniband/hw/hns/hns_roce_eq.c:485:9: error: implicit declaration of function 'IRQ_RETVAL' [-Werror=implicit-function-declaration]
-	  1 ../drivers/infiniband/hw/hns/hns_roce_eq.c:477:8: error: unknown type name 'irqreturn_t'
-
-Warnings Summary: 2
-	  2 ../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: next-20170728 build: 1 failures 2 warnings (next-20170728)
+Date: Fri, 28 Jul 2017 11:41:49 +0100
+Message-ID: <20170728104149.jqt7tuvytouuebdn@sirena.org.uk>
+References: <E1db2Vq-0000IU-Ew@optimist>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="glxe6cs4ptnf2axg"
+Return-path: <linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <E1db2Vq-0000IU-Ew@optimist>
+Sender: linux-rdma-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lijun Ou <oulijun-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Wei Hu <xavier.huwei-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, Doug Ledford <dledford-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Sean Hefty <sean.hefty-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Hal Rosenstock <hal.rosenstock-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rdma-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Id: linux-next.vger.kernel.org
 
 
+--glxe6cs4ptnf2axg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Fri, Jul 28, 2017 at 11:28:54AM +0100, Build bot for Mark Brown wrote:
 
+Today's -next fails to build an arm64 allmodconfig due to:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 5 errors, 1 warnings, 0 section mismatches
+> 	arm64-allmodconfig
+> ../drivers/infiniband/hw/hns/hns_roce_eq.c:477:8: error: unknown type name 'irqreturn_t'
+> ../drivers/infiniband/hw/hns/hns_roce_eq.c:485:9: error: implicit declaration of function 'IRQ_RETVAL' [-Werror=implicit-function-declaration]
+> ../drivers/infiniband/hw/hns/hns_roce_eq.c:711:9: error: implicit declaration of function 'request_irq' [-Werror=implicit-function-declaration]
+> ../drivers/infiniband/hw/hns/hns_roce_eq.c:726:3: error: implicit declaration of function 'free_irq' [-Werror=implicit-function-declaration]
+> ../drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name 'irqreturn_t'
 
-Errors:
-	../drivers/infiniband/hw/hns/hns_roce_eq.c:477:8: error: unknown type name 'irqreturn_t'
-	../drivers/infiniband/hw/hns/hns_roce_eq.c:485:9: error: implicit declaration of function 'IRQ_RETVAL' [-Werror=implicit-function-declaration]
-	../drivers/infiniband/hw/hns/hns_roce_eq.c:711:9: error: implicit declaration of function 'request_irq' [-Werror=implicit-function-declaration]
-	../drivers/infiniband/hw/hns/hns_roce_eq.c:726:3: error: implicit declaration of function 'free_irq' [-Werror=implicit-function-declaration]
-	../drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name 'irqreturn_t'
+since the file uses the interrupt API but doesn't explicitly include the
+header for it, I'm just about to send a patch.  Presumably something
+else was implicitly including it but that header changed.
 
-Warnings:
-	../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
+--glxe6cs4ptnf2axg
+Content-Type: application/pgp-signature; name="signature.asc"
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+-----BEGIN PGP SIGNATURE-----
 
-Warnings:
-	../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAll7FOwACgkQJNaLcl1U
+h9CBFwf9GFpuLlPNFsGAdpndUvMwLXjbYJBY22KRR2PwYkPAc0pv/OAxo/Vx78pZ
+ekmG0Glwyy4CKxFY4huaI0mfK/6iV1Ehfh7MP+zIk8VPztllHTR1gp/5OQrY3fBC
+S+men8lysPaJPA+KO0QQK19Po75fAGppK969ZS2Kd8LIeQY1cLkRalmXhgJPCR5D
+7oPk7dqHtlZUbi0s+IWxmUvTcKPkx56druvvmG2TrWEeOwTUQRZcQSg3DvB4Lt1P
+4AhQyrAAnqmGF7OP8rnJxHAOnJANuIV+xI+x6PaRNLUyhYr1NKsc+GPhOFkImlC4
+fe2wZ7BGQXTV4LCpVnHTj/2NrN+VBg==
+=B0jm
+-----END PGP SIGNATURE-----
 
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+--glxe6cs4ptnf2axg--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-rdma" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
