@@ -1,41 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the renesas
- tree
-Date: Fri, 28 Jul 2017 15:57:46 +1000
-Message-ID: <20170728155746.47f0f8c3@canb.auug.org.au>
-References: <20170728092108.0d5ccd41@canb.auug.org.au>
-        <20170728050912.GB531@localhost>
+From: Ilya Dryomov <idryomov@gmail.com>
+Subject: Re: linux-next: Signed-off-by misspelt for commit in the ceph tree
+Date: Fri, 28 Jul 2017 09:54:27 +0200
+Message-ID: <CAOi1vP8GLXepn5oUdvK6TLZXnx-SMLLTYxVMp4oZqeWr-s5cyQ@mail.gmail.com>
+References: <20170728092828.4b829c61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37953 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750924AbdG1F5s (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 28 Jul 2017 01:57:48 -0400
-In-Reply-To: <20170728050912.GB531@localhost>
+Received: from mail-ua0-f174.google.com ([209.85.217.174]:38310 "EHLO
+        mail-ua0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751071AbdG1Hy2 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 28 Jul 2017 03:54:28 -0400
+In-Reply-To: <20170728092828.4b829c61@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: jmondi <jacopo@jmondi.org>
-Cc: Simon Horman <horms@verge.net.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jacopo Mondi <jacopo+renesas@jmondi.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sage Weil <sage@newdream.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi,
-
-On Fri, 28 Jul 2017 12:09:12 +0700 jmondi <jacopo@jmondi.org> wrote:
+On Fri, Jul 28, 2017 at 1:28 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Sage,
 >
-> On Fri, Jul 28, 2017 at 09:21:08AM +1000, Stephen Rothwell wrote:
-> >
-> > Commit
-> >
-> >   bb003371172f ("arm: dts: genmai: Add RIIC2 pin group")
-> >
-> > is missing a Signed-off-by from its committer.  
-> 
-> I do see my SOB in the patch I've sent. Any chance it has been dropped
-> while applying it? Should I resend?
+> Commit
+>
+>   aaebc1ce8663 ("libceph: fallback for when there isn't a pool-specific choose_arg")
+>
+> has Signed-off-by misspelt.
 
-The commit is missing Simon's Signed-off-by ...
+Hah, I wonder how that happened.  Fixed now, thanks Stephen!
 
--- 
-Cheers,
-Stephen Rothwell
+                Ilya
