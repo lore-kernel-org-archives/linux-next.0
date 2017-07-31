@@ -1,72 +1,49 @@
-From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
-Subject: Re: linux-next: build failure in the staging tree (Was: kisskb:
- FAILED linux-next/s390-allmodconfig/s390x Mon Jul 31, 17:24)
-Date: Mon, 31 Jul 2017 09:55:14 +0000
-Message-ID: <597EFE81.9010407@nxp.com>
-References: <20170731072425.1.95853@222023911cb9>
- <20170731193546.6d0538cf@canb.auug.org.au>
+From: Gary R Hook <gary.hook@amd.com>
+Subject: Re: linux-next: build warning after merge of the crypto tree
+Date: Mon, 31 Jul 2017 08:50:28 -0500
+Message-ID: <25e2301b-258c-df38-3417-d446b820e924@amd.com>
+References: <20170731121756.6f54cadf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-eopbgr10080.outbound.protection.outlook.com ([40.107.1.80]:31376
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+Received: from mail-by2nam03on0046.outbound.protection.outlook.com ([104.47.42.46]:9568
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750847AbdGaJzS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 31 Jul 2017 05:55:18 -0400
-In-Reply-To: <20170731193546.6d0538cf@canb.auug.org.au>
-Content-Language: en-US
-Content-ID: <B36B419A2CBE3049BC3146E88BB4CC98@eurprd04.prod.outlook.com>
+        id S1751054AbdGaNvK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 31 Jul 2017 09:51:10 -0400
+In-Reply-To: <20170731121756.6f54cadf@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Stephen,
-
-That's because the fsl-mc driver selects GENERIC_MSI_IRQ_DOMAIN and not=20
-all arches implement the support for the option. I can submit a patch=20
-that adds explicit dependencies on arches that it was build-tested (x86,=20
-arm, powerpc, all both 32 and 64 bits) similar to how it's done here=20
-[1]. Let me know if you're ok with this fix and i'll submit the fix to=20
-staging.
-
----
-Thanks & Best Regards, Laurentiu
-
-[1]=20
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/pci/Kconfig#n28
-
-On 07/31/2017 12:35 PM, Stephen Rothwell wrote:
-> Hi all,
+On 07/30/2017 09:17 PM, Stephen Rothwell wrote:
+> Hi Herbert,
 >
-> On Mon, 31 Jul 2017 07:24:25 -0000 noreply@ellerman.id.au wrote:
->>
->> FAILED linux-next/s390-allmodconfig/s390x Mon Jul 31, 17:24
->>
->> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fkiss=
-kb.ellerman.id.au%2Fkisskb%2Fbuildresult%2F13110910%2F&data=3D01%7C01%7Clau=
-rentiu.tudor%40nxp.com%7C0b58775ead154830f76f08d4d7f78d99%7C686ea1d3bc2b4c6=
-fa92cd99c5c301635%7C0&sdata=3DA84bbMQe7VRz9OPK13PzaidBEfjm43Ik%2FbfCDJ89ZzM=
-%3D&reserved=3D0
->>
->> Commit:   Add linux-next specific files for 20170731
->>            742f220ee69c8102eabea45e45d92aa18721fab1
->> Compiler: s390x-linux-gcc (GCC) 4.6.3
->>
->> Possible errors
->> ---------------
->>
->> include/linux/msi.h:196:21: fatal error: asm/msi.h: No such file or dire=
-ctory
->> make[2]: *** [arch/s390/kernel/asm-offsets.s] Error 1
->> make[1]: *** [prepare0] Error 2
->> make: *** [sub-make] Error 2
+> After merging the crypto tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 >
-> Caused by commit
+> drivers/crypto/ccp/ccp-ops.c: In function 'ccp_run_rsa_cmd':
+> drivers/crypto/ccp/ccp-ops.c:1856:3: warning: 'sb_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
+>    cmd_q->ccp->vdata->perform->sbfree(cmd_q, op.sb_key, sb_count);
+>    ^
 >
->    03274850279c ("staging: fsl-mc: allow the driver compile multi-arch")
+> Maybe introduced by commit
 >
-> I will revert that commit tomorrow unless it if fixed in the mean time.
->=
+>   6ba46c7d4d7e ("crypto: ccp - Fix base RSA function for version 5 CCPs")
+>
+
+Actually, it's been this way for a while: 956ee21 should be the commit 
+that introduced the spurious warning.
+
+If you can explain to me a way to get the compiler to either (a) be 
+smarter, or (b) shut up about this, I'd like to hear it. I see this with 
+gcc 4.8/4.9/50.
+
+IMO the compiler is incorrect. The code path where the variable is used 
+is complete, and the path where it is unused is complete. I don't see a 
+way for a logic error (and thus, use an uninitialized variable) to occur.
+
+If someone can enlighten me, I'd appreciate it. Or, I can change the 
+code to recompute the value when it's needed.
