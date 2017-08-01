@@ -1,67 +1,58 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
-Date: Tue, 1 Aug 2017 14:36:52 -0700
-Message-ID: <20170801213652.GJ3730@linux.vnet.ibm.com>
-References: <20170731135029.479025ea@canb.auug.org.au>
- <20170731161341.GG3730@linux.vnet.ibm.com>
- <1145333348.610.1501545845911.JavaMail.zimbra@efficios.com>
- <20170801040323.GP3730@linux.vnet.ibm.com>
- <CALCETrWO5g5HuNpxa4Phxg--fDPWpuCVDTVr-UfuzrK5wn-8dQ@mail.gmail.com>
- <1639218309.1091.1501596152868.JavaMail.zimbra@efficios.com>
- <CALCETrWWx8h=74td8bxbR6KZJN2GLAZ_jz9G-x9Q+Vn2AHSijQ@mail.gmail.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: linux-next: manual merge of the akpm tree with the wberr tree
+Date: Tue, 1 Aug 2017 15:32:30 -0700
+Message-ID: <20170801153230.4ac75584959f3f5391c2341c@linux-foundation.org>
+References: <20170801154634.0a01acdc@canb.auug.org.au>
+        <1501585159.4702.0.camel@poochiereds.net>
+        <1501587093.4702.6.camel@poochiereds.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50260 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751981AbdHAVg5 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Aug 2017 17:36:57 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v71LXs0H124521
-        for <linux-next@vger.kernel.org>; Tue, 1 Aug 2017 17:36:57 -0400
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2c2y7n6w07-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Tue, 01 Aug 2017 17:36:57 -0400
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 1 Aug 2017 17:36:56 -0400
-Content-Disposition: inline
-In-Reply-To: <CALCETrWWx8h=74td8bxbR6KZJN2GLAZ_jz9G-x9Q+Vn2AHSijQ@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andy Lutomirski <luto@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1501587093.4702.6.camel@poochiereds.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jeff Layton <jlayton@poochiereds.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Aug 01, 2017 at 07:15:40AM -0700, Andy Lutomirski wrote:
-> On Tue, Aug 1, 2017 at 7:02 AM, Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
-> > /*
-> >  * The full memory barrier implied by mm_cpumask update operations
-> >  * is required by the membarrier system call.
-> >  */
-> >
-> > What we want to order here is:
-> >
-> > prev userspace memory accesses
-> > schedule
-> >   <full mb> (it's already there) [A]
-> >   update to rq->curr changing the rq->curr->mm value
-> >   <full mb> (provided by mm_cpumask updates in switch_mm on x86) [B]
+On Tue, 01 Aug 2017 07:31:33 -0400 Jeff Layton <jlayton@poochiereds.net> wrote:
+
+> On Tue, 2017-08-01 at 06:59 -0400, Jeff Layton wrote:
+> > On Tue, 2017-08-01 at 15:46 +1000, Stephen Rothwell wrote:
+> > > Hi Andrew,
+> > > 
+> > > Today's linux-next merge of the akpm-current tree got a conflict in:
+> > > 
+> > >   include/linux/fs.h
+> > > 
+> > > between commit:
+> > > 
+> > >   9dcc0577f2a4 ("mm: remove optimizations based on i_size in mapping writeback waits")
+> > > 
+> > > from the wberr tree and patch:
+> > > 
+> > >   "mm: remove optimizations based on i_size in mapping writeback waits"
+> > > 
+> > > from the akpm tree.
+> > > 
+> > > I fixed it up (I just dropped the akpm tree patch) and can carry the
+> > > fix as necessary. This is now fixed as far as linux-next is concerned,
+> > > but any non trivial conflicts should be mentioned to your upstream
+> > > maintainer when your tree is submitted for merging.  You may also want
+> > > to consider cooperating with the maintainer of the conflicting tree to
+> > > minimise any particularly complex conflicts.
+> > > 
+> > 
+> > I didn't realize that Andrew was going to pick that one up. I'll drop it
+> > from my tree.
+
+Please don't do that.  When a patch turns up in linux-next I'll drop my
+copy.  If you then drop your copy, the patch is lost.
+
+> > Thanks!
 > 
-> If I understand this right, the issue with relying on CR3 writes is
-> that the target CPU could switch to a kernel thread and back to the
-> same user mm white the membarrier caller is reading its mm, right?
+> Actually, I take it back. Jan had some comments about the commit message
+> and I'd like to revise this. Andrew, do you mind dropping this patch
+> instead?
 
-The thing that got my attention was your patch removing the load_cr3().
-Ah, looking closer, it appears that you have not eliminated the CR3
-load, but just renamed it to write_cr3().  So if there is always still
-a CR3 load, you are right, I should be able to simply move the comment.
-Or let you insert the comment into your patch?
-
-So there is still always a CR3 load, correct?  (Hey, I thought that
-maybe x86 was moving to ASIDs or some such.)
-
-							Thanx, Paul
+Yes, do that ;)
