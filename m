@@ -1,56 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Tue, 1 Aug 2017 15:29:13 +1000
-Message-ID: <20170801152913.7fcfbf26@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the wberr tree
+Date: Tue, 1 Aug 2017 15:46:34 +1000
+Message-ID: <20170801154634.0a01acdc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:41351 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750914AbdHAFqg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 1 Aug 2017 01:46:36 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Jeff Layton <jlayton@poochiereds.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 Hi Andrew,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-arch/powerpc/kernel/rtas.c: In function 'rtas_online_cpus_mask':
-arch/powerpc/kernel/rtas.c:917:37: error: 'GFP_KENREL' undeclared (first use in this function)
-   if (!alloc_cpumask_var(&tmp_mask, GFP_KENREL))
-                                     ^
+  include/linux/fs.h
 
-Caused by commit
+between commit:
 
-  404170cf1c4c ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+  9dcc0577f2a4 ("mm: remove optimizations based on i_size in mapping writeback waits")
 
-I added the following patch:
+from the wberr tree and patch:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 1 Aug 2017 15:25:33 +1000
-Subject: [PATCH] mm: treewide: remove GFP_TEMPORARY allocation flag fix
+  "mm: remove optimizations based on i_size in mapping writeback waits"
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/kernel/rtas.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+from the akpm tree.
 
-diff --git a/arch/powerpc/kernel/rtas.c b/arch/powerpc/kernel/rtas.c
-index 90d27dcd0da8..1643e9e53655 100644
---- a/arch/powerpc/kernel/rtas.c
-+++ b/arch/powerpc/kernel/rtas.c
-@@ -914,7 +914,7 @@ int rtas_online_cpus_mask(cpumask_var_t cpus)
- 	if (ret) {
- 		cpumask_var_t tmp_mask;
- 
--		if (!alloc_cpumask_var(&tmp_mask, GFP_KENREL))
-+		if (!alloc_cpumask_var(&tmp_mask, GFP_KERNEL))
- 			return ret;
- 
- 		/* Use tmp_mask to preserve cpus mask from first failure */
--- 
-2.13.2
+I fixed it up (I just dropped the akpm tree patch) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 -- 
 Cheers,
