@@ -1,69 +1,31 @@
-From: <Will@pgem.com>
-Subject: (unknown)
-Date: Wed, 02 Aug 2017 13:58:21 -0000
-Message-ID: <150168230186.2727.16728271004398715255@zaural.ru>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Date: Thu, 3 Aug 2017 06:37:43 +1000
+Message-ID: <20170803063743.1d50a5d2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: application/zip; name="EMAIL_771025884546703_linux-next.zip"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ws20.zone31-163-182.zaural.ru ([31.163.182.20]:50096 "HELO
-        zaural.ru" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-        id S1752036AbdHBN6Z (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 2 Aug 2017 09:58:25 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from ozlabs.org ([103.22.144.67]:57617 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751991AbdHBUhq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 2 Aug 2017 16:37:46 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Reeves@cfcm.com
+To: Darren Hart <dvhart@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
 
-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
-AAAAuQoAAAAA
+Hi Darren,
+
+Commits
+
+  890f658c101d ("platform/x86: peaq-wmi: silence a static checker warning")
+  6d8d55626296 ("platform/x86: msi-wmi: remove unnecessary static in msi_wmi_notify()")
+  cd0223c64c60 ("platform/x86: ibm_rtl: remove unnecessary static in ibm_rtl_write()")
+
+are missing Signed-off-by's from their commiter.
+
+-- 
+Cheers,
+Stephen Rothwell
