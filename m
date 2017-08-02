@@ -1,73 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-misc tree with
-	Linus' tree
-Date: Wed, 2 Aug 2017 12:23:06 +1000
-Message-ID: <20170802122306.0882da2e@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the fbdev tree
+Date: Wed, 2 Aug 2017 13:24:15 +1000
+Message-ID: <20170802132415.4061f3f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:40821 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751743AbdHBDYR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 1 Aug 2017 23:24:17 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
-dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udjUwX2Rpc3BsYXku
-YwoKYmV0d2VlbiBjb21taXQ6CgogIDRhNTQzMWFmMTliYyAoImRybS9ub3V2ZWF1L2ttcy9udjUw
-OiB1cGRhdGUgdmJsYW5rIHN0YXRlIGluIHJlc3BvbnNlIHRvIG1vZGVzZXQgYWN0aW9ucyIpCgpm
-cm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIDNjODQ3ZDZjZGFkYiAoImRybS9ub3V2ZWF1
-OiBDb252ZXJ0IG5vdXZlYXUgdG8gdXNlIG5ldyBpdGVyYXRvciBtYWNyb3MsIHYyLiIpCgpmcm9t
-IHRoZSBkcm0tbWlzYyB0cmVlLgoKSSBmaXhlZCBpdCB1cCAoSSB0aGluayAtIHNlZSBiZWxvdykg
-YW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4KVGhpcyBpcyBub3cgZml4ZWQgYXMg
-ZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbgp0cml2aWFsIGNvbmZs
-aWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVu
-CnlvdXIgdHJlZSBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0
-byBjb25zaWRlcgpjb29wZXJhdGluZyB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGlj
-dGluZyB0cmVlIHRvIG1pbmltaXNlIGFueQpwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGljdHMu
-CgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCgpkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJt
-L25vdXZlYXUvbnY1MF9kaXNwbGF5LmMKaW5kZXggOWQ0MGIyYThiZTRkLGJkMTE5OWI2N2ViNC4u
-MDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5j
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5jCkBAQCAtMzk0MSw4
-IC0zOTMzLDYgKzM5NDIsOCBAQEAgbnY1MF9kaXNwX2F0b21pY19jb21taXRfdGFpbChzdHJ1Y3Qg
-ZHJtCiAgCiAgCQlOVl9BVE9NSUMoZHJtLCAiJXM6IGNsciAlMDR4IChzZXQgJTA0eClcbiIsIGNy
-dGMtPm5hbWUsCiAgCQkJICBhc3loLT5jbHIubWFzaywgYXN5aC0+c2V0Lm1hc2spOwotIAkJaWYg
-KGNydGNfc3RhdGUtPmFjdGl2ZSAmJiAhYXN5aC0+c3RhdGUuYWN0aXZlKQorKwkJaWYgKG5ld19j
-cnRjX3N0YXRlLT5hY3RpdmUgJiYgIWFzeWgtPnN0YXRlLmFjdGl2ZSkKICsJCQlkcm1fY3J0Y192
-Ymxhbmtfb2ZmKGNydGMpOwogIAogIAkJaWYgKGFzeWgtPmNsci5tYXNrKSB7CiAgCQkJbnY1MF9o
-ZWFkX2ZsdXNoX2NscihoZWFkLCBhc3loLCBhdG9tLT5mbHVzaF9kaXNhYmxlKTsKQEBAIC00MDI4
-LDEzIC00MDE4LDExICs0MDI5LDEzIEBAQAogIAkJCW52NTBfaGVhZF9mbHVzaF9zZXQoaGVhZCwg
-YXN5aCk7CiAgCQkJaW50ZXJsb2NrX2NvcmUgPSAxOwogIAkJfQogLQl9CiAgCiAtCWZvcl9lYWNo
-X25ld19jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBuZXdfY3J0Y19zdGF0ZSwgaSkgewogLQkJ
-aWYgKG5ld19jcnRjX3N0YXRlLT5ldmVudCkKIC0JCQlkcm1fY3J0Y192YmxhbmtfZ2V0KGNydGMp
-OwogKwkJaWYgKGFzeWgtPnN0YXRlLmFjdGl2ZSkgewotIAkJCWlmICghY3J0Y19zdGF0ZS0+YWN0
-aXZlKQorKwkJCWlmICghbmV3X2NydGNfc3RhdGUtPmFjdGl2ZSkKICsJCQkJZHJtX2NydGNfdmJs
-YW5rX29uKGNydGMpOwogKwkJCWlmIChhc3loLT5zdGF0ZS5ldmVudCkKICsJCQkJZHJtX2NydGNf
-dmJsYW5rX2dldChjcnRjKTsKICsJCX0KICAJfQogIAogIAkvKiBVcGRhdGUgcGxhbmUocykuICov
-CkBAQCAtNDA3NywxOCAtNDA2NSwxNiArNDA3OCwxOCBAQEAKICAJCQlOVl9FUlJPUihkcm0sICIl
-czogdGltZW91dFxuIiwgcGxhbmUtPm5hbWUpOwogIAl9CiAgCi0gCWZvcl9lYWNoX2NydGNfaW5f
-c3RhdGUoc3RhdGUsIGNydGMsIGNydGNfc3RhdGUsIGkpIHsKLSAJCWlmIChjcnRjLT5zdGF0ZS0+
-ZXZlbnQpIHsKKyAJZm9yX2VhY2hfbmV3X2NydGNfaW5fc3RhdGUoc3RhdGUsIGNydGMsIG5ld19j
-cnRjX3N0YXRlLCBpKSB7CisgCQlpZiAobmV3X2NydGNfc3RhdGUtPmV2ZW50KSB7CiAgCQkJdW5z
-aWduZWQgbG9uZyBmbGFnczsKICAJCQkvKiBHZXQgY29ycmVjdCBjb3VudC90cyBpZiByYWNpbmcg
-d2l0aCB2YmxhbmsgaXJxICovCiAtCQkJZHJtX2NydGNfYWNjdXJhdGVfdmJsYW5rX2NvdW50KGNy
-dGMpOwogKwkJCWlmIChjcnRjLT5zdGF0ZS0+YWN0aXZlKQogKwkJCQlkcm1fY3J0Y19hY2N1cmF0
-ZV92YmxhbmtfY291bnQoY3J0Yyk7CiAgCQkJc3Bpbl9sb2NrX2lycXNhdmUoJmNydGMtPmRldi0+
-ZXZlbnRfbG9jaywgZmxhZ3MpOwotIAkJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMs
-IGNydGMtPnN0YXRlLT5ldmVudCk7CisgCQkJZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0
-YywgbmV3X2NydGNfc3RhdGUtPmV2ZW50KTsKICAJCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZj
-cnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKLSAJCQljcnRjLT5zdGF0ZS0+ZXZlbnQgPSBO
-VUxMOworIAkJCW5ld19jcnRjX3N0YXRlLT5ldmVudCA9IE5VTEw7CiAtCQkJZHJtX2NydGNfdmJs
-YW5rX3B1dChjcnRjKTsKICsJCQlpZiAoY3J0Yy0+c3RhdGUtPmFjdGl2ZSkKICsJCQkJZHJtX2Ny
-dGNfdmJsYW5rX3B1dChjcnRjKTsKICAJCX0KICAJfQogIApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdm
-eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Hi all,
+
+Today's linux-next merge of the tip tree got a conflict in:
+
+  drivers/video/fbdev/core/fbmem.c
+
+between commit:
+
+  6104c37094e7 ("fbcon: Make fbcon a built-time depency for fbdev")
+
+from the fbdev tree and commit:
+
+  95cf9264d5f3 ("x86, drm, fbdev: Do not specify encrypted memory for video mappings")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/video/fbdev/core/fbmem.c
+index f8ced1434edf,25e862c487f6..000000000000
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@@ -32,7 -32,7 +32,8 @@@
+  #include <linux/device.h>
+  #include <linux/efi.h>
+  #include <linux/fb.h>
+ +#include <linux/fbcon.h>
++ #include <linux/mem_encrypt.h>
+  
+  #include <asm/fb.h>
+  
