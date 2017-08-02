@@ -1,36 +1,35 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: linux-next: Tree for Aug 1
-Date: Wed, 2 Aug 2017 08:55:55 +0900
-Message-ID: <20170801235555.GA539@jagdpanzerIV.localdomain>
-References: <20170801173746.6962444d@canb.auug.org.au>
- <20170801124204.GA457@jagdpanzerIV.localdomain>
- <CAK8P3a2dUdOf4OTLBEMLAVYXSpMyqFSHsRShz7aLEYBjViw61A@mail.gmail.com>
- <CAK8P3a3vOHteTswgXr+9cO-wX2HGVb_GXd3w3bByZLR=36MXFg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the fbdev tree
+Date: Wed, 2 Aug 2017 11:32:11 +1000
+Message-ID: <20170802113211.6797dda4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f50.google.com ([74.125.83.50]:33731 "EHLO
-        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751600AbdHAXzm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 1 Aug 2017 19:55:42 -0400
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a3vOHteTswgXr+9cO-wX2HGVb_GXd3w3bByZLR=36MXFg@mail.gmail.com>
+Received: from ozlabs.org ([103.22.144.67]:54231 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751655AbdHBBcN (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 1 Aug 2017 21:32:13 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@chromium.org>
 
-Hello,
+Hi Bartlomiej,
 
-On (08/01/17 15:28), Arnd Bergmann wrote:
-[..]
-> > Looking into it now, sorry for the breakage.
-> 
-> Does this fix it? I definitely got this part wrong as I see now, we must
-> look up the 'tail' after calling __tty_buffer_request_room, not before.
+After merging the fbdev tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-yes, it does. thanks!
+drivers/video/fbdev/matrox/matroxfb_base.c:1583:12: warning: 'hotplug' defined but not used [-Wunused-variable]
+ static int hotplug = 0;
+            ^
 
-Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Introduced by commit
 
-	-ss
+  376b3ff54c9a ("fbdev: Nuke FBINFO_MODULE")
+
+"hotplug" is only used when CONFIG_MODULE is not set, now.
+
+-- 
+Cheers,
+Stephen Rothwell
