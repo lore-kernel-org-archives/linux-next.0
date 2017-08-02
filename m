@@ -1,38 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the drm tree
-Date: Wed, 2 Aug 2017 16:54:56 +1000
-Message-ID: <20170802165456.1a2f6eb7@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: Tree for Aug 1
+Date: Wed, 2 Aug 2017 13:13:12 +0200
+Message-ID: <CAK8P3a245ufEQHoR1ewJAROy8ay0r-59Et7U4utAT9ogLU-Asw@mail.gmail.com>
+References: <20170801173746.6962444d@canb.auug.org.au> <20170801124204.GA457@jagdpanzerIV.localdomain>
+ <CAK8P3a2dUdOf4OTLBEMLAVYXSpMyqFSHsRShz7aLEYBjViw61A@mail.gmail.com>
+ <CAK8P3a3vOHteTswgXr+9cO-wX2HGVb_GXd3w3bByZLR=36MXFg@mail.gmail.com> <20170801235555.GA539@jagdpanzerIV.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36355 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750985AbdHBGy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 2 Aug 2017 02:54:58 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37424 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752883AbdHBLNN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 2 Aug 2017 07:13:13 -0400
+In-Reply-To: <20170801235555.GA539@jagdpanzerIV.localdomain>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Hi Dave,
+On Wed, Aug 2, 2017 at 1:55 AM, Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+> On (08/01/17 15:28), Arnd Bergmann wrote:
+>> Does this fix it? I definitely got this part wrong as I see now, we must
+>> look up the 'tail' after calling __tty_buffer_request_room, not before.
+>
+> yes, it does. thanks!
+>
+> Tested-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Commits
+Thanks for testing! I've now submitted that fix properly with a real
+changelog and your Tested-by tag.
 
-  663ebbf63180 "drm/amdgpu: trace VM flags as 64bits"
-  5327dd8acf05 "drm/amdgpu: remove stale TODO comment"
-  eabd76cef900 "drm/amd/sched: print sched job id in amd_sched_job trace"
-  a69c7e0138fc "drm/amdgpu: update pctl1 ram index/data for mmhub on raven"
-  7504938f8e73 "drm/amdgpu: add check when no firmware need to load"
-  98a7f88ce9a9 "drm/amdgpu: bind BOs with GTT space allocated directly v2"
-  92c60d9cf663 "drm/amdgpu: bind BOs to TTM only once"
-  fc9c8f5459f2 "drm/amdgpu: add vm_needs_flush parameter to amdgpu_copy_buffer"
-  df264f9e0808 "drm/amdgpu: allow flushing VMID0 before IB execution as well"
-  369421cbfabf "drm/amdgpu: fix amdgpu_ring_write_multiple"
-  e8110b1c9bdd "drm/amdgpu: move ring helpers to amdgpu_ring.h"
-
-are missing Signed-off-by from their comitter.
-
--- 
-Cheers,
-Stephen Rothwell
+        Arnd
