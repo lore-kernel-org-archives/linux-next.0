@@ -1,35 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the fbdev tree
-Date: Wed, 2 Aug 2017 11:32:11 +1000
-Message-ID: <20170802113211.6797dda4@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with
+	Linus' tree
+Date: Wed, 2 Aug 2017 12:23:06 +1000
+Message-ID: <20170802122306.0882da2e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54231 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751655AbdHBBcN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 1 Aug 2017 21:32:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Bartlomiej,
-
-After merging the fbdev tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
-
-drivers/video/fbdev/matrox/matroxfb_base.c:1583:12: warning: 'hotplug' defined but not used [-Wunused-variable]
- static int hotplug = 0;
-            ^
-
-Introduced by commit
-
-  376b3ff54c9a ("fbdev: Nuke FBINFO_MODULE")
-
-"hotplug" is only used when CONFIG_MODULE is not set, now.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0tbWlzYyB0cmVlIGdv
+dCBhIGNvbmZsaWN0IGluOgoKICBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9udjUwX2Rpc3BsYXku
+YwoKYmV0d2VlbiBjb21taXQ6CgogIDRhNTQzMWFmMTliYyAoImRybS9ub3V2ZWF1L2ttcy9udjUw
+OiB1cGRhdGUgdmJsYW5rIHN0YXRlIGluIHJlc3BvbnNlIHRvIG1vZGVzZXQgYWN0aW9ucyIpCgpm
+cm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6CgogIDNjODQ3ZDZjZGFkYiAoImRybS9ub3V2ZWF1
+OiBDb252ZXJ0IG5vdXZlYXUgdG8gdXNlIG5ldyBpdGVyYXRvciBtYWNyb3MsIHYyLiIpCgpmcm9t
+IHRoZSBkcm0tbWlzYyB0cmVlLgoKSSBmaXhlZCBpdCB1cCAoSSB0aGluayAtIHNlZSBiZWxvdykg
+YW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4KVGhpcyBpcyBub3cgZml4ZWQgYXMg
+ZmFyIGFzIGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbgp0cml2aWFsIGNvbmZs
+aWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVu
+CnlvdXIgdHJlZSBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0
+byBjb25zaWRlcgpjb29wZXJhdGluZyB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25mbGlj
+dGluZyB0cmVlIHRvIG1pbmltaXNlIGFueQpwYXJ0aWN1bGFybHkgY29tcGxleCBjb25mbGljdHMu
+CgotLSAKQ2hlZXJzLApTdGVwaGVuIFJvdGh3ZWxsCgpkaWZmIC0tY2MgZHJpdmVycy9ncHUvZHJt
+L25vdXZlYXUvbnY1MF9kaXNwbGF5LmMKaW5kZXggOWQ0MGIyYThiZTRkLGJkMTE5OWI2N2ViNC4u
+MDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5j
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5jCkBAQCAtMzk0MSw4
+IC0zOTMzLDYgKzM5NDIsOCBAQEAgbnY1MF9kaXNwX2F0b21pY19jb21taXRfdGFpbChzdHJ1Y3Qg
+ZHJtCiAgCiAgCQlOVl9BVE9NSUMoZHJtLCAiJXM6IGNsciAlMDR4IChzZXQgJTA0eClcbiIsIGNy
+dGMtPm5hbWUsCiAgCQkJICBhc3loLT5jbHIubWFzaywgYXN5aC0+c2V0Lm1hc2spOwotIAkJaWYg
+KGNydGNfc3RhdGUtPmFjdGl2ZSAmJiAhYXN5aC0+c3RhdGUuYWN0aXZlKQorKwkJaWYgKG5ld19j
+cnRjX3N0YXRlLT5hY3RpdmUgJiYgIWFzeWgtPnN0YXRlLmFjdGl2ZSkKICsJCQlkcm1fY3J0Y192
+Ymxhbmtfb2ZmKGNydGMpOwogIAogIAkJaWYgKGFzeWgtPmNsci5tYXNrKSB7CiAgCQkJbnY1MF9o
+ZWFkX2ZsdXNoX2NscihoZWFkLCBhc3loLCBhdG9tLT5mbHVzaF9kaXNhYmxlKTsKQEBAIC00MDI4
+LDEzIC00MDE4LDExICs0MDI5LDEzIEBAQAogIAkJCW52NTBfaGVhZF9mbHVzaF9zZXQoaGVhZCwg
+YXN5aCk7CiAgCQkJaW50ZXJsb2NrX2NvcmUgPSAxOwogIAkJfQogLQl9CiAgCiAtCWZvcl9lYWNo
+X25ld19jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBuZXdfY3J0Y19zdGF0ZSwgaSkgewogLQkJ
+aWYgKG5ld19jcnRjX3N0YXRlLT5ldmVudCkKIC0JCQlkcm1fY3J0Y192YmxhbmtfZ2V0KGNydGMp
+OwogKwkJaWYgKGFzeWgtPnN0YXRlLmFjdGl2ZSkgewotIAkJCWlmICghY3J0Y19zdGF0ZS0+YWN0
+aXZlKQorKwkJCWlmICghbmV3X2NydGNfc3RhdGUtPmFjdGl2ZSkKICsJCQkJZHJtX2NydGNfdmJs
+YW5rX29uKGNydGMpOwogKwkJCWlmIChhc3loLT5zdGF0ZS5ldmVudCkKICsJCQkJZHJtX2NydGNf
+dmJsYW5rX2dldChjcnRjKTsKICsJCX0KICAJfQogIAogIAkvKiBVcGRhdGUgcGxhbmUocykuICov
+CkBAQCAtNDA3NywxOCAtNDA2NSwxNiArNDA3OCwxOCBAQEAKICAJCQlOVl9FUlJPUihkcm0sICIl
+czogdGltZW91dFxuIiwgcGxhbmUtPm5hbWUpOwogIAl9CiAgCi0gCWZvcl9lYWNoX2NydGNfaW5f
+c3RhdGUoc3RhdGUsIGNydGMsIGNydGNfc3RhdGUsIGkpIHsKLSAJCWlmIChjcnRjLT5zdGF0ZS0+
+ZXZlbnQpIHsKKyAJZm9yX2VhY2hfbmV3X2NydGNfaW5fc3RhdGUoc3RhdGUsIGNydGMsIG5ld19j
+cnRjX3N0YXRlLCBpKSB7CisgCQlpZiAobmV3X2NydGNfc3RhdGUtPmV2ZW50KSB7CiAgCQkJdW5z
+aWduZWQgbG9uZyBmbGFnczsKICAJCQkvKiBHZXQgY29ycmVjdCBjb3VudC90cyBpZiByYWNpbmcg
+d2l0aCB2YmxhbmsgaXJxICovCiAtCQkJZHJtX2NydGNfYWNjdXJhdGVfdmJsYW5rX2NvdW50KGNy
+dGMpOwogKwkJCWlmIChjcnRjLT5zdGF0ZS0+YWN0aXZlKQogKwkJCQlkcm1fY3J0Y19hY2N1cmF0
+ZV92YmxhbmtfY291bnQoY3J0Yyk7CiAgCQkJc3Bpbl9sb2NrX2lycXNhdmUoJmNydGMtPmRldi0+
+ZXZlbnRfbG9jaywgZmxhZ3MpOwotIAkJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50KGNydGMs
+IGNydGMtPnN0YXRlLT5ldmVudCk7CisgCQkJZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0
+YywgbmV3X2NydGNfc3RhdGUtPmV2ZW50KTsKICAJCQlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZj
+cnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKLSAJCQljcnRjLT5zdGF0ZS0+ZXZlbnQgPSBO
+VUxMOworIAkJCW5ld19jcnRjX3N0YXRlLT5ldmVudCA9IE5VTEw7CiAtCQkJZHJtX2NydGNfdmJs
+YW5rX3B1dChjcnRjKTsKICsJCQlpZiAoY3J0Yy0+c3RhdGUtPmFjdGl2ZSkKICsJCQkJZHJtX2Ny
+dGNfdmJsYW5rX3B1dChjcnRjKTsKICAJCX0KICAJfQogIApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdm
+eEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9pbnRlbC1nZngK
