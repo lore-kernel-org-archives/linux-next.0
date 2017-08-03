@@ -1,46 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
- tree
-Date: Thu, 3 Aug 2017 10:28:10 +1000
-Message-ID: <20170803102810.37f7c6b0@canb.auug.org.au>
-References: <20170803063743.1d50a5d2@canb.auug.org.au>
-        <20170802235740.GB27974@fury>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
+Date: Wed, 2 Aug 2017 18:06:20 -0700
+Message-ID: <CA+55aFwVBk2FQEp0pbF9Xx-YhexL19fCHgJex4JaOannXpCTOA@mail.gmail.com>
+References: <20170803063743.1d50a5d2@canb.auug.org.au> <20170802235740.GB27974@fury>
+ <20170803102810.37f7c6b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33159 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751172AbdHCA2N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 2 Aug 2017 20:28:13 -0400
-In-Reply-To: <20170802235740.GB27974@fury>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>, Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170803102810.37f7c6b0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Darren Hart <dvhart@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Darren,
-
-On Wed, 2 Aug 2017 16:57:40 -0700 Darren Hart <dvhart@infradead.org> wrote:
+On Wed, Aug 2, 2017 at 5:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Is this a new check Stephen?
+> I would say that if you rebase someone's commit(s), then you are on the
+> "patch's delivery path" and so should add a Signed-off-by tag.
 
-Yes :-)
+Yeah, I agree. Rebasing really is pretty much the exact same thing as
+applying a patch.
 
-> Is there any statement regarding maintainer teams that we must abide by
-> this?  e.g. any time a rebase in a testing branch is made, the
-> maintainer must also ensure a SOB is on each patch?
+> "git rebase" does have a "--signoff" option.
 
-I would say that if you rebase someone's commit(s), then you are on the
-"patch's delivery path" and so should add a Signed-off-by tag. (cc'ing
-Linus to see if he has an opinion.  Linus, the case here is a patch
-originally committed by one maintainer and then rebased by the other.)
+I think you end up signing off twice using that. I don't think it's
+smart enough to say "oh, you already did it once".
 
-> I just want to get a clear picture of what the failure was so we can
-> update our tooling so this doesn't repeat itself.
+But I didn't check. Sometimes git is a lot smarter than I remember it
+being, simply because I don't worry about it. Junio does a good job.
 
-"git rebase" does have a "--signoff" option.
+And in general, you simply should never rebase commits that have
+already been publicized. And the fact that you didn't commit them in
+the first place definitely means that they've been public somewhere.
 
--- 
-Cheers,
-Stephen Rothwell
+So I would definitely suggest against the "git rebase --signoff"
+model, even if git were to do the "right thing". It's simply
+fundamentally the wrong thing to do. Either you already committed them
+(and hopefully signed off correctly the first time), or you didn't
+(and you shouldn't be rebasing). So in neither case is "git rebase
+--signoff" sensible.
+
+              Linus
