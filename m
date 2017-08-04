@@ -1,34 +1,63 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the crypto tree
-Date: Fri, 4 Aug 2017 09:29:55 +0800
-Message-ID: <20170804012955.GA15200@gondor.apana.org.au>
-References: <20170804075022.02c9ce09@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-drivers-next tree with
+ Linus' tree
+Date: Fri, 4 Aug 2017 12:04:08 +1000
+Message-ID: <20170804120408.0d147e86@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from orcrist.hmeau.com ([104.223.48.154]:46270 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751811AbdHDBaG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 3 Aug 2017 21:30:06 -0400
-Content-Disposition: inline
-In-Reply-To: <20170804075022.02c9ce09@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:35297 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751811AbdHDCEK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 3 Aug 2017 22:04:10 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rabin Vincent <rabinv@axis.com>, Lars Persson <larper@axis.com>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johannes Berg <johannes.berg@intel.com>, Luca Coelho <luciano.coelho@intel.com>
 
-On Fri, Aug 04, 2017 at 07:50:22AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commit
-> 
->   9577212cc0e2 ("crypto: hash - add crypto_(un)register_ahashes()")
-> 
-> is missing a Signed-off-by from its author.
+Hi all,
 
-OK, I've backed out the patches in question.  Please resubmit
-with a sign-off.  Thanks!
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in:
+
+  drivers/net/wireless/intel/iwlwifi/mvm/ops.c
+
+between commit:
+
+  bf8b286f86fc ("iwlwifi: mvm: defer setting IWL_MVM_STATUS_IN_HW_RESTART")
+
+from Linus' tree and commit:
+
+  7174beb60c53 ("iwlwifi: refactor firmware debug code")
+
+from the wireless-drivers-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/net/wireless/intel/iwlwifi/mvm/ops.c
+index 9c175d5e9d67,c387d5095bfe..000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/ops.c
+@@@ -1234,9 -1190,10 +1190,9 @@@ void iwl_mvm_nic_restart(struct iwl_mv
+  	 * can't recover this since we're already half suspended.
+  	 */
+  	if (!mvm->fw_restart && fw_error) {
+- 		iwl_mvm_fw_dbg_collect_desc(mvm, &iwl_mvm_dump_desc_assert,
++ 		iwl_fw_dbg_collect_desc(&mvm->fwrt, &iwl_dump_desc_assert,
+  					NULL);
+ -	} else if (test_and_set_bit(IWL_MVM_STATUS_IN_HW_RESTART,
+ -				    &mvm->status)) {
+ +	} else if (test_bit(IWL_MVM_STATUS_IN_HW_RESTART, &mvm->status)) {
+  		struct iwl_mvm_reprobe *reprobe;
+  
+  		IWL_ERR(mvm,
