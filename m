@@ -1,68 +1,76 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
- tree
-Date: Fri, 4 Aug 2017 10:47:37 -0700
-Message-ID: <20170804174737.GD21169@fury>
-References: <20170803063743.1d50a5d2@canb.auug.org.au>
- <20170802235740.GB27974@fury>
- <20170803102810.37f7c6b0@canb.auug.org.au>
- <CA+55aFwVBk2FQEp0pbF9Xx-YhexL19fCHgJex4JaOannXpCTOA@mail.gmail.com>
- <xmqqmv7ftegw.fsf@gitster.mtv.corp.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <xmqqmv7ftegw.fsf@gitster.mtv.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Junio C Hamano <gitster@pobox.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170731 build: 2 failures 3 warnings (next-20170731)
+Date: Sat, 05 Aug 2017 16:30:50 +0100
+Message-ID: <E1de12Q-0006l0-Fr@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37256 "EHLO
+        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751226AbdHEQBX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 5 Aug 2017 12:01:23 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Fri, Aug 04, 2017 at 10:44:31AM -0700, Junio C Hamano wrote:
-> Linus Torvalds <torvalds@linux-foundation.org> writes:
-> 
-> > On Wed, Aug 2, 2017 at 5:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >>
-> >> I would say that if you rebase someone's commit(s), then you are on the
-> >> "patch's delivery path" and so should add a Signed-off-by tag.
-> >
-> > Yeah, I agree. Rebasing really is pretty much the exact same thing as
-> > applying a patch.
-> >
-> >> "git rebase" does have a "--signoff" option.
-> >
-> > I think you end up signing off twice using that. I don't think it's
-> > smart enough to say "oh, you already did it once".
-> 
-> Git avoids duplication only when your SoB appears as the last
-> existing one, so that we can capture a flow of a patch which you
-> originally signed off, picked up and tweaked further by somebody
-> else, which comes back to you and you sign it off again.
-> 
-> We may drop yours even when yours is not the last in the existing
-> chain, but that would be a bug; at least the above is what we try to
-> do.
-> 
-> > And in general, you simply should never rebase commits that have
-> > already been publicized. And the fact that you didn't commit them in
-> > the first place definitely means that they've been public somewhere.
-> >
-> > So I would definitely suggest against the "git rebase --signoff"
-> > model, even if git were to do the "right thing". It's simply
-> > fundamentally the wrong thing to do.
-> 
-> When those involved are using push/pull as a replacement for
-> e-mailed patch exchange, then such a workflow should be OK.  There
-> needs to be a shared understanding that the branch(es) used for such
-> exchange are unstable and should not be built directly on to be
-> merged, of course.
-> 
+Tree/Branch: next-20170731
+Git describe: next-20170731
+Commit: 742f220ee6 Add linux-next specific files for 20170731
 
-Thanks Junio,
+Build Time: 2883 min 29 sec
 
-I don't think I correctly parsed "should not be built directly on to be
-merged", can you rephrase?
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+Errors: 0
+Warnings: 3
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 3
+	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
+	  1 ../drivers/crypto/ccp/ccp-ops.c:1856:3: warning: 'sb_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/crypto/ccp/ccp-ops.c:1856:3: warning: 'sb_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
+	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
