@@ -1,76 +1,22 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170731 build: 2 failures 3 warnings (next-20170731)
-Date: Sat, 05 Aug 2017 16:30:50 +0100
-Message-ID: <E1de12Q-0006l0-Fr@optimist>
+From: "Senecaut Peter" <slobod@superbarter.sk>
+Subject: Brauchen sie schnell Geld? Ich helfe ihnen weiter!
+Date: Sat, 05 Aug 2017 17:01:28 +0000
+Message-ID: <20170805170130.6CD99401A12@mail.distrito02d02.saludzona5.gob.ec>
+Reply-To: info@authenticloanfinance.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37256 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751226AbdHEQBX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sat, 5 Aug 2017 12:01:23 -0400
+Received: from mail.distrito02d02.saludzona5.gob.ec ([186.46.233.172]:60149
+        "EHLO mail.distrito02d02.saludzona5.gob.ec" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751419AbdHERKy (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 5 Aug 2017 13:10:54 -0400
+Content-Description: Mail message body
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Recipients <slobod@superbarter.sk>
 
-Tree/Branch: next-20170731
-Git describe: next-20170731
-Commit: 742f220ee6 Add linux-next specific files for 20170731
-
-Build Time: 2883 min 29 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 0
-Warnings: 3
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm64-allmodconfig
-
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      2 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 3
-	  1 ../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
-	  1 ../drivers/crypto/ccp/ccp-ops.c:1856:3: warning: 'sb_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : FAIL, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/crypto/ccp/ccp-ops.c:1856:3: warning: 'sb_count' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
-
-Warnings:
-	../drivers/iommu/exynos-iommu.c:58:2: warning: #warning "revisit driver if we can enable big-endian ptes" [-Wcpp]
-	../drivers/staging/media/imx/imx-media-of.c:216:4: warning: 'remote_np' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+Ich bin reich und fühle mich verpflichtet Menschen in Not eine zweite Chance zu geben.
+Sie werden keine Überraschungen erleben, es ist kein Betrug.
+Kontaktieren sie mich, geben sie an wieviel Geld sie leihen möchten.
+Ich übersende ihnen sofort welche Möglichkeiten sie haben.
