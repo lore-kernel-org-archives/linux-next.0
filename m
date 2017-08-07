@@ -1,56 +1,76 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170731 build: 2 failures 3 warnings (next-20170731)
-Date: Sun, 6 Aug 2017 14:15:44 +0100
-Message-ID: <20170806131544.77vo6wy4pwatautq@sirena.org.uk>
-References: <E1de12Q-0006l0-Fr@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rockchip tree with Linus' tree
+Date: Mon, 7 Aug 2017 10:18:43 +1000
+Message-ID: <20170807101843.4819a9a0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zkq7rve3hxbm57ux"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46442 "EHLO
-        mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751282AbdHFNPu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 6 Aug 2017 09:15:50 -0400
-Content-Disposition: inline
-In-Reply-To: <E1de12Q-0006l0-Fr@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Simon Xue <xxm@rock-chips.com>, Tao Huang <huangtao@rock-chips.com>
+List-Id: linux-next.vger.kernel.org
 
+Hi Heiko,
 
---zkq7rve3hxbm57ux
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the rockchip tree got a conflict in:
 
-On Sat, Aug 05, 2017 at 04:30:50PM +0100, Build bot for Mark Brown wrote:
-> Tree/Branch: next-20170731
-> Git describe: next-20170731
-> Commit: 742f220ee6 Add linux-next specific files for 20170731
->=20
-> Build Time: 2883 min 29 sec
->=20
-> Passed:    8 / 10   ( 80.00 %)
-> Failed:    2 / 10   ( 20.00 %)
+  arch/arm/boot/dts/rk3288.dtsi
 
-Sorry, this is noise - the build server decided it was a good idea to
-wedge itself at the lowest processor speed which meant that the builds
-had effectively hung so I killed and rebooted causing some false
-positives.
+between commit:
 
---zkq7rve3hxbm57ux
-Content-Type: application/pgp-signature; name="signature.asc"
+  ca12437303f3 ("ARM: dts: rockchip: fix mali gpu node on rk3288")
 
------BEGIN PGP SIGNATURE-----
+from Linus' tree and commits:
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlmHFnsACgkQJNaLcl1U
-h9AdHAf/VNmVw8onAhg7dlV82Tj/sgOVY+Rq6ZvD++NCNmgP+TA42jL7uMJ5cRPb
-knnCBQ1zGLYkMXPebFztbpcPFSpJl09wWkfZrEpyPfRdHnsGFZv4MwBCJpCNBM85
-Ngj16f89OCDJq9Fv2HFMI76kXzgd9xIskNRXSf8429oM/+Fr9NlZcNnKmEXcd+H2
-tYEjWFe5GOEnevxMBEOM33SwFm2hk4lQ8HPfcQIA4swqVk2vqA463j9aCs2/wSsv
-K2GOM8UpqUQLVxMNygZrmtyuoyWDVsAYOnwwaJw/3eDVpiOsE0uauscoMadMaRJJ
-iLsrMaVI9MHeEshlKhLiV91hbKPu9w==
-=Hka1
------END PGP SIGNATURE-----
+  79db45be2b8b ("ARM: dts: rockchip: convert rk3288 device tree files to 64 bits")
+  1cc47e63599c ("ARM: dts: rockchip: add more iommu nodes on rk3288")
 
---zkq7rve3hxbm57ux--
+from the rockchip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm/boot/dts/rk3288.dtsi
+index 858e1fed762a,c0c04e99e159..000000000000
+--- a/arch/arm/boot/dts/rk3288.dtsi
++++ b/arch/arm/boot/dts/rk3288.dtsi
+@@@ -1126,9 -1145,27 +1145,27 @@@
+  		};
+  	};
+  
++ 	vpu_mmu: iommu@ff9a0800 {
++ 		compatible = "rockchip,iommu";
++ 		reg = <0x0 0xff9a0800 0x0 0x100>;
++ 		interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
++ 		interrupt-names = "vpu_mmu";
++ 		#iommu-cells = <0>;
++ 		status = "disabled";
++ 	};
++ 
++ 	hevc_mmu: iommu@ff9c0440 {
++ 		compatible = "rockchip,iommu";
++ 		reg = <0x0 0xff9c0440 0x0 0x40>, <0x0 0xff9c0480 0x0 0x40>;
++ 		interrupts = <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
++ 		interrupt-names = "hevc_mmu";
++ 		#iommu-cells = <0>;
++ 		status = "disabled";
++ 	};
++ 
+ -	gpu: mali@ffa30000 {
+ -		compatible = "rockchip,rk3288-mali", "arm,mali-t760", "arm,mali-midgard";
+ +	gpu: gpu@ffa30000 {
+ +		compatible = "rockchip,rk3288-mali", "arm,mali-t760";
+- 		reg = <0xffa30000 0x10000>;
++ 		reg = <0x0 0xffa30000 0x0 0x10000>;
+  		interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+  			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+  			     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
