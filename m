@@ -1,60 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure in the staging tree (Was: kisskb:
- FAILED linux-next/s390-allmodconfig/s390x Mon Jul 31, 17:24)
-Date: Mon, 7 Aug 2017 10:22:08 +1000
-Message-ID: <20170807102208.597379d4@canb.auug.org.au>
-References: <20170731072425.1.95853@222023911cb9>
-        <20170731193546.6d0538cf@canb.auug.org.au>
-        <597EFE81.9010407@nxp.com>
-        <20170731155850.GD1262@kroah.com>
-        <59803B7E.7050001@nxp.com>
+Subject: linux-next: manual merge of the pm tree with the dmi tree
+Date: Mon, 7 Aug 2017 11:40:33 +1000
+Message-ID: <20170807114033.4d484e6c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59025 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:51371 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751364AbdHGAWK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 6 Aug 2017 20:22:10 -0400
-In-Reply-To: <59803B7E.7050001@nxp.com>
+        id S1751378AbdHGBkf (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 6 Aug 2017 21:40:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Laurentiu Tudor <laurentiu.tudor@nxp.com>, Greg KH <gregkh@linuxfoundation.org>
-Cc: "heiko.carstens@de.ibm.com" <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Jean Delvare <jdelvare@suse.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Lukas Wunner <lukas@wunner.de>
 
-Hi all,
+Hi Rafael,
 
-On Tue, 1 Aug 2017 08:29:31 +0000 Laurentiu Tudor <laurentiu.tudor@nxp.com> wrote:
->
-> On 07/31/2017 06:58 PM, Greg KH wrote:
-> > On Mon, Jul 31, 2017 at 09:55:14AM +0000, Laurentiu Tudor wrote:  
-> >> Hi Stephen,
-> >>
-> >> That's because the fsl-mc driver selects GENERIC_MSI_IRQ_DOMAIN and not
-> >> all arches implement the support for the option. I can submit a patch
-> >> that adds explicit dependencies on arches that it was build-tested (x86,
-> >> arm, powerpc, all both 32 and 64 bits) similar to how it's done here
-> >> [1]. Let me know if you're ok with this fix and i'll submit the fix to
-> >> staging.  
-> >
-> > Ugh, you should not be selecting that option, but rather depending on
-> > the option, right?  
-> 
-> All users in the kernel use "select", so i don't think so. An 
-> interesting use that adds explicit dependencies on architectures can be
-> seen here [1], in the generic code. I've proposed a patch [2] that does 
-> a similar thing for mc-bus. I think it's a good approach as it keeps 
-> things under control by explicitly specifying the architectures on which
-> the driver was compile-tested.
-> 
-> ---
-> Best Regards, Laurentiu
-> 
-> [1] 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/Kconfig#n28
-> [2] https://patchwork.kernel.org/patch/9871861/
+Today's linux-next merge of the pm tree got a conflict in:
 
-Any resolution of this?
+  drivers/acpi/sbs.c
+
+between commit:
+
+  f996c4155d0d ("dmi: Mark all struct dmi_system_id instances const")
+
+from the dmi tree and commit:
+
+  630b3aff8a51 ("treewide: Consolidate Apple DMI checks")
+
+from the pm tree.
+
+I fixed it up (the latter removed the declaration updated by the former)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
 -- 
 Cheers,
 Stephen Rothwell
