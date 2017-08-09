@@ -1,31 +1,28 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the scsi tree
-Date: Wed, 09 Aug 2017 09:32:47 -0700
-Message-ID: <1502296367.3602.26.camel@HansenPartnership.com>
-References: <20170809092730.1138bf7e@canb.auug.org.au>
-         <1502235696.2736.120.camel@HansenPartnership.com>
-         <yq14ltg676h.fsf@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
+Date: Thu, 10 Aug 2017 09:19:13 +1000
+Message-ID: <20170810091913.52034d41@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <yq14ltg676h.fsf@oracle.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46723 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752067AbdHIXTP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 9 Aug 2017 19:19:15 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, 2017-08-09 at 12:24 -0400, Martin K. Petersen wrote:
-> James,
-> 
-> > 
-> > Yes we had to drop a commit which proved problematic in the fixes
-> > tree.
-> 
-> I'm still not sure why you decided to rebase instead of waiting for
-> me to drop the patch. That's how we usually do it...
+Hi Mauro,
 
-We can certainly do it that way around.  If you want to rebase to drop
-the patch, I can set the top of the fixes tree to your rebase. 
+Commit
 
-James
+  383c36471c00 ("media: cx231xx: only unregister successfully registered i2c adapters")
+
+is missing a Signed-off-by from its committer.
+
+-- 
+Cheers,
+Stephen Rothwell
