@@ -1,28 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
-Date: Thu, 10 Aug 2017 09:19:13 +1000
-Message-ID: <20170810091913.52034d41@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Thu, 10 Aug 2017 12:06:34 +1000
+Message-ID: <20170810120634.17d62e91@canb.auug.org.au>
+References: <20170802122306.0882da2e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46723 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752067AbdHIXTP (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 9 Aug 2017 19:19:15 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170802122306.0882da2e@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
-
-Commit
-
-  383c36471c00 ("media: cx231xx: only unregister successfully registered i2c adapters")
-
-is missing a Signed-off-by from its committer.
-
--- 
-Cheers,
-Stephen Rothwell
+SGkgRGF2ZSwKCk9uIFdlZCwgMiBBdWcgMjAxNyAxMjoyMzowNiArMTAwMCBTdGVwaGVuIFJvdGh3
+ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gd3JvdGU6Cj4KPiBUb2RheSdzIGxpbnV4LW5leHQg
+bWVyZ2Ugb2YgdGhlIGRybS1taXNjIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4gCj4gICBkcml2
+ZXJzL2dwdS9kcm0vbm91dmVhdS9udjUwX2Rpc3BsYXkuYwo+IAo+IGJldHdlZW4gY29tbWl0Ogo+
+IAo+ICAgNGE1NDMxYWYxOWJjICgiZHJtL25vdXZlYXUva21zL252NTA6IHVwZGF0ZSB2Ymxhbmsg
+c3RhdGUgaW4gcmVzcG9uc2UgdG8gbW9kZXNldCBhY3Rpb25zIikKPiAKPiBmcm9tIExpbnVzJyB0
+cmVlIGFuZCBjb21taXQ6Cj4gCj4gICAzYzg0N2Q2Y2RhZGIgKCJkcm0vbm91dmVhdTogQ29udmVy
+dCBub3V2ZWF1IHRvIHVzZSBuZXcgaXRlcmF0b3IgbWFjcm9zLCB2Mi4iKQo+IAo+IGZyb20gdGhl
+IGRybS1taXNjIHRyZWUuCj4gCj4gSSBmaXhlZCBpdCB1cCAoSSB0aGluayAtIHNlZSBiZWxvdykg
+YW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4KPiBUaGlzIGlzIG5vdyBmaXhlZCBh
+cyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uCj4gdHJpdmlhbCBj
+b25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIg
+d2hlbgo+IHlvdXIgdHJlZSBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28g
+d2FudCB0byBjb25zaWRlcgo+IGNvb3BlcmF0aW5nIHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhl
+IGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55Cj4gcGFydGljdWxhcmx5IGNvbXBsZXgg
+Y29uZmxpY3RzLgo+IAo+IC0tIAo+IENoZWVycywKPiBTdGVwaGVuIFJvdGh3ZWxsCj4gCj4gZGlm
+ZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L252NTBfZGlzcGxheS5jCj4gaW5kZXggOWQ0
+MGIyYThiZTRkLGJkMTE5OWI2N2ViNC4uMDAwMDAwMDAwMDAwCj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL25vdXZlYXUvbnY1MF9kaXNwbGF5LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
+dS9udjUwX2Rpc3BsYXkuYwo+IEBAQCAtMzk0MSw4IC0zOTMzLDYgKzM5NDIsOCBAQEAgbnY1MF9k
+aXNwX2F0b21pY19jb21taXRfdGFpbChzdHJ1Y3QgZHJtCj4gICAKPiAgIAkJTlZfQVRPTUlDKGRy
+bSwgIiVzOiBjbHIgJTA0eCAoc2V0ICUwNHgpXG4iLCBjcnRjLT5uYW1lLAo+ICAgCQkJICBhc3lo
+LT5jbHIubWFzaywgYXN5aC0+c2V0Lm1hc2spOwo+IC0gCQlpZiAoY3J0Y19zdGF0ZS0+YWN0aXZl
+ICYmICFhc3loLT5zdGF0ZS5hY3RpdmUpCj4gKysJCWlmIChuZXdfY3J0Y19zdGF0ZS0+YWN0aXZl
+ICYmICFhc3loLT5zdGF0ZS5hY3RpdmUpCj4gICsJCQlkcm1fY3J0Y192Ymxhbmtfb2ZmKGNydGMp
+Owo+ICAgCj4gICAJCWlmIChhc3loLT5jbHIubWFzaykgewo+ICAgCQkJbnY1MF9oZWFkX2ZsdXNo
+X2NscihoZWFkLCBhc3loLCBhdG9tLT5mbHVzaF9kaXNhYmxlKTsKPiBAQEAgLTQwMjgsMTMgLTQw
+MTgsMTEgKzQwMjksMTMgQEBACj4gICAJCQludjUwX2hlYWRfZmx1c2hfc2V0KGhlYWQsIGFzeWgp
+Owo+ICAgCQkJaW50ZXJsb2NrX2NvcmUgPSAxOwo+ICAgCQl9Cj4gIC0JfQo+ICAgCj4gIC0JZm9y
+X2VhY2hfbmV3X2NydGNfaW5fc3RhdGUoc3RhdGUsIGNydGMsIG5ld19jcnRjX3N0YXRlLCBpKSB7
+Cj4gIC0JCWlmIChuZXdfY3J0Y19zdGF0ZS0+ZXZlbnQpCj4gIC0JCQlkcm1fY3J0Y192Ymxhbmtf
+Z2V0KGNydGMpOwo+ICArCQlpZiAoYXN5aC0+c3RhdGUuYWN0aXZlKSB7Cj4gLSAJCQlpZiAoIWNy
+dGNfc3RhdGUtPmFjdGl2ZSkKPiArKwkJCWlmICghbmV3X2NydGNfc3RhdGUtPmFjdGl2ZSkKPiAg
+KwkJCQlkcm1fY3J0Y192Ymxhbmtfb24oY3J0Yyk7Cj4gICsJCQlpZiAoYXN5aC0+c3RhdGUuZXZl
+bnQpCj4gICsJCQkJZHJtX2NydGNfdmJsYW5rX2dldChjcnRjKTsKPiAgKwkJfQo+ICAgCX0KPiAg
+IAo+ICAgCS8qIFVwZGF0ZSBwbGFuZShzKS4gKi8KPiBAQEAgLTQwNzcsMTggLTQwNjUsMTYgKzQw
+NzgsMTggQEBACj4gICAJCQlOVl9FUlJPUihkcm0sICIlczogdGltZW91dFxuIiwgcGxhbmUtPm5h
+bWUpOwo+ICAgCX0KPiAgIAo+IC0gCWZvcl9lYWNoX2NydGNfaW5fc3RhdGUoc3RhdGUsIGNydGMs
+IGNydGNfc3RhdGUsIGkpIHsKPiAtIAkJaWYgKGNydGMtPnN0YXRlLT5ldmVudCkgewo+ICsgCWZv
+cl9lYWNoX25ld19jcnRjX2luX3N0YXRlKHN0YXRlLCBjcnRjLCBuZXdfY3J0Y19zdGF0ZSwgaSkg
+ewo+ICsgCQlpZiAobmV3X2NydGNfc3RhdGUtPmV2ZW50KSB7Cj4gICAJCQl1bnNpZ25lZCBsb25n
+IGZsYWdzOwo+ICAgCQkJLyogR2V0IGNvcnJlY3QgY291bnQvdHMgaWYgcmFjaW5nIHdpdGggdmJs
+YW5rIGlycSAqLwo+ICAtCQkJZHJtX2NydGNfYWNjdXJhdGVfdmJsYW5rX2NvdW50KGNydGMpOwo+
+ICArCQkJaWYgKGNydGMtPnN0YXRlLT5hY3RpdmUpCj4gICsJCQkJZHJtX2NydGNfYWNjdXJhdGVf
+dmJsYW5rX2NvdW50KGNydGMpOwo+ICAgCQkJc3Bpbl9sb2NrX2lycXNhdmUoJmNydGMtPmRldi0+
+ZXZlbnRfbG9jaywgZmxhZ3MpOwo+IC0gCQkJZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoY3J0
+YywgY3J0Yy0+c3RhdGUtPmV2ZW50KTsKPiArIAkJCWRybV9jcnRjX3NlbmRfdmJsYW5rX2V2ZW50
+KGNydGMsIG5ld19jcnRjX3N0YXRlLT5ldmVudCk7Cj4gICAJCQlzcGluX3VubG9ja19pcnFyZXN0
+b3JlKCZjcnRjLT5kZXYtPmV2ZW50X2xvY2ssIGZsYWdzKTsKPiAtIAkJCWNydGMtPnN0YXRlLT5l
+dmVudCA9IE5VTEw7Cj4gKyAJCQluZXdfY3J0Y19zdGF0ZS0+ZXZlbnQgPSBOVUxMOwo+ICAtCQkJ
+ZHJtX2NydGNfdmJsYW5rX3B1dChjcnRjKTsKPiAgKwkJCWlmIChjcnRjLT5zdGF0ZS0+YWN0aXZl
+KQo+ICArCQkJCWRybV9jcnRjX3ZibGFua19wdXQoY3J0Yyk7Cj4gICAJCX0KPiAgIAl9Cj4gICAK
+ClRoaXMgY29uZmxpY3QgaXMgbm93IGJldHdlZW4gdGhlIGRybSB0cmVlIGFuZCBMaW51cycgdHJl
+ZS4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
