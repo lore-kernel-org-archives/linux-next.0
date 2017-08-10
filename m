@@ -1,24 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the omap tree
-Date: Fri, 11 Aug 2017 09:25:08 +1000
-Message-ID: <20170811092508.727d77db@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the kvm tree
+Date: Fri, 11 Aug 2017 09:28:16 +1000
+Message-ID: <20170811092816.01875df0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Hildenbrand <david@redhat.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Tony,
+Hi all,
 
-Commits
+Commit
 
-  de2f0cf18400 ("ARM: dts: dra72x: Create a common file with MMC/SD IOdelay data")
-  949ac551ff48 ("ARM: dts: dra74x: Create a common file with MMC/SD IOdelay data")
+  53a70daf3cfd ("KVM: nVMX: get rid of nested_release_page*")
 
-are missing a Signed-off-by from their author.
+is missing a Signed-off-by from its committer.
 
 -- 
 Cheers,
