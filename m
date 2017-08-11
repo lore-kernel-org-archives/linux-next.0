@@ -1,61 +1,41 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 11 Aug 2017 16:45:36 +0200
-Message-ID: <20170811144536.qw3ufue2uvm2r6wk@hirez.programming.kicks-ass.net>
-References: <20170811144352.585085e2@canb.auug.org.au>
- <20170811045453.GB3730@linux.vnet.ibm.com>
- <20170811091434.h6mkuuw3zcgkzg26@hirez.programming.kicks-ass.net>
- <20170811143917.GD3730@linux.vnet.ibm.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the omap tree
+Date: Fri, 11 Aug 2017 08:18:31 -0700
+Message-ID: <20170811151830.GF3930@atomide.com>
+References: <20170811092508.727d77db@canb.auug.org.au>
+ <4787caf0-d66e-bd75-805d-9d8c078e4ed7@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from muru.com ([72.249.23.125]:35462 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752901AbdHKPSe (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 11 Aug 2017 11:18:34 -0400
 Content-Disposition: inline
-In-Reply-To: <20170811143917.GD3730@linux.vnet.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <4787caf0-d66e-bd75-805d-9d8c078e4ed7@ti.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
 
-On Fri, Aug 11, 2017 at 07:39:17AM -0700, Paul E. McKenney wrote:
-> On Fri, Aug 11, 2017 at 11:14:34AM +0200, Peter Zijlstra wrote:
-> > On Thu, Aug 10, 2017 at 09:54:53PM -0700, Paul E. McKenney wrote:
-> > > On Fri, Aug 11, 2017 at 02:43:52PM +1000, Stephen Rothwell wrote:
-> > > 
-> > > Looks like I need to rebase my patch on top of a9668cd6ee28, and
-> > > than put an smp_mb__after_spinlock() between the lock and the unlock.
-> > > 
-> > > Peter, any objections to that approach?  Other suggestions?
+* Kishon Vijay Abraham I <kishon@ti.com> [170811 03:43]:
+> 
+> 
+> On Friday 11 August 2017 04:55 AM, Stephen Rothwell wrote:
+> > Hi Tony,
 > > 
-> > Hurm.. I'll have to try and understand that comment there again it
-> > seems.
+> > Commits
+> > 
+> >   de2f0cf18400 ("ARM: dts: dra72x: Create a common file with MMC/SD IOdelay data")
+> >   949ac551ff48 ("ARM: dts: dra74x: Create a common file with MMC/SD IOdelay data")
+> > 
+> > are missing a Signed-off-by from their author.
 > 
-> My reasoning is as follows:
-> 
-> 1.	The critical section is empty, so any prior references
-> 	would be ordered only against later critical sections.
-> 
-> 2.	A full barrier within the critical section will order those
-> 	prior references against later critical sections just
-> 	as easily as would one prior to the critical section.
-> 
-> Does that make sense, I should I have stayed away from the keyboard
-> at this early hour?  ;-)
+> sorry for not noticing this before.
 
-So I think we can do away with 2 because our prior and later stores have
-an address dependency (they are to the same variable) and thus must be
-ordered already.
+Oops, will drop these two today. Can you guys
+please resend them?
 
-Basically:
+Regards,
 
-	CPU0				CPU1
-
-	p->state = TASK_UNINTERRUPTIBLE;
-					 try_to_wake_up(p)
-	p->state = TASK_RUNNING
-	spin_lock(&p->pi_lock);
-	spin_unlock(&p->pi_lock);
-	p->state = TASK_DEAD
-
-Now, the ttwu(p) NO-OPs unless it sees (UN)INTERRUPTIBLE, so either
-RUNNING or DEAD are fine. However if it sees (UN)INTERRUPTIBLE it will
-do another (competing) RUNNING store which must not overwrite DEAD.
+Tony
