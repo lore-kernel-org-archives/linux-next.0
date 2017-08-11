@@ -1,105 +1,113 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the pm tree with the tty.current tree
-Date: Fri, 11 Aug 2017 08:45:39 -0700
-Message-ID: <20170811154539.GB22908@kroah.com>
-References: <20170811120047.17d5db54@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 11 Aug 2017 13:12:47 -0700
+Message-ID: <20170811201247.GH3730@linux.vnet.ibm.com>
+References: <20170811144352.585085e2@canb.auug.org.au>
+ <20170811045453.GB3730@linux.vnet.ibm.com>
+ <20170811091434.h6mkuuw3zcgkzg26@hirez.programming.kicks-ass.net>
+ <20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:52493 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753004AbdHKPpl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Fri, 11 Aug 2017 11:45:41 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170811120047.17d5db54@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>, Graeme Gregory <graeme.gregory@linaro.org>
+In-Reply-To: <20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 11, 2017 at 12:00:47PM +1000, Stephen Rothwell wrote:
-> Hi Rafael,
+On Fri, Aug 11, 2017 at 04:41:50PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 11, 2017 at 11:14:34AM +0200, Peter Zijlstra wrote:
+> > On Thu, Aug 10, 2017 at 09:54:53PM -0700, Paul E. McKenney wrote:
+> > > On Fri, Aug 11, 2017 at 02:43:52PM +1000, Stephen Rothwell wrote:
+> > > 
+> > > Looks like I need to rebase my patch on top of a9668cd6ee28, and
+> > > than put an smp_mb__after_spinlock() between the lock and the unlock.
+> > > 
+> > > Peter, any objections to that approach?  Other suggestions?
+> > 
+> > Hurm.. I'll have to try and understand that comment there again it
+> > seems.
 > 
-> Today's linux-next merge of the pm tree got a conflict in:
+> OK, so per commit b5740f4b2cb3 ("sched: Fix ancient race in do_exit()")
+> the race is with try_to_wake_up():
 > 
->   drivers/acpi/spcr.c
+> down_read()
+> 	p->state = TASK_UNINTERRUPTIBLE;
 > 
-> between commit:
+> 						try_to_wake_up(p)
+> 							spin_lock(p->pi_lock);
+> 							/* sees TASK_UNINTERRUPTIBLE */
+> 							ttwu_remote()
+> 	/* check stuff, no need to schedule() */
+> 	p->state = TASK_RUNNING
 > 
->   37ef38f3f838 ("tty: pl011: fix initialization order of QDF2400 E44")
 > 
-> from the tty.current tree and commit:
+> p->state = TASK_DEAD
 > 
->   01c5210cad90 ("ACPI: SPCR: work around clock issue on xgene UART")
+> 								p->state = TASK_RUNNING /* whoops! */
+> 							spin_unlock(p->pi_lock);
 > 
-> from the pm tree.
+> __schedule(false);
+> BUG();
 > 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
 > 
-> diff --cc drivers/acpi/spcr.c
-> index 98aa8c808a33,48a7efc28ebb..000000000000
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@@ -157,35 -155,21 +165,43 @@@ int __init parse_spcr(bool earlycon
->   		goto done;
->   	}
->   
->  -	if (qdf2400_erratum_44_present(&table->header))
->  -		uart = "qdf2400_e44";
->  +	/*
->  +	 * If the E44 erratum is required, then we need to tell the pl011
->  +	 * driver to implement the work-around.
->  +	 *
->  +	 * The global variable is used by the probe function when it
->  +	 * creates the UARTs, whether or not they're used as a console.
->  +	 *
->  +	 * If the user specifies "traditional" earlycon, the qdf2400_e44
->  +	 * console name matches the EARLYCON_DECLARE() statement, and
->  +	 * SPCR is not used.  Parameter "earlycon" is false.
->  +	 *
->  +	 * If the user specifies "SPCR" earlycon, then we need to update
->  +	 * the console name so that it also says "qdf2400_e44".  Parameter
->  +	 * "earlycon" is true.
->  +	 *
->  +	 * For consistency, if we change the console name, then we do it
->  +	 * for everyone, not just earlycon.
->  +	 */
->  +	if (qdf2400_erratum_44_present(&table->header)) {
->  +		qdf2400_e44_present = true;
->  +		if (earlycon)
->  +			uart = "qdf2400_e44";
->  +	}
->  +
-> - 	if (xgene_8250_erratum_present(table))
-> + 	if (xgene_8250_erratum_present(table)) {
->   		iotype = "mmio32";
->   
-> - 	snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, iotype,
-> - 		 table->serial_port.address, baud_rate);
-> + 		/* for xgene v1 and v2 we don't know the clock rate of the
-> + 		 * UART so don't attempt to change to the baud rate state
-> + 		 * in the table because driver cannot calculate the dividers
-> + 		 */
-> + 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype,
-> + 			 table->serial_port.address);
-> + 	} else {
-> + 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, iotype,
-> + 			 table->serial_port.address, baud_rate);
-> + 	}
->   
->   	pr_info("console: %s\n", opts);
->   
+> 
+> So given that, I think that:
+> 
+>   spin_lock(&current->pi_lock);
+>   spin_unlock(&current->pi_lock);
+> 
+>   current->state = TASK_DEAD;
+> 
+> is sufficient. I don't see a need for an additional smp_mb here.
+> 
+> Either the concurrent ttwu is finished and we must observe its RUNNING
+> store, or it will observe our RUNNING store.
 
-Fix looks good to me, thanks!
+Makes sense to me!  Please see below for the updated commit.
 
-greg k-h
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 23a9b748a3d27f67cdb078fcb891a920285e75d9
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Thu Jun 29 12:08:26 2017 -0700
+
+    sched: Replace spin_unlock_wait() with lock/unlock pair
+    
+    There is no agreed-upon definition of spin_unlock_wait()'s semantics,
+    and it appears that all callers could do just as well with a lock/unlock
+    pair.  This commit therefore replaces the spin_unlock_wait() call in
+    do_task_dead() with spin_lock() followed immediately by spin_unlock().
+    This should be safe from a performance perspective because the lock is
+    this tasks ->pi_lock, and this is called only after the task exits.
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+    Cc: Ingo Molnar <mingo@redhat.com>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Cc: Will Deacon <will.deacon@arm.com>
+    Cc: Alan Stern <stern@rowland.harvard.edu>
+    Cc: Andrea Parri <parri.andrea@gmail.com>
+    Cc: Linus Torvalds <torvalds@linux-foundation.org>
+    [ paulmck: Drop smp_mb() based on Peter Zijlstra's analysis:
+      http://lkml.kernel.org/r/20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net ]
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 17c667b427b4..5d22323ae099 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3352,8 +3352,8 @@ void __noreturn do_task_dead(void)
+ 	 * To avoid it, we have to wait for releasing tsk->pi_lock which
+ 	 * is held by try_to_wake_up()
+ 	 */
+-	smp_mb();
+-	raw_spin_unlock_wait(&current->pi_lock);
++	raw_spin_lock_irq(&current->pi_lock);
++	raw_spin_unlock_irq(&current->pi_lock);
+ 
+ 	/* Causes final put_task_struct in finish_task_switch(): */
+ 	__set_current_state(TASK_DEAD);
