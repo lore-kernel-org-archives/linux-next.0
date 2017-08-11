@@ -1,138 +1,59 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Fri, 11 Aug 2017 16:04:50 +0200
-Message-ID: <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
-References: <20170811175326.36d546dc@canb.auug.org.au>
- <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
- <20170811214556.322b3c4e@canb.auug.org.au>
- <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: build failure after merge of the rcu tree
+Date: Fri, 11 Aug 2017 07:39:17 -0700
+Message-ID: <20170811143917.GD3730@linux.vnet.ibm.com>
+References: <20170811144352.585085e2@canb.auug.org.au>
+ <20170811045453.GB3730@linux.vnet.ibm.com>
+ <20170811091434.h6mkuuw3zcgkzg26@hirez.programming.kicks-ass.net>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:50642 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752850AbdHKOFC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 11 Aug 2017 10:05:02 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49596 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753183AbdHKOjh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 11 Aug 2017 10:39:37 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v7BEdaH1009288
+        for <linux-next@vger.kernel.org>; Fri, 11 Aug 2017 10:39:37 -0400
+Received: from e18.ny.us.ibm.com (e18.ny.us.ibm.com [129.33.205.208])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2c9bk19xtq-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Fri, 11 Aug 2017 10:39:37 -0400
+Received: from localhost
+        by e18.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 11 Aug 2017 10:39:19 -0400
 Content-Disposition: inline
-In-Reply-To: <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
+In-Reply-To: <20170811091434.h6mkuuw3zcgkzg26@hirez.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>, Linus <torvalds@linux-foundation.org>, minchan@kernel.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+On Fri, Aug 11, 2017 at 11:14:34AM +0200, Peter Zijlstra wrote:
+> On Thu, Aug 10, 2017 at 09:54:53PM -0700, Paul E. McKenney wrote:
+> > On Fri, Aug 11, 2017 at 02:43:52PM +1000, Stephen Rothwell wrote:
+> > 
+> > Looks like I need to rebase my patch on top of a9668cd6ee28, and
+> > than put an smp_mb__after_spinlock() between the lock and the unlock.
+> > 
+> > Peter, any objections to that approach?  Other suggestions?
+> 
+> Hurm.. I'll have to try and understand that comment there again it
+> seems.
 
-Ok, so I have the below to still go on-top.
+My reasoning is as follows:
 
-Ideally someone would clarify the situation around
-mm_tlb_flush_nested(), because ideally we'd remove the
-smp_mb__after_atomic() and go back to relying on PTL alone.
+1.	The critical section is empty, so any prior references
+	would be ordered only against later critical sections.
 
-This also removes the pointless smp_mb__before_atomic()
+2.	A full barrier within the critical section will order those
+	prior references against later critical sections just
+	as easily as would one prior to the critical section.
 
----
-Subject: mm: Fix barriers for the tlb_flush_pending thing
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Fri Aug 11 12:43:33 CEST 2017
+Does that make sense, I should I have stayed away from the keyboard
+at this early hour?  ;-)
 
-I'm not 100% sure we always care about the same PTL and when we have
-SPLIT_PTE_PTLOCKS and have RCpc locks (PPC) the UNLOCK of one does not
-in fact order against the LOCK of another lock. Therefore the
-documented scheme does not work if we care about multiple PTLs
-
-mm_tlb_flush_pending() appears to only care about a single PTL:
-
- - arch pte_accessible() (x86, arm64) only cares about that one PTE.
- - do_huge_pmd_numa_page() also only cares about a single (huge) page.
- - ksm write_protect_page() also only cares about a single page.
-
-however mm_tlb_flush_nested() is a mystery, it appears to care about
-anything inside the range. For now rely on it doing at least _a_ PTL
-lock instead of taking  _the_ PTL lock.
-
-Therefore add an explicit smp_mb__after_atomic() to cure things.
-
-Also remove the smp_mb__before_atomic() on the dec side, as its
-completely pointless. We must rely on flush_tlb_range() to DTRT.
-
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/mm_types.h |   38 ++++++++++++++++++++++----------------
- 1 file changed, 22 insertions(+), 16 deletions(-)
-
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -537,13 +537,13 @@ static inline bool mm_tlb_flush_pending(
- {
- 	/*
- 	 * Must be called with PTL held; such that our PTL acquire will have
--	 * observed the store from set_tlb_flush_pending().
-+	 * observed the increment from inc_tlb_flush_pending().
- 	 */
--	return atomic_read(&mm->tlb_flush_pending) > 0;
-+	return atomic_read(&mm->tlb_flush_pending);
- }
- 
- /*
-- * Returns true if there are two above TLB batching threads in parallel.
-+ * Returns true if there are two or more TLB batching threads in parallel.
-  */
- static inline bool mm_tlb_flush_nested(struct mm_struct *mm)
- {
-@@ -558,15 +558,12 @@ static inline void init_tlb_flush_pendin
- static inline void inc_tlb_flush_pending(struct mm_struct *mm)
- {
- 	atomic_inc(&mm->tlb_flush_pending);
--
- 	/*
--	 * The only time this value is relevant is when there are indeed pages
--	 * to flush. And we'll only flush pages after changing them, which
--	 * requires the PTL.
--	 *
- 	 * So the ordering here is:
- 	 *
- 	 *	atomic_inc(&mm->tlb_flush_pending);
-+	 *	smp_mb__after_atomic();
-+	 *
- 	 *	spin_lock(&ptl);
- 	 *	...
- 	 *	set_pte_at();
-@@ -580,21 +577,30 @@ static inline void inc_tlb_flush_pending
- 	 *	flush_tlb_range();
- 	 *	atomic_dec(&mm->tlb_flush_pending);
- 	 *
--	 * So the =true store is constrained by the PTL unlock, and the =false
--	 * store is constrained by the TLB invalidate.
-+	 * Where we order the increment against the PTE modification with the
-+	 * smp_mb__after_atomic(). It would appear that the spin_unlock(&ptl)
-+	 * is sufficient to constrain the inc, because we only care about the
-+	 * value if there is indeed a pending PTE modification. However with
-+	 * SPLIT_PTE_PTLOCKS and RCpc locks (PPC) the UNLOCK of one lock does
-+	 * not order against the LOCK of another lock.
-+	 *
-+	 * The decrement is ordered by the flush_tlb_range(), such that
-+	 * mm_tlb_flush_pending() will not return false unless all flushes have
-+	 * completed.
- 	 */
-+	smp_mb__after_atomic();
- }
- 
--/* Clearing is done after a TLB flush, which also provides a barrier. */
- static inline void dec_tlb_flush_pending(struct mm_struct *mm)
- {
- 	/*
--	 * Guarantee that the tlb_flush_pending does not not leak into the
--	 * critical section, since we must order the PTE change and changes to
--	 * the pending TLB flush indication. We could have relied on TLB flush
--	 * as a memory barrier, but this behavior is not clearly documented.
-+	 * See inc_tlb_flush_pending().
-+	 *
-+	 * This cannot be smp_mb__before_atomic() because smp_mb() simply does
-+	 * not order against TLB invalidate completion, which is what we need.
-+	 *
-+	 * Therefore we must rely on tlb_flush_*() to guarantee order.
- 	 */
--	smp_mb__before_atomic();
- 	atomic_dec(&mm->tlb_flush_pending);
- }
- 
+							Thanx, Paul
