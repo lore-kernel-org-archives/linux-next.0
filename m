@@ -1,41 +1,105 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the omap tree
-Date: Fri, 11 Aug 2017 08:18:31 -0700
-Message-ID: <20170811151830.GF3930@atomide.com>
-References: <20170811092508.727d77db@canb.auug.org.au>
- <4787caf0-d66e-bd75-805d-9d8c078e4ed7@ti.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the pm tree with the tty.current tree
+Date: Fri, 11 Aug 2017 08:45:39 -0700
+Message-ID: <20170811154539.GB22908@kroah.com>
+References: <20170811120047.17d5db54@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:35462 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752901AbdHKPSe (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 11 Aug 2017 11:18:34 -0400
+Received: from out3-smtp.messagingengine.com ([66.111.4.27]:52493 "EHLO
+        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753004AbdHKPpl (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Fri, 11 Aug 2017 11:45:41 -0400
 Content-Disposition: inline
-In-Reply-To: <4787caf0-d66e-bd75-805d-9d8c078e4ed7@ti.com>
+In-Reply-To: <20170811120047.17d5db54@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Timur Tabi <timur@codeaurora.org>, Graeme Gregory <graeme.gregory@linaro.org>
 
-* Kishon Vijay Abraham I <kishon@ti.com> [170811 03:43]:
+On Fri, Aug 11, 2017 at 12:00:47PM +1000, Stephen Rothwell wrote:
+> Hi Rafael,
 > 
+> Today's linux-next merge of the pm tree got a conflict in:
 > 
-> On Friday 11 August 2017 04:55 AM, Stephen Rothwell wrote:
-> > Hi Tony,
-> > 
-> > Commits
-> > 
-> >   de2f0cf18400 ("ARM: dts: dra72x: Create a common file with MMC/SD IOdelay data")
-> >   949ac551ff48 ("ARM: dts: dra74x: Create a common file with MMC/SD IOdelay data")
-> > 
-> > are missing a Signed-off-by from their author.
+>   drivers/acpi/spcr.c
 > 
-> sorry for not noticing this before.
+> between commit:
+> 
+>   37ef38f3f838 ("tty: pl011: fix initialization order of QDF2400 E44")
+> 
+> from the tty.current tree and commit:
+> 
+>   01c5210cad90 ("ACPI: SPCR: work around clock issue on xgene UART")
+> 
+> from the pm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/acpi/spcr.c
+> index 98aa8c808a33,48a7efc28ebb..000000000000
+> --- a/drivers/acpi/spcr.c
+> +++ b/drivers/acpi/spcr.c
+> @@@ -157,35 -155,21 +165,43 @@@ int __init parse_spcr(bool earlycon
+>   		goto done;
+>   	}
+>   
+>  -	if (qdf2400_erratum_44_present(&table->header))
+>  -		uart = "qdf2400_e44";
+>  +	/*
+>  +	 * If the E44 erratum is required, then we need to tell the pl011
+>  +	 * driver to implement the work-around.
+>  +	 *
+>  +	 * The global variable is used by the probe function when it
+>  +	 * creates the UARTs, whether or not they're used as a console.
+>  +	 *
+>  +	 * If the user specifies "traditional" earlycon, the qdf2400_e44
+>  +	 * console name matches the EARLYCON_DECLARE() statement, and
+>  +	 * SPCR is not used.  Parameter "earlycon" is false.
+>  +	 *
+>  +	 * If the user specifies "SPCR" earlycon, then we need to update
+>  +	 * the console name so that it also says "qdf2400_e44".  Parameter
+>  +	 * "earlycon" is true.
+>  +	 *
+>  +	 * For consistency, if we change the console name, then we do it
+>  +	 * for everyone, not just earlycon.
+>  +	 */
+>  +	if (qdf2400_erratum_44_present(&table->header)) {
+>  +		qdf2400_e44_present = true;
+>  +		if (earlycon)
+>  +			uart = "qdf2400_e44";
+>  +	}
+>  +
+> - 	if (xgene_8250_erratum_present(table))
+> + 	if (xgene_8250_erratum_present(table)) {
+>   		iotype = "mmio32";
+>   
+> - 	snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, iotype,
+> - 		 table->serial_port.address, baud_rate);
+> + 		/* for xgene v1 and v2 we don't know the clock rate of the
+> + 		 * UART so don't attempt to change to the baud rate state
+> + 		 * in the table because driver cannot calculate the dividers
+> + 		 */
+> + 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype,
+> + 			 table->serial_port.address);
+> + 	} else {
+> + 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx,%d", uart, iotype,
+> + 			 table->serial_port.address, baud_rate);
+> + 	}
+>   
+>   	pr_info("console: %s\n", opts);
+>   
 
-Oops, will drop these two today. Can you guys
-please resend them?
+Fix looks good to me, thanks!
 
-Regards,
-
-Tony
+greg k-h
