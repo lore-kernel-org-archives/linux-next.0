@@ -1,82 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Fri, 11 Aug 2017 14:06:46 +1000
-Message-ID: <20170811140646.6d499a6e@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the rcu tree
+Date: Fri, 11 Aug 2017 14:43:52 +1000
+Message-ID: <20170811144352.585085e2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51285 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50525 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751545AbdHKEGs (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 11 Aug 2017 00:06:48 -0400
+        id S1750815AbdHKEny (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 11 Aug 2017 00:43:54 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Paul,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the rcu tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  kernel/sched/fair.c
+kernel/sched/core.c: In function 'do_task_dead':
+kernel/sched/core.c:3385:2: error: implicit declaration of function 'smp_mb__before_spinlock' [-Werror=implicit-function-declaration]
+  smp_mb__before_spinlock();
+  ^
+cc1: some warnings being treated as errors
 
-between commit:
+Caused by commit
 
-  674e75411fc2 ("sched: cpufreq: Allow remote cpufreq callbacks")
+  4a6fc6107e90 ("sched: Replace spin_unlock_wait() with lock/unlock pair")
 
-from the pm tree and commit:
+Interacting with commit
 
-  a030d7381d8b ("sched/fair: Call cpufreq update util handlers less frequently on UP")
+  a9668cd6ee28 ("locking: Remove smp_mb__before_spinlock()")
 
 from the tip tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I applied this patch for now, but I assume something better is required.
 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 11 Aug 2017 14:32:10 +1000
+Subject: [PATCH] sched: temporary hack for locking: Remove smp_mb__before_spinlock()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ kernel/sched/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 2bd00feaea15..a4f4ba2e3be6 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3382,7 +3382,7 @@ void __noreturn do_task_dead(void)
+ 	 * To avoid it, we have to wait for releasing tsk->pi_lock which
+ 	 * is held by try_to_wake_up()
+ 	 */
+-	smp_mb__before_spinlock();
++	smp_mb();
+ 	raw_spin_lock_irq(&current->pi_lock);
+ 	raw_spin_unlock_irq(&current->pi_lock);
+ 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc kernel/sched/fair.c
-index d378d02fdfcb,8d5868771cb3..000000000000
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@@ -2790,6 -2801,29 +2801,31 @@@ static inline void update_cfs_shares(st
-  }
-  #endif /* CONFIG_FAIR_GROUP_SCHED */
-  
-+ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq)
-+ {
- -	if (&this_rq()->cfs == cfs_rq) {
-++	struct rq *rq = rq_of(cfs_rq);
-++
-++	if (&rq->cfs == cfs_rq) {
-+ 		/*
-+ 		 * There are a few boundary cases this might miss but it should
-+ 		 * get called often enough that that should (hopefully) not be
-+ 		 * a real problem -- added to that it only calls on the local
-+ 		 * CPU, so if we enqueue remotely we'll miss an update, but
-+ 		 * the next tick/schedule should update.
-+ 		 *
-+ 		 * It will not get called when we go idle, because the idle
-+ 		 * thread is a different class (!fair), nor will the utilization
-+ 		 * number include things like RT tasks.
-+ 		 *
-+ 		 * As is, the util number is not freq-invariant (we'd have to
-+ 		 * implement arch_scale_freq_capacity() for that).
-+ 		 *
-+ 		 * See cpu_util().
-+ 		 */
- -		cpufreq_update_util(rq_of(cfs_rq), 0);
-++		cpufreq_update_util(rq, 0);
-+ 	}
-+ }
-+ 
-  #ifdef CONFIG_SMP
-  /*
-   * Approximate:
