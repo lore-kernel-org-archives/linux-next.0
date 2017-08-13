@@ -1,65 +1,156 @@
-From: Nadav Amit <namit@vmware.com>
+From: Peter Zijlstra <peterz@infradead.org>
 Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
  tree
-Date: Sun, 13 Aug 2017 06:06:32 +0000
-Message-ID: <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
+Date: Sun, 13 Aug 2017 14:50:19 +0200
+Message-ID: <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
 References: <20170811175326.36d546dc@canb.auug.org.au>
  <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
  <20170811214556.322b3c4e@canb.auug.org.au>
  <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
  <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
+ <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-bl2nam02on0066.outbound.protection.outlook.com ([104.47.38.66]:42271
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750813AbdHMGGg (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 13 Aug 2017 02:06:36 -0400
-In-Reply-To: <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
-Content-Language: en-US
-Content-ID: <333CCAC84D73794ABB613731DD1F7B93@namprd05.prod.outlook.com>
+Received: from bombadil.infradead.org ([65.50.211.133]:57733 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750880AbdHMMub (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sun, 13 Aug 2017 08:50:31 -0400
+Content-Disposition: inline
+In-Reply-To: <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
+To: Nadav Amit <namit@vmware.com>
 Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, "minchan@kernel.org" <minchan@kernel.org>
 
-UGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPiB3cm90ZToNCg0KPiANCj4gT2ss
-IHNvIEkgaGF2ZSB0aGUgYmVsb3cgdG8gc3RpbGwgZ28gb24tdG9wLg0KPiANCj4gSWRlYWxseSBz
-b21lb25lIHdvdWxkIGNsYXJpZnkgdGhlIHNpdHVhdGlvbiBhcm91bmQNCj4gbW1fdGxiX2ZsdXNo
-X25lc3RlZCgpLCBiZWNhdXNlIGlkZWFsbHkgd2UnZCByZW1vdmUgdGhlDQo+IHNtcF9tYl9fYWZ0
-ZXJfYXRvbWljKCkgYW5kIGdvIGJhY2sgdG8gcmVseWluZyBvbiBQVEwgYWxvbmUuDQo+IA0KPiBU
-aGlzIGFsc28gcmVtb3ZlcyB0aGUgcG9pbnRsZXNzIHNtcF9tYl9fYmVmb3JlX2F0b21pYygpDQo+
-IA0KPiAtLS0NCj4gU3ViamVjdDogbW06IEZpeCBiYXJyaWVycyBmb3IgdGhlIHRsYl9mbHVzaF9w
-ZW5kaW5nIHRoaW5nDQo+IEZyb206IFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9y
-Zz4NCj4gRGF0ZTogRnJpIEF1ZyAxMSAxMjo0MzozMyBDRVNUIDIwMTcNCj4gDQo+IEknbSBub3Qg
-MTAwJSBzdXJlIHdlIGFsd2F5cyBjYXJlIGFib3V0IHRoZSBzYW1lIFBUTCBhbmQgd2hlbiB3ZSBo
-YXZlDQo+IFNQTElUX1BURV9QVExPQ0tTIGFuZCBoYXZlIFJDcGMgbG9ja3MgKFBQQykgdGhlIFVO
-TE9DSyBvZiBvbmUgZG9lcyBub3QNCj4gaW4gZmFjdCBvcmRlciBhZ2FpbnN0IHRoZSBMT0NLIG9m
-IGFub3RoZXIgbG9jay4gVGhlcmVmb3JlIHRoZQ0KPiBkb2N1bWVudGVkIHNjaGVtZSBkb2VzIG5v
-dCB3b3JrIGlmIHdlIGNhcmUgYWJvdXQgbXVsdGlwbGUgUFRMcw0KPiANCj4gbW1fdGxiX2ZsdXNo
-X3BlbmRpbmcoKSBhcHBlYXJzIHRvIG9ubHkgY2FyZSBhYm91dCBhIHNpbmdsZSBQVEw6DQo+IA0K
-PiAtIGFyY2ggcHRlX2FjY2Vzc2libGUoKSAoeDg2LCBhcm02NCkgb25seSBjYXJlcyBhYm91dCB0
-aGF0IG9uZSBQVEUuDQo+IC0gZG9faHVnZV9wbWRfbnVtYV9wYWdlKCkgYWxzbyBvbmx5IGNhcmVz
-IGFib3V0IGEgc2luZ2xlIChodWdlKSBwYWdlLg0KPiAtIGtzbSB3cml0ZV9wcm90ZWN0X3BhZ2Uo
-KSBhbHNvIG9ubHkgY2FyZXMgYWJvdXQgYSBzaW5nbGUgcGFnZS4NCj4gDQo+IGhvd2V2ZXIgbW1f
-dGxiX2ZsdXNoX25lc3RlZCgpIGlzIGEgbXlzdGVyeSwgaXQgYXBwZWFycyB0byBjYXJlIGFib3V0
-DQo+IGFueXRoaW5nIGluc2lkZSB0aGUgcmFuZ2UuIEZvciBub3cgcmVseSBvbiBpdCBkb2luZyBh
-dCBsZWFzdCBfYV8gUFRMDQo+IGxvY2sgaW5zdGVhZCBvZiB0YWtpbmcgIF90aGVfIFBUTCBsb2Nr
-Lg0KDQpJdCBkb2VzIG5vdCBjYXJlIGFib3V0IOKAnGFueXRoaW5n4oCdIGluc2lkZSB0aGUgcmFu
-Z2UsIGJ1dCBvbmx5IG9uIHNpdHVhdGlvbnMNCmluIHdoaWNoIHRoZXJlIGlzIGF0IGxlYXN0IG9u
-ZSAoc2FtZSkgUFQgdGhhdCB3YXMgbW9kaWZpZWQgYnkgb25lIGNvcmUgYW5kDQp0aGVuIHJlYWQg
-YnkgdGhlIG90aGVyLiBTbywgeWVzLCBpdCB3aWxsIGFsd2F5cyBiZSBfdGhlXyBzYW1lIFBUTCwg
-YW5kIG5vdA0KX2FfIFBUTCAtIGluIHRoZSBjYXNlcyB0aGF0IGZsdXNoIGlzIHJlYWxseSBuZWVk
-ZWQuDQoNClRoZSBpc3N1ZSB0aGF0IG1pZ2h0IHJlcXVpcmUgYWRkaXRpb25hbCBiYXJyaWVycyBp
-cyB0aGF0DQppbmNfdGxiX2ZsdXNoX3BlbmRpbmcoKSBhbmQgbW1fdGxiX2ZsdXNoX25lc3RlZCgp
-IGFyZSBjYWxsZWQgd2hlbiB0aGUgUFRMIGlzDQpub3QgaGVsZC4gSUlVQywgc2luY2UgdGhlIHJl
-bGVhc2UtYWNxdWlyZSBtaWdodCBub3QgYmVoYXZlIGFzIGEgZnVsbCBtZW1vcnkNCmJhcnJpZXIs
-IHRoaXMgcmVxdWlyZXMgYW4gZXhwbGljaXQgbWVtb3J5IGJhcnJpZXIuDQoNCj4gVGhlcmVmb3Jl
-IGFkZCBhbiBleHBsaWNpdCBzbXBfbWJfX2FmdGVyX2F0b21pYygpIHRvIGN1cmUgdGhpbmdzLg0K
-PiANCj4gQWxzbyByZW1vdmUgdGhlIHNtcF9tYl9fYmVmb3JlX2F0b21pYygpIG9uIHRoZSBkZWMg
-c2lkZSwgYXMgaXRzDQo+IGNvbXBsZXRlbHkgcG9pbnRsZXNzLiBXZSBtdXN0IHJlbHkgb24gZmx1
-c2hfdGxiX3JhbmdlKCkgdG8gRFRSVC4NCg0KR29vZC4gSXQgc2VlbWVkIGZpc2h5IHRvIG1lLCBi
-dXQgSSB3YXMgZm9jdXNlZCBvbiB0aGUgVExCIGNvbnNpc3RlbmN5IGFuZA0KbGVzcyBvbiB0aGUg
-YmFycmllcnMgKHRoYXTigJlzIG15IGV4Y3VzZSkuDQoNCk5hZGF2DQoNCg==
+On Sun, Aug 13, 2017 at 06:06:32AM +0000, Nadav Amit wrote:
+> > however mm_tlb_flush_nested() is a mystery, it appears to care about
+> > anything inside the range. For now rely on it doing at least _a_ PTL
+> > lock instead of taking  _the_ PTL lock.
+> 
+> It does not care about “anything” inside the range, but only on situations
+> in which there is at least one (same) PT that was modified by one core and
+> then read by the other. So, yes, it will always be _the_ same PTL, and not
+> _a_ PTL - in the cases that flush is really needed.
+> 
+> The issue that might require additional barriers is that
+> inc_tlb_flush_pending() and mm_tlb_flush_nested() are called when the PTL is
+> not held. IIUC, since the release-acquire might not behave as a full memory
+> barrier, this requires an explicit memory barrier.
+
+So I'm not entirely clear about this yet.
+
+How about:
+
+
+	CPU0				CPU1
+
+					tlb_gather_mmu()
+
+					lock PTLn
+					no mod
+					unlock PTLn
+
+	tlb_gather_mmu()
+
+					lock PTLm
+					mod
+					include in tlb range
+					unlock PTLm
+
+	lock PTLn
+	mod
+	unlock PTLn
+
+					tlb_finish_mmu()
+					  force = mm_tlb_flush_nested(tlb->mm);
+					  arch_tlb_finish_mmu(force);
+
+
+	... more ...
+
+	tlb_finish_mmu()
+
+
+
+In this case you also want CPU1's mm_tlb_flush_nested() call to return
+true, right?
+
+But even with an smp_mb__after_atomic() at CPU0's tlg_bather_mmu()
+you're not guaranteed CPU1 sees the increment. The only way to do that
+is to make the PTL locks RCsc and that is a much more expensive
+proposition.
+
+
+What about:
+
+
+	CPU0				CPU1
+
+					tlb_gather_mmu()
+
+					lock PTLn
+					no mod
+					unlock PTLn
+
+
+					lock PTLm
+					mod
+					include in tlb range
+					unlock PTLm
+
+	tlb_gather_mmu()
+
+	lock PTLn
+	mod
+	unlock PTLn
+
+					tlb_finish_mmu()
+					  force = mm_tlb_flush_nested(tlb->mm);
+					  arch_tlb_finish_mmu(force);
+
+
+	... more ...
+
+	tlb_finish_mmu()
+
+Do we want CPU1 to see it here? If so, where does it end?
+
+
+	CPU0				CPU1
+
+					tlb_gather_mmu()
+
+					lock PTLn
+					no mod
+					unlock PTLn
+
+
+					lock PTLm
+					mod
+					include in tlb range
+					unlock PTLm
+
+					tlb_finish_mmu()
+					  force = mm_tlb_flush_nested(tlb->mm);
+
+	tlb_gather_mmu()
+
+	lock PTLn
+	mod
+	unlock PTLn
+
+					  arch_tlb_finish_mmu(force);
+
+
+	... more ...
+
+	tlb_finish_mmu()
+
+
+This?
+
+
+Could you clarify under what exact condition mm_tlb_flush_nested() must
+return true?
