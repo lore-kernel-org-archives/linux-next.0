@@ -1,113 +1,65 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: build failure after merge of the rcu tree
-Date: Fri, 11 Aug 2017 13:12:47 -0700
-Message-ID: <20170811201247.GH3730@linux.vnet.ibm.com>
-References: <20170811144352.585085e2@canb.auug.org.au>
- <20170811045453.GB3730@linux.vnet.ibm.com>
- <20170811091434.h6mkuuw3zcgkzg26@hirez.programming.kicks-ass.net>
- <20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Nadav Amit <namit@vmware.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Sun, 13 Aug 2017 06:06:32 +0000
+Message-ID: <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
+References: <20170811175326.36d546dc@canb.auug.org.au>
+ <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
+ <20170811214556.322b3c4e@canb.auug.org.au>
+ <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
+ <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-bl2nam02on0066.outbound.protection.outlook.com ([104.47.38.66]:42271
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1750813AbdHMGGg (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 13 Aug 2017 02:06:36 -0400
+In-Reply-To: <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
+Content-Language: en-US
+Content-ID: <333CCAC84D73794ABB613731DD1F7B93@namprd05.prod.outlook.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Cc: Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>, "minchan@kernel.org" <minchan@kernel.org>
 
-On Fri, Aug 11, 2017 at 04:41:50PM +0200, Peter Zijlstra wrote:
-> On Fri, Aug 11, 2017 at 11:14:34AM +0200, Peter Zijlstra wrote:
-> > On Thu, Aug 10, 2017 at 09:54:53PM -0700, Paul E. McKenney wrote:
-> > > On Fri, Aug 11, 2017 at 02:43:52PM +1000, Stephen Rothwell wrote:
-> > > 
-> > > Looks like I need to rebase my patch on top of a9668cd6ee28, and
-> > > than put an smp_mb__after_spinlock() between the lock and the unlock.
-> > > 
-> > > Peter, any objections to that approach?  Other suggestions?
-> > 
-> > Hurm.. I'll have to try and understand that comment there again it
-> > seems.
-> 
-> OK, so per commit b5740f4b2cb3 ("sched: Fix ancient race in do_exit()")
-> the race is with try_to_wake_up():
-> 
-> down_read()
-> 	p->state = TASK_UNINTERRUPTIBLE;
-> 
-> 						try_to_wake_up(p)
-> 							spin_lock(p->pi_lock);
-> 							/* sees TASK_UNINTERRUPTIBLE */
-> 							ttwu_remote()
-> 	/* check stuff, no need to schedule() */
-> 	p->state = TASK_RUNNING
-> 
-> 
-> p->state = TASK_DEAD
-> 
-> 								p->state = TASK_RUNNING /* whoops! */
-> 							spin_unlock(p->pi_lock);
-> 
-> __schedule(false);
-> BUG();
-> 
-> 
-> 
-> 
-> So given that, I think that:
-> 
->   spin_lock(&current->pi_lock);
->   spin_unlock(&current->pi_lock);
-> 
->   current->state = TASK_DEAD;
-> 
-> is sufficient. I don't see a need for an additional smp_mb here.
-> 
-> Either the concurrent ttwu is finished and we must observe its RUNNING
-> store, or it will observe our RUNNING store.
-
-Makes sense to me!  Please see below for the updated commit.
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 23a9b748a3d27f67cdb078fcb891a920285e75d9
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Thu Jun 29 12:08:26 2017 -0700
-
-    sched: Replace spin_unlock_wait() with lock/unlock pair
-    
-    There is no agreed-upon definition of spin_unlock_wait()'s semantics,
-    and it appears that all callers could do just as well with a lock/unlock
-    pair.  This commit therefore replaces the spin_unlock_wait() call in
-    do_task_dead() with spin_lock() followed immediately by spin_unlock().
-    This should be safe from a performance perspective because the lock is
-    this tasks ->pi_lock, and this is called only after the task exits.
-    
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-    Cc: Ingo Molnar <mingo@redhat.com>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Will Deacon <will.deacon@arm.com>
-    Cc: Alan Stern <stern@rowland.harvard.edu>
-    Cc: Andrea Parri <parri.andrea@gmail.com>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    [ paulmck: Drop smp_mb() based on Peter Zijlstra's analysis:
-      http://lkml.kernel.org/r/20170811144150.26gowhxte7ri5fpk@hirez.programming.kicks-ass.net ]
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 17c667b427b4..5d22323ae099 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3352,8 +3352,8 @@ void __noreturn do_task_dead(void)
- 	 * To avoid it, we have to wait for releasing tsk->pi_lock which
- 	 * is held by try_to_wake_up()
- 	 */
--	smp_mb();
--	raw_spin_unlock_wait(&current->pi_lock);
-+	raw_spin_lock_irq(&current->pi_lock);
-+	raw_spin_unlock_irq(&current->pi_lock);
- 
- 	/* Causes final put_task_struct in finish_task_switch(): */
- 	__set_current_state(TASK_DEAD);
+UGV0ZXIgWmlqbHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPiB3cm90ZToNCg0KPiANCj4gT2ss
+IHNvIEkgaGF2ZSB0aGUgYmVsb3cgdG8gc3RpbGwgZ28gb24tdG9wLg0KPiANCj4gSWRlYWxseSBz
+b21lb25lIHdvdWxkIGNsYXJpZnkgdGhlIHNpdHVhdGlvbiBhcm91bmQNCj4gbW1fdGxiX2ZsdXNo
+X25lc3RlZCgpLCBiZWNhdXNlIGlkZWFsbHkgd2UnZCByZW1vdmUgdGhlDQo+IHNtcF9tYl9fYWZ0
+ZXJfYXRvbWljKCkgYW5kIGdvIGJhY2sgdG8gcmVseWluZyBvbiBQVEwgYWxvbmUuDQo+IA0KPiBU
+aGlzIGFsc28gcmVtb3ZlcyB0aGUgcG9pbnRsZXNzIHNtcF9tYl9fYmVmb3JlX2F0b21pYygpDQo+
+IA0KPiAtLS0NCj4gU3ViamVjdDogbW06IEZpeCBiYXJyaWVycyBmb3IgdGhlIHRsYl9mbHVzaF9w
+ZW5kaW5nIHRoaW5nDQo+IEZyb206IFBldGVyIFppamxzdHJhIDxwZXRlcnpAaW5mcmFkZWFkLm9y
+Zz4NCj4gRGF0ZTogRnJpIEF1ZyAxMSAxMjo0MzozMyBDRVNUIDIwMTcNCj4gDQo+IEknbSBub3Qg
+MTAwJSBzdXJlIHdlIGFsd2F5cyBjYXJlIGFib3V0IHRoZSBzYW1lIFBUTCBhbmQgd2hlbiB3ZSBo
+YXZlDQo+IFNQTElUX1BURV9QVExPQ0tTIGFuZCBoYXZlIFJDcGMgbG9ja3MgKFBQQykgdGhlIFVO
+TE9DSyBvZiBvbmUgZG9lcyBub3QNCj4gaW4gZmFjdCBvcmRlciBhZ2FpbnN0IHRoZSBMT0NLIG9m
+IGFub3RoZXIgbG9jay4gVGhlcmVmb3JlIHRoZQ0KPiBkb2N1bWVudGVkIHNjaGVtZSBkb2VzIG5v
+dCB3b3JrIGlmIHdlIGNhcmUgYWJvdXQgbXVsdGlwbGUgUFRMcw0KPiANCj4gbW1fdGxiX2ZsdXNo
+X3BlbmRpbmcoKSBhcHBlYXJzIHRvIG9ubHkgY2FyZSBhYm91dCBhIHNpbmdsZSBQVEw6DQo+IA0K
+PiAtIGFyY2ggcHRlX2FjY2Vzc2libGUoKSAoeDg2LCBhcm02NCkgb25seSBjYXJlcyBhYm91dCB0
+aGF0IG9uZSBQVEUuDQo+IC0gZG9faHVnZV9wbWRfbnVtYV9wYWdlKCkgYWxzbyBvbmx5IGNhcmVz
+IGFib3V0IGEgc2luZ2xlIChodWdlKSBwYWdlLg0KPiAtIGtzbSB3cml0ZV9wcm90ZWN0X3BhZ2Uo
+KSBhbHNvIG9ubHkgY2FyZXMgYWJvdXQgYSBzaW5nbGUgcGFnZS4NCj4gDQo+IGhvd2V2ZXIgbW1f
+dGxiX2ZsdXNoX25lc3RlZCgpIGlzIGEgbXlzdGVyeSwgaXQgYXBwZWFycyB0byBjYXJlIGFib3V0
+DQo+IGFueXRoaW5nIGluc2lkZSB0aGUgcmFuZ2UuIEZvciBub3cgcmVseSBvbiBpdCBkb2luZyBh
+dCBsZWFzdCBfYV8gUFRMDQo+IGxvY2sgaW5zdGVhZCBvZiB0YWtpbmcgIF90aGVfIFBUTCBsb2Nr
+Lg0KDQpJdCBkb2VzIG5vdCBjYXJlIGFib3V0IOKAnGFueXRoaW5n4oCdIGluc2lkZSB0aGUgcmFu
+Z2UsIGJ1dCBvbmx5IG9uIHNpdHVhdGlvbnMNCmluIHdoaWNoIHRoZXJlIGlzIGF0IGxlYXN0IG9u
+ZSAoc2FtZSkgUFQgdGhhdCB3YXMgbW9kaWZpZWQgYnkgb25lIGNvcmUgYW5kDQp0aGVuIHJlYWQg
+YnkgdGhlIG90aGVyLiBTbywgeWVzLCBpdCB3aWxsIGFsd2F5cyBiZSBfdGhlXyBzYW1lIFBUTCwg
+YW5kIG5vdA0KX2FfIFBUTCAtIGluIHRoZSBjYXNlcyB0aGF0IGZsdXNoIGlzIHJlYWxseSBuZWVk
+ZWQuDQoNClRoZSBpc3N1ZSB0aGF0IG1pZ2h0IHJlcXVpcmUgYWRkaXRpb25hbCBiYXJyaWVycyBp
+cyB0aGF0DQppbmNfdGxiX2ZsdXNoX3BlbmRpbmcoKSBhbmQgbW1fdGxiX2ZsdXNoX25lc3RlZCgp
+IGFyZSBjYWxsZWQgd2hlbiB0aGUgUFRMIGlzDQpub3QgaGVsZC4gSUlVQywgc2luY2UgdGhlIHJl
+bGVhc2UtYWNxdWlyZSBtaWdodCBub3QgYmVoYXZlIGFzIGEgZnVsbCBtZW1vcnkNCmJhcnJpZXIs
+IHRoaXMgcmVxdWlyZXMgYW4gZXhwbGljaXQgbWVtb3J5IGJhcnJpZXIuDQoNCj4gVGhlcmVmb3Jl
+IGFkZCBhbiBleHBsaWNpdCBzbXBfbWJfX2FmdGVyX2F0b21pYygpIHRvIGN1cmUgdGhpbmdzLg0K
+PiANCj4gQWxzbyByZW1vdmUgdGhlIHNtcF9tYl9fYmVmb3JlX2F0b21pYygpIG9uIHRoZSBkZWMg
+c2lkZSwgYXMgaXRzDQo+IGNvbXBsZXRlbHkgcG9pbnRsZXNzLiBXZSBtdXN0IHJlbHkgb24gZmx1
+c2hfdGxiX3JhbmdlKCkgdG8gRFRSVC4NCg0KR29vZC4gSXQgc2VlbWVkIGZpc2h5IHRvIG1lLCBi
+dXQgSSB3YXMgZm9jdXNlZCBvbiB0aGUgVExCIGNvbnNpc3RlbmN5IGFuZA0KbGVzcyBvbiB0aGUg
+YmFycmllcnMgKHRoYXTigJlzIG15IGV4Y3VzZSkuDQoNCk5hZGF2DQoNCg==
