@@ -1,79 +1,92 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the tty tree with the tty.current
  tree
-Date: Mon, 14 Aug 2017 21:57:23 +0200
-Message-ID: <20170814195723.GO6524@worktop.programming.kicks-ass.net>
-References: <20170811175326.36d546dc@canb.auug.org.au>
- <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
- <20170811214556.322b3c4e@canb.auug.org.au>
- <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
- <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
- <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
- <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
- <20170814031613.GD25427@bbox>
- <0F858068-D41D-46E3-B4A8-8A95B4EDB94F@vmware.com>
- <20170814083839.GD26913@bbox>
+Date: Mon, 14 Aug 2017 15:17:14 -0700
+Message-ID: <20170814221714.GA24595@kroah.com>
+References: <20170802142628.6b39c31d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:35508 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751098AbdHNT5d (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 14 Aug 2017 15:57:33 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35281 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752275AbdHNWRP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Aug 2017 18:17:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20170814083839.GD26913@bbox>
+In-Reply-To: <20170802142628.6b39c31d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Minchan Kim <minchan@kernel.org>
-Cc: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-On Mon, Aug 14, 2017 at 05:38:39PM +0900, Minchan Kim wrote:
-> memory-barrier.txt always scares me. I have read it for a while
-> and IIUC, it seems semantic of spin_unlock(&same_pte) would be
-> enough without some memory-barrier inside mm_tlb_flush_nested.
+On Wed, Aug 02, 2017 at 02:26:28PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the tty tree got a conflict in:
+> 
+>   drivers/tty/serial/8250/8250_core.c
+> 
+> between commit:
+> 
+>   9527b82ae3af ("Revert "serial: Delete dead code for CIR serial ports"")
+> 
+> from the tty.current tree and commit:
+> 
+>   c7ac15ce8924 ("serial: core: move UPF_NO_TXEN_TEST to quirks and rename")
+> 
+> from the tty tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/tty/serial/8250/8250_core.c
+> index 1aab3010fbfa,3db9d6e19660..000000000000
+> --- a/drivers/tty/serial/8250/8250_core.c
+> +++ b/drivers/tty/serial/8250/8250_core.c
+> @@@ -1043,24 -1043,14 +1043,25 @@@ int serial8250_register_8250_port(struc
+>   		if (up->dl_write)
+>   			uart->dl_write = up->dl_write;
+>   
+>  -		if (serial8250_isa_config != NULL)
+>  -			serial8250_isa_config(0, &uart->port,
+>  -					&uart->capabilities);
+>  +		if (uart->port.type != PORT_8250_CIR) {
+>  +			if (serial8250_isa_config != NULL)
+>  +				serial8250_isa_config(0, &uart->port,
+>  +						&uart->capabilities);
+>  +
+> ++			serial8250_apply_quirks(uart);
+>  +			ret = uart_add_one_port(&serial8250_reg,
+>  +						&uart->port);
+>  +			if (ret == 0)
+>  +				ret = uart->port.line;
+>  +		} else {
+>  +			dev_info(uart->port.dev,
+>  +				"skipping CIR port at 0x%lx / 0x%llx, IRQ %d\n",
+>  +				uart->port.iobase,
+>  +				(unsigned long long)uart->port.mapbase,
+>  +				uart->port.irq);
+>   
+>  -		serial8250_apply_quirks(uart);
+>  -		ret = uart_add_one_port(&serial8250_reg, &uart->port);
+>  -		if (ret == 0)
+>  -			ret = uart->port.line;
+>  +			ret = 0;
+>  +		}
+>   	}
+>   	mutex_unlock(&serial_mutex);
+>   
 
-Indeed, see the email I just send. Its both spin_lock() and
-spin_unlock() that we care about.
+I've merged this merge fix into the tty-next tree now.
 
-Aside from the semi permeable barrier of these primitives, RCpc ensures
-these orderings only work against the _same_ lock variable.
+thanks,
 
-Let me try and explain the ordering for PPC (which is by far the worst
-we have in this regard):
-
-
-spin_lock(lock)
-{
-	while (test_and_set(lock))
-		cpu_relax();
-	lwsync();
-}
-
-
-spin_unlock(lock)
-{
-	lwsync();
-	clear(lock);
-}
-
-Now LWSYNC has fairly 'simple' semantics, but with fairly horrible
-ramifications. Consider LWSYNC to provide _local_ TSO ordering, this
-means that it allows 'stores reordered after loads'.
-
-For the spin_lock() that implies that all load/store's inside the lock
-do indeed stay in, but the ACQUIRE is only on the LOAD of the
-test_and_set(). That is, the actual _set_ can leak in. After all it can
-re-order stores after load (inside the lock).
-
-For unlock it again means all load/store's prior stay prior, and the
-RELEASE is on the store clearing the lock state (nothing surprising
-here).
-
-Now the _local_ part, the main take-away is that these orderings are
-strictly CPU local. What makes the spinlock work across CPUs (as we'd
-very much expect it to) is the address dependency on the lock variable.
-
-In order for the spin_lock() to succeed, it must observe the clear. Its
-this link that crosses between the CPUs and builds the ordering. But
-only the two CPUs agree on this order. A third CPU not involved in
-this transaction can disagree on the order of events.
+greg k-h
