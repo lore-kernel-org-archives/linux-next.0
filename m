@@ -1,92 +1,57 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the tty tree with the tty.current
- tree
-Date: Mon, 14 Aug 2017 15:17:14 -0700
-Message-ID: <20170814221714.GA24595@kroah.com>
-References: <20170802142628.6b39c31d@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH-next] bus: fsl-mc: fix implicit irq include causing build
+ fails
+Date: Mon, 14 Aug 2017 15:18:44 -0700
+Message-ID: <20170814221844.GA24807@kroah.com>
+References: <20170723143652.16445-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:35281 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752275AbdHNWRP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 14 Aug 2017 18:17:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35112 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752275AbdHNWSo (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 14 Aug 2017 18:18:44 -0400
 Content-Disposition: inline
-In-Reply-To: <20170802142628.6b39c31d@canb.auug.org.au>
+In-Reply-To: <20170723143652.16445-1-paul.gortmaker@windriver.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, Stuart Yoder <stuyoder@gmail.com>, Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-On Wed, Aug 02, 2017 at 02:26:28PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Sun, Jul 23, 2017 at 10:36:52AM -0400, Paul Gortmaker wrote:
+> To fix:
 > 
-> Today's linux-next merge of the tty tree got a conflict in:
+> In file included from drivers/staging/fsl-dpaa2/ethernet/dpaa2-eth.h:39:0,
+>                  from drivers/staging/fsl-dpaa2/ethernet/dpaa2-ethtool.c:34:
+> drivers/staging/fsl-dpaa2/ethernet/../../fsl-mc/include/dpaa2-io.h:86:1: error: unknown type name ‘irqreturn_t’
+>  irqreturn_t dpaa2_io_irq(struct dpaa2_io *obj);
+>  ^
 > 
->   drivers/tty/serial/8250/8250_core.c
+> as seen on arm64 allmodconfig builds.
 > 
-> between commit:
+> Cc: Stuart Yoder <stuyoder@gmail.com>
+> Cc: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> ---
 > 
->   9527b82ae3af ("Revert "serial: Delete dead code for CIR serial ports"")
+> [Seen on current linux-next tree.]
 > 
-> from the tty.current tree and commit:
+>  drivers/staging/fsl-mc/include/dpaa2-io.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
->   c7ac15ce8924 ("serial: core: move UPF_NO_TXEN_TEST to quirks and rename")
-> 
-> from the tty tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/tty/serial/8250/8250_core.c
-> index 1aab3010fbfa,3db9d6e19660..000000000000
-> --- a/drivers/tty/serial/8250/8250_core.c
-> +++ b/drivers/tty/serial/8250/8250_core.c
-> @@@ -1043,24 -1043,14 +1043,25 @@@ int serial8250_register_8250_port(struc
->   		if (up->dl_write)
->   			uart->dl_write = up->dl_write;
->   
->  -		if (serial8250_isa_config != NULL)
->  -			serial8250_isa_config(0, &uart->port,
->  -					&uart->capabilities);
->  +		if (uart->port.type != PORT_8250_CIR) {
->  +			if (serial8250_isa_config != NULL)
->  +				serial8250_isa_config(0, &uart->port,
->  +						&uart->capabilities);
->  +
-> ++			serial8250_apply_quirks(uart);
->  +			ret = uart_add_one_port(&serial8250_reg,
->  +						&uart->port);
->  +			if (ret == 0)
->  +				ret = uart->port.line;
->  +		} else {
->  +			dev_info(uart->port.dev,
->  +				"skipping CIR port at 0x%lx / 0x%llx, IRQ %d\n",
->  +				uart->port.iobase,
->  +				(unsigned long long)uart->port.mapbase,
->  +				uart->port.irq);
->   
->  -		serial8250_apply_quirks(uart);
->  -		ret = uart_add_one_port(&serial8250_reg, &uart->port);
->  -		if (ret == 0)
->  -			ret = uart->port.line;
->  +			ret = 0;
->  +		}
->   	}
->   	mutex_unlock(&serial_mutex);
->   
+> diff --git a/drivers/staging/fsl-mc/include/dpaa2-io.h b/drivers/staging/fsl-mc/include/dpaa2-io.h
+> index 002829cecd75..afc5d5bb1698 100644
+> --- a/drivers/staging/fsl-mc/include/dpaa2-io.h
+> +++ b/drivers/staging/fsl-mc/include/dpaa2-io.h
+> @@ -34,6 +34,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/cpumask.h>
+> +#include <linux/interrupt.h>
+>  
+>  #include "dpaa2-fd.h"
+>  #include "dpaa2-global.h"
 
-I've merged this merge fix into the tty-next tree now.
-
-thanks,
-
-greg k-h
+This does not apply to my tree :(
