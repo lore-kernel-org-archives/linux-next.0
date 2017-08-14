@@ -1,8 +1,8 @@
-From: Minchan Kim <minchan@kernel.org>
+From: Nadav Amit <namit@vmware.com>
 Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
  tree
-Date: Mon, 14 Aug 2017 12:16:13 +0900
-Message-ID: <20170814031613.GD25427@bbox>
+Date: Mon, 14 Aug 2017 05:07:19 +0000
+Message-ID: <0F858068-D41D-46E3-B4A8-8A95B4EDB94F@vmware.com>
 References: <20170811175326.36d546dc@canb.auug.org.au>
  <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
  <20170811214556.322b3c4e@canb.auug.org.au>
@@ -10,163 +10,101 @@ References: <20170811175326.36d546dc@canb.auug.org.au>
  <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
  <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
  <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
+ <20170814031613.GD25427@bbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEAMRELO11.lge.com ([156.147.23.51]:38210 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751097AbdHNDQR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 13 Aug 2017 23:16:17 -0400
-Content-Disposition: inline
-In-Reply-To: <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
+Received: from mail-sn1nam02on0083.outbound.protection.outlook.com ([104.47.36.83]:38112
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751501AbdHNFHW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 14 Aug 2017 01:07:22 -0400
+In-Reply-To: <20170814031613.GD25427@bbox>
+Content-Language: en-US
+Content-ID: <819DE372108DE643ABE71D60F3FDF4B1@namprd05.prod.outlook.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Minchan Kim <minchan@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-On Sun, Aug 13, 2017 at 02:50:19PM +0200, Peter Zijlstra wrote:
-> On Sun, Aug 13, 2017 at 06:06:32AM +0000, Nadav Amit wrote:
-> > > however mm_tlb_flush_nested() is a mystery, it appears to care about
-> > > anything inside the range. For now rely on it doing at least _a_ PTL
-> > > lock instead of taking  _the_ PTL lock.
-> > 
-> > It does not care about “anything” inside the range, but only on situations
-> > in which there is at least one (same) PT that was modified by one core and
-> > then read by the other. So, yes, it will always be _the_ same PTL, and not
-> > _a_ PTL - in the cases that flush is really needed.
-> > 
-> > The issue that might require additional barriers is that
-> > inc_tlb_flush_pending() and mm_tlb_flush_nested() are called when the PTL is
-> > not held. IIUC, since the release-acquire might not behave as a full memory
-> > barrier, this requires an explicit memory barrier.
-> 
-> So I'm not entirely clear about this yet.
-> 
-> How about:
-> 
-> 
-> 	CPU0				CPU1
-> 
-> 					tlb_gather_mmu()
-> 
-> 					lock PTLn
-> 					no mod
-> 					unlock PTLn
-> 
-> 	tlb_gather_mmu()
-> 
-> 					lock PTLm
-> 					mod
-> 					include in tlb range
-> 					unlock PTLm
-> 
-> 	lock PTLn
-> 	mod
-> 	unlock PTLn
-> 
-> 					tlb_finish_mmu()
-> 					  force = mm_tlb_flush_nested(tlb->mm);
-> 					  arch_tlb_finish_mmu(force);
-> 
-> 
-> 	... more ...
-> 
-> 	tlb_finish_mmu()
-> 
-> 
-> 
-> In this case you also want CPU1's mm_tlb_flush_nested() call to return
-> true, right?
-
-No, because CPU 1 mofified pte and added it into tlb range
-so regardless of nested, it will flush TLB so there is no stale
-TLB problem.
-
-> 
-> But even with an smp_mb__after_atomic() at CPU0's tlg_bather_mmu()
-> you're not guaranteed CPU1 sees the increment. The only way to do that
-> is to make the PTL locks RCsc and that is a much more expensive
-> proposition.
-> 
-> 
-> What about:
-> 
-> 
-> 	CPU0				CPU1
-> 
-> 					tlb_gather_mmu()
-> 
-> 					lock PTLn
-> 					no mod
-> 					unlock PTLn
-> 
-> 
-> 					lock PTLm
-> 					mod
-> 					include in tlb range
-> 					unlock PTLm
-> 
-> 	tlb_gather_mmu()
-> 
-> 	lock PTLn
-> 	mod
-> 	unlock PTLn
-> 
-> 					tlb_finish_mmu()
-> 					  force = mm_tlb_flush_nested(tlb->mm);
-> 					  arch_tlb_finish_mmu(force);
-> 
-> 
-> 	... more ...
-> 
-> 	tlb_finish_mmu()
-> 
-> Do we want CPU1 to see it here? If so, where does it end?
-
-Ditto. Since CPU 1 has added range, it will flush TLB regardless
-of nested condition.
-
-> 
-> 	CPU0				CPU1
-> 
-> 					tlb_gather_mmu()
-> 
-> 					lock PTLn
-> 					no mod
-> 					unlock PTLn
-> 
-> 
-> 					lock PTLm
-> 					mod
-> 					include in tlb range
-> 					unlock PTLm
-> 
-> 					tlb_finish_mmu()
-> 					  force = mm_tlb_flush_nested(tlb->mm);
-> 
-> 	tlb_gather_mmu()
-> 
-> 	lock PTLn
-> 	mod
-> 	unlock PTLn
-> 
-> 					  arch_tlb_finish_mmu(force);
-> 
-> 
-> 	... more ...
-> 
-> 	tlb_finish_mmu()
-> 
-> 
-> This?
-> 
-> 
-> Could you clarify under what exact condition mm_tlb_flush_nested() must
-> return true?
-
-mm_tlb_flush_nested aims for the CPU side where there is no pte update
-but need TLB flush.
-As I wrote https://marc.info/?l=linux-mm&m=150267398226529&w=2,
-it has stable TLB problem if we don't flush TLB although there is no
-pte modification.
+TWluY2hhbiBLaW0gPG1pbmNoYW5Aa2VybmVsLm9yZz4gd3JvdGU6DQoNCj4gT24gU3VuLCBBdWcg
+MTMsIDIwMTcgYXQgMDI6NTA6MTlQTSArMDIwMCwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6DQo+PiBP
+biBTdW4sIEF1ZyAxMywgMjAxNyBhdCAwNjowNjozMkFNICswMDAwLCBOYWRhdiBBbWl0IHdyb3Rl
+Og0KPj4+PiBob3dldmVyIG1tX3RsYl9mbHVzaF9uZXN0ZWQoKSBpcyBhIG15c3RlcnksIGl0IGFw
+cGVhcnMgdG8gY2FyZSBhYm91dA0KPj4+PiBhbnl0aGluZyBpbnNpZGUgdGhlIHJhbmdlLiBGb3Ig
+bm93IHJlbHkgb24gaXQgZG9pbmcgYXQgbGVhc3QgX2FfIFBUTA0KPj4+PiBsb2NrIGluc3RlYWQg
+b2YgdGFraW5nICBfdGhlXyBQVEwgbG9jay4NCj4+PiANCj4+PiBJdCBkb2VzIG5vdCBjYXJlIGFi
+b3V0IOKAnGFueXRoaW5n4oCdIGluc2lkZSB0aGUgcmFuZ2UsIGJ1dCBvbmx5IG9uIHNpdHVhdGlv
+bnMNCj4+PiBpbiB3aGljaCB0aGVyZSBpcyBhdCBsZWFzdCBvbmUgKHNhbWUpIFBUIHRoYXQgd2Fz
+IG1vZGlmaWVkIGJ5IG9uZSBjb3JlIGFuZA0KPj4+IHRoZW4gcmVhZCBieSB0aGUgb3RoZXIuIFNv
+LCB5ZXMsIGl0IHdpbGwgYWx3YXlzIGJlIF90aGVfIHNhbWUgUFRMLCBhbmQgbm90DQo+Pj4gX2Ff
+IFBUTCAtIGluIHRoZSBjYXNlcyB0aGF0IGZsdXNoIGlzIHJlYWxseSBuZWVkZWQuDQo+Pj4gDQo+
+Pj4gVGhlIGlzc3VlIHRoYXQgbWlnaHQgcmVxdWlyZSBhZGRpdGlvbmFsIGJhcnJpZXJzIGlzIHRo
+YXQNCj4+PiBpbmNfdGxiX2ZsdXNoX3BlbmRpbmcoKSBhbmQgbW1fdGxiX2ZsdXNoX25lc3RlZCgp
+IGFyZSBjYWxsZWQgd2hlbiB0aGUgUFRMIGlzDQo+Pj4gbm90IGhlbGQuIElJVUMsIHNpbmNlIHRo
+ZSByZWxlYXNlLWFjcXVpcmUgbWlnaHQgbm90IGJlaGF2ZSBhcyBhIGZ1bGwgbWVtb3J5DQo+Pj4g
+YmFycmllciwgdGhpcyByZXF1aXJlcyBhbiBleHBsaWNpdCBtZW1vcnkgYmFycmllci4NCj4+IA0K
+Pj4gU28gSSdtIG5vdCBlbnRpcmVseSBjbGVhciBhYm91dCB0aGlzIHlldC4NCj4+IA0KPj4gSG93
+IGFib3V0Og0KPj4gDQo+PiANCj4+IAlDUFUwCQkJCUNQVTENCj4+IA0KPj4gCQkJCQl0bGJfZ2F0
+aGVyX21tdSgpDQo+PiANCj4+IAkJCQkJbG9jayBQVExuDQo+PiAJCQkJCW5vIG1vZA0KPj4gCQkJ
+CQl1bmxvY2sgUFRMbg0KPj4gDQo+PiAJdGxiX2dhdGhlcl9tbXUoKQ0KPj4gDQo+PiAJCQkJCWxv
+Y2sgUFRMbQ0KPj4gCQkJCQltb2QNCj4+IAkJCQkJaW5jbHVkZSBpbiB0bGIgcmFuZ2UNCj4+IAkJ
+CQkJdW5sb2NrIFBUTG0NCj4+IA0KPj4gCWxvY2sgUFRMbg0KPj4gCW1vZA0KPj4gCXVubG9jayBQ
+VExuDQo+PiANCj4+IAkJCQkJdGxiX2ZpbmlzaF9tbXUoKQ0KPj4gCQkJCQkgIGZvcmNlID0gbW1f
+dGxiX2ZsdXNoX25lc3RlZCh0bGItPm1tKTsNCj4+IAkJCQkJICBhcmNoX3RsYl9maW5pc2hfbW11
+KGZvcmNlKTsNCj4+IA0KPj4gDQo+PiAJLi4uIG1vcmUgLi4uDQo+PiANCj4+IAl0bGJfZmluaXNo
+X21tdSgpDQo+PiANCj4+IA0KPj4gDQo+PiBJbiB0aGlzIGNhc2UgeW91IGFsc28gd2FudCBDUFUx
+J3MgbW1fdGxiX2ZsdXNoX25lc3RlZCgpIGNhbGwgdG8gcmV0dXJuDQo+PiB0cnVlLCByaWdodD8N
+Cj4gDQo+IE5vLCBiZWNhdXNlIENQVSAxIG1vZmlmaWVkIHB0ZSBhbmQgYWRkZWQgaXQgaW50byB0
+bGIgcmFuZ2UNCj4gc28gcmVnYXJkbGVzcyBvZiBuZXN0ZWQsIGl0IHdpbGwgZmx1c2ggVExCIHNv
+IHRoZXJlIGlzIG5vIHN0YWxlDQo+IFRMQiBwcm9ibGVtLg0KPiANCj4+IEJ1dCBldmVuIHdpdGgg
+YW4gc21wX21iX19hZnRlcl9hdG9taWMoKSBhdCBDUFUwJ3MgdGxnX2JhdGhlcl9tbXUoKQ0KPj4g
+eW91J3JlIG5vdCBndWFyYW50ZWVkIENQVTEgc2VlcyB0aGUgaW5jcmVtZW50LiBUaGUgb25seSB3
+YXkgdG8gZG8gdGhhdA0KPj4gaXMgdG8gbWFrZSB0aGUgUFRMIGxvY2tzIFJDc2MgYW5kIHRoYXQg
+aXMgYSBtdWNoIG1vcmUgZXhwZW5zaXZlDQo+PiBwcm9wb3NpdGlvbi4NCj4+IA0KPj4gDQo+PiBX
+aGF0IGFib3V0Og0KPj4gDQo+PiANCj4+IAlDUFUwCQkJCUNQVTENCj4+IA0KPj4gCQkJCQl0bGJf
+Z2F0aGVyX21tdSgpDQo+PiANCj4+IAkJCQkJbG9jayBQVExuDQo+PiAJCQkJCW5vIG1vZA0KPj4g
+CQkJCQl1bmxvY2sgUFRMbg0KPj4gDQo+PiANCj4+IAkJCQkJbG9jayBQVExtDQo+PiAJCQkJCW1v
+ZA0KPj4gCQkJCQlpbmNsdWRlIGluIHRsYiByYW5nZQ0KPj4gCQkJCQl1bmxvY2sgUFRMbQ0KPj4g
+DQo+PiAJdGxiX2dhdGhlcl9tbXUoKQ0KPj4gDQo+PiAJbG9jayBQVExuDQo+PiAJbW9kDQo+PiAJ
+dW5sb2NrIFBUTG4NCj4+IA0KPj4gCQkJCQl0bGJfZmluaXNoX21tdSgpDQo+PiAJCQkJCSAgZm9y
+Y2UgPSBtbV90bGJfZmx1c2hfbmVzdGVkKHRsYi0+bW0pOw0KPj4gCQkJCQkgIGFyY2hfdGxiX2Zp
+bmlzaF9tbXUoZm9yY2UpOw0KPj4gDQo+PiANCj4+IAkuLi4gbW9yZSAuLi4NCj4+IA0KPj4gCXRs
+Yl9maW5pc2hfbW11KCkNCj4+IA0KPj4gRG8gd2Ugd2FudCBDUFUxIHRvIHNlZSBpdCBoZXJlPyBJ
+ZiBzbywgd2hlcmUgZG9lcyBpdCBlbmQ/DQo+IA0KPiBEaXR0by4gU2luY2UgQ1BVIDEgaGFzIGFk
+ZGVkIHJhbmdlLCBpdCB3aWxsIGZsdXNoIFRMQiByZWdhcmRsZXNzDQo+IG9mIG5lc3RlZCBjb25k
+aXRpb24uDQo+IA0KPj4gQ1BVMAkJCQlDUFUxDQo+PiANCj4+IAkJCQkJdGxiX2dhdGhlcl9tbXUo
+KQ0KPj4gDQo+PiAJCQkJCWxvY2sgUFRMbg0KPj4gCQkJCQlubyBtb2QNCj4+IAkJCQkJdW5sb2Nr
+IFBUTG4NCj4+IA0KPj4gDQo+PiAJCQkJCWxvY2sgUFRMbQ0KPj4gCQkJCQltb2QNCj4+IAkJCQkJ
+aW5jbHVkZSBpbiB0bGIgcmFuZ2UNCj4+IAkJCQkJdW5sb2NrIFBUTG0NCj4+IA0KPj4gCQkJCQl0
+bGJfZmluaXNoX21tdSgpDQo+PiAJCQkJCSAgZm9yY2UgPSBtbV90bGJfZmx1c2hfbmVzdGVkKHRs
+Yi0+bW0pOw0KPj4gDQo+PiAJdGxiX2dhdGhlcl9tbXUoKQ0KPj4gDQo+PiAJbG9jayBQVExuDQo+
+PiAJbW9kDQo+PiAJdW5sb2NrIFBUTG4NCj4+IA0KPj4gCQkJCQkgIGFyY2hfdGxiX2ZpbmlzaF9t
+bXUoZm9yY2UpOw0KPj4gDQo+PiANCj4+IAkuLi4gbW9yZSAuLi4NCj4+IA0KPj4gCXRsYl9maW5p
+c2hfbW11KCkNCj4+IA0KPj4gDQo+PiBUaGlzPw0KPj4gDQo+PiANCj4+IENvdWxkIHlvdSBjbGFy
+aWZ5IHVuZGVyIHdoYXQgZXhhY3QgY29uZGl0aW9uIG1tX3RsYl9mbHVzaF9uZXN0ZWQoKSBtdXN0
+DQo+PiByZXR1cm4gdHJ1ZT8NCj4gDQo+IG1tX3RsYl9mbHVzaF9uZXN0ZWQgYWltcyBmb3IgdGhl
+IENQVSBzaWRlIHdoZXJlIHRoZXJlIGlzIG5vIHB0ZSB1cGRhdGUNCj4gYnV0IG5lZWQgVExCIGZs
+dXNoLg0KPiBBcyBJIHdyb3RlIGh0dHBzOi8vdXJsZGVmZW5zZS5wcm9vZnBvaW50LmNvbS92Mi91
+cmw/dT1odHRwcy0zQV9fbWFyYy5pbmZvXy0zRmwtM0RsaW51eC0yRG1tLTI2bS0zRDE1MDI2NzM5
+ODIyNjUyOS0yNnctM0QyJmQ9RHdJRGFRJmM9dWlsYUs5MEQ0VE9Wb0g1OEpOWFJnUSZyPXg5emhY
+Q3RDTHZURHR2RTY1LUJHU0EmbT12Mlo3ZURpN3oxSDl6ZG5nY2padmxOZUJ1ZFd6QTlLdmNYRk5w
+VTJBNzdzJnM9YW1hU3VfZ3VybUJISFBjbDNQeGZkbDBUa191VG5tZjYwdE1RQXNOREhWVSZlPSAs
+DQo+IGl0IGhhcyBzdGFibGUgVExCIHByb2JsZW0gaWYgd2UgZG9uJ3QgZmx1c2ggVExCIGFsdGhv
+dWdoIHRoZXJlIGlzIG5vDQo+IHB0ZSBtb2RpZmljYXRpb24uDQoNClRvIGNsYXJpZnk6IHRoZSBt
+YWluIHByb2JsZW0gdGhhdCB0aGVzZSBwYXRjaGVzIGFkZHJlc3MgaXMgd2hlbiB0aGUgZmlyc3QN
+CkNQVSB1cGRhdGVzIHRoZSBQVEUsIGFuZCBzZWNvbmQgQ1BVIHNlZXMgdGhlIHVwZGF0ZWQgdmFs
+dWUgYW5kIHRoaW5rczog4oCcdGhlDQpQVEUgaXMgYWxyZWFkeSB3aGF0IEkgd2FudGVkIC0gbm8g
+Zmx1c2ggaXMgbmVlZGVk4oCdLg0KDQpGb3Igc29tZSByZWFzb24gKEkgd291bGQgYXNzdW1lIGlu
+dGVudGlvbmFsKSwgYWxsIHRoZSBleGFtcGxlcyBoZXJlIGZpcnN0DQrigJxkbyBub3QgbW9kaWZ5
+4oCdIHRoZSBQVEUsIGFuZCB0aGVuIG1vZGlmeSBpdCAtIHdoaWNoIGlzIG5vdCBhbiDigJxpbnRl
+cmVzdGluZ+KAnQ0KY2FzZS4gSG93ZXZlciwgYmFzZWQgb24gd2hhdCBJIHVuZGVyc3RhbmQgb24g
+dGhlIG1lbW9yeSBiYXJyaWVycywgSSB0aGluaw0KdGhlcmUgaXMgaW5kZWVkIGEgbWlzc2luZyBi
+YXJyaWVyIGJlZm9yZSByZWFkaW5nIGl0IGluDQptbV90bGJfZmx1c2hfbmVzdGVkKCkuIElJVUMg
+dXNpbmcgc21wX21iX19hZnRlcl91bmxvY2tfbG9jaygpIGluIHRoaXMgY2FzZSwNCmJlZm9yZSBy
+ZWFkaW5nLCB3b3VsZCBzb2x2ZSB0aGUgcHJvYmxlbSB3aXRoIGxlYXN0IGltcGFjdCBvbiBzeXN0
+ZW1zIHdpdGgNCnN0cm9uZyBtZW1vcnkgb3JkZXJpbmcuDQoNCk1pbmNoYW4sIGFzIGZvciB0aGUg
+c29sdXRpb24geW91IHByb3Bvc2VkLCBpdCBzZWVtcyB0byBvcGVuIGFnYWluIGEgcmFjZSwNCnNp
+bmNlIHRoZSDigJxwZW5kaW5n4oCdIGluZGljYXRpb24gaXMgcmVtb3ZlZCBiZWZvcmUgdGhlIGFj
+dHVhbCBUTEIgZmx1c2ggaXMNCnBlcmZvcm1lZC4NCg0KTmFkYXY=
