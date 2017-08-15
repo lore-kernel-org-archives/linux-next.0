@@ -1,40 +1,148 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: next-20170815 build: 2 failures 4 warnings (next-20170815)
-Date: Tue, 15 Aug 2017 13:59:46 +0200
-Message-ID: <13442814.gWUDHvzIl2@aspire.rjw.lan>
-References: <E1dhZPk-0002d9-9k@optimist> <20170815111612.esq73hxowbw2mehj@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with the net tree
+Date: Wed, 16 Aug 2017 09:51:28 +1000
+Message-ID: <20170816095128.7205e4f1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <20170815111612.esq73hxowbw2mehj@sirena.org.uk>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42571 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752598AbdHOXva (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 15 Aug 2017 19:51:30 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ding Tianhong <dingtianhong@huawei.com>, Casey Leedom <leedom@chelsio.com>, Sinan Kaya <okaya@codeaurora.org>
 
-On Tuesday, August 15, 2017 1:16:12 PM CEST Mark Brown wrote:
-> 
-> --xqegarazqzvkdxmo
-> Content-Type: text/plain; charset=us-ascii
-> Content-Disposition: inline
-> 
-> On Tue, Aug 15, 2017 at 11:49:36AM +0100, Build bot for Mark Brown wrote:
-> 
-> Today's -next fails to build on arm64 due to:
-> 
-> > 	arm64-allmodconfig
-> > 	arm64-defconfig
-> > ../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
-> > ../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
-> 
-> caused by f69ba1326ac33b (Merge branch 'acpi-spcr' into linux-next)
-> which has an unresolved conflict in it.
+Hi Bjorn,
 
-Yes, I broke this, sorry.
+Today's linux-next merge of the pci tree got a conflict in:
 
-Will fix it shortly.
+  drivers/pci/probe.c
 
-Thanks,
-Rafael
+between commit:
 
+  a99b646afa8a ("PCI: Disable PCIe Relaxed Ordering if unsupported")
+
+from the net tree and commit:
+
+  62ce94a7a5a5 ("PCI: Mark Broadcom HT2100 Root Port Extended Tags as broken")
+
+from the pci tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/probe.c
+index e6a917b4acd3,d11fede6bd53..000000000000
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@@ -1751,67 -1753,51 +1753,94 @@@ int pci_configure_extended_tags(struct 
+  	int ret;
+  
+  	if (!pci_is_pcie(dev))
+- 		return;
++ 		return 0;
+  
+- 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &dev_cap);
++ 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
+  	if (ret)
+- 		return;
++ 		return 0;
++ 
++ 	if (!(cap & PCI_EXP_DEVCAP_EXT_TAG))
++ 		return 0;
++ 
++ 	ret = pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &ctl);
++ 	if (ret)
++ 		return 0;
++ 
++ 	host = pci_find_host_bridge(dev->bus);
++ 	if (!host)
++ 		return 0;
++ 
++ 	/*
++ 	 * If some device in the hierarchy doesn't handle Extended Tags
++ 	 * correctly, make sure they're disabled.
++ 	 */
++ 	if (host->no_ext_tags) {
++ 		if (ctl & PCI_EXP_DEVCTL_EXT_TAG) {
++ 			dev_info(&dev->dev, "disabling Extended Tags\n");
++ 			pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
++ 						   PCI_EXP_DEVCTL_EXT_TAG);
++ 		}
++ 		return 0;
++ 	}
+  
+- 	if (dev_cap & PCI_EXP_DEVCAP_EXT_TAG)
++ 	if (!(ctl & PCI_EXP_DEVCTL_EXT_TAG)) {
++ 		dev_info(&dev->dev, "enabling Extended Tags\n");
+  		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
+  					 PCI_EXP_DEVCTL_EXT_TAG);
++ 	}
++ 	return 0;
+  }
+  
+ +/**
+ + * pcie_relaxed_ordering_enabled - Probe for PCIe relaxed ordering enable
+ + * @dev: PCI device to query
+ + *
+ + * Returns true if the device has enabled relaxed ordering attribute.
+ + */
+ +bool pcie_relaxed_ordering_enabled(struct pci_dev *dev)
+ +{
+ +	u16 v;
+ +
+ +	pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &v);
+ +
+ +	return !!(v & PCI_EXP_DEVCTL_RELAX_EN);
+ +}
+ +EXPORT_SYMBOL(pcie_relaxed_ordering_enabled);
+ +
+ +static void pci_configure_relaxed_ordering(struct pci_dev *dev)
+ +{
+ +	struct pci_dev *root;
+ +
+ +	/* PCI_EXP_DEVICE_RELAX_EN is RsvdP in VFs */
+ +	if (dev->is_virtfn)
+ +		return;
+ +
+ +	if (!pcie_relaxed_ordering_enabled(dev))
+ +		return;
+ +
+ +	/*
+ +	 * For now, we only deal with Relaxed Ordering issues with Root
+ +	 * Ports. Peer-to-Peer DMA is another can of worms.
+ +	 */
+ +	root = pci_find_pcie_root_port(dev);
+ +	if (!root)
+ +		return;
+ +
+ +	if (root->dev_flags & PCI_DEV_FLAGS_NO_RELAXED_ORDERING) {
+ +		pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
+ +					   PCI_EXP_DEVCTL_RELAX_EN);
+ +		dev_info(&dev->dev, "Disable Relaxed Ordering because the Root Port didn't support it\n");
+ +	}
+ +}
+ +
+  static void pci_configure_device(struct pci_dev *dev)
+  {
+  	struct hotplug_params hpp;
+  	int ret;
+  
+  	pci_configure_mps(dev);
+- 	pci_configure_extended_tags(dev);
++ 	pci_configure_extended_tags(dev, NULL);
+ +	pci_configure_relaxed_ordering(dev);
+  
+  	memset(&hpp, 0, sizeof(hpp));
+  	ret = pci_get_hp_params(dev, &hpp);
