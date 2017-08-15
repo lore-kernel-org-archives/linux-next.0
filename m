@@ -1,49 +1,107 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20170815 build: 2 failures 4 warnings (next-20170815)
-Date: Tue, 15 Aug 2017 12:16:12 +0100
-Message-ID: <20170815111612.esq73hxowbw2mehj@sirena.org.uk>
-References: <E1dhZPk-0002d9-9k@optimist>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xqegarazqzvkdxmo"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1dhZPk-0002d9-9k@optimist>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170815 build: 2 failures 4 warnings (next-20170815)
+Date: Tue, 15 Aug 2017 11:49:36 +0100
+Message-ID: <E1dhZPk-0002d9-9k@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51698 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750997AbdHOLSh (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 15 Aug 2017 07:18:37 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+
+Tree/Branch: next-20170815
+Git describe: next-20170815
+Commit: 497247033e Add linux-next specific files for 20170815
+
+Build Time: 78 min 48 sec
+
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 2
+Warnings: 4
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	arm64-defconfig
+
+Errors:
+
+	arm64-allmodconfig
+../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
+../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
+
+	arm64-defconfig
+../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
+../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : x86_64-allnoconfig
+      1 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 2
+	  2 ../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
+	  2 ../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
+
+Warnings Summary: 4
+	  2 ../drivers/acpi/spcr.c:34:13: warning: 'qdf2400_erratum_44_present' defined but not used [-Wunused-function]
+	  1 ../drivers/mmc/core/mmc_test.c:883:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../drivers/md/dm-integrity.c:827:1: warning: the frame size of 1248 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	  1 ../arch/x86/kernel/cpu/amd.c:305:13: warning: 'legacy_fixup_core_id' defined but not used [-Wunused-function]
 
 
---xqegarazqzvkdxmo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Aug 15, 2017 at 11:49:36AM +0100, Build bot for Mark Brown wrote:
+===============================================================================
+Detailed per-defconfig build reports below:
 
-Today's -next fails to build on arm64 due to:
 
-> 	arm64-allmodconfig
-> 	arm64-defconfig
-> ../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
-> ../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-caused by f69ba1326ac33b (Merge branch 'acpi-spcr' into linux-next)
-which has an unresolved conflict in it.
+Warnings:
+	../arch/x86/kernel/cpu/amd.c:305:13: warning: 'legacy_fixup_core_id' defined but not used [-Wunused-function]
 
---xqegarazqzvkdxmo
-Content-Type: application/pgp-signature; name="signature.asc"
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
 
------BEGIN PGP SIGNATURE-----
+Errors:
+	../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
+	../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlmS1/sACgkQJNaLcl1U
-h9AkaQf/TXBGGh+HRb8qMiqXhsa4KXS03aV8a4B381n1K5lMnIrLbqrJB/yGrSYd
-cE9X4tTexhMZSspiX3pQ1B19sb43yGEES2fGRIIALupDiUXotyvbRmw8SWrwZumG
-MDt6fRsP3NUX319vUPqPPqkmi2FxdLbYN8zysXoTz34uWX9CPqhe4G6/XFrjh2jR
-RFaO7StNYfwtnJH1ZuR72pfVNqrBRzy+bYhLpRlIUkEuRVWRfpmtXPrtzKqS6fqV
-UW8emKN89M9YPTLgtedG6XUVrN0/8JAVM28DefV49l3i4aE8uxIpqTfn9lgP7cYR
-CapiQjjqivuZ04HexTN5RpemcwV0qA==
-=LX6G
------END PGP SIGNATURE-----
+Warnings:
+	../drivers/acpi/spcr.c:34:13: warning: 'qdf2400_erratum_44_present' defined but not used [-Wunused-function]
 
---xqegarazqzvkdxmo--
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../drivers/md/dm-integrity.c:827:1: warning: the frame size of 1248 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+	../drivers/mmc/core/mmc_test.c:883:1: warning: the frame size of 1032 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : FAIL, 2 errors, 1 warnings, 0 section mismatches
+
+Errors:
+	../drivers/acpi/spcr.c:168:1: error: expected expression before '<<' token
+	../drivers/acpi/spcr.c:198:1: error: expected expression before '>>' token
+
+Warnings:
+	../drivers/acpi/spcr.c:34:13: warning: 'qdf2400_erratum_44_present' defined but not used [-Wunused-function]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+arm-multi_v4t_defconfig
