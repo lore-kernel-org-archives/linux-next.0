@@ -1,148 +1,85 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the net tree
-Date: Wed, 16 Aug 2017 09:51:28 +1000
-Message-ID: <20170816095128.7205e4f1@canb.auug.org.au>
+From: Minchan Kim <minchan@kernel.org>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
+ tree
+Date: Wed, 16 Aug 2017 13:14:18 +0900
+Message-ID: <20170816041418.GB24294@blaptop>
+References: <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
+ <20170811214556.322b3c4e@canb.auug.org.au>
+ <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
+ <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
+ <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
+ <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
+ <20170814031613.GD25427@bbox>
+ <0F858068-D41D-46E3-B4A8-8A95B4EDB94F@vmware.com>
+ <20170814083839.GD26913@bbox>
+ <20170814195723.GO6524@worktop.programming.kicks-ass.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42571 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752598AbdHOXva (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 15 Aug 2017 19:51:30 -0400
+Received: from LGEAMRELO13.lge.com ([156.147.23.53]:58890 "EHLO
+        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751070AbdHPEOV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Aug 2017 00:14:21 -0400
+Content-Disposition: inline
+In-Reply-To: <20170814195723.GO6524@worktop.programming.kicks-ass.net>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ding Tianhong <dingtianhong@huawei.com>, Casey Leedom <leedom@chelsio.com>, Sinan Kaya <okaya@codeaurora.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-Hi Bjorn,
+On Mon, Aug 14, 2017 at 09:57:23PM +0200, Peter Zijlstra wrote:
+> On Mon, Aug 14, 2017 at 05:38:39PM +0900, Minchan Kim wrote:
+> > memory-barrier.txt always scares me. I have read it for a while
+> > and IIUC, it seems semantic of spin_unlock(&same_pte) would be
+> > enough without some memory-barrier inside mm_tlb_flush_nested.
+> 
+> Indeed, see the email I just send. Its both spin_lock() and
+> spin_unlock() that we care about.
+> 
+> Aside from the semi permeable barrier of these primitives, RCpc ensures
+> these orderings only work against the _same_ lock variable.
+> 
+> Let me try and explain the ordering for PPC (which is by far the worst
+> we have in this regard):
+> 
+> 
+> spin_lock(lock)
+> {
+> 	while (test_and_set(lock))
+> 		cpu_relax();
+> 	lwsync();
+> }
+> 
+> 
+> spin_unlock(lock)
+> {
+> 	lwsync();
+> 	clear(lock);
+> }
+> 
+> Now LWSYNC has fairly 'simple' semantics, but with fairly horrible
+> ramifications. Consider LWSYNC to provide _local_ TSO ordering, this
+> means that it allows 'stores reordered after loads'.
+> 
+> For the spin_lock() that implies that all load/store's inside the lock
+> do indeed stay in, but the ACQUIRE is only on the LOAD of the
+> test_and_set(). That is, the actual _set_ can leak in. After all it can
+> re-order stores after load (inside the lock).
+> 
+> For unlock it again means all load/store's prior stay prior, and the
+> RELEASE is on the store clearing the lock state (nothing surprising
+> here).
+> 
+> Now the _local_ part, the main take-away is that these orderings are
+> strictly CPU local. What makes the spinlock work across CPUs (as we'd
+> very much expect it to) is the address dependency on the lock variable.
+> 
+> In order for the spin_lock() to succeed, it must observe the clear. Its
+> this link that crosses between the CPUs and builds the ordering. But
+> only the two CPUs agree on this order. A third CPU not involved in
+> this transaction can disagree on the order of events.
 
-Today's linux-next merge of the pci tree got a conflict in:
+The detail explanation in your previous reply makes me comfortable
+from scary memory-barrier.txt but this reply makes me scared again. ;-)
 
-  drivers/pci/probe.c
-
-between commit:
-
-  a99b646afa8a ("PCI: Disable PCIe Relaxed Ordering if unsupported")
-
-from the net tree and commit:
-
-  62ce94a7a5a5 ("PCI: Mark Broadcom HT2100 Root Port Extended Tags as broken")
-
-from the pci tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/pci/probe.c
-index e6a917b4acd3,d11fede6bd53..000000000000
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@@ -1751,67 -1753,51 +1753,94 @@@ int pci_configure_extended_tags(struct 
-  	int ret;
-  
-  	if (!pci_is_pcie(dev))
-- 		return;
-+ 		return 0;
-  
-- 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &dev_cap);
-+ 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
-  	if (ret)
-- 		return;
-+ 		return 0;
-+ 
-+ 	if (!(cap & PCI_EXP_DEVCAP_EXT_TAG))
-+ 		return 0;
-+ 
-+ 	ret = pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &ctl);
-+ 	if (ret)
-+ 		return 0;
-+ 
-+ 	host = pci_find_host_bridge(dev->bus);
-+ 	if (!host)
-+ 		return 0;
-+ 
-+ 	/*
-+ 	 * If some device in the hierarchy doesn't handle Extended Tags
-+ 	 * correctly, make sure they're disabled.
-+ 	 */
-+ 	if (host->no_ext_tags) {
-+ 		if (ctl & PCI_EXP_DEVCTL_EXT_TAG) {
-+ 			dev_info(&dev->dev, "disabling Extended Tags\n");
-+ 			pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
-+ 						   PCI_EXP_DEVCTL_EXT_TAG);
-+ 		}
-+ 		return 0;
-+ 	}
-  
-- 	if (dev_cap & PCI_EXP_DEVCAP_EXT_TAG)
-+ 	if (!(ctl & PCI_EXP_DEVCTL_EXT_TAG)) {
-+ 		dev_info(&dev->dev, "enabling Extended Tags\n");
-  		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
-  					 PCI_EXP_DEVCTL_EXT_TAG);
-+ 	}
-+ 	return 0;
-  }
-  
- +/**
- + * pcie_relaxed_ordering_enabled - Probe for PCIe relaxed ordering enable
- + * @dev: PCI device to query
- + *
- + * Returns true if the device has enabled relaxed ordering attribute.
- + */
- +bool pcie_relaxed_ordering_enabled(struct pci_dev *dev)
- +{
- +	u16 v;
- +
- +	pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &v);
- +
- +	return !!(v & PCI_EXP_DEVCTL_RELAX_EN);
- +}
- +EXPORT_SYMBOL(pcie_relaxed_ordering_enabled);
- +
- +static void pci_configure_relaxed_ordering(struct pci_dev *dev)
- +{
- +	struct pci_dev *root;
- +
- +	/* PCI_EXP_DEVICE_RELAX_EN is RsvdP in VFs */
- +	if (dev->is_virtfn)
- +		return;
- +
- +	if (!pcie_relaxed_ordering_enabled(dev))
- +		return;
- +
- +	/*
- +	 * For now, we only deal with Relaxed Ordering issues with Root
- +	 * Ports. Peer-to-Peer DMA is another can of worms.
- +	 */
- +	root = pci_find_pcie_root_port(dev);
- +	if (!root)
- +		return;
- +
- +	if (root->dev_flags & PCI_DEV_FLAGS_NO_RELAXED_ORDERING) {
- +		pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
- +					   PCI_EXP_DEVCTL_RELAX_EN);
- +		dev_info(&dev->dev, "Disable Relaxed Ordering because the Root Port didn't support it\n");
- +	}
- +}
- +
-  static void pci_configure_device(struct pci_dev *dev)
-  {
-  	struct hotplug_params hpp;
-  	int ret;
-  
-  	pci_configure_mps(dev);
-- 	pci_configure_extended_tags(dev);
-+ 	pci_configure_extended_tags(dev, NULL);
- +	pci_configure_relaxed_ordering(dev);
-  
-  	memset(&hpp, 0, sizeof(hpp));
-  	ret = pci_get_hp_params(dev, &hpp);
+Thanks for the kind clarification, Peter!
