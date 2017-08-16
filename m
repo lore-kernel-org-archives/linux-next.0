@@ -1,85 +1,69 @@
-From: Minchan Kim <minchan@kernel.org>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the tip
- tree
-Date: Wed, 16 Aug 2017 13:14:18 +0900
-Message-ID: <20170816041418.GB24294@blaptop>
-References: <20170811093449.w5wttpulmwfykjzm@hirez.programming.kicks-ass.net>
- <20170811214556.322b3c4e@canb.auug.org.au>
- <20170811115607.p2vgqcp7w3wurhvw@gmail.com>
- <20170811140450.irhxa2bhdpmmhhpv@hirez.programming.kicks-ass.net>
- <DE232310-8D7E-4074-ACFE-FE6416B13A3F@vmware.com>
- <20170813125019.ihqjud37ytgri7bn@hirez.programming.kicks-ass.net>
- <20170814031613.GD25427@bbox>
- <0F858068-D41D-46E3-B4A8-8A95B4EDB94F@vmware.com>
- <20170814083839.GD26913@bbox>
- <20170814195723.GO6524@worktop.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 16 Aug 2017 14:47:03 +1000
+Message-ID: <20170816144703.378d4f4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from LGEAMRELO13.lge.com ([156.147.23.53]:58890 "EHLO
-        lgeamrelo13.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751070AbdHPEOV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 16 Aug 2017 00:14:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20170814195723.GO6524@worktop.programming.kicks-ass.net>
+Received: from ozlabs.org ([103.22.144.67]:49963 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751089AbdHPErF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 16 Aug 2017 00:47:05 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>, Jason Ekstrand <jason@jlekstrand.net>, Chris Wilson <chris@chris-wilson.co.uk>, Dave Airlie <airlied@linux.ie>
 
-On Mon, Aug 14, 2017 at 09:57:23PM +0200, Peter Zijlstra wrote:
-> On Mon, Aug 14, 2017 at 05:38:39PM +0900, Minchan Kim wrote:
-> > memory-barrier.txt always scares me. I have read it for a while
-> > and IIUC, it seems semantic of spin_unlock(&same_pte) would be
-> > enough without some memory-barrier inside mm_tlb_flush_nested.
-> 
-> Indeed, see the email I just send. Its both spin_lock() and
-> spin_unlock() that we care about.
-> 
-> Aside from the semi permeable barrier of these primitives, RCpc ensures
-> these orderings only work against the _same_ lock variable.
-> 
-> Let me try and explain the ordering for PPC (which is by far the worst
-> we have in this regard):
-> 
-> 
-> spin_lock(lock)
-> {
-> 	while (test_and_set(lock))
-> 		cpu_relax();
-> 	lwsync();
-> }
-> 
-> 
-> spin_unlock(lock)
-> {
-> 	lwsync();
-> 	clear(lock);
-> }
-> 
-> Now LWSYNC has fairly 'simple' semantics, but with fairly horrible
-> ramifications. Consider LWSYNC to provide _local_ TSO ordering, this
-> means that it allows 'stores reordered after loads'.
-> 
-> For the spin_lock() that implies that all load/store's inside the lock
-> do indeed stay in, but the ACQUIRE is only on the LOAD of the
-> test_and_set(). That is, the actual _set_ can leak in. After all it can
-> re-order stores after load (inside the lock).
-> 
-> For unlock it again means all load/store's prior stay prior, and the
-> RELEASE is on the store clearing the lock state (nothing surprising
-> here).
-> 
-> Now the _local_ part, the main take-away is that these orderings are
-> strictly CPU local. What makes the spinlock work across CPUs (as we'd
-> very much expect it to) is the address dependency on the lock variable.
-> 
-> In order for the spin_lock() to succeed, it must observe the clear. Its
-> this link that crosses between the CPUs and builds the ordering. But
-> only the two CPUs agree on this order. A third CPU not involved in
-> this transaction can disagree on the order of events.
+Hi all,
 
-The detail explanation in your previous reply makes me comfortable
-from scary memory-barrier.txt but this reply makes me scared again. ;-)
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks for the kind clarification, Peter!
+drivers/gpu/drm/i915/i915_gem_execbuffer.c: In function 'get_fence_array':
+drivers/gpu/drm/i915/i915_gem_execbuffer.c:2163:20: error: 'GFP_TEMPORARY' undeclared (first use in this function)
+     __GFP_NOWARN | GFP_TEMPORARY);
+                    ^
+
+Caused by commit
+
+  4d6fc0a48c52 ("mm: treewide: remove GFP_TEMPORARY allocation flag")
+
+interacting with commit
+
+  cf6e7bac6357 ("drm/i915: Add support for drm syncobjs")
+
+from the drm-intel tree.
+
+I applied the following merge fix patch (and I suspect - given the
+comments in the former commit message - that this could be applied to
+the drm-intel tree right now without any problems):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 16 Aug 2017 14:41:24 +1000
+Subject: [PATCH] drm/i915: fix up for mm: treewide: remove GFP_TEMPORARY allocation flag
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem_execbuffer.c b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+index 8fbdefe0216e..15ab3e6792f9 100644
+--- a/drivers/gpu/drm/i915/i915_gem_execbuffer.c
++++ b/drivers/gpu/drm/i915/i915_gem_execbuffer.c
+@@ -2160,7 +2160,7 @@ get_fence_array(struct drm_i915_gem_execbuffer2 *args,
+ 		return ERR_PTR(-EFAULT);
+ 
+ 	fences = kvmalloc_array(args->num_cliprects, sizeof(*fences),
+-				__GFP_NOWARN | GFP_TEMPORARY);
++				__GFP_NOWARN | GFP_KERNEL);
+ 	if (!fences)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-- 
+2.13.2
+
+-- 
+Cheers,
+Stephen Rothwell
