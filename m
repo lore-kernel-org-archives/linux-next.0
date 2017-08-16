@@ -1,26 +1,28 @@
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: Re: [BUG][bisected 270065e] linux-next fails to boot on powerpc
-Date: Wed, 16 Aug 2017 20:25:48 +0000
-Message-ID: <1502915146.2421.13.camel@wdc.com>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the xfs tree
+Date: Thu, 17 Aug 2017 07:48:05 +1000
+Message-ID: <20170817074805.1071434d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502902815.3305.22.camel@abdul.in.ibm.com>
-Content-Language: en-US
-Content-ID: <1688A37DF7FA5D40A13AE7D50AB93CBE@namprd04.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "hch@lst.de" <hch@lst.de>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47215 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752219AbdHPVsI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 16 Aug 2017 17:48:08 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Paul Menzel <pmenzel@molgen.mpg.de>
 
-T24gV2VkLCAyMDE3LTA4LTE2IGF0IDIyOjMwICswNTMwLCBBYmR1bCBIYWxlZW0gd3JvdGU6DQo+
-IEFzIG9mIG5leHQtMjAxNzA4MDksIGxpbnV4LW5leHQgb24gcG93ZXJwYyBib290IGh1bmcgd2l0
-aCBiZWxvdyB0cmFjZQ0KPiBtZXNzYWdlLg0KPiBbIC4uLiBdDQo+IFN5c3RlbSBib290ZWQgZmlu
-ZSB3aGVuIHRoZSBiZWxvdyBjb21taXQgaXMgcmV2ZXJ0ZWQ6IA0KDQpIZWxsbyBBYmR1bCwNCg0K
-Q2FuIHlvdSBjaGVjayB3aGV0aGVyIGFwcGx5aW5nIHRoZSBmb2xsb3dpbmcgY29tbWl0IG9uIHRv
-cCBvZiBuZXh0LTIwMTcwODA5DQpmaXhlcyB0aGlzIHJlZ3Jlc3Npb246DQoNCmh0dHBzOi8vZ2l0
-Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L21rcC9zY3NpLmdpdC9jb21taXQv
-P2g9NC4xMy9zY3NpLWZpeGVzJmlkPWIwZTE3YTliMGRmMjk1OTBjNDVkZmIyOTZmNTQxMjcwYTU5
-NDFmNDENCg0KVGhhbmtzLA0KDQpCYXJ0Lg==
+Hi all,
+
+Commit
+
+  74456cceed0b ("iomap: fix integer truncation issues in the zeroing and dirtying helpers")
+
+is missing a Signed-off-by from its author.
+
+-- 
+Cheers,
+Stephen Rothwell
