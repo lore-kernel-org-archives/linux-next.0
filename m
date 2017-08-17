@@ -1,50 +1,54 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [BUG][bisected 270065e] linux-next fails to boot on powerpc
-Date: Thu, 17 Aug 2017 11:33:08 +1000
-Message-ID: <87o9rfrnaj.fsf@concordia.ellerman.id.au>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com> <1502904072.2421.3.camel@wdc.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the security tree
+Date: Thu, 17 Aug 2017 12:51:40 +1000
+Message-ID: <20170817125140.7d705af8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1502904072.2421.3.camel@wdc.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "brking@linux.vnet.ibm.com" <brking@linux.vnet.ibm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:46401 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751621AbdHQCvm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 16 Aug 2017 22:51:42 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: James Morris <jmorris@namei.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 
-Bart Van Assche <Bart.VanAssche@wdc.com> writes:
+Hi James,
 
-> On Wed, 2017-08-16 at 22:30 +0530, Abdul Haleem wrote:
->> As of next-20170809, linux-next on powerpc boot hung with below trace
->> message.
->> 
->> [ ... ]
->> 
->> A bisection resulted in first bad commit (270065e92 - scsi: scsi-mq:
->> Always unprepare ...) in the merge branch 'scsi/for-next'
->> 
->> System booted fine when the below commit is reverted: 
->> 
->> commit 270065e92c317845d69095ec8e3d18616b5b39d5
->> Author: Bart Van Assche <bart.vanassche@wdc.com>
->> Date:   Thu Aug 3 14:40:14 2017 -0700
->> 
->>     scsi: scsi-mq: Always unprepare before requeuing a request
->
-> Hello Brian and Michael,
->
-> Do you agree that this probably indicates a bug in the PowerPC block driver
-> that is used to access the boot disk?
+After merging the security tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-I don't know a scsi device from a block device, so I'm not much help sorry.
+In file included from samples/seccomp/bpf-fancy.c:12:0:
+samples/seccomp/bpf-fancy.c: In function 'main':
+samples/seccomp/bpf-helper.h:47:26: error: 'SECCOMP_RET_KILL_THREAD' undeclared (first use in this function)
+  BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_KILL_THREAD)
+                          ^
+./usr/include/linux/filter.h:48:59: note: in definition of macro 'BPF_STMT'
+ #define BPF_STMT(code, k) { (unsigned short)(code), 0, 0, k }
+                                                           ^
+samples/seccomp/bpf-fancy.c:41:3: note: in expansion of macro 'DENY'
+   DENY,  /* Don't passthrough into a label */
+   ^~~~
+samples/seccomp/bpf-helper.h:47:26: note: each undeclared identifier is reported only once for each function it appears in
+  BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_KILL_THREAD)
+                          ^
+./usr/include/linux/filter.h:48:59: note: in definition of macro 'BPF_STMT'
+ #define BPF_STMT(code, k) { (unsigned short)(code), 0, 0, k }
+                                                           ^
+samples/seccomp/bpf-fancy.c:41:3: note: in expansion of macro 'DENY'
+   DENY,  /* Don't passthrough into a label */
+   ^~~~
 
-It seems likely it is a powerpc specific bug, as it seems no one else
-has reported any problems with this commit.
+[Note: this is a cross build, if that is relevant ...]
 
-> Anyway, since a solution is not yet available, I will submit a revert
-> for this patch.
+Presumably caused by commit
 
-Thanks. Sorry I haven't been able to debug it further, there's about 10
-things on fire right now - ie. situation normal :)
+  fd76875ca289 ("seccomp: Rename SECCOMP_RET_KILL to SECCOMP_RET_KILL_THREAD")
 
-cheers
+I have used the security tree from next-20170816 for today.
+
+-- 
+Cheers,
+Stephen Rothwell
