@@ -1,158 +1,113 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [bisected c64e09ce] sysctl command hung indefinitely
-Date: Mon, 21 Aug 2017 09:50:01 +0200
-Message-ID: <20170821075001.GA24530@dhcp22.suse.cz>
+From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Subject: Re: [linux-next][bisected c64e09ce] sysctl command hung indefinitely
+Date: Mon, 21 Aug 2017 14:15:21 +0530
+Message-ID: <1503305121.3629.2.camel@abdul.in.ibm.com>
 References: <1503137971.28497.19.camel@abdul>
+         <20170821075001.GA24530@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:39821 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751063AbdHUHuG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 21 Aug 2017 03:50:06 -0400
-Content-Disposition: inline
-In-Reply-To: <1503137971.28497.19.camel@abdul>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, Joonsoo Kim <js1304@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170821075001.GA24530@dhcp22.suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Joonsoo Kim <js1304@gmail.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+List-Id: linux-next.vger.kernel.org
 
-On Sat 19-08-17 15:49:31, Abdul Haleem wrote:
-> Hi Michal,
+On Mon, 2017-08-21 at 09:50 +0200, Michal Hocko wrote:
+> On Sat 19-08-17 15:49:31, Abdul Haleem wrote:
+> > Hi Michal,
+> > 
+> > 'sysctl -a' command never completes on my PowerPC machine with latest
+> > next kernel (As of next-20170811)
+> > 
+> > Machine Type : Power8 bare-metal
+> > Kernel version : 4.13.0-rc4-next-20170817
+> > gcc version : 4.8.5
+> > 
+> > 
+> > command output
+> > --------------
+> > $ sysctl -a
+> > [...
+> > vm.hugetlb_shm_group = 0
+> > vm.laptop_mode = 0
+> > vm.legacy_va_layout = 0
+> > vm.lowmem_reserve_ratio = 256	256	32
+> > vm.max_map_count = 65530
+> > vm.min_free_kbytes = 6637
+> > vm.min_slab_ratio = 5
+> > vm.min_unmapped_ratio = 1
+> > vm.mmap_min_addr = 4096
+> > vm.mmap_rnd_bits = 14
+> > vm.mmap_rnd_compat_bits = 7
+> > vm.nr_hugepages = 0
+> > vm.nr_hugepages_mempolicy = 0
+> > vm.nr_overcommit_hugepages = 0
+> > vm.nr_pdflush_threads = 0
+> > vm.numa_zonelist_order = Node
+> > vm.numa_zonelist_order = e
+> > vm.numa_zonelist_order = ode
+> > vm.numa_zonelist_order = 
+> > vm.numa_zonelist_order = de
+> > vm.numa_zonelist_order = Node
+> > vm.numa_zonelist_order = e
+> > vm.numa_zonelist_order = ode
+> > vm.numa_zonelist_order = 
+> > vm.numa_zonelist_order = de
+> > vm.numa_zonelist_order = Node
+> > vm.numa_zonelist_order = e
+> > vm.numa_zonelist_order = ode
+> > vm.numa_zonelist_order = 
+> > vm.numa_zonelist_order = de
+> > vm.numa_zonelist_order = Node
+> > vm.numa_zonelist_order = e
+> > vm.numa_zonelist_order = ode
+> > ....]
+> > 
+> > The last string 'vm.numa_zonelist_order = ' keeps flooding the stdout
+> > and command never exit.
+> > 
+> > A bisection resulted commit c64e09ce mm, page_alloc: rip out
+> > ZONELIST_ORDER_ZONE
 > 
-> 'sysctl -a' command never completes on my PowerPC machine with latest
-> next kernel (As of next-20170811)
+> Yeah, my read implementation is broken. I do not update the ppos and so
+> the reader doesn't know it should exit. Mel was suggesting to keep the
+> proc_dostring but I thought I was more clever. Sigh...
 > 
-> Machine Type : Power8 bare-metal
-> Kernel version : 4.13.0-rc4-next-20170817
-> gcc version : 4.8.5
+> This should do the trick. Andrew, could you fold it into
+> mm-page_alloc-rip-out-zonelist_order_zone.patch please?
 > 
+> Thanks for the report Abdul!
 > 
-> command output
-> --------------
-> $ sysctl -a
-> [...
-> vm.hugetlb_shm_group = 0
-> vm.laptop_mode = 0
-> vm.legacy_va_layout = 0
-> vm.lowmem_reserve_ratio = 256	256	32
-> vm.max_map_count = 65530
-> vm.min_free_kbytes = 6637
-> vm.min_slab_ratio = 5
-> vm.min_unmapped_ratio = 1
-> vm.mmap_min_addr = 4096
-> vm.mmap_rnd_bits = 14
-> vm.mmap_rnd_compat_bits = 7
-> vm.nr_hugepages = 0
-> vm.nr_hugepages_mempolicy = 0
-> vm.nr_overcommit_hugepages = 0
-> vm.nr_pdflush_threads = 0
-> vm.numa_zonelist_order = Node
-> vm.numa_zonelist_order = e
-> vm.numa_zonelist_order = ode
-> vm.numa_zonelist_order = 
-> vm.numa_zonelist_order = de
-> vm.numa_zonelist_order = Node
-> vm.numa_zonelist_order = e
-> vm.numa_zonelist_order = ode
-> vm.numa_zonelist_order = 
-> vm.numa_zonelist_order = de
-> vm.numa_zonelist_order = Node
-> vm.numa_zonelist_order = e
-> vm.numa_zonelist_order = ode
-> vm.numa_zonelist_order = 
-> vm.numa_zonelist_order = de
-> vm.numa_zonelist_order = Node
-> vm.numa_zonelist_order = e
-> vm.numa_zonelist_order = ode
-> ....]
+> ---
+> commit 69885605ee3ba681deb54021e3df645f46589ba1
+> Author: Michal Hocko <mhocko@suse.com>
+> Date:   Mon Aug 21 09:46:04 2017 +0200
 > 
-> The last string 'vm.numa_zonelist_order = ' keeps flooding the stdout
-> and command never exit.
+>     mmotm: mm-page_alloc-rip-out-zonelist_order_zone-fix
+>     
+>     Abdul has noticed that reading sysctl vm.numa_zonelist_order
+>     read will never terminate. This is because of
+>     http://lkml.kernel.org/r/20170714080006.7250-2-mhocko@kernel.org
+>     where the reading side doesn't update ppos and so the reader will
+>     never get 0. Return back to proc_dostring which does all the necessary
+>     stuff.
+>     
+>     Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+>     Signed-off-by: Michal Hocko <mhocko@suse.com>
 > 
-> A bisection resulted commit c64e09ce mm, page_alloc: rip out
-> ZONELIST_ORDER_ZONE
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index fda9afbd14d9..e7e92c8f4883 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
 
-Yeah, my read implementation is broken. I do not update the ppos and so
-the reader doesn't know it should exit. Mel was suggesting to keep the
-proc_dostring but I thought I was more clever. Sigh...
+Thanks for the fix Michal, the patch fixes the problem.
 
-This should do the trick. Andrew, could you fold it into
-mm-page_alloc-rip-out-zonelist_order_zone.patch please?
+Reported-and-Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
-Thanks for the report Abdul!
-
----
-commit 69885605ee3ba681deb54021e3df645f46589ba1
-Author: Michal Hocko <mhocko@suse.com>
-Date:   Mon Aug 21 09:46:04 2017 +0200
-
-    mmotm: mm-page_alloc-rip-out-zonelist_order_zone-fix
-    
-    Abdul has noticed that reading sysctl vm.numa_zonelist_order
-    read will never terminate. This is because of
-    http://lkml.kernel.org/r/20170714080006.7250-2-mhocko@kernel.org
-    where the reading side doesn't update ppos and so the reader will
-    never get 0. Return back to proc_dostring which does all the necessary
-    stuff.
-    
-    Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-    Signed-off-by: Michal Hocko <mhocko@suse.com>
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index fda9afbd14d9..e7e92c8f4883 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -894,6 +894,8 @@ int sysctl_min_slab_ratio_sysctl_handler(struct ctl_table *, int,
- 
- extern int numa_zonelist_order_handler(struct ctl_table *, int,
- 			void __user *, size_t *, loff_t *);
-+extern char numa_zonelist_order[];
-+#define NUMA_ZONELIST_ORDER_LEN	16
- 
- #ifndef CONFIG_NEED_MULTIPLE_NODES
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 0cbce40f5426..655686d546cb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -1553,6 +1553,8 @@ static struct ctl_table vm_table[] = {
- #ifdef CONFIG_NUMA
- 	{
- 		.procname	= "numa_zonelist_order",
-+		.data		= &numa_zonelist_order,
-+		.maxlen		= NUMA_ZONELIST_ORDER_LEN,
- 		.mode		= 0644,
- 		.proc_handler	= numa_zonelist_order_handler,
- 	},
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 5cba36337893..b55e97decac4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4859,6 +4859,8 @@ static __init int setup_numa_zonelist_order(char *s)
- }
- early_param("numa_zonelist_order", setup_numa_zonelist_order);
- 
-+char numa_zonelist_order[] = "Node";
-+
- /*
-  * sysctl handler for numa_zonelist_order
-  */
-@@ -4869,12 +4871,8 @@ int numa_zonelist_order_handler(struct ctl_table *table, int write,
- 	char *str;
- 	int ret;
- 
--	if (!write) {
--		int len = sizeof("Node");
--		if (copy_to_user(buffer, "Node", len))
--			return -EFAULT;
--		return len;
--	}
-+	if (!write)
-+		return proc_dostring(table, write, buffer, length, ppos);
- 	str = memdup_user_nul(buffer, 16);
- 	if (IS_ERR(str))
- 		return PTR_ERR(str);
 -- 
-Michal Hocko
-SUSE Labs
+Regard's
+
+Abdul Haleem
+IBM Linux Technology Centre
