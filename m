@@ -1,52 +1,40 @@
-From: Brian King <brking@linux.vnet.ibm.com>
-Subject: Re: [PATCH 1/2] scsi: Move scsi_cmd->jiffies_at_alloc initialization
- to allocation time
-Date: Mon, 21 Aug 2017 17:16:49 -0500
-Message-ID: <ac7be26f-845d-6397-cd27-847873807a1b@linux.vnet.ibm.com>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com>
- <1502904072.2421.3.camel@wdc.com>
- <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
- <1502985161.2615.8.camel@wdc.com>
- <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
- <1503092473.2622.17.camel@wdc.com>
- <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com>
- <1503094414.2622.21.camel@wdc.com>
- <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
- <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arc tree
+Date: Tue, 22 Aug 2017 08:31:26 +1000
+Message-ID: <20170822083126.224078a6@canb.auug.org.au>
+References: <20170822075519.053ed3e5@canb.auug.org.au>
+        <28d0b3a0-2521-1c21-4e44-def1b3f1d991@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42296 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753644AbdHUWQz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 21 Aug 2017 18:16:55 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v7LMF0cU140216
-        for <linux-next@vger.kernel.org>; Mon, 21 Aug 2017 18:16:55 -0400
-Received: from e37.co.us.ibm.com (e37.co.us.ibm.com [32.97.110.158])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2cg25baf8t-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Mon, 21 Aug 2017 18:16:55 -0400
-Received: from localhost
-        by e37.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <brking@linux.vnet.ibm.com>;
-        Mon, 21 Aug 2017 16:16:54 -0600
-In-Reply-To: <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <28d0b3a0-2521-1c21-4e44-def1b3f1d991@synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Liav Rehana <liavr@mellanox.com>, Noam Camus <noamc@ezchip.com>
+List-Id: linux-next.vger.kernel.org
 
-Scratch this one... Version 2 on the way with the corresponding changes
-in scsi_init_request...
+Hi Vineet,
 
--Brian
+On Mon, 21 Aug 2017 14:57:48 -0700 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>
+> On 08/21/2017 02:55 PM, Stephen Rothwell wrote:
+> > Hi Vineet,
+> >
+> > Commit
+> >
+> >    62611ac87d44 ("ARC: [plat-eznps] handle extra aux regs #2: kernel/entry exit")
+> >
+> > is missing a Signed-off-by from its author.  
+> 
+> Whao - that was fast :-)
 
+I do my best :-)
+
+> Fixed/pushed now !
+
+And that was fast enough to get into today's linux-next, thanks.
 
 -- 
-Brian King
-Power Linux I/O
-IBM Linux Technology Center
+Cheers,
+Stephen Rothwell
