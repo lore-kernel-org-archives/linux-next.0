@@ -1,42 +1,29 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: [BUG][bisected 270065e] linux-next fails to boot on powerpc
-Date: Mon, 21 Aug 2017 16:27:12 -0400
-Message-ID: <yq1h8x0ekf3.fsf@oracle.com>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com>
-        <1502904072.2421.3.camel@wdc.com>
-        <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
-        <1502985161.2615.8.camel@wdc.com>
-        <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
-        <1503092473.2622.17.camel@wdc.com>
-        <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the phy-next tree
+Date: Tue, 22 Aug 2017 07:49:34 +1000
+Message-ID: <20170822074934.3f01d4b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com> (Brian
-        King's message of "Fri, 18 Aug 2017 16:57:59 -0500")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Brian King <brking@linux.vnet.ibm.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:58773 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751575AbdHUVtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 21 Aug 2017 17:49:39 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+Hi Kishon,
 
-Brian,
+Commits
 
->> Thanks for the detailed analysis. This is very helpful. Have you
->> considered to change the ipr driver such that it terminates REPORT
->> SUPPORTED OPERATION CODES commands with the appropriate check
->> condition code instead of DID_ERROR?
->
-> Yes. That data is actually in the sense buffer, but since I'm also
-> setting DID_ERROR, scsi_decide_disposition isn't using it. I've got a
-> patch to do just as you suggest, to stop setting DID_ERROR when there
-> is more detailed error data available, but it will need some
-> additional testing before I submit, as it will impact much more than
-> just this case.
+  74d8a7a7971a ("dt-bindings: phy: sun4i-usb-phy: Add property descriptions for H3")
+  24d5503fa233 ("dt-bindings: phy: sun4i-usb-phy: Add compatible string for A83T")
 
-I agree. In this case where a command is not supported, a check
-condition would be a better way to signal the failure to the SCSI
-midlayer.
+are missing a Signed-off-by from their committer.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Cheers,
+Stephen Rothwell
