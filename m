@@ -1,46 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [bisected c64e09ce] sysctl command hung
- indefinitely
-Date: Mon, 21 Aug 2017 21:57:31 +1000
-Message-ID: <20170821215731.3b32d942@canb.auug.org.au>
-References: <1503137971.28497.19.camel@abdul>
-        <20170821075001.GA24530@dhcp22.suse.cz>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH] ipr: Set no_report_opcodes for RAID arrays
+Date: Mon, 21 Aug 2017 16:22:41 -0400
+Message-ID: <yq1lgmcekmm.fsf@oracle.com>
+References: <1502902815.3305.22.camel@abdul.in.ibm.com>
+ <1502904072.2421.3.camel@wdc.com>
+ <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
+ <1502985161.2615.8.camel@wdc.com>
+ <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
+ <c2272791-2010-600b-3982-835b8eb1a523@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58469 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751814AbdHUL5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 21 Aug 2017 07:57:35 -0400
-In-Reply-To: <20170821075001.GA24530@dhcp22.suse.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michal Hocko <mhocko@kernel.org>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, sachinp <sachinp@linux.vnet.ibm.com>, Joonsoo Kim <js1304@gmail.com>
+Content-Type: text/plain
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <c2272791-2010-600b-3982-835b8eb1a523@linux.vnet.ibm.com> (Brian
+ King's message of "Fri, 18 Aug 2017 16:17:32 -0500")
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Brian King <brking@linux.vnet.ibm.com>
+Cc: "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "hare@suse.com" <hare@suse.com>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "hch@lst.de" <hch@lst.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Michal,
 
-On Mon, 21 Aug 2017 09:50:01 +0200 Michal Hocko <mhocko@kernel.org> wrote:
->
-> commit 69885605ee3ba681deb54021e3df645f46589ba1
-> Author: Michal Hocko <mhocko@suse.com>
-> Date:   Mon Aug 21 09:46:04 2017 +0200
-> 
->     mmotm: mm-page_alloc-rip-out-zonelist_order_zone-fix
->     
->     Abdul has noticed that reading sysctl vm.numa_zonelist_order
->     read will never terminate. This is because of
->     http://lkml.kernel.org/r/20170714080006.7250-2-mhocko@kernel.org
->     where the reading side doesn't update ppos and so the reader will
->     never get 0. Return back to proc_dostring which does all the necessary
->     stuff.
->     
->     Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
->     Signed-off-by: Michal Hocko <mhocko@suse.com>
+Brian,
 
-I have added that to linux-next for tomorrow.
+> Since ipr RAID arrays do not support the MAINTENANCE_IN /
+> MI_REPORT_SUPPORTED_OPERATION_CODES, set no_report_opcodes to prevent
+> it from being sent.
+
+Applied to 4.13/scsi-fixes. Thank you!
 
 -- 
-Cheers,
-Stephen Rothwell
+Martin K. Petersen	Oracle Linux Engineering
