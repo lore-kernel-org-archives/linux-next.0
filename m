@@ -1,89 +1,70 @@
-From: Brian King <brking@linux.vnet.ibm.com>
-Subject: [PATCHv2 1/2] scsi: Move scsi_cmd->jiffies_at_alloc initialization to
- allocation time
-Date: Mon, 21 Aug 2017 17:40:14 -0500
-Message-ID: <e605bd0d-b193-0a7c-a7f3-63d7cc49e9b9@linux.vnet.ibm.com>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com>
- <1502904072.2421.3.camel@wdc.com>
- <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
- <1502985161.2615.8.camel@wdc.com>
- <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
- <1503092473.2622.17.camel@wdc.com>
- <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com>
- <1503094414.2622.21.camel@wdc.com>
- <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
- <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the btrfs-kdave tree with the btrfs
+ tree
+Date: Tue, 22 Aug 2017 09:44:03 +1000
+Message-ID: <20170822094403.11477046@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
-Content-Language: en-US
-Sender: linux-scsi-owner@vger.kernel.org
-To: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59995 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754433AbdHUXoG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 21 Aug 2017 19:44:06 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Sterba <dsterba@suse.cz>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anand Jain <anand.jain@oracle.com>, Nick Terrell <terrelln@fb.com>
 
-This second version also sets up jiffies_at_alloc in scsi_init_request.
-This has been tested without the second patch in the series and
-I've confirmed I now see the following in the logs after booting:
+Hi All,
 
-[  121.718088] sd 1:2:0:0: timing out command, waited 120s
-[  121.798081] sd 1:2:1:0: timing out command, waited 120s
+(As expected) Today's linux-next merge of the btrfs-kdave tree got a
+conflict in:
 
-Without this patch I was never seeing these messages, indicating
-the retry timer code wasn't working. Also, after seeing these
-messages, I've confirmed there are no longer any hung tasks
-in the kernel with sysrq-w, while before, without this patch,
-I would see hung tasks for the scsi_report_opcodes calls which
-were getting retried forever.
+  fs/btrfs/compression.h
 
-8<
+between commit:
 
-Move the initialization of scsi_cmd->jiffies_at_alloc to allocation
-time rather than prep time. Also ensure that jiffies_at_alloc
-is preserved when we go through prep. This lets us send retries
-through prep again and not break the overall retry timer logic
-in scsi_softirq_done.
+  5c1aab1dd544 ("btrfs: Add zstd support")
 
-Suggested-by: Bart Van Assche <Bart.VanAssche@wdc.com>
-Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
----
+from the btrfs tree and commit:
 
-Index: linux-2.6.git/drivers/scsi/scsi_lib.c
-===================================================================
---- linux-2.6.git.orig/drivers/scsi/scsi_lib.c
-+++ linux-2.6.git/drivers/scsi/scsi_lib.c
-@@ -1154,6 +1154,7 @@ void scsi_init_command(struct scsi_devic
- 	void *buf = cmd->sense_buffer;
- 	void *prot = cmd->prot_sdb;
- 	unsigned int unchecked_isa_dma = cmd->flags & SCMD_UNCHECKED_ISA_DMA;
-+	unsigned long jiffies_at_alloc = cmd->jiffies_at_alloc;
- 
- 	/* zero out the cmd, except for the embedded scsi_request */
- 	memset((char *)cmd + sizeof(cmd->req), 0,
-@@ -1164,7 +1165,7 @@ void scsi_init_command(struct scsi_devic
- 	cmd->prot_sdb = prot;
- 	cmd->flags = unchecked_isa_dma;
- 	INIT_DELAYED_WORK(&cmd->abort_work, scmd_eh_abort_handler);
--	cmd->jiffies_at_alloc = jiffies;
-+	cmd->jiffies_at_alloc = jiffies_at_alloc;
- 
- 	scsi_add_cmd_to_list(cmd);
- }
-@@ -2016,6 +2017,7 @@ static int scsi_init_request(struct blk_
- 	if (!cmd->sense_buffer)
- 		return -ENOMEM;
- 	cmd->req.sense = cmd->sense_buffer;
-+	cmd->jiffies_at_alloc = jiffies;
- 
- 	if (scsi_host_get_prot(shost)) {
- 		sg = (void *)cmd + sizeof(struct scsi_cmnd) +
-@@ -2119,6 +2121,7 @@ static int scsi_init_rq(struct request_q
- 	if (!cmd->sense_buffer)
- 		goto fail;
- 	cmd->req.sense = cmd->sense_buffer;
-+	cmd->jiffies_at_alloc = jiffies;
- 
- 	if (scsi_host_get_prot(shost) >= SHOST_DIX_TYPE0_PROTECTION) {
- 		cmd->prot_sdb = kmem_cache_zalloc(scsi_sdb_cache, gfp);
+  dc2f29212a26 ("btrfs: remove unused BTRFS_COMPRESS_LAST")
+
+from the btrfs-kdave tree.
+
+I fixed it up (as suggested by Chris - see below) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/btrfs/compression.h
+index 2269e00854d8,3b1b0ac15fdc..000000000000
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@@ -99,9 -99,7 +99,8 @@@ enum btrfs_compression_type
+        BTRFS_COMPRESS_NONE  = 0,
+        BTRFS_COMPRESS_ZLIB  = 1,
+        BTRFS_COMPRESS_LZO   = 2,
+ -      BTRFS_COMPRESS_TYPES = 2,
+ +      BTRFS_COMPRESS_ZSTD  = 3,
+ +      BTRFS_COMPRESS_TYPES = 3,
+-       BTRFS_COMPRESS_LAST  = 4,
+  };
+
+  struct btrfs_compress_op {
+@@@ -129,6 -127,7 +128,8 @@@
+
+  extern const struct btrfs_compress_op btrfs_zlib_compress;
+  extern const struct btrfs_compress_op btrfs_lzo_compress;
+ +extern const struct btrfs_compress_op btrfs_zstd_compress;
+
++ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end);
++
+  #endif
