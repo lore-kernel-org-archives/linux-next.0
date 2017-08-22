@@ -1,86 +1,41 @@
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: Re: possible circular locking dependency detected [was: linux-next:
- Tree for Aug 22]
-Date: Tue, 22 Aug 2017 21:43:56 +0000
-Message-ID: <1503438234.2508.27.camel@wdc.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Tree for Aug 22
+Date: Wed, 23 Aug 2017 07:57:05 +1000
+Message-ID: <20170823075705.75432321@canb.auug.org.au>
 References: <20170822183816.7925e0f8@canb.auug.org.au>
-         <20170822104708.GA491@jagdpanzerIV.localdomain>
+        <20170823041117.780097f7@canb.auug.org.au>
+        <20170823041424.1dddeb2d@canb.auug.org.au>
+        <20170822185923.GE11320@linux.vnet.ibm.com>
+        <20170823051216.34f2c09f@canb.auug.org.au>
+        <20170822193231.GF11320@linux.vnet.ibm.com>
+        <20170822193620.GA7752@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170822104708.GA491@jagdpanzerIV.localdomain>
-Content-Language: en-US
-Content-ID: <A2253BF467CE414D89A7499605F5D6CE@namprd04.prod.outlook.com>
+In-Reply-To: <20170822193620.GA7752@linux.vnet.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "byungchul.park@lge.com" <byungchul.park@lge.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "peterz@infradead.org" <peterz@infradead.org>, "sergey.senozhatsky.work@gmail.com" <sergey.senozhatsky.work@gmail.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ppc-dev <linuxppc-dev@lists.ozlabs.org>, Nicholas Piggin <npiggin@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCAyMDE3LTA4LTIyIGF0IDE5OjQ3ICswOTAwLCBTZXJnZXkgU2Vub3poYXRza3kgd3Jv
-dGU6DQo+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PQ0KPiBXQVJOSU5HOiBwb3NzaWJsZSBjaXJjdWxhciBsb2NraW5nIGRlcGVuZGVuY3kgZGV0
-ZWN0ZWQNCj4gNC4xMy4wLXJjNi1uZXh0LTIwMTcwODIyLWRiZy0wMDAyMC1nMzk3NThlZDhhYWUw
-LWRpcnR5ICMxNzQ2IE5vdCB0YWludGVkDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiBmc2NrLmV4dDQvMTQ4IGlzIHRyeWluZyB0byBh
-Y3F1aXJlIGxvY2s6DQo+ICAoJmJkZXYtPmJkX211dGV4KXsrLisufSwgYXQ6IFs8ZmZmZmZmZmY4
-MTE2ZTczZT5dIF9fYmxrZGV2X3B1dCsweDMzLzB4MTkwDQo+IA0KPiAgYnV0IG5vdyBpbiByZWxl
-YXNlIGNvbnRleHQgb2YgYSBjcm9zc2xvY2sgYWNxdWlyZWQgYXQgdGhlIGZvbGxvd2luZzoNCj4g
-ICgoY29tcGxldGUpJndhaXQjMil7Ky4rLn0sIGF0OiBbPGZmZmZmZmZmODEyMTU5ZTA+XSBibGtf
-ZXhlY3V0ZV9ycSsweGJiLzB4ZGENCj4gDQo+ICB3aGljaCBsb2NrIGFscmVhZHkgZGVwZW5kcyBv
-biB0aGUgbmV3IGxvY2suDQo+IA0KPiAgdGhlIGV4aXN0aW5nIGRlcGVuZGVuY3kgY2hhaW4gKGlu
-IHJldmVyc2Ugb3JkZXIpIGlzOg0KPiANCj4gIC0+ICMxICgoY29tcGxldGUpJndhaXQjMil7Ky4r
-Ln06DQo+ICAgICAgICBsb2NrX2FjcXVpcmUrMHgxNzYvMHgxOWUNCj4gICAgICAgIF9fd2FpdF9m
-b3JfY29tbW9uKzB4NTAvMHgxZTMNCj4gICAgICAgIGJsa19leGVjdXRlX3JxKzB4YmIvMHhkYQ0K
-PiAgICAgICAgc2NzaV9leGVjdXRlKzB4YzMvMHgxN2QgW3Njc2lfbW9kXQ0KPiAgICAgICAgc2Rf
-cmV2YWxpZGF0ZV9kaXNrKzB4MTEyLzB4MTU0OSBbc2RfbW9kXQ0KPiAgICAgICAgcmVzY2FuX3Bh
-cnRpdGlvbnMrMHg0OC8weDJjNA0KPiAgICAgICAgX19ibGtkZXZfZ2V0KzB4MTRiLzB4MzdjDQo+
-ICAgICAgICBibGtkZXZfZ2V0KzB4MTkxLzB4MmMwDQo+ICAgICAgICBkZXZpY2VfYWRkX2Rpc2sr
-MHgyYjQvMHgzZTUNCj4gICAgICAgIHNkX3Byb2JlX2FzeW5jKzB4ZjgvMHgxN2UgW3NkX21vZF0N
-Cj4gICAgICAgIGFzeW5jX3J1bl9lbnRyeV9mbisweDM0LzB4ZTANCj4gICAgICAgIHByb2Nlc3Nf
-b25lX3dvcmsrMHgyYWYvMHg0ZDENCj4gICAgICAgIHdvcmtlcl90aHJlYWQrMHgxOWEvMHgyNGYN
-Cj4gICAgICAgIGt0aHJlYWQrMHgxMzMvMHgxM2INCj4gICAgICAgIHJldF9mcm9tX2ZvcmsrMHgy
-Ny8weDQwDQo+IA0KPiAgLT4gIzAgKCZiZGV2LT5iZF9tdXRleCl7Ky4rLn06DQo+ICAgICAgICBf
-X2Jsa2Rldl9wdXQrMHgzMy8weDE5MA0KPiAgICAgICAgYmxrZGV2X2Nsb3NlKzB4MjQvMHgyNw0K
-PiAgICAgICAgX19mcHV0KzB4ZWUvMHgxOGENCj4gICAgICAgIHRhc2tfd29ya19ydW4rMHg3OS8w
-eGEwDQo+ICAgICAgICBwcmVwYXJlX2V4aXRfdG9fdXNlcm1vZGUrMHg5Yi8weGI1DQo+IA0KPiAg
-b3RoZXIgaW5mbyB0aGF0IG1pZ2h0IGhlbHAgdXMgZGVidWcgdGhpczoNCj4gIFBvc3NpYmxlIHVu
-c2FmZSBsb2NraW5nIHNjZW5hcmlvIGJ5IGNyb3NzbG9jazoNCj4gICAgICAgIENQVTAgICAgICAg
-ICAgICAgICAgICAgIENQVTENCj4gICAgICAgIC0tLS0gICAgICAgICAgICAgICAgICAgIC0tLS0N
-Cj4gICBsb2NrKCZiZGV2LT5iZF9tdXRleCk7DQo+ICAgbG9jaygoY29tcGxldGUpJndhaXQjMik7
-DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsb2NrKCZiZGV2LT5iZF9tdXRleCk7
-DQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bmxvY2soKGNvbXBsZXRlKSZ3YWl0
-IzIpOw0KPiANCj4gICAqKiogREVBRExPQ0sgKioqDQo+IDQgbG9ja3MgaGVsZCBieSBmc2NrLmV4
-dDQvMTQ4Og0KPiAgIzA6ICAoJmJkZXYtPmJkX211dGV4KXsrLisufSwgYXQ6IFs8ZmZmZmZmZmY4
-MTE2ZTczZT5dIF9fYmxrZGV2X3B1dCsweDMzLzB4MTkwDQo+ICAjMTogIChyY3VfcmVhZF9sb2Nr
-KXsuLi4ufSwgYXQ6IFs8ZmZmZmZmZmY4MTIxN2YxNj5dIHJjdV9sb2NrX2FjcXVpcmUrMHgwLzB4
-MjANCj4gICMyOiAgKCYoJmhvc3QtPmxvY2spLT5ybG9jayl7LS4tLn0sIGF0OiBbPGZmZmZmZmZm
-YTAwZTc1NTA+XSBhdGFfc2NzaV9xdWV1ZWNtZCsweDIzLzB4NzQgW2xpYmF0YV0NCj4gICMzOiAg
-KCZ4LT53YWl0IzE0KXstLi4ufSwgYXQ6IFs8ZmZmZmZmZmY4MTA2YjU5Mz5dIGNvbXBsZXRlKzB4
-MTgvMHg1MA0KPiANCj4gIHN0YWNrIGJhY2t0cmFjZToNCj4gQ1BVOiAxIFBJRDogMTQ4IENvbW06
-IGZzY2suZXh0NCBOb3QgdGFpbnRlZCA0LjEzLjAtcmM2LW5leHQtMjAxNzA4MjItZGJnLTAwMDIw
-LWczOTc1OGVkOGFhZTAtZGlydHkgIzE3NDYNCj4gQ2FsbCBUcmFjZToNCj4gIGR1bXBfc3RhY2sr
-MHg2Ny8weDhlDQo+ICBwcmludF9jaXJjdWxhcl9idWcrMHgyYTEvMHgyYWYNCj4gID8gemFwX2Ns
-YXNzKzB4YzUvMHhjNQ0KPiAgY2hlY2tfcHJldl9hZGQrMHg3Ni8weDIwZA0KPiAgPyBfX2xvY2tf
-YWNxdWlyZSsweGMyNy8weGNjOA0KPiAgbG9ja19jb21taXRfY3Jvc3Nsb2NrKzB4MzI3LzB4MzVl
-DQo+ICBjb21wbGV0ZSsweDI0LzB4NTANCj4gIHNjc2lfZW5kX3JlcXVlc3QrMHg4ZC8weDE3NiBb
-c2NzaV9tb2RdDQo+ICBzY3NpX2lvX2NvbXBsZXRpb24rMHgxYmUvMHg0MjMgW3Njc2lfbW9kXQ0K
-PiAgX19ibGtfbXFfY29tcGxldGVfcmVxdWVzdCsweDExMi8weDEzMQ0KPiAgYXRhX3Njc2lfc2lt
-dWxhdGUrMHgyMTIvMHgyMTggW2xpYmF0YV0NCj4gIF9fYXRhX3Njc2lfcXVldWVjbWQrMHgxYmUv
-MHgxZGUgW2xpYmF0YV0NCj4gIGF0YV9zY3NpX3F1ZXVlY21kKzB4NDEvMHg3NCBbbGliYXRhXQ0K
-PiAgc2NzaV9kaXNwYXRjaF9jbWQrMHgxOTQvMHgyYWYgW3Njc2lfbW9kXQ0KPiAgc2NzaV9xdWV1
-ZV9ycSsweDFlMC8weDI2ZiBbc2NzaV9tb2RdDQo+ICBibGtfbXFfZGlzcGF0Y2hfcnFfbGlzdCsw
-eDE5My8weDJhNw0KPiAgPyBfcmF3X3NwaW5fdW5sb2NrKzB4MmUvMHg0MA0KPiAgYmxrX21xX3Nj
-aGVkX2Rpc3BhdGNoX3JlcXVlc3RzKzB4MTMyLzB4MTc2DQo+ICBfX2Jsa19tcV9ydW5faHdfcXVl
-dWUrMHg1OS8weGM1DQo+ICBfX2Jsa19tcV9kZWxheV9ydW5faHdfcXVldWUrMHg1Zi8weGMxDQo+
-ICBibGtfbXFfZmx1c2hfcGx1Z19saXN0KzB4ZmMvMHgxMGINCj4gIGJsa19mbHVzaF9wbHVnX2xp
-c3QrMHhjNi8weDFlYg0KPiAgYmxrX2ZpbmlzaF9wbHVnKzB4MjUvMHgzMg0KPiAgZ2VuZXJpY193
-cml0ZXBhZ2VzKzB4NTYvMHg2Mw0KPiAgZG9fd3JpdGVwYWdlcysweDM2LzB4NzANCj4gIF9fZmls
-ZW1hcF9mZGF0YXdyaXRlX3JhbmdlKzB4NTkvMHg1Zg0KPiAgZmlsZW1hcF93cml0ZV9hbmRfd2Fp
-dCsweDE5LzB4NGYNCj4gIF9fYmxrZGV2X3B1dCsweDVmLzB4MTkwDQo+ICBibGtkZXZfY2xvc2Ur
-MHgyNC8weDI3DQo+ICBfX2ZwdXQrMHhlZS8weDE4YQ0KPiAgdGFza193b3JrX3J1bisweDc5LzB4
-YTANCj4gIHByZXBhcmVfZXhpdF90b191c2VybW9kZSsweDliLzB4YjUNCj4gIGVudHJ5X1NZU0NB
-TExfNjRfZmFzdHBhdGgrMHhhYi8weGFkDQoNCkJ5dW5nY2h1bCwgZGlkIHlvdSBhZGQgdGhlIGNy
-b3NzbG9jayBjaGVja3MgdG8gbG9ja2RlcD8gQ2FuIHlvdSBoYXZlIGEgbG9vayBhdA0KdGhlIGFi
-b3ZlIHJlcG9ydD8gVGhhdCByZXBvcnQgbmFtZWx5IGRvZXNuJ3QgbWFrZSBzZW5zZSB0byBtZS4N
-Cg0KQmFydC4=
+Hi Paul,
+
+On Tue, 22 Aug 2017 12:36:20 -0700 "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+>
+> To complete the thought, if you aren't already using it, I suggest
+> applying Nick's patch:
+> 
+> http://lkml.kernel.org/r/20170822084348.21436-1-npiggin@gmail.com
+
+OK, I applied that - with a little shoehorning due to commit
+
+  71acb768f5b3 ("timers: Fix excessive granularity of new timers after a nohz idle")
+
+from your cru tree.
+
+my qemu test now boots and shuts down fine.
+
+-- 
+Cheers,
+Stephen Rothwell
