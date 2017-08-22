@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the
- parisc-hd tree
-Date: Tue, 22 Aug 2017 16:53:18 +1000
-Message-ID: <20170822165318.77e3e0ca@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Tue, 22 Aug 2017 16:57:19 +1000
+Message-ID: <20170822165719.112d9186@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39673 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:48581 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754517AbdHVGxU (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Aug 2017 02:53:20 -0400
+        id S1754565AbdHVG5V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Aug 2017 02:57:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Waiman Long <longman@redhat.com>
 
 Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/parisc/include/uapi/asm/mman.h
+  init/main.c
 
 between commit:
 
-  1c190151447d ("parisc: Add MADV_HWPOISON and MADV_SOFT_OFFLINE")
+  caba4cbbd27d ("debugobjects: Make kmemleak ignore debug objects")
 
-from the parisc-hd tree and commit:
+from the tip tree and commit:
 
-  115d20ededaf ("mm,fork: introduce MADV_WIPEONFORK")
+  50a7dc046b58 ("mm, page_ext: move page_ext_init() after page_alloc_init_late()")
 
 from the akpm-current tree.
 
@@ -43,20 +42,18 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/parisc/include/uapi/asm/mman.h
-index 9a9c2fe4be50,f6eec376e5fa..000000000000
---- a/arch/parisc/include/uapi/asm/mman.h
-+++ b/arch/parisc/include/uapi/asm/mman.h
-@@@ -57,9 -60,9 +57,12 @@@
-  					   overrides the coredump filter bits */
-  #define MADV_DODUMP	70		/* Clear the MADV_NODUMP flag */
-  
-+ #define MADV_WIPEONFORK 71		/* Zero memory on fork, child only */
-+ #define MADV_KEEPONFORK 72		/* Undo MADV_WIPEONFORK */
-+ 
- +#define MADV_HWPOISON     100		/* poison a page for testing */
- +#define MADV_SOFT_OFFLINE 101		/* soft offline page for testing */
- +
-  /* compatibility flags */
-  #define MAP_FILE	0
-  #define MAP_VARIABLE	0
+diff --cc init/main.c
+index aea41cf8f9a3,c401e5a38af3..000000000000
+--- a/init/main.c
++++ b/init/main.c
+@@@ -658,9 -651,8 +659,8 @@@ asmlinkage __visible void __init start_
+  		initrd_start = 0;
+  	}
+  #endif
+- 	page_ext_init();
+ -	debug_objects_mem_init();
+  	kmemleak_init();
+ +	debug_objects_mem_init();
+  	setup_per_cpu_pageset();
+  	numa_policy_init();
+  	if (late_time_init)
