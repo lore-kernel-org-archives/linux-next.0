@@ -1,125 +1,69 @@
-From: Baoquan He <bhe@redhat.com>
-Subject: Re: linux-next: manual merge of the tip tree with the iommu tree
-Date: Tue, 22 Aug 2017 13:57:58 +0800
-Message-ID: <20170822055758.GB12401@x1>
-References: <20170822135057.776f3509@canb.auug.org.au>
+From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Subject: Re: [PATCH 0/2] Allow scsi_prep_fn to occur for retried commands
+Date: Tue, 22 Aug 2017 12:12:04 +0530
+Message-ID: <1503384124.3629.22.camel@abdul.in.ibm.com>
+References: <1502902815.3305.22.camel@abdul.in.ibm.com>
+         <1502904072.2421.3.camel@wdc.com>
+         <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
+         <1502985161.2615.8.camel@wdc.com>
+         <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
+         <1503092473.2622.17.camel@wdc.com>
+         <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com>
+         <1503094414.2622.21.camel@wdc.com>
+         <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170822135057.776f3509@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Joerg Roedel <joro@8bytes.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52356 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754544AbdHVGmP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Aug 2017 02:42:15 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v7M6dPAQ097661
+        for <linux-next@vger.kernel.org>; Tue, 22 Aug 2017 02:42:14 -0400
+Received: from e23smtp03.au.ibm.com (e23smtp03.au.ibm.com [202.81.31.145])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2cgd72h4nd-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Tue, 22 Aug 2017 02:42:14 -0400
+Received: from localhost
+        by e23smtp03.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Tue, 22 Aug 2017 16:42:11 +1000
+In-Reply-To: <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Brian King <brking@linux.vnet.ibm.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
 
-Hi Stephen,
+On Mon, 2017-08-21 at 17:11 -0500, Brian King wrote:
+> The following two patches address the hang issue being observed
+> with Bart's patch on powerpc. The first patch moves the initialization
+> of jiffies_at_alloc from scsi_init_command to scsi_init_rq, and ensures
+> we don't zero jiffies_at_alloc in scsi_init_command. The second patch
+> saves / restores the retry counter in scsi_init_command which lets us
+> go through scsi_init_command for retries and not forget why we were
+> there. 
+> 
+> These patches have only been boot tested on my Power machine with ipr
+> to ensure they fix the issue I was seeing.
+> 
+> -Brian
+> 
 
-On 08/22/17 at 01:50pm, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got conflicts in:
-> 
->   drivers/iommu/amd_iommu.c
->   drivers/iommu/amd_iommu_init.c
->   drivers/iommu/amd_iommu_proto.h
->   drivers/iommu/amd_iommu_types.h
-> 
-> between commits:
-> 
->   4c232a708be1 ("iommu/amd: Detect pre enabled translation")
->   9494ea90a56d ("Revert "iommu/amd: Suppress IO_PAGE_FAULTs in kdump kernel"")
->   07a80a6b5920 ("iommu/amd: Define bit fields for DTE particularly")
->   daae2d25a477 ("iommu/amd: Don't copy GCR3 table root pointer")
-> 
-> from the iommu tree and commit:
-> 
->   2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
+Thank you Brian and Bart, for your efforts to fix this bug.
 
-Could you tell where the above commit is put? I can have a look.
+I tested these patches on my PowerPC machine and system booted fine.
 
-Thanks
-Baoquan
+[PATCHv2 1/2] scsi: Move scsi_cmd->jiffies_at_alloc initialization to
+allocation time
+[PATCH 2/2] scsi: Preserve retry counter through scsi_prep_fn
 
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/iommu/amd_iommu.c
-> index 31bce367866c,4ad7e5e31943..000000000000
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@@ -1476,10 -1538,10 +1478,10 @@@ static int iommu_map_page(struct protec
->   			return -EBUSY;
->   
->   	if (count > 1) {
-> - 		__pte = PAGE_SIZE_PTE(phys_addr, page_size);
-> + 		__pte = PAGE_SIZE_PTE(__sme_set(phys_addr), page_size);
->  -		__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_P | IOMMU_PTE_FC;
->  +		__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_PR | IOMMU_PTE_FC;
->   	} else
-> - 		__pte = phys_addr | IOMMU_PTE_PR | IOMMU_PTE_FC;
->  -		__pte = __sme_set(phys_addr) | IOMMU_PTE_P | IOMMU_PTE_FC;
-> ++		__pte = __sme_set(phys_addr) | IOMMU_PTE_PR | IOMMU_PTE_FC;
->   
->   	if (prot & IOMMU_PROT_IR)
->   		__pte |= IOMMU_PTE_IR;
-> diff --cc drivers/iommu/amd_iommu_init.c
-> index ff8887ac5555,2292a6cece76..000000000000
-> --- a/drivers/iommu/amd_iommu_init.c
-> +++ b/drivers/iommu/amd_iommu_init.c
-> @@@ -29,6 -29,8 +29,7 @@@
->   #include <linux/export.h>
->   #include <linux/iommu.h>
->   #include <linux/kmemleak.h>
->  -#include <linux/crash_dump.h>
-> + #include <linux/mem_encrypt.h>
->   #include <asm/pci-direct.h>
->   #include <asm/iommu.h>
->   #include <asm/gart.h>
-> diff --cc drivers/iommu/amd_iommu_proto.h
-> index 90e62e9b01c5,3f12fb2338ea..000000000000
-> --- a/drivers/iommu/amd_iommu_proto.h
-> +++ b/drivers/iommu/amd_iommu_proto.h
-> @@@ -87,6 -87,14 +87,16 @@@ static inline bool iommu_feature(struc
->   	return !!(iommu->features & f);
->   }
->   
-> + static inline u64 iommu_virt_to_phys(void *vaddr)
-> + {
-> + 	return (u64)__sme_set(virt_to_phys(vaddr));
-> + }
-> + 
-> + static inline void *iommu_phys_to_virt(unsigned long paddr)
-> + {
-> + 	return phys_to_virt(__sme_clr(paddr));
-> + }
-> + 
->  +extern bool translation_pre_enabled(struct amd_iommu *iommu);
->  +extern struct iommu_dev_data *get_dev_data(struct device *dev);
->   #endif /* _ASM_X86_AMD_IOMMU_PROTO_H  */
-> diff --cc drivers/iommu/amd_iommu_types.h
-> index 5f775fef341c,8591f43c467c..000000000000
-> --- a/drivers/iommu/amd_iommu_types.h
-> +++ b/drivers/iommu/amd_iommu_types.h
-> @@@ -361,8 -343,8 +361,8 @@@
->   #define GCR3_VALID		0x01ULL
->   
->   #define IOMMU_PAGE_MASK (((1ULL << 52) - 1) & ~0xfffULL)
->  -#define IOMMU_PTE_PRESENT(pte) ((pte) & IOMMU_PTE_P)
->  +#define IOMMU_PTE_PRESENT(pte) ((pte) & IOMMU_PTE_PR)
-> - #define IOMMU_PTE_PAGE(pte) (phys_to_virt((pte) & IOMMU_PAGE_MASK))
-> + #define IOMMU_PTE_PAGE(pte) (iommu_phys_to_virt((pte) & IOMMU_PAGE_MASK))
->   #define IOMMU_PTE_MODE(pte) (((pte) >> 9) & 0x07)
->   
->   #define IOMMU_PROT_MASK 0x03
+Reported-and-Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+
+-- 
+Regard's
+
+Abdul Haleem
+IBM Linux Technology Centre
