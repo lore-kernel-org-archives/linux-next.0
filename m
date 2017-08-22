@@ -1,53 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the staging tree
-Date: Tue, 22 Aug 2017 11:49:10 +1000
-Message-ID: <20170822114910.245d1d48@canb.auug.org.au>
-References: <20170731150227.58ea271b@canb.auug.org.au>
-        <20170809112522.1b2563ad@canb.auug.org.au>
+Subject: linux-next: manual merge of the l2-mtd tree with the kbuild-current
+ tree
+Date: Tue, 22 Aug 2017 11:56:14 +1000
+Message-ID: <20170822115614.1590b368@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54261 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754388AbdHVBtN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 21 Aug 2017 21:49:13 -0400
-In-Reply-To: <20170809112522.1b2563ad@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, JB Van Puyvelde <jbvanpuyvelde@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Brian Norris <computersforpeace@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Boris Brezillon <boris.brezillon@free-electrons.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+Hi Brian,
 
-On Wed, 9 Aug 2017 11:25:22 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Mon, 31 Jul 2017 15:02:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the staging tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> > 
-> > drivers/staging/media/atomisp/i2c/imx/imx.c:1087:12: warning: 'imx_vcm_power_up' defined but not used [-Wunused-function]
-> >  static int imx_vcm_power_up(struct v4l2_subdev *sd)
-> >             ^
-> > drivers/staging/media/atomisp/i2c/imx/imx.c:1095:12: warning: 'imx_vcm_power_down' defined but not used [-Wunused-function]
-> >  static int imx_vcm_power_down(struct v4l2_subdev *sd)
-> >             ^
-> > drivers/staging/media/atomisp/i2c/imx/imx.c:1103:12: warning: 'imx_vcm_init' defined but not used [-Wunused-function]
-> >  static int imx_vcm_init(struct v4l2_subdev *sd)
-> >             ^
-> > drivers/staging/media/atomisp/i2c/imx/imx.c:1111:12: warning: 'imx_t_focus_vcm' defined but not used [-Wunused-function]
-> >  static int imx_t_focus_vcm(struct v4l2_subdev *sd, u16 val)
-> >             ^
-> > 
-> > Introduced by commit
-> > 
-> >   9a5a6911aa3f ("staging: imx: fix non-static declarations")  
-> 
-> There is now another copy of this commit in the v4l-dvb tree producing
-> the same warnings :-(
+Today's linux-next merge of the l2-mtd tree got a conflict in:
 
-Any chance this will be fixed in the v4l-dvb tree?
+  include/asm-generic/vmlinux.lds.h
+
+between commit:
+
+  cb87481ee89d ("kbuild: linker script do not match C names unless LD_DEAD_CODE_DATA_ELIMINATION is configured")
+
+from the kbuild-current tree and commit:
+
+  129f6c4820dd ("mtd: only use __xipram annotation when XIP_KERNEL is set")
+
+from the l2-mtd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/asm-generic/vmlinux.lds.h
+index 9623d78f8494,ff507c178327..000000000000
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@@ -214,9 -198,13 +214,10 @@@
+
+  /*
+   * .data section
+ - * LD_DEAD_CODE_DATA_ELIMINATION option enables -fdata-sections generates
+ - * .data.identifier which needs to be pulled in with .data, but don't want to
+ - * pull in .data..stuff which has its own requirements. Same for bss.
+   */
+  #define DATA_DATA                                                     \
++       *(.xiptext)                                                     \
+ -      *(.data .data.[0-9a-zA-Z_]*)                                    \
+ +      *(DATA_MAIN)                                                    \
+        *(.ref.data)                                                    \
+        *(.data..shared_aligned) /* percpu related */                   \
+        MEM_KEEP(init.data)                                             \
