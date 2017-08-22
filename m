@@ -1,38 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the spi tree
-Date: Tue, 22 Aug 2017 16:49:36 +1000
-Message-ID: <20170822164936.5a57ec78@canb.auug.org.au>
+From: "hch@lst.de" <hch@lst.de>
+Subject: Re: [PATCH 1/2] scsi: Move scsi_cmd->jiffies_at_alloc
+        initialization to allocation time
+Date: Tue, 22 Aug 2017 08:51:04 +0200
+Message-ID: <20170822065104.GA7054@lst.de>
+References: <1502902815.3305.22.camel@abdul.in.ibm.com> <1502904072.2421.3.camel@wdc.com> <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com> <1502985161.2615.8.camel@wdc.com> <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com> <1503092473.2622.17.camel@wdc.com> <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com> <1503094414.2622.21.camel@wdc.com> <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com> <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47549 "EHLO ozlabs.org"
+Received: from verein.lst.de ([213.95.11.211]:37325 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754517AbdHVGti (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Aug 2017 02:49:38 -0400
+        id S1754517AbdHVGvG (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Aug 2017 02:51:06 -0400
+Content-Disposition: inline
+In-Reply-To: <21928108-3a20-577e-99c8-6da05637c158@linux.vnet.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiada Wang <jiada_wang@mentor.com>
+To: Brian King <brking@linux.vnet.ibm.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "abdhalee@linux.vnet.ibm.com" <abdhalee@linux.vnet.ibm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
 
-Hi all,
+On Mon, Aug 21, 2017 at 05:13:20PM -0500, Brian King wrote:
+> Move the initialization of scsi_cmd->jiffies_at_alloc to allocation
+> time rather than prep time. Also ensure that jiffies_at_alloc
+> is preserved when we go through prep. This lets us send retries
+> through prep again and not break the overall retry timer logic
+> in scsi_softirq_done.
+> 
+> Suggested-by: Bart Van Assche <Bart.VanAssche@wdc.com>
+> Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
 
-After merging the spi tree, today's linux-next build (powerpc
-allyesconfig) produced these warnings:
-
-drivers/spi/spi-imx.c: In function 'spi_imx_buf_rx_swap_u32':
-drivers/spi/spi-imx.c:284:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-  unsigned int bytes_per_word;
-               ^
-drivers/spi/spi-imx.c: In function 'spi_imx_buf_tx_swap_u32':
-drivers/spi/spi-imx.c:319:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-  unsigned int bytes_per_word;
-               ^
-
-Introduced by commit
-
-  1673c81d9435 ("spi: imx: dynamic burst length adjust for PIO mode")
-
--- 
-Cheers,
-Stephen Rothwell
+As far as I can tell this will never set jiffies_at_alloc for the
+blk-mq path.
