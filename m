@@ -1,54 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the slave-dma tree
-Date: Tue, 22 Aug 2017 15:36:54 +1000
-Message-ID: <20170822153654.6455c8df@canb.auug.org.au>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: linux-next: manual merge of the l2-mtd tree with the
+ kbuild-current tree
+Date: Tue, 22 Aug 2017 07:37:01 +0200
+Message-ID: <20170822073701.34d77cc8@bbrezillon>
+References: <20170822115614.1590b368@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170822115614.1590b368@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Roese <sr@denx.de>, Dave Jiang <dave.jiang@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Brian Norris <computersforpeace@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-next.vger.kernel.org
 
-Hi Vinod,
+Le Tue, 22 Aug 2017 11:56:14 +1000,
+Stephen Rothwell <sfr@canb.auug.org.au> a écrit :
 
-After merging the slave-dma tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+> Hi Brian,
+> 
+> Today's linux-next merge of the l2-mtd tree got a conflict in:
+> 
+>   include/asm-generic/vmlinux.lds.h
+> 
+> between commit:
+> 
+>   cb87481ee89d ("kbuild: linker script do not match C names unless LD_DEAD_CODE_DATA_ELIMINATION is configured")
 
-In file included from drivers/dma/dmaengine.h:9:0,
-                 from drivers/dma/altera-msgdma.c:27:
-drivers/dma/altera-msgdma.c: In function 'msgdma_probe':
-drivers/dma/altera-msgdma.c:946:14: error: 'DMA_SG' undeclared (first use in this function)
-  dma_cap_set(DMA_SG, dma_dev->cap_mask);
-              ^
-include/linux/dmaengine.h:1197:46: note: in definition of macro 'dma_cap_set'
- #define dma_cap_set(tx, mask) __dma_cap_set((tx), &(mask))
-                                              ^
-drivers/dma/altera-msgdma.c:946:14: note: each undeclared identifier is reported only once for each function it appears in
-  dma_cap_set(DMA_SG, dma_dev->cap_mask);
-              ^
-include/linux/dmaengine.h:1197:46: note: in definition of macro 'dma_cap_set'
- #define dma_cap_set(tx, mask) __dma_cap_set((tx), &(mask))
-                                              ^
-drivers/dma/altera-msgdma.c:965:9: error: 'struct dma_device' has no member named 'device_prep_dma_sg'
-  dma_dev->device_prep_dma_sg = msgdma_prep_sg;
-         ^
+Masahiro, according to this message [1], you queued the above patch to
+your fixes branch. Do you plan to send a fixes PR to Linus before
+-rc7? If that's the case I'll merge -rc7 in l2-mtd/master, otherwise
+I'll need an immutable branch.
 
-Caused by commit
+Thanks,
 
-  a85c6f1b2921 ("dmaengine: Add driver for Altera / Intel mSGDMA IP core")
+Boris
 
-interacting with commit
+[1]https://www.spinics.net/lists/arm-kernel/msg599088.html
 
-  c678fa66341c ("dmaengine: remove DMA_SG as it is dead code in kernel")
-
-This should have been fixed up in the merge commit
-
-  0a0ab6497093 ("Merge branch 'topic/dmatest' into next")
-
-I have used the slave-dma tree from next-20170817 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+> 
+> from the kbuild-current tree and commit:
+> 
+>   129f6c4820dd ("mtd: only use __xipram annotation when XIP_KERNEL is set")
+> 
+> from the l2-mtd tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
