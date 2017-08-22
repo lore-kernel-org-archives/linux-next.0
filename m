@@ -1,69 +1,38 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: Re: [PATCH 0/2] Allow scsi_prep_fn to occur for retried commands
-Date: Tue, 22 Aug 2017 12:12:04 +0530
-Message-ID: <1503384124.3629.22.camel@abdul.in.ibm.com>
-References: <1502902815.3305.22.camel@abdul.in.ibm.com>
-         <1502904072.2421.3.camel@wdc.com>
-         <2f686064-3e32-df8d-134f-962b5181da9d@linux.vnet.ibm.com>
-         <1502985161.2615.8.camel@wdc.com>
-         <71fb9c1b-9f3f-acdc-8bb5-aa1240aea763@linux.vnet.ibm.com>
-         <1503092473.2622.17.camel@wdc.com>
-         <0f7e2114-eba1-f149-ea80-d32d8b6d212a@linux.vnet.ibm.com>
-         <1503094414.2622.21.camel@wdc.com>
-         <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the spi tree
+Date: Tue, 22 Aug 2017 16:49:36 +1000
+Message-ID: <20170822164936.5a57ec78@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52356 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754544AbdHVGmP (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Aug 2017 02:42:15 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v7M6dPAQ097661
-        for <linux-next@vger.kernel.org>; Tue, 22 Aug 2017 02:42:14 -0400
-Received: from e23smtp03.au.ibm.com (e23smtp03.au.ibm.com [202.81.31.145])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2cgd72h4nd-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Tue, 22 Aug 2017 02:42:14 -0400
-Received: from localhost
-        by e23smtp03.au.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
-        Tue, 22 Aug 2017 16:42:11 +1000
-In-Reply-To: <f4ec8576-f4d7-4be3-0f38-c1a9d7ef4251@linux.vnet.ibm.com>
+Received: from ozlabs.org ([103.22.144.67]:47549 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754517AbdHVGti (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 22 Aug 2017 02:49:38 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Brian King <brking@linux.vnet.ibm.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hch@lst.de" <hch@lst.de>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "sachinp@linux.vnet.ibm.com" <sachinp@linux.vnet.ibm.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "hare@suse.com" <hare@suse.com>, "mpe@ellerman.id.au" <mpe@ellerman.id.au>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiada Wang <jiada_wang@mentor.com>
 
-On Mon, 2017-08-21 at 17:11 -0500, Brian King wrote:
-> The following two patches address the hang issue being observed
-> with Bart's patch on powerpc. The first patch moves the initialization
-> of jiffies_at_alloc from scsi_init_command to scsi_init_rq, and ensures
-> we don't zero jiffies_at_alloc in scsi_init_command. The second patch
-> saves / restores the retry counter in scsi_init_command which lets us
-> go through scsi_init_command for retries and not forget why we were
-> there. 
-> 
-> These patches have only been boot tested on my Power machine with ipr
-> to ensure they fix the issue I was seeing.
-> 
-> -Brian
-> 
+Hi all,
 
-Thank you Brian and Bart, for your efforts to fix this bug.
+After merging the spi tree, today's linux-next build (powerpc
+allyesconfig) produced these warnings:
 
-I tested these patches on my PowerPC machine and system booted fine.
+drivers/spi/spi-imx.c: In function 'spi_imx_buf_rx_swap_u32':
+drivers/spi/spi-imx.c:284:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
+  unsigned int bytes_per_word;
+               ^
+drivers/spi/spi-imx.c: In function 'spi_imx_buf_tx_swap_u32':
+drivers/spi/spi-imx.c:319:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
+  unsigned int bytes_per_word;
+               ^
 
-[PATCHv2 1/2] scsi: Move scsi_cmd->jiffies_at_alloc initialization to
-allocation time
-[PATCH 2/2] scsi: Preserve retry counter through scsi_prep_fn
+Introduced by commit
 
-Reported-and-Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+  1673c81d9435 ("spi: imx: dynamic burst length adjust for PIO mode")
 
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+Cheers,
+Stephen Rothwell
