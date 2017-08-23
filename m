@@ -1,47 +1,43 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Wed, 23 Aug 2017 15:13:26 -0700
-Message-ID: <20170823151326.a32b42a27b016b4705d0e98c@linux-foundation.org>
-References: <20170823204159.3d706699@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Thu, 24 Aug 2017 09:22:46 +1000
+Message-ID: <20170824092246.6a92110e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45538 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751003AbdHWWN2 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2017 18:13:28 -0400
-In-Reply-To: <20170823204159.3d706699@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:55013 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751038AbdHWXWs (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 23 Aug 2017 19:22:48 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, Will Deacon <will.deacon@arm.com>
 
-On Wed, 23 Aug 2017 20:41:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Catalin,
 
-> After merging the akpm-current tree, today's linux-next build (mips
-> defconfig) failed like this:
-> 
-> In file included from include/linux/selection.h:11:0,
->                  from drivers/video/console/newport_con.c:16:
-> include/linux/vt_buffer.h: In function 'scr_memsetw':
-> include/linux/vt_buffer.h:34:2: error: implicit declaration of function 'memset16' [-Werror=implicit-function-declaration]
-> include/linux/vt_buffer.h: In function 'scr_memcpyw':
-> include/linux/vt_buffer.h:47:2: error: implicit declaration of function 'memcpy' [-Werror=implicit-function-declaration]
-> include/linux/vt_buffer.h: In function 'scr_memmovew':
-> include/linux/vt_buffer.h:66:2: error: implicit declaration of function 'memmove' [-Werror=implicit-function-declaration]
-> In file included from include/linux/string.h:18:0,
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-This?
+  arch/arm64/kernel/fpsimd.c
 
---- a/include/linux/vt_buffer.h~vga-optimise-console-scrolling-fix
-+++ a/include/linux/vt_buffer.h
-@@ -13,6 +13,7 @@
- #ifndef _LINUX_VT_BUFFER_H_
- #define _LINUX_VT_BUFFER_H_
- 
-+#include <linux/string.h>
- 
- #if defined(CONFIG_VGA_CONSOLE) || defined(CONFIG_MDA_CONSOLE)
- #include <asm/vga.h>
-_
+between commit:
+
+  096622104e14 ("arm64: fpsimd: Prevent registers leaking across exec")
+
+from Linus' tree and commit:
+
+  cb84d11e1625 ("arm64: neon: Remove support for nested or hardirq kernel-mode NEON")
+
+from the arm64 tree.
+
+I fixed it up (I just used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
