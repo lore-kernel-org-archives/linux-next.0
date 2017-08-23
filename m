@@ -1,30 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Wed, 23 Aug 2017 12:20:07 +1000
-Message-ID: <20170823122007.6dbcd592@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: possible circular locking dependency detected [was: linux-next:
+ Tree for Aug 22]
+Date: Wed, 23 Aug 2017 11:36:49 +0900
+Message-ID: <20170823023649.GD10329@jagdpanzerIV.localdomain>
+References: <20170822183816.7925e0f8@canb.auug.org.au>
+ <20170822104708.GA491@jagdpanzerIV.localdomain>
+ <1503438234.2508.27.camel@wdc.com>
+ <20170823000304.GK20323@X58A-UD3R>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f174.google.com ([209.85.192.174]:34936 "EHLO
+        mail-pf0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753057AbdHWCgd (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 22 Aug 2017 22:36:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20170823000304.GK20323@X58A-UD3R>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, peterz@infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "sergey.senozhatsky.work@gmail.com" <sergey.senozhatsky.work@gmail.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
 
-Hi all,
+On (08/23/17 09:03), Byungchul Park wrote:
+[..]
 
-After merging the sound-asoc tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+aha, ok
 
-sound/soc/tegra/tegra_wm8903.c: In function 'tegra_wm8903_remove':
-sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
-  struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
-                       ^
+> The report is talking about the following lockup:
+> 
+> A work in a worker                     A task work on exit to user
+> ------------------                     ---------------------------
+> mutex_lock(&bdev->bd_mutex)
+>                                        mutext_lock(&bdev->bd_mutex)
+> blk_execute_rq()
+>    wait_for_completion_io_timeout(&A)
+>                                        complete(&A)
+> 
+> Is this impossible?
 
-Introduced by commit
+I was really confused how this "unlock" may lead to a deadlock
 
-  2a8bd83af30e ("ASoC: tegra: Remove superfluous snd_soc_jack_free_gpios() call")
+> > >  other info that might help us debug this:
+> > >  Possible unsafe locking scenario by crosslock:
+> > >        CPU0                    CPU1
+> > >        ----                    ----
+> > >   lock(&bdev->bd_mutex);
+> > >   lock((complete)&wait#2);
+> > >                                lock(&bdev->bd_mutex);
+> > >                                unlock((complete)&wait#2);
 
--- 
-Cheers,
-Stephen Rothwell
+
+any chance the report can be improved? mention timeout, etc?
+// well, if this functionality will stay.
+
+
+p.s.
+Bart Van Assche, thanks for Cc-ing Park Byungchul, I was really
+sure I didn't enabled the cross-release, but apparently I was wrong:
+ CONFIG_LOCKDEP_CROSSRELEASE=y
+ CONFIG_LOCKDEP_COMPLETIONS=y
+
+	-ss
