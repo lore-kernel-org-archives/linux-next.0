@@ -1,59 +1,63 @@
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: linux-next: manual merge of the tip tree with the iommu tree
-Date: Wed, 23 Aug 2017 09:15:07 -0500
-Message-ID: <828c5f60-5d75-f9f3-4d96-a85906399463@amd.com>
-References: <20170822135057.776f3509@canb.auug.org.au>
+From: John Johansen <john.johansen@canonical.com>
+Subject: [PATCH] apparmor: fix build failure on sparc caused by undeclared,
+ signals
+Date: Wed, 23 Aug 2017 12:21:43 -0700
+Message-ID: <40445189-181f-fc19-3c44-8fa2ab23d2f9@canonical.com>
+References: <20170823211213.0b014b1e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0071.outbound.protection.outlook.com ([104.47.36.71]:45632
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754001AbdHWOPQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 23 Aug 2017 10:15:16 -0400
-In-Reply-To: <20170822135057.776f3509@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Joerg Roedel <joro@8bytes.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170823211213.0b014b1e@canb.auug.org.au>
+Content-Language: en-GB
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, James Morris <jmorris@namei.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 8/21/2017 10:50 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got conflicts in:
-> 
->    drivers/iommu/amd_iommu.c
->    drivers/iommu/amd_iommu_init.c
->    drivers/iommu/amd_iommu_proto.h
->    drivers/iommu/amd_iommu_types.h
-> 
-> between commits:
-> 
->    4c232a708be1 ("iommu/amd: Detect pre enabled translation")
->    9494ea90a56d ("Revert "iommu/amd: Suppress IO_PAGE_FAULTs in kdump kernel"")
->    07a80a6b5920 ("iommu/amd: Define bit fields for DTE particularly")
->    daae2d25a477 ("iommu/amd: Don't copy GCR3 table root pointer")
-> 
-> from the iommu tree and commit:
-> 
->    2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
 
-Sorry, I was out of the office the past few days.  I checked the
-linux-next tree and everything looks good in relation to commit
+  In file included from security/apparmor/ipc.c:23:0:
+  security/apparmor/include/sig_names.h:26:3: error: 'SIGSTKFLT' undeclared here (not in a function)
+    [SIGSTKFLT] = 16, /* -, 16, - */
+     ^
+  security/apparmor/include/sig_names.h:26:3: error: array index in initializer not of integer type
+  security/apparmor/include/sig_names.h:26:3: note: (near initialization for 'sig_map')
+  security/apparmor/include/sig_names.h:51:3: error: 'SIGUNUSED' undeclared here (not in a function)
+    [SIGUNUSED] = 34, /* -, 31, - */
+     ^
+  security/apparmor/include/sig_names.h:51:3: error: array index in initializer not of integer type
+  security/apparmor/include/sig_names.h:51:3: note: (near initialization for 'sig_map')
 
-  2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: c6bf1adaecaa ("apparmor: add the ability to mediate signals")
+Signed-off-by: John Johansen <john.johansen@canonical.com>
+---
+ security/apparmor/include/sig_names.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Thanks,
-Tom
+diff --git a/security/apparmor/include/sig_names.h b/security/apparmor/include/sig_names.h
+index 0d4395f231ca..92e62fe95292 100644
+--- a/security/apparmor/include/sig_names.h
++++ b/security/apparmor/include/sig_names.h
+@@ -23,7 +23,9 @@ static const int sig_map[MAXMAPPED_SIG] = {
+ 	[SIGPIPE] = 13,
+ 	[SIGALRM] = 14,
+ 	[SIGTERM] = 15,
++#ifdef SIGSTKFLT
+ 	[SIGSTKFLT] = 16,	/* -, 16, - */
++#endif
+ 	[SIGCHLD] = 17,		/* 20, 17, 18.  SIGCHLD -, -, 18 */
+ 	[SIGCONT] = 18,		/* 19, 18, 25 */
+ 	[SIGSTOP] = 19,		/* 17, 19, 23 */
+@@ -47,7 +49,8 @@ static const int sig_map[MAXMAPPED_SIG] = {
+ #if defined(SIGLOST) && SIGPWR != SIGLOST		/* sparc */
+ 	[SIGLOST] = 33,		/* unused on Linux */
+ #endif
+-#if defined(SIGLOST) && defined(SIGSYS) && SIGLOST != SIGSYS
++#if defined(SIGUNUSED) && \
++    defined(SIGLOST) && defined(SIGSYS) && SIGLOST != SIGSYS
+ 	[SIGUNUSED] = 34,	/* -, 31, - */
+ #endif
+ };
+-- 
+2.11.0
