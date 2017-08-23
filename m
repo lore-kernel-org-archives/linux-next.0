@@ -1,111 +1,59 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170823 build: 1 failures 9 warnings (next-20170823)
-Date: Wed, 23 Aug 2017 12:38:04 +0100
-Message-ID: <E1dkTz2-0001jl-7T@optimist>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: linux-next: manual merge of the tip tree with the iommu tree
+Date: Wed, 23 Aug 2017 09:15:07 -0500
+Message-ID: <828c5f60-5d75-f9f3-4d96-a85906399463@amd.com>
+References: <20170822135057.776f3509@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46452 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753768AbdHWLiG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 23 Aug 2017 07:38:06 -0400
+Received: from mail-sn1nam02on0071.outbound.protection.outlook.com ([104.47.36.71]:45632
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754001AbdHWOPQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 23 Aug 2017 10:15:16 -0400
+In-Reply-To: <20170822135057.776f3509@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Joerg Roedel <joro@8bytes.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>
 
-Tree/Branch: next-20170823
-Git describe: next-20170823
-Commit: cc6d46bb99 Add linux-next specific files for 20170823
+On 8/21/2017 10:50 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got conflicts in:
+> 
+>    drivers/iommu/amd_iommu.c
+>    drivers/iommu/amd_iommu_init.c
+>    drivers/iommu/amd_iommu_proto.h
+>    drivers/iommu/amd_iommu_types.h
+> 
+> between commits:
+> 
+>    4c232a708be1 ("iommu/amd: Detect pre enabled translation")
+>    9494ea90a56d ("Revert "iommu/amd: Suppress IO_PAGE_FAULTs in kdump kernel"")
+>    07a80a6b5920 ("iommu/amd: Define bit fields for DTE particularly")
+>    daae2d25a477 ("iommu/amd: Don't copy GCR3 table root pointer")
+> 
+> from the iommu tree and commit:
+> 
+>    2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-Build Time: 102 min 39 sec
+Sorry, I was out of the office the past few days.  I checked the
+linux-next tree and everything looks good in relation to commit
 
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
+  2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
 
-Errors: 3
-Warnings: 9
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-../drivers/rtc/rtc-sa1100.c:272:2: error: 'ret' undeclared (first use in this function)
-../drivers/rtc/rtc-sa1100.c:273:22: error: 'dev' undeclared (first use in this function)
-../drivers/rtc/rtc-sa1100.c:285:2: error: 'rtc' undeclared (first use in this function)
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 3
-	  1 ../drivers/rtc/rtc-sa1100.c:285:2: error: 'rtc' undeclared (first use in this function)
-	  1 ../drivers/rtc/rtc-sa1100.c:273:22: error: 'dev' undeclared (first use in this function)
-	  1 ../drivers/rtc/rtc-sa1100.c:272:2: error: 'ret' undeclared (first use in this function)
-
-Warnings Summary: 9
-	  3 ../sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
-	  2 ../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../drivers/spi/spi-imx.c:319:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-	  2 ../drivers/spi/spi-imx.c:284:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-	  1 ../include/linux/dynamic_debug.h:134:3: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/rtlwifi/base.c:2546:34: warning: 'ht_cap_ie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/phy/ralink/phy-ralink-usb.c:195:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../drivers/md/dm-integrity.c:827:1: warning: the frame size of 1248 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
-	../drivers/phy/ralink/phy-ralink-usb.c:195:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/spi/spi-imx.c:284:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-	../drivers/spi/spi-imx.c:319:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 3 errors, 8 warnings, 0 section mismatches
-
-Errors:
-	../drivers/rtc/rtc-sa1100.c:272:2: error: 'ret' undeclared (first use in this function)
-	../drivers/rtc/rtc-sa1100.c:273:22: error: 'dev' undeclared (first use in this function)
-	../drivers/rtc/rtc-sa1100.c:285:2: error: 'rtc' undeclared (first use in this function)
-
-Warnings:
-	../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
-	../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/md/dm-integrity.c:827:1: warning: the frame size of 1248 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-	../include/linux/dynamic_debug.h:134:3: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/spi/spi-imx.c:284:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-	../drivers/spi/spi-imx.c:319:15: warning: unused variable 'bytes_per_word' [-Wunused-variable]
-	../drivers/staging/rtlwifi/base.c:2546:34: warning: 'ht_cap_ie' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+Thanks,
+Tom
