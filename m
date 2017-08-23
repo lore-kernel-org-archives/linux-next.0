@@ -1,62 +1,30 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 23 Aug 2017 11:31:05 +1000
-Message-ID: <20170823113105.0bd692ea@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Wed, 23 Aug 2017 12:20:07 +1000
+Message-ID: <20170823122007.6dbcd592@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46675 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752810AbdHWBbJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 22 Aug 2017 21:31:09 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wei Wang <weiwan@google.com>, Ido Schimmel <idosch@mellanox.com>, iri Pirko <jiri@mellanox.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  net/ipv6/ip6_fib.c
+sound/soc/tegra/tegra_wm8903.c: In function 'tegra_wm8903_remove':
+sound/soc/tegra/tegra_wm8903.c:206:23: warning: unused variable 'machine' [-Wunused-variable]
+  struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(card);
+                       ^
 
-between commit:
+Introduced by commit
 
-  c5cff8561d2d ("ipv6: add rcu grace period before freeing fib6_node")
-
-from the net tree and commit:
-
-  a460aa83963b ("ipv6: fib: Add helpers to hold / drop a reference on rt6_info")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  2a8bd83af30e ("ASoC: tegra: Remove superfluous snd_soc_jack_free_gpios() call")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc net/ipv6/ip6_fib.c
-index a5ebf86f6be8,549aacc3cb2c..000000000000
---- a/net/ipv6/ip6_fib.c
-+++ b/net/ipv6/ip6_fib.c
-@@@ -160,12 -154,7 +161,12 @@@ static void node_free_rcu(struct rcu_he
-  	kmem_cache_free(fib6_node_kmem, fn);
-  }
-  
- +static void node_free(struct fib6_node *fn)
- +{
- +	call_rcu(&fn->rcu, node_free_rcu);
- +}
- +
-- static void rt6_free_pcpu(struct rt6_info *non_pcpu_rt)
-+ void rt6_free_pcpu(struct rt6_info *non_pcpu_rt)
-  {
-  	int cpu;
-  
