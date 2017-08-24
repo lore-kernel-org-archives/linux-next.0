@@ -1,60 +1,42 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: possible circular locking dependency detected [was: linux-next:
- Tree for Aug 22]
-Date: Thu, 24 Aug 2017 13:49:12 +0900
-Message-ID: <20170824044912.GB3569@jagdpanzerIV.localdomain>
-References: <20170822183816.7925e0f8@canb.auug.org.au>
- <20170822104708.GA491@jagdpanzerIV.localdomain>
- <1503438234.2508.27.camel@wdc.com>
- <20170823000304.GK20323@X58A-UD3R>
- <20170823034951.GG11771@tardis>
- <20170823043813.GH11771@tardis>
- <20170823044648.GE10329@jagdpanzerIV.localdomain>
- <20170823053501.GJ11771@tardis>
- <20170823055517.GB728@jagdpanzerIV.localdomain>
- <20170824043909.GL11771@tardis>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the phy-next tree
+Date: Thu, 24 Aug 2017 15:23:35 +1000
+Message-ID: <20170824152335.7d9977e8@canb.auug.org.au>
+References: <20170822150733.32c8514c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:38254 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750806AbdHXEsz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Aug 2017 00:48:55 -0400
-Content-Disposition: inline
-In-Reply-To: <20170824043909.GL11771@tardis>
+Received: from ozlabs.org ([103.22.144.67]:43139 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750806AbdHXFXh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 24 Aug 2017 01:23:37 -0400
+In-Reply-To: <20170822150733.32c8514c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Byungchul Park <byungchul.park@lge.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, peterz@infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
+To: Greg KH <greg@kroah.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Crispin <john@phrozen.org>, Harvey Hunt <harvey.hunt@imgtec.com>
 
-Hi,
+Hi Greg,
 
-On (08/24/17 12:39), Boqun Feng wrote:
-> On Wed, Aug 23, 2017 at 02:55:17PM +0900, Sergey Senozhatsky wrote:
-> > On (08/23/17 13:35), Boqun Feng wrote:
-> > > > KERN_CONT and "\n" should not be together. "\n" flushes the cont
-> > > > buffer immediately.
-> > > > 
-> > > 
-> > > Hmm.. Not quite familiar with printk() stuffs, but I could see several
-> > > usages of printk(KERN_CONT "...\n") in kernel.
-> > > 
-> > > Did a bit research myself, and I now think the inappropriate use is to
-> > > use a KERN_CONT printk *after* another printk ending with a "\n".
-> > 
-> > ah... I didn't check __print_lock_name(): it leaves unflushed cont buffer
-> > upon the return. sorry, your code is correct.
-> > 
+On Tue, 22 Aug 2017 15:07:33 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Kishon,
 > 
-> So means printk(KERN_CON "..."); + printk(KERN_CONT "...\n") is a
-> correct usage, right?
+> After merging the phy-next tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/phy/ralink/phy-ralink-usb.c: In function 'ralink_usb_phy_probe':
+> drivers/phy/ralink/phy-ralink-usb.c:195:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+>   phy->clk = (u32) match->data;
+>              ^
+> 
+> Introduced by commit
+> 
+>   2411a736ff09 ("phy: ralink-usb: add driver for Mediatek/Ralink")
 
-well, yes. with one precondition - there should be no printk-s from other
-CPUs/tasks in between
+I now get this warning after merging the usb tree ...
 
-	printk(KERN_CON "...");  +  printk(KERN_CONT "...\n")
-                               ^^^^^
-			here we can have a preliminary flush and broken
-			cont line. but it's been this way forever.
-
-	-ss
+-- 
+Cheers,
+Stephen Rothwell
