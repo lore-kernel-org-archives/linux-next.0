@@ -1,73 +1,72 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
 Subject: linux-next: manual merge of the wireless-drivers-next tree with
  Linus' tree
-Date: Thu, 24 Aug 2017 11:17:53 +1000
-Message-ID: <20170824111753.2b1c508e@canb.auug.org.au>
+Date: Thu, 24 Aug 2017 11:24:19 +1000
+Message-ID: <20170824112419.40149e36@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gregory Greenman <gregory.greenman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Luca Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-As expetced, today's linux-next merge of the wireless-drivers-next tree
-got a conflict in:
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in:
 
-  drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+  drivers/net/wireless/intel/iwlwifi/mvm/rs.c
 
 between commit:
 
-  92b0f7b26b31 ("iwlwifi: split the regulatory rules when the bandwidth flags require it")
+  87f55616f81b ("iwlwifi: mvm: rs: fix TLC statistics collection")
 
 from Linus' tree and commit:
 
-  b823cf3bae81 ("iwlwifi: update channel flags parser")
+  482e48440a0e ("iwlwifi: mvm: change open and close criteria of a BA session")
 
 from the wireless-drivers-next tree.
 
-I fixed it up (see below - Luca, Kalle, thanks for the heads up) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-index 3ee6767392b6,aa382f719988..000000000000
---- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-@@@ -864,11 -908,11 +911,11 @@@ iwl_parse_nvm_mcc_info(struct device *d
-  		rule->flags |= NL80211_RRF_AUTO_BW;
-  		rule->freq_range.max_bandwidth_khz = 0;
+diff --cc drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+index 8999a1199d60,44c873082a31..000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+@@@ -1312,7 -1357,8 +1357,8 @@@ void iwl_mvm_rs_tx_status(struct iwl_mv
+  		if (info->status.ampdu_ack_len == 0)
+  			info->status.ampdu_len = 1;
   
- -		prev_ch_flags = ch_flags;
-  		prev_center_freq = center_freq;
- +		prev_reg_rule_flags = reg_rule_flags;
+- 		rs_collect_tlc_data(mvm, lq_sta, curr_tbl, tx_resp_rate.index,
++ 		rs_collect_tlc_data(mvm, mvmsta, tid, curr_tbl,
+ -				    lq_rate.index,
+++				    tx_resp_rate.index,
+  				    info->status.ampdu_len,
+  				    info->status.ampdu_ack_len);
   
-  		IWL_DEBUG_DEV(dev, IWL_DL_LAR,
-- 			      "Ch. %d [%sGHz] %s%s%s%s%s%s%s%s%s(0x%02x) reg_flags 0x%x: %s\n",
- -			      "Ch. %d [%sGHz] %s%s%s%s%s%s%s%s%s%s%s%s(0x%02x): %s\n",
-++			      "Ch. %d [%sGHz] %s%s%s%s%s%s%s%s%s%s%s%s(0x%02x) reg_flags 0x%x: %s\n"
-  			      center_freq,
-  			      band == NL80211_BAND_5GHZ ? "5.2" : "2.4",
-  			      CHECK_AND_PRINT_I(VALID),
-@@@ -878,9 -926,8 +929,8 @@@
-  			      CHECK_AND_PRINT_I(40MHZ),
-  			      CHECK_AND_PRINT_I(80MHZ),
-  			      CHECK_AND_PRINT_I(160MHZ),
-- 			      CHECK_AND_PRINT_I(INDOOR_ONLY),
-- 			      CHECK_AND_PRINT_I(GO_CONCURRENT),
-+ 			      CHECK_AND_PRINT_I(DC_HIGH),
- -			      ch_flags,
- +			      ch_flags, reg_rule_flags,
-  			      ((ch_flags & NVM_CHANNEL_ACTIVE) &&
-  			       !(ch_flags & NVM_CHANNEL_RADAR))
-  					 ? "Ad-Hoc" : "");
+@@@ -1348,11 -1394,11 +1394,11 @@@
+  				continue;
+  
+  			rs_collect_tpc_data(mvm, lq_sta, tmp_tbl,
+ -					    lq_rate.index, 1,
+ +					    tx_resp_rate.index, 1,
+  					    i < retries ? 0 : legacy_success,
+  					    reduced_txp);
+- 			rs_collect_tlc_data(mvm, lq_sta, tmp_tbl,
++ 			rs_collect_tlc_data(mvm, mvmsta, tid, tmp_tbl,
+ -					    lq_rate.index, 1,
+ +					    tx_resp_rate.index, 1,
+  					    i < retries ? 0 : legacy_success);
+  		}
+  
