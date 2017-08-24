@@ -1,72 +1,45 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the wireless-drivers-next tree with
  Linus' tree
-Date: Thu, 24 Aug 2017 11:24:19 +1000
-Message-ID: <20170824112419.40149e36@canb.auug.org.au>
+Date: Thu, 24 Aug 2017 11:28:25 +1000
+Message-ID: <20170824112825.29c2f8a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gregory Greenman <gregory.greenman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Luca Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:47559 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750715AbdHXB21 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 23 Aug 2017 21:28:27 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Emmanuel Grumbach <emmanuel.grumbach@intel.com>, Luca Coelho <luciano.coelho@intel.com>
 
 Hi all,
 
 Today's linux-next merge of the wireless-drivers-next tree got a
 conflict in:
 
-  drivers/net/wireless/intel/iwlwifi/mvm/rs.c
+  drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c
 
 between commit:
 
-  87f55616f81b ("iwlwifi: mvm: rs: fix TLC statistics collection")
+  a600852a9d00 ("iwlwifi: mvm: don't WARN when a legit race happens in A-MPDU")
 
 from Linus' tree and commit:
 
-  482e48440a0e ("iwlwifi: mvm: change open and close criteria of a BA session")
+  790e663433d8 ("iwlwifi: mvm: include more debug data when we get an unexpected baid")
 
 from the wireless-drivers-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I just used the former) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-index 8999a1199d60,44c873082a31..000000000000
---- a/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/rs.c
-@@@ -1312,7 -1357,8 +1357,8 @@@ void iwl_mvm_rs_tx_status(struct iwl_mv
-  		if (info->status.ampdu_ack_len == 0)
-  			info->status.ampdu_len = 1;
-  
-- 		rs_collect_tlc_data(mvm, lq_sta, curr_tbl, tx_resp_rate.index,
-+ 		rs_collect_tlc_data(mvm, mvmsta, tid, curr_tbl,
- -				    lq_rate.index,
-++				    tx_resp_rate.index,
-  				    info->status.ampdu_len,
-  				    info->status.ampdu_ack_len);
-  
-@@@ -1348,11 -1394,11 +1394,11 @@@
-  				continue;
-  
-  			rs_collect_tpc_data(mvm, lq_sta, tmp_tbl,
- -					    lq_rate.index, 1,
- +					    tx_resp_rate.index, 1,
-  					    i < retries ? 0 : legacy_success,
-  					    reduced_txp);
-- 			rs_collect_tlc_data(mvm, lq_sta, tmp_tbl,
-+ 			rs_collect_tlc_data(mvm, mvmsta, tid, tmp_tbl,
- -					    lq_rate.index, 1,
- +					    tx_resp_rate.index, 1,
-  					    i < retries ? 0 : legacy_success);
-  		}
-  
