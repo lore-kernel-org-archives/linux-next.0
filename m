@@ -1,80 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170824 build: 0 failures 7 warnings (next-20170824)
-Date: Thu, 24 Aug 2017 12:56:11 +0100
-Message-ID: <E1dkqk7-0007FZ-FW@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46616 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751317AbdHXL4N (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 24 Aug 2017 07:56:13 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
+ tree
+Date: Thu, 24 Aug 2017 13:56:10 -0700
+Message-ID: <20170824205610.GF24167@fury>
+References: <20170803063743.1d50a5d2@canb.auug.org.au>
+ <20170802235740.GB27974@fury>
+ <20170803102810.37f7c6b0@canb.auug.org.au>
+ <CA+55aFwVBk2FQEp0pbF9Xx-YhexL19fCHgJex4JaOannXpCTOA@mail.gmail.com>
+ <20170803155006.GA2234@fury>
+ <20170805215829.GC1277@fury>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170805215829.GC1277@fury>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Gustavo A. R. Silva" <gustavo@embeddedor.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170824
-Git describe: next-20170824
-Commit: 9506597de2 Add linux-next specific files for 20170824
+On Sat, Aug 05, 2017 at 02:58:29PM -0700, Darren Hart wrote:
+> On Thu, Aug 03, 2017 at 08:50:06AM -0700, Darren Hart wrote:
+> > On Wed, Aug 02, 2017 at 06:06:20PM -0700, Linus Torvalds wrote:
+> > > On Wed, Aug 2, 2017 at 5:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > > >
+> > > > I would say that if you rebase someone's commit(s), then you are on the
+> > > > "patch's delivery path" and so should add a Signed-off-by tag.
+> > > 
+> > > Yeah, I agree. Rebasing really is pretty much the exact same thing as
+> > > applying a patch.
+> 
+> I will be away for a few days, but will follow up on this when I return.
+> In the meantime, my plan is to leave the current for-next branch alone
+> rather than rebasing it to fix the previous rebase which resulted in the
+> mixed committer/signoff issue Stephen's new test identified.
+> 
+> I just want it to be clear I'm not ignoring the issue, but rather
+> planning on addressing it in commits going forward - based on the
+> results of the discussion below.
+> 
 
-Build Time: 100 min 1 sec
+OK, with no additional feedback here, Andy and I have discussed and we will
+adapt our process by using individual review branches which 0-day can pull from
+which are considered transient and mutable. After this, the patches will be
+added to the common testing branch, which will now be fast-forward only [1].
+After a short period, testing will move to for-next and fixes branches in
+preparation for pull-requests, just as before.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+Thanks,
 
-Errors: 0
-Warnings: 7
-Section Mismatches: 0
+1. We may eliminate the testing branch as it may not offer any value over
+   for-next, but we'll work through at least one release cycle before doing
+   so.
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      5 warnings    0 mismatches  : arm64-allmodconfig
-      6 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 7
-	  2 ../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  2 ../fs/ocfs2/dlm/dlmrecovery.c:2306:6: warning: unused variable 'i' [-Wunused-variable]
-	  2 ../fs/ocfs2/dlm/dlmrecovery.c:2305:20: warning: unused variable 'queue' [-Wunused-variable]
-	  1 ../include/linux/dynamic_debug.h:134:3: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/staging/rtlwifi/base.c:2546:34: warning: 'ht_cap_ie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	  1 ../drivers/phy/ralink/phy-ralink-usb.c:195:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/ocfs2/dlm/dlmrecovery.c:2306:6: warning: unused variable 'i' [-Wunused-variable]
-	../fs/ocfs2/dlm/dlmrecovery.c:2305:20: warning: unused variable 'queue' [-Wunused-variable]
-	../drivers/phy/ralink/phy-ralink-usb.c:195:13: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
-
-Warnings:
-	../include/linux/cpumask.h:24:29: warning: 'mask' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../net/ipv6/route.c:1322:43: warning: 'rt_cookie' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../fs/ocfs2/dlm/dlmrecovery.c:2306:6: warning: unused variable 'i' [-Wunused-variable]
-	../fs/ocfs2/dlm/dlmrecovery.c:2305:20: warning: unused variable 'queue' [-Wunused-variable]
-	../include/linux/dynamic_debug.h:134:3: warning: 'i' may be used uninitialized in this function [-Wmaybe-uninitialized]
-	../drivers/staging/rtlwifi/base.c:2546:34: warning: 'ht_cap_ie' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Darren Hart
+VMware Open Source Technology Center
