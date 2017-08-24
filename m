@@ -1,52 +1,99 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the block tree
-Date: Thu, 24 Aug 2017 13:34:55 +1000
-Message-ID: <20170824133455.7fb963ca@canb.auug.org.au>
-References: <20170824133203.18512289@canb.auug.org.au>
+From: Boqun Feng <boqun.feng@gmail.com>
+Subject: Re: possible circular locking dependency detected [was: linux-next:
+ Tree for Aug 22]
+Date: Thu, 24 Aug 2017 12:39:09 +0800
+Message-ID: <20170824043909.GL11771@tardis>
+References: <20170822183816.7925e0f8@canb.auug.org.au>
+ <20170822104708.GA491@jagdpanzerIV.localdomain>
+ <1503438234.2508.27.camel@wdc.com>
+ <20170823000304.GK20323@X58A-UD3R>
+ <20170823034951.GG11771@tardis>
+ <20170823043813.GH11771@tardis>
+ <20170823044648.GE10329@jagdpanzerIV.localdomain>
+ <20170823053501.GJ11771@tardis>
+ <20170823055517.GB728@jagdpanzerIV.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45245 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751215AbdHXDe5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 23 Aug 2017 23:34:57 -0400
-In-Reply-To: <20170824133203.18512289@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jIYo0VRlfdMI9fLa"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170823055517.GB728@jagdpanzerIV.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Byungchul Park <byungchul.park@lge.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, peterz@infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
 
-On Thu, 24 Aug 2017 13:32:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> After merging the block tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> block/bio-integrity.c: In function '__bio_integrity_endio':
-> block/bio-integrity.c:388:51: error: 'struct bio' has no member named 'bi_bdev'
->   struct blk_integrity *bi = bdev_get_integrity(bio->bi_bdev);
->                                                    ^
-> 
-> Caused by commit
-> 
->   74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
-> 
-> interacting with commit
-> 
->   c775d2098d35 ("bio-integrity: Fix regression if profile verify_fn is NULL")
-> 
-> from Linus' tree (before v4.13-rc5).
-> 
-> This should have been fixed up in commit
-> 
->   3b8848b41130 ("Merge branch 'master' into for-next")
-> 
-> I have used the block tree from next-20170823 for today.
+--jIYo0VRlfdMI9fLa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The other remaining reference to bi_bdev is in Documentation/block/biodoc.txt.
+On Wed, Aug 23, 2017 at 02:55:17PM +0900, Sergey Senozhatsky wrote:
+> On (08/23/17 13:35), Boqun Feng wrote:
+> > > KERN_CONT and "\n" should not be together. "\n" flushes the cont
+> > > buffer immediately.
+> > >=20
+> >=20
+> > Hmm.. Not quite familiar with printk() stuffs, but I could see several
+> > usages of printk(KERN_CONT "...\n") in kernel.
+> >=20
+> > Did a bit research myself, and I now think the inappropriate use is to
+> > use a KERN_CONT printk *after* another printk ending with a "\n".
+>=20
+> ah... I didn't check __print_lock_name(): it leaves unflushed cont buffer
+> upon the return. sorry, your code is correct.
+>=20
 
--- 
-Cheers,
-Stephen Rothwell
+So means printk(KERN_CON "..."); + printk(KERN_CONT "...\n") is a
+correct usage, right? Thanks. Again, not familiar with printk stuff,
+glad you can help me go through this ;-)
+
+Regards,
+Boqun
+
+> 	-ss
+>=20
+> > > >  		printk("\n *** DEADLOCK ***\n\n");
+> > > > +	} else if (cross_lock(src->instance)) {
+> > > > +		printk(" Possible unsafe locking scenario by crosslock:\n\n");
+> > > > +		printk("       CPU0                    CPU1\n");
+> > > > +		printk("       ----                    ----\n");
+> > > > +		printk("  lock(");
+> > > > +		__print_lock_name(target);
+> > > > +		printk(KERN_CONT ");\n");
+> > > > +		printk("  lock(");
+> > > > +		__print_lock_name(source);
+> > > > +		printk(KERN_CONT ");\n");
+> > > > +		printk("                               lock(");
+> > > > +		__print_lock_name(parent =3D=3D source ? target : parent);
+> > > > +		printk(KERN_CONT ");\n");
+> > > > +		printk("                               unlock(");
+> > > > +		__print_lock_name(source);
+> > > > +		printk(KERN_CONT ");\n");
+> > > > +		printk("\n *** DEADLOCK ***\n\n");
+> > > >  	} else {
+> > > >  		printk(" Possible unsafe locking scenario:\n\n");
+> > > >  		printk("       CPU0                    CPU1\n");
+> > > > --=20
+> > > > 2.14.1
+> > > >=20
+>=20
+>=20
+
+--jIYo0VRlfdMI9fLa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEj5IosQTPz8XU1wRHSXnow7UH+rgFAlmeWGkACgkQSXnow7UH
++rhIWwf+OmxhdQxb4S1PfW9qANb3TIOPTr4tJTKPe2DZd0itItkSGji81N6X6SZj
+j4h3Ha+zaChDnPhxqSotJD5XSBUomQ96Avq4cjnjOxU9TI91zQtH1WIuNrPuggZ+
+JK3z8kU3xaWh7YIyKJAkiy6V1h8Q6cONTIT7pheuL4buphbW+FdaTjRgEjlrhsNU
+QFHLYyIx7eruJ/KQKOoWDo6Pb+dUGY1tCYzFIzqkJsh4rj6xQLvmJLhvYXAFxSK7
+RfbZodZhVANRq7g3dy+S4xtQ3l6N1ViOMe1mOBkKOWYpfXn2aZ39DtiHNbfGn4w2
+wxd081KqAcI7BRq3gyPTKDrnHfRNEQ==
+=2gpd
+-----END PGP SIGNATURE-----
+
+--jIYo0VRlfdMI9fLa--
