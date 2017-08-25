@@ -1,43 +1,103 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 25 Aug 2017 14:57:21 +1000
-Message-ID: <20170825145721.51c56af3@canb.auug.org.au>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+Date: Fri, 25 Aug 2017 08:39:22 +0200
+Message-ID: <2984689e-ab4e-0c22-7151-adfeeffce4ed@redhat.com>
+References: <20170825143930.494744fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48601 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:39894 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751411AbdHYE5X (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 25 Aug 2017 00:57:23 -0400
+        id S1754231AbdHYGj2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 25 Aug 2017 02:39:28 -0400
+In-Reply-To: <20170825143930.494744fe@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, Brijesh Singh <brijesh.singh@amd.com>
 
-Hi all,
+On 25/08/2017 06:39, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvm tree got a conflict in:
+> 
+>   arch/x86/kvm/mmu.h
+> 
+> between commit:
+> 
+>   d0ec49d4de90 ("kvm/x86/svm: Support Secure Memory Encryption within KVM")
+> 
+> from the tip tree and commit:
+> 
+>   d1cd3ce90044 ("KVM: MMU: check guest CR3 reserved bits based on its physical address width.")
+> 
+> from the kvm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Thomas L., Ingo,
 
-  arch/arm64/include/asm/esr.h
+this is completely wrong:
 
-between commit:
+> 
+>  static inline u64 rsvd_bits(int s, int e)
+>  {
+> -	return ((1ULL << (e - s + 1)) - 1) << s;
+> +	return __sme_clr(((1ULL << (e - s + 1)) - 1) << s);
+>  }
+>  
 
-  1f9b8936f36f ("arm64: Decode information from ESR upon mem faults")
+First, rsvd_bits is just a simple function to return some 1 bits.  Applying
+a mask based on properties of the host MMU is incorrect.
 
-from the arm64 tree and commit:
+Second, the masks computed by __reset_rsvds_bits_mask also apply to 
+guest page tables, where the C bit is reserved since we don't emulate
+SME.
 
-  c5511c3c068c ("KVM: arm/arm64: Fix guest external abort matching")
+Something like this:
 
-from the kvm-arm tree.
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 2dafd36368cc..e0597d703d72 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -4142,16 +4142,24 @@ void
+ reset_shadow_zero_bits_mask(struct kvm_vcpu *vcpu, struct kvm_mmu *context)
+ {
+ 	bool uses_nx = context->nx || context->base_role.smep_andnot_wp;
++	struct rsvd_bits_validate *shadow_zero_check;
++	int i;
+ 
+ 	/*
+ 	 * Passing "true" to the last argument is okay; it adds a check
+ 	 * on bit 8 of the SPTEs which KVM doesn't use anyway.
+ 	 */
+-	__reset_rsvds_bits_mask(vcpu, &context->shadow_zero_check,
++        shadow_zero_check = &context->shadow_zero_check;
++	__reset_rsvds_bits_mask(vcpu, shadow_zero_check,
+ 				boot_cpu_data.x86_phys_bits,
+ 				context->shadow_root_level, uses_nx,
+ 				guest_cpuid_has(vcpu, X86_FEATURE_GBPAGES),
+ 				is_pse(vcpu), true);
++
++	for (i = context->shadow_root_level; --i >= 0; ) {
++		shadow_zero_check->rsvd_bits_mask[i][0] &= ~shadow_me_mask;
++		shadow_zero_check->rsvd_bits_mask[i][1] &= ~shadow_me_mask;
++	}
+ }
+ EXPORT_SYMBOL_GPL(reset_shadow_zero_bits_mask);
+ 
 
-I fixed it up (I used the former version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+Can you please fix it up?   Please Cc me at paolo.bonzini@gmail.com too 
+because I'll be on vacation next week.
 
--- 
-Cheers,
-Stephen Rothwell
+(And thanks Stephen for the heads-up!)
+
+Paolo
