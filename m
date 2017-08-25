@@ -1,40 +1,53 @@
-From: Hsin-yu Chao <hychao@chromium.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 25 Aug 2017 15:58:56 +0800
-Message-ID: <CANyK0SmE7VwiDocjwSBqQFjZaTE1WOPZS9PBB8+wYtfPtOQ+Wg@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Fri, 25 Aug 2017 09:11:47 +0100
+Message-ID: <87wp5s83ss.fsf@arm.com>
+References: <20170825145721.51c56af3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170825145721.51c56af3@canb.auug.org.au> (Stephen Rothwell's
+        message of "Fri, 25 Aug 2017 14:57:21 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoffer Dall <cdall@cs.columbia.edu>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-Sorry for the trouble.
-Looks like these rt5514_spi_* functions should be guarded by #if
-IS_ENABLED(CONFIG_SND_SOC_RT5514_SPI)
-I'll resend the patch to address this.
+Hi Stephen,
 
-Thanks,
-Hsin-yu
-
-On Fri, Aug 25, 2017 at 3:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, Aug 25 2017 at  2:57:21 pm BST, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > Hi all,
 >
-> After merging the sound-asoc tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
+> Today's linux-next merge of the kvm-arm tree got a conflict in:
 >
-> sound/soc/codecs/rt5514.c: In function 'rt5514_dsp_voice_wake_up_put':
-> sound/soc/codecs/rt5514.c:343:11: error: implicit declaration of function 'rt5514_spi_burst_write' [-Werror=implicit-function-declaration]
->      ret = rt5514_spi_burst_write(0x4ff80000,
->            ^
+>   arch/arm64/include/asm/esr.h
 >
-> Caused by commit
+> between commit:
 >
->   d18420b0a0b8 ("ASoC: rt5514: expose Hotword Model control")
+>   1f9b8936f36f ("arm64: Decode information from ESR upon mem faults")
 >
-> I have reverted that commit for today.
+> from the arm64 tree and commit:
 >
-> --
-> Cheers,
-> Stephen Rothwell
+>   c5511c3c068c ("KVM: arm/arm64: Fix guest external abort matching")
+>
+> from the kvm-arm tree.
+>
+> I fixed it up (I used the former version) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+
+Thanks for that, result looking good.
+
+Christoffer: I think we could simply drop the hunk touching esr.h from
+James' patch. After all, even if nothing is using it, this bit still
+exists in the ESR register, and there is little gain in dropping its
+definition. This would solve the conflict nicely...
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead, it just smell funny.
