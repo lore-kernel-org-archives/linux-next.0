@@ -1,46 +1,42 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 25 Aug 2017 19:35:48 +1000
-Message-ID: <20170825193548.404c7ad0@canb.auug.org.au>
-References: <20170825181254.17e6541d@canb.auug.org.au>
-        <20170825093419.GA11402@lst.de>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the
+ sound-current tree
+Date: Fri, 25 Aug 2017 12:37:29 +0300
+Message-ID: <1503653849.25945.96.camel@linux.intel.com>
+References: <20170825125705.44de0444@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170825093419.GA11402@lst.de>
+In-Reply-To: <20170825125705.44de0444@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Minchan Kim <minchan@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Rini <trini@konsulko.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Christoph,
-
-On Fri, 25 Aug 2017 11:34:19 +0200 Christoph Hellwig <hch@lst.de> wrote:
->
-> On Fri, Aug 25, 2017 at 06:12:54PM +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > After merging the akpm-current tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> > 
-> > drivers/block/zram/zram_drv.c: In function 'read_from_bdev_a
-> > sync':
-> > drivers/block/zram/zram_drv.c:461:5: error: 'struct bio' has
-> >  no member named 'bi_bdev'
-> >   bio->bi_bdev = zram->bdev;
-> >      ^
-> > drivers/block/zram/zram_drv.c: In function 'write_to_bdev':
-> > drivers/block/zram/zram_drv.c:555:5: error: 'struct bio' has
-> >  no member named 'bi_bdev'
-> >   bio->bi_bdev = zram->bdev;  
+On Fri, 2017-08-25 at 12:57 +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Replace this with:
+> Today's linux-next merge of the sound-asoc tree got a conflict in:
 > 
-> 	bio_set_dev(bio, zram->bdev);
+>   sound/soc/codecs/rt5677.c
+> 
+> between commit:
+> 
+>   9ce76511b67b ("ASoC: rt5677: Reintroduce I2C device IDs")
 
-Excellent thanks, I will do that in the next release.
+This one AFAIU is a quick fix solely for v4.13.
+
+Thus, the correct fix is to remove all 3 IDs from that table to get:
+
+ static const struct i2c_device_id rt5677_i2c_id[] = {
+
+        { }
+ };
+ MODULE_DEVICE_TABLE(i2c, rt5677_i2c_id);
+
+at the end.
 
 -- 
-Cheers,
-Stephen Rothwell
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
