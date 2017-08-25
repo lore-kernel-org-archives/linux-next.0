@@ -1,53 +1,48 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 25 Aug 2017 09:11:47 +0100
-Message-ID: <87wp5s83ss.fsf@arm.com>
-References: <20170825145721.51c56af3@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 25 Aug 2017 18:12:54 +1000
+Message-ID: <20170825181254.17e6541d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170825145721.51c56af3@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 25 Aug 2017 14:57:21 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoffer Dall <cdall@cs.columbia.edu>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Minchan Kim <minchan@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Hi all,
 
-On Fri, Aug 25 2017 at  2:57:21 pm BST, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
->
->   arch/arm64/include/asm/esr.h
->
-> between commit:
->
->   1f9b8936f36f ("arm64: Decode information from ESR upon mem faults")
->
-> from the arm64 tree and commit:
->
->   c5511c3c068c ("KVM: arm/arm64: Fix guest external abort matching")
->
-> from the kvm-arm tree.
->
-> I fixed it up (I used the former version) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Thanks for that, result looking good.
+drivers/block/zram/zram_drv.c: In function 'read_from_bdev_a
+sync':
+drivers/block/zram/zram_drv.c:461:5: error: 'struct bio' has
+ no member named 'bi_bdev'
+  bio->bi_bdev = zram->bdev;
+     ^
+drivers/block/zram/zram_drv.c: In function 'write_to_bdev':
+drivers/block/zram/zram_drv.c:555:5: error: 'struct bio' has
+ no member named 'bi_bdev'
+  bio->bi_bdev = zram->bdev;
+     ^
 
-Christoffer: I think we could simply drop the hunk touching esr.h from
-James' patch. After all, even if nothing is using it, this bit still
-exists in the ESR register, and there is little gain in dropping its
-definition. This would solve the conflict nicely...
+Caused by commits
 
-Thanks,
+  827180946edf ("zram: write incompressible pages to backing device")
+  83ff0ec8b13f ("zram: read page from backing device")
 
-	M.
+interacting with commit
+
+  74d46992e0d9 ("block: replace bi_bdev with a gendisk pointer and partitions index")
+
+from the block tree.
+
+I have no idea how to fix this up, so I just disabled CONFIG_ZRAM
+for today.
+
+If someone could look at providing a resolution, that would help.
 -- 
-Jazz is not dead, it just smell funny.
+Cheers,
+Stephen Rothwell
