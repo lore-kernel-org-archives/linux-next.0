@@ -1,38 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the sound-asoc tree with the
- sound-current tree
-Date: Fri, 25 Aug 2017 12:57:05 +1000
-Message-ID: <20170825125705.44de0444@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Fri, 25 Aug 2017 14:34:16 +1000
+Message-ID: <20170825143416.1673621d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46791 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754220AbdHYC5H (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 24 Aug 2017 22:57:07 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Rini <trini@konsulko.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>, Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the sound-asoc tree got a conflict in:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-  sound/soc/codecs/rt5677.c
+  arch/x86/include/asm/cpufeatures.h
 
 between commit:
 
-  9ce76511b67b ("ASoC: rt5677: Reintroduce I2C device IDs")
+  5442c2699552 ("x86/cpufeature, kvm/svm: Rename (shorten) the new "virtualized VMSAVE/VMLOAD" CPUID flag")
 
-from the sound-current tree and commit:
+from Linus' tree and commit:
 
-  ddc9e69b9dc2 ("ASoC: rt5677: Hide platform data in the module sources")
+  d837312dfd5b ("KVM: SVM: Add Virtual GIF feature definition")
 
-from the sound-asoc tree.
-
-I considered just using the latter version, but in the end did not.
+from the kvm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,17 +38,17 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc sound/soc/codecs/rt5677.c
-index 6f629278d982,c735590c5a25..000000000000
---- a/sound/soc/codecs/rt5677.c
-+++ b/sound/soc/codecs/rt5677.c
-@@@ -5019,9 -5010,6 +5010,7 @@@ static const struct regmap_config rt567
-  };
+diff --cc arch/x86/include/asm/cpufeatures.h
+index 42bbbf0f173d,0e25e7a8ab03..000000000000
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@@ -287,7 -286,8 +287,8 @@@
+  #define X86_FEATURE_PAUSEFILTER (15*32+10) /* filtered pause intercept */
+  #define X86_FEATURE_PFTHRESHOLD (15*32+12) /* pause filter threshold */
+  #define X86_FEATURE_AVIC	(15*32+13) /* Virtual Interrupt Controller */
+ -#define X86_FEATURE_VIRTUAL_VMLOAD_VMSAVE (15*32+15) /* Virtual VMLOAD VMSAVE */
+ +#define X86_FEATURE_V_VMSAVE_VMLOAD (15*32+15) /* Virtual VMSAVE VMLOAD */
++ #define X86_FEATURE_VGIF	(15*32+16) /* Virtual GIF */
   
-  static const struct i2c_device_id rt5677_i2c_id[] = {
-- 	{ "rt5677", RT5677 },
-- 	{ "rt5676", RT5676 },
- +	{ "RT5677CE:00", RT5677 },
-  	{ }
-  };
-  MODULE_DEVICE_TABLE(i2c, rt5677_i2c_id);
+  /* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx), word 16 */
+  #define X86_FEATURE_AVX512VBMI  (16*32+ 1) /* AVX512 Vector Bit Manipulation instructions*/
