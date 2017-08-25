@@ -1,103 +1,36 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
-Date: Fri, 25 Aug 2017 08:39:22 +0200
-Message-ID: <2984689e-ab4e-0c22-7151-adfeeffce4ed@redhat.com>
-References: <20170825143930.494744fe@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 25 Aug 2017 17:41:11 +1000
+Message-ID: <20170825174111.0ba91a9b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:39894 "EHLO mx1.redhat.com"
+Received: from ozlabs.org ([103.22.144.67]:44387 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754231AbdHYGj2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 25 Aug 2017 02:39:28 -0400
-In-Reply-To: <20170825143930.494744fe@canb.auug.org.au>
-Content-Language: en-US
+        id S1754584AbdHYHlO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 25 Aug 2017 03:41:14 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, Brijesh Singh <brijesh.singh@amd.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hsin-Yu Chao <hychao@chromium.org>
 
-On 25/08/2017 06:39, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/x86/kvm/mmu.h
-> 
-> between commit:
-> 
->   d0ec49d4de90 ("kvm/x86/svm: Support Secure Memory Encryption within KVM")
-> 
-> from the tip tree and commit:
-> 
->   d1cd3ce90044 ("KVM: MMU: check guest CR3 reserved bits based on its physical address width.")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
+Hi all,
 
-Thomas L., Ingo,
+After merging the sound-asoc tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-this is completely wrong:
+sound/soc/codecs/rt5514.c: In function 'rt5514_dsp_voice_wake_up_put':
+sound/soc/codecs/rt5514.c:343:11: error: implicit declaration of function 'rt5514_spi_burst_write' [-Werror=implicit-function-declaration]
+     ret = rt5514_spi_burst_write(0x4ff80000,
+           ^
 
-> 
->  static inline u64 rsvd_bits(int s, int e)
->  {
-> -	return ((1ULL << (e - s + 1)) - 1) << s;
-> +	return __sme_clr(((1ULL << (e - s + 1)) - 1) << s);
->  }
->  
+Caused by commit
 
-First, rsvd_bits is just a simple function to return some 1 bits.  Applying
-a mask based on properties of the host MMU is incorrect.
+  d18420b0a0b8 ("ASoC: rt5514: expose Hotword Model control")
 
-Second, the masks computed by __reset_rsvds_bits_mask also apply to 
-guest page tables, where the C bit is reserved since we don't emulate
-SME.
+I have reverted that commit for today.
 
-Something like this:
-
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 2dafd36368cc..e0597d703d72 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4142,16 +4142,24 @@ void
- reset_shadow_zero_bits_mask(struct kvm_vcpu *vcpu, struct kvm_mmu *context)
- {
- 	bool uses_nx = context->nx || context->base_role.smep_andnot_wp;
-+	struct rsvd_bits_validate *shadow_zero_check;
-+	int i;
- 
- 	/*
- 	 * Passing "true" to the last argument is okay; it adds a check
- 	 * on bit 8 of the SPTEs which KVM doesn't use anyway.
- 	 */
--	__reset_rsvds_bits_mask(vcpu, &context->shadow_zero_check,
-+        shadow_zero_check = &context->shadow_zero_check;
-+	__reset_rsvds_bits_mask(vcpu, shadow_zero_check,
- 				boot_cpu_data.x86_phys_bits,
- 				context->shadow_root_level, uses_nx,
- 				guest_cpuid_has(vcpu, X86_FEATURE_GBPAGES),
- 				is_pse(vcpu), true);
-+
-+	for (i = context->shadow_root_level; --i >= 0; ) {
-+		shadow_zero_check->rsvd_bits_mask[i][0] &= ~shadow_me_mask;
-+		shadow_zero_check->rsvd_bits_mask[i][1] &= ~shadow_me_mask;
-+	}
- }
- EXPORT_SYMBOL_GPL(reset_shadow_zero_bits_mask);
- 
-
-Can you please fix it up?   Please Cc me at paolo.bonzini@gmail.com too 
-because I'll be on vacation next week.
-
-(And thanks Stephen for the heads-up!)
-
-Paolo
+-- 
+Cheers,
+Stephen Rothwell
