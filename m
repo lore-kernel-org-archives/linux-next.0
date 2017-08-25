@@ -1,29 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Fri, 25 Aug 2017 14:34:16 +1000
-Message-ID: <20170825143416.1673621d@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the tip tree
+Date: Fri, 25 Aug 2017 14:39:30 +1000
+Message-ID: <20170825143930.494744fe@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>, Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, Yu Zhang <yu.c.zhang@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
 Today's linux-next merge of the kvm tree got a conflict in:
 
-  arch/x86/include/asm/cpufeatures.h
+  arch/x86/kvm/mmu.h
 
 between commit:
 
-  5442c2699552 ("x86/cpufeature, kvm/svm: Rename (shorten) the new "virtualized VMSAVE/VMLOAD" CPUID flag")
+  d0ec49d4de90 ("kvm/x86/svm: Support Secure Memory Encryption within KVM")
 
-from Linus' tree and commit:
+from the tip tree and commit:
 
-  d837312dfd5b ("KVM: SVM: Add Virtual GIF feature definition")
+  d1cd3ce90044 ("KVM: MMU: check guest CR3 reserved bits based on its physical address width.")
 
 from the kvm tree.
 
@@ -38,17 +38,19 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/include/asm/cpufeatures.h
-index 42bbbf0f173d,0e25e7a8ab03..000000000000
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@@ -287,7 -286,8 +287,8 @@@
-  #define X86_FEATURE_PAUSEFILTER (15*32+10) /* filtered pause intercept */
-  #define X86_FEATURE_PFTHRESHOLD (15*32+12) /* pause filter threshold */
-  #define X86_FEATURE_AVIC	(15*32+13) /* Virtual Interrupt Controller */
- -#define X86_FEATURE_VIRTUAL_VMLOAD_VMSAVE (15*32+15) /* Virtual VMLOAD VMSAVE */
- +#define X86_FEATURE_V_VMSAVE_VMLOAD (15*32+15) /* Virtual VMSAVE VMLOAD */
-+ #define X86_FEATURE_VGIF	(15*32+16) /* Virtual GIF */
+diff --cc arch/x86/kvm/mmu.h
+index 3cc725590ab9,e2999f57bfc4..000000000000
+--- a/arch/x86/kvm/mmu.h
++++ b/arch/x86/kvm/mmu.h
+@@@ -48,7 -49,10 +49,10 @@@
   
-  /* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx), word 16 */
-  #define X86_FEATURE_AVX512VBMI  (16*32+ 1) /* AVX512 Vector Bit Manipulation instructions*/
+  static inline u64 rsvd_bits(int s, int e)
+  {
++ 	if (e < s)
++ 		return 0;
++ 
+ -	return ((1ULL << (e - s + 1)) - 1) << s;
+ +	return __sme_clr(((1ULL << (e - s + 1)) - 1) << s);
+  }
+  
+  void kvm_mmu_set_mmio_spte_mask(u64 mmio_mask, u64 mmio_value);
