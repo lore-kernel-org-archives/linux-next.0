@@ -1,53 +1,35 @@
-From: Christoffer Dall <cdall@cs.columbia.edu>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 25 Aug 2017 10:44:17 +0200
-Message-ID: <CAEDV+gJa4pY-c3G1S6fq3HmkS3eukR3qFd6i=k-2Ws6Z0N=mxA@mail.gmail.com>
-References: <20170825145721.51c56af3@canb.auug.org.au> <87wp5s83ss.fsf@arm.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 25 Aug 2017 11:34:19 +0200
+Message-ID: <20170825093419.GA11402@lst.de>
+References: <20170825181254.17e6541d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87wp5s83ss.fsf@arm.com>
+Content-Disposition: inline
+In-Reply-To: <20170825181254.17e6541d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Morse <james.morse@arm.com>, Julien Thierry <julien.thierry@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Minchan Kim <minchan@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Aug 25, 2017 at 10:11 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> Hi Stephen,
->
-> On Fri, Aug 25 2017 at  2:57:21 pm BST, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Today's linux-next merge of the kvm-arm tree got a conflict in:
->>
->>   arch/arm64/include/asm/esr.h
->>
->> between commit:
->>
->>   1f9b8936f36f ("arm64: Decode information from ESR upon mem faults")
->>
->> from the arm64 tree and commit:
->>
->>   c5511c3c068c ("KVM: arm/arm64: Fix guest external abort matching")
->>
->> from the kvm-arm tree.
->>
->> I fixed it up (I used the former version) and can carry the fix as
->> necessary. This is now fixed as far as linux-next is concerned, but any
->> non trivial conflicts should be mentioned to your upstream maintainer
->> when your tree is submitted for merging.  You may also want to consider
->> cooperating with the maintainer of the conflicting tree to minimise any
->> particularly complex conflicts.
->
-> Thanks for that, result looking good.
->
-> Christoffer: I think we could simply drop the hunk touching esr.h from
-> James' patch. After all, even if nothing is using it, this bit still
-> exists in the ESR register, and there is little gain in dropping its
-> definition. This would solve the conflict nicely...
->
+On Fri, Aug 25, 2017 at 06:12:54PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/block/zram/zram_drv.c: In function 'read_from_bdev_a
+> sync':
+> drivers/block/zram/zram_drv.c:461:5: error: 'struct bio' has
+>  no member named 'bi_bdev'
+>   bio->bi_bdev = zram->bdev;
+>      ^
+> drivers/block/zram/zram_drv.c: In function 'write_to_bdev':
+> drivers/block/zram/zram_drv.c:555:5: error: 'struct bio' has
+>  no member named 'bi_bdev'
+>   bio->bi_bdev = zram->bdev;
 
-Yes, I have updated the branch accordingly and added my signed-off-by as well.
+Replace this with:
 
-Thanks,
--Christoffer
+	bio_set_dev(bio, zram->bdev);
