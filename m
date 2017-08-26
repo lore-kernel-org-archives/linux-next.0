@@ -1,41 +1,75 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2017-08-25-15-50 uploaded
-Date: Fri, 25 Aug 2017 16:50:26 -0700
-Message-ID: <3c9df006-0cc5-3a32-b715-1fbb43cb9ea8@infradead.org>
-References: <59a0a9d1.jzOblYrHfdIDuDZw%akpm@linux-foundation.org>
+From: Changwei Ge <ge.changwei@h3c.com>
+Subject: Re: linux-next: build warnings after merge of the akpm-current tree
+Date: Sat, 26 Aug 2017 01:23:41 +0000
+Message-ID: <63ADC13FD55D6546B7DECE290D39E373AC2CFA97@H3CMLB14-EX.srv.huawei-3com.com>
+References: <20170824174159.67177da2@canb.auug.org.au>
+ <63ADC13FD55D6546B7DECE290D39E373AC2CF2E2@H3CMLB14-EX.srv.huawei-3com.com>
+ <20170825142348.89eb3cf90c2e054869add1d9@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <59a0a9d1.jzOblYrHfdIDuDZw%akpm@linux-foundation.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.h3c.com ([60.191.123.56]:56400 "EHLO h3cmg01-ex.h3c.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751411AbdHZB0T (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 25 Aug 2017 21:26:19 -0400
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
-Cc: =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Fasheh <mfasheh@versity.com>
 
-On 08/25/17 15:50, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2017-08-25-15-50 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+Hi Andrew,
 
-lots of this one (on x86_64, i386, or UML):
 
-../kernel/fork.c:818:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
-../kernel/fork.c:897:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
+On 2017/8/26 5:24, Andrew Morton wrote:
+> On Thu, 24 Aug 2017 08:15:30 +0000 Changwei Ge <ge.changwei@h3c.com> wrote:
+>
+>> Hi Andrew,
+>>
+>> On 2017/8/24 15:42, Stephen Rothwell wrote:
+>>> Hi Andrew, After merging the akpm-current tree, today's linux-next
+>>> build (x86_64 allmodconfig) produced these warnings:
+>>> fs/ocfs2/dlm/dlmrecovery.c: In function 'dlm_free_dead_locks':
+>>> fs/ocfs2/dlm/dlmrecovery.c:2306:6: warning: unused variable 'i'
+>>> [-Wunused-variable] int i; ^ fs/ocfs2/dlm/dlmrecovery.c:2305:20:
+>>> warning: unused variable 'queue' [-Wunused-variable] struct list_head
+>>> *queue = NULL; ^ 
+>> My patch never defines these two variables, it's strange that they are
+>> defined within the patch you collected.
+>> Could you please help to check if this patch comes from mail '[PATCH]
+>> ocfs2: re-queue AST or BAST if sending is failed to improve the
+>> reliability' sent on 7, August.
+> Yes, I'm not at all sure how those lines got there.
+>
+> Problem is, the patch you sent was wordwrapped and had its tabs
+> replaced with spaces.  So I had to do quite a lot of work on it to make
+> it usable.  Evidently I somehow added those lines in the process.
+>
+> Please carefully check that
+>
+> http://www.ozlabs.org/~akpm/mmotm/broken-out/ocfs2-re-queue-ast-or-bast-if-sending-is-failed-to-improve-the-reliability.patch
+>
+> plus
+>
+> --- a/fs/ocfs2/dlm/dlmrecovery.c~ocfs2-re-queue-ast-or-bast-if-sending-is-failed-to-improve-the-reliability-fix
+> +++ a/fs/ocfs2/dlm/dlmrecovery.c
+> @@ -2302,8 +2302,6 @@ static void dlm_free_dead_locks(struct d
+>  	struct dlm_lock *lock, *next;
+>  	unsigned int freed = 0;
+>  	int reserved_tmp = 0;
+> -	struct list_head *queue = NULL;
+> -	int i;
+>  
+>  	/* this node is the lockres master:
+>  	 * 1) remove any stale locks for the dead node
+>
+> produce the correct result.
+>
+> And please appropriately configure your email client for next time!
+Sorry for the trouble my patch made, I will check my email client
+configuration.
 
-from mm-hmm-heterogeneous-memory-management-hmm-for-short-v5.patch
-
-Cc: Jérôme Glisse <jglisse@redhat.com>
-
--- 
-~Randy
+Thanks,
+Changwei
+>
