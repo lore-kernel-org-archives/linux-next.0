@@ -1,75 +1,52 @@
-From: Changwei Ge <ge.changwei@h3c.com>
-Subject: Re: linux-next: build warnings after merge of the akpm-current tree
-Date: Sat, 26 Aug 2017 01:23:41 +0000
-Message-ID: <63ADC13FD55D6546B7DECE290D39E373AC2CFA97@H3CMLB14-EX.srv.huawei-3com.com>
-References: <20170824174159.67177da2@canb.auug.org.au>
- <63ADC13FD55D6546B7DECE290D39E373AC2CF2E2@H3CMLB14-EX.srv.huawei-3com.com>
- <20170825142348.89eb3cf90c2e054869add1d9@linux-foundation.org>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+Date: Sat, 26 Aug 2017 09:24:04 +0200
+Message-ID: <20170826072404.ocjypnhp2b5rnh4l@gmail.com>
+References: <20170825143930.494744fe@canb.auug.org.au>
+ <2984689e-ab4e-0c22-7151-adfeeffce4ed@redhat.com>
+ <dd8be323-8ffb-bab5-0431-f77e48fd5df1@amd.com>
+ <a71c9dbd-ec32-8bb6-9d36-c138d9b4f001@amd.com>
+ <2b021bf3-9ace-8678-0793-c0048500469c@redhat.com>
+ <df4641f2-93ca-4923-bb6b-5a43f709859c@amd.com>
+ <575d1d5a-5cfb-49b4-0ce7-b78372739cb6@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.h3c.com ([60.191.123.56]:56400 "EHLO h3cmg01-ex.h3c.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751411AbdHZB0T (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 25 Aug 2017 21:26:19 -0400
-Content-Language: en-US
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:35723 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750818AbdHZHYI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 26 Aug 2017 03:24:08 -0400
+Content-Disposition: inline
+In-Reply-To: <575d1d5a-5cfb-49b4-0ce7-b78372739cb6@redhat.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Fasheh <mfasheh@versity.com>
-
-Hi Andrew,
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Brijesh Singh <brijesh.singh@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yu Zhang <yu.c.zhang@linux.intel.com>, paolo.bonzini@gmail.com
 
 
-On 2017/8/26 5:24, Andrew Morton wrote:
-> On Thu, 24 Aug 2017 08:15:30 +0000 Changwei Ge <ge.changwei@h3c.com> wrote:
->
->> Hi Andrew,
->>
->> On 2017/8/24 15:42, Stephen Rothwell wrote:
->>> Hi Andrew, After merging the akpm-current tree, today's linux-next
->>> build (x86_64 allmodconfig) produced these warnings:
->>> fs/ocfs2/dlm/dlmrecovery.c: In function 'dlm_free_dead_locks':
->>> fs/ocfs2/dlm/dlmrecovery.c:2306:6: warning: unused variable 'i'
->>> [-Wunused-variable] int i; ^ fs/ocfs2/dlm/dlmrecovery.c:2305:20:
->>> warning: unused variable 'queue' [-Wunused-variable] struct list_head
->>> *queue = NULL; ^ 
->> My patch never defines these two variables, it's strange that they are
->> defined within the patch you collected.
->> Could you please help to check if this patch comes from mail '[PATCH]
->> ocfs2: re-queue AST or BAST if sending is failed to improve the
->> reliability' sent on 7, August.
-> Yes, I'm not at all sure how those lines got there.
->
-> Problem is, the patch you sent was wordwrapped and had its tabs
-> replaced with spaces.  So I had to do quite a lot of work on it to make
-> it usable.  Evidently I somehow added those lines in the process.
->
-> Please carefully check that
->
-> http://www.ozlabs.org/~akpm/mmotm/broken-out/ocfs2-re-queue-ast-or-bast-if-sending-is-failed-to-improve-the-reliability.patch
->
-> plus
->
-> --- a/fs/ocfs2/dlm/dlmrecovery.c~ocfs2-re-queue-ast-or-bast-if-sending-is-failed-to-improve-the-reliability-fix
-> +++ a/fs/ocfs2/dlm/dlmrecovery.c
-> @@ -2302,8 +2302,6 @@ static void dlm_free_dead_locks(struct d
->  	struct dlm_lock *lock, *next;
->  	unsigned int freed = 0;
->  	int reserved_tmp = 0;
-> -	struct list_head *queue = NULL;
-> -	int i;
->  
->  	/* this node is the lockres master:
->  	 * 1) remove any stale locks for the dead node
->
-> produce the correct result.
->
-> And please appropriately configure your email client for next time!
-Sorry for the trouble my patch made, I will check my email client
-configuration.
+* Paolo Bonzini <pbonzini@redhat.com> wrote:
+
+> On 25/08/2017 22:41, Brijesh Singh wrote:
+> >>>>
+> > 
+> >> Neither my version nor yours is correct. :)  The right one has [0][i]
+> >> and [1][i] (I inverted the indices by mistake).
+> >>
+> >> With that change, you can include my
+> >>
+> >> Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+> >>
+> > 
+> > Ingo,
+> > 
+> > I assuming that this patch should be sent through the tip since SME support
+> > came from tip. I will be submitting the patch very soon.
+> 
+> Yes, that is correct.  I cannot apply it directly to the KVM tree.
+
+I've merged it to tip:x86/mm where the SME bits live and will propagate it to 
+linux-next ASAP, once it's gone through my local testing.
 
 Thanks,
-Changwei
->
+
+	Ingo
