@@ -1,96 +1,73 @@
-From: "greg@kroah.com" <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the staging tree
-Date: Mon, 28 Aug 2017 20:47:13 +0200
-Message-ID: <20170828184713.GA22823@kroah.com>
-References: <20170828164127.15902025@canb.auug.org.au>
- <20170828064921.GA24696@kroah.com>
- <1503934884.2841.22.camel@wdc.com>
- <20170828160545.GA11231@kroah.com>
- <1503938165.2841.30.camel@wdc.com>
- <20170828164420.GB16802@kroah.com>
- <1503942719.2744.3.camel@HansenPartnership.com>
+From: Brian Norris <computersforpeace@gmail.com>
+Subject: Re: linux-next: build failure after merge of the l2-mtd tree
+Date: Mon, 28 Aug 2017 15:06:54 -0700
+Message-ID: <20170828220654.GA141992@google.com>
+References: <20170828121905.36ff8a63@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1503942719.2744.3.camel@HansenPartnership.com>
+In-Reply-To: <20170828121905.36ff8a63@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hare@suse.de" <hare@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "sameer.wadgaonkar@unisys.com" <sameer.wadgaonkar@unisys.com>, linux-scsi <linux-scsi@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Rugiero <mrugiero@gmail.com>, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-mtd@lists.infradead.org, Boris Brezillon <boris.brezillon@free-electrons.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 28, 2017 at 06:51:59PM +0100, James Bottomley wrote:
-> On Mon, 2017-08-28 at 18:44 +0200, greg@kroah.com wrote:
-> > On Mon, Aug 28, 2017 at 04:36:06PM +0000, Bart Van Assche wrote:
-> > > 
-> > > On Mon, 2017-08-28 at 18:05 +0200, greg@kroah.com wrote:
-> > > > 
-> > > > On Mon, Aug 28, 2017 at 03:41:28PM +0000, Bart Van Assche wrote:
-> > > > > 
-> > > > > * Most SCSI drivers exist under drivers/scsi, including the
-> > > > > virtio-scsi and   xen-scsifront drivers. So why has the
-> > > > > visorhba driver been added under unisys/visorhba?
-> > > > 
-> > > > That's because right now it's still a staging driver.  Also,
-> > > > there are other scsi drivers in other portions of the kernel tree
-> > > > (like the USB driver), so there's no hard rule that all scsi
-> > > > drivers have to be under drivers/scsi/
-> > > > 
-> > > > <snip>
-> > > > 
-> > > > Please provide this review to them, on the properly mailing list,
-> > > > I'm sure they would be glad to get it.
-> > > 
-> > > OK, I will do that. BTW, is there a written down version of the
-> > > rules for adding a driver under drivers/staging available
-> > > somewhere? 
-> > 
-> > The only 2 rules for adding a new drivers/staging driver is:
-> > 	- has to compile
-> > 	- correct license
-> > and sometimes we let code in if the first one isn't true :)
-> > 
-> > > 
-> > > As far as I can see the visorhba driver went in without the linux-
-> > > scsi mailing list having been CC-ed. See also Benjamin Romer,
-> > > [PATCH] staging: unisys: Add s-Par visorhba, linux-driver-devel
-> > > mailing list, July 2015
-> > > (https://urldefense.proofpoint.com/v2/url?u=https-3A__marc.info_-
-> > > 3Fl-3Dlinux-2Ddriver-2Ddevel-26m-
-> > > 3D143681271902628&d=DwIBAg&c=jf_iaSHvJObTbx-
-> > > siA1ZOg&r=lxuMXTRCffN3cvb-
-> > > aRKL97jBhWZUIH_7zc3AgXUz9Mw&m=muMI5n73yuzpaRBjZnIrYLfhcO8lIP0JZSjBG
-> > > D1LC5I&s=76_tO8QEuhUmhJPijDkweBOfh6DLPRILWj9Rhphb8j0&e= ).
-> > 
-> > That's totally normal, why would the scsi developers care about a
-> > staging driver in such a rough state.  Only when it looks "good
-> > enough" would we ask for a scsi developer review to move it out of
-> > staging.
+On Mon, Aug 28, 2017 at 12:19:05PM +1000, Stephen Rothwell wrote:
+> Hi Brian,
+
+Hi Stephen,
+
+> After merging the l2-mtd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> I think I've said before, we'd really rather a SCSI driver went via the
-> SCSI tree because most of what's wrong with it will be the mechanics of
-> the driver and its interaction with the SCSI and block subsystems which
-> simply don't get looked at in the staging tree.  The aesthetics and the
-> formatting issues are mostly fixed by a quick trip through lindent or a
-> brief education of the submitters on Linux style.
+> drivers/mtd/nand/nandsim.c: In function 'ns_init_module':
+> drivers/mtd/nand/nandsim.c:2353:2: error: implicit declaration of function 'nandsim_debugfs_remove' [-Werror=implicit-function-declaration]
+>   nandsim_debugfs_remove(nand);
+>   ^
+> 
+> Caused by commit
+> 
+>   e8e3edb95ce6 ("mtd: create per-device and module-scope debugfs entries")
+> 
+> interacting with commit
+> 
+>   b974696da1cf ("mtd: nandsim: remove debugfs entries in error path")
+> 
+> from Linus' tree.
 
-This driver has been in the tree for almost 2 years now, with no
-problems in this area before.  It, and the infrastructure around it, has
-needed hundreds, if not thousands, of patches and changes and reworks to
-get it to the almost readable state it is in today.
+Yes, this was expected in the divergence between a bugfix merge	for 4.13
+vs. a feature change in 4.14. I think Boris has fixed the conflict in
+his merges and is uploading that to l2-mtd/master (he's handling MTD for
+4.14).
 
-It was anything but a "quick trip through lindent".
+Good to know you catch this too :)
 
-And we don't have code in the "real" part of the kernel depend on code
-in drivers/staging/, as that would not work.
+> I applied the following merge fix patch ... please check.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 28 Aug 2017 12:13:42 +1000
+> Subject: [PATCH] fix merge of l2-mtd tree
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/mtd/nand/nandsim.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
+> index 00635fd738f6..1ddf0b73c246 100644
+> --- a/drivers/mtd/nand/nandsim.c
+> +++ b/drivers/mtd/nand/nandsim.c
+> @@ -2350,7 +2350,6 @@ static int __init ns_init_module(void)
+>          return 0;
+>  
+>  err_exit:
+> -	nandsim_debugfs_remove(nand);
+>  	free_nandsim(nand);
+>  	nand_release(nsmtd);
+>  	for (i = 0;i < ARRAY_SIZE(nand->partitions); ++i)
 
-So let's just keep things as they are here, there's been no issues with
-this for 2 years, and for times when there is, great, let me know and we
-can work to fix things up.  You are always free to break staging drivers
-with api changes, it's up to the owner of the staging driver to fix the
-issues in that case.
+I think this is right, and it matches what Boris is pushing.
 
-thanks,
-
-greg k-h
+Regards,
+Brian
