@@ -1,75 +1,98 @@
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the staging tree
-Date: Mon, 28 Aug 2017 15:41:28 +0000
-Message-ID: <1503934884.2841.22.camel@wdc.com>
-References: <20170828164127.15902025@canb.auug.org.au>
-         <20170828064921.GA24696@kroah.com>
+From: Jerome Glisse <jglisse@redhat.com>
+Subject: Re: mmotm 2017-08-25-15-50 uploaded
+Date: Mon, 28 Aug 2017 11:46:40 -0400 (EDT)
+Message-ID: <1201125186.4681340.1503935200216.JavaMail.zimbra@redhat.com>
+References: <59a0a9d1.jzOblYrHfdIDuDZw%akpm@linux-foundation.org> <3c9df006-0cc5-3a32-b715-1fbb43cb9ea8@infradead.org> <20170828075931.GC17097@dhcp22.suse.cz> <20170828182705.150afe66@canb.auug.org.au> <20170828083157.GE17097@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:13185 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751297AbdH1PmQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Aug 2017 11:42:16 -0400
-In-Reply-To: <20170828064921.GA24696@kroah.com>
-Content-Language: en-US
-Content-ID: <369FDC46C03CEA4B80304C5E39A13EFF@namprd04.prod.outlook.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "greg@kroah.com" <greg@kroah.com>
-Cc: "James.Bottomley@HansenPartnership.com" <James.Bottomley@HansenPartnership.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hare@suse.de" <hare@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "sameer.wadgaonkar@unisys.com" <sameer.wadgaonkar@unisys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170828083157.GE17097@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, broonie@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCAyMDE3LTA4LTI4IGF0IDA4OjQ5ICswMjAwLCBHcmVnIEtIIHdyb3RlOg0KPiBPbiBN
-b24sIEF1ZyAyOCwgMjAxNyBhdCAwNDo0MToyN1BNICsxMDAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdy
-b3RlOg0KPiA+IEhpIEphbWVzLA0KPiA+IA0KPiA+IFRvZGF5J3MgbGludXgtbmV4dCBtZXJnZSBv
-ZiB0aGUgc2NzaSB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOg0KPiA+IA0KPiA+ICAgZHJpdmVycy9z
-dGFnaW5nL3VuaXN5cy92aXNvcmhiYS92aXNvcmhiYV9tYWluLmMNCj4gPiANCj4gPiBiZXR3ZWVu
-IGNvbW1pdHM6DQo+ID4gDQo+ID4gICA3ODFmYWNkMDVlYjkgKCJzdGFnaW5nOiB1bmlzeXM6IHZp
-c29yaGJhOiB2aXNvcmhiYV9tYWluLmM6IGZpeGVkIGNvbW1lbnQgZm9ybWF0dGluZyBpc3N1ZXMi
-KQ0KPiA+IA0KPiA+IGZyb20gdGhlIHN0YWdpbmcgdHJlZSBhbmQgY29tbWl0Og0KPiA+IA0KPiA+
-ICAgN2JjNGU1MjhkOWY2ICgic2NzaTogdmlzb3JoYmE6IHNhbml0emUgcHJpdmF0ZSBkZXZpY2Ug
-ZGF0YSBhbGxvY2F0aW9uIikNCj4gPiANCj4gPiBmcm9tIHRoZSBzY3NpIHRyZWUuDQo+ID4gDQo+
-ID4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5IHRoZSBmaXggYXMgbmVj
-ZXNzYXJ5LiBUaGlzDQo+ID4gaXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNv
-bmNlcm5lZCwgYnV0IGFueSBub24gdHJpdmlhbA0KPiA+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVu
-dGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5lciB3aGVuIHlvdXIgdHJlZQ0KPiA+IGlz
-IHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNvbnNpZGVyIGNv
-b3BlcmF0aW5nDQo+ID4gd2l0aCB0aGUgbWFpbnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJl
-ZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5DQo+ID4gY29tcGxleCBjb25mbGljdHMuDQo+
-IA0KPiBJY2ssIG1lc3N5IG1lcmdlLCB0aGFua3MgZm9yIGRvaW5nIHRoaXMuDQoNCkhlbGxvIEdy
-ZWcsDQoNCklmIHlvdSBhZ3JlZSB3aXRoIHRoZSBmb2xsb3dpbmcsIHBsZWFzZSBjb21tdW5pY2F0
-ZSB0aGlzIHRvIHRoZSB2aXNvcmhiYQ0KYXV0aG9yczoNCiogTW9zdCBTQ1NJIGRyaXZlcnMgZXhp
-c3QgdW5kZXIgZHJpdmVycy9zY3NpLCBpbmNsdWRpbmcgdGhlIHZpcnRpby1zY3NpIGFuZA0KICB4
-ZW4tc2NzaWZyb250IGRyaXZlcnMuIFNvIHdoeSBoYXMgdGhlIHZpc29yaGJhIGRyaXZlciBiZWVu
-IGFkZGVkIHVuZGVyDQogIHVuaXN5cy92aXNvcmhiYT8NCiogU2luY2UgdGhlIFNDU0kgY29yZSBh
-bHJlYWR5IGtlZXBzIHRyYWNrIG9mIHdoaWNoIGNvbW1hbmRzIGFyZSBwZW5kaW5nLCB0aGUNCiAg
-dmlzb3JoYmEgZHJpdmVyIHNob3VsZCBub3QgZG8gdGhpcy4gSSdtIHJlZmVycmluZyBoZXJlIHRv
-IHRoZSBzY3NpcGVuZGluZw0KICBkYXRhIHN0cnVjdHVyZSBhbmQgdGhlIHBlbmRpbmdbXSBhcnJh
-eSBpbiBzdHJ1Y3Qgdmlzb3JoYl9kZXZkYXRhLg0KKiBUaGUgcGVuZGluZ1tdIGFycmF5IHNob3Vs
-ZCBiZSByZW1vdmVkIGFuZCBzaG91bGQgYmUgY29udmVydGVkIGludG8NCiAgZHJpdmVyLXByaXZh
-dGUgY29tbWFuZCBkYXRhIGJ5IHNldHRpbmcgdGhlIC5jbWRfc2l6ZSBtZW1iZXIgb2YgdGhlIFND
-U0kgaG9zdA0KICB0ZW1wbGF0ZS4NCiogc2NzaV9ob3N0X2ZpbmRfdGFnKCkgc2hvdWxkIGJlIHVz
-ZWQgd2hlbiBhIGNvbW1hbmQgY29tcGxldGlvbiBpcyByZWNlaXZlZA0KICB0byBsb29rIHVwIHRo
-ZSBwb2ludGVyIG9mIHRoZSBTQ1NJIGNvbW1hbmQgdGhhdCBoYXMgYmVlbiBjb21wbGV0ZWQuDQoq
-IEFsbCBjb2RlIHRoYXQgY2FsbHMgZm9yX2VhY2hfdmRpc2tfbWF0Y2goKSBsb29rcyBidWdneSB0
-byBtZSBpbiBzb21lIHdheS4NCiAgRS5nLiB2aXNvcmhiYV9hYm9ydF9oYW5kbGVyKCkgc2hvdWxk
-IG9ubHkgYWZmZWN0IHRoZSBjb21tYW5kIHBhc3NlZCBhcyBhbg0KICBhcmd1bWVudCB0byB0aGF0
-IGZ1bmN0aW9uIGFuZCBubyBvdGhlciBTQ1NJIGNvbW1hbmRzLg0KKiBUaGUgZGV2aWNlIGFuZCBi
-dXMgcmVzZXQgaGFuZGxlcnMgc2hvdWxkIGNhbGwgc2NzaV9kb25lKCkgZm9yIGFsbCBhZmZlY3Rl
-ZA0KICBjb21tYW5kcyBpZiBmb3J3YXJkX3Rhc2ttZ210X2NvbW1hbmQoKSBzdWNjZWVkcyBpbnN0
-ZWFkIG9mIG9ubHkgdGhlIGNvbW1hbmQNCiAgcGFzc2VkIGFzIGFuIGFyZ3VtZW50Lg0KKiBUaGUg
-Zm9yX2VhY2hfdmRpc2tfbWF0Y2goKSBtYWNybyBkb2VzIG5vdCBwcm90ZWN0IGFnYWluc3QgY29u
-Y3VycmVudCBkZXZpY2UNCiAgcmVtb3ZhbCBhbmQgaGVuY2UgaXMgdW5zYWZlLiBUaGlzIG1hY3Jv
-IHNob3VsZCBiZSByZW1vdmVkIGFuZCBpbiBjb250ZXh0cw0KICB3aGVyZSBpdCBpcyAqcmVhbGx5
-KiBuZWVkZWQgdG8gaXRlcmF0ZSBvdmVyIFNDU0kgZGV2aWNlcw0KICBzaG9zdF9mb3JfZWFjaF9k
-ZXZpY2UoKSBzaG91bGQgYmUgdXNlZCBpbnN0ZWFkLg0KKiBJbnN0ZWFkIG9mIGNyZWF0aW5nIGEg
-a2VybmVsIHRocmVhZCB0byBwb2xsIGZvciByZXNwb25zZXMgdGhlIHZpc29yaGJhIGRyaXZlcg0K
-ICBzaG91bGQgb25seSBwcm9jZXNzIHJlc3BvbnNlcyBhZnRlciBpdCBoYXMgcmVjZWl2ZWQgYW4g
-aW50ZXJydXB0IHRoYXQgdGVsbHMgaXQNCiAgdG8gZG8gc28gKHNlZSBhbHNvIHRoZSB2aXNvcl90
-aHJlYWRfc3RhcnQoKSBjYWxscykuDQoqIFNDU0kgZHJpdmVycyBzaG91bGQgbm90IGhhdmUgc3Bl
-Y2lhbC1jYXNlIGNvZGUgZm9yIGhvc3Qgc2h1dGRvd24uDQoqIFRoZSAnZGV2X2luZm9fbGlzdCcg
-bWVtYmVyIGluIHN0cnVjdCB2aXNvcmhiYV9kYXRhIGlzIG5vdCB1c2VkIGFuZCBoZW5jZQ0KICBz
-aG91bGQgYmUgcmVtb3ZlZC4NCg0KUGxlYXNlIG5vdGUgdGhhdCBJIGhhdmUgbm90IGF0dGVtcHRl
-ZCB0byBkbyBhIGZ1bGwgcmV2aWV3IG9mIHRoZSB2aXNvcmhiYSBkcml2ZXIuDQoNClRoYW5rcywN
-Cg0KQmFydC4NCg==
+> On Mon 28-08-17 18:27:05, Stephen Rothwell wrote:
+> > Hi Michal,
+> >=20
+> > On Mon, 28 Aug 2017 09:59:31 +0200 Michal Hocko <mhocko@kernel.org> wro=
+te:
+> > >
+> > > From 31d551dbcb1b7987a4cd07767c1e2805849b7a26 Mon Sep 17 00:00:00 200=
+1
+> > > From: Michal Hocko <mhocko@suse.com>
+> > > Date: Mon, 28 Aug 2017 09:41:39 +0200
+> > > Subject: [PATCH]
+> > >  mm-hmm-struct-hmm-is-only-use-by-hmm-mirror-functionality-v2-fix
+> > >=20
+> > > Compiler is complaining for allnoconfig
+> > >=20
+> > > kernel/fork.c: In function 'mm_init':
+> > > kernel/fork.c:814:2: error: implicit declaration of function
+> > > 'hmm_mm_init' [-Werror=3Dimplicit-function-declaration]
+> > >   hmm_mm_init(mm);
+> > >   ^
+> > > kernel/fork.c: In function '__mmdrop':
+> > > kernel/fork.c:893:2: error: implicit declaration of function
+> > > 'hmm_mm_destroy' [-Werror=3Dimplicit-function-declaration]
+> > >   hmm_mm_destroy(mm);
+> > >=20
+> > > Make sure that hmm_mm_init/hmm_mm_destroy empty stups are defined whe=
+n
+> > > CONFIG_HMM is disabled.
+> > >=20
+> > > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > > ---
+> > >  include/linux/hmm.h | 7 +++----
+> > >  1 file changed, 3 insertions(+), 4 deletions(-)
+> > >=20
+> > > diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> > > index 9583d9a15f9c..aeb94e682dda 100644
+> > > --- a/include/linux/hmm.h
+> > > +++ b/include/linux/hmm.h
+> > > @@ -508,11 +508,10 @@ static inline void hmm_mm_init(struct mm_struct
+> > > *mm)
+> > >  {
+> > >  =09mm->hmm =3D NULL;
+> > >  }
+> > > -#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+> > > +#endif
+> > > +
+> > > +#else /* IS_ENABLED(CONFIG_HMM) */
+> > >  static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+> > >  static inline void hmm_mm_init(struct mm_struct *mm) {}
+> > > -#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+> > > -
+> > > -
+> > >  #endif /* IS_ENABLED(CONFIG_HMM) */
+> > >  #endif /* LINUX_HMM_H */
+> >=20
+> > What happens when CONFIG_HMM is defined but CONFIG_HMM_MIRROR is not?
+> > Or is that not possible (in which case why would we have
+> > CONFIG_HMM_MIRROR)?
+>=20
+> This is something to Jerome to answer but hmm_mm_init/hmm_mm_destroy are
+> used regardless of the specific HMM configuration so an empty stub
+> should be defined unconditionally AFAIU.
+
+Sorry for the build issue i posted a patch on friday that i tested against
+all combination :
+
+https://lkml.org/lkml/2017/8/25/802
+
+Michal is right this function needs to be defined no matter what but they
+only need to be stub if HMM_MIRROR is not enabled.
+
+The fix i posted has the correct logic. I missplaced the endif when i was
+fixing Arnd build issue when HMM_MIRROR was not enabled but other HMM featu=
+re
+were.
+
+J=C3=A9r=C3=B4me
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
