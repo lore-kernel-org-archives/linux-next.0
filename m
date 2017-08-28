@@ -1,61 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Mon, 28 Aug 2017 18:18:49 +1000
-Message-ID: <20170828181849.323ab81b@canb.auug.org.au>
+Subject: Re: mmotm 2017-08-25-15-50 uploaded
+Date: Mon, 28 Aug 2017 18:27:05 +1000
+Message-ID: <20170828182705.150afe66@canb.auug.org.au>
+References: <59a0a9d1.jzOblYrHfdIDuDZw%akpm@linux-foundation.org>
+	<3c9df006-0cc5-3a32-b715-1fbb43cb9ea8@infradead.org>
+	<20170828075931.GC17097@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <20170828075931.GC17097@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Michal Hocko <mhocko@kernel.org>
+Cc: Randy Dunlap <rdunlap@infradead.org>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, broonie@kernel.org, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Hi Michal,
 
-After merging the akpm-current tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+On Mon, 28 Aug 2017 09:59:31 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+>
+> From 31d551dbcb1b7987a4cd07767c1e2805849b7a26 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Mon, 28 Aug 2017 09:41:39 +0200
+> Subject: [PATCH] 
+>  mm-hmm-struct-hmm-is-only-use-by-hmm-mirror-functionality-v2-fix
+> 
+> Compiler is complaining for allnoconfig
+> 
+> kernel/fork.c: In function 'mm_init':
+> kernel/fork.c:814:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
+>   hmm_mm_init(mm);
+>   ^
+> kernel/fork.c: In function '__mmdrop':
+> kernel/fork.c:893:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
+>   hmm_mm_destroy(mm);
+> 
+> Make sure that hmm_mm_init/hmm_mm_destroy empty stups are defined when
+> CONFIG_HMM is disabled.
+> 
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  include/linux/hmm.h | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+> index 9583d9a15f9c..aeb94e682dda 100644
+> --- a/include/linux/hmm.h
+> +++ b/include/linux/hmm.h
+> @@ -508,11 +508,10 @@ static inline void hmm_mm_init(struct mm_struct *mm)
+>  {
+>  	mm->hmm = NULL;
+>  }
+> -#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+> +#endif
+> +
+> +#else /* IS_ENABLED(CONFIG_HMM) */
+>  static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+>  static inline void hmm_mm_init(struct mm_struct *mm) {}
+> -#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+> -
+> -
+>  #endif /* IS_ENABLED(CONFIG_HMM) */
+>  #endif /* LINUX_HMM_H */
 
-kernel/fork.c: In function 'mm_init':
-kernel/fork.c:821:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
-  hmm_mm_init(mm);
-  ^
-kernel/fork.c: In function '__mmdrop':
-kernel/fork.c:900:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
-  hmm_mm_destroy(mm);
-  ^
-
-Caused by commit
-
-  af097d7ae64e ("mm/hmm: struct hmm is only use by HMM mirror functionality v2")
-
-I added the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 28 Aug 2017 18:14:09 +1000
-Subject: [PATCH] mm/hmm: struct hmm is only use by HMM mirror functionality v2 fix
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/linux/hmm.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 9583d9a15f9c..0758072f6585 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -514,5 +514,8 @@ static inline void hmm_mm_init(struct mm_struct *mm) {}
- #endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
- 
- 
-+#else /* IS_ENABLED(CONFIG_HMM) */
-+static inline void hmm_mm_destroy(struct mm_struct *mm) {}
-+static inline void hmm_mm_init(struct mm_struct *mm) {}
- #endif /* IS_ENABLED(CONFIG_HMM) */
- #endif /* LINUX_HMM_H */
--- 
-2.13.2
-
+What happens when CONFIG_HMM is defined but CONFIG_HMM_MIRROR is not?
+Or is that not possible (in which case why would we have
+CONFIG_HMM_MIRROR)? 
 -- 
 Cheers,
 Stephen Rothwell
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
