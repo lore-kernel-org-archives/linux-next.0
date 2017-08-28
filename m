@@ -1,64 +1,42 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the l2-mtd tree
-Date: Mon, 28 Aug 2017 12:19:05 +1000
-Message-ID: <20170828121905.36ff8a63@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 28 Aug 2017 12:32:38 +1000
+Message-ID: <20170828123238.410885a1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Brian Norris <computersforpeace@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mario Rugiero <mrugiero@gmail.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:39997 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751799AbdH1Cck (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 27 Aug 2017 22:32:40 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
 
-Hi Brian,
+Hi Dave,
 
-After merging the l2-mtd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the drm tree got a conflict in:
 
-drivers/mtd/nand/nandsim.c: In function 'ns_init_module':
-drivers/mtd/nand/nandsim.c:2353:2: error: implicit declaration of function 'nandsim_debugfs_remove' [-Werror=implicit-function-declaration]
-  nandsim_debugfs_remove(nand);
-  ^
+  drivers/gpu/drm/imx/ipuv3-plane.c
 
-Caused by commit
+between commit:
 
-  e8e3edb95ce6 ("mtd: create per-device and module-scope debugfs entries")
+  5be5dd38d462 ("drm/imx: ipuv3-plane: fix YUV framebuffer scanout on the base plane")
 
-interacting with commit
+from Linus' tree and commit:
 
-  b974696da1cf ("mtd: nandsim: remove debugfs entries in error path")
+  58dff39904c0 ("drm/imx: ipuv3-plane: use fb local variable instead of state->fb")
 
-from Linus' tree.
+from the drm tree.
 
-I applied the following merge fix patch ... please check.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 28 Aug 2017 12:13:42 +1000
-Subject: [PATCH] fix merge of l2-mtd tree
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/mtd/nand/nandsim.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/mtd/nand/nandsim.c b/drivers/mtd/nand/nandsim.c
-index 00635fd738f6..1ddf0b73c246 100644
---- a/drivers/mtd/nand/nandsim.c
-+++ b/drivers/mtd/nand/nandsim.c
-@@ -2350,7 +2350,6 @@ static int __init ns_init_module(void)
-         return 0;
- 
- err_exit:
--	nandsim_debugfs_remove(nand);
- 	free_nandsim(nand);
- 	nand_release(nsmtd);
- 	for (i = 0;i < ARRAY_SIZE(nand->partitions); ++i)
--- 
-2.13.2
-
-
-
+I fixed it up (the former included the latter change) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 -- 
 Cheers,
