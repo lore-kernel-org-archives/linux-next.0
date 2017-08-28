@@ -1,47 +1,98 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the staging tree
-Date: Mon, 28 Aug 2017 08:49:21 +0200
-Message-ID: <20170828064921.GA24696@kroah.com>
-References: <20170828164127.15902025@canb.auug.org.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: mmotm 2017-08-25-15-50 uploaded
+Date: Mon, 28 Aug 2017 09:59:31 +0200
+Message-ID: <20170828075931.GC17097@dhcp22.suse.cz>
+References: <59a0a9d1.jzOblYrHfdIDuDZw%akpm@linux-foundation.org>
+ <3c9df006-0cc5-3a32-b715-1fbb43cb9ea8@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:49513 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750837AbdH1GtR (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Aug 2017 02:49:17 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <20170828164127.15902025@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hannes Reinecke <hare@suse.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Sameer Wadgaonkar <sameer.wadgaonkar@unisys.com>
+In-Reply-To: <3c9df006-0cc5-3a32-b715-1fbb43cb9ea8@infradead.org>
+Sender: owner-linux-mm@kvack.org
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org, =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-On Mon, Aug 28, 2017 at 04:41:27PM +1000, Stephen Rothwell wrote:
-> Hi James,
+On Fri 25-08-17 16:50:26, Randy Dunlap wrote:
+> On 08/25/17 15:50, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2017-08-25-15-50 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
 > 
-> Today's linux-next merge of the scsi tree got a conflict in:
+> lots of this one (on x86_64, i386, or UML):
 > 
->   drivers/staging/unisys/visorhba/visorhba_main.c
+> ../kernel/fork.c:818:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
+> ../kernel/fork.c:897:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
 > 
-> between commits:
+> from mm-hmm-heterogeneous-memory-management-hmm-for-short-v5.patch
 > 
->   781facd05eb9 ("staging: unisys: visorhba: visorhba_main.c: fixed comment formatting issues")
-> 
-> from the staging tree and commit:
-> 
->   7bc4e528d9f6 ("scsi: visorhba: sanitze private device data allocation")
-> 
-> from the scsi tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> Cc: Jérôme Glisse <jglisse@redhat.com>
 
-Ick, messy merge, thanks for doing this.
+This one should address it
+---
+>From 31d551dbcb1b7987a4cd07767c1e2805849b7a26 Mon Sep 17 00:00:00 2001
+From: Michal Hocko <mhocko@suse.com>
+Date: Mon, 28 Aug 2017 09:41:39 +0200
+Subject: [PATCH] 
+ mm-hmm-struct-hmm-is-only-use-by-hmm-mirror-functionality-v2-fix
 
-greg k-h
+Compiler is complaining for allnoconfig
+
+kernel/fork.c: In function 'mm_init':
+kernel/fork.c:814:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
+  hmm_mm_init(mm);
+  ^
+kernel/fork.c: In function '__mmdrop':
+kernel/fork.c:893:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
+  hmm_mm_destroy(mm);
+
+Make sure that hmm_mm_init/hmm_mm_destroy empty stups are defined when
+CONFIG_HMM is disabled.
+
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+---
+ include/linux/hmm.h | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 9583d9a15f9c..aeb94e682dda 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -508,11 +508,10 @@ static inline void hmm_mm_init(struct mm_struct *mm)
+ {
+ 	mm->hmm = NULL;
+ }
+-#else /* IS_ENABLED(CONFIG_HMM_MIRROR) */
++#endif
++
++#else /* IS_ENABLED(CONFIG_HMM) */
+ static inline void hmm_mm_destroy(struct mm_struct *mm) {}
+ static inline void hmm_mm_init(struct mm_struct *mm) {}
+-#endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+-
+-
+ #endif /* IS_ENABLED(CONFIG_HMM) */
+ #endif /* LINUX_HMM_H */
+-- 
+2.13.2
+
+-- 
+Michal Hocko
+SUSE Labs
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
