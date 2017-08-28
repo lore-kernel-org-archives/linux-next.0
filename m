@@ -1,37 +1,28 @@
-From: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Date: Mon, 28 Aug 2017 15:28:32 -0700
-Message-ID: <6c1f0464-92a1-7845-5de5-68e0a906675c@synopsys.com>
-References: <20170829082325.2fb5aaa9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the slave-dma tree
+Date: Tue, 29 Aug 2017 09:10:56 +1000
+Message-ID: <20170829091056.398976cf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:54278 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751190AbdH1W2p (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 28 Aug 2017 18:28:45 -0400
-In-Reply-To: <20170829082325.2fb5aaa9@canb.auug.org.au>
-Content-Language: en-US
+Received: from ozlabs.org ([103.22.144.67]:57275 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751189AbdH1XK7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 28 Aug 2017 19:10:59 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Roese <sr@denx.de>
 
-Hi Stephen,
+Hi Vinod,
 
-On 08/28/2017 03:23 PM, Stephen Rothwell wrote:
-> Hi Vineet,
->
-> Commit
->
->    279921e080b9 ("ARCv2: SLC: provide a line based flush routine for debugging")
->
-> is missing a Signed-off-by from its author and committer.
->
+Commit
 
-/me slaps myself. Fixed/pushed now.
+  966e5e01f420 ("dmaengine: altera: Use macros instead of structs to describe the registers")
 
-Thx,
--Vineet
+is missing a Signed-off-by from its committer.
+
+-- 
+Cheers,
+Stephen Rothwell
