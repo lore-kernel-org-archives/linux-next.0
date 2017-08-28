@@ -1,34 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the scsi tree
-Date: Mon, 28 Aug 2017 18:02:36 +1000
-Message-ID: <20170828180236.6a6cfaf2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 28 Aug 2017 18:18:49 +1000
+Message-ID: <20170828181849.323ab81b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54173 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750797AbdH1ICj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Aug 2017 04:02:39 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hannes Reinecke <hare@suse.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Christoph Hellwig <hch@lst.de>, Johannes Thumshirn <jthumshirn@suse.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi James,
+Hi Andrew,
 
-After merging the scsi tree, today's linux-next build (sparc defconfig)
-failed like this:
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-drivers/scsi/qlogicpti.c:1285:27: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
-  .eh_host_reset_handler = qlogicpti_reset,
-                           ^
+kernel/fork.c: In function 'mm_init':
+kernel/fork.c:821:2: error: implicit declaration of function 'hmm_mm_init' [-Werror=implicit-function-declaration]
+  hmm_mm_init(mm);
+  ^
+kernel/fork.c: In function '__mmdrop':
+kernel/fork.c:900:2: error: implicit declaration of function 'hmm_mm_destroy' [-Werror=implicit-function-declaration]
+  hmm_mm_destroy(mm);
+  ^
 
 Caused by commit
 
-  af167bc42d86 ("scsi: qlogicpti: move bus reset to host reset")
+  af097d7ae64e ("mm/hmm: struct hmm is only use by HMM mirror functionality v2")
 
-I have reverted that commit for today.
+I added the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 28 Aug 2017 18:14:09 +1000
+Subject: [PATCH] mm/hmm: struct hmm is only use by HMM mirror functionality v2 fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/hmm.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/linux/hmm.h b/include/linux/hmm.h
+index 9583d9a15f9c..0758072f6585 100644
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -514,5 +514,8 @@ static inline void hmm_mm_init(struct mm_struct *mm) {}
+ #endif /* IS_ENABLED(CONFIG_HMM_MIRROR) */
+ 
+ 
++#else /* IS_ENABLED(CONFIG_HMM) */
++static inline void hmm_mm_destroy(struct mm_struct *mm) {}
++static inline void hmm_mm_init(struct mm_struct *mm) {}
+ #endif /* IS_ENABLED(CONFIG_HMM) */
+ #endif /* LINUX_HMM_H */
+-- 
+2.13.2
+
 -- 
 Cheers,
 Stephen Rothwell
