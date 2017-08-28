@@ -1,32 +1,55 @@
-From: "greg@kroah.com" <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the scsi tree with the staging tree
-Date: Mon, 28 Aug 2017 18:44:20 +0200
-Message-ID: <20170828164420.GB16802@kroah.com>
+From: "Wadgaonkar, Sameer Laxmikant" <Sameer.Wadgaonkar@unisys.com>
+Subject: RE: linux-next: manual merge of the scsi tree with the staging tree
+Date: Mon, 28 Aug 2017 17:06:00 +0000
+Message-ID: <BN3PR0701MB16541511B3EEDEBA03483DFF909E0@BN3PR0701MB1654.namprd07.prod.outlook.com>
 References: <20170828164127.15902025@canb.auug.org.au>
- <20170828064921.GA24696@kroah.com>
- <1503934884.2841.22.camel@wdc.com>
- <20170828160545.GA11231@kroah.com>
- <1503938165.2841.30.camel@wdc.com>
+ <20170828064921.GA24696@kroah.com> <1503934884.2841.22.camel@wdc.com>
+ <20170828160545.GA11231@kroah.com> <1503938165.2841.30.camel@wdc.com>
+ <20170828164420.GB16802@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed;
+        protocol="application/x-pkcs7-signature";
+        micalg=SHA1;
+        boundary="----=_NextPart_000_01AB_01D31FFE.63D9AAC0"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:34211 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751203AbdH1QoQ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Aug 2017 12:44:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1503938165.2841.30.camel@wdc.com>
+Received: from mail-by2nam03on0049.outbound.protection.outlook.com ([104.47.42.49]:32935
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751232AbdH1RGD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 28 Aug 2017 13:06:03 -0400
+In-Reply-To: <20170828164420.GB16802@kroah.com>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
+To: "greg@kroah.com" <greg@kroah.com>, Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>, "hare@suse.de" <hare@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, *S-Par-Maintainer <SParMaintainer@unisys.com>
+
+------=_NextPart_000_01AB_01D31FFE.63D9AAC0
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+
+Adding SParMaintainer@unisys.com.
+
+-Sameer Wadgaonkar
+
+-----Original Message-----
+From: greg@kroah.com [mailto:greg@kroah.com] 
+Sent: Monday, August 28, 2017 12:44 PM
 To: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>, "hare@suse.de" <hare@suse.de>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "sameer.wadgaonkar@unisys.com" <sameer.wadgaonkar@unisys.com>
+Cc: sfr@canb.auug.org.au; linux-kernel@vger.kernel.org;
+jejb@linux.vnet.ibm.com; hare@suse.de; linux-next@vger.kernel.org;
+martin.petersen@oracle.com; Wadgaonkar, Sameer Laxmikant
+<Sameer.Wadgaonkar@unisys.com>
+Subject: Re: linux-next: manual merge of the scsi tree with the staging tree
 
 On Mon, Aug 28, 2017 at 04:36:06PM +0000, Bart Van Assche wrote:
 > On Mon, 2017-08-28 at 18:05 +0200, greg@kroah.com wrote:
 > > On Mon, Aug 28, 2017 at 03:41:28PM +0000, Bart Van Assche wrote:
-> > > * Most SCSI drivers exist under drivers/scsi, including the virtio-scsi and
-> > >   xen-scsifront drivers. So why has the visorhba driver been added under
+> > > * Most SCSI drivers exist under drivers/scsi, including the
+virtio-scsi and
+> > >   xen-scsifront drivers. So why has the visorhba driver been added
+under
 > > >   unisys/visorhba?
 > > 
 > > That's because right now it's still a staging driver.  Also, there are
@@ -60,3 +83,152 @@ would we ask for a scsi developer review to move it out of staging.
 hope this helps,
 
 greg k-h
+
+------=_NextPart_000_01AB_01D31FFE.63D9AAC0
+Content-Type: application/pkcs7-signature;
+	name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+	filename="smime.p7s"
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIa8zCCBJEw
+ggN5oAMCAQICBEVrUFQwDQYJKoZIhvcNAQEFBQAwgbAxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1F
+bnRydXN0LCBJbmMuMTkwNwYDVQQLEzB3d3cuZW50cnVzdC5uZXQvQ1BTIGlzIGluY29ycG9yYXRl
+ZCBieSByZWZlcmVuY2UxHzAdBgNVBAsTFihjKSAyMDA2IEVudHJ1c3QsIEluYy4xLTArBgNVBAMT
+JEVudHJ1c3QgUm9vdCBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0wNjExMjcyMDIzNDJaFw0y
+NjExMjcyMDUzNDJaMIGwMQswCQYDVQQGEwJVUzEWMBQGA1UEChMNRW50cnVzdCwgSW5jLjE5MDcG
+A1UECxMwd3d3LmVudHJ1c3QubmV0L0NQUyBpcyBpbmNvcnBvcmF0ZWQgYnkgcmVmZXJlbmNlMR8w
+HQYDVQQLExYoYykgMjAwNiBFbnRydXN0LCBJbmMuMS0wKwYDVQQDEyRFbnRydXN0IFJvb3QgQ2Vy
+dGlmaWNhdGlvbiBBdXRob3JpdHkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC2lbZD
+QvrGbSpvSN+UTDlXBe7DeRFBaDbt7P6aAY+hOCj89xBGZi5NHhqxGk7G0cCViLDJ/zGLMwPbt4N7
+PiCEXu2yViin+OC5QHE3xctHDpcqaMAilWIV20fZ9dAr/4JLya0+3kzbkIBQPwmKhADsMAo9GM37
+/SpZmiOVFyxFnh9uQ3ltDFyY/kinxSNHXF79bucetPZoRdGGg1uiio2x4ymA/iVxiK2+vI+sUpZL
+qlGN5BMxGehOTZ/brLNq1bw5VHHKenp/kN19HYDZgbtZJsIR/uaT4veA5GX7NDcOKYBwTa84hi6e
+f1evnheu6xzLKCFfthzY56IEIvnT2tjLAgMBAAGjgbAwga0wDgYDVR0PAQH/BAQDAgEGMA8GA1Ud
+EwEB/wQFMAMBAf8wKwYDVR0QBCQwIoAPMjAwNjExMjcyMDIzNDJagQ8yMDI2MTEyNzIwNTM0Mlow
+HwYDVR0jBBgwFoAUaJDkZ6SmU4DHhmak8fdLQ/uEvW0wHQYDVR0OBBYEFGiQ5GekplOAx4ZmpPH3
+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
+BAICAIAwBwYFKw4DAgcwCgYIKoZIhvcNAwcwHQYDVR0OBBYEFKA1c5NkQGeHlZ+76IttBn/ql7gD
+MB8GA1UdIwQYMBaAFF5HyDDxQ78BzzojA8CeAQIDWH5hMEEGA1UdHwQ6MDgwNqA0oDKGMGh0dHA6
+Ly91aXNwa2kudW5pc3lzLmNvbS9yZXAvVUlTLUlzdUIxLUNBKDYpLmNybDB3BggrBgEFBQcBAQRr
+MGkwPAYIKwYBBQUHMAKGMGh0dHA6Ly91aXNwa2kudW5pc3lzLmNvbS9yZXAvVUlTLUlzdUIxLUNB
+KDYpLmNydDApBggrBgEFBQcwAYYdaHR0cDovL3BlY3MxLnVuaXN5cy5jb20vb2NzcC8wJwYDVR0R
+BCAwHoEcU2FtZWVyLldhZGdhb25rYXJAdW5pc3lzLmNvbTANBgkqhkiG9w0BAQsFAAOCAQEAWqTW
+5WiL32DUKWyArdYLbP3h4620H+PAp4iALJ+r016rea0qEt1grAD+lThieTET0mgirJZwogR+fn5H
+NVoLiZXOfCGsREJNNPiY8H2oijvjyfIcytzGAGM3fO4t3Ztl0FDSZU3LIECpAH6Q9NGv61tKCUVw
+irxJXMilAHHN5dqFQs2vbAj91G3DynANCbWGxFK8bsltORqGxSl4LhiUurjnk/1ETznqiRXItdML
+n7zTn1DQRvTDBu3clK2ywsh0gLBEDmZLB4y67Cml04WOQyHKckzpOwOlGL/a65UXda6M+u0FQwFF
+9DFFbZ0xQnfAM9H2IqygKgqgQLHIPmABWDCCBwAwggXooAMCAQICChBIYaQABgAAABgwDQYJKoZI
+hvcNAQELBQAwFjEUMBIGA1UEAxMLVUlTLUludEItQ0EwHhcNMTUxMDE5MTc1NTMyWhcNMjExMDE5
+MTgwNTMyWjBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRYwFAYKCZImiZPyLGQBGRYGdW5pc3lzMRMw
+EQYKCZImiZPyLGQBGRYDdWlzMRUwEwYDVQQDEwxVSVMtSXN1QjEtQ0EwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDPFkKZZZk9meQFIwrYAvD6Z7nfZjM2MBonwmX7QLUw/xemKqZJi7tf
+NcbSGgmlKdBN+0e3P8SP1PrvIyX8oWAa0P7R8mB12Bv6ZQ84HijYTSYULTExHmabbemUIY9V90fW
+v5YQVi4BmlweHqR7nLy/L1PMKF6aL9gMpETD7vP7ZHuhPBDb9Lx4NZHG6+sA37iqqgByAMy/g3YS
+8deR65XU/kP0fpoSEuBOTC9EJLZJJ+1ctBgyy+KjXHkIttqDh8gcnq4FH3cNFQGP3BxM57U86IO/
+6/pSSppSdntIb3qWeOlkG6niyvB0QkUXKoPmSr1TH4g899FNHiGkTSR6+guHAgMBAAGjggQLMIIE
+BzAOBgNVHQ8BAf8EBAMCAYYwEgYJKwYBBAGCNxUBBAUCAwYABjAjBgkrBgEEAYI3FQIEFgQUrAhb
+PjJf6KrNo0m3mGz3rJicQ3swHQYDVR0OBBYEFF5HyDDxQ78BzzojA8CeAQIDWH5hMIICIAYDVR0g
+BIICFzCCAhMwOQYKYIZIAYb9MAEBBzArMCkGCCsGAQUFBwIBFh1odHRwOi8vdWlzcGtpLnVuaXN5
+cy5jb20vcmVwLzA5BgpghkgBhv0wAQE9MCswKQYIKwYBBQUHAgEWHWh0dHA6Ly91aXNwa2kudW5p
+c3lzLmNvbS9yZXAvMDkGCmCGSAGG/TABAQMwKzApBggrBgEFBQcCARYdaHR0cDovL3Vpc3BraS51
+bmlzeXMuY29tL3JlcC8wOQYKYIZIAYb9MAEBAjArMCkGCCsGAQUFBwIBFh1odHRwOi8vdWlzcGtp
+LnVuaXN5cy5jb20vcmVwLzA5BgpghkgBhv0wAQEEMCswKQYIKwYBBQUHAgEWHWh0dHA6Ly91aXNw
+a2kudW5pc3lzLmNvbS9yZXAvMDkGCmCGSAGG/TABAQUwKzApBggrBgEFBQcCARYdaHR0cDovL3Vp
+c3BraS51bmlzeXMuY29tL3JlcC8wOQYKYIZIAYb9MAEBDjArMCkGCCsGAQUFBwIBFh1odHRwOi8v
+dWlzcGtpLnVuaXN5cy5jb20vcmVwLzA5BgpghkgBhv0wAQEBMCswKQYIKwYBBQUHAgEWHWh0dHA6
+Ly91aXNwa2kudW5pc3lzLmNvbS9yZXAvMDkGCmCGSAGG/TABAQYwKzApBggrBgEFBQcCARYdaHR0
+cDovL3Vpc3BraS51bmlzeXMuY29tL3JlcC8wGQYJKwYBBAGCNxQCBAweCgBTAHUAYgBDAEEwEgYD
+VR0TAQH/BAgwBgEB/wIBADAfBgNVHSMEGDAWgBRyNwE2Pfhm1gOYTvX4AC6kJKp2IDBxBgNVHR8E
+ajBoMGagZKBihi9odHRwOi8vdWlzcGtpLnVuaXN5cy5jb20vcmVwL1VJUy1JbnRCLUNBKDYpLmNy
+bIYvaHR0cDovL3BraXJlcC51bmlzeXMuY29tL3JlcC9VSVMtSW50Qi1DQSg2KS5jcmwwgbUGCCsG
+AQUFBwEBBIGoMIGlMDsGCCsGAQUFBzAChi9odHRwOi8vdWlzcGtpLnVuaXN5cy5jb20vcmVwL1VJ
+Uy1JbnRCLUNBKDYpLmNydDA7BggrBgEFBQcwAoYvaHR0cDovL3BraXJlcC51bmlzeXMuY29tL3Jl
+cC9VSVMtSW50Qi1DQSg2KS5jcnQwKQYIKwYBBQUHMAGGHWh0dHA6Ly9wZWNzMS51bmlzeXMuY29t
+L29jc3AvMA0GCSqGSIb3DQEBCwUAA4IBAQBWdgi2rAksfRWDhpBlbEI1I2qw7PbB3SwhtP7/k0ih
+4z6jBYVpV01T9o1lnKO1FJ8m36EkQt3dlhv2wdRCfJkJ+81poHbBUM+dM5SaS9ZWiKIbHyxsem4R
+OIiQioYHfEUY60Hdd063TQvXywIYam4wa40VgNbsYA97F67u5Q65bsGSO8FwmeHXEiNL3tHqAbtq
+/iGSgrf1hRDBm9TccCCh/skJ/3HjM5vKXNj/76iNKC3xHr8vqSEAPEveG4HYX56ntDGPb2zkaHJX
+BP3qgff0I+Tok15eumcilQPdarUIm2Pg06b0aD1f+SuLxG8MGpLWX504FJujGWn0YxjGjz3VMYID
+kzCCA48CAQEwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRYwFAYKCZImiZPyLGQBGRYGdW5pc3lz
+MRMwEQYKCZImiZPyLGQBGRYDdWlzMRUwEwYDVQQDEwxVSVMtSXN1QjEtQ0ECEzkAAohGhx5IQTs6
+fc0ABgACiEYwCQYFKw4DAhoFAKCCAfgwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG
+9w0BCQUxDxcNMTcwODI4MTcwNTU4WjAjBgkqhkiG9w0BCQQxFgQU+kTVFlCQ/j1lunvYWP9SABct
+7AcwfwYJKwYBBAGCNxAEMXIwcDBZMRMwEQYKCZImiZPyLGQBGRYDY29tMRYwFAYKCZImiZPyLGQB
+GRYGdW5pc3lzMRMwEQYKCZImiZPyLGQBGRYDdWlzMRUwEwYDVQQDEwxVSVMtSXN1QjEtQ0ECEzkA
+ATiBjyPEYPH+2T4ABgABOIEwgYEGCyqGSIb3DQEJEAILMXKgcDBZMRMwEQYKCZImiZPyLGQBGRYD
+Y29tMRYwFAYKCZImiZPyLGQBGRYGdW5pc3lzMRMwEQYKCZImiZPyLGQBGRYDdWlzMRUwEwYDVQQD
+EwxVSVMtSXN1QjEtQ0ECEzkAATiBjyPEYPH+2T4ABgABOIEwgZMGCSqGSIb3DQEJDzGBhTCBgjAL
+BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAoGCCqGSIb3DQMHMAsGCWCGSAFlAwQBAjAOBggqhkiG
+9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAhowCwYJYIZIAWUDBAIDMAsGCWCGSAFlAwQC
+AjALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEADW0mT+7povvGfXDb7QvVpIdrppLpUb3P
+acQzzJ8q5aXQYD5BrQBVvkYQmWHIIkHjtZh9vV0QS4Hipnz7PQgJuGOZXk4dgmhbAXVs59sJyTPW
+YivSHwkBd+3U+ilRV763hhni7/fTxMMsgPkZ+RtVX1RLQST0xNRjjh/uAb0A5pcu7qKwN7AIujmM
+PsSGFwBjLeRQNq8KmBuS8USNfUvnwPjb6qVH/snoOqfH/Wt8lrzz2kRFF1Hpu1dxRzYdufHdRFmF
+EZiaFFS1LXd3tIisDt6JQMOWyCt1argURr/cNHVsnG2gwefYvj4crWIWSDvd0id9faThCzb7KvnD
+2/h60AAAAAAAAA==
+
+------=_NextPart_000_01AB_01D31FFE.63D9AAC0--
