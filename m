@@ -1,27 +1,29 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the slave-dma tree
-Date: Tue, 29 Aug 2017 09:10:56 +1000
-Message-ID: <20170829091056.398976cf@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the drm tree
+Date: Tue, 29 Aug 2017 11:44:13 +1000
+Message-ID: <20170829114413.43692976@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:57275 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751189AbdH1XK7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 28 Aug 2017 19:10:59 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefan Roese <sr@denx.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, Thomas Hellstrom <thellstrom@vmware.com>, Sinclair Yeh <syeh@vmware.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Vinod,
+Hi Dave,
 
-Commit
+Commits
 
-  966e5e01f420 ("dmaengine: altera: Use macros instead of structs to describe the registers")
+  461e60ea1119 ("drm/exynos/decon5433: use mode info stored in CRTC to detect i80 mode")
+  ac60944ccf23 ("drm/exynos: consistent use of cpp")
+  e300173f0616 ("drm/vmwgfx: Don't use drm_irq_[un]install")
+  ef369904aaf7 ("drm/vmwgfx: Move irq bottom half processing to threads")
+  65b97a2bec2f ("drm/vmwgfx: Restart command buffers after errors")
+  5f55be5f306a ("drm/vmwgfx: Support the NOP_ERROR command")
+  1f1a36cc4d49 ("drm/vmwgfx: Fix incorrect command header offset at restart")
 
-is missing a Signed-off-by from its committer.
+are missing a Signed-off-by from their committers.
 
 -- 
 Cheers,
