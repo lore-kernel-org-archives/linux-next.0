@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the tty tree with the parisc-hd tree
-Date: Tue, 29 Aug 2017 16:35:13 +1000
-Message-ID: <20170829163513.4b119a91@canb.auug.org.au>
+Date: Tue, 29 Aug 2017 16:38:58 +1000
+Message-ID: <20170829163858.3cab845b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48841 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46763 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750796AbdH2GfQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 29 Aug 2017 02:35:16 -0400
+        id S1750758AbdH2GjB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 29 Aug 2017 02:39:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>, Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
@@ -19,15 +19,15 @@ Hi Greg,
 
 Today's linux-next merge of the tty tree got a conflict in:
 
-  drivers/tty/serial/8250/8250_gsc.c
+  drivers/tty/serial/mux.c
 
 between commit:
 
-  9e466f101e19 ("parisc/8250_gsc: Fix section mismatches")
+  fc72b7a3a0d8 ("parisc/mux: Fix section mismatches")
 
 from the parisc-hd tree and commit:
 
-  0d474f7fad3b ("tty: 8250: constify parisc_device_id")
+  829374f544b3 ("tty: mux: constify parisc_device_id")
 
 from the tty tree.
 
