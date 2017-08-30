@@ -1,37 +1,79 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: clean up the coresight tree
-Date: Wed, 30 Aug 2017 09:29:06 +1000
-Message-ID: <20170830092906.12f2668f@canb.auug.org.au>
-References: <20170829174553.7c7bdc5c@canb.auug.org.au>
-        <CANLsYkwXZRoP5qyzGyrC=tvDWXBg0qJpsdnyyhHkPrFZM2LXhg@mail.gmail.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: possible circular locking dependency detected [was: linux-next:
+ Tree for Aug 22]
+Date: Wed, 30 Aug 2017 14:20:37 +0900
+Message-ID: <20170830052037.GA432@jagdpanzerIV.localdomain>
+References: <20170822183816.7925e0f8@canb.auug.org.au>
+ <20170822104708.GA491@jagdpanzerIV.localdomain>
+ <1503438234.2508.27.camel@wdc.com>
+ <20170823000304.GK20323@X58A-UD3R>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45841 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751272AbdH2X3J (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 29 Aug 2017 19:29:09 -0400
-In-Reply-To: <CANLsYkwXZRoP5qyzGyrC=tvDWXBg0qJpsdnyyhHkPrFZM2LXhg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20170823000304.GK20323@X58A-UD3R>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Bart Van Assche <Bart.VanAssche@wdc.com>, peterz@infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "sergey.senozhatsky.work@gmail.com" <sergey.senozhatsky.work@gmail.com>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
+List-Id: linux-next.vger.kernel.org
 
-Hi Mathieu,
-
-On Tue, 29 Aug 2017 13:38:30 -0600 Mathieu Poirier <mathieu.poirier@linaro.org> wrote:
->
-> On 29 August 2017 at 01:45, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Could you plese clean up the coresight tree now that Greg has merged
-> > (most of) it into his char-misc tree?  
+On (08/23/17 09:03), Byungchul Park wrote:
+[..]
+> > Byungchul, did you add the crosslock checks to lockdep? Can you have a look at
+> > the above report? That report namely doesn't make sense to me.
 > 
-> I just rebased my next tree on top of Greg's char-misc-next - get back
-> to me if you wanted me to take a different approach.
+> The report is talking about the following lockup:
+> 
+> A work in a worker                     A task work on exit to user
+> ------------------                     ---------------------------
+> mutex_lock(&bdev->bd_mutex)
+>                                        mutext_lock(&bdev->bd_mutex)
+> blk_execute_rq()
+>    wait_for_completion_io_timeout(&A)
+>                                        complete(&A)
+> 
+[..]
+> To Peterz,
+> 
+> Anyway I wanted to avoid lockdep reports in the case using a timeout
+> interface. Do you think it's still worth reporting the kind of lockup?
+> I'm ok if you do.
 
-Thanks for that.
+Byungchul, a quick question.
+have you measured the performance impact? somehow my linux-next is
+notably slower than earlier 4.13 linux-next. (e.g. scrolling in vim
+is irritatingly slow)
 
--- 
-Cheers,
-Stephen Rothwell
+
+`time dmesg' shows some difference, but probably that's not a good
+test.
+
+	!LOCKDEP	LOCKDEP		LOCKDEP -CROSSRELEASE -COMPLETIONS
+	real 0m0.661s	0m2.290s	0m1.920s
+	user 0m0.010s	0m0.105s	0m0.000s
+	sys  0m0.636s	0m2.224s	0m1.888s
+
+anyone else "sees"/"can confirm" the slow down?
+
+
+it gets back to "usual normal" when I disable CROSSRELEASE and COMPLETIONS.
+
+---
+
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index b19c491cbc4e..cdc30ef81c5e 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1091,8 +1091,6 @@ config PROVE_LOCKING
+        select DEBUG_MUTEXES
+        select DEBUG_RT_MUTEXES if RT_MUTEXES
+        select DEBUG_LOCK_ALLOC
+-       select LOCKDEP_CROSSRELEASE
+-       select LOCKDEP_COMPLETIONS
+        select TRACE_IRQFLAGS
+        default n
+        help
+
+---
+
+	-ss
