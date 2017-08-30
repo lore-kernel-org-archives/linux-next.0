@@ -1,28 +1,56 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: Signed-off-bys missing for commits in the block
-        tree
-Date: Wed, 30 Aug 2017 20:13:02 +0200
-Message-ID: <20170830181302.GA5734@lst.de>
-References: <20170831030647.19c22478@canb.auug.org.au> <20170830170936.GA3925@lst.de> <20170831033400.423f0e6b@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Thu, 31 Aug 2017 09:48:14 +1000
+Message-ID: <20170831094814.1549b70e@canb.auug.org.au>
+References: <20170825102420.3ab48a1b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from verein.lst.de ([213.95.11.211]:51114 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751555AbdH3SNE (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 30 Aug 2017 14:13:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20170831033400.423f0e6b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Arnav Dawn <a.dawn@samsung.com>, Guan Junxiong <guanjunxiong@huawei.com>, Max Gurtovoy <maxg@mellanox.com>, James Smart <james.smart@broadcom.com>, Martin Wilck <mwilck@suse.com>, Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, Roland Kammerer <roland.kammerer@linbit.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170825102420.3ab48a1b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 31, 2017 at 03:38:03AM +1000, Stephen Rothwell wrote:
-> > I would say that if you rebase someone's commit(s), then you are on the
-> > "patch's delivery path" and so should add a Signed-off-by tag.  
+Hi all,
+
+On Fri, 25 Aug 2017 10:24:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the nfsd tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> Yeah, I agree. Rebasing really is pretty much the exact same thing as
-> applying a patch."
+> fs/nfsd/nfs4proc.c: In function 'nfsd4_getdeviceinfo_release':
+> fs/nfsd/nfs4proc.c:1356:8: error: 'gdev' undeclared (first use in this function)
+>   kfree(gdev->gd_device);
+>         ^
+> fs/nfsd/nfs4proc.c:1356:8: note: each undeclared identifier is reported only once for each function it appears in
+> fs/nfsd/nfs4proc.c: At top level:
+> fs/nfsd/nfs4proc.c:1439:1: warning: return type defaults to 'int' [-Wreturn-type]
+>  nfsd4_layoutget_release(union nfsd4_op_u *u)
+>  ^
+> fs/nfsd/nfs4proc.c: In function 'nfsd4_layoutget_release':
+> fs/nfsd/nfs4proc.c:1441:8: error: 'lgp' undeclared (first use in this function)
+>   kfree(lgp->lg_content);
+>         ^
+> fs/nfsd/nfs4proc.c: At top level:
+> fs/nfsd/nfs4proc.c:2405:17: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>    .op_release = nfsd4_layoutget_release,
+>                  ^
+> fs/nfsd/nfs4proc.c:2405:17: note: (near initialization for 'nfsd4_ops[50].op_release')
+> fs/nfsd/nfs4proc.c: In function 'nfsd4_layoutget_release':
+> fs/nfsd/nfs4proc.c:1442:1: warning: control reaches end of non-void function [-Wreturn-type]
+>  }
+>  ^
+> 
+> Caused by commit
+> 
+>   93e92e5d0016 ("nfsd4: define ->op_release for compound ops")
+> 
+> I have used the nfsd tree from next-20170824 for today.
 
-Ok, we'll get it right next time.
+I am still getting this failure.
+
+-- 
+Cheers,
+Stephen Rothwell
