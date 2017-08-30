@@ -1,58 +1,39 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: possible circular locking dependency detected [was: linux-next:
- Tree for Aug 22]
-Date: Wed, 30 Aug 2017 21:30:07 +0900
-Message-ID: <20170830123007.GA6460@jagdpanzerIV.localdomain>
-References: <20170822183816.7925e0f8@canb.auug.org.au>
- <20170822104708.GA491@jagdpanzerIV.localdomain>
- <1503438234.2508.27.camel@wdc.com>
- <20170823000304.GK20323@X58A-UD3R>
- <20170830052037.GA432@jagdpanzerIV.localdomain>
- <20170830054334.GF3240@X58A-UD3R>
- <20170830061511.GA330@jagdpanzerIV.localdomain>
- <20170830084207.GL32112@worktop.programming.kicks-ass.net>
- <20170830084746.GC660@worktop.programming.kicks-ass.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arc-current
+ tree
+Date: Wed, 30 Aug 2017 22:59:05 +1000
+Message-ID: <20170830225905.4ddb08c8@canb.auug.org.au>
+References: <20170829082325.2fb5aaa9@canb.auug.org.au>
+        <6c1f0464-92a1-7845-5de5-68e0a906675c@synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34734 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751326AbdH3M1o (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Aug 2017 08:27:44 -0400
-Content-Disposition: inline
-In-Reply-To: <20170830084746.GC660@worktop.programming.kicks-ass.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Byungchul Park <byungchul.park@lge.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6c1f0464-92a1-7845-5de5-68e0a906675c@synopsys.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hello Peter,
+Hi Vineet,
 
-On (08/30/17 10:47), Peter Zijlstra wrote:
-[..]
-> On Wed, Aug 30, 2017 at 10:42:07AM +0200, Peter Zijlstra wrote:
-> > 
-> > So the overhead looks to be spread out over all sorts, which makes it
-> > harder to find and fix.
-> > 
-> > stack unwinding is done lots and is fairly expensive, I've not yet
-> > checked if crossrelease does too much of that.
+On Mon, 28 Aug 2017 15:28:32 -0700 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+>
+> On 08/28/2017 03:23 PM, Stephen Rothwell wrote:
+> >
+> > Commit
+> >
+> >    279921e080b9 ("ARCv2: SLC: provide a line based flush routine for debugging")
+> >
+> > is missing a Signed-off-by from its author and committer.
+> >  
 > 
-> Aah, we do an unconditional stack unwind for every __lock_acquire() now.
-> It keeps a trace in the xhlocks[].
-> 
-> Does the below cure most of that overhead?
+> /me slaps myself. Fixed/pushed now.
 
-thanks.
+slap again :-)
 
-mostly yes. the kernel is not so dramatically slower now. it's still
-seems to be a bit slower, which is expected I suppose, but over all
-it's much better
+You seem to have republished the old branch. :-(
 
-	real	1m35.209s
-	user	4m12.467s
-	sys	0m49.457s
-
-// approx 10 seconds slower.
-
-	-ss
+-- 
+Cheers,
+Stephen Rothwell
