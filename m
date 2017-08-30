@@ -1,38 +1,27 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arc-current
- tree
-Date: Wed, 30 Aug 2017 22:59:05 +1000
-Message-ID: <20170830225905.4ddb08c8@canb.auug.org.au>
-References: <20170829082325.2fb5aaa9@canb.auug.org.au>
-        <6c1f0464-92a1-7845-5de5-68e0a906675c@synopsys.com>
+Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Date: Wed, 30 Aug 2017 23:07:12 +1000
+Message-ID: <20170830230712.55db7911@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6c1f0464-92a1-7845-5de5-68e0a906675c@synopsys.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vineet Gupta <Vineet.Gupta1@synopsys.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35763 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751345AbdH3NHO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 30 Aug 2017 09:07:14 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Rezvanov <dmitry.rezvanov@yandex.ru>, Alexandre Belloni <alexandre.belloni@free-electrons.com>
 
-Hi Vineet,
+Hi all,
 
-On Mon, 28 Aug 2017 15:28:32 -0700 Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
->
-> On 08/28/2017 03:23 PM, Stephen Rothwell wrote:
-> >
-> > Commit
-> >
-> >    279921e080b9 ("ARCv2: SLC: provide a line based flush routine for debugging")
-> >
-> > is missing a Signed-off-by from its author and committer.
-> >  
-> 
-> /me slaps myself. Fixed/pushed now.
+Commit
 
-slap again :-)
+  1a9f9af07e80 ("ARM: dts: at91: at91sam9g45: add AC97")
 
-You seem to have republished the old branch. :-(
+is missing a Signed-off-by from its author.
 
 -- 
 Cheers,
