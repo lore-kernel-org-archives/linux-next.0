@@ -1,23 +1,59 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no release today
-Date: Wed, 30 Aug 2017 16:10:19 +1000
-Message-ID: <20170830161019.779a9ec6@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: possible circular locking dependency detected [was: linux-next:
+ Tree for Aug 22]
+Date: Wed, 30 Aug 2017 15:15:11 +0900
+Message-ID: <20170830061511.GA330@jagdpanzerIV.localdomain>
+References: <20170822183816.7925e0f8@canb.auug.org.au>
+ <20170822104708.GA491@jagdpanzerIV.localdomain>
+ <1503438234.2508.27.camel@wdc.com>
+ <20170823000304.GK20323@X58A-UD3R>
+ <20170830052037.GA432@jagdpanzerIV.localdomain>
+ <20170830054334.GF3240@X58A-UD3R>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51293 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750744AbdH3GKV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 30 Aug 2017 02:10:21 -0400
+Received: from mail-pf0-f171.google.com ([209.85.192.171]:36316 "EHLO
+        mail-pf0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751186AbdH3GMs (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 30 Aug 2017 02:12:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20170830054334.GF3240@X58A-UD3R>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Byungchul Park <byungchul.park@lge.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, peterz@infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "axboe@kernel.dk" <axboe@kernel.dk>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, kernel-team@lge.com
 
-Hi all,
+Hi,
 
-There will be no linux-next release today, sorry.
+On (08/30/17 14:43), Byungchul Park wrote:
+[..]
+> > notably slower than earlier 4.13 linux-next. (e.g. scrolling in vim
+> > is irritatingly slow)
+> 
+> To Ingo,
+> 
+> I cannot decide if we have to roll back CONFIG_LOCKDEP_CROSSRELEASE
+> dependency on CONFIG_PROVE_LOCKING in Kconfig. With them enabled,
+> lockdep detection becomes strong but has performance impact. But,
+> it's anyway a debug option so IMHO we don't have to take case of the
+> performance impact. Please let me know your decision.
 
--- 
-Cheers,
-Stephen Rothwell
+well, I expected it :)
+
+I've been running lockdep enabled kernels for years, and was OK with
+the performance. but now it's just too much and I'm looking at disabling
+lockdep.
+
+a more relevant test -- compilation of a relatively small project
+
+  LOCKDEP -CROSSRELEASE -COMPLETIONS     LOCKDEP +CROSSRELEASE +COMPLETIONS
+
+   real    1m23.722s                      real    2m9.969s
+   user    4m11.300s                      user    4m15.458s
+   sys     0m49.386s                      sys     2m3.594s
+
+
+you don't want to know how much time now it takes to recompile the
+kernel ;)
+
+	-ss
