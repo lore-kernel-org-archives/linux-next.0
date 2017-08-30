@@ -1,42 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
 Subject: Re: linux-next: Signed-off-by missing for commit in the net-next
  tree
-Date: Thu, 31 Aug 2017 03:38:49 +1000
-Message-ID: <20170831033849.6a458de5@canb.auug.org.au>
+Date: Wed, 30 Aug 2017 10:52:08 -0700 (PDT)
+Message-ID: <20170830.105208.866936923406230960.davem@davemloft.net>
 References: <20170831025131.56d2cf92@canb.auug.org.au>
         <32dc9201-c7a2-2cf0-e8a1-1c735b8784ee@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34427 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752186AbdH3Riw (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 30 Aug 2017 13:38:52 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <32dc9201-c7a2-2cf0-e8a1-1c735b8784ee@gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Ahern <dsahern@gmail.com>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dsahern@gmail.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi David,
+From: David Ahern <dsahern@gmail.com>
+Date: Wed, 30 Aug 2017 10:53:48 -0600
 
-On Wed, 30 Aug 2017 10:53:48 -0600 David Ahern <dsahern@gmail.com> wrote:
->
 > On 8/30/17 10:51 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Commit
-> > 
-> >   1b70d792cf67 ("ipv6: Use rt6i_idev index for echo replies to a local address")
-> > 
-> > is missing a Signed-off-by from its author.
+>> Hi all,
+>> 
+>> Commit
+>> 
+>>   1b70d792cf67 ("ipv6: Use rt6i_idev index for echo replies to a local address")
+>> 
+>> is missing a Signed-off-by from its author.
+>> 
 > 
 > Eric pointed this out last night. The commit message copied output from
 > a command that contained '---' so git ignored the remainder of the message.
 
-Rats!
-
--- 
-Cheers,
-Stephen Rothwell
+Yes, it unfortunately got clipped off by GIT due to how the
+commit message was written. :(
