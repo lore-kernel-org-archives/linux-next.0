@@ -1,76 +1,41 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc
+Subject: Re: linux-next: Signed-off-bys missing for commits in the block
  tree
-Date: Thu, 31 Aug 2017 03:21:48 +1000
-Message-ID: <20170831032148.3d2fa85b@canb.auug.org.au>
-References: <20170830230712.55db7911@canb.auug.org.au>
-        <20170830131930.bvu6furm7dlhes3i@piout.net>
-        <CAOesGMg130BvqS1vGid9jm-G7-Gub+7bOQFKtaSg4qPTvosxcA@mail.gmail.com>
+Date: Thu, 31 Aug 2017 03:34:00 +1000
+Message-ID: <20170831033400.423f0e6b@canb.auug.org.au>
+References: <20170831030647.19c22478@canb.auug.org.au>
+        <20170830170936.GA3925@lst.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60677 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751415AbdH3RVv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 30 Aug 2017 13:21:51 -0400
-In-Reply-To: <CAOesGMg130BvqS1vGid9jm-G7-Gub+7bOQFKtaSg4qPTvosxcA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Olof Johansson <olof@lixom.net>
-Cc: Alexandre Belloni <alexandre.belloni@free-electrons.com>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Rezvanov <dmitry.rezvanov@yandex.ru>
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170830170936.GA3925@lst.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Arnav Dawn <a.dawn@samsung.com>, Guan Junxiong <guanjunxiong@huawei.com>, Max Gurtovoy <maxg@mellanox.com>, James Smart <james.smart@broadcom.com>, Martin Wilck <mwilck@suse.com>, "Jan H. =?UTF-8?B?U2Now7ZuaGVycg==?=" <jschoenh@amazon.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, Roland Kammerer <roland.kammerer@linbit.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Olof,
+Hi Christoph,
 
-On Wed, 30 Aug 2017 09:21:47 -0700 Olof Johansson <olof@lixom.net> wrote:
+On Wed, 30 Aug 2017 19:09:36 +0200 Christoph Hellwig <hch@lst.de> wrote:
 >
-> Thanks for the heads up, Stephen. I presume you have a script that
-> checks this? It's something we should run too, do you keep it in a
-> shared location?
+> They all have singnoffs from the original committer.  It's just
+> that we team-maintain the tree and had a rebase.
+>=20
+> Are we supposed to add another Signoff just for the rebase?
 
-Script below.
+=46rom a previous discussion, Linus said:
 
--- 
+"On Wed, Aug 2, 2017 at 5:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wr=
+ote:
+>
+> I would say that if you rebase someone's commit(s), then you are on the
+> "patch's delivery path" and so should add a Signed-off-by tag. =20
+
+Yeah, I agree. Rebasing really is pretty much the exact same thing as
+applying a patch."
+
+So, yes, you are suppose to.
+--=20
 Cheers,
 Stephen Rothwell
-
-#!/bin/bash
-
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
-
-for c in $(git rev-list --no-merges "$@"); do
-	ae=$(git log -1 --format='%ae' "$c")
-	aE=$(git log -1 --format='%aE' "$c")
-	an=$(git log -1 --format='%an' "$c")
-	aN=$(git log -1 --format='%aN' "$c")
-	ce=$(git log -1 --format='%ce' "$c")
-	cE=$(git log -1 --format='%cE' "$c")
-	cn=$(git log -1 --format='%cn' "$c")
-	cN=$(git log -1 --format='%cN' "$c")
-	sob=$(git log -1 --format='%b' "$c" | grep -i '^[[:space:]]*Signed-off-by:')
-
-	am=false
-	cm=false
-	grep -i -q "<$ae>" <<<"$sob" ||
-		grep -i -q "<$aE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
-		am=true
-	grep -i -q "<$ce>" <<<"$sob" ||
-		grep -i -q "<$cE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
-		cm=true
-
-	if "$am" || "$cm"; then
-		printf "Commit %s\n" "$c"
-		"$am" && printf "\tauthor SOB missing\n"
-		"$cm" && printf "\tcommitter SOB missing\n"
-		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
-	fi
-done
-
-exec gitk "$@"
