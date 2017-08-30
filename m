@@ -1,35 +1,28 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: Signed-off-by missing for commit in the net-next
- tree
-Date: Wed, 30 Aug 2017 10:52:08 -0700 (PDT)
-Message-ID: <20170830.105208.866936923406230960.davem@davemloft.net>
-References: <20170831025131.56d2cf92@canb.auug.org.au>
-        <32dc9201-c7a2-2cf0-e8a1-1c735b8784ee@gmail.com>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: Signed-off-bys missing for commits in the block
+        tree
+Date: Wed, 30 Aug 2017 20:13:02 +0200
+Message-ID: <20170830181302.GA5734@lst.de>
+References: <20170831030647.19c22478@canb.auug.org.au> <20170830170936.GA3925@lst.de> <20170831033400.423f0e6b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <32dc9201-c7a2-2cf0-e8a1-1c735b8784ee@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dsahern@gmail.com
-Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from verein.lst.de ([213.95.11.211]:51114 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751555AbdH3SNE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 30 Aug 2017 14:13:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20170831033400.423f0e6b@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Arnav Dawn <a.dawn@samsung.com>, Guan Junxiong <guanjunxiong@huawei.com>, Max Gurtovoy <maxg@mellanox.com>, James Smart <james.smart@broadcom.com>, Martin Wilck <mwilck@suse.com>, Jan =?iso-8859-1?Q?H=2E_Sch=F6nherr?= <jschoenh@amazon.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Philipp Reisner <philipp.reisner@linbit.com>, Lars Ellenberg <lars.ellenberg@linbit.com>, Roland Kammerer <roland.kammerer@linbit.com>
 
-From: David Ahern <dsahern@gmail.com>
-Date: Wed, 30 Aug 2017 10:53:48 -0600
-
-> On 8/30/17 10:51 AM, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Commit
->> 
->>   1b70d792cf67 ("ipv6: Use rt6i_idev index for echo replies to a local address")
->> 
->> is missing a Signed-off-by from its author.
->> 
+On Thu, Aug 31, 2017 at 03:38:03AM +1000, Stephen Rothwell wrote:
+> > I would say that if you rebase someone's commit(s), then you are on the
+> > "patch's delivery path" and so should add a Signed-off-by tag.  
 > 
-> Eric pointed this out last night. The commit message copied output from
-> a command that contained '---' so git ignored the remainder of the message.
+> Yeah, I agree. Rebasing really is pretty much the exact same thing as
+> applying a patch."
 
-Yes, it unfortunately got clipped off by GIT due to how the
-commit message was written. :(
+Ok, we'll get it right next time.
