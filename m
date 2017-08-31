@@ -1,113 +1,37 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: linux-next: build warning after merge of the xfs tree
-Date: Thu, 31 Aug 2017 08:41:13 -0700
-Message-ID: <20170831154113.GK3775@magnolia>
-References: <20170831100703.16eeb69f@canb.auug.org.au>
- <20170831103040.GB21508@bfoster.bfoster>
- <20170831145752.GH3775@magnolia>
- <20170831152220.GF21939@bfoster.bfoster>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: build failure after merge of the nfsd tree
+Date: Thu, 31 Aug 2017 11:55:41 -0400
+Message-ID: <20170831155541.GA7569@fieldses.org>
+References: <20170825102420.3ab48a1b@canb.auug.org.au>
+ <20170831094814.1549b70e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:20857 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751743AbdHaPlW (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 31 Aug 2017 11:41:22 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20170831152220.GF21939@bfoster.bfoster>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20170831094814.1549b70e@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Aug 31, 2017 at 11:22:20AM -0400, Brian Foster wrote:
-> On Thu, Aug 31, 2017 at 07:57:52AM -0700, Darrick J. Wong wrote:
-> > On Thu, Aug 31, 2017 at 06:30:41AM -0400, Brian Foster wrote:
-> > > On Thu, Aug 31, 2017 at 10:07:03AM +1000, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > After merging the xfs tree, today's linux-next build (powerpc
-> > > > ppc64_defconfig) produced this warning:
-> > > > 
-> > > > fs/xfs/xfs_buf_item.c: In function 'xfs_buf_item_unlock':
-> > > > fs/xfs/xfs_buf_item.c:573:9: warning: unused variable 'ordered' [-Wunused-variable]
-> > > >   bool   ordered = !!(bip->bli_flags & XFS_BLI_ORDERED);
-> > > >          ^
-> > > > 
-> > > > Introduced by commit
-> > > > 
-> > > >   a097077ef708 ("xfs: remove unnecessary dirty bli format check for ordered bufs")
-> > > > 
-> > > 
-> > > Ugh, this is due to the refactoring of this patch between v1 and v2. I
-> > > specifically recall testing for this in v1 because I added the ordered
-> > > bool purely to clean up the ASSERT(), then I apparently lost of track of
-> > > it for v2.
-> > > 
-> > > Anyways.. Christoph, Darrick, preferences to clean this up..? I have no
-> > > preference between the v1 or v2 factoring. Or if it's easier, we could
-> > > always just drop something like the hunk below on top. Thoughts?
-> > > 
-> > > Brian
-> > > 
-> > > --- 8< ---
-> > > 
-> > > diff --git a/fs/xfs/xfs_buf_item.c b/fs/xfs/xfs_buf_item.c
-> > > index ef2c137..f5d25f5 100644
-> > > --- a/fs/xfs/xfs_buf_item.c
-> > > +++ b/fs/xfs/xfs_buf_item.c
-> > > @@ -567,10 +567,15 @@ xfs_buf_item_unlock(
-> > >  {
-> > >  	struct xfs_buf_log_item	*bip = BUF_ITEM(lip);
-> > >  	struct xfs_buf		*bp = bip->bli_buf;
-> > > -	bool			aborted = !!(lip->li_flags & XFS_LI_ABORTED);
-> > > -	bool			hold = !!(bip->bli_flags & XFS_BLI_HOLD);
-> > > -	bool			dirty = !!(bip->bli_flags & XFS_BLI_DIRTY);
-> > > -	bool			ordered = !!(bip->bli_flags & XFS_BLI_ORDERED);
-> > > +	bool			aborted;
-> > > +	bool			hold;
-> > > +	bool			dirty;
-> > > +	bool			ordered;
-> > > +
-> > > +	aborted = !!(lip->li_flags & XFS_LI_ABORTED);
-> > > +	hold = !!(bip->bli_flags & XFS_BLI_HOLD);
-> > > +	dirty = !!(bip->bli_flags & XFS_BLI_DIRTY);
-> > > +	ordered = !!(bip->bli_flags & XFS_BLI_ORDERED);
+On Thu, Aug 31, 2017 at 09:48:14AM +1000, Stephen Rothwell wrote:
+> On Fri, 25 Aug 2017 10:24:20 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+...
+> > fs/nfsd/nfs4proc.c:2405:17: note: (near initialization for 'nfsd4_ops[50].op_release')
+> > fs/nfsd/nfs4proc.c: In function 'nfsd4_layoutget_release':
+> > fs/nfsd/nfs4proc.c:1442:1: warning: control reaches end of non-void function [-Wreturn-type]
+> >  }
+> >  ^
 > > 
-> > The trouble is, 'ordered' is still an unused variable on !DEBUG builds,
-> > since the only user of ordered is that ASSERT.  So either we #ifdef
-> > DEBUG the variable out of existence or employ one of those silly
-> > 'ordered = ordered' constructions to shut up gcc, if that even still
-> > works.
+> > Caused by commit
 > > 
-> 
-> The warning goes away for me if we separate the initialization of
-> ordered from the declaration. Do you observe otherwise?
-
-Hm.  Seems to shut up gcc, so I guess it's fine.  In the past it would
-whine, but I guess they fixed it or something.
-
-Want to send it as a real [PATCH]?
-
---D
-
-> 
-> Brian
-> 
-> > --D
+> >   93e92e5d0016 ("nfsd4: define ->op_release for compound ops")
 > > 
-> > >  
-> > >  	/* Clear the buffer's association with this transaction. */
-> > >  	bp->b_transp = NULL;
-> > > --
-> > > To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> > > the body of a message to majordomo@vger.kernel.org
-> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > I have used the nfsd tree from next-20170824 for today.
+> 
+> I am still getting this failure.
+
+Apologies, it looks like I'd fixed this locally but not pushed it to the
+nfsd-next branch.
+
+--b.
