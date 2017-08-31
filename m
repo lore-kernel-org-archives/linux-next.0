@@ -1,38 +1,42 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: Re: linux-next: build failure after merge of the rpmsg tree
-Date: Thu, 31 Aug 2017 10:47:37 -0700
-Message-ID: <20170831174737.GS29306@minitux>
-References: <20170831165447.064fab6f@canb.auug.org.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: manual merge of the xen-tip tree with the tip tree
+Date: Thu, 31 Aug 2017 20:30:43 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1708312029110.2346@nanos>
+References: <20170831142654.47f17cd7@canb.auug.org.au> <alpine.DEB.2.20.1708311009020.1874@nanos> <alpine.DEB.2.20.1708311057260.1874@nanos> <b8a39692-160e-a15a-158f-74fd5255348b@suse.com> <alpine.DEB.2.20.1708311359510.1874@nanos>
+ <1e7c28e3-d0f6-ac40-fb72-7b95d17379f5@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170831165447.064fab6f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from Galois.linutronix.de ([146.0.238.70]:34537 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750895AbdHaSbc (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 31 Aug 2017 14:31:32 -0400
+In-Reply-To: <1e7c28e3-d0f6-ac40-fb72-7b95d17379f5@oracle.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Xen Devel <Xen-devel@lists.xensource.com>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed 30 Aug 23:54 PDT 2017, Stephen Rothwell wrote:
+On Thu, 31 Aug 2017, Boris Ostrovsky wrote:
 
-> Hi Bjorn,
+> On 08/31/2017 08:00 AM, Thomas Gleixner wrote:
+> > On Thu, 31 Aug 2017, Juergen Gross wrote:
+> >>> I've applied it on top of tip:x86/apic and fixed up the merge conflicts
+> >>> mindlessly. Patch below.
+> >>>
+> >>> Juergen, can you please check the result?
+> >> You missed the updates to arch/x86/xen/xen-asm_64.S and the declarations
+> >> of the xen specific trap entries in arch/x86/include/asm/traps.h
+> > I'll try that again later today, unless you beat me to it.
+> >
 > 
-> After merging the rpmsg tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: "qcom_glink_native_probe" [drivers/rpmsg/qcom_glink_rpm.ko] undefined!
-> ERROR: "qcom_glink_native_remove" [drivers/rpmsg/qcom_glink_rpm.ko] undefined!
-> 
-> Maybe caused by commit
-> 
->   6799c434c27b ("rpmsg: glink: Split rpm_probe to reuse the common code")
-> 
+> https://marc.info/?l=linux-kernel&m=150296063131595&w=2 should also be
+> picked up by the tip tree then since it applies on top of the
+> adjust_exception_frame patch. I will revert it from Xen tree as well.
 
-Thanks for letting me know Stephen, those functions should have been
-exported and I've corrected it.
+Juergen folded that fix in and posted a version against tip:x86/apic. It's
+applied and pushed out now.
 
-> I have used the rpmsg tree from next-20170829 for today.
-> 
+Thanks to everyone helping with this.
 
-Thanks,
-Bjorn
+       tglx
