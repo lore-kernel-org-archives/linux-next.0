@@ -1,94 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the xen-tip tree with the tip tree
-Date: Thu, 31 Aug 2017 14:37:54 +1000
-Message-ID: <20170831143754.3136a6c6@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the xen-tip tree
+Date: Thu, 31 Aug 2017 15:22:40 +1000
+Message-ID: <20170831152240.125004d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60845 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750813AbdHaEh4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 31 Aug 2017 00:37:56 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Juergen Gross <jgross@suse.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Stefano Stabellini <sstabellini@kernel.org>, Boris Ostrovsky <boris.ostrovsky@oracle.com>, Xen Devel <Xen-devel@lists.xensource.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the xen-tip tree got a conflict in:
+After merging the xen-tip tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  arch/x86/xen/enlighten_pv.c
+arch/x86/xen/xen-asm_64.o: In function `xen_trace_page_fault':
+(.text+0x174): undefined reference to `trace_page_fault'
 
-between commit:
-
-  64b163fab684 ("x86/idt: Unify gate_struct handling for 32/64-bit kernels")
-
-from the tip tree and commit:
+Caused by commit
 
   ad5b8c4ba323 ("xen: get rid of paravirt op adjust_exception_frame")
 
-from the xen-tip tree.
+interacting with commit
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  11a7ffb01703 ("x86/traps: Simplify pagefault tracing logic")
+
+from the tip tree.
+
+I am not sure how to fix up this, so I have just applied the following
+patch for today.  A better solution would be appreciated.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 31 Aug 2017 15:06:10 +1000
+Subject: [PATCH] xen: fix for "x86/traps: Simplify pagefault tracing logic"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/x86/xen/enlighten_pv.c | 2 +-
+ arch/x86/xen/xen-asm_64.S   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+index b18d9b9f84c2..6ea983a9016d 100644
+--- a/arch/x86/xen/enlighten_pv.c
++++ b/arch/x86/xen/enlighten_pv.c
+@@ -618,7 +618,7 @@ static struct {
+ 	{ alignment_check, xen_alignment_check, false },
+ 	{ simd_coprocessor_error, xen_simd_coprocessor_error, false },
+ #ifdef CONFIG_TRACING
+-	{ trace_page_fault, xen_trace_page_fault, false },
++//	{ trace_page_fault, xen_trace_page_fault, false },
+ #endif
+ };
+ 
+diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+index 4ebac091a0e8..1c7a3df3e5a5 100644
+--- a/arch/x86/xen/xen-asm_64.S
++++ b/arch/x86/xen/xen-asm_64.S
+@@ -52,7 +52,7 @@ xen_pv_trap simd_coprocessor_error
+ xen_pv_trap entry_INT80_compat
+ #endif
+ #ifdef CONFIG_TRACING
+-xen_pv_trap trace_page_fault
++/* xen_pv_trap trace_page_fault */
+ #endif
+ xen_pv_trap hypervisor_callback
+ 
+-- 
+2.13.2
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/x86/xen/enlighten_pv.c
-index c76f5ff4d0d7,148527c4e48a..000000000000
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@@ -596,42 -651,10 +658,10 @@@ static int cvt_gate_to_trap(int vector
-  
-  	info->vector = vector;
-  
- -	addr = gate_offset(*val);
- +	addr = gate_offset(val);
-  #ifdef CONFIG_X86_64
-- 	/*
-- 	 * Look for known traps using IST, and substitute them
-- 	 * appropriately.  The debugger ones are the only ones we care
-- 	 * about.  Xen will handle faults like double_fault,
-- 	 * so we should never see them.  Warn if
-- 	 * there's an unexpected IST-using fault handler.
-- 	 */
-- 	if (addr == (unsigned long)debug)
-- 		addr = (unsigned long)xen_debug;
-- 	else if (addr == (unsigned long)int3)
-- 		addr = (unsigned long)xen_int3;
-- 	else if (addr == (unsigned long)stack_segment)
-- 		addr = (unsigned long)xen_stack_segment;
-- 	else if (addr == (unsigned long)double_fault) {
-- 		/* Don't need to handle these */
- -	if (!get_trap_addr(&addr, val->ist))
-++	if (!get_trap_addr(&addr, val->bits.ist))
-  		return 0;
-- #ifdef CONFIG_X86_MCE
-- 	} else if (addr == (unsigned long)machine_check) {
-- 		/*
-- 		 * when xen hypervisor inject vMCE to guest,
-- 		 * use native mce handler to handle it
-- 		 */
-- 		;
-- #endif
-- 	} else if (addr == (unsigned long)nmi)
-- 		/*
-- 		 * Use the native version as well.
-- 		 */
-- 		;
-- 	else {
-- 		/* Some other trap using IST? */
-- 		if (WARN_ON(val->bits.ist != 0))
-- 			return 0;
-- 	}
-  #endif	/* CONFIG_X86_64 */
-  	info->address = addr;
-  
