@@ -1,59 +1,54 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Date: Fri, 1 Sep 2017 14:48:00 +1000
-Message-ID: <20170901144800.76a5576b@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2017-08-31-16-13 uploaded (x86/kernel/eisa.c)
+Date: Thu, 31 Aug 2017 22:11:11 -0700
+Message-ID: <43a5f1af-2135-191e-4640-9f9cc50b34ca@infradead.org>
+References: <59a8982c.FwLJY62HB+esikOu%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39851 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750707AbdIAEsC (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 1 Sep 2017 00:48:02 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Damien Le Moal <damien.lemoal@wdc.com>, Bart Van Assche <bart.vanassche@wdc.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <59a8982c.FwLJY62HB+esikOu%akpm@linux-foundation.org>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: akpm@linux-foundation.org, X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+On 08/31/17 16:13, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2017-08-31-16-13 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
 
-  include/scsi/scsi_cmnd.h
+from linux-next.patch:
 
-between commit:
+on i386:
 
-  70e42fd02c46 ("scsi: sd_zbc: Write unlock zone from sd_uninit_cmnd()")
+  CC      arch/x86/kernel/eisa.o
+../arch/x86/kernel/eisa.c: In function 'eisa_bus_probe':
+../arch/x86/kernel/eisa.c:11:2: error: implicit declaration of function 'ioremap' [-Werror=implicit-function-declaration]
+  void __iomem *p = ioremap(0x0FFFD9, 4);
+  ^
+../arch/x86/kernel/eisa.c:11:20: warning: initialization makes pointer from integer without a cast [enabled by default]
+  void __iomem *p = ioremap(0x0FFFD9, 4);
+                    ^
+../arch/x86/kernel/eisa.c:13:2: error: implicit declaration of function 'readl' [-Werror=implicit-function-declaration]
+  if (readl(p) == 'E' + ('I'<<8) + ('S'<<16) + ('A'<<24))
+  ^
+../arch/x86/kernel/eisa.c:15:2: error: implicit declaration of function 'iounmap' [-Werror=implicit-function-declaration]
+  iounmap(p);
+  ^
 
-from Linus' tree and commit:
 
-  64104f703212 ("scsi: Call scsi_initialize_rq() for filesystem requests")
 
-from the scsi-mkp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc include/scsi/scsi_cmnd.h
-index 5f45f2349a75,a9f8f7e79d83..000000000000
---- a/include/scsi/scsi_cmnd.h
-+++ b/include/scsi/scsi_cmnd.h
-@@@ -57,7 -57,9 +57,10 @@@ struct scsi_pointer 
-  /* for scmd->flags */
-  #define SCMD_TAGGED		(1 << 0)
-  #define SCMD_UNCHECKED_ISA_DMA	(1 << 1)
- +#define SCMD_ZONE_WRITE_LOCK	(1 << 2)
-+ #define SCMD_INITIALIZED	(1 << 3)
-+ /* flags preserved across unprep / reprep */
-+ #define SCMD_PRESERVED_FLAGS	(SCMD_UNCHECKED_ISA_DMA | SCMD_INITIALIZED)
-  
-  struct scsi_cmnd {
-  	struct scsi_request req;
+~Randy
