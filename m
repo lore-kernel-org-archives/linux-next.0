@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the thermal tree
-Date: Fri, 1 Sep 2017 10:52:03 +1000
-Message-ID: <20170901105203.2948dba8@canb.auug.org.au>
+Subject: Re: mmotm 2017-08-31-16-13 uploaded
+Date: Fri, 1 Sep 2017 11:43:41 +1000
+Message-ID: <20170901114341.1da24b37@canb.auug.org.au>
+References: <59a8982c.FwLJY62HB+esikOu%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49923 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39911 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750868AbdIAAwG (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 31 Aug 2017 20:52:06 -0400
+        id S1751238AbdIABno (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 31 Aug 2017 21:43:44 -0400
+In-Reply-To: <59a8982c.FwLJY62HB+esikOu%akpm@linux-foundation.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: akpm@linux-foundation.org
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>
 
-Hi Zhang,
+Hi Andrew,
 
-After merging the thermal tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+On Thu, 31 Aug 2017 16:13:48 -0700 akpm@linux-foundation.org wrote:
+>
+> * mm-hmm-struct-hmm-is-only-use-by-hmm-mirror-functionality-v2-fix.patch
 
-drivers/thermal/int340x_thermal/int3406_thermal.c: In function 'int3406_thermal_get_limit':
-drivers/thermal/int340x_thermal/int3406_thermal.c:116:6: warning: unused variable 'index' [-Wunused-variable]
-  int index;
-      ^
+You should have dropped the above patch from me before applying the
+below patch from J=C3=A9r=C3=B4me.
 
-Introduced by commit
+> * mm-hmm-fix-build-when-hmm-is-disabled.patch
 
-  c658894562ba ("Thermal: int3406_thermal: fix thermal sysfs I/F")
-
--- 
+I will do that in linux-next today.
+--=20
 Cheers,
 Stephen Rothwell
