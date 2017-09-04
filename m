@@ -1,35 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the spi tree
-Date: Mon, 4 Sep 2017 16:07:56 +1000
-Message-ID: <20170904160756.32f3a55c@canb.auug.org.au>
-References: <20170828140503.63b569bb@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvm tree with the tip tree
+Date: Mon, 4 Sep 2017 16:09:12 +1000
+Message-ID: <20170904160912.7ed61e25@canb.auug.org.au>
+References: <20170828145209.25a97c49@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170828140503.63b569bb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Mark Brown <broonie@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Juergen Gross <jgross@suse.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:37499 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751642AbdIDGJO (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 02:09:14 -0400
+In-Reply-To: <20170828145209.25a97c49@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, Brijesh Singh <brijesh.singh@amd.com>
 
 Hi all,
 
-On Mon, 28 Aug 2017 14:05:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, 28 Aug 2017 14:52:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the tip tree got a conflict in:
+> Today's linux-next merge of the kvm tree got a conflict in:
 > 
->   tools/Makefile
+>   arch/x86/kvm/mmu.c
 > 
 > between commit:
 > 
->   e9d4650dcc59 ("spi: tools: add install section")
+>   ea2800ddb20d ("kvm/x86: Avoid clearing the C-bit in rsvd_bits()")
 > 
-> from the spi tree and commit:
+> from the tip tree and commit:
 > 
->   ecda85e70277 ("x86/lguest: Remove lguest support")
+>   d6321d493319 ("KVM: x86: generalize guest_cpuid_has_ helpers")
 > 
-> from the tip tree.
+> from the kvm tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,31 +46,35 @@ On Mon, 28 Aug 2017 14:05:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc tools/Makefile
-> index 616e7722b327,a19b176b914b..000000000000
-> --- a/tools/Makefile
-> +++ b/tools/Makefile
-> @@@ -90,8 -89,8 +89,8 @@@ freefall: FORC
->   kvm_stat: FORCE
->   	$(call descend,kvm/$@)
+> diff --cc arch/x86/kvm/mmu.c
+> index 04d750813c9d,2a8a6e3e2a31..000000000000
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@@ -4116,21 -4157,11 +4162,21 @@@ reset_shadow_zero_bits_mask(struct kvm_
+>   	 * Passing "true" to the last argument is okay; it adds a check
+>   	 * on bit 8 of the SPTEs which KVM doesn't use anyway.
+>   	 */
+>  -	__reset_rsvds_bits_mask(vcpu, &context->shadow_zero_check,
+>  +	shadow_zero_check = &context->shadow_zero_check;
+>  +	__reset_rsvds_bits_mask(vcpu, shadow_zero_check,
+>   				boot_cpu_data.x86_phys_bits,
+>   				context->shadow_root_level, uses_nx,
+> - 				guest_cpuid_has_gbpages(vcpu), is_pse(vcpu),
+> - 				true);
+> + 				guest_cpuid_has(vcpu, X86_FEATURE_GBPAGES),
+> + 				is_pse(vcpu), true);
+>  +
+>  +	if (!shadow_me_mask)
+>  +		return;
+>  +
+>  +	for (i = context->shadow_root_level; --i >= 0;) {
+>  +		shadow_zero_check->rsvd_bits_mask[0][i] &= ~shadow_me_mask;
+>  +		shadow_zero_check->rsvd_bits_mask[1][i] &= ~shadow_me_mask;
+>  +	}
+>  +
+>   }
+>   EXPORT_SYMBOL_GPL(reset_shadow_zero_bits_mask);
 >   
-> - all: acpi cgroup cpupower gpio hv firewire lguest liblockdep \
-> + all: acpi cgroup cpupower gpio hv firewire liblockdep \
->  -		perf selftests turbostat usb \
->  +		perf selftests spi turbostat usb \
->   		virtio vm net x86_energy_perf_policy \
->   		tmon freefall objtool kvm_stat
->   
-> @@@ -101,7 -100,7 +100,7 @@@ acpi_install
->   cpupower_install:
->   	$(call descend,power/$(@:_install=),install)
->   
-> - cgroup_install firewire_install gpio_install hv_install lguest_install perf_install spi_install usb_install virtio_install vm_install net_install objtool_install:
->  -cgroup_install firewire_install gpio_install hv_install perf_install usb_install virtio_install vm_install net_install objtool_install:
-> ++cgroup_install firewire_install gpio_install hv_install perf_install spi_install usb_install virtio_install vm_install net_install objtool_install:
->   	$(call descend,$(@:_install=),install)
->   
->   liblockdep_install:
 
 Just a reminder that this conflict still exists.
 
