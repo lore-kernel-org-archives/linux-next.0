@@ -1,34 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the powerpc tree
-Date: Mon, 4 Sep 2017 18:53:41 +1000
-Message-ID: <20170904185341.58e3ff62@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Mon, 4 Sep 2017 18:56:45 +1000
+Message-ID: <20170904185645.70d8c14b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53663 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753318AbdIDIxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 04:53:44 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Evgeny Baskakov <ebaskakov@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, Mark Hairgrove <mhairgrove@nvidia.com>, Sherry Cheung <SCheung@nvidia.com>, Subhash Gutti <sgutti@nvidia.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Andrew,
 
-After merging the powerpc tree, today's linux-next build (powerpc
-allyesconfig) produced this warning:
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-WARNING: vmlinux.o(.text+0xa7cb8): Section mismatch in reference from the function .xive_spapr_init() to the function .init.text:.xive_core_init()
-The function .xive_spapr_init() references
-the function __init .xive_core_init().
-This is often because .xive_spapr_init lacks a __init 
-annotation or the annotation of .xive_core_init is wrong.
+/home/sfr/next/next/mm/hmm.c:202:2: error: unknown field 'invalidate_page' specified in initializer
+  .invalidate_page = hmm_invalidate_page,
+  ^
+/home/sfr/next/next/mm/hmm.c:202:21: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+  .invalidate_page = hmm_invalidate_page,
+                     ^
 
-Introduced by commit
+Caused by commit
 
-  eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
+  b49705c24406 ("mm/hmm/mirror: mirror process address space on device with HMM helpers")
+
+interacting with commit
+
+  5f32b265400d ("mm/mmu_notifier: kill invalidate_page")
+
+from Linus' tree.
+
+I have disabled CONFIG_HMM_MIRROR for today.
 
 -- 
 Cheers,
