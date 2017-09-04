@@ -1,34 +1,51 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb tree with the mips tree
-Date: Mon, 4 Sep 2017 11:17:23 +0200
-Message-ID: <20170904091723.GA13245@kroah.com>
-References: <20170904155132.007b788b@canb.auug.org.au>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: Re: linux-next: manual merge of the s390 tree with Linus' tree
+Date: Mon, 4 Sep 2017 14:45:42 +0200
+Message-ID: <20170904144542.3d41a0fe@mschwideX1>
+References: <20170904094928.59e8594c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20170904155132.007b788b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40797 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753651AbdIDMpt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Sep 2017 08:45:49 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id v84CijEt150896
+        for <linux-next@vger.kernel.org>; Mon, 4 Sep 2017 08:45:49 -0400
+Received: from e06smtp14.uk.ibm.com (e06smtp14.uk.ibm.com [195.75.94.110])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2cs1ewaec1-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Mon, 04 Sep 2017 08:45:48 -0400
+Received: from localhost
+        by e06smtp14.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Mon, 4 Sep 2017 13:45:47 +0100
+In-Reply-To: <20170904094928.59e8594c@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Kishon Vijay Abraham I <kishon@ti.com>
-List-Id: linux-next.vger.kernel.org
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 04, 2017 at 03:51:32PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
+On Mon, 4 Sep 2017 09:49:28 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
 > 
-> Today's linux-next merge of the usb tree got a conflict in:
+> Today's linux-next merge of the s390 tree got a conflict in:
 > 
->   drivers/phy/Makefile
+>   arch/s390/include/asm/mmu_context.h
 > 
 > between commit:
 > 
->   0ab3aa747f26 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
+>   0b89ede62963 ("s390/mm: fork vs. 5 level page tabel")
 > 
-> from the mips tree and commit:
+> from Linus' tree and commit:
 > 
->   cd4ec4b03dc1 ("phy: phy-mt65xx-usb3: add mediatek directory and rename file")
+>   f1c1174fa099 ("s390/mm: use new mm defines instead of magic values")
 > 
-> from the usb tree.
+> from the s390 tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -36,32 +53,11 @@ On Mon, Sep 04, 2017 at 03:51:32PM +1000, Stephen Rothwell wrote:
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/phy/Makefile
-> index a8b9439a5d8e,06f3c500030d..000000000000
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@@ -4,12 -4,12 +4,12 @@@
->   
->   obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
->   obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
-> - obj-$(CONFIG_PHY_MT65XX_USB3)		+= phy-mt65xx-usb3.o
->   obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
->   obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
->  -
->   obj-$(CONFIG_ARCH_SUNXI)		+= allwinner/
->   obj-$(CONFIG_ARCH_MESON)		+= amlogic/
->  +obj-$(CONFIG_LANTIQ)			+= lantiq/
-> + obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
->   obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
->   obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->   obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
+ 
+Fixup looks fine, thank you!
 
+-- 
+blue skies,
+   Martin.
 
-Looks good to me, thanks!
-
-greg k-h
+"Reality continues to ruin my life." - Calvin.
