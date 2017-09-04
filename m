@@ -1,73 +1,35 @@
-From: Hauke Mehrtens <hauke@hauke-m.de>
-Subject: Re: linux-next: Signed-off-by missing for commits in the mips tree
-Date: Mon, 4 Sep 2017 10:43:40 +0200
-Message-ID: <787d811b-a998-db65-d4f5-237c57d22fbe@hauke-m.de>
-References: <20170904021318.613b0a21@canb.auug.org.au>
- <CAFBinCA_2PMwNsC_1MtnUeBWs7VPFOjrRTqHts6_O_fqp0Svrg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the powerpc tree
+Date: Mon, 4 Sep 2017 18:53:41 +1000
+Message-ID: <20170904185341.58e3ff62@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.mailbox.org ([80.241.60.215]:59016 "EHLO mx2.mailbox.org"
+Received: from ozlabs.org ([103.22.144.67]:53663 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750839AbdIDInq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 04:43:46 -0400
-In-Reply-To: <CAFBinCA_2PMwNsC_1MtnUeBWs7VPFOjrRTqHts6_O_fqp0Svrg@mail.gmail.com>
-Content-Language: en-US
+        id S1753318AbdIDIxo (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 04:53:44 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <james.hogan@imgtec.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@imgtec.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?Q8OpZHJpYw==?= Le Goater <clg@kaod.org>
 
-Hi Ralf and Martin,
+Hi all,
 
-On 09/03/2017 11:14 PM, Martin Blumenstingl wrote:
-> Hi Hauke, Hi Ralf,
-> 
-> On Sun, Sep 3, 2017 at 6:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Commits
->>
->> bb19a5e5205b MIPS: lantiq: Remove the arch/mips/lantiq/xway/reset.c implementation
->> f6a4de1654c9 MIPS: lantiq: Add a GPHY driver which uses the RCU syscon-mfd
->> 565f7e8292f5 reset: Add a reset controller driver for the Lantiq XWAY based SoCs
->> e55bfdfacaed Documentation: DT: MIPS: lantiq: Add docs for the RCU bindings
->> 5a7715f4b8e0 MIPS: lantiq: Enable MFD_SYSCON to be able to use it for the RCU MFD
-> Hauke: thank you for pushing these patches forward (by adding lots of
-> fixes, missing documentation and so on)!
-> I can send a Signed-off-by for all of these - however I'd like you to
-> be the author of at least "Documentation: DT: MIPS: lantiq: Add docs
-> for the RCU bindings" (since you did all the actual work, but finding
-> the best DT binding with the DT maintainers).
+After merging the powerpc tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
 
-I am ok with this.
+WARNING: vmlinux.o(.text+0xa7cb8): Section mismatch in reference from the function .xive_spapr_init() to the function .init.text:.xive_core_init()
+The function .xive_spapr_init() references
+the function __init .xive_core_init().
+This is often because .xive_spapr_init lacks a __init 
+annotation or the annotation of .xive_core_init is wrong.
 
-> Ralf: how do you want to handle this? should I simply send my
-> Signed-off-by on the relevant patches and you will fixup these?
-> and similarly, (if it's OK for Hauke) can you also change the author
-> of "Documentation: DT: MIPS: lantiq: Add docs for the RCU bindings"?
+Introduced by commit
 
-I am ok with this and I think the easiest solution would be if Ralf
-would edit it.
+  eac1e731b59e ("powerpc/xive: guest exploitation of the XIVE interrupt controller")
 
->> 114f298226a3 MIPS: Malta: Use new GIC accessor functions
->>
->> are missing a Signed-off-by from their author.
->>
->> Commit
->>
->> 114f298226a3 MIPS: Malta: Use new GIC accessor functions
->>
->> is missing a Signed-off-by from its commiter.
->>
->> --
->> Cheers,
->> Stephen Rothwell
-> thanks for spotting this Stephen
-> 
-> 
-> Regards,
-> Martin
-
-Hauke
+-- 
+Cheers,
+Stephen Rothwell
