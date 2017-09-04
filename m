@@ -1,126 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the iommu tree
-Date: Mon, 4 Sep 2017 15:45:14 +1000
-Message-ID: <20170904154514.57253535@canb.auug.org.au>
-References: <20170822135057.776f3509@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the mips tree
+Date: Mon, 4 Sep 2017 15:51:32 +1000
+Message-ID: <20170904155132.007b788b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170822135057.776f3509@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Joerg Roedel <joro@8bytes.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, Baoquan He <bhe@redhat.com>
+To: Greg KH <greg@kroah.com>, Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Greg,
 
-On Tue, 22 Aug 2017 13:50:57 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got conflicts in:
-> 
->   drivers/iommu/amd_iommu.c
->   drivers/iommu/amd_iommu_init.c
->   drivers/iommu/amd_iommu_proto.h
->   drivers/iommu/amd_iommu_types.h
-> 
-> between commits:
-> 
->   4c232a708be1 ("iommu/amd: Detect pre enabled translation")
->   9494ea90a56d ("Revert "iommu/amd: Suppress IO_PAGE_FAULTs in kdump kernel"")
->   07a80a6b5920 ("iommu/amd: Define bit fields for DTE particularly")
->   daae2d25a477 ("iommu/amd: Don't copy GCR3 table root pointer")
-> 
-> from the iommu tree and commit:
-> 
->   2543a786aa25 ("iommu/amd: Allow the AMD IOMMU to work with memory encryption")
-> 
-> from the tip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/iommu/amd_iommu.c
-> index 31bce367866c,4ad7e5e31943..000000000000
-> --- a/drivers/iommu/amd_iommu.c
-> +++ b/drivers/iommu/amd_iommu.c
-> @@@ -1476,10 -1538,10 +1478,10 @@@ static int iommu_map_page(struct protec
->   			return -EBUSY;
->   
->   	if (count > 1) {
-> - 		__pte = PAGE_SIZE_PTE(phys_addr, page_size);
-> + 		__pte = PAGE_SIZE_PTE(__sme_set(phys_addr), page_size);
->  -		__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_P | IOMMU_PTE_FC;
->  +		__pte |= PM_LEVEL_ENC(7) | IOMMU_PTE_PR | IOMMU_PTE_FC;
->   	} else
-> - 		__pte = phys_addr | IOMMU_PTE_PR | IOMMU_PTE_FC;
->  -		__pte = __sme_set(phys_addr) | IOMMU_PTE_P | IOMMU_PTE_FC;
-> ++		__pte = __sme_set(phys_addr) | IOMMU_PTE_PR | IOMMU_PTE_FC;
->   
->   	if (prot & IOMMU_PROT_IR)
->   		__pte |= IOMMU_PTE_IR;
-> diff --cc drivers/iommu/amd_iommu_init.c
-> index ff8887ac5555,2292a6cece76..000000000000
-> --- a/drivers/iommu/amd_iommu_init.c
-> +++ b/drivers/iommu/amd_iommu_init.c
-> @@@ -29,6 -29,8 +29,7 @@@
->   #include <linux/export.h>
->   #include <linux/iommu.h>
->   #include <linux/kmemleak.h>
->  -#include <linux/crash_dump.h>
-> + #include <linux/mem_encrypt.h>
->   #include <asm/pci-direct.h>
->   #include <asm/iommu.h>
->   #include <asm/gart.h>
-> diff --cc drivers/iommu/amd_iommu_proto.h
-> index 90e62e9b01c5,3f12fb2338ea..000000000000
-> --- a/drivers/iommu/amd_iommu_proto.h
-> +++ b/drivers/iommu/amd_iommu_proto.h
-> @@@ -87,6 -87,14 +87,16 @@@ static inline bool iommu_feature(struc
->   	return !!(iommu->features & f);
->   }
->   
-> + static inline u64 iommu_virt_to_phys(void *vaddr)
-> + {
-> + 	return (u64)__sme_set(virt_to_phys(vaddr));
-> + }
-> + 
-> + static inline void *iommu_phys_to_virt(unsigned long paddr)
-> + {
-> + 	return phys_to_virt(__sme_clr(paddr));
-> + }
-> + 
->  +extern bool translation_pre_enabled(struct amd_iommu *iommu);
->  +extern struct iommu_dev_data *get_dev_data(struct device *dev);
->   #endif /* _ASM_X86_AMD_IOMMU_PROTO_H  */
-> diff --cc drivers/iommu/amd_iommu_types.h
-> index 5f775fef341c,8591f43c467c..000000000000
-> --- a/drivers/iommu/amd_iommu_types.h
-> +++ b/drivers/iommu/amd_iommu_types.h
-> @@@ -361,8 -343,8 +361,8 @@@
->   #define GCR3_VALID		0x01ULL
->   
->   #define IOMMU_PAGE_MASK (((1ULL << 52) - 1) & ~0xfffULL)
->  -#define IOMMU_PTE_PRESENT(pte) ((pte) & IOMMU_PTE_P)
->  +#define IOMMU_PTE_PRESENT(pte) ((pte) & IOMMU_PTE_PR)
-> - #define IOMMU_PTE_PAGE(pte) (phys_to_virt((pte) & IOMMU_PAGE_MASK))
-> + #define IOMMU_PTE_PAGE(pte) (iommu_phys_to_virt((pte) & IOMMU_PAGE_MASK))
->   #define IOMMU_PTE_MODE(pte) (((pte) >> 9) & 0x07)
->   
->   #define IOMMU_PROT_MASK 0x03
+Today's linux-next merge of the usb tree got a conflict in:
 
-Just a reminder that these conflicts still exist.
+  drivers/phy/Makefile
+
+between commit:
+
+  0ab3aa747f26 ("phy: Add an USB PHY driver for the Lantiq SoCs using the RCU module")
+
+from the mips tree and commit:
+
+  cd4ec4b03dc1 ("phy: phy-mt65xx-usb3: add mediatek directory and rename file")
+
+from the usb tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/phy/Makefile
+index a8b9439a5d8e,06f3c500030d..000000000000
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@@ -4,12 -4,12 +4,12 @@@
+  
+  obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
+  obj-$(CONFIG_PHY_LPC18XX_USB_OTG)	+= phy-lpc18xx-usb-otg.o
+- obj-$(CONFIG_PHY_MT65XX_USB3)		+= phy-mt65xx-usb3.o
+  obj-$(CONFIG_PHY_XGENE)			+= phy-xgene.o
+  obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
+ -
+  obj-$(CONFIG_ARCH_SUNXI)		+= allwinner/
+  obj-$(CONFIG_ARCH_MESON)		+= amlogic/
+ +obj-$(CONFIG_LANTIQ)			+= lantiq/
++ obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
+  obj-$(CONFIG_ARCH_RENESAS)		+= renesas/
+  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
+  obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
