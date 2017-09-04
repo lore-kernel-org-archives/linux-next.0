@@ -1,39 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nvdimm tree
-Date: Mon, 4 Sep 2017 17:34:25 +1000
-Message-ID: <20170904173425.5cc0e08d@canb.auug.org.au>
+From: Hauke Mehrtens <hauke@hauke-m.de>
+Subject: Re: linux-next: Signed-off-by missing for commits in the mips tree
+Date: Mon, 4 Sep 2017 10:43:40 +0200
+Message-ID: <787d811b-a998-db65-d4f5-237c57d22fbe@hauke-m.de>
+References: <20170904021318.613b0a21@canb.auug.org.au>
+ <CAFBinCA_2PMwNsC_1MtnUeBWs7VPFOjrRTqHts6_O_fqp0Svrg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.mailbox.org ([80.241.60.215]:59016 "EHLO mx2.mailbox.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750839AbdIDInq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 04:43:46 -0400
+In-Reply-To: <CAFBinCA_2PMwNsC_1MtnUeBWs7VPFOjrRTqHts6_O_fqp0Svrg@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <james.hogan@imgtec.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paul Burton <paul.burton@imgtec.com>, Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi Dan,
+Hi Ralf and Martin,
 
-After merging the nvdimm tree, today's linux-next build (i386 defconfig)
-failed like this:
+On 09/03/2017 11:14 PM, Martin Blumenstingl wrote:
+> Hi Hauke, Hi Ralf,
+> 
+> On Sun, Sep 3, 2017 at 6:13 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
+>>
+>> Commits
+>>
+>> bb19a5e5205b MIPS: lantiq: Remove the arch/mips/lantiq/xway/reset.c implementation
+>> f6a4de1654c9 MIPS: lantiq: Add a GPHY driver which uses the RCU syscon-mfd
+>> 565f7e8292f5 reset: Add a reset controller driver for the Lantiq XWAY based SoCs
+>> e55bfdfacaed Documentation: DT: MIPS: lantiq: Add docs for the RCU bindings
+>> 5a7715f4b8e0 MIPS: lantiq: Enable MFD_SYSCON to be able to use it for the RCU MFD
+> Hauke: thank you for pushing these patches forward (by adding lots of
+> fixes, missing documentation and so on)!
+> I can send a Signed-off-by for all of these - however I'd like you to
+> be the author of at least "Documentation: DT: MIPS: lantiq: Add docs
+> for the RCU bindings" (since you did all the actual work, but finding
+> the best DT binding with the DT maintainers).
 
-drivers/dax/super.c:64:20: error: redefinition of 'fs_dax_get_by_bdev'
- struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-                    ^
-In file included from drivers/dax/super.c:22:0:
-include/linux/dax.h:76:34: note: previous definition of 'fs_dax_get_by_bdev' was here
- static inline struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev)
-                                  ^ 
+I am ok with this.
 
-Caused by commit
+> Ralf: how do you want to handle this? should I simply send my
+> Signed-off-by on the relevant patches and you will fixup these?
+> and similarly, (if it's OK for Hauke) can you also change the author
+> of "Documentation: DT: MIPS: lantiq: Add docs for the RCU bindings"?
 
-  78f354735081 ("dax: introduce a fs_dax_get_by_bdev() helper")
+I am ok with this and I think the easiest solution would be if Ralf
+would edit it.
 
-The protection in drivers/dax/super.c is CONFIG_BLOCK, while in
-include/linux/dax.h it is IS_ENABLED(CONFIG_FS_DAX) and the Makefile
-uses CONFIG_DAX.
+>> 114f298226a3 MIPS: Malta: Use new GIC accessor functions
+>>
+>> are missing a Signed-off-by from their author.
+>>
+>> Commit
+>>
+>> 114f298226a3 MIPS: Malta: Use new GIC accessor functions
+>>
+>> is missing a Signed-off-by from its commiter.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+> thanks for spotting this Stephen
+> 
+> 
+> Regards,
+> Martin
 
-I have reverted that commit and the following 3 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+Hauke
