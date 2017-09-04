@@ -1,35 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the pci tree with the net tree
-Date: Mon, 4 Sep 2017 14:54:27 +1000
-Message-ID: <20170904145427.60b35b0c@canb.auug.org.au>
-References: <20170816095128.7205e4f1@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the spi tree with the pm tree
+Date: Mon, 4 Sep 2017 14:56:06 +1000
+Message-ID: <20170904145606.218d9d7a@canb.auug.org.au>
+References: <20170817132308.090d4b88@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170816095128.7205e4f1@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ding Tianhong <dingtianhong@huawei.com>, Casey Leedom <leedom@chelsio.com>, Sinan Kaya <okaya@codeaurora.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36071 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750951AbdIDE4I (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 00:56:08 -0400
+In-Reply-To: <20170817132308.090d4b88@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, Suniel Mahesh <sunil.m@techveda.org>, Karthik Tummala <karthik@techveda.org>
 
 Hi all,
 
-On Wed, 16 Aug 2017 09:51:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 17 Aug 2017 13:23:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the pci tree got a conflict in:
+> Today's linux-next merge of the spi tree got a conflict in:
 > 
->   drivers/pci/probe.c
+>   drivers/spi/spi.c
 > 
 > between commit:
 > 
->   a99b646afa8a ("PCI: Disable PCIe Relaxed Ordering if unsupported")
+>   8a2e487e6fc1 ("spi: Use Apple device properties in absence of ACPI resources")
 > 
-> from the net tree and commit:
+> from the pm tree and commit:
 > 
->   62ce94a7a5a5 ("PCI: Mark Broadcom HT2100 Root Port Extended Tags as broken")
+>   9b61e302210e ("spi: Pick spi bus number from Linux idr or spi alias")
 > 
-> from the pci tree.
+> from the spi tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,110 +46,19 @@ On Wed, 16 Aug 2017 09:51:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc drivers/pci/probe.c
-> index e6a917b4acd3,d11fede6bd53..000000000000
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@@ -1751,67 -1753,51 +1753,94 @@@ int pci_configure_extended_tags(struct 
->   	int ret;
+> diff --cc drivers/spi/spi.c
+> index 7d920ea19957,43cb8b98e953..000000000000
+> --- a/drivers/spi/spi.c
+> +++ b/drivers/spi/spi.c
+> @@@ -40,7 -40,7 +40,8 @@@
+>   #include <linux/ioport.h>
+>   #include <linux/acpi.h>
+>   #include <linux/highmem.h>
+>  +#include <linux/platform_data/x86/apple.h>
+> + #include <linux/idr.h>
 >   
->   	if (!pci_is_pcie(dev))
-> - 		return;
-> + 		return 0;
->   
-> - 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &dev_cap);
-> + 	ret = pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &cap);
->   	if (ret)
-> - 		return;
-> + 		return 0;
-> + 
-> + 	if (!(cap & PCI_EXP_DEVCAP_EXT_TAG))
-> + 		return 0;
-> + 
-> + 	ret = pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &ctl);
-> + 	if (ret)
-> + 		return 0;
-> + 
-> + 	host = pci_find_host_bridge(dev->bus);
-> + 	if (!host)
-> + 		return 0;
-> + 
-> + 	/*
-> + 	 * If some device in the hierarchy doesn't handle Extended Tags
-> + 	 * correctly, make sure they're disabled.
-> + 	 */
-> + 	if (host->no_ext_tags) {
-> + 		if (ctl & PCI_EXP_DEVCTL_EXT_TAG) {
-> + 			dev_info(&dev->dev, "disabling Extended Tags\n");
-> + 			pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
-> + 						   PCI_EXP_DEVCTL_EXT_TAG);
-> + 		}
-> + 		return 0;
-> + 	}
->   
-> - 	if (dev_cap & PCI_EXP_DEVCAP_EXT_TAG)
-> + 	if (!(ctl & PCI_EXP_DEVCTL_EXT_TAG)) {
-> + 		dev_info(&dev->dev, "enabling Extended Tags\n");
->   		pcie_capability_set_word(dev, PCI_EXP_DEVCTL,
->   					 PCI_EXP_DEVCTL_EXT_TAG);
-> + 	}
-> + 	return 0;
->   }
->   
->  +/**
->  + * pcie_relaxed_ordering_enabled - Probe for PCIe relaxed ordering enable
->  + * @dev: PCI device to query
->  + *
->  + * Returns true if the device has enabled relaxed ordering attribute.
->  + */
->  +bool pcie_relaxed_ordering_enabled(struct pci_dev *dev)
->  +{
->  +	u16 v;
->  +
->  +	pcie_capability_read_word(dev, PCI_EXP_DEVCTL, &v);
->  +
->  +	return !!(v & PCI_EXP_DEVCTL_RELAX_EN);
->  +}
->  +EXPORT_SYMBOL(pcie_relaxed_ordering_enabled);
->  +
->  +static void pci_configure_relaxed_ordering(struct pci_dev *dev)
->  +{
->  +	struct pci_dev *root;
->  +
->  +	/* PCI_EXP_DEVICE_RELAX_EN is RsvdP in VFs */
->  +	if (dev->is_virtfn)
->  +		return;
->  +
->  +	if (!pcie_relaxed_ordering_enabled(dev))
->  +		return;
->  +
->  +	/*
->  +	 * For now, we only deal with Relaxed Ordering issues with Root
->  +	 * Ports. Peer-to-Peer DMA is another can of worms.
->  +	 */
->  +	root = pci_find_pcie_root_port(dev);
->  +	if (!root)
->  +		return;
->  +
->  +	if (root->dev_flags & PCI_DEV_FLAGS_NO_RELAXED_ORDERING) {
->  +		pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
->  +					   PCI_EXP_DEVCTL_RELAX_EN);
->  +		dev_info(&dev->dev, "Disable Relaxed Ordering because the Root Port didn't support it\n");
->  +	}
->  +}
->  +
->   static void pci_configure_device(struct pci_dev *dev)
->   {
->   	struct hotplug_params hpp;
->   	int ret;
->   
->   	pci_configure_mps(dev);
-> - 	pci_configure_extended_tags(dev);
-> + 	pci_configure_extended_tags(dev, NULL);
->  +	pci_configure_relaxed_ordering(dev);
->   
->   	memset(&hpp, 0, sizeof(hpp));
->   	ret = pci_get_hp_params(dev, &hpp);
+>   #define CREATE_TRACE_POINTS
+>   #include <trace/events/spi.h>
 
 Just a reminder that this conflict still exists.
 
