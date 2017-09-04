@@ -1,40 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the btrfs-kdave tree with Linus'
- tree
-Date: Mon, 4 Sep 2017 16:02:30 +1000
-Message-ID: <20170904160230.3912011f@canb.auug.org.au>
-References: <20170825095825.60c576f3@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Mon, 4 Sep 2017 16:04:09 +1000
+Message-ID: <20170904160409.7df5042a@canb.auug.org.au>
+References: <20170825143416.1673621d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37159 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751235AbdIDGCc (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 02:02:32 -0400
-In-Reply-To: <20170825095825.60c576f3@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Omar Sandoval <osandov@fb.com>, Nikolay Borisov <nborisov@suse.com>, Chris Mason <clm@fb.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170825143416.1673621d@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>, Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-On Fri, 25 Aug 2017 09:58:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Fri, 25 Aug 2017 14:34:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the btrfs-kdave tree got a conflict in:
+> Hi all,
 > 
->   fs/btrfs/inode.c
+> Today's linux-next merge of the kvm tree got a conflict in:
+> 
+>   arch/x86/include/asm/cpufeatures.h
 > 
 > between commit:
 > 
->   58efbc9f5463 ("Btrfs: fix blk_status_t/errno confusion")
+>   5442c2699552 ("x86/cpufeature, kvm/svm: Rename (shorten) the new "virtualized VMSAVE/VMLOAD" CPUID flag")
 > 
 > from Linus' tree and commit:
 > 
->   e6961cac730f ("btrfs: Move skip checksum check from btrfs_submit_direct to __btrfs_submit_dio_bio")
+>   d837312dfd5b ("KVM: SVM: Add Virtual GIF feature definition")
 > 
-> from the btrfs-kdave tree.
+> from the kvm tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -47,77 +44,20 @@ On Fri, 25 Aug 2017 09:58:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc fs/btrfs/inode.c
-> index 24bcd5cd9cf2,d184a46e46c4..000000000000
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@@ -7991,10 -8080,9 +8081,10 @@@ static blk_status_t dio_read_error(stru
->   	struct extent_io_tree *failure_tree = &BTRFS_I(inode)->io_failure_tree;
->   	struct bio *bio;
->   	int isector;
-> - 	int read_mode = 0;
-> + 	unsigned int read_mode = 0;
->   	int segs;
->   	int ret;
->  +	blk_status_t status;
+> diff --cc arch/x86/include/asm/cpufeatures.h
+> index 42bbbf0f173d,0e25e7a8ab03..000000000000
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@@ -287,7 -286,8 +287,8 @@@
+>   #define X86_FEATURE_PAUSEFILTER (15*32+10) /* filtered pause intercept */
+>   #define X86_FEATURE_PFTHRESHOLD (15*32+12) /* pause filter threshold */
+>   #define X86_FEATURE_AVIC	(15*32+13) /* Virtual Interrupt Controller */
+>  -#define X86_FEATURE_VIRTUAL_VMLOAD_VMSAVE (15*32+15) /* Virtual VMLOAD VMSAVE */
+>  +#define X86_FEATURE_V_VMSAVE_VMLOAD (15*32+15) /* Virtual VMSAVE VMLOAD */
+> + #define X86_FEATURE_VGIF	(15*32+16) /* Virtual GIF */
 >   
->   	BUG_ON(bio_op(failed_bio) == REQ_OP_WRITE);
->   
-> @@@ -8021,11 -8109,11 +8111,11 @@@
->   	bio_set_op_attrs(bio, REQ_OP_READ, read_mode);
->   
->   	btrfs_debug(BTRFS_I(inode)->root->fs_info,
-> - 		    "Repair DIO Read Error: submitting new dio read[%#x] to this_mirror=%d, in_validation=%d\n",
-> + 		    "repair DIO read error: submitting new dio read[%#x] to this_mirror=%d, in_validation=%d",
->   		    read_mode, failrec->this_mirror, failrec->in_validation);
->   
->  -	ret = submit_dio_repair_bio(inode, bio, failrec->this_mirror);
->  -	if (ret) {
->  +	status = submit_dio_repair_bio(inode, bio, failrec->this_mirror);
->  +	if (status) {
->   		free_io_failure(failure_tree, io_tree, failrec);
->   		bio_put(bio);
->   	}
-> @@@ -8426,9 -8513,8 +8516,9 @@@ static inline blk_status_t btrfs_lookup
->   	return 0;
->   }
->   
->  -static inline int __btrfs_submit_dio_bio(struct bio *bio, struct inode *inode,
->  -					 u64 file_offset, int async_submit)
->  +static inline blk_status_t
->  +__btrfs_submit_dio_bio(struct bio *bio, struct inode *inode, u64 file_offset,
-> - 		       int skip_sum, int async_submit)
-> ++		       int async_submit)
->   {
->   	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
->   	struct btrfs_dio_private *dip = bio->bi_private;
-> @@@ -8541,9 -8625,9 +8630,9 @@@ static int btrfs_submit_direct_hook(str
->   		 */
->   		atomic_inc(&dip->pending_bios);
->   
-> - 		status = __btrfs_submit_dio_bio(bio, inode, file_offset, skip_sum,
->  -		ret = __btrfs_submit_dio_bio(bio, inode, file_offset,
->  -					     async_submit);
->  -		if (ret) {
-> ++		status = __btrfs_submit_dio_bio(bio, inode, file_offset,
->  +						async_submit);
->  +		if (status) {
->   			bio_put(bio);
->   			atomic_dec(&dip->pending_bios);
->   			goto out_err;
-> @@@ -8561,9 -8645,8 +8650,8 @@@
->   	} while (submit_len > 0);
->   
->   submit:
-> - 	status = __btrfs_submit_dio_bio(bio, inode, file_offset, skip_sum,
-> - 					async_submit);
->  -	ret = __btrfs_submit_dio_bio(bio, inode, file_offset, async_submit);
->  -	if (!ret)
-> ++	status = __btrfs_submit_dio_bio(bio, inode, file_offset, async_submit);
->  +	if (!status)
->   		return 0;
->   
->   	bio_put(bio);
+>   /* Intel-defined CPU features, CPUID level 0x00000007:0 (ecx), word 16 */
+>   #define X86_FEATURE_AVX512VBMI  (16*32+ 1) /* AVX512 Vector Bit Manipulation instructions*/
 
 Just a reminder that this conflict still exists.
 
