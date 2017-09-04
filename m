@@ -1,39 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the spi tree with the pm tree
-Date: Mon, 4 Sep 2017 14:56:06 +1000
-Message-ID: <20170904145606.218d9d7a@canb.auug.org.au>
-References: <20170817132308.090d4b88@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the arm-soc
+ tree
+Date: Mon, 4 Sep 2017 15:23:07 +1000
+Message-ID: <20170904152307.33f9ba2a@canb.auug.org.au>
+References: <20170822105534.7f52bda0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36071 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750951AbdIDE4I (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 00:56:08 -0400
-In-Reply-To: <20170817132308.090d4b88@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, Suniel Mahesh <sunil.m@techveda.org>, Karthik Tummala <karthik@techveda.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20170822105534.7f52bda0@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>, Steve Longerbeam <steve_longerbeam@mentor.com>, Shawn Guo <shawnguo@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-On Thu, 17 Aug 2017 13:23:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 22 Aug 2017 10:55:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the spi tree got a conflict in:
+> Today's linux-next merge of the v4l-dvb tree got a conflict in:
 > 
->   drivers/spi/spi.c
+>   arch/arm/configs/imx_v6_v7_defconfig
 > 
 > between commit:
 > 
->   8a2e487e6fc1 ("spi: Use Apple device properties in absence of ACPI resources")
+>   b834bc1c52b8 ("ARM: imx_v6_v7_defconfig: Enable staging video4linux drivers")
 > 
-> from the pm tree and commit:
+> from the arm-soc tree and commit:
 > 
->   9b61e302210e ("spi: Pick spi bus number from Linux idr or spi alias")
+>   b9e1486e0e4b ("media: rc-core: do not depend on MEDIA_SUPPORT")
 > 
-> from the spi tree.
+> from the v4l-dvb tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -46,19 +43,21 @@ On Thu, 17 Aug 2017 13:23:08 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote
 > Cheers,
 > Stephen Rothwell
 > 
-> diff --cc drivers/spi/spi.c
-> index 7d920ea19957,43cb8b98e953..000000000000
-> --- a/drivers/spi/spi.c
-> +++ b/drivers/spi/spi.c
-> @@@ -40,7 -40,7 +40,8 @@@
->   #include <linux/ioport.h>
->   #include <linux/acpi.h>
->   #include <linux/highmem.h>
->  +#include <linux/platform_data/x86/apple.h>
-> + #include <linux/idr.h>
->   
->   #define CREATE_TRACE_POINTS
->   #include <trace/events/spi.h>
+> diff --cc arch/arm/configs/imx_v6_v7_defconfig
+> index 3a48ad809731,1736813bdea7..000000000000
+> --- a/arch/arm/configs/imx_v6_v7_defconfig
+> +++ b/arch/arm/configs/imx_v6_v7_defconfig
+> @@@ -230,9 -226,7 +230,9 @@@ CONFIG_REGULATOR_MC13892=
+>   CONFIG_REGULATOR_PFUZE100=y
+>   CONFIG_MEDIA_SUPPORT=y
+>   CONFIG_MEDIA_CAMERA_SUPPORT=y
+> - CONFIG_MEDIA_RC_SUPPORT=y
+> + CONFIG_RC_CORE=y
+>  +CONFIG_MEDIA_CONTROLLER=y
+>  +CONFIG_VIDEO_V4L2_SUBDEV_API=y
+>   CONFIG_RC_DEVICES=y
+>   CONFIG_IR_GPIO_CIR=y
+>   CONFIG_MEDIA_USB_SUPPORT=y
 
 Just a reminder that this conflict still exists.
 
