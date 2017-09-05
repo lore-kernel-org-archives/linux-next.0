@@ -1,81 +1,70 @@
-From: "Kani, Toshimitsu" <toshi.kani@hpe.com>
-Subject: RE: linux-next: manual merge of the pm tree with the dmi tree
-Date: Mon, 4 Sep 2017 23:17:32 +0000
-Message-ID: <DF4PR84MB0187513FF1BE644FF396987082910@DF4PR84MB0187.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20170831110759.334c9fe2@canb.auug.org.au>
-        <1504272021.4651.1.camel@suse.de>
- <20170904163733.008c3b63@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
+Date: Tue, 5 Sep 2017 10:05:46 +1000
+Message-ID: <20170905100546.4b20136f@canb.auug.org.au>
+References: <20170831134702.7fc1bd57@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170904163733.008c3b63@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Jean Delvare <jdelvare@suse.de>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20170831134702.7fc1bd57@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Intiyaz Basha <intiyaz.basha@cavium.com>, Ying Huang <ying.huang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-> Hi Jean,
-> 
-> On Fri, 01 Sep 2017 15:20:21 +0200 Jean Delvare <jdelvare@suse.de> wrote:
-> >
-> > On jeu., 2017-08-31 at 11:07 +1000, Stephen Rothwell wrote:
-> > >
-> > > Today's linux-next merge of the pm tree got a conflict in:
-> > >
-> > >   drivers/acpi/blacklist.c
-> > >
-> > > between commit:
-> > >
-> > >   f996c4155d0d ("dmi: Mark all struct dmi_system_id instances const")
-> > >
-> > > from the dmi tree and commit:
-> > >
-> > >   5aa5911a0ed9 ("ACPI / blacklist: add acpi_match_platform_list()")
-> > >
-> > > from the pm tree.
-> > >
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> >
-> > Below, where?
-> 
-> Oops sorry, I think this is it:
+Hi Dave,
 
-The merge change below looks good to me.
-Thanks,
--Toshi
+On Thu, 31 Aug 2017 13:47:02 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   drivers/net/ethernet/cavium/liquidio/lio_main.c
+> 
+> between commit:
+> 
+>   d1d97ee6e3a8 ("liquidio: moved liquidio_napi_drv_callback to lio_core.c")
+> 
+> from the net-next tree and commit:
+> 
+>   966a967116e6 ("smp: Avoid using two cache lines for struct call_single_data")
+> 
+> from the tip tree.
+> 
+> I fixed it up (I added the blow merge fix patch) and can carry the fix
+> as necessary. This is now fixed as far as linux-next is concerned, but
+> any non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 31 Aug 2017 13:42:50 +1000
+> Subject: [PATCH] liquidio: fix for merge with "smp: Avoid using two cache
+>  lines for struct call_single_data"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/net/ethernet/cavium/liquidio/lio_core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/cavium/liquidio/lio_core.c b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> index 0e7896cdb295..23f6b60030c5 100644
+> --- a/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> +++ b/drivers/net/ethernet/cavium/liquidio/lio_core.c
+> @@ -613,7 +613,7 @@ static void liquidio_napi_drv_callback(void *arg)
+>  	    droq->cpu_id == this_cpu) {
+>  		napi_schedule_irqoff(&droq->napi);
+>  	} else {
+> -		struct call_single_data *csd = &droq->csd;
+> +		call_single_data_t *csd = &droq->csd;
+>  
+>  		csd->func = napi_schedule_wrapper;
+>  		csd->info = &droq->napi;
 
+The above merge fix patch is now needed when I merge the net-next tree
+with Linus' tree (since the tip commit has been merged by Linus).
 
-> 
-> d75dc5255183bfae1181f5e1e8b260f18794d79d
-> diff --cc drivers/acpi/blacklist.c
-> index f58bbc368f88,037fd537bbf6..995c4d8922b1
-> --- a/drivers/acpi/blacklist.c
-> +++ b/drivers/acpi/blacklist.c
-> @@@ -30,24 -30,7 +30,7 @@@
-> 
->   #include "internal.h"
-> 
-> - enum acpi_blacklist_predicates {
-> - 	all_versions,
-> - 	less_than_or_equal,
-> - 	equal,
-> - 	greater_than_or_equal,
-> - };
-> -
-> - struct acpi_blacklist_item {
-> - 	char oem_id[7];
-> - 	char oem_table_id[9];
-> - 	u32 oem_revision;
-> - 	char *table;
-> - 	enum acpi_blacklist_predicates oem_revision_predicate;
-> - 	char *reason;
-> - 	u32 is_critical_error;
-> - };
-> -
->  -static struct dmi_system_id acpi_rev_dmi_table[] __initdata;
->  +static const struct dmi_system_id acpi_rev_dmi_table[] __initconst;
-> 
->   /*
->    * POLICY: If *anything* doesn't work, put it on the blacklist.
+-- 
+Cheers,
+Stephen Rothwell
