@@ -1,38 +1,39 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: linux-next: Signed-off-bys missing for commits in the thermal
- tree
-Date: Tue, 05 Sep 2017 09:15:04 +0800
-Message-ID: <1504574104.3022.1.camel@intel.com>
-References: <20170905105734.13e4c3cc@canb.auug.org.au>
+From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
+Date: Mon, 4 Sep 2017 20:58:24 -0500
+Message-ID: <CAH2r5mv52NX-Fjzn+Qwyd=acAD0_c0xqxxm9QsHJkzFi=P85gA@mail.gmail.com>
+References: <20170905075631.7a6cca8a@canb.auug.org.au> <CAH2r5mtGthm6XkatxGMUdJwc9CXgdo31xgPLZuRxWqXgL1g19Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga06.intel.com ([134.134.136.31]:59109 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754092AbdIEBPM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 21:15:12 -0400
-In-Reply-To: <20170905105734.13e4c3cc@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAH2r5mtGthm6XkatxGMUdJwc9CXgdo31xgPLZuRxWqXgL1g19Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 2017-09-05 at 10:57 +1000, Stephen Rothwell wrote:
-> Hi Zhang,
-> 
-> Commits
-> 
->   1f0d851d9359 ("Debug patch")
->   083d998842a2 ("debug")
-> 
-> are missing a Signed-off-bys.
-> 
-> These are not really appropriate for linux-next inclusion -
-> especially
-> during the merge window.
-> 
-oops, sorry, wrong branch merged.
+Fixed and repushed
 
-thanks,
-rui
+On Mon, Sep 4, 2017 at 5:44 PM, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Ok. Will check what happened and repush
+>
+> On Sep 4, 2017 16:56, "Stephen Rothwell" <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
+>>
+>> Hi all,
+>>
+>> Commit
+>>
+>>   84c9d65efa37 ("cifs: Check for timeout on Negotiate stage")
+>>
+>> is missing a Signed-off-by from its committer.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+
+
+
+-- 
+Thanks,
+
+Steve
