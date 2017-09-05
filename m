@@ -1,67 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- parisc-hd tree
-Date: Tue, 5 Sep 2017 10:34:48 +1000
-Message-ID: <20170905103448.6dfb93eb@canb.auug.org.au>
-References: <20170822165318.77e3e0ca@canb.auug.org.au>
+Subject: linux-next: Signed-off-bys missing for commits in the thermal tree
+Date: Tue, 5 Sep 2017 10:57:34 +1000
+Message-ID: <20170905105734.13e4c3cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56127 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:55657 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754045AbdIEAeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 20:34:50 -0400
-In-Reply-To: <20170822165318.77e3e0ca@canb.auug.org.au>
+        id S1754065AbdIEA5g (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 20:57:36 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>
+To: Zhang Rui <rui.zhang@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+Hi Zhang,
 
-On Tue, 22 Aug 2017 16:53:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the akpm-current tree got a conflict in:
-> 
->   arch/parisc/include/uapi/asm/mman.h
-> 
-> between commit:
-> 
->   1c190151447d ("parisc: Add MADV_HWPOISON and MADV_SOFT_OFFLINE")
-> 
-> from the parisc-hd tree and commit:
-> 
->   115d20ededaf ("mm,fork: introduce MADV_WIPEONFORK")
-> 
-> from the akpm-current tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc arch/parisc/include/uapi/asm/mman.h
-> index 9a9c2fe4be50,f6eec376e5fa..000000000000
-> --- a/arch/parisc/include/uapi/asm/mman.h
-> +++ b/arch/parisc/include/uapi/asm/mman.h
-> @@@ -57,9 -60,9 +57,12 @@@
->   					   overrides the coredump filter bits */
->   #define MADV_DODUMP	70		/* Clear the MADV_NODUMP flag */
->   
-> + #define MADV_WIPEONFORK 71		/* Zero memory on fork, child only */
-> + #define MADV_KEEPONFORK 72		/* Undo MADV_WIPEONFORK */
-> + 
->  +#define MADV_HWPOISON     100		/* poison a page for testing */
->  +#define MADV_SOFT_OFFLINE 101		/* soft offline page for testing */
->  +
->   /* compatibility flags */
->   #define MAP_FILE	0
->   #define MAP_VARIABLE	0
+Commits
 
-Just a reminder that the above conflict still exists.
+  1f0d851d9359 ("Debug patch")
+  083d998842a2 ("debug")
+
+are missing a Signed-off-bys.
+
+These are not really appropriate for linux-next inclusion - especially
+during the merge window.
 
 -- 
 Cheers,
