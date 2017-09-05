@@ -1,24 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: no new material during the merge window
-Date: Tue, 5 Sep 2017 11:02:44 +1000
-Message-ID: <20170905110244.044d6e1e@canb.auug.org.au>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: linux-next: Signed-off-bys missing for commits in the thermal
+ tree
+Date: Tue, 05 Sep 2017 09:15:04 +0800
+Message-ID: <1504574104.3022.1.camel@intel.com>
+References: <20170905105734.13e4c3cc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52243 "EHLO ozlabs.org"
+Received: from mga06.intel.com ([134.134.136.31]:59109 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751155AbdIEBCq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 4 Sep 2017 21:02:46 -0400
+        id S1754092AbdIEBPM (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 21:15:12 -0400
+In-Reply-To: <20170905105734.13e4c3cc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kerenel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Tue, 2017-09-05 at 10:57 +1000, Stephen Rothwell wrote:
+> Hi Zhang,
+> 
+> Commits
+> 
+>   1f0d851d9359 ("Debug patch")
+>   083d998842a2 ("debug")
+> 
+> are missing a Signed-off-bys.
+> 
+> These are not really appropriate for linux-next inclusion -
+> especially
+> during the merge window.
+> 
+oops, sorry, wrong branch merged.
 
-Please do not add any v4.15 related material to your linux-next
-included branches until after v4.14-rc1 has been released.
-
--- 
-Cheers,
-Stephen Rothwell
+thanks,
+rui
