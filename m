@@ -1,39 +1,63 @@
-From: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Mon, 4 Sep 2017 20:58:24 -0500
-Message-ID: <CAH2r5mv52NX-Fjzn+Qwyd=acAD0_c0xqxxm9QsHJkzFi=P85gA@mail.gmail.com>
-References: <20170905075631.7a6cca8a@canb.auug.org.au> <CAH2r5mtGthm6XkatxGMUdJwc9CXgdo31xgPLZuRxWqXgL1g19Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the net-next
+ tree
+Date: Tue, 5 Sep 2017 15:27:25 +1000
+Message-ID: <20170905152725.4ae867b6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAH2r5mtGthm6XkatxGMUdJwc9CXgdo31xgPLZuRxWqXgL1g19Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Cc: LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51931 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750953AbdIEF12 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 5 Sep 2017 01:27:28 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Varsha Rao <rvarsha016@gmail.com>, Pablo Neira Ayuso <pablo@netfilter.org>, Krzysztof Kozlowski <krzk@kernel.org>
 
-Fixed and repushed
+Hi Andrew,
 
-On Mon, Sep 4, 2017 at 5:44 PM, Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Ok. Will check what happened and repush
->
-> On Sep 4, 2017 16:56, "Stephen Rothwell" <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> wrote:
->>
->> Hi all,
->>
->> Commit
->>
->>   84c9d65efa37 ("cifs: Check for timeout on Negotiate stage")
->>
->> is missing a Signed-off-by from its committer.
->>
->> --
->> Cheers,
->> Stephen Rothwell
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
+  arch/sh/configs/se7751_defconfig
 
+between commit:
+
+  9efdb14f76f4 ("net: Remove CONFIG_NETFILTER_DEBUG and _ASSERT() macros.")
+
+from the net-next tree and commit:
+
+  a83883ff2285 ("sh: defconfig: cleanup from old Kconfig options")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Thanks,
+Cheers,
+Stephen Rothwell
 
-Steve
+diff --cc arch/sh/configs/se7751_defconfig
+index 56b5e4ce8d4a,153e1d3c8be5..000000000000
+--- a/arch/sh/configs/se7751_defconfig
++++ b/arch/sh/configs/se7751_defconfig
+@@@ -25,12 -24,10 +24,9 @@@ CONFIG_IP_PNP=
+  CONFIG_IP_PNP_DHCP=y
+  CONFIG_IP_PNP_BOOTP=y
+  CONFIG_IP_PNP_RARP=y
+- # CONFIG_INET_LRO is not set
+  # CONFIG_IPV6 is not set
+  CONFIG_NETFILTER=y
+- CONFIG_IP_NF_QUEUE=y
+ -CONFIG_NETFILTER_DEBUG=y
+  CONFIG_MTD=y
+- CONFIG_MTD_PARTITIONS=y
+  CONFIG_MTD_BLOCK=y
+  CONFIG_MTD_CFI=y
+  CONFIG_MTD_CFI_AMDSTD=y
