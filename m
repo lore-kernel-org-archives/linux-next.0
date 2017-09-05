@@ -1,35 +1,40 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rpmsg tree with the qcom tree
-Date: Tue, 5 Sep 2017 10:27:35 +1000
-Message-ID: <20170905102735.4e59ffc9@canb.auug.org.au>
-References: <20170809145727.7b3849da@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ parisc-hd tree
+Date: Tue, 5 Sep 2017 10:34:48 +1000
+Message-ID: <20170905103448.6dfb93eb@canb.auug.org.au>
+References: <20170822165318.77e3e0ca@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170809145727.7b3849da@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>, Andy Gross <agross@codeaurora.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56127 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754045AbdIEAeu (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Sep 2017 20:34:50 -0400
+In-Reply-To: <20170822165318.77e3e0ca@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rik van Riel <riel@redhat.com>
 
 Hi all,
 
-On Wed, 9 Aug 2017 14:57:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, 22 Aug 2017 16:53:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> Today's linux-next merge of the rpmsg tree got a conflict in:
+> Today's linux-next merge of the akpm-current tree got a conflict in:
 > 
->   drivers/soc/qcom/Kconfig
+>   arch/parisc/include/uapi/asm/mman.h
 > 
 > between commit:
 > 
->   2a464815d326 ("soc: qcom: bring all qcom drivers into a submenu")
+>   1c190151447d ("parisc: Add MADV_HWPOISON and MADV_SOFT_OFFLINE")
 > 
-> from the qcom tree and commit:
+> from the parisc-hd tree and commit:
 > 
->   c4d77d5fcd8b ("soc: qcom: GLINK SSR notifier")
+>   115d20ededaf ("mm,fork: introduce MADV_WIPEONFORK")
 > 
-> from the rpmsg tree.
+> from the akpm-current tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,31 +43,25 @@ On Wed, 9 Aug 2017 14:57:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 > 
-> diff --cc drivers/soc/qcom/Kconfig
-> index 5f12657fc552,d0fc331972d2..000000000000
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@@ -1,8 -1,15 +1,17 @@@
->   #
->   # QCOM Soc drivers
->   #
->  +menu "Qualcomm SoC drivers"
->  +
-> + config QCOM_GLINK_SSR
-> + 	tristate "Qualcomm Glink SSR driver"
-> + 	depends on RPMSG
-> + 	depends on QCOM_RPROC_COMMON
-> + 	help
-> + 	  Say y here to enable GLINK SSR support. The GLINK SSR driver
-> + 	  implements the SSR protocol for notifying the remote processor about
-> + 	  neighboring subsystems going up or down.
+> diff --cc arch/parisc/include/uapi/asm/mman.h
+> index 9a9c2fe4be50,f6eec376e5fa..000000000000
+> --- a/arch/parisc/include/uapi/asm/mman.h
+> +++ b/arch/parisc/include/uapi/asm/mman.h
+> @@@ -57,9 -60,9 +57,12 @@@
+>   					   overrides the coredump filter bits */
+>   #define MADV_DODUMP	70		/* Clear the MADV_NODUMP flag */
+>   
+> + #define MADV_WIPEONFORK 71		/* Zero memory on fork, child only */
+> + #define MADV_KEEPONFORK 72		/* Undo MADV_WIPEONFORK */
 > + 
->   config QCOM_GSBI
->           tristate "QCOM General Serial Bus Interface"
->           depends on ARCH_QCOM
+>  +#define MADV_HWPOISON     100		/* poison a page for testing */
+>  +#define MADV_SOFT_OFFLINE 101		/* soft offline page for testing */
+>  +
+>   /* compatibility flags */
+>   #define MAP_FILE	0
+>   #define MAP_VARIABLE	0
 
-Just a reminder that the above conflict still exists (but between the
-rpmsg tree and the arm-soc tree, now).
+Just a reminder that the above conflict still exists.
 
 -- 
 Cheers,
