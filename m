@@ -1,97 +1,47 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Thu, 7 Sep 2017 00:46:12 -0700
-Message-ID: <20170907004612.4ac130b0e89daaa0e51b2f40@linux-foundation.org>
-References: <20170801163904.7d49881a@canb.auug.org.au>
-        <20170801205054.17c8579f@canb.auug.org.au>
-        <00BCCF64-C319-44F0-992B-7F78D4676B5E@cs.rutgers.edu>
-        <FB1FCBDA-1F7A-40C4-9415-3E6495B0B809@cs.rutgers.edu>
-        <20170802154554.2fe6515b@canb.auug.org.au>
-        <20170802163137.064ba4bf@canb.auug.org.au>
-        <20170907152355.16f4490a@canb.auug.org.au>
+From: Colin Ian King <colin.king@canonical.com>
+Subject: Re: linux-next: build warning after merge of the tpmdd tree
+Date: Thu, 7 Sep 2017 09:43:37 +0100
+Message-ID: <a14159a4-5bb6-ce63-3dcb-985b4247adf6@canonical.com>
+References: <20170907123132.1fef5ca8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43514 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753312AbdIGHqN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Sep 2017 03:46:13 -0400
-In-Reply-To: <20170907152355.16f4490a@canb.auug.org.au>
+Received: from youngberry.canonical.com ([91.189.89.112]:60591 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754776AbdIGInj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Sep 2017 04:43:39 -0400
+In-Reply-To: <20170907123132.1fef5ca8@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Zi Yan <zi.yan@cs.rutgers.edu>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, 7 Sep 2017 15:23:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Thanks for reporting that Stephen, I've sent a fix to address this issue.
 
-> Hi all,
-> 
-> On Wed, 2 Aug 2017 16:31:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > On Wed, 2 Aug 2017 15:45:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > On Tue, 01 Aug 2017 09:08:01 -0400 "Zi Yan" <zi.yan@cs.rutgers.edu> wrote:  
-> > > >
-> > > > I found two possible fixes.
-> > > > 
-> > > > 1. This uses C++ zero initializer, GCC is OK with it.
-> > > > I tested with GCC 4.9.3 (has the initialization bug) and GCC 6.4.0.
-> > > > 
-> > > > --- a/include/linux/swapops.h~a
-> > > > +++ a/include/linux/swapops.h
-> > > > @@ -217,7 +217,7 @@ static inline swp_entry_t pmd_to_swp_ent
-> > > > 
-> > > >  static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
-> > > >  {
-> > > > -	return (pmd_t){ 0 };
-> > > > +	return (pmd_t){};
-> > > >  }    
-> > > 
-> > > I have done that for today ... please decide which is best (or find
-> > > something better - maybe every platform really needs to have a __pmd()
-> > > definition) and submit a real fix patch to Andrew.  
-> > 
-> > OK, that failed for my compiler (gcc 5.2.0) like this:
-> > 
-> > In file included from mm/vmscan.c:55:0:
-> > include/linux/swapops.h: In function 'swp_entry_to_pmd':
-> > include/linux/swapops.h:226:16: error: empty scalar initializer
-> >   return (pmd_t){};
-> >                 ^
-> > include/linux/swapops.h:226:16: note: (near initialization for '(anonymous)')
-> 
-> This has reappeared today :-( (for the arm multi_v7_defconfig build at
-> least)
-> 
-> > So I used the other idea (on top of Andrew's current tree):
-> 
-> The fix patch now looks like this:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Wed, 2 Aug 2017 15:55:02 +1000
-> Subject: [PATCH] mm-thp-enable-thp-migration-in-generic-path-fix-fix
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/swapops.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> index 45b092aa6419..61cffa148a79 100644
-> --- a/include/linux/swapops.h
-> +++ b/include/linux/swapops.h
-> @@ -223,7 +223,9 @@ static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
->  
->  static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
->  {
-> -	return (pmd_t){};
-> +	pmd_t e;
-> +	memset(&e, 0, sizeof(pmd_t));
-> +	return e;
->  }
+Colin
 
-err, yeah.  I didn't want to add that one :(
-
-At the very least we should add a good comment explaining why we had to
-resort to this.
+On 07/09/17 03:31, Stephen Rothwell wrote:
+> Hi Jarkko,
+> 
+> After merging the tpmdd tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> drivers/char/tpm/tpm_tis_core.c: In function 'probe_itpm':
+> drivers/char/tpm/tpm_tis_core.c:469:31: warning: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   rc = tpm_tis_send_data(chip, cmd_getticks, len);
+>                                ^
+> drivers/char/tpm/tpm_tis_core.c:255:12: note: expected 'u8 * {aka unsigned char *}' but argument is of type 'const u8 * {aka const unsigned char *}'
+>  static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>             ^
+> drivers/char/tpm/tpm_tis_core.c:477:31: warning: passing argument 2 of 'tpm_tis_send_data' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>   rc = tpm_tis_send_data(chip, cmd_getticks, len);
+>                                ^
+> drivers/char/tpm/tpm_tis_core.c:255:12: note: expected 'u8 * {aka unsigned char *}' but argument is of type 'const u8 * {aka const unsigned char *}'
+>  static int tpm_tis_send_data(struct tpm_chip *chip, u8 *buf, size_t len)
+>             ^
+> 
+> Introduced by commit
+> 
+>   5e35bd8e06b9 ("tpm_tis: make array cmd_getticks static const to shink object code size")
+> 
