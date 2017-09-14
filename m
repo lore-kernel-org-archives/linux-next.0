@@ -1,71 +1,58 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170914 build: 0 failures 1 warnings (next-20170914)
-Date: Thu, 14 Sep 2017 20:21:04 +0100
-Message-ID: <E1dsZhA-0007q5-6J@optimist>
+From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: linux-next: Tree for Sep 12
+Date: Fri, 15 Sep 2017 07:31:55 +0900
+Message-ID: <20170914223155.GA1429@tigerII.localdomain>
+References: <20170912141647.7578aec1@canb.auug.org.au>
+ <20170912131825.GA485@tigerII.localdomain>
+ <CALCETrUoVT4DXJo-QU7mX0X5tUCp=jjkyGbomt1pd3Yt+GNd6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50102 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751746AbdINTVG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 14 Sep 2017 15:21:06 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:35855 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751268AbdINWgi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 14 Sep 2017 18:36:38 -0400
+Content-Disposition: inline
+In-Reply-To: <CALCETrUoVT4DXJo-QU7mX0X5tUCp=jjkyGbomt1pd3Yt+GNd6g@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Andy Lutomirski <luto@kernel.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Dan Carpenter <dan.carpenter@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20170914
-Git describe: next-20170914
-Commit: 31fc38c476 Add linux-next specific files for 20170914
+On (09/14/17 09:48), Andy Lutomirski wrote:
+> On Tue, Sep 12, 2017 at 6:18 AM, Sergey Senozhatsky
+> <sergey.senozhatsky@gmail.com> wrote:
+> > Hi Andy,
+> >
+> > got the following warn for each CPU
+> >
+> >
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] WARNING: CPU: 0 PID: 0 at arch/x86/mm/tlb.c:245 initialize_tlbstate_and_flush+0x60/0xd4
+> > [    0.000000] Modules linked in:
+> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.13.0-next-20170912-00021-g7df61d682d25-dirty #406
+> > [    0.000000] task: ffffffff8180d480 task.stack: ffffffff81800000
+> > [    0.000000] RIP: 0010:initialize_tlbstate_and_flush+0x60/0xd4
+> > [    0.000000] RSP: 0000:ffffffff81803eb8 EFLAGS: 00010046
+> > [    0.000000] RAX: 00000000000406b0 RBX: ffff88042fa16440 RCX: 0000000001808000
+> > [    0.000000] RDX: ffffffff8182f3e0 RSI: 0000000001808000 RDI: 0000000000000000
+> > [    0.000000] RBP: ffffffff81803f10 R08: 0000000000000000 R09: ffffffff0000ffff
+> > [    0.000000] R10: ffff0000ffffffff R11: 0000ffffffffffff R12: 0000000000000000
+> > [    0.000000] R13: 0000000000000000 R14: ffff88042fa0c3a0 R15: ffffffff8180d480
+> > [    0.000000] FS:  0000000000000000(0000) GS:ffff88042fa00000(0000) knlGS:0000000000000000
+> > [    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [    0.000000] CR2: ffff88042fdff000 CR3: 0000000001808000 CR4: 00000000000406b0
+> > [    0.000000] Call Trace:
+> > [    0.000000]  cpu_init+0x174/0x2dc
+> > [    0.000000]  trap_init+0x3a/0x4a
+> > [    0.000000]  start_kernel+0x1da/0x3f6
+> > [    0.000000]  secondary_startup_64+0xa5/0xa5
+> > [    0.000000] Code: 00 80 ff 77 00 00 48 01 f8 48 39 c6 74 02 0f ff 48 8b 05 7d b9 82 00 0f ba e0 11 73 10 65 48 8b 05 fb 92 fe 7e 0f ba e0 11 72 02 <0f> ff 48 81 e1 00 f0 ff ff 0f 22 d9 65 66 c7 05 d7 92 fe 7e 00
+> > [    0.000000] ---[ end trace e43a322026e46189 ]---
+> >
+> 
+> Should be fixed upstream now.
 
-Build Time: 104 min 58 sec
+thanks.
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 1
-	  3 ../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+	-ss
