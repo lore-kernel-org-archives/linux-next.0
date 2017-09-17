@@ -1,71 +1,36 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170915 build: 0 failures 1 warnings (next-20170915)
-Date: Fri, 15 Sep 2017 08:00:38 +0100
-Message-ID: <E1dskcA-0000if-NE@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35560 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751124AbdIOHAl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 15 Sep 2017 03:00:41 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Mon, 18 Sep 2017 09:34:48 +1000
+Message-ID: <20170918093448.359d25c4@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jan H. =?UTF-8?B?U2Now7Zu?= =?UTF-8?B?aGVycg==?=" <jschoenh@amazon.de>, Paolo Bonzini <pbonzini@redhat.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20170915
-Git describe: next-20170915
-Commit: 1f183459b5 Add linux-next specific files for 20170915
+Hi Linus,
 
-Build Time: 104 min 54 sec
+With just your tree, today's linux-next build (powerpc ppc64_defconfig)
+failed like this:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+arch/powerpc/kvm/../../../virt/kvm/eventfd.c: In function 'kvm_irqfd':
+arch/powerpc/kvm/../../../virt/kvm/eventfd.c:568:19: error: 'KVM_MAX_IRQ_ROUTES' undeclared (first use in this function)
+  if (args->gsi >= KVM_MAX_IRQ_ROUTES)
+                   ^
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+Caused by commit
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : x86_64-defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
+  36ae3c0a36b7 ("KVM: Don't accept obviously wrong gsi values via KVM_IRQFD")
 
--------------------------------------------------------------------------------
+KVM_MAX_IRQ_ROUTES is only defined when CONFIG_HAVE_KVM_IRQ_ROUTING is
+defined (which for PowerPC is only when CONFIG_KVM_MPIC is defined which
+depends on CONFIG_E500).
 
-Warnings Summary: 1
-	  3 ../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
+I have just reverted that commit for today.
 
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../kernel/signal.c:3443:19: warning: unused variable 'mask' [-Wunused-variable]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
+-- 
+Cheers,
+Stephen Rothwell
