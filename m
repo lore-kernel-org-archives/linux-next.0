@@ -1,45 +1,47 @@
 From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: [linux-next][EXT4][Oops]kernel panics when running fsfuzzer
-Date: Mon, 18 Sep 2017 19:01:01 +0530
-Message-ID: <1505741461.6990.11.camel@abdul.in.ibm.com>
+Subject: [linux-next][XFS][trinity] WARNING: CPU: 32 PID: 31369 at
+ fs/iomap.c:993
+Date: Mon, 18 Sep 2017 20:26:05 +0530
+Message-ID: <1505746565.6990.18.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="=-1UZMof9oRpWaKUrPGDCZ"
+Content-Type: multipart/mixed; boundary="=-pvrNdR6VcoUUCsPwTR/I"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc: linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, chandan <chandan@linux.vnet.ibm.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Cc: linux-xfs <linux-xfs@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@fb.com>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, chandan <chandan@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
 
---=-1UZMof9oRpWaKUrPGDCZ
+--=-pvrNdR6VcoUUCsPwTR/I
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 
 Hi,
 
-next kernel panics when running fsfuzzer test on ext4 file system.
+A warning is triggered from:
+
+file fs/iomap.c in function iomap_dio_rw
+
+    if (ret)
+        goto out_free_dio;
+
+    ret = invalidate_inode_pages2_range(mapping,
+            start >> PAGE_SHIFT, end >> PAGE_SHIFT);
+>>  WARN_ON_ONCE(ret);
+    ret = 0;
+
+    inode_dio_begin(inode);
 
 Machine Type: Power 7 PowerVM LPAR
-kernel : 4.13.0-next-20170915
-config : attached
-Test: fsfuzzer
+Kernel : 4.13.0-next-20170915
+gcc: 4.8.5
+Test: trinity fuzzer
+
 
 dmesg:
------
-EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional
-features (e4000000)
-JBD2: no valid journal superblock found
-EXT4-fs (loop1): error loading journal
-EXT4-fs (loop1): mounted filesystem with ordered data mode. Opts: (null)
-EXT4-fs error (device loop1): ext4_mb_generate_buddy:756: group 0, block
-bitmap and bg descriptor inconsistent: 1077 vs 1045 free clusters
-Unable to handle kernel paging request for data at address 0x00000008
-Faulting instruction address: 0xd0000000084b0424
-Oops: Kernel access of bad area, sig: 11 [#1]
-BE SMP NR_CPUS=2048 NUMA pSeries
-Dumping ftrace buffer: 
-   (ftrace buffer empty)
-Modules linked in: cramfs(E) dlci(E) 8021q(E) garp(E) mrp(E) af_key(E)
+------------[ cut here ]------------
+WARNING: CPU: 32 PID: 31369 at fs/iomap.c:993 .iomap_dio_rw+0x470/0x480
+Modules linked in: dlci(E) 8021q(E) garp(E) mrp(E) af_key(E)
 ieee802154_socket(E) ieee802154(E) rpcrdma(E) ib_isert(E)
 iscsi_target_mod(E) ib_iser(E) libiscsi(E) ib_srpt(E) target_core_mod(E)
 ib_srp(E) hidp(E) ib_ipoib(E) cmtp(E) kernelcapi(E) rdma_ucm(E)
@@ -59,57 +61,49 @@ dccp(E) inet_diag(E) iptable_filter(E) nfsd(E) auth_rpcgss(E) nfs_acl(E)
 lockd(E) grace(E) sunrpc(E) binfmt_misc(E) ip_tables(E) ext4(E)
 mbcache(E) jbd2(E) sd_mod(E) ibmvscsi(E) scsi_transport_srp(E) [last
 unloaded: netlink_diag]
-CPU: 15 PID: 32523 Comm: jbd2/loop1-8 Tainted: G        W   E
+CPU: 32 PID: 31369 Comm: trinity-c133 Tainted: G            E
 4.13.0-next-20170915-autotest #1
-task: c000000189664900 task.stack: c0000009f122c000
-NIP:  d0000000084b0424 LR: d0000000084a8040 CTR: c000000000373fe0
-REGS: c0000009f122f590 TRAP: 0300   Tainted: G        W   E
+task: c0000009f4149d80 task.stack: c000000546920000
+NIP:  c0000000003aac40 LR: c0000000003aa9e8 CTR: 0000000000000000
+REGS: c000000546923630 TRAP: 0700   Tainted: G            E
 (4.13.0-next-20170915-autotest)
-MSR:  800000000280b032 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI>  CR: 28002022
+MSR:  800000000282b032 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI>  CR: 28004428
 XER: 20000000  
-CFAR: c000000000008718 DAR: 0000000000000008 DSISR: 40000000 SOFTE: 1 
-GPR00: d0000000084a8040 c0000009f122f810 d0000000084bf010
-c00000093b66a7d0 
-GPR04: f0000000024ed980 c00000093b66a578 c00000093b66a578
-0000000000000001 
-GPR08: 0000000000000000 0000000000000000 0000000000000000
-d0000000084b2738 
-GPR12: c000000000373fe0 c00000000e939d80 c000000000118350
-c0000013f0bc22c0 
-GPR16: c0000009f65e4000 c0000009f122fb20 0000000000000000
-c00000108a749824 
-GPR20: c0000009f791cf9c 0000000000000000 c0000009f791cf60
-d0000000084b6cb0 
-GPR24: 0000000000000000 c00000108a749880 0000000000000000
-c0000009f791d300 
-GPR28: c00000093b66a7d0 c0000009f122c000 0000000000000000
-c0000013f8f389b8 
-NIP [d0000000084b0424] .jbd2_journal_put_journal_head+0x94/0x22c [jbd2]
-LR [d0000000084a8040] .__jbd2_journal_remove_checkpoint+0x70/0x200
-[jbd2]
+CFAR: c0000000003aa9f0 SOFTE: 1 
+GPR00: c0000000003aa9e8 c0000005469238b0 c000000001453b00
+fffffffffffffff0 
+GPR04: 0000000000000000 0000000000000000 0000000000000000
+0000000000000000 
+GPR08: 0000000000000000 00000000ffffffff 0000000000000000
+0000000000000000 
+GPR12: 0000000028004422 c00000000e945000 0000000000000000
+0000000010030a00 
+GPR16: 0000000010030bc8 0000000000000000 0000000000000000
+0000000000000000 
+GPR20: 0000000000000000 0000000000000000 c0000013ebcc16a0
+0000000000000010 
+GPR24: c00000099ec0c2d0 c000000000a49168 c00000099ec0c158
+c000000546923b70 
+GPR28: c000000546923d40 0000000000000014 0000000000000000
+c0000013ebcc1680 
+NIP [c0000000003aac40] .iomap_dio_rw+0x470/0x480
+LR [c0000000003aa9e8] .iomap_dio_rw+0x218/0x480
 Call Trace:
-[c0000009f122f810] [d0000000084b04ec] .jbd2_journal_put_journal_head
-+0x15c/0x22c [jbd2] (unreliable)
-[c0000009f122f890] [d0000000084a8040] .__jbd2_journal_remove_checkpoint
-+0x70/0x200 [jbd2]
-[c0000009f122f930] [d0000000084a8b98] .__jbd2_log_wait_for_space
-+0x368/0x3d0 [jbd2]
-[c0000009f122f9c0]
-[d0000000084a8c5c] .__jbd2_journal_clean_checkpoint_list+0x5c/0xc0
-[jbd2]
-[c0000009f122fa60] [d0000000084a4e2c] .jbd2_journal_commit_transaction
-+0x33c/0x2f80 [jbd2]
-[c0000009f122fc90] [d0000000084ad160] .jbd2_journal_init_inode
-+0x390/0x5a0 [jbd2]
-[c0000009f122fd70] [c0000000001184ac] .kthread+0x15c/0x1a0
-[c0000009f122fe30] [c00000000000b4e4] .ret_from_kernel_thread+0x58/0x74
+[c0000005469238b0] [c0000000003aa9e8] .iomap_dio_rw+0x218/0x480
+(unreliable)
+[c0000005469239d0] [c0000000004639c8] .xfs_file_dio_aio_read+0x88/0x160
+[c000000546923a70] [c000000000463f44] .xfs_file_read_iter+0x104/0x120
+[c000000546923b00] [c0000000003248f0] .do_iter_readv_writev+0x190/0x1c0
+[c000000546923bb0] [c000000000325d90] .do_iter_read+0xf0/0x280
+[c000000546923c50] [c00000000032858c] .vfs_readv+0x6c/0xa0
+[c000000546923d90] [c0000000003287b8] .do_preadv+0xd8/0x120
+[c000000546923e30] [c00000000000b184] system_call+0x58/0x6c
 Instruction dump:
-7c2004ac 7d40f8a8 7d4a4878 7d40f9ad 40c2fff4 38210080 e8010010 ebc1fff0 
-ebe1fff8 7c0803a6 4e800020 ebdf0040 <e93e000a> 79290fe0 0b090000
-e93e0028 
----[ end trace bd674540a2bf235c ]---
+7c0af000 40c20010 7c60492d 40c2fff0 7c0004ac 4bfffe90 60000000 60000000 
+3be0fdef 4bfffc0c 3be0fff4 4bfffc04 <0fe00000> 4bfffdb0 00000000
+00000000 
+---[ end trace bd674540a2bf235b ]---
 
-Kernel panic - not syncing: Fatal exception
 
 -- 
 Regard's
@@ -119,7 +113,7 @@ IBM Linux Technology Centre
 
 
 
---=-1UZMof9oRpWaKUrPGDCZ
+--=-pvrNdR6VcoUUCsPwTR/I
 Content-Disposition: attachment; filename="p7-vm-config"
 Content-Type: text/plain; name="p7-vm-config"; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
@@ -5997,211 +5991,4 @@ CONFIG_VHOST_NET=m
 CONFIG_VHOST=m
 CONFIG_VHOST_CROSS_ENDIAN_LEGACY=y
 
---=-1UZMof9oRpWaKUrPGDCZ
-Content-Disposition: attachment; filename="EXT4-fuzzerlog.txt"
-Content-Type: text/plain; name="EXT4-fuzzerlog.txt"; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-
-(04/17) avocado-misc-tests/fuzz/fsfuzzer.py:Fsfuzzer.test;ext4-6275:  [32626.478538] EXT4-fs (loop1): mounted filesystem with ordered data mode. Opts: (null)
-[32634.026419] EXT4-fs (loop1): ext4_check_descriptors: Inode table for group 0 not in group (block 146235046494274)!
-[32634.026449] EXT4-fs (loop1): group descriptors corrupted!
-[32634.607043] EXT4-fs (loop1): ext4_check_descriptors: Inode bitmap for group 0 not in group (block 14680114)!
-[32634.607073] EXT4-fs (loop1): group descriptors corrupted!
-[32635.250558] EXT4-fs (loop1): mounted filesystem with ordered data mode. Opts: (null)
-[32637.115255] EXT4-fs (loop1): VFS: Can't find ext4 filesystem
-[32637.665685] EXT4-fs (loop1): Unrecognized mount option "
-" or missing value
-[32637.665713] EXT4-fs (loop1): failed to parse options in superblock: 
-
-[32637.665721] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (1800)
-[32638.125270] EXT4-fs (loop1): bad geometry: block count 14487552 exceeds size of device (4096 blocks)
-[32638.615244] EXT4-fs (loop1): invalid inodes per group: 8192
-[32638.615244] 
-[32639.165206] EXT4-fs (loop1): Invalid log block size: 3909128448
-[32639.605258] EXT4-fs (loop1): bad geometry: block count 8574853690513428480 exceeds size of device (4096 blocks)
-[32639.985283] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (b80000)
-[32640.506889] EXT4-fs (loop1): bad geometry: block count 15536128 exceeds size of device (4096 blocks)
-[32640.965247] EXT4-fs (loop1): invalid inodes per group: 8192
-[32640.965247] 
-[32641.445226] EXT4-fs (loop1): bad geometry: block count 47616 exceeds size of device (4096 blocks)
-[32642.125255] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (8000)
-[32642.565350] EXT4-fs (loop1): filesystem has both journal and inode journals!
-[32643.095239] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (f00000)
-[32643.597057] EXT4-fs (loop1): #blocks per group too big: 5775360
-[32644.045249] EXT4-fs (loop1): Unrecognized mount option "�" or missing value
-[32644.045275] EXT4-fs (loop1): failed to parse options in superblock: �
-[32644.045283] EXT4-fs (loop1): Invalid log block size: 45312
-[32644.585223] EXT4-fs warning (device loop1): ext4_fill_super:3481: metadata_csum and uninit_bg are redundant flags; please run fsck.
-[32644.585262] EXT4-fs (loop1): VFS: Found ext4 filesystem with unknown checksum algorithm.
-[32645.046769] EXT4-fs (loop1): Unrecognized mount option "�" or missing value
-[32645.046796] EXT4-fs (loop1): failed to parse options in superblock: �
-[32645.046812] EXT4-fs (loop1): ext4_check_descriptors: Inode table for group 0 not in group (block 8716354)!
-[32645.046819] EXT4-fs (loop1): group descriptors corrupted!
-[32645.565320] EXT4-fs (loop1): ext4_check_descriptors: Inode bitmap for group 0 not in group (block 54322)!
-[32645.565353] EXT4-fs (loop1): group descriptors corrupted!
-[32646.145225] EXT4-fs warning (device loop1): ext4_fill_super:3481: metadata_csum and uninit_bg are redundant flags; please run fsck.
-[32646.145251] EXT4-fs (loop1): VFS: Found ext4 filesystem with unknown checksum algorithm.
-[32646.766720] EXT4-fs (loop1): Unrecognized mount option "�" or missing value
-[32646.766747] EXT4-fs (loop1): failed to parse options in superblock: �
-[32646.766758] EXT4-fs (loop1): bad geometry: block count 14094336 exceeds size of device (4096 blocks)
-[32647.406721] EXT4-fs (loop1): Unsupported filesystem blocksize 262144 (136 log_block_size)
-[32648.005640] EXT4-fs (loop1): ext4_check_descriptors: Inode bitmap for group 0 not in group (block 16056370)!
-[32648.005675] EXT4-fs (loop1): group descriptors corrupted!
-[32648.596715] EXT4-fs (loop1): #blocks per group too big: 6955008
-[32649.185233] EXT4-fs (loop1): bad geometry: block count 70931694131089408 exceeds size of device (4096 blocks)
-[32649.795243] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (8)
-[32650.427080] EXT4-fs (loop2): ext4_check_descriptors: Inode bitmap for group 0 not in group (block 21550427904409650)!
-[32650.427108] EXT4-fs (loop2): group descriptors corrupted!
-[32651.036710] EXT4-fs (loop1): unsupported descriptor size 237
-[32651.565309] EXT4-fs (loop1): ext4_check_descriptors: Checksum for group 0 failed (53275!=19159)
-[32651.565337] EXT4-fs (loop1): group descriptors corrupted!
-[32652.117306] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (83000000)
-[32652.687512] EXT4-fs (loop1): mounted filesystem with ordered data mode. Opts: (null)
-[32652.706452] EXT4-fs error (device loop1): htree_dirblock_to_tree:1004: inode #2: block 35: comm fstest: bad entry in directory: inode out of bounds - offset=484(484), inode=45092, rec_len=20, name_len=11
-[32652.729581] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.741648] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.759743] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.777806] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.795895] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.813954] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.832051] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.854872] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32652.874863] EXT4-fs error (device loop1): ext4_lookup:1580: inode #2: comm fstest: deleted inode referenced: 130
-[32655.945260] EXT4-fs (loop1): #blocks per group too big: 12525568
-[32656.405253] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (37000000)
-[32656.845267] EXT4-fs (loop1): filesystem too large to mount safely on this system
-[32657.215251] EXT4-fs (loop1): #blocks per group too big: 8398
-[32657.665241] EXT4-fs (loop1): Invalid log block size: 194
-[32658.125266] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (8a0000)
-[32658.675250] EXT4-fs (loop1): Invalid log block size: 16128
-[32659.175221] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (29)
-[32659.825210] EXT4-fs (loop1): VFS: Can't find ext4 filesystem
-[32660.586694] EXT4-fs (loop1): unsupported descriptor size 55360
-[32661.126738] EXT4-fs (loop1): #blocks per group too big: 15540224
-[32661.565607] EXT4-fs (loop1): ext4_check_descriptors: Inode table for group 0 not in group (block 13697090)!
-[32661.565634] EXT4-fs (loop1): group descriptors corrupted!
-[32662.075256] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (29)
-[32662.496941] EXT4-fs (loop1): VFS: Can't find ext4 filesystem
-[32663.005251] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (1800)
-[32663.496713] EXT4-fs (loop1): bad geometry: block count 2617249792 exceeds size of device (4096 blocks)
-[32664.066756] EXT4-fs (loop1): Invalid log block size: 2533359616
-[32664.765426] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (cc0000)
-[32665.186716] EXT4-fs (loop1): filesystem too large to mount safely on this system
-[32665.705232] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (910000)
-[32666.175253] EXT4-fs (loop1): unsupported descriptor size 187
-[32666.725262] EXT4-fs (loop1): #blocks per group too big: 14884864
-[32667.305244] EXT4-fs (loop1): Invalid log block size: 2550136832
-[32667.765254] EXT4-fs (loop1): Invalid log block size: 9591808
-[32668.245243] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (ae0000)
-[32668.715289] EXT4-fs (loop1): Invalid log block size: 2902458368
-[32669.255255] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (e21800)
-[32669.775791] EXT4-fs (loop1): bad geometry: block count 170424302309376 exceeds size of device (4096 blocks)
-[32670.305259] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (10000)
-[32670.935211] EXT4-fs warning (device loop1): ext4_fill_super:3481: metadata_csum and uninit_bg are redundant flags; please run fsck.
-[32670.935241] EXT4-fs (loop1): VFS: Found ext4 filesystem with unknown checksum algorithm.
-[32671.586722] EXT4-fs (loop1): Unrecognized mount option ")" or missing value
-[32671.586748] EXT4-fs (loop1): failed to parse options in superblock: )
-[32671.586757] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (b81e0000)
-[32672.175266] EXT4-fs warning (device loop1): ext4_fill_super:3481: metadata_csum and uninit_bg are redundant flags; please run fsck.
-[32672.175294] EXT4-fs (loop1): VFS: Found ext4 filesystem with unknown checksum algorithm.
-[32672.685207] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (80)
-[32673.345288] EXT4-fs (loop1): Unsupported filesystem blocksize 0 (161 log_block_size)
-[32673.857351] EXT4-fs (loop1): ext4_check_descriptors: Checksum for group 0 failed (23760!=19159)
-[32673.857381] EXT4-fs (loop1): group descriptors corrupted!
-[32674.395228] EXT4-fs warning (device loop1): ext4_fill_super:3481: metadata_csum and uninit_bg are redundant flags; please run fsck.
-[32674.395258] EXT4-fs (loop1): VFS: Found ext4 filesystem with unknown checksum algorithm.
-[32674.926718] EXT4-fs (loop1): invalid inodes per group: 8192
-[32674.926718] 
-[32675.375664] EXT4-fs (loop1): ext4_check_descriptors: Checksum for group 0 failed (42565!=19159)
-[32675.375690] EXT4-fs (loop1): group descriptors corrupted!
-[32675.825244] EXT4-fs (loop1): bad geometry: first data block 16515073 is beyond end of filesystem (4096)
-[32676.436799] EXT4-fs (loop1): ext4_check_descriptors: Block bitmap for group 0 not in group (block 17510074516053688354)!
-[32676.436827] EXT4-fs (loop1): group descriptors corrupted!
-[32677.034872] EXT4-fs error (device loop1): ext4_ext_check_inode:510: inode #2: comm mount: pblk 0 bad header/extent: invalid extent entries - magic f30a, entries 1, max 4(4), depth 0(0)
-[32677.061339] EXT4-fs (loop1): get root inode failed
-[32677.061349] EXT4-fs (loop1): mount failed
-[32677.616747] EXT4-fs (loop1): bad geometry: block count 4539628424389464064 exceeds size of device (4096 blocks)
-[32678.105597] EXT4-fs (loop1): ext4_check_descriptors: Inode bitmap for group 0 not in group (block 141836999983154)!
-[32678.105625] EXT4-fs (loop1): group descriptors corrupted!
-[32678.647431] EXT4-fs error (device loop1): ext4_ext_check_inode:510: inode #8: comm mount: pblk 0 bad header/extent: invalid extent entries - magic f30a, entries 3, max 4(4), depth 0(0)
-[32678.673539] EXT4-fs (loop1): no journal found
-[32679.356787] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (63000000)
-[32679.955457] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (800)
-[32680.635233] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (21)
-[32681.165593] EXT4-fs (loop1): ext4_check_descriptors: Checksum for group 0 failed (41639!=19159)
-[32681.165631] EXT4-fs (loop1): group descriptors corrupted!
-[32681.645655] EXT4-fs (loop1): ext4_check_descriptors: Inode table for group 0 not in group (block 343597383746)!
-[32681.645687] EXT4-fs (loop1): group descriptors corrupted!
-[32682.285217] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (90000)
-[32682.886744] EXT4-fs (loop1): Invalid log block size: 51200
-[32683.476599] EXT4-fs (loop1): VFS: Can't find ext4 filesystem
-[32684.095333] EXT4-fs (loop1): ext4_check_descriptors: Checksum for group 0 failed (18540!=19159)
-[32684.095361] EXT4-fs (loop1): group descriptors corrupted!
-[32684.715259] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (20)
-[32685.225239] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (b8000000)
-[32685.766743] EXT4-fs (loop1): bad geometry: first data block 45313 is beyond end of filesystem (4096)
-[32686.376738] EXT4-fs (loop1): ext4_check_descriptors: Block bitmap for group 0 not in group (block 15728674)!
-[32686.376766] EXT4-fs (loop1): group descriptors corrupted!
-[32686.866789] EXT4-fs (loop1): Couldn't mount because of unsupported optional features (1800)
-[32687.456706] EXT4-fs (loop1): Number of reserved GDT blocks insanely large: 36639
-[32687.927053] EXT4-fs (loop1): ext4_check_descriptors: Block bitmap for group 0 not in group (block 15138850)!
-[32687.927083] EXT4-fs (loop1): group descriptors corrupted!
-[32688.415238] EXT4-fs (loop1): Invalid log block size: 36608
-[32688.935227] EXT4-fs (loop1): VFS: Can't find ext4 filesystem
-[32689.576750] EXT4-fs (loop1): ext4_check_descriptors: Block bitmap for group 0 not in group (block 39687971716202717)!
-[32689.576777] EXT4-fs (loop1): group descriptors corrupted!
-[32690.105222] EXT4-fs (loop1): invalid inodes per group: 8192
-[32690.105222] 
-[32690.715242] EXT4-fs (loop1): couldn't mount RDWR because of unsupported optional features (e4000000)
-[32691.196855] JBD2: no valid journal superblock found
-[32691.196882] EXT4-fs (loop1): error loading journal
-[32691.774998] EXT4-fs (loop1): mounted filesystem with ordered data mode. Opts: (null)
-[32692.007219] EXT4-fs error (device loop1): ext4_mb_generate_buddy:756: group 0, block bitmap and bg descriptor inconsistent: 1077 vs 1045 free clusters
-[32692.585160] Unable to handle kernel paging request for data at address 0x00000008
-[32692.585184] Faulting instruction address: 0xd0000000084b0424
-[32692.585194] Oops: Kernel access of bad area, sig: 11 [#1]
-[32692.585198] BE SMP NR_CPUS=2048 NUMA pSeries
-[32692.585229] Dumping ftrace buffer:
-[32692.585279]    (ftrace buffer empty)
-[32692.585287] Modules linked in: cramfs(E) dlci(E) 8021q(E) garp(E) mrp(E) af_key(E) ieee802154_socket(E) ieee802154(E) rpcrdma(E) ib_isert(E) iscsi_target_mod(E) ib_iser(E) libiscsi(E) ib_srpt(E) target_core_mod(E) ib_srp(E) hidp(E) ib_ipoib(E) cmtp(E) kernelcapi(E) rdma_ucm(E) ib_ucm(E) bnep(E) ib_uverbs(E) rfcomm(E) bluetooth(E) ib_umad(E) rdma_cm(E) ecdh_generic(E) rfkill(E) ib_cm(E) iw_cm(E) pptp(E) gre(E) l2tp_ppp(E) l2tp_netlink(E) l2tp_core(E) ip6_udp_tunnel(E) udp_tunnel(E) pppoe(E) pppox(E) ppp_generic(E) slhc(E) crypto_user(E) ib_core(E) nfnetlink(E) scsi_transport_iscsi(E) atm(E) sctp(E) dccp_ipv4(E) netlink_diag(E) dccp_diag(E) ip6table_filter(E) af_packet_diag(E) unix_diag(E) tcp_diag(E) udp_diag(E) ebtable_filter(E) bridge(E) sg(E) ibmveth(E) rpadlpar_io(E) loop(E) xt_CHECK
- SUM(E) iptable_mangle(E)
-[32692.585398]  ipt_MASQUERADE(E) nf_nat_masquerade_ipv4(E) iptable_nat(E) nf_nat_ipv4(E) nf_nat(E) nf_conntrack_ipv4(E) nf_defrag_ipv4(E) xt_conntrack(E) nf_conntrack(E) ipt_REJECT(E) nf_reject_ipv4(E) tun(E) stp(E) llc(E) rpaphp(E) kvm_pr(E) kvm(E) ebtables(E) ip6_tables(E) dccp(E) inet_diag(E) iptable_filter(E) nfsd(E) auth_rpcgss(E) nfs_acl(E) lockd(E) grace(E) sunrpc(E) binfmt_misc(E) ip_tables(E) ext4(E) mbcache(E) jbd2(E) sd_mod(E) ibmvscsi(E) scsi_transport_srp(E) [last unloaded: netlink_diag]
-[32692.585465] CPU: 15 PID: 32523 Comm: jbd2/loop1-8 Tainted: G        W   E   4.13.0-next-20170915-autotest #1
-[32692.585474] task: c000000189664900 task.stack: c0000009f122c000
-[32692.585480] NIP:  d0000000084b0424 LR: d0000000084a8040 CTR: c000000000373fe0
-[32692.585486] REGS: c0000009f122f590 TRAP: 0300   Tainted: G        W   E    (4.13.0-next-20170915-autotest)
-[32692.585492] MSR:  800000000280b032 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI>  CR: 28002022  XER: 20000000
-[32692.585509] CFAR: c000000000008718 DAR: 0000000000000008 DSISR: 40000000 SOFTE: 1 
-[32692.585509] GPR00: d0000000084a8040 c0000009f122f810 d0000000084bf010 c00000093b66a7d0 
-[32692.585509] GPR04: f0000000024ed980 c00000093b66a578 c00000093b66a578 0000000000000001 
-[32692.585509] GPR08: 0000000000000000 0000000000000000 0000000000000000 d0000000084b2738 
-[32692.585509] GPR12: c000000000373fe0 c00000000e939d80 c000000000118350 c0000013f0bc22c0 
-[32692.585509] GPR16: c0000009f65e4000 c0000009f122fb20 0000000000000000 c00000108a749824 
-[32692.585509] GPR20: c0000009f791cf9c 0000000000000000 c0000009f791cf60 d0000000084b6cb0 
-[32692.585509] GPR24: 0000000000000000 c00000108a749880 0000000000000000 c0000009f791d300 
-[32692.585509] GPR28: c00000093b66a7d0 c0000009f122c000 0000000000000000 c0000013f8f389b8 
-[32692.585589] NIP [d0000000084b0424] .jbd2_journal_put_journal_head+0x94/0x22c [jbd2]
-[32692.585601] LR [d0000000084a8040] .__jbd2_journal_remove_checkpoint+0x70/0x200 [jbd2]
-[32692.585606] Call Trace:
-[32692.585615] [c0000009f122f810] [d0000000084b04ec] .jbd2_journal_put_journal_head+0x15c/0x22c [jbd2] (unreliable)
-[32692.585629] [c0000009f122f890] [d0000000084a8040] .__jbd2_journal_remove_checkpoint+0x70/0x200 [jbd2]
-[32692.585640] [c0000009f122f930] [d0000000084a8b98] .__jbd2_log_wait_for_space+0x368/0x3d0 [jbd2]
-[32692.585652] [c0000009f122f9c0] [d0000000084a8c5c] .__jbd2_journal_clean_checkpoint_list+0x5c/0xc0 [jbd2]
-[32692.585664] [c0000009f122fa60] [d0000000084a4e2c] .jbd2_journal_commit_transaction+0x33c/0x2f80 [jbd2]
-[32692.585676] [c0000009f122fc90] [d0000000084ad160] .jbd2_journal_init_inode+0x390/0x5a0 [jbd2]
-[32692.585688] [c0000009f122fd70] [c0000000001184ac] .kthread+0x15c/0x1a0
-[32692.585699] [c0000009f122fe30] [c00000000000b4e4] .ret_from_kernel_thread+0x58/0x74
-[32692.585705] Instruction dump:
-[32692.585711] 7c2004ac 7d40f8a8 7d4a4878 7d40f9ad 40c2fff4 38210080 e8010010 ebc1fff0 
-[32692.585724] ebe1fff8 7c0803a6 4e800020 ebdf0040 <e93e000a> 79290fe0 0b090000 e93e0028 
-[32692.585740] ---[ end trace bd674540a2bf235c ]---
-[32692.587310] 
-[32693.587341] Kernel panic - not syncing: Fatal exception
-[32693.587442] Dumping ftrace buffer:
-[32693.587455]    (ftrace buffer empty)
-[32693.588792] Rebooting in 10 seconds..
-
-
-
-
---=-1UZMof9oRpWaKUrPGDCZ--
+--=-pvrNdR6VcoUUCsPwTR/I--
