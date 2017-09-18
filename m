@@ -1,8 +1,8 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: [XFS][trinity] WARNING: CPU: 32 PID: 31369 at
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [linux-next][XFS][trinity] WARNING: CPU: 32 PID: 31369 at
  fs/iomap.c:993
-Date: Mon, 18 Sep 2017 15:04:12 -0700
-Message-ID: <20170918220412.GB6533@magnolia>
+Date: Tue, 19 Sep 2017 08:05:02 +1000
+Message-ID: <20170918220502.GL10621@dastard>
 References: <1505746565.6990.18.camel@abdul.in.ibm.com>
  <20170918152706.GA11482@lst.de>
  <8abed401-1634-760f-6543-4652fa495315@kernel.dk>
@@ -10,17 +10,13 @@ References: <1505746565.6990.18.camel@abdul.in.ibm.com>
  <21c53d3f-5ca9-886d-a326-cb6f1bbddffd@sandeen.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:20781 "EHLO
-        userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750790AbdIRWE1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 18 Sep 2017 18:04:27 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 In-Reply-To: <21c53d3f-5ca9-886d-a326-cb6f1bbddffd@sandeen.net>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Eric Sandeen <sandeen@sandeen.net>
-Cc: Dave Chinner <david@fromorbit.com>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-xfs <linux-xfs@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, chandan <chandan@linux.vnet.ibm.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-xfs <linux-xfs@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, chandan <chandan@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
 On Mon, Sep 18, 2017 at 05:00:58PM -0500, Eric Sandeen wrote:
 > On 9/18/17 4:31 PM, Dave Chinner wrote:
@@ -62,28 +58,12 @@ On Mon, Sep 18, 2017 at 05:00:58PM -0500, Eric Sandeen wrote:
 > without the ZOMG I THINK I OOPSED that a WARN_ON produces?  Or do we 
 > want/need the backtrace?
 
-Maybe we could state a little more directly what's going on:
+backtrace is actually useful - that's how I recently learnt that
+splice now supports direct IO.....
 
-if (err)
-	printk_once(KERN_INFO "Urk, collision detected between direct IO and page cache, YHL. HAND.\n"); ?
+Cheers,
 
-8-)
-
---D
-
-> 
-> -Eric
-> 
-> > It needs to be on by default, bu tI'm sure we can wrap it with
-> > something like an xfs_alert_tag() type of construct so the tag can
-> > be set in /proc/fs/xfs/panic_mask to suppress it if testers so
-> > desire.
-> > 
-> > Cheers,
-> > 
-> > Dave.
-> > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
