@@ -1,47 +1,60 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [XFS][trinity] WARNING: CPU: 32 PID: 31369 at
+From: Dave Chinner <david@fromorbit.com>
+Subject: Re: [linux-next][XFS][trinity] WARNING: CPU: 32 PID: 31369 at
  fs/iomap.c:993
-Date: Mon, 18 Sep 2017 09:51:29 -0600
-Message-ID: <955c9c41-1941-5cf4-751c-14a3efa9d0ce@kernel.dk>
+Date: Tue, 19 Sep 2017 07:31:43 +1000
+Message-ID: <20170918213143.GJ10621@dastard>
 References: <1505746565.6990.18.camel@abdul.in.ibm.com>
  <20170918152706.GA11482@lst.de>
  <8abed401-1634-760f-6543-4652fa495315@kernel.dk>
- <20170918153947.GA12635@lst.de> <20170918154328.GA32076@ZenIV.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:49846 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754165AbdIRPvc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 18 Sep 2017 11:51:32 -0400
-Received: by mail-io0-f171.google.com with SMTP id 21so3188492iof.6
-        for <linux-next@vger.kernel.org>; Mon, 18 Sep 2017 08:51:32 -0700 (PDT)
-In-Reply-To: <20170918154328.GA32076@ZenIV.linux.org.uk>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Christoph Hellwig <hch@lst.de>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-xfs <linux-xfs@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, chandan <chandan@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <8abed401-1634-760f-6543-4652fa495315@kernel.dk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Christoph Hellwig <hch@lst.de>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-xfs <linux-xfs@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, chandan <chandan@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-On 09/18/2017 09:43 AM, Al Viro wrote:
-> On Mon, Sep 18, 2017 at 05:39:47PM +0200, Christoph Hellwig wrote:
->> On Mon, Sep 18, 2017 at 09:28:55AM -0600, Jens Axboe wrote:
->>> If it's expected, why don't we kill the WARN_ON_ONCE()? I get it all
->>> the time running xfstests as well.
->>
->> Dave insisted on it to decourage users/applications from mixing
->> mmap and direct I/O.
->>
->> In many ways a tracepoint might be the better way to diagnose these.
+On Mon, Sep 18, 2017 at 09:28:55AM -0600, Jens Axboe wrote:
+> On 09/18/2017 09:27 AM, Christoph Hellwig wrote:
+> > On Mon, Sep 18, 2017 at 08:26:05PM +0530, Abdul Haleem wrote:
+> >> Hi,
+> >>
+> >> A warning is triggered from:
+> >>
+> >> file fs/iomap.c in function iomap_dio_rw
+> >>
+> >>     if (ret)
+> >>         goto out_free_dio;
+> >>
+> >>     ret = invalidate_inode_pages2_range(mapping,
+> >>             start >> PAGE_SHIFT, end >> PAGE_SHIFT);
+> >>>>  WARN_ON_ONCE(ret);
+> >>     ret = 0;
+> >>
+> >>     inode_dio_begin(inode);
+> > 
+> > This is expected and an indication of a problematic workload - which
+> > may be triggered by a fuzzer.
 > 
-> sysctl suppressing those two, perhaps?
+> If it's expected, why don't we kill the WARN_ON_ONCE()? I get it all
+> the time running xfstests as well.
 
-I'd rather just make it a trace point, but don't care too much.
+Because when a user reports a data corruption, the only evidence we
+have that they are running an app that does something stupid is this
+warning in their syslogs.  Tracepoints are not useful for replacing
+warnings about data corruption vectors being triggered.
 
-The code doesn't even have a comment as to why that WARN_ON() is
-there or expected. Seems pretty sloppy to me, not a great way
-to "discourage" users to mix mmap/dio.
+It needs to be on by default, bu tI'm sure we can wrap it with
+something like an xfs_alert_tag() type of construct so the tag can
+be set in /proc/fs/xfs/panic_mask to suppress it if testers so
+desire.
+
+Cheers,
+
+Dave.
 
 -- 
-Jens Axboe
+Dave Chinner
+david@fromorbit.com
