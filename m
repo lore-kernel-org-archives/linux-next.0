@@ -1,30 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Tue, 19 Sep 2017 07:54:55 +1000
-Message-ID: <20170919075455.59a3183b@canb.auug.org.au>
+From: David Teigland <teigland@redhat.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the dlm tree
+Date: Mon, 18 Sep 2017 17:00:53 -0500
+Message-ID: <20170918220053.GD6025@redhat.com>
+References: <20170919074919.1aee891b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45223 "EHLO ozlabs.org"
+Received: from mx1.redhat.com ([209.132.183.28]:38678 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751458AbdIRVy6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 18 Sep 2017 17:54:58 -0400
+        id S1750783AbdIRWAz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 18 Sep 2017 18:00:55 -0400
+Content-Disposition: inline
+In-Reply-To: <20170919074919.1aee891b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bob Peterson <rpeterso@redhat.com>, "tsutomu.owa@toshiba.co.jp" <tsutomu.owa@toshiba.co.jp>, Tadashi Miyauchi <miyauchi@toshiba-tops.co.jp>
 
-Hi Greg,
+On Tue, Sep 19, 2017 at 07:49:19AM +1000, Stephen Rothwell wrote:
+> Hi David,
+> 
+> Commits
+> 
+>   bcc976a145c9 ("DLM: Eliminate CF_CONNECT_PENDING flag")
+>   c071b28b2bd5 ("DLM: Eliminate CF_WRITE_PENDING flag")
+>   782551aac851 ("DLM: Fix saving of NULL callbacks")
+> 
+> are missing a Signed-off-by from their author.
 
-Commits
-
-  688a0206cfb8 ("staging: rtlwifi: fix parenthesis alignment")
-  85d309d53f7a ("staging: rtlwifi: use kcalloc instead of multiply")
-  f216f6cdeb1d ("staging: rtlwifi: remove unused functions")
-
-are missing a Signed-off-by from their author.
-
--- 
-Cheers,
-Stephen Rothwell
+Thanks, should be fixed now.
+Dave
