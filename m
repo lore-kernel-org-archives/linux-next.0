@@ -1,42 +1,38 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 19 (x86/kernel/cpuinfo.c)
-Date: Tue, 19 Sep 2017 08:54:32 -0700
-Message-ID: <75e3d5e7-091e-9b26-47cc-36bece726b9e@infradead.org>
-References: <20170919141557.03ffb2a7@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error while fetching the microblaze tree
+Date: Wed, 20 Sep 2017 09:26:00 +1000
+Message-ID: <20170920092600.716baffd@canb.auug.org.au>
+References: <20160107093856.779af583@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:37295 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750733AbdISPyc (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Sep 2017 11:54:32 -0400
-In-Reply-To: <20170919141557.03ffb2a7@canb.auug.org.au>
-Content-Language: en-US
+Received: from ozlabs.org ([103.22.144.67]:40003 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751521AbdISX0D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Sep 2017 19:26:03 -0400
+In-Reply-To: <20160107093856.779af583@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 09/18/17 21:15, Stephen Rothwell wrote:
-> Hi all,
+Hi Michal,
+
+On Thu, 7 Jan 2016 09:38:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Fetching the microblaze tree
+> (git://git.monstr.eu/linux-2.6-microblaze.git#next) produces this error.
 > 
-> Changes since 20170918:
+> fatal: read error: Connection reset by peer
 > 
-> Linus' tree still had its build failure for which I reverted a commit.
-> 
+> I will use the previously fetched version for today.
 
-on i386:
+I have been unable to fetch the microblaze tree again for the past few
+days.  This time it is is getting:
 
-../arch/x86/kernel/cpuinfo.c: In function 'cpuinfo_flags':
-../arch/x86/kernel/cpuinfo.c:35:26: error: 'x86_cap_flags' undeclared (first use in this function)
-   if (cpu_has(cpu, i) && x86_cap_flags[i] != NULL)
-                          ^
-
-# CONFIG_X86_FEATURE_NAMES is not set
-CONFIG_HAVE_CPUINFO_SYSFS=y
-
-
+git.monstr.eu[0: 195.88.143.27]: errno=Connection refused
 
 -- 
-~Randy
+Cheers,
+Stephen Rothwell
