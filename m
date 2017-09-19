@@ -1,28 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Date: Tue, 19 Sep 2017 14:43:10 +1000
-Message-ID: <20170919144310.2adffee8@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
+Date: Tue, 19 Sep 2017 08:09:15 +0200
+Message-ID: <20170919060915.GA1628@kroah.com>
+References: <20170919075455.59a3183b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59835 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751039AbdISEnM (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 19 Sep 2017 00:43:12 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45991 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751109AbdISGJE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Sep 2017 02:09:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20170919075455.59a3183b@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>
 
-Hi all,
+On Tue, Sep 19, 2017 at 07:54:55AM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Commits
+> 
+>   688a0206cfb8 ("staging: rtlwifi: fix parenthesis alignment")
+>   85d309d53f7a ("staging: rtlwifi: use kcalloc instead of multiply")
+>   f216f6cdeb1d ("staging: rtlwifi: remove unused functions")
+> 
+> are missing a Signed-off-by from their author.
 
-Commit
+Ugh, I totally missed that, Tobin, what went wrong here?
 
-  129c6cda2de2 ("8139too: revisit napi_complete_done() usage")
+I can't go rewrite my tree, so I'll just accept this as an implicit "ok"
+for these patches, any objection?
 
-is missing a Signed-off-by from its author.
+thanks,
 
--- 
-Cheers,
-Stephen Rothwell
+greg k-h
