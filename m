@@ -1,50 +1,46 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 19 (drivers/gpu/drm/i915/i915_gem.c)
-Date: Tue, 19 Sep 2017 08:49:36 -0700
-Message-ID: <537cae4b-0157-85da-2a47-a768e34eb412@infradead.org>
-References: <20170919141557.03ffb2a7@canb.auug.org.au>
+From: Tobin Harding <me@tobin.cc>
+Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
+Date: Wed, 20 Sep 2017 01:50:48 +1000
+Message-ID: <1505836248.392159.1111298816.4DE9BCE7@webmail.messagingengine.com>
+References: <20170919075455.59a3183b@canb.auug.org.au>
+ <20170919060915.GA1628@kroah.com>
+ <1505835299.387461.1111276008.64AD9525@webmail.messagingengine.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:39736 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751365AbdISPti (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Sep 2017 11:49:38 -0400
-In-Reply-To: <20170919141557.03ffb2a7@canb.auug.org.au>
-Content-Language: en-US
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:52321 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751283AbdISPut (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Sep 2017 11:50:49 -0400
+In-Reply-To: <1505835299.387461.1111276008.64AD9525@webmail.messagingengine.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
+To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/18/17 21:15, Stephen Rothwell wrote:
-> Hi all,
+
+On Wed, Sep 20, 2017, at 01:34, Tobin Harding wrote:
 > 
-> Changes since 20170918:
+> On Tue, Sep 19, 2017, at 16:09, Greg KH wrote:
+> > On Tue, Sep 19, 2017 at 07:54:55AM +1000, Stephen Rothwell wrote:
+> > > Hi Greg,
+> > > 
+> > > Commits
+> > > 
+> > >   688a0206cfb8 ("staging: rtlwifi: fix parenthesis alignment")
+> > >   85d309d53f7a ("staging: rtlwifi: use kcalloc instead of multiply")
+> > >   f216f6cdeb1d ("staging: rtlwifi: remove unused functions")
+> > > 
+> > > are missing a Signed-off-by from their author.
+> > 
+> > Ugh, I totally missed that, Tobin, what went wrong here?
 > 
-> Linus' tree still had its build failure for which I reverted a commit.
-> 
-> The drm-intel tree gained conflicts against Linus' tree.
-> 
+> Apologies, I bet I didn't set up my environment on the laptop fully.
+> Usual dev machine is a desktop, I did these patches as prep for OSS. 
 
-on x86_64:
+I've got a strong feeling I didn't enable the driver before I 'built'
+this patch series also.  Bad Tobin.
 
-In file included from ../drivers/gpu/drm/i915/i915_gem.c:5342:0:
-../drivers/gpu/drm/i915/selftests/mock_gem_device.c: In function 'mock_gem_device':
-../drivers/gpu/drm/i915/selftests/mock_gem_device.c:150:20: error: 'struct dev_archdata' has no member named 'iommu'
-  pdev->dev.archdata.iommu = (void *)-1;
-                    ^
-
-when IOMMU_SUPPORT, INTEL_IOMMU, and AMD_IOMMU are not enabled.
-
-struct dev_archdata {
-#if defined(CONFIG_INTEL_IOMMU) || defined(CONFIG_AMD_IOMMU)
-	void *iommu; /* hook for IOMMU specific extension */
-#endif
-};
-
-
-
--- 
-~Randy
+Luckily the kbot didn't punish me.
