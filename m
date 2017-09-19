@@ -1,53 +1,33 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170919 build: 0 failures 0 warnings (next-20170919)
-Date: Tue, 19 Sep 2017 09:06:42 +0100
-Message-ID: <E1duDYI-0001SC-He@optimist>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: linux-next: Signed-off-by missing for commits in the renesas tree
+Date: Tue, 19 Sep 2017 11:20:11 +0200
+Message-ID: <20170919092011.GB7933@verge.net.au>
+References: <20170919073950.575a0086@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37072 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751512AbdISIGp (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Sep 2017 04:06:45 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:43341 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbdISJUb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Sep 2017 05:20:31 -0400
+Content-Disposition: inline
+In-Reply-To: <20170919073950.575a0086@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Tree/Branch: next-20170919
-Git describe: next-20170919
-Commit: 840cc455c5 Add linux-next specific files for 20170919
+On Tue, Sep 19, 2017 at 07:39:50AM +1000, Stephen Rothwell wrote:
+> Hi Simon,
+> 
+> Commits
+> 
+>   5cb3ee61cab3 ("ARM: dts: iwg20d-q7: Add SDHI1 support")
+>   39b87a4ae6f5 ("ARM: dts: r8a7745: Add MMC interface support")
+> 
+> are missing a Signed-off-by from their committer.
 
-Build Time: 106 min 32 sec
+Hi Stephen,
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
-
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-
--------------------------------------------------------------------------------
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+sorry for letting these slip through.
+I'll fix this ASAP.
