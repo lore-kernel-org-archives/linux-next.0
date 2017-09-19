@@ -1,39 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Tue, 19 Sep 2017 08:09:15 +0200
-Message-ID: <20170919060915.GA1628@kroah.com>
-References: <20170919075455.59a3183b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20170919 build: 0 failures 0 warnings (next-20170919)
+Date: Tue, 19 Sep 2017 09:06:42 +0100
+Message-ID: <E1duDYI-0001SC-He@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:45991 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751109AbdISGJE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 19 Sep 2017 02:09:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20170919075455.59a3183b@canb.auug.org.au>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37072 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751512AbdISIGp (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 19 Sep 2017 04:06:45 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Tue, Sep 19, 2017 at 07:54:55AM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Commits
-> 
->   688a0206cfb8 ("staging: rtlwifi: fix parenthesis alignment")
->   85d309d53f7a ("staging: rtlwifi: use kcalloc instead of multiply")
->   f216f6cdeb1d ("staging: rtlwifi: remove unused functions")
-> 
-> are missing a Signed-off-by from their author.
+Tree/Branch: next-20170919
+Git describe: next-20170919
+Commit: 840cc455c5 Add linux-next specific files for 20170919
 
-Ugh, I totally missed that, Tobin, what went wrong here?
+Build Time: 106 min 32 sec
 
-I can't go rewrite my tree, so I'll just accept this as an implicit "ok"
-for these patches, any objection?
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-thanks,
+Errors: 0
+Warnings: 0
+Section Mismatches: 0
 
-greg k-h
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+
+-------------------------------------------------------------------------------
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allmodconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
