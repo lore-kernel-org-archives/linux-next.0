@@ -1,74 +1,60 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: [Oops] memory hot-unplug results fault instruction
- address at /include/linux/list.h:104
-Date: Wed, 20 Sep 2017 12:54:37 -0700
-Message-ID: <CAGXu5jKMGuc-i0vfZx3TYx4iq35PCF0T1y9zv9A=k7ieES2Qkg@mail.gmail.com>
-References: <1505198479.10243.23.camel@abdul> <1505893239.30180.24.camel@abdul.in.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: error while fetching the microblaze tree
+Date: Thu, 21 Sep 2017 08:27:45 +1000
+Message-ID: <20170921082745.3b777207@canb.auug.org.au>
+References: <20160107093856.779af583@canb.auug.org.au>
+        <20170920092600.716baffd@canb.auug.org.au>
+        <ef16f2a8-67f9-207b-6c95-0735767a4a74@monstr.eu>
+        <4bdc1802-8cc8-c934-46bc-71692278d953@monstr.eu>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2.rBGF4mc__5/M9M9o71mp3"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f170.google.com ([209.85.223.170]:48705 "EHLO
-        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751000AbdITTyj (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Sep 2017 15:54:39 -0400
-Received: by mail-io0-f170.google.com with SMTP id n69so6170493ioi.5
-        for <linux-next@vger.kernel.org>; Wed, 20 Sep 2017 12:54:39 -0700 (PDT)
-In-Reply-To: <1505893239.30180.24.camel@abdul.in.ibm.com>
+Received: from ozlabs.org ([103.22.144.67]:35723 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751551AbdITW16 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 20 Sep 2017 18:27:58 -0400
+In-Reply-To: <4bdc1802-8cc8-c934-46bc-71692278d953@monstr.eu>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>, stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Nathan Fontenot <nfont@linux.vnet.ibm.com>
+To: Michal Simek <monstr@monstr.eu>
+Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 20, 2017 at 12:40 AM, Abdul Haleem
-<abdhalee@linux.vnet.ibm.com> wrote:
-> On Tue, 2017-09-12 at 12:11 +0530, abdul wrote:
->> Hi,
->>
->> Memory hot-unplug on PowerVM LPAR running next-20170911 results in
->> Faulting instruction address: 0xc0000000002b56c4
->>
->> which maps to the below code path:
->>
->> 0xc0000000002b56c4 is in __rmqueue (./include/linux/list.h:104).
->> 99     * This is only for internal list manipulation where we know
->> 100    * the prev/next entries already!
->> 101    */
->> 102   static inline void __list_del(struct list_head * prev, struct
->> list_head * next)
->> 103   {
->> 104           next->prev = prev;
->> 105           WRITE_ONCE(prev->next, next);
->> 106   }
->> 107
->> 108   /**
->>
->
-> I see another kernel Oops when running transparent hugepages
-> de-fragmentation test.
->
-> And the faulty instruction address again pointing to same code line
-> 0xc00000000026f9f4 is in compaction_alloc (./include/linux/list.h:104)
->
-> steps to recreate:
-> -----------------
-> 1. Enable transparent hugepages ("always")
-> 2. Turn off the defrag $ echo 0 > khugepaged/defrag
-> 3. Write random to memory path
-> 4. Set huge pages numbers
-> 5. Turn on defrag $ echo 1 > khugepaged/defrag
->
->
-> new trace:
-> ----------
-> Unable to handle kernel paging request for data at address
-> 0x5deadbeef0000108
+--Sig_/2.rBGF4mc__5/M9M9o71mp3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This looks like use-after-list-removal, that value appears to be LIST_POISON1.
+Hi Michal,
 
-Try enabling CONFIG_DEBUG_LIST to see if you get better details?
+On Wed, 20 Sep 2017 15:09:30 +0200 Michal Simek <monstr@monstr.eu> wrote:
+>
+> Fixed now. Please try and let me know if there is any issue.
 
--Kees
+Looks good from here.  Thanks.
 
--- 
-Kees Cook
-Pixel Security
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2.rBGF4mc__5/M9M9o71mp3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEb/8FnQ4F3+D3b2b8ReVMXCmzCDkFAlnC62EACgkQReVMXCmz
+CDkFUg/+OYbqlCqOZgoNmJGUHKsI7fvLCUmS0M+mUzSCZFMtQdbVtR6F9sWcfrXL
+WT7BgOs6O6kti8XSNiMlATDlKs68KGqz8KrG+hxz3wPhMgyqwHiyaPCEEwFqw4Z2
+yZ8nFPRZmp1ssUuvSBG5RqmDG9jl4DyKEnS2yDfskPd5PG9hv2hkixBWwspHFzwk
+GiCRJFl+v832gaCrJ4bxSLgF1paBmzyLPByhtIaz+aNkH62adiuU23Eo1RYNwGOg
+ynBNzHLl225Kqeo6nTuvpVgdllaj7r5qq7J4XH8WexmSFnkuaBtTxhu5yISMIRxp
+gSKcumANgQsAKZ0SZJCnOKYX67H3Y8fUfVZOgM5iFgVRK0OM8C53+0ptAxLRZ5Yt
+/6nLZJOyvzUG9ujj4mWW4YAN+RVov6w7NeksmVRz7Hs/+a2btxGOySawsKEYEkZ2
+ej9v+0K6JFp6bJFRnQzZZjQ835d91wO+O1zBKqfnzIqKPh4d5CAgwHQ+AP4gpY73
+k0hfEfF8V2Ki4aLs8CBf/eKzygjGDJjwf2EXLU22TsSozD1qxqh5d36jnADM9ClY
+vATFK7afvh3UGvpQroXYP1+73/rwsAbTyVcQzaUcKn7G6hLUZ/tRf51V14PtgGuv
+d7Pzs5eYYScvy/gXxFRaFLabA+uFzN1cmS9FQlyz/JsTdMIMBag=
+=audB
+-----END PGP SIGNATURE-----
+
+--Sig_/2.rBGF4mc__5/M9M9o71mp3--
