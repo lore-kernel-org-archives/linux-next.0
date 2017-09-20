@@ -1,121 +1,131 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the
- driver-core.current tree
-Date: Wed, 20 Sep 2017 11:15:56 +1000
-Message-ID: <20170920111556.3c739e52@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 20 Sep 2017 12:01:51 +1000
+Message-ID: <20170920120151.3d7d97b8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Eric Dumazet <edumazet@google.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robert Jarzmik <robert.jarzmik@free.fr>
 List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-  lib/kobject_uevent.c
+sound/soc/codecs/wm9712.c: In function 'wm9712_soc_probe':
+sound/soc/codecs/wm9712.c:675:12: error: invalid storage class for function 'wm9712_soc_remove'
+ static int wm9712_soc_remove(struct snd_soc_codec *codec)
+            ^
+sound/soc/codecs/wm9712.c:675:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static int wm9712_soc_remove(struct snd_soc_codec *codec)
+ ^
+sound/soc/codecs/wm9712.c:690:13: error: initializer element is not constant
+  .remove =  wm9712_soc_remove,
+             ^
+sound/soc/codecs/wm9712.c:690:13: note: (near initialization for 'soc_codec_dev_wm9712.remove')
+sound/soc/codecs/wm9712.c:705:12: error: invalid storage class for function 'wm9712_probe'
+ static int wm9712_probe(struct platform_device *pdev)
+            ^
+sound/soc/codecs/wm9712.c:722:12: error: invalid storage class for function 'wm9712_remove'
+ static int wm9712_remove(struct platform_device *pdev)
+            ^
+sound/soc/codecs/wm9712.c:733:11: error: initializer element is not constant
+  .probe = wm9712_probe,
+           ^
+sound/soc/codecs/wm9712.c:733:11: note: (near initialization for 'wm9712_codec_driver.probe')
+sound/soc/codecs/wm9712.c:734:12: error: initializer element is not constant
+  .remove = wm9712_remove,
+            ^
+sound/soc/codecs/wm9712.c:734:12: note: (near initialization for 'wm9712_codec_driver.remove')
+In file included from sound/soc/codecs/wm9712.c:18:0:
+sound/soc/codecs/wm9712.c:737:24: error: invalid storage class for function 'wm9712_codec_driver_init'
+ module_platform_driver(wm9712_codec_driver);
+                        ^
+include/linux/device.h:1500:19: note: in definition of macro 'module_driver'
+ static int __init __driver##_init(void) \
+                   ^
+sound/soc/codecs/wm9712.c:737:1: note: in expansion of macro 'module_platform_driver'
+ module_platform_driver(wm9712_codec_driver);
+ ^
+In file included from sound/soc/codecs/wm9712.c:16:0:
+include/linux/module.h:129:42: error: invalid storage class for function '__inittest'
+  static inline initcall_t __maybe_unused __inittest(void)  \
+                                          ^
+include/linux/device.h:1504:1: note: in expansion of macro 'module_init'
+ module_init(__driver##_init); \
+ ^
+include/linux/platform_device.h:228:2: note: in expansion of macro 'module_driver'
+  module_driver(__platform_driver, platform_driver_register, \
+  ^
+sound/soc/codecs/wm9712.c:737:1: note: in expansion of macro 'module_platform_driver'
+ module_platform_driver(wm9712_codec_driver);
+ ^
+sound/soc/codecs/wm9712.c:737:1: warning: 'alias' attribute ignored [-Wattributes]
+In file included from sound/soc/codecs/wm9712.c:18:0:
+sound/soc/codecs/wm9712.c:737:24: error: invalid storage class for function 'wm9712_codec_driver_exit'
+ module_platform_driver(wm9712_codec_driver);
+                        ^
+include/linux/device.h:1505:20: note: in definition of macro 'module_driver'
+ static void __exit __driver##_exit(void) \
+                    ^
+sound/soc/codecs/wm9712.c:737:1: note: in expansion of macro 'module_platform_driver'
+ module_platform_driver(wm9712_codec_driver);
+ ^
+include/linux/device.h:1505:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static void __exit __driver##_exit(void) \
+ ^
+include/linux/platform_device.h:228:2: note: in expansion of macro 'module_driver'
+  module_driver(__platform_driver, platform_driver_register, \
+  ^
+sound/soc/codecs/wm9712.c:737:1: note: in expansion of macro 'module_platform_driver'
+ module_platform_driver(wm9712_codec_driver);
+ ^
+In file included from sound/soc/codecs/wm9712.c:16:0:
+include/linux/module.h:135:42: error: invalid storage class for function '__exittest'
+  static inline exitcall_t __maybe_unused __exittest(void)  \
+                                          ^
+include/linux/device.h:1509:1: note: in expansion of macro 'module_exit'
+ module_exit(__driver##_exit);
+ ^
+include/linux/platform_device.h:228:2: note: in expansion of macro 'module_driver'
+  module_driver(__platform_driver, platform_driver_register, \
+  ^
+sound/soc/codecs/wm9712.c:737:1: note: in expansion of macro 'module_platform_driver'
+ module_platform_driver(wm9712_codec_driver);
+ ^
+sound/soc/codecs/wm9712.c:737:1: warning: 'alias' attribute ignored [-Wattributes]
+In file included from include/linux/module.h:18:0,
+                 from sound/soc/codecs/wm9712.c:16:
+include/linux/moduleparam.h:21:1: warning: ISO C90 forbids mixed declarations and code [-Wdeclaration-after-statement]
+ static const char __UNIQUE_ID(name)[]       \
+ ^
+include/linux/module.h:160:32: note: in expansion of macro '__MODULE_INFO'
+ #define MODULE_INFO(tag, info) __MODULE_INFO(tag, tag, info)
+                                ^
+include/linux/module.h:207:42: note: in expansion of macro 'MODULE_INFO'
+ #define MODULE_DESCRIPTION(_description) MODULE_INFO(description, _description)
+                                          ^
+sound/soc/codecs/wm9712.c:739:1: note: in expansion of macro 'MODULE_DESCRIPTION'
+ MODULE_DESCRIPTION("ASoC WM9711/WM9712 driver");
+ ^
+sound/soc/codecs/wm9712.c:741:1: error: expected declaration or statement at end of input
+ MODULE_LICENSE("GPL");
+ ^
+sound/soc/codecs/wm9712.c: At top level:
+sound/soc/codecs/wm9712.c:637:12: warning: 'wm9712_soc_probe' defined but not used [-Wunused-function]
+ static int wm9712_soc_probe(struct snd_soc_codec *codec)
+            ^
 
-between commit:
+Caused by commit
 
-  6878e7de6af7 ("driver core: suppress sending MODALIAS in UNBIND uevents")
+  2ed1a8e0ce8d ("ASoC: wm9712: add ac97 new bus support")
 
-from the driver-core.current tree and commit:
-
-  16dff336b33d ("kobject: add kobject_uevent_net_broadcast()")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I have used the sound-asoc tree from next-20170919 for today.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc lib/kobject_uevent.c
-index f237a09a5862,147db91c10d0..000000000000
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@@ -294,26 -294,55 +294,75 @@@ static void cleanup_uevent_env(struct s
-  }
-  #endif
-  
- +static void zap_modalias_env(struct kobj_uevent_env *env)
- +{
- +	static const char modalias_prefix[] = "MODALIAS=";
- +	int i;
- +
- +	for (i = 0; i < env->envp_idx;) {
- +		if (strncmp(env->envp[i], modalias_prefix,
- +			    sizeof(modalias_prefix) - 1)) {
- +			i++;
- +			continue;
- +		}
- +
- +		if (i != env->envp_idx - 1)
- +			memmove(&env->envp[i], &env->envp[i + 1],
- +				sizeof(env->envp[i]) * env->envp_idx - 1);
- +
- +		env->envp_idx--;
- +	}
- +}
- +
-+ static int kobject_uevent_net_broadcast(struct kobject *kobj,
-+ 					struct kobj_uevent_env *env,
-+ 					const char *action_string,
-+ 					const char *devpath)
-+ {
-+ 	int retval = 0;
-+ #if defined(CONFIG_NET)
-+ 	struct sk_buff *skb = NULL;
-+ 	struct uevent_sock *ue_sk;
-+ 
-+ 	/* send netlink message */
-+ 	list_for_each_entry(ue_sk, &uevent_sock_list, list) {
-+ 		struct sock *uevent_sock = ue_sk->sk;
-+ 
-+ 		if (!netlink_has_listeners(uevent_sock, 1))
-+ 			continue;
-+ 
-+ 		if (!skb) {
-+ 			/* allocate message with the maximum possible size */
-+ 			size_t len = strlen(action_string) + strlen(devpath) + 2;
-+ 			char *scratch;
-+ 
-+ 			retval = -ENOMEM;
-+ 			skb = alloc_skb(len + env->buflen, GFP_KERNEL);
-+ 			if (!skb)
-+ 				continue;
-+ 
-+ 			/* add header */
-+ 			scratch = skb_put(skb, len);
-+ 			sprintf(scratch, "%s@%s", action_string, devpath);
-+ 
-+ 			skb_put_data(skb, env->buf, env->buflen);
-+ 
-+ 			NETLINK_CB(skb).dst_group = 1;
-+ 		}
-+ 
-+ 		retval = netlink_broadcast_filtered(uevent_sock, skb_get(skb),
-+ 						    0, 1, GFP_KERNEL,
-+ 						    kobj_bcast_filter,
-+ 						    kobj);
-+ 		/* ENOBUFS should be handled in userspace */
-+ 		if (retval == -ENOBUFS || retval == -ESRCH)
-+ 			retval = 0;
-+ 	}
-+ 	consume_skb(skb);
-+ #endif
-+ 	return retval;
-+ }
-+ 
-  /**
-   * kobject_uevent_env - send an uevent with environmental data
-   *
