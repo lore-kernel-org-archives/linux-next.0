@@ -1,103 +1,74 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: error while fetching the microblaze tree
-Date: Wed, 20 Sep 2017 15:09:30 +0200
-Message-ID: <4bdc1802-8cc8-c934-46bc-71692278d953@monstr.eu>
-References: <20160107093856.779af583@canb.auug.org.au>
- <20170920092600.716baffd@canb.auug.org.au>
- <ef16f2a8-67f9-207b-6c95-0735767a4a74@monstr.eu>
-Reply-To: monstr@monstr.eu
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: [Oops] memory hot-unplug results fault instruction
+ address at /include/linux/list.h:104
+Date: Wed, 20 Sep 2017 12:54:37 -0700
+Message-ID: <CAGXu5jKMGuc-i0vfZx3TYx4iq35PCF0T1y9zv9A=k7ieES2Qkg@mail.gmail.com>
+References: <1505198479.10243.23.camel@abdul> <1505893239.30180.24.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="Q4jvTK57M6ectgWqiK5hFhSQM2XtxopqL"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wr0-f179.google.com ([209.85.128.179]:56634 "EHLO
-        mail-wr0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751590AbdITNJi (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Sep 2017 09:09:38 -0400
-Received: by mail-wr0-f179.google.com with SMTP id r74so2108066wrb.13
-        for <linux-next@vger.kernel.org>; Wed, 20 Sep 2017 06:09:37 -0700 (PDT)
-In-Reply-To: <ef16f2a8-67f9-207b-6c95-0735767a4a74@monstr.eu>
+Received: from mail-io0-f170.google.com ([209.85.223.170]:48705 "EHLO
+        mail-io0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751000AbdITTyj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 20 Sep 2017 15:54:39 -0400
+Received: by mail-io0-f170.google.com with SMTP id n69so6170493ioi.5
+        for <linux-next@vger.kernel.org>; Wed, 20 Sep 2017 12:54:39 -0700 (PDT)
+In-Reply-To: <1505893239.30180.24.camel@abdul.in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, sachinp <sachinp@linux.vnet.ibm.com>, stephen Rothwell <sfr@canb.auug.org.au>, linux-next <linux-next@vger.kernel.org>, Nathan Fontenot <nfont@linux.vnet.ibm.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---Q4jvTK57M6ectgWqiK5hFhSQM2XtxopqL
-Content-Type: multipart/mixed; boundary="EKuV6Xu0fqN986DEiLRCq0osOFUX7RbC3";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <4bdc1802-8cc8-c934-46bc-71692278d953@monstr.eu>
-Subject: Re: linux-next: error while fetching the microblaze tree
-References: <20160107093856.779af583@canb.auug.org.au>
- <20170920092600.716baffd@canb.auug.org.au>
- <ef16f2a8-67f9-207b-6c95-0735767a4a74@monstr.eu>
-In-Reply-To: <ef16f2a8-67f9-207b-6c95-0735767a4a74@monstr.eu>
-
---EKuV6Xu0fqN986DEiLRCq0osOFUX7RbC3
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-
-On 20.9.2017 07:36, Michal Simek wrote:
-> Hi Stephen,
->=20
-> On 20.9.2017 01:26, Stephen Rothwell wrote:
->> Hi Michal,
+On Wed, Sep 20, 2017 at 12:40 AM, Abdul Haleem
+<abdhalee@linux.vnet.ibm.com> wrote:
+> On Tue, 2017-09-12 at 12:11 +0530, abdul wrote:
+>> Hi,
 >>
->> On Thu, 7 Jan 2016 09:38:56 +1100 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
->>>
->>> Fetching the microblaze tree
->>> (git://git.monstr.eu/linux-2.6-microblaze.git#next) produces this err=
-or.
->>>
->>> fatal: read error: Connection reset by peer
->>>
->>> I will use the previously fetched version for today.
+>> Memory hot-unplug on PowerVM LPAR running next-20170911 results in
+>> Faulting instruction address: 0xc0000000002b56c4
 >>
->> I have been unable to fetch the microblaze tree again for the past few=
-
->> days.  This time it is is getting:
+>> which maps to the below code path:
 >>
->> git.monstr.eu[0: 195.88.143.27]: errno=3DConnection refused
+>> 0xc0000000002b56c4 is in __rmqueue (./include/linux/list.h:104).
+>> 99     * This is only for internal list manipulation where we know
+>> 100    * the prev/next entries already!
+>> 101    */
+>> 102   static inline void __list_del(struct list_head * prev, struct
+>> list_head * next)
+>> 103   {
+>> 104           next->prev = prev;
+>> 105           WRITE_ONCE(prev->next, next);
+>> 106   }
+>> 107
+>> 108   /**
 >>
->=20
-> Thanks for letting me know. I have contacted admin to look at it.
-> Will let you know when it is recover.
+>
+> I see another kernel Oops when running transparent hugepages
+> de-fragmentation test.
+>
+> And the faulty instruction address again pointing to same code line
+> 0xc00000000026f9f4 is in compaction_alloc (./include/linux/list.h:104)
+>
+> steps to recreate:
+> -----------------
+> 1. Enable transparent hugepages ("always")
+> 2. Turn off the defrag $ echo 0 > khugepaged/defrag
+> 3. Write random to memory path
+> 4. Set huge pages numbers
+> 5. Turn on defrag $ echo 1 > khugepaged/defrag
+>
+>
+> new trace:
+> ----------
+> Unable to handle kernel paging request for data at address
+> 0x5deadbeef0000108
 
-Fixed now. Please try and let me know if there is any issue.
+This looks like use-after-list-removal, that value appears to be LIST_POISON1.
 
-Thanks,
-Michal
+Try enabling CONFIG_DEBUG_LIST to see if you get better details?
 
+-Kees
 
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---EKuV6Xu0fqN986DEiLRCq0osOFUX7RbC3--
-
---Q4jvTK57M6ectgWqiK5hFhSQM2XtxopqL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlnCaIoACgkQykllyylKDCGAGgCfRVZ6fujZDYTDqQGmNB6iCWM2
-XJ0AoJaaaZPDF6MTjyJjZVwJdQkpd+rJ
-=5+tB
------END PGP SIGNATURE-----
-
---Q4jvTK57M6ectgWqiK5hFhSQM2XtxopqL--
+-- 
+Kees Cook
+Pixel Security
