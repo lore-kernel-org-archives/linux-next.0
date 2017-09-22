@@ -1,53 +1,43 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20170921 build: 0 failures 0 warnings (next-20170921)
-Date: Thu, 21 Sep 2017 08:49:26 +0100
-Message-ID: <E1duwEg-0004uZ-7A@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the mips tree with the pci-current tree
+Date: Fri, 22 Sep 2017 10:01:14 +1000
+Message-ID: <20170922100114.569b940e@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41632 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751765AbdIUHti (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Sep 2017 03:49:38 -0400
+Received: from ozlabs.org ([103.22.144.67]:51147 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751728AbdIVABQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Sep 2017 20:01:16 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Ralf Baechle <ralf@linux-mips.org>, James Hogan <james.hogan@imgtec.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Manuel Lauss <manuel.lauss@gmail.com>
 
-Tree/Branch: next-20170921
-Git describe: next-20170921
-Commit: 43ec4ba696 Add linux-next specific files for 20170921
+Hi all,
 
-Build Time: 107 min 49 sec
+Today's linux-next merge of the mips tree got a conflict in:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+  arch/mips/pci/pci-octeon.c
 
-Errors: 0
-Warnings: 0
-Section Mismatches: 0
+between commit:
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
+  19a8d6b7604d ("MIPS: PCI: Move map_irq() hooks out of initdata")
 
--------------------------------------------------------------------------------
+from the pci-current tree and commit:
 
+  8eba3651f1da ("MIPS: PCI: fix pcibios_map_irq section mismatch")
 
+from the mips tree.
 
-===============================================================================
-Detailed per-defconfig build reports below:
+I fixed it up (basically the same patch - I used the pci-current tree
+version) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allmodconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+Cheers,
+Stephen Rothwell
