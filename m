@@ -1,77 +1,45 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Thu, 21 Sep 2017 18:37:59 -0700 (PDT)
-Message-ID: <20170921.183759.289331373985144347.davem@davemloft.net>
-References: <20170922110355.6a631fc5@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170922110355.6a631fc5@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sfr@canb.auug.org.au
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com
-List-Id: linux-next.vger.kernel.org
-
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 22 Sep 2017 11:03:55 +1000
+Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Fri, 22 Sep 2017 12:24:49 +1000
+Message-ID: <20170922122449.0ada9f8d@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45449 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751726AbdIVCYw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Sep 2017 22:24:52 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>
 
-> After merging the net-next tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> net/ipv4/fib_frontend.c: In function 'fib_validate_source':
-> net/ipv4/fib_frontend.c:411:16: error: 'struct netns_ipv4' has no member named 'fib_has_custom_local_routes'
->    if (net->ipv4.fib_has_custom_local_routes)
->                 ^
-> net/ipv4/fib_frontend.c: In function 'inet_rtm_newroute':
-> net/ipv4/fib_frontend.c:773:12: error: 'struct netns_ipv4' has no member named 'fib_has_custom_local_routes'
->    net->ipv4.fib_has_custom_local_routes = true;
->             ^
-> 
-> Caused by commit
-> 
->   6e617de84e87 ("net: avoid a full fib lookup when rp_filter is disabled.")
+Hi all,
 
-Paolo, it seems this struct member should be placed outside of
-IP_MULTIPLE_TABLES protection, since users can insert custom
-local routes even without that set.
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-So I'm installing the following fix for this:
+  drivers/gpu/drm/i915/intel_display.c
 
-====================
-[PATCH] ipv4: Move fib_has_custom_local_routes outside of IP_MULTIPLE_TABLES.
+between commit:
 
-> net/ipv4/fib_frontend.c: In function 'fib_validate_source':
-> net/ipv4/fib_frontend.c:411:16: error: 'struct netns_ipv4' has no member named 'fib_has_custom_local_routes'
->    if (net->ipv4.fib_has_custom_local_routes)
->                 ^
-> net/ipv4/fib_frontend.c: In function 'inet_rtm_newroute':
-> net/ipv4/fib_frontend.c:773:12: error: 'struct netns_ipv4' has no member named 'fib_has_custom_local_routes'
->    net->ipv4.fib_has_custom_local_routes = true;
->             ^
+  fd70075f82b7 ("drm/i915: Trim struct_mutex usage for kms")
 
-Fixes: 6e617de84e87 ("net: avoid a full fib lookup when rp_filter is disabled.")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: David S. Miller <davem@davemloft.net>
----
- include/net/netns/ipv4.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+from Linus' tree and commits:
 
-diff --git a/include/net/netns/ipv4.h b/include/net/netns/ipv4.h
-index 20720721da4b..8387f099115e 100644
---- a/include/net/netns/ipv4.h
-+++ b/include/net/netns/ipv4.h
-@@ -49,10 +49,10 @@ struct netns_ipv4 {
- #ifdef CONFIG_IP_MULTIPLE_TABLES
- 	struct fib_rules_ops	*rules_ops;
- 	bool			fib_has_custom_rules;
--	bool			fib_has_custom_local_routes;
- 	struct fib_table __rcu	*fib_main;
- 	struct fib_table __rcu	*fib_default;
- #endif
-+	bool			fib_has_custom_local_routes;
- #ifdef CONFIG_IP_ROUTE_CLASSID
- 	int			fib_num_tclassid_users;
- #endif
+  21a01abbe32a ("drm/atomic: Fix freeing connector/plane state too early by tracking commits, v3.")
+  669c9215afea ("drm/atomic: Make async plane update checks work as intended, v2.")
+
+from the drm-misc tree.
+
+I fixed it up (I basically used the latter version of the changes to
+intel_legacy_cursor_update()) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
-2.13.5
+Cheers,
+Stephen Rothwell
