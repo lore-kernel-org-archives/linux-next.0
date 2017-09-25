@@ -1,25 +1,35 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: no release today
-Date: Mon, 25 Sep 2017 17:35:38 +1000
-Message-ID: <20170925173538.5615979e@canb.auug.org.au>
-References: <20170925171238.6d818e43@canb.auug.org.au>
+From: Jan Kara <jack@suse.cz>
+Subject: Re: [linux-next][EXT4][Oops]kernel panics when running fsfuzzer
+Date: Mon, 25 Sep 2017 11:14:49 +0200
+Message-ID: <20170925091449.GB5741@quack2.suse.cz>
+References: <1505741461.6990.11.camel@abdul.in.ibm.com>
+ <87lgl9lvhj.fsf@concordia.ellerman.id.au>
+ <1506075381.17232.18.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170925171238.6d818e43@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <1506075381.17232.18.camel@abdul.in.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, chandan <chandan@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-[Just getting the addresses right :-(]
-
-On Mon, 25 Sep 2017 17:12:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
+On Fri 22-09-17 15:46:21, Abdul Haleem wrote:
+> On Wed, 2017-09-20 at 16:44 +1000, Michael Ellerman wrote:
+> > Is it reproducible?
 > 
-> There will be no linux-next release today, sorry.
+> No, bug is not seen once for 3 re-run from yesterday.
+> 
+> Hope to hit it again in the future CI runs.
 
+I was also looking into this but I couldn't figure out what has happened.
+>From the crash it seems that jh->b_bh->b_private was NULL although it
+should point back to 'jh'. But that just doesn't seem possible so maybe it
+is something different. If you ever happen to hit it again, please save
+the fuzzed image so that it can be used for reproduction. Thanks!
+
+								Honza
 -- 
-Cheers,
-Stephen Rothwell
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
