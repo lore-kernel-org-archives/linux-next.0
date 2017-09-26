@@ -1,57 +1,43 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: build failure after merge of the cifs tree
-Date: Mon, 25 Sep 2017 20:20:07 -0500
-Message-ID: <CAH2r5mtSy5w6FWG3tJidfLQWOoWyqAg3Sq-MKNOen1wPiOW4Rw@mail.gmail.com>
-References: <20170926105148.5e1553ec@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Tue, 26 Sep 2017 13:00:18 +1000
+Message-ID: <20170926130018.421ed780@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f45.google.com ([74.125.83.45]:56719 "EHLO
-        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965604AbdIZBU2 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Sep 2017 21:20:28 -0400
-In-Reply-To: <20170926105148.5e1553ec@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:38831 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966346AbdIZDAV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 25 Sep 2017 23:00:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-fixed - repushed to cifs-2.6.git for-next
+Hi Paul,
 
-On Mon, Sep 25, 2017 at 7:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the cifs tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
->
-> fs/cifs/smb2transport.c: In function 'generate_smb311signingkey':
-> fs/cifs/smb2transport.c:403:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
->   d->context.iov_base = ses->preauth_sha_hash;
->                            ^
-> fs/cifs/smb2transport.c:409:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
->   d->context.iov_base = ses->preauth_sha_hash;
->                            ^
-> fs/cifs/smb2transport.c:415:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
->   d->context.iov_base = ses->preauth_sha_hash;
->                            ^
->
-> Caused by commit
->
->   a679c0e328c9 ("Fix encryption labels and lengths for SMB3.1.1")
->
-> This build has
->
-> # CONFIG_CIFS_SMB311 is not set
->
-> I have used the version of the cifs tree from next-20170922 for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Today's linux-next merge of the rcu tree got a conflict in:
 
+  kernel/rcu/tree.c
 
+between commit:
+
+  28585a832602 ("rcu: Allow for page faults in NMI handlers")
+
+from Linus' tree and commit:
+
+  3e2baa988b9c ("rcu: Allow for page faults in NMI handlers")
+
+from the rcu tree.
+
+I fixed it up (I just used the rcu tree version) and can carry the fix
+as necessary. This is now fixed as far as linux-next is concerned, but
+any non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
-Thanks,
-
-Steve
+Cheers,
+Stephen Rothwell
