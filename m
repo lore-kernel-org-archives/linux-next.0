@@ -1,26 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
-Date: Tue, 26 Sep 2017 09:09:57 +1000
-Message-ID: <20170926090957.67fc493d@canb.auug.org.au>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Tue, 26 Sep 2017 10:51:48 +1000
+Message-ID: <20170926105148.5e1553ec@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, Hans Verkuil <hansverk@cisco.com>
+Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+Hi all,
 
-Commits
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  9722e5696ca7 ("media: dvb-frontends: delete jump targets")
-  af28c99628eb ("media: drivers: Adjust checks for null pointers")
-  2d3da59ff163 ("media: drivers: improve a size determination")
-  d303b7c5b266 ("media: drivers: delete unnecessary variable initialisations")
+fs/cifs/smb2transport.c: In function 'generate_smb311signingkey':
+fs/cifs/smb2transport.c:403:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
+  d->context.iov_base = ses->preauth_sha_hash;
+                           ^
+fs/cifs/smb2transport.c:409:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash' 
+  d->context.iov_base = ses->preauth_sha_hash;
+                           ^
+fs/cifs/smb2transport.c:415:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash' 
+  d->context.iov_base = ses->preauth_sha_hash;
+                           ^
 
-are missing a Signed-off-by from their committer.
+Caused by commit
+
+  a679c0e328c9 ("Fix encryption labels and lengths for SMB3.1.1")
+
+This build has
+
+# CONFIG_CIFS_SMB311 is not set
+
+I have used the version of the cifs tree from next-20170922 for today.
 
 -- 
 Cheers,
