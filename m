@@ -1,48 +1,57 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Sep 19 (x86/kernel/cpuinfo.c)
-Date: Mon, 25 Sep 2017 18:19:06 -0700
-Message-ID: <46a06a76-a17c-de77-362a-99a18efaee79@infradead.org>
-References: <20170919141557.03ffb2a7@canb.auug.org.au>
- <75e3d5e7-091e-9b26-47cc-36bece726b9e@infradead.org>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: build failure after merge of the cifs tree
+Date: Mon, 25 Sep 2017 20:20:07 -0500
+Message-ID: <CAH2r5mtSy5w6FWG3tJidfLQWOoWyqAg3Sq-MKNOen1wPiOW4Rw@mail.gmail.com>
+References: <20170926105148.5e1553ec@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:48446 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965630AbdIZBTN (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Sep 2017 21:19:13 -0400
-In-Reply-To: <75e3d5e7-091e-9b26-47cc-36bece726b9e@infradead.org>
-Content-Language: en-US
+Received: from mail-pg0-f45.google.com ([74.125.83.45]:56719 "EHLO
+        mail-pg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965604AbdIZBU2 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 25 Sep 2017 21:20:28 -0400
+In-Reply-To: <20170926105148.5e1553ec@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felix Schnizlein <fschnizlein@suse.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/19/17 08:54, Randy Dunlap wrote:
-> On 09/18/17 21:15, Stephen Rothwell wrote:
->> Hi all,
->>
->> Changes since 20170918:
->>
->> Linus' tree still had its build failure for which I reverted a commit.
->>
-> 
-> on i386:
-> 
-> ../arch/x86/kernel/cpuinfo.c: In function 'cpuinfo_flags':
-> ../arch/x86/kernel/cpuinfo.c:35:26: error: 'x86_cap_flags' undeclared (first use in this function)
->    if (cpu_has(cpu, i) && x86_cap_flags[i] != NULL)
->                           ^
-> 
-> # CONFIG_X86_FEATURE_NAMES is not set
-> CONFIG_HAVE_CPUINFO_SYSFS=y
-> 
+fixed - repushed to cifs-2.6.git for-next
 
-Add author and driver-core maintainers.
+On Mon, Sep 25, 2017 at 7:51 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the cifs tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> fs/cifs/smb2transport.c: In function 'generate_smb311signingkey':
+> fs/cifs/smb2transport.c:403:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
+>   d->context.iov_base = ses->preauth_sha_hash;
+>                            ^
+> fs/cifs/smb2transport.c:409:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
+>   d->context.iov_base = ses->preauth_sha_hash;
+>                            ^
+> fs/cifs/smb2transport.c:415:27: error: 'struct cifs_ses' has no member named 'preauth_sha_hash'
+>   d->context.iov_base = ses->preauth_sha_hash;
+>                            ^
+>
+> Caused by commit
+>
+>   a679c0e328c9 ("Fix encryption labels and lengths for SMB3.1.1")
+>
+> This build has
+>
+> # CONFIG_CIFS_SMB311 is not set
+>
+> I have used the version of the cifs tree from next-20170922 for today.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-Same error in linux-next 20170922.
 
 
 -- 
-~Randy
+Thanks,
+
+Steve
