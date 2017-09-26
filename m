@@ -1,65 +1,42 @@
-From: Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Date: Tue, 26 Sep 2017 07:15:37 +0100
-Message-ID: <ACE7F7E8-BEB1-4B02-9467-AB61DBB40D72@jic23.retrosnub.co.uk>
-References: <20170926135441.7396587f@canb.auug.org.au>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: Tree for Sep 19 (x86/kernel/cpuinfo.c)
+Date: Tue, 26 Sep 2017 09:40:00 +0200 (CEST)
+Message-ID: <alpine.DEB.2.20.1709260930220.1941@nanos>
+References: <20170919141557.03ffb2a7@canb.auug.org.au> <75e3d5e7-091e-9b26-47cc-36bece726b9e@infradead.org> <46a06a76-a17c-de77-362a-99a18efaee79@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20170926135441.7396587f@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from Galois.linutronix.de ([146.0.238.70]:47546 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964790AbdIZHkJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 26 Sep 2017 03:40:09 -0400
+In-Reply-To: <46a06a76-a17c-de77-362a-99a18efaee79@infradead.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felix Schnizlein <fschnizlein@suse.com>, Borislav Petkov <bp@alien8.de>
 
+On Mon, 25 Sep 2017, Randy Dunlap wrote:
+> On 09/19/17 08:54, Randy Dunlap wrote:
+> > On 09/18/17 21:15, Stephen Rothwell wrote:
+> >> Hi all,
+> >>
+> >> Changes since 20170918:
+> >>
+> >> Linus' tree still had its build failure for which I reverted a commit.
+> >>
+> > 
+> > on i386:
+> > 
+> > ../arch/x86/kernel/cpuinfo.c: In function 'cpuinfo_flags':
 
+Where does this file come from? Random driver code added to arch/x86? This
+was neither acked nor reviewed by any x86 maintainer and just slapped into
+arch/x86/kernel/ without spending a split second of brain to find the spot
+where it actually belongs. It's not rocket science to figure that out.
 
-On 26 September 2017 04:54:41 BST, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->Hi Greg,
->
->After merging the staging tree, today's linux-next build (x86_64
->allmodconfig) failed like this:
->
->drivers/iio/counter/stm32-lptimer-cnt.c:181:2: error: unknown field
->'driver_module' specified in initializer
->  .driver_module = THIS_MODULE,
->  ^
->In file included from include/linux/linkage.h:6:0,
->                 from include/linux/kernel.h:6,
->                 from include/asm-generic/bug.h:15,
->                 from arch/x86/include/asm/bug.h:81,
->                 from include/linux/bug.h:4,
->                 from include/linux/bitfield.h:18,
->                 from drivers/iio/counter/stm32-lptimer-cnt.c:13:
->include/linux/export.h:35:21: error: initialization from incompatible
->pointer type [-Werror=incompatible-pointer-types]
-> #define THIS_MODULE (&__this_module)
->                     ^
->drivers/iio/counter/stm32-lptimer-cnt.c:181:19: note: in expansion of
->macro 'THIS_MODULE'
->  .driver_module = THIS_MODULE,
->                   ^
->include/linux/export.h:35:21: note: (near initialization for
->'stm32_lptim_cnt_iio_info.write_raw_get_fmt')
-> #define THIS_MODULE (&__this_module)
->                     ^
->drivers/iio/counter/stm32-lptimer-cnt.c:181:19: note: in expansion of
->macro 'THIS_MODULE'
->  .driver_module = THIS_MODULE,
->                   ^
->
->Caused by commit
->
->97623c0a80a6 ("iio: drop iio_info.driver_module and
->iio_trigger_ops.owner.")
->
->I have used the staging tree from next-20170922 for today.
+Please revert.
 
-Sorry, my mess up. Will send a patch dropping that line shortly..
+Thanks,
 
-Jonathan
-
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+	tglx
