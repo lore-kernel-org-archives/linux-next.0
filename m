@@ -1,58 +1,92 @@
-From: Nik Nyby <njn2118@columbia.edu>
-Subject: Re: linux-next: Signed-off-by missing for commit in the gpio tree
-Date: Thu, 28 Sep 2017 11:12:57 -0400
-Message-ID: <f1943a33-8771-b17b-0f20-78fa9d928c84@columbia.edu>
-References: <20170928073704.1f271e4e@canb.auug.org.au>
- <CACRpkdZmkjv=Js1wbBXcbCph9eF9CnYU3O1BW9jQ61c9N3GGCA@mail.gmail.com>
+From: Corey Minyard <minyard@acm.org>
+Subject: Re: linux-next: build failure after merge of the ipmi tree
+Date: Thu, 28 Sep 2017 12:34:06 -0500
+Message-ID: <489f35d2-6b65-b96e-76e6-7398b066064d@acm.org>
+References: <20170928144537.1465e782@canb.auug.org.au>
+Reply-To: minyard@acm.org
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from outprodmail02.cc.columbia.edu ([128.59.72.51]:55072 "EHLO
-        outprodmail02.cc.columbia.edu" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752671AbdI1PNC (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 28 Sep 2017 11:13:02 -0400
-Received: from hazelnut (hazelnut.cc.columbia.edu [128.59.213.250])
-        by outprodmail02.cc.columbia.edu (8.14.4/8.14.4) with ESMTP id v8SF88bw032891
-        for <linux-next@vger.kernel.org>; Thu, 28 Sep 2017 11:13:01 -0400
-Received: from hazelnut (localhost.localdomain [127.0.0.1])
-        by hazelnut (Postfix) with ESMTP id B4C1A80
-        for <linux-next@vger.kernel.org>; Thu, 28 Sep 2017 11:13:01 -0400 (EDT)
-Received: from sendprodmail02.cc.columbia.edu (sendprodmail02.cc.columbia.edu [128.59.72.14])
-        by hazelnut (Postfix) with ESMTP id 617AE80
-        for <linux-next@vger.kernel.org>; Thu, 28 Sep 2017 11:13:01 -0400 (EDT)
-Received: from mail-qt0-f197.google.com (mail-qt0-f197.google.com [209.85.216.197])
-        by sendprodmail02.cc.columbia.edu (8.14.4/8.14.4) with ESMTP id v8SFD1Gh053694
-        (version=TLSv1/SSLv3 cipher=AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 28 Sep 2017 11:13:01 -0400
-Received: by mail-qt0-f197.google.com with SMTP id u48so669949qtc.6
-        for <linux-next@vger.kernel.org>; Thu, 28 Sep 2017 08:13:01 -0700 (PDT)
-In-Reply-To: <CACRpkdZmkjv=Js1wbBXcbCph9eF9CnYU3O1BW9jQ61c9N3GGCA@mail.gmail.com>
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:33999 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751339AbdI1ReJ (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 28 Sep 2017 13:34:09 -0400
+In-Reply-To: <20170928144537.1465e782@canb.auug.org.au>
 Content-Language: en-GB
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Corey Minyard <cminyard@mvista.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/27/2017 06:47 PM, Linus Walleij wrote:
-> On Wed, Sep 27, 2017 at 11:37 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> Hi Linus,
->>
->> Commit
->>
->>    937a0df4f4ea ("gpio: amd8111 Kconfig typo fix (trivial)")
->>
->> is missing a Signed-off-by from its author.
-> 
-> OMG! How could I miss that.
-> 
-> The patch is so trivial that I just dropped it.
-> 
-> Yours,
-> Linus Walleij
-> 
+On 09/27/2017 11:45 PM, Stephen Rothwell wrote:
+> Hi Corey,
+>
+> After merging the ipmi tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: data definition has no type or storage class
+>   MODULE_DEVICE_TABLE(of, of_ipmi_match);
+>   ^
+> drivers/char/ipmi/ipmi_si_platform.c:360:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
+> drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: parameter names (without types) in function declaration
+> drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: data definition has no type or storage class
+>   MODULE_DEVICE_TABLE(pci, ipmi_pci_devices);
+>   ^
+> drivers/char/ipmi/ipmi_si_pci.c:142:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
+> drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: parameter names (without types) in function declaration
+>
+> Caused by commits
+>
+>    a3f3086dd508 ("ipmi_si: Move platform device handling to another file")
+>    fb5d20a966cf ("ipmi_si: Move PCI setup to another file
+>
+> Probably missing include files.
+>
+> I have added this patch for today:
 
-Agh - sorry about that. I thought git send-email did that for me and I'm 
-just not used to sending patches. I'll pay more attention next time.
+Hmm, I'm wondering how this got missed.  I compile tested it, of course,
+and lots of things compile my master rebase branch that this came from,
+but nothing found this.  Oh well.
+
+Thanks for handling this.  I have the fixes in and ready for next time.
+
+-corey
+
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 28 Sep 2017 14:40:49 +1000
+> Subject: [PATCH] ipmi_si: MODULE_DEVICE_TABLE needs module.h
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>   drivers/char/ipmi/ipmi_si_pci.c      | 2 +-
+>   drivers/char/ipmi/ipmi_si_platform.c | 2 +-
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
+> index ad0b7b6ad250..99771f5cad07 100644
+> --- a/drivers/char/ipmi/ipmi_si_pci.c
+> +++ b/drivers/char/ipmi/ipmi_si_pci.c
+> @@ -3,7 +3,7 @@
+>    *
+>    * Handling for IPMI devices on the PCI bus.
+>    */
+> -#include <linux/moduleparam.h>
+> +#include <linux/module.h>
+>   #include <linux/pci.h>
+>   #include "ipmi_si.h"
+>   
+> diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+> index 0e7ff0a4a151..9573f1116450 100644
+> --- a/drivers/char/ipmi/ipmi_si_platform.c
+> +++ b/drivers/char/ipmi/ipmi_si_platform.c
+> @@ -5,7 +5,7 @@
+>    * coming from the platform.
+>    */
+>   #include <linux/types.h>
+> -#include <linux/moduleparam.h>
+> +#include <linux/module.h>
+>   #include <linux/of_device.h>
+>   #include <linux/of_platform.h>
+>   #include <linux/of_address.h>
