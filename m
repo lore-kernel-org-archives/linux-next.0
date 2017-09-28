@@ -1,81 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the ipmi tree
-Date: Thu, 28 Sep 2017 14:45:37 +1000
-Message-ID: <20170928144537.1465e782@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Thu, 28 Sep 2017 14:57:33 +1000
+Message-ID: <20170928145733.09f080fc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44139 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:46741 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751355AbdI1Epj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 28 Sep 2017 00:45:39 -0400
+        id S1751591AbdI1E5f (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 28 Sep 2017 00:57:35 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Corey Minyard <cminyard@mvista.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 
-Hi Corey,
+Hi Dave,
 
-After merging the ipmi tree, today's linux-next build (powerpc
+After merging the drm tree, today's linux-next build (powerpc
 allyesconfig) failed like this:
 
-drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: data definition has no type or storage class
- MODULE_DEVICE_TABLE(of, of_ipmi_match);
- ^
-drivers/char/ipmi/ipmi_si_platform.c:360:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
-drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: parameter names (without types) in function declaration
-drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: data definition has no type or storage class
- MODULE_DEVICE_TABLE(pci, ipmi_pci_devices);
- ^
-drivers/char/ipmi/ipmi_si_pci.c:142:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
-drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: parameter names (without types) in function declaration
+drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.o:(.opd+0xd8): multiple definition of `ci_send_msg_to_smc'
+drivers/gpu/drm/radeon/ci_smc.o:(.opd+0xc0): first defined here
+drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.o: In function `.ci_send_msg_to_smc':
+(.text+0xea0): multiple definition of `.ci_send_msg_to_smc'
+drivers/gpu/drm/radeon/ci_smc.o:(.text+0x760): first defined here
 
-Caused by commits
 
-  a3f3086dd508 ("ipmi_si: Move platform device handling to another file")
-  fb5d20a966cf ("ipmi_si: Move PCI setup to another file
+Caused by commit
 
-Probably missing include files.
+  9f4b35411cfe ("drm/amd/powerplay: add CI asics support to smumgr (v3)")
 
-I have added this patch for today:
+I applied the following patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 28 Sep 2017 14:40:49 +1000
-Subject: [PATCH] ipmi_si: MODULE_DEVICE_TABLE needs module.h
+Date: Thu, 28 Sep 2017 14:50:51 +1000
+Subject: [PATCH] drm/amd/powerplay: uniquify ci_send_msg_to_smc
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- drivers/char/ipmi/ipmi_si_pci.c      | 2 +-
- drivers/char/ipmi/ipmi_si_platform.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c    | 4 ++--
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.h    | 2 +-
+ drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
-index ad0b7b6ad250..99771f5cad07 100644
---- a/drivers/char/ipmi/ipmi_si_pci.c
-+++ b/drivers/char/ipmi/ipmi_si_pci.c
-@@ -3,7 +3,7 @@
-  *
-  * Handling for IPMI devices on the PCI bus.
-  */
--#include <linux/moduleparam.h>
-+#include <linux/module.h>
- #include <linux/pci.h>
- #include "ipmi_si.h"
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
+index 9ee14315dce7..fcf88b8fc738 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.c
+@@ -208,7 +208,7 @@ static int ci_read_smc_sram_dword(struct pp_hwmgr *hwmgr, uint32_t smc_addr,
+ 	return 0;
+ }
  
-diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
-index 0e7ff0a4a151..9573f1116450 100644
---- a/drivers/char/ipmi/ipmi_si_platform.c
-+++ b/drivers/char/ipmi/ipmi_si_platform.c
-@@ -5,7 +5,7 @@
-  * coming from the platform.
-  */
- #include <linux/types.h>
--#include <linux/moduleparam.h>
-+#include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/of_platform.h>
- #include <linux/of_address.h>
+-int ci_send_msg_to_smc(struct pp_hwmgr *hwmgr, uint16_t msg)
++int sumgr_ci_send_msg_to_smc(struct pp_hwmgr *hwmgr, uint16_t msg)
+ {
+ 	int ret;
+ 
+@@ -231,7 +231,7 @@ int ci_send_msg_to_smc_with_parameter(struct pp_hwmgr *hwmgr,
+ 					uint16_t msg, uint32_t parameter)
+ {
+ 	cgs_write_register(hwmgr->device, mmSMC_MSG_ARG_0, parameter);
+-	return ci_send_msg_to_smc(hwmgr, msg);
++	return sumgr_ci_send_msg_to_smc(hwmgr, msg);
+ }
+ 
+ static void ci_initialize_power_tune_defaults(struct pp_hwmgr *hwmgr)
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.h b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.h
+index cc4176d2d25f..61d17e354d6d 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.h
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smc.h
+@@ -32,7 +32,7 @@ struct amd_pp_profile;
+ 
+ int ci_send_msg_to_smc_with_parameter(struct pp_hwmgr *hwmgr,
+ 					uint16_t msg, uint32_t parameter);
+-int ci_send_msg_to_smc(struct pp_hwmgr *hwmgr, uint16_t msg);
++int sumgr_ci_send_msg_to_smc(struct pp_hwmgr *hwmgr, uint16_t msg);
+ int ci_populate_all_graphic_levels(struct pp_hwmgr *hwmgr);
+ int ci_populate_all_memory_levels(struct pp_hwmgr *hwmgr);
+ int ci_init_smc_table(struct pp_hwmgr *hwmgr);
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+index f265f42a7ed3..ce3c13f9e97b 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/ci_smumgr.c
+@@ -68,7 +68,7 @@ const struct pp_smumgr_func ci_smu_funcs = {
+ 	.check_fw_load_finish = NULL,
+ 	.request_smu_load_fw = NULL,
+ 	.request_smu_load_specific_fw = NULL,
+-	.send_msg_to_smc = ci_send_msg_to_smc,
++	.send_msg_to_smc = sumgr_ci_send_msg_to_smc,
+ 	.send_msg_to_smc_with_parameter = ci_send_msg_to_smc_with_parameter,
+ 	.download_pptable_settings = NULL,
+ 	.upload_pptable_settings = NULL,
 -- 
 2.14.1
 
