@@ -1,36 +1,84 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the gpio tree
-Date: Thu, 28 Sep 2017 00:47:20 +0200
-Message-ID: <CACRpkdZmkjv=Js1wbBXcbCph9eF9CnYU3O1BW9jQ61c9N3GGCA@mail.gmail.com>
-References: <20170928073704.1f271e4e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the ipmi tree
+Date: Thu, 28 Sep 2017 14:45:37 +1000
+Message-ID: <20170928144537.1465e782@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:52235 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752050AbdI0WrV (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 27 Sep 2017 18:47:21 -0400
-Received: by mail-it0-f49.google.com with SMTP id c195so106797itb.1
-        for <linux-next@vger.kernel.org>; Wed, 27 Sep 2017 15:47:21 -0700 (PDT)
-In-Reply-To: <20170928073704.1f271e4e@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:44139 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751355AbdI1Epj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 28 Sep 2017 00:45:39 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nik Nyby <nnyby@columbia.edu>
+To: Corey Minyard <cminyard@mvista.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Sep 27, 2017 at 11:37 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Corey,
 
-> Hi Linus,
->
-> Commit
->
->   937a0df4f4ea ("gpio: amd8111 Kconfig typo fix (trivial)")
->
-> is missing a Signed-off-by from its author.
+After merging the ipmi tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-OMG! How could I miss that.
+drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: data definition has no type or storage class
+ MODULE_DEVICE_TABLE(of, of_ipmi_match);
+ ^
+drivers/char/ipmi/ipmi_si_platform.c:360:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
+drivers/char/ipmi/ipmi_si_platform.c:360:1: warning: parameter names (without types) in function declaration
+drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: data definition has no type or storage class
+ MODULE_DEVICE_TABLE(pci, ipmi_pci_devices);
+ ^
+drivers/char/ipmi/ipmi_si_pci.c:142:1: error: type defaults to 'int' in declaration of 'MODULE_DEVICE_TABLE' [-Werror=implicit-int]
+drivers/char/ipmi/ipmi_si_pci.c:142:1: warning: parameter names (without types) in function declaration
 
-The patch is so trivial that I just dropped it.
+Caused by commits
 
-Yours,
-Linus Walleij
+  a3f3086dd508 ("ipmi_si: Move platform device handling to another file")
+  fb5d20a966cf ("ipmi_si: Move PCI setup to another file
+
+Probably missing include files.
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 28 Sep 2017 14:40:49 +1000
+Subject: [PATCH] ipmi_si: MODULE_DEVICE_TABLE needs module.h
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/char/ipmi/ipmi_si_pci.c      | 2 +-
+ drivers/char/ipmi/ipmi_si_platform.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_si_pci.c b/drivers/char/ipmi/ipmi_si_pci.c
+index ad0b7b6ad250..99771f5cad07 100644
+--- a/drivers/char/ipmi/ipmi_si_pci.c
++++ b/drivers/char/ipmi/ipmi_si_pci.c
+@@ -3,7 +3,7 @@
+  *
+  * Handling for IPMI devices on the PCI bus.
+  */
+-#include <linux/moduleparam.h>
++#include <linux/module.h>
+ #include <linux/pci.h>
+ #include "ipmi_si.h"
+ 
+diff --git a/drivers/char/ipmi/ipmi_si_platform.c b/drivers/char/ipmi/ipmi_si_platform.c
+index 0e7ff0a4a151..9573f1116450 100644
+--- a/drivers/char/ipmi/ipmi_si_platform.c
++++ b/drivers/char/ipmi/ipmi_si_platform.c
+@@ -5,7 +5,7 @@
+  * coming from the platform.
+  */
+ #include <linux/types.h>
+-#include <linux/moduleparam.h>
++#include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_address.h>
+-- 
+2.14.1
+
+-- 
+Cheers,
+Stephen Rothwell
