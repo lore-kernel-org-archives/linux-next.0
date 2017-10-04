@@ -1,276 +1,188 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2017-10-03-17-08 uploaded
-Date: Tue, 03 Oct 2017 17:08:44 -0700
-Message-ID: <59d4268c.FlFtK0Mqe7TSSBd5%akpm@linux-foundation.org>
+From: Jerome Glisse <jglisse@redhat.com>
+Subject: Re: [PATCH] mm/mmu_notifier: avoid double notification when it is
+ useless
+Date: Tue, 3 Oct 2017 20:15:59 -0400
+Message-ID: <20171004001559.GD20644@redhat.com>
+References: <20170901173011.10745-1-jglisse@redhat.com>
+ <20171003234215.GA5231@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx1.redhat.com ([209.132.183.28]:51388 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750865AbdJDAQE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 3 Oct 2017 20:16:04 -0400
+Content-Disposition: inline
+In-Reply-To: <20171003234215.GA5231@redhat.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrea Arcangeli <aarcange@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, Nadav Amit <nadav.amit@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Joerg Roedel <jroedel@suse.de>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, David Woodhouse <dwmw2@infradead.org>, Alistair Popple <alistair@popple.id.au>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, iommu@lists.linux-foundation.org, linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org
 
-The mm-of-the-moment snapshot 2017-10-03-17-08 has been uploaded to
+On Wed, Oct 04, 2017 at 01:42:15AM +0200, Andrea Arcangeli wrote:
+> Hello Jerome,
+> 
+> On Fri, Sep 01, 2017 at 01:30:11PM -0400, Jerome Glisse wrote:
+> > +Case A is obvious you do not want to take the risk for the device to write to
+> > +a page that might now be use by some completely different task.
+> 
+> used
+> 
+> > +is true ven if the thread doing the page table update is preempted right after
+> 
+> even
+> 
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 90731e3b7e58..5706252b828a 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -1167,8 +1167,15 @@ static int do_huge_pmd_wp_page_fallback(struct vm_fault *vmf, pmd_t orig_pmd,
+> >  		goto out_free_pages;
+> >  	VM_BUG_ON_PAGE(!PageHead(page), page);
+> >  
+> > +	/*
+> > +	 * Leave pmd empty until pte is filled note we must notify here as
+> > +	 * concurrent CPU thread might write to new page before the call to
+> > +	 * mmu_notifier_invalidate_range_end() happen which can lead to a
+> 
+> happens
+> 
+> > +	 * device seeing memory write in different order than CPU.
+> > +	 *
+> > +	 * See Documentation/vm/mmu_notifier.txt
+> > +	 */
+> >  	pmdp_huge_clear_flush_notify(vma, haddr, vmf->pmd);
+> > -	/* leave pmd empty until pte is filled */
+> >  
+> 
+> Here we can change the following mmu_notifier_invalidate_range_end to
+> skip calling ->invalidate_range. It could be called
+> mmu_notifier_invalidate_range_only_end, or other suggestions
+> welcome. Otherwise we'll repeat the call for nothing.
+> 
+> We need it inside the PT lock for the ordering issue, but we don't
+> need to run it twice.
+> 
+> Same in do_huge_pmd_wp_page, wp_page_copy and
+> migrate_vma_insert_page. Every time *clear_flush_notify is used
+> mmu_notifier_invalidate_range_only_end should be called after it,
+> instead of mmu_notifier_invalidate_range_end.
+> 
+> I think optimizing that part too, fits in the context of this patchset
+> (if not in the same patch), because the objective is still the same:
+> to remove unnecessary ->invalidate_range calls.
 
-   http://www.ozlabs.org/~akpm/mmotm/
-
-mmotm-readme.txt says
-
-README for mm-of-the-moment:
-
-http://www.ozlabs.org/~akpm/mmotm/
-
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
-
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
-
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+Yes you are right, good idea, i will respin with that too (and with the
+various typo you noted thank you for that). I can do 2 patch or 1, i don't
+mind either way. I will probably do 2 as first and they can be folded into
+1 if people prefer just one.
 
 
-This mmotm tree contains the following patches against 4.14-rc3:
-(patches marked "*" will be included in linux-next)
+> 
+> > +				 * No need to notify as we downgrading page
+> 
+> are
+> 
+> > +				 * table protection not changing it to point
+> > +				 * to a new page.
+> > +	 			 *
+> 
+> > +		 * No need to notify as we downgrading page table to read only
+> 
+> are
+> 
+> > +	 * No need to notify as we replacing a read only page with another
+> 
+> are
+> 
+> > @@ -1510,13 +1515,43 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+> >  			if (pte_soft_dirty(pteval))
+> >  				swp_pte = pte_swp_mksoft_dirty(swp_pte);
+> >  			set_pte_at(mm, address, pvmw.pte, swp_pte);
+> > -		} else
+> > +		} else {
+> > +			/*
+> > +			 * We should not need to notify here as we reach this
+> > +			 * case only from freeze_page() itself only call from
+> > +			 * split_huge_page_to_list() so everything below must
+> > +			 * be true:
+> > +			 *   - page is not anonymous
+> > +			 *   - page is locked
+> > +			 *
+> > +			 * So as it is a shared page and it is locked, it can
+> > +			 * not be remove from the page cache and replace by
+> > +			 * a new page before mmu_notifier_invalidate_range_end
+> > +			 * so no concurrent thread might update its page table
+> > +			 * to point at new page while a device still is using
+> > +			 * this page.
+> > +			 *
+> > +			 * But we can not assume that new user of try_to_unmap
+> > +			 * will have that in mind so just to be safe here call
+> > +			 * mmu_notifier_invalidate_range()
+> > +			 *
+> > +			 * See Documentation/vm/mmu_notifier.txt
+> > +			 */
+> >  			dec_mm_counter(mm, mm_counter_file(page));
+> > +			mmu_notifier_invalidate_range(mm, address,
+> > +						      address + PAGE_SIZE);
+> > +		}
+> >  discard:
+> > +		/*
+> > +		 * No need to call mmu_notifier_invalidate_range() as we are
+> > +		 * either replacing a present pte with non present one (either
+> > +		 * a swap or special one). We handling the clearing pte case
+> > +		 * above.
+> > +		 *
+> > +		 * See Documentation/vm/mmu_notifier.txt
+> > +		 */
+> >  		page_remove_rmap(subpage, PageHuge(page));
+> >  		put_page(page);
+> > -		mmu_notifier_invalidate_range(mm, address,
+> > -					      address + PAGE_SIZE);
+> >  	}
+> >  
+> >  	mmu_notifier_invalidate_range_end(vma->vm_mm, start, end);
+> 
+> That is the path that unmaps filebacked pages (btw, not necessarily
+> shared unlike comment says, they can be private but still filebacked).
 
-  origin.patch
-  i-need-old-gcc.patch
-* alpha-fix-build-failures.patch
-* params-align-add_sysfs_param-documentation-with-code.patch
-* scripts-spellingtxt-add-more-spelling-mistakes-to-spellingtxt.patch
-* mm-fix-typo-in-vm_mpx-definition.patch
-* ksm-fix-unlocked-iteration-over-vmas-in-cmp_and_merge_page.patch
-* mm-hugetlb-soft_offline-save-compound-page-order-before-page-migration.patch
-* sh-sh7722-remove-nonexistent-gpio_ptq7-to-fix-pinctrl-registration.patch
-* sh-sh7757-remove-nonexistent-gpio_pt7_resv-to-fix-pinctrl-registration.patch
-* sh-sh7264-remove-nonexistent-gpio_ph-to-fix-pinctrl-registration.patch
-* sh-sh7269-remove-nonexistent-gpio_ph-to-fix-pinctrl-registration.patch
-* z3fold-fix-potential-race-in-z3fold_reclaim_page.patch
-* mm-oom_reaper-skip-mm-structs-with-mmu-notifiers.patch
-* mm-memcg-remove-hotplug-locking-from-try_charge.patch
-* mm-memcg-avoid-page-count-check-for-zone-device.patch
-* android-binder-drop-lru-lock-in-isolate-callback.patch
-* mmcompaction-serialize-waitqueue_active-checks-for-real.patch
-* z3fold-fix-stale-list-handling.patch
-* mm-meminit-mark-init_reserved_page-as-__meminit.patch
-* rapidio-remove-global-irq-spinlocks-from-the-subsystem.patch
-* mm-fix-rodata_test-failure-rodata_test-test-data-was-not-read-only.patch
-* zram-fix-null-dereference-of-handle.patch
-* m32r-define-cpu_big_endian.patch
-* mm-have-filemap_check_and_advance_wb_err-clear-as_eio-as_enospc.patch
-* mm-avoid-marking-swap-cached-page-as-lazyfree.patch
-* mm-fix-data-corruption-caused-by-lazyfree-page.patch
-* mm-device-public-memory-fix-edge-case-in-_vm_normal_page.patch
-* userfaultfd-non-cooperative-fix-fork-use-after-free.patch
-* exec-load_script-kill-the-onstack-interp-array.patch
-* exec-binfmt_misc-dont-nullify-node-dentry-in-kill_node.patch
-* exec-binfmt_misc-shift-filp_closeinterp_file-from-kill_node-to-bm_evict_inode.patch
-* exec-binfmt_misc-remove-the-confusing-e-interp_file-=-null-checks.patch
-* exec-binfmt_misc-fix-race-between-load_misc_binary-and-kill_node.patch
-* exec-binfmt_misc-kill-the-onstack-iname-array.patch
-* lib-lz4-make-arrays-static-const-reduces-object-code-size.patch
-* bitfieldh-remove-32bit-from-field_get-comment-block.patch
-* sysctl-remove-duplicate-uint_max-check-on-do_proc_douintvec_conv.patch
-* mm-memcontrol-use-vmalloc-fallback-for-large-kmem-memcg-arrays.patch
-* idr-fix-comment-for-idr_replace.patch
-* mm-memory_hotplug-add-scheduling-point-to-__add_pages.patch
-* mm-page_alloc-add-scheduling-point-to-memmap_init_zone.patch
-* memremap-add-scheduling-point-to-devm_memremap_pages.patch
-* kcmp-drop-branch-leftover-typo.patch
-* mm-memory_hotplug-change-pfn_to_section_nr-section_nr_to_pfn-macro-to-inline-function.patch
-* mm-memory_hotplug-define-find_smallestbiggest_section_pfn-as-unsigned-long.patch
-* params-fix-the-maximum-length-in-param_get_string.patch
-* params-fix-an-overflow-in-param_attr_show.patch
-* params-improve-standard_param_def-readability.patch
-* ratelimit-use-deferred-printk-version.patch
-* m32r-fix-build-failure.patch
-* checkpatch-fix-ignoring-cover-letter-logic.patch
-* include-linux-fsh-fix-comment-about-struct-address_space.patch
-* scripts-decodecode-fix-decoding-for-aarch64-arm64-instructions.patch
-* mm-skip-hwpoisoned-pages-when-onlining-pages.patch
-* mm-migrate-fix-indexing-bug-off-by-one-and-avoid-out-of-bound-access.patch
-* kernel-hacking-menu-runtime-testing-keep-tests-together.patch
-* mm-madvise-add-description-for-madv_wipeonfork-and-madv_keeponfork.patch
-* of-provide-of_n_addrsize_cells-wrappers-for-config_of.patch
-* of-provide-of_n_addrsize_cells-wrappers-for-config_of-fix.patch
-* mm-mempolicy-fix-numa_interleave_hit-counter.patch
-* mm-remove-unnecessary-warn_once-in-page_vma_mapped_walk.patch
-* mm-only-dispaly-online-cpus-of-the-numa-node.patch
-* dma-debug-fix-incorrect-pfn-calculation.patch
-* mm-memory_hotplug-do-not-back-off-draining-pcp-free-pages-from-kworker-context.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* dax-quiet-bdev_dax_supported.patch
-* dax-disable-filesystem-dax-on-devices-that-do-not-map-pages.patch
-* dax-stop-using-vm_mixedmap-for-dax.patch
-* dax-stop-using-vm_mixedmap-for-dax-fix.patch
-* dax-stop-using-vm_hugepage-for-dax.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* bloat-o-meter-provide-3-different-arguments-for-data-function-and-all.patch
-* bloat-o-meter-provide-3-different-arguments-for-data-function-and-all-v2.patch
-* spellingtxt-add-unnecessary-typo-variants.patch
-* ocfs2-remove-unused-function-ocfs2_publish_get_mount_state.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called.patch
-* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called-fix.patch
-* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names.patch
-* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names-v2.patch
-* ocfs2-move-some-definitions-to-header-file.patch
-* ocfs2-fix-some-small-problems.patch
-* ocfs2-add-kobject-for-online-file-check.patch
-* ocfs2-add-duplicative-ino-number-check.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-  mm.patch
-* include-linux-sched-mmh-uninline-mmdrop_async-etc.patch
-* mm-add-kmalloc_array_node-and-kcalloc_node.patch
-* block-use-kmalloc_array_node.patch
-* ib-qib-use-kmalloc_array_node.patch
-* ib-rdmavt-use-kmalloc_array_node.patch
-* mm-mempool-use-kmalloc_array_node.patch
-* rds-ib-use-kmalloc_array_node.patch
-* mm-update-comments-for-struct-pagemapping.patch
-* zram-set-bdi_cap_stable_writes-once.patch
-* bdi-introduce-bdi_cap_synchronous_io.patch
-* mm-swap-introduce-swp_synchronous_io.patch
-* mm-swap-skip-swapcache-for-swapin-of-synchronous-device.patch
-* mm-make-count-list_lru_one-nr_items-lockless.patch
-* writeback-remove-unused-parameter-from-balance_dirty_pages.patch
-* mm-memory_hotplug-do-not-fail-offlining-too-early.patch
-* mm-memory_hotplug-remove-timeout-from-__offline_memory.patch
-* mm-memblockc-make-the-index-explicit-argument-of-for_each_memblock_type.patch
-* mm-print-a-warning-once-the-vm-dirtiness-settings-is-illogical.patch
-* mm-sysctl-make-numa-stats-configurable.patch
-* mm-sysctl-make-numa-stats-configurable-fix.patch
-* mm-sysctl-make-numa-stats-configurable-fix-fix.patch
-* mm-madvise-enable-soft-offline-of-hugetlb-pages-at-pud-level.patch
-* zram-add-zstd-to-the-supported-algorithms-list.patch
-* zram-remove-zlib-from-the-list-of-recommended-algorithms.patch
-* mm-hugetlbfs-remove-the-redundant-enival-return-from-hugetlbfs_setattr.patch
-* mm-hmm-constify-hmm_devmem_page_get_drvdata-parameter.patch
-* mm-account-pud-page-tables.patch
-* zsmalloc-calling-zs_map_object-from-irq-is-a-bug.patch
-* mm-mmu_notifier-avoid-double-notification-when-it-is-useless.patch
-* mm-mmu_notifier-avoid-double-notification-when-it-is-useless-checkpatch-fixes.patch
-* mm-remove-unused-pgdat-inactive_ratio.patch
-* mm-hugetlb-drop-hugepages_treat_as_movable-sysctl.patch
-* mm-swap-fix-race-conditions-in-swap_slots-cache-init.patch
-* mm-swap-fix-race-conditions-in-swap_slots-cache-init-fix.patch
-* mm-swap-fix-race-conditions-in-swap_slots-cache-init-fix-fix.patch
-* mm-swap-remove-lock_initialized-flag-from-swap_slots_cache.patch
-* mm-compaction-kcompactd-should-not-ignore-pageblock-skip.patch
-* mm-compaction-persistently-skip-hugetlbfs-pageblocks.patch
-* mm-compaction-persistently-skip-hugetlbfs-pageblocks-fix.patch
-* mm-page_alloc-return-0-in-case-this-node-has-no-page-within-the-zone.patch
-* mm-vmscan-do-not-pass-reclaimed-slab-to-vmpressure.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
-* proc-coredump-add-coredumping-flag-to-proc-pid-status.patch
-* proc-coredump-add-coredumping-flag-to-proc-pid-status-fix.patch
-* proc-uninline-name_to_int.patch
-* proc-use-do-while-in-name_to_int.patch
-* sh-boot-add-static-stack-protector-to-pre-kernel.patch
-* makefile-move-stackprotector-availability-out-of-kconfig.patch
-* makefile-introduce-config_cc_stackprotector_auto.patch
-* makefile-introduce-config_cc_stackprotector_auto-fix.patch
-* parse-maintainers-add-ability-to-specify-filenames.patch
-* bitfieldh-include-linux-build_bugh-instead-of-linux-bugh.patch
-* radix-tree-remove-unneeded-include-linux-bugh.patch
-* lib-add-module-support-to-string-tests.patch
-* checkpatch-support-function-pointers-for-unnamed-function-definition-arguments.patch
-* scripts-checkpatchpl-avoid-false-warning-missing-break.patch
-* checkpatch-printks-always-need-a-kern_level.patch
-* epoll-account-epitem-and-eppoll_entry-to-kmemcg.patch
-* init-version-include-linux-exporth-instead-of-linux-moduleh.patch
-* seq_file-delete-small-value-optimization.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-* rapidio-idt_gen2-constify-rio_device_id.patch
-* rapidio-idt_gen3-constify-rio_device_id.patch
-* rapidio-idtcps-constify-rio_device_id.patch
-* rapidio-tsi568-constify-rio_device_id.patch
-* rapidio-tsi57x-constify-rio_device_id.patch
-* rapidio-fix-resources-leak-in-error-handling-path-in-rio_dma_transfer.patch
-* rapidio-fix-an-error-handling-in-rio_dma_transfer.patch
-* uapi-fix-linux-sysctlh-userspace-compilation-errors.patch
-* pid-delete-reserved_pids.patch
-* pid-delete-struct-pidmap-nr_free.patch
-* kernel-panic-add-taint_aux.patch
-* kcov-remove-pointless-current-=-null-check.patch
-* kernel-reboot-add-devm_register_reboot_notifier.patch
-* kernel-reboot-add-devm_register_reboot_notifier-fix.patch
-* initramfs-fix-initramfs-rebuilds-w-compression-after-disabling.patch
-* sysvipc-unteach-ids-next_id-for-checkpoint_restore.patch
-* sysvipc-unteach-ids-next_id-for-checkpoint_restore-checkpatch-fixes.patch
-* sysvipc-duplicate-lock-comments-wrt-ipc_addid.patch
-* sysvipc-properly-name-ipc_addid-limit-parameter.patch
-* sysvipc-make-get_maxid-o1-again.patch
-* sysvipc-make-get_maxid-o1-again-checkpatch-fixes.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* mm-add-infrastructure-for-get_user_pages_fast-benchmarking.patch
-* iopoll-avoid-wint-in-bool-context-warning.patch
-* maintainers-update-tpm-driver-infrastructure-changes.patch
-* pcmcia-badge4-avoid-unused-function-warning.patch
-* ia64-topology-remove-the-unused-parent_node-macro.patch
-* sh-numa-remove-the-unused-parent_node-macro.patch
-* sparc64-topology-remove-the-unused-parent_node-macro.patch
-* tile-topology-remove-the-unused-parent_node-macro.patch
-* asm-generic-numa-remove-the-unused-parent_node-macro.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-* lib-crc-ccitt-add-ccitt-false-crc16-variant.patch
-  mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+I was more refering to the fact that they are in page cache and thus
+given current condition they can not be migrated to a new page in our
+back. But yes it can be a private mapping, i will fix the comment.
+
+
+> I'd like some more explanation about the inner working of "that new
+> user" as per comment above.
+> 
+> It would be enough to drop mmu_notifier_invalidate_range from above
+> without adding it to the filebacked case. The above gives higher prio
+> to the hypothetical and uncertain future case, than to the current
+> real filebacked case that doesn't need ->invalidate_range inside the
+> PT lock, or do you see something that might already need such
+> ->invalidate_range?
+
+No i don't see any new user today that might need such invalidate but
+i was trying to be extra cautious as i have a tendency to assume that
+someone might do a patch that use try_to_unmap() without going through
+all the comments in the function and thus possibly using it in a an
+unexpected way from mmu_notifier callback point of view. I am fine
+with putting the burden on new user to get it right and adding an
+extra warning in the function description to try to warn people in a
+sensible way.
+
+
+> I certainly like the patch. I expect ->invalidate_range users will
+> like the slight higher complexity in order to eliminate unnecessary
+> invalidates that are slowing them down unnecessarily. At the same time
+> this is zero risk (because a noop) for all other MMU notifier users
+> (those that don't share the primary MMU pagetables, like KVM).
+
+I have another patchset to restore the change_pte optimization for kvm
+i want to post too. I will need to do some benchmarking first to make
+sure it actualy helps even in a small way.
+
+Thank you for looking into this patch, i will repost with your suggestions
+soon.
+
+Jérôme
