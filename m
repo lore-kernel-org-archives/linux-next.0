@@ -1,55 +1,39 @@
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: Re: linux-next: manual merge of the cgroup tree with the net-next
- tree
-Date: Mon, 9 Oct 2017 16:04:25 -0700
-Message-ID: <20171009230424.4p7r4b7s7xubmyhi@ast-mbp>
-References: <20171009183836.cceczuqytzmgqubr@sirena.co.uk>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: manual merge of the drivers-x86 tree with the
+ net-next tree
+Date: Mon, 9 Oct 2017 16:18:10 -0700
+Message-ID: <20171009231810.GI12321@fury>
+References: <20171009175633.dm7hjmgoxusspue5@sirena.co.uk>
+ <20171009194301.GP2761@lahna.fi.intel.com>
+ <20171009195634.gzxwcqn7xklumqyr@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <netdev-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171009183836.cceczuqytzmgqubr@sirena.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20171009195634.gzxwcqn7xklumqyr@sirena.co.uk>
+Sender: netdev-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, Mario Limonciello <mario.limonciello@dell.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amir Levy <amir.jer.levy@intel.com>, Michael Jamet <michael.jamet@intel.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 09, 2017 at 07:38:36PM +0100, Mark Brown wrote:
-> Hi Tejun,
+On Mon, Oct 09, 2017 at 08:56:34PM +0100, Mark Brown wrote:
+> On Mon, Oct 09, 2017 at 10:43:01PM +0300, Mika Westerberg wrote:
 > 
-> Today's linux-next merge of the cgroup tree got a conflict in:
+> > If possible, I would rather move this chapter to be before "Networking
+> > over Thunderbolt cable". Reason is that it then follows NVM flashing
+> > chapter which is typically where you need to force power in the first
+> > place.
 > 
->   kernel/cgroup/cgroup.c
-> 
-> between commit:
-> 
->   324bda9e6c5ad ("bpf: multi program support for cgroup+bpf")
-> 
-> from the net-next tree and commit:
-> 
->   041cd640b2f3c ("cgroup: Implement cgroup2 basic CPU usage accounting")
-> 
-> from the cgroup tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc kernel/cgroup/cgroup.c
-> index 00f5b358aeac,c3421ee0d230..000000000000
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@@ -4765,8 -4785,9 +4788,11 @@@ static struct cgroup *cgroup_create(str
->   
->   	return cgrp;
->   
->  +out_idr_free:
->  +	cgroup_idr_remove(&root->cgroup_idr, cgrp->id);
-> + out_stat_exit:
-> + 	if (cgroup_on_dfl(parent))
-> + 		cgroup_stat_exit(cgrp);
 
-thanks. I did the same merge conflict resolution for our combined tree.
+Agreed.
+
+> I guess that's something best sorted out either in the relevant trees or
+> during the merge window?
+
+I'm not sure how we would deal with it in the trees. Best to note this during
+the merge window - whichever goes in second. Test merge will identify the merge
+conflict, and we can include a note to Linus on the preference.
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
