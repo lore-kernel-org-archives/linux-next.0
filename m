@@ -1,50 +1,64 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: mmotm 2017-10-03-17-08 uploaded
-Date: Mon, 9 Oct 2017 21:37:10 +0100
-Message-ID: <20171009203710.6ick6l3kpmqhiq23@sirena.co.uk>
-References: <59d4268c.FlFtK0Mqe7TSSBd5%akpm@linux-foundation.org>
+Subject: linux-next: Tree for Oct 9th
+Date: Mon, 9 Oct 2017 22:21:22 +0100
+Message-ID: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="w4452otkpsr4eyvu"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="72fid4vymnxizmy7"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52088 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751676AbdJIVVY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 9 Oct 2017 17:21:24 -0400
 Content-Disposition: inline
-In-Reply-To: <59d4268c.FlFtK0Mqe7TSSBd5%akpm@linux-foundation.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---w4452otkpsr4eyvu
+--72fid4vymnxizmy7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 03, 2017 at 05:08:44PM -0700, akpm@linux-foundation.org wrote:
+For my birthday I've gone and got myself a linux-next tree:
 
-> You will need quilt to apply these patches to the latest Linus release (4.x
-> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-> http://ozlabs.org/~akpm/mmotm/series
+Changes since 20170929:
 
-I'm getting several merge errors importing the current tree but I have
-to confess I don't really understand what the conflicts were as I don't
-100% follow what the script is doing with the imports, it's getting late
-and there's some use of old -next trees which is confusing me.  All the
-merge resolutions appear to come out as null diffs so I think everything
-is fine but please check when I push today's -next release shortly.
+The net-next and drm trees lost their build failures but the rcu tree
+gained one.
 
---w4452otkpsr4eyvu
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with an arm64 defconfig, an allmodconfig (with
+CONFIG_BUILD_DOCSRC=3Dn) for x86_64, a multi_v7_defconfig for arm and a
+native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+and arm64 allnoconfig=20
+
+--72fid4vymnxizmy7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnb3fYACgkQJNaLcl1U
-h9A4AAf+PZYxqIql06lrhRaUhqUH7kv1FYkx+gi0OMLOuZA52TSP2qltkn++f4BL
-oclkT/YRZG4PIQAxp+mS68QuqrHIghABP/TFzVCogCYlo7x9MjAuYFWDlG/nPuTg
-E6WrmlDF+c806HimAYmzXX0Ie7AVcpStpjHOU5PNxAPtHBiBgQmlbwrqndMNOpVk
-HdlFNATQSd8vMNbAoqViezIk/H/dqjHHjE14cSi3VJcGhEyjsWsONX9k3G7qeqPQ
-TkNi7wolp+1dheCIw00lMWY+fs2QKrGavlP3DmsSno0mpKGEKoIdvjRb3OgCn/io
-6n6NEusAALcr+gFTy6GbMQdDgAcYXA==
-=OBVA
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnb6FIACgkQJNaLcl1U
+h9B02wf/XJSfqCc9liCooM5/ustwu5ZJUt3XrYOGL3aDE1K0dJzsqI1r5tYX/0ZP
+714Q6Xz0P5vOJRkJQncqVOPFy1WvsqoY9+1HrLeGvK9Zxj/O35pig7p2s2CcFpxV
+L209A05G3GbpFcFqmDgeHbrSXV2PYELujMsb9GIiE0x73L4nlfilH85w9nnEX3nS
+ZMOjD7Mv9/Mzl11RV6Y88GZ8WYXA4OQ5Fq9Evw/b3gsGvBHK8UTs6a4KT2kkDMcE
+0JCVgrYrYVPzC1K4BhkZrgVDxYRil/nr0MUQRbKNB9fiJoroFFg07UoAyD9X96IT
+xAxFFNbR/jo/GSOo41YdfilnY+xsFQ==
+=Iixg
 -----END PGP SIGNATURE-----
 
---w4452otkpsr4eyvu--
+--72fid4vymnxizmy7--
