@@ -1,52 +1,37 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 9th (of: unittest: testcases)
-Date: Tue, 10 Oct 2017 11:34:20 -0700
-Message-ID: <ec791848-ea92-db98-e0c8-ef96a6409caf@infradead.org>
-References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
- <7524d1e5-137c-cb78-c24f-6a9701e46701@infradead.org>
- <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2016-08-02-15-53 uploaded
+Date: Tue, 10 Oct 2017 12:37:49 -0700
+Message-ID: <20171010123749.2c59f3b762b3c0b33e80a67d@linux-foundation.org>
+References: <57a124aa.eJmVCvd1SOHlQ1X8%akpm@linux-foundation.org>
+        <CAGF4SLgi6jgtxbqtTEjL8FGXUHHsSm6KeoVqANLt3LB6OTBboA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Frank Rowand <frowand.list@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38828 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbdJJThw (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Oct 2017 15:37:52 -0400
+In-Reply-To: <CAGF4SLgi6jgtxbqtTEjL8FGXUHHsSm6KeoVqANLt3LB6OTBboA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Vitaly Mayatskih <v.mayatskih@gmail.com>
+Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org, ocfs2-devel@oss.oracle.com, piaojun <piaojun@huawei.com>, Joseph Qi <joseph.qi@huawei.com>, Jiufei Xue <xuejiufei@huawei.com>, Mark Fasheh <mfasheh@suse.de>, Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>
 
-On 10/10/17 11:26, Rob Herring wrote:
-> +Frank
-> 
-> On Tue, Oct 10, 2017 at 12:33 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 10/09/17 14:21, Mark Brown wrote:
->>> For my birthday I've gone and got myself a linux-next tree:
->>>
->>> Changes since 20170929:
->>>
->>> The net-next and drm trees lost their build failures but the rcu tree
->>> gained one.
->>
->>
->> I don't know what this is but it's new AFAIK.
->> (seen on i386 and x86_64)
-> 
-> Yes, new dtc version with new warnings.
-> 
->>   DTC     drivers/of/unittest-data/testcases.dtb
->> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_extended_property): Could not get phandle node for /__local_fixups__/testcase-data/interrupts/interrupts-extended0:interrupts-extended(cell 3)
-> 
-> Frank, this is in __local_fixups__, we should be able to remove that
-> now as the necessary dtc changes are in place, right?
-> 
->> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_property): interrupts size is (4), expected multiple of 8 in /testcase-data/testcase-device2
-> 
-> This one is purposely bad data to feed the unit test. If I suppress
-> it, then it is suppressed everywhere in the unit test data.
+On Tue, 10 Oct 2017 14:06:41 -0400 Vitaly Mayatskih <v.mayatskih@gmail.com> wrote:
 
-Thanks for the info.
+> * ocfs2-dlm-continue-to-purge-recovery-lockres-when-recovery
+> -master-goes-down.patch
+> 
+> This one completely broke two node cluster use case: when one node dies,
+> the other one either eventually crashes (~4.14-rc4) or locks up (pre-4.14).
 
+Are you sure?
 
--- 
-~Randy
+Are you able to confirm that reverting this patch (ee8f7fcbe638b07e8)
+and only this patch fixes up current mainline kernels?
+
+Are you able to supply more info on the crashes and lockups so that the
+ocfs2 developers can understand the failures?
+
+Thanks.
