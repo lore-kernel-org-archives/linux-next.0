@@ -1,26 +1,34 @@
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: linux-next: manual merge of the drivers-x86 tree with the
- net-next tree
-Date: Tue, 10 Oct 2017 14:49:20 +0300
-Message-ID: <20171010114920.GY2761@lahna.fi.intel.com>
-References: <20171009175633.dm7hjmgoxusspue5@sirena.co.uk>
- <20171009194301.GP2761@lahna.fi.intel.com>
- <20171009195634.gzxwcqn7xklumqyr@sirena.co.uk>
- <20171009231810.GI12321@fury>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Oct 9th (drivers/dma/stm32-mdma.c)
+Date: Tue, 10 Oct 2017 09:27:18 -0700
+Message-ID: <a86da771-5abc-acc9-cc2e-c31984fba659@infradead.org>
+References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171009231810.GI12321@fury>
+In-Reply-To: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Mario Limonciello <mario.limonciello@dell.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amir Levy <amir.jer.levy@intel.com>, Michael Jamet <michael.jamet@intel.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre-Yves Mordret <pierre-yves.mordret@st.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Oct 09, 2017 at 04:18:10PM -0700, Darren Hart wrote:
+On 10/09/17 14:21, Mark Brown wrote:
+> For my birthday I've gone and got myself a linux-next tree:
+> 
+> Changes since 20170929:
+> 
 
-> I'm not sure how we would deal with it in the trees. Best to note this during
-> the merge window - whichever goes in second. Test merge will identify the merge
-> conflict, and we can include a note to Linus on the preference.
+on i386:
 
-That sounds good, thanks!
+drivers/dma/stm32-mdma.o: In function `stm32_mdma_prep_dma_memcpy':
+stm32-mdma.c:(.text+0x1174): undefined reference to `__umoddi3'
+stm32-mdma.c:(.text+0x1208): undefined reference to `__umoddi3'
+stm32-mdma.c:(.text+0x134c): undefined reference to `__umoddi3'
+stm32-mdma.c:(.text+0x141d): undefined reference to `__umoddi3'
+
+
+
+-- 
+~Randy
