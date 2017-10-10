@@ -1,37 +1,44 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: mmotm 2016-08-02-15-53 uploaded
-Date: Tue, 10 Oct 2017 12:37:49 -0700
-Message-ID: <20171010123749.2c59f3b762b3c0b33e80a67d@linux-foundation.org>
-References: <57a124aa.eJmVCvd1SOHlQ1X8%akpm@linux-foundation.org>
-        <CAGF4SLgi6jgtxbqtTEjL8FGXUHHsSm6KeoVqANLt3LB6OTBboA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: No tree for Oct 10th
+Date: Wed, 11 Oct 2017 00:18:57 +0100
+Message-ID: <20171010231857.yddyypcgcf3gjv2o@sirena.co.uk>
+References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38828 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751704AbdJJThw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Oct 2017 15:37:52 -0400
-In-Reply-To: <CAGF4SLgi6jgtxbqtTEjL8FGXUHHsSm6KeoVqANLt3LB6OTBboA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Vitaly Mayatskih <v.mayatskih@gmail.com>
-Cc: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org, ocfs2-devel@oss.oracle.com, piaojun <piaojun@huawei.com>, Joseph Qi <joseph.qi@huawei.com>, Jiufei Xue <xuejiufei@huawei.com>, Mark Fasheh <mfasheh@suse.de>, Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n5it7riipvuwff6y"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 10 Oct 2017 14:06:41 -0400 Vitaly Mayatskih <v.mayatskih@gmail.com> wrote:
 
-> * ocfs2-dlm-continue-to-purge-recovery-lockres-when-recovery
-> -master-goes-down.patch
-> 
-> This one completely broke two node cluster use case: when one node dies,
-> the other one either eventually crashes (~4.14-rc4) or locks up (pre-4.14).
+--n5it7riipvuwff6y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Are you sure?
+There will be no -next today, too many of the failures came when I had
+to step away from the computer and I'm out of time.  Sorry, I'll give it
+another go tomorrow. =20
 
-Are you able to confirm that reverting this patch (ee8f7fcbe638b07e8)
-and only this patch fixes up current mainline kernels?
+There were new failures in drm-intel-fixes and keystone.
 
-Are you able to supply more info on the crashes and lockups so that the
-ocfs2 developers can understand the failures?
+--n5it7riipvuwff6y
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlndVWAACgkQJNaLcl1U
+h9CKBQf+Ln7BLVCc7JK2eN6mvvt7LY3xRtQzsMdOHg4kLmFEv8Nv2XO8VXmGNBiC
+6rIc/7/YQMSJhViAVKm0/hFugEeSE3pm802aYWVOobaLUMgkxe1PGTpgVbsMyK/b
+iDa5acBAszYNX1bcEAvK7V6C1KVhF17teo9Whm5UbYWFcfQs1nbRQN2yLIZXlrFc
++87CGUKZfYFcsi1vQhAtuUyW/idQcyBLSR2GHLG7IfCPuv9RZkDqikArJMb5/n84
+6dDy/35gGuLb19Tfn9rMokfD1UWi4X/fERPns71Y0RvyM7wdBZBZCDnvfFMnTNdA
+xLe05TL9PcKkvOoN22Y4mF+Oh24r9Q==
+=tAS2
+-----END PGP SIGNATURE-----
+
+--n5it7riipvuwff6y--
