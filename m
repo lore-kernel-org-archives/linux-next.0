@@ -1,52 +1,26 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: build failure after merge of the keystone tree
-Date: Tue, 10 Oct 2017 08:19:24 +0100
-Message-ID: <20171010071924.ddxkylkwq44qh47q@sirena.co.uk>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: linux-next: manual merge of the drivers-x86 tree with the
+ net-next tree
+Date: Tue, 10 Oct 2017 14:49:20 +0300
+Message-ID: <20171010114920.GY2761@lahna.fi.intel.com>
+References: <20171009175633.dm7hjmgoxusspue5@sirena.co.uk>
+ <20171009194301.GP2761@lahna.fi.intel.com>
+ <20171009195634.gzxwcqn7xklumqyr@sirena.co.uk>
+ <20171009231810.GI12321@fury>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="426bvsttycsu6xfd"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20171009231810.GI12321@fury>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, Franklin S Cooper Jr <fcooper@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Darren Hart <dvhart@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Mario Limonciello <mario.limonciello@dell.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amir Levy <amir.jer.levy@intel.com>, Michael Jamet <michael.jamet@intel.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Mon, Oct 09, 2017 at 04:18:10PM -0700, Darren Hart wrote:
 
---426bvsttycsu6xfd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> I'm not sure how we would deal with it in the trees. Best to note this during
+> the merge window - whichever goes in second. Test merge will identify the merge
+> conflict, and we can include a note to Linus on the preference.
 
-Hi Santosh,
-
-After merging the keystone tree, today's linux-next build
-(multi_v7_defconfig) failed like this:
-
-  DTC     arch/arm/boot/dts/keystone-k2g-evm.dtb
-Error: /home/broonie/tmpfs/next/arch/arm/boot/dts/keystone-k2g-evm.dts:150.1-15 syntax error
-FATAL ERROR: Unable to parse input tree
-scripts/Makefile.lib:316: recipe for target 'arch/arm/boot/dts/keystone-k2g-evm.dtb' failed
-make[2]: *** [arch/arm/boot/dts/keystone-k2g-evm.dtb] Error 1
-
-Caused by commit
-
-   a6f244505915f ("ARM: dts: keystone-k2g-evm: Add I2C EEPROM DT entry")
-
-I've used the keystone tree from yesterday.
-
---426bvsttycsu6xfd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlncdHsACgkQJNaLcl1U
-h9DJ1Af/QfswVM9vmKcXKsL8sb1IQjH/z57M+vgEfQINvkB2yHCVLxMJKJ+OJivU
-UI3nfISrA6bhToUBcHWqqmgBlCo9AchG8uJAJzrPcHDBNHkiLtxyPCOztlnLQqtG
-S8rZVFFlzkH87mSB+yfi588BGE16L1nDN+WywTY1Y7OXHh0Z0NVHE0kdNOC7K9ir
-Y9JVTKPQ5m1cPWrgqgEUMUUYXy0GeLW7zgrnNieE0cAJwW9ISRpN74v5nakUVrfs
-0byYbMoha0Q1ANHi16CUOhecUk0cnsghXOrvIkNo4YJiQEbnraMNeCEiFoAIyx1y
-o5yC8i2yZujf9kp/3zFeQmDZB5M7QA==
-=Q76/
------END PGP SIGNATURE-----
-
---426bvsttycsu6xfd--
+That sounds good, thanks!
