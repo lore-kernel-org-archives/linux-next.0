@@ -1,97 +1,61 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20171009 build: 1 failures 1 warnings (next-20171009)
-Date: Tue, 10 Oct 2017 03:30:46 +0100
-Message-ID: <E1e1kJi-0008Uc-On@optimist>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the drm-intel-fixes tree
+Date: Tue, 10 Oct 2017 08:03:00 +0100
+Message-ID: <20171010070300.6fsdy52752resxqn@sirena.co.uk>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="smdyiiqfwdavppnr"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34840 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39996 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751184AbdJJCat (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 9 Oct 2017 22:30:49 -0400
+        with ESMTP id S1751872AbdJJHDN (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 10 Oct 2017 03:03:13 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20171009
-Git describe: next-20171009
-Commit: 49827b977a Add linux-next specific files for 20171009
-
-Build Time: 118 min 33 sec
-
-Passed:    9 / 10   ( 90.00 %)
-Failed:    1 / 10   ( 10.00 %)
-
-Errors: 1
-Warnings: 1
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__bad_cmpxchg" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm64-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v7_defconfig
-      1 warnings    0 mismatches  : arm-allmodconfig
-      1 warnings    0 mismatches  : arm-multi_v5_defconfig
-      1 warnings    0 mismatches  : arm64-defconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__bad_cmpxchg" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
-
-Warnings Summary: 1
-	  5 ../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Chris Wilson <chris@chris-wilson.co.uk>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
+--smdyiiqfwdavppnr
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+Hi all,
 
+After merging the drm-misc-fixes tree, today's linux-next build
+(x86_allmodconfig) failed like this:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+  CC [M]  drivers/gpu/drm/i915/i915_gem_evict.o
+drivers/gpu/drm/i915/i915_gem_evict.c: In function =E2=80=98i915_gem_evict_=
+for_node=E2=80=99:
+drivers/gpu/drm/i915/i915_gem_evict.c:318:31: error: implicit declaration o=
+f function =E2=80=98i915_vma_has_userfault=E2=80=99; did you mean =E2=80=98=
+i915_vma_pin_count=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+   if (flags & PIN_NONFAULT && i915_vma_has_userfault(vma)) {
+                               ^~~~~~~~~~~~~~~~~~~~~~
+                               i915_vma_pin_count
 
-Warnings:
-	../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Caused by commit
 
--------------------------------------------------------------------------------
-arm-multi_v7_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+  72872c99b6dbc ("drm/i915: Check PIN_NONFAULT overlaps in evict_for_node")
 
-Warnings:
-	../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
+in the drm-intel-fixes tree.  I've used the tree from yesterday.
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 1 warnings, 0 section mismatches
+--smdyiiqfwdavppnr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Errors:
-	ERROR: "__bad_cmpxchg" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
+-----BEGIN PGP SIGNATURE-----
 
-Warnings:
-	../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnccKQACgkQJNaLcl1U
+h9AJNAf/QyvH0rbhE+1KNm2Yf3Hr5nnLvajTZX73cWXsvL/v126M+SukgBaDwAus
+YhJaqVO+Ti58G7pWKmWdH5C7b+q8jZ8b71/XHjWRGWe+53eWL8wuEKleW+RL7XgE
+LbaScy/84IKhsBUH7+TPSagLf9v5zjcSSBETv+V/DtLnKMHFFXET+chyrul1i3qF
+pMA32pjhzb1RDuGsH+cumCL9ehoym7yo9XI8YiNhq5bxnAWk0JVn1yH0hxdhaa0U
+VbnzUaXpw9MnDkVtK02FDoEGk4jjHg/Y/OxaZwIcFl01qmHZqRtmBqWSAWmiy4Nl
+KA1b+RNUh64JI2z5RYpnHTXfC2u0ig==
+=HTDF
+-----END PGP SIGNATURE-----
 
--------------------------------------------------------------------------------
-arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
-
--------------------------------------------------------------------------------
-arm64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../sound/soc/soc-dapm.c:3940:2: warning: 'w_param_text' may be used uninitialized in this function [-Wmaybe-uninitialized]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-x86_64-allnoconfig
-arm64-allnoconfig
-arm-allnoconfig
-arm-multi_v4t_defconfig
-x86_64-defconfig
+--smdyiiqfwdavppnr--
