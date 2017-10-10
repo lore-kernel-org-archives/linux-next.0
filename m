@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 9th (drivers/dma/stm32-mdma.c)
-Date: Tue, 10 Oct 2017 09:27:18 -0700
-Message-ID: <a86da771-5abc-acc9-cc2e-c31984fba659@infradead.org>
+Subject: Re: linux-next: Tree for Oct 9th (of: unittest: testcases)
+Date: Tue, 10 Oct 2017 10:33:22 -0700
+Message-ID: <7524d1e5-137c-cb78-c24f-6a9701e46701@infradead.org>
 References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
@@ -11,7 +11,7 @@ In-Reply-To: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre-Yves Mordret <pierre-yves.mordret@st.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 On 10/09/17 14:21, Mark Brown wrote:
@@ -19,14 +19,17 @@ On 10/09/17 14:21, Mark Brown wrote:
 > 
 > Changes since 20170929:
 > 
+> The net-next and drm trees lost their build failures but the rcu tree
+> gained one.
 
-on i386:
 
-drivers/dma/stm32-mdma.o: In function `stm32_mdma_prep_dma_memcpy':
-stm32-mdma.c:(.text+0x1174): undefined reference to `__umoddi3'
-stm32-mdma.c:(.text+0x1208): undefined reference to `__umoddi3'
-stm32-mdma.c:(.text+0x134c): undefined reference to `__umoddi3'
-stm32-mdma.c:(.text+0x141d): undefined reference to `__umoddi3'
+I don't know what this is but it's new AFAIK.
+(seen on i386 and x86_64)
+
+
+  DTC     drivers/of/unittest-data/testcases.dtb
+drivers/of/unittest-data/testcases.dtb: Warning (interrupts_extended_property): Could not get phandle node for /__local_fixups__/testcase-data/interrupts/interrupts-extended0:interrupts-extended(cell 3)
+drivers/of/unittest-data/testcases.dtb: Warning (interrupts_property): interrupts size is (4), expected multiple of 8 in /testcase-data/testcase-device2
 
 
 
