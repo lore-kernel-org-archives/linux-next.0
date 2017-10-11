@@ -1,44 +1,61 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: No tree for Oct 10th
-Date: Wed, 11 Oct 2017 00:18:57 +0100
-Message-ID: <20171010231857.yddyypcgcf3gjv2o@sirena.co.uk>
-References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
+From: Changwei Ge <ge.changwei@h3c.com>
+Subject: Re: mmotm 2016-08-02-15-53 uploaded
+Date: Wed, 11 Oct 2017 00:48:34 +0000
+Message-ID: <63ADC13FD55D6546B7DECE290D39E373CED68187@H3CMLB14-EX.srv.huawei-3com.com>
+References: <57a124aa.eJmVCvd1SOHlQ1X8%akpm@linux-foundation.org>
+ <CAGF4SLgi6jgtxbqtTEjL8FGXUHHsSm6KeoVqANLt3LB6OTBboA@mail.gmail.com>
+ <20171010123749.2c59f3b762b3c0b33e80a67d@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n5it7riipvuwff6y"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <owner-linux-mm@kvack.org>
+Content-Language: en-US
+Sender: owner-linux-mm@kvack.org
+To: Andrew Morton <akpm@linux-foundation.org>, Vitaly Mayatskih <v.mayatskih@gmail.com>
+Cc: "mm-commits@vger.kernel.org" <mm-commits@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "mhocko@suse.cz" <mhocko@suse.cz>, "broonie@kernel.org" <broonie@kernel.org>, "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>, piaojun <piaojun@huawei.com>, Joseph Qi <joseph.qi@huawei.com>, Jiufei Xue <xuejiufei@huawei.com>, Mark Fasheh <mfasheh@suse.de>, Joel Becker <jlbec@evilplan.org>, Junxiao Bi <junxiao.bi@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
+Hi Andrew and Vitaly,=0A=
+=0A=
+I do agree that patch ee8f7fcbe638 ("ocfs2/dlm: continue to purge =0A=
+recovery lockres when recovery master goes down", 2016-08-02) introduced =
+=0A=
+an issue. It makes DLM recovery can't pick up a new master for an =0A=
+existed lock resource whose owner died seconds ago.=0A=
+=0A=
+But this patch truly solves another issue.=0A=
+So I think we can't just revert this patch but to give a fix to it.=0A=
+=0A=
+Thanks,=0A=
+Changwei=0A=
+=0A=
+On 2017/10/11 3:38, Andrew Morton wrote:=0A=
+> On Tue, 10 Oct 2017 14:06:41 -0400 Vitaly Mayatskih <v.mayatskih@gmail.co=
+m> wrote:=0A=
+> =0A=
+>> * ocfs2-dlm-continue-to-purge-recovery-lockres-when-recovery=0A=
+>> -master-goes-down.patch=0A=
+>>=0A=
+>> This one completely broke two node cluster use case: when one node dies,=
+=0A=
+>> the other one either eventually crashes (~4.14-rc4) or locks up (pre-4.1=
+4).=0A=
+> =0A=
+> Are you sure?=0A=
+> =0A=
+> Are you able to confirm that reverting this patch (ee8f7fcbe638b07e8)=0A=
+> and only this patch fixes up current mainline kernels?=0A=
+> =0A=
+> Are you able to supply more info on the crashes and lockups so that the=
+=0A=
+> ocfs2 developers can understand the failures?=0A=
+> =0A=
+> Thanks.=0A=
+> =0A=
+=0A=
 
---n5it7riipvuwff6y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-There will be no -next today, too many of the failures came when I had
-to step away from the computer and I'm out of time.  Sorry, I'll give it
-another go tomorrow. =20
-
-There were new failures in drm-intel-fixes and keystone.
-
---n5it7riipvuwff6y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlndVWAACgkQJNaLcl1U
-h9CKBQf+Ln7BLVCc7JK2eN6mvvt7LY3xRtQzsMdOHg4kLmFEv8Nv2XO8VXmGNBiC
-6rIc/7/YQMSJhViAVKm0/hFugEeSE3pm802aYWVOobaLUMgkxe1PGTpgVbsMyK/b
-iDa5acBAszYNX1bcEAvK7V6C1KVhF17teo9Whm5UbYWFcfQs1nbRQN2yLIZXlrFc
-+87CGUKZfYFcsi1vQhAtuUyW/idQcyBLSR2GHLG7IfCPuv9RZkDqikArJMb5/n84
-6dDy/35gGuLb19Tfn9rMokfD1UWi4X/fERPns71Y0RvyM7wdBZBZCDnvfFMnTNdA
-xLe05TL9PcKkvOoN22Y4mF+Oh24r9Q==
-=tAS2
------END PGP SIGNATURE-----
-
---n5it7riipvuwff6y--
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
