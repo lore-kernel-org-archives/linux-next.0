@@ -1,43 +1,124 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: linux-next: Tree for Oct 9th (drivers/dma/stm32-mdma.c)
-Date: Wed, 11 Oct 2017 18:25:28 +0530
-Message-ID: <20171011125528.GI30097@localhost>
-References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
- <a86da771-5abc-acc9-cc2e-c31984fba659@infradead.org>
+From: Soheil Hassas Yeganeh <soheil.kdev@gmail.com>
+Subject: Re: [6f5b24e] WARNING: CPU: 0 PID: 10288 at
+ net/ipv4/tcp_input.c:889 tcp_update_reordering+0x1c4/0x1e0
+Date: Wed, 11 Oct 2017 10:08:07 -0400
+Message-ID: <CACSApva6SkJe8kj+3TKyD+67dJ8qX-HHRDpxRBQskFCqzd-Mfg@mail.gmail.com>
+References: <1507716177.3792.35.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:46012 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751991AbdJKMvT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Oct 2017 08:51:19 -0400
-Content-Disposition: inline
-In-Reply-To: <a86da771-5abc-acc9-cc2e-c31984fba659@infradead.org>
+Received: from mail-qt0-f194.google.com ([209.85.216.194]:35674 "EHLO
+        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751587AbdJKOIv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 11 Oct 2017 10:08:51 -0400
+Received: by mail-qt0-f194.google.com with SMTP id z19so2560629qtg.2
+        for <linux-next@vger.kernel.org>; Wed, 11 Oct 2017 07:08:50 -0700 (PDT)
+Received: from mail-io0-f182.google.com (mail-io0-f182.google.com. [209.85.223.182])
+        by smtp.gmail.com with ESMTPSA id j3sm4818327ywe.80.2017.10.11.07.08.48
+        for <linux-next@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Oct 2017 07:08:49 -0700 (PDT)
+Received: by mail-io0-f182.google.com with SMTP id h70so2025654ioi.4
+        for <linux-next@vger.kernel.org>; Wed, 11 Oct 2017 07:08:48 -0700 (PDT)
+In-Reply-To: <1507716177.3792.35.camel@abdul.in.ibm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre-Yves Mordret <pierre-yves.mordret@st.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>, Yuchung Cheng <ycheng@google.com>
 
-On Tue, Oct 10, 2017 at 09:27:18AM -0700, Randy Dunlap wrote:
-> On 10/09/17 14:21, Mark Brown wrote:
-> > For my birthday I've gone and got myself a linux-next tree:
+On Wed, Oct 11, 2017 at 6:02 AM, Abdul Haleem
+<abdhalee@linux.vnet.ibm.com> wrote:
+> Hi,
+>
+> CPU OFF & ON in a loop on next kernel results in WARNING in dmesg.
+>
+> Machine Type: Power 8 PowerVM LPAR
+> Kernel : 4.14.0-rc4-next-20171009
+> Gcc : 6.3.1
+> config : attached
+> Test: CPU toggle
+>
+> WARN_ON was first introduced with the commit:
+>
+> commit 6f5b24eed0278136c29c27f2a7b3a2b6a202ac68
+> Author: Soheil Hassas Yeganeh <soheil@google.com>
+> Date:   Tue May 16 17:39:02 2017 -0400
+>
+>     tcp: warn on negative reordering values
+>
+>     Commit bafbb9c73241 ("tcp: eliminate negative reordering
+>     in tcp_clean_rtx_queue") fixes an issue for negative
+>     reordering metrics.
+>
+>     To be resilient to such errors, warn and return
+>     when a negative metric is passed to tcp_update_reordering().
+>
+>     Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+>     Signed-off-by: Neal Cardwell <ncardwell@google.com>
+>     Signed-off-by: Yuchung Cheng <ycheng@google.com>
+>     Signed-off-by: Eric Dumazet <edumazet@google.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+>
+> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+> index bbadd79..2fa55f5 100644
+> --- a/net/ipv4/tcp_input.c
+> +++ b/net/ipv4/tcp_input.c
+> @@ -887,6 +887,9 @@ static void tcp_update_reordering(struct sock *sk,
+> const int metric,
+>         struct tcp_sock *tp = tcp_sk(sk);
+>         int mib_idx;
+>
+> +       if (WARN_ON_ONCE(metric < 0))
+> +               return;
+> +
 
-Nice thing you chose to do for the day :D
+Thank you for your report, Abdul! This warning was added to find the
+root cause of insanely high reordering in TCP, which luckily I believe
+you have reproduced.
 
-> > 
-> > Changes since 20170929:
-> > 
-> 
-> on i386:
-> 
-> drivers/dma/stm32-mdma.o: In function `stm32_mdma_prep_dma_memcpy':
-> stm32-mdma.c:(.text+0x1174): undefined reference to `__umoddi3'
-> stm32-mdma.c:(.text+0x1208): undefined reference to `__umoddi3'
-> stm32-mdma.c:(.text+0x134c): undefined reference to `__umoddi3'
-> stm32-mdma.c:(.text+0x141d): undefined reference to `__umoddi3'
+Yuchung had pointed out offline that we are using inconsistent types
+in using in tcp_sacktag_state vs tcp_sock: int for reord and
+fack_count in tcp_sacktag_state and u32 for their related fields in
+tcp_sock. This is likely to be the culprit here.
 
-The driver uses DIV_ROUND_UP but this should have worked, let me check more.
-Was generic i386 defconfig used or some other config
+Would you mind giving the following patch a try please? If that fixes
+the issue for you, we will mail that as a fix. Thanks!
 
+From: Soheil Hassas Yeganeh <soheil@google.com>
+Date: Wed, 11 Oct 2017 09:52:49 -0400
+Subject: [PATCH net] tcp: fix type of fack_count and reord in sack_tag_state
+
+This bug is found by Yuchung.
+
+Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
+---
+ net/ipv4/tcp_input.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+index d0682ce2a5d6..2fada7acbdc5 100644
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -1132,8 +1132,8 @@ static bool tcp_check_dsack(struct sock *sk,
+const struct sk_buff *ack_skb,
+ }
+
+ struct tcp_sacktag_state {
+-       int reord;
+-       int fack_count;
++       u32 reord;
++       u32 fack_count;
+        /* Timestamps for earliest and latest never-retransmitted segment
+         * that was SACKed. RTO needs the earliest RTT to stay conservative,
+         * but congestion control should still get an accurate delay signal.
+@@ -1209,7 +1209,7 @@ static u8 tcp_sacktag_one(struct sock *sk,
+                        u64 xmit_time)
+ {
+        struct tcp_sock *tp = tcp_sk(sk);
+-       int fack_count = state->fack_count;
++       u32 fack_count = state->fack_count;
+
+        /* Account D-SACK for retransmitted packet. */
+        if (dup_sack && (sacked & TCPCB_RETRANS)) {
 -- 
-~Vinod
+2.15.0.rc0.271.g36b669edcc-goog
