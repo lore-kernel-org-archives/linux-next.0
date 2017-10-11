@@ -1,124 +1,82 @@
-From: Soheil Hassas Yeganeh <soheil.kdev@gmail.com>
-Subject: Re: [6f5b24e] WARNING: CPU: 0 PID: 10288 at
- net/ipv4/tcp_input.c:889 tcp_update_reordering+0x1c4/0x1e0
-Date: Wed, 11 Oct 2017 10:08:07 -0400
-Message-ID: <CACSApva6SkJe8kj+3TKyD+67dJ8qX-HHRDpxRBQskFCqzd-Mfg@mail.gmail.com>
-References: <1507716177.3792.35.camel@abdul.in.ibm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the tpmdd tree with Linus' tree
+Date: Wed, 11 Oct 2017 16:01:07 +0100
+Message-ID: <20171011150107.vft64nx3kccndjlj@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jzyoo7w5ue4jyyv5"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:35674 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751587AbdJKOIv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 11 Oct 2017 10:08:51 -0400
-Received: by mail-qt0-f194.google.com with SMTP id z19so2560629qtg.2
-        for <linux-next@vger.kernel.org>; Wed, 11 Oct 2017 07:08:50 -0700 (PDT)
-Received: from mail-io0-f182.google.com (mail-io0-f182.google.com. [209.85.223.182])
-        by smtp.gmail.com with ESMTPSA id j3sm4818327ywe.80.2017.10.11.07.08.48
-        for <linux-next@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Oct 2017 07:08:49 -0700 (PDT)
-Received: by mail-io0-f182.google.com with SMTP id h70so2025654ioi.4
-        for <linux-next@vger.kernel.org>; Wed, 11 Oct 2017 07:08:48 -0700 (PDT)
-In-Reply-To: <1507716177.3792.35.camel@abdul.in.ibm.com>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59736 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750705AbdJKPBS (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 11 Oct 2017 11:01:18 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>, Yuchung Cheng <ycheng@google.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, Hamza Attak <hamza@hpe.com>, James Morris <james.l.morris@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Oct 11, 2017 at 6:02 AM, Abdul Haleem
-<abdhalee@linux.vnet.ibm.com> wrote:
-> Hi,
->
-> CPU OFF & ON in a loop on next kernel results in WARNING in dmesg.
->
-> Machine Type: Power 8 PowerVM LPAR
-> Kernel : 4.14.0-rc4-next-20171009
-> Gcc : 6.3.1
-> config : attached
-> Test: CPU toggle
->
-> WARN_ON was first introduced with the commit:
->
-> commit 6f5b24eed0278136c29c27f2a7b3a2b6a202ac68
-> Author: Soheil Hassas Yeganeh <soheil@google.com>
-> Date:   Tue May 16 17:39:02 2017 -0400
->
->     tcp: warn on negative reordering values
->
->     Commit bafbb9c73241 ("tcp: eliminate negative reordering
->     in tcp_clean_rtx_queue") fixes an issue for negative
->     reordering metrics.
->
->     To be resilient to such errors, warn and return
->     when a negative metric is passed to tcp_update_reordering().
->
->     Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
->     Signed-off-by: Neal Cardwell <ncardwell@google.com>
->     Signed-off-by: Yuchung Cheng <ycheng@google.com>
->     Signed-off-by: Eric Dumazet <edumazet@google.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
->
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index bbadd79..2fa55f5 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -887,6 +887,9 @@ static void tcp_update_reordering(struct sock *sk,
-> const int metric,
->         struct tcp_sock *tp = tcp_sk(sk);
->         int mib_idx;
->
-> +       if (WARN_ON_ONCE(metric < 0))
-> +               return;
-> +
 
-Thank you for your report, Abdul! This warning was added to find the
-root cause of insanely high reordering in TCP, which luckily I believe
-you have reproduced.
+--jzyoo7w5ue4jyyv5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yuchung had pointed out offline that we are using inconsistent types
-in using in tcp_sacktag_state vs tcp_sock: int for reord and
-fack_count in tcp_sacktag_state and u32 for their related fields in
-tcp_sock. This is likely to be the culprit here.
+Hi Jarkko,
 
-Would you mind giving the following patch a try please? If that fixes
-the issue for you, we will mail that as a fix. Thanks!
+Today's linux-next merge of the tpmdd tree got a conflict in:
 
-From: Soheil Hassas Yeganeh <soheil@google.com>
-Date: Wed, 11 Oct 2017 09:52:49 -0400
-Subject: [PATCH net] tcp: fix type of fack_count and reord in sack_tag_state
+  drivers/char/tpm/tpm2-cmd.c
 
-This bug is found by Yuchung.
+between commit:
 
-Signed-off-by: Soheil Hassas Yeganeh <soheil@google.com>
----
- net/ipv4/tcp_input.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+   9f3fc7bcddcb51 ("tpm: replace msleep() with  usleep_range() in TPM 1.2/2=
+=2E0 generic drivers")
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index d0682ce2a5d6..2fada7acbdc5 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -1132,8 +1132,8 @@ static bool tcp_check_dsack(struct sock *sk,
-const struct sk_buff *ack_skb,
- }
+=66rom Linus' tree and commit:
 
- struct tcp_sacktag_state {
--       int reord;
--       int fack_count;
-+       u32 reord;
-+       u32 fack_count;
-        /* Timestamps for earliest and latest never-retransmitted segment
-         * that was SACKed. RTO needs the earliest RTT to stay conservative,
-         * but congestion control should still get an accurate delay signal.
-@@ -1209,7 +1209,7 @@ static u8 tcp_sacktag_one(struct sock *sk,
-                        u64 xmit_time)
- {
-        struct tcp_sock *tp = tcp_sk(sk);
--       int fack_count = state->fack_count;
-+       u32 fack_count = state->fack_count;
+   217d4dfa87415e ("tpm: Use dynamic delay to wait for TPM 2.0 self test re=
+sult")
 
-        /* Account D-SACK for retransmitted packet. */
-        if (dup_sack && (sacked & TCPCB_RETRANS)) {
--- 
-2.15.0.rc0.271.g36b669edcc-goog
+=66rom the tpmdd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc drivers/char/tpm/tpm2-cmd.c
+index e1a41b788f08,f40d20671a78..000000000000
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@@ -900,6 -867,10 +867,11 @@@ static int tpm2_do_selftest(struct tpm_
+  			break;
+ =20
+  		tpm_msleep(delay_msec);
+++
++ 		duration -=3D delay_msec;
++=20
++ 		/* wait longer the next round */
++ 		delay_msec *=3D 2;
+  	}
+ =20
+  	return rc;
+
+--jzyoo7w5ue4jyyv5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlneMjIACgkQJNaLcl1U
+h9AREAf/XFv5dr8LCyQXDTP20I0+ooCsEF2tsKYp8mxM0SWC2eMqMItxsJycMpKA
+xR2bRcaQrEaY8/S7jLoKyYvvPyJzwThTDoDeLb7IIEWYcMzLE3Xqlr+M22U1C5yw
+Whh6rSCncI3GLDamZjNfb0N+VsTjapCW84XoiWSiHGGcQ12CR+uKK4BGVAlvt73F
+fqgLzTbzx9XZsoWLLC5BHxX6nrcC0isKDJzI4r/RFw9YrA3HuIEaMzFTK1qWkUD+
+ZLeOU9mQR/8ttc7bTpmk2OLqPHa/vuEtchODbJzvekBIcsROI8hBGx86tIgTq2s2
+g9UFbBZJpXgcRXYTsTDawJ4SnKeFaw==
+=iwM0
+-----END PGP SIGNATURE-----
+
+--jzyoo7w5ue4jyyv5--
