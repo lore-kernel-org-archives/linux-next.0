@@ -1,50 +1,60 @@
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Subject: Re: [Intel-gfx] linux-next: build failure after merge of the
- drm-intel-fixes tree
-Date: Wed, 11 Oct 2017 10:39:36 -0700
-Message-ID: <20171011173936.bs32lwinrjlpgccn@intel.com>
-References: <20171010070300.6fsdy52752resxqn@sirena.co.uk>
- <20171011085106.cusi65s2du3n537y@sirena.co.uk>
+From: Frank Rowand <frowand.list@gmail.com>
+Subject: Re: linux-next: Tree for Oct 9th (of: unittest: testcases)
+Date: Wed, 11 Oct 2017 11:11:14 -0700
+Message-ID: <59DE5EC2.9030306@gmail.com>
+References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
+ <7524d1e5-137c-cb78-c24f-6a9701e46701@infradead.org>
+ <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:14330 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751487AbdJKRjk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Oct 2017 13:39:40 -0400
-Content-Disposition: inline
-In-Reply-To: <20171011085106.cusi65s2du3n537y@sirena.co.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Chris Wilson <chris@chris-wilson.co.uk>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Oct 11, 2017 at 08:51:06AM +0000, Mark Brown wrote:
-> On Tue, Oct 10, 2017 at 08:03:00AM +0100, Mark Brown wrote:
-> > Hi all,
-> > 
-> > After merging the drm-misc-fixes tree, today's linux-next build
-> > (x86_allmodconfig) failed like this:
-> > 
-> >   CC [M]  drivers/gpu/drm/i915/i915_gem_evict.o
-> > drivers/gpu/drm/i915/i915_gem_evict.c: In function ‘i915_gem_evict_for_node’:
-> > drivers/gpu/drm/i915/i915_gem_evict.c:318:31: error: implicit declaration of function ‘i915_vma_has_userfault’; did you mean ‘i915_vma_pin_count’? [-Werror=implicit-function-declaration]
-> >    if (flags & PIN_NONFAULT && i915_vma_has_userfault(vma)) {
-> >                                ^~~~~~~~~~~~~~~~~~~~~~
-> >                                i915_vma_pin_count
-> > 
-> > Caused by commit
-> > 
-> >   72872c99b6dbc ("drm/i915: Check PIN_NONFAULT overlaps in evict_for_node")
-> > 
-> > in the drm-intel-fixes tree.  I've used the tree from yesterday.
+On 10/10/17 11:26, Rob Herring wrote:
+> +Frank
 > 
-> This is still present today.
+> On Tue, Oct 10, 2017 at 12:33 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
+>> On 10/09/17 14:21, Mark Brown wrote:
+>>> For my birthday I've gone and got myself a linux-next tree:
+>>>
+>>> Changes since 20170929:
+>>>
+>>> The net-next and drm trees lost their build failures but the rcu tree
+>>> gained one.
+>>
+>>
+>> I don't know what this is but it's new AFAIK.
+>> (seen on i386 and x86_64)
+> 
+> Yes, new dtc version with new warnings.
+> 
+>>   DTC     drivers/of/unittest-data/testcases.dtb
+>> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_extended_property): Could not get phandle node for /__local_fixups__/testcase-data/interrupts/interrupts-extended0:interrupts-extended(cell 3)
+> 
+> Frank, this is in __local_fixups__, we should be able to remove that
+> now as the necessary dtc changes are in place, right?
 
-It is fixed now. Sorry for the trouble.
+Yes, I have a patch to add "/plugin/;" to testcases.dts and remove the __local_fixups__ node,
+but have not submitted it yet.
 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+It builds and the unit tests still work.
+
+I still need to rework all of the overlays that are hand coded in testcases.dts,
+and was planning to do that before submitting the above changes.
+
+-Frank
+
+> 
+>> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_property): interrupts size is (4), expected multiple of 8 in /testcase-data/testcase-device2
+> 
+> This one is purposely bad data to feed the unit test. If I suppress
+> it, then it is suppressed everywhere in the unit test data.
+> 
+> Rob
+> .
+> 
