@@ -1,69 +1,88 @@
-From: <cl_luzcc@hotmail.com>
-Subject: (unknown)
-Date: Wed, 11 Oct 2017 07:34:35 -0000
-Message-ID: <150770727508.32758.14537463998829384103@mail.arirangaviationbd.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the
+	drm-intel-fixes tree
+Date: Wed, 11 Oct 2017 09:51:06 +0100
+Message-ID: <20171011085106.cusi65s2du3n537y@sirena.co.uk>
+References: <20171010070300.6fsdy52752resxqn@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: application/zip; name="12752943587877.zip"
-Content-Transfer-Encoding: base64
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.arirangaviationbd.com ([103.4.147.67]:33756 "HELO
-        mail.arirangaviationbd.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with SMTP id S1754285AbdJKHej (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Wed, 11 Oct 2017 03:34:39 -0400
-Subject: 
-Content-Disposition: attachment
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1849655819=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20171010070300.6fsdy52752resxqn@sirena.co.uk>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Chris Wilson <chris@chris-wilson.co.uk>, Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-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
-AAA=
+
+--===============1849655819==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="6xi2arjyvwyiyavk"
+Content-Disposition: inline
+
+
+--6xi2arjyvwyiyavk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 10, 2017 at 08:03:00AM +0100, Mark Brown wrote:
+> Hi all,
+>=20
+> After merging the drm-misc-fixes tree, today's linux-next build
+> (x86_allmodconfig) failed like this:
+>=20
+>   CC [M]  drivers/gpu/drm/i915/i915_gem_evict.o
+> drivers/gpu/drm/i915/i915_gem_evict.c: In function =E2=80=98i915_gem_evic=
+t_for_node=E2=80=99:
+> drivers/gpu/drm/i915/i915_gem_evict.c:318:31: error: implicit declaration=
+ of function =E2=80=98i915_vma_has_userfault=E2=80=99; did you mean =E2=80=
+=98i915_vma_pin_count=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>    if (flags & PIN_NONFAULT && i915_vma_has_userfault(vma)) {
+>                                ^~~~~~~~~~~~~~~~~~~~~~
+>                                i915_vma_pin_count
+>=20
+> Caused by commit
+>=20
+>   72872c99b6dbc ("drm/i915: Check PIN_NONFAULT overlaps in evict_for_node=
+")
+>=20
+> in the drm-intel-fixes tree.  I've used the tree from yesterday.
+
+This is still present today.
+
+--6xi2arjyvwyiyavk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnd23kACgkQJNaLcl1U
+h9DTRAf/Wc/hdGZEi+BUeYKkRYibSSGh5HoTIvzj5nz2I5nRfG/R2NvIuNOKm0ZF
+CNoH+TyvK5qFqb0MpR+q/+vBTQVoEYiQGrukG72dDwXeQV6wPgC8nE+TIekXAWuV
+B+V+vaQAS9LfoWwe7ewjGUeaB1P+U3MUumYknw48IFWZEQ5lMTpLjPLeQ0ub3HBs
+rw4pm9cfyKPLvxN/RqY5SlBR4SLjuO7EjamRqY9Gy7++R2FQ0zlLiHxYJRHQKbrK
+0sUz1GLZbBbudBxCpcTHL9Oin0c1k+6W6QROdHKFwiR7eh1WAz3/nL6um0DnwNJR
+NIgzCY1cRmCDw1062Arf7q+uDZHegg==
+=mmXw
+-----END PGP SIGNATURE-----
+
+--6xi2arjyvwyiyavk--
+
+--===============1849655819==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============1849655819==--
