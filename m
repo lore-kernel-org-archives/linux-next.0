@@ -1,44 +1,39 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 9th (drivers/dma/stm32-mdma.c)
-Date: Wed, 11 Oct 2017 09:19:59 -0700
-Message-ID: <ad2ff849-ea08-a384-b809-df2404116591@infradead.org>
-References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
- <a86da771-5abc-acc9-cc2e-c31984fba659@infradead.org>
- <20171011125528.GI30097@localhost>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: No tree for Oct 11th
+Date: Wed, 11 Oct 2017 17:25:00 +0100
+Message-ID: <20171011162500.ksnhk5blw2xpiaew@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3ozd3nrucoikn6fi"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171011125528.GI30097@localhost>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre-Yves Mordret <pierre-yves.mordret@st.com>, M'boumba Cedric Madianga <cedric.madianga@gmail.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 10/11/17 05:55, Vinod Koul wrote:
-> On Tue, Oct 10, 2017 at 09:27:18AM -0700, Randy Dunlap wrote:
->> On 10/09/17 14:21, Mark Brown wrote:
->>> For my birthday I've gone and got myself a linux-next tree:
-> 
-> Nice thing you chose to do for the day :D
-> 
->>>
->>> Changes since 20170929:
->>>
->>
->> on i386:
->>
->> drivers/dma/stm32-mdma.o: In function `stm32_mdma_prep_dma_memcpy':
->> stm32-mdma.c:(.text+0x1174): undefined reference to `__umoddi3'
->> stm32-mdma.c:(.text+0x1208): undefined reference to `__umoddi3'
->> stm32-mdma.c:(.text+0x134c): undefined reference to `__umoddi3'
->> stm32-mdma.c:(.text+0x141d): undefined reference to `__umoddi3'
-> 
-> The driver uses DIV_ROUND_UP but this should have worked, let me check more.
-> Was generic i386 defconfig used or some other config
 
-Maybe look at the uses of '%' (modulus, as in __umoddi3).
+--3ozd3nrucoikn6fi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-~Randy
+There will be no -next today either, sorry.  I'm again out of time, this
+time due to a failure with the scripts requiring a restart of the merge
+process far too late into things to complete today.
+
+--3ozd3nrucoikn6fi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlneRdsACgkQJNaLcl1U
+h9B5OQf/WbwtrjmxXApjjtKnMmTDbBHLyT5Da8P3U1qVmiLXRe8Z8/nTOI+JgAoS
+rSy4UkqPPPqW3bkPiDwMoHNiR6ReRD6Q4nBds0XfNoUSAG45qS/o01nHwZUZlDxR
+PiO+6l5SwtEHA/h3jB6hj2jWnWkBUFvO6KpP+lGmgxrmdCuVHvmaCGsqAwNR18qp
+vVnuPiNy5ae2/PuX0fXEBTFssZLchSod1qEBQrB54LAFbVgw6GUEAe1pae0W9GSx
+LOQh+bW4ILrqJOGPU1iHckNMaAZc5ss2WgOlkvxu+lBaPIqpeRfVhHWjyYcx8JSw
+B56qrI1Gh03E1Xsswn2+ofF2LHBWpQ==
+=zHNR
+-----END PGP SIGNATURE-----
+
+--3ozd3nrucoikn6fi--
