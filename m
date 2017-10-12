@@ -1,60 +1,55 @@
-From: Frank Rowand <frowand.list@gmail.com>
-Subject: Re: linux-next: Tree for Oct 9th (of: unittest: testcases)
-Date: Wed, 11 Oct 2017 11:11:14 -0700
-Message-ID: <59DE5EC2.9030306@gmail.com>
-References: <20171009212122.wx4lgnecmqyzuywq@sirena.co.uk>
- <7524d1e5-137c-cb78-c24f-6a9701e46701@infradead.org>
- <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the FIXME tree
+Date: Thu, 12 Oct 2017 09:36:45 +0100
+Message-ID: <20171012083645.o5prct7zs4gqfw2f@sirena.co.uk>
+References: <20171011161035.sudulg5gpvw4lp4o@sirena.co.uk>
+ <20171011172328.GB14971@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqJgf+HOp-7DNzpExOE2UnXbraL3uaL0a01K4t8Z6fkoSA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
-Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5cckca4e3xi67ksz"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53174 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752670AbdJLIhX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Oct 2017 04:37:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20171011172328.GB14971@arm.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 10/10/17 11:26, Rob Herring wrote:
-> +Frank
-> 
-> On Tue, Oct 10, 2017 at 12:33 PM, Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 10/09/17 14:21, Mark Brown wrote:
->>> For my birthday I've gone and got myself a linux-next tree:
->>>
->>> Changes since 20170929:
->>>
->>> The net-next and drm trees lost their build failures but the rcu tree
->>> gained one.
->>
->>
->> I don't know what this is but it's new AFAIK.
->> (seen on i386 and x86_64)
-> 
-> Yes, new dtc version with new warnings.
-> 
->>   DTC     drivers/of/unittest-data/testcases.dtb
->> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_extended_property): Could not get phandle node for /__local_fixups__/testcase-data/interrupts/interrupts-extended0:interrupts-extended(cell 3)
-> 
-> Frank, this is in __local_fixups__, we should be able to remove that
-> now as the necessary dtc changes are in place, right?
 
-Yes, I have a patch to add "/plugin/;" to testcases.dts and remove the __local_fixups__ node,
-but have not submitted it yet.
+--5cckca4e3xi67ksz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It builds and the unit tests still work.
+On Wed, Oct 11, 2017 at 06:23:29PM +0100, Will Deacon wrote:
+> On Wed, Oct 11, 2017 at 05:10:35PM +0100, Mark Brown wrote:
 
-I still need to rework all of the overlays that are hand coded in testcases.dts,
-and was planning to do that before submitting the above changes.
+> > I'm don't feel confident I can resolve this conflict sensibly without
+> > taking too long so I've used the tip tree from yesterday.
 
--Frank
+> It's a shame that the conflict is so messy -- most of it is just context
+> because that file has changed a lot in the s390 tree so the cleanup doesn't
+> apply. I resolved it below.
 
-> 
->> drivers/of/unittest-data/testcases.dtb: Warning (interrupts_property): interrupts size is (4), expected multiple of 8 in /testcase-data/testcase-device2
-> 
-> This one is purposely bad data to feed the unit test. If I suppress
-> it, then it is suppressed everywhere in the unit test data.
-> 
-> Rob
-> .
-> 
+Thanks, I'll give that a spin today.  It did look like it should be fine
+but it was such a mess I didn't want to try to resolve by hand.
+
+--5cckca4e3xi67ksz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnfKZwACgkQJNaLcl1U
+h9CEpwf/UTIACdjABfBoFPYJ4wxtklmejG9MHDhGDbc0DCPRy27SzYLIvmCh4sLT
+Nhq1Uk8kZvgn/Hi51mdHzLily8guEAVDHS6GiZpVcAEPhfavk+ryIHeWNRyiQGpd
+yG7QU2Hl1IWlM2Yg6Eb+I9Lmy/7qcgznZOzWjQzkISRVxQmfLuTE8g6CfJfnwc50
+AL1aDGRZAZtNtTYpDYq8gRacfE0vRdjby8c7NHiORm2uus/0Uqb2U/tnU5TIVnfT
+v2p4a2/YtGvMU0MiTShJMY3wW3zSBaGirwE25+DPtD4iwg0WC9OclvroSnnI7Ubh
+bD8E6ZuWP943IJva43ERogmmO5WR7Q==
+=33e5
+-----END PGP SIGNATURE-----
+
+--5cckca4e3xi67ksz--
