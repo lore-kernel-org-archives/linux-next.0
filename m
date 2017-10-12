@@ -1,20 +1,20 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: linux-next: manual merge of the wireless-drivers-next tree with the
  wireless-drivers tree
-Date: Thu, 12 Oct 2017 18:14:24 +0100
-Message-ID: <20171012171424.435b2cwnixnkl72r@sirena.co.uk>
+Date: Thu, 12 Oct 2017 18:20:54 +0100
+Message-ID: <20171012172053.3lrrstim7a2xg57o@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="m75tuv6t7oylusqm"
+        protocol="application/pgp-signature"; boundary="jo25remj2oo7eet5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>, Chaya Rachel Ivgi <chaya.rachel.ivgi@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Johannes Berg <johannes.berg@intel.com>
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>, Shahar S Matityahu <shahar.s.matityahu@intel.com>, Luca Coelho <luciano.coelho@intel.com>, Chaya Rachel Ivgi <chaya.rachel.ivgi@intel.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---m75tuv6t7oylusqm
+--jo25remj2oo7eet5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -24,15 +24,15 @@ Hi all,
 Today's linux-next merge of the wireless-drivers-next tree got a
 conflict in:
 
-  drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+  drivers/net/wireless/intel/iwlwifi/cfg/a000.c
 
 between commit:
 
-  44fd09dad5d2b78e ("iwlwifi: nvm: set the correct offsets to 3168 series")
+  44fd09dad5d2b78ef ("iwlwifi: nvm: set the correct offsets to 3168 series")
 
 =66rom the wireless-drivers tree and commit:
 
-  a2ff48af65ad661a ("iwlwifi: remove redundant reading from NVM file")
+   dd05f9aab4426ff1 ("iwlwifi: pcie: dynamic Tx command queue size")
 
 =66rom the wireless-drivers-next tree.
 
@@ -43,67 +43,52 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-index c3a5d8ccc95e,d9a2ea9dd93f..000000000000
---- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-@@@ -75,9 -75,10 +75,10 @@@
-  #include "iwl-prph.h"
-  #include "iwl-io.h"
-  #include "iwl-csr.h"
-+ #include "fw/acpi.h"
+diff --cc drivers/net/wireless/intel/iwlwifi/cfg/a000.c
+index a440140ed8dd,076f8d6d1124..000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/cfg/a000.c
++++ b/drivers/net/wireless/intel/iwlwifi/cfg/a000.c
+@@@ -133,17 -133,18 +133,18 @@@ static const struct iwl_ht_params iwl_a
+  	.use_tfh =3D true,						\
+  	.rf_id =3D true,							\
+  	.gen2 =3D true,							\
+ -	.ext_nvm =3D true,						\
+ +	.nvm_type =3D IWL_NVM_EXT,					\
+- 	.dbgc_supported =3D true
++ 	.dbgc_supported =3D true,						\
++ 	.tx_cmd_queue_size =3D 32
  =20
-  /* NVM offsets (in words) definitions */
- -enum wkp_nvm_offsets {
- +enum nvm_offsets {
-  	/* NVM HW-Section offset (in words) definitions */
-  	SUBSYSTEM_ID =3D 0x0A,
-  	HW_ADDR =3D 0x15,
-@@@ -89,13 -90,6 +90,9 @@@
-  	SKU =3D 2,
-  	N_HW_ADDRS =3D 3,
-  	NVM_CHANNELS =3D 0x1E0 - NVM_SW_SECTION,
- +
-- 	/* NVM calibration section offset (in words) definitions */
-- 	NVM_CALIB_SECTION =3D 0x2B8,
-- 	XTAL_CALIB =3D 0x316 - NVM_CALIB_SECTION,
--=20
- +	/* NVM REGULATORY -Section offset (in words) definitions */
- +	NVM_CHANNELS_SDP =3D 0,
+  const struct iwl_cfg iwla000_2ac_cfg_hr =3D {
+- 		.name =3D "Intel(R) Dual Band Wireless AC a000",
+- 		.fw_name_pre =3D IWL_A000_HR_FW_PRE,
+- 		IWL_DEVICE_A000,
+- 		.ht_params =3D &iwl_a000_ht_params,
+- 		.nvm_ver =3D IWL_A000_NVM_VERSION,
+- 		.nvm_calib_ver =3D IWL_A000_TX_POWER_VERSION,
+- 		.max_ht_ampdu_exponent =3D IEEE80211_HT_MAX_AMPDU_64K,
++ 	.name =3D "Intel(R) Dual Band Wireless AC a000",
++ 	.fw_name_pre =3D IWL_A000_HR_FW_PRE,
++ 	IWL_DEVICE_A000,
++ 	.ht_params =3D &iwl_a000_ht_params,
++ 	.nvm_ver =3D IWL_A000_NVM_VERSION,
++ 	.nvm_calib_ver =3D IWL_A000_TX_POWER_VERSION,
++ 	.max_ht_ampdu_exponent =3D IEEE80211_HT_MAX_AMPDU_64K,
   };
  =20
-  enum ext_nvm_offsets {
-@@@ -758,15 -745,8 +755,12 @@@ iwl_parse_nvm_data(struct iwl_trans *tr
-  			kfree(data);
-  			return NULL;
-  		}
- +
- +		ch_section =3D cfg->nvm_type =3D=3D IWL_NVM_SDP ?
- +			     &regulatory[NVM_CHANNELS_SDP] :
- +			     &nvm_sw[NVM_CHANNELS];
- +
-- 		/* in family 8000 Xtal calibration values moved to OTP */
-- 		data->xtal_calib[0] =3D *(nvm_calib + XTAL_CALIB);
-- 		data->xtal_calib[1] =3D *(nvm_calib + XTAL_CALIB + 1);
-  		lar_enabled =3D true;
- -		ch_section =3D &nvm_sw[NVM_CHANNELS];
-  	} else {
-  		u16 lar_offset =3D data->nvm_version < 0xE39 ?
-  				 NVM_LAR_OFFSET_OLD :
+  const struct iwl_cfg iwla000_2ac_cfg_hr_cdb =3D {
 
---m75tuv6t7oylusqm
+--jo25remj2oo7eet5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnfou8ACgkQJNaLcl1U
-h9AD1gf/fMtJnh6026YmxZ+l00iLKo/ScFYrdDhfOHhVIMISR3wxEyJCya6adqdq
-e+ddDsBCGkA7KJqgdzOLKm2u9iigj6K+8kc/KL1dbjbvG1h9BSLEVJIa7TCU7Ai7
-3CHSq9IvRNlhqxcqLb8Cgjx3Lo1pWuVDfvoogsr6axLtckFPN5A7Q5ptbORgIyna
-5f5pa1AleypTKvzLIBb2fhDMJg9frs8nv+BP7a5UyHNWVL9cFfXXOkHazqsyc9tS
-0Vju/gd+yMPIyctgzx3DZRif+CNtoze6io14/nmDEXHOICh5z4r9FvBY4SeM6YbH
-MyovWIyjPwunICOsNamVbK/fIl7ENQ==
-=/nmY
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnfpHUACgkQJNaLcl1U
+h9CgaQf9EhmgoNwaAh8MUww2PhAUrreLv7A7kdLO2qHeXzhdG1mWmVHKSzxIRL9q
+FQ8tA4SNQ+NIgj8fO7CzeyII5ePHolYh/ERtZIeFfEwftZfpjVxhhBUlqNaPgLNI
+DBQkpH+CvLA2SRh1C5ZRisiBKclsrMZ3sDz7asE8LFiep2JPpThX1H2yd1spmnmE
+qRr7ivBxnBWWR6Z3NCWiZWVNBONXWGIgeFZbzKbR9+D7Rkl4gQxEt7Seu6xMoO2C
+YBlN+ATA9dX5uBHohEvxt6j9FhkCjnRt4qeEgR/Of3m+6dLtRq+RTO/Bj4f3dDyl
+eGQyf+XGOf5IN+BtGBvgLbfOjOhtBQ==
+=aCiN
 -----END PGP SIGNATURE-----
 
---m75tuv6t7oylusqm--
+--jo25remj2oo7eet5--
