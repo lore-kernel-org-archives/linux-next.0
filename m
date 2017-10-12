@@ -1,59 +1,86 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with
- the wireless-drivers tree
-Date: Thu, 12 Oct 2017 19:35:05 +0100
-Message-ID: <20171012183505.oo77lgdbmqjevsuo@sirena.co.uk>
-References: <20171012172512.tlsdjhppfz2hu4vr@sirena.co.uk>
- <1507832196.5497.1.camel@intel.com>
- <20171012182114.fdeiv67ebx7c63te@sirena.co.uk>
- <1507832866.5497.2.camel@intel.com>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Thu, 12 Oct 2017 19:36:32 +0100
+Message-ID: <20171012183632.nwnqbvtnlq4iehia@sirena.co.uk>
 Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0014179091=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, Chris Wilson <chris@chris-wilson.co.uk>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+
+--===============0014179091==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="asnvqr4utlul26yr"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40404 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750907AbdJLSfK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Oct 2017 14:35:10 -0400
+	protocol="application/pgp-signature"; boundary="njax3q2cnnsqm7xw"
 Content-Disposition: inline
-In-Reply-To: <1507832866.5497.2.camel@intel.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Luciano Coelho <luciano.coelho@intel.com>
-Cc: Kalle Valo <kvalo@codeaurora.org>, Chaya Rachel Ivgi <chaya.rachel.ivgi@intel.com>, Shahar S Matityahu <shahar.s.matityahu@intel.com>, Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---asnvqr4utlul26yr
+--njax3q2cnnsqm7xw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 12, 2017 at 09:27:46PM +0300, Luciano Coelho wrote:
-> On Thu, 2017-10-12 at 19:21 +0100, Mark Brown wrote:
+Hi all,
 
-> > I may have confused the trees when I was pasting things in, the
-> > commits
-> > are filled in by hand.
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-> Ah, okay.  But still, if the same patches conflicted twice, why wasn't
-> there only one occurrence with both conflicts at once?
+  drivers/gpu/drm/i915/intel_display.c
 
-With trees like this that don't coordinate with their fixes branch there
-are frequently multiple conflicts introduced so I generally report
-things file by file without even looking at the new ones.
+between commit:
 
---asnvqr4utlul26yr
+   7b50f7b24cd6c ("rm/i915: Read timings from the correct transcoder in int=
+el_crtc_mode_get()")
+
+=66rom the drm-intel-fixes tree and commit:
+
+   de330815677d8 ("drm/i915: Reuse normal state readout for LVDS/DVO fixed =
+mode")
+
+=66rom the drm-intel tree.
+
+I fixed it up by taking the version from the drm-intel tree and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--njax3q2cnnsqm7xw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnftdgACgkQJNaLcl1U
-h9AfLgf/aduXqP0wdS/yJxXiRI1tNUgfZbHv/WtnL/W7momqW/sF/MdEUlW/MSoD
-5UcW5jqGhOZgJjzIJPG5cqMk+9r7DscGEuLOINnb92PM53XBn9BzFGJJnSW52ox4
-3PegkyVJHiyeJYSqhEfgh4r1/Y78SX0wl+fc28/GFM5C+DqSuMG95ByxKHjX2hSc
-LxuV//HC4nqidznHHoH4AL95ablja81j8JVvmlfByfG8WTkH9mvav5Jr8FqVJkUw
-+FmuJEybX0LeRQaVRTklkc4R1CQQTUfs+KX1Jl3NyzADmxx7x9FLrsBe3ODcadII
-dhgs1pxwRuurpZ4a0VRTBf2SUgJhsA==
-=GPh8
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnfti8ACgkQJNaLcl1U
+h9BxGgf/dHhVVWCJkmxnDqQD64O5phlKkym6of0k/1ILhsGCzULj/QixlLKn/H/C
+P8q0MWFaMbU1CpzOm6j3+gS+khKr1Lh3LIQe1EqY6xVZ+JVEFiKoIu+sZDSwvSB4
+nASocSMO7CjOX+5JYJv+LAL16AjXCO50BFcJm2boglXsVt+ykFT+b+VVBV1QUQ8l
+HObQf6Z73OuWN4haUsN6LRnWkYp7PJbB51frP/Y/iY6MWoPZm+Ye06J9N0Bsd6DL
+7ux01aP7LXHlRmkhfEGtQYUflZqD+M76V9fIQ2Bbppz+0ozVfJ5z6mZ7fG0e88O6
+fP0Go5bkSIDFDAFyAUXX/XjNeHWdgA==
+=XWYz
 -----END PGP SIGNATURE-----
 
---asnvqr4utlul26yr--
+--njax3q2cnnsqm7xw--
+
+--===============0014179091==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0014179091==--
