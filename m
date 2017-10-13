@@ -1,56 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: build failure after merge of the akpm-current tree
-Date: Fri, 13 Oct 2017 03:38:39 +0100
-Message-ID: <20171013023839.tz2l22ked5jfgztw@sirena.co.uk>
+Subject: linux-next: Tree for Oct 12th
+Date: Fri, 13 Oct 2017 03:43:22 +0100
+Message-ID: <20171013024322.vk6hounnbf5lhja5@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fhj5ftztqkrlmtep"
+        protocol="application/pgp-signature"; boundary="qbst7m3h5xzheqkt"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33168 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41038 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753085AbdJMCio (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Oct 2017 22:38:44 -0400
+        with ESMTP id S1753291AbdJMCnY (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 12 Oct 2017 22:43:24 -0400
 Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Simon Horman <simon.horman@netronome.com>, "David S. Miller" <davem@davemloft.net>
-Cc: netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---fhj5ftztqkrlmtep
+--qbst7m3h5xzheqkt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-After merging the akpm-current tree, today's linux-next build
-(x86 allmodconfig) failed like this:
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with an arm64 defconfig, an allmodconfig (with
+CONFIG_BUILD_DOCSRC=3Dn) for x86_64, a multi_v7_defconfig for arm and a
+native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+and arm64 allnoconfig=20
 
-  CC [M]  drivers/net/ethernet/netronome/nfp/nfp_app.o
-In file included from /home/broonie/tmpfs/next/drivers/net/ethernet/netronome/nfp/nfp_asm.c:40:0:
-/home/broonie/tmpfs/next/drivers/net/ethernet/netronome/nfp/nfp_asm.h: In function '__enc_swreg_lm':
-/home/broonie/tmpfs/next/drivers/net/ethernet/netronome/nfp/nfp_asm.h:301:2: error: implicit declaration of function 'WARN_ON' [-Werror=implicit-function-declaration]
-  WARN_ON(id > 3 || (off && mode != NN_LM_MOD_NONE));
-  ^
-cc1: some warnings being treated as errors
-
-Caused by some reliance on an implicit include being exposed by a header
-reorganization in your tree.  I'll add a patch for this which I'll post,
-probably tomorrow morning.
-
---fhj5ftztqkrlmtep
+--qbst7m3h5xzheqkt
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlngJy4ACgkQJNaLcl1U
-h9DZIQf/fhaZXsuRxlUVyjaIxtjuarqIHjhRksBH56e3CW6vCaSXCyWMLA/cJ6kK
-vx5LWteEjD9cRnuIFJxHTF35/kiNJehNMm74eCPLqgBfoRHgcRn1FCEq8QAdOEG4
-LN+esJFAiwgMQxsYzjGVpHQUFzKEpNt8E7CNZfnPLK/QV/tHuCkHckHsEtCynGm9
-v6iYbsr2C53fmgE2D6BqqITRD8/TqxglrxIRYWBQBRN7CisQRXCYoOHhpYn7hajg
-MwlNa+VyGkavkYV08vRmphoiULVS59lkqPjHP31NF+Acpxqaz4XW8ET5rejXvrPB
-mGx9vuo+zW//uzHL2Xy1whhW9VpNVQ==
-=2/eB
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlngKEkACgkQJNaLcl1U
+h9AY2Af6A22rBI5agqPNsRSJk+W2Wj7emIY6TnRsN8DDhKd86DgcvSwvr26vh1eo
+7vcOWlwyETDAJXZssNatfjiHghWf3C31PwuLgnSRiEovWDK/ka9aWR0wSN8o5RvG
+oEEMOqoLpwQmfJs0IFCaOy8L1P8C7dDlSaIx/ojQ8Vk57TBb/u8Rr+A7Idtot9g4
+GnjCn3e2bf0K/hscrqhsyl3+k7Tc5ulN/qVP3oehDVpRIypgWecTWQI2vKTJmjum
+mJFXdqaTMVCCAvq6gt7Qa3DAe6AgNtyKq3sPsgiOUjbM8cCMuHIoUUUSXtiE0bBd
+hYa0km+8euOMc36W5kwyNoTAPCDYXw==
+=a8yt
 -----END PGP SIGNATURE-----
 
---fhj5ftztqkrlmtep--
+--qbst7m3h5xzheqkt--
