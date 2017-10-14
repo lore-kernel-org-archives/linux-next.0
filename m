@@ -1,74 +1,66 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Oct 13th (drivers/mfd/lpc_ich ->
- mtd/spi-nor/intel-spi-platform)
-Date: Fri, 13 Oct 2017 17:31:27 -0700
-Message-ID: <b6c40f74-2a08-13b2-70c1-2a7fce2ca1ef@infradead.org>
-References: <20171013210628.izp3bf4glwa5kq7h@sirena.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171013 build: 1 failures 1 warnings (next-20171013)
+Date: Sat, 14 Oct 2017 04:00:31 +0100
+Message-ID: <E1e3Cgh-0001Dm-ED@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:49422 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753230AbdJNAbh (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 13 Oct 2017 20:31:37 -0400
-In-Reply-To: <20171013210628.izp3bf4glwa5kq7h@sirena.co.uk>
-Content-Language: en-US
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58358 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751572AbdJNDAe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 13 Oct 2017 23:00:34 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>, Bin Meng <bmeng.cn@gmail.com>, Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 10/13/17 14:06, Mark Brown wrote:
-> Changes since 20171012:
-> 
-> The rdma tree gained a conflict.
+Tree/Branch: next-20171013
+Git describe: next-20171013
+Commit: 3fd49c0eda Add linux-next specific files for 20171013
 
+Build Time: 120 min 41 sec
 
-on i386:
+Passed:    9 / 10   ( 90.00 %)
+Failed:    1 / 10   ( 10.00 %)
 
-CONFIG_PCI is not enabled.
+Errors: 0
+Warnings: 1
+Section Mismatches: 0
 
-../drivers/mfd/lpc_ich.c: In function 'lpc_ich_init_spi':
-../drivers/mfd/lpc_ich.c:1137:3: error: implicit declaration of function 'pci_bus_write_config_byte' [-Werror=implicit-function-declaration]
-   pci_bus_write_config_byte(bus, p2sb, 0xe1, 0x0);
-   ^
-../drivers/mfd/lpc_ich.c:1138:3: error: implicit declaration of function 'pci_bus_read_config_dword' [-Werror=implicit-function-declaration]
-   pci_bus_read_config_dword(bus, spi, PCI_BASE_ADDRESS_0,
-   ^
-../drivers/mfd/lpc_ich.c:1147:5: error: implicit declaration of function 'pci_bus_write_config_dword' [-Werror=implicit-function-declaration]
-     pci_bus_write_config_dword(bus, spi, BCR, bcr);
-     ^
-../drivers/mfd/lpc_ich.c: At top level:
-../drivers/mfd/lpc_ich.c:1246:1: warning: data definition has no type or storage class [enabled by default]
- module_pci_driver(lpc_ich_driver);
- ^
-../drivers/mfd/lpc_ich.c:1246:1: error: type defaults to 'int' in declaration of 'module_pci_driver' [-Werror=implicit-int]
-../drivers/mfd/lpc_ich.c:1246:1: warning: parameter names (without types) in function declaration [enabled by default]
-../drivers/mfd/lpc_ich.c:1239:26: warning: 'lpc_ich_driver' defined but not used [-Wunused-variable]
- static struct pci_driver lpc_ich_driver = {
-                          ^
-cc1: some warnings being treated as errors
-../scripts/Makefile.build:313: recipe for target 'drivers/mfd/lpc_ich.o' failed
-make[3]: *** [drivers/mfd/lpc_ich.o] Error 1
+Failed defconfigs:
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      1 warnings    0 mismatches  : arm-allmodconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 1
+	  1 ../fs/btrfs/tree-checker.c:185:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Wformat=]
 
 
-But that driver depends on PCI, so it should not be built.
-This was caused by:
 
-CONFIG_SPI_INTEL_SPI=y
-CONFIG_SPI_INTEL_SPI_PLATFORM=y
-
-where the latter does this:
-
-config SPI_INTEL_SPI_PLATFORM
-	tristate "Intel PCH/PCU SPI flash platform driver" if EXPERT
-	depends on X86
-	select SPI_INTEL_SPI
-	select LPC_ICH
-
-even though CONFIG_PCI is not enabled.  That's a no-no.
+===============================================================================
+Detailed per-defconfig build reports below:
 
 
--- 
-~Randy
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/btrfs/tree-checker.c:185:2: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Wformat=]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm64-allmodconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
+arm64-defconfig
+close failed in file object destructor:
+sys.excepthook is missing
+lost sys.stderr
