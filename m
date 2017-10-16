@@ -1,69 +1,96 @@
-From: <cl_luzcc@hotmail.com>
-Subject: (unknown)
-Date: Sun, 15 Oct 2017 11:15:28 -0000
-Message-ID: <150806612873.32756.6129520835873578331@50-205-199-18-static.hfc.comcastbusiness.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the thermal tree with the imx-mxs tree
+Date: Mon, 16 Oct 2017 10:17:28 +0100
+Message-ID: <20171016091728.gbtoakghi4ndyyt2@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: application/zip; name="211899324.zip"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fajimcv5bkp6vqgc"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 50-205-199-18-static.hfc.comcastbusiness.net ([50.205.199.18]:55573
-        "HELO 50-205-199-18-static.hfc.comcastbusiness.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with SMTP
-        id S1750836AbdJOLPb (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 15 Oct 2017 07:15:31 -0400
-Subject: 
-Content-Disposition: attachment
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45726 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750914AbdJPJRq (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 16 Oct 2017 05:17:46 -0400
+Content-Disposition: inline
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Leonard Crestez <leonard.crestez@nxp.com>, Shawn Guo <shawnguo@kernel.org>, Marco Franchi <marco.franchi@nxp.com>
+Cc: linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-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
-AAEAAQBbAAAAhwoAAAAA
+
+--fajimcv5bkp6vqgc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Zhang,
+
+Today's linux-next merge of the thermal tree got a conflict in:
+
+  arch/arm/boot/dts/imx6ul.dtsi
+
+between commit:
+
+   efb9adb274754 ("ARM: dts: imx6ul: Remove leading zeroes from unit addres=
+ses")
+
+=66rom the imx-mxs tree and commit:
+
+   1dc31d4981dd9 ("ARM: dts: imx6ul: Add imx6ul-tempmon")
+
+=66rom the thermal tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.  Usually DTS changes go through arm-soc to avoid
+issues like this.
+
+diff --cc arch/arm/boot/dts/imx6ul.dtsi
+index 2057ee695a66,51717d54f285..000000000000
+--- a/arch/arm/boot/dts/imx6ul.dtsi
++++ b/arch/arm/boot/dts/imx6ul.dtsi
+@@@ -860,13 -869,23 +869,23 @@@
+  				reg =3D <0x021b0000 0x4000>;
+  			};
+ =20
+ -			ocotp: ocotp-ctrl@021bc000 {
+ +			ocotp: ocotp-ctrl@21bc000 {
++ 				#address-cells =3D <1>;
++ 				#size-cells =3D <1>;
+  				compatible =3D "fsl,imx6ul-ocotp", "syscon";
+  				reg =3D <0x021bc000 0x4000>;
+  				clocks =3D <&clks IMX6UL_CLK_OCOTP>;
++=20
++ 				tempmon_calib: calib@38 {
++ 					reg =3D <0x38 4>;
++ 				};
++=20
++ 				tempmon_temp_grade: temp-grade@20 {
++ 					reg =3D <0x20 4>;
++ 				};
+  			};
+ =20
+ -			lcdif: lcdif@021c8000 {
+ +			lcdif: lcdif@21c8000 {
+  				compatible =3D "fsl,imx6ul-lcdif", "fsl,imx28-lcdif";
+  				reg =3D <0x021c8000 0x4000>;
+  				interrupts =3D <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+
+--fajimcv5bkp6vqgc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnkeSgACgkQJNaLcl1U
+h9CTwwf/eZqJZVb/XjrTPD4d04ljGLNkL4rm4+9B+gDxbqMRHHaSxg5FtSFoUWVd
+uyt98iSWDaCMWX3/yozmC9dBnf2Yb7OxrY6mTBolsnqJoF69HQUSQsCoZhfusNt7
+XDCwlDU2nNF+hqrq6th+kBt+yAkGfucO2jZzuXZB7VmnWsV47TQHGB1gYleJUG2C
+f2bTtrkvrzcqbHh1Cr1F/unVj/wbDDFtPpecYVOebEPfhYWJUD2jk3q+LdEmxbJG
+J7D5MFhd3tzzLv+vLwDvgRqY00OepM4f2n/WoAs0yY/nxYGS+gqXw4hIG1MjhzW4
+EuwfZGx+9Eo9Z+5Dn+hWMNp1b93kGw==
+=fLAc
+-----END PGP SIGNATURE-----
+
+--fajimcv5bkp6vqgc--
