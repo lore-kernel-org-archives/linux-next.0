@@ -1,68 +1,115 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 16 Oct 2017 10:36:35 +0100
-Message-ID: <20171016093635.zxyyq2px4hdewse3@sirena.co.uk>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Mon, 16 Oct 2017 12:35:29 +0100
+Message-ID: <20171016113529.ey35y6zwfyhdbvhe@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="panwwdpopndhfdyb"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49434 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750914AbdJPJgs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 16 Oct 2017 05:36:48 -0400
-Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Vivien Didelot <vivien.didelot@savoirfairelinux.com>
+Content-Type: multipart/mixed; boundary="===============0459575060=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Chris Wilson <chris@chris-wilson.co.uk>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Mika Kuoppala <mika.kuoppala@intel.com>, Daniel Vetter <daniel.vetter@intel.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 
---panwwdpopndhfdyb
+--===============0459575060==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="erjjdcth2jt275nj"
+Content-Disposition: inline
+
+
+--erjjdcth2jt275nj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-  drivers/net/dsa/mv88e6060.c
+  drivers/gpu/drm/i915/i915_gem.c
 
 between commit:
 
-  3efc93c2bc243 ("net: dsa: mv88e6060: fix switch MAC address")
+  b85577b72837e ("drm/i915: Order two completing nop_submit_request")
 
-=66rom the net tree and commit:
+=66rom the drm-intel-fixes tree and commit:
 
-  56c3ff9bf23e1 ("net: dsa: mv88e6060: setup random mac address")
+  5d031f4e1618b ("drm/i915: Stop asserting on set-wedged vs nop_submit_requ=
+est ordering")
 
-=66rom the net-next tree.
+=66rom the drm-intel tree.
 
-I fixed it up (see below, the relevant code was deleted in net-next) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-diff --cc drivers/net/dsa/mv88e6060.c
-index f123ed57630d,6173be889d95..000000000000
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
+diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_ge=
+m.c
+index bace56523e9f..4fdebca8ff40 100644
+--- a/drivers/gpu/drm/i915/i915_gem.c
++++ b/drivers/gpu/drm/i915/i915_gem.c
+@@ -3089,20 +3089,14 @@ static void nop_submit_request(struct drm_i915_gem_=
+request *request)
+ {
+ 	unsigned long flags;
+=20
+-	GEM_BUG_ON(!i915_terminally_wedged(&request->i915->gpu_error));
+ 	dma_fence_set_error(&request->fence, -EIO);
+-
+-	spin_lock_irqsave(&request->engine->timeline->lock, flags);
+-	__i915_gem_request_submit(request);
+-	intel_engine_init_global_seqno(request->engine, request->global_seqno);
+-	spin_unlock_irqrestore(&request->engine->timeline->lock, flags);
++	i915_gem_request_submit(request);
+ }
+=20
+ static void nop_complete_submit_request(struct drm_i915_gem_request *reque=
+st)
+ {
+ 	unsigned long flags;
+=20
+-	GEM_BUG_ON(!i915_terminally_wedged(&request->i915->gpu_error));
+ 	dma_fence_set_error(&request->fence, -EIO);
+=20
+ 	spin_lock_irqsave(&request->engine->timeline->lock, flags);
 
---panwwdpopndhfdyb
+--erjjdcth2jt275nj
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnkfaIACgkQJNaLcl1U
-h9ACvAf8CPT/AykF7gE2NBbdP0+9H78KIRQObHfOkhqurAjBzVFicqECnQSmuZf8
-qQ7CHH7ClCX/5kj/qW2Tc9DVReo27sNVgHuTe9RkjU1hMg94rHBEUByaF3F/Ly/G
-vZleCdGWwqab+oDNvt68Sq2zkm3tmz8axv1pw2404SIQy4RGjKsCyy32jGPCXUmK
-CQ/NTNxCFrTvigxWrJcyI038CNwy4/RSjBEvnoGYBHF3Y+hkL1mr3lcA8adt5TRM
-FFyUh+1tFdxmLMJ3IjZF/mXmO60Nw4j4rx2EgQeP6sVTR3zRkwkQJLzz09U4S9UU
-OzpHLLo/cECYbREAso38o+iSTVVF7A==
-=88Tm
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnkmYAACgkQJNaLcl1U
+h9Dhegf/btyLcctUkGgMXoHoTh9tiQEhRAhIz52hkQHG69b0TSvZcGBggkuhP69e
+QikQzMj0InQIKtEPG/Yq4sog8h/C4lceTcWJGaex/WTk2uJ9Y5v0kFoLc+y9Bkng
+rIS/7grKBqPJWhICZlniVYnMfFD52b+qtCoygaP5Xv0fUKFenVVoLwUDl+lu3MC6
+Qfi9wsu+7hW98Rj1bGbYPpl/sO15vpq11LnwbjsppOebKv60DBQM3oNdxaaSiZIH
+nlZPCFcLYVtiTpp9Mu4M178tip1WwZzbgR4R+e8knmi5Cfj5qezQ2okL0Ly0stcu
+8UQSa5JTkv5BImZRTri5zC72CZgHaQ==
+=zmI5
 -----END PGP SIGNATURE-----
 
---panwwdpopndhfdyb--
+--erjjdcth2jt275nj--
+
+--===============0459575060==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--===============0459575060==--
