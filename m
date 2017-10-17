@@ -1,78 +1,77 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the drm-intel tree with
- the drm-intel-fixes tree
-Date: Tue, 17 Oct 2017 09:30:27 +0100
-Message-ID: <20171017083027.fdzk3ujcgted3q5g@sirena.co.uk>
-References: <20171016113529.ey35y6zwfyhdbvhe@sirena.co.uk>
- <CAK8P3a0bz3XzPsso0T-AfiBn7K_wRHauAckt5rB5dmNt4Fa-bw@mail.gmail.com>
+Subject: linux-next: net/sched/cls_flower.c
+Date: Tue, 17 Oct 2017 11:15:09 +0100
+Message-ID: <20171017101509.soy55d4ipx3dusbo@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1371529664=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <CAK8P3a0bz3XzPsso0T-AfiBn7K_wRHauAckt5rB5dmNt4Fa-bw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Daniel Vetter <daniel.vetter@intel.com>, Mika Kuoppala <mika.kuoppala@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="r45awaaj4t2izqjs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---===============1371529664==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="v54q5lmczlwx4kc3"
-Content-Disposition: inline
-
-
---v54q5lmczlwx4kc3
+--r45awaaj4t2izqjs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 17, 2017 at 10:11:53AM +0200, Arnd Bergmann wrote:
+Hi all,
 
-> This merge seems fine, but it seems there was another merge
-> against the akpm tree that introduced a build error by reintroducing
-> the spin_lock_irqsave() without restoring the local variable:
+After merging the net-next tree, today's linux-next build
+(x86_allmodconfig) failed like this:
 
-> drivers/gpu/drm/i915/i915_gem.c: In function 'nop_submit_request':
-> drivers/gpu/drm/i915/i915_gem.c:3092:54: error: 'flags' undeclared
-> (first use in this function); did you mean 'class'?
+/home/broonie/tmpfs/next/net/sched/cls_flower.c: In function 'fl_hw_destroy=
+_filter':
+/home/broonie/tmpfs/next/net/sched/cls_flower.c:208:12: error: 'struct tc_c=
+ls_flower_offload' has no member named 'egress_dev'
+  cls_flower.egress_dev =3D f->hw_dev !=3D tp->q->dev_queue->dev;
+            ^
+/home/broonie/tmpfs/next/net/sched/cls_flower.c:208:27: error: 'struct cls_=
+fl_filter' has no member named 'hw_dev'
+  cls_flower.egress_dev =3D f->hw_dev !=3D tp->q->dev_queue->dev;
+                           ^
+/home/broonie/tmpfs/next/net/sched/cls_flower.c: In function 'fl_hw_update_=
+stats':
+/home/broonie/tmpfs/next/net/sched/cls_flower.c:270:12: error: 'struct tc_c=
+ls_flower_offload' has no member named 'egress_dev'
+  cls_flower.egress_dev =3D f->hw_dev !=3D tp->q->dev_queue->dev;
+            ^
+/home/broonie/tmpfs/next/net/sched/cls_flower.c:270:27: error: 'struct cls_=
+fl_filter' has no member named 'hw_dev'
+  cls_flower.egress_dev =3D f->hw_dev !=3D tp->q->dev_queue->dev;
+                           ^
+/home/broonie/tmpfs/next/scripts/Makefile.build:319: recipe for target 'net=
+/sched/cls_flower.o' failed
 
-> I'll send my local build fix, which may or may not be the intended
-> behavior but gets it to compile.
+Caused by commit
 
-Bother, that was actually an automated merge git did.
+  7578d7b45ed870b13a8ace57e32feaed623c2a94 ("net/sched: cls_flower: Set egr=
+ess_dev mark when calling into the HW driver")
 
---v54q5lmczlwx4kc3
+interacting with=20
+
+  7578d7b45ed870b1 ("net: sched: remove unused tcf_exts_get_dev helper and =
+cls_flower->egress_dev")
+
+both in the net-next tree.  Falling back to previous net-next trees
+introduced other issues so I reverted that commit for today.
+
+--r45awaaj4t2izqjs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnlv6IACgkQJNaLcl1U
-h9Dbpgf/eJBV7hjkXYitbMhKmxa4jTDVxh87t2u3mLQLFQCP1vvlVN9/suGHvyPT
-AOAYkvmTunKvX0OdgBwXOYd+f4PdHd9zhkWLBbVfyxAAfuyN+5HETpitRnTW0n3B
-vtxNdbZWfDu4TlTS2eSNsMAx1q3lQ1l+Z+pnpHPRDuQA4/L1kGL8ZNo63leyxPQM
-fbm8lk7f4T27GY7ZqA+fjRDIwKixHAAjjmXTv5TJNiZIqZikAI8MQq5Z8R7/npIB
-yAsxsVGgHcngmC1cXaSR1zN793+udBl6bctLgE807bvYIiITBXoKZHdZsuV6oDcy
-F7Kd+wzrieCdBS4te6U1DaQB57cNug==
-=EBRB
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnl2CwACgkQJNaLcl1U
+h9CDMAf9HgFu4TLIQYMwAa7CaAaS/vkXoQuBv7DYsslRodSAKlGv6iSYDWISqU6W
+uorSBVd0PU25nVp+bx8fCLBVA61RUIN5D/1MD/nnlV/6w2BipQ6l6AgYlto1A8Ll
+P5WpFwTW6abxa/2O2WYsyic5AKDYDfItuDWEb3kvJSlZtWxbr/ynqTppaqkkAIaC
+DsEpKVVX0jBKsuuRy1A1hFYD9/EFAyI1x9vxOwUq02HYl1tuw2b63Ddh2QNywMRI
+sXEKytHUbS02wHRwQ1d2kW+w22N0AqviegxtbbbevItV3yFRKaMQz3JKprwPzeVZ
+bptbAjPFPZDQrtH2LhGxnYBpTyOqwg==
+=Aa99
 -----END PGP SIGNATURE-----
 
---v54q5lmczlwx4kc3--
-
---===============1371529664==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============1371529664==--
+--r45awaaj4t2izqjs--
