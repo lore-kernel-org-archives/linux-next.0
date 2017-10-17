@@ -1,63 +1,52 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: net/sched/cls_flower.c
-Date: Tue, 17 Oct 2017 11:27:51 +0100
-Message-ID: <20171017102751.wpwiyh72daobyicj@sirena.co.uk>
-References: <20171017101509.soy55d4ipx3dusbo@sirena.co.uk>
- <20171017102107.GF2112@nanopsycho>
+Subject: linux-next: net/sched/sch_mqprio.c
+Date: Tue, 17 Oct 2017 11:43:41 +0100
+Message-ID: <20171017104341.kxrjb67k3rf65lf3@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zfplr4y6xiwnwtyq"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:38098 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1757290AbdJQK1z (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Oct 2017 06:27:55 -0400
+        protocol="application/pgp-signature"; boundary="j42roriwt27myzux"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171017102107.GF2112@nanopsycho>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jiri Pirko <jiri@resnulli.us>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Jiri Pirko <jiri@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Jesus Sanchez-Palencia <jesus.sanchez-palencia@intel.com>, Alexander Duyck <alexander.h.duyck@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 
---zfplr4y6xiwnwtyq
+--j42roriwt27myzux
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Oct 17, 2017 at 12:21:07PM +0200, Jiri Pirko wrote:
-> Tue, Oct 17, 2017 at 12:15:09PM CEST, broonie@kernel.org wrote:
+Hi all,
 
-> >/home/broonie/tmpfs/next/net/sched/cls_flower.c:270:27: error: 'struct cls_fl_filter' has no member named 'hw_dev'
-> >  cls_flower.egress_dev = f->hw_dev != tp->q->dev_queue->dev;
+After merging the net-next tree, today's linux-next build (KCONFIG_NAME)
+failed like this:
 
-> This fix ("net/sched: cls_flower: Set egress_dev mark when calling into the HW driver")
-> went to -net tree, should not go to -next. Apparently there is some mixup.
-> DaveM?
+ERROR: "netdev_txq_to_tc" [net/sched/sch_mqprio.ko] undefined!
+/home/broonie/tmpfs/next/scripts/Makefile.modpost:91: recipe for target '__modpo
+st' failed
 
-The issue is that:
+Caused by commit
 
-> >  7578d7b45ed870b1 ("net: sched: remove unused tcf_exts_get_dev helper and cls_flower->egress_dev")
+  32302902ff093 ("mqprio: Reserve last 32 classid values for HW traffic classes and misc IDs")
 
-> >both in the net-next tree.  Falling back to previous net-next trees
-> >introduced other issues so I reverted that commit for today.
+which adds a user of that function in a module but that function is not
+exported.  As noted on the previous report reverting to a previous
+net-next caused other errors so I've reverted that specific commit.
 
-the removal happened in the net-next tree, breaking the commit that was
-previously introduced in the net tree (sorry, didn't notice that the
-immediate commit was in there not net-next).
-
---zfplr4y6xiwnwtyq
+--j42roriwt27myzux
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnl2yYACgkQJNaLcl1U
-h9BCpwf/bQ3tV8Z9pFFXIhXKWnPDGYYS2WmW0dBJOVWexIHWdacBSSZVZFdCPt2l
-Zh3K3Ij0qUGrAWTAxgH74+98b/dTi88YAEGsx5KCoayvljrN4ycI27bAinOdamQ/
-rxuW4XliRU4XVRTPa5p1b9H8oxtGAYp1t/e+/iRQPHL8BiPnYFtXfLpXBJY5uZeI
-KWTGKQYpSVctMWh2nFTuAEbcK4xfNxCzMc+Xccv0jsT2PT/V1u8Zt6kGDdGYFCXI
-zn48+SyyMJI93KuxwBw8bI0T1CUEjCZ74R2SjTANkBw5G/doQoEe71kQp70/aiF4
-YESMDI/jpjsVUFOFo1/733ThhXbobw==
-=asou
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnl3twACgkQJNaLcl1U
+h9CO6gf/XjPr7rCQrTPzZxrlFGJVEGSpYRAOe/qVKVx7m8bwRuLYfe/UlcNlazcq
+WuMfT3reY1XTn8HcEDcS8ehgqwCdxCvdrPjIdnlxKnpsfqqCgyQBcf9pLv3sbUWM
+92lc1ZNx77QRB7yEdxyvyGV/5cWDia6FmPfnqCkTJIZj+OsSe97uYOwZEqmRYP1b
+j9c7H8r72j4qcwKKeiEFJzbXDANzX8AOqfP7iXi93n5tR3kR11u219ey9xUsBuxH
+ftXXh696PUs6+wcHegywGhavoDiuuLDZPfR9e03b6+3oK8xeIQKh78CxV33VcSUI
+RioFi8cFNzyp6dFVqGDbPy8Z13JUwg==
+=oIh/
 -----END PGP SIGNATURE-----
 
---zfplr4y6xiwnwtyq--
+--j42roriwt27myzux--
