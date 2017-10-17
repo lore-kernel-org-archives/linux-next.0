@@ -1,59 +1,55 @@
-From: Jiri Pirko <jiri@resnulli.us>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: linux-next: net/sched/cls_flower.c
-Date: Tue, 17 Oct 2017 12:21:07 +0200
-Message-ID: <20171017102107.GF2112@nanopsycho>
+Date: Tue, 17 Oct 2017 11:26:30 +0100
+Message-ID: <20171017102630.ujithuyywajku2cl@sirena.co.uk>
 References: <20171017101509.soy55d4ipx3dusbo@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="bkmkty2rvddx7lo7"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wr0-f171.google.com ([209.85.128.171]:48610 "EHLO
-        mail-wr0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756931AbdJQKVJ (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Oct 2017 06:21:09 -0400
-Received: by mail-wr0-f171.google.com with SMTP id u5so1082505wrc.5
-        for <linux-next@vger.kernel.org>; Tue, 17 Oct 2017 03:21:09 -0700 (PDT)
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35934 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754684AbdJQK0h (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 17 Oct 2017 06:26:37 -0400
 Content-Disposition: inline
 In-Reply-To: <20171017101509.soy55d4ipx3dusbo@sirena.co.uk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Jiri Pirko <jiri@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-
-Tue, Oct 17, 2017 at 12:15:09PM CEST, broonie@kernel.org wrote:
->Hi all,
->
->After merging the net-next tree, today's linux-next build
->(x86_allmodconfig) failed like this:
->
->/home/broonie/tmpfs/next/net/sched/cls_flower.c: In function 'fl_hw_destroy_filter':
->/home/broonie/tmpfs/next/net/sched/cls_flower.c:208:12: error: 'struct tc_cls_flower_offload' has no member named 'egress_dev'
->  cls_flower.egress_dev = f->hw_dev != tp->q->dev_queue->dev;
->            ^
->/home/broonie/tmpfs/next/net/sched/cls_flower.c:208:27: error: 'struct cls_fl_filter' has no member named 'hw_dev'
->  cls_flower.egress_dev = f->hw_dev != tp->q->dev_queue->dev;
->                           ^
->/home/broonie/tmpfs/next/net/sched/cls_flower.c: In function 'fl_hw_update_stats':
->/home/broonie/tmpfs/next/net/sched/cls_flower.c:270:12: error: 'struct tc_cls_flower_offload' has no member named 'egress_dev'
->  cls_flower.egress_dev = f->hw_dev != tp->q->dev_queue->dev;
->            ^
->/home/broonie/tmpfs/next/net/sched/cls_flower.c:270:27: error: 'struct cls_fl_filter' has no member named 'hw_dev'
->  cls_flower.egress_dev = f->hw_dev != tp->q->dev_queue->dev;
-
-This fix ("net/sched: cls_flower: Set egress_dev mark when calling into the HW driver")
-went to -net tree, should not go to -next. Apparently there is some mixup.
-DaveM?
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Or Gerlitz <ogerlitz@mellanox.com>, Roi Dayan <roid@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
->                           ^
->/home/broonie/tmpfs/next/scripts/Makefile.build:319: recipe for target 'net/sched/cls_flower.o' failed
->
->Caused by commit
->
->  7578d7b45ed870b13a8ace57e32feaed623c2a94 ("net/sched: cls_flower: Set egress_dev mark when calling into the HW driver")
->
->interacting with 
->
->  7578d7b45ed870b1 ("net: sched: remove unused tcf_exts_get_dev helper and cls_flower->egress_dev")
->
->both in the net-next tree.  Falling back to previous net-next trees
->introduced other issues so I reverted that commit for today.
+--bkmkty2rvddx7lo7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 17, 2017 at 11:15:09AM +0100, Mark Brown wrote:
+
+> Caused by commit
+>=20
+>   7578d7b45ed870b13a8ace57e32feaed623c2a94 ("net/sched: cls_flower: Set e=
+gress_dev mark when calling into the HW driver")
+
+Cut'n'paste error, this should be=20
+
+c019b5166e11faaf9ed3b64316ed338eaa19de60
+
+Sorry about that.
+
+--bkmkty2rvddx7lo7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnl2tUACgkQJNaLcl1U
+h9ACmgf9EGFb5Yi8yU7LC7FmLKACXuVOqw+9AIXVbfh1d4kiVBbxj0fYNX4QbDgC
+4zvkNBWCr2jFDf3YSo/5T/z98YqWacDRUJgOoMFKc+rjEXfnX5IbL7DBIiJ184Dq
+ocqmfGJ8uw3B/XOC/4X/ATqrASKZT3kABMDK0Lexi0JnbPXS8avwDVIHpnA8LvQs
+VNHmeRfE0XyDNsZLBLUzrJPvmMAMM/As+cscWREjitF+/xeOaP117451x1QVgZHO
+iF55hV9D9+XYHjzhw8bhCkjAqc0lD1rwBny65x8HNmuioDqcFm3G0WBxH7oYo2yT
+ETIt0J2TD7Ogi5xlmBFFYHtK9n0b5g==
+=AmrO
+-----END PGP SIGNATURE-----
+
+--bkmkty2rvddx7lo7--
