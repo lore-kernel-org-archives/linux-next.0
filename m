@@ -1,73 +1,65 @@
-From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: Re: linux-next: manual merge of the sound-asoc tree
- with the drm-misc tree
-Date: Wed, 18 Oct 2017 14:33:37 +0000
-Message-ID: <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
-References: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
- <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the usb-gadget tree with the usb tree
+Date: Wed, 18 Oct 2017 15:42:35 +0100
+Message-ID: <20171018144235.onumhg5fqmboodo6@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: 'Mark Brown' <broonie@kernel.org>, "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z7s4akybno6zsaap"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58472 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751456AbdJROmj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 10:42:39 -0400
+Content-Disposition: inline
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Felipe Balbi <balbi@kernel.org>, Kees Cook <keescook@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Allen Pais <allen.lkml@gmail.com>
+Cc: linux-usb@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IE1hcmsgQnJvd24gW21haWx0bzpi
-cm9vbmllQGtlcm5lbC5vcmddCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDE4LCAyMDE3IDY6
-MDggQU0KPiBUbzogRGV1Y2hlciwgQWxleGFuZGVyOyBNdWt1bmRhLCBWaWplbmRhcjsgWmh1LCBS
-ZXg7IERhbmllbCBWZXR0ZXI7IEludGVsCj4gR3JhcGhpY3M7IERSSTsgTGlhbSBHaXJkd29vZAo+
-IENjOiBMaW51eC1OZXh0IE1haWxpbmcgTGlzdDsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdDsg
-YWxzYS1kZXZlbEBhbHNhLQo+IHByb2plY3Qub3JnCj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6
-IG1hbnVhbCBtZXJnZSBvZiB0aGUgc291bmQtYXNvYyB0cmVlIHdpdGggdGhlIGRybS0KPiBtaXNj
-IHRyZWUKPiAKPiBPbiBXZWQsIE9jdCAxOCwgMjAxNyBhdCAxMDo1NzozM0FNICswMTAwLCBNYXJr
-IEJyb3duIHdyb3RlOgo+IAo+ID4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNh
-cnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4gPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFz
-IGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4gPiBjb25mbGlj
-dHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5
-b3VyCj4gdHJlZQo+ID4gaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdh
-bnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKPiA+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhl
-IGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+ID4gY29tcGxl
-eCBjb25mbGljdHMuCj4gCj4gQWN0dWFsbHkgSSdtIGp1c3QgZ29pbmcgdG8gZGlzY2FyZCB0aGUg
-QU1EIGRyaXZlcnMgZnJvbSB0aGUgQVNvQyB0cmVlCj4gYmVjYXVzZSB0aGUgYnVpbGQgcHJvZHVj
-ZXMgcmVhbXMgb2YgZXJyb3JzIGxpa2UgdGhvc2UgYmVsb3csIHRoZSBjaGFuZ2VzCj4gdG8gbW92
-ZSB0aGUgY2hpcCB0eXBlIGRlZmluaXRpb25zIGFyb3VuZCB3ZXJlbid0IGZ1bGx5IGJha2VkLiAg
-UGxlYXNlCj4gcmVzZW5kIGJvdGggdGhlIHB1bGwgcmVxdWVzdCBhbmQgdGhlIHBhdGNoZXMgd2l0
-aCB0aGlzIGZpeGVkLiAgTm90ZSBhbHNvCj4gdGhhdCBpZiB5b3UncmUgYmFzaW5nIHNvbWV0aGlu
-ZyBvbiBMaW51cycgdHJlZSB5b3Ugc2hvdWxkIHVzZSBhIHRhZ2dlZAo+IHJlbGVhc2UgcmF0aGVy
-IHRoYW4ganVzdCBhIHJhbmRvbSBjb21taXQuCgpZb3VyIGNvbmZsaWN0IGNoYW5nZSBhZmZlY3Rp
-dmVseSByZXZlcnRlZCAxZTQ0NDg2NDgzMzNhIHdoaWNoIGlzIHdoYXQgY2F1c2VkIHRoZSBwcm9i
-bGVtLiAgSXQgbG9va3MgbGlrZSBEYXZlIGRpZCBub3QgeWV0IHB1bGwgdGhlIHJlcXVlc3QgSSBt
-YWRlLiAgSSBjYW4gc2VuZCBhbm90aGVyIHB1bGwgcmVxdWVzdCwgYnV0IHlvdSBtYXkgcnVuIGlu
-dG8gdGhlIHNhbWUgaXNzdWUgaWYgeW91IHJlc29sdmUgdGhlIGNvbmZsaWN0IHRoZSBzYW1lIHdh
-eSBhZ2Fpbi4gIAoKQWxleAoKPiAKPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20KPiAvaG9tZS9icm9v
-bmllL3RtcGZzL25leHQvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1Lmg6NTE6MCwK
-PiAgICAgICAgICAgICAgICAgIGZyb20KPiAvaG9tZS9icm9vbmllL3RtcGZzL25leHQvZHJpdmVy
-cy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm4KPiBlY3RvcnMuYzozMToKPiAvaG9tZS9i
-cm9vbmllL3RtcGZzL25leHQvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vaW5jbHVkZS9h
-bWQKPiBfc2hhcmVkLmg6MzM6NjogZXJyb3I6IG5lc3RlZCByZWRlZmluaXRpb24gb2YgJ2VudW0g
-YW1kX2FzaWNfdHlwZScKPiAgZW51bSBhbWRfYXNpY190eXBlIHsKPiAgICAgICBeCj4gL2hvbWUv
-YnJvb25pZS90bXBmcy9uZXh0L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2luY2x1ZGUv
-YW1kCj4gX3NoYXJlZC5oOjMzOjY6IGVycm9yOiByZWRlY2xhcmF0aW9uIG9mICdlbnVtIGFtZF9h
-c2ljX3R5cGUnCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tCj4gL2hvbWUvYnJvb25pZS90bXBmcy9u
-ZXh0L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2luY2x1ZGUvYW1kCj4gX3NoYXJlZC5o
-OjI2OjAsCj4gICAgICAgICAgICAgICAgICBmcm9tCj4gL2hvbWUvYnJvb25pZS90bXBmcy9uZXh0
-L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdS5oOjUxLAo+ICAgICAgICAgICAgICAg
-ICAgZnJvbQo+IC9ob21lL2Jyb29uaWUvdG1wZnMvbmV4dC9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
-ZGdwdS9hbWRncHVfY29ubgo+IGVjdG9ycy5jOjMxOgo+IC9ob21lL2Jyb29uaWUvdG1wZnMvbmV4
-dC9pbmNsdWRlL2RybS9hbWRfYXNpY190eXBlLmg6Mjg6Njogbm90ZToKPiBvcmlnaW5hbGx5IGRl
-ZmluZWQgaGVyZQo+ICBlbnVtIGFtZF9hc2ljX3R5cGUgewo+ICAgICAgIF4KX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlz
-dApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--z7s4akybno6zsaap
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Felipe,
+
+Today's linux-next merge of the usb-gadget tree got a conflict in:
+
+  drivers/usb/gadget/udc/snps_udc_core.c
+
+between commit:
+
+  29bce57723351f63d ("usb/gadget/snps_udc_core: Convert timers to use timer=
+_setup()")
+
+=66rom the usb tree and commit:
+
+  46b614affda8667f9 ("usb: gadget: udc: snps_udc_core: use setup_timer() he=
+lper.")
+
+=66rom the usb-gadget tree.
+
+I fixed it up by taking the USB version and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--z7s4akybno6zsaap
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnnaFoACgkQJNaLcl1U
+h9CUZAf8C9Vdf3S8omMzATxcEhZB+9ikyYR4yA50840BNTsIwP/VP8HjxB8se6sg
+7cbWg5Zdv485NdT8g5F0yIOTuZMft6Pi3dDyT1ij+oHxV/8uf0MqDIoTS2pXvmPD
+3iCErOz7ojliNy+N4fwUHFMFU00lros3w/elNMCjLCmiuf6xDu/ByRIqudeFb0+7
+rLv0KShykZay79yynOeOBo+MLAluoxh22yNIg3wKZ0L0hjnohMmTryMMZV6wY9ky
+uuR9pplyKrtugTR6H44e/gFrsHN30yXgKqvfmrr0tJc718P5uUy9VuVESUN5BtxL
+4h9KX5uXnKQTRsMc1j367yjQqNyVZg==
+=qI9B
+-----END PGP SIGNATURE-----
+
+--z7s4akybno6zsaap--
