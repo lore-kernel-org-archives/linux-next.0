@@ -1,55 +1,59 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
-Date: Wed, 18 Oct 2017 17:04:42 +0100
-Message-ID: <20171018160442.kgdwfzobxtcbf636@sirena.co.uk>
-References: <20171018144912.qlc7vlnhdqmr5tdd@sirena.co.uk>
- <CAGXu5jJFTczR39wPX=B+6nWHfHUW12HxA_f6iRg41uNre6msww@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree with the
+ drm-misc tree
+Date: Wed, 18 Oct 2017 17:26:31 +0100
+Message-ID: <20171018162631.qceuluxqpv3xu2xb@sirena.co.uk>
+References: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
+ <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
+ <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="td5ldxmizzp7fmgw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="2xf3hjck6by2gymk"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35200 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbdJRQ0g (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 12:26:36 -0400
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jJFTczR39wPX=B+6nWHfHUW12HxA_f6iRg41uNre6msww@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Felipe Balbi <balbi@kernel.org>, Tony Lindgren <tony@atomide.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Allen Pais <allen.lkml@gmail.com>, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Cc: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
 
 
---td5ldxmizzp7fmgw
+--2xf3hjck6by2gymk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 18, 2017 at 08:40:04AM -0700, Kees Cook wrote:
-> On Wed, Oct 18, 2017 at 7:49 AM, Mark Brown <broonie@kernel.org> wrote:
+On Wed, Oct 18, 2017 at 02:33:37PM +0000, Deucher, Alexander wrote:
 
-> > I fixed it up with the USB version and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
 
-> FWIW, timer_setup() should be preferred over setup_timer().
+> Your conflict change affectively reverted 1e4448648333a which is what
+> caused the problem.  It looks like Dave did not yet pull the request I
+> made.  I can send another pull request, but you may run into the same
+> issue if you resolve the conflict the same way again. =20
 
-Bah, that's unfortunate.  When more of these come up I'll do that.  It
-would be better to sort these out in the relevant trees though, there's
-quite a few of these conflicts and it's not super obvious if you're not
-into the timer code what's preferred.
+OK...  I really wasn't expecting to see any conflicts at all TBH.  I'll
+have a look tomorrow.
 
---td5ldxmizzp7fmgw
+--2xf3hjck6by2gymk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnne5kACgkQJNaLcl1U
-h9AKBgf6A2WhnLcvWwwbXLd0hXyaIS+U6lx0m25qO0N3+GspQSDZzBonCYiEwKh5
-ri8NUwF9kPVPln3HVqU3C13izhvWAIK+7l6Pjh0CWT3/djAhOIPavSHFviV70daw
-E5YkB0cQDJGwg99ca62p79g39UtSFFGwDttaAFsuBzCGe9qLq3DLd3SqtmXZbQnN
-KnbzNh1FSn2dqaw6p2n1EVpvweG46iZYmcjKpAC2Mhv7/o1k0dDTUtY/nTH9wchi
-dxNvRDvO8mh4G+xnRhsUPGvQB4EGx2mQgALu9JbpxIqN+C1GC4P+H9VV4nbN0NXH
-/GX+/+y2XT2LG5NRxAX4ErW4qWI7rA==
-=dKuH
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnngLYACgkQJNaLcl1U
+h9Bbcwf/Qe4ssY96ep1Urm3ao8tYBJosR/MPLvYnU1bDidbuF8guM7CXgVYSuPAI
+Z+I6/HkAlABDMuGXGEL34T7ZL1B8Znpvr9CP3Gqmdvf4nbTvcNLLC53ZQlP01Gcu
+Geuj7AcYHh8+Fq2uBEj46z19oRslTWTzE842U1PZoE7fJGpWojyTS8O66771KLhR
+PxQ3cxhWERHHEQq7LwZgYzJHSwq07Ay1rc46VgNfITV+kRgwGFsbsnBBHZrlxX0b
+WHJ1bmPtyBnxpXMt88O82L49euY/Zst4+6WuMnnNyaSsmeMd3KsHnNIadr6j5QS5
+NC+et1gSU/gMtd+83do1XZ1xwosNWQ==
+=r8/H
 -----END PGP SIGNATURE-----
 
---td5ldxmizzp7fmgw--
+--2xf3hjck6by2gymk--
