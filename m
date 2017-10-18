@@ -1,108 +1,73 @@
 From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Subject: RE: linux-next: manual merge of the sound-asoc tree with the drm-misc
- tree
-Date: Wed, 18 Oct 2017 14:30:50 +0000
-Message-ID: <BN6PR12MB16527C9DCEEA4D46EEF1AA90F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
+Subject: Re: linux-next: manual merge of the sound-asoc tree
+ with the drm-misc tree
+Date: Wed, 18 Oct 2017 14:33:37 +0000
+Message-ID: <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
 References: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
+ <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-sn1nam02on0079.outbound.protection.outlook.com ([104.47.36.79]:18944
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751343AbdJROa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 18 Oct 2017 10:30:56 -0400
-In-Reply-To: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
 Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: 'Mark Brown' <broonie@kernel.org>, "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-> -----Original Message-----
-> From: Mark Brown [mailto:broonie@kernel.org]
-> Sent: Wednesday, October 18, 2017 5:58 AM
-> To: Deucher, Alexander; Mukunda, Vijendar; Zhu, Rex; Daniel Vetter; Intel
-> Graphics; DRI; Liam Girdwood
-> Cc: Linux-Next Mailing List; Linux Kernel Mailing List
-> Subject: linux-next: manual merge of the sound-asoc tree with the drm-mis=
-c
-> tree
->=20
-> Hi all,
->=20
-> Today's linux-next merge of the sound-asoc tree got a conflict in:
->=20
->   drivers/gpu/drm/amd/include/amd_shared.h
->=20
-> between commit:
->=20
->   cfa289fd4986c ("drm/amdgpu: rename amdgpu_dpm_funcs to
-> amd_pm_funcs")
->=20
-> from the drm-misc tree and commit:
->=20
->   1e4448648333a ("drm/amdgpu Moving amdgpu asic types to a separate
-> file")
-
-The patch below effectively reverts 1e4448648333a.  If you drop the patch b=
-elow, you should be fine.
-
-Alex
-
->=20
-> from the sound-asoc tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/gpu/drm/amd/include/amd_shared.h
-> index de6fc2731b98,3a49fbd8baf8..000000000000
-> --- a/drivers/gpu/drm/amd/include/amd_shared.h
-> +++ b/drivers/gpu/drm/amd/include/amd_shared.h
-> @@@ -23,37 -23,10 +23,39 @@@
->   #ifndef __AMD_SHARED_H__
->   #define __AMD_SHARED_H__
->=20
-> - #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
-> + #include <drm/amd_asic_type.h>
->=20
->  +struct seq_file;
->  +
->  +/*
->  + * Supported ASIC types
->  + */
->  +enum amd_asic_type {
->  +	CHIP_TAHITI =3D 0,
->  +	CHIP_PITCAIRN,
->  +	CHIP_VERDE,
->  +	CHIP_OLAND,
->  +	CHIP_HAINAN,
->  +	CHIP_BONAIRE,
->  +	CHIP_KAVERI,
->  +	CHIP_KABINI,
->  +	CHIP_HAWAII,
->  +	CHIP_MULLINS,
->  +	CHIP_TOPAZ,
->  +	CHIP_TONGA,
->  +	CHIP_FIJI,
->  +	CHIP_CARRIZO,
->  +	CHIP_STONEY,
->  +	CHIP_POLARIS10,
->  +	CHIP_POLARIS11,
->  +	CHIP_POLARIS12,
->  +	CHIP_VEGA10,
->  +	CHIP_RAVEN,
->  +	CHIP_LAST,
->  +};
->  +
-> + #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
-> +
->   /*
->    * Chip flags
->    */
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQo+IEZyb206IE1hcmsgQnJvd24gW21haWx0bzpi
+cm9vbmllQGtlcm5lbC5vcmddCj4gU2VudDogV2VkbmVzZGF5LCBPY3RvYmVyIDE4LCAyMDE3IDY6
+MDggQU0KPiBUbzogRGV1Y2hlciwgQWxleGFuZGVyOyBNdWt1bmRhLCBWaWplbmRhcjsgWmh1LCBS
+ZXg7IERhbmllbCBWZXR0ZXI7IEludGVsCj4gR3JhcGhpY3M7IERSSTsgTGlhbSBHaXJkd29vZAo+
+IENjOiBMaW51eC1OZXh0IE1haWxpbmcgTGlzdDsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdDsg
+YWxzYS1kZXZlbEBhbHNhLQo+IHByb2plY3Qub3JnCj4gU3ViamVjdDogUmU6IGxpbnV4LW5leHQ6
+IG1hbnVhbCBtZXJnZSBvZiB0aGUgc291bmQtYXNvYyB0cmVlIHdpdGggdGhlIGRybS0KPiBtaXNj
+IHRyZWUKPiAKPiBPbiBXZWQsIE9jdCAxOCwgMjAxNyBhdCAxMDo1NzozM0FNICswMTAwLCBNYXJr
+IEJyb3duIHdyb3RlOgo+IAo+ID4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNh
+cnJ5IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4gPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFz
+IGxpbnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4gPiBjb25mbGlj
+dHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5
+b3VyCj4gdHJlZQo+ID4gaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1heSBhbHNvIHdh
+bnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKPiA+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhl
+IGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+ID4gY29tcGxl
+eCBjb25mbGljdHMuCj4gCj4gQWN0dWFsbHkgSSdtIGp1c3QgZ29pbmcgdG8gZGlzY2FyZCB0aGUg
+QU1EIGRyaXZlcnMgZnJvbSB0aGUgQVNvQyB0cmVlCj4gYmVjYXVzZSB0aGUgYnVpbGQgcHJvZHVj
+ZXMgcmVhbXMgb2YgZXJyb3JzIGxpa2UgdGhvc2UgYmVsb3csIHRoZSBjaGFuZ2VzCj4gdG8gbW92
+ZSB0aGUgY2hpcCB0eXBlIGRlZmluaXRpb25zIGFyb3VuZCB3ZXJlbid0IGZ1bGx5IGJha2VkLiAg
+UGxlYXNlCj4gcmVzZW5kIGJvdGggdGhlIHB1bGwgcmVxdWVzdCBhbmQgdGhlIHBhdGNoZXMgd2l0
+aCB0aGlzIGZpeGVkLiAgTm90ZSBhbHNvCj4gdGhhdCBpZiB5b3UncmUgYmFzaW5nIHNvbWV0aGlu
+ZyBvbiBMaW51cycgdHJlZSB5b3Ugc2hvdWxkIHVzZSBhIHRhZ2dlZAo+IHJlbGVhc2UgcmF0aGVy
+IHRoYW4ganVzdCBhIHJhbmRvbSBjb21taXQuCgpZb3VyIGNvbmZsaWN0IGNoYW5nZSBhZmZlY3Rp
+dmVseSByZXZlcnRlZCAxZTQ0NDg2NDgzMzNhIHdoaWNoIGlzIHdoYXQgY2F1c2VkIHRoZSBwcm9i
+bGVtLiAgSXQgbG9va3MgbGlrZSBEYXZlIGRpZCBub3QgeWV0IHB1bGwgdGhlIHJlcXVlc3QgSSBt
+YWRlLiAgSSBjYW4gc2VuZCBhbm90aGVyIHB1bGwgcmVxdWVzdCwgYnV0IHlvdSBtYXkgcnVuIGlu
+dG8gdGhlIHNhbWUgaXNzdWUgaWYgeW91IHJlc29sdmUgdGhlIGNvbmZsaWN0IHRoZSBzYW1lIHdh
+eSBhZ2Fpbi4gIAoKQWxleAoKPiAKPiBJbiBmaWxlIGluY2x1ZGVkIGZyb20KPiAvaG9tZS9icm9v
+bmllL3RtcGZzL25leHQvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1Lmg6NTE6MCwK
+PiAgICAgICAgICAgICAgICAgIGZyb20KPiAvaG9tZS9icm9vbmllL3RtcGZzL25leHQvZHJpdmVy
+cy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Nvbm4KPiBlY3RvcnMuYzozMToKPiAvaG9tZS9i
+cm9vbmllL3RtcGZzL25leHQvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvLi4vaW5jbHVkZS9h
+bWQKPiBfc2hhcmVkLmg6MzM6NjogZXJyb3I6IG5lc3RlZCByZWRlZmluaXRpb24gb2YgJ2VudW0g
+YW1kX2FzaWNfdHlwZScKPiAgZW51bSBhbWRfYXNpY190eXBlIHsKPiAgICAgICBeCj4gL2hvbWUv
+YnJvb25pZS90bXBmcy9uZXh0L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2luY2x1ZGUv
+YW1kCj4gX3NoYXJlZC5oOjMzOjY6IGVycm9yOiByZWRlY2xhcmF0aW9uIG9mICdlbnVtIGFtZF9h
+c2ljX3R5cGUnCj4gSW4gZmlsZSBpbmNsdWRlZCBmcm9tCj4gL2hvbWUvYnJvb25pZS90bXBmcy9u
+ZXh0L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1Ly4uL2luY2x1ZGUvYW1kCj4gX3NoYXJlZC5o
+OjI2OjAsCj4gICAgICAgICAgICAgICAgICBmcm9tCj4gL2hvbWUvYnJvb25pZS90bXBmcy9uZXh0
+L2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdS5oOjUxLAo+ICAgICAgICAgICAgICAg
+ICAgZnJvbQo+IC9ob21lL2Jyb29uaWUvdG1wZnMvbmV4dC9kcml2ZXJzL2dwdS9kcm0vYW1kL2Ft
+ZGdwdS9hbWRncHVfY29ubgo+IGVjdG9ycy5jOjMxOgo+IC9ob21lL2Jyb29uaWUvdG1wZnMvbmV4
+dC9pbmNsdWRlL2RybS9hbWRfYXNpY190eXBlLmg6Mjg6Njogbm90ZToKPiBvcmlnaW5hbGx5IGRl
+ZmluZWQgaGVyZQo+ICBlbnVtIGFtZF9hc2ljX3R5cGUgewo+ICAgICAgIF4KX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlz
+dApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
