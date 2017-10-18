@@ -1,121 +1,108 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the integrity tree with the jc-docs tree
-Date: Wed, 18 Oct 2017 11:50:25 +0100
-Message-ID: <20171018105025.pj5rewvvg5vxhzbw@sirena.co.uk>
+From: "Deucher, Alexander" <Alexander.Deucher@amd.com>
+Subject: RE: linux-next: manual merge of the sound-asoc tree with the drm-misc
+ tree
+Date: Wed, 18 Oct 2017 14:30:50 +0000
+Message-ID: <BN6PR12MB16527C9DCEEA4D46EEF1AA90F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
+References: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dnfe6ffk27iphesa"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36052 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750817AbdJRKud (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 06:50:33 -0400
-Content-Disposition: inline
+Received: from mail-sn1nam02on0079.outbound.protection.outlook.com ([104.47.36.79]:18944
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751343AbdJROa4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 18 Oct 2017 10:30:56 -0400
+In-Reply-To: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Matthew Garrett <mjg59@google.com>, Tom Saeger <tom.saeger@oracle.com>, Jonathan Corbet <corbet@lwn.net>, Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+To: 'Mark Brown' <broonie@kernel.org>, "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: Wednesday, October 18, 2017 5:58 AM
+> To: Deucher, Alexander; Mukunda, Vijendar; Zhu, Rex; Daniel Vetter; Intel
+> Graphics; DRI; Liam Girdwood
+> Cc: Linux-Next Mailing List; Linux Kernel Mailing List
+> Subject: linux-next: manual merge of the sound-asoc tree with the drm-mis=
+c
+> tree
+>=20
+> Hi all,
+>=20
+> Today's linux-next merge of the sound-asoc tree got a conflict in:
+>=20
+>   drivers/gpu/drm/amd/include/amd_shared.h
+>=20
+> between commit:
+>=20
+>   cfa289fd4986c ("drm/amdgpu: rename amdgpu_dpm_funcs to
+> amd_pm_funcs")
+>=20
+> from the drm-misc tree and commit:
+>=20
+>   1e4448648333a ("drm/amdgpu Moving amdgpu asic types to a separate
+> file")
 
---dnfe6ffk27iphesa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The patch below effectively reverts 1e4448648333a.  If you drop the patch b=
+elow, you should be fine.
 
-Hi all,
+Alex
 
-Today's linux-next merge of the integrity tree got a conflict in:
-
-  Documentation/ABI/testing/evm
-
-between commit:
-
-  c7f66400f504fd5 ("Documentation: fix security related doc refs")
-
-=66rom the jc-docs tree and commit:
-
-  cbad39d632b7c18 ("EVM: Allow userspace to signal an RSA key has been load=
-ed")
-
-=66rom the integrity tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/ABI/testing/evm
-index ca622c9aa24c,a0bbccb00736..000000000000
---- a/Documentation/ABI/testing/evm
-+++ b/Documentation/ABI/testing/evm
-@@@ -7,17 -7,36 +7,36 @@@ Description
-  		HMAC-sha1 value across the extended attributes, storing the
-  		value as the extended attribute 'security.evm'.
- =20
-- 		EVM depends on the Kernel Key Retention System to provide it
-- 		with a trusted/encrypted key for the HMAC-sha1 operation.
-- 		The key is loaded onto the root's keyring using keyctl.  Until
-- 		EVM receives notification that the key has been successfully
-- 		loaded onto the keyring (echo 1 > <securityfs>/evm), EVM
-- 		can not create or validate the 'security.evm' xattr, but
-- 		returns INTEGRITY_UNKNOWN.  Loading the key and signaling EVM
-- 		should be done as early as possible.  Normally this is done
-- 		in the initramfs, which has already been measured as part
-- 		of the trusted boot.  For more information on creating and
-- 		loading existing trusted/encrypted keys, refer to:
-- 		Documentation/security/keys/trusted-encrypted.rst.  (A sample
-- 		dracut patch, which loads the trusted/encrypted key and enables
-- 		EVM, is available from http://linux-ima.sourceforge.net/#EVM.)
-+ 		EVM supports two classes of security.evm. The first is
-+ 		an HMAC-sha1 generated locally with a
-+ 		trusted/encrypted key stored in the Kernel Key
-+ 		Retention System. The second is a digital signature
-+ 		generated either locally or remotely using an
-+ 		asymmetric key. These keys are loaded onto root's
-+ 		keyring using keyctl, and EVM is then enabled by
-+ 		echoing a value to <securityfs>/evm:
-+=20
-+ 		1: enable HMAC validation and creation
-+ 		2: enable digital signature validation
-+ 		3: enable HMAC and digital signature validation and HMAC
-+ 		   creation
-+=20
-+ 		Further writes will be blocked if HMAC support is enabled or
-+ 		if bit 32 is set:
-+=20
-+ 		echo 0x80000002 ><securityfs>/evm
-+=20
-+ 		will enable digital signature validation and block
-+ 		further writes to <securityfs>/evm.
-+=20
-+ 		Until this is done, EVM can not create or validate the
-+ 		'security.evm' xattr, but returns INTEGRITY_UNKNOWN.
-+ 		Loading keys and signaling EVM should be done as early
-+ 		as possible.  Normally this is done in the initramfs,
-+ 		which has already been measured as part of the trusted
-+ 		boot.  For more information on creating and loading
-+ 		existing trusted/encrypted keys, refer to:
- -		Documentation/keys-trusted-encrypted.txt. Both dracut
-++		Documentation/security/keys/trusted-encrypted.rst. Both dracut
-+ 		(via 97masterkey and 98integrity) and systemd (via
-+ 		core/ima-setup) have support for loading keys at boot
-+ 		time.
-
---dnfe6ffk27iphesa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnnMfAACgkQJNaLcl1U
-h9D2qAf6AyOWBSnMiNYndia/U8yWZxPU8EO/26/AdfBoB5RsFjBSTM8UxE92OiYz
-OQxjmZeykSsO6V1oeknk0hqy2FwZHpNwLFS+IdO9NwsO35vPY3gM5uCo5togj0jv
-xL3kTC4NrOnjTouHVqEXAADFEjmPXlJ2yRZqdrahKEUzFeXxxfcT4a3LijrQ5kRC
-ENdSIyGGYCSm/7lTUKRElprggJD7PG7K/yanjrQRLqpc47xBXlAbCOLtCr1v9Q/C
-NRFGkhGrNXL4LYmlvc61AEvDtGSaO25jyyqOIa61ihdYxvKPM+2EEY2sedZEb17J
-+mZKcetjzPX1oemwKJsu3hpUQ/X2xQ==
-=48Er
------END PGP SIGNATURE-----
-
---dnfe6ffk27iphesa--
+>=20
+> from the sound-asoc tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc drivers/gpu/drm/amd/include/amd_shared.h
+> index de6fc2731b98,3a49fbd8baf8..000000000000
+> --- a/drivers/gpu/drm/amd/include/amd_shared.h
+> +++ b/drivers/gpu/drm/amd/include/amd_shared.h
+> @@@ -23,37 -23,10 +23,39 @@@
+>   #ifndef __AMD_SHARED_H__
+>   #define __AMD_SHARED_H__
+>=20
+> - #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
+> + #include <drm/amd_asic_type.h>
+>=20
+>  +struct seq_file;
+>  +
+>  +/*
+>  + * Supported ASIC types
+>  + */
+>  +enum amd_asic_type {
+>  +	CHIP_TAHITI =3D 0,
+>  +	CHIP_PITCAIRN,
+>  +	CHIP_VERDE,
+>  +	CHIP_OLAND,
+>  +	CHIP_HAINAN,
+>  +	CHIP_BONAIRE,
+>  +	CHIP_KAVERI,
+>  +	CHIP_KABINI,
+>  +	CHIP_HAWAII,
+>  +	CHIP_MULLINS,
+>  +	CHIP_TOPAZ,
+>  +	CHIP_TONGA,
+>  +	CHIP_FIJI,
+>  +	CHIP_CARRIZO,
+>  +	CHIP_STONEY,
+>  +	CHIP_POLARIS10,
+>  +	CHIP_POLARIS11,
+>  +	CHIP_POLARIS12,
+>  +	CHIP_VEGA10,
+>  +	CHIP_RAVEN,
+>  +	CHIP_LAST,
+>  +};
+>  +
+> + #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
+> +
+>   /*
+>    * Chip flags
+>    */
