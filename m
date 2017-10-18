@@ -1,98 +1,85 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20171017 build: 3 failures 8 warnings (next-20171017)
-Date: Wed, 18 Oct 2017 05:17:03 +0100
-Message-ID: <E1e4fmx-0007bA-F3@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53904 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753499AbdJRERG (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 00:17:06 -0400
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20171017
-Git describe: next-20171017
-Commit: a7dd40274d Add linux-next specific files for 20171017
-
-Build Time: 122 min 21 sec
-
-Passed:    7 / 10   ( 70.00 %)
-Failed:    3 / 10   ( 30.00 %)
-
-Errors: 1
-Warnings: 8
-Section Mismatches: 0
-
-Failed defconfigs:
-	arm-allmodconfig
-
-Errors:
-
-	arm-allmodconfig
-ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      6 warnings    0 mismatches  : arm64-allmodconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Errors summary: 1
-	  1 ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
-
-Warnings Summary: 8
-	  2 ../fs/f2fs/node.c:1654:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	  2 ../fs/f2fs/node.c:1556:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	  2 ../fs/f2fs/node.c:1443:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	  2 ../fs/f2fs/node.c:1289:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	  2 ../fs/f2fs/checkpoint.c:322:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	  2 ../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
-	  1 ../net/sched/cls_u32.c:338:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	  1 ../fs/btrfs/tree-checker.c:186:4: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Wformat=]
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree with the
+ drm-intel-fixes tree
+Date: Wed, 18 Oct 2017 10:27:58 +0100
+Message-ID: <20171018092758.7fc7xtaxp23yoy6s@sirena.co.uk>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0521221596=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Chris Wilson <chris@chris-wilson.co.uk>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 
+--===============0521221596==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zhf2gdgbml7cpbyh"
+Content-Disposition: inline
 
-===============================================================================
-Detailed per-defconfig build reports below:
 
+--zhf2gdgbml7cpbyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+Hi all,
 
-Warnings:
-	../fs/f2fs/checkpoint.c:322:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1289:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1443:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1556:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1654:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
--------------------------------------------------------------------------------
-arm-allmodconfig : FAIL, 1 errors, 8 warnings, 0 section mismatches
+  drivers/gpu/drm/i915/i915_gem_evict.c
 
-Errors:
-	ERROR: "__aeabi_uldivmod" [drivers/net/ethernet/intel/i40e/i40e.ko] undefined!
+between commit:
 
-Warnings:
-	../fs/btrfs/tree-checker.c:186:4: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'unsigned int' [-Wformat=]
-	../fs/f2fs/checkpoint.c:322:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1289:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1443:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1556:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../fs/f2fs/node.c:1654:5: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
-	../net/sched/cls_u32.c:338:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-	../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
--------------------------------------------------------------------------------
+  99b169d3c2052 ("drm/i915: Fix eviction when the GGTT is idle but full")
 
-Passed with no errors, warnings or mismatches:
+=66rom the drm-intel-fixes tree and commit:
 
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+  9c1477e83e629 ("drm/i915/selftests: Exercise adding requests to a full GG=
+TT")
+
+=66rom the drm-intel tree.
+
+I fixed it up (null diff) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--zhf2gdgbml7cpbyh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnnHp0ACgkQJNaLcl1U
+h9CxFAf+NbDDYgsg7eEoh4jFJGbTNiJu80rCXFI+1nsrakaUcjVyXXKIGELvJ72L
+OnTet+jtCMjgzIvIUTo89lk/Ftd9HcquSRU/LJ3cMV1KaTNi+P3ZfAFbYvS5y6/B
+adlGyQeT2NI8fCav+78axufwFFvuMLmeimzldhvr3FT0rs2iNOUu61ChPOLB99mY
+wctgKBoLTXFXps/UNZ7LlXArPXIHTwtd4HM6zNmGZOQ0TMdvqSTy858Cdz3jYnho
+6s5/BRV9eCToWEnGt36VwXH7SJbj6kXZV6QUT50JoSACVzpReNNtmCO0Ct/8dMQB
+/Yl0cxEuTUdK/2//HVUUSg+W6EOLVw==
+=dze2
+-----END PGP SIGNATURE-----
+
+--zhf2gdgbml7cpbyh--
+
+--===============0521221596==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0521221596==--
