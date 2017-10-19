@@ -1,46 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: No tree for Oct 18th
-Date: Thu, 19 Oct 2017 14:57:55 +0100
-Message-ID: <20171019135755.tlr6qrfantulzgth@sirena.co.uk>
-References: <20171019001559.fbubnkm23spmov7r@sirena.co.uk>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: /home/broonie/tmpfs/next/kernel/bpf/verifier.c:
+Date: Thu, 19 Oct 2017 16:04:33 +0200
+Message-ID: <59E8B0F1.40509@iogearbox.net>
+References: <20171019135523.w7ljx34hyx7422nb@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="undtspufk6ncmjln"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171019001559.fbubnkm23spmov7r@sirena.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20171019135523.w7ljx34hyx7422nb@sirena.co.uk>
+Sender: netdev-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>, Edward Cree <ecree@solarflare.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On 10/19/2017 03:55 PM, Mark Brown wrote:
+> Hi all,
+>
+> After merging the net-next tree, today's linux-next build (x86allmodconfig)
+> failed like this:
+>
+> /home/broonie/tmpfs/next/kernel/bpf/verifier.c: In function 'check_mem_access':
+> /home/broonie/tmpfs/next/kernel/bpf/verifier.c:1010:12: error: passing argument 1 of 'verbose' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>      verbose("dereference of modified ctx ptr R%d off=%d+%d, ctx+const is allowed, ctx+const+const is not\n",
+>              ^
 
---undtspufk6ncmjln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yeah, the verbose calls need to have env passed into them:
 
-On Thu, Oct 19, 2017 at 01:15:59AM +0100, Mark Brown wrote:
-> I'm going to have a go at doing a -next build tomorrow but I'm starting
-> pre-Prague travel in the evening so it's pot luck if it completes in
-> time.  If not this will be the last build before Stephen returns to work
-> and your usual levels of competence.
+   verbose(env, [...])
 
-There's no way I'm going to be able to finish today's -next build,
-sorry.  This means there will be no further builds until 30th October.
+See also the note below '---':
 
---undtspufk6ncmjln
-Content-Type: application/pgp-signature; name="signature.asc"
+   http://patchwork.ozlabs.org/patch/826449/
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnor2MACgkQJNaLcl1U
-h9BUgQf7BwLS+vM2dnR49hQLEbvjrz301uk1rAI0JGpIbqYovQLXtwhV8wWDMmxM
-cnB58Dp3RIIIMnFymYX9mnh9wX4NXVwZckwsFNyMhmAfsdwha5yEII6Gbh+BL3C4
-t7a0SSmghLZL/P+PlTtqc3Ei3ufgN8aWd0UiJWuSTl29RChog3usplWhgRPZqbcz
-IviLcKmlpxEdmZrSkYqbqux5RVZ3dXCUosMAueqZPa4lwJfpBCPrNRAxjTtFw8t2
-2BZobgZMvnVptHnPUpvraToOdNg/KkWJsj9Z7Vc5/u5P5IA5iWq+50zkrMmjlwgQ
-X/GHjWy6owQXygb7MLUpbCtRjuIzZw==
-=KG8M
------END PGP SIGNATURE-----
-
---undtspufk6ncmjln--
+> /home/broonie/tmpfs/next/kernel/bpf/verifier.c:173:28: note: expected 'struct bpf_verifier_env *' but argument is of type 'char *'
+>   static __printf(2, 3) void verbose(struct bpf_verifier_env *env,
+>                              ^
+> /home/broonie/tmpfs/next/kernel/bpf/verifier.c:1011:5: warning: passing argument 2 of 'verbose' makes pointer from integer without a cast [-Wint-conversion]
+>       regno, reg->off, off - reg->off);
+>       ^
+> /home/broonie/tmpfs/next/kernel/bpf/verifier.c:173:28: note: expected 'const char *' but argument is of type 'u32 {aka unsigned int}'
+>   static __printf(2, 3) void verbose(struct bpf_verifier_env *env,
+>                              ^
+> cc1: some warnings being treated as errors
+> /home/broonie/tmpfs/next/scripts/Makefile.build:313: recipe for target 'kernel/bpf/verifier.o' failed
+>
+> Caused by commit
+>
+>    28e33f9d78eef ("bpf: disallow arithmetic operations on context pointer")
+>
+> interacting with
+>
+>    61bd5218eef34 ("bpf: move global verifier log into verifier environment")
+>
