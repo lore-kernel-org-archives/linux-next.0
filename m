@@ -1,59 +1,62 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the sound-asoc tree with the
- drm-misc tree
-Date: Wed, 18 Oct 2017 17:26:31 +0100
-Message-ID: <20171018162631.qceuluxqpv3xu2xb@sirena.co.uk>
-References: <20171018095733.2ffvg6ty6kn2lfdf@sirena.co.uk>
- <20171018100802.4eiin6bhsj6wir75@sirena.co.uk>
- <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
+Subject: linux-next: Tree for Oct 18th
+Date: Thu, 19 Oct 2017 01:15:59 +0100
+Message-ID: <20171019001559.fbubnkm23spmov7r@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2xf3hjck6by2gymk"
+        protocol="application/pgp-signature"; boundary="6z6buxdvwh4ep34t"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35200 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60376 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbdJRQ0g (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 12:26:36 -0400
+        with ESMTP id S1751077AbdJSAQB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 18 Oct 2017 20:16:01 -0400
 Content-Disposition: inline
-In-Reply-To: <BN6PR12MB165283F1E4A670659E6C0C89F74D0@BN6PR12MB1652.namprd12.prod.outlook.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Deucher, Alexander" <Alexander.Deucher@amd.com>
-Cc: "Mukunda, Vijendar" <Vijendar.Mukunda@amd.com>, "Zhu, Rex" <Rex.Zhu@amd.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---2xf3hjck6by2gymk
+--6z6buxdvwh4ep34t
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 18, 2017 at 02:33:37PM +0000, Deucher, Alexander wrote:
+I'm going to have a go at doing a -next build tomorrow but I'm starting
+pre-Prague travel in the evening so it's pot luck if it completes in
+time.  If not this will be the last build before Stephen returns to work
+and your usual levels of competence.
 
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
 
-> Your conflict change affectively reverted 1e4448648333a which is what
-> caused the problem.  It looks like Dave did not yet pull the request I
-> made.  I can send another pull request, but you may run into the same
-> issue if you resolve the conflict the same way again. =20
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There are also quilt-import.log and merge.log
+files in the Next directory.  Between each merge, the tree was built
+with an arm64 defconfig, an allmodconfig (with
+CONFIG_BUILD_DOCSRC=3Dn) for x86_64, a multi_v7_defconfig for arm and a
+native build of tools/perf. After the final fixups (if any), I do an
+x86_64 modules_install followed by builds for x86_64 allnoconfig,
+and arm64 allnoconfig=20
 
-OK...  I really wasn't expecting to see any conflicts at all TBH.  I'll
-have a look tomorrow.
-
---2xf3hjck6by2gymk
+--6z6buxdvwh4ep34t
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnngLYACgkQJNaLcl1U
-h9Bbcwf/Qe4ssY96ep1Urm3ao8tYBJosR/MPLvYnU1bDidbuF8guM7CXgVYSuPAI
-Z+I6/HkAlABDMuGXGEL34T7ZL1B8Znpvr9CP3Gqmdvf4nbTvcNLLC53ZQlP01Gcu
-Geuj7AcYHh8+Fq2uBEj46z19oRslTWTzE842U1PZoE7fJGpWojyTS8O66771KLhR
-PxQ3cxhWERHHEQq7LwZgYzJHSwq07Ay1rc46VgNfITV+kRgwGFsbsnBBHZrlxX0b
-WHJ1bmPtyBnxpXMt88O82L49euY/Zst4+6WuMnnNyaSsmeMd3KsHnNIadr6j5QS5
-NC+et1gSU/gMtd+83do1XZ1xwosNWQ==
-=r8/H
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnn7r4ACgkQJNaLcl1U
+h9A/9gf/XLv/WiKrnlQUbUPQYtsCEKqay7bRPT9lfgXyzIvTU70FF3MENq5GZkn8
+g84H3vAyCOLz0Z2Dy+2Y8fYddihE7gyPfmG2SIXn9A0uSHCuQLTLtN23aE6xGJdg
+Mewf0F5a9O+DV5O5oezYTZdtDcdknxtDqtQC+u1whCTGd+Je2fs+ic1MAvj84Se4
+LCsj//1XU6IOEdWguorPsCFdOkteYTTaDdsXvTQl3o1xrM4Zj+IyBSJ7y0Y1YaOW
+TzsvW9algUWF5qgmme0vlVJuO9vbD5AuccS9NpS/zWZ/gwBhHrfz9CLawFMEDkpE
+lCFm0EpkMY/Fmr3qd7lgrstkoOZWkA==
+=CFva
 -----END PGP SIGNATURE-----
 
---2xf3hjck6by2gymk--
+--6z6buxdvwh4ep34t--
