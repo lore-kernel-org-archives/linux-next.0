@@ -1,75 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
-Date: Thu, 19 Oct 2017 12:32:50 +0100
-Message-ID: <20171019113250.uwpyhsxknnva545j@sirena.co.uk>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with Linus' tree
+Date: Thu, 19 Oct 2017 13:50:05 +0100
+Message-ID: <20171019125005.GA18883@red-moon>
+References: <20171019112833.2h5ah7tidjnkvo7o@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="72whdvbffq3bucun"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
-
-
---72whdvbffq3bucun
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from foss.arm.com ([217.140.101.70]:52912 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753021AbdJSMuF (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 19 Oct 2017 08:50:05 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20171019112833.2h5ah7tidjnkvo7o@sirena.co.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Hanjun Guo <hanjun.guo@linaro.org>, Robin Murphy <robin.murphy@arm.com>, Nate Watterson <nwatters@codeaurora.org>, linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, will.deacon@arm.com
 
-Hi Jonathan,
+[+Will]
 
-Today's linux-next merge of the jc_docs tree got a conflict in:
+On Thu, Oct 19, 2017 at 12:28:33PM +0100, Mark Brown wrote:
+> Hi Catalin,
+> 
+> Today's linux-next merge of the arm64 tree got a conflict in:
+> 
+>   drivers/acpi/arm64/iort.c
+> 
+> between commit:
+> 
+>   37f6b42e9c296 ("ACPI/IORT: Fix PCI ACS enablement")
+> 
+> from Linus' tree and commit:
+> 
+>   896dd2c324842 ("ACPI/IORT: Make platform devices initialization code SMMU agnostic")
+> 
+> from the arm64 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/acpi/arm64/iort.c
+> index de56394dd161,7dc964f4d8f1..000000000000
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@@ -1215,7 -1326,7 +1357,8 @@@ static void __init iort_init_platform_d
+>   	struct acpi_table_iort *iort;
+>   	struct fwnode_handle *fwnode;
+>   	int i, ret;
+>  +	bool acs_enabled = false;
+> + 	const struct iort_dev_config *ops;
+>   
+>   	/*
+>   	 * iort_table and iort both point to the start of IORT table, but
+> @@@ -1235,12 -1346,8 +1378,11 @@@
+>   			return;
+>   		}
+>   
+>  +		if (!acs_enabled)
+>  +			acs_enabled = iort_enable_acs(iort_node);
+>  +
+> - 		if ((iort_node->type == ACPI_IORT_NODE_SMMU) ||
+> - 			(iort_node->type == ACPI_IORT_NODE_SMMU_V3)) {
+> - 
+> + 		ops = iort_get_dev_cfg(iort_node);
+> + 		if (ops) {
+>   			fwnode = acpi_alloc_fwnode_static();
+>   			if (!fwnode)
+>   				return;
 
-  Documentation/process/index.rst
+Hi Mark,
 
-between commit:
+it is expected and that's the right conflict resolution:
 
-  9ed95129ffcab ("Documentation: Add a file explaining the Linux kernel lic=
-ense enforcement policy")
+https://marc.info/?l=linux-arm-kernel&m=150817031118241&w=2
 
-=66rom Linus' tree and commit:
-
-  13277782dd4bc ("Documentation: add Kernel Driver Statement to the kernel")
-
-=66rom the jc_docs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc Documentation/process/index.rst
-index 61e43cc3ed17,68454319f006..000000000000
---- a/Documentation/process/index.rst
-+++ b/Documentation/process/index.rst
-@@@ -25,7 -25,7 +25,8 @@@ Below are the essential guides that eve
-     submitting-patches
-     coding-style
-     email-clients
- +   kernel-enforcement-statement
-+    kernel-driver-statement
- =20
-  Other guides to the community that are of interest to most developers are=
-:=20
- =20
-
---72whdvbffq3bucun
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlnojWIACgkQJNaLcl1U
-h9BYtgf+I+1z8q2e62dj+El2gDPbJEx9/fL2ux0RPmMtgc0SW7TiUYLyLLXv3Ax3
-vMzsopTlAmmzAYHLgZtIqK/IGSE5khqa7JJj5D6NJK43Xl5GkkjOuVMmCZc+9/EJ
-8Fwcnoal+zE252qiLGMTQdDVMSiSPcqz1EP4ziGi3AN8+u1Oc1QjHdQhOwZbf1Qf
-SCMrzgIQmg+/z48wxMp0kRK/Ik3XC02YfL2K7TfNExV/SF7EL0loGRv+M1woaeQV
-aPBAhxjHhL43UGi1x+m/szrxqnk2jVS3I/KkczvircgSLgI89ghjYpakbi1IOwsp
-7+kPpr6IXwQFkfdSSG0bASyQkR2+WA==
-=nwjF
------END PGP SIGNATURE-----
-
---72whdvbffq3bucun--
+Thank you,
+Lorenzo
