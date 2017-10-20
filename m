@@ -1,417 +1,329 @@
-From: Jerome Glisse <jglisse@redhat.com>
-Subject: Re: [PATCH 1/2] mm/mmu_notifier: avoid double notification when it
- is useless v2
-Date: Thu, 19 Oct 2017 12:58:23 -0400
-Message-ID: <20171019165823.GA3044@redhat.com>
-References: <20171017031003.7481-1-jglisse@redhat.com>
- <20171017031003.7481-2-jglisse@redhat.com>
- <20171019140426.21f51957@MiWiFi-R3-srv>
- <20171019032811.GC5246@redhat.com>
- <CAKTCnz=5GL_Bbu=kqywgW98uxpvYqCo2+KyzzGb67BmnKju3bw@mail.gmail.com>
+From: akpm@linux-foundation.org
+Subject: mmotm 2017-10-19-17-00 uploaded
+Date: Thu, 19 Oct 2017 17:01:06 -0700
+Message-ID: <59e93cc2.vysmWcgg8TnZZJEF%akpm@linux-foundation.org>
+Reply-To: linux-kernel@vger.kernel.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <CAKTCnz=5GL_Bbu=kqywgW98uxpvYqCo2+KyzzGb67BmnKju3bw@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: Balbir Singh <bsingharora@gmail.com>
-Cc: linux-mm <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrea Arcangeli <aarcange@redhat.com>, Nadav Amit <nadav.amit@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Joerg Roedel <jroedel@suse.de>, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, David Woodhouse <dwmw2@infradead.org>, Alistair Popple <alistair@popple.id.au>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Donnellan <andrew.donnellan@au1.ibm.com>, iommu@lists.linux-foundation.org, "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <mm-commits-owner@vger.kernel.org>
+Sender: mm-commits-owner@vger.kernel.org
+To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Oct 19, 2017 at 09:53:11PM +1100, Balbir Singh wrote:
-> On Thu, Oct 19, 2017 at 2:28 PM, Jerome Glisse <jglisse@redhat.com> wrote:
-> > On Thu, Oct 19, 2017 at 02:04:26PM +1100, Balbir Singh wrote:
-> >> On Mon, 16 Oct 2017 23:10:02 -0400
-> >> jglisse@redhat.com wrote:
-> >>
-> >> > From: Jérôme Glisse <jglisse@redhat.com>
-> >> >
-> >> > +           /*
-> >> > +            * No need to call mmu_notifier_invalidate_range() as we are
-> >> > +            * downgrading page table protection not changing it to point
-> >> > +            * to a new page.
-> >> > +            *
-> >> > +            * See Documentation/vm/mmu_notifier.txt
-> >> > +            */
-> >> >             if (pmdp) {
-> >> >  #ifdef CONFIG_FS_DAX_PMD
-> >> >                     pmd_t pmd;
-> >> > @@ -628,7 +635,6 @@ static void dax_mapping_entry_mkclean(struct address_space *mapping,
-> >> >                     pmd = pmd_wrprotect(pmd);
-> >> >                     pmd = pmd_mkclean(pmd);
-> >> >                     set_pmd_at(vma->vm_mm, address, pmdp, pmd);
-> >> > -                   mmu_notifier_invalidate_range(vma->vm_mm, start, end);
-> >>
-> >> Could the secondary TLB still see the mapping as dirty and propagate the dirty bit back?
-> >
-> > I am assuming hardware does sane thing of setting the dirty bit only
-> > when walking the CPU page table when device does a write fault ie
-> > once the device get a write TLB entry the dirty is set by the IOMMU
-> > when walking the page table before returning the lookup result to the
-> > device and that it won't be set again latter (ie propagated back
-> > latter).
-> >
-> 
-> The other possibility is that the hardware things the page is writable
-> and already
-> marked dirty. It allows writes and does not set the dirty bit?
+The mm-of-the-moment snapshot 2017-10-19-17-00 has been uploaded to
 
-I thought about this some more and the patch can not regress anything
-that is not broken today. So if we assume that device can propagate
-dirty bit because it can cache the write protection than all current
-code is broken for two reasons:
+   http://www.ozlabs.org/~akpm/mmotm/
 
-First one is current code clear pte entry, build a new pte value with
-write protection and update pte entry with new pte value. So any PASID/
-ATS platform that allows device to cache the write bit and set dirty
-bit anytime after that can race during that window and you would loose
-the dirty bit of the device. That is not that bad as you are gonna
-propagate the dirty bit to the struct page.
+mmotm-readme.txt says
 
-Second one is if the dirty bit is propagated back to the new write
-protected pte. Quick look at code it seems that when we zap pte or
-or mkclean we don't check that the pte has write permission but only
-care about the dirty bit. So it should not have any bad consequence.
+README for mm-of-the-moment:
 
-After this patch only the second window is bigger and thus more likely
-to happen. But nothing sinister should happen from that.
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
 
 
-> 
-> > I should probably have spell that out and maybe some of the ATS/PASID
-> > implementer did not do that.
-> >
-> >>
-> >> >  unlock_pmd:
-> >> >                     spin_unlock(ptl);
-> >> >  #endif
-> >> > @@ -643,7 +649,6 @@ static void dax_mapping_entry_mkclean(struct address_space *mapping,
-> >> >                     pte = pte_wrprotect(pte);
-> >> >                     pte = pte_mkclean(pte);
-> >> >                     set_pte_at(vma->vm_mm, address, ptep, pte);
-> >> > -                   mmu_notifier_invalidate_range(vma->vm_mm, start, end);
-> >>
-> >> Ditto
-> >>
-> >> >  unlock_pte:
-> >> >                     pte_unmap_unlock(ptep, ptl);
-> >> >             }
-> >> > diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-> >> > index 6866e8126982..49c925c96b8a 100644
-> >> > --- a/include/linux/mmu_notifier.h
-> >> > +++ b/include/linux/mmu_notifier.h
-> >> > @@ -155,7 +155,8 @@ struct mmu_notifier_ops {
-> >> >      * shared page-tables, it not necessary to implement the
-> >> >      * invalidate_range_start()/end() notifiers, as
-> >> >      * invalidate_range() alread catches the points in time when an
-> >> > -    * external TLB range needs to be flushed.
-> >> > +    * external TLB range needs to be flushed. For more in depth
-> >> > +    * discussion on this see Documentation/vm/mmu_notifier.txt
-> >> >      *
-> >> >      * The invalidate_range() function is called under the ptl
-> >> >      * spin-lock and not allowed to sleep.
-> >> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >> > index c037d3d34950..ff5bc647b51d 100644
-> >> > --- a/mm/huge_memory.c
-> >> > +++ b/mm/huge_memory.c
-> >> > @@ -1186,8 +1186,15 @@ static int do_huge_pmd_wp_page_fallback(struct vm_fault *vmf, pmd_t orig_pmd,
-> >> >             goto out_free_pages;
-> >> >     VM_BUG_ON_PAGE(!PageHead(page), page);
-> >> >
-> >> > +   /*
-> >> > +    * Leave pmd empty until pte is filled note we must notify here as
-> >> > +    * concurrent CPU thread might write to new page before the call to
-> >> > +    * mmu_notifier_invalidate_range_end() happens which can lead to a
-> >> > +    * device seeing memory write in different order than CPU.
-> >> > +    *
-> >> > +    * See Documentation/vm/mmu_notifier.txt
-> >> > +    */
-> >> >     pmdp_huge_clear_flush_notify(vma, haddr, vmf->pmd);
-> >> > -   /* leave pmd empty until pte is filled */
-> >> >
-> >> >     pgtable = pgtable_trans_huge_withdraw(vma->vm_mm, vmf->pmd);
-> >> >     pmd_populate(vma->vm_mm, &_pmd, pgtable);
-> >> > @@ -2026,8 +2033,15 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
-> >> >     pmd_t _pmd;
-> >> >     int i;
-> >> >
-> >> > -   /* leave pmd empty until pte is filled */
-> >> > -   pmdp_huge_clear_flush_notify(vma, haddr, pmd);
-> >> > +   /*
-> >> > +    * Leave pmd empty until pte is filled note that it is fine to delay
-> >> > +    * notification until mmu_notifier_invalidate_range_end() as we are
-> >> > +    * replacing a zero pmd write protected page with a zero pte write
-> >> > +    * protected page.
-> >> > +    *
-> >> > +    * See Documentation/vm/mmu_notifier.txt
-> >> > +    */
-> >> > +   pmdp_huge_clear_flush(vma, haddr, pmd);
-> >>
-> >> Shouldn't the secondary TLB know if the page size changed?
-> >
-> > It should not matter, we are talking virtual to physical on behalf
-> > of a device against a process address space. So the hardware should
-> > not care about the page size.
-> >
-> 
-> Does that not indicate how much the device can access? Could it try
-> to access more than what is mapped?
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
 
-Assuming device has huge TLB and 2MB huge page with 4K small page.
-You are going from one 1 TLB covering a 2MB zero page to 512 TLB
-each covering 4K. Both case is read only and both case are pointing
-to same data (ie zero).
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
 
-It is fine to delay the TLB invalidate on the device to the call of
-mmu_notifier_invalidate_range_end(). The device will keep using the
-huge TLB for a little longer but both CPU and device are looking at
-same data.
+To develop on top of mmotm git:
 
-Now if there is a racing thread that replace one of the 512 zeor page
-after the split but before mmu_notifier_invalidate_range_end() that
-code path would call mmu_notifier_invalidate_range() before changing
-the pte to point to something else. Which should shoot down the device
-TLB (it would be a serious device bug if this did not work).
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
 
 
-> 
-> > Moreover if any of the new 512 (assuming 2MB huge and 4K pages) zero
-> > 4K pages is replace by something new then a device TLB shootdown will
-> > happen before the new page is set.
-> >
-> > Only issue i can think of is if the IOMMU TLB (if there is one) or
-> > the device TLB (you do expect that there is one) does not invalidate
-> > TLB entry if the TLB shootdown is smaller than the TLB entry. That
-> > would be idiotic but yes i know hardware bug.
-> >
-> >
-> >>
-> >> >
-> >> >     pgtable = pgtable_trans_huge_withdraw(mm, pmd);
-> >> >     pmd_populate(mm, &_pmd, pgtable);
-> >> > diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> >> > index 1768efa4c501..63a63f1b536c 100644
-> >> > --- a/mm/hugetlb.c
-> >> > +++ b/mm/hugetlb.c
-> >> > @@ -3254,9 +3254,14 @@ int copy_hugetlb_page_range(struct mm_struct *dst, struct mm_struct *src,
-> >> >                     set_huge_swap_pte_at(dst, addr, dst_pte, entry, sz);
-> >> >             } else {
-> >> >                     if (cow) {
-> >> > +                           /*
-> >> > +                            * No need to notify as we are downgrading page
-> >> > +                            * table protection not changing it to point
-> >> > +                            * to a new page.
-> >> > +                            *
-> >> > +                            * See Documentation/vm/mmu_notifier.txt
-> >> > +                            */
-> >> >                             huge_ptep_set_wrprotect(src, addr, src_pte);
-> >>
-> >> OK.. so we could get write faults on write accesses from the device.
-> >>
-> >> > -                           mmu_notifier_invalidate_range(src, mmun_start,
-> >> > -                                                              mmun_end);
-> >> >                     }
-> >> >                     entry = huge_ptep_get(src_pte);
-> >> >                     ptepage = pte_page(entry);
-> >> > @@ -4288,7 +4293,12 @@ unsigned long hugetlb_change_protection(struct vm_area_struct *vma,
-> >> >      * and that page table be reused and filled with junk.
-> >> >      */
-> >> >     flush_hugetlb_tlb_range(vma, start, end);
-> >> > -   mmu_notifier_invalidate_range(mm, start, end);
-> >> > +   /*
-> >> > +    * No need to call mmu_notifier_invalidate_range() we are downgrading
-> >> > +    * page table protection not changing it to point to a new page.
-> >> > +    *
-> >> > +    * See Documentation/vm/mmu_notifier.txt
-> >> > +    */
-> >> >     i_mmap_unlock_write(vma->vm_file->f_mapping);
-> >> >     mmu_notifier_invalidate_range_end(mm, start, end);
-> >> >
-> >> > diff --git a/mm/ksm.c b/mm/ksm.c
-> >> > index 6cb60f46cce5..be8f4576f842 100644
-> >> > --- a/mm/ksm.c
-> >> > +++ b/mm/ksm.c
-> >> > @@ -1052,8 +1052,13 @@ static int write_protect_page(struct vm_area_struct *vma, struct page *page,
-> >> >              * So we clear the pte and flush the tlb before the check
-> >> >              * this assure us that no O_DIRECT can happen after the check
-> >> >              * or in the middle of the check.
-> >> > +            *
-> >> > +            * No need to notify as we are downgrading page table to read
-> >> > +            * only not changing it to point to a new page.
-> >> > +            *
-> >> > +            * See Documentation/vm/mmu_notifier.txt
-> >> >              */
-> >> > -           entry = ptep_clear_flush_notify(vma, pvmw.address, pvmw.pte);
-> >> > +           entry = ptep_clear_flush(vma, pvmw.address, pvmw.pte);
-> >> >             /*
-> >> >              * Check that no O_DIRECT or similar I/O is in progress on the
-> >> >              * page
-> >> > @@ -1136,7 +1141,13 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
-> >> >     }
-> >> >
-> >> >     flush_cache_page(vma, addr, pte_pfn(*ptep));
-> >> > -   ptep_clear_flush_notify(vma, addr, ptep);
-> >> > +   /*
-> >> > +    * No need to notify as we are replacing a read only page with another
-> >> > +    * read only page with the same content.
-> >> > +    *
-> >> > +    * See Documentation/vm/mmu_notifier.txt
-> >> > +    */
-> >> > +   ptep_clear_flush(vma, addr, ptep);
-> >> >     set_pte_at_notify(mm, addr, ptep, newpte);
-> >> >
-> >> >     page_remove_rmap(page, false);
-> >> > diff --git a/mm/rmap.c b/mm/rmap.c
-> >> > index 061826278520..6b5a0f219ac0 100644
-> >> > --- a/mm/rmap.c
-> >> > +++ b/mm/rmap.c
-> >> > @@ -937,10 +937,15 @@ static bool page_mkclean_one(struct page *page, struct vm_area_struct *vma,
-> >> >  #endif
-> >> >             }
-> >> >
-> >> > -           if (ret) {
-> >> > -                   mmu_notifier_invalidate_range(vma->vm_mm, cstart, cend);
-> >> > +           /*
-> >> > +            * No need to call mmu_notifier_invalidate_range() as we are
-> >> > +            * downgrading page table protection not changing it to point
-> >> > +            * to a new page.
-> >> > +            *
-> >> > +            * See Documentation/vm/mmu_notifier.txt
-> >> > +            */
-> >> > +           if (ret)
-> >> >                     (*cleaned)++;
-> >> > -           }
-> >> >     }
-> >> >
-> >> >     mmu_notifier_invalidate_range_end(vma->vm_mm, start, end);
-> >> > @@ -1424,6 +1429,10 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                     if (pte_soft_dirty(pteval))
-> >> >                             swp_pte = pte_swp_mksoft_dirty(swp_pte);
-> >> >                     set_pte_at(mm, pvmw.address, pvmw.pte, swp_pte);
-> >> > +                   /*
-> >> > +                    * No need to invalidate here it will synchronize on
-> >> > +                    * against the special swap migration pte.
-> >> > +                    */
-> >> >                     goto discard;
-> >> >             }
-> >> >
-> >> > @@ -1481,6 +1490,9 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                      * will take care of the rest.
-> >> >                      */
-> >> >                     dec_mm_counter(mm, mm_counter(page));
-> >> > +                   /* We have to invalidate as we cleared the pte */
-> >> > +                   mmu_notifier_invalidate_range(mm, address,
-> >> > +                                                 address + PAGE_SIZE);
-> >> >             } else if (IS_ENABLED(CONFIG_MIGRATION) &&
-> >> >                             (flags & (TTU_MIGRATION|TTU_SPLIT_FREEZE))) {
-> >> >                     swp_entry_t entry;
-> >> > @@ -1496,6 +1508,10 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                     if (pte_soft_dirty(pteval))
-> >> >                             swp_pte = pte_swp_mksoft_dirty(swp_pte);
-> >> >                     set_pte_at(mm, address, pvmw.pte, swp_pte);
-> >> > +                   /*
-> >> > +                    * No need to invalidate here it will synchronize on
-> >> > +                    * against the special swap migration pte.
-> >> > +                    */
-> >> >             } else if (PageAnon(page)) {
-> >> >                     swp_entry_t entry = { .val = page_private(subpage) };
-> >> >                     pte_t swp_pte;
-> >> > @@ -1507,6 +1523,8 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                             WARN_ON_ONCE(1);
-> >> >                             ret = false;
-> >> >                             /* We have to invalidate as we cleared the pte */
-> >> > +                           mmu_notifier_invalidate_range(mm, address,
-> >> > +                                                   address + PAGE_SIZE);
-> >> >                             page_vma_mapped_walk_done(&pvmw);
-> >> >                             break;
-> >> >                     }
-> >> > @@ -1514,6 +1532,9 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                     /* MADV_FREE page check */
-> >> >                     if (!PageSwapBacked(page)) {
-> >> >                             if (!PageDirty(page)) {
-> >> > +                                   /* Invalidate as we cleared the pte */
-> >> > +                                   mmu_notifier_invalidate_range(mm,
-> >> > +                                           address, address + PAGE_SIZE);
-> >> >                                     dec_mm_counter(mm, MM_ANONPAGES);
-> >> >                                     goto discard;
-> >> >                             }
-> >> > @@ -1547,13 +1568,39 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
-> >> >                     if (pte_soft_dirty(pteval))
-> >> >                             swp_pte = pte_swp_mksoft_dirty(swp_pte);
-> >> >                     set_pte_at(mm, address, pvmw.pte, swp_pte);
-> >> > -           } else
-> >> > +                   /* Invalidate as we cleared the pte */
-> >> > +                   mmu_notifier_invalidate_range(mm, address,
-> >> > +                                                 address + PAGE_SIZE);
-> >> > +           } else {
-> >> > +                   /*
-> >> > +                    * We should not need to notify here as we reach this
-> >> > +                    * case only from freeze_page() itself only call from
-> >> > +                    * split_huge_page_to_list() so everything below must
-> >> > +                    * be true:
-> >> > +                    *   - page is not anonymous
-> >> > +                    *   - page is locked
-> >> > +                    *
-> >> > +                    * So as it is a locked file back page thus it can not
-> >> > +                    * be remove from the page cache and replace by a new
-> >> > +                    * page before mmu_notifier_invalidate_range_end so no
-> >> > +                    * concurrent thread might update its page table to
-> >> > +                    * point at new page while a device still is using this
-> >> > +                    * page.
-> >> > +                    *
-> >> > +                    * See Documentation/vm/mmu_notifier.txt
-> >> > +                    */
-> >> >                     dec_mm_counter(mm, mm_counter_file(page));
-> >> > +           }
-> >> >  discard:
-> >> > +           /*
-> >> > +            * No need to call mmu_notifier_invalidate_range() it has be
-> >> > +            * done above for all cases requiring it to happen under page
-> >> > +            * table lock before mmu_notifier_invalidate_range_end()
-> >> > +            *
-> >> > +            * See Documentation/vm/mmu_notifier.txt
-> >> > +            */
-> >> >             page_remove_rmap(subpage, PageHuge(page));
-> >> >             put_page(page);
-> >> > -           mmu_notifier_invalidate_range(mm, address,
-> >> > -                                         address + PAGE_SIZE);
-> >> >     }
-> >> >
-> >> >     mmu_notifier_invalidate_range_end(vma->vm_mm, start, end);
-> >>
-> >> Looking at the patchset, I understand the efficiency, but I am concerned
-> >> with correctness.
-> >
-> > I am fine in holding this off from reaching Linus but only way to flush this
-> > issues out if any is to have this patch in linux-next or somewhere were they
-> > get a chance of being tested.
-> >
-> 
-> Yep, I would like to see some additional testing around npu and get Alistair
-> Popple to comment as well
 
-I think this patch is fine. The only one race window that it might make
-bigger should have no bad consequences.
 
-> 
-> > Note that the second patch is always safe. I agree that this one might
-> > not be if hardware implementation is idiotic (well that would be my
-> > opinion and any opinion/point of view can be challenge :))
-> 
-> 
-> You mean the only_end variant that avoids shootdown after pmd/pte changes
-> that avoid the _start/_end and have just the only_end variant? That seemed
-> reasonable to me, but I've not tested it or evaluated it in depth
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
 
-Yes, patch 2/2 in this serie is definitly fine. It invalidate the device
-TLB right after clearing pte entry and avoid latter unecessary invalidation
-of same TLB.
+A git copy of this tree is available at
 
-Jérôme
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.14-rc5:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* scripts-decodecode-fix-decoding-for-aarch64-arm64-instructions.patch
+* mm-skip-hwpoisoned-pages-when-onlining-pages.patch
+* userfaultfd-hugetlbfs-prevent-uffdio_copy-to-fill-beyond-the-end-of-i_size.patch
+* mm-pagemap-fix-soft-dirty-marking-for-pmd-migration-entry.patch
+* ocfs2-fstrim-fix-start-offset-of-first-cluster-group-during-fstrim.patch
+* mm-hugetlbfs-fix-hwpoison-reserve-accounting.patch
+* mm-swap-fix-race-between-swap-count-continuation-operations.patch
+* dma-debug-fix-incorrect-pfn-calculation.patch
+* mm-memory_hotplug-do-not-back-off-draining-pcp-free-pages-from-kworker-context.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* bloat-o-meter-provide-3-different-arguments-for-data-function-and-all.patch
+* bloat-o-meter-provide-3-different-arguments-for-data-function-and-all-v2.patch
+* spellingtxt-add-unnecessary-typo-variants.patch
+* ocfs2-remove-unused-function-ocfs2_publish_get_mount_state.patch
+* ocfs2-no-need-flush-workqueue-before-destroying-it.patch
+* ocfs2-cleanup-unused-func-declaration-and-assignment.patch
+* ocfs2-fix-cluster-hang-after-a-node-dies.patch
+* ocfs2-clean-up-some-unused-func-declaration.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called.patch
+* ocfs2-old-mle-put-and-release-after-the-function-dlm_add_migration_mle-called-fix.patch
+* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names.patch
+* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names-v2.patch
+* ocfs2-move-some-definitions-to-header-file.patch
+* ocfs2-fix-some-small-problems.patch
+* ocfs2-add-kobject-for-online-file-check.patch
+* ocfs2-add-duplicative-ino-number-check.patch
+* ocfs2-fix-qs_holds-may-could-not-be-zero.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+  mm.patch
+* tools-slabinfo-add-u-option-to-show-unreclaimable-slabs-only.patch
+* mm-slabinfo-dump-config_slabinfo.patch
+* mm-slabinfo-dump-config_slabinfo-v11.patch
+* mm-oom-show-unreclaimable-slab-info-when-unreclaimable-slabs-user-memory.patch
+* mm-oom-show-unreclaimable-slab-info-when-unreclaimable-slabs-user-memory-v11.patch
+* mm-slob-remove-an-unnecessary-check-for-__gfp_zero.patch
+* mm-slab-only-set-__gfp_reclaimable-once.patch
+* include-linux-sched-mmh-uninline-mmdrop_async-etc.patch
+* mm-add-kmalloc_array_node-and-kcalloc_node.patch
+* block-use-kmalloc_array_node.patch
+* ib-qib-use-kmalloc_array_node.patch
+* ib-rdmavt-use-kmalloc_array_node.patch
+* mm-mempool-use-kmalloc_array_node.patch
+* rds-ib-use-kmalloc_array_node.patch
+* mm-update-comments-for-struct-pagemapping.patch
+* zram-set-bdi_cap_stable_writes-once.patch
+* bdi-introduce-bdi_cap_synchronous_io.patch
+* mm-swap-introduce-swp_synchronous_io.patch
+* mm-swap-skip-swapcache-for-swapin-of-synchronous-device.patch
+* mm-swap-skip-swapcache-only-if-swapped-page-has-no-other-reference.patch
+* mm-swap-skip-swapcache-only-if-swapped-page-has-no-other-reference-checkpatch-fixes.patch
+* mm-make-count-list_lru_one-nr_items-lockless.patch
+* writeback-remove-unused-parameter-from-balance_dirty_pages.patch
+* mm-drop-migrate-type-checks-from-has_unmovable_pages.patch
+* mm-drop-migrate-type-checks-from-has_unmovable_pages-fix.patch
+* mm-page_alloc-fail-has_unmovable_pages-when-seeing-reserved-pages.patch
+* mm-memory_hotplug-do-not-fail-offlining-too-early.patch
+* mm-memory_hotplug-remove-timeout-from-__offline_memory.patch
+* mm-memblockc-make-the-index-explicit-argument-of-for_each_memblock_type.patch
+* mm-print-a-warning-once-the-vm-dirtiness-settings-is-illogical.patch
+* mm-madvise-enable-soft-offline-of-hugetlb-pages-at-pud-level.patch
+* zram-add-zstd-to-the-supported-algorithms-list.patch
+* zram-remove-zlib-from-the-list-of-recommended-algorithms.patch
+* mm-hugetlbfs-remove-the-redundant-enival-return-from-hugetlbfs_setattr.patch
+* mm-hmm-constify-hmm_devmem_page_get_drvdata-parameter.patch
+* mm-account-pud-page-tables.patch
+* mm-account-pud-page-tables-fix.patch
+* zsmalloc-calling-zs_map_object-from-irq-is-a-bug.patch
+* mm-mmu_notifier-avoid-double-notification-when-it-is-useless.patch
+* mm-mmu_notifier-avoid-double-notification-when-it-is-useless-v2.patch
+* mm-mmu_notifier-avoid-call-to-invalidate_range-in-range_end.patch
+* mm-remove-unused-pgdat-inactive_ratio.patch
+* mm-hugetlb-drop-hugepages_treat_as_movable-sysctl.patch
+* mm-swap-fix-race-conditions-in-swap_slots-cache-init.patch
+* mm-swap-fix-race-conditions-in-swap_slots-cache-init-fix.patch
+* mm-swap-fix-race-conditions-in-swap_slots-cache-init-fix-fix.patch
+* mm-arch-remove-empty_bad_page.patch
+* mm-readahead-increase-maximum-readahead-window.patch
+* cma-change-pr_info-to-pr_err-for-cma_alloc-fail-log.patch
+* mm-reducing-page_owner-structure-size.patch
+* mm-implement-find_get_pages_range_tag.patch
+* btrfs-use-pagevec_lookup_range_tag.patch
+* ceph-use-pagevec_lookup_range_tag.patch
+* ext4-use-pagevec_lookup_range_tag.patch
+* f2fs-use-pagevec_lookup_range_tag.patch
+* f2fs-simplify-page-iteration-loops.patch
+* f2fs-simplify-page-iteration-loops-fix.patch
+* f2fs-use-find_get_pages_tag-for-looking-up-single-page.patch
+* gfs2-use-pagevec_lookup_range_tag.patch
+* nilfs2-use-pagevec_lookup_range_tag.patch
+* mm-use-pagevec_lookup_range_tag-in-__filemap_fdatawait_range.patch
+* mm-use-pagevec_lookup_range_tag-in-write_cache_pages.patch
+* mm-add-variant-of-pagevec_lookup_range_tag-taking-number-of-pages.patch
+* ceph-use-pagevec_lookup_range_nr_tag.patch
+* mm-remove-nr_pages-argument-from-pagevec_lookup_range_tag.patch
+* afs-use-find_get_pages_range_tag.patch
+* cifs-use-find_get_pages_range_tag.patch
+* kmemleak-change-sys-kernel-debug-kmemleak-permissions-from-0444-to-0644.patch
+* proc-do-not-show-vmexe-bigger-than-total-executable-virtual-memory.patch
+* mm-introduce-wrappers-to-access-mm-nr_ptes.patch
+* mm-consolidate-page-table-accounting.patch
+* mm-consolidate-page-table-accounting-fix.patch
+* fs-mm-account-filp-cache-to-kmemcg.patch
+* mm-rmap-remove-redundant-variable-cend.patch
+* kmemcheck-remove-annotations.patch
+* kmemcheck-remove-annotations-fix.patch
+* kmemcheck-stop-using-gfp_notrack-and-slab_notrack.patch
+* kmemcheck-remove-whats-left-of-notrack-flags.patch
+* kmemcheck-rip-it-out.patch
+* mm-swap_statec-declare-a-few-variables-as-__read_mostly.patch
+* mm-deferred_init_memmap-improvements.patch
+* mm-deferred_init_memmap-improvements-fix.patch
+* x86-mm-setting-fields-in-deferred-pages.patch
+* sparc64-mm-setting-fields-in-deferred-pages.patch
+* sparc64-simplify-vmemmap_populate.patch
+* mm-defining-memblock_virt_alloc_try_nid_raw.patch
+* mm-zero-reserved-and-unavailable-struct-pages.patch
+* x86-kasan-add-and-use-kasan_map_populate.patch
+* arm64-kasan-add-and-use-kasan_map_populate.patch
+* mm-stop-zeroing-memory-during-allocation-in-vmemmap.patch
+* mm-stop-zeroing-memory-during-allocation-in-vmemmap-fix.patch
+* sparc64-optimized-struct-page-zeroing.patch
+* arm64-kasan-avoid-using-vmemmap_populate-to-initialise-shadow.patch
+* mm-page_alloc-make-sure-__rmqueue-etc-always-inline.patch
+* userfaultfd-use-mmgrab-instead-of-open-coded-increment-of-mm_count.patch
+* mm-soft_offline-improve-hugepage-soft-offlining-error-log.patch
+* writeback-convert-timers-to-use-timer_setup.patch
+* zram-make-function-zram_page_end_io-static.patch
+* mm-speedup-cancel_dirty_page-for-clean-pages.patch
+* mm-refactor-truncate_complete_page.patch
+* mm-factor-out-page-cache-page-freeing-into-a-separate-function.patch
+* mm-move-accounting-updates-before-page_cache_tree_delete.patch
+* mm-move-clearing-of-page-mapping-to-page_cache_tree_delete.patch
+* mm-factor-out-checks-and-accounting-from-__delete_from_page_cache.patch
+* mm-batch-radix-tree-operations-when-truncating-pages.patch
+* mm-batch-radix-tree-operations-when-truncating-pages-fix.patch
+* mm-batch-radix-tree-operations-when-truncating-pages-fix-fix.patch
+* mm-page_alloc-enable-disable-irqs-once-when-freeing-a-list-of-pages.patch
+* mm-page_alloc-enable-disable-irqs-once-when-freeing-a-list-of-pages-fix.patch
+* mm-truncate-do-not-check-mapping-for-every-page-being-truncated.patch
+* mm-truncate-remove-all-exceptional-entries-from-pagevec-under-one-lock.patch
+* mm-only-drain-per-cpu-pagevecs-once-per-pagevec-usage.patch
+* mm-pagevec-remove-cold-parameter-for-pagevecs.patch
+* mm-remove-cold-parameter-for-release_pages.patch
+* mm-remove-cold-parameter-from-free_hot_cold_page.patch
+* mm-remove-cold-parameter-from-free_hot_cold_page-fix.patch
+* mm-remove-__gfp_cold.patch
+* mm-page_alloc-simplify-list-handling-in-rmqueue_bulk.patch
+* mm-pagevec-rename-pagevec-drained-field.patch
+* unify-migrate_pages-and-move_pages-access-checks.patch
+* shmem-convert-shmem_init_inodecache-to-void.patch
+* mm-sysctl-make-numa-stats-configurable-v5.patch
+* mm-compaction-kcompactd-should-not-ignore-pageblock-skip.patch
+* mm-compaction-persistently-skip-hugetlbfs-pageblocks.patch
+* mm-compaction-persistently-skip-hugetlbfs-pageblocks-fix.patch
+* mm-page_alloc-return-0-in-case-this-node-has-no-page-within-the-zone.patch
+* mm-vmscan-do-not-pass-reclaimed-slab-to-vmpressure.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
+* proc-coredump-add-coredumping-flag-to-proc-pid-status.patch
+* proc-coredump-add-coredumping-flag-to-proc-pid-status-fix.patch
+* proc-uninline-name_to_int.patch
+* proc-use-do-while-in-name_to_int.patch
+* sh-boot-add-static-stack-protector-to-pre-kernel.patch
+* support-resetting-warn_once.patch
+* support-resetting-warn_once-checkpatch-fixes.patch
+* support-resetting-warn_once-for-all-architectures.patch
+* parse-maintainers-add-ability-to-specify-filenames.patch
+* bitfieldh-include-linux-build_bugh-instead-of-linux-bugh.patch
+* radix-tree-remove-unneeded-include-linux-bugh.patch
+* lib-add-module-support-to-string-tests.patch
+* lib-test-delete-five-error-messages-for-a-failed-memory-allocation.patch
+* checkpatch-support-function-pointers-for-unnamed-function-definition-arguments.patch
+* scripts-checkpatchpl-avoid-false-warning-missing-break.patch
+* checkpatch-printks-always-need-a-kern_level.patch
+* checkpatch-allow-define_per_cpu-definitions-to-exceed-line-length.patch
+* checkpatch-add-tp_printk-to-list-of-logging-functions.patch
+* checkpatch-add-strict-test-for-lines-ending-in-or.patch
+* epoll-account-epitem-and-eppoll_entry-to-kmemcg.patch
+* epoll-avoid-calling-ep_call_nested-from-ep_poll_safewake.patch
+* init-version-include-linux-exporth-instead-of-linux-moduleh.patch
+* pipe-match-pipe_max_size-data-type-with-procfs.patch
+* pipe-avoid-round_pipe_size-nr_pages-overflow-on-32-bit.patch
+* pipe-add-proc_dopipe_max_size-to-safely-assign-pipe_max_size.patch
+* sysctl-check-for-uint_max-before-unsigned-int-min-max.patch
+* fs-nilfs2-convert-timers-to-use-timer_setup.patch
+* hfs-hfsplus-clean-up-unused-variables-in-bnodec.patch
+* fat-remove-redundant-assignment-of-0-to-slots.patch
+* seq_file-delete-small-value-optimization.patch
+* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
+* rapidio-idt_gen2-constify-rio_device_id.patch
+* rapidio-idt_gen3-constify-rio_device_id.patch
+* rapidio-idtcps-constify-rio_device_id.patch
+* rapidio-tsi568-constify-rio_device_id.patch
+* rapidio-tsi57x-constify-rio_device_id.patch
+* rapidio-fix-resources-leak-in-error-handling-path-in-rio_dma_transfer.patch
+* rapidio-fix-an-error-handling-in-rio_dma_transfer.patch
+* fix-a-typo-in-documentation-sysctl-vmtxt.patch
+* uapi-fix-linux-sysctlh-userspace-compilation-errors.patch
+* pid-replace-pid-bitmap-implementation-with-idr-api.patch
+* pid-replace-pid-bitmap-implementation-with-idr-api-v6.patch
+* pid-remove-pidhash.patch
+* pid-remove-pidhash-v6.patch
+* kernel-panic-add-taint_aux.patch
+* kcov-remove-pointless-current-=-null-check.patch
+* kcov-support-comparison-operands-collection.patch
+* makefile-support-flag-fsanitizer-coverage=trace-cmp.patch
+* kcov-update-documentation.patch
+* kernel-reboot-add-devm_register_reboot_notifier.patch
+* kernel-reboot-add-devm_register_reboot_notifier-fix.patch
+* watchdog-core-make-use-of-devm_register_reboot_notifier.patch
+* watchdog-core-make-use-of-devm_register_reboot_notifier-fix.patch
+* initramfs-fix-initramfs-rebuilds-w-compression-after-disabling.patch
+* initramfs-use-time64_t-timestamps.patch
+* sysvipc-unteach-ids-next_id-for-checkpoint_restore.patch
+* sysvipc-unteach-ids-next_id-for-checkpoint_restore-checkpatch-fixes.patch
+* sysvipc-duplicate-lock-comments-wrt-ipc_addid.patch
+* sysvipc-properly-name-ipc_addid-limit-parameter.patch
+* sysvipc-make-get_maxid-o1-again.patch
+* sysvipc-make-get_maxid-o1-again-checkpatch-fixes.patch
+  linux-next.patch
+  linux-next-rejects.patch
+  linux-next-git-rejects.patch
+* mm-add-infrastructure-for-get_user_pages_fast-benchmarking.patch
+* maintainers-update-tpm-driver-infrastructure-changes.patch
+* pcmcia-badge4-avoid-unused-function-warning.patch
+* ia64-topology-remove-the-unused-parent_node-macro.patch
+* sh-numa-remove-the-unused-parent_node-macro.patch
+* sparc64-topology-remove-the-unused-parent_node-macro.patch
+* tile-topology-remove-the-unused-parent_node-macro.patch
+* asm-generic-numa-remove-the-unused-parent_node-macro.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+* lib-crc-ccitt-add-ccitt-false-crc16-variant.patch
+  mm-add-strictlimit-knob-v2.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  mutex-subsystem-synchro-test-module.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
