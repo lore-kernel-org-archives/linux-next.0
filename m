@@ -1,38 +1,39 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the ext4 tree with the fscrypt tree
-Date: Mon, 30 Oct 2017 14:48:04 +0000
-Message-ID: <20171030144804.dkjusjfvl4cvlzoh@sirena.co.uk>
+Subject: linux-next: manual merge of the thermal-soc tree with Linus' tree
+Date: Mon, 30 Oct 2017 16:42:22 +0000
+Message-ID: <20171030164222.yuykqxtlvzo2c7jq@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4smuhi5wktn3gbk5"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="6d5nl74abdcoqkma"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33440 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751475AbdJ3Qmj (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 12:42:39 -0400
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, Eric Biggers <ebiggers@google.com>, Ross Zwisler <ross.zwisler@linux.intel.com>, Jan Kara <jack@suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>, Julia Lawall <Julia.Lawall@lip6.fr>, Zhang Rui <rui.zhang@intel.com>, Kevin Wangtao <kevin.wangtao@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
 
---4smuhi5wktn3gbk5
+--6d5nl74abdcoqkma
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi Eduardo,
 
-Today's linux-next merge of the ext4 tree got a conflict in:
+Today's linux-next merge of the thermal-soc tree got a conflict in:
 
-  fs/ext4/inode.c
+  drivers/thermal/hisi_thermal.c
 
 between commit:
 
-  2ee6a576be564272 ("fs, fscrypt: add an S_ENCRYPTED inode flag")
+  3fe156f1dd9909 ("thermal: hisilicon: constify thermal_zone_of_device_ops =
+structures")
 
-=66rom the fscrypt tree and commit:
-
-  d4e50e6d43b2620f ("ext4: add ext4_should_use_dax()")
-
-=66rom the ext4 tree.
+=66rom Linus' tree and various commits from the thermal-soc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -41,67 +42,84 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc fs/ext4/inode.c
-index 617c7feced24,9f836e2ec18c..000000000000
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@@ -4572,6 -4610,21 +4610,23 @@@ int ext4_get_inode_loc(struct inode *in
-  		!ext4_test_inode_state(inode, EXT4_STATE_XATTR));
+diff --cc drivers/thermal/hisi_thermal.c
+index bd3572c41585,6a4e866a3596..000000000000
+--- a/drivers/thermal/hisi_thermal.c
++++ b/drivers/thermal/hisi_thermal.c
+@@@ -206,20 -403,50 +403,50 @@@ static int hi6220_thermal_probe(struct=20
+  	return 0;
   }
  =20
-+ static bool ext4_should_use_dax(struct inode *inode)
+- static const struct thermal_zone_of_device_ops hisi_of_thermal_ops =3D {
+- 	.get_temp =3D hisi_thermal_get_temp,
+- };
++ static int hi3660_thermal_probe(struct hisi_thermal_data *data)
 + {
-++	unsigned int flags =3D EXT4_I(inode)->i_flags;
-++
-+ 	if (!test_opt(inode->i_sb, DAX))
-+ 		return false;
-+ 	if (!S_ISREG(inode->i_mode))
-+ 		return false;
-+ 	if (ext4_should_journal_data(inode))
-+ 		return false;
-+ 	if (ext4_has_inline_data(inode))
-+ 		return false;
- -	if (ext4_encrypted_inode(inode))
-++	if (flags & EXT4_ENCRYPT_FL)
-+ 		return false;
-+ 	return true;
++ 	struct platform_device *pdev =3D data->pdev;
++ 	struct device *dev =3D &pdev->dev;
++ 	struct resource *res;
++=20
++ 	data->get_temp =3D hi3660_thermal_get_temp;
++ 	data->enable_sensor =3D hi3660_thermal_enable_sensor;
++ 	data->disable_sensor =3D hi3660_thermal_disable_sensor;
++ 	data->irq_handler =3D hi3660_thermal_irq_handler;
++=20
++ 	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
++ 	data->regs =3D devm_ioremap_resource(dev, res);
++ 	if (IS_ERR(data->regs)) {
++ 		dev_err(dev, "failed to get io address\n");
++ 		return PTR_ERR(data->regs);
++ 	}
+ =20
+- static irqreturn_t hisi_thermal_alarm_irq(int irq, void *dev)
++ 	data->irq =3D platform_get_irq(pdev, 0);
++ 	if (data->irq < 0)
++ 		return data->irq;
++=20
++ 	data->sensor.id =3D HI3660_DEFAULT_SENSOR;
++=20
++ 	return 0;
 + }
 +=20
-  void ext4_set_inode_flags(struct inode *inode)
++ static int hisi_thermal_get_temp(void *__data, int *temp)
   {
-  	unsigned int flags =3D EXT4_I(inode)->i_flags;
-@@@ -4587,15 -4640,10 +4642,13 @@@
-  		new_fl |=3D S_NOATIME;
-  	if (flags & EXT4_DIRSYNC_FL)
-  		new_fl |=3D S_DIRSYNC;
-- 	if (test_opt(inode->i_sb, DAX) && S_ISREG(inode->i_mode) &&
-- 	    !ext4_should_journal_data(inode) && !ext4_has_inline_data(inode) &&
-- 	    !(flags & EXT4_ENCRYPT_FL))
-+ 	if (ext4_should_use_dax(inode))
-  		new_fl |=3D S_DAX;
- +	if (flags & EXT4_ENCRYPT_FL)
- +		new_fl |=3D S_ENCRYPTED;
-  	inode_set_flags(inode, new_fl,
- -			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX);
- +			S_SYNC|S_APPEND|S_IMMUTABLE|S_NOATIME|S_DIRSYNC|S_DAX|
- +			S_ENCRYPTED);
+- 	struct hisi_thermal_data *data =3D dev;
++ 	struct hisi_thermal_data *data =3D __data;
++ 	struct hisi_thermal_sensor *sensor =3D &data->sensor;
+ =20
+- 	disable_irq_nosync(irq);
+- 	data->irq_enabled =3D false;
++ 	*temp =3D data->get_temp(data);
+ =20
+- 	return IRQ_WAKE_THREAD;
++ 	dev_dbg(&data->pdev->dev, "id=3D%d, temp=3D%d, thres=3D%d\n",
++ 		sensor->id, *temp, sensor->thres_temp);
++=20
++ 	return 0;
   }
  =20
-  static blkcnt_t ext4_inode_blocks(struct ext4_inode *raw_inode,
+ -static struct thermal_zone_of_device_ops hisi_of_thermal_ops =3D {
+++static const struct thermal_zone_of_device_ops hisi_of_thermal_ops =3D {
++ 	.get_temp =3D hisi_thermal_get_temp,
++ };
++=20
+  static irqreturn_t hisi_thermal_alarm_irq_thread(int irq, void *dev)
+  {
+  	struct hisi_thermal_data *data =3D dev;
 
---4smuhi5wktn3gbk5
+--6d5nl74abdcoqkma
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3O6MACgkQJNaLcl1U
-h9CO9wf9FokAkRetrhmfFC4b1zMD0H9CygzjiC4oiMsUZP1gW+RKMAgqxg5cZbkY
-GH4LVIcDlUL8WfarcoUgum+2hLcVPjqAmGUE5RXLteyyjx7GAjwsvdMmMZxm2aj/
-9Jt1UyhpP/rCu+bPOXe3DX08j3lG3yoD3AkqLI7jyndG77B12YjYJJ1KjF7YWbXu
-Qw8QRZgv5zlwIPv+Fv/40iOH7iYVWeL6WXWs7Y3/UnjK3Hg5XR9Te/bPbU1ofe4L
-179/wyPqyfJP5kqBEe77z2z25o6YmeQ/5ROB54jDxRFRZZx8Gsj4GOSOks2RjBpK
-eC8ONngzuM84YQPOxfUwSRh89jKcOQ==
-=p7lg
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3Vm4ACgkQJNaLcl1U
+h9CX5wf/WiBbj4H863/6/orB9CptTjrfk/9TN0eEM/QsDc/DbaAZRgDLUgH/9H0v
+Kd7U0of6K4yvNA8jO+pe291qQAfhe5XA5lNg3kLlugfP55NtZhJLPLiKSQJ7LgZq
+cU4v+XnftNlfWI2sSr0n5/TUlws2+JLrX6Dz3P/fgwCo0sanZVCNwf33NlMukhGz
+6VGrT7x2VGbDm1y3q51N1NatrezuVQCWEDMiwuzjNqsHUOcowLuhuhUUbozoGgva
+LHl89enp853nbm+1LishuGBZatkTc+DMlbWmYN7U6GXKI/4seZ7EHcbdvU0JTdeQ
+FD5jjCCDOXWskWyBqgZ8pcCLD7NEBw==
+=QoWk
 -----END PGP SIGNATURE-----
 
---4smuhi5wktn3gbk5--
+--6d5nl74abdcoqkma--
