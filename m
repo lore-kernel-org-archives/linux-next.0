@@ -1,43 +1,36 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the spi-nor tree with the imx-mxs tree
-Date: Mon, 30 Oct 2017 18:15:51 +0000
-Message-ID: <20171030181551.skcvt4mr4br7rtn2@sirena.co.uk>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 30 Oct 2017 18:26:23 +0000
+Message-ID: <20171030182622.tpparrqnltztesll@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aj6klbbkhnnep5f4"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48956 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932716AbdJ3SQB (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 14:16:01 -0400
+        protocol="application/pgp-signature"; boundary="lcpoegoltgydatpa"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Yuan Yao <yao.yuan@nxp.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Philipp Puschmann <pp@emlix.com>
-Cc: linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dave Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 
---aj6klbbkhnnep5f4
+--lcpoegoltgydatpa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Cyrille,
+Hi Dave,
 
-Today's linux-next merge of the spi-nor tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
+  drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
 
 between commit:
 
-  b07815d4eaf65 ("dt-bindings: mtd: add sst25wf040b and en25s64 to sip-nor =
-list")
+  c94501279bb191c ("Revert "drm/amdgpu: discard commands of killed processe=
+s"")
 
-=66rom the imx-mxs tree and commit:
-
-   282e45dc64d1 ("mtd: spi-nor: Add support for mr25h128")
-
-=66rom the spi-nor tree.
+=66rom Linus' tree (it even made it into -rc6 over a week ago!) and the
+fixes it explicitly identifies from the drm tree. =20
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -46,33 +39,63 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
-index 4cab5d85cf6f,956bb046e599..000000000000
---- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
-+++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
-@@@ -13,7 -13,7 +13,8 @@@ Required properties
-                   at25df321a
-                   at25df641
-                   at26df081a
- +                 en25s64
-+                  mr25h128
-                   mr25h256
-                   mr25h10
-                   mr25h40
+diff --cc drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
+index 38cea6fb25a8,e4d3b4ec4e92..000000000000
+--- a/drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
++++ b/drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
+@@@ -208,14 -209,34 +209,35 @@@ void amd_sched_entity_fini(struct amd_g
+ =20
+  	if (!amd_sched_entity_is_initialized(sched, entity))
+  		return;
+ +
+  	/**
+  	 * The client will not queue more IBs during this fini, consume existing
+ -	 * queued IBs or discard them on SIGKILL
+ +	 * queued IBs
+  	*/
+- 	wait_event(sched->job_scheduled, amd_sched_entity_is_idle(entity));
++ 	if ((current->flags & PF_SIGNALED) && current->exit_code =3D=3D SIGKILL)
++ 		r =3D -ERESTARTSYS;
++ 	else
++ 		r =3D wait_event_killable(sched->job_scheduled,
++ 					amd_sched_entity_is_idle(entity));
++ 	amd_sched_entity_set_rq(entity, NULL);
++ 	if (r) {
++ 		struct amd_sched_job *job;
++=20
++ 		/* Park the kernel for a moment to make sure it isn't processing
++ 		 * our enity.
++ 		 */
++ 		kthread_park(sched->thread);
++ 		kthread_unpark(sched->thread);
++ 		while (kfifo_out(&entity->job_queue, &job, sizeof(job))) {
++ 			struct amd_sched_fence *s_fence =3D job->s_fence;
++ 			amd_sched_fence_scheduled(s_fence);
++ 			dma_fence_set_error(&s_fence->finished, -ESRCH);
++ 			amd_sched_fence_finished(s_fence);
++ 			dma_fence_put(&s_fence->finished);
++ 			sched->ops->free_job(job);
++ 		}
+ =20
+- 	amd_sched_rq_remove_entity(rq, entity);
++ 	}
+  	kfifo_free(&entity->job_queue);
+  }
+ =20
 
---aj6klbbkhnnep5f4
+--lcpoegoltgydatpa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3bFYACgkQJNaLcl1U
-h9AS4wf/RAALzdnB2L6IIbUAk54sTxPKh8eDCRGd1fGUb0MalKAshyE6LrFITlL6
-rYUIiNRLWMBESM6dretJcZa2U+Dg9c5z272kydo8vRAp9z2bm9XC4wwy4/6nWoWm
-0VxLJcML4JHKoOpMMQnCu6iovx8E9+i5+/u/zoAO75WBpIfBjgrb+NI2QdttKpTP
-DX/0zL1gjtlyVxrryrIiNqHNOT2NBI6nIzLWzVPUOnFwhQ4Qgdf4xj+VhegTggSy
-JuCF/iHKEDkRd2v8yfBWAyNo3Nc1wNmc41qMBMk8AoD7WOVRHqWc4+AGQac+ZJCB
-dJSdbG2DncXwMpk5FcFl/4wHuO5m4Q==
-=6uCT
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3bs4ACgkQJNaLcl1U
+h9BkTgf9HBg5tNjHau1gHThOob75byZ3GWXJxMOV8nO6vilYlPFzDlavb8q66wFv
+h1oalRQPtbQGx6IoZPv8q9pM/03+saZWjcDuDYBFmDjw1/whkdf5a2p6vJa1+dfc
+LOXZjhylrrSWODqJ0om7Gh1rG/YhlzzuIC5DHR5PmCBpBlejxH3bqJBqIAn8fdTG
+wBAgLanKsYipYw4IZmSvObbu8sTk7IebbbP345t0os5qrCMS+VI5Sug2D9j9wzKY
+YDooogqcu1HuSpRgK0JA4lli5qXUiuLbkaCwqcHXk5V5iojB8lEWrrB4fZHZ6krk
+anf5gJdG+SDl62+/gHmf0lkYSyhExg==
+=aJiq
 -----END PGP SIGNATURE-----
 
---aj6klbbkhnnep5f4--
+--lcpoegoltgydatpa--
