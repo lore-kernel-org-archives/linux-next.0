@@ -1,88 +1,158 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 30 Oct 2017 17:24:13 +0000
-Message-ID: <20171030172413.nju5ew5lmt462f6p@sirena.co.uk>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
+Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
+Date: Mon, 30 Oct 2017 10:43:07 -0700
+Message-ID: <20171030104307.0857ee38@cakuba.netronome.com>
+References: <20171030170224.badokg3dsgjb4hvg@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="cmqoriyudf3crchq"
-Return-path: <netdev-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Yousuk Seung <ysseung@google.com>, Neal Cardwell <ncardwell@google.com>, Soheil Hassas Yeganeh <soheil@google.com>, Yuchung Cheng <ycheng@google.com>, Eric Dumazet <edumazet@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-qt0-f176.google.com ([209.85.216.176]:44603 "EHLO
+        mail-qt0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932735AbdJ3RnL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 13:43:11 -0400
+Received: by mail-qt0-f176.google.com with SMTP id 8so17466409qtv.1
+        for <linux-next@vger.kernel.org>; Mon, 30 Oct 2017 10:43:11 -0700 (PDT)
+In-Reply-To: <20171030170224.badokg3dsgjb4hvg@sirena.co.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+On Mon, 30 Oct 2017 17:02:24 +0000, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the net-next tree got a conflict in:
+> 
+>   drivers/net/ethernet/netronome/nfp/flower/action.c
+> 
+> between commit:
+> 
+>   d309ae5c6a0064 ("nfp: refuse offloading filters that redirects to upper devices")
+> 
+> from Linus' tree and commit:
+> 
+>   62d3f60b4d065c ("nfp: use struct fields for 8 bit-wide access")
 
---cmqoriyudf3crchq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Actually the conflict is with a much older commit b27d6a95a70d ("nfp:
+compile flower vxlan tunnel set actions").
 
-Hi all,
+> from the net-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Unfortunately, this is not a correct resolution.  Please see below.
 
-  net/ipv4/tcp_output.c
+> diff --cc drivers/net/ethernet/netronome/nfp/flower/action.c
+> index 8ea9320014ee,0a5fc9f8545f..000000000000
+> --- a/drivers/net/ethernet/netronome/nfp/flower/action.c
+> +++ b/drivers/net/ethernet/netronome/nfp/flower/action.c
+> @@@ -105,19 -104,326 +104,329 @@@ nfp_fl_output(struct nfp_fl_output *out
+>   	if (!out_dev)
+>   		return -EOPNOTSUPP;
+>   
+> - 	/* Only offload egress ports are on the same device as the ingress
+> - 	 * port.
+> + 	tmp_flags = last ? NFP_FL_OUT_FLAGS_LAST : 0;
+> + 
+> + 	if (tun_type) {
+> + 		/* Verify the egress netdev matches the tunnel type. */
+> + 		if (!nfp_fl_netdev_is_tunnel_type(out_dev, tun_type))
+> + 			return -EOPNOTSUPP;
+> + 
+> + 		if (*tun_out_cnt)
+> + 			return -EOPNOTSUPP;
+> + 		(*tun_out_cnt)++;
+> + 
+> + 		output->flags = cpu_to_be16(tmp_flags |
+> + 					    NFP_FL_OUT_FLAGS_USE_TUN);
+> + 		output->port = cpu_to_be32(NFP_FL_PORT_TYPE_TUN | tun_type);
+> + 	} else {
+> + 		/* Set action output parameters. */
+> + 		output->flags = cpu_to_be16(tmp_flags);
+> + 
+> + 		/* Only offload if egress ports are on the same device as the
+> + 		 * ingress port.
+> + 		 */
+> + 		if (!switchdev_port_same_parent_id(in_dev, out_dev))
+> + 			return -EOPNOTSUPP;
 
-between commit:
+The code from net should be inserted here.  Note that net-next only
+indented this area, the code is unchanged.
 
-  5889e2c0e441d8 ("tcp: call tcp_rate_skb_sent() when retransmit with unali=
-gned skb->data")
+	if (!nfp_netdev_is_nfp_repr(out_dev))
+		return -EOPNOTSUPP;
 
-=66rom Linus' tree and commit:
+should immediately follow switchdev_port_same_parent_id() check.
 
-  e2080072ed2d98 ("tcp: new list for sent but unacked skbs for RACK recover=
-y")
-
-=66rom the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc net/ipv4/tcp_output.c
-index ae60dd3faed0,aab6e7145013..000000000000
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@@ -2840,13 -2905,14 +2907,16 @@@ int __tcp_retransmit_skb(struct sock *s
-  		     skb_headroom(skb) >=3D 0xFFFF)) {
-  		struct sk_buff *nskb;
- =20
-- 		nskb =3D __pskb_copy(skb, MAX_TCP_HEADER, GFP_ATOMIC);
-- 		err =3D nskb ? tcp_transmit_skb(sk, nskb, 0, GFP_ATOMIC) :
-- 			     -ENOBUFS;
-+ 		tcp_skb_tsorted_save(skb) {
-+ 			nskb =3D __pskb_copy(skb, MAX_TCP_HEADER, GFP_ATOMIC);
-+ 			err =3D nskb ? tcp_transmit_skb(sk, nskb, 0, GFP_ATOMIC) :
-+ 				     -ENOBUFS;
-+ 		} tcp_skb_tsorted_restore(skb);
-+=20
- -		if (!err)
- +		if (!err) {
-- 			skb->skb_mstamp =3D tp->tcp_mstamp;
-+ 			tcp_update_skb_after_send(tp, skb);
- +			tcp_rate_skb_sent(sk, skb);
- +		}
-  	} else {
-  		err =3D tcp_transmit_skb(sk, skb, 1, GFP_ATOMIC);
-  	}
-
---cmqoriyudf3crchq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3YDwACgkQJNaLcl1U
-h9AEMAf9FcNVZiRfBckApcoIxSaiJqLooDvLvC2zVqE6j5jBi+/H9U4MvtfyhDMz
-8AzId8RgVMy6ccW2/x2mJEkaEQwv//JUtN6vGBlFjr8tukg37ZpiMmbKjlhIKJQB
-zpmwM0uNnZDPFP8xliH9nNv3DdwDG1dRkJB45mZ0TyB6Ew/C2qOyNt8Md/SjJlXK
-dVbYFbMvT8KIJa5IgIQC1b/utOKGtx7lwbjsAcMCyPaOlXLHNVeQ7O9tccNPBO1E
-q8xq57RYEBaapqsVb0HogiFqL2WdTi7uMZqpHQNpATLes6ohjM7u5A5PpmraT499
-z1+m0Rg839/RLtBGQD9OJ3ujZ4Km7g==
-=+3W1
------END PGP SIGNATURE-----
-
---cmqoriyudf3crchq--
+> + 		output->port = cpu_to_be32(nfp_repr_get_port_id(out_dev));
+> + 		if (!output->port)
+> + 			return -EOPNOTSUPP;
+> + 	}
+> + 	nfp_flow->meta.shortcut = output->port;
+> + 
+> + 	return 0;
+> + }
+> + 
+> + static bool nfp_fl_supported_tun_port(const struct tc_action *action)
+> + {
+> + 	struct ip_tunnel_info *tun = tcf_tunnel_info(action);
+> + 
+> + 	return tun->key.tp_dst == htons(NFP_FL_VXLAN_PORT);
+> + }
+> + 
+> + static struct nfp_fl_pre_tunnel *nfp_fl_pre_tunnel(char *act_data, int act_len)
+> + {
+> + 	size_t act_size = sizeof(struct nfp_fl_pre_tunnel);
+> + 	struct nfp_fl_pre_tunnel *pre_tun_act;
+> + 
+> + 	/* Pre_tunnel action must be first on action list.
+> + 	 * If other actions already exist they need pushed forward.
+>   	 */
+> - 	if (!switchdev_port_same_parent_id(in_dev, out_dev))
+> + 	if (act_len)
+> + 		memmove(act_data + act_size, act_data, act_len);
+> + 
+> + 	pre_tun_act = (struct nfp_fl_pre_tunnel *)act_data;
+> + 
+> + 	memset(pre_tun_act, 0, act_size);
+> + 
+> + 	pre_tun_act->head.jump_id = NFP_FL_ACTION_OPCODE_PRE_TUNNEL;
+> + 	pre_tun_act->head.len_lw = act_size >> NFP_FL_LW_SIZ;
+> + 
+> + 	return pre_tun_act;
+> + }
+> + 
+> + static int
+> + nfp_fl_set_vxlan(struct nfp_fl_set_vxlan *set_vxlan,
+> + 		 const struct tc_action *action,
+> + 		 struct nfp_fl_pre_tunnel *pre_tun)
+> + {
+> + 	struct ip_tunnel_info *vxlan = tcf_tunnel_info(action);
+> + 	size_t act_size = sizeof(struct nfp_fl_set_vxlan);
+> + 	u32 tmp_set_vxlan_type_index = 0;
+> + 	/* Currently support one pre-tunnel so index is always 0. */
+> + 	int pretun_idx = 0;
+> + 
+> + 	if (vxlan->options_len) {
+> + 		/* Do not support options e.g. vxlan gpe. */
+>   		return -EOPNOTSUPP;
+> + 	}
+> + 
+>  +	if (!nfp_netdev_is_nfp_repr(out_dev))
+>  +		return -EOPNOTSUPP;
+>  +
+> - 	output->port = cpu_to_be32(nfp_repr_get_port_id(out_dev));
+> - 	if (!output->port)
+> + 	set_vxlan->head.jump_id = NFP_FL_ACTION_OPCODE_SET_IPV4_TUNNEL;
+> + 	set_vxlan->head.len_lw = act_size >> NFP_FL_LW_SIZ;
+> + 
+> + 	/* Set tunnel type and pre-tunnel index. */
+> + 	tmp_set_vxlan_type_index |=
+> + 		FIELD_PREP(NFP_FL_IPV4_TUNNEL_TYPE, NFP_FL_TUNNEL_VXLAN) |
+> + 		FIELD_PREP(NFP_FL_IPV4_PRE_TUN_INDEX, pretun_idx);
