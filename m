@@ -1,19 +1,23 @@
 From: Mark Brown <broonie@kernel.org>
 Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 30 Oct 2017 18:26:23 +0000
-Message-ID: <20171030182622.tpparrqnltztesll@sirena.co.uk>
+Date: Mon, 30 Oct 2017 18:36:05 +0000
+Message-ID: <20171030183605.tytps6fqxhsgqpg4@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lcpoegoltgydatpa"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="5n43owz6lg2s7nc5"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54654 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752902AbdJ3SgO (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 14:36:14 -0400
 Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, Alex Deucher <alexander.deucher@amd.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, David Airlie <airlied@gmail.com>, Imre Deak <imre.deak@intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
 
 
---lcpoegoltgydatpa
+--5n43owz6lg2s7nc5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -22,15 +26,17 @@ Hi Dave,
 
 Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
+  drivers/gpu/drm/i915/intel_runtime_pm.c
 
 between commit:
 
-  c94501279bb191c ("Revert "drm/amdgpu: discard commands of killed processe=
-s"")
+  2a8408e537250 ("drm/i915/cnl: Reprogram DMC firmware after S3/S4 resume")
 
-=66rom Linus' tree (it even made it into -rc6 over a week ago!) and the
-fixes it explicitly identifies from the drm tree. =20
+=66rom Linus' tree and commit:
+
+  57522c4c87de2 ("drm/i915/cnl: Reprogram DMC firmware after S3/S4 resume")
+
+=66rom the drm tree.  This one has also been in Linus' tree since -rc6.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -39,63 +45,28 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
-index 38cea6fb25a8,e4d3b4ec4e92..000000000000
---- a/drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
-+++ b/drivers/gpu/drm/amd/scheduler/gpu_scheduler.c
-@@@ -208,14 -209,34 +209,35 @@@ void amd_sched_entity_fini(struct amd_g
- =20
-  	if (!amd_sched_entity_is_initialized(sched, entity))
-  		return;
- +
-  	/**
-  	 * The client will not queue more IBs during this fini, consume existing
- -	 * queued IBs or discard them on SIGKILL
- +	 * queued IBs
-  	*/
-- 	wait_event(sched->job_scheduled, amd_sched_entity_is_idle(entity));
-+ 	if ((current->flags & PF_SIGNALED) && current->exit_code =3D=3D SIGKILL)
-+ 		r =3D -ERESTARTSYS;
-+ 	else
-+ 		r =3D wait_event_killable(sched->job_scheduled,
-+ 					amd_sched_entity_is_idle(entity));
-+ 	amd_sched_entity_set_rq(entity, NULL);
-+ 	if (r) {
-+ 		struct amd_sched_job *job;
-+=20
-+ 		/* Park the kernel for a moment to make sure it isn't processing
-+ 		 * our enity.
-+ 		 */
-+ 		kthread_park(sched->thread);
-+ 		kthread_unpark(sched->thread);
-+ 		while (kfifo_out(&entity->job_queue, &job, sizeof(job))) {
-+ 			struct amd_sched_fence *s_fence =3D job->s_fence;
-+ 			amd_sched_fence_scheduled(s_fence);
-+ 			dma_fence_set_error(&s_fence->finished, -ESRCH);
-+ 			amd_sched_fence_finished(s_fence);
-+ 			dma_fence_put(&s_fence->finished);
-+ 			sched->ops->free_job(job);
-+ 		}
- =20
-- 	amd_sched_rq_remove_entity(rq, entity);
-+ 	}
-  	kfifo_free(&entity->job_queue);
-  }
- =20
+diff --cc drivers/gpu/drm/i915/intel_display.c
+index 5c7828c52d12,7e91dc9a0fcf..000000000000
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+diff --cc drivers/gpu/drm/i915/intel_runtime_pm.c
+index 49577eba8e7e,8af286c63d3b..000000000000
+--- a/drivers/gpu/drm/i915/intel_runtime_pm.c
++++ b/drivers/gpu/drm/i915/intel_runtime_pm.c
 
---lcpoegoltgydatpa
+--5n43owz6lg2s7nc5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3bs4ACgkQJNaLcl1U
-h9BkTgf9HBg5tNjHau1gHThOob75byZ3GWXJxMOV8nO6vilYlPFzDlavb8q66wFv
-h1oalRQPtbQGx6IoZPv8q9pM/03+saZWjcDuDYBFmDjw1/whkdf5a2p6vJa1+dfc
-LOXZjhylrrSWODqJ0om7Gh1rG/YhlzzuIC5DHR5PmCBpBlejxH3bqJBqIAn8fdTG
-wBAgLanKsYipYw4IZmSvObbu8sTk7IebbbP345t0os5qrCMS+VI5Sug2D9j9wzKY
-YDooogqcu1HuSpRgK0JA4lli5qXUiuLbkaCwqcHXk5V5iojB8lEWrrB4fZHZ6krk
-anf5gJdG+SDl62+/gHmf0lkYSyhExg==
-=aJiq
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3cRQACgkQJNaLcl1U
+h9BO2gf/fFiuPFZqNme4F8Lov7vGSo2kmnZBjOeueM83kB//eFm4BN6BxCKlEbbx
+9smg+71MfjAEuhRXbR/+gb6Gws4zxmKWIe9Uli7yTIr8jXQ6ocTRjMBspMPA9mPr
+WHubZ9qf5JPqtv70IdawSkOoQJSUxZDwhpFZ5idBnbPtCF/eEXaGAI7mWTNviN4F
+qx8BMlO0Ws44cNfMJeomMGGcnQpcSEev8z8CNRGe4uEXiMQ7sj4BWQn3ujXyxzTN
+ReRiBq081YMnr2EVvfub7ySecdgvSsZFEAMv5+RGYJep/nUHFkjx1QYU19BKyMdJ
+YSjOrt95bFkmNL0PTHeuRhHAOqdrqA==
+=JUAQ
 -----END PGP SIGNATURE-----
 
---lcpoegoltgydatpa--
+--5n43owz6lg2s7nc5--
