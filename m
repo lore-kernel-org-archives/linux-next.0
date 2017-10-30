@@ -1,52 +1,78 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Mon, 30 Oct 2017 18:10:30 +0000
-Message-ID: <20171030181030.e2te534v3ntiaht6@sirena.co.uk>
-References: <20171030170224.badokg3dsgjb4hvg@sirena.co.uk>
- <20171030104307.0857ee38@cakuba.netronome.com>
+Subject: linux-next: manual merge of the spi-nor tree with the imx-mxs tree
+Date: Mon, 30 Oct 2017 18:15:51 +0000
+Message-ID: <20171030181551.skcvt4mr4br7rtn2@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ma366v4jrcsj2m65"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="aj6klbbkhnnep5f4"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48956 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932716AbdJ3SQB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 14:16:01 -0400
 Content-Disposition: inline
-In-Reply-To: <20171030104307.0857ee38@cakuba.netronome.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jakub Kicinski <jakub.kicinski@netronome.com>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Pieter Jansen van Vuuren <pieter.jansenvanvuuren@netronome.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Yuan Yao <yao.yuan@nxp.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Philipp Puschmann <pp@emlix.com>
+Cc: linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 
---ma366v4jrcsj2m65
+--aj6klbbkhnnep5f4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 30, 2017 at 10:43:07AM -0700, Jakub Kicinski wrote:
-> On Mon, 30 Oct 2017 17:02:24 +0000, Mark Brown wrote:
+Hi Cyrille,
 
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+Today's linux-next merge of the spi-nor tree got a conflict in:
 
-> Unfortunately, this is not a correct resolution.  Please see below.
+  Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
 
-So I actually ended up just throwing this away (and the rest of what was
-going on for net-next, there were just far too many of these self
-conflicts.  The tree is one of the bigger time sinks when doing -next
-but today was particularly heavy.
+between commit:
 
---ma366v4jrcsj2m65
+  b07815d4eaf65 ("dt-bindings: mtd: add sst25wf040b and en25s64 to sip-nor =
+list")
+
+=66rom the imx-mxs tree and commit:
+
+   282e45dc64d1 ("mtd: spi-nor: Add support for mr25h128")
+
+=66rom the spi-nor tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
+index 4cab5d85cf6f,956bb046e599..000000000000
+--- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
++++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.txt
+@@@ -13,7 -13,7 +13,8 @@@ Required properties
+                   at25df321a
+                   at25df641
+                   at26df081a
+ +                 en25s64
++                  mr25h128
+                   mr25h256
+                   mr25h10
+                   mr25h40
+
+--aj6klbbkhnnep5f4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3axUACgkQJNaLcl1U
-h9CXjgf/TaLbFO7umuZYjNya/7YD+FmYH1eVONppb5pQwpZJANWAotLxTQDEI0xc
-g9gSDuCMmMJFtZ/Vi1wu2v/oT8UHdfZ5/Dq8v1qSZ1ppFRHOSVcEEs6BD0vVJxVv
-9MQV25OiivHbPNdr3+dWPWjXgsSDbed8nCGF25pOuoE5B7l2mzfWyieObhp68ARm
-tJ+Shl7K9w6+890hgd6wZVa6j7CHXeZRmEtLvXinjcTfUbmOk8CO3vlc3Mk2nY7K
-0j3PRFhSUPa+1CyPr2ZT8jZfgJ5pjmNkChODxzQlbS26woZnM7ECMghNtxhtCgin
-rbinBS6fUyhCncpghj6lAAGpr9PwHw==
-=C0Hp
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3bFYACgkQJNaLcl1U
+h9AS4wf/RAALzdnB2L6IIbUAk54sTxPKh8eDCRGd1fGUb0MalKAshyE6LrFITlL6
+rYUIiNRLWMBESM6dretJcZa2U+Dg9c5z272kydo8vRAp9z2bm9XC4wwy4/6nWoWm
+0VxLJcML4JHKoOpMMQnCu6iovx8E9+i5+/u/zoAO75WBpIfBjgrb+NI2QdttKpTP
+DX/0zL1gjtlyVxrryrIiNqHNOT2NBI6nIzLWzVPUOnFwhQ4Qgdf4xj+VhegTggSy
+JuCF/iHKEDkRd2v8yfBWAyNo3Nc1wNmc41qMBMk8AoD7WOVRHqWc4+AGQac+ZJCB
+dJSdbG2DncXwMpk5FcFl/4wHuO5m4Q==
+=6uCT
 -----END PGP SIGNATURE-----
 
---ma366v4jrcsj2m65--
+--aj6klbbkhnnep5f4--
