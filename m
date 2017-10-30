@@ -1,43 +1,35 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the devicetree tree with the drm tree
-Date: Mon, 30 Oct 2017 20:37:56 +0000
-Message-ID: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
+Subject: linux-next: manual merge of the tip tree with the net-next tree
+Date: Mon, 30 Oct 2017 20:55:47 +0000
+Message-ID: <20171030205547.pvd23ahq7xgahlke@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="htarrupxfffskzsm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33230 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751837AbdJ3UiD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 30 Oct 2017 16:38:03 -0400
+        protocol="application/pgp-signature"; boundary="2a3zhkdh4u47cvpe"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robherring2@gmail.com>, Frank Rowand <frank.rowand@sony.com>, Rob Herring <robh@kernel.org>, Stephen Boyd <stephen.boyd@linaro.org>, Jyri Sarha <jsarha@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
 
---htarrupxfffskzsm
+--2a3zhkdh4u47cvpe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi all,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
+  net/ipv4/tcp_output.c
 
 between commit:
 
-  44cd3939c111b7 ("drm/tilcdc: Remove redundant OF_DETACHED flag setting")
+  6aa7de059173a ("locking/atomics: COCCINELLE/treewide: Convert trivial ACC=
+ESS_ONCE() patterns to READ_ONCE()/WRITE_ONCE()")
 
-=66rom the drm tree and commit:
-
-  f948d6d8b792bb ("of: overlay: avoid race condition between applying multi=
-ple overlays")
-
-=66rom the devicetree tree.
+in the tip tree and some change in the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -46,38 +38,35 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-index 482299a6f3b0,54025af534d4..000000000000
---- a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-+++ b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
-@@@ -163,12 -162,8 +162,6 @@@ static struct device_node * __init tilc
-  		return NULL;
-  	}
+diff --cc net/ipv4/tcp_output.c
+index a69a34f57330,48531da1aba6..000000000000
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@@ -1978,7 -1908,7 +1978,7 @@@ static bool tcp_tso_should_defer(struc
+  	if ((skb !=3D tcp_write_queue_tail(sk)) && (limit >=3D skb->len))
+  		goto send_now;
  =20
-- 	ret =3D of_resolve_phandles(overlay);
-- 	if (ret) {
-- 		pr_err("%s: Failed to resolve phandles: %d\n", __func__, ret);
-- 		return NULL;
-- 	}
- -	of_node_set_flag(overlay, OF_DETACHED);
---
-  	return overlay;
-  }
+- 	win_divisor =3D ACCESS_ONCE(sock_net(sk)->ipv4.sysctl_tcp_tso_win_diviso=
+r);
+ -	win_divisor =3D READ_ONCE(sysctl_tcp_tso_win_divisor);
+++	win_divisor =3D READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_tso_win_divisor);
+  	if (win_divisor) {
+  		u32 chunk =3D min(tp->snd_wnd, tp->snd_cwnd * tp->mss_cache);
  =20
 
---htarrupxfffskzsm
+--2a3zhkdh4u47cvpe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3jaQACgkQJNaLcl1U
-h9C9wwf+LBUS1qVW8kDdrFtS8ECLKbcsnXnIfTT+rOPaToQSXtgYj7GGUNxdluXG
-jVFTLpY3DuhYas2I2IWty3QO+P7Bkxkc2yBfgqwlCDumBLM0CO/g8IHSNg834Pqa
-qM+IliWghawETU9A/DRjDs2RRIKkvej/u1+q3A9v4OTMe+1Md/KQo8+b5DLCrj+Z
-zj9eE9uXsip6M/jsRCECscQostv+eKWnQixBMwJJpa8Esne5ATOFnqfpJD9Yqs9K
-e6SzMoqXvGzyQxlT0u31kK4j2VGrLqa7pbHzNghNiryEAxOHmngoyl3zD6w0m5vD
-Qa1USjWmY+NCnFx6KAEywSFOrDJxRg==
-=mXR8
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAln3kdMACgkQJNaLcl1U
+h9BY3gf6AjGHwAEF7NDfKp8RhWbMwD64Ove6QLsTaPYe+f8lJoRO+MYt7u41WC12
+rmNPqQAl6xt4Sk0N8p8ZVcdeUrMs91m0NZ8C4O7w4V4R89aRrp05yMJuPAYTfBZg
+HNUzWa63x+qHU1wN59Ha0lA76NVr50PbzqCgjNwJfRAmzhaKhE3LUE29QWQhdfG8
+IupXcsmk+23fytfAHd9gnjoPxV7SswRX05DcM06TVsluUmLgzfe6XUpxGwK1UjtN
+HLplYwEPifIk4LTrTBexTiqkWU553X0v5Yi0gnJYes0F69Fj/Nnd06Svbw8Emzpg
+gpxejqG2Xm5UWERpOH/4LXWi74m26g==
+=rbhK
 -----END PGP SIGNATURE-----
 
---htarrupxfffskzsm--
+--2a3zhkdh4u47cvpe--
