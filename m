@@ -1,34 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the xfs tree
-Date: Wed, 1 Nov 2017 09:42:52 +1100
-Message-ID: <20171101093957.1d1c45d9@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with Linus' tree
+Date: Wed, 1 Nov 2017 10:35:37 +1100
+Message-ID: <20171101103537.04a67581@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Jon,
 
-After merging the xfs tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-fs/xfs/libxfs/xfs_bmap.c: In function 'xfs_bmap_del_extent_delay':
-fs/xfs/libxfs/xfs_bmap.c:4648:20: warning: unused variable 'ifp' [-Wunused-variable]
-  struct xfs_ifork *ifp = XFS_IFORK_PTR(ip, whichfork);
-                    ^
-fs/xfs/libxfs/xfs_bmap.c: In function 'xfs_bmap_del_extent_cow':
-fs/xfs/libxfs/xfs_bmap.c:4776:20: warning: unused variable 'ifp' [-Wunused-variable]
-  struct xfs_ifork *ifp = XFS_IFORK_PTR(ip, XFS_COW_FORK);
-                    ^
+  Documentation/process/index.rst
 
-Introduced by commit
+between commit:
 
-  ca5d8e5b7b90 ("xfs: move pre/post-bmap tracing into xfs_iext_update_extent")
+  9ed95129ffca ("Documentation: Add a file explaining the Linux kernel license enforcement policy")
+
+from Linus' tree and commit:
+
+  13277782dd4b ("Documentation: add Kernel Driver Statement to the kernel")
+
+from the jc_docs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc Documentation/process/index.rst
+index 61e43cc3ed17,68454319f006..000000000000
+--- a/Documentation/process/index.rst
++++ b/Documentation/process/index.rst
+@@@ -25,7 -25,7 +25,8 @@@ Below are the essential guides that eve
+     submitting-patches
+     coding-style
+     email-clients
+ +   kernel-enforcement-statement
++    kernel-driver-statement
+  
+  Other guides to the community that are of interest to most developers are: 
+  
