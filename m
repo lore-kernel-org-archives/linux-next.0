@@ -1,68 +1,32 @@
-From: "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: RE: linux-next: manual merge of the spi-nor tree with the imx-mxs
- tree
-Date: Tue, 31 Oct 2017 02:39:45 +0000
-Message-ID: <AM5PR0402MB2771BE97FFDCF052411F974B845E0@AM5PR0402MB2771.eurprd04.prod.outlook.com>
-References: <20171030181551.skcvt4mr4br7rtn2@sirena.co.uk>
- <d38cf683-c7a8-51b1-896a-ff1fda0f64f9@wedev4u.fr>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: No tree for Oct 20th
+Date: Tue, 31 Oct 2017 14:42:24 +1100
+Message-ID: <20171031144209.536f9f91@canb.auug.org.au>
+References: <20171030213202.3s27oauijqyxoonw@sirena.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <d38cf683-c7a8-51b1-896a-ff1fda0f64f9@wedev4u.fr>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Mark Brown <broonie@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Philipp Puschmann <pp@emlix.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Vasut <marek.vasut@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:34091 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751327AbdJaDm1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 30 Oct 2017 23:42:27 -0400
+In-Reply-To: <20171030213202.3s27oauijqyxoonw@sirena.co.uk>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-SGkgQ3lyaWxsZSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBDeXJp
-bGxlIFBpdGNoZW4gW21haWx0bzpjeXJpbGxlLnBpdGNoZW5Ad2VkZXY0dS5mcl0NCj4gU2VudDog
-MjAxN8TqMTDUwjMxyNUgODo0Mw0KPiBUbzogTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3Jn
-PjsgWXVhbiBZYW8gPHlhby55dWFuQG54cC5jb20+OyBaLnEuDQo+IEhvdSA8emhpcWlhbmcuaG91
-QG54cC5jb20+OyBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwub3JnPjsgU2hhd24gR3VvDQo+IDxz
-aGF3bmd1b0BrZXJuZWwub3JnPjsgUGhpbGlwcCBQdXNjaG1hbm4gPHBwQGVtbGl4LmNvbT4NCj4g
-Q2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgTGludXgtTmV4dCBNYWls
-aW5nIExpc3QNCj4gPGxpbnV4LW5leHRAdmdlci5rZXJuZWwub3JnPjsgTGludXggS2VybmVsIE1h
-aWxpbmcgTGlzdA0KPiA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz47IE1hcmVrIFZhc3V0
-IDxtYXJlay52YXN1dEBnbWFpbC5jb20+DQo+IFN1YmplY3Q6IFJlOiBsaW51eC1uZXh0OiBtYW51
-YWwgbWVyZ2Ugb2YgdGhlIHNwaS1ub3IgdHJlZSB3aXRoIHRoZSBpbXgtbXhzIHRyZWUNCj4gDQo+
-IEhpIGFsbCwNCj4gDQo+ICsgTWFyZWsNCj4gDQo+IE1hcmssIHRoYW5rcyBmb3IgdGhpcyByZXBv
-cnQuDQo+IA0KPiBTaGF3biwgWXVhbiwgaWYgSSBkb24ndCBtYWtlIGEgbWlzdGFrZSwgcGF0Y2gg
-ImR0LWJpbmRpbmdzOiBtdGQ6IGFkZA0KPiBzc3QyNXdmMDQwYiBhbmQgZW4yNXM2NCB0byBzaXAt
-bm9yIGxpc3QiIHdhcyBub3Qgc3VibWl0dGVkIHRvIHRoZSBsaW51eC1tdGQNCj4gbWFpbGluZyBs
-aXN0IGhlbmNlIHdhcyBuZWl0aGVyIHJldmlld2VkIG5vciBhY2tlZCBieSBhbnkgc3BpLW5vciBt
-YWludGFpbmVyLiBJZg0KPiBzbywgc3VjaCBhIHBhdGNoIHNob3VsZCB0aGVuIGJlIHRha2VuIGZy
-b20gdGhlIHNwaS1ub3IvbmV4dCBicmFuY2ggb2YgdGhlDQo+IGwyLW10ZCB0cmVlLg0KPiANCj4g
-U28gU2hhd24sIGNvdWxkIHlvdSBwbGVhc2UgcmVtb3ZlIHRoaXMgcGF0Y2ggZnJvbSB5b3VyIHRy
-ZWUgPw0KPiANCj4gWXVhbiwgY291bGQgeW91IHBsZWFzZSBzdWJtaXQgeW91ciBwYXRjaCB0byB0
-aGUgbGludXgtbXRkIG1haWxpbmcgbGlzdCBmb3INCj4gcHJvcGVyIHJldmlldyA/DQoNCk9ubHkg
-dGhpcyBzaW5nbGUgcGF0Y2ggaXMgbmVlZGVkIHRvIHN1Ym1pdCB0byBsaW51eC1tdGQgbWFpbGlu
-ZyBsaXN0LCByaWdodD8NCg0KVGhhbmtzLA0KWmhpcWlhbmcNCg0KPiBCZXN0IHJlZ2FyZHMsDQo+
-IA0KPiBDeXJpbGxlDQo+IA0KPiANCj4gTGUgMzAvMTAvMjAxNyCopCAxOToxNSwgTWFyayBCcm93
-biBhIKimY3JpdCA6DQo+ID4gSGkgQ3lyaWxsZSwNCj4gPg0KPiA+IFRvZGF5J3MgbGludXgtbmV4
-dCBtZXJnZSBvZiB0aGUgc3BpLW5vciB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOg0KPiA+DQo+ID4g
-ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbXRkL2plZGVjLHNwaS1ub3IudHh0
-DQo+ID4NCj4gPiBiZXR3ZWVuIGNvbW1pdDoNCj4gPg0KPiA+ICAgYjA3ODE1ZDRlYWY2NSAoImR0
-LWJpbmRpbmdzOiBtdGQ6IGFkZCBzc3QyNXdmMDQwYiBhbmQgZW4yNXM2NCB0bw0KPiA+IHNpcC1u
-b3IgbGlzdCIpDQo+ID4NCj4gPiBmcm9tIHRoZSBpbXgtbXhzIHRyZWUgYW5kIGNvbW1pdDoNCj4g
-Pg0KPiA+ICAgIDI4MmU0NWRjNjRkMSAoIm10ZDogc3BpLW5vcjogQWRkIHN1cHBvcnQgZm9yIG1y
-MjVoMTI4IikNCj4gPg0KPiA+IGZyb20gdGhlIHNwaS1ub3IgdHJlZS4NCj4gPg0KPiA+IEkgZml4
-ZWQgaXQgdXAgKHNlZSBiZWxvdykgYW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4g
-VGhpcyBpcw0KPiA+IG5vdyBmaXhlZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQs
-IGJ1dCBhbnkgbm9uIHRyaXZpYWwNCj4gPiBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0
-byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5b3VyDQo+ID4gdHJlZSBpcyBzdWJtaXR0
-ZWQgZm9yIG1lcmdpbmcuICBZb3UgbWF5IGFsc28gd2FudCB0byBjb25zaWRlcg0KPiA+IGNvb3Bl
-cmF0aW5nIHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWlu
-aW1pc2UNCj4gPiBhbnkgcGFydGljdWxhcmx5IGNvbXBsZXggY29uZmxpY3RzLg0KPiA+DQo+ID4g
-ZGlmZiAtLWNjIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tdGQvamVkZWMsc3Bp
-LW5vci50eHQNCj4gPiBpbmRleCA0Y2FiNWQ4NWNmNmYsOTU2YmIwNDZlNTk5Li4wMDAwMDAwMDAw
-MDANCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbXRkL2plZGVj
-LHNwaS1ub3IudHh0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdz
-L210ZC9qZWRlYyxzcGktbm9yLnR4dA0KPiA+IEBAQCAtMTMsNyAtMTMsNyArMTMsOCBAQEAgUmVx
-dWlyZWQgcHJvcGVydGllcw0KPiA+ICAgICAgICAgICAgICAgICAgICBhdDI1ZGYzMjFhDQo+ID4g
-ICAgICAgICAgICAgICAgICAgIGF0MjVkZjY0MQ0KPiA+ICAgICAgICAgICAgICAgICAgICBhdDI2
-ZGYwODFhDQo+ID4gICsgICAgICAgICAgICAgICAgIGVuMjVzNjQNCj4gPiArICAgICAgICAgICAg
-ICAgICAgbXIyNWgxMjgNCj4gPiAgICAgICAgICAgICAgICAgICAgbXIyNWgyNTYNCj4gPiAgICAg
-ICAgICAgICAgICAgICAgbXIyNWgxMA0KPiA+ICAgICAgICAgICAgICAgICAgICBtcjI1aDQwDQo+
-ID4NCg0K
+Hi Mark,
+
+On Mon, 30 Oct 2017 21:32:02 +0000 Mark Brown <broonie@kernel.org> wrote:
+>
+> There will be no -next tree today, there are too many non-trivial
+> conflicts for things to complete in a reasonable time.
+
+Thanks very much for you efforts while I was traveling. I am back now
+and will restart linux-next tomorrow (Nov 1).
+
+-- 
+Cheers,
+Stephen Rothwell
