@@ -1,99 +1,59 @@
 From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Wed, 1 Nov 2017 07:32:57 -0700
-Message-ID: <CAGXu5jJX7k0Nifj7Wnq=CNVA1bWgMfpQu8ALZGb=q+dn1q5Ybg@mail.gmail.com>
-References: <20171101215150.74daafd2@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the block tree
+Date: Wed, 1 Nov 2017 07:37:56 -0700
+Message-ID: <CAGXu5j+okG+N+xy=9u9rx8FZudO+dM9dsZgq-Ey_Nr51vqWLVw@mail.gmail.com>
+References: <20171101171007.6a340098@canb.auug.org.au> <bc21c070-3a7d-b469-62fd-1258ab265e3b@kernel.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f195.google.com ([209.85.223.195]:43620 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754687AbdKAOc7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 10:32:59 -0400
-Received: by mail-io0-f195.google.com with SMTP id 134so6491639ioo.0
-        for <linux-next@vger.kernel.org>; Wed, 01 Nov 2017 07:32:59 -0700 (PDT)
-In-Reply-To: <20171101215150.74daafd2@canb.auug.org.au>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:44141 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754516AbdKAOh6 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 10:37:58 -0400
+Received: by mail-io0-f177.google.com with SMTP id m16so6530500iod.1
+        for <linux-next@vger.kernel.org>; Wed, 01 Nov 2017 07:37:58 -0700 (PDT)
+In-Reply-To: <bc21c070-3a7d-b469-62fd-1258ab265e3b@kernel.dk>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 1, 2017 at 3:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+On Wed, Nov 1, 2017 at 7:25 AM, Jens Axboe <axboe@kernel.dk> wrote:
+> On 11/01/2017 12:10 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Today's linux-next merge of the tip tree got a conflict in:
+>>
+>>   drivers/block/amiflop.c
+>>
+>> between commit:
+>>
+>>   f37ecbfc238b ("amifloppy: Convert timers to use timer_setup()")
+>>
+>> from the block tree and commit:
+>>
+>>   3c557df67257 ("timer: Remove meaningless .data/.function assignments")
+>>
+>> from the tip tree.
+>>
+>> I fixed it up (I just used the former version of the motor_on_callback
+>> definition) and can carry the fix as necessary. This is now fixed as
+>> far as linux-next is concerned, but any non trivial conflicts should be
+>> mentioned to your upstream maintainer when your tree is submitted for
+>> merging.  You may also want to consider cooperating with the maintainer
+>> of the conflicting tree to minimise any particularly complex conflicts.
 >
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
->
-> In file included from include/linux/workqueue.h:8:0,
->                  from include/linux/srcu.h:34,
->                  from include/linux/notifier.h:15,
->                  from include/linux/memory_hotplug.h:6,
->                  from include/linux/mmzone.h:779,
->                  from include/linux/gfp.h:5,
->                  from include/linux/umh.h:4,
->                  from include/linux/kmod.h:22,
->                  from include/linux/module.h:13,
->                  from drivers/net/ethernet/chelsio/cxgb/common.h:43,
->                  from drivers/net/ethernet/chelsio/cxgb/sge.c:39:
-> drivers/net/ethernet/chelsio/cxgb/sge.c: In function 't1_sge_create':
-> include/linux/timer.h:176:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
->    __setup_timer(timer, (TIMER_FUNC_TYPE)callback,  \
->                         ^
-> include/linux/timer.h:122:25: note: in definition of macro '__setup_timer'
->    (_timer)->function = (_fn);    \
->                          ^
-> drivers/net/ethernet/chelsio/cxgb/sge.c:2081:3: note: in expansion of macro 'timer_setup'
->    timer_setup(&sge->espibug_timer,
->    ^
-> drivers/net/ethernet/chelsio/cxgb/sge.c:2082:31: warning: comparison between pointer and integer
->         adapter->params.nports > 1 ? espibug_workaround_t204 : espibug_workaround,
->                                ^
-> include/linux/timer.h:122:25: note: in definition of macro '__setup_timer'
->    (_timer)->function = (_fn);    \
->                          ^
-> drivers/net/ethernet/chelsio/cxgb/sge.c:2081:3: note: in expansion of macro 'timer_setup'
->    timer_setup(&sge->espibug_timer,
->    ^
-> include/linux/timer.h:122:22: error: assignment from incompatible pointer type [-Werror=incompatible-pointer-types]
->    (_timer)->function = (_fn);    \
->                       ^
-> include/linux/timer.h:176:3: note: in expansion of macro '__setup_timer'
->    __setup_timer(timer, (TIMER_FUNC_TYPE)callback,  \
->    ^
-> drivers/net/ethernet/chelsio/cxgb/sge.c:2081:3: note: in expansion of macro 'timer_setup'
->    timer_setup(&sge->espibug_timer,
->    ^
->
-> and another similar.
->
-> Caused by commit
->
->   cacd2b3fb981 ("chelsio: Convert timers to use timer_setup()")
->
-> from te net-next tree interacting with commit
->
->   52f737c2da40 ("timer: Provide wrappers safe for use with LOCKDEP")
->
-> from the tip tree.
->
-> Looks like the LOCKDEP sage version of timer_setup() needs to put
-> parentheses around the usages of its parameters?
+> Kees, why are we in this situation? Making similar timer fixups in the
+> same driver and submitting it through two different trees is a mess.
 
-Ugh, yup. Thanks for the catch. I have no idea why I didn't see this
-in my own builds.
+It's a large conversion with a lot of moving parts and about 1100
+callsites. I've tried to minimize conflicts, but without being able to
+carry everything in a single tree, it's made things extremely complex.
+I'm doing my best to avoid these glitches, but I haven't been 100%
+successful. This is mainly the fault of the conversion uncovering more
+and more corner cases as I went. :(
 
 -Kees
-
->
-> --
-> Cheers,
-> Stephen Rothwell
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-next" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
 
 -- 
 Kees Cook
