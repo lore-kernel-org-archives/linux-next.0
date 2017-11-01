@@ -1,107 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Wed, 1 Nov 2017 11:58:36 +1100
-Message-ID: <20171101115836.6b1025ba@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the drm tree
+Date: Wed, 1 Nov 2017 14:16:40 +1100
+Message-ID: <20171101141640.3ca7597f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45719 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:44699 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753486AbdKAA6j (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Oct 2017 20:58:39 -0400
+        id S1751958AbdKADQn (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 31 Oct 2017 23:16:43 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@mellanox.com>
+To: Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>, Eric Anholt <eric@anholt.net>
 
-Hi all,
+Hi Dave,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+produced these warnings:
 
-  net/sched/cls_api.c
+drivers/gpu/drm/vc4/vc4_bo.c: In function 'vc4_bo_stats_debugfs':
+drivers/gpu/drm/vc4/vc4_bo.c:91:17: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+   seq_printf(m, "%30s: %6dkb BOs (%d)\n", "userspace BO cache",
+                 ^
+drivers/gpu/drm/vc4/vc4_bo.c:95:17: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+   seq_printf(m, "%30s: %6dkb BOs (%d)\n", "total purged BO",
+                 ^
 
-between commit:
+Introduced by commit
 
-  822e86d997e4 ("net_sched: remove tcf_block_put_deferred()")
-
-from the net tree and commit:
-
-  8c4083b30e56 ("net: sched: add block bind/unbind notif. and extended block_get/put")
-
-from the net-next tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  b9f19259b84d ("drm/vc4: Add the DRM_IOCTL_VC4_GEM_MADVISE ioctl")
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc net/sched/cls_api.c
-index b2d310745487,d9d54b367d23..000000000000
---- a/net/sched/cls_api.c
-+++ b/net/sched/cls_api.c
-@@@ -289,22 -331,47 +331,26 @@@ static void tcf_block_put_final(struct 
-  }
-  
-  /* XXX: Standalone actions are not allowed to jump to any chain, and bound
- - * actions should be all removed after flushing. However, filters are destroyed
- - * in RCU callbacks, we have to hold the chains first, otherwise we would
- - * always race with RCU callbacks on this list without proper locking.
- + * actions should be all removed after flushing. However, filters are now
- + * destroyed in tc filter workqueue with RTNL lock, they can not race here.
-   */
-- void tcf_block_put(struct tcf_block *block)
- -static void tcf_block_put_deferred(struct work_struct *work)
- -{
- -	struct tcf_block *block = container_of(work, struct tcf_block, work);
- -	struct tcf_chain *chain;
- -
- -	rtnl_lock();
- -	/* Hold a refcnt for all chains, except 0, in case they are gone. */
- -	list_for_each_entry(chain, &block->chain_list, list)
- -		if (chain->index)
- -			tcf_chain_hold(chain);
- -
- -	/* No race on the list, because no chain could be destroyed. */
- -	list_for_each_entry(chain, &block->chain_list, list)
- -		tcf_chain_flush(chain);
- -
- -	INIT_WORK(&block->work, tcf_block_put_final);
- -	/* Wait for RCU callbacks to release the reference count and make
- -	 * sure their works have been queued before this.
- -	 */
- -	rcu_barrier();
- -	tcf_queue_work(&block->work);
- -	rtnl_unlock();
- -}
- -
-+ void tcf_block_put_ext(struct tcf_block *block,
-+ 		       struct tcf_proto __rcu **p_filter_chain, struct Qdisc *q,
-+ 		       struct tcf_block_ext_info *ei)
-  {
- +	struct tcf_chain *chain, *tmp;
- +
-  	if (!block)
-  		return;
-  
-+ 	tcf_block_offload_unbind(block, q, ei);
-+ 
- -	INIT_WORK(&block->work, tcf_block_put_deferred);
- -	/* Wait for existing RCU callbacks to cool down, make sure their works
- -	 * have been queued before this. We can not flush pending works here
- -	 * because we are holding the RTNL lock.
- +	list_for_each_entry_safe(chain, tmp, &block->chain_list, list)
- +		tcf_chain_flush(chain);
- +
- +	INIT_WORK(&block->work, tcf_block_put_final);
- +	/* Wait for RCU callbacks to release the reference count and make
- +	 * sure their works have been queued before this.
-  	 */
-  	rcu_barrier();
-  	tcf_queue_work(&block->work);
