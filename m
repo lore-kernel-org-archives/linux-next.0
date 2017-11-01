@@ -1,45 +1,87 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the drm-msm tree
-Date: Wed, 1 Nov 2017 14:46:56 +1100
-Message-ID: <20171101144656.691413a2@canb.auug.org.au>
+Subject: linux-next: manual merge of the sound-asoc tree with the drm tree
+Date: Wed, 1 Nov 2017 15:04:15 +1100
+Message-ID: <20171101150415.159558ae@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49751 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41477 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751390AbdKADq6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 31 Oct 2017 23:46:58 -0400
+        id S1750716AbdKAEER (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 1 Nov 2017 00:04:17 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jordan Crouse <jcrouse@codeaurora.org>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Dave Airlie <airlied@linux.ie>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Rex Zhu <Rex.Zhu@amd.com>, DRI <dri-devel@lists.freedesktop.org>
 
-Hi Rob,
+Hi all,
 
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Today's linux-next merge of the sound-asoc tree got a conflict in:
 
-In file included from include/drm/drm_mm.h:49:0,
-                 from include/drm/drmP.h:73,
-                 from drivers/gpu/drm/msm/msm_drv.h:37,
-                 from drivers/gpu/drm/msm/msm_gpu.h:24,
-                 from drivers/gpu/drm/msm/msm_gpu.c:18:
-drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_init':
-drivers/gpu/drm/msm/msm_gpu.c:780:31: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Wformat=]
-   DRM_DEV_INFO_ONCE(drm->dev, "Only creating %lu ringbuffers\n",
-                               ^
-include/drm/drm_print.h:237:60: note: in definition of macro 'DRM_DEV_INFO'
-  drm_dev_printk(dev, KERN_INFO, DRM_UT_NONE, __func__, "", fmt, \
-                                                            ^
-drivers/gpu/drm/msm/msm_gpu.c:780:3: note: in expansion of macro 'DRM_DEV_INFO_ONCE'
-   DRM_DEV_INFO_ONCE(drm->dev, "Only creating %lu ringbuffers\n",
-   ^
+  drivers/gpu/drm/amd/include/amd_shared.h
 
-Introduced by commit
+between commit:
 
-  f97decac5f4c ("drm/msm: Support multiple ringbuffers")
+  cfa289fd4986 ("drm/amdgpu: rename amdgpu_dpm_funcs to amd_pm_funcs")
+
+from the drm tree and commit:
+
+  f674bd281460 ("drm/amdgpu Moving amdgpu asic types to a separate file")
+
+from the sound-asoc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc drivers/gpu/drm/amd/include/amd_shared.h
+index de6fc2731b98,3a49fbd8baf8..000000000000
+--- a/drivers/gpu/drm/amd/include/amd_shared.h
++++ b/drivers/gpu/drm/amd/include/amd_shared.h
+@@@ -23,36 -23,9 +23,11 @@@
+  #ifndef __AMD_SHARED_H__
+  #define __AMD_SHARED_H__
+  
+- #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
++ #include <drm/amd_asic_type.h>
+  
+ +struct seq_file;
+ +
+- /*
+-  * Supported ASIC types
+-  */
+- enum amd_asic_type {
+- 	CHIP_TAHITI = 0,
+- 	CHIP_PITCAIRN,
+- 	CHIP_VERDE,
+- 	CHIP_OLAND,
+- 	CHIP_HAINAN,
+- 	CHIP_BONAIRE,
+- 	CHIP_KAVERI,
+- 	CHIP_KABINI,
+- 	CHIP_HAWAII,
+- 	CHIP_MULLINS,
+- 	CHIP_TOPAZ,
+- 	CHIP_TONGA,
+- 	CHIP_FIJI,
+- 	CHIP_CARRIZO,
+- 	CHIP_STONEY,
+- 	CHIP_POLARIS10,
+- 	CHIP_POLARIS11,
+- 	CHIP_POLARIS12,
+- 	CHIP_VEGA10,
+- 	CHIP_RAVEN,
+- 	CHIP_LAST,
+- };
++ #define AMD_MAX_USEC_TIMEOUT		200000  /* 200 ms */
+  
+  /*
+   * Chip flags
