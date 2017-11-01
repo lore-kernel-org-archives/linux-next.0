@@ -1,64 +1,43 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the net-next tree
-Date: Wed, 1 Nov 2017 10:04:02 +0100
-Message-ID: <20171101090402.kky67dyvebggelbp@gmail.com>
-References: <20171101181554.1826e8c8@canb.auug.org.au>
- <20171101081832.zdehp7ysi5ecwsdv@hirez.programming.kicks-ass.net>
- <20171101082742.dteg337holmodzn2@gmail.com>
- <20171101085524.4dcxgaq7kawn37pq@hirez.programming.kicks-ass.net>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: linux-next: build warnings after merge of the drm tree
+Date: Wed, 1 Nov 2017 10:58:37 +0100
+Message-ID: <20171101105837.75bc2be5@bbrezillon>
+References: <20171101141640.3ca7597f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171101085524.4dcxgaq7kawn37pq@hirez.programming.kicks-ass.net>
+In-Reply-To: <20171101141640.3ca7597f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yonghong Song <yhs@fb.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Anholt <eric@anholt.net>
 List-Id: linux-next.vger.kernel.org
 
+Hi Stephen,
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+On Wed, 1 Nov 2017 14:16:40 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> On Wed, Nov 01, 2017 at 09:27:43AM +0100, Ingo Molnar wrote:
-> > 
-> > * Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > > On Wed, Nov 01, 2017 at 06:15:54PM +1100, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Today's linux-next merge of the tip tree got a conflict in:
-> > > > 
-> > > >   kernel/trace/bpf_trace.c
-> > > > 
-> > > > between commits:
-> > > > 
-> > > >   97562633bcba ("bpf: perf event change needed for subsequent bpf helpers")
-> > > > and more changes ...
-> > > > 
-> > > > from the net-next tree and commit:
-> > > > 
-> > > >   7d9285e82db5 ("perf/bpf: Extend the perf_event_read_local() interface, a.k.a. "bpf: perf event change needed for subsequent bpf helpers"")
-> > > > 
-> > > > from the tip tree.
-> > > 
-> > > So those should be the exact same patch; except for Changelog and
-> > > subject. Code wise there shouldn't be a conflict.
-> > 
-> > So the problem is that then we have:
-> > 
-> >   0d3d73aac2ff ("perf/core: Rewrite event timekeeping")
-> > 
-> > which changes the code. This is a known conflict generation pattern: Git isn't 
-> > smart enough to sort out that (probably because it would make merges too 
-> > expensive) - and it's a bad flow in any case.
+> Hi Dave,
 > 
-> Hmm, I thought having that same base patch in both trees would allow it
-> to resolve that conflict. A well..
+> After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+> produced these warnings:
+> 
+> drivers/gpu/drm/vc4/vc4_bo.c: In function 'vc4_bo_stats_debugfs':
+> drivers/gpu/drm/vc4/vc4_bo.c:91:17: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>    seq_printf(m, "%30s: %6dkb BOs (%d)\n", "userspace BO cache",
+>                  ^
+> drivers/gpu/drm/vc4/vc4_bo.c:95:17: warning: format '%d' expects argument of type 'int', but argument 4 has type 'size_t {aka long unsigned int}' [-Wformat=]
+>    seq_printf(m, "%30s: %6dkb BOs (%d)\n", "total purged BO",
+>                  ^
+> 
+> Introduced by commit
+> 
+>   b9f19259b84d ("drm/vc4: Add the DRM_IOCTL_VC4_GEM_MADVISE ioctl")
+> 
 
-I think that would require content level matching of a rather horrifying volume to 
-resolve, slowing down Git merges horribly. (Maybe there's an option for Git to do 
-that, but it's not the default I think.)
+Just sent a patch fixing the problem.
 
-Thanks,
+Thanks for the report.
 
-	Ingo
+Boris
