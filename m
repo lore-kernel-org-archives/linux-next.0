@@ -1,60 +1,52 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: manual merge of the tip tree with the block tree
-Date: Wed, 1 Nov 2017 07:37:56 -0700
-Message-ID: <CAGXu5j+okG+N+xy=9u9rx8FZudO+dM9dsZgq-Ey_Nr51vqWLVw@mail.gmail.com>
-References: <20171101171007.6a340098@canb.auug.org.au> <bc21c070-3a7d-b469-62fd-1258ab265e3b@kernel.dk>
+From: Rob Clark <robdclark@gmail.com>
+Subject: Re: linux-next: build warning after merge of the drm-msm tree
+Date: Wed, 1 Nov 2017 11:19:59 -0400
+Message-ID: <CAF6AEGv6eHoeaVs+TDPtEzPYxGEXO__OjSnfhZqLGTeXVhkgeg@mail.gmail.com>
+References: <20171101144656.691413a2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f177.google.com ([209.85.223.177]:44141 "EHLO
-        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754516AbdKAOh6 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 10:37:58 -0400
-Received: by mail-io0-f177.google.com with SMTP id m16so6530500iod.1
-        for <linux-next@vger.kernel.org>; Wed, 01 Nov 2017 07:37:58 -0700 (PDT)
-In-Reply-To: <bc21c070-3a7d-b469-62fd-1258ab265e3b@kernel.dk>
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:55205 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751511AbdKAPUB (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 11:20:01 -0400
+In-Reply-To: <20171101144656.691413a2@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jordan Crouse <jcrouse@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>
 
-On Wed, Nov 1, 2017 at 7:25 AM, Jens Axboe <axboe@kernel.dk> wrote:
-> On 11/01/2017 12:10 AM, Stephen Rothwell wrote:
->> Hi all,
->>
->> Today's linux-next merge of the tip tree got a conflict in:
->>
->>   drivers/block/amiflop.c
->>
->> between commit:
->>
->>   f37ecbfc238b ("amifloppy: Convert timers to use timer_setup()")
->>
->> from the block tree and commit:
->>
->>   3c557df67257 ("timer: Remove meaningless .data/.function assignments")
->>
->> from the tip tree.
->>
->> I fixed it up (I just used the former version of the motor_on_callback
->> definition) and can carry the fix as necessary. This is now fixed as
->> far as linux-next is concerned, but any non trivial conflicts should be
->> mentioned to your upstream maintainer when your tree is submitted for
->> merging.  You may also want to consider cooperating with the maintainer
->> of the conflicting tree to minimise any particularly complex conflicts.
+On Tue, Oct 31, 2017 at 11:46 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Rob,
 >
-> Kees, why are we in this situation? Making similar timer fixups in the
-> same driver and submitting it through two different trees is a mess.
+> After merging the drm-msm tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>
+> In file included from include/drm/drm_mm.h:49:0,
+>                  from include/drm/drmP.h:73,
+>                  from drivers/gpu/drm/msm/msm_drv.h:37,
+>                  from drivers/gpu/drm/msm/msm_gpu.h:24,
+>                  from drivers/gpu/drm/msm/msm_gpu.c:18:
+> drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_init':
+> drivers/gpu/drm/msm/msm_gpu.c:780:31: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Wformat=]
+>    DRM_DEV_INFO_ONCE(drm->dev, "Only creating %lu ringbuffers\n",
+>                                ^
+> include/drm/drm_print.h:237:60: note: in definition of macro 'DRM_DEV_INFO'
+>   drm_dev_printk(dev, KERN_INFO, DRM_UT_NONE, __func__, "", fmt, \
+>                                                             ^
+> drivers/gpu/drm/msm/msm_gpu.c:780:3: note: in expansion of macro 'DRM_DEV_INFO_ONCE'
+>    DRM_DEV_INFO_ONCE(drm->dev, "Only creating %lu ringbuffers\n",
+>    ^
+>
+> Introduced by commit
+>
+>   f97decac5f4c ("drm/msm: Support multiple ringbuffers")
 
-It's a large conversion with a lot of moving parts and about 1100
-callsites. I've tried to minimize conflicts, but without being able to
-carry everything in a single tree, it's made things extremely complex.
-I'm doing my best to avoid these glitches, but I haven't been 100%
-successful. This is mainly the fault of the conversion uncovering more
-and more corner cases as I went. :(
+Oh, I thought Arnd fixed[1] that already, but it looks like I lost his
+patch in the process of moving to a newer version of the
+multiple-ringbuffers patch.
 
--Kees
+I've added Arnd's patch to msm-next.
 
--- 
-Kees Cook
-Pixel Security
+
+[1] https://patchwork.freedesktop.org/patch/170111/
