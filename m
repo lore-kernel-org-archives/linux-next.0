@@ -1,37 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the sound-asoc tree
-Date: Wed, 1 Nov 2017 15:13:07 +1100
-Message-ID: <20171101151307.25e1e44c@canb.auug.org.au>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Subject: Re: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 31 Oct 2017 21:17:10 -0700
+Message-ID: <CAM_iQpWmytJSu7=7VS+gDPZUbHWHbtmxn9mwXD2E=fNXSq9zNA@mail.gmail.com>
+References: <20171101115836.6b1025ba@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60061 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751053AbdKAENJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 1 Nov 2017 00:13:09 -0400
+Received: from mail-pg0-f46.google.com ([74.125.83.46]:55540 "EHLO
+        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751081AbdKAERb (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 00:17:31 -0400
+In-Reply-To: <20171101115836.6b1025ba@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Olivier Moysan <olivier.moysan@st.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@mellanox.com>
 
-Hi all,
+On Tue, Oct 31, 2017 at 5:58 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Today's linux-next merge of the net-next tree got a conflict in:
+>
+>   net/sched/cls_api.c
+>
+> between commit:
+>
+>   822e86d997e4 ("net_sched: remove tcf_block_put_deferred()")
+>
+> from the net tree and commit:
+>
+>   8c4083b30e56 ("net: sched: add block bind/unbind notif. and extended block_get/put")
+>
+> from the net-next tree.
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Seems good.
 
-sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_hw_params':
-sound/soc/stm/stm32_sai_sub.c:485:7: warning: 'cr1' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   cr1 |= SAI_XCR1_DS_SET(SAI_DATASIZE_8);
-       ^
-sound/soc/stm/stm32_sai_sub.c:469:6: note: 'cr1' was declared here
-  int cr1, cr1_mask, ret;
-      ^
-
-Introduced by commit
-
-  61fb4ff70377 ("ASoC: stm32: sai: Move static settings to DAI init")
-
--- 
-Cheers,
-Stephen Rothwell
+Thanks!
