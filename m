@@ -1,69 +1,66 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: linux-next: build warning after merge of the mmc tree
-Date: Wed, 1 Nov 2017 18:47:39 -0700
-Message-ID: <CAD=FV=VD2mgZQLS7q=iKzZOZ1_-FN1XR=gN8+60w_=zZJObVfA@mail.gmail.com>
-References: <20171102123617.56364a21@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the integrity tree with the security
+ tree
+Date: Thu, 2 Nov 2017 13:02:02 +1100
+Message-ID: <20171102130202.4f6e5d18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:49202 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752349AbdKBBrl (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 1 Nov 2017 21:47:41 -0400
-Received: by mail-ua0-f196.google.com with SMTP id h34so2875027uaa.6
-        for <linux-next@vger.kernel.org>; Wed, 01 Nov 2017 18:47:41 -0700 (PDT)
-In-Reply-To: <20171102123617.56364a21@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, James Morris <jmorris@namei.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Hi all,
 
-On Wed, Nov 1, 2017 at 6:36 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Ulf,
->
-> After merging the mmc tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->
-> In file included from include/linux/irqflags.h:14:0,
->                  from arch/arm/include/asm/bitops.h:27,
->                  from include/linux/bitops.h:37,
->                  from include/linux/kernel.h:10,
->                  from include/asm-generic/bug.h:15,
->                  from arch/arm/include/asm/bug.h:59,
->                  from include/linux/bug.h:4,
->                  from include/linux/thread_info.h:11,
->                  from include/asm-generic/current.h:4,
->                  from ./arch/arm/include/generated/asm/current.h:1,
->                  from include/linux/sched.h:11,
->                  from include/linux/blkdev.h:4,
->                  from drivers/mmc/host/dw_mmc.c:14:
-> drivers/mmc/host/dw_mmc.c: In function 'dw_mci_set_drto':
-> include/linux/typecheck.h:11:18: warning: comparison of distinct pointer types lacks a cast
->   (void)(&__dummy == &__dummy2); \
->                   ^
-> include/linux/spinlock.h:221:3: note: in expansion of macro 'typecheck'
->    typecheck(unsigned long, flags); \
->    ^
-> include/linux/spinlock.h:346:2: note: in expansion of macro 'raw_spin_lock_irqsave'
->   raw_spin_lock_irqsave(spinlock_check(lock), flags); \
->   ^
-> drivers/mmc/host/dw_mmc.c:1953:2: note: in expansion of macro 'spin_lock_irqsave'
->   spin_lock_irqsave(&host->irq_lock, irqflags);
->   ^
->
-> Introduced by commit
->
->   80a2a5a7745b ("mmc: dw_mmc: Cleanup the DTO timer like the CTO one")
+Today's linux-next merge of the integrity tree got a conflict in:
 
-Yes, the 0-day bot already complained about this.  The short answer is
-that Ulf kindly volunteered to manually fix up my patch series where I
-had introduced a variable in the wrong patch.  ...but in doing so he
-introduced a small bug.
+  MAINTAINERS
 
-It should be very easy to fix.  Just need to change irqflags from
-"unsigned int" to "unsigned long".
+between commit:
 
+  e28aa8aeab43 ("MAINTAINERS: remove David Safford as maintainer for encrypted+trusted keys")
 
--Doug
+from the security tree and commit:
+
+  46d6c35e6882 ("MAINTAINERS: update the IMA, EVM, trusted-keys, encrypted-keys entries")
+
+from the integrity tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index df4a2519b306,80023acd6a7c..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -7680,7 -7623,8 +7677,7 @@@ F:	kernel/kexec
+  
+  KEYS-ENCRYPTED
+  M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
+- L:	linux-security-module@vger.kernel.org
+ -M:	David Safford <safford@us.ibm.com>
++ L:	linux-integrity@vger.kernel.org
+  L:	keyrings@vger.kernel.org
+  S:	Supported
+  F:	Documentation/security/keys/trusted-encrypted.rst
+@@@ -7688,8 -7632,9 +7685,8 @@@ F:	include/keys/encrypted-type.
+  F:	security/keys/encrypted-keys/
+  
+  KEYS-TRUSTED
+ -M:	David Safford <safford@us.ibm.com>
+  M:	Mimi Zohar <zohar@linux.vnet.ibm.com>
+- L:	linux-security-module@vger.kernel.org
++ L:	linux-integrity@vger.kernel.org
+  L:	keyrings@vger.kernel.org
+  S:	Supported
+  F:	Documentation/security/keys/trusted-encrypted.rst
