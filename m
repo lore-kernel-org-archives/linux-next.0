@@ -1,124 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the tip tree
-Date: Thu, 2 Nov 2017 18:19:14 +1100
-Message-ID: <20171102181914.3121e876@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the drm tree
+Date: Thu, 2 Nov 2017 18:32:20 +1100
+Message-ID: <20171102183220.3c0e852c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52901 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:41537 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750836AbdKBHTR (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Nov 2017 03:19:17 -0400
+        id S1751321AbdKBHcW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Nov 2017 03:32:22 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pavel Tatashin <pasha.tatashin@oracle.com>, Andrey Ryabinin <aryabinin@virtuozzo.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mel Gorman <mgorman@techsingularity.net>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 
 Hi Andrew,
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+Today's linux-next merge of the akpm-current tree got conflicts in:
 
-  arch/x86/mm/kasan_init_64.c
+  drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+  drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
 
-between commit:
+between commits:
 
-  12a8cc7fcf54 ("x86/kasan: Use the same shadow offset for 4- and 5-level paging")
+  b72cf4fca2bb ("drm/amdgpu: move taking mmap_sem into get_user_pages v2")
+  ca666a3c298f ("drm/amdgpu: stop using BO status for user pages")
 
-from the tip tree and commit:
+from the drm tree and commit:
 
-  3af83426c380 ("x86/kasan: add and use kasan_map_populate()")
+  b7e8af45222b ("mm: remove cold parameter for release_pages")
 
 from the akpm-current tree.
 
-I fixed it up (hopefully - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/mm/kasan_init_64.c
-index fe5760db7b19,9778fec8a5dc..000000000000
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@@ -15,8 -15,73 +15,75 @@@
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+index f7fceb63413c,cd664832f9e8..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c
+@@@ -562,8 -553,7 +562,7 @@@ static int amdgpu_cs_parser_bos(struct 
+  				 * invalidated it. Free it and try again
+  				 */
+  				release_pages(e->user_pages,
+- 					      bo->tbo.ttm->num_pages,
+- 					      false);
+ -					      e->robj->tbo.ttm->num_pages);
+++					      bo->tbo.ttm->num_pages);
+  				kvfree(e->user_pages);
+  				e->user_pages = NULL;
+  			}
+diff --cc drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+index 51eacefadea1,d792959fac43..000000000000
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
+@@@ -746,8 -659,7 +746,8 @@@ int amdgpu_ttm_tt_get_user_pages(struc
+  	return 0;
   
-  extern struct range pfn_mapped[E820_MAX_ENTRIES];
+  release_pages:
+- 	release_pages(pages, pinned, 0);
++ 	release_pages(pages, pinned);
+ +	up_read(&current->mm->mmap_sem);
+  	return r;
+  }
   
- +static p4d_t tmp_p4d_table[PTRS_PER_P4D] __initdata __aligned(PAGE_SIZE);
- +
-+ /* Creates mappings for kasan during early boot. The mapped memory is zeroed */
-+ static int __meminit kasan_map_populate(unsigned long start, unsigned long end,
-+ 					int node)
-+ {
-+ 	unsigned long addr, pfn, next;
-+ 	unsigned long long size;
-+ 	pgd_t *pgd;
-+ 	p4d_t *p4d;
-+ 	pud_t *pud;
-+ 	pmd_t *pmd;
-+ 	pte_t *pte;
-+ 	int ret;
-+ 
-+ 	ret = vmemmap_populate(start, end, node);
-+ 	/*
-+ 	 * We might have partially populated memory, so check for no entries,
-+ 	 * and zero only those that actually exist.
-+ 	 */
-+ 	for (addr = start; addr < end; addr = next) {
-+ 		pgd = pgd_offset_k(addr);
-+ 		if (pgd_none(*pgd)) {
-+ 			next = pgd_addr_end(addr, end);
-+ 			continue;
-+ 		}
-+ 
-+ 		p4d = p4d_offset(pgd, addr);
-+ 		if (p4d_none(*p4d)) {
-+ 			next = p4d_addr_end(addr, end);
-+ 			continue;
-+ 		}
-+ 
-+ 		pud = pud_offset(p4d, addr);
-+ 		if (pud_none(*pud)) {
-+ 			next = pud_addr_end(addr, end);
-+ 			continue;
-+ 		}
-+ 		if (pud_large(*pud)) {
-+ 			/* This is PUD size page */
-+ 			next = pud_addr_end(addr, end);
-+ 			size = PUD_SIZE;
-+ 			pfn = pud_pfn(*pud);
-+ 		} else {
-+ 			pmd = pmd_offset(pud, addr);
-+ 			if (pmd_none(*pmd)) {
-+ 				next = pmd_addr_end(addr, end);
-+ 				continue;
-+ 			}
-+ 			if (pmd_large(*pmd)) {
-+ 				/* This is PMD size page */
-+ 				next = pmd_addr_end(addr, end);
-+ 				size = PMD_SIZE;
-+ 				pfn = pmd_pfn(*pmd);
-+ 			} else {
-+ 				pte = pte_offset_kernel(pmd, addr);
-+ 				next = addr + PAGE_SIZE;
-+ 				if (pte_none(*pte))
-+ 					continue;
-+ 				/* This is base size page */
-+ 				size = PAGE_SIZE;
-+ 				pfn = pte_pfn(*pte);
-+ 			}
-+ 		}
-+ 		memset(phys_to_virt(PFN_PHYS(pfn)), 0, size);
-+ 	}
-+ 	return ret;
-+ }
-+ 
-  static int __init map_range(struct range *range)
-  {
-  	unsigned long start;
