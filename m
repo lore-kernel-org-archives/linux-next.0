@@ -1,65 +1,93 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: manual merge of the gpio tree with the tip tree
-Date: Thu, 2 Nov 2017 09:38:29 +0100
-Message-ID: <20171102083829.jw3xrru7u5zpwtbi@hirez.programming.kicks-ass.net>
-References: <20171102155952.56d90a49@canb.auug.org.au>
- <20171102080627.6lhlrfcucz7zsfch@hirez.programming.kicks-ass.net>
+From: Shawn Guo <shawnguo@kernel.org>
+Subject: Re: linux-next: manual merge of the spi-nor tree with the imx-mxs
+ tree
+Date: Thu, 2 Nov 2017 16:38:49 +0800
+Message-ID: <20171102083847.GA24292@x250>
+References: <20171030181551.skcvt4mr4br7rtn2@sirena.co.uk>
+ <d38cf683-c7a8-51b1-896a-ff1fda0f64f9@wedev4u.fr>
+ <20171031021650.GC6270@dragon>
+ <a91e5500-29d8-c336-f684-220c899d1ac2@wedev4u.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:59537 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750836AbdKBIij (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 2 Nov 2017 04:38:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750836AbdKBIiz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Nov 2017 04:38:55 -0400
 Content-Disposition: inline
-In-Reply-To: <20171102080627.6lhlrfcucz7zsfch@hirez.programming.kicks-ass.net>
+In-Reply-To: <a91e5500-29d8-c336-f684-220c899d1ac2@wedev4u.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lukas Wunner <lukas@wunner.de>, Andi Kleen <ak@linux.intel.com>
+To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Yuan Yao <yao.yuan@nxp.com>, Hou Zhiqiang <Zhiqiang.Hou@nxp.com>, Rob Herring <robh@kernel.org>, Philipp Puschmann <pp@emlix.com>, linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Vasut <marek.vasut@gmail.com>, Linux MTD Development List <linux-mtd@lists.infradead.org>
 
-On Thu, Nov 02, 2017 at 09:06:27AM +0100, Peter Zijlstra wrote:
-> On Thu, Nov 02, 2017 at 03:59:52PM +1100, Stephen Rothwell wrote:
-> > diff --cc include/linux/bitops.h
-> > index 15a5bcfcd0a2,9a874deee6e2..000000000000
-> > --- a/include/linux/bitops.h
-> > +++ b/include/linux/bitops.h
-> > @@@ -227,32 -227,30 +227,56 @@@ static inline unsigned long __ffs64(u6
-> >   	return __ffs((unsigned long)word);
-> >   }
-> >   
-> >  +/*
-> >  + * clear_bit32 - Clear a bit in memory for u32 array
-> >  + * @nr: Bit to clear
-> >  + * @addr: u32 * address of bitmap
-> >  + *
-> >  + * Same as clear_bit, but avoids needing casts for u32 arrays.
-> >  + */
-> >  +
-> >  +static __always_inline void clear_bit32(long nr, volatile u32 *addr)
-> >  +{
-> >  +	clear_bit(nr, (volatile unsigned long *)addr);
-> >  +}
-> >  +
-> >  +/*
-> >  + * set_bit32 - Set a bit in memory for u32 array
-> >  + * @nr: Bit to clear
-> >  + * @addr: u32 * address of bitmap
-> >  + *
-> >  + * Same as set_bit, but avoids needing casts for u32 arrays.
-> >  + */
-> >  +
-> >  +static __always_inline void set_bit32(long nr, volatile u32 *addr)
-> >  +{
-> >  +	set_bit(nr, (volatile unsigned long *)addr);
-> >  +}
+On Wed, Nov 01, 2017 at 01:47:04PM +0100, Cyrille Pitchen wrote:
+> >> So Shawn, could you please remove this patch from your tree ?
+> > 
+> > I have already sent the patch to my upstream maintainers (arm-soc).  I
+> > guess it's okay to leave such trivial conflict to Linus.  @Arnd, what do
+> > you think?
+> >
 > 
-> How is that not fundamentally broken for big-endian?
+> My concern is not about the conflict, which indeed is trivial, but about
+> the fact that this patch should not be applied at all. I would have
+> like to discuss it on the linux-mtd mailing list since the
+> jedec,spi-nor.txt is maintained by MTD / spi-nor folks.
+> 
+> Some memory parts like mr25h128 don't support at all the JEDEC READ ID
+> (9Fh) command. In such a case, the "jedec,spi-nor" string is not suited
+> as a value inside the 'compatible' DT property because the memory is
+> not JEDEC compliant. In that precise case, we have no other choice but
+> to use another 'compatible' value, that's why we rely on chip name.
+> 
+> However, for memory parts that do support the JEDEC READ ID command,
+> like en25s64 and sst25wf040b, we require that the 'compatible' DT
+> property includes the "jedec,spi-nor" string. I guess for *legacy
+> reasons*, the chip name MAY be included too but this is not needed and
+> actually may have side effects, especially when the SPI NOR memory is
+> handled by the m25p80 driver. When possible, it's better to set the
+> 2nd parameter of spi_nor_scan() to NULL. My understanding is that is
+> parameter is there for historical reason and is only used for:
+> 1 - backward compatibility, when DT and the "jedec,spi-nor" 'compatible'
+>     string were not introduced yet.
+> 2 - provide the chip name of non-JEDEC memories.
+> 
+> So currently, I advise to avoid adding the chip name in the 'compatible'
+> string when not needed then to set it to "jedec,spi-nor" alone.
+> Also I think we should add new chip names in the "jedec,spi-nor.txt"
+> file only for non JEDEC memory parts, that is to say, when we have no
+> other choice.
+> 
+> This is my current feeling and I would have like to have a chance to
+> discuss it first with Marek and other MTD guys before taking a
+> decision because at the spi-nor side we've already had bad surprises
+> with chip names / Jedec ID mismatches. So IMHO, chip names are not so
+> reliable and we should avoid to use them when possible.
+> 
+> For instance, as long as they are not used in device trees, we can still
+> try to fix inconsistent naming in the entries of the spi_nor_ids[]
+> array of the drivers/mtd/spi-nor/spi-nor.c. In most cases the
+> name is only informational, not use for other purpose than display.
+> However, when the 2nd parameter of spi_nor_scan() is not NULL, which
+> is not true in the general case, the name is used as an index to find
+> out the relevant entry from the spi_nor_ids[] array. Such mechanism
+> should be used only for non-JEDEC memories, though the spi-nor driver
+> can handle the case where the 'compatible' DT property is set to
+> compatible = "<vendor>,<chip-name>", "jedec,spi-nor";
+> In such a case, and only when driven by the m25p80 driver, the
+> <chip-name> string is provided as the 2nd argument of spi_nor_scan().
+> This function first tries to look up the proper spi_nor_ids[] entry
+> based on the <chip-name> then reads the JEDEC ID and uses it as
+> another index in the spi_nor_ids[] array to find the real entry.
+> If both entries, the one found by name and the one found by JEDEC ID,
+> don't match, the spi-nor driver display a warning and keep the entry
+> found by ID. So adding the chip name in the 'compatible' string of
+> JEDEC memories is in the best case useless.
+> 
+> That's why, for now, I still think this patch should not be applied at
+> all, at least, not before having been reviewed and accepted by MTD guys.
 
-I think its broken in another way as well, {set,clear}_bit() are atomic
-ops that expect a naturally aligned 'unsigned long', and that cast can
-break the alignment as well.
+Okay.  If people all agreed that the patch was doing something wrong,
+maybe a revert patch is more appropriate at this point, I guess.
 
-And I'm fairly sure we have architectures where the atomic ops
-misbehave or maybe even trap when you don't feed them properly aligned
-data.
+Shawn
