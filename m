@@ -1,60 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the powerpc tree
-Date: Thu, 2 Nov 2017 17:49:36 +1100
-Message-ID: <20171102174936.7cc061cc@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the kbuild
+ tree
+Date: Thu, 2 Nov 2017 18:13:18 +1100
+Message-ID: <20171102181318.2d017239@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51839 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:45193 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750883AbdKBGtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Nov 2017 02:49:39 -0400
+        id S1752632AbdKBHNV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Nov 2017 03:13:21 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Victor Chibotaru <tchibo@google.com>, Alexander Potapenko <glider@google.com>
 
-Hi all,
+Hi Andrew,
 
-After merging the powerpc tree, today's linux-next build (powerpc64
-allnoconfig) failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-arch/powerpc/kernel/irq.o: In function `.replay_system_reset':
-irq.c:(.text+0x10): undefined reference to `.ppc_save_regs'
+  Makefile
 
-Caused by commit
+between commit:
 
-  78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
+  2e026cb9ffbb ("kbuild: do not call cc-option before KBUILD_CFLAGS initialization")
 
-I have applied the following fix patch:
+from the kbuild tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 2 Nov 2017 17:45:18 +1100
-Subject: [PATCH] powerpc/64s: ppc_save_regs is now needed for all 64s builds
+  56db01c150f1 ("Makefile: support flag -fsanitizer-coverage=trace-cmp")
 
-Fixes: 78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/kernel/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+from the akpm-current tree.
 
-diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
-index 91960f83039c..34b6e729f38c 100644
---- a/arch/powerpc/kernel/Makefile
-+++ b/arch/powerpc/kernel/Makefile
-@@ -128,7 +128,7 @@ obj64-$(CONFIG_PPC_TRANSACTIONAL_MEM)	+= tm.o
- obj-$(CONFIG_PPC64)		+= $(obj64-y)
- obj-$(CONFIG_PPC32)		+= $(obj32-y)
- 
--ifneq ($(CONFIG_XMON)$(CONFIG_KEXEC_CORE),)
-+ifneq ($(CONFIG_XMON)$(CONFIG_KEXEC_CORE)(CONFIG_PPC_BOOK3S),)
- obj-y				+= ppc_save_regs.o
- endif
- 
--- 
-2.14.1
+I fixed it up (mostly - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc Makefile
+index 94e70d8693f3,4ee187f133bb..000000000000
+--- a/Makefile
++++ b/Makefile
+@@@ -603,12 -619,6 +603,11 @@@ endi
+  # Defaults to vmlinux, but the arch makefile usually adds further targets
+  all: vmlinux
+  
+ +KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+ +KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+ +CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
+- CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
+ +export CFLAGS_GCOV CFLAGS_KCOV
+ +
+  # The arch Makefile can set ARCH_{CPP,A,C}FLAGS to override the default
+  # values of the respective KBUILD_* variables
+  ARCH_CPPFLAGS :=
