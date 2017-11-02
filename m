@@ -1,57 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the usb tree
-Date: Thu, 2 Nov 2017 15:10:22 +1100
-Message-ID: <20171102151022.033dc8d0@canb.auug.org.au>
+Subject: linux-next: manual merge of the char-misc tree with the tip tree
+Date: Thu, 2 Nov 2017 15:20:58 +1100
+Message-ID: <20171102152058.4facb497@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:44285 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:60951 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750704AbdKBEKY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 2 Nov 2017 00:10:24 -0400
+        id S1750753AbdKBEVB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Nov 2017 00:21:01 -0400
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, Felipe Balbi <felipe.balbi@linux.intel.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 
-Hi Greg,
+Hi all,
 
-After merging the usb tree, today's linux-next build (x86_64 allmodconfig)
-produced these warnings:
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-In file included from include/linux/printk.h:327:0,
-                 from include/linux/kernel.h:13,
-                 from include/asm-generic/bug.h:15,
-                 from arch/x86/include/asm/bug.h:81,
-                 from include/linux/bug.h:4,
-                 from include/linux/scatterlist.h:6,
-                 from include/linux/dmapool.h:14,
-                 from drivers/usb/mtu3/mtu3_qmu.c:30:
-drivers/usb/mtu3/mtu3_qmu.c: In function 'mtu3_prepare_tx_gpd':
-drivers/usb/mtu3/mtu3_qmu.c:261:25: warning: format '%p' expects argument of type 'void *', but argument 7 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
-  dev_dbg(mep->mtu->dev, "TX-EP%d queue gpd=%p, enq=%p, qdma=%pad\n",
-                         ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/usb/mtu3/mtu3_qmu.c:261:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(mep->mtu->dev, "TX-EP%d queue gpd=%p, enq=%p, qdma=%pad\n",
-  ^
-drivers/usb/mtu3/mtu3_qmu.c: In function 'mtu3_prepare_rx_gpd':
-drivers/usb/mtu3/mtu3_qmu.c:300:25: warning: format '%p' expects argument of type 'void *', but argument 7 has type 'dma_addr_t {aka long long unsigned int}' [-Wformat=]
-  dev_dbg(mep->mtu->dev, "RX-EP%d queue gpd=%p, enq=%p, qdma=%pad\n",
-                         ^
-include/linux/dynamic_debug.h:134:39: note: in definition of macro 'dynamic_dev_dbg'
-   __dynamic_dev_dbg(&descriptor, dev, fmt, \
-                                       ^
-drivers/usb/mtu3/mtu3_qmu.c:300:2: note: in expansion of macro 'dev_dbg'
-  dev_dbg(mep->mtu->dev, "RX-EP%d queue gpd=%p, enq=%p, qdma=%pad\n",
-  ^
+  drivers/misc/lkdtm_core.c
 
-Introduced by commit
+between commit:
 
-  1a46dfea0841 ("usb: mtu3: support 36-bit DMA address")
+  8776fe75dc0e ("lkdtm, kprobes: Convert from jprobes to kprobes")
+
+from the tip tree and commits:
+
+  31c5c870a112 ("lkdtm: Convert from jprobe to kprobe")
+  75f98b7ab748 ("lkdtm: Constify the crashtypes table")
+
+from the char-misc tree.
+
+[8776fe75dc0e and 31c5c870a112 are the same patch]
+
+I fixed it up (I just usted the latter) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 -- 
 Cheers,
