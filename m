@@ -1,60 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kspp tree with the kvm tree
-Date: Thu, 2 Nov 2017 16:53:58 +1100
-Message-ID: <20171102165358.79adaffb@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc tree
+Date: Thu, 2 Nov 2017 17:49:36 +1100
+Message-ID: <20171102174936.7cc061cc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@google.com>, Marcelo Tosatti <mtosatti@redhat.com>, Gleb Natapov <gleb@kernel.org>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, Shakeel Butt <shakeelb@google.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51839 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750883AbdKBGtj (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 2 Nov 2017 02:49:39 -0400
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
 
-Hi Kees,
+Hi all,
 
-Today's linux-next merge of the kspp tree got a conflict in:
+After merging the powerpc tree, today's linux-next build (powerpc64
+allnoconfig) failed like this:
 
-  virt/kvm/kvm_main.c
+arch/powerpc/kernel/irq.o: In function `.replay_system_reset':
+irq.c:(.text+0x10): undefined reference to `.ppc_save_regs'
 
-between commit:
+Caused by commit
 
-  46bea48ac241 ("kvm, mm: account kvm related kmem slabs to kmemcg")
+  78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
 
-from the kvm tree and commit:
+I have applied the following fix patch:
 
-  67ac5ee34976 ("kvm: whitelist struct kvm_vcpu_arch")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 2 Nov 2017 17:45:18 +1100
+Subject: [PATCH] powerpc/64s: ppc_save_regs is now needed for all 64s builds
 
-from the kspp tree.
+Fixes: 78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kernel/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+index 91960f83039c..34b6e729f38c 100644
+--- a/arch/powerpc/kernel/Makefile
++++ b/arch/powerpc/kernel/Makefile
+@@ -128,7 +128,7 @@ obj64-$(CONFIG_PPC_TRANSACTIONAL_MEM)	+= tm.o
+ obj-$(CONFIG_PPC64)		+= $(obj64-y)
+ obj-$(CONFIG_PPC32)		+= $(obj32-y)
+ 
+-ifneq ($(CONFIG_XMON)$(CONFIG_KEXEC_CORE),)
++ifneq ($(CONFIG_XMON)$(CONFIG_KEXEC_CORE)(CONFIG_PPC_BOOK3S),)
+ obj-y				+= ppc_save_regs.o
+ endif
+ 
+-- 
+2.14.1
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc virt/kvm/kvm_main.c
-index fe080f5152b6,1075d7338807..000000000000
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@@ -4006,8 -4009,11 +4006,12 @@@ int kvm_init(void *opaque, unsigned vcp
-  	/* A kmem cache lets us meet the alignment requirements of fx_save. */
-  	if (!vcpu_align)
-  		vcpu_align = __alignof__(struct kvm_vcpu);
-- 	kvm_vcpu_cache = kmem_cache_create("kvm_vcpu", vcpu_size, vcpu_align,
-- 					   SLAB_ACCOUNT, NULL);
-+ 	kvm_vcpu_cache =
-+ 		kmem_cache_create_usercopy("kvm_vcpu", vcpu_size, vcpu_align,
- -					   0, offsetof(struct kvm_vcpu, arch),
-++					   SLAB_ACCOUNT,
-++					   offsetof(struct kvm_vcpu, arch),
-+ 					   sizeof_field(struct kvm_vcpu, arch),
-+ 					   NULL);
-  	if (!kvm_vcpu_cache) {
-  		r = -ENOMEM;
-  		goto out_free_3;
