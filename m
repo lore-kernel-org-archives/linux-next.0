@@ -1,7 +1,7 @@
-From: Michal Hocko <mhocko@kernel.org>
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 Subject: Re: [PATCH] s390/mm: fix pud table accounting
-Date: Fri, 3 Nov 2017 10:17:08 +0100
-Message-ID: <20171103091708.eh4qgoxp3bc5vvkb@dhcp22.suse.cz>
+Date: Fri, 3 Nov 2017 12:20:49 +0300
+Message-ID: <20171103092048.ozmskabkq5rrwizz@black.fi.intel.com>
 References: <20171103090551.18231-1-heiko.carstens@de.ibm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -10,10 +10,10 @@ Content-Disposition: inline
 In-Reply-To: <20171103090551.18231-1-heiko.carstens@de.ibm.com>
 Sender: owner-linux-mm@kvack.org
 To: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri 03-11-17 10:05:51, Heiko Carstens wrote:
+On Fri, Nov 03, 2017 at 09:05:51AM +0000, Heiko Carstens wrote:
 > With "mm: account pud page tables" and "mm: consolidate page table
 > accounting" pud page table accounting was introduced which now results
 > in tons of warnings like this one on s390:
@@ -35,48 +35,12 @@ On Fri 03-11-17 10:05:51, Heiko Carstens wrote:
 > While at it also adjust the comment, since there is no "mm->nr_pmds"
 > anymore.
 
-Subtle...
+Thanks for tracking it down.
 
-Thanks for the fix, I didn't have any idea about this when reviewing.
-
-> Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-> Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-> ---
->  arch/s390/include/asm/mmu_context.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
-> index 3c9abedc323c..4f943d58cbac 100644
-> --- a/arch/s390/include/asm/mmu_context.h
-> +++ b/arch/s390/include/asm/mmu_context.h
-> @@ -43,6 +43,8 @@ static inline int init_new_context(struct task_struct *tsk,
->  		mm->context.asce_limit = STACK_TOP_MAX;
->  		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
->  				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
-> +		/* pgd_alloc() did not account this pud */
-> +		mm_inc_nr_puds(mm);
->  		break;
->  	case -PAGE_SIZE:
->  		/* forked 5-level task, set new asce with new_mm->pgd */
-> @@ -58,7 +60,7 @@ static inline int init_new_context(struct task_struct *tsk,
->  		/* forked 2-level compat task, set new asce with new mm->pgd */
->  		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
->  				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
-> -		/* pgd_alloc() did not increase mm->nr_pmds */
-> +		/* pgd_alloc() did not account this pmd */
->  		mm_inc_nr_pmds(mm);
->  	}
->  	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
-> -- 
-> 2.13.5
-> 
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
 -- 
-Michal Hocko
-SUSE Labs
+ Kirill A. Shutemov
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
