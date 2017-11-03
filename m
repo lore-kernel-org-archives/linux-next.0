@@ -1,54 +1,110 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: next-20171103 build: 3 failures 22 warnings (next-20171103)
-Date: Fri, 3 Nov 2017 21:16:21 +0100
-Message-ID: <CAK8P3a1j5p7wYpwY3neF8Z4EwcFsS6TciEy3UAcGaSfujrQN_Q@mail.gmail.com>
-References: <E1eAbKY-0001Sc-Ue@optimist> <CAK8P3a2JFOgp5nPmEnM9NATutQ_+aSxdHGh6YHcnveMJ+eASJg@mail.gmail.com>
- <20171104042729.2196dbe1ad905c71f18cbb1e@kernel.org>
+From: Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Date: Sat, 4 Nov 2017 06:00:34 +0900
+Message-ID: <20171104060034.4aae72a524c428c9fcb98152@kernel.org>
+References: <20171102135351.24ee83f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:48812 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750857AbdKCUQX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Nov 2017 16:16:23 -0400
-In-Reply-To: <20171104042729.2196dbe1ad905c71f18cbb1e@kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:55192 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750772AbdKCVAh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 3 Nov 2017 17:00:37 -0400
+In-Reply-To: <20171102135351.24ee83f9@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Build bot for Mark Brown <broonie@kernel.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, linaro-kernel@lists.linaro.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Hemminger <stephen@networkplumber.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Daniel Borkmann <dborkman@redhat.com>, Ian McDonald <ian.mcdonald@jandi.co.nz>, Wei Yongjun <yjwei@cn.fujitsu.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>
 
-On Fri, Nov 3, 2017 at 8:27 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> On Fri, 3 Nov 2017 15:44:53 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
->> On Fri, Nov 3, 2017 at 1:44 PM, Build bot for Mark Brown <broonie@kernel.org> wrote:
->>
->> > Warnings Summary: 22
->> >           2 ../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           2 ../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           1 ../arch/arm/probes/kprobes/test-core.c:398:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->> >           1 ../arch/arm/probes/kprobes/test-core.c:390:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->>
->> I need a little help from Masami Hiramatsu to understand what the plan is here:
->> Do we just need to remove those files now that jprobes are gone, or do
->> we actually want to restore the functionality using some other replacement code?
->>
->> I'm asking because the __deprecated warning seems unhelpful if there
->> isn't an easy way to address the warning.
->
-> It seems that the arm/probes case is just for testing, I'll just remove it
-> because it's functionality is gone.
+On Thu, 2 Nov 2017 13:53:51 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Makes sense, thanks!
+> Hi all,
+> 
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> produced these warnings:
+> 
+> net/dccp/probe.c: In function 'dccpprobe_init':
+> net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   ret = register_jprobe(&dccp_send_probe);
+>   ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>     ret = register_jprobe(&dccp_send_probe);
+>     ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/dccp/probe.c: In function 'dccpprobe_exit':
+> net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&dccp_send_probe);
+>   ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> net/ipv4/tcp_probe.c: In function 'tcpprobe_init':
+> net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   ret = register_jprobe(&tcp_jprobe);
+>   ^
+> In file included from net/ipv4/tcp_probe.c:24:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/ipv4/tcp_probe.c: In function 'tcpprobe_exit':
+> net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&tcp_jprobe);
+>   ^
+> In file included from net/ipv4/tcp_probe.c:24:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> net/sctp/probe.c: In function 'sctp_setup_jprobe':
+> net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   int ret = register_jprobe(&sctp_recv_probe);
+>   ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>    ret = register_jprobe(&sctp_recv_probe);
+>    ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/sctp/probe.c: In function 'sctpprobe_exit':
+> net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&sctp_recv_probe);
+>   ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> 
+> Introduced by commit
+> 
+>   590c84593045 ("kprobes: Disable the jprobes APIs")
+> 
+> These days we normally don't deprecate things, just remove them.  But we
+> do that *after* fixing up all the usages in the tree, please.
 
-> Others should be decided by network maintainers. Maybe those are not used anymore,
-> or should be rewritten by kprobes or ftrace.
+OK, should I remove __deprecated or revert above patch?
+I pinged such users but no response. I can just rewrite it but not sure they can reply.
 
-Added a few people to cc that worked on {tcp,dccp,sctp}_probe in the past
-for clarification. Do you already have plans to deal with this?
+Thank you,
 
-        Arnd
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
