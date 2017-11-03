@@ -1,34 +1,54 @@
-From: "Martin Kelly" <authentic@mypanel.biz>
-Subject: =?utf-8?q?Wir_bieten_jedem_ein_G=C3=9CNSTIGES_Darlehnen_zu_TOP_Konditione?=
- =?utf-8?q?n_an?=
-Date: Fri, 03 Nov 2017 00:39:37 -0700
-Message-ID: <20171103073722.D6F1FB83834__31587.0425467894$1509739553$gmane$org@mail.07d02.mspz7.gob.ec>
-Reply-To: kellyauthentic@gmail.com
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: next-20171103 build: 3 failures 22 warnings (next-20171103)
+Date: Fri, 3 Nov 2017 21:16:21 +0100
+Message-ID: <CAK8P3a1j5p7wYpwY3neF8Z4EwcFsS6TciEy3UAcGaSfujrQN_Q@mail.gmail.com>
+References: <E1eAbKY-0001Sc-Ue@optimist> <CAK8P3a2JFOgp5nPmEnM9NATutQ_+aSxdHGh6YHcnveMJ+eASJg@mail.gmail.com>
+ <20171104042729.2196dbe1ad905c71f18cbb1e@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.07d02.mspz7.gob.ec ([181.196.137.211]:35901 "EHLO
-        mail.07d02.mspz7.gob.ec" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751907AbdKCUFw (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Nov 2017 16:05:52 -0400
-Content-Description: Mail message body
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:48812 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750857AbdKCUQX (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 3 Nov 2017 16:16:23 -0400
+In-Reply-To: <20171104042729.2196dbe1ad905c71f18cbb1e@kernel.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Recipients <authentic@mypanel.biz>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Build bot for Mark Brown <broonie@kernel.org>, Kernel Build Reports Mailman List <kernel-build-reports@lists.linaro.org>, linaro-kernel@lists.linaro.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Hemminger <stephen@networkplumber.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>, Daniel Borkmann <dborkman@redhat.com>, Ian McDonald <ian.mcdonald@jandi.co.nz>, Wei Yongjun <yjwei@cn.fujitsu.com>
 
-Sehr geehrte Damen und Herren,
+On Fri, Nov 3, 2017 at 8:27 PM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> On Fri, 3 Nov 2017 15:44:53 +0100 Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Fri, Nov 3, 2017 at 1:44 PM, Build bot for Mark Brown <broonie@kernel.org> wrote:
+>>
+>> > Warnings Summary: 22
+>> >           2 ../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           2 ../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           1 ../arch/arm/probes/kprobes/test-core.c:398:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>> >           1 ../arch/arm/probes/kprobes/test-core.c:390:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>>
+>> I need a little help from Masami Hiramatsu to understand what the plan is here:
+>> Do we just need to remove those files now that jprobes are gone, or do
+>> we actually want to restore the functionality using some other replacement code?
+>>
+>> I'm asking because the __deprecated warning seems unhelpful if there
+>> isn't an easy way to address the warning.
+>
+> It seems that the arm/probes case is just for testing, I'll just remove it
+> because it's functionality is gone.
 
-Sie brauchen Geld? Sie sind auf der suche nach einem Darlehnen? Seriös und unkompliziert?
-Dann sind Sie hier bei uns genau richtig.
-Durch unsere jahrelange Erfahrung und kompetente Beratung sind wir Europaweit tätig.
+Makes sense, thanks!
 
-Wir bieten jedem ein GÜNSTIGES Darlehnen zu TOP Konditionen an. 
-Darlehnen zwischen 5000 CHF/Euro bis zu 20 Millionen CHF/Euro möglich.
-Wir erheben dazu 2% Zinssatz.
+> Others should be decided by network maintainers. Maybe those are not used anymore,
+> or should be rewritten by kprobes or ftrace.
 
-Lassen Sie sich von unserem kompetenten Team beraten. 
+Added a few people to cc that worked on {tcp,dccp,sctp}_probe in the past
+for clarification. Do you already have plans to deal with this?
 
-Zögern Sie nicht und kontaktieren Sie mich unter für weitere Infos & Anfragen unter
-der eingeblendeten Email Adresse: 
-Ich freue mich von Ihnen zu hören.
+        Arnd
