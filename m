@@ -1,40 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Fri, 3 Nov 2017 19:13:16 +1100
-Message-ID: <20171103191316.27a28dd9@canb.auug.org.au>
-References: <20171102162038.339466ef@canb.auug.org.au>
-        <CACRpkdY0rOxacH=kymWanruEgUcSsfXhy3CrogVUqg9WT_bjTg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:41971 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751960AbdKCINS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 3 Nov 2017 04:13:18 -0400
-In-Reply-To: <CACRpkdY0rOxacH=kymWanruEgUcSsfXhy3CrogVUqg9WT_bjTg@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [PATCH] s390/mm: fix pud table accounting
+Date: Fri,  3 Nov 2017 10:05:51 +0100
+Message-ID: <20171103090551.18231-1-heiko.carstens@de.ibm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-next@vger.kernel.org, linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>, "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Michal Hocko <mhocko@suse.com>, Gerald Schaefer <gerald.schaefer@de.ibm.com>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
+With "mm: account pud page tables" and "mm: consolidate page table
+accounting" pud page table accounting was introduced which now results
+in tons of warnings like this one on s390:
 
-On Fri, 3 Nov 2017 08:50:31 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> I applied this patch to the GPIO tree, I guess it is the right thing
-> to do at this point.
+BUG: non-zero pgtables_bytes on freeing mm: -16384
 
-Umm, you can't really validly apply my merge fix patch to the gpio tree
-without merging in part of the tip tree (it will generate, at least,
-warnings in your build testing of your tree) ...
+Reason for this are our run-time folded page tables: by default new
+processes start with three page table levels where the allocated pgd
+is the same as the first pud. In this case there won't ever be a pud
+allocated and therefore mm_inc_nr_puds() will also never be called.
 
-> I suspect the IRQ infrastructure will be pulled to Torvald's tree
-> first anyway.
+However when freeing the address space free_pud_range() will call
+exactly once mm_dec_nr_puds() which leads to misaccounting.
 
-You just need to let Linus know that this update is require (maybe
-provide him with my merge fix patch) when you send your pull request.
+Therefore call mm_inc_nr_puds() within init_new_context() to fix
+this. This is the same like we have it already for processes that run
+with two page table levels (aka compat processes).
 
+While at it also adjust the comment, since there is no "mm->nr_pmds"
+anymore.
+
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+---
+ arch/s390/include/asm/mmu_context.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+index 3c9abedc323c..4f943d58cbac 100644
+--- a/arch/s390/include/asm/mmu_context.h
++++ b/arch/s390/include/asm/mmu_context.h
+@@ -43,6 +43,8 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		mm->context.asce_limit = STACK_TOP_MAX;
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
++		/* pgd_alloc() did not account this pud */
++		mm_inc_nr_puds(mm);
+ 		break;
+ 	case -PAGE_SIZE:
+ 		/* forked 5-level task, set new asce with new_mm->pgd */
+@@ -58,7 +60,7 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		/* forked 2-level compat task, set new asce with new mm->pgd */
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+-		/* pgd_alloc() did not increase mm->nr_pmds */
++		/* pgd_alloc() did not account this pmd */
+ 		mm_inc_nr_pmds(mm);
+ 	}
+ 	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
 -- 
-Cheers,
-Stephen Rothwell
+2.13.5
