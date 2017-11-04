@@ -1,41 +1,51 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2017-11-03-13-00 uploaded
-Date: Fri, 3 Nov 2017 15:41:35 -0700
-Message-ID: <7137ff17-e194-2896-f471-91395b447f59@infradead.org>
-References: <59fccb0b.sRkbr0rZ7jKYyY01%akpm@linux-foundation.org>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Date: Sat, 4 Nov 2017 09:01:34 +0100
+Message-ID: <20171104080134.7i6vv2avlxqdvvz3@gmail.com>
+References: <20171102135351.24ee83f9@canb.auug.org.au>
+ <20171104060034.4aae72a524c428c9fcb98152@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <59fccb0b.sRkbr0rZ7jKYyY01%akpm@linux-foundation.org>
-Content-Language: en-US
-Sender: owner-linux-mm@kvack.org
-To: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org, X86 ML <x86@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wr0-f169.google.com ([209.85.128.169]:46320 "EHLO
+        mail-wr0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751559AbdKDIBi (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Sat, 4 Nov 2017 04:01:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20171104060034.4aae72a524c428c9fcb98152@kernel.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 11/03/2017 01:01 PM, akpm@linux-foundation.org wrote:
+
+* Masami Hiramatsu <mhiramat@kernel.org> wrote:
+
+> > net/sctp/probe.c: In function 'sctpprobe_exit':
+> > net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+> >   unregister_jprobe(&sctp_recv_probe);
+> >   ^
+> > In file included from net/sctp/probe.c:28:0:
+> > include/linux/kprobes.h:479:33: note: declared here
+> >  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+> >                                  ^
+> > 
+> > Introduced by commit
+> > 
+> >   590c84593045 ("kprobes: Disable the jprobes APIs")
+> > 
+> > These days we normally don't deprecate things, just remove them.  But we
+> > do that *after* fixing up all the usages in the tree, please.
 > 
-> This mmotm tree contains the following patches against 4.14-rc7:
-> (patches marked "*" will be included in linux-next)
-> 
->   origin.patch
-origin.patch has a problem.  When CONFIG_SMP is not enabled (on x86_64 e.g.):
+> OK, should I remove __deprecated or revert above patch?
+> I pinged such users but no response. I can just rewrite it but not sure they can reply.
 
--	if (cpu_has(c, X86_FEATURE_TSC))
-+	if (cpu_has(c, X86_FEATURE_TSC)) {
-+		unsigned int freq = arch_freq_get_on_cpu(cpu);
+Ideal would be to just fix all these places: convert code where the facility 
+appears to be actively used, remove code where it looks unused. If maintainers 
+don't reply, I can apply them to a separate branch in -tip.
 
+For example I'm pretty sure we can just remove the jprobes usage in SCTP.
 
-arch/x86/kernel/cpu/proc.o: In function `show_cpuinfo':
-proc.c:(.text+0x13d): undefined reference to `arch_freq_get_on_cpu'
-/local/lnx/mmotm/mmotm-2017-1103-1300/Makefile:994: recipe for target 'vmlinux' failed
+Thanks,
 
-
--- 
-~Randy
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+	Ingo
