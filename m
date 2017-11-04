@@ -1,70 +1,67 @@
-From: Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: linux-next: build warnings after merge of the tip tree
-Date: Sat, 4 Nov 2017 21:16:05 +0900
-Message-ID: <20171104211605.ce02abd1ea46c248105617bf@kernel.org>
-References: <20171102135351.24ee83f9@canb.auug.org.au>
-        <20171104060034.4aae72a524c428c9fcb98152@kernel.org>
-        <20171104080134.7i6vv2avlxqdvvz3@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: mmotm 2017-11-03-13-00 uploaded
+Date: Sun, 5 Nov 2017 08:17:00 +1100
+Message-ID: <20171105081700.50e04162@canb.auug.org.au>
+References: <59fccb0b.sRkbr0rZ7jKYyY01%akpm@linux-foundation.org>
+        <7137ff17-e194-2896-f471-91395b447f59@infradead.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
+Received: from ozlabs.org ([103.22.144.67]:36255 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752362AbdKDMQJ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sat, 4 Nov 2017 08:16:09 -0400
-In-Reply-To: <20171104080134.7i6vv2avlxqdvvz3@gmail.com>
+        id S1751895AbdKDVRE (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sat, 4 Nov 2017 17:17:04 -0400
+In-Reply-To: <7137ff17-e194-2896-f471-91395b447f59@infradead.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, mhocko@suse.cz, broonie@kernel.org, X86 ML <x86@kernel.org>
 
-On Sat, 4 Nov 2017 09:01:34 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
+Hi Randy,
 
-> 
-> * Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> 
-> > > net/sctp/probe.c: In function 'sctpprobe_exit':
-> > > net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-> > >   unregister_jprobe(&sctp_recv_probe);
-> > >   ^
-> > > In file included from net/sctp/probe.c:28:0:
-> > > include/linux/kprobes.h:479:33: note: declared here
-> > >  static inline void __deprecated unregister_jprobe(struct jprobe *p)
-> > >                                  ^
-> > > 
-> > > Introduced by commit
-> > > 
-> > >   590c84593045 ("kprobes: Disable the jprobes APIs")
-> > > 
-> > > These days we normally don't deprecate things, just remove them.  But we
-> > > do that *after* fixing up all the usages in the tree, please.
+On Fri, 3 Nov 2017 15:41:35 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+>
+> On 11/03/2017 01:01 PM, akpm@linux-foundation.org wrote:
 > > 
-> > OK, should I remove __deprecated or revert above patch?
-> > I pinged such users but no response. I can just rewrite it but not sure they can reply.
+> > This mmotm tree contains the following patches against 4.14-rc7:
+> > (patches marked "*" will be included in linux-next)
+> > 
+> >   origin.patch  
+> origin.patch has a problem.  When CONFIG_SMP is not enabled (on x86_64 e.g.):
 > 
-> Ideal would be to just fix all these places: convert code where the facility 
-> appears to be actively used, remove code where it looks unused. If maintainers 
-> don't reply, I can apply them to a separate branch in -tip.
-
-Thanks, that will help me.
-
+> -	if (cpu_has(c, X86_FEATURE_TSC))
+> +	if (cpu_has(c, X86_FEATURE_TSC)) {
+> +		unsigned int freq = arch_freq_get_on_cpu(cpu);
 > 
-> For example I'm pretty sure we can just remove the jprobes usage in SCTP.
+> 
+> arch/x86/kernel/cpu/proc.o: In function `show_cpuinfo':
+> proc.c:(.text+0x13d): undefined reference to `arch_freq_get_on_cpu'
+> /local/lnx/mmotm/mmotm-2017-1103-1300/Makefile:994: recipe for target 'vmlinux' failed
 
-Actually TCP and DCCP jprobes usages are similar to that SCTP usage 
-(maybe derived from TCP one). For those usages, we can not replace
-it with kprobe/ftrace because it depends on the arguments of target funcs.
-For such use-cases, we have 3 options;
- - Remove entirely feature if possible (like no more used).
- - Replace it with trace-events, and handle the event from kernel as sched tracer does.
- - Just introduce trace-events, remove usage, and trace it via ftrace or perf.
+That would be because the conflist in arch/x86/kernel/cpu/Makefile has
+been resolved the wrong way.  In the linux-next import, I have resolved
+it like this:
 
-At a glance, all network probes are just used for printing out the event,
-so we can just introduce trace-events and remove usage. I will try it.
+diff --cc arch/x86/kernel/cpu/Makefile
+index 236999c54edc,90cb82dbba57..000000000000
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@@ -22,7 -22,8 +22,8 @@@ obj-y                 += common.
+  obj-y                 += rdrand.o
+  obj-y                 += match.o
+  obj-y                 += bugs.o
+ -obj-$(CONFIG_CPU_FREQ)        += aperfmperf.o
+ +obj-y                 += aperfmperf.o
++ obj-y                 += cpuid-deps.o
+  
+  obj-$(CONFIG_PROC_FS) += proc.o
+  obj-$(CONFIG_X86_FEATURE_NAMES) += capflags.o powerflags.o
 
-Thank you,
+so it should bo OK there on Monday. [mmotm retained the:
 
+obj-$(CONFIG_CPU_FREQ)        += aperfmperf.o
+]
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Cheers,
+Stephen Rothwell
