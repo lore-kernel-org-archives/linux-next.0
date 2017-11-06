@@ -1,97 +1,122 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20171106 build: 2 failures 11 warnings (next-20171106)
-Date: Mon, 06 Nov 2017 10:54:04 +0000
-Message-ID: <E1eBf2a-0006wc-HJ@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44994 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751933AbdKFKyH (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 6 Nov 2017 05:54:07 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
-
-Tree/Branch: next-20171106
-Git describe: next-20171106
-Commit: 717d4dcea4 Add linux-next specific files for 20171106
-
-Build Time: 100 min 13 sec
-
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
-
-Errors: 0
-Warnings: 11
-Section Mismatches: 0
-
-Failed defconfigs:
-
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      9 warnings    0 mismatches  : arm64-allmodconfig
-     11 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 11
-	  2 ../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
-	  1 ../arch/arm/probes/kprobes/test-core.c:398:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  1 ../arch/arm/probes/kprobes/test-core.c:390:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build warning after merge of the regmap tree
+Date: Mon, 6 Nov 2017 11:21:43 +0000
+Message-ID: <20171106112143.ht4cmm2qngdbmmuy@sirena.co.uk>
+References: <20171106115214.19cb007a@canb.auug.org.au>
+ <20171106152157.2ad9a5a9@canb.auug.org.au>
+ <20171106153037.2afa3e7b@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="agmybq6rue55gqhj"
+Return-path: <linux-kbuild-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171106153037.2afa3e7b@canb.auug.org.au>
+Sender: linux-kbuild-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-kbuild@vger.kernel.org, "Yann E. MORIN" <yann.morin.1998@free.fr>, linux-remoteproc@vger.kernel.org, Ohad Ben-Cohen <ohad@wizery.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
+List-Id: linux-next.vger.kernel.org
 
 
+--agmybq6rue55gqhj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-===============================================================================
-Detailed per-defconfig build reports below:
+On Mon, Nov 06, 2017 at 03:30:37PM +1100, Stephen Rothwell wrote:
+> On Mon, 6 Nov 2017 15:21:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
+ wrote:
+> > On Mon, 6 Nov 2017 11:52:14 +1100 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
 
+> > > After merging the regmap tree, today's linux-next build
+> > > (arm_multi_v7_defconfig) produced this warning:
 
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 9 warnings, 0 section mismatches
+Not snipping Kconfig errors for context, looks like Kconfig is exploding...
 
-Warnings:
-	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
+> > > drivers/gpio/Kconfig:13:error: recursive dependency detected!
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_SUNXI
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by =
+PINCTRL_SUN6I_A31_R
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/pinctrl/sunxi/Kconfig:21:	symbol PINCTRL_SUN6I_A31_R depends =
+on RESET_CONTROLLER
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by QCOM_=
+SCM
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/firmware/Kconfig:205:	symbol QCOM_SCM is selected by QCOM_ADS=
+P_PIL
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/remoteproc/Kconfig:90:	symbol QCOM_ADSP_PIL depends on QCOM_S=
+MEM
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/soc/qcom/Kconfig:49:	symbol QCOM_SMEM depends on HWSPINLOCK
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/hwspinlock/Kconfig:5:	symbol HWSPINLOCK is selected by REGMAP
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/base/regmap/Kconfig:6:	symbol REGMAP is selected by PINCTRL_S=
+X150X
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/pinctrl/Kconfig:227:	symbol PINCTRL_SX150X is selected by GPI=
+O_SX150X
+> > > For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> > > subsection "Kconfig recursive dependency limitations"
+> > > drivers/gpio/Kconfig:821:	symbol GPIO_SX150X depends on GPIOLIB
+> > > warning: (ARCH_VEXPRESS) selects MFD_VEXPRESS_SYSREG which has unmet =
+direct dependencies (HAS_IOMEM && VEXPRESS_CONFIG && GPIOLIB && !ARCH_USES_=
+GETTIMEOFFSET)
+> > > warning: (ARCH_NOMADIK && ARCH_U8500) selects PINCTRL_NOMADIK which h=
+as unmet direct dependencies (PINCTRL && (ARCH_U8500 || ARCH_NOMADIK) && OF=
+ && GPIOLIB)
+> > > warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_MESON && PINCTR=
+L_OXNAS && PINCTRL_PISTACHIO && PINCTRL_PIC32 && PINCTRL_NOMADIK && PINCTRL=
+_MTK && GPIO_TB10X) selects OF_GPIO which has unmet direct dependencies (GP=
+IOLIB && OF && HAS_IOMEM)
 
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
+> > > Maybe introduced by commit
 
-Warnings:
-	../arch/arm/probes/kprobes/test-core.c:390:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../arch/arm/probes/kprobes/test-core.c:398:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../drivers/soc/qcom/rmtfs_mem.c:211:1: warning: label 'remove_cdev' defined but not used [-Wunused-label]
--------------------------------------------------------------------------------
+> > >   f25637a6b89e ("regmap: Add a config option for hwspinlock") =20
 
-Passed with no errors, warnings or mismatches:
+> > Things got worse during the day until config started segfaulting, so I
+> > reverted this commit.
 
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+> That necessitated me reverting commits
+
+>   8698b9364710 ("regmap: Add hardware spinlock support")
+>   267f3e4f18f1 ("regmap: Also protect hwspinlock in error handling path")
+>   e8419c40a5ad ("regmap: Clean up hwspinlock on regmap exit")
+
+This seems like there's a Kconfig bug, it's claiming HWSPINLOCK is
+selected by regmap but the select is conditional and not actually
+enabled.  You could potentially get a recursive dependency but there
+isn't one right now.  The root issue here is that HWSPINLOCK can be
+built modular which makes it very painful to use from core code.
+
+--agmybq6rue55gqhj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloARcQACgkQJNaLcl1U
+h9C48Af8DsmbmPszkoeO3CrbS/ZtAc1XvCpT5THuTsvwwkZBud+FG9MsgfKvCwc1
+G2Nb2+Nqt45pUyGlHmv15OspgCTChJfuCecMCOXT/aZP/LLLhv2K1IIZR0yRCQVI
+/xJ4VijaGivf/OxvGT29Zpvz8o5If6XKbgQjpndg197BQJWsZRzVYQGupB1D5zVJ
+CmMcB8bzxogon9y+rfXoYwfjbNw9CA30hk2inBjPXed/LkVpx7De4P8qMwKIXt+8
+mkWA7U83xJ+ldBsurAgDyy++VnRBa/n8fauFcl5sub8VmImFlbI2dVV1zJQ4fZ/M
+Q4k0QT9ryC5J52upUIF5fgKEweDCCw==
+=feuq
+-----END PGP SIGNATURE-----
+
+--agmybq6rue55gqhj--
