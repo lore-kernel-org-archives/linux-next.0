@@ -1,80 +1,68 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the regmap tree
-Date: Mon, 6 Nov 2017 15:30:37 +1100
-Message-ID: <20171106153037.2afa3e7b@canb.auug.org.au>
-References: <20171106115214.19cb007a@canb.auug.org.au>
-        <20171106152157.2ad9a5a9@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the arm64
+ tree
+Date: Mon, 6 Nov 2017 16:33:09 +1100
+Message-ID: <20171106163309.6612ffb0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171106152157.2ad9a5a9@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54105 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750715AbdKFFdL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 6 Nov 2017 00:33:11 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, =?UTF-8?B?SsO8cmc=?= Billeter <j@bitron.ch>, Dave Martin <Dave.Martin@arm.com>, Will Deacon <will.deacon@arm.com>
 
-Hi Mark,
+Hi Andrew,
 
-On Mon, 6 Nov 2017 15:21:57 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> On Mon, 6 Nov 2017 11:52:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the regmap tree, today's linux-next build
-> > (arm_multi_v7_defconfig) produced this warning:
-> > 
-> > drivers/gpio/Kconfig:13:error: recursive dependency detected!
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_SUNXI
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by PINCTRL_SUN6I_A31_R
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/pinctrl/sunxi/Kconfig:21:	symbol PINCTRL_SUN6I_A31_R depends on RESET_CONTROLLER
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by QCOM_SCM
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/firmware/Kconfig:205:	symbol QCOM_SCM is selected by QCOM_ADSP_PIL
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/remoteproc/Kconfig:90:	symbol QCOM_ADSP_PIL depends on QCOM_SMEM
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/soc/qcom/Kconfig:49:	symbol QCOM_SMEM depends on HWSPINLOCK
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/hwspinlock/Kconfig:5:	symbol HWSPINLOCK is selected by REGMAP
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/base/regmap/Kconfig:6:	symbol REGMAP is selected by PINCTRL_SX150X
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/pinctrl/Kconfig:227:	symbol PINCTRL_SX150X is selected by GPIO_SX150X
-> > For a resolution refer to Documentation/kbuild/kconfig-language.txt
-> > subsection "Kconfig recursive dependency limitations"
-> > drivers/gpio/Kconfig:821:	symbol GPIO_SX150X depends on GPIOLIB
-> > warning: (ARCH_VEXPRESS) selects MFD_VEXPRESS_SYSREG which has unmet direct dependencies (HAS_IOMEM && VEXPRESS_CONFIG && GPIOLIB && !ARCH_USES_GETTIMEOFFSET)
-> > warning: (ARCH_NOMADIK && ARCH_U8500) selects PINCTRL_NOMADIK which has unmet direct dependencies (PINCTRL && (ARCH_U8500 || ARCH_NOMADIK) && OF && GPIOLIB)
-> > warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_MESON && PINCTRL_OXNAS && PINCTRL_PISTACHIO && PINCTRL_PIC32 && PINCTRL_NOMADIK && PINCTRL_MTK && GPIO_TB10X) selects OF_GPIO which has unmet direct dependencies (GPIOLIB && OF && HAS_IOMEM)
-> > 
-> > Maybe introduced by commit
-> > 
-> >   f25637a6b89e ("regmap: Add a config option for hwspinlock")  
-> 
-> Things got worse during the day until config started segfaulting, so I
-> reverted this commit.
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-That necessitated me reverting commits
+  include/uapi/linux/prctl.h
 
-  8698b9364710 ("regmap: Add hardware spinlock support")
-  267f3e4f18f1 ("regmap: Also protect hwspinlock in error handling path")
-  e8419c40a5ad ("regmap: Clean up hwspinlock on regmap exit")
+between commit:
 
-as well.
+  7582e22038a2 ("arm64/sve: Backend logic for setting the vector length")
+  2d2123bc7c7f ("arm64/sve: Add prctl controls for userspace vector length management")
+
+from the arm64 tree and commit:
+
+  4391ebaac0d6 ("prctl: add PR_[GS]ET_PDEATHSIG_PROC")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/uapi/linux/prctl.h
+index af5f8c2df87a,5e7068e45126..000000000000
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@@ -198,13 -198,8 +198,17 @@@ struct prctl_mm_map 
+  # define PR_CAP_AMBIENT_LOWER		3
+  # define PR_CAP_AMBIENT_CLEAR_ALL	4
+  
++ /* Process-based variant of PDEATHSIG */
++ #define PR_SET_PDEATHSIG_PROC		48
++ #define PR_GET_PDEATHSIG_PROC		49
++ 
+ +/* arm64 Scalable Vector Extension controls */
+ +/* Flag values must be kept in sync with ptrace NT_ARM_SVE interface */
+ +#define PR_SVE_SET_VL			50	/* set task vector length */
+ +# define PR_SVE_SET_VL_ONEXEC		(1 << 18) /* defer effect until exec */
+ +#define PR_SVE_GET_VL			51	/* get task vector length */
+ +/* Bits common to PR_SVE_SET_VL and PR_SVE_GET_VL */
+ +# define PR_SVE_VL_LEN_MASK		0xffff
+ +# define PR_SVE_VL_INHERIT		(1 << 17) /* inherit across exec */
+ +
+  #endif /* _LINUX_PRCTL_H */
