@@ -1,43 +1,133 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
-Date: Mon, 6 Nov 2017 13:56:36 +1100
-Message-ID: <20171106135636.2958f4a3@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi tree with Linus' tree
+Date: Mon, 6 Nov 2017 14:48:28 +1100
+Message-ID: <20171106144828.37919ead@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39677 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39333 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751641AbdKFC4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Nov 2017 21:56:38 -0500
+        id S1750778AbdKFDsa (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 5 Nov 2017 22:48:30 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dongjiu Geng <gengdongjiu@huawei.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>
 
-Hi all,
+Hi James,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the scsi tree got a conflict in:
 
-  arch/arm64/kvm/inject_fault.c
+  include/scsi/scsi_devinfo.h
 
 between commit:
 
-  fd6c8c206fc5 ("arm/arm64: KVM: set right LR register value for 32 bit guest when inject abort")
+  28a0bc4120d3 ("scsi: sd: Implement blacklist option for WRITE SAME w/ UNMAP")
 
 from Linus' tree and commit:
 
-  00586cdaf597 ("KVM: arm/arm64: Unify 32bit fault injection")
+  f26aeada0493 ("scsi: scsi_devinfo: Reformat blacklist flags")
 
-from the kvm-arm tree.
+from the scsi tree.
 
-I fixed it up (I just used the latter) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc include/scsi/scsi_devinfo.h
+index 3575693bb628,7a2329c026a4..000000000000
+--- a/include/scsi/scsi_devinfo.h
++++ b/include/scsi/scsi_devinfo.h
+@@@ -4,32 -3,55 +4,57 @@@
+  /*
+   * Flags for SCSI devices that need special treatment
+   */
+- #define BLIST_NOLUN     	0x001	/* Only scan LUN 0 */
+- #define BLIST_FORCELUN  	0x002	/* Known to have LUNs, force scanning,
+- 					   deprecated: Use max_luns=N */
+- #define BLIST_BORKEN    	0x004	/* Flag for broken handshaking */
+- #define BLIST_KEY       	0x008	/* unlock by special command */
+- #define BLIST_SINGLELUN 	0x010	/* Do not use LUNs in parallel */
+- #define BLIST_NOTQ		0x020	/* Buggy Tagged Command Queuing */
+- #define BLIST_SPARSELUN 	0x040	/* Non consecutive LUN numbering */
+- #define BLIST_MAX5LUN		0x080	/* Avoid LUNS >= 5 */
+- #define BLIST_ISROM     	0x100	/* Treat as (removable) CD-ROM */
+- #define BLIST_LARGELUN		0x200	/* LUNs past 7 on a SCSI-2 device */
+- #define BLIST_INQUIRY_36	0x400	/* override additional length field */
+- #define BLIST_NOSTARTONADD	0x1000	/* do not do automatic start on add */
+- #define BLIST_REPORTLUN2	0x20000	/* try REPORT_LUNS even for SCSI-2 devs
+-  					   (if HBA supports more than 8 LUNs) */
+- #define BLIST_NOREPORTLUN	0x40000	/* don't try REPORT_LUNS scan (SCSI-3 devs) */
+- #define BLIST_NOT_LOCKABLE	0x80000	/* don't use PREVENT-ALLOW commands */
+- #define BLIST_NO_ULD_ATTACH	0x100000 /* device is actually for RAID config */
+- #define BLIST_SELECT_NO_ATN	0x200000 /* select without ATN */
+- #define BLIST_RETRY_HWERROR	0x400000 /* retry HARDWARE_ERROR */
+- #define BLIST_MAX_512		0x800000 /* maximum 512 sector cdb length */
+- #define BLIST_NO_DIF		0x2000000 /* Disable T10 PI (DIF) */
+- #define BLIST_SKIP_VPD_PAGES	0x4000000 /* Ignore SBC-3 VPD pages */
+- #define BLIST_TRY_VPD_PAGES	0x10000000 /* Attempt to read VPD pages */
+- #define BLIST_NO_RSOC		0x20000000 /* don't try to issue RSOC */
+- #define BLIST_MAX_1024		0x40000000 /* maximum 1024 sector cdb length */
+- #define BLIST_UNMAP_LIMIT_WS	0x80000000 /* Use UNMAP limit for WRITE SAME */
++ 
++ /* Only scan LUN 0 */
++ #define BLIST_NOLUN		((__force __u32 __bitwise)(1 << 0))
++ /* Known to have LUNs, force scanning.
++  * DEPRECATED: Use max_luns=N */
++ #define BLIST_FORCELUN		((__force __u32 __bitwise)(1 << 1))
++ /* Flag for broken handshaking */
++ #define BLIST_BORKEN		((__force __u32 __bitwise)(1 << 2))
++ /* unlock by special command */
++ #define BLIST_KEY		((__force __u32 __bitwise)(1 << 3))
++ /* Do not use LUNs in parallel */
++ #define BLIST_SINGLELUN		((__force __u32 __bitwise)(1 << 4))
++ /* Buggy Tagged Command Queuing */
++ #define BLIST_NOTQ		((__force __u32 __bitwise)(1 << 5))
++ /* Non consecutive LUN numbering */
++ #define BLIST_SPARSELUN		((__force __u32 __bitwise)(1 << 6))
++ /* Avoid LUNS >= 5 */
++ #define BLIST_MAX5LUN		((__force __u32 __bitwise)(1 << 7))
++ /* Treat as (removable) CD-ROM */
++ #define BLIST_ISROM		((__force __u32 __bitwise)(1 << 8))
++ /* LUNs past 7 on a SCSI-2 device */
++ #define BLIST_LARGELUN		((__force __u32 __bitwise)(1 << 9))
++ /* override additional length field */
++ #define BLIST_INQUIRY_36	((__force __u32 __bitwise)(1 << 10))
++ /* do not do automatic start on add */
++ #define BLIST_NOSTARTONADD	((__force __u32 __bitwise)(1 << 12))
++ /* try REPORT_LUNS even for SCSI-2 devs (if HBA supports more than 8 LUNs) */
++ #define BLIST_REPORTLUN2	((__force __u32 __bitwise)(1 << 17))
++ /* don't try REPORT_LUNS scan (SCSI-3 devs) */
++ #define BLIST_NOREPORTLUN	((__force __u32 __bitwise)(1 << 18))
++ /* don't use PREVENT-ALLOW commands */
++ #define BLIST_NOT_LOCKABLE	((__force __u32 __bitwise)(1 << 19))
++ /* device is actually for RAID config */
++ #define BLIST_NO_ULD_ATTACH	((__force __u32 __bitwise)(1 << 20))
++ /* select without ATN */
++ #define BLIST_SELECT_NO_ATN	((__force __u32 __bitwise)(1 << 21))
++ /* retry HARDWARE_ERROR */
++ #define BLIST_RETRY_HWERROR	((__force __u32 __bitwise)(1 << 22))
++ /* maximum 512 sector cdb length */
++ #define BLIST_MAX_512		((__force __u32 __bitwise)(1 << 23))
++ /* Disable T10 PI (DIF) */
++ #define BLIST_NO_DIF		((__force __u32 __bitwise)(1 << 25))
++ /* Ignore SBC-3 VPD pages */
++ #define BLIST_SKIP_VPD_PAGES	((__force __u32 __bitwise)(1 << 26))
++ /* Attempt to read VPD pages */
++ #define BLIST_TRY_VPD_PAGES	((__force __u32 __bitwise)(1 << 28))
++ /* don't try to issue RSOC */
++ #define BLIST_NO_RSOC		((__force __u32 __bitwise)(1 << 29))
++ /* maximum 1024 sector cdb length */
++ #define BLIST_MAX_1024		((__force __u32 __bitwise)(1 << 30))
+++/* Use UNMAP limit for WRITE SAME */
+++#define BLIST_UNMAP_LIMIT_WS	((__force __u32 __bitwise)(1 << 31))
+  
+  #endif
