@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kvm-arm tree with Linus' tree
-Date: Mon, 6 Nov 2017 13:52:20 +1100
-Message-ID: <20171106135220.77c2101d@canb.auug.org.au>
+Date: Mon, 6 Nov 2017 13:56:36 +1100
+Message-ID: <20171106135636.2958f4a3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59671 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:39677 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750848AbdKFCwV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Nov 2017 21:52:21 -0500
+        id S1751641AbdKFC4i (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 5 Nov 2017 21:56:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>
@@ -19,7 +19,7 @@ Hi all,
 
 Today's linux-next merge of the kvm-arm tree got a conflict in:
 
-  arch/arm/kvm/emulate.c
+  arch/arm64/kvm/inject_fault.c
 
 between commit:
 
@@ -31,7 +31,7 @@ from Linus' tree and commit:
 
 from the kvm-arm tree.
 
-I fixed it up (I just used the latter version) and can carry the fix as
+I fixed it up (I just used the latter) and can carry the fix as
 necessary. This is now fixed as far as linux-next is concerned, but any
 non trivial conflicts should be mentioned to your upstream maintainer
 when your tree is submitted for merging.  You may also want to consider
