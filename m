@@ -1,133 +1,74 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi tree with Linus' tree
-Date: Mon, 6 Nov 2017 14:48:28 +1100
-Message-ID: <20171106144828.37919ead@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the regmap tree
+Date: Mon, 6 Nov 2017 15:21:57 +1100
+Message-ID: <20171106152157.2ad9a5a9@canb.auug.org.au>
+References: <20171106115214.19cb007a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39333 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:43547 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750778AbdKFDsa (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 5 Nov 2017 22:48:30 -0500
+        id S1750766AbdKFEWA (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 5 Nov 2017 23:22:00 -0500
+In-Reply-To: <20171106115214.19cb007a@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Hannes Reinecke <hare@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi James,
+Hi Mark,
 
-Today's linux-next merge of the scsi tree got a conflict in:
+On Mon, 6 Nov 2017 11:52:14 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the regmap tree, today's linux-next build
+> (arm_multi_v7_defconfig) produced this warning:
+> 
+> drivers/gpio/Kconfig:13:error: recursive dependency detected!
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/gpio/Kconfig:13:	symbol GPIOLIB is selected by PINCTRL_SUNXI
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/pinctrl/sunxi/Kconfig:3:	symbol PINCTRL_SUNXI is selected by PINCTRL_SUN6I_A31_R
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/pinctrl/sunxi/Kconfig:21:	symbol PINCTRL_SUN6I_A31_R depends on RESET_CONTROLLER
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/reset/Kconfig:4:	symbol RESET_CONTROLLER is selected by QCOM_SCM
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/firmware/Kconfig:205:	symbol QCOM_SCM is selected by QCOM_ADSP_PIL
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/remoteproc/Kconfig:90:	symbol QCOM_ADSP_PIL depends on QCOM_SMEM
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/soc/qcom/Kconfig:49:	symbol QCOM_SMEM depends on HWSPINLOCK
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/hwspinlock/Kconfig:5:	symbol HWSPINLOCK is selected by REGMAP
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/base/regmap/Kconfig:6:	symbol REGMAP is selected by PINCTRL_SX150X
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/pinctrl/Kconfig:227:	symbol PINCTRL_SX150X is selected by GPIO_SX150X
+> For a resolution refer to Documentation/kbuild/kconfig-language.txt
+> subsection "Kconfig recursive dependency limitations"
+> drivers/gpio/Kconfig:821:	symbol GPIO_SX150X depends on GPIOLIB
+> warning: (ARCH_VEXPRESS) selects MFD_VEXPRESS_SYSREG which has unmet direct dependencies (HAS_IOMEM && VEXPRESS_CONFIG && GPIOLIB && !ARCH_USES_GETTIMEOFFSET)
+> warning: (ARCH_NOMADIK && ARCH_U8500) selects PINCTRL_NOMADIK which has unmet direct dependencies (PINCTRL && (ARCH_U8500 || ARCH_NOMADIK) && OF && GPIOLIB)
+> warning: (PINCTRL_AT91 && PINCTRL_AT91PIO4 && PINCTRL_MESON && PINCTRL_OXNAS && PINCTRL_PISTACHIO && PINCTRL_PIC32 && PINCTRL_NOMADIK && PINCTRL_MTK && GPIO_TB10X) selects OF_GPIO which has unmet direct dependencies (GPIOLIB && OF && HAS_IOMEM)
+> 
+> Maybe introduced by commit
+> 
+>   f25637a6b89e ("regmap: Add a config option for hwspinlock")
 
-  include/scsi/scsi_devinfo.h
-
-between commit:
-
-  28a0bc4120d3 ("scsi: sd: Implement blacklist option for WRITE SAME w/ UNMAP")
-
-from Linus' tree and commit:
-
-  f26aeada0493 ("scsi: scsi_devinfo: Reformat blacklist flags")
-
-from the scsi tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Things got worse during the day until config started segfaulting, so I
+reverted this commit.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc include/scsi/scsi_devinfo.h
-index 3575693bb628,7a2329c026a4..000000000000
---- a/include/scsi/scsi_devinfo.h
-+++ b/include/scsi/scsi_devinfo.h
-@@@ -4,32 -3,55 +4,57 @@@
-  /*
-   * Flags for SCSI devices that need special treatment
-   */
-- #define BLIST_NOLUN     	0x001	/* Only scan LUN 0 */
-- #define BLIST_FORCELUN  	0x002	/* Known to have LUNs, force scanning,
-- 					   deprecated: Use max_luns=N */
-- #define BLIST_BORKEN    	0x004	/* Flag for broken handshaking */
-- #define BLIST_KEY       	0x008	/* unlock by special command */
-- #define BLIST_SINGLELUN 	0x010	/* Do not use LUNs in parallel */
-- #define BLIST_NOTQ		0x020	/* Buggy Tagged Command Queuing */
-- #define BLIST_SPARSELUN 	0x040	/* Non consecutive LUN numbering */
-- #define BLIST_MAX5LUN		0x080	/* Avoid LUNS >= 5 */
-- #define BLIST_ISROM     	0x100	/* Treat as (removable) CD-ROM */
-- #define BLIST_LARGELUN		0x200	/* LUNs past 7 on a SCSI-2 device */
-- #define BLIST_INQUIRY_36	0x400	/* override additional length field */
-- #define BLIST_NOSTARTONADD	0x1000	/* do not do automatic start on add */
-- #define BLIST_REPORTLUN2	0x20000	/* try REPORT_LUNS even for SCSI-2 devs
--  					   (if HBA supports more than 8 LUNs) */
-- #define BLIST_NOREPORTLUN	0x40000	/* don't try REPORT_LUNS scan (SCSI-3 devs) */
-- #define BLIST_NOT_LOCKABLE	0x80000	/* don't use PREVENT-ALLOW commands */
-- #define BLIST_NO_ULD_ATTACH	0x100000 /* device is actually for RAID config */
-- #define BLIST_SELECT_NO_ATN	0x200000 /* select without ATN */
-- #define BLIST_RETRY_HWERROR	0x400000 /* retry HARDWARE_ERROR */
-- #define BLIST_MAX_512		0x800000 /* maximum 512 sector cdb length */
-- #define BLIST_NO_DIF		0x2000000 /* Disable T10 PI (DIF) */
-- #define BLIST_SKIP_VPD_PAGES	0x4000000 /* Ignore SBC-3 VPD pages */
-- #define BLIST_TRY_VPD_PAGES	0x10000000 /* Attempt to read VPD pages */
-- #define BLIST_NO_RSOC		0x20000000 /* don't try to issue RSOC */
-- #define BLIST_MAX_1024		0x40000000 /* maximum 1024 sector cdb length */
-- #define BLIST_UNMAP_LIMIT_WS	0x80000000 /* Use UNMAP limit for WRITE SAME */
-+ 
-+ /* Only scan LUN 0 */
-+ #define BLIST_NOLUN		((__force __u32 __bitwise)(1 << 0))
-+ /* Known to have LUNs, force scanning.
-+  * DEPRECATED: Use max_luns=N */
-+ #define BLIST_FORCELUN		((__force __u32 __bitwise)(1 << 1))
-+ /* Flag for broken handshaking */
-+ #define BLIST_BORKEN		((__force __u32 __bitwise)(1 << 2))
-+ /* unlock by special command */
-+ #define BLIST_KEY		((__force __u32 __bitwise)(1 << 3))
-+ /* Do not use LUNs in parallel */
-+ #define BLIST_SINGLELUN		((__force __u32 __bitwise)(1 << 4))
-+ /* Buggy Tagged Command Queuing */
-+ #define BLIST_NOTQ		((__force __u32 __bitwise)(1 << 5))
-+ /* Non consecutive LUN numbering */
-+ #define BLIST_SPARSELUN		((__force __u32 __bitwise)(1 << 6))
-+ /* Avoid LUNS >= 5 */
-+ #define BLIST_MAX5LUN		((__force __u32 __bitwise)(1 << 7))
-+ /* Treat as (removable) CD-ROM */
-+ #define BLIST_ISROM		((__force __u32 __bitwise)(1 << 8))
-+ /* LUNs past 7 on a SCSI-2 device */
-+ #define BLIST_LARGELUN		((__force __u32 __bitwise)(1 << 9))
-+ /* override additional length field */
-+ #define BLIST_INQUIRY_36	((__force __u32 __bitwise)(1 << 10))
-+ /* do not do automatic start on add */
-+ #define BLIST_NOSTARTONADD	((__force __u32 __bitwise)(1 << 12))
-+ /* try REPORT_LUNS even for SCSI-2 devs (if HBA supports more than 8 LUNs) */
-+ #define BLIST_REPORTLUN2	((__force __u32 __bitwise)(1 << 17))
-+ /* don't try REPORT_LUNS scan (SCSI-3 devs) */
-+ #define BLIST_NOREPORTLUN	((__force __u32 __bitwise)(1 << 18))
-+ /* don't use PREVENT-ALLOW commands */
-+ #define BLIST_NOT_LOCKABLE	((__force __u32 __bitwise)(1 << 19))
-+ /* device is actually for RAID config */
-+ #define BLIST_NO_ULD_ATTACH	((__force __u32 __bitwise)(1 << 20))
-+ /* select without ATN */
-+ #define BLIST_SELECT_NO_ATN	((__force __u32 __bitwise)(1 << 21))
-+ /* retry HARDWARE_ERROR */
-+ #define BLIST_RETRY_HWERROR	((__force __u32 __bitwise)(1 << 22))
-+ /* maximum 512 sector cdb length */
-+ #define BLIST_MAX_512		((__force __u32 __bitwise)(1 << 23))
-+ /* Disable T10 PI (DIF) */
-+ #define BLIST_NO_DIF		((__force __u32 __bitwise)(1 << 25))
-+ /* Ignore SBC-3 VPD pages */
-+ #define BLIST_SKIP_VPD_PAGES	((__force __u32 __bitwise)(1 << 26))
-+ /* Attempt to read VPD pages */
-+ #define BLIST_TRY_VPD_PAGES	((__force __u32 __bitwise)(1 << 28))
-+ /* don't try to issue RSOC */
-+ #define BLIST_NO_RSOC		((__force __u32 __bitwise)(1 << 29))
-+ /* maximum 1024 sector cdb length */
-+ #define BLIST_MAX_1024		((__force __u32 __bitwise)(1 << 30))
-++/* Use UNMAP limit for WRITE SAME */
-++#define BLIST_UNMAP_LIMIT_WS	((__force __u32 __bitwise)(1 << 31))
-  
-  #endif
