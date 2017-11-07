@@ -1,71 +1,56 @@
 From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [linux-next][0692229e] next-20171106 fails to boot on Power 7
-Date: Tue, 7 Nov 2017 11:28:54 +0100
-Message-ID: <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+Subject: Re: [0692229e] next-20171106 fails to boot on Power 7
+Date: Tue, 7 Nov 2017 12:49:00 +0100
+Message-ID: <20171107114900.7zdpgfatbmg3xugg@dhcp22.suse.cz>
 References: <1510048229.12079.7.camel@abdul.in.ibm.com>
+ <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx2.suse.de ([195.135.220.15]:39477 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752689AbdKGLtC (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 7 Nov 2017 06:49:02 -0500
 Content-Disposition: inline
-In-Reply-To: <1510048229.12079.7.camel@abdul.in.ibm.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
 
-On Tue 07-11-17 15:20:29, Abdul Haleem wrote:
-> Hi,
+On Tue 07-11-17 11:28:54, Michal Hocko wrote:
+> On Tue 07-11-17 15:20:29, Abdul Haleem wrote:
+> > Hi,
+> > 
+> > Today's next kernel fails to boot on Power 7 Machine with below errors
+> > in boot log messages.
+> > 
+> > 'Uhuuh, elf segement at 0000000010040000 requested but the memory is
+> > mapped already'
+> > 
+> > It was introduced with commit:
+> > 
+> > 0692229e : fs/binfmt_elf.c: drop MAP_FIXED usage from elf_map
 > 
-> Today's next kernel fails to boot on Power 7 Machine with below errors
-> in boot log messages.
-> 
-> 'Uhuuh, elf segement at 0000000010040000 requested but the memory is
-> mapped already'
-> 
-> It was introduced with commit:
-> 
-> 0692229e : fs/binfmt_elf.c: drop MAP_FIXED usage from elf_map
+> Weird. Clashes shouldn't really happen. Maybe power is doing something
+> different from other platforms. Could you apply the following debugging
+> patch to see what is going on there?
 
-Weird. Clashes shouldn't really happen. Maybe power is doing something
-different from other platforms. Could you apply the following debugging
-patch to see what is going on there?
----
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 0abc30d681ae..f098aaf60039 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -361,8 +361,28 @@ static unsigned long elf_vm_mmap(struct file *filep, unsigned long addr,
- 		return map_addr;
- 
- 	if ((type & MAP_FIXED) && map_addr != addr) {
--		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already\n",
--				(void*)addr);
-+		struct mm_struct *mm = current->mm;
-+		struct vm_area_struct *vma;
-+		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already, got %p\n",
-+				(void*)addr, (void*)map_addr);
-+		down_read(&mm->mmap_sem);
-+		vma = find_vma(mm, addr);
-+		if (vma) {
-+			const char *name;
-+			pr_info("Clashing vma [%lx, %lx] flags:%lx", vma->vm_start, vma->vm_end, vma->vm_flags);
-+			name = arch_vma_name(vma);
-+			if (!name) {
-+				if (vma->vm_start <= mm->brk &&
-+				    vma->vm_end >= mm->start_brk)
-+					name = "[heap]";
-+				else if (vma->vm_start <= vma->vm_mm->start_stack &&
-+						vma->vm_end >= vma->vm_mm->start_stack)
-+					name = "[stack]";
-+			}
-+			pr_cont(" name:%s\n", name);
-+		} else
-+			pr_info("Uhm, no clashing VMA\n");
-+		up_read(&mm->mmap_sem);
- 		return -EAGAIN;
- 	}
- 
+I have checked the ppc arch_get_unmapped_area and somethig I wouldn't be
+surprised if we triped over
+	if (!fixed && addr) {
+		addr = _ALIGN_UP(addr, 1ul << pshift);
+		slice_dbg(" aligned addr=%lx\n", addr);
+		/* Ignore hint if it's too large or overlaps a VMA */
+		if (addr > mm->task_size - len ||
+		    !slice_area_is_free(mm, addr, len))
+			addr = 0;
+	}
 
+I do not pretend to understand why this is needed or what this actually
+does but if the debugging check simply shows that there is no
+overlapping VMA then we simply have to come up with a ppc specific code
+to handle this...
 -- 
 Michal Hocko
 SUSE Labs
