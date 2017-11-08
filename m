@@ -1,37 +1,78 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: build warning after merge of the netfilter-next tree
-Date: Thu, 9 Nov 2017 00:40:14 +0100
-Message-ID: <20171108234014.GA1788@salvia>
-References: <20171107110248.7f1924a7@canb.auug.org.au>
- <20171108190052.63dfd8ce@canb.auug.org.au>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: build failure after merge of the kspp tree
+Date: Wed, 8 Nov 2017 15:43:47 -0800
+Message-ID: <CAGXu5jLvnRAXk3Ka0bMXOyhNDwj4ZBduXEci44gkZfr1_WO8yA@mail.gmail.com>
+References: <20171108162358.3a6d96bb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171108190052.63dfd8ce@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-io0-f177.google.com ([209.85.223.177]:50344 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752826AbdKHXnt (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Nov 2017 18:43:49 -0500
+Received: by mail-io0-f177.google.com with SMTP id 97so7851900iok.7
+        for <linux-next@vger.kernel.org>; Wed, 08 Nov 2017 15:43:48 -0800 (PST)
+In-Reply-To: <20171108162358.3a6d96bb@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
-List-Id: linux-next.vger.kernel.org
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Windsor <dave@nullcore.net>, Christoph Hellwig <hch@lst.de>
 
-On Wed, Nov 08, 2017 at 07:00:52PM +1100, Stephen Rothwell wrote:
-> Hi Dave,
-> 
-> On Tue, 7 Nov 2017 11:02:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Hi all,
-> > 
-> > After merging the netfilter-next tree, today's linux-next build (powerpc
-> > ppc64_defconfig) produced this warning:
-> > 
-> > net/netfilter/nf_conntrack_netlink.c:536:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
-> >  static size_t ctnetlink_proto_size(const struct nf_conn *ct)
-> >                ^
-> > 
-> > Introduced by commit
-> > 
-> >   5caaed151a68 ("netfilter: conntrack: don't cache nlattr_tuple_size result in nla_size")
-> 
-> I assume that this warning will now be in the net-next tree ...
+On Tue, Nov 7, 2017 at 9:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
+>
+> After merging the kspp tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> In file included from include/linux/compiler_types.h:58:0,
+>                  from include/uapi/linux/stddef.h:2,
+>                  from include/linux/stddef.h:5,
+>                  from include/uapi/linux/posix_types.h:5,
+>                  from include/uapi/linux/types.h:14,
+>                  from include/linux/types.h:6,
+>                  from fs/xfs/xfs_linux.h:21,
+>                  from fs/xfs/xfs.h:35,
+>                  from fs/xfs/xfs_super.c:19:
+> fs/xfs/xfs_super.c: In function 'xfs_init_zones':
+> include/linux/compiler-gcc.h:166:2: error: 'xfs_ifork_t {aka struct xfs_ifork}' has no member named 'if_u2'
+>   __builtin_offsetof(a, b)
+>   ^
+> include/linux/stddef.h:17:32: note: in expansion of macro '__compiler_offsetof'
+>  #define offsetof(TYPE, MEMBER) __compiler_offsetof(TYPE, MEMBER)
+>                                 ^
+> fs/xfs/xfs_super.c:1862:4: note: in expansion of macro 'offsetof'
+>     offsetof(xfs_inode_t, i_df.if_u2.if_inline_data),
+>     ^
+> In file included from include/uapi/linux/posix_types.h:5:0,
+>                  from include/uapi/linux/types.h:14,
+>                  from include/linux/types.h:6,
+>                  from fs/xfs/xfs_linux.h:21,
+>                  from fs/xfs/xfs.h:35,
+>                  from fs/xfs/xfs_super.c:19:
+> fs/xfs/xfs_super.c:1863:34: error: 'xfs_ifork_t {aka struct xfs_ifork}' has no member named 'if_u2'
+>     sizeof_field(xfs_inode_t, i_df.if_u2.if_inline_data),
+>                                   ^
+> include/linux/stddef.h:22:66: note: in definition of macro 'sizeof_field'
+>  #define sizeof_field(structure, field) sizeof((((structure *)0)->field))
+>                                                                   ^
+>
+> Caused by commit
+>
+>   1d48144b9688 ("xfs: Define usercopy region in xfs_inode slab cache")
+>
+> interacting with commit
+>
+>   43518812d297 ("xfs: remove support for inlining data/extents into the inode fork")
+>
+> from the  tree.
+>
+> I just reverted the kspp tree commit as it seems like it is no longer
+> needed.
 
-It's my fault, I'll fix this in my next batch, sorry for the inconvenience.
+Yup, that looks like the correct fix. Thanks!
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
