@@ -1,57 +1,38 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: build warnings after merge of the gpio tree
-Date: Thu, 9 Nov 2017 08:42:43 +0100
-Message-ID: <CACRpkdahm-N7JyKQ8LA69qjvPG6Vf4TRKx67emxxFKVdszGiNA@mail.gmail.com>
-References: <20171103163724.73fe268e@canb.auug.org.au> <20171109145125.4c505048@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
+Date: Thu, 9 Nov 2017 09:34:07 +0100
+Message-ID: <20171109083407.GB11420@kroah.com>
+References: <20171109150126.3417da53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-it0-f49.google.com ([209.85.214.49]:55492 "EHLO
-        mail-it0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752823AbdKIHmo (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 9 Nov 2017 02:42:44 -0500
-Received: by mail-it0-f49.google.com with SMTP id l196so9634996itl.4
-        for <linux-next@vger.kernel.org>; Wed, 08 Nov 2017 23:42:44 -0800 (PST)
-In-Reply-To: <20171109145125.4c505048@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "arm@kernel.org" <arm@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171109150126.3417da53@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Srishti Sharma <srishtishar@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Thu, Nov 9, 2017 at 4:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Fri, 3 Nov 2017 16:37:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> After merging the gpio tree, yesterday's linux-next build (arm
->> multi_v7_defconfig) produced these warnings:
->>
->> arch/arm/boot/dts/bcm2835-rpi-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-b-rev2.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-a.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-b-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-a-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2836-rpi-2-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2837-rpi-3-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-zero.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/bcm2835-rpi-zero-w.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
->> arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property): Missing interrupt-controller or interrupt-map property in /soc/system-controller@10040000
->>
->> and many, many more.
->>
->> I have no idea what caused this.
->
-> I am still getting lots of these ...
+On Thu, Nov 09, 2017 at 03:01:26PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   drivers/staging/pi433/pi433_if.c
+> 
+> between commit:
+> 
+>   f81f0b5c9a30 ("pi433: sanitize ioctl")
+> 
+> from the vfs tree and commit:
+> 
+>   69af5d92da20 ("Staging: pi433: Fix the position of brace after if")
+> 
+> from the staging tree.
+> 
+> I fixed it up (I just used the vfs tree version (for the conflicting bits)
+> as suggested by Al) and can carry the fix as necessary.
 
-I have absolutely no clue either.
+Sounds like the correct fix, thanks.
 
-What I know is that there is a device tree compiler warning that can
-be turned on, and
-it generates these warnings a lot. The actual problems have been in
-the DTS files
-forever. They just recently started to look into them.
-
-It has nothing to do with the GPIO tree whatsoever, so I wonder if it
-is a side effect of
-something else?
-
-Yours,
-Linus Walleij
+greg k-h
