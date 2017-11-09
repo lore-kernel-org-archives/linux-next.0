@@ -1,48 +1,45 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Thu, 9 Nov 2017 14:03:52 +1100
-Message-ID: <20171109140352.26e07c5e@canb.auug.org.au>
-References: <20171108134717.578046db@canb.auug.org.au>
-        <20171108030152.bd76eahiwjwjt3kp@treble>
-        <20171108091827.pl3igqvpy56bvvn7@gmail.com>
+Subject: Re: linux-next: build warnings after merge of the gpio tree
+Date: Thu, 9 Nov 2017 14:51:25 +1100
+Message-ID: <20171109145125.4c505048@canb.auug.org.au>
+References: <20171103163724.73fe268e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171108091827.pl3igqvpy56bvvn7@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45813 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751495AbdKIDv1 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 8 Nov 2017 22:51:27 -0500
+In-Reply-To: <20171103163724.73fe268e@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Ingo,
+Hi Linus,
 
-On Wed, 8 Nov 2017 10:18:28 +0100 Ingo Molnar <mingo@kernel.org> wrote:
+On Fri, 3 Nov 2017 16:37:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> After merging the gpio tree, yesterday's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
 > 
-> > On Wed, Nov 08, 2017 at 01:47:17PM +1100, Stephen Rothwell wrote:  
-> > 
-> > Does this fix it?
-> > 
-> > diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
-> > index 6aaed251b4ed..0f94af3ccaaa 100644
-> > --- a/tools/objtool/Makefile
-> > +++ b/tools/objtool/Makefile
-> > @@ -27,7 +27,7 @@ all: $(OBJTOOL)
-> >  
-> >  INCLUDES := -I$(srctree)/tools/include \
-> >  	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
-> > -	    -I$(srctree)/tools/objtool/arch/$(HOSTARCH)/include
-> > +	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
-> >  WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
-> >  CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
-> >  LDFLAGS  += -lelf $(LIBSUBCMD)  
+> arch/arm/boot/dts/bcm2835-rpi-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-b-rev2.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-a.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-b-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-a-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2836-rpi-2-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2837-rpi-3-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-zero.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/bcm2835-rpi-zero-w.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+> arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property): Missing interrupt-controller or interrupt-map property in /soc/system-controller@10040000
 > 
-> Note, I created a commit out of this fix, with your SOB - let me know if you have 
-> any objections.
+> and many, many more.
+> 
+> I have no idea what caused this.
 
-I applied this patch to linux-next today after the tip tree merge.
+I am still getting lots of these ...
 -- 
 Cheers,
 Stephen Rothwell
