@@ -1,66 +1,45 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm tree with the pci tree
-Date: Thu, 9 Nov 2017 16:53:24 +1100
-Message-ID: <20171109165324.51eafb68@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 9 Nov 2017 07:18:55 +0100
+Message-ID: <20171109061855.f7fvo6e7iniekoym@gmail.com>
+References: <20171108134717.578046db@canb.auug.org.au>
+ <20171108030152.bd76eahiwjwjt3kp@treble>
+ <20171108091827.pl3igqvpy56bvvn7@gmail.com>
+ <20171108231426.3f2139de@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f44.google.com ([74.125.82.44]:49766 "EHLO
+        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751061AbdKIGS7 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 9 Nov 2017 01:18:59 -0500
+Content-Disposition: inline
+In-Reply-To: <20171108231426.3f2139de@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Andrew,
 
-Today's linux-next merge of the akpm tree got a conflict in:
+* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-  init/Kconfig
+> Hi Ingo,
+> 
+> On Wed, 8 Nov 2017 10:18:28 +0100 Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > Note, I created a commit out of this fix, with your SOB - let me know if you have 
+> > any objections.
+> 
+> Only a small nit - I didn't bisect it, I just figured it out by
+> inspection.  Unfortunately, I don't have time to do bisections while
+> building linux-next. :-(
+> 
+> Not a biggie, though.  Thanks for sorting this out.
 
-between commit:
+Yeah, so while I knew that you didn't do the bisection the usual way, you still 
+got it right nevertheless, so the tag is well deserved! I'll add it as a 
+"Commit-identified-by" tag next time perhaps.
 
-  03ea2263c2ef ("PCI: Move PCI_QUIRKS to the PCI bus menu")
+Thanks,
 
-from the pci tree and patch:
-
-  "EXPERT Kconfig menu: fix broken EXPERT menu"
-
-from the akpm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc init/Kconfig
-index 7d5a6fbac56a,a05d8938c016..000000000000
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@@ -1378,14 -1308,15 +1308,6 @@@ config ADVISE_SYSCALL
-  	  applications use these syscalls, you can disable this option to save
-  	  space.
-  
-- config USERFAULTFD
-- 	bool "Enable userfaultfd() system call"
-- 	select ANON_INODES
-- 	depends on MMU
- -config PCI_QUIRKS
- -	default y
- -	bool "Enable PCI quirk workarounds" if EXPERT
- -	depends on PCI
---	help
-- 	  Enable the userfaultfd() system call that allows to intercept and
-- 	  handle page faults in userland.
- -	  This enables workarounds for various PCI chipset
- -	  bugs/quirks. Disable this only if your target machine is
- -	  unaffected by PCI quirks.
---
-  config MEMBARRIER
-  	bool "Enable membarrier() system call" if EXPERT
-  	default y
+	Ingo
