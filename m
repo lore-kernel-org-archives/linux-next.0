@@ -1,126 +1,72 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: Re: [PATCH 2/2] kbuild: handle dtb-y and CONFIG_OF_ALL_DTBS natively
- in Makefile.lib
-Date: Thu, 9 Nov 2017 21:23:14 +0900
-Message-ID: <CAK7LNAT-3yBTFqnFECbGzSHRUiaG38b0BG3_3ouRAZRTF+iiDQ@mail.gmail.com>
-References: <1509859853-27473-1-git-send-email-yamada.masahiro@socionext.com>
- <1509859853-27473-3-git-send-email-yamada.masahiro@socionext.com>
- <CAAG0J98rRS+Sw8k_87gmTqYdNWByk=9zWVbWnC348vd63H4N9w@mail.gmail.com> <CAAG0J99envT6gtM6tHdTvetrHr0itX1dexkuWSU=u1c5UTLE1A@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the gpio tree
+Date: Thu, 9 Nov 2017 08:37:00 -0600
+Message-ID: <CABGGisyhjtJN=Rgjb0MS9vg+TH2M8Rir27GNyv8jAT2LibjASg@mail.gmail.com>
+References: <20171103163724.73fe268e@canb.auug.org.au> <20171109145125.4c505048@canb.auug.org.au>
+ <CACRpkdahm-N7JyKQ8LA69qjvPG6Vf4TRKx67emxxFKVdszGiNA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAG0J99envT6gtM6tHdTvetrHr0itX1dexkuWSU=u1c5UTLE1A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: James Hogan <james-IP01RNCDaiKakBO8gow8eQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kbuild mailing list <linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pantelis Antoniou <pantelis.antoniou-OWPKS81ov/FWk0Htik3J/w@public.gmane.org>, ARM Kernel List <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Michal Marek <michal.lkml-yyZNWGI4GtDR7s880joybQ@public.gmane.org>, Sam Ravnborg <sam-uyr5N9Q2VtJg9hUCZPvPmw@public.gmane.org>, Linux MIPS Mailing List <linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, David Daney <david.daney-YGCgFSpz5w/QT0dZR+AlfA@public.gmane.org>, James Hogan <james.hogan-8NJIiSa5LzA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753399AbdKIOhX (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 9 Nov 2017 09:37:23 -0500
+Received: from mail-wr0-f172.google.com (mail-wr0-f172.google.com [209.85.128.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CBE52193B
+        for <linux-next@vger.kernel.org>; Thu,  9 Nov 2017 14:37:22 +0000 (UTC)
+Received: by mail-wr0-f172.google.com with SMTP id k61so5801124wrc.4
+        for <linux-next@vger.kernel.org>; Thu, 09 Nov 2017 06:37:22 -0800 (PST)
+In-Reply-To: <CACRpkdahm-N7JyKQ8LA69qjvPG6Vf4TRKx67emxxFKVdszGiNA@mail.gmail.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "arm@kernel.org" <arm@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi James,
-
-
-2017-11-09 21:19 GMT+09:00 James Hogan <james-IP01RNCDaiKakBO8gow8eQ@public.gmane.org>:
-> (resend using a working From address)
->
-> <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
->> If CONFIG_OF_ALL_DTBS is enabled, "make ARCH=arm64 dtbs" compiles each
->> DTB twice; one from arch/arm64/boot/dts/*/Makefile and the other from
->> the dtb-$(CONFIG_OF_ALL_DTBS) line in arch/arm64/boot/dts/Makefile.
->> It could be a race problem when building DTBS in parallel.
+On Thu, Nov 9, 2017 at 1:42 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Thu, Nov 9, 2017 at 4:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> On Fri, 3 Nov 2017 16:37:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>>
+>>> After merging the gpio tree, yesterday's linux-next build (arm
+>>> multi_v7_defconfig) produced these warnings:
+>>>
+>>> arch/arm/boot/dts/bcm2835-rpi-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-b-rev2.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-a.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-b-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-a-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2836-rpi-2-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2837-rpi-3-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-zero.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/bcm2835-rpi-zero-w.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>>> arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property): Missing interrupt-controller or interrupt-map property in /soc/system-controller@10040000
+>>>
+>>> and many, many more.
+>>>
+>>> I have no idea what caused this.
 >>
->> Another minor issue is CONFIG_OF_ALL_DTBS covers only *.dts in vendor
->> sub-directories, so this broke when Broadcom added one more hierarchy
->> in arch/arm64/boot/dts/broadcom/<soc>/.
->>
->> One idea to fix the issues in a clean way is to move DTB handling
->> to Kbuild core scripts.  Makefile.dtbinst already recognizes dtb-y
->> natively, so it should not hurt to do so.
->>
->> Add $(dtb-y) to extra-y, and $(dtb-) as well if CONFIG_OF_ALL_DTBS is
->> enabled.  All clutter things in Makefiles go away.
->>
->> As a bonus clean-up, I also removed dts-dirs.  Just use subdir-y
->> directly to traverse sub-directories.
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+>> I am still getting lots of these ...
 >
->  ...
+> I have absolutely no clue either.
 >
->> diff --git a/arch/mips/boot/dts/Makefile b/arch/mips/boot/dts/Makefile
->> index 7891ffa..b2b0d88 100644
->> --- a/arch/mips/boot/dts/Makefile
->> +++ b/arch/mips/boot/dts/Makefile
->> @@ -1,20 +1,14 @@
->> -dts-dirs       += brcm
->> -dts-dirs       += cavium-octeon
->> -dts-dirs       += img
->> -dts-dirs       += ingenic
->> -dts-dirs       += lantiq
->> -dts-dirs       += mti
->> -dts-dirs       += netlogic
->> -dts-dirs       += ni
->> -dts-dirs       += pic32
->> -dts-dirs       += qca
->> -dts-dirs       += ralink
->> -dts-dirs       += xilfpga
->> +subdir-y       += brcm
->> +subdir-y       += cavium-octeon
->> +subdir-y       += img
->> +subdir-y       += ingenic
->> +subdir-y       += lantiq
->> +subdir-y       += mti
->> +subdir-y       += netlogic
->> +subdir-y       += ni
->> +subdir-y       += pic32
->> +subdir-y       += qca
->> +subdir-y       += ralink
->> +subdir-y       += xilfpga
->>
->> -obj-y          := $(addsuffix /, $(dts-dirs))
->> -
->> -dtstree                := $(srctree)/$(src)
->> -dtb-$(CONFIG_OF_ALL_DTBS) := $(patsubst $(dtstree)/%.dts,%.dtb, $(foreach d,$(dts-dirs), $(wildcard $(dtstree)/$(d)/*.dts)))
->> -
->> -always         := $(dtb-y)
->> -subdir-y       := $(dts-dirs)
->> +obj-$(BUILTIN_DTB)     := $(addsuffix /, $(subdir-y))
+> What I know is that there is a device tree compiler warning that can
+> be turned on, and
+> it generates these warnings a lot. The actual problems have been in
+> the DTS files
+> forever. They just recently started to look into them.
 >
-> I wonder if that should be CONFIG_BUILTIN_DTB?
->
-> This is causing failures in linux-next with MIPS
-> cavium_octeon_defconfig like below, and changing this line to
-> CONFIG_BUILTIN_DTB seems to fix it.
+> It has nothing to do with the GPIO tree whatsoever, so I wonder if it
+> is a side effect of
+> something else?
 
-Good catch!
+There's a dtc update in -next which adds these new checks. It's been
+there for over a month now. Unlike other dtc checks, these are
+generally actual errors, so they are not off by default (enabled with
+W=1,2).
 
+In reality, there's only about 50-100 warnings. The way dts includes
+are structured and because the dtc checks don't have the original
+source file lines, it just multiplies the warnings.
 
-Rob,
-Can you fix it to CONFIG_BUILTIN_DTB?
-
-Thanks!
-
-
-
-> arch/mips/cavium-octeon/setup.o: In function `__octeon_is_model_runtime__':
-> /work/mips/linux/main/./arch/mips/include/asm/octeon/octeon-model.h:368:
-> undefined reference to `__dtb_octeon_3xxx_begin'
-> arch/mips/cavium-octeon/setup.o: In function `device_tree_init':
-> /work/mips/linux/main/arch/mips/cavium-octeon/setup.c:1188: undefined
-> reference to `__dtb_octeon_3xxx_begin'
-> /work/mips/linux/main/arch/mips/cavium-octeon/setup.c:1184: undefined
-> reference to `__dtb_octeon_68xx_begin'
-> /work/mips/linux/main/arch/mips/cavium-octeon/setup.c:1184: undefined
-> reference to `__dtb_octeon_68xx_begin'
->
-> Thanks
-> James
->
->
-
-
--- 
-Best Regards
-Masahiro Yamada
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Rob
