@@ -1,26 +1,58 @@
-From: Kees Cook <keescook@google.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Wed, 8 Nov 2017 16:31:01 -0800
-Message-ID: <CAGXu5j+f937fYxGpoN+zq-_f1-AkBXQTqYBE0rxBFPXTgtiDnw@mail.gmail.com>
-References: <20171108162358.3a6d96bb@canb.auug.org.au> <CAGXu5jLvnRAXk3Ka0bMXOyhNDwj4ZBduXEci44gkZfr1_WO8yA@mail.gmail.com>
- <20171109001835.GH26910@magnolia>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the devicetree tree with the arm-soc
+ tree
+Date: Thu, 9 Nov 2017 13:21:43 +1100
+Message-ID: <20171109132143.3e59879d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171109001835.GH26910@magnolia>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Windsor <dave@nullcore.net>, Christoph Hellwig <hch@lst.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35899 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751241AbdKICVq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 8 Nov 2017 21:21:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Antony Antony <antony@phenome.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
-On Wed, Nov 8, 2017 at 4:18 PM, Darrick J. Wong <darrick.wong@oracle.com> wrote:
-> Agreed.  I guess we'll see you for round X when you get to general
-> kmalloc annotating. :)
+Hi Rob,
 
-That should be "fun". :)
+Today's linux-next merge of the devicetree tree got a conflict in:
 
--Kees
+  arch/arm64/boot/dts/allwinner/Makefile
+
+between commit:
+
+  d7341305863b ("arm64: allwinner: h5: add NanoPi NEO Plus2 DT support")
+
+from the arm-soc tree and commit:
+
+  4408a86af32e ("kbuild: handle dtb-y and CONFIG_OF_ALL_DTBS natively in Makefile.lib")
+
+from the devicetree tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Kees Cook
-Pixel Security
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/boot/dts/allwinner/Makefile
+index 16fa7b9839e6,4dab590d24a5..000000000000
+--- a/arch/arm64/boot/dts/allwinner/Makefile
++++ b/arch/arm64/boot/dts/allwinner/Makefile
+@@@ -9,8 -8,3 +9,4 @@@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-o
+  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-prime.dtb
+  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-orangepi-zero-plus2.dtb
+  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo2.dtb
+ +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h5-nanopi-neo-plus2.dtb
+- 
+- always		:= $(dtb-y)
+- subdir-y	:= $(dts-dirs)
+- clean-files	:= *.dtb
