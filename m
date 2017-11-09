@@ -1,54 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the devicetree tree with the arm-soc
- tree
-Date: Thu, 9 Nov 2017 13:26:32 +1100
-Message-ID: <20171109132632.480f1050@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Thu, 9 Nov 2017 14:03:52 +1100
+Message-ID: <20171109140352.26e07c5e@canb.auug.org.au>
+References: <20171108134717.578046db@canb.auug.org.au>
+        <20171108030152.bd76eahiwjwjt3kp@treble>
+        <20171108091827.pl3igqvpy56bvvn7@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171108091827.pl3igqvpy56bvvn7@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Neil Armstrong <narmstrong@baylibre.com>, Kevin Hilman <khilman@baylibre.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Rob,
+Hi Ingo,
 
-Today's linux-next merge of the devicetree tree got a conflict in:
+On Wed, 8 Nov 2017 10:18:28 +0100 Ingo Molnar <mingo@kernel.org> wrote:
+>
+> * Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> 
+> > On Wed, Nov 08, 2017 at 01:47:17PM +1100, Stephen Rothwell wrote:  
+> > 
+> > Does this fix it?
+> > 
+> > diff --git a/tools/objtool/Makefile b/tools/objtool/Makefile
+> > index 6aaed251b4ed..0f94af3ccaaa 100644
+> > --- a/tools/objtool/Makefile
+> > +++ b/tools/objtool/Makefile
+> > @@ -27,7 +27,7 @@ all: $(OBJTOOL)
+> >  
+> >  INCLUDES := -I$(srctree)/tools/include \
+> >  	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
+> > -	    -I$(srctree)/tools/objtool/arch/$(HOSTARCH)/include
+> > +	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
+> >  WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
+> >  CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
+> >  LDFLAGS  += -lelf $(LIBSUBCMD)  
+> 
+> Note, I created a commit out of this fix, with your SOB - let me know if you have 
+> any objections.
 
-  arch/arm64/boot/dts/amlogic/Makefile
-
-between commit:
-
-  593d311d9f17 ("ARM64: dts: meson-gxm: Add Vega S96 board")
-
-from the arm-soc tree and commit:
-
-  4408a86af32e ("kbuild: handle dtb-y and CONFIG_OF_ALL_DTBS natively in Makefile.lib")
-
-from the devicetree tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
+I applied this patch to linux-next today after the tip tree merge.
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/arm64/boot/dts/amlogic/Makefile
-index b503e9b00cd3,4eb8f829472e..000000000000
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@@ -22,8 -19,3 +22,4 @@@ dtb-$(CONFIG_ARCH_MESON) += meson-gxm-n
-  dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q200.dtb
-  dtb-$(CONFIG_ARCH_MESON) += meson-gxm-q201.dtb
-  dtb-$(CONFIG_ARCH_MESON) += meson-gxm-rbox-pro.dtb
- +dtb-$(CONFIG_ARCH_MESON) += meson-gxm-vega-s96.dtb
-- 
-- always		:= $(dtb-y)
-- subdir-y	:= $(dts-dirs)
-- clean-files	:= *.dtb
