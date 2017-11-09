@@ -1,88 +1,88 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: linux-next: build failure after merge of the kspp tree
-Date: Wed, 8 Nov 2017 16:18:35 -0800
-Message-ID: <20171109001835.GH26910@magnolia>
-References: <20171108162358.3a6d96bb@canb.auug.org.au>
- <CAGXu5jLvnRAXk3Ka0bMXOyhNDwj4ZBduXEci44gkZfr1_WO8yA@mail.gmail.com>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: Tree for Nov 8 (timer conversions)
+Date: Wed, 8 Nov 2017 16:30:22 -0800
+Message-ID: <CAGXu5jKVLMYQ_=msd6Es5St5EP9d6tOHWGeNVxte1v4oH7HrLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp1040.oracle.com ([141.146.126.69]:29029 "EHLO
-        aserp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753114AbdKIASs (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 8 Nov 2017 19:18:48 -0500
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLvnRAXk3Ka0bMXOyhNDwj4ZBduXEci44gkZfr1_WO8yA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Kees Cook <keescook@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Windsor <dave@nullcore.net>, Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Allen Pais <allen.lkml@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 08, 2017 at 03:43:47PM -0800, Kees Cook wrote:
-> On Tue, Nov 7, 2017 at 9:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi Kees,
-> >
-> > After merging the kspp tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > In file included from include/linux/compiler_types.h:58:0,
-> >                  from include/uapi/linux/stddef.h:2,
-> >                  from include/linux/stddef.h:5,
-> >                  from include/uapi/linux/posix_types.h:5,
-> >                  from include/uapi/linux/types.h:14,
-> >                  from include/linux/types.h:6,
-> >                  from fs/xfs/xfs_linux.h:21,
-> >                  from fs/xfs/xfs.h:35,
-> >                  from fs/xfs/xfs_super.c:19:
-> > fs/xfs/xfs_super.c: In function 'xfs_init_zones':
-> > include/linux/compiler-gcc.h:166:2: error: 'xfs_ifork_t {aka struct xfs_ifork}' has no member named 'if_u2'
-> >   __builtin_offsetof(a, b)
-> >   ^
-> > include/linux/stddef.h:17:32: note: in expansion of macro '__compiler_offsetof'
-> >  #define offsetof(TYPE, MEMBER) __compiler_offsetof(TYPE, MEMBER)
-> >                                 ^
-> > fs/xfs/xfs_super.c:1862:4: note: in expansion of macro 'offsetof'
-> >     offsetof(xfs_inode_t, i_df.if_u2.if_inline_data),
-> >     ^
-> > In file included from include/uapi/linux/posix_types.h:5:0,
-> >                  from include/uapi/linux/types.h:14,
-> >                  from include/linux/types.h:6,
-> >                  from fs/xfs/xfs_linux.h:21,
-> >                  from fs/xfs/xfs.h:35,
-> >                  from fs/xfs/xfs_super.c:19:
-> > fs/xfs/xfs_super.c:1863:34: error: 'xfs_ifork_t {aka struct xfs_ifork}' has no member named 'if_u2'
-> >     sizeof_field(xfs_inode_t, i_df.if_u2.if_inline_data),
-> >                                   ^
-> > include/linux/stddef.h:22:66: note: in definition of macro 'sizeof_field'
-> >  #define sizeof_field(structure, field) sizeof((((structure *)0)->field))
-> >                                                                   ^
-> >
-> > Caused by commit
-> >
-> >   1d48144b9688 ("xfs: Define usercopy region in xfs_inode slab cache")
-> >
-> > interacting with commit
-> >
-> >   43518812d297 ("xfs: remove support for inlining data/extents into the inode fork")
-> >
-> > from the  tree.
-> >
-> > I just reverted the kspp tree commit as it seems like it is no longer
-> > needed.
-> 
-> Yup, that looks like the correct fix. Thanks!
+timer_setup() conversion[1] status update:
 
-Agreed.  I guess we'll see you for round X when you get to general
-kmalloc annotating. :)
+As of this -next tree, there are (at least) 249 "non trivial" conversions
+staged (with a matching subject of ": Convert timers to use timer_setup"),
+producing:
+ 736 files changed, 3446 insertions(+), 4001 deletions(-)
 
---D
+There are 20 outstanding non-trivial conversions (all are now in-flight).
+Combined with the trivial treewide conversions and API adjustments
+it produces an additional:
+ 392 files changed, 1388 insertions(+), 1925 deletions(-)
 
-> -Kees
-> 
-> -- 
-> Kees Cook
-> Pixel Security
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+After that, all 1116 timer_setup() callsites will be finished. My
+tree, based on next-20171108, is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/timer/next/20171108/conversions
+
+Notes and break-down of patch statuses:
+
+# in-flight (tip/timers/core)
+ARM: footbridge: Fix typo in timer conversion
+crypto: Convert timers to use timer_setup()
+block/aoe: discover_timer: Convert timers to use timer_setup()
+ide: Convert timers to use timer_setup()
+drbd: Convert timers to use timer_setup()
+mailbox: Convert timers to use timer_setup()
+scsi: qla2xxx: Convert timers to use timer_setup()
+netfilter: ipvs: Convert timers to use timer_setup()
+timer: Prepare to change all DEFINE_TIMER() callbacks
+
+# in-flight (s390)
+s390: qdio: Convert timers to use timer_setup()
+s390/sclp: Convert timers to use timer_setup()
+s390/cio: Convert timers to use timer_setup()
+s390/scsi: Convert timers to use timer_setup()
+s390/ap_bus: Convert timers to use timer_setup()
+
+# late rc1 (through tip/timers/core, depends on other trees)
+drm/vc4: Convert timers to use timer_setup()
+video: fbdev: Convert timers to use timer_setup()
+block/laptop_mode: Convert timers to use timer_setup()
+usb: usbatm: Convert timers to use timer_setup()
+drm/i915/selftests: Convert timers to use timer_setup()
+lightnvm: Convert timers to use timer_setup()
+drivers/firmware: psci: Convert timers to use timer_setup()
+net/atm/mpc: Avoid open-coded assignment of timer callback function
+s390: cmm: Convert timers to use timer_setup()
+drivers/net: cris: Convert timers to use timer_setup()
+treewide: Switch DEFINE_TIMER callbacks to struct timer_list *
+
+# late rc1 (through tip/timers/core or scripted by linus, tree-wide changes)
+treewide: init_timer() -> setup_timer()
+treewide: setup_timer() -> timer_setup()
+treewide: setup_timer() -> timer_setup() (2 field)
+
+# late rc1 (through tip/timers/core, API removal and clean up)
+timer: Remove init_timer() interface
+timer: Remove setup_*timer() interface
+Coccinelle: Remove setup_timer.cocci
+timer: Pass timer_list pointer to callbacks unconditionally
+timer: Switch callback prototype to take struct timer_list * argument
+timer: Remove unused data arguments from macros
+timer: Pass function down to initialization routines
+timer: Remove redundant __setup_timer*() macros
+treewide: Remove TIMER_FUNC_TYPE cast
+
+Thanks to everyone who has suffered through this with me. Looks like
+everything is now covered. I'll keep my fingers crossed for the merge
+window. :)
+
+-Kees
+
+[1] https://git.kernel.org/linus/686fef928bba6be13cabe639f154af7d72b63120
+
+-- 
+Kees Cook
+Pixel Security
