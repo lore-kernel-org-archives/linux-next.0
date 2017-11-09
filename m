@@ -1,38 +1,104 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
-Date: Thu, 9 Nov 2017 09:34:07 +0100
-Message-ID: <20171109083407.GB11420@kroah.com>
-References: <20171109150126.3417da53@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171109150126.3417da53@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Srishti Sharma <srishtishar@gmail.com>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171109 build: 2 failures 11 warnings (next-20171109)
+Date: Thu, 09 Nov 2017 10:04:06 +0000
+Message-ID: <E1eCjgs-0002ar-Ai@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36314 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751190AbdKIKEL (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 9 Nov 2017 05:04:11 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Thu, Nov 09, 2017 at 03:01:26PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   drivers/staging/pi433/pi433_if.c
-> 
-> between commit:
-> 
->   f81f0b5c9a30 ("pi433: sanitize ioctl")
-> 
-> from the vfs tree and commit:
-> 
->   69af5d92da20 ("Staging: pi433: Fix the position of brace after if")
-> 
-> from the staging tree.
-> 
-> I fixed it up (I just used the vfs tree version (for the conflicting bits)
-> as suggested by Al) and can carry the fix as necessary.
+Tree/Branch: next-20171109
+Git describe: next-20171109
+Commit: 5515cf16e2 Add linux-next specific files for 20171109
 
-Sounds like the correct fix, thanks.
+Build Time: 100 min 24 sec
 
-greg k-h
+Passed:    8 / 10   ( 80.00 %)
+Failed:    2 / 10   ( 20.00 %)
+
+Errors: 0
+Warnings: 11
+Section Mismatches: 0
+
+Failed defconfigs:
+
+Errors:
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     10 warnings    0 mismatches  : arm64-allmodconfig
+     10 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 11
+	  3 ../fs/overlayfs/super.c:1069:15: warning: 'stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  2 ../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	  2 ../fs/overlayfs/super.c:1070:25: warning: 'numlower' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../fs/overlayfs/super.c:1133:2: warning: 'numlower' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
+
+Warnings:
+	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	../fs/overlayfs/super.c:1070:25: warning: 'numlower' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/overlayfs/super.c:1069:15: warning: 'stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 10 warnings, 0 section mismatches
+
+Warnings:
+	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	../fs/overlayfs/super.c:1133:2: warning: 'numlower' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/overlayfs/super.c:1069:15: warning: 'stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	../fs/overlayfs/super.c:1070:25: warning: 'numlower' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../fs/overlayfs/super.c:1069:15: warning: 'stack' may be used uninitialized in this function [-Wmaybe-uninitialized]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+arm64-allnoconfig
+arm-multi_v5_defconfig
+arm-multi_v7_defconfig
+x86_64-defconfig
+arm-allnoconfig
+x86_64-allnoconfig
+arm-multi_v4t_defconfig
