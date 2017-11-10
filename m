@@ -1,81 +1,39 @@
 From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: [linux-next][0692229e] next-20171106 fails to boot on Power 7
-Date: Fri, 10 Nov 2017 13:30:26 +0100
-Message-ID: <20171110123026.c5h5ejp27tlly6l3@dhcp22.suse.cz>
-References: <1510048229.12079.7.camel@abdul.in.ibm.com>
- <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+Subject: Re: linux-next: Tree for Nov 7
+Date: Fri, 10 Nov 2017 13:30:54 +0100
+Message-ID: <20171110123054.5pnefm3mczsfv7bz@dhcp22.suse.cz>
+References: <20171107162217.382cd754@canb.auug.org.au>
+ <CACPK8Xfd4nqkf=Lk3n6+TNHAAi327r0dkUfGypZ3TpR0LqfS4Q@mail.gmail.com>
+ <20171108142050.7w3yliulxjeco3b7@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+In-Reply-To: <20171108142050.7w3yliulxjeco3b7@dhcp22.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>
+To: Joel Stanley <joel@jms.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Abdul,
+Hi Joel,
 
-On Tue 07-11-17 11:28:54, Michal Hocko wrote:
-> On Tue 07-11-17 15:20:29, Abdul Haleem wrote:
-> > Hi,
+On Wed 08-11-17 15:20:50, Michal Hocko wrote:
+[...]
+> > There are a lot of messages on the way up that look like this:
 > > 
-> > Today's next kernel fails to boot on Power 7 Machine with below errors
-> > in boot log messages.
+> > [    2.527460] Uhuuh, elf segement at 000d9000 requested but the
+> > memory is mapped already
+> > [    2.540160] Uhuuh, elf segement at 000d9000 requested but the
+> > memory is mapped already
+> > [    2.546153] Uhuuh, elf segement at 000d9000 requested but the
+> > memory is mapped already
 > > 
-> > 'Uhuuh, elf segement at 0000000010040000 requested but the memory is
-> > mapped already'
-> > 
-> > It was introduced with commit:
-> > 
-> > 0692229e : fs/binfmt_elf.c: drop MAP_FIXED usage from elf_map
+> > And then trying to run userspace looks like this:
 > 
-> Weird. Clashes shouldn't really happen. Maybe power is doing something
-> different from other platforms. Could you apply the following debugging
-> patch to see what is going on there?
+> Could you please run with debugging patch posted
+> http://lkml.kernel.org/r/20171107102854.vylrtaodla63kc57@dhcp22.suse.cz
 
 Did you have chance to test with this debugging patch, please?
-
-> ---
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 0abc30d681ae..f098aaf60039 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -361,8 +361,28 @@ static unsigned long elf_vm_mmap(struct file *filep, unsigned long addr,
->  		return map_addr;
->  
->  	if ((type & MAP_FIXED) && map_addr != addr) {
-> -		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already\n",
-> -				(void*)addr);
-> +		struct mm_struct *mm = current->mm;
-> +		struct vm_area_struct *vma;
-> +		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already, got %p\n",
-> +				(void*)addr, (void*)map_addr);
-> +		down_read(&mm->mmap_sem);
-> +		vma = find_vma(mm, addr);
-> +		if (vma) {
-> +			const char *name;
-> +			pr_info("Clashing vma [%lx, %lx] flags:%lx", vma->vm_start, vma->vm_end, vma->vm_flags);
-> +			name = arch_vma_name(vma);
-> +			if (!name) {
-> +				if (vma->vm_start <= mm->brk &&
-> +				    vma->vm_end >= mm->start_brk)
-> +					name = "[heap]";
-> +				else if (vma->vm_start <= vma->vm_mm->start_stack &&
-> +						vma->vm_end >= vma->vm_mm->start_stack)
-> +					name = "[stack]";
-> +			}
-> +			pr_cont(" name:%s\n", name);
-> +		} else
-> +			pr_info("Uhm, no clashing VMA\n");
-> +		up_read(&mm->mmap_sem);
->  		return -EAGAIN;
->  	}
->  
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
 
 -- 
 Michal Hocko
