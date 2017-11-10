@@ -1,90 +1,82 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20171110 build: 2 failures 8 warnings (next-20171110)
-Date: Fri, 10 Nov 2017 09:25:33 +0000
-Message-ID: <E1eD5Z7-0005QY-82@optimist>
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44740 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750835AbdKJJZf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 10 Nov 2017 04:25:35 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [linux-next][0692229e] next-20171106 fails to boot on Power 7
+Date: Fri, 10 Nov 2017 13:30:26 +0100
+Message-ID: <20171110123026.c5h5ejp27tlly6l3@dhcp22.suse.cz>
+References: <1510048229.12079.7.camel@abdul.in.ibm.com>
+ <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171107102854.vylrtaodla63kc57@dhcp22.suse.cz>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Tree/Branch: next-20171110
-Git describe: next-20171110
-Commit: d9e0e63d9a Add linux-next specific files for 20171110
+Hi Abdul,
 
-Build Time: 100 min 19 sec
+On Tue 07-11-17 11:28:54, Michal Hocko wrote:
+> On Tue 07-11-17 15:20:29, Abdul Haleem wrote:
+> > Hi,
+> > 
+> > Today's next kernel fails to boot on Power 7 Machine with below errors
+> > in boot log messages.
+> > 
+> > 'Uhuuh, elf segement at 0000000010040000 requested but the memory is
+> > mapped already'
+> > 
+> > It was introduced with commit:
+> > 
+> > 0692229e : fs/binfmt_elf.c: drop MAP_FIXED usage from elf_map
+> 
+> Weird. Clashes shouldn't really happen. Maybe power is doing something
+> different from other platforms. Could you apply the following debugging
+> patch to see what is going on there?
 
-Passed:    8 / 10   ( 80.00 %)
-Failed:    2 / 10   ( 20.00 %)
+Did you have chance to test with this debugging patch, please?
 
-Errors: 0
-Warnings: 8
-Section Mismatches: 0
+> ---
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 0abc30d681ae..f098aaf60039 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -361,8 +361,28 @@ static unsigned long elf_vm_mmap(struct file *filep, unsigned long addr,
+>  		return map_addr;
+>  
+>  	if ((type & MAP_FIXED) && map_addr != addr) {
+> -		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already\n",
+> -				(void*)addr);
+> +		struct mm_struct *mm = current->mm;
+> +		struct vm_area_struct *vma;
+> +		pr_info("Uhuuh, elf segement at %p requested but the memory is mapped already, got %p\n",
+> +				(void*)addr, (void*)map_addr);
+> +		down_read(&mm->mmap_sem);
+> +		vma = find_vma(mm, addr);
+> +		if (vma) {
+> +			const char *name;
+> +			pr_info("Clashing vma [%lx, %lx] flags:%lx", vma->vm_start, vma->vm_end, vma->vm_flags);
+> +			name = arch_vma_name(vma);
+> +			if (!name) {
+> +				if (vma->vm_start <= mm->brk &&
+> +				    vma->vm_end >= mm->start_brk)
+> +					name = "[heap]";
+> +				else if (vma->vm_start <= vma->vm_mm->start_stack &&
+> +						vma->vm_end >= vma->vm_mm->start_stack)
+> +					name = "[stack]";
+> +			}
+> +			pr_cont(" name:%s\n", name);
+> +		} else
+> +			pr_info("Uhm, no clashing VMA\n");
+> +		up_read(&mm->mmap_sem);
+>  		return -EAGAIN;
+>  	}
+>  
+> 
+> -- 
+> Michal Hocko
+> SUSE Labs
 
-Failed defconfigs:
-
-Errors:
-
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      8 warnings    0 mismatches  : arm64-allmodconfig
-      8 warnings    0 mismatches  : arm-allmodconfig
-
--------------------------------------------------------------------------------
-
-Warnings Summary: 8
-	  2 ../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	  2 ../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm64-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 8 warnings, 0 section mismatches
-
-Warnings:
-	../net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
-	../net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
+-- 
+Michal Hocko
+SUSE Labs
