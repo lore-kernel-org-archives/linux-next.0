@@ -1,42 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the cgroup tree with the net-next
- tree
-Date: Mon, 13 Nov 2017 16:26:28 +1100
-Message-ID: <20171113162618.1b33e82d@canb.auug.org.au>
-References: <20171009183836.cceczuqytzmgqubr@sirena.co.uk>
+Subject: Re: linux-next: manual merge of the drivers-x86 tree with the
+ net-next tree
+Date: Mon, 13 Nov 2017 16:28:20 +1100
+Message-ID: <20171113162810.28dd7f87@canb.auug.org.au>
+References: <20171009175633.dm7hjmgoxusspue5@sirena.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36489 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750949AbdKMF0a (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 00:26:30 -0500
-In-Reply-To: <20171009183836.cceczuqytzmgqubr@sirena.co.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tejun Heo <tj@kernel.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <kafai@fb.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171009175633.dm7hjmgoxusspue5@sirena.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Darren Hart <dvhart@infradead.org>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>, Mario Limonciello <mario.limonciello@dell.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, Yehezkel Bernat <yehezkel.bernat@intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Amir Levy <amir.jer.levy@intel.com>, Michael Jamet <michael.jamet@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mark,
+Hi all,
 
-On Mon, 9 Oct 2017 19:38:36 +0100 Mark Brown <broonie@kernel.org> wrote:
+On Mon, 9 Oct 2017 18:56:33 +0100 Mark Brown <broonie@kernel.org> wrote:
 >
-> Hi Tejun,
+> Today's linux-next merge of the drivers-x86 tree got a conflict in:
 > 
-> Today's linux-next merge of the cgroup tree got a conflict in:
-> 
->   kernel/cgroup/cgroup.c
+>   Documentation/admin-guide/thunderbolt.rst
 > 
 > between commit:
 > 
->   324bda9e6c5ad ("bpf: multi program support for cgroup+bpf")
+>    e69b6c02b4c3b ("net: Add support for networking over Thunderbolt cable")
 > 
 > from the net-next tree and commit:
 > 
->   041cd640b2f3c ("cgroup: Implement cgroup2 basic CPU usage accounting")
+>    ce6a90027c10f ("platform/x86: Add driver to force WMI Thunderbolt controller power status")
 > 
-> from the cgroup tree.
+> from the drivers-x86 tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,22 +39,52 @@ On Mon, 9 Oct 2017 19:38:36 +0100 Mark Brown <broonie@kernel.org> wrote:
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 > 
-> diff --cc kernel/cgroup/cgroup.c
-> index 00f5b358aeac,c3421ee0d230..000000000000
-> --- a/kernel/cgroup/cgroup.c
-> +++ b/kernel/cgroup/cgroup.c
-> @@@ -4765,8 -4785,9 +4788,11 @@@ static struct cgroup *cgroup_create(str
+> diff --cc Documentation/admin-guide/thunderbolt.rst
+> index 5c62d11d77e8,dadcd66ee12f..000000000000
+> --- a/Documentation/admin-guide/thunderbolt.rst
+> +++ b/Documentation/admin-guide/thunderbolt.rst
+> @@@ -198,26 -198,17 +198,41 @@@ information is missing
+>   To recover from this mode, one needs to flash a valid NVM image to the
+>   host host controller in the same way it is done in the previous chapter.
 >   
->   	return cgrp;
->   
->  +out_idr_free:
->  +	cgroup_idr_remove(&root->cgroup_idr, cgrp->id);
-> + out_stat_exit:
-> + 	if (cgroup_on_dfl(parent))
-> + 		cgroup_stat_exit(cgrp);
->   out_cancel_ref:
->   	percpu_ref_exit(&cgrp->self.refcnt);
->   out_free_cgrp:
+>  +Networking over Thunderbolt cable
+>  +---------------------------------
+>  +Thunderbolt technology allows software communication across two hosts
+>  +connected by a Thunderbolt cable.
+>  +
+>  +It is possible to tunnel any kind of traffic over Thunderbolt link but
+>  +currently we only support Apple ThunderboltIP protocol.
+>  +
+>  +If the other host is running Windows or macOS only thing you need to
+>  +do is to connect Thunderbolt cable between the two hosts, the
+>  +``thunderbolt-net`` is loaded automatically. If the other host is also
+>  +Linux you should load ``thunderbolt-net`` manually on one host (it does
+>  +not matter which one)::
+>  +
+>  +  # modprobe thunderbolt-net
+>  +
+>  +This triggers module load on the other host automatically. If the driver
+>  +is built-in to the kernel image, there is no need to do anything.
+>  +
+>  +The driver will create one virtual ethernet interface per Thunderbolt
+>  +port which are named like ``thunderbolt0`` and so on. From this point
+>  +you can either use standard userspace tools like ``ifconfig`` to
+>  +configure the interface or let your GUI to handle it automatically.
+> ++
+> + Forcing power
+> + -------------
+> + Many OEMs include a method that can be used to force the power of a
+> + thunderbolt controller to an "On" state even if nothing is connected.
+> + If supported by your machine this will be exposed by the WMI bus with
+> + a sysfs attribute called "force_power".
+> + 
+> + For example the intel-wmi-thunderbolt driver exposes this attribute in:
+> +   /sys/devices/platform/PNP0C14:00/wmi_bus/wmi_bus-PNP0C14:00/86CCFD48-205E-4A77-9C48-2021CBEDE341/force_power
+> + 
+> +   To force the power to on, write 1 to this attribute file.
+> +   To disable force power, write 0 to this attribute file.
+> + 
+> + Note: it's currently not possible to query the force power state of a platform.
 
 Just a reminder that this conflict still exists.
 
