@@ -1,19 +1,101 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: build failure after merge of the keys tree
-Date: Mon, 13 Nov 2017 11:21:58 +0000
-Message-ID: <4139.1510572118@warthog.procyon.org.uk>
-References: <20171113130808.12d7ec72@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warnings after merge of the tip tree
+Date: Mon, 13 Nov 2017 22:31:44 +1100
+Message-ID: <20171113223144.7563d1ad@canb.auug.org.au>
+References: <20171102135351.24ee83f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171113130808.12d7ec72@canb.auug.org.au>
-Content-ID: <4138.1510572118.1@warthog.procyon.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35725 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752254AbdKMLbr (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 13 Nov 2017 06:31:47 -0500
+In-Reply-To: <20171102135351.24ee83f9@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>
 
-I've dropped the keyrings ACL patches from the branch for now.  I'll revisit
-them after the merge window.
+Hi all,
 
-David
+On Thu, 2 Nov 2017 13:53:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
+> produced these warnings:
+> 
+> net/dccp/probe.c: In function 'dccpprobe_init':
+> net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   ret = register_jprobe(&dccp_send_probe);
+>   ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>     ret = register_jprobe(&dccp_send_probe);
+>     ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/dccp/probe.c: In function 'dccpprobe_exit':
+> net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&dccp_send_probe);
+>   ^
+> In file included from net/dccp/probe.c:26:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> net/ipv4/tcp_probe.c: In function 'tcpprobe_init':
+> net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   ret = register_jprobe(&tcp_jprobe);
+>   ^
+> In file included from net/ipv4/tcp_probe.c:24:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/ipv4/tcp_probe.c: In function 'tcpprobe_exit':
+> net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&tcp_jprobe);
+>   ^
+> In file included from net/ipv4/tcp_probe.c:24:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> net/sctp/probe.c: In function 'sctp_setup_jprobe':
+> net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>   int ret = register_jprobe(&sctp_recv_probe);
+>   ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
+>    ret = register_jprobe(&sctp_recv_probe);
+>    ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:471:32: note: declared here
+>  static inline int __deprecated register_jprobe(struct jprobe *p)
+>                                 ^
+> net/sctp/probe.c: In function 'sctpprobe_exit':
+> net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
+>   unregister_jprobe(&sctp_recv_probe);
+>   ^
+> In file included from net/sctp/probe.c:28:0:
+> include/linux/kprobes.h:479:33: note: declared here
+>  static inline void __deprecated unregister_jprobe(struct jprobe *p)
+>                                  ^
+> 
+> Introduced by commit
+> 
+>   590c84593045 ("kprobes: Disable the jprobes APIs")
+> 
+> These days we normally don't deprecate things, just remove them.  But we
+> do that *after* fixing up all the usages in the tree, please.
+
+Just a reminder that I am still getting these warnings.
+
+-- 
+Cheers,
+Stephen Rothwell
