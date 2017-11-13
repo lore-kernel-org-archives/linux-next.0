@@ -1,100 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warnings after merge of the tip tree
-Date: Mon, 13 Nov 2017 22:31:44 +1100
-Message-ID: <20171113223144.7563d1ad@canb.auug.org.au>
-References: <20171102135351.24ee83f9@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 13 Nov 2017 22:33:05 +1100
+Message-ID: <20171113223305.42aae1a2@canb.auug.org.au>
+References: <20171102162038.339466ef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:35725 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:56287 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752254AbdKMLbr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 06:31:47 -0500
-In-Reply-To: <20171102135351.24ee83f9@canb.auug.org.au>
+        id S1752163AbdKMLdI (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 13 Nov 2017 06:33:08 -0500
+In-Reply-To: <20171102162038.339466ef@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
 
 Hi all,
 
-On Thu, 2 Nov 2017 13:53:51 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Thu, 2 Nov 2017 16:20:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >
-> After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-> produced these warnings:
+> After merging the gpio tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 > 
-> net/dccp/probe.c: In function 'dccpprobe_init':
-> net/dccp/probe.c:166:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->   ret = register_jprobe(&dccp_send_probe);
->   ^
-> In file included from net/dccp/probe.c:26:0:
-> include/linux/kprobes.h:471:32: note: declared here
->  static inline int __deprecated register_jprobe(struct jprobe *p)
->                                 ^
-> net/dccp/probe.c:170:4: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->     ret = register_jprobe(&dccp_send_probe);
->     ^
-> In file included from net/dccp/probe.c:26:0:
-> include/linux/kprobes.h:471:32: note: declared here
->  static inline int __deprecated register_jprobe(struct jprobe *p)
->                                 ^
-> net/dccp/probe.c: In function 'dccpprobe_exit':
-> net/dccp/probe.c:190:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->   unregister_jprobe(&dccp_send_probe);
->   ^
-> In file included from net/dccp/probe.c:26:0:
-> include/linux/kprobes.h:479:33: note: declared here
->  static inline void __deprecated unregister_jprobe(struct jprobe *p)
->                                  ^
-> net/ipv4/tcp_probe.c: In function 'tcpprobe_init':
-> net/ipv4/tcp_probe.c:280:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->   ret = register_jprobe(&tcp_jprobe);
->   ^
-> In file included from net/ipv4/tcp_probe.c:24:0:
-> include/linux/kprobes.h:471:32: note: declared here
->  static inline int __deprecated register_jprobe(struct jprobe *p)
->                                 ^
-> net/ipv4/tcp_probe.c: In function 'tcpprobe_exit':
-> net/ipv4/tcp_probe.c:298:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->   unregister_jprobe(&tcp_jprobe);
->   ^
-> In file included from net/ipv4/tcp_probe.c:24:0:
-> include/linux/kprobes.h:479:33: note: declared here
->  static inline void __deprecated unregister_jprobe(struct jprobe *p)
->                                  ^
-> net/sctp/probe.c: In function 'sctp_setup_jprobe':
-> net/sctp/probe.c:189:2: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->   int ret = register_jprobe(&sctp_recv_probe);
->   ^
-> In file included from net/sctp/probe.c:28:0:
-> include/linux/kprobes.h:471:32: note: declared here
->  static inline int __deprecated register_jprobe(struct jprobe *p)
->                                 ^
-> net/sctp/probe.c:194:3: warning: 'register_jprobe' is deprecated [-Wdeprecated-declarations]
->    ret = register_jprobe(&sctp_recv_probe);
->    ^
-> In file included from net/sctp/probe.c:28:0:
-> include/linux/kprobes.h:471:32: note: declared here
->  static inline int __deprecated register_jprobe(struct jprobe *p)
->                                 ^
-> net/sctp/probe.c: In function 'sctpprobe_exit':
-> net/sctp/probe.c:240:2: warning: 'unregister_jprobe' is deprecated [-Wdeprecated-declarations]
->   unregister_jprobe(&sctp_recv_probe);
->   ^
-> In file included from net/sctp/probe.c:28:0:
-> include/linux/kprobes.h:479:33: note: declared here
->  static inline void __deprecated unregister_jprobe(struct jprobe *p)
->                                  ^
+> drivers/gpio/gpio-uniphier.c:324:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   .activate = uniphier_gpio_irq_domain_activate,
+>               ^
 > 
-> Introduced by commit
+> Caused by commit
 > 
->   590c84593045 ("kprobes: Disable the jprobes APIs")
+>   dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
 > 
-> These days we normally don't deprecate things, just remove them.  But we
-> do that *after* fixing up all the usages in the tree, please.
+> interacting with commit
+> 
+>   72491643469a ("genirq/irqdomain: Update irq_domain_ops.activate() signature")
+> 
+> from the tip tree
+> 
+> I added the following merge fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 2 Nov 2017 16:10:46 +1100
+> Subject: [PATCH] gpio: uniphier: merge fix for "Update
+>  irq_domain_ops.activate() signature"
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpio/gpio-uniphier.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+> index d62cea4ed6b7..d0069202ade3 100644
+> --- a/drivers/gpio/gpio-uniphier.c
+> +++ b/drivers/gpio/gpio-uniphier.c
+> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
+>  	return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+>  }
+>  
+> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+> -					      struct irq_data *data)
+> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+> +					      struct irq_data *data,
+> +					      bool early)
+>  {
+>  	struct uniphier_gpio_priv *priv = domain->host_data;
+>  	struct gpio_chip *chip = &priv->chip;
+>  
+>  	gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
+> +	return 0;
+>  }
+>  
+>  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
 
-Just a reminder that I am still getting these warnings.
+Just a reminder that this conflict still exists.
 
 -- 
 Cheers,
