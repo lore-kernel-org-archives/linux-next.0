@@ -1,65 +1,34 @@
-From: Jyri Sarha <jsarha@ti.com>
-Subject: Re: linux-next: manual merge of the devicetree tree with the drm tree
-Date: Mon, 13 Nov 2017 17:40:54 +0200
-Message-ID: <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
-References: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
- <20171113165831.19ebc9fa@canb.auug.org.au>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm64 tree
+Date: Mon, 13 Nov 2017 15:44:02 +0000
+Message-ID: <20171113154400.GA29665@arm.com>
+References: <20171107163117.5aeaac71@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171113165831.19ebc9fa@canb.auug.org.au>
-Content-Language: en-GB
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robherring2@gmail.com>, Rob Herring <robh@kernel.org>, ave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Stephen Boyd <stephen.boyd@linaro.org>, Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Frank Rowand <frank.rowand@sony.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171107163117.5aeaac71@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gMTEvMTMvMTcgMDc6NTgsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+
-IE9uIE1vbiwgMzAgT2N0IDIwMTcgMjA6Mzc6NTYgKzAwMDAgTWFyayBCcm93biA8YnJvb25pZUBr
-ZXJuZWwub3JnPiB3cm90ZToKPj4KPj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBk
-ZXZpY2V0cmVlIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4+Cj4+ICAgZHJpdmVycy9ncHUvZHJt
-L3RpbGNkYy90aWxjZGNfc2xhdmVfY29tcGF0LmMKPj4KPj4gYmV0d2VlbiBjb21taXQ6Cj4+Cj4+
-ICAgNDRjZDM5MzljMTExYjcgKCJkcm0vdGlsY2RjOiBSZW1vdmUgcmVkdW5kYW50IE9GX0RFVEFD
-SEVEIGZsYWcgc2V0dGluZyIpCj4+Cj4+IGZyb20gdGhlIGRybSB0cmVlIGFuZCBjb21taXQ6Cj4+
-Cj4+ICAgZjk0OGQ2ZDhiNzkyYmIgKCJvZjogb3ZlcmxheTogYXZvaWQgcmFjZSBjb25kaXRpb24g
-YmV0d2VlbiBhcHBseWluZyBtdWx0aXBsZSBvdmVybGF5cyIpCj4+Cj4+IGZyb20gdGhlIGRldmlj
-ZXRyZWUgdHJlZS4KPj4KPj4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5
-IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4+IGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGlu
-dXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKPj4gY29uZmxpY3RzIHNo
-b3VsZCBiZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0
-cmVlCj4+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNv
-bnNpZGVyIGNvb3BlcmF0aW5nCj4+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0
-aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+PiBjb21wbGV4IGNvbmZsaWN0
-cy4KPj4KPj4gZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2Nv
-bXBhdC5jCj4+IGluZGV4IDQ4MjI5OWE2ZjNiMCw1NDAyNWFmNTM0ZDQuLjAwMDAwMDAwMDAwMAo+
-PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+PiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+PiBAQEAg
-LTE2MywxMiAtMTYyLDggKzE2Miw2IEBAQCBzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICogX19p
-bml0IHRpbGMKPj4gICAJCXJldHVybiBOVUxMOwo+PiAgIAl9Cj4+ICAgCj4+IC0gCXJldCA9IG9m
-X3Jlc29sdmVfcGhhbmRsZXMob3ZlcmxheSk7Cj4+IC0gCWlmIChyZXQpIHsKPj4gLSAJCXByX2Vy
-cigiJXM6IEZhaWxlZCB0byByZXNvbHZlIHBoYW5kbGVzOiAlZFxuIiwgX19mdW5jX18sIHJldCk7
-Cj4+IC0gCQlyZXR1cm4gTlVMTDsKPj4gLSAJfQo+PiAgLQlvZl9ub2RlX3NldF9mbGFnKG92ZXJs
-YXksIE9GX0RFVEFDSEVEKTsKPj4gLS0KPj4gICAJcmV0dXJuIG92ZXJsYXk7Cj4+ICAgfQo+PiAg
-IAo+IAo+IEp1c3QgYSByZW1pbmRlciB0aGF0IHRoaXMgY29uZmxpY3Qgc3RpbGwgZXhpc3RzLgo+
-IAoKQWZ0ZXIgc29tZSBjb25zaWRlcmF0aW9uLCBJIHRoaW5rIHdlIGNhbiBkcm9wIHRoZSBkdHMg
-YmFja3dhcmQKY29tcGF0aWJpbGl0eSBjb2RlIGZyb20gZHJtL3RpbGNkYy4gSXQgc2VlbXMgdGhh
-dCBpdCBpcyBjYXVzaW5nIGEgbG90IG9mCnRyb3VibGUgYW5kIEkgZG8gbm90IGV2ZW4ga25vdyBp
-ZiBhbnlib2R5IHVzZXMgaXQgYW55bW9yZS4gSGVyZSBpcyBhCnBhdGNoIGZvciBkcm9wcGluZyBp
-dDoKCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE3
-LU5vdmVtYmVyLzE1NzM5NC5odG1sCgpJIGRpZCBub3QgcGxhbiB0byBtZXJnZSBpdCBiZWZvcmUg
-djQuMTYsIGJ1dCBpZiB0aGlzIGlzIGEgYmlnZ2VyIHByb2JsZW0KSSBjYW4gcHVzaCBpcyByaWdo
-dCBub3cgZm9yIHY0LjE1LgoKQmVzdCByZWdhcmRzLApKeXJpCgotLSAKVGV4YXMgSW5zdHJ1bWVu
-dHMgRmlubGFuZCBPeSwgUG9ya2thbGFua2F0dSAyMiwgMDAxODAgSGVsc2lua2kuClktdHVubnVz
-L0J1c2luZXNzIElEOiAwNjE1NTIxLTQuIEtvdGlwYWlra2EvRG9taWNpbGU6IEhlbHNpbmtpCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Tue, Nov 07, 2017 at 04:31:17PM +1100, Stephen Rothwell wrote:
+> Hi Catalin,
+> 
+> Commit
+> 
+>   2c0db5b45071 ("rm64: Implement __lshrti3 library function")
+> 
+> is missing a Signed-off-by from its author.
+
+Bugger; my fault. I split Jason's patch in a hurry so that it applied on
+top of his old one (that I'd already pushed) and forgot his SoB, despite
+getting the authorship right.
+
+Given that this is HEAD on arm64 and nobody is using that as a base, I'll
+do the --amend and repush.
+
+Sorry about the mess.
+
+Will
