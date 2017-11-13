@@ -1,80 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the gpio tree
-Date: Mon, 13 Nov 2017 22:33:05 +1100
-Message-ID: <20171113223305.42aae1a2@canb.auug.org.au>
-References: <20171102162038.339466ef@canb.auug.org.au>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: Tree for Nov 7
+Date: Mon, 13 Nov 2017 22:34:50 +1100
+Message-ID: <87lgjawgx1.fsf@concordia.ellerman.id.au>
+References: <20171107162217.382cd754@canb.auug.org.au> <CACPK8Xfd4nqkf=Lk3n6+TNHAAi327r0dkUfGypZ3TpR0LqfS4Q@mail.gmail.com> <20171108142050.7w3yliulxjeco3b7@dhcp22.suse.cz> <20171110123054.5pnefm3mczsfv7bz@dhcp22.suse.cz> <CACPK8Xe5uUKEytkRiszdX511b_cYTD-z3X=ZsMcNJ-NOYnXfuQ@mail.gmail.com> <20171113092006.cjw2njjukt6limvb@dhcp22.suse.cz> <20171113094203.aofz2e7kueitk55y@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56287 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752163AbdKMLdI (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 06:33:08 -0500
-In-Reply-To: <20171102162038.339466ef@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Content-Type: text/plain
+Return-path: <linux-parisc-owner@vger.kernel.org>
+In-Reply-To: <20171113094203.aofz2e7kueitk55y@dhcp22.suse.cz>
+Sender: linux-parisc-owner@vger.kernel.org
+To: Michal Hocko <mhocko@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Ralf Baechle <ralf@linux-mips.org>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Helge Deller <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, "David S. Miller" <davem@davemloft.net>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-mips@linux-mips.org, linux-parisc@vger.kernel.orglinux-
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Michal,
 
-On Thu, 2 Nov 2017 16:20:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Michal Hocko <mhocko@kernel.org> writes:
+> On Mon 13-11-17 10:20:06, Michal Hocko wrote:
+>> [Cc arm and ppc maintainers]
 >
-> After merging the gpio tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> drivers/gpio/gpio-uniphier.c:324:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->   .activate = uniphier_gpio_irq_domain_activate,
->               ^
-> 
-> Caused by commit
-> 
->   dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
-> 
-> interacting with commit
-> 
->   72491643469a ("genirq/irqdomain: Update irq_domain_ops.activate() signature")
-> 
-> from the tip tree
-> 
-> I added the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 2 Nov 2017 16:10:46 +1100
-> Subject: [PATCH] gpio: uniphier: merge fix for "Update
->  irq_domain_ops.activate() signature"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/gpio/gpio-uniphier.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
-> index d62cea4ed6b7..d0069202ade3 100644
-> --- a/drivers/gpio/gpio-uniphier.c
-> +++ b/drivers/gpio/gpio-uniphier.c
-> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
->  	return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
->  }
->  
-> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
-> -					      struct irq_data *data)
-> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
-> +					      struct irq_data *data,
-> +					      bool early)
->  {
->  	struct uniphier_gpio_priv *priv = domain->host_data;
->  	struct gpio_chip *chip = &priv->chip;
->  
->  	gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
-> +	return 0;
->  }
->  
->  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
+> Hmm, it turned out to be a problem on other architectures as well.
+> CCing more maintainers. For your reference, we are talking about
+> http://lkml.kernel.org/r/20171023082608.6167-1-mhocko@kernel.org
+> which has broken architectures which do apply aligning on the mmap
+> address hint without MAP_FIXED applied. See below my proposed way
+> around this issue because I belive that the above patch is quite
+> valuable on its own to be dropped for all archs.
 
-Just a reminder that this conflict still exists.
+I don't really like your solution sorry :)  The fact that you've had to
+patch seven arches seems like a red flag.
 
--- 
-Cheers,
-Stephen Rothwell
+I think this is a generic problem with MAP_FIXED, which I've heard
+userspace folks complain about in the past.
+
+Currently MAP_FIXED does two things:
+  1. makes addr not a hint but the required address
+  2. blasts any existing mapping
+
+You want 1) but not 2).
+
+So the right solution IMHO would be to add a new mmap flag to request
+that behaviour, ie. a fixed address but iff there is nothing already
+mapped there.
+
+I don't know the mm code well enough to know if that's hard for some
+reason, but it *seems* like it should be doable.
+
+cheers
