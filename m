@@ -1,92 +1,78 @@
-From: Frank Rowand <frowand.list@gmail.com>
+From: Jyri Sarha <jsarha@ti.com>
 Subject: Re: linux-next: manual merge of the devicetree tree with the drm tree
-Date: Mon, 13 Nov 2017 10:43:35 -0800
-Message-ID: <917c5115-3d36-92bd-2713-5a6119fc82ca@gmail.com>
+Date: Mon, 13 Nov 2017 21:51:29 +0200
+Message-ID: <6e7a5a3e-c5a9-7069-74bc-06037761af93@ti.com>
 References: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
  <20171113165831.19ebc9fa@canb.auug.org.au>
  <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
+ <917c5115-3d36-92bd-2713-5a6119fc82ca@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f50.google.com ([74.125.83.50]:43596 "EHLO
-        mail-pg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753076AbdKMSni (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Nov 2017 13:43:38 -0500
-In-Reply-To: <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jyri Sarha <jsarha@ti.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robherring2@gmail.com>, Rob Herring <robh@kernel.org>, ave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Mark Brown <broonie@kernel.org>, Frank Rowand <frank.rowand@sony.com>, Stephen Boyd <stephen.boyd@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <917c5115-3d36-92bd-2713-5a6119fc82ca@gmail.com>
+Content-Language: en-GB
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Frank Rowand <frowand.list@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robherring2@gmail.com>, Rob Herring <robh@kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: "airlied@linux.ie" <airlied@linux.ie>, "Valkeinen,
+ Tomi" <tomi.valkeinen@ti.com>, Stephen Boyd <stephen.boyd@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Frank Rowand <frank.rowand@sony.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jyri,
-
-On 11/13/17 07:40, Jyri Sarha wrote:
-> On 11/13/17 07:58, Stephen Rothwell wrote:
->> Hi all,
->>
->> On Mon, 30 Oct 2017 20:37:56 +0000 Mark Brown <broonie@kernel.org> wrote:
->>>
->>> Today's linux-next merge of the devicetree tree got a conflict in:
->>>
->>>   drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
->>>
->>> between commit:
->>>
->>>   44cd3939c111b7 ("drm/tilcdc: Remove redundant OF_DETACHED flag setting")
->>>
->>> from the drm tree and commit:
->>>
->>>   f948d6d8b792bb ("of: overlay: avoid race condition between applying multiple overlays")
->>>
->>> from the devicetree tree.
->>>
->>> I fixed it up (see below) and can carry the fix as necessary. This
->>> is now fixed as far as linux-next is concerned, but any non trivial
->>> conflicts should be mentioned to your upstream maintainer when your tree
->>> is submitted for merging.  You may also want to consider cooperating
->>> with the maintainer of the conflicting tree to minimise any particularly
->>> complex conflicts.
->>>
->>> diff --cc drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
->>> index 482299a6f3b0,54025af534d4..000000000000
->>> --- a/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
->>> +++ b/drivers/gpu/drm/tilcdc/tilcdc_slave_compat.c
->>> @@@ -163,12 -162,8 +162,6 @@@ static struct device_node * __init tilc
->>>   		return NULL;
->>>   	}
->>>   
->>> - 	ret = of_resolve_phandles(overlay);
->>> - 	if (ret) {
->>> - 		pr_err("%s: Failed to resolve phandles: %d\n", __func__, ret);
->>> - 		return NULL;
->>> - 	}
->>>  -	of_node_set_flag(overlay, OF_DETACHED);
->>> --
->>>   	return overlay;
->>>   }
->>>   
->>
->> Just a reminder that this conflict still exists.
->>
-> 
-> After some consideration, I think we can drop the dts backward
-> compatibility code from drm/tilcdc. It seems that it is causing a lot of
-> trouble and I do not even know if anybody uses it anymore. Here is a
-> patch for dropping it:
-> 
-> https://lists.freedesktop.org/archives/dri-devel/2017-November/157394.html
-> 
-> I did not plan to merge it before v4.16, but if this is a bigger problem
-> I can push is right now for v4.15.
-> 
-> Best regards,
-> Jyri
-> 
-
-The dropping patch is much appreciated.
-
-It would make life easier for me if the patch gets into v4.15-rc.
-
--Frank
+T24gMTEvMTMvMTcgMjA6NDMsIEZyYW5rIFJvd2FuZCB3cm90ZToKPiBIaSBKeXJpLAo+IAo+IE9u
+IDExLzEzLzE3IDA3OjQwLCBKeXJpIFNhcmhhIHdyb3RlOgo+PiBPbiAxMS8xMy8xNyAwNzo1OCwg
+U3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPj4+IEhpIGFsbCwKPj4+Cj4+PiBPbiBNb24sIDMwIE9j
+dCAyMDE3IDIwOjM3OjU2ICswMDAwIE1hcmsgQnJvd24gPGJyb29uaWVAa2VybmVsLm9yZz4gd3Jv
+dGU6Cj4+Pj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkZXZpY2V0cmVlIHRyZWUg
+Z290IGEgY29uZmxpY3QgaW46Cj4+Pj4KPj4+PiAgIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGls
+Y2RjX3NsYXZlX2NvbXBhdC5jCj4+Pj4KPj4+PiBiZXR3ZWVuIGNvbW1pdDoKPj4+Pgo+Pj4+ICAg
+NDRjZDM5MzljMTExYjcgKCJkcm0vdGlsY2RjOiBSZW1vdmUgcmVkdW5kYW50IE9GX0RFVEFDSEVE
+IGZsYWcgc2V0dGluZyIpCj4+Pj4KPj4+PiBmcm9tIHRoZSBkcm0gdHJlZSBhbmQgY29tbWl0Ogo+
+Pj4+Cj4+Pj4gICBmOTQ4ZDZkOGI3OTJiYiAoIm9mOiBvdmVybGF5OiBhdm9pZCByYWNlIGNvbmRp
+dGlvbiBiZXR3ZWVuIGFwcGx5aW5nIG11bHRpcGxlIG92ZXJsYXlzIikKPj4+Pgo+Pj4+IGZyb20g
+dGhlIGRldmljZXRyZWUgdHJlZS4KPj4+Pgo+Pj4+IEkgZml4ZWQgaXQgdXAgKHNlZSBiZWxvdykg
+YW5kIGNhbiBjYXJyeSB0aGUgZml4IGFzIG5lY2Vzc2FyeS4gVGhpcwo+Pj4+IGlzIG5vdyBmaXhl
+ZCBhcyBmYXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwK
+Pj4+PiBjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50
+YWluZXIgd2hlbiB5b3VyIHRyZWUKPj4+PiBpcyBzdWJtaXR0ZWQgZm9yIG1lcmdpbmcuICBZb3Ug
+bWF5IGFsc28gd2FudCB0byBjb25zaWRlciBjb29wZXJhdGluZwo+Pj4+IHdpdGggdGhlIG1haW50
+YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJs
+eQo+Pj4+IGNvbXBsZXggY29uZmxpY3RzLgo+Pj4+Cj4+Pj4gZGlmZiAtLWNjIGRyaXZlcnMvZ3B1
+L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2NvbXBhdC5jCj4+Pj4gaW5kZXggNDgyMjk5YTZmM2Iw
+LDU0MDI1YWY1MzRkNC4uMDAwMDAwMDAwMDAwCj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Rp
+bGNkYy90aWxjZGNfc2xhdmVfY29tcGF0LmMKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGls
+Y2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+Pj4+IEBAQCAtMTYzLDEyIC0xNjIsOCArMTYyLDYg
+QEBAIHN0YXRpYyBzdHJ1Y3QgZGV2aWNlX25vZGUgKiBfX2luaXQgdGlsYwo+Pj4+ICAgCQlyZXR1
+cm4gTlVMTDsKPj4+PiAgIAl9Cj4+Pj4gICAKPj4+PiAtIAlyZXQgPSBvZl9yZXNvbHZlX3BoYW5k
+bGVzKG92ZXJsYXkpOwo+Pj4+IC0gCWlmIChyZXQpIHsKPj4+PiAtIAkJcHJfZXJyKCIlczogRmFp
+bGVkIHRvIHJlc29sdmUgcGhhbmRsZXM6ICVkXG4iLCBfX2Z1bmNfXywgcmV0KTsKPj4+PiAtIAkJ
+cmV0dXJuIE5VTEw7Cj4+Pj4gLSAJfQo+Pj4+ICAtCW9mX25vZGVfc2V0X2ZsYWcob3ZlcmxheSwg
+T0ZfREVUQUNIRUQpOwo+Pj4+IC0tCj4+Pj4gICAJcmV0dXJuIG92ZXJsYXk7Cj4+Pj4gICB9Cj4+
+Pj4gICAKPj4+IEp1c3QgYSByZW1pbmRlciB0aGF0IHRoaXMgY29uZmxpY3Qgc3RpbGwgZXhpc3Rz
+Lgo+Pj4KPj4gQWZ0ZXIgc29tZSBjb25zaWRlcmF0aW9uLCBJIHRoaW5rIHdlIGNhbiBkcm9wIHRo
+ZSBkdHMgYmFja3dhcmQKPj4gY29tcGF0aWJpbGl0eSBjb2RlIGZyb20gZHJtL3RpbGNkYy4gSXQg
+c2VlbXMgdGhhdCBpdCBpcyBjYXVzaW5nIGEgbG90IG9mCj4+IHRyb3VibGUgYW5kIEkgZG8gbm90
+IGV2ZW4ga25vdyBpZiBhbnlib2R5IHVzZXMgaXQgYW55bW9yZS4gSGVyZSBpcyBhCj4+IHBhdGNo
+IGZvciBkcm9wcGluZyBpdDoKPj4KPj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvYXJj
+aGl2ZXMvZHJpLWRldmVsLzIwMTctTm92ZW1iZXIvMTU3Mzk0Lmh0bWwKPj4KPj4gSSBkaWQgbm90
+IHBsYW4gdG8gbWVyZ2UgaXQgYmVmb3JlIHY0LjE2LCBidXQgaWYgdGhpcyBpcyBhIGJpZ2dlciBw
+cm9ibGVtCj4+IEkgY2FuIHB1c2ggaXMgcmlnaHQgbm93IGZvciB2NC4xNS4KPj4KPj4gQmVzdCBy
+ZWdhcmRzLAo+PiBKeXJpCj4+Cj4gVGhlIGRyb3BwaW5nIHBhdGNoIGlzIG11Y2ggYXBwcmVjaWF0
+ZWQuCj4gCj4gSXQgd291bGQgbWFrZSBsaWZlIGVhc2llciBmb3IgbWUgaWYgdGhlIHBhdGNoIGdl
+dHMgaW50byB2NC4xNS1yYy4KCkRhdmUsIERhbmllbD8gV291bGQgeW91IHRha2UgdGhpcyBsYXRl
+IGFkZGl0aW9uIHRvIHY0LjE1IHN0aWxsLCBpZiBJCndvdWxkIHNlbmQgYSBwdWxsIHJlcXVlc3Qg
+bm93PwoKVGhlIHBhdGNoIGlzIHByZXR0eSBtdWNoIG9ydGhvZ29uYWwgdG8gdGhlIHJlc3Qgb2Yg
+ZHJtIGFzIGl0IGlzIG9ubHkKZGVhbGluZyB3aXRoIGRldmljZSB0cmVlIHN0dWZmLgoKQmVzdCBy
+ZWdhcmRzLApKeXJpCgotLSAKVGV4YXMgSW5zdHJ1bWVudHMgRmlubGFuZCBPeSwgUG9ya2thbGFu
+a2F0dSAyMiwgMDAxODAgSGVsc2lua2kuClktdHVubnVzL0J1c2luZXNzIElEOiAwNjE1NTIxLTQu
+IEtvdGlwYWlra2EvRG9taWNpbGU6IEhlbHNpbmtpCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
