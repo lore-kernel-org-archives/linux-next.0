@@ -1,33 +1,43 @@
-From: Richard Weinberger <richard@nod.at>
-Subject: Re: linux-next: Signed-off-by missing for commit in the l2-mtd tree
-Date: Mon, 13 Nov 2017 22:09:05 +0100
-Message-ID: <3708653.8v5jKD7tj3@blindfold>
-References: <20171114080430.7c33fd83@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings in Linus' tree
+Date: Tue, 14 Nov 2017 08:52:35 +1100
+Message-ID: <20171114085235.70e99fb6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.sigma-star.at ([95.130.255.111]:45996 "EHLO
-        mail.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752145AbdKMVIu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 13 Nov 2017 16:08:50 -0500
-In-Reply-To: <20171114080430.7c33fd83@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Brian Norris <computersforpeace@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Boris Brezillon <boris.brezillon@free-electrons.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+List-Id: linux-next.vger.kernel.org
 
-Am Montag, 13. November 2017, 22:04:30 CET schrieb Stephen Rothwell:
-> Hi Brian,
-> 
-> Commit
-> 
->   d8c585fc5f37 ("mtd: Avoid probe failures when mtd->dbg.dfs_dir is
-> invalid")
-> 
-> is missing a Signed-off-by from its comiiter.
+Hi Linus,
 
-Fixed. :)
+Today's linux-next build (x86_64 allmodconfig) produced these warnings:
 
-Thanks,
-//richard
+WARNING: modpost: missing MODULE_LICENSE() in net/9p/9pnet_xen.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/mtk-vcodec/mtk-vcodec-common.o
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/auxdisplay/img-ascii-lcd.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-ath79.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/gpio/gpio-iop.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/iio/accel/kxsd9-i2c.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/iio/adc/qcom-vadc-common.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/mtk-vcodec/mtk-vcodec-common.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/media/platform/soc_camera/soc_scale_crop.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/mtd/nand/denali_pci.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/net/phy/cortina.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/pinctrl/pxa/pinctrl-pxa2xx.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/power/reset/zx-reboot.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/rpmsg/qcom_glink_native.o
+WARNING: modpost: missing MODULE_LICENSE() in drivers/staging/comedi/drivers/ni_atmio.o
+WARNING: modpost: missing MODULE_LICENSE() in net/9p/9pnet_xen.o
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/codecs/snd-soc-pcm512x-spi.o
+
+Introduced by commit
+
+  ba1029c9cbc5 ("modpost: detect modules without a MODULE_LICENSE")
+
+-- 
+Cheers,
+Stephen Rothwell
