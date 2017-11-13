@@ -1,66 +1,96 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: linux-next: build warning after merge of the akpm-current tree
-Date: Mon, 13 Nov 2017 13:29:47 +0100
-Message-ID: <20171113122947.3svmlriqcrbeahyd@dhcp22.suse.cz>
-References: <20171113164206.187a790d@canb.auug.org.au>
- <20171113080955.zcdzx2p5kzoa4d7s@dhcp22.suse.cz>
- <CAK8P3a36vx6fnXz=QWxqpCb3TC2XZeKLe3Or7Wvrac5=C3RaxA@mail.gmail.com>
- <20171113115430.pms47vgz5uszqsjm@dhcp22.suse.cz>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+Date: Mon, 13 Nov 2017 22:40:10 +0900
+Message-ID: <CAK7LNAS-XbQ8mwGrFKNogqeMH1dBwj8eQaqV3esTVAmV9hOP5g@mail.gmail.com>
+References: <20171102162038.339466ef@canb.auug.org.au> <20171113223305.42aae1a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:47714 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752526AbdKMM3t (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 07:29:49 -0500
-Content-Disposition: inline
-In-Reply-To: <20171113115430.pms47vgz5uszqsjm@dhcp22.suse.cz>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171113223305.42aae1a2@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon 13-11-17 12:54:30, Michal Hocko wrote:
-> On Mon 13-11-17 12:43:08, Arnd Bergmann wrote:
-> > On Mon, Nov 13, 2017 at 9:09 AM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > On Mon 13-11-17 16:42:06, Stephen Rothwell wrote:
-> > >> Hi Andrew,
-> > >>
-> > >> After merging the akpm-current tree, today's linux-next build (powerpc
-> > >> ppc64_defconfig) produced this warning:
-> > >>
-> > >> In file included from include/linux/mmzone.h:17:0,
-> > >>                  from include/linux/mempolicy.h:10,
-> > >>                  from mm/mempolicy.c:70:
-> > >> mm/mempolicy.c: In function 'mpol_to_str':
-> > >> include/linux/nodemask.h:107:41: warning: the address of 'nodes' will always evaluate as 'true' [-Waddress]
-> > >>  #define nodemask_pr_args(maskp) (maskp) ? MAX_NUMNODES : 0, (maskp) ? (maskp)->bits : NULL
-> > >>                                          ^
-> > >> mm/mempolicy.c:2817:11: note: in expansion of macro 'nodemask_pr_args'
-> > >>            nodemask_pr_args(&nodes));
-> > >>            ^
-> > >
-> > > Hmm, this warning is quite surprising to me. Sure in this particular
-> > > case maskp will always be non-NULL so we always expand to
-> > >         MAX_NUMNODES, maskp->bits
-> > > which is what we want. But we have other users which may be NULL. Does
-> > > anybody understan why this warns at all?
-> > 
-> > As I understand it, the warning tries to address a common typo of accidentally
-> > testing the pointer to a stack object for being non-NULL, rather than the object
-> > pointed to for being non-zero.
-> > 
-> > Adding an extra '!= NULL' comparison gets rid of the warning for me:
-> > 
-> > #define nodemask_pr_args(maskp)  \
-> >    ((maskp) != NULL) ? MAX_NUMNODES : 0, \
-> >    ((maskp) != NULL) ?(maskp)->bits : NULL
-> 
-> OK, that is a reasonable workaround. I was talking to our gcc guy and
-> he suggested to report a bug for this.
+2017-11-13 20:33 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi all,
+>
+> On Thu, 2 Nov 2017 16:20:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the gpio tree, today's linux-next build (arm
+>> multi_v7_defconfig) failed like this:
+>>
+>> drivers/gpio/gpio-uniphier.c:324:14: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>   .activate = uniphier_gpio_irq_domain_activate,
+>>               ^
+>>
+>> Caused by commit
+>>
+>>   dbe776c2ca54 ("gpio: uniphier: add UniPhier GPIO controller driver")
+>>
+>> interacting with commit
+>>
+>>   72491643469a ("genirq/irqdomain: Update irq_domain_ops.activate() signature")
+>>
+>> from the tip tree
+>>
+>> I added the following merge fix patch:
+>>
+>> From: Stephen Rothwell <sfr@canb.auug.org.au>
+>> Date: Thu, 2 Nov 2017 16:10:46 +1100
+>> Subject: [PATCH] gpio: uniphier: merge fix for "Update
+>>  irq_domain_ops.activate() signature"
+>>
+>> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+>> ---
+>>  drivers/gpio/gpio-uniphier.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-uniphier.c b/drivers/gpio/gpio-uniphier.c
+>> index d62cea4ed6b7..d0069202ade3 100644
+>> --- a/drivers/gpio/gpio-uniphier.c
+>> +++ b/drivers/gpio/gpio-uniphier.c
+>> @@ -300,13 +300,15 @@ static int uniphier_gpio_irq_domain_alloc(struct irq_domain *domain,
+>>       return irq_domain_alloc_irqs_parent(domain, virq, 1, &parent_fwspec);
+>>  }
+>>
+>> -static void uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+>> -                                           struct irq_data *data)
+>> +static int uniphier_gpio_irq_domain_activate(struct irq_domain *domain,
+>> +                                           struct irq_data *data,
+>> +                                           bool early)
+>>  {
+>>       struct uniphier_gpio_priv *priv = domain->host_data;
+>>       struct gpio_chip *chip = &priv->chip;
+>>
+>>       gpiochip_lock_as_irq(chip, data->hwirq + UNIPHIER_GPIO_IRQ_OFFSET);
+>> +     return 0;
+>>  }
+>>
+>>  static void uniphier_gpio_irq_domain_deactivate(struct irq_domain *domain,
+>
+> Just a reminder that this conflict still exists.
+>
 
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82963
+Thanks for the reminder.
+
+
+Linus,
+
+Is it possible to forward this one?
+http://patchwork.ozlabs.org/patch/837435/
+
+
+I'd like to eliminate coding style warning where possible.
+
+
+Just a slight change of coding style.
+I kept Stephen's authorship and Signed-off-by as-is.
+
+
+
+
 
 -- 
-Michal Hocko
-SUSE Labs
+Best Regards
+Masahiro Yamada
