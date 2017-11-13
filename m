@@ -1,106 +1,65 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: linux-next: Tree for Nov 7
-Date: Mon, 13 Nov 2017 16:31:42 +0100
-Message-ID: <20171113153142.aoznpjivgjjihlef@dhcp22.suse.cz>
-References: <20171107162217.382cd754@canb.auug.org.au>
- <CACPK8Xfd4nqkf=Lk3n6+TNHAAi327r0dkUfGypZ3TpR0LqfS4Q@mail.gmail.com>
- <20171108142050.7w3yliulxjeco3b7@dhcp22.suse.cz>
- <20171110123054.5pnefm3mczsfv7bz@dhcp22.suse.cz>
- <CACPK8Xe5uUKEytkRiszdX511b_cYTD-z3X=ZsMcNJ-NOYnXfuQ@mail.gmail.com>
- <20171113092006.cjw2njjukt6limvb@dhcp22.suse.cz>
- <20171113141140.cns5fxt5jg4zdedb@dhcp22.suse.cz>
- <20171113150908.GL12318@n2100.armlinux.org.uk>
+From: Jyri Sarha <jsarha@ti.com>
+Subject: Re: linux-next: manual merge of the devicetree tree with the drm tree
+Date: Mon, 13 Nov 2017 17:40:54 +0200
+Message-ID: <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
+References: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
+ <20171113165831.19ebc9fa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:60556 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751174AbdKMPbo (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 10:31:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20171113150908.GL12318@n2100.armlinux.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc: Joel Stanley <joel@jms.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Michael Ellerman <mpe@ellerman.id.au>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20171113165831.19ebc9fa@canb.auug.org.au>
+Content-Language: en-GB
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Herring <robherring2@gmail.com>, Rob Herring <robh@kernel.org>, ave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Stephen Boyd <stephen.boyd@linaro.org>, Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Frank Rowand <frank.rowand@sony.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Mon 13-11-17 15:09:09, Russell King - ARM Linux wrote:
-> On Mon, Nov 13, 2017 at 03:11:40PM +0100, Michal Hocko wrote:
-> > On Mon 13-11-17 10:20:06, Michal Hocko wrote:
-> > > [Cc arm and ppc maintainers]
-> > > 
-> > > Thanks a lot for testing!
-> > > 
-> > > On Sun 12-11-17 11:38:02, Joel Stanley wrote:
-> > > > On Fri, Nov 10, 2017 at 11:00 PM, Michal Hocko <mhocko@kernel.org> wrote:
-> > > > > Hi Joel,
-> > > > >
-> > > > > On Wed 08-11-17 15:20:50, Michal Hocko wrote:
-> > > > > [...]
-> > > > >> > There are a lot of messages on the way up that look like this:
-> > > > >> >
-> > > > >> > [    2.527460] Uhuuh, elf segement at 000d9000 requested but the
-> > > > >> > memory is mapped already
-> > > > >> > [    2.540160] Uhuuh, elf segement at 000d9000 requested but the
-> > > > >> > memory is mapped already
-> > > > >> > [    2.546153] Uhuuh, elf segement at 000d9000 requested but the
-> > > > >> > memory is mapped already
-> > > > >> >
-> > > > >> > And then trying to run userspace looks like this:
-> > > > >>
-> > > > >> Could you please run with debugging patch posted
-> > > > >> http://lkml.kernel.org/r/20171107102854.vylrtaodla63kc57@dhcp22.suse.cz
-> > > > >
-> > > > > Did you have chance to test with this debugging patch, please?
-> > > > 
-> > > > Lots of this:
-> > > > 
-> > > > [    1.177266] Uhuuh, elf segement at 000d9000 requested but the  memory is mapped already, got 000dd000
-> > > > [    1.177555] Clashing vma [dd000, de000] flags:100873 name:(null)
-> > > 
-> > > This smells like the problem I've expected that mmap with hint doesn't
-> > > respect the hint even though there is no clashing mapping. The above
-> > > basically says that we didn't map at 0xd9000 but it has placed it at
-> > > 0xdd000. The nearest (clashing) vma is at 0xdd000 so this is our new
-> > > mapping. find_vma returns the closest vma (with addr < vm_end) for the
-> > > given address 0xd9000 so this address cannot be mapped by any other vma.
-> > > 
-> > > Now that I am looking at arm's arch_get_unmapped_area it does perform
-> > > aligning for shared vmas.
-> > 
-> > Sorry for confusion here. These are not shared mappings as pointed out
-> > by Russell in a private email. I got confused by the above flags which I
-> > have misinterpreted as bit 0 set => MAP_SHARED. These are vm_flags
-> > obviously so the bit 0 is VM_READ. Sorry about the confusion. The real
-> > reason we are doing the alignment is that we do a file mapping
-> > 	/*
-> > 	 * We only need to do colour alignment if either the I or D
-> > 	 * caches alias.
-> > 	 */
-> > 	if (aliasing)
-> > 		do_align = filp || (flags & MAP_SHARED);
-> > 
-> > I am not really familiar with this architecture to understand why do we
-> > need aliasing for file mappings, though.
-> 
-> I think it's there so that flush_dcache_page() works - possibly
-> get_user_pages() being used on a private mapping of page cache pages,
-> but that's guessing.
-
-I fail to see how the mixure of MAP_FIXED and regular mapping of the
-same file work then, but as I've said I really do not understand this
-code.
-
-> I'm afraid I don't remember all the details, this is code from around
-> 15 years ago, and I'd be very nervous about changing it now without
-> fully understanding the issues.
-
-Ohh, absolutely! I didn't dare to touch this code and that's why I took
-the easy way and simply opt-out from the harding for all those archs
-that are basically sharing this pattern. But after a closer look it
-seems that we can really introduce MAP_FIXED_SAFE that would keep the
-arch mmap code intact yet we would get the hardening for all archs.
-It would allow also allow a safer MAP_FIXED semantic for userspace.
--- 
-Michal Hocko
-SUSE Labs
+T24gMTEvMTMvMTcgMDc6NTgsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gSGkgYWxsLAo+IAo+
+IE9uIE1vbiwgMzAgT2N0IDIwMTcgMjA6Mzc6NTYgKzAwMDAgTWFyayBCcm93biA8YnJvb25pZUBr
+ZXJuZWwub3JnPiB3cm90ZToKPj4KPj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBk
+ZXZpY2V0cmVlIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4+Cj4+ICAgZHJpdmVycy9ncHUvZHJt
+L3RpbGNkYy90aWxjZGNfc2xhdmVfY29tcGF0LmMKPj4KPj4gYmV0d2VlbiBjb21taXQ6Cj4+Cj4+
+ICAgNDRjZDM5MzljMTExYjcgKCJkcm0vdGlsY2RjOiBSZW1vdmUgcmVkdW5kYW50IE9GX0RFVEFD
+SEVEIGZsYWcgc2V0dGluZyIpCj4+Cj4+IGZyb20gdGhlIGRybSB0cmVlIGFuZCBjb21taXQ6Cj4+
+Cj4+ICAgZjk0OGQ2ZDhiNzkyYmIgKCJvZjogb3ZlcmxheTogYXZvaWQgcmFjZSBjb25kaXRpb24g
+YmV0d2VlbiBhcHBseWluZyBtdWx0aXBsZSBvdmVybGF5cyIpCj4+Cj4+IGZyb20gdGhlIGRldmlj
+ZXRyZWUgdHJlZS4KPj4KPj4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5
+IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4+IGlzIG5vdyBmaXhlZCBhcyBmYXIgYXMgbGlu
+dXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKPj4gY29uZmxpY3RzIHNo
+b3VsZCBiZSBtZW50aW9uZWQgdG8geW91ciB1cHN0cmVhbSBtYWludGFpbmVyIHdoZW4geW91ciB0
+cmVlCj4+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRvIGNv
+bnNpZGVyIGNvb3BlcmF0aW5nCj4+IHdpdGggdGhlIG1haW50YWluZXIgb2YgdGhlIGNvbmZsaWN0
+aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJseQo+PiBjb21wbGV4IGNvbmZsaWN0
+cy4KPj4KPj4gZGlmZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2Nv
+bXBhdC5jCj4+IGluZGV4IDQ4MjI5OWE2ZjNiMCw1NDAyNWFmNTM0ZDQuLjAwMDAwMDAwMDAwMAo+
+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+PiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+PiBAQEAg
+LTE2MywxMiAtMTYyLDggKzE2Miw2IEBAQCBzdGF0aWMgc3RydWN0IGRldmljZV9ub2RlICogX19p
+bml0IHRpbGMKPj4gICAJCXJldHVybiBOVUxMOwo+PiAgIAl9Cj4+ICAgCj4+IC0gCXJldCA9IG9m
+X3Jlc29sdmVfcGhhbmRsZXMob3ZlcmxheSk7Cj4+IC0gCWlmIChyZXQpIHsKPj4gLSAJCXByX2Vy
+cigiJXM6IEZhaWxlZCB0byByZXNvbHZlIHBoYW5kbGVzOiAlZFxuIiwgX19mdW5jX18sIHJldCk7
+Cj4+IC0gCQlyZXR1cm4gTlVMTDsKPj4gLSAJfQo+PiAgLQlvZl9ub2RlX3NldF9mbGFnKG92ZXJs
+YXksIE9GX0RFVEFDSEVEKTsKPj4gLS0KPj4gICAJcmV0dXJuIG92ZXJsYXk7Cj4+ICAgfQo+PiAg
+IAo+IAo+IEp1c3QgYSByZW1pbmRlciB0aGF0IHRoaXMgY29uZmxpY3Qgc3RpbGwgZXhpc3RzLgo+
+IAoKQWZ0ZXIgc29tZSBjb25zaWRlcmF0aW9uLCBJIHRoaW5rIHdlIGNhbiBkcm9wIHRoZSBkdHMg
+YmFja3dhcmQKY29tcGF0aWJpbGl0eSBjb2RlIGZyb20gZHJtL3RpbGNkYy4gSXQgc2VlbXMgdGhh
+dCBpdCBpcyBjYXVzaW5nIGEgbG90IG9mCnRyb3VibGUgYW5kIEkgZG8gbm90IGV2ZW4ga25vdyBp
+ZiBhbnlib2R5IHVzZXMgaXQgYW55bW9yZS4gSGVyZSBpcyBhCnBhdGNoIGZvciBkcm9wcGluZyBp
+dDoKCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE3
+LU5vdmVtYmVyLzE1NzM5NC5odG1sCgpJIGRpZCBub3QgcGxhbiB0byBtZXJnZSBpdCBiZWZvcmUg
+djQuMTYsIGJ1dCBpZiB0aGlzIGlzIGEgYmlnZ2VyIHByb2JsZW0KSSBjYW4gcHVzaCBpcyByaWdo
+dCBub3cgZm9yIHY0LjE1LgoKQmVzdCByZWdhcmRzLApKeXJpCgotLSAKVGV4YXMgSW5zdHJ1bWVu
+dHMgRmlubGFuZCBPeSwgUG9ya2thbGFua2F0dSAyMiwgMDAxODAgSGVsc2lua2kuClktdHVubnVz
+L0J1c2luZXNzIElEOiAwNjE1NTIxLTQuIEtvdGlwYWlra2EvRG9taWNpbGU6IEhlbHNpbmtpCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
