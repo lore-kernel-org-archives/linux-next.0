@@ -1,59 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next-20171114 build: 4 failures 5 warnings (next-20171114)
-Date: Tue, 14 Nov 2017 11:18:48 +0000
-Message-ID: <20171114111848.s3os77xlwuf7mxkx@sirena.org.uk>
-References: <E1eEWh8-0005hK-AY@optimist>
+From: Khalid Aziz <khalid.aziz@oracle.com>
+Subject: Re: linux-next: Tree for Nov 7
+Date: Tue, 14 Nov 2017 07:52:25 -0700
+Message-ID: <1510671145.4344.1.camel@oracle.com>
+References: <20171107162217.382cd754@canb.auug.org.au>
+ <CACPK8Xfd4nqkf=Lk3n6+TNHAAi327r0dkUfGypZ3TpR0LqfS4Q@mail.gmail.com>
+ <20171108142050.7w3yliulxjeco3b7@dhcp22.suse.cz>
+ <20171110123054.5pnefm3mczsfv7bz@dhcp22.suse.cz>
+ <CACPK8Xe5uUKEytkRiszdX511b_cYTD-z3X=ZsMcNJ-NOYnXfuQ@mail.gmail.com>
+ <20171113092006.cjw2njjukt6limvb@dhcp22.suse.cz>
+ <20171113094203.aofz2e7kueitk55y@dhcp22.suse.cz>
+ <87lgjawgx1.fsf@concordia.ellerman.id.au>
+ <20171113120057.555mvrs4fjq5tyng@dhcp22.suse.cz>
+ <87h8txw87w.fsf@concordia.ellerman.id.au>
+ <20171114090444.lhrkuywuls26g6lu@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3lrzyhlohkt3emdm"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41552 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751836AbdKNLS4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Nov 2017 06:18:56 -0500
-Content-Disposition: inline
-In-Reply-To: <E1eEWh8-0005hK-AY@optimist>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mehmet Kayaalp <mkayaalp@linux.vnet.ibm.com>, David Howells <dhowells@redhat.com>
-Cc: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20171114090444.lhrkuywuls26g6lu@dhcp22.suse.cz>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Michal Hocko <mhocko@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: linux-mips@linux-mips.org, Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "James
+ E.J. Bottomley" <jejb@parisc-linux.org>, Max Filippov <jcmvbkbc@gmail.com>, sparclinux@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Yoshinori Sato <ysato@users.sourceforge.jp>, Helge Deller <deller@gmx.de>, Russell King <linux@armlinux.org.uk>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Joel Stanley <joel@jms.id.au>, linux-xtensa@linux-xtensa.org, linux-arm-kernel@lists.infradead.org, Chris Zankel <chris@zankel.net>, linux-parisc@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ralf Baechle <ralf@linux-mips.org>, Andrew Morton <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org, "David S. Miller" <davem@davemloft.net>
+List-Id: linux-next.vger.kernel.org
 
+On Tue, 2017-11-14 at 10:04 +0100, Michal Hocko wrote:
+> If there is a general consensus that this is the preferred way to go,
+> I
+> will post the patch as an RFC to linux-api
+> 
+> [1] http://lkml.kernel.org/r/20171113160637.jhekbdyfpccme3be@dhcp22.s
+> use.cz
 
---3lrzyhlohkt3emdm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I prefer the new flag. It is cleaner and avoids unintended breakage for
+existing flag.
 
-On Tue, Nov 14, 2017 at 08:35:46AM +0000, Build bot for Mark Brown wrote:
-
-Today's -next fails to build on arm and arm64 due to:
-
-> 	arm64-allmodconfig
-> ../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or =
-directory
->=20
-> 	arm-allmodconfig
-> ../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or =
-directory
-
-which is due to 2dbfb74badfd3a0178 (KEYS: Add ELF class-independent
-certificate insertion support) adding a requirement for libelf rather
-suddenly.  I've installed that on the build box but it's a bit
-surprising to see this appear after the merge window has opened.
-
---3lrzyhlohkt3emdm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAloK0RcACgkQJNaLcl1U
-h9D6LQgAgZojHAP5bzXiigZpwtB+Bg/5WYB2iu3q6Mg392Y1dL+ywihXcaWCauxl
-A/kUoulmIAP0s7IIG4Ro+pSGjnXIhZh9z9HukQwE5dYD46je4h+YLVLs9kgdbdgB
-qbmVmPKfzK1ZVlp73YnKqI5uuEKFH5IAim0ifxKeCQ2ROF+2uO68BY1HTLEakTQH
-aRvIFZ7xYI0wj2uOQ3oz7ehrVgoFKQFTF7Xj3Qz/qzRmTiNGPGnXdiHfBK+fyfUj
-MftZJiUk3Yh+bPf9j0uZGwZmcah8MefKmDc80tKzyKaopTsAuZF20Rluobqvu3KI
-1pG/dhY5TDDUzoagLh35JBdnenfjkQ==
-=Ujpc
------END PGP SIGNATURE-----
-
---3lrzyhlohkt3emdm--
+--
+Khalid
