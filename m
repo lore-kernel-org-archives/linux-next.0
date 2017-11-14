@@ -1,33 +1,37 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the bluetooth tree
-Date: Tue, 14 Nov 2017 11:56:33 +1100
-Message-ID: <20171114115633.1f4db312@canb.auug.org.au>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the f2fs tree
+Date: Mon, 13 Nov 2017 18:29:47 -0800
+Message-ID: <20171114022947.GA81139@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20171113073958.6e63ed70@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:34031 "EHLO ozlabs.org"
+Received: from mail.kernel.org ([198.145.29.99]:57870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751113AbdKNA4f (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 13 Nov 2017 19:56:35 -0500
+        id S1751561AbdKNC3s (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 13 Nov 2017 21:29:48 -0500
+Content-Disposition: inline
+In-Reply-To: <20171113073958.6e63ed70@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yunlei He <heyunlei@huawei.com>, Chao Yu <yuchao0@huawei.com>
 
-Hi all,
+On 11/13, Stephen Rothwell wrote:
+> Hi Jaegeuk,
+> 
+> Commit
+> 
+>   c79d88f915ed ("f2fs: separate nat entry mem alloc from nat_tree_lock")
+> 
+> is missing a Signed-off-by from its author.
 
-After merging the bluetooth tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Thank you so much to point this out.
+I fixed it.
 
-drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+Thanks,
 
-Introduced by commit
-
-  86be3c232877 ("Bluetooth: btusb: Add a Kconfig option to enable USB autosuspend by default")
-
-There is a missing close double quote ...
-
--- 
-Cheers,
-Stephen Rothwell
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
