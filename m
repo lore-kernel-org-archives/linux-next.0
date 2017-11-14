@@ -1,83 +1,152 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: linux-next: Tree for Nov 7
-Date: Tue, 14 Nov 2017 08:07:48 +0100
-Message-ID: <20171114070748.in5zdc4giqbxowjy@dhcp22.suse.cz>
-References: <20171110123054.5pnefm3mczsfv7bz@dhcp22.suse.cz>
- <CACPK8Xe5uUKEytkRiszdX511b_cYTD-z3X=ZsMcNJ-NOYnXfuQ@mail.gmail.com>
- <20171113092006.cjw2njjukt6limvb@dhcp22.suse.cz>
- <20171113094203.aofz2e7kueitk55y@dhcp22.suse.cz>
- <87lgjawgx1.fsf@concordia.ellerman.id.au>
- <20171113120057.555mvrs4fjq5tyng@dhcp22.suse.cz>
- <20171113151641.yfqrecpcxllpn5mq@dhcp22.suse.cz>
- <20171113154939.6ui2fmpokpm7g4oj@dhcp22.suse.cz>
- <20171113160637.jhekbdyfpccme3be@dhcp22.suse.cz>
- <c52fa249-9583-18a2-cbac-28abfb23d5a5@oracle.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171114 build: 4 failures 5 warnings (next-20171114)
+Date: Tue, 14 Nov 2017 08:35:46 +0000
+Message-ID: <E1eEWh8-0005hK-AY@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:57748 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752583AbdKNHH4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Nov 2017 02:07:56 -0500
-Content-Disposition: inline
-In-Reply-To: <c52fa249-9583-18a2-cbac-28abfb23d5a5@oracle.com>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50388 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751759AbdKNIft (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Nov 2017 03:35:49 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Khalid Aziz <khalid.aziz@oracle.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Joel Stanley <joel@jms.id.au>, Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Ralf Baechle <ralf@linux-mips.org>, "James E.J. Bottomley" <jejb@parisc-linux.org>, Helge Deller <deller@gmx.de>, Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, "David S. Miller" <davem@davemloft.net>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lis
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On Mon 13-11-17 09:35:22, Khalid Aziz wrote:
-> On 11/13/2017 09:06 AM, Michal Hocko wrote:
-> > OK, so this one should take care of the backward compatibility while
-> > still not touching the arch code
-> > ---
-> > commit 39ff9bf8597e79a032da0954aea1f0d77d137765
-> > Author: Michal Hocko <mhocko@suse.com>
-> > Date:   Mon Nov 13 17:06:24 2017 +0100
-> > 
-> >      mm: introduce MAP_FIXED_SAFE
-> >      MAP_FIXED is used quite often but it is inherently dangerous because it
-> >      unmaps an existing mapping covered by the requested range. While this
-> >      might be might be really desidered behavior in many cases there are
-> >      others which would rather see a failure than a silent memory corruption.
-> >      Introduce a new MAP_FIXED_SAFE flag for mmap to achive this behavior.
-> >      It is a MAP_FIXED extension with a single exception that it fails with
-> >      ENOMEM if the requested address is already covered by an existing
-> >      mapping. We still do rely on get_unmaped_area to handle all the arch
-> >      specific MAP_FIXED treatment and check for a conflicting vma after it
-> >      returns.
-> >      Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > 
-> > ...... deleted .......
-> > diff --git a/mm/mmap.c b/mm/mmap.c
-> > index 680506faceae..aad8d37f0205 100644
-> > --- a/mm/mmap.c
-> > +++ b/mm/mmap.c
-> > @@ -1358,6 +1358,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
-> >   	if (mm->map_count > sysctl_max_map_count)
-> >   		return -ENOMEM;
-> > +	/* force arch specific MAP_FIXED handling in get_unmapped_area */
-> > +	if (flags & MAP_FIXED_SAFE)
-> > +		flags |= MAP_FIXED;
-> > +
-> >   	/* Obtain the address to map to. we verify (or select) it and ensure
-> >   	 * that it represents a valid section of the address space.
-> >   	 */
-> 
-> Do you need to move this code above:
-> 
->         if (!(flags & MAP_FIXED))
->                 addr = round_hint_to_min(addr);
-> 
->         /* Careful about overflows.. */
->         len = PAGE_ALIGN(len);
->         if (!len)
->                 return -ENOMEM;
-> 
-> Not doing that might mean the hint address will end up being rounded for
-> MAP_FIXED_SAFE which would change the behavior from MAP_FIXED.
+Tree/Branch: next-20171114
+Git describe: next-20171114
+Commit: c9b945f2a7 Add linux-next specific files for 20171114
 
-Yes, I will move it.
--- 
-Michal Hocko
-SUSE Labs
+Build Time: 19 min 13 sec
+
+Passed:    6 / 10   ( 60.00 %)
+Failed:    4 / 10   ( 40.00 %)
+
+Errors: 1
+Warnings: 5
+Section Mismatches: 0
+
+Failed defconfigs:
+	arm64-allmodconfig
+	x86_64-defconfig
+	arm-allmodconfig
+	x86_64-allnoconfig
+
+Errors:
+
+	arm64-allmodconfig
+../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or directory
+
+	arm-allmodconfig
+../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or directory
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      4 warnings    0 mismatches  : arm64-allnoconfig
+      2 warnings    0 mismatches  : arm64-allmodconfig
+      2 warnings    0 mismatches  : arm-multi_v5_defconfig
+      2 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+      2 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : x86_64-allnoconfig
+      2 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      4 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Errors summary: 1
+	  2 ../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or directory
+
+Warnings Summary: 5
+	 19 drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	  1 ../include/linux/nodemask.h:107:69: warning: the address of 'nodes' will always evaluate as 'true' [-Waddress]
+	  1 ../include/linux/nodemask.h:107:41: warning: the address of 'nodes' will always evaluate as 'true' [-Waddress]
+	  1 ../include/linux/irqchip/arm-gic-v4.h:112:57: warning: its scope is only this definition or declaration, which is probably not what you want
+	  1 ../include/linux/irqchip/arm-gic-v4.h:112:57: warning: 'struct irq_domain_ops' declared inside parameter list
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	../include/linux/irqchip/arm-gic-v4.h:112:57: warning: 'struct irq_domain_ops' declared inside parameter list
+	../include/linux/irqchip/arm-gic-v4.h:112:57: warning: its scope is only this definition or declaration, which is probably not what you want
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or directory
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : FAIL, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : FAIL, 1 errors, 2 warnings, 0 section mismatches
+
+Errors:
+	../scripts/insert-sys-cert.c:28:18: fatal error: gelf.h: No such file or directory
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : FAIL, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	drivers/bluetooth/Kconfig:35:warning: multi-line strings not supported
+	../include/linux/nodemask.h:107:41: warning: the address of 'nodes' will always evaluate as 'true' [-Waddress]
+	../include/linux/nodemask.h:107:69: warning: the address of 'nodes' will always evaluate as 'true' [-Waddress]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
