@@ -1,35 +1,37 @@
-From: James Hogan <james.hogan@mips.com>
+From: Stephen Hemminger <stephen@networkplumber.org>
 Subject: Re: [net-next,1/3] netem: convert to qdisc_watchdog_schedule_ns
-Date: Tue, 14 Nov 2017 21:43:59 +0000
-Message-ID: <20171114214359.GI15235@jhogan-linux>
+Date: Tue, 14 Nov 2017 14:49:17 -0800
+Message-ID: <20171114144917.66f0047c@xeon-e3>
 References: <1510088376-5527-2-git-send-email-dave.taht@gmail.com>
- <20171114211112.GA28794@jhogan-linux.mipstec.com>
+        <20171114211112.GA28794@jhogan-linux.mipstec.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yQrIXZbGokyKU1X6"
+ boundary="Sig_/.mqhecnEQbKr_PrIAjZI4vC"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from 19pmail.ess.barracuda.com ([64.235.154.231]:33347 "EHLO
-        19pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755979AbdKNVp1 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Nov 2017 16:45:27 -0500
-Content-Disposition: inline
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:49735 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756952AbdKNWtV (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 14 Nov 2017 17:49:21 -0500
+Received: by mail-pf0-f195.google.com with SMTP id l24so3085343pfj.6
+        for <linux-next@vger.kernel.org>; Tue, 14 Nov 2017 14:49:21 -0800 (PST)
 In-Reply-To: <20171114211112.GA28794@jhogan-linux.mipstec.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Taht <dave.taht@gmail.com>
-Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
+To: James Hogan <james.hogan@mips.com>
+Cc: Dave Taht <dave.taht@gmail.com>, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
 
---yQrIXZbGokyKU1X6
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+--Sig_/.mqhecnEQbKr_PrIAjZI4vC
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 14, 2017 at 09:11:12PM +0000, James Hogan wrote:
+On Tue, 14 Nov 2017 21:11:13 +0000
+James Hogan <james.hogan@mips.com> wrote:
+
 > On Tue, Nov 07, 2017 at 12:59:34PM -0800, Dave Taht wrote:
 > > diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
 > > index db0228a..443a75d 100644
 > > --- a/net/sched/sch_netem.c
-> > +++ b/net/sched/sch_netem.c
+> > +++ b/net/sched/sch_netem.c =20
 >=20
 > ...
 >=20
@@ -41,7 +43,7 @@ On Tue, Nov 14, 2017 at 09:11:12PM +0000, James Hogan wrote:
 a,
 > > -				struct crndstate *state,
 > > -				const struct disttable *dist)
-> > +static s64 tabledist(s64 mu, s64 sigma,
+> > +static s64 tabledist(s64 mu, s64 sigma, =20
 >=20
 > sigma is used in a modulo operation in this function, which results in
 > this error on a bunch of MIPS configs once it is made 64-bits wide:
@@ -51,34 +53,32 @@ a,
 >=20
 > Should that code not be using <linux/math64.h>, i.e. div_s64_rem() now
 > that it is 64bit?
+>=20
+> Thanks
+> James
 
-For the record, Dave has kindly pointed me at:
-https://patchwork.ozlabs.org/project/netdev/list/?series=3D13554
+Not really since random is only 32 bit, the sigma value being 64 bit makes
+no sense really.
 
-which fixes the MIPS builds.
-
-Cheers
-James
-
---yQrIXZbGokyKU1X6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/.mqhecnEQbKr_PrIAjZI4vC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAloLY54ACgkQbAtpk944
-dnq0QRAAkHn5lPXmd6rYgKNJteDly4FsWam1JD8LsCZ433WAjDs4D7T/2vO6kAS2
-F3slScj5FuIe61pQEGRMSPEqjF6FaE6gHnhKB0dpAzyYwDAS+pp76cldzJYu0xXU
-Uyapaw4C+eaMSYT9/XVTaFBfke1O2GbXzYwTaCcM549fvqQ2ZRB4AIwoukuCyya6
-+0Cmkeq0R0zfE5IpIvxC8QAVVVAPb5rSDzBRCsQrxYVQKiZtzKdz0xv43WMnmD1R
-Ge4XX4nh1GpAM5G9ZR5lc898dRS+7Swfo/zbaCVcXWs1IoNrW/Q4KmNC8zB4Yq6z
-BJ/QGzjzi3jCj0d7V4rwVbmSa9BWz3P6CCmYvt6fWn+/AEWhgUoRszEaaLJo3yY6
-r0z8tXMxBlzBH/ObhSzqPo7pfeUyCx/UOKxlHPSQDtZXFkN88xcnJ9W88BntVE0a
-S583Y5jM+LPZnJ3R4i1ivZ48L9hFjxcrSqCLd0EUFlCPbkGzyroZRunjLmfPgY+j
-lo2MVnTeLh09NBxPoYsLVa7E6aYdl5NNx2xIb1nYbRlEJhUK9sLqJsfUppsDprLY
-vO6HYyIlxP6GieMxfC99vcXwbN1QMGliGmpv8F1syIWZZJ9hwJFoOngtaIgkStCj
-Bx9OKtBv6fwcdZ/FQoh+v6ENhMiCIv+GBlEXqHxX481QxJh4aXk=
-=lRir
+iQIzBAEBCAAdFiEEn2/DRbBb5+dmuDyPgKd/YJXN5H4FAloLcu0ACgkQgKd/YJXN
+5H6Gew/6A/eZ8FnXQLRCZzlYMeJqz3Bl4b0C4HuUYsEZhSZMyu+TTIJyjhpk4tau
+D+VkwNtaOc0J6GmKbvWkb20n08RjN1xAZuNWxL+ohjdLE9SrvMIPzrs+PFiqow8d
+ApL8cOsZFnbuha/ncPyXELf5z8xbDPWIJLM0dh07esNy93ZVMKq6slqjAScinJwE
+/3iW3Ad5XYuC0PxpeodwtswDVxnXhy5zZqZDz26kxQ93eWk1+8biO6vLOTEKuk3J
+jZ0l2r2Lc3npDYO7V6uE/ZRRlyTHULuF28KnrWCKUDuv1FkH2ITNoFeu90BuTT3y
+wzMbqp3e3Z9A0fN6etffh6qPN8gmV3KwiIhzeYd6t6CMwQLH6XVDOxp2W8mic4UK
+UsItxhRDSTv2mRV/PnJmfF6V27MO47XpnD48X0H0iWyxaBmmwgewrpuOlkXlDHxa
+IHxdRfGaglS2U/jxus34T24zFJpyvt6+fjohpMrwq+LW78OLZJm/Y8nzMQ/T1yem
+Y7JD+E20evAjRiZB9hk5RgfqtLfwNf4vXgh8vK72e5CVZIKUCQpZV51bx7ZC9Ob4
+teBfuyJ4s4iv+4uvXG/PeYYxHDgC0WPVuo7+Gxz+/76ghQvL7F4VY97YlhQCGiat
+EEEfDHtrDrAJJQ/NMUUCsD9T8cSAHr41YdSGbBqKwpEzSEZunos=
+=oJr8
 -----END PGP SIGNATURE-----
 
---yQrIXZbGokyKU1X6--
+--Sig_/.mqhecnEQbKr_PrIAjZI4vC--
