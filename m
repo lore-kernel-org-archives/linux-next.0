@@ -1,28 +1,71 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the powerpc tree
-Date: Wed, 15 Nov 2017 07:26:43 +1100
-Message-ID: <20171115072643.0c37fcb0@canb.auug.org.au>
+From: James Hogan <james.hogan@mips.com>
+Subject: Re: [net-next,1/3] netem: convert to qdisc_watchdog_schedule_ns
+Date: Tue, 14 Nov 2017 21:11:13 +0000
+Message-ID: <20171114211112.GA28794@jhogan-linux.mipstec.com>
+References: <1510088376-5527-2-git-send-email-dave.taht@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50443 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756286AbdKNU0q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Nov 2017 15:26:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1510088376-5527-2-git-send-email-dave.taht@gmail.com>
+Sender: netdev-owner@vger.kernel.org
+To: Dave Taht <dave.taht@gmail.com>
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Commit
+On Tue, Nov 07, 2017 at 12:59:34PM -0800, Dave Taht wrote:
+> diff --git a/net/sched/sch_netem.c b/net/sched/sch_netem.c
+> index db0228a..443a75d 100644
+> --- a/net/sched/sch_netem.c
+> +++ b/net/sched/sch_netem.c
 
-  f23ab3efb1b3 ("powerpc: Fix DABR match on hash based systems")
+...
 
-is missing a Signed-off-by from its committer.
+> @@ -305,11 +305,11 @@ static bool loss_event(struct netem_sched_data *q)
+>   * std deviation sigma.  Uses table lookup to approximate the desired
+>   * distribution, and a uniformly-distributed pseudo-random source.
+>   */
+> -static psched_tdiff_t tabledist(psched_tdiff_t mu, psched_tdiff_t sigma,
+> -				struct crndstate *state,
+> -				const struct disttable *dist)
+> +static s64 tabledist(s64 mu, s64 sigma,
 
--- 
-Cheers,
-Stephen Rothwell
+sigma is used in a modulo operation in this function, which results in
+this error on a bunch of MIPS configs once it is made 64-bits wide:
+
+net/sched/sch_netem.o In function `tabledist':
+net/sched/sch_netem.c:330: undefined reference to `__moddi3'
+
+Should that code not be using <linux/math64.h>, i.e. div_s64_rem() now
+that it is 64bit?
+
+Thanks
+James
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEd80NauSabkiESfLYbAtpk944dnoFAloLW/AACgkQbAtpk944
+dnpWmA//aZDkO1jeDKifUd/Xv5uxz34KRv/ZiFZu+Ac65gDU1pKDwepoMniKXXxE
+CCnrrkP0q/iH8VrXy3dAld+rlqm/2byhvhhaBknKz/XN0lgnqK1VSPJANafIhNMf
+vEgudbuel/Lw7MNV4gCHEhTlab/9GiE/2s/LKxkUSYXwbHue6y3tB/eHF+lRtQjg
+05D4Gstbe/BPqVthe0ZpxVIJpeck2YAAQ6bXUHa6pJ9YAAATJJ7/XXBki07/CzAF
+WXxft8TFaHNaT94YYh6iU90AddJtWCEAthCQr9BzghtOZjgfr/ErxS5PxT53I8qE
+IMwkAU3dvMiRQv5Ceaq9vkyrWFhmoqNOhEeq4sRU6kniZXG4t7l/0AWq67szbxNy
+XR1j/VPfq2+hTFMddV3t6fkHLVBFRZVQJ7ZUM89mjxwDTTtbi7lCaBnnf73SPOmd
+uHwFd+HbwjcR3A7pBlSdygbLlxLdWhqp+JqGgc5bzDxtO4cgTGJ3RGrZbkd5DWHO
+Y/6WT7vocGf91wOh6gakSjVj+66+L9WGwY2PqAnMjtX4BOv6QQciLhLTdWFdlkVz
+D/nflDE06jAt1Nbc+n+uRm+l5aON1K31Su74UG9UiQHK4WrwHj7KXF629+eqfaa8
+HI52QjZ97Pd2eFEoE2Ad1LUf4+bq6g4CECAe2bWj7fz+KtQG2JM=
+=4891
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
