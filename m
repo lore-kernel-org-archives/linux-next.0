@@ -1,42 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error fetching the vfs-jk tree
-Date: Tue, 14 Nov 2017 21:31:44 +1100
-Message-ID: <20171114213144.4b4662cf@canb.auug.org.au>
-References: <20171114094010.5601ee2c@canb.auug.org.au>
-        <20171114090037.GA7053@quack2.suse.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Michael Ellerman <patch-notifications@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the powerpc tree
+Date: Tue, 14 Nov 2017 22:12:13 +1100 (AEDT)
+Message-ID: <3yblG540Dpz9sRg@ozlabs.org>
+References: <20171102174936.7cc061cc@canb.auug.org.au>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50505 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:52943 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753706AbdKNKbr (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 14 Nov 2017 05:31:47 -0500
-In-Reply-To: <20171114090037.GA7053@quack2.suse.cz>
+        id S1754453AbdKNLMP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 14 Nov 2017 06:12:15 -0500
+In-Reply-To: <20171102174936.7cc061cc@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
 
-Hi Jan,
-
-On Tue, 14 Nov 2017 10:00:37 +0100 Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 14-11-17 09:40:10, Stephen Rothwell wrote:
-> > Fetching the vfs-jk tree
-> > (git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git#vfs)
-> > produces this error:
-> > 
-> > fatal: Couldn't find remote ref refs/heads/vfs
-> > 
-> > Do you want me to still fetch/merge that tree?  
+On Thu, 2017-11-02 at 06:49:36 UTC, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Sorry, I forgot you were still fetching it. No, there's no need to fetch
-> that branch anymore (it was a branch for one time work and I've deleted it
-> now since it was untouched for an year or so). Thanks!
+> After merging the powerpc tree, today's linux-next build (powerpc64
+> allnoconfig) failed like this:
+> 
+> arch/powerpc/kernel/irq.o: In function `.replay_system_reset':
+> irq.c:(.text+0x10): undefined reference to `.ppc_save_regs'
+> 
+> Caused by commit
+> 
+>   78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
+> 
+> I have applied the following fix patch:
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 2 Nov 2017 17:45:18 +1100
+> Subject: [PATCH] powerpc/64s: ppc_save_regs is now needed for all 64s builds
+> 
+> Fixes: 78adf6c214f0 ("powerpc/64s: Implement system reset idle wakeup reason")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-All gone now.
+Applied to powerpc next, thanks.
 
--- 
-Cheers,
-Stephen Rothwell
+https://git.kernel.org/powerpc/c/fc2a5a6161a26b386eb0936b74a852
+
+cheers
