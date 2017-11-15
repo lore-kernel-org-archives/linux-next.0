@@ -1,46 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the netfilter-next
- tree
-Date: Thu, 16 Nov 2017 09:46:17 +1100
-Message-ID: <20171116094617.029257cb@canb.auug.org.au>
-References: <20171107110248.7f1924a7@canb.auug.org.au>
-        <20171108190052.63dfd8ce@canb.auug.org.au>
-        <20171108234014.GA1788@salvia>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build warnings after merge of the gpio tree
+Date: Wed, 15 Nov 2017 17:12:00 -0600
+Message-ID: <CAL_JsqLMjMpz81rpZuG=TJSabLpstcU-=Ypnj4ARP2M+BesjVA@mail.gmail.com>
+References: <20171103163724.73fe268e@canb.auug.org.au> <20171109145125.4c505048@canb.auug.org.au>
+ <CACRpkdahm-N7JyKQ8LA69qjvPG6Vf4TRKx67emxxFKVdszGiNA@mail.gmail.com>
+ <CABGGisyhjtJN=Rgjb0MS9vg+TH2M8Rir27GNyv8jAT2LibjASg@mail.gmail.com> <20171116094244.55db9408@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <netfilter-devel-owner@vger.kernel.org>
-In-Reply-To: <20171108234014.GA1788@salvia>
-Sender: netfilter-devel-owner@vger.kernel.org
-To: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:48280 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1757883AbdKOXMW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 15 Nov 2017 18:12:22 -0500
+In-Reply-To: <20171116094244.55db9408@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "arm@kernel.org" <arm@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Pablo,
-
-On Thu, 9 Nov 2017 00:40:14 +0100 Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+On Wed, Nov 15, 2017 at 4:42 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
 >
-> On Wed, Nov 08, 2017 at 07:00:52PM +1100, Stephen Rothwell wrote:
-> > 
-> > On Tue, 7 Nov 2017 11:02:48 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:  
-> > >
-> > > After merging the netfilter-next tree, today's linux-next build (powerpc
-> > > ppc64_defconfig) produced this warning:
-> > > 
-> > > net/netfilter/nf_conntrack_netlink.c:536:15: warning: 'ctnetlink_proto_size' defined but not used [-Wunused-function]
-> > >  static size_t ctnetlink_proto_size(const struct nf_conn *ct)
-> > >                ^
-> > > 
-> > > Introduced by commit
-> > > 
-> > >   5caaed151a68 ("netfilter: conntrack: don't cache nlattr_tuple_size result in nla_size")  
-> > 
-> > I assume that this warning will now be in the net-next tree ...  
-> 
-> It's my fault, I'll fix this in my next batch, sorry for the inconvenience.
+> On Thu, 9 Nov 2017 08:37:00 -0600 Rob Herring <robh@kernel.org> wrote:
+>>
+>> On Thu, Nov 9, 2017 at 1:42 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> > On Thu, Nov 9, 2017 at 4:51 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >> On Fri, 3 Nov 2017 16:37:24 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >>>
+>> >>> After merging the gpio tree, yesterday's linux-next build (arm
+>> >>> multi_v7_defconfig) produced these warnings:
+>> >>>
+>> >>> arch/arm/boot/dts/bcm2835-rpi-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-b-rev2.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-a.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-b-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-a-plus.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2836-rpi-2-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2837-rpi-3-b.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-zero.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/bcm2835-rpi-zero-w.dtb: Warning (phys_property): Missing property '#phy-cells' in node /phy or bad phandle (referred from /soc/usb@7e980000:phys[0])
+>> >>> arch/arm/boot/dts/exynos5410-odroidxu.dtb: Warning (interrupts_property): Missing interrupt-controller or interrupt-map property in /soc/system-controller@10040000
+>> >>>
+>> >>> and many, many more.
+>> >>>
+>> >>> I have no idea what caused this.
+>> >>
+>> >> I am still getting lots of these ...
+>> >
+>> > I have absolutely no clue either.
+>> >
+>> > What I know is that there is a device tree compiler warning that can
+>> > be turned on, and
+>> > it generates these warnings a lot. The actual problems have been in
+>> > the DTS files
+>> > forever. They just recently started to look into them.
+>> >
+>> > It has nothing to do with the GPIO tree whatsoever, so I wonder if it
+>> > is a side effect of
+>> > something else?
+>
+> Probably just the first tree to cause a rebuild of the dtb files after
+> the change below.
+>
+>> There's a dtc update in -next which adds these new checks. It's been
+>> there for over a month now. Unlike other dtc checks, these are
+>> generally actual errors, so they are not off by default (enabled with
+>> W=1,2).
+>>
+>> In reality, there's only about 50-100 warnings. The way dts includes
+>> are structured and because the dtc checks don't have the original
+>> source file lines, it just multiplies the warnings.
+>
+> So these (many) warnings are now in Linus' tree :-(
+>
+> Please do something about them.
 
-This has now made it into Linus' tree :-(
+Patches are in flight. I got all the low hanging fruit that are the
+most duplicated[1]. There's other patches in flight too.
 
--- 
-Cheers,
-Stephen Rothwell
+Rob
+
+[1] https://www.spinics.net/lists/arm-kernel/msg616518.html
