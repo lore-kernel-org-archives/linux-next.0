@@ -1,83 +1,80 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: manual merge of the devicetree tree with the drm tree
-Date: Mon, 20 Nov 2017 08:41:30 +0100
-Message-ID: <20171120074129.sy6gyfaqhqbch4hy@phenom.ffwll.local>
-References: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
- <20171113165831.19ebc9fa@canb.auug.org.au>
- <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
- <917c5115-3d36-92bd-2713-5a6119fc82ca@gmail.com>
- <6e7a5a3e-c5a9-7069-74bc-06037761af93@ti.com>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCH] mm: fix nodemask printing
+Date: Mon, 20 Nov 2017 09:22:39 +0100
+Message-ID: <20171120082239.irwzcrxkfu3qggbh@dhcp22.suse.cz>
+References: <CAK8P3a39FmdV+8dpGZ2ZDM_NWWmUwn9wGW53omLFibfnCfaHOQ@mail.gmail.com>
+ <20171117101545.119689-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6e7a5a3e-c5a9-7069-74bc-06037761af93@ti.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jyri Sarha <jsarha@ti.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, ave Airlie <airlied@linux.ie>, "Valkeinen, Tomi" <tomi.valkeinen@ti.com>, Stephen Boyd <stephen.boyd@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robherring2@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Frank Rowand <frowand.list@gmail.com>, Frank Rowand <frank.rowand@sony.com>
+In-Reply-To: <20171117101545.119689-1-arnd@arndb.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Zhangshaokun <zhangshaokun@hisilicon.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gTW9uLCBOb3YgMTMsIDIwMTcgYXQgMDk6NTE6MjlQTSArMDIwMCwgSnlyaSBTYXJoYSB3cm90
-ZToKPiBPbiAxMS8xMy8xNyAyMDo0MywgRnJhbmsgUm93YW5kIHdyb3RlOgo+ID4gSGkgSnlyaSwK
-PiA+IAo+ID4gT24gMTEvMTMvMTcgMDc6NDAsIEp5cmkgU2FyaGEgd3JvdGU6Cj4gPj4gT24gMTEv
-MTMvMTcgMDc6NTgsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPj4+IEhpIGFsbCwKPiA+Pj4K
-PiA+Pj4gT24gTW9uLCAzMCBPY3QgMjAxNyAyMDozNzo1NiArMDAwMCBNYXJrIEJyb3duIDxicm9v
-bmllQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4+Pj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9m
-IHRoZSBkZXZpY2V0cmVlIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4gPj4+Pgo+ID4+Pj4gICBk
-cml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+ID4+Pj4KPiA+Pj4+
-IGJldHdlZW4gY29tbWl0Ogo+ID4+Pj4KPiA+Pj4+ICAgNDRjZDM5MzljMTExYjcgKCJkcm0vdGls
-Y2RjOiBSZW1vdmUgcmVkdW5kYW50IE9GX0RFVEFDSEVEIGZsYWcgc2V0dGluZyIpCj4gPj4+Pgo+
-ID4+Pj4gZnJvbSB0aGUgZHJtIHRyZWUgYW5kIGNvbW1pdDoKPiA+Pj4+Cj4gPj4+PiAgIGY5NDhk
-NmQ4Yjc5MmJiICgib2Y6IG92ZXJsYXk6IGF2b2lkIHJhY2UgY29uZGl0aW9uIGJldHdlZW4gYXBw
-bHlpbmcgbXVsdGlwbGUgb3ZlcmxheXMiKQo+ID4+Pj4KPiA+Pj4+IGZyb20gdGhlIGRldmljZXRy
-ZWUgdHJlZS4KPiA+Pj4+Cj4gPj4+PiBJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4g
-Y2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKPiA+Pj4+IGlzIG5vdyBmaXhlZCBhcyBm
-YXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKPiA+Pj4+
-IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5l
-ciB3aGVuIHlvdXIgdHJlZQo+ID4+Pj4gaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1h
-eSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKPiA+Pj4+IHdpdGggdGhlIG1haW50
-YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJs
-eQo+ID4+Pj4gY29tcGxleCBjb25mbGljdHMuCj4gPj4+Pgo+ID4+Pj4gZGlmZiAtLWNjIGRyaXZl
-cnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2NvbXBhdC5jCj4gPj4+PiBpbmRleCA0ODIy
-OTlhNmYzYjAsNTQwMjVhZjUzNGQ0Li4wMDAwMDAwMDAwMDAKPiA+Pj4+IC0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2NvbXBhdC5jCj4gPj4+PiArKysgYi9kcml2ZXJz
-L2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+ID4+Pj4gQEBAIC0xNjMsMTIg
-LTE2Miw4ICsxNjIsNiBAQEAgc3RhdGljIHN0cnVjdCBkZXZpY2Vfbm9kZSAqIF9faW5pdCB0aWxj
-Cj4gPj4+PiAgIAkJcmV0dXJuIE5VTEw7Cj4gPj4+PiAgIAl9Cj4gPj4+PiAgIAo+ID4+Pj4gLSAJ
-cmV0ID0gb2ZfcmVzb2x2ZV9waGFuZGxlcyhvdmVybGF5KTsKPiA+Pj4+IC0gCWlmIChyZXQpIHsK
-PiA+Pj4+IC0gCQlwcl9lcnIoIiVzOiBGYWlsZWQgdG8gcmVzb2x2ZSBwaGFuZGxlczogJWRcbiIs
-IF9fZnVuY19fLCByZXQpOwo+ID4+Pj4gLSAJCXJldHVybiBOVUxMOwo+ID4+Pj4gLSAJfQo+ID4+
-Pj4gIC0Jb2Zfbm9kZV9zZXRfZmxhZyhvdmVybGF5LCBPRl9ERVRBQ0hFRCk7Cj4gPj4+PiAtLQo+
-ID4+Pj4gICAJcmV0dXJuIG92ZXJsYXk7Cj4gPj4+PiAgIH0KPiA+Pj4+ICAgCj4gPj4+IEp1c3Qg
-YSByZW1pbmRlciB0aGF0IHRoaXMgY29uZmxpY3Qgc3RpbGwgZXhpc3RzLgo+ID4+Pgo+ID4+IEFm
-dGVyIHNvbWUgY29uc2lkZXJhdGlvbiwgSSB0aGluayB3ZSBjYW4gZHJvcCB0aGUgZHRzIGJhY2t3
-YXJkCj4gPj4gY29tcGF0aWJpbGl0eSBjb2RlIGZyb20gZHJtL3RpbGNkYy4gSXQgc2VlbXMgdGhh
-dCBpdCBpcyBjYXVzaW5nIGEgbG90IG9mCj4gPj4gdHJvdWJsZSBhbmQgSSBkbyBub3QgZXZlbiBr
-bm93IGlmIGFueWJvZHkgdXNlcyBpdCBhbnltb3JlLiBIZXJlIGlzIGEKPiA+PiBwYXRjaCBmb3Ig
-ZHJvcHBpbmcgaXQ6Cj4gPj4KPiA+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNo
-aXZlcy9kcmktZGV2ZWwvMjAxNy1Ob3ZlbWJlci8xNTczOTQuaHRtbAo+ID4+Cj4gPj4gSSBkaWQg
-bm90IHBsYW4gdG8gbWVyZ2UgaXQgYmVmb3JlIHY0LjE2LCBidXQgaWYgdGhpcyBpcyBhIGJpZ2dl
-ciBwcm9ibGVtCj4gPj4gSSBjYW4gcHVzaCBpcyByaWdodCBub3cgZm9yIHY0LjE1Lgo+ID4+Cj4g
-Pj4gQmVzdCByZWdhcmRzLAo+ID4+IEp5cmkKPiA+Pgo+ID4gVGhlIGRyb3BwaW5nIHBhdGNoIGlz
-IG11Y2ggYXBwcmVjaWF0ZWQuCj4gPiAKPiA+IEl0IHdvdWxkIG1ha2UgbGlmZSBlYXNpZXIgZm9y
-IG1lIGlmIHRoZSBwYXRjaCBnZXRzIGludG8gdjQuMTUtcmMuCj4gCj4gRGF2ZSwgRGFuaWVsPyBX
-b3VsZCB5b3UgdGFrZSB0aGlzIGxhdGUgYWRkaXRpb24gdG8gdjQuMTUgc3RpbGwsIGlmIEkKPiB3
-b3VsZCBzZW5kIGEgcHVsbCByZXF1ZXN0IG5vdz8KPiAKPiBUaGUgcGF0Y2ggaXMgcHJldHR5IG11
-Y2ggb3J0aG9nb25hbCB0byB0aGUgcmVzdCBvZiBkcm0gYXMgaXQgaXMgb25seQo+IGRlYWxpbmcg
-d2l0aCBkZXZpY2UgdHJlZSBzdHVmZi4KClNlZW1zIGxpa2UgYSByZWFzb25hYmxlIHRoaW5nIHRv
-IGluY2x1ZGUgaW4gdGhlIG1lcmdlIHdpbmRvdyAtZml4ZXMgcHVsbApEYXZlIHVzdWFsbHkgZG9l
-cywganVzdCBtYWtlIHN1cmUgYWxsIHRoZSBhY2tzIGFyZSByZWNvcmRlZC4KLURhbmllbAotLSAK
-RGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDov
-L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+On Fri 17-11-17 11:15:45, Arnd Bergmann wrote:
+> The cleanup caused build warnings for constant mask pointers:
+> 
+> mm/mempolicy.c: In function ‘mpol_to_str’:
+> ./include/linux/nodemask.h:108:11: warning: the comparison will always evaluate as ‘true’ for the address of ‘nodes’ will never be NULL [-Waddress]
+> 
+> An earlier workaround I suggested was incorporated in the version that
+> got merged, but that only solved the problem for gcc-7 and higher, while
+> gcc-4.6 through gcc-6.x still warn.
+> 
+> This changes the printing again to use inline functions that make it
+> clear to the compiler that the line that does the NULL check has no
+> idea whether the argument is a constant NULL.
+> 
+> Fixes: 0205f75571e3 ("mm: simplify nodemask printing")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Thanks for the fixup. It is sad how a questionable warning makes the
+code worse... Does it make sense to have the warning enabled?
+Gcc bug  [1] suggests there is no great interest into fixing it.
+
+Anyway to the patch
+Acked-by: Michal Hocko <mhocko@suse.com>
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82963
+
+> ---
+> I've done only minimal build testing on this, but did check it with
+> all compiler versions this time.
+> ---
+>  include/linux/nodemask.h | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
+> index 15cab3967d6d..1fbde8a880d9 100644
+> --- a/include/linux/nodemask.h
+> +++ b/include/linux/nodemask.h
+> @@ -104,9 +104,16 @@ extern nodemask_t _unused_nodemask_arg_;
+>   *
+>   * Can be used to provide arguments for '%*pb[l]' when printing a nodemask.
+>   */
+> -#define nodemask_pr_args(maskp)				\
+> -	((maskp) != NULL) ? MAX_NUMNODES : 0,		\
+> -	((maskp) != NULL) ? (maskp)->bits : NULL
+> +#define nodemask_pr_args(maskp)	__nodemask_pr_numnodes(maskp), \
+> +				__nodemask_pr_bits(maskp)
+> +static inline unsigned int __nodemask_pr_numnodes(const nodemask_t *m)
+> +{
+> +	return m ? MAX_NUMNODES : 0;
+> +}
+> +static inline const unsigned long *__nodemask_pr_bits(const nodemask_t *m)
+> +{
+> +	return m ? m->bits : NULL;
+> +}
+>  
+>  /*
+>   * The inline keyword gives the compiler room to decide to inline, or
+> -- 
+> 2.9.0
+
+-- 
+Michal Hocko
+SUSE Labs
