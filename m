@@ -1,56 +1,83 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Date: Sun, 19 Nov 2017 20:34:58 -0800
-Message-ID: <CAPcyv4gK4Ezz4sccwyKynj378RLXts0xYrLq9i7rpRA_eZyoZg@mail.gmail.com>
-References: <20171120125748.156fa18b@canb.auug.org.au> <CAPcyv4hvgxndkNeUxXEQUxysiRauFqoKYmBC5EXqrU2KhnESxg@mail.gmail.com>
- <20171120153230.1738cc35@canb.auug.org.au>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: linux-next: manual merge of the devicetree tree with the drm tree
+Date: Mon, 20 Nov 2017 08:41:30 +0100
+Message-ID: <20171120074129.sy6gyfaqhqbch4hy@phenom.ffwll.local>
+References: <20171030203756.35brom4ulrbgqesv@sirena.co.uk>
+ <20171113165831.19ebc9fa@canb.auug.org.au>
+ <153e4593-2ebb-c091-49c8-b8d44d5caeb5@ti.com>
+ <917c5115-3d36-92bd-2713-5a6119fc82ca@gmail.com>
+ <6e7a5a3e-c5a9-7069-74bc-06037761af93@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ot0-f170.google.com ([74.125.82.170]:36099 "EHLO
-        mail-ot0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750764AbdKTEe7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Sun, 19 Nov 2017 23:34:59 -0500
-Received: by mail-ot0-f170.google.com with SMTP id t79so6646073ota.3
-        for <linux-next@vger.kernel.org>; Sun, 19 Nov 2017 20:34:58 -0800 (PST)
-In-Reply-To: <20171120153230.1738cc35@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <6e7a5a3e-c5a9-7069-74bc-06037761af93@ti.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jyri Sarha <jsarha@ti.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, ave Airlie <airlied@linux.ie>, "Valkeinen, Tomi" <tomi.valkeinen@ti.com>, Stephen Boyd <stephen.boyd@linaro.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robherring2@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Frank Rowand <frowand.list@gmail.com>, Frank Rowand <frank.rowand@sony.com>
+List-Id: linux-next.vger.kernel.org
 
-On Sun, Nov 19, 2017 at 8:32 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dan,
->
-> On Sun, 19 Nov 2017 20:25:18 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
->>
->> Ugh, yes. Looks correct. I might have confused my build success
->> notifications from 0day. I'll spin out a new branch to make sure this
->> is the last of it.
->
-> Thanks.
->
-> While I have your attention ... did you consider using the other
-> paradigm:
->
-> In arch include files:
-> #define pud_write       pud_write
-> static inline int pud_write(pud_t pud)
->  .....
->
-> Then in include/asm-generic/pgtable.h:
->
-> #ifndef pud_write
-> tatic inline int pud_write(pud_t pud)
-> {
->         ....
-> }
-> #endif
->
-> If you had, then the powerpc code would have worked ... ;-)
-> and many of the other interfaces in include/asm-generic/pgtable.h are
-> protected that way ...
-
-I like that better. I simply cargo-culted the way pmd_write() was
-defined, and should have given it a bit more thought. Andrew, I'll
-respin these with Stephen's suggestion.
+T24gTW9uLCBOb3YgMTMsIDIwMTcgYXQgMDk6NTE6MjlQTSArMDIwMCwgSnlyaSBTYXJoYSB3cm90
+ZToKPiBPbiAxMS8xMy8xNyAyMDo0MywgRnJhbmsgUm93YW5kIHdyb3RlOgo+ID4gSGkgSnlyaSwK
+PiA+IAo+ID4gT24gMTEvMTMvMTcgMDc6NDAsIEp5cmkgU2FyaGEgd3JvdGU6Cj4gPj4gT24gMTEv
+MTMvMTcgMDc6NTgsIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6Cj4gPj4+IEhpIGFsbCwKPiA+Pj4K
+PiA+Pj4gT24gTW9uLCAzMCBPY3QgMjAxNyAyMDozNzo1NiArMDAwMCBNYXJrIEJyb3duIDxicm9v
+bmllQGtlcm5lbC5vcmc+IHdyb3RlOgo+ID4+Pj4gVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9m
+IHRoZSBkZXZpY2V0cmVlIHRyZWUgZ290IGEgY29uZmxpY3QgaW46Cj4gPj4+Pgo+ID4+Pj4gICBk
+cml2ZXJzL2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+ID4+Pj4KPiA+Pj4+
+IGJldHdlZW4gY29tbWl0Ogo+ID4+Pj4KPiA+Pj4+ICAgNDRjZDM5MzljMTExYjcgKCJkcm0vdGls
+Y2RjOiBSZW1vdmUgcmVkdW5kYW50IE9GX0RFVEFDSEVEIGZsYWcgc2V0dGluZyIpCj4gPj4+Pgo+
+ID4+Pj4gZnJvbSB0aGUgZHJtIHRyZWUgYW5kIGNvbW1pdDoKPiA+Pj4+Cj4gPj4+PiAgIGY5NDhk
+NmQ4Yjc5MmJiICgib2Y6IG92ZXJsYXk6IGF2b2lkIHJhY2UgY29uZGl0aW9uIGJldHdlZW4gYXBw
+bHlpbmcgbXVsdGlwbGUgb3ZlcmxheXMiKQo+ID4+Pj4KPiA+Pj4+IGZyb20gdGhlIGRldmljZXRy
+ZWUgdHJlZS4KPiA+Pj4+Cj4gPj4+PiBJIGZpeGVkIGl0IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4g
+Y2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMKPiA+Pj4+IGlzIG5vdyBmaXhlZCBhcyBm
+YXIgYXMgbGludXgtbmV4dCBpcyBjb25jZXJuZWQsIGJ1dCBhbnkgbm9uIHRyaXZpYWwKPiA+Pj4+
+IGNvbmZsaWN0cyBzaG91bGQgYmUgbWVudGlvbmVkIHRvIHlvdXIgdXBzdHJlYW0gbWFpbnRhaW5l
+ciB3aGVuIHlvdXIgdHJlZQo+ID4+Pj4gaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91IG1h
+eSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKPiA+Pj4+IHdpdGggdGhlIG1haW50
+YWluZXIgb2YgdGhlIGNvbmZsaWN0aW5nIHRyZWUgdG8gbWluaW1pc2UgYW55IHBhcnRpY3VsYXJs
+eQo+ID4+Pj4gY29tcGxleCBjb25mbGljdHMuCj4gPj4+Pgo+ID4+Pj4gZGlmZiAtLWNjIGRyaXZl
+cnMvZ3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2NvbXBhdC5jCj4gPj4+PiBpbmRleCA0ODIy
+OTlhNmYzYjAsNTQwMjVhZjUzNGQ0Li4wMDAwMDAwMDAwMDAKPiA+Pj4+IC0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS90aWxjZGMvdGlsY2RjX3NsYXZlX2NvbXBhdC5jCj4gPj4+PiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vdGlsY2RjL3RpbGNkY19zbGF2ZV9jb21wYXQuYwo+ID4+Pj4gQEBAIC0xNjMsMTIg
+LTE2Miw4ICsxNjIsNiBAQEAgc3RhdGljIHN0cnVjdCBkZXZpY2Vfbm9kZSAqIF9faW5pdCB0aWxj
+Cj4gPj4+PiAgIAkJcmV0dXJuIE5VTEw7Cj4gPj4+PiAgIAl9Cj4gPj4+PiAgIAo+ID4+Pj4gLSAJ
+cmV0ID0gb2ZfcmVzb2x2ZV9waGFuZGxlcyhvdmVybGF5KTsKPiA+Pj4+IC0gCWlmIChyZXQpIHsK
+PiA+Pj4+IC0gCQlwcl9lcnIoIiVzOiBGYWlsZWQgdG8gcmVzb2x2ZSBwaGFuZGxlczogJWRcbiIs
+IF9fZnVuY19fLCByZXQpOwo+ID4+Pj4gLSAJCXJldHVybiBOVUxMOwo+ID4+Pj4gLSAJfQo+ID4+
+Pj4gIC0Jb2Zfbm9kZV9zZXRfZmxhZyhvdmVybGF5LCBPRl9ERVRBQ0hFRCk7Cj4gPj4+PiAtLQo+
+ID4+Pj4gICAJcmV0dXJuIG92ZXJsYXk7Cj4gPj4+PiAgIH0KPiA+Pj4+ICAgCj4gPj4+IEp1c3Qg
+YSByZW1pbmRlciB0aGF0IHRoaXMgY29uZmxpY3Qgc3RpbGwgZXhpc3RzLgo+ID4+Pgo+ID4+IEFm
+dGVyIHNvbWUgY29uc2lkZXJhdGlvbiwgSSB0aGluayB3ZSBjYW4gZHJvcCB0aGUgZHRzIGJhY2t3
+YXJkCj4gPj4gY29tcGF0aWJpbGl0eSBjb2RlIGZyb20gZHJtL3RpbGNkYy4gSXQgc2VlbXMgdGhh
+dCBpdCBpcyBjYXVzaW5nIGEgbG90IG9mCj4gPj4gdHJvdWJsZSBhbmQgSSBkbyBub3QgZXZlbiBr
+bm93IGlmIGFueWJvZHkgdXNlcyBpdCBhbnltb3JlLiBIZXJlIGlzIGEKPiA+PiBwYXRjaCBmb3Ig
+ZHJvcHBpbmcgaXQ6Cj4gPj4KPiA+PiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9hcmNo
+aXZlcy9kcmktZGV2ZWwvMjAxNy1Ob3ZlbWJlci8xNTczOTQuaHRtbAo+ID4+Cj4gPj4gSSBkaWQg
+bm90IHBsYW4gdG8gbWVyZ2UgaXQgYmVmb3JlIHY0LjE2LCBidXQgaWYgdGhpcyBpcyBhIGJpZ2dl
+ciBwcm9ibGVtCj4gPj4gSSBjYW4gcHVzaCBpcyByaWdodCBub3cgZm9yIHY0LjE1Lgo+ID4+Cj4g
+Pj4gQmVzdCByZWdhcmRzLAo+ID4+IEp5cmkKPiA+Pgo+ID4gVGhlIGRyb3BwaW5nIHBhdGNoIGlz
+IG11Y2ggYXBwcmVjaWF0ZWQuCj4gPiAKPiA+IEl0IHdvdWxkIG1ha2UgbGlmZSBlYXNpZXIgZm9y
+IG1lIGlmIHRoZSBwYXRjaCBnZXRzIGludG8gdjQuMTUtcmMuCj4gCj4gRGF2ZSwgRGFuaWVsPyBX
+b3VsZCB5b3UgdGFrZSB0aGlzIGxhdGUgYWRkaXRpb24gdG8gdjQuMTUgc3RpbGwsIGlmIEkKPiB3
+b3VsZCBzZW5kIGEgcHVsbCByZXF1ZXN0IG5vdz8KPiAKPiBUaGUgcGF0Y2ggaXMgcHJldHR5IG11
+Y2ggb3J0aG9nb25hbCB0byB0aGUgcmVzdCBvZiBkcm0gYXMgaXQgaXMgb25seQo+IGRlYWxpbmcg
+d2l0aCBkZXZpY2UgdHJlZSBzdHVmZi4KClNlZW1zIGxpa2UgYSByZWFzb25hYmxlIHRoaW5nIHRv
+IGluY2x1ZGUgaW4gdGhlIG1lcmdlIHdpbmRvdyAtZml4ZXMgcHVsbApEYXZlIHVzdWFsbHkgZG9l
+cywganVzdCBtYWtlIHN1cmUgYWxsIHRoZSBhY2tzIGFyZSByZWNvcmRlZC4KLURhbmllbAotLSAK
+RGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDov
+L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
