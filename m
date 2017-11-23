@@ -1,62 +1,44 @@
-From: Build bot for Mark Brown <broonie@kernel.org>
-Subject: next-20171122 build: 0 failures 1 warnings (next-20171122)
-Date: Wed, 22 Nov 2017 21:10:48 +0000
-Message-ID: <E1eHcIC-0002uf-Ho@optimist>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Date: Thu, 23 Nov 2017 13:01:09 +1100
+Message-ID: <20171123130109.41f47546@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60048 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751324AbdKVVKv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 22 Nov 2017 16:10:51 -0500
+Received: from ozlabs.org ([103.22.144.67]:57199 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751525AbdKWCBL (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 22 Nov 2017 21:01:11 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-Tree/Branch: next-20171122
-Git describe: next-20171122
-Commit: 1efc584c71 Add linux-next specific files for 20171122
+Hi Andrew,
 
-Build Time: 122 min 42 sec
+After merging the akpm-current tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Passed:   10 / 10   (100.00 %)
-Failed:    0 / 10   (  0.00 %)
+fs/super.c: In function 'sget_userns':
+fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+  register_shrinker(&s->s_shrink);
+  ^
+drivers/gpu/drm/ttm/ttm_page_alloc.c: In function 'ttm_pool_mm_shrink_init':
+drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+  register_shrinker(&manager->mm_shrink);
+  ^
+drivers/gpu/drm/ttm/ttm_page_alloc_dma.c: In function 'ttm_dma_pool_mm_shrink_init':
+drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+  register_shrinker(&manager->mm_shrink);
+  ^
 
-Errors: 0
-Warnings: 1
-Section Mismatches: 0
+Introduced by commit
 
--------------------------------------------------------------------------------
-defconfigs with issues (other than build errors):
-      1 warnings    0 mismatches  : arm-allmodconfig
+  488251e1e892 ("mm,vmscan: mark register_shrinker() as __must_check")
 
--------------------------------------------------------------------------------
+Yes, I realise that it is meant to flush the users out ...
 
-Warnings Summary: 1
-	  1 ../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
-
-
-
-===============================================================================
-Detailed per-defconfig build reports below:
-
-
--------------------------------------------------------------------------------
-arm-allmodconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
-
-Warnings:
-	../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
--------------------------------------------------------------------------------
-
-Passed with no errors, warnings or mismatches:
-
-arm64-allnoconfig
-arm64-allmodconfig
-arm-multi_v5_defconfig
-arm-multi_v7_defconfig
-x86_64-defconfig
-arm-allnoconfig
-x86_64-allnoconfig
-arm-multi_v4t_defconfig
-arm64-defconfig
-close failed in file object destructor:
-sys.excepthook is missing
-lost sys.stderr
+-- 
+Cheers,
+Stephen Rothwell
