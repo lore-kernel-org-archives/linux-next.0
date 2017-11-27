@@ -1,24 +1,23 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Tue, 28 Nov 2017 08:16:51 +1100
-Message-ID: <20171128081651.71a2e92a@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the nfsd tree
+Date: Tue, 28 Nov 2017 09:52:56 +1100
+Message-ID: <20171128095256.4052c982@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Shvetsov <andrey.shvetsov@k2l.de>, Christian Gromm <christian.gromm@microchip.com>
+To: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Naofumi Honda <honda@math.sci.hokudai.ac.jp>, Jeff Layton <jlayton@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi Bruce,
 
-Commits
+Commit
 
-  2525ef557c73 ("staging: most: update driver usage file")
-  e7e3ce04588c ("staging: most: core: fix list traversing")
+  64ebe12494fd ("nfsd: fix panic in posix_unblock_lock called from nfs4_laundromat")
 
-are missing a Signed-off-by from their author.
+is missing a Signed-off-by from its author.
 
 -- 
 Cheers,
