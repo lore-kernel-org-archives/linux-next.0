@@ -1,85 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commits in the staging
- tree
-Date: Wed, 29 Nov 2017 09:59:16 +1100
-Message-ID: <20171129095916.062d6f7d@canb.auug.org.au>
-References: <20171128081651.71a2e92a@canb.auug.org.au>
-        <20171128194139.GA2653@kroah.com>
+Subject: linux-next: build warning after merge of the arm tree
+Date: Wed, 29 Nov 2017 10:16:37 +1100
+Message-ID: <20171129101637.1e4c7af3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="MP_/doR0lJ+HwCEyjQO_XgeImZN"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:36137 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752367AbdK1W7S (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 28 Nov 2017 17:59:18 -0500
-In-Reply-To: <20171128194139.GA2653@kroah.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-
---MP_/doR0lJ+HwCEyjQO_XgeImZN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:36729 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751496AbdK1XQk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 28 Nov 2017 18:16:40 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Russell King <rmk@armlinux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicolas Pitre <nico@linaro.org>, Robin Murphy <robin.murphy@arm.com>
 
-Hi Greg,
+Hi Russell,
 
-On Tue, 28 Nov 2017 20:41:39 +0100 Greg KH <greg@kroah.com> wrote:
->
-> I need to set up a git hook for this :(
+After merging the arm tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-I couldn't find an appropriate hook for fetching or merging other
-trees :-( Instead I run the attached script below after each fetch.
+arch/arm/vfp/vfphw.S: Assembler messages:
+arch/arm/vfp/vfphw.S:158: Warning: conditional infixes are deprecated in unified syntax
+arch/arm/vfp/vfphw.S:233: Warning: conditional infixes are deprecated in unified syntax
+arch/arm/kernel/entry-common.S: Assembler messages:
+arch/arm/kernel/entry-common.S:285: Warning: conditional infixes are deprecated in unified syntax
+arch/arm/kernel/entry-common.S:286: Warning: conditional infixes are deprecated in unified syntax
+arch/arm/kernel/entry-common.S:365: Warning: conditional infixes are deprecated in unified syntax
+
+And many more similar.
+
+Presumably introduced by commit
+
+  cabcafe5d1a5 ("ARM: 8723/1: always assume the "unified" syntax for assembly code")
 
 -- 
 Cheers,
 Stephen Rothwell
-
---MP_/doR0lJ+HwCEyjQO_XgeImZN
-Content-Type: application/x-shellscript
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename=check_commits
-
-#!/bin/bash
-
-if [ "$#" -lt 1 ]; then
-	printf "Usage: %s <commit range>\n", "$0" 1>&2
-	exit 1
-fi
-
-for c in $(git rev-list --no-merges "$@"); do
-	ae=$(git log -1 --format='%ae' "$c")
-	aE=$(git log -1 --format='%aE' "$c")
-	an=$(git log -1 --format='%an' "$c")
-	aN=$(git log -1 --format='%aN' "$c")
-	ce=$(git log -1 --format='%ce' "$c")
-	cE=$(git log -1 --format='%cE' "$c")
-	cn=$(git log -1 --format='%cn' "$c")
-	cN=$(git log -1 --format='%cN' "$c")
-	sob=$(git log -1 --format='%b' "$c" | grep -i '^[[:space:]]*Signed-off-by:')
-
-	am=false
-	cm=false
-	grep -i -q "<$ae>" <<<"$sob" ||
-		grep -i -q "<$aE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
-		am=true
-	grep -i -q "<$ce>" <<<"$sob" ||
-		grep -i -q "<$cE>" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
-		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
-		cm=true
-
-	if "$am" || "$cm"; then
-		printf "Commit %s\n" "$c"
-		"$am" && printf "\tauthor SOB missing\n"
-		"$cm" && printf "\tcommitter SOB missing\n"
-		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
-	fi
-done
-
-exec gitk "$@"
-
---MP_/doR0lJ+HwCEyjQO_XgeImZN--
