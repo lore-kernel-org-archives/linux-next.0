@@ -1,34 +1,31 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: build warning after merge of the arm tree
-Date: Tue, 28 Nov 2017 23:41:11 +0000
-Message-ID: <20171128234111.GB19925@flint.armlinux.org.uk>
-References: <20171129101637.1e4c7af3@canb.auug.org.au>
- <20171128231959.GU8052@flint.armlinux.org.uk>
- <20171129103805.767cc813@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with Linus' tree
+Date: Wed, 29 Nov 2017 10:53:29 +1100
+Message-ID: <20171129105329.41031142@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171129103805.767cc813@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Nicolas Pitre <nico@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Nov 29, 2017 at 10:38:05AM +1100, Stephen Rothwell wrote:
-> Hi Russell,
-> 
-> On Tue, 28 Nov 2017 23:19:59 +0000 Russell King <rmk@armlinux.org.uk> wrote:
-> >
-> > Stephen, which binutils version are you using?
-> 
-> GNU ld (GNU Binutils) 2.25.2
-> 
-> built from upstream source some time ago.
+Hi Al,
 
-Hmm, so slightly younger than mine (2.25) which also generates the
-warnings.
+Today's linux-next merge of the vfs tree got conflicts in several files
+due to commit:
+
+  1751e8a6cb93 ("Rename superblock flags (MS_xyz -> SB_xyz)")
+
+from Linus' tree and commit:
+
+  c2c6773f9942 ("VFS: Roll out mount flag differentiation (MS_* -> SB_*) generally")
+
+from the vfs tree.
+
+I just dropped the vfs tree for today, can you please clean it up?
 
 -- 
-Russell King
-ARM architecture Linux Kernel maintainer
+Cheers,
+Stephen Rothwell
