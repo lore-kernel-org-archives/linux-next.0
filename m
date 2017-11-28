@@ -1,35 +1,31 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Tue, 28 Nov 2017 20:41:39 +0100
-Message-ID: <20171128194139.GA2653@kroah.com>
-References: <20171128081651.71a2e92a@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the omap tree
+Date: Wed, 29 Nov 2017 09:30:17 +1100
+Message-ID: <20171129093017.5e69ad0d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:45745 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752417AbdK1Tle (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 28 Nov 2017 14:41:34 -0500
-Content-Disposition: inline
-In-Reply-To: <20171128081651.71a2e92a@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:33383 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752586AbdK1WaV (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 28 Nov 2017 17:30:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Shvetsov <andrey.shvetsov@k2l.de>, Christian Gromm <christian.gromm@microchip.com>
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Tue, Nov 28, 2017 at 08:16:51AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Commits
-> 
->   2525ef557c73 ("staging: most: update driver usage file")
->   e7e3ce04588c ("staging: most: core: fix list traversing")
-> 
-> are missing a Signed-off-by from their author.
+Hi Tony,
 
-Ugh, I missed that.  Christian, please be more careful.
+Commit
 
-I need to set up a git hook for this :(
+  57af8b4f7b46 ("Revert "ARM: omap2plus: Run make savedefconfig again to save some space"")
 
-greg k-h
+is missing a Signed-off-by from its author or committer.
+
+Also, it is nice to put some reasoning in the commit message for a revert
+so future you knows why you did it.
+
+-- 
+Cheers,
+Stephen Rothwell
