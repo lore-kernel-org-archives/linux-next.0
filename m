@@ -1,75 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the etnaviv tree
-Date: Tue, 28 Nov 2017 11:44:46 +1100
-Message-ID: <20171128114446.005eff98@canb.auug.org.au>
+From: "J. Bruce Fields" <bfields@fieldses.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the nfsd tree
+Date: Mon, 27 Nov 2017 20:38:40 -0500
+Message-ID: <20171128013840.GB28092@fieldses.org>
+References: <20171128095256.4052c982@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51197 "EHLO ozlabs.org"
+Received: from fieldses.org ([173.255.197.46]:57202 "EHLO fieldses.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752331AbdK1Aos (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 27 Nov 2017 19:44:48 -0500
+        id S1752709AbdK1Bik (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 27 Nov 2017 20:38:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20171128095256.4052c982@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Naofumi Honda <honda@math.sci.hokudai.ac.jp>, Jeff Layton <jlayton@redhat.com>
 
-Hi Lucas,
+On Tue, Nov 28, 2017 at 09:52:56AM +1100, Stephen Rothwell wrote:
+> Hi Bruce,
+> 
+> Commit
+> 
+>   64ebe12494fd ("nfsd: fix panic in posix_unblock_lock called from nfs4_laundromat")
+> 
+> is missing a Signed-off-by from its author.
 
-After merging the etnaviv tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Previously:
 
-drivers/gpu/drm/tve200/Kconfig:1:error: recursive dependency detected!
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/tve200/Kconfig:1:       symbol DRM_TVE200 depends on CMA
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-mm/Kconfig:489: symbol CMA is selected by DRM_ETNAVIV
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/etnaviv/Kconfig:2:      symbol DRM_ETNAVIV depends on THERMAL
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/thermal/Kconfig:5:      symbol THERMAL is selected by ACPI_VIDEO
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/acpi/Kconfig:189:       symbol ACPI_VIDEO is selected by BACKLIGHT_CLASS_DEVICE
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/video/backlight/Kconfig:158:    symbol BACKLIGHT_CLASS_DEVICE is selected by DRM_PARADE_PS8622
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/bridge/Kconfig:62:      symbol DRM_PARADE_PS8622 depends on DRM_BRIDGE
-For a resolution refer to Documentation/kbuild/kconfig-language.txt
-subsection "Kconfig recursive dependency limitations"
-drivers/gpu/drm/bridge/Kconfig:1:       symbol DRM_BRIDGE is selected by DRM_TVE200
-warning: (PMAC_BACKLIGHT && DRM_NOUVEAU && HT16K33 && FB_TFT) selects FB_BACKLIGHT which has unmet direct dependencies (HAS_IOMEM && FB)
-*
-* Restart config...
-*
-*
-* Multiplexer I2C Chip support
-*
-GPIO-based I2C arbitration (I2C_ARB_GPIO_CHALLENGE) [M/n/?] m
-GPIO-based I2C multiplexer (I2C_MUX_GPIO) [M/n/?] m
-General Purpose I2C multiplexer (I2C_MUX_GPMUX) [M/n/?] m
-LTC LTC4306/5 I2C multiplexer (I2C_MUX_LTC4306) [N/m/?] (NEW) aborted!
+	http://lkml.kernel.org/r/20171109200609.GM8773@fieldses.org
 
-Console input/output is redirected. Run 'make oldconfig' to update configuration.
+	It fixes a typo in two lines in pretty much the only way
+	possible, so there should not be copyright concerns.
 
-scripts/kconfig/Makefile:38: recipe for target 'silentoldconfig' failed
+	Naofumi Honda is as far as I know a one-time contributor, and
+	I'd prefer not to burden such folks with unnecessary
+	bureaucracy.
 
-Caused by commit
+I rebased (probably unnecessarily, sorry), so your scripts probably
+caught this as a new commit.
 
-  dba536cd9538 ("drm/etnaviv: add THERMAL dependency")
-
-I got the abobe warnings while doing "make allmodconfig" and then the
-error when doing the actual build.
-
-I have used the etnaviv tree from next-20171127 for today.
-
--- 
-Cheers,
-Stephen Rothwell
+--b.
