@@ -1,213 +1,85 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2017-11-28-17-01 uploaded
-Date: Tue, 28 Nov 2017 17:02:27 -0800
-Message-ID: <5a1e0723.br/6i+AJlBViEh4u%akpm@linux-foundation.org>
-Reply-To: linux-kernel@vger.kernel.org
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rcu tree
+Date: Tue, 28 Nov 2017 17:14:29 -0800
+Message-ID: <20171129011429.GB3624@linux.vnet.ibm.com>
+References: <20171129115151.40b72764@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <mm-commits-owner@vger.kernel.org>
-Sender: mm-commits-owner@vger.kernel.org
-To: mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, mhocko@suse.cz, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751402AbdK2BOe (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Tue, 28 Nov 2017 20:14:34 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id vAT1EJ2D013790
+        for <linux-next@vger.kernel.org>; Tue, 28 Nov 2017 20:14:33 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ehg54665x-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Tue, 28 Nov 2017 20:14:33 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 28 Nov 2017 20:14:32 -0500
+Content-Disposition: inline
+In-Reply-To: <20171129115151.40b72764@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Liang Lihao <lianglihao@huawei.com>
 
-The mm-of-the-moment snapshot 2017-11-28-17-01 has been uploaded to
+On Wed, Nov 29, 2017 at 11:51:51AM +1100, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Commit
+> 
+>   d7e182c9c324 ("rcu: Remove unnecessary spinlock in rcu_boot_init_percpu_data()")
+> 
+> is missing a Signed-off-by from its author.
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Good catch, Stephen!
 
-mmotm-readme.txt says
+Lihao, would you please get me you Signed-off-by?  The patch is below.
 
-README for mm-of-the-moment:
+							Thanx, Paul
 
-http://www.ozlabs.org/~akpm/mmotm/
+------------------------------------------------------------------------
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+commit d7e182c9c32480c1f579dd888ac50e88bfb39596
+Author: Liang Lihao <lianglihao@huawei.com>
+Date:   Wed Nov 22 19:00:55 2017 +0000
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+    rcu: Remove unnecessary spinlock in rcu_boot_init_percpu_data()
+    
+    Since rcu_boot_init_percpu_data() is only called at boot time,
+    there is no data race and spinlock is not needed.
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
-
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
-
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
-
-
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
-
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
-
-To develop on top of mmotm git:
-
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
-
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.15-rc1:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* mm-memory_hotplug-do-not-back-off-draining-pcp-free-pages-from-kworker-context.patch
-* frv-fix-build-failure.patch
-* mm-oom_reaper-gather-each-vma-to-prevent-leaking-tlb-entry.patch
-* scripts-decodecode-fix-decoding-for-aarch64-arm64-instructions.patch
-* mm-skip-hwpoisoned-pages-when-onlining-pages.patch
-* mm-cma-fix-alloc_contig_range-ret-code-potential-leak-v2.patch
-* mm-fix-device-dax-pud-write-faults-triggered-by-get_user_pages.patch
-* mm-fix-device-dax-pud-write-faults-triggered-by-get_user_pages-v3.patch
-* mm-switch-to-define-pmd_write-instead-of-__have_arch_pmd_write.patch
-* mm-replace-pud_write-with-pud_access_permitted-in-fault-gup-paths.patch
-* mm-replace-pud_write-with-pud_access_permitted-in-fault-gup-paths-v3.patch
-* mm-replace-pmd_write-with-pmd_access_permitted-in-fault-gup-paths.patch
-* mm-replace-pte_write-with-pte_access_permitted-in-fault-gup-paths.patch
-* scripts-faddr2line-extend-usage-on-generic-arch.patch
-* mm-hugetlbfs-introduce-split-to-vm_operations_struct.patch
-* device-dax-implement-split-to-catch-invalid-munmap-attempts.patch
-* mm-introduce-get_user_pages_longterm.patch
-* mm-introduce-get_user_pages_longterm-fix.patch
-* mm-fail-get_vaddr_frames-for-filesystem-dax-mappings.patch
-* v4l2-disable-filesystem-dax-mapping-support.patch
-* ib-core-disable-memory-registration-of-fileystem-dax-vmas.patch
-* exec-avoid-rlimit_stack-races-with-prlimit.patch
-* mmmadvise-bugfix-of-madvise-systemcall-infinite-loop-under-special-circumstances.patch
-* revert-mm-page-writebackc-print-a-warning-if-the-vm-dirtiness-settings-are-illogical-was-re-mm-print-a-warning-once-the-vm-dirtiness-settings-is-illogical.patch
-* fs-mbcache-make-count_objects-more-robust.patch
-* bloat-o-meter-dont-fail-with-division-by-0.patch
-* kmemleak-add-scheduling-point-to-kmemleak_scan.patch
-* mm-migrate-fix-an-incorrect-call-of-prep_transhuge_page.patch
-* mm-memcg-fix-mem_cgroup_swapout-for-thps.patch
-* fat-fix-sb_rdonly-change.patch
-* autofs-revert-take-more-care-to-not-update-last_used-on-path-walk.patch
-* autofs-revert-fix-at_no_automount-not-being-honored.patch
-* mm-hugetlb-fix-null-pointer-dereference-on-5-level-paging-machine.patch
-* lib-rbtreedrm-mm-add-rbtree_replace_node_cached.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* ocfs2-dlm-clean-dead-code-up.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names.patch
-* ocfs2-give-an-obvious-tip-for-dismatch-cluster-names-v2.patch
-* ocfs2-move-some-definitions-to-header-file.patch
-* ocfs2-fix-some-small-problems.patch
-* ocfs2-add-kobject-for-online-file-check.patch
-* ocfs2-add-duplicative-ino-number-check.patch
-* ocfs2-fix-qs_holds-may-could-not-be-zero.patch
-* ocfs2-dlm-wait-for-dlm-recovery-done-when-migrating-all-lockres.patch
-* ocfs2-add-ocfs2_try_rw_lock-and-ocfs2_try_inode_lock.patch
-* ocfs2-add-ocfs2_overwrite_io-function.patch
-* ocfs2-nowait-aio-support.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-  mm.patch
-* include-linux-sched-mmh-uninline-mmdrop_async-etc.patch
-* mm-kmemleak-remove-unused-hardirqh.patch
-* zswap-same-filled-pages-handling.patch
-* zswap-same-filled-pages-handling-v2.patch
-* mm-relax-deferred-struct-page-requirements.patch
-* mm-mempolicy-remove-redundant-check-in-get_nodes.patch
-* mm-mempolicy-fix-the-check-of-nodemask-from-user.patch
-* mm-mempolicy-add-nodes_empty-check-in-sysc_migrate_pages.patch
-* mm-drop-hotplug-lock-from-lru_add_drain_all.patch
-* mm-show-total-hugetlb-memory-consumption-in-proc-meminfo.patch
-* mm-use-sc-priority-for-slab-shrink-targets.patch
-* mm-mlock-vmscan-no-more-skipping-pagevecs.patch
-* mmvmscan-mark-register_shrinker-as-__must_check.patch
-* mm-split-deferred_init_range-into-initializing-and-freeing-parts.patch
-* mm-filemap-remove-include-of-hardirqh.patch
-* mm-memcontrol-eliminate-raw-access-to-stat-and-event-counters.patch
-* mm-memcontrol-implement-lruvec-stat-functions-on-top-of-each-other.patch
-* mm-memcontrol-fix-excessive-complexity-in-memorystat-reporting.patch
-* mm-swap-clean-up-swap-readahead.patch
-* mm-swap-unify-cluster-based-and-vma-based-swap-readahead.patch
-* mm-page_owner-use-ptr_err_or_zero.patch
-* mm-page_alloc-fix-comment-is-__get_free_pages.patch
-* mmoom-move-last-second-allocation-to-inside-the-oom-killer.patch
-* mmoom-use-alloc_oom-for-oom-victims-last-second-allocation.patch
-* mmoom-remove-oom_lock-serialization-from-the-oom-reaper.patch
-* mm-do-not-stall-register_shrinker.patch
-* mm-do-not-stall-register_shrinker-fix.patch
-* selftest-vm-move-128tb-mmap-boundary-test-to-generic-directory.patch
-* selftest-vm-move-128tb-mmap-boundary-test-to-generic-directory-fix.patch
-* mm-use-vma_pages-helper.patch
-* mm-remove-unused-pgdat_reclaimable_pages.patch
-* mm-make-count-list_lru_one-nr_items-lockless.patch
-* mm-madvise-enable-soft-offline-of-hugetlb-pages-at-pud-level.patch
-* mm-readahead-increase-maximum-readahead-window.patch
-* proc-do-not-show-vmexe-bigger-than-total-executable-virtual-memory.patch
-* mm-hugetlb-drop-hugepages_treat_as_movable-sysctl.patch
-* mm-vmscan-do-not-pass-reclaimed-slab-to-vmpressure.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-walk-the-zone-in-pageblock_nr_pages-steps.patch
-* proc-use-%u-for-pid-printing-and-slightly-less-stack.patch
-* proc-dont-use-read_once-write_once-for-proc-fail-nth.patch
-* proc-fix-proc-map_files-lookup.patch
-* proc-simpler-proc-vmcore-cleanup.patch
-* proc-less-memory-for-proc-map_files-readdir.patch
-* proc-delete-children_seq_release.patch
-* makefile-move-stack-protector-compiler-breakage-test-earlier.patch
-* makefile-move-stack-protector-availability-out-of-kconfig.patch
-* makefile-introduce-config_cc_stackprotector_auto.patch
-* revert-async-simplify-lowest_in_progress.patch
-* lib-stackdepot-use-a-non-instrumented-version-of-memcmp.patch
-* lib-test_find_bitc-rename-to-find_bit_benchmarkc.patch
-* lib-find_bit_benchmarkc-improvements.patch
-* lib-optimize-cpumask_next_and.patch
-* checkpatch-allow-long-lines-containing-url.patch
-* seq_file-delete-small-value-optimization.patch
-* forkc-check-error-and-return-early.patch
-* forkc-add-doc-about-usage-of-clone_fs-flags-and-namespaces.patch
-* kdump-vmcoreinfo-report-actual-value-of-phys_base.patch
-* uapi-fix-linux-sysctlh-userspace-compilation-errors.patch
-* pids-introduce-find_get_task_by_vpid-helper.patch
-  linux-next.patch
-  linux-next-rejects.patch
-  linux-next-git-rejects.patch
-* tools-objtool-makefile-dont-assume-sync-checksh-is-executable.patch
-* vfs-remove-might_sleep-from-clear_inode.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-* lib-crc-ccitt-add-ccitt-false-crc16-variant.patch
-  mm-add-strictlimit-knob-v2.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  mutex-subsystem-synchro-test-module.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 69722817d6d6..0abe1db53d70 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -3636,12 +3636,9 @@ static void rcu_init_new_rnp(struct rcu_node *rnp_leaf)
+ static void __init
+ rcu_boot_init_percpu_data(int cpu, struct rcu_state *rsp)
+ {
+-	unsigned long flags;
+ 	struct rcu_data *rdp = per_cpu_ptr(rsp->rda, cpu);
+-	struct rcu_node *rnp = rcu_get_root(rsp);
+ 
+ 	/* Set up local state, ensuring consistent view of global state. */
+-	raw_spin_lock_irqsave_rcu_node(rnp, flags);
+ 	rdp->grpmask = leaf_node_cpu_bit(rdp->mynode, cpu);
+ 	rdp->dynticks = &per_cpu(rcu_dynticks, cpu);
+ 	WARN_ON_ONCE(rdp->dynticks->dynticks_nesting != 1);
+@@ -3649,7 +3646,6 @@ rcu_boot_init_percpu_data(int cpu, struct rcu_state *rsp)
+ 	rdp->cpu = cpu;
+ 	rdp->rsp = rsp;
+ 	rcu_boot_init_nocb_percpu_data(rdp);
+-	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ }
+ 
+ /*
