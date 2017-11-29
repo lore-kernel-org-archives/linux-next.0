@@ -1,188 +1,142 @@
-From: Christian Gromm <christian.gromm@microchip.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Wed, 29 Nov 2017 09:44:44 +0100
-Message-ID: <ece95101-65e9-9008-1e24-f9b76db13a98@microchip.com>
-References: <20171128081651.71a2e92a@canb.auug.org.au>
- <20171128194139.GA2653@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171129 build: 0 failures 15 warnings (next-20171129)
+Date: Wed, 29 Nov 2017 08:52:03 +0000
+Message-ID: <E1eJy67-0006y3-6r@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:24994 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751943AbdK2InK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Nov 2017 03:43:10 -0500
-In-Reply-To: <20171128194139.GA2653@kroah.com>
-Content-Language: en-US
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56534 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753667AbdK2IwF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 29 Nov 2017 03:52:05 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Shvetsov <andrey.shvetsov@k2l.de>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-On 28.11.2017 20:41, Greg KH wrote:
-> On Tue, Nov 28, 2017 at 08:16:51AM +1100, Stephen Rothwell wrote:
->> Hi Greg,
->>
->> Commits
->>
->>    2525ef557c73 ("staging: most: update driver usage file")
->>    e7e3ce04588c ("staging: most: core: fix list traversing")
->>
->> are missing a Signed-off-by from their author.
-> 
-> Ugh, I missed that.  Christian, please be more careful.
-> 
+Tree/Branch: next-20171129
+Git describe: next-20171129
+Commit: d127129e85 Add linux-next specific files for 20171129
 
-Hmm, am I missing something here? I have it in.
-Here are copies of the patches in question and both have
-a "Signed-off-by" line in.
+Build Time: 123 min 16 sec
 
----snip---
-Received: from muaddib.microchip.com (10.10.76.4) by 
-chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id 
-14.3.352.0; Tue, 21 Nov 2017 07:05:31 -0700
-From: Christian Gromm <christian.gromm@microchip.com>
-To: gregkh@linuxfoundation.org
-CC: driverdev-devel@linuxdriverproject.org, Andrey Shvetsov 
-<andrey.shvetsov@k2l.de>, Christian Gromm <christian.gromm@microchip.com>
-Subject: [PATCH 48/50] staging: most: core: fix list traversing
-Date: Tue, 21 Nov 2017 15:05:22 +0100
-Message-ID: 
-<1511273124-7840-49-git-send-email-christian.gromm@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: 
-<1511273124-7840-1-git-send-email-christian.gromm@microchip.com>
-References: <1511273124-7840-1-git-send-email-christian.gromm@microchip.com>
-Content-Type: text/plain
-Return-Path: christian.gromm@microchip.com
-X-MS-Exchange-Organization-AuthSource: CHN-SV-EXCH05.mchp-main.com
-X-MS-Exchange-Organization-AuthAs: Internal
-X-MS-Exchange-Organization-AuthMechanism: 10
-X-MS-Exchange-Organization-AVStamp-Mailbox: SYMANTEC;628359232;0;info
-MIME-Version: 1.0
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-From: Andrey Shvetsov <andrey.shvetsov@k2l.de>
-This patch fixes the offset and data handling when traversing
-the list of devices that are attached to the bus.
+Errors: 0
+Warnings: 15
+Section Mismatches: 0
 
-Signed-off-by: Christian Gromm <christian.gromm@microchip.com>
----
-  drivers/staging/most/core.c | 17 +++++++++++++----
-  1 file changed, 13 insertions(+), 4 deletions(-)
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     14 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      3 warnings    0 mismatches  : arm-multi_v7_defconfig
+      2 warnings    0 mismatches  : x86_64-defconfig
+     15 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      4 warnings    0 mismatches  : arm64-defconfig
 
-diff --git a/drivers/staging/most/core.c b/drivers/staging/most/core.c
-index d03ff97..9729206 100644
---- a/drivers/staging/most/core.c
-+++ b/drivers/staging/most/core.c
-@@ -535,10 +535,16 @@ static struct core_component *match_component(char 
-*name)
-  	return NULL;
-  }
+-------------------------------------------------------------------------------
 
-+struct show_links_data {
-+	int offs;
-+	char *buf;
-+};
-+
-  int print_links(struct device *dev, void *data)
-  {
--	int offs = 0;
--	char *buf = data;
-+	struct show_links_data *d = data;
-+	int offs = d->offs;
-+	char *buf = d->buf;
-  	struct most_channel *c;
-  	struct most_interface *iface = to_most_interface(dev);
-
-@@ -560,13 +566,16 @@ int print_links(struct device *dev, void *data)
-  					 dev_name(&c->dev));
-  		}
-  	}
-+	d->offs = offs;
-  	return 0;
-  }
-
-  static ssize_t links_show(struct device_driver *drv, char *buf)
-  {
--	bus_for_each_dev(&mc.bus, NULL, buf, print_links);
--	return strlen(buf);
-+	struct show_links_data d = { .buf = buf };
-+
-+	bus_for_each_dev(&mc.bus, NULL, &d, print_links);
-+	return d.offs;
-  }
-
-  static ssize_t components_show(struct device_driver *drv, char *buf)
--- 
-2.7.4
+Warnings Summary: 15
+	  7 ../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../fs/quota/dquot.c:2988:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ion/ion_heap.c:315:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ashmem.c:865:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/md/bcache/btree.c:810:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
 
 
-and
+
+===============================================================================
+Detailed per-defconfig build reports below:
 
 
-Received: from muaddib.microchip.com (10.10.76.4) by 
-chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id 
-14.3.352.0; Tue, 21 Nov 2017 07:05:26 -0700
-From: Christian Gromm <christian.gromm@microchip.com>
-To: gregkh@linuxfoundation.org
-CC: driverdev-devel@linuxdriverproject.org, Andrey Shvetsov 
-<andrey.shvetsov@k2l.de>, Christian Gromm <christian.gromm@microchip.com>
-Subject: [PATCH 44/50] staging: most: update driver usage file
-Date: Tue, 21 Nov 2017 15:05:18 +0100
-Message-ID: 
-<1511273124-7840-45-git-send-email-christian.gromm@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: 
-<1511273124-7840-1-git-send-email-christian.gromm@microchip.com>
-References: <1511273124-7840-1-git-send-email-christian.gromm@microchip.com>
-Content-Type: text/plain
-Return-Path: christian.gromm@microchip.com
-X-MS-Exchange-Organization-AuthSource: CHN-SV-EXCH05.mchp-main.com
-X-MS-Exchange-Organization-AuthAs: Internal
-X-MS-Exchange-Organization-AuthMechanism: 10
-X-MS-Exchange-Organization-AVStamp-Mailbox: SYMANTEC;628359232;0;info
-MIME-Version: 1.0
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
 
-From: Andrey Shvetsov <andrey.shvetsov@k2l.de>
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/quota/dquot.c:2988:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/bcache/btree.c:810:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ion/ion_heap.c:315:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:865:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
 
-This patch keeps the usage file up to date.
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
 
-Signed-off-by: Christian Gromm <christian.gromm@microchip.com>
----
-  .../staging/most/Documentation/driver_usage.txt    | 192 
-+++++++++++----------
-  1 file changed, 105 insertions(+), 87 deletions(-)
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
 
-diff --git a/drivers/staging/most/Documentation/driver_usage.txt 
-b/drivers/staging/most/Documentation/driver_usage.txt
-index a4dc0c3..bb9b4e8 100644
---- a/drivers/staging/most/Documentation/driver_usage.txt
-+++ b/drivers/staging/most/Documentation/driver_usage.txt
-@@ -23,20 +23,29 @@ audio/video streaming. Therefore, the driver 
-perfectly fits to the mission
-  of Automotive Grade Linux to create open source software solutions for
-  automotive applications.
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
 
--The driver consists basically of three layers. The hardware layer, the
--core layer and the application layer. The core layer consists of the core
--module only. This module handles the communication flow through all three
--layers, the configuration of the driver, the configuration interface
--representation in sysfs, and the buffer management.
--For each of the other two layers a selection of modules is provided. These
--modules can arbitrarily be combined to meet the needs of the desired
--system architecture. A module of the hardware layer is referred to as an
--HDM (hardware dependent module). Each module of this layer handles exactly
--one of the peripheral interfaces of a network interface controller (e.g.
--USB, MediaLB, I2C). A module of the application layer is referred to as an
--AIM (application interfacing module). The modules of this layer give access
--to MOST via one the following ways: character devices, ALSA, Networking or
-..........
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
 
-regards,
-Chris
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
 
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/quota/dquot.c:2988:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
 
-> I need to set up a git hook for this :(
-> 
-> greg k-h
-> 
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 15 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
+	../fs/quota/dquot.c:2988:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/bcache/btree.c:810:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ion/ion_heap.c:315:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:865:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/quota/dquot.c:2988:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
