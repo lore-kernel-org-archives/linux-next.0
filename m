@@ -1,45 +1,34 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the mfd-fixes
- tree
-Date: Wed, 29 Nov 2017 16:31:42 +0000
-Message-ID: <20171129163142.3qrtdlqivwyfip6e@dell>
-References: <20171130014305.38797236@canb.auug.org.au>
- <20171129145000.GA7381@localhost>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the omap tree
+Date: Wed, 29 Nov 2017 08:50:50 -0800
+Message-ID: <20171129165050.GG28152@atomide.com>
+References: <20171129093017.5e69ad0d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171129145000.GA7381@localhost>
+In-Reply-To: <20171129093017.5e69ad0d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johan Hovold <johan@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 29 Nov 2017, Johan Hovold wrote:
-
-> On Thu, Nov 30, 2017 at 01:43:05AM +1100, Stephen Rothwell wrote:
-> > Hi Lee,
-> > 
-> > Commits
-> > 
-> >   5f6bf7b9f96e ("mfd: twl4030-audio: Fix sibling-node lookup")
-> >   38c021ee7af3 ("mfd: twl6040: Fix child-node lookup")
-> > 
-> > are missing a Signed-off-by from their author.
+* Stephen Rothwell <sfr@canb.auug.org.au> [171128 22:32]:
+> Hi Tony,
 > 
-> Ouch, sorry about that.
+> Commit
+> 
+>   57af8b4f7b46 ("Revert "ARM: omap2plus: Run make savedefconfig again to save some space"")
+> 
+> is missing a Signed-off-by from its author or committer.
+> 
+> Also, it is nice to put some reasoning in the commit message for a revert
+> so future you knows why you did it.
 
-That's unlike you Johan.
+Thanks for letting me know, that's no longer in my for-next branch.
 
-As it was you I didn't even look for that. :)
+And yes, I should have added a proper commit message to the revert.
 
-> Lee, can you still fix them up? Want me to resubmit?
+Regards,
 
-No, it's okay.  Fixed and pushed.
-
--- 
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Tony
