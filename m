@@ -1,70 +1,67 @@
-From: Lihao Liang <lianglihao@huawei.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the rcu tree
-Date: Wed, 29 Nov 2017 11:29:03 +0800
-Message-ID: <10748b8a-a3a4-c4c0-b476-3afd4e0e4499@huawei.com>
-References: <20171129115151.40b72764@canb.auug.org.au>
- <20171129011429.GB3624@linux.vnet.ibm.com>
- <0d3da4c4-1eb3-bcdc-690b-7f864ab35073@huawei.com> <5A1E261A.30302@huawei.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: linux-next: build warning after merge of the arm tree
+Date: Wed, 29 Nov 2017 01:58:23 -0500 (EST)
+Message-ID: <nycvar.YSQ.7.76.1711290121350.5925@knanqh.ubzr>
+References: <20171129101637.1e4c7af3@canb.auug.org.au> <20171128231959.GU8052@flint.armlinux.org.uk> <20171129103805.767cc813@canb.auug.org.au> <20171128234111.GB19925@flint.armlinux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5A1E261A.30302@huawei.com>
-Content-Language: en-US
+In-Reply-To: <20171128234111.GB19925@flint.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Hanjun Guo <guohanjun@huawei.com>, paulmck@linux.vnet.ibm.com, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, lihao.liang@gmail.com
+To: Russell King <rmk@armlinux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>
 List-Id: linux-next.vger.kernel.org
 
+On Tue, 28 Nov 2017, Russell King wrote:
+
+> On Wed, Nov 29, 2017 at 10:38:05AM +1100, Stephen Rothwell wrote:
+> > Hi Russell,
+> > 
+> > On Tue, 28 Nov 2017 23:19:59 +0000 Russell King <rmk@armlinux.org.uk> wrote:
+> > >
+> > > Stephen, which binutils version are you using?
+> > 
+> > GNU ld (GNU Binutils) 2.25.2
+> > 
+> > built from upstream source some time ago.
+> 
+> Hmm, so slightly younger than mine (2.25) which also generates the
+> warnings.
+
+Well... somehow I failed to notice those warning when I initially tested 
+the patch. Sorry about that.
+
+Now that I do see those warnings, that patch just needs the following to 
+"fix" them the way they just like we already do for a Thumb2 build:
+
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 80351e505f..e83f5161fd 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -115,9 +115,11 @@ ifeq ($(CONFIG_ARM_UNWIND),y)
+ CFLAGS_ABI	+=-funwind-tables
+ endif
+ 
++# Accept old syntax despite ".syntax unified"
++AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
++
+ ifeq ($(CONFIG_THUMB2_KERNEL),y)
+ AFLAGS_AUTOIT	:=$(call as-option,-Wa$(comma)-mimplicit-it=always,-Wa$(comma)-mauto-it)
+-AFLAGS_NOWARN	:=$(call as-option,-Wa$(comma)-mno-warn-deprecated,-Wa$(comma)-W)
+ CFLAGS_ISA	:=-mthumb $(AFLAGS_AUTOIT) $(AFLAGS_NOWARN)
+ AFLAGS_ISA	:=$(CFLAGS_ISA) -Wa$(comma)-mthumb
+ # Work around buggy relocation from gas if requested:
+@@ -125,7 +127,7 @@ ifeq ($(CONFIG_THUMB2_AVOID_R_ARM_THM_JUMP11),y)
+ KBUILD_CFLAGS_MODULE	+=-fno-optimize-sibling-calls
+ endif
+ else
+-CFLAGS_ISA	:=$(call cc-option,-marm,)
++CFLAGS_ISA	:=$(call cc-option,-marm,) $(AFLAGS_NOWARN)
+ AFLAGS_ISA	:=$(CFLAGS_ISA)
+ endif
+ 
+
+New patch submitted.
 
 
-On 2017/11/29 11:14, Hanjun Guo wrote:
-> Hi Lihao,
-> 
-> On 2017/11/29 10:48, Lihao Liang wrote:
->> Hi Paul,
->>
->> Signed-off-by: Lihao Liang <lihao.liang@gmail.com>
-> 
-> ...
-> 
->>
->> Many thanks,
->> Lihao.
->>
->> On 2017/11/29 9:14, Paul E. McKenney wrote:
->>> On Wed, Nov 29, 2017 at 11:51:51AM +1100, Stephen Rothwell wrote:
->>>> Hi Paul,
->>>>
->>>> Commit
->>>>
->>>>   d7e182c9c324 ("rcu: Remove unnecessary spinlock in rcu_boot_init_percpu_data()")
->>>>
->>>> is missing a Signed-off-by from its author.
->>> Good catch, Stephen!
->>>
->>> Lihao, would you please get me you Signed-off-by?  The patch is below.
->>>
->>> 							Thanx, Paul
->>>
->>> ------------------------------------------------------------------------
->>>
->>> commit d7e182c9c32480c1f579dd888ac50e88bfb39596
->>> Author: Liang Lihao <lianglihao@huawei.com>
-> 
-> So it's better to keep the author and Signed-off-by the same :)
-> 
-
-Sure. Paul and Stephen, please use
-
-Signed-off-by: Lihao Liang <lianglihao@huawei.com>
-
-Many thanks,
-Lihao.
-
-> Thanks
-> Hanjun
-> 
-> 
-> .
-> 
+Nicolas
