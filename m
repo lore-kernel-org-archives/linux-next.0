@@ -1,48 +1,38 @@
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
-Subject: [PATCH] leds: pm8058: Make ledtype pointer sized type
-Date: Wed, 29 Nov 2017 19:05:43 -0800
-Message-ID: <20171130030543.1071-1-bjorn.andersson@linaro.org>
-References: <20171130113516.42c8bde2@canb.auug.org.au>
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <20171130113516.42c8bde2@canb.auug.org.au>
-Sender: linux-leds-owner@vger.kernel.org
-To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Thu, 30 Nov 2017 14:46:53 +1100
+Message-ID: <20171130144653.1e2e7fab@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48489 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752684AbdK3Dq4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 29 Nov 2017 22:46:56 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Waiman Long <longman@redhat.com>, "David S. Miller" <davem@davemloft.net>, sparclinux@vger.kernel.org
 
-The pointer returned by of_device_get_match_data() doesn't have the same
-size as u32 on 64-bit architectures, causing issues when compile testing
-the driver on such platform. Make ledtype unsigned long instead, to
-solve this problem.
+Hi Andrew,
 
-Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/leds/leds-pm8058.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After merging the akpm-current tree, today's linux-next build (sparc
+defconfig) failed like this:
 
-diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
-index a52674327857..cc2afe81720d 100644
---- a/drivers/leds/leds-pm8058.c
-+++ b/drivers/leds/leds-pm8058.c
-@@ -29,7 +29,7 @@
- struct pm8058_led {
- 	struct regmap *map;
- 	u32 reg;
--	u32 ledtype;
-+	unsigned long ledtype;
- 	struct led_classdev cdev;
- };
- 
-@@ -106,7 +106,7 @@ static int pm8058_led_probe(struct platform_device *pdev)
- 	if (!led)
- 		return -ENOMEM;
- 
--	led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
-+	led->ledtype = (unsigned long)of_device_get_match_data(&pdev->dev);
- 
- 	map = dev_get_regmap(pdev->dev.parent, NULL);
- 	if (!map) {
+mm/list_lru.c: In function 'list_lru_del':
+mm/list_lru.c:141:2: error: implicit declaration of function 'prefetchw' [-Werror=implicit-function-declaration]
+  prefetchw(item->prev);
+  ^
+
+Caused by commit
+
+  9b4516980e87 ("mm/list_lru.c: prefetch neighboring list entries before acquiring lock")
+
+Missing include of linux/prefetch.h?
+
+I have reverted that commit for today.
+
 -- 
-2.15.0
+Cheers,
+Stephen Rothwell
