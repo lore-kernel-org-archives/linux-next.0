@@ -1,77 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the etnaviv tree
-Date: Thu, 30 Nov 2017 10:53:29 +1100
-Message-ID: <20171130105329.6af10e07@canb.auug.org.au>
-References: <20171128114446.005eff98@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the mfd tree
+Date: Thu, 30 Nov 2017 11:35:16 +1100
+Message-ID: <20171130113516.42c8bde2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171128114446.005eff98@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45759 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753120AbdK3AfS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 29 Nov 2017 19:35:18 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
 
-SGkgTHVjYXMsCgpPbiBUdWUsIDI4IE5vdiAyMDE3IDExOjQ0OjQ2ICsxMTAwIFN0ZXBoZW4gUm90
-aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPgo+IEFmdGVyIG1lcmdpbmcgdGhl
-IGV0bmF2aXYgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0IGJ1aWxkICh4ODZfNjQKPiBhbGxtb2Rj
-b25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4gCj4gZHJpdmVycy9ncHUvZHJtL3R2ZTIwMC9LY29u
-ZmlnOjE6ZXJyb3I6IHJlY3Vyc2l2ZSBkZXBlbmRlbmN5IGRldGVjdGVkIQo+IEZvciBhIHJlc29s
-dXRpb24gcmVmZXIgdG8gRG9jdW1lbnRhdGlvbi9rYnVpbGQva2NvbmZpZy1sYW5ndWFnZS50eHQK
-PiBzdWJzZWN0aW9uICJLY29uZmlnIHJlY3Vyc2l2ZSBkZXBlbmRlbmN5IGxpbWl0YXRpb25zIgo+
-IGRyaXZlcnMvZ3B1L2RybS90dmUyMDAvS2NvbmZpZzoxOiAgICAgICBzeW1ib2wgRFJNX1RWRTIw
-MCBkZXBlbmRzIG9uIENNQQo+IEZvciBhIHJlc29sdXRpb24gcmVmZXIgdG8gRG9jdW1lbnRhdGlv
-bi9rYnVpbGQva2NvbmZpZy1sYW5ndWFnZS50eHQKPiBzdWJzZWN0aW9uICJLY29uZmlnIHJlY3Vy
-c2l2ZSBkZXBlbmRlbmN5IGxpbWl0YXRpb25zIgo+IG1tL0tjb25maWc6NDg5OiBzeW1ib2wgQ01B
-IGlzIHNlbGVjdGVkIGJ5IERSTV9FVE5BVklWCj4gRm9yIGEgcmVzb2x1dGlvbiByZWZlciB0byBE
-b2N1bWVudGF0aW9uL2tidWlsZC9rY29uZmlnLWxhbmd1YWdlLnR4dAo+IHN1YnNlY3Rpb24gIktj
-b25maWcgcmVjdXJzaXZlIGRlcGVuZGVuY3kgbGltaXRhdGlvbnMiCj4gZHJpdmVycy9ncHUvZHJt
-L2V0bmF2aXYvS2NvbmZpZzoyOiAgICAgIHN5bWJvbCBEUk1fRVROQVZJViBkZXBlbmRzIG9uIFRI
-RVJNQUwKPiBGb3IgYSByZXNvbHV0aW9uIHJlZmVyIHRvIERvY3VtZW50YXRpb24va2J1aWxkL2tj
-b25maWctbGFuZ3VhZ2UudHh0Cj4gc3Vic2VjdGlvbiAiS2NvbmZpZyByZWN1cnNpdmUgZGVwZW5k
-ZW5jeSBsaW1pdGF0aW9ucyIKPiBkcml2ZXJzL3RoZXJtYWwvS2NvbmZpZzo1OiAgICAgIHN5bWJv
-bCBUSEVSTUFMIGlzIHNlbGVjdGVkIGJ5IEFDUElfVklERU8KPiBGb3IgYSByZXNvbHV0aW9uIHJl
-ZmVyIHRvIERvY3VtZW50YXRpb24va2J1aWxkL2tjb25maWctbGFuZ3VhZ2UudHh0Cj4gc3Vic2Vj
-dGlvbiAiS2NvbmZpZyByZWN1cnNpdmUgZGVwZW5kZW5jeSBsaW1pdGF0aW9ucyIKPiBkcml2ZXJz
-L2FjcGkvS2NvbmZpZzoxODk6ICAgICAgIHN5bWJvbCBBQ1BJX1ZJREVPIGlzIHNlbGVjdGVkIGJ5
-IEJBQ0tMSUdIVF9DTEFTU19ERVZJQ0UKPiBGb3IgYSByZXNvbHV0aW9uIHJlZmVyIHRvIERvY3Vt
-ZW50YXRpb24va2J1aWxkL2tjb25maWctbGFuZ3VhZ2UudHh0Cj4gc3Vic2VjdGlvbiAiS2NvbmZp
-ZyByZWN1cnNpdmUgZGVwZW5kZW5jeSBsaW1pdGF0aW9ucyIKPiBkcml2ZXJzL3ZpZGVvL2JhY2ts
-aWdodC9LY29uZmlnOjE1ODogICAgc3ltYm9sIEJBQ0tMSUdIVF9DTEFTU19ERVZJQ0UgaXMgc2Vs
-ZWN0ZWQgYnkgRFJNX1BBUkFERV9QUzg2MjIKPiBGb3IgYSByZXNvbHV0aW9uIHJlZmVyIHRvIERv
-Y3VtZW50YXRpb24va2J1aWxkL2tjb25maWctbGFuZ3VhZ2UudHh0Cj4gc3Vic2VjdGlvbiAiS2Nv
-bmZpZyByZWN1cnNpdmUgZGVwZW5kZW5jeSBsaW1pdGF0aW9ucyIKPiBkcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL0tjb25maWc6NjI6ICAgICAgc3ltYm9sIERSTV9QQVJBREVfUFM4NjIyIGRlcGVuZHMg
-b24gRFJNX0JSSURHRQo+IEZvciBhIHJlc29sdXRpb24gcmVmZXIgdG8gRG9jdW1lbnRhdGlvbi9r
-YnVpbGQva2NvbmZpZy1sYW5ndWFnZS50eHQKPiBzdWJzZWN0aW9uICJLY29uZmlnIHJlY3Vyc2l2
-ZSBkZXBlbmRlbmN5IGxpbWl0YXRpb25zIgo+IGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvS2NvbmZp
-ZzoxOiAgICAgICBzeW1ib2wgRFJNX0JSSURHRSBpcyBzZWxlY3RlZCBieSBEUk1fVFZFMjAwCj4g
-d2FybmluZzogKFBNQUNfQkFDS0xJR0hUICYmIERSTV9OT1VWRUFVICYmIEhUMTZLMzMgJiYgRkJf
-VEZUKSBzZWxlY3RzIEZCX0JBQ0tMSUdIVCB3aGljaCBoYXMgdW5tZXQgZGlyZWN0IGRlcGVuZGVu
-Y2llcyAoSEFTX0lPTUVNICYmIEZCKQo+ICoKPiAqIFJlc3RhcnQgY29uZmlnLi4uCj4gKgo+ICoK
-PiAqIE11bHRpcGxleGVyIEkyQyBDaGlwIHN1cHBvcnQKPiAqCj4gR1BJTy1iYXNlZCBJMkMgYXJi
-aXRyYXRpb24gKEkyQ19BUkJfR1BJT19DSEFMTEVOR0UpIFtNL24vP10gbQo+IEdQSU8tYmFzZWQg
-STJDIG11bHRpcGxleGVyIChJMkNfTVVYX0dQSU8pIFtNL24vP10gbQo+IEdlbmVyYWwgUHVycG9z
-ZSBJMkMgbXVsdGlwbGV4ZXIgKEkyQ19NVVhfR1BNVVgpIFtNL24vP10gbQo+IExUQyBMVEM0MzA2
-LzUgSTJDIG11bHRpcGxleGVyIChJMkNfTVVYX0xUQzQzMDYpIFtOL20vP10gKE5FVykgYWJvcnRl
-ZCEKPiAKPiBDb25zb2xlIGlucHV0L291dHB1dCBpcyByZWRpcmVjdGVkLiBSdW4gJ21ha2Ugb2xk
-Y29uZmlnJyB0byB1cGRhdGUgY29uZmlndXJhdGlvbi4KPiAKPiBzY3JpcHRzL2tjb25maWcvTWFr
-ZWZpbGU6Mzg6IHJlY2lwZSBmb3IgdGFyZ2V0ICdzaWxlbnRvbGRjb25maWcnIGZhaWxlZAo+IAo+
-IENhdXNlZCBieSBjb21taXQKPiAKPiAgIGRiYTUzNmNkOTUzOCAoImRybS9ldG5hdml2OiBhZGQg
-VEhFUk1BTCBkZXBlbmRlbmN5IikKPiAKPiBJIGdvdCB0aGUgYWJvYmUgd2FybmluZ3Mgd2hpbGUg
-ZG9pbmcgIm1ha2UgYWxsbW9kY29uZmlnIiBhbmQgdGhlbiB0aGUKPiBlcnJvciB3aGVuIGRvaW5n
-IHRoZSBhY3R1YWwgYnVpbGQuCj4gCj4gSSBoYXZlIHVzZWQgdGhlIGV0bmF2aXYgdHJlZSBmcm9t
-IG5leHQtMjAxNzExMjcgZm9yIHRvZGF5LgoKSSBhbSBzdGlsbCBnZXR0aW5nIHRoaXMgZmFpbHVy
-ZS4KCi0tIApDaGVlcnMsClN0ZXBoZW4gUm90aHdlbGwKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Lee,
+
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
+
+drivers/leds/leds-pm8058.c: In function 'pm8058_led_probe':
+drivers/leds/leds-pm8058.c:109:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
+                 ^
+
+Exposed by commit
+
+  deed10c2d603 ("mfd: pm8xxx: Make elegible for COMPILE_TEST")
+
+CONFIG_LEDS_PM8058 depends on CONFIG_MFD_PM8XXX which is now turned on
+by allmodconfig.
+
+The actual problematic commit is:
+
+  7f866986e705 ("leds: add PM8058 LEDs driver")
+
+from v4.9-rc1.
+
+-- 
+Cheers,
+Stephen Rothwell
