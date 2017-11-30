@@ -1,47 +1,47 @@
 From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: build warning after merge of the mfd tree
-Date: Thu, 30 Nov 2017 08:28:33 +0000
-Message-ID: <20171130082833.uxs7gnlmurwopigh@dell>
+Subject: Re: [PATCH] leds: pm8058: Make ledtype pointer sized type
+Date: Thu, 30 Nov 2017 08:29:40 +0000
+Message-ID: <20171130082940.5mzslaxv53dlu3t2@dell>
 References: <20171130113516.42c8bde2@canb.auug.org.au>
+ <20171130030543.1071-1-bjorn.andersson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:37756 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbdK3I3o (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 30 Nov 2017 03:29:44 -0500
+Received: by mail-wm0-f66.google.com with SMTP id f140so10715103wmd.2
+        for <linux-next@vger.kernel.org>; Thu, 30 Nov 2017 00:29:43 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20171130113516.42c8bde2@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Bjorn Andersson <bjorn.andersson@linaro.org>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20171130030543.1071-1-bjorn.andersson@linaro.org>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 
-On Thu, 30 Nov 2017, Stephen Rothwell wrote:
+On Wed, 29 Nov 2017, Bjorn Andersson wrote:
 
-> Hi Lee,
+> The pointer returned by of_device_get_match_data() doesn't have the same
+> size as u32 on 64-bit architectures, causing issues when compile testing
+> the driver on such platform. Make ledtype unsigned long instead, to
+> solve this problem.
 > 
-> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
-> produced this warning:
-> 
-> drivers/leds/leds-pm8058.c: In function 'pm8058_led_probe':
-> drivers/leds/leds-pm8058.c:109:17: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
->   led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
+> Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/leds/leds-pm8058.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Linuuuuusssssss ...
+Hi Bjorn,
 
-Please fix.  I'm happy to squash.
+(Nice to see you) :)
 
-> Exposed by commit
-> 
->   deed10c2d603 ("mfd: pm8xxx: Make elegible for COMPILE_TEST")
-> 
-> CONFIG_LEDS_PM8058 depends on CONFIG_MFD_PM8XXX which is now turned on
-> by allmodconfig.
-> 
-> The actual problematic commit is:
-> 
->   7f866986e705 ("leds: add PM8058 LEDs driver")
-> 
-> from v4.9-rc1.
-> 
+I'm going to apply this *before* Linus' fix.
+
+Applied, thanks.
 
 -- 
 Lee Jones
