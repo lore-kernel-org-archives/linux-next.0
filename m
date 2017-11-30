@@ -1,34 +1,48 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Date: Thu, 30 Nov 2017 12:55:11 +1100
-Message-ID: <20171130125511.6313f7d3@canb.auug.org.au>
-References: <20171130125121.7d16ef43@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:48469 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753234AbdK3BzN (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 29 Nov 2017 20:55:13 -0500
-In-Reply-To: <20171130125121.7d16ef43@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ching Huang <ching2048@areca.com.tw>, Kees Cook <keescook@chromium.org>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
+Subject: [PATCH] leds: pm8058: Make ledtype pointer sized type
+Date: Wed, 29 Nov 2017 19:05:43 -0800
+Message-ID: <20171130030543.1071-1-bjorn.andersson@linaro.org>
+References: <20171130113516.42c8bde2@canb.auug.org.au>
+Return-path: <linux-leds-owner@vger.kernel.org>
+In-Reply-To: <20171130113516.42c8bde2@canb.auug.org.au>
+Sender: linux-leds-owner@vger.kernel.org
+To: Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <jacek.anaszewski@gmail.com>, Pavel Machek <pavel@ucw.cz>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Martin
+The pointer returned by of_device_get_match_data() doesn't have the same
+size as u32 on 64-bit architectures, causing issues when compile testing
+the driver on such platform. Make ledtype unsigned long instead, to
+solve this problem.
 
-On Thu, 30 Nov 2017 12:51:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> + static void arcmsr_init_set_datetime_timer(struct AdapterControlBlock *pacb)
-> + {
->  -	init_timer(&pacb->refresh_timer);
-> ++	timer_setup(&pacb->eternal_timer, arcmsr_request_device_map, 0);
-                                          ^^^^^^^^^^^^^^^^^^^^^^^^^
-That should have been arcmsr_set_iop_datetime, sorry.  I will fix it
-tomorrow if you haven't rebased onto v4.15-rc1 by then :-)
+Fixes: 7f866986e705 ("leds: add PM8058 LEDs driver")
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ drivers/leds/leds-pm8058.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/leds/leds-pm8058.c b/drivers/leds/leds-pm8058.c
+index a52674327857..cc2afe81720d 100644
+--- a/drivers/leds/leds-pm8058.c
++++ b/drivers/leds/leds-pm8058.c
+@@ -29,7 +29,7 @@
+ struct pm8058_led {
+ 	struct regmap *map;
+ 	u32 reg;
+-	u32 ledtype;
++	unsigned long ledtype;
+ 	struct led_classdev cdev;
+ };
+ 
+@@ -106,7 +106,7 @@ static int pm8058_led_probe(struct platform_device *pdev)
+ 	if (!led)
+ 		return -ENOMEM;
+ 
+-	led->ledtype = (u32)of_device_get_match_data(&pdev->dev);
++	led->ledtype = (unsigned long)of_device_get_match_data(&pdev->dev);
+ 
+ 	map = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!map) {
 -- 
-Cheers,
-Stephen Rothwell
+2.15.0
