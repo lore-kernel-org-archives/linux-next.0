@@ -1,36 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Fri, 1 Dec 2017 10:36:02 +1100
-Message-ID: <20171201103602.1b83eec7@canb.auug.org.au>
-References: <20171129105329.41031142@canb.auug.org.au>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH] leds: pm8058: Make ledtype pointer sized type
+Date: Fri, 1 Dec 2017 01:28:58 +0100
+Message-ID: <20171201002858.GD2808@amd>
+References: <20171130113516.42c8bde2@canb.auug.org.au>
+ <20171130030543.1071-1-bjorn.andersson@linaro.org>
+ <20171130094019.GA21887@amd>
+ <545eb1a6-3235-9fe6-1d0d-958aa13e5170@gmail.com>
+ <20171130223406.GC2808@amd>
+ <20171201101351.3e57f2b1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171129105329.41031142@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="tEFtbjk+mNEviIIX"
+Return-path: <linux-leds-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171201101351.3e57f2b1@canb.auug.org.au>
+Sender: linux-leds-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>, Bjorn Andersson <bjorn.andersson@linaro.org>, Richard Purdie <rpurdie@rpsys.net>, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee.jones@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Al,
 
-On Wed, 29 Nov 2017 10:53:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the vfs tree got conflicts in several files
-> due to commit:
-> 
->   1751e8a6cb93 ("Rename superblock flags (MS_xyz -> SB_xyz)")
-> 
-> from Linus' tree and commit:
-> 
->   c2c6773f9942 ("VFS: Roll out mount flag differentiation (MS_* -> SB_*) generally")
-> 
-> from the vfs tree.
-> 
-> I just dropped the vfs tree for today, can you please clean it up?
+--tEFtbjk+mNEviIIX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ping?
--- 
-Cheers,
-Stephen Rothwell
+Hi!
+
+> > > of_device_get_match_data will return PM8058_LED_TYPE_*
+> > > which clearly is a led type identifier.
+> > >=20
+> > > Thus unsigned long looks reasonable. =20
+> >=20
+> > Hmm. Ok. So u32 would actually make even more sense there (because
+> > PM8058_LED_TYPE_* does not really need to be 64-bit), but it would
+> > cause a warning.
+> >=20
+> > I don't like this. This fix actually makes code waste memory and is
+> > uglier.
+> >=20
+> > ...but we get a warning fix. So I don't like the patch, but it is an
+> > improvement...
+>=20
+> I *think* you can get away with (u32)(unsigned long)ptr ...
+
+Yes, that should work. It would actually be my preferred solution.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--tEFtbjk+mNEviIIX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlogokoACgkQMOfwapXb+vLsaACfUHg6dqim086tiMWZCthTQnDk
+afEAoMKFGtPcHNbadcFCpJ3HaMGJgLmm
+=y/An
+-----END PGP SIGNATURE-----
+
+--tEFtbjk+mNEviIIX--
