@@ -1,31 +1,74 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: linux-next: build warning after merge of the drm tree
-Date: Mon, 4 Dec 2017 10:57:40 +1000
-Message-ID: <CAPM=9tx6Q3KdMhUwK=RS0vOVqZRN_EQ4V0i6pKi8b5vOh6ZBhA@mail.gmail.com>
-References: <20171204113021.074df7b8@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ staging.current tree
+Date: Mon, 4 Dec 2017 12:50:45 +1100
+Message-ID: <20171204125045.59e1a704@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20171204113021.074df7b8@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:52587 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751465AbdLDBus (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 3 Dec 2017 20:50:48 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-T24gNCBEZWNlbWJlciAyMDE3IGF0IDEwOjMwLCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5h
-dXVnLm9yZy5hdT4gd3JvdGU6Cj4gSGkgYWxsLAo+Cj4gQWZ0ZXIgbWVyZ2luZyB0aGUgZHJtIHRy
-ZWUsIHRvZGF5J3MgbGludXgtbmV4dCBidWlsZCAoeDg2XzY0IGFsbG1vZGNvbmZpZykKPiBwcm9k
-dWNlZCB0aGlzIHdhcm5pbmc6CgpPb3BzLCBub3Qgc3VyZSBob3cgSSBtaXNzZWQgaXQsIGZvcmNl
-IHB1c2hlZCBkcm0tbmV4dCB3aXRoIHRoZSBtZXJnZSBmaXhlZC4KCkRhdmUuCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNr
-dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Greg,
+
+Today's linux-next merge of the staging tree got a conflict in:
+
+  drivers/iio/adc/meson_saradc.c
+
+between commit:
+
+  d85eed9f5763 ("iio: adc: meson-saradc: initialize the bandgap correctly on older SoCs")
+
+from the staging.current tree and commit:
+
+  930df4d853a8 ("iio: adc: meson-saradc: remove irrelevant clock "sana"")
+
+from the staging tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/iio/adc/meson_saradc.c
+index 36047147ce7c,f0b6502a8904..000000000000
+--- a/drivers/iio/adc/meson_saradc.c
++++ b/drivers/iio/adc/meson_saradc.c
+@@@ -762,9 -732,8 +755,7 @@@ static int meson_sar_adc_hw_enable(stru
+  err_adc_clk:
+  	regmap_update_bits(priv->regmap, MESON_SAR_ADC_REG3,
+  			   MESON_SAR_ADC_REG3_ADC_EN, 0);
+ -	regmap_update_bits(priv->regmap, MESON_SAR_ADC_REG11,
+ -			   MESON_SAR_ADC_REG11_BANDGAP_EN, 0);
+ +	meson_sar_adc_set_bandgap(indio_dev, false);
+- 	clk_disable_unprepare(priv->sana_clk);
+- err_sana_clk:
+  	clk_disable_unprepare(priv->core_clk);
+  err_core_clk:
+  	regulator_disable(priv->vref);
+@@@ -787,10 -756,9 +778,9 @@@ static int meson_sar_adc_hw_disable(str
+  
+  	regmap_update_bits(priv->regmap, MESON_SAR_ADC_REG3,
+  			   MESON_SAR_ADC_REG3_ADC_EN, 0);
+ -	regmap_update_bits(priv->regmap, MESON_SAR_ADC_REG11,
+ -			   MESON_SAR_ADC_REG11_BANDGAP_EN, 0);
+ +
+ +	meson_sar_adc_set_bandgap(indio_dev, false);
+  
+- 	clk_disable_unprepare(priv->sana_clk);
+  	clk_disable_unprepare(priv->core_clk);
+  
+  	regulator_disable(priv->vref);
