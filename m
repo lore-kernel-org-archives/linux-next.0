@@ -1,28 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the
-	drm tree
-Date: Mon, 4 Dec 2017 10:57:35 +1100
-Message-ID: <20171204105735.433ba206@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the net-next tree
+Date: Mon, 4 Dec 2017 11:02:49 +1100
+Message-ID: <20171204110249.0d21a17d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57527 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752488AbdLDACv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 3 Dec 2017 19:02:51 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>
 
-SGkgYWxsLAoKVGhlcmUgaXMgYSBzZXJpZXMgb2YgY29tbWl0cwoKICA1NGNmZjY0NzlmZDggLSBj
-MTgwMjUzNGU1YTYKKG5vdCBhbGwgaW4gdGhhdCByYW5nZSkKCnRoYXQgYXJlIG1pc3NpbmcgYSBT
-aWduZWQtb2ZmLWJ5IGZyb20gdGhlaXIgY29tbWl0dGVyLgoKLS0gCkNoZWVycywKU3RlcGhlbiBS
-b3Rod2VsbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJ
-bnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+Hi all,
+
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
+
+drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+ static int bcm5482_read_status(struct phy_device *phydev)
+            ^
+drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+ static int bcm5481_config_aneg(struct phy_device *phydev)
+            ^
+
+Introduced by commit
+
+  80274abafc60 ("net: phy: remove generic settings for callbacks config_aneg and read_status from drivers")
+
+-- 
+Cheers,
+Stephen Rothwell
