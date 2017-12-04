@@ -1,15 +1,15 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Mon, 4 Dec 2017 12:58:11 +1100
-Message-ID: <20171204125811.787cba01@canb.auug.org.au>
+Date: Mon, 4 Dec 2017 13:06:49 +1100
+Message-ID: <20171204130649.65e1c2c4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:53273 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:50317 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751465AbdLDB6N (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 3 Dec 2017 20:58:13 -0500
+        id S1751385AbdLDCGw (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 3 Dec 2017 21:06:52 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>
@@ -19,7 +19,7 @@ Hi Greg,
 
 Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/staging/most/cdev/cdev.c
+  drivers/staging/most/video/video.c
 
 between commit:
 
@@ -27,7 +27,7 @@ between commit:
 
 from the vfs tree and commit:
 
-  1fd923f38610 ("staging: most: cdev: replace function prefix")
+  1b10a0316e2d ("staging: most: video: remove aim designators")
 
 from the staging tree.
 
@@ -42,22 +42,23 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/staging/most/cdev/cdev.c
-index 69f530972273,dd9456fd2cd6..000000000000
---- a/drivers/staging/most/cdev/cdev.c
-+++ b/drivers/staging/most/cdev/cdev.c
-@@@ -287,10 -283,10 +283,10 @@@ comp_read(struct file *filp, char __use
-  	return copied;
+diff --cc drivers/staging/most/video/video.c
+index 7783bc2dd9f5,098873851646..000000000000
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@@ -209,11 -203,11 +203,11 @@@ static ssize_t comp_vdev_read(struct fi
+  	return ret;
   }
   
-- static __poll_t aim_poll(struct file *filp, poll_table *wait)
- -static unsigned int comp_poll(struct file *filp, poll_table *wait)
-++static __poll_t comp_poll(struct file *filp, poll_table *wait)
+- static __poll_t aim_vdev_poll(struct file *filp, poll_table *wait)
+ -static unsigned int comp_vdev_poll(struct file *filp, poll_table *wait)
+++static __poll_t comp_vdev_poll(struct file *filp, poll_table *wait)
   {
-- 	struct aim_channel *c = filp->private_data;
-+ 	struct comp_channel *c = filp->private_data;
+- 	struct aim_fh *fh = filp->private_data;
++ 	struct comp_fh *fh = filp->private_data;
+  	struct most_video_dev *mdev = fh->mdev;
  -	unsigned int mask = 0;
  +	__poll_t mask = 0;
   
-  	poll_wait(filp, &c->wq, wait);
-  
+  	/* only wait if no data is available */
+  	if (!data_ready(mdev))
