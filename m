@@ -1,58 +1,37 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Date: Mon, 04 Dec 2017 10:02:35 -0800
-Message-ID: <7h7eu2v0as.fsf@baylibre.com>
-References: <20171204083256.262c4b7c@canb.auug.org.au>
-        <CAOesGMh_YT1TH_c0xs614HoK8iAOoaxPofxQtmSuPa8h7HpHKQ@mail.gmail.com>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Mon, 04 Dec 2017 13:21:29 -0500 (EST)
+Message-ID: <20171204.132129.2201796826162314849.davem@davemloft.net>
+References: <20171204110249.0d21a17d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMh_YT1TH_c0xs614HoK8iAOoaxPofxQtmSuPa8h7HpHKQ@mail.gmail.com>
-        (Olof Johansson's message of "Sun, 3 Dec 2017 19:41:30 -0800")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from shards.monkeyblade.net ([184.105.139.130]:51248 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751208AbdLDSVa (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Dec 2017 13:21:30 -0500
+In-Reply-To: <20171204110249.0d21a17d@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: sfr@canb.auug.org.au
+Cc: netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, hkallweit1@gmail.com
 
-Olof Johansson <olof@lixom.net> writes:
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Dec 2017 11:02:49 +1100
 
-> Thanks, Stephen. I need to get a similar script going to catch these
-> things in our own tree.
->
-> Since this was a clean revert, I've redone it myself, carrying over
-> descriptions from the pull request and keeping attribution to Kevin.
->
-> Kevin; hope this is alright with you. We can revisit if not.
+> After merging the net-next tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+>  static int bcm5482_read_status(struct phy_device *phydev)
+>             ^
+> drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+>  static int bcm5481_config_aneg(struct phy_device *phydev)
+>             ^
+> 
+> Introduced by commit
+> 
+>   80274abafc60 ("net: phy: remove generic settings for callbacks config_aneg and read_status from drivers")
 
-Yes, that's fine with me.  Thanks for cleaning up, and sorry I missed
-the sign-off.
-
-Kevin
-
-
-
->
-> -Olof
->
->
-> On Sun, Dec 3, 2017 at 1:32 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> Hi all,
->>
->> Commit
->>
->>   5f56b7f4854a ("Revert "Merge tag 'scpi-updates-4.15' of
->> git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux
->> into next/drivers"")
->>
->> is missing a Signed-off-by from its author or committer.
->>
->> Reverts are commits as well and so need an explanation of why they
->> are done and Signed-off-by tags.
->>
->> --
->> Cheers,
->> Stephen Rothwell
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-next" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This shoudl be resolved now, thanks for the report.
