@@ -1,23 +1,27 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: remove the tile tree?
-Date: Tue, 5 Dec 2017 07:25:41 +1100
-Message-ID: <20171205072541.6c30d7b9@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the befs tree
+Date: Tue, 5 Dec 2017 07:28:15 +1100
+Message-ID: <20171205072815.3a7ba013@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Metcalf <cmetcalf@ezchip.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45935 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752302AbdLDU2R (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 4 Dec 2017 15:28:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Luis de Bethencourt <luisbg@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alfonso Lima Astor <alfonsolimaastor@gmail.com>, Alex Frappier Lachapelle <Alex.FrappierLachapelle@gmail.com>
 
-Hi Chris,
+Hi Luis,
 
-Given commit
+Commit
 
-  8ee5ad1d4c0b ("arch/tile: mark as orphaned")
+  88e3f65c2c20 ("fs: befs: btree: Fixed some coding standard issues")
 
-in Linus' tree, should I remove the tile tree from linux-next?
+is missing a Signed-off-by from its author.
 
 -- 
 Cheers,
