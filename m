@@ -1,40 +1,144 @@
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Subject: Re: linux-next: build warning after merge of the net-next tree
-Date: Mon, 4 Dec 2017 07:33:39 +0100
-Message-ID: <c9ab011c-960b-b371-094b-ceb698cc17b0@gmail.com>
-References: <20171204110249.0d21a17d@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171204 build: 0 failures 16 warnings (next-20171204)
+Date: Mon, 04 Dec 2017 08:30:14 +0000
+Message-ID: <E1eLm8k-0003xJ-QT@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wr0-f172.google.com ([209.85.128.172]:43568 "EHLO
-        mail-wr0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751407AbdLDGdu (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Dec 2017 01:33:50 -0500
-In-Reply-To: <20171204110249.0d21a17d@canb.auug.org.au>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46388 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753625AbdLDIaR (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 4 Dec 2017 03:30:17 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Am 04.12.2017 um 01:02 schrieb Stephen Rothwell:
-> Hi all,
-> 
-> After merging the net-next tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
->  static int bcm5482_read_status(struct phy_device *phydev)
->             ^
-> drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
->  static int bcm5481_config_aneg(struct phy_device *phydev)
->             ^
-> 
-> Introduced by commit
-> 
->   80274abafc60 ("net: phy: remove generic settings for callbacks config_aneg and read_status from drivers")
-> 
-This issue has been addressed addressed already, see this patch:
-https://marc.info/?l=linux-netdev&m=151220825402398&w=2
+Tree/Branch: next-20171204
+Git describe: next-20171204
+Commit: 7cc61a0a56 Add linux-next specific files for 20171204
 
-Rgds, Heiner
+Build Time: 123 min 44 sec
+
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 16
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     14 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+     16 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 16
+	  7 ../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  3 ../drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+	  3 ../drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+	  2 ../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
+	  1 ../drivers/memory/ti-emif-pm.c:303:17: warning: unused variable 'dev' [-Wunused-variable]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+	../drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+	../drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 16 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/btrfs/tree-checker.c:273:3: warning: format '%lu' expects argument of type 'long unsigned int', but argument 5 has type 'u32 {aka unsigned int}' [-Wformat=]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/memory/ti-emif-pm.c:303:17: warning: unused variable 'dev' [-Wunused-variable]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/net/phy/broadcom.c:391:12: warning: 'bcm5482_read_status' defined but not used [-Wunused-function]
+	../drivers/net/phy/broadcom.c:411:12: warning: 'bcm5481_config_aneg' defined but not used [-Wunused-function]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:521:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:451:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
