@@ -1,65 +1,58 @@
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-Subject: RE: linux-next: manual merge of the staging tree with the
- staging.current tree
-Date: Mon, 4 Dec 2017 10:00:12 +0000
-Message-ID: <53418B0A3A5CEF439F1108674285B0A90157649A@lhreml523-mbs.china.huawei.com>
-References: <20171204125045.59e1a704@canb.auug.org.au>
- <20171204090944.GA16936@kroah.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Date: Mon, 04 Dec 2017 10:02:35 -0800
+Message-ID: <7h7eu2v0as.fsf@baylibre.com>
+References: <20171204083256.262c4b7c@canb.auug.org.au>
+        <CAOesGMh_YT1TH_c0xs614HoK8iAOoaxPofxQtmSuPa8h7HpHKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171204090944.GA16936@kroah.com>
-Content-Language: en-US
+In-Reply-To: <CAOesGMh_YT1TH_c0xs614HoK8iAOoaxPofxQtmSuPa8h7HpHKQ@mail.gmail.com>
+        (Olof Johansson's message of "Sun, 3 Dec 2017 19:41:30 -0800")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Xingyu Chen <xingyu.chen@amlogic.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+Olof Johansson <olof@lixom.net> writes:
+
+> Thanks, Stephen. I need to get a similar script going to catch these
+> things in our own tree.
+>
+> Since this was a clean revert, I've redone it myself, carrying over
+> descriptions from the pull request and keeping attribution to Kevin.
+>
+> Kevin; hope this is alright with you. We can revisit if not.
+
+Yes, that's fine with me.  Thanks for cleaning up, and sorry I missed
+the sign-off.
+
+Kevin
 
 
-> -----Original Message-----
-> From: Greg KH [mailto:greg@kroah.com]
-> Sent: 04 December 2017 09:10
-> To: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>; Linux Kernel Mailing
-> List <linux-kernel@vger.kernel.org>; Xingyu Chen <xingyu.chen@amlogic.com>;
-> Jonathan Cameron <jonathan.cameron@huawei.com>; Martin Blumenstingl
-> <martin.blumenstingl@googlemail.com>
-> Subject: Re: linux-next: manual merge of the staging tree with the
-> staging.current tree
-> 
-> On Mon, Dec 04, 2017 at 12:50:45PM +1100, Stephen Rothwell wrote:
-> > Hi Greg,
-> >
-> > Today's linux-next merge of the staging tree got a conflict in:
-> >
-> >   drivers/iio/adc/meson_saradc.c
-> >
-> > between commit:
-> >
-> >   d85eed9f5763 ("iio: adc: meson-saradc: initialize the bandgap correctly on
-> older SoCs")
-> >
-> > from the staging.current tree and commit:
-> >
-> >   930df4d853a8 ("iio: adc: meson-saradc: remove irrelevant clock "sana"")
-> >
-> > from the staging tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> 
-> Thanks for the notification, merge looks correct to me, Jonathan?
-> 
-> greg k-h
 
-Looks right to me. Sorry about that - I should have noticed this one!
-
-Thanks Stephen,
-
-Jonathan
+>
+> -Olof
+>
+>
+> On Sun, Dec 3, 2017 at 1:32 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi all,
+>>
+>> Commit
+>>
+>>   5f56b7f4854a ("Revert "Merge tag 'scpi-updates-4.15' of
+>> git://git.kernel.org/pub/scm/linux/kernel/git/sudeep.holla/linux
+>> into next/drivers"")
+>>
+>> is missing a Signed-off-by from its author or committer.
+>>
+>> Reverts are commits as well and so need an explanation of why they
+>> are done and Signed-off-by tags.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-next" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
