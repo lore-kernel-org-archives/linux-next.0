@@ -1,80 +1,109 @@
-From: Zhenyu Wang <zhenyuw@linux.intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in
-	the drm tree
-Date: Mon, 4 Dec 2017 10:32:03 +0800
-Message-ID: <20171204023203.boxnkfvlc37bb5pu@zhen-hp.sh.intel.com>
-References: <20171204105735.433ba206@canb.auug.org.au>
-Reply-To: Zhenyu Wang <zhenyuw@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mfd tree
+Date: Mon, 4 Dec 2017 14:19:56 +1100
+Message-ID: <20171204141956.5b90bc18@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0976010248=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20171204105735.433ba206@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:51023 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752917AbdLDDT7 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 3 Dec 2017 22:19:59 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>, Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Perry Yuan <perry_yuan@dell.com>
+
+Hi Lee,
+
+After merging the mfd tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
+
+drivers/staging/rts5208/sd.o: In function `.sd_power_off_card3v3':
+(.text+0x5760): multiple definition of `.sd_power_off_card3v3'
+drivers/misc/cardreader/rtsx_pcr.o:(.text+0x4630): first defined here
+drivers/staging/rts5208/sd.o:(.opd+0x378): multiple definition of `sd_power_off_card3v3'
+drivers/misc/cardreader/rtsx_pcr.o:(.opd+0x4f8): first defined here
+drivers/staging/rts5208/ms.o: In function `.ms_power_off_card3v3':
+(.text+0x5e70): multiple definition of `.ms_power_off_card3v3'
+drivers/misc/cardreader/rtsx_pcr.o:(.text+0x46e0): first defined here
+drivers/staging/rts5208/ms.o:(.opd+0x360): multiple definition of `ms_power_off_card3v3'
+drivers/misc/cardreader/rtsx_pcr.o:(.opd+0x510): first defined here
 
 
---===============0976010248==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4llyxk7j427yzzhq"
-Content-Disposition: inline
+Caused by commit
 
+  5da4e04ae480 ("misc: rtsx: Add support for RTS5260")
 
---4llyxk7j427yzzhq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I added the following fix patch:
 
-On 2017.12.04 10:57:35 +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> There is a series of commits
->=20
->   54cff6479fd8 - c1802534e5a6
-> (not all in that range)
->=20
-> that are missing a Signed-off-by from their committer.
->=20
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 4 Dec 2017 14:10:34 +1100
+Subject: [PATCH] misc: rtsx: fix symbol clashes
 
-They were originally committed by Zhi himself, but I had to rebase
-onto intel -next before they're sent for pull and missed my signed-off..
-Really sorry for that! I think maybe we could still be able to fix that
-before next kernel merge.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/misc/cardreader/rts5260.c  | 4 ++--
+ drivers/misc/cardreader/rtsx_pcr.c | 4 ++--
+ drivers/misc/cardreader/rtsx_pcr.h | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
---=20
-Open Source Technology Center, Intel ltd.
+diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
+index 3b308640282d..07cb93abf685 100644
+--- a/drivers/misc/cardreader/rts5260.c
++++ b/drivers/misc/cardreader/rts5260.c
+@@ -426,9 +426,9 @@ void rts5260_process_ocp(struct rtsx_pcr *pcr)
+ 	rtsx_pci_get_ocpstat(pcr, &pcr->ocp_stat);
+ 	rts5260_get_ocpstat2(pcr, &pcr->ocp_stat2);
+ 	if (pcr->card_exist & SD_EXIST)
+-		sd_power_off_card3v3(pcr);
++		rtsx_sd_power_off_card3v3(pcr);
+ 	else if (pcr->card_exist & MS_EXIST)
+-		ms_power_off_card3v3(pcr);
++		rtsx_ms_power_off_card3v3(pcr);
+ 
+ 	if (!(pcr->card_exist & MS_EXIST) && !(pcr->card_exist & SD_EXIST)) {
+ 		if ((pcr->ocp_stat & (SD_OC_NOW | SD_OC_EVER |
+diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+index 99adc67bbf73..5345170fc57b 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.c
++++ b/drivers/misc/cardreader/rtsx_pcr.c
+@@ -1208,7 +1208,7 @@ void rtsx_pci_clear_ocpstat(struct rtsx_pcr *pcr)
+ 	}
+ }
+ 
+-int sd_power_off_card3v3(struct rtsx_pcr *pcr)
++int rtsx_sd_power_off_card3v3(struct rtsx_pcr *pcr)
+ {
+ 	rtsx_pci_write_register(pcr, CARD_CLK_EN, SD_CLK_EN |
+ 		MS_CLK_EN | SD40_CLK_EN, 0);
+@@ -1223,7 +1223,7 @@ int sd_power_off_card3v3(struct rtsx_pcr *pcr)
+ 	return 0;
+ }
+ 
+-int ms_power_off_card3v3(struct rtsx_pcr *pcr)
++int rtsx_ms_power_off_card3v3(struct rtsx_pcr *pcr)
+ {
+ 	rtsx_pci_write_register(pcr, CARD_CLK_EN, SD_CLK_EN |
+ 		MS_CLK_EN | SD40_CLK_EN, 0);
+diff --git a/drivers/misc/cardreader/rtsx_pcr.h b/drivers/misc/cardreader/rtsx_pcr.h
+index c544e35d0154..6ea1655db0bb 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.h
++++ b/drivers/misc/cardreader/rtsx_pcr.h
+@@ -107,7 +107,7 @@ void rtsx_pci_disable_ocp(struct rtsx_pcr *pcr);
+ void rtsx_pci_enable_ocp(struct rtsx_pcr *pcr);
+ int rtsx_pci_get_ocpstat(struct rtsx_pcr *pcr, u8 *val);
+ void rtsx_pci_clear_ocpstat(struct rtsx_pcr *pcr);
+-int sd_power_off_card3v3(struct rtsx_pcr *pcr);
+-int ms_power_off_card3v3(struct rtsx_pcr *pcr);
++int rtsx_sd_power_off_card3v3(struct rtsx_pcr *pcr);
++int rtsx_ms_power_off_card3v3(struct rtsx_pcr *pcr);
+ 
+ #endif
+-- 
+2.15.0
 
-$gpg --keyserver wwwkeys.pgp.net --recv-keys 4D781827
-
---4llyxk7j427yzzhq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EARECAB0WIQTXuabgHDW6LPt9CICxBBozTXgYJwUCWiSzowAKCRCxBBozTXgY
-J8FjAJ9+JX861XyHJRwT8+URFAPHntpMhACfWtyVBsr+SXBZCc1UCGygMmOK6D4=
-=JSp4
------END PGP SIGNATURE-----
-
---4llyxk7j427yzzhq--
-
---===============0976010248==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============0976010248==--
+-- 
+Cheers,
+Stephen Rothwell
