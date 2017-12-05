@@ -1,74 +1,41 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [linux-next][41e83b9][gcc 4.8.5] make modules fail at
- net/netfilter/xt_bpf.ko
-Date: Tue, 5 Dec 2017 18:06:50 +0000
-Message-ID: <20171205180650.GV21978@ZenIV.linux.org.uk>
-References: <1512484991.13113.11.camel@abdul>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Wed, 6 Dec 2017 10:32:58 +1100
+Message-ID: <20171206103258.4920acde@canb.auug.org.au>
+References: <20171204141956.5b90bc18@canb.auug.org.au>
+        <20171204093953.iwhew4w7wgzm6b3q@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1512484991.13113.11.camel@abdul>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:57113 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753270AbdLEXdB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 5 Dec 2017 18:33:01 -0500
+In-Reply-To: <20171204093953.iwhew4w7wgzm6b3q@dell>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Perry Yuan <perry_yuan@dell.com>
 
-On Tue, Dec 05, 2017 at 08:13:11PM +0530, Abdul Haleem wrote:
-> Hi Al Viro,
+Hi Lee,
+
+On Mon, 4 Dec 2017 09:39:53 +0000 Lee Jones <lee.jones@linaro.org> wrote:
+>
+> > I added the following fix patch:
+> > 
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Mon, 4 Dec 2017 14:10:34 +1100
+> > Subject: [PATCH] misc: rtsx: fix symbol clashes
+> > 
+> > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>  
 > 
-> Today's next kernel build failed with commit 41e83b9: fix "netfilter:
-> xt_bpf: Fix XT_BPF_MODE_FD_PINNED
-> 
-> Machine Type: Power 7
-> kernel version: 4.15.0-rc2-next-20171204
-> kernel config: attached
-> test: 'make modules'
-> 
-> ERROR: ".bpf_prog_get_type_path" [net/netfilter/xt_bpf.ko] undefined!
-> 
-> Kernel built fine when bad commit is reverted.
+> Although I'm not sure how to apply this manually without scissors.
 
-In the same commit there's
+Just take everything from the From: line above to the end and give it
+to "git am".  Yes, this may involve saving the email and editting it,
+sorry about that.
 
-+EXPORT_SYMBOL(bpf_prog_get_type_path);
-
-so I really wonder WTF is going on...
-
-Oh, I see.  !BPF_SYSCALL and NETFILTER_XT_MATCH_BPF in .config triggers
-that.  Incremental (to be folded into the commit in question) follows:
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index a7000e4775e7..571450f98006 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -419,6 +419,8 @@ static inline int bpf_map_attr_numa_node(const union bpf_attr *attr)
- 		attr->numa_node : NUMA_NO_NODE;
- }
- 
-+struct bpf_prog *bpf_prog_get_type_path(const char *name, enum bpf_prog_type type);
-+
- #else /* !CONFIG_BPF_SYSCALL */
- static inline struct bpf_prog *bpf_prog_get(u32 ufd)
- {
-@@ -506,6 +508,12 @@ static inline int cpu_map_enqueue(struct bpf_cpu_map_entry *rcpu,
- {
- 	return 0;
- }
-+
-+static inline struct bpf_prog *bpf_prog_get_type_path(const char *name,
-+				enum bpf_prog_type type)
-+{
-+	return -EOPNOTSUPP;
-+}
- #endif /* CONFIG_BPF_SYSCALL */
- 
- static inline struct bpf_prog *bpf_prog_get_type(u32 ufd,
-@@ -514,7 +522,6 @@ static inline struct bpf_prog *bpf_prog_get_type(u32 ufd,
- 	return bpf_prog_get_type_dev(ufd, type, false);
- }
- 
--struct bpf_prog *bpf_prog_get_type_path(const char *name, enum bpf_prog_type type);
- bool bpf_prog_get_ok(struct bpf_prog *, enum bpf_prog_type *, bool);
- 
- int bpf_prog_offload_compile(struct bpf_prog *prog);
+-- 
+Cheers,
+Stephen Rothwell
