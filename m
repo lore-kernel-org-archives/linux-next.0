@@ -1,30 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [Intel-gfx] linux-next: build failure after merge of the
- drm-misc tree
-Date: Wed, 6 Dec 2017 13:12:24 +1100
-Message-ID: <20171206131224.74fd7d8e@canb.auug.org.au>
-References: <20171206120015.66d85f77@canb.auug.org.au>
-        <20171206012154.rzeyq6yuhhvsylxp@intel.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: build failure after merge of the printk tree
+Date: Wed, 6 Dec 2017 13:28:45 +0900
+Message-ID: <20171206042845.GA15885@jagdpanzerIV>
+References: <20171206142300.64d5a70f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171206012154.rzeyq6yuhhvsylxp@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Hans de Goede <j.w.r.degoede@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:38545 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754625AbdLFE2u (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 5 Dec 2017 23:28:50 -0500
+Content-Disposition: inline
+In-Reply-To: <20171206142300.64d5a70f@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Petr Mladek <pmladek@suse.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-Hi Rodrigo,
+Hello,
 
-On Tue, 5 Dec 2017 17:21:54 -0800 Rodrigo Vivi <rodrigo.vivi@intel.com> wrote:
->
-> I had just written the email for you about this.
-> Feel free to ignore that one since you already found the solution
-> and sorry for the delay on warning you.
+On (12/06/17 14:23), Stephen Rothwell wrote:
+> Hi Petr,
+> 
+> After merging the printk tree, today's linux-next build (x86_64
+> allnoconfig) failed like this:
+> 
+> lib/vsprintf.o: In function `pointer':
+> vsprintf.c:(.text+0x2260): undefined reference to `dereference_symbol_descriptor'
+> 
+> Caused by commit
+> 
+>   b77929215209 ("symbol lookup: introduce dereference_symbol_descriptor()")
+> 
+> I have reverted that commit for today.
 
-And I should read all my email before responding to earlier ones :-)
 
--- 
-Cheers,
-Stephen Rothwell
+thanks. will fix it.
+
+	-ss
