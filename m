@@ -1,30 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the printk tree
-Date: Wed, 6 Dec 2017 14:23:00 +1100
-Message-ID: <20171206142300.64d5a70f@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Wed, 6 Dec 2017 08:58:03 +0000
+Message-ID: <20171206085803.d2whwsmua3fm6ij5@dell>
+References: <20171204141956.5b90bc18@canb.auug.org.au>
+ <20171204093953.iwhew4w7wgzm6b3q@dell>
+ <20171206103258.4920acde@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171206103258.4920acde@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Perry Yuan <perry_yuan@dell.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Petr,
+On Wed, 06 Dec 2017, Stephen Rothwell wrote:
 
-After merging the printk tree, today's linux-next build (x86_64
-allnoconfig) failed like this:
+> Hi Lee,
+> 
+> On Mon, 4 Dec 2017 09:39:53 +0000 Lee Jones <lee.jones@linaro.org> wrote:
+> >
+> > > I added the following fix patch:
+> > > 
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 4 Dec 2017 14:10:34 +1100
+> > > Subject: [PATCH] misc: rtsx: fix symbol clashes
+> > > 
+> > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>  
+> > 
+> > Although I'm not sure how to apply this manually without scissors.
+> 
+> Just take everything from the From: line above to the end and give it
+> to "git am".  Yes, this may involve saving the email and editting it,
+> sorry about that.
 
-lib/vsprintf.o: In function `pointer':
-vsprintf.c:(.text+0x2260): undefined reference to `dereference_symbol_descriptor'
+If you use the scissors, I can ask Git to deal with all that for me.
 
-Caused by commit
-
-  b77929215209 ("symbol lookup: introduce dereference_symbol_descriptor()")
-
-I have reverted that commit for today.
+We like #lazymaintenance. :D
 
 -- 
-Cheers,
-Stephen Rothwell
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
