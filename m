@@ -1,41 +1,70 @@
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: linux-next: build failure after merge of the printk tree
-Date: Thu, 7 Dec 2017 10:26:31 +0900
-Message-ID: <20171207012631.GC1119@jagdpanzerIV>
-References: <20171207113707.0ce273dd@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the netfilter-next tree with the
+ netfilter tree
+Date: Thu, 7 Dec 2017 12:58:11 +1100
+Message-ID: <20171207125811.550421ae@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f46.google.com ([74.125.83.46]:42856 "EHLO
-        mail-pg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdLGB0g (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Dec 2017 20:26:36 -0500
-Content-Disposition: inline
-In-Reply-To: <20171207113707.0ce273dd@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:40943 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752466AbdLGB6N (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 6 Dec 2017 20:58:13 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Petr Mladek <pmladek@suse.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Sesterhenn <eric.sesterhenn@x41-dsec.de>, Varsha Rao <rvarsha016@gmail.com>
 
-On (12/07/17 11:37), Stephen Rothwell wrote:
-[..]
-> include/linux/kallsyms.h: In function 'dereference_symbol_descriptor':
-> include/linux/kallsyms.h:63:8: error: implicit declaration of function '__module_address' [-Werror=implicit-function-declaration]
->   mod = __module_address((unsigned long)ptr);
->         ^
-> include/linux/kallsyms.h:67:9: error: implicit declaration of function 'dereference_module_function_descriptor' [-Werror=implicit-function-declaration]
->    ptr = dereference_module_function_descriptor(mod, ptr);
->          ^
-> 
-> and many more ...
-> 
-> Caused by commit
-> 
->   78675fe41d57 ("symbol lookup: introduce dereference_symbol_descriptor()")
-> 
-> I have used the printk tree from next-20171206 (with its version of the
-> above patch reverted due to yesterday's error) for today.
+Hi all,
 
-will fix   :(
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-	-ss
+  net/netfilter/nf_conntrack_h323_asn1.c
+
+between commit:
+
+  bc7d811ace4a ("netfilter: nf_ct_h323: Convert CHECK_BOUND macro to function")
+
+from the netfilter tree and commit:
+
+  e3e52b49c9e7 ("netfilter: nf_conntrack_h323: Remove unwanted comments.")
+
+from the netfilter-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc net/netfilter/nf_conntrack_h323_asn1.c
+index dc6347342e34,475fc8a9b477..000000000000
+--- a/net/netfilter/nf_conntrack_h323_asn1.c
++++ b/net/netfilter/nf_conntrack_h323_asn1.c
+@@@ -164,20 -166,6 +165,19 @@@ static unsigned int get_len(struct bits
+  	return v;
+  }
+  
+ +static int nf_h323_error_boundary(struct bitstr *bs, size_t bytes, size_t bits)
+ +{
+ +	bits += bs->bit;
+ +	bytes += bits / BITS_PER_BYTE;
+ +	if (bits % BITS_PER_BYTE > 0)
+ +		bytes++;
+ +
+ +	if (*bs->cur + bytes > *bs->end)
+ +		return 1;
+ +
+ +	return 0;
+ +}
+ +
+- /****************************************************************************/
+  static unsigned int get_bit(struct bitstr *bs)
+  {
+  	unsigned int b = (*bs->cur) & (0x80 >> bs->bit);
