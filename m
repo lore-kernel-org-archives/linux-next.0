@@ -1,53 +1,51 @@
-From: Jann Horn <jannh@google.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the netfilter tree
-Date: Thu, 7 Dec 2017 01:48:14 +0100
-Message-ID: <CAG48ez1itzyi=0_N-DfjJ+LYSTjCkQR-GHNLOSTnR=oOj7nyyQ@mail.gmail.com>
-References: <20171207111035.7c22d7c0@canb.auug.org.au>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Subject: Re: linux-next: build failure after merge of the printk tree
+Date: Thu, 7 Dec 2017 10:24:04 +0900
+Message-ID: <20171207012404.GB1119@jagdpanzerIV>
+References: <20171206142300.64d5a70f@canb.auug.org.au>
+ <20171206101725.fn4sfbf7sithel55@pathway.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-ot0-f181.google.com ([74.125.82.181]:36794 "EHLO
-        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751941AbdLGAsf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Dec 2017 19:48:35 -0500
-Received: by mail-ot0-f181.google.com with SMTP id d5so5019147oti.3
-        for <linux-next@vger.kernel.org>; Wed, 06 Dec 2017 16:48:35 -0800 (PST)
-In-Reply-To: <20171207111035.7c22d7c0@canb.auug.org.au>
+Received: from mail-pf0-f176.google.com ([209.85.192.176]:41998 "EHLO
+        mail-pf0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751718AbdLGBYI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Dec 2017 20:24:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20171206101725.fn4sfbf7sithel55@pathway.suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Petr Mladek <pmladek@suse.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-On Thu, Dec 7, 2017 at 1:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Al,
->
-> Today's linux-next merge of the vfs tree got a conflict in:
->
->   net/netfilter/xt_bpf.c
->
-> between commit:
->
->   6ab405114b0b ("netfilter: xt_bpf: add overflow checks")
->
-> from the netfilter tree and commit:
->
->   af58d2496b49 ("fix "netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'"")
->
-> from the vfs tree.
->
-> I can't tell if the strlen test from the former is still needed, so I
-> just used the vfs tree version for now.
+On (12/06/17 11:17), Petr Mladek wrote:
+> On Wed 2017-12-06 14:23:00, Stephen Rothwell wrote:
+> > Hi Petr,
+> > 
+> > After merging the printk tree, today's linux-next build (x86_64
+> > allnoconfig) failed like this:
+> > 
+> > lib/vsprintf.o: In function `pointer':
+> > vsprintf.c:(.text+0x2260): undefined reference to `dereference_symbol_descriptor'
+> > 
+> > Caused by commit
+> > 
+> >   b77929215209 ("symbol lookup: introduce dereference_symbol_descriptor()")
+> 
+> I have just pushed the fixed commit from Sergey and will improve my
+> test coverage.
+> 
+> > I have reverted that commit for today.
+> 
+> It should work now. I am sorry for the troubles.
 
-Yeah, both of the checks from the netfilter tree are still necessary
-independent of the commit from the vfs tree.
+Stephen,
 
-> I fixed it up (see below)
+please keep that commit
 
-Did you mean to paste in the fixed-up patch below this message?
+	("symbol lookup: introduce dereference_symbol_descriptor()")
 
-> and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+reverted in today's [20171207] linux-next. we have one more problem
+with it.
+
+	-ss
