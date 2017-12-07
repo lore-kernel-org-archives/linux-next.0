@@ -1,61 +1,158 @@
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tip tree
-Date: Thu, 7 Dec 2017 09:27:16 -0200
-Message-ID: <20171207112716.GB3138@redhat.com>
-References: <20171207094016.32774ae8@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171207 build: 0 failures 24 warnings (next-20171207)
+Date: Thu, 07 Dec 2017 12:51:54 +0000
+Message-ID: <E1eMvec-0000uV-6T@optimist>
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:47164 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752670AbdLGL1U (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 7 Dec 2017 06:27:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20171207094016.32774ae8@canb.auug.org.au>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52806 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753319AbdLGMv4 (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Dec 2017 07:51:56 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Em Thu, Dec 07, 2017 at 09:40:16AM +1100, Stephen Rothwell escreveu:
-> Hi all,
-> 
-> Commit
-> 
->   0b44cfb8e40f ("tools/headers: Synchronize kernel x86 UAPI headers")
-> 
-> is missing a Signed-off-by from its committer.
+Tree/Branch: next-20171207
+Git describe: next-20171207
+Commit: e40fd8d6b4 Add linux-next specific files for 20171207
 
-oops, my bad :-\ I'll avoid this in the future with scripts before
-pushing to Ingo.
+Build Time: 123 min 26 sec
 
-- Arnaldo
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-commit 0b44cfb8e40f64cd72520be223414a7ef79c5d90
-Author:     Ingo Molnar <mingo@kernel.org>
-AuthorDate: Sat Nov 18 09:00:46 2017 +0100
-Commit:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue Nov 28 14:29:05 2017 -0300
+Errors: 0
+Warnings: 24
+Section Mismatches: 0
 
-    tools/headers: Synchronize kernel x86 UAPI headers
-    
-    Two x86 headers got modified in this merge window:
-    
-     arch/x86/include/asm/cpufeatures.h
-     arch/x86/include/asm/disabled-features.h
-    
-    To support x86 UMIP feature, to add new AVX instructions, plus
-cleanups.
-    
-    None of those changes have an effect on tooling, so do a plain copy.
-    
-    Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-    Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Thomas Gleixner <tglx@linutronix.de>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Jiri Olsa <jolsa@redhat.com>
-    Cc: linux-kernel@vger.kernel.org
-    Signed-off-by: Ingo Molnar <mingo@kernel.org>
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     14 warnings    0 mismatches  : arm64-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v5_defconfig
+     13 warnings    0 mismatches  : arm-multi_v7_defconfig
+      1 warnings    0 mismatches  : x86_64-defconfig
+     14 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      3 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 24
+	  7 ../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	  2 ../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	  2 ../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  1 arch/arm/configs/multi_v7_defconfig:966:warning: override: reassigning to symbol VIRTIO_MMIO
+	  1 arch/arm/configs/multi_v7_defconfig:964:warning: override: reassigning to symbol VIRTIO_PCI
+	  1 arch/arm/configs/multi_v7_defconfig:962:warning: override: reassigning to symbol VIDEO_VIVID
+	  1 arch/arm/configs/multi_v7_defconfig:934:warning: override: reassigning to symbol HW_RANDOM_ST
+	  1 arch/arm/configs/multi_v7_defconfig:933:warning: override: reassigning to symbol HW_RANDOM
+	  1 arch/arm/configs/multi_v7_defconfig:932:warning: override: reassigning to symbol KEYSTONE_IRQ
+	  1 arch/arm/configs/multi_v7_defconfig:846:warning: override: reassigning to symbol ARCH_TEGRA_124_SOC
+	  1 arch/arm/configs/multi_v7_defconfig:845:warning: override: reassigning to symbol ARCH_TEGRA_114_SOC
+	  1 arch/arm/configs/multi_v7_defconfig:844:warning: override: reassigning to symbol ARCH_TEGRA_3x_SOC
+	  1 arch/arm/configs/multi_v7_defconfig:843:warning: override: reassigning to symbol ARCH_TEGRA_2x_SOC
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 13 warnings, 0 section mismatches
+
+Warnings:
+	arch/arm/configs/multi_v7_defconfig:843:warning: override: reassigning to symbol ARCH_TEGRA_2x_SOC
+	arch/arm/configs/multi_v7_defconfig:844:warning: override: reassigning to symbol ARCH_TEGRA_3x_SOC
+	arch/arm/configs/multi_v7_defconfig:845:warning: override: reassigning to symbol ARCH_TEGRA_114_SOC
+	arch/arm/configs/multi_v7_defconfig:846:warning: override: reassigning to symbol ARCH_TEGRA_124_SOC
+	arch/arm/configs/multi_v7_defconfig:932:warning: override: reassigning to symbol KEYSTONE_IRQ
+	arch/arm/configs/multi_v7_defconfig:933:warning: override: reassigning to symbol HW_RANDOM
+	arch/arm/configs/multi_v7_defconfig:934:warning: override: reassigning to symbol HW_RANDOM_ST
+	arch/arm/configs/multi_v7_defconfig:962:warning: override: reassigning to symbol VIDEO_VIVID
+	arch/arm/configs/multi_v7_defconfig:964:warning: override: reassigning to symbol VIRTIO_PCI
+	arch/arm/configs/multi_v7_defconfig:966:warning: override: reassigning to symbol VIRTIO_MMIO
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 14 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1752:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
