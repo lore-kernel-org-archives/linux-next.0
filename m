@@ -1,76 +1,126 @@
-From: Bart Van Assche <Bart.VanAssche@wdc.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Thu, 7 Dec 2017 17:30:03 +0000
-Message-ID: <1512667802.2624.20.camel@wdc.com>
+Date: Thu, 7 Dec 2017 09:40:38 -0800
+Message-ID: <20171207174038.GQ7829@linux.vnet.ibm.com>
 References: <20171207145728.57cd9ac4@canb.auug.org.au>
-         <1512619169.3298.3.camel@wdc.com>
-         <20171207152521.0036b131@canb.auug.org.au>
-         <20171207044222.GK7829@linux.vnet.ibm.com>
+ <1512619169.3298.3.camel@wdc.com>
+ <20171207152521.0036b131@canb.auug.org.au>
+ <20171207044222.GK7829@linux.vnet.ibm.com>
+ <1512667802.2624.20.camel@wdc.com>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171207044222.GK7829@linux.vnet.ibm.com>
-Content-Language: en-US
-Content-ID: <D9EEA6B5DBEEEB47A3B1EE01260AB3D8@namprd04.prod.outlook.com>
+Content-Disposition: inline
+In-Reply-To: <1512667802.2624.20.camel@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
-Cc: "josh@joshtriplett.org" <josh@joshtriplett.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "ptikhomirov@virtuozzo.com" <ptikhomirov@virtuozzo.com>
+To: Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "josh@joshtriplett.org" <josh@joshtriplett.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "ptikhomirov@virtuozzo.com" <ptikhomirov@virtuozzo.com>
 List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCAyMDE3LTEyLTA2IGF0IDIwOjQyIC0wODAwLCBQYXVsIEUuIE1jS2VubmV5IHdyb3Rl
-Og0KPiBPbiBUaHUsIERlYyAwNywgMjAxNyBhdCAwMzoyNToyMVBNICsxMTAwLCBTdGVwaGVuIFJv
-dGh3ZWxsIHdyb3RlOg0KPiA+IE9uIFRodSwgNyBEZWMgMjAxNyAwMzo1OTozMCArMDAwMCBCYXJ0
-IFZhbiBBc3NjaGUgPEJhcnQuVmFuQXNzY2hlQHdkYy5jb20+IHdyb3RlOg0KPiA+ID4gT24gVGh1
-LCAyMDE3LTEyLTA3IGF0IDE0OjU3ICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0KPiA+
-ID4gPiBBZnRlciBtZXJnaW5nIHRoZSBzY3NpLW1rcCB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
-YnVpbGQgKHg4Nl82NA0KPiA+ID4gPiBhbGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6DQo+
-ID4gPiA+IA0KPiA+ID4gPiBFUlJPUjogImluaXRfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2Nz
-aV9tb2Qua29dIHVuZGVmaW5lZCENCj4gPiA+ID4gRVJST1I6ICJkZXN0cm95X3JjdV9oZWFkIiBb
-ZHJpdmVycy9zY3NpL3Njc2lfbW9kLmtvXSB1bmRlZmluZWQhDQo+ID4gPiA+IA0KPiA+ID4gPiBD
-YXVzZWQgYnkgY29tbWl0DQo+ID4gPiA+IA0KPiA+ID4gPiAgIGFjOTA0MjBmMTdjOSAoInNjc2k6
-IGNvcmU6IEVuc3VyZSB0aGF0IHRoZSBTQ1NJIGVycm9yIGhhbmRsZXIgZ2V0cyB3b2tlbiB1cCIp
-DQo+ID4gPiA+IA0KPiA+ID4gPiBJIGhhdmUgdXNlZCB0aGUgc2NzaS1ta3AgdHJlZSBmcm9tIG5l
-eHQtMjAxNzEyMDYgZm9yIHRvZGF5LiAgDQo+ID4gPiANCj4gPiA+IERvZXMgdGhhdCBtZWFuIEkn
-bSB0aGUgZmlyc3Qgb25lIHdobyBhZGRlZCBSQ1UgY29kZSB0byB0aGUgU0NTSSBjb3JlPw0KPiA+
-IA0KPiA+IFRoZSBvbmx5IG90aGVyIHVzZXMgb2YgaW5pdF9yY3VfaGVhZCgpIGFyZSBpbiBkcml2
-ZXJzL2lvbW11L2ludGVsLXN2bS5jDQo+ID4gYW5kIGtlcm5lbC9pcnEvaXJxZGVzYy5jLiAgZGVz
-dHJveV9yY3VfaGVhZCgpIGFwcGVhcnMgdG8gbm90IGJlIHVzZWQNCj4gPiBhbnl3aGVyZSAuLi4N
-Cj4gDQo+IFRoZSBrZXkgcG9pbnQgaXMgdGhhdCBCYXJ0IGFwcGVhcnMgdG8gYmUgdGhlIGZpcnN0
-IHRvIHRyeSB1c2luZyB0aGVtIGluDQo+IGEgbW9kdWxlLCBmb3Igd2hpY2ggZXhwb3J0cyBhcmUg
-bmVlZGVkLiAgRG9lcyB0aGUgcGF0Y2ggYmVsb3cgaGVscD8NCj4gDQo+IAkJCQkJCQlUaGFueCwg
-UGF1bA0KPiANCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0KPiBjb21taXQgY2RlNDY5MWEzYTQ1OTFl
-NzM1NTI5NWRkNjI2MTBlMzI2MjE1OTAwMg0KPiBBdXRob3I6IFBhdWwgRS4gTWNLZW5uZXkgPHBh
-dWxtY2tAbGludXgudm5ldC5pYm0uY29tPg0KPiBEYXRlOiAgIFdlZCBEZWMgNiAyMDozOTozOCAy
-MDE3IC0wODAwDQo+IA0KPiAgICAgcmN1OiBFeHBvcnQgaW5pdF9yY3VfaGVhZCgpIGFuZCBkZXN0
-cm95X3JjdV9oZWFkKCkgdG8gR1BMIG1vZHVsZXMNCj4gICAgIA0KPiAgICAgVXNlIG9mIGluaXRf
-cmN1X2hlYWQoKSBhbmQgZGVzdHJveV9yY3VfaGVhZCgpIGZyb20gbW9kdWxlcyByZXN1bHRzIGlu
-DQo+ICAgICB0aGUgZm9sbG93aW5nIGJ1aWxkLXRpbWUgZXJyb3I6DQo+ICAgICANCj4gICAgIAlF
-UlJPUjogImluaXRfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2NzaV9tb2Qua29dIHVuZGVmaW5l
-ZCENCj4gICAgIAlFUlJPUjogImRlc3Ryb3lfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2NzaV9t
-b2Qua29dIHVuZGVmaW5lZCENCj4gICAgIA0KPiAgICAgVGhpcyBjb21taXQgdGhlcmVmb3JlIGFk
-ZHMgRVhQT1JUX1NZTUJPTF9HUEwoKSBmb3IgZWFjaCB0byBhbGxvdyB0aGVtDQo+ICAgICB0byBi
-ZSB1c2VkIGJ5IEdQTC1saWNlbnNlZCBrZXJuZWwgbW9kdWxlcy4NCj4gICAgIA0KPiAgICAgUmVw
-b3J0ZWQtYnk6IEJhcnQgVmFuIEFzc2NoZSA8QmFydC5WYW5Bc3NjaGVAd2RjLmNvbT4NCj4gICAg
-IFJlcG9ydGVkLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4NCj4g
-ICAgIFNpZ25lZC1vZmYtYnk6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXgudm5ldC5p
-Ym0uY29tPg0KPiANCj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9yY3UvdXBkYXRlLmMgYi9rZXJuZWwv
-cmN1L3VwZGF0ZS5jDQo+IGluZGV4IDhkNTkxZDg0MTFmZS4uNGM0ZDI2ZTlhNjdiIDEwMDY0NA0K
-PiAtLS0gYS9rZXJuZWwvcmN1L3VwZGF0ZS5jDQo+ICsrKyBiL2tlcm5lbC9yY3UvdXBkYXRlLmMN
-Cj4gQEAgLTQyMiwxMSArNDIyLDEzIEBAIHZvaWQgaW5pdF9yY3VfaGVhZChzdHJ1Y3QgcmN1X2hl
-YWQgKmhlYWQpDQo+ICB7DQo+ICAJZGVidWdfb2JqZWN0X2luaXQoaGVhZCwgJnJjdWhlYWRfZGVi
-dWdfZGVzY3IpOw0KPiAgfQ0KPiArRVhQT1JUX1NZTUJPTF9HUEwoaW5pdF9yY3VfaGVhZCk7DQo+
-ICANCj4gIHZvaWQgZGVzdHJveV9yY3VfaGVhZChzdHJ1Y3QgcmN1X2hlYWQgKmhlYWQpDQo+ICB7
-DQo+ICAJZGVidWdfb2JqZWN0X2ZyZWUoaGVhZCwgJnJjdWhlYWRfZGVidWdfZGVzY3IpOw0KPiAg
-fQ0KPiArRVhQT1JUX1NZTUJPTF9HUEwoZGVzdHJveV9yY3VfaGVhZCk7DQo+ICANCj4gIHN0YXRp
-YyBib29sIHJjdWhlYWRfaXNfc3RhdGljX29iamVjdCh2b2lkICphZGRyKQ0KPiAgew0KDQooK2xp
-bnV4LXNjc2kpDQoNCkhlbGxvIFBhdWwsDQoNCkhvdyBhYm91dCBjaGFuZ2luZyB0aGUgY29tbWl0
-IG1lc3NhZ2UgaW50byAiLi4uIGZpeGVzIGEgYnVpbGQgZmFpbHVyZSB3aXRoDQpDT05GSUdfREVC
-VUdfT0JKRUNUU19SQ1VfSEVBRD15Ij8gT3RoZXJ3aXNlIHRoZSBhYm92ZSBwYXRjaCBsb29rcyBm
-aW5lIHRvIG1lDQphbmQgZml4ZXMgdGhlIHJlcG9ydGVkIGJ1aWxkIGZhaWx1cmUgb24gbXkgc2V0
-dXAuDQoNCkhvd2V2ZXIsIHdoYXQncyBub3QgY2xlYXIgdG8gbWUgaXMgdGhyb3VnaCB3aGljaCB0
-cmVlIHRoaXMgcGF0Y2ggc2hvdWxkIGJlDQpzZW50IHRvIExpbnVzPyBTaG91bGQgdGhlIGFib3Zl
-IHBhdGNoIGJlIHNlbnQgYXMgYSB2NC4xNS1yYyBmaXggb3Igc2hvdWxkDQpNYXJ0aW4gcGVyaGFw
-cyBxdWV1ZSBpdCBpbiBoaXMgdHJlZSBmb3IgdjQuMTYtcmMxPw0KDQpUaGFua3MsDQoNCkJhcnQu
-DQoNCg==
+On Thu, Dec 07, 2017 at 05:30:03PM +0000, Bart Van Assche wrote:
+> On Wed, 2017-12-06 at 20:42 -0800, Paul E. McKenney wrote:
+> > On Thu, Dec 07, 2017 at 03:25:21PM +1100, Stephen Rothwell wrote:
+> > > On Thu, 7 Dec 2017 03:59:30 +0000 Bart Van Assche <Bart.VanAssche@wdc.com> wrote:
+
+[ . . . ]
+
+> > commit cde4691a3a4591e7355295dd62610e3262159002
+> > Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > Date:   Wed Dec 6 20:39:38 2017 -0800
+> > 
+> >     rcu: Export init_rcu_head() and destroy_rcu_head() to GPL modules
+> >     
+> >     Use of init_rcu_head() and destroy_rcu_head() from modules results in
+> >     the following build-time error:
+> >     
+> >     	ERROR: "init_rcu_head" [drivers/scsi/scsi_mod.ko] undefined!
+> >     	ERROR: "destroy_rcu_head" [drivers/scsi/scsi_mod.ko] undefined!
+> >     
+> >     This commit therefore adds EXPORT_SYMBOL_GPL() for each to allow them
+> >     to be used by GPL-licensed kernel modules.
+> >     
+> >     Reported-by: Bart Van Assche <Bart.VanAssche@wdc.com>
+> >     Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> >     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > 
+> > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > index 8d591d8411fe..4c4d26e9a67b 100644
+> > --- a/kernel/rcu/update.c
+> > +++ b/kernel/rcu/update.c
+> > @@ -422,11 +422,13 @@ void init_rcu_head(struct rcu_head *head)
+> >  {
+> >  	debug_object_init(head, &rcuhead_debug_descr);
+> >  }
+> > +EXPORT_SYMBOL_GPL(init_rcu_head);
+> >  
+> >  void destroy_rcu_head(struct rcu_head *head)
+> >  {
+> >  	debug_object_free(head, &rcuhead_debug_descr);
+> >  }
+> > +EXPORT_SYMBOL_GPL(destroy_rcu_head);
+> >  
+> >  static bool rcuhead_is_static_object(void *addr)
+> >  {
+> 
+> (+linux-scsi)
+> 
+> Hello Paul,
+> 
+> How about changing the commit message into "... fixes a build failure with
+> CONFIG_DEBUG_OBJECTS_RCU_HEAD=y"? Otherwise the above patch looks fine to me
+> and fixes the reported build failure on my setup.
+
+I have updated it as shown below.
+
+> However, what's not clear to me is through which tree this patch should be
+> sent to Linus? Should the above patch be sent as a v4.15-rc fix or should
+> Martin perhaps queue it in his tree for v4.16-rc1?
+
+I have to defer to you guys on that one.  Left to myself, I will just
+push it into the next merge window (as opposed to using my normal process,
+which at this point would get it into the one following).
+
+So please let me know how you would like to proceed.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit 193dffdf4354f14b4f3369a85128817e5ba74e58
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Wed Dec 6 20:39:38 2017 -0800
+
+    rcu: Export init_rcu_head() and destroy_rcu_head() to GPL modules
+    
+    Use of init_rcu_head() and destroy_rcu_head() from modules results in
+    the following build-time error with CONFIG_DEBUG_OBJECTS_RCU_HEAD=y:
+    
+    	ERROR: "init_rcu_head" [drivers/scsi/scsi_mod.ko] undefined!
+    	ERROR: "destroy_rcu_head" [drivers/scsi/scsi_mod.ko] undefined!
+    
+    This commit therefore adds EXPORT_SYMBOL_GPL() for each to allow them
+    to be used by GPL-licensed kernel modules.
+    
+    Reported-by: Bart Van Assche <Bart.VanAssche@wdc.com>
+    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+index 8d591d8411fe..4c4d26e9a67b 100644
+--- a/kernel/rcu/update.c
++++ b/kernel/rcu/update.c
+@@ -422,11 +422,13 @@ void init_rcu_head(struct rcu_head *head)
+ {
+ 	debug_object_init(head, &rcuhead_debug_descr);
+ }
++EXPORT_SYMBOL_GPL(init_rcu_head);
+ 
+ void destroy_rcu_head(struct rcu_head *head)
+ {
+ 	debug_object_free(head, &rcuhead_debug_descr);
+ }
++EXPORT_SYMBOL_GPL(destroy_rcu_head);
+ 
+ static bool rcuhead_is_static_object(void *addr)
+ {
