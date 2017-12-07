@@ -1,49 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the printk tree
-Date: Thu, 7 Dec 2017 11:37:07 +1100
-Message-ID: <20171207113707.0ce273dd@canb.auug.org.au>
+From: Jann Horn <jannh@google.com>
+Subject: Re: linux-next: manual merge of the vfs tree with the netfilter tree
+Date: Thu, 7 Dec 2017 01:48:14 +0100
+Message-ID: <CAG48ez1itzyi=0_N-DfjJ+LYSTjCkQR-GHNLOSTnR=oOj7nyyQ@mail.gmail.com>
+References: <20171207111035.7c22d7c0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40897 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751718AbdLGAhK (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 6 Dec 2017 19:37:10 -0500
+Received: from mail-ot0-f181.google.com ([74.125.82.181]:36794 "EHLO
+        mail-ot0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751941AbdLGAsf (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Wed, 6 Dec 2017 19:48:35 -0500
+Received: by mail-ot0-f181.google.com with SMTP id d5so5019147oti.3
+        for <linux-next@vger.kernel.org>; Wed, 06 Dec 2017 16:48:35 -0800 (PST)
+In-Reply-To: <20171207111035.7c22d7c0@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Petr,
+On Thu, Dec 7, 2017 at 1:10 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Al,
+>
+> Today's linux-next merge of the vfs tree got a conflict in:
+>
+>   net/netfilter/xt_bpf.c
+>
+> between commit:
+>
+>   6ab405114b0b ("netfilter: xt_bpf: add overflow checks")
+>
+> from the netfilter tree and commit:
+>
+>   af58d2496b49 ("fix "netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'"")
+>
+> from the vfs tree.
+>
+> I can't tell if the strlen test from the former is still needed, so I
+> just used the vfs tree version for now.
 
-After merging the printk tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Yeah, both of the checks from the netfilter tree are still necessary
+independent of the commit from the vfs tree.
 
-In file included from include/linux/ftrace.h:11:0,
-                 from include/linux/perf_event.h:48,
-                 from include/linux/trace_events.h:10,
-                 from include/trace/syscall.h:7,
-                 from include/linux/syscalls.h:82,
-                 from init/do_mounts.h:5,
-                 from init/do_mounts_initrd.c:22:
-include/linux/kallsyms.h: In function 'dereference_symbol_descriptor':
-include/linux/kallsyms.h:63:8: error: implicit declaration of function '__module_address' [-Werror=implicit-function-declaration]
-  mod = __module_address((unsigned long)ptr);
-        ^
-include/linux/kallsyms.h:67:9: error: implicit declaration of function 'dereference_module_function_descriptor' [-Werror=implicit-function-declaration]
-   ptr = dereference_module_function_descriptor(mod, ptr);
-         ^
+> I fixed it up (see below)
 
-and many more ...
+Did you mean to paste in the fixed-up patch below this message?
 
-Caused by commit
-
-  78675fe41d57 ("symbol lookup: introduce dereference_symbol_descriptor()")
-
-I have used the printk tree from next-20171206 (with its version of the
-above patch reverted due to yesterday's error) for today.
-
--- 
-Cheers,
-Stephen Rothwell
+> and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
