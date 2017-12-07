@@ -1,42 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the keystone tree
-Date: Thu, 7 Dec 2017 10:38:16 +1100
-Message-ID: <20171207103816.06a8d2d8@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the bpf tree
+Date: Thu, 7 Dec 2017 11:00:01 +1100
+Message-ID: <20171207110001.4c3342b9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:32891 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751950AbdLFXiS (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 6 Dec 2017 18:38:18 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Al Viro <viro@ZenIV.linux.org.uk>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Santosh,
+Hi Al,
 
-After merging the keystone tree, today's linux-next build (arm
-multi_v7_defconfig) produced these warnings:
+Today's linux-next merge of the vfs tree got conflicts in:
 
-arch/arm/configs/multi_v7_defconfig:843:warning: override: reassigning to symbol ARCH_TEGRA_2x_SOC
-arch/arm/configs/multi_v7_defconfig:844:warning: override: reassigning to symbol ARCH_TEGRA_3x_SOC
-arch/arm/configs/multi_v7_defconfig:845:warning: override: reassigning to symbol ARCH_TEGRA_114_SOC
-arch/arm/configs/multi_v7_defconfig:846:warning: override: reassigning to symbol ARCH_TEGRA_124_SOC
-arch/arm/configs/multi_v7_defconfig:932:warning: override: reassigning to symbol KEYSTONE_IRQ
-arch/arm/configs/multi_v7_defconfig:933:warning: override: reassigning to symbol HW_RANDOM
-arch/arm/configs/multi_v7_defconfig:934:warning: override: reassigning to symbol HW_RANDOM_ST
-arch/arm/configs/multi_v7_defconfig:962:warning: override: reassigning to symbol VIDEO_VIVID
-arch/arm/configs/multi_v7_defconfig:964:warning: override: reassigning to symbol VIRTIO_PCI
-arch/arm/configs/multi_v7_defconfig:966:warning: override: reassigning to symbol VIRTIO_MMIO
+  arch/alpha/include/uapi/asm/Kbuild
+  arch/mn10300/include/uapi/asm/Kbuild
+  arch/score/include/uapi/asm/Kbuild
 
-Introduced by commit
+between commit:
 
-  0d81df335462 ("ARM: config: sync multi-v7 config with keystone peripherals")
+  c895f6f703ad ("bpf: correct broken uapi for BPF_PROG_TYPE_PERF_EVENT program type")
 
+from the bpf tree and commit:
 
+  d759be8953fe ("switch wrapper poll.h instances to generic-y")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+I do wonder if those poll.h additions are necessary given that poll.h
+is listed in include/uapi/asm-generic/Kbuild.asm ...
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/alpha/include/uapi/asm/Kbuild
+index 14a2e9af97e9,574fe90c8b58..000000000000
+--- a/arch/alpha/include/uapi/asm/Kbuild
++++ b/arch/alpha/include/uapi/asm/Kbuild
+@@@ -1,4 -1,4 +1,5 @@@
+  # UAPI Header export list
+  include include/uapi/asm-generic/Kbuild.asm
+  
+ +generic-y += bpf_perf_event.h
++ generic-y += poll.h
+diff --cc arch/mn10300/include/uapi/asm/Kbuild
+index 81271d3af47c,162fbdbb5fd5..000000000000
+--- a/arch/mn10300/include/uapi/asm/Kbuild
++++ b/arch/mn10300/include/uapi/asm/Kbuild
+@@@ -1,5 -1,5 +1,6 @@@
+  # UAPI Header export list
+  include include/uapi/asm-generic/Kbuild.asm
+  
+ +generic-y	+= bpf_perf_event.h
++ generic-y	+= poll.h
+  generic-y	+= siginfo.h
+diff --cc arch/score/include/uapi/asm/Kbuild
+index 81271d3af47c,162fbdbb5fd5..000000000000
+--- a/arch/score/include/uapi/asm/Kbuild
++++ b/arch/score/include/uapi/asm/Kbuild
+@@@ -1,5 -1,5 +1,6 @@@
+  # UAPI Header export list
+  include include/uapi/asm-generic/Kbuild.asm
+  
+ +generic-y	+= bpf_perf_event.h
++ generic-y	+= poll.h
+  generic-y	+= siginfo.h
