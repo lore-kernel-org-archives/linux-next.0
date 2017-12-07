@@ -1,33 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the bpf tree
-Date: Thu, 7 Dec 2017 11:00:01 +1100
-Message-ID: <20171207110001.4c3342b9@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the netfilter tree
+Date: Thu, 7 Dec 2017 11:10:35 +1100
+Message-ID: <20171207111035.7c22d7c0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54925 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751604AbdLGAKh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 6 Dec 2017 19:10:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got conflicts in:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-  arch/alpha/include/uapi/asm/Kbuild
-  arch/mn10300/include/uapi/asm/Kbuild
-  arch/score/include/uapi/asm/Kbuild
+  net/netfilter/xt_bpf.c
 
 between commit:
 
-  c895f6f703ad ("bpf: correct broken uapi for BPF_PROG_TYPE_PERF_EVENT program type")
+  6ab405114b0b ("netfilter: xt_bpf: add overflow checks")
 
-from the bpf tree and commit:
+from the netfilter tree and commit:
 
-  d759be8953fe ("switch wrapper poll.h instances to generic-y")
+  af58d2496b49 ("fix "netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'"")
 
 from the vfs tree.
+
+I can't tell if the strlen test from the former is still needed, so I
+just used the vfs tree version for now.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -36,42 +41,9 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-I do wonder if those poll.h additions are necessary given that poll.h
-is listed in include/uapi/asm-generic/Kbuild.asm ...
+Al, can I convince you to submit fixes to the appropriate maintainers
+(or have you done so and it just hasn't been picked up yet)?
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/alpha/include/uapi/asm/Kbuild
-index 14a2e9af97e9,574fe90c8b58..000000000000
---- a/arch/alpha/include/uapi/asm/Kbuild
-+++ b/arch/alpha/include/uapi/asm/Kbuild
-@@@ -1,4 -1,4 +1,5 @@@
-  # UAPI Header export list
-  include include/uapi/asm-generic/Kbuild.asm
-  
- +generic-y += bpf_perf_event.h
-+ generic-y += poll.h
-diff --cc arch/mn10300/include/uapi/asm/Kbuild
-index 81271d3af47c,162fbdbb5fd5..000000000000
---- a/arch/mn10300/include/uapi/asm/Kbuild
-+++ b/arch/mn10300/include/uapi/asm/Kbuild
-@@@ -1,5 -1,5 +1,6 @@@
-  # UAPI Header export list
-  include include/uapi/asm-generic/Kbuild.asm
-  
- +generic-y	+= bpf_perf_event.h
-+ generic-y	+= poll.h
-  generic-y	+= siginfo.h
-diff --cc arch/score/include/uapi/asm/Kbuild
-index 81271d3af47c,162fbdbb5fd5..000000000000
---- a/arch/score/include/uapi/asm/Kbuild
-+++ b/arch/score/include/uapi/asm/Kbuild
-@@@ -1,5 -1,5 +1,6 @@@
-  # UAPI Header export list
-  include include/uapi/asm-generic/Kbuild.asm
-  
- +generic-y	+= bpf_perf_event.h
-+ generic-y	+= poll.h
-  generic-y	+= siginfo.h
