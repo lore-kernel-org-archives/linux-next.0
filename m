@@ -1,48 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the netfilter tree
-Date: Thu, 7 Dec 2017 11:10:35 +1100
-Message-ID: <20171207111035.7c22d7c0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the printk tree
+Date: Thu, 7 Dec 2017 11:37:07 +1100
+Message-ID: <20171207113707.0ce273dd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54925 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:40897 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751604AbdLGAKh (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 6 Dec 2017 19:10:37 -0500
+        id S1751718AbdLGAhK (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 6 Dec 2017 19:37:10 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Al Viro <viro@ZenIV.linux.org.uk>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-Hi Al,
+Hi Petr,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+After merging the printk tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  net/netfilter/xt_bpf.c
+In file included from include/linux/ftrace.h:11:0,
+                 from include/linux/perf_event.h:48,
+                 from include/linux/trace_events.h:10,
+                 from include/trace/syscall.h:7,
+                 from include/linux/syscalls.h:82,
+                 from init/do_mounts.h:5,
+                 from init/do_mounts_initrd.c:22:
+include/linux/kallsyms.h: In function 'dereference_symbol_descriptor':
+include/linux/kallsyms.h:63:8: error: implicit declaration of function '__module_address' [-Werror=implicit-function-declaration]
+  mod = __module_address((unsigned long)ptr);
+        ^
+include/linux/kallsyms.h:67:9: error: implicit declaration of function 'dereference_module_function_descriptor' [-Werror=implicit-function-declaration]
+   ptr = dereference_module_function_descriptor(mod, ptr);
+         ^
 
-between commit:
+and many more ...
 
-  6ab405114b0b ("netfilter: xt_bpf: add overflow checks")
+Caused by commit
 
-from the netfilter tree and commit:
+  78675fe41d57 ("symbol lookup: introduce dereference_symbol_descriptor()")
 
-  af58d2496b49 ("fix "netfilter: xt_bpf: Fix XT_BPF_MODE_FD_PINNED mode of 'xt_bpf_info_v1'"")
-
-from the vfs tree.
-
-I can't tell if the strlen test from the former is still needed, so I
-just used the vfs tree version for now.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-Al, can I convince you to submit fixes to the appropriate maintainers
-(or have you done so and it just hasn't been picked up yet)?
+I have used the printk tree from next-20171206 (with its version of the
+above patch reverted due to yesterday's error) for today.
 
 -- 
 Cheers,
