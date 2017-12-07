@@ -1,36 +1,76 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warnings after merge of the gpio tree
-Date: Thu, 7 Dec 2017 16:10:21 +0100
-Message-ID: <CAK8P3a0s6+BsbxYLi5VejbBYuhhDRHPgWh5SM5i2KbJhVAY59Q@mail.gmail.com>
-References: <20171103163724.73fe268e@canb.auug.org.au> <20171109145125.4c505048@canb.auug.org.au>
- <CACRpkdahm-N7JyKQ8LA69qjvPG6Vf4TRKx67emxxFKVdszGiNA@mail.gmail.com>
- <CABGGisyhjtJN=Rgjb0MS9vg+TH2M8Rir27GNyv8jAT2LibjASg@mail.gmail.com>
- <20171116094244.55db9408@canb.auug.org.au> <CAL_JsqLMjMpz81rpZuG=TJSabLpstcU-=Ypnj4ARP2M+BesjVA@mail.gmail.com>
- <20171206094853.30cc0bb0@canb.auug.org.au> <CAL_JsqL2+ZRWdywRSNKLuWWJhvbYb6RHQKTWhJQWvZLABCy7TA@mail.gmail.com>
+From: Bart Van Assche <Bart.VanAssche@wdc.com>
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+Date: Thu, 7 Dec 2017 17:30:03 +0000
+Message-ID: <1512667802.2624.20.camel@wdc.com>
+References: <20171207145728.57cd9ac4@canb.auug.org.au>
+         <1512619169.3298.3.camel@wdc.com>
+         <20171207152521.0036b131@canb.auug.org.au>
+         <20171207044222.GK7829@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45221 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753012AbdLGPKX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Dec 2017 10:10:23 -0500
-In-Reply-To: <CAL_JsqL2+ZRWdywRSNKLuWWJhvbYb6RHQKTWhJQWvZLABCy7TA@mail.gmail.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "arm@kernel.org" <arm@kernel.org>, Andy Gross <andy.gross@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171207044222.GK7829@linux.vnet.ibm.com>
+Content-Language: en-US
+Content-ID: <D9EEA6B5DBEEEB47A3B1EE01260AB3D8@namprd04.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "paulmck@linux.vnet.ibm.com" <paulmck@linux.vnet.ibm.com>
+Cc: "josh@joshtriplett.org" <josh@joshtriplett.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "martin.petersen@oracle.com" <martin.petersen@oracle.com>, "ptikhomirov@virtuozzo.com" <ptikhomirov@virtuozzo.com>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Dec 6, 2017 at 9:51 PM, Rob Herring <robh@kernel.org> wrote:
-> On Tue, Dec 5, 2017 at 4:48 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> These 2 aren't in -next and seem to have been missed:
->
-> arm: dts: qcom: fix missing #phy-cells for apq8064
-
-Apparently this is a subsect of 3191b5b332f8 ("ARM: dts: qcom-apq8064: Fix dsi
-and hdmi phy cells"), which we already have
-
-> arm: dts: nspire: Add missing #phy-cells to usb-nop-xceiv
-
-Picked this one up now.
-
-       Arnd
+T24gV2VkLCAyMDE3LTEyLTA2IGF0IDIwOjQyIC0wODAwLCBQYXVsIEUuIE1jS2VubmV5IHdyb3Rl
+Og0KPiBPbiBUaHUsIERlYyAwNywgMjAxNyBhdCAwMzoyNToyMVBNICsxMTAwLCBTdGVwaGVuIFJv
+dGh3ZWxsIHdyb3RlOg0KPiA+IE9uIFRodSwgNyBEZWMgMjAxNyAwMzo1OTozMCArMDAwMCBCYXJ0
+IFZhbiBBc3NjaGUgPEJhcnQuVmFuQXNzY2hlQHdkYy5jb20+IHdyb3RlOg0KPiA+ID4gT24gVGh1
+LCAyMDE3LTEyLTA3IGF0IDE0OjU3ICsxMTAwLCBTdGVwaGVuIFJvdGh3ZWxsIHdyb3RlOg0KPiA+
+ID4gPiBBZnRlciBtZXJnaW5nIHRoZSBzY3NpLW1rcCB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NA0KPiA+ID4gPiBhbGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6DQo+
+ID4gPiA+IA0KPiA+ID4gPiBFUlJPUjogImluaXRfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2Nz
+aV9tb2Qua29dIHVuZGVmaW5lZCENCj4gPiA+ID4gRVJST1I6ICJkZXN0cm95X3JjdV9oZWFkIiBb
+ZHJpdmVycy9zY3NpL3Njc2lfbW9kLmtvXSB1bmRlZmluZWQhDQo+ID4gPiA+IA0KPiA+ID4gPiBD
+YXVzZWQgYnkgY29tbWl0DQo+ID4gPiA+IA0KPiA+ID4gPiAgIGFjOTA0MjBmMTdjOSAoInNjc2k6
+IGNvcmU6IEVuc3VyZSB0aGF0IHRoZSBTQ1NJIGVycm9yIGhhbmRsZXIgZ2V0cyB3b2tlbiB1cCIp
+DQo+ID4gPiA+IA0KPiA+ID4gPiBJIGhhdmUgdXNlZCB0aGUgc2NzaS1ta3AgdHJlZSBmcm9tIG5l
+eHQtMjAxNzEyMDYgZm9yIHRvZGF5LiAgDQo+ID4gPiANCj4gPiA+IERvZXMgdGhhdCBtZWFuIEkn
+bSB0aGUgZmlyc3Qgb25lIHdobyBhZGRlZCBSQ1UgY29kZSB0byB0aGUgU0NTSSBjb3JlPw0KPiA+
+IA0KPiA+IFRoZSBvbmx5IG90aGVyIHVzZXMgb2YgaW5pdF9yY3VfaGVhZCgpIGFyZSBpbiBkcml2
+ZXJzL2lvbW11L2ludGVsLXN2bS5jDQo+ID4gYW5kIGtlcm5lbC9pcnEvaXJxZGVzYy5jLiAgZGVz
+dHJveV9yY3VfaGVhZCgpIGFwcGVhcnMgdG8gbm90IGJlIHVzZWQNCj4gPiBhbnl3aGVyZSAuLi4N
+Cj4gDQo+IFRoZSBrZXkgcG9pbnQgaXMgdGhhdCBCYXJ0IGFwcGVhcnMgdG8gYmUgdGhlIGZpcnN0
+IHRvIHRyeSB1c2luZyB0aGVtIGluDQo+IGEgbW9kdWxlLCBmb3Igd2hpY2ggZXhwb3J0cyBhcmUg
+bmVlZGVkLiAgRG9lcyB0aGUgcGF0Y2ggYmVsb3cgaGVscD8NCj4gDQo+IAkJCQkJCQlUaGFueCwg
+UGF1bA0KPiANCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IA0KPiBjb21taXQgY2RlNDY5MWEzYTQ1OTFl
+NzM1NTI5NWRkNjI2MTBlMzI2MjE1OTAwMg0KPiBBdXRob3I6IFBhdWwgRS4gTWNLZW5uZXkgPHBh
+dWxtY2tAbGludXgudm5ldC5pYm0uY29tPg0KPiBEYXRlOiAgIFdlZCBEZWMgNiAyMDozOTozOCAy
+MDE3IC0wODAwDQo+IA0KPiAgICAgcmN1OiBFeHBvcnQgaW5pdF9yY3VfaGVhZCgpIGFuZCBkZXN0
+cm95X3JjdV9oZWFkKCkgdG8gR1BMIG1vZHVsZXMNCj4gICAgIA0KPiAgICAgVXNlIG9mIGluaXRf
+cmN1X2hlYWQoKSBhbmQgZGVzdHJveV9yY3VfaGVhZCgpIGZyb20gbW9kdWxlcyByZXN1bHRzIGlu
+DQo+ICAgICB0aGUgZm9sbG93aW5nIGJ1aWxkLXRpbWUgZXJyb3I6DQo+ICAgICANCj4gICAgIAlF
+UlJPUjogImluaXRfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2NzaV9tb2Qua29dIHVuZGVmaW5l
+ZCENCj4gICAgIAlFUlJPUjogImRlc3Ryb3lfcmN1X2hlYWQiIFtkcml2ZXJzL3Njc2kvc2NzaV9t
+b2Qua29dIHVuZGVmaW5lZCENCj4gICAgIA0KPiAgICAgVGhpcyBjb21taXQgdGhlcmVmb3JlIGFk
+ZHMgRVhQT1JUX1NZTUJPTF9HUEwoKSBmb3IgZWFjaCB0byBhbGxvdyB0aGVtDQo+ICAgICB0byBi
+ZSB1c2VkIGJ5IEdQTC1saWNlbnNlZCBrZXJuZWwgbW9kdWxlcy4NCj4gICAgIA0KPiAgICAgUmVw
+b3J0ZWQtYnk6IEJhcnQgVmFuIEFzc2NoZSA8QmFydC5WYW5Bc3NjaGVAd2RjLmNvbT4NCj4gICAg
+IFJlcG9ydGVkLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4NCj4g
+ICAgIFNpZ25lZC1vZmYtYnk6IFBhdWwgRS4gTWNLZW5uZXkgPHBhdWxtY2tAbGludXgudm5ldC5p
+Ym0uY29tPg0KPiANCj4gZGlmZiAtLWdpdCBhL2tlcm5lbC9yY3UvdXBkYXRlLmMgYi9rZXJuZWwv
+cmN1L3VwZGF0ZS5jDQo+IGluZGV4IDhkNTkxZDg0MTFmZS4uNGM0ZDI2ZTlhNjdiIDEwMDY0NA0K
+PiAtLS0gYS9rZXJuZWwvcmN1L3VwZGF0ZS5jDQo+ICsrKyBiL2tlcm5lbC9yY3UvdXBkYXRlLmMN
+Cj4gQEAgLTQyMiwxMSArNDIyLDEzIEBAIHZvaWQgaW5pdF9yY3VfaGVhZChzdHJ1Y3QgcmN1X2hl
+YWQgKmhlYWQpDQo+ICB7DQo+ICAJZGVidWdfb2JqZWN0X2luaXQoaGVhZCwgJnJjdWhlYWRfZGVi
+dWdfZGVzY3IpOw0KPiAgfQ0KPiArRVhQT1JUX1NZTUJPTF9HUEwoaW5pdF9yY3VfaGVhZCk7DQo+
+ICANCj4gIHZvaWQgZGVzdHJveV9yY3VfaGVhZChzdHJ1Y3QgcmN1X2hlYWQgKmhlYWQpDQo+ICB7
+DQo+ICAJZGVidWdfb2JqZWN0X2ZyZWUoaGVhZCwgJnJjdWhlYWRfZGVidWdfZGVzY3IpOw0KPiAg
+fQ0KPiArRVhQT1JUX1NZTUJPTF9HUEwoZGVzdHJveV9yY3VfaGVhZCk7DQo+ICANCj4gIHN0YXRp
+YyBib29sIHJjdWhlYWRfaXNfc3RhdGljX29iamVjdCh2b2lkICphZGRyKQ0KPiAgew0KDQooK2xp
+bnV4LXNjc2kpDQoNCkhlbGxvIFBhdWwsDQoNCkhvdyBhYm91dCBjaGFuZ2luZyB0aGUgY29tbWl0
+IG1lc3NhZ2UgaW50byAiLi4uIGZpeGVzIGEgYnVpbGQgZmFpbHVyZSB3aXRoDQpDT05GSUdfREVC
+VUdfT0JKRUNUU19SQ1VfSEVBRD15Ij8gT3RoZXJ3aXNlIHRoZSBhYm92ZSBwYXRjaCBsb29rcyBm
+aW5lIHRvIG1lDQphbmQgZml4ZXMgdGhlIHJlcG9ydGVkIGJ1aWxkIGZhaWx1cmUgb24gbXkgc2V0
+dXAuDQoNCkhvd2V2ZXIsIHdoYXQncyBub3QgY2xlYXIgdG8gbWUgaXMgdGhyb3VnaCB3aGljaCB0
+cmVlIHRoaXMgcGF0Y2ggc2hvdWxkIGJlDQpzZW50IHRvIExpbnVzPyBTaG91bGQgdGhlIGFib3Zl
+IHBhdGNoIGJlIHNlbnQgYXMgYSB2NC4xNS1yYyBmaXggb3Igc2hvdWxkDQpNYXJ0aW4gcGVyaGFw
+cyBxdWV1ZSBpdCBpbiBoaXMgdHJlZSBmb3IgdjQuMTYtcmMxPw0KDQpUaGFua3MsDQoNCkJhcnQu
+DQoNCg==
