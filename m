@@ -1,34 +1,64 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
-Date: Thu, 07 Dec 2017 20:00:50 -0500
-Message-ID: <yq1k1xyvxrx.fsf@oracle.com>
-References: <20171207145728.57cd9ac4@canb.auug.org.au>
-        <1512619169.3298.3.camel@wdc.com>
-        <20171207152521.0036b131@canb.auug.org.au>
-        <20171207044222.GK7829@linux.vnet.ibm.com>
-        <1512667802.2624.20.camel@wdc.com>
-        <20171207174038.GQ7829@linux.vnet.ibm.com>
-        <20171208073439.1593936d@canb.auug.org.au>
-        <yq1wp1yw8ew.fsf@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tpmdd tree with Linus' tree
+Date: Fri, 8 Dec 2017 13:25:35 +1100
+Message-ID: <20171208132536.0c55270d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from userp2120.oracle.com ([156.151.31.85]:51290 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752407AbdLHBBE (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Dec 2017 20:01:04 -0500
-In-Reply-To: <yq1wp1yw8ew.fsf@oracle.com> (Martin K. Petersen's message of
-        "Thu, 07 Dec 2017 16:11:03 -0500")
+Received: from ozlabs.org ([103.22.144.67]:54311 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752335AbdLHCZi (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 7 Dec 2017 21:25:38 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, "josh@joshtriplett.org" <josh@joshtriplett.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "ptikhomirov@virtuozzo.com" <ptikhomirov@virtuozzo.com>
+To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
+Hi Jarkko,
 
-> I'm perfectly OK with taking it through the SCSI tree. Probably the
-> path of least resistance.
+Today's linux-next merge of the tpmdd tree got a conflict in:
 
-Applied to 4.16/scsi-queue and rebased so it sits before Bart's patch.
+  MAINTAINERS
+
+between commit:
+
+  60fdb44a23cb ("MAINTAINERS: update TPM driver infrastructure changes")
+
+from Linus' tree and commit:
+
+  510230d28445 ("tpm: Update MAINTAINERS for Jason Gunthorpe")
+
+from the tpmdd tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 9fa8f576f5cf,3e099b360db3..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -13830,10 -13581,12 +13830,10 @@@ F:	drivers/platform/x86/toshiba-wmi.
+  
+  TPM DEVICE DRIVER
+  M:	Peter Huewe <peterhuewe@gmx.de>
+ -M:	Marcel Selhorst <tpmdd@selhorst.net>
+  M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+- R:	Jason Gunthorpe <jgunthorpe@obsidianresearch.com>
++ R:	Jason Gunthorpe <jgg@ziepe.ca>
+ -W:	http://tpmdd.sourceforge.net
+ -L:	tpmdd-devel@lists.sourceforge.net (moderated for non-subscribers)
+ -Q:	https://patchwork.kernel.org/project/tpmdd-devel/list/
+ +L:	linux-integrity@vger.kernel.org
+ +Q:	https://patchwork.kernel.org/project/linux-integrity/list/
+  T:	git git://git.infradead.org/users/jjs/linux-tpmdd.git
+  S:	Maintained
+  F:	drivers/char/tpm/
