@@ -1,35 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Fri, 8 Dec 2017 11:33:21 +1100
-Message-ID: <20171208113321.71dc45b3@canb.auug.org.au>
+Subject: linux-next: manual merge of the wireless-drivers-next tree with the
+ wireless-drivers tree
+Date: Fri, 8 Dec 2017 12:00:34 +1100
+Message-ID: <20171208120034.499e1a65@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58877 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750993AbdLHAdY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 7 Dec 2017 19:33:24 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ursula Braun <ubraun@linux.vnet.ibm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ihab Zhaika <ihab.zhaika@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+List-Id: linux-next.vger.kernel.org
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the wireless-drivers-next tree got a
+conflict in:
 
-  net/smc/smc_clc.c
+  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
 
 between commit:
 
-  d63d271ce2b5 ("smc: switch to sock_recvmsg()")
+  567deca8e72d ("iwlwifi: add new cards for 9260 and 22000 series")
 
-from the vfs tree and commit:
+from the wireless-drivers tree and commit:
 
-  e7b7a64a8493 ("smc: support variable CLC proposal messages")
+  2f7a3863191a ("iwlwifi: rename the temporary name of A000 to the official 22000")
 
-from the net-next tree.
+from the wireless-drivers-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,24 +40,42 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc net/smc/smc_clc.c
-index 511548085d16,abf7ceb6690b..000000000000
---- a/net/smc/smc_clc.c
-+++ b/net/smc/smc_clc.c
-@@@ -86,12 -129,13 +132,12 @@@ int smc_clc_wait_msg(struct smc_sock *s
-  	}
+diff --cc drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+index ccd7c33c4c28,5ed89d7ac4b2..000000000000
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
+@@@ -652,20 -651,19 +652,20 @@@ static const struct pci_device_id iwl_h
+  	{IWL_PCI_DEVICE(0xA370, 0x4034, iwl9560_2ac_cfg_soc)},
+  	{IWL_PCI_DEVICE(0xA370, 0x40A4, iwl9462_2ac_cfg_soc)},
   
-  	/* receive the complete CLC message */
- -	vec.iov_base = buf;
- -	vec.iov_len = buflen;
-  	memset(&msg, 0, sizeof(struct msghdr));
- +	iov_iter_kvec(&msg.msg_iter, READ | ITER_KVEC, &vec, 1, buflen);
-  	krflags = MSG_WAITALL;
-  	smc->clcsock->sk->sk_rcvtimeo = CLC_WAIT_TIME;
- -	len = kernel_recvmsg(smc->clcsock, &msg, &vec, 1, datlen, krflags);
- +	len = sock_recvmsg(smc->clcsock, &msg, krflags);
-- 	if (len < datlen) {
-+ 	if (len < datlen || !smc_clc_msg_hdr_valid(clcm)) {
-  		smc->sk.sk_err = EPROTO;
-  		reason_code = -EPROTO;
-  		goto out;
+- /* a000 Series */
+- 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwla000_2ac_cfg_hr_cdb)},
+- 	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwla000_2ac_cfg_jf)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0000, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0x34F0, 0x0070, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0078, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0070, iwla000_2ac_cfg_hr_cdb)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0030, iwla000_2ac_cfg_hr_cdb)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x1080, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0090, iwla000_2ac_cfg_hr_cdb)},
+- 	{IWL_PCI_DEVICE(0x2720, 0x0310, iwla000_2ac_cfg_hr_cdb)},
+- 	{IWL_PCI_DEVICE(0x40C0, 0x0000, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0x40C0, 0x0A10, iwla000_2ax_cfg_hr)},
+- 	{IWL_PCI_DEVICE(0xA0F0, 0x0000, iwla000_2ax_cfg_hr)},
++ /* 22000 Series */
++ 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwl22000_2ac_cfg_hr_cdb)},
++ 	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwl22000_2ac_cfg_jf)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0000, iwl22000_2ax_cfg_hr)},
++ 	{IWL_PCI_DEVICE(0x34F0, 0x0070, iwl22000_2ax_cfg_hr)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0078, iwl22000_2ax_cfg_hr)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0070, iwl22000_2ac_cfg_hr_cdb)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0030, iwl22000_2ac_cfg_hr_cdb)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x1080, iwl22000_2ax_cfg_hr)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0090, iwl22000_2ac_cfg_hr_cdb)},
++ 	{IWL_PCI_DEVICE(0x2720, 0x0310, iwl22000_2ac_cfg_hr_cdb)},
++ 	{IWL_PCI_DEVICE(0x40C0, 0x0000, iwl22000_2ax_cfg_hr)},
++ 	{IWL_PCI_DEVICE(0x40C0, 0x0A10, iwl22000_2ax_cfg_hr)},
+++	{IWL_PCI_DEVICE(0xA0F0, 0x0000, iwl22000_2ax_cfg_hr)},
+  
+  #endif /* CONFIG_IWLMVM */
+  
