@@ -1,81 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the wireless-drivers-next tree with the
- wireless-drivers tree
-Date: Fri, 8 Dec 2017 12:00:34 +1100
-Message-ID: <20171208120034.499e1a65@canb.auug.org.au>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: linux-next: build failure after merge of the scsi-mkp tree
+Date: Thu, 07 Dec 2017 20:00:50 -0500
+Message-ID: <yq1k1xyvxrx.fsf@oracle.com>
+References: <20171207145728.57cd9ac4@canb.auug.org.au>
+        <1512619169.3298.3.camel@wdc.com>
+        <20171207152521.0036b131@canb.auug.org.au>
+        <20171207044222.GK7829@linux.vnet.ibm.com>
+        <1512667802.2624.20.camel@wdc.com>
+        <20171207174038.GQ7829@linux.vnet.ibm.com>
+        <20171208073439.1593936d@canb.auug.org.au>
+        <yq1wp1yw8ew.fsf@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ihab Zhaika <ihab.zhaika@intel.com>, Luca Coelho <luciano.coelho@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from userp2120.oracle.com ([156.151.31.85]:51290 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752407AbdLHBBE (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 7 Dec 2017 20:01:04 -0500
+In-Reply-To: <yq1wp1yw8ew.fsf@oracle.com> (Martin K. Petersen's message of
+        "Thu, 07 Dec 2017 16:11:03 -0500")
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Bart Van Assche <Bart.VanAssche@wdc.com>, "josh@joshtriplett.org" <josh@joshtriplett.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, "ptikhomirov@virtuozzo.com" <ptikhomirov@virtuozzo.com>
 
-Hi all,
 
-Today's linux-next merge of the wireless-drivers-next tree got a
-conflict in:
+> I'm perfectly OK with taking it through the SCSI tree. Probably the
+> path of least resistance.
 
-  drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-
-between commit:
-
-  567deca8e72d ("iwlwifi: add new cards for 9260 and 22000 series")
-
-from the wireless-drivers tree and commit:
-
-  2f7a3863191a ("iwlwifi: rename the temporary name of A000 to the official 22000")
-
-from the wireless-drivers-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Applied to 4.16/scsi-queue and rebased so it sits before Bart's patch.
 
 -- 
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-index ccd7c33c4c28,5ed89d7ac4b2..000000000000
---- a/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/drv.c
-@@@ -652,20 -651,19 +652,20 @@@ static const struct pci_device_id iwl_h
-  	{IWL_PCI_DEVICE(0xA370, 0x4034, iwl9560_2ac_cfg_soc)},
-  	{IWL_PCI_DEVICE(0xA370, 0x40A4, iwl9462_2ac_cfg_soc)},
-  
-- /* a000 Series */
-- 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwla000_2ac_cfg_hr_cdb)},
-- 	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwla000_2ac_cfg_jf)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0000, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0x34F0, 0x0070, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0078, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0070, iwla000_2ac_cfg_hr_cdb)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0030, iwla000_2ac_cfg_hr_cdb)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x1080, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0090, iwla000_2ac_cfg_hr_cdb)},
-- 	{IWL_PCI_DEVICE(0x2720, 0x0310, iwla000_2ac_cfg_hr_cdb)},
-- 	{IWL_PCI_DEVICE(0x40C0, 0x0000, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0x40C0, 0x0A10, iwla000_2ax_cfg_hr)},
-- 	{IWL_PCI_DEVICE(0xA0F0, 0x0000, iwla000_2ax_cfg_hr)},
-+ /* 22000 Series */
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0A10, iwl22000_2ac_cfg_hr_cdb)},
-+ 	{IWL_PCI_DEVICE(0x34F0, 0x0310, iwl22000_2ac_cfg_jf)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0000, iwl22000_2ax_cfg_hr)},
-+ 	{IWL_PCI_DEVICE(0x34F0, 0x0070, iwl22000_2ax_cfg_hr)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0078, iwl22000_2ax_cfg_hr)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0070, iwl22000_2ac_cfg_hr_cdb)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0030, iwl22000_2ac_cfg_hr_cdb)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x1080, iwl22000_2ax_cfg_hr)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0090, iwl22000_2ac_cfg_hr_cdb)},
-+ 	{IWL_PCI_DEVICE(0x2720, 0x0310, iwl22000_2ac_cfg_hr_cdb)},
-+ 	{IWL_PCI_DEVICE(0x40C0, 0x0000, iwl22000_2ax_cfg_hr)},
-+ 	{IWL_PCI_DEVICE(0x40C0, 0x0A10, iwl22000_2ax_cfg_hr)},
-++	{IWL_PCI_DEVICE(0xA0F0, 0x0000, iwl22000_2ax_cfg_hr)},
-  
-  #endif /* CONFIG_IWLMVM */
-  
+Martin K. Petersen	Oracle Linux Engineering
