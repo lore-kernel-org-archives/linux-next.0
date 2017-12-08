@@ -1,48 +1,24 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with the wireless-drivers tree
-Date: Fri, 08 Dec 2017 14:30:26 +0200
-Message-ID: <877etxs8pp.fsf@kamboji.qca.qualcomm.com>
-References: <20171208120034.499e1a65@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: Adding init_task consolidation patches to linux-next
+Date: Fri, 08 Dec 2017 15:56:40 +0000
+Message-ID: <10228.1512748600@warthog.procyon.org.uk>
+References: <151274828194.9961.4230316917108602662.stgit@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.29.96]:43268 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752488AbdLHMab (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 8 Dec 2017 07:30:31 -0500
-In-Reply-To: <20171208120034.499e1a65@canb.auug.org.au> (Stephen Rothwell's
-        message of "Fri, 8 Dec 2017 12:00:34 +1100")
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <151274828194.9961.4230316917108602662.stgit@warthog.procyon.org.uk>
+Content-ID: <10227.1512748600.1@warthog.procyon.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Wireless <linux-wireless@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ihab Zhaika <ihab.zhaika@intel.com>, Luca Coelho <luciano.coelho@intel.com>
+Cc: dhowells@redhat.com, linux-arch@vger.kernel.org, x86@kernel.org, linux-ia64@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+Hi Stephen,
 
-> Today's linux-next merge of the wireless-drivers-next tree got a
-> conflict in:
->
->   drivers/net/wireless/intel/iwlwifi/pcie/drv.c
->
-> between commit:
->
->   567deca8e72d ("iwlwifi: add new cards for 9260 and 22000 series")
->
-> from the wireless-drivers tree and commit:
->
->   2f7a3863191a ("iwlwifi: rename the temporary name of A000 to the official 22000")
->
-> from the wireless-drivers-next tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Can you add the following to linux-next please?
 
-The fix looks good, thanks! I'll try to resolve the conflict before I
-send a wireless-drivers-next pull request to Dave.
+	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=init_task
 
--- 
-Kalle Valo
+Thanks,
+David
