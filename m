@@ -1,43 +1,31 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the v4l-dvb-next tree with the vfs tree
-Date: Mon, 11 Dec 2017 11:28:54 +1100
-Message-ID: <20171211112854.42a7a70a@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the device-mapper tree
+Date: Mon, 11 Dec 2017 13:05:34 +1100
+Message-ID: <20171211130534.6ab6e415@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:47409 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751137AbdLKA24 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 10 Dec 2017 19:28:56 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Mauro,
+Hi all,
 
-Today's linux-next merge of the v4l-dvb-next tree got a conflict in:
+After merging the device-mapper tree, today's linux-next build (powerp
+ppc64_defconfig) produced this warning:
 
-  drivers/staging/media/lirc/lirc_zilog.c
+drivers/md/dm.c: In function '__send_changing_extent_only':
+drivers/md/dm.c:1365:45: warning: 'ti' may be used uninitialized in this function [-Wmaybe-uninitialized]
+  num_bios = get_num_bios ? get_num_bios(ti) : 0;
+                                             ^
 
-between commit:
+Introduced by commit
 
-  c23e0cb81e40 ("media: annotate ->poll() instances")
+  aecefd4919de ("dm: fix __send_changing_extent_only() to send first bio and chain remainder")
 
-from the vfs tree and commit:
-
-  28032a347ed0 ("media: staging: remove lirc_zilog driver")
-
-from the v4l-dvb-next tree.
-
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
+This looks particularly bad :-(
 -- 
 Cheers,
 Stephen Rothwell
