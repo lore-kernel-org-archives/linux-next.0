@@ -1,51 +1,41 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: build warning after merge of the kbuild tree
-Date: Mon, 11 Dec 2017 09:22:20 +0900
-Message-ID: <CAK7LNAQ=PE2yL8T8AaBqovf54Lo_M7Nq+LpQc9VSKBJUHx67dQ@mail.gmail.com>
-References: <20171211095228.21562f56@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the v4l-dvb-next tree with the vfs tree
+Date: Mon, 11 Dec 2017 11:25:40 +1100
+Message-ID: <20171211112540.4c2adc43@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171211095228.21562f56@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ulf Magnusson <ulfalizer@gmail.com>, Bart Van Assche <bart.vanassche@wdc.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Hannes Reinecke <hare@suse.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56785 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751637AbdLKAZm (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 10 Dec 2017 19:25:42 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Young <sean@mess.org>
 
-Hi Stephen,
+Hi Mauro,
 
-2017-12-11 7:52 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
->
-> After merging the kbuild tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->
-> drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+Today's linux-next merge of the v4l-dvb-next tree got a conflict in:
 
+  include/media/lirc_dev.h
 
-I had noticed this before merging it.
+between commit:
 
-I expect somebody will fix drivers/usb/gadget/Kconfig.
+  c23e0cb81e40 ("media: annotate ->poll() instances")
 
+from the vfs tree and various commits from the v4l-dvb-next tree.
 
-
-> Exposed by commit
->
->   2c37e08464a8 ("kconfig: Warn if choice default is not in choice")
->
-> Introduced by commit
->
->   7a9618a22aad ("usb: gadget: allow to enable legacy drivers without USB_ETH")
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 
 
 -- 
-Best Regards
-Masahiro Yamada
+Cheers,
+Stephen Rothwell
