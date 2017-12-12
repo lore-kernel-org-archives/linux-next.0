@@ -1,67 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 Subject: Re: linux-next: error while fetching the spi-nor tree
-Date: Wed, 13 Dec 2017 09:35:30 +1100
-Message-ID: <20171213093530.15c3ac0b@canb.auug.org.au>
-References: <20171213075845.5923cc80@canb.auug.org.au>
-        <12d92a91-bacc-38ae-9906-ac83ed32a0f6@wedev4u.fr>
+Date: Tue, 12 Dec 2017 14:53:46 -0800
+Message-ID: <CA+55aFynbxKc9TgUvcDkMHUn1bnG8pf1MfYgxnHo88LCaVpFqg@mail.gmail.com>
+References: <20171213075845.5923cc80@canb.auug.org.au> <12d92a91-bacc-38ae-9906-ac83ed32a0f6@wedev4u.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:52551 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752654AbdLLWfd (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 12 Dec 2017 17:35:33 -0500
+Received: from mail-io0-f177.google.com ([209.85.223.177]:34549 "EHLO
+        mail-io0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752680AbdLLWxr (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 12 Dec 2017 17:53:47 -0500
 In-Reply-To: <12d92a91-bacc-38ae-9906-ac83ed32a0f6@wedev4u.fr>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi Cyrille,
-
-[cc'ing Linus on the off chance he knows something relevant]
-
-On Tue, 12 Dec 2017 22:24:17 +0100 Cyrille Pitchen <cyrille.pitchen@wedev4u=
-.fr> wrote:
+On Tue, Dec 12, 2017 at 1:24 PM, Cyrille Pitchen
+<cyrille.pitchen@wedev4u.fr> wrote:
 >
-> I've just added 2 commits about 8 hours ago, nothing special.
-> Could the issue be explained by an unlikely bad timing?
-
-No idea.  The current top commit in my copy of your branch is:
-
-  b3fbf5e23f8c ("mtd: spi-nor: Check that BP bits are set properly")
-
 > I don't see anything wrong when fetching the tree or when browsing the
 > web server:
 > http://git.infradead.org/l2-mtd.git/shortlog/refs/heads/spi-nor/next
->=20
-> Please, let me know whether it was a spurious error or if it still doesn't
-> work. Currently, I don't know what's going on.
 
-I am still getting the error.  I even tried cloning your tree and got
-the same error.
+There's definitely something funky there.
 
-> Le 12/12/2017 =C3=A0 21:58, Stephen Rothwell a =C3=A9crit=C2=A0:
-> > Hi Cyrille,
-> >=20
-> > Fetching the spi-nor tree
-> > (git://git.infradead.org/l2-mtd.git#spi-nor/next) this morning, I get
-> > theses errors:
-> >=20
-> > remote: error: Could not read 6e408e3aa1643624ea7da50ad5b27a226a16a654
+  http://git.infradead.org/l2-mtd.git/commitdiff/f3203415105860e811f4ee9508efd009c9e6525e
+  http://git.infradead.org/l2-mtd.git/commitdiff/7a6843af9089b01eab266bbee0ed19f98f09a94a
 
-This SHA1 refers to a tree object (representing the drivers directory)
-that exists in my tree somewhere (I don't know how to figure out which
-commit it is related to (if any)).
+both show "no differences found". I suspect that's because of git diff
+failing due to missing objects.
 
-> > remote: fatal: bad tree object 6e408e3aa1643624ea7da50ad5b27a226a16a654
-> > remote: aborting due to possible repository corruption on the remote si=
-de.
-> > fatal: protocol error: bad pack header
-> >=20
-> > I wil continue to use the previously fetched tree.
+Most likely reason? Something like an unsafe garbage collect / prune
+operation at infradead.org at the same time as you pushed. I don't
+know what infradead.org does, but you can definitely do bad things
+maintaining a git tree.
 
---=20
-Cheers,
-Stephen Rothwell
+I would suggest doing a force-push back to some known-good state, and
+then pushing it out again.
+
+Ie, something like
+
+    git push --force infradead.org:l2-mtd.git v4.15-rc1:master
+
+to reset the master branch to v4.15-rc1, and then pushing out again.
+And then asking whoever maintains the infradead git trees if something
+odd happened..
+
+              Linus
