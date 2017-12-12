@@ -1,60 +1,173 @@
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke-LJ9M9ZcSy1A@public.gmane.org>
-Subject: Re: linux-next: build failure after merge of the mac80211-next tree
-Date: Tue, 12 Dec 2017 09:59:45 +0100
-Message-ID: <87r2s0uxry.fsf@toke.dk>
-References: <20171212125805.5f7813fd@canb.auug.org.au> <1513068419.26976.86.camel@sipsolutions.net>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1513068419.26976.86.camel-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Felix Fietkau <nbd-Vt+b4OUoWG0@public.gmane.org>, Lorenzo Bianconi <lorenzo.bianconi83-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Miller <davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org>, Networking <netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171212 build: 0 failures 15 warnings (next-20171212)
+Date: Tue, 12 Dec 2017 10:03:02 +0000
+Message-ID: <E1eOhOw-0001zl-JV@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47350 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751234AbdLLKDF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 12 Dec 2017 05:03:05 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org> writes:
+Tree/Branch: next-20171212
+Git describe: next-20171212
+Commit: d20787938d Add linux-next specific files for 20171212
 
-> Hi Stephen,
->
-> Thanks!
->
-> Felix made me aware of this yesterday evening and said he's going to
-> work out the required changes to mt76.
->
-> Kalle and I will make sure to submit the trees to Dave one by one so he
-> doesn't have to deal with it :)
->
-> Unfortunately, this might take a few days to resolve.
->
->> -void mt76_wake_tx_queue(struct ieee80211_hw *hw, struct ieee80211_txq *txq)
->> +void mt76_wake_tx_queue(struct ieee80211_hw *hw)
->>  {
->> +	struct ieee80211_txq *txq;
->>  	struct mt76_dev *dev = hw->priv;
->> -	struct mt76_txq *mtxq = (struct mt76_txq *) txq->drv_priv;
->> -	struct mt76_queue *hwq = mtxq->hwq;
->> +	struct mt76_txq *mtxq;
->> +	struct mt76_queue *hwq;
->>  
->> +	txq = ieee80211_next_txq(hw);
->> +	mtxq = (struct mt76_txq *) txq->drv_priv;
->> +	hwq = mtxq->hwq;
->
-> Looks pretty much right to me - perhaps for safety there should be a
-> NULL check on txq, but OTOH when you get here it should be non-NULL.
+Build Time: 124 min 17 sec
 
-Note that while this will fix compilation it probably won't work right.
-next_txq() is not guaranteed to return the same txq as was previously
-passed in the wake_tx_queue() argument, so if this is the only place the
-driver calls next_txq(), things are likely going to break.
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
 
-Rather, the driver should call next_txq() whenever it schedules queues
-instead of doing its own internal scheduling.
+Errors: 0
+Warnings: 15
+Section Mismatches: 0
 
-> Sorry for the inconvenience, I hadn't realized mt76 went in now.
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+      2 warnings    0 mismatches  : arm64-allnoconfig
+     16 warnings    0 mismatches  : arm64-allmodconfig
+      3 warnings    0 mismatches  : arm-multi_v5_defconfig
+      5 warnings    0 mismatches  : arm-multi_v7_defconfig
+      3 warnings    0 mismatches  : x86_64-defconfig
+     16 warnings    0 mismatches  : arm-allmodconfig
+      2 warnings    0 mismatches  : arm-allnoconfig
+      2 warnings    0 mismatches  : x86_64-allnoconfig
+      3 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      5 warnings    0 mismatches  : arm64-defconfig
 
-Yeah, hadn't expected these streams to cross either. If Felix is looking
-into this that is great; let me know if you need me to do anything else
-on the mac80211 side. :)
+-------------------------------------------------------------------------------
 
--Toke
+Warnings Summary: 15
+	 20 drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	  7 ../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	  2 ../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	  2 ../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 16 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 16 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/scsi/bfa/bfad_bsg.c:3137:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/scsi/bfa/bfad_bsg.c:3353:35: warning: initialization makes pointer from integer without a cast [-Wint-conversion]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/obdclass/lu_object.c:1954:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/osc/osc_request.c:2847:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/../../lustre/ldlm/ldlm_pool.c:1090:3: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/lustre/lustre/ptlrpc/sec_bulk.c:435:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+
+-------------------------------------------------------------------------------
+x86_64-allnoconfig : PASS, 0 errors, 2 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 3 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 5 warnings, 0 section mismatches
+
+Warnings:
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	drivers/usb/gadget/Kconfig:487:warning: choice default symbol 'USB_ETH' is not contained in the choice
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
