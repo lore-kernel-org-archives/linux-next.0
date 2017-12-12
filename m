@@ -1,38 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the char-misc tree
-Date: Tue, 12 Dec 2017 12:49:56 +0100
-Message-ID: <20171212114956.GB23534@kroah.com>
-References: <20171212143910.146724d2@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Date: Tue, 12 Dec 2017 22:54:33 +1100
+Message-ID: <20171212225433.34838ef9@canb.auug.org.au>
+References: <20171204141956.5b90bc18@canb.auug.org.au>
+        <20171204093953.iwhew4w7wgzm6b3q@dell>
+        <20171206103258.4920acde@canb.auug.org.au>
+        <20171206085803.d2whwsmua3fm6ij5@dell>
+        <20171212131316.02ead60b@canb.auug.org.au>
+        <20171212081310.ie5nmwxj25pb7qy4@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:44295 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751665AbdLLLts (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 12 Dec 2017 06:49:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20171212143910.146724d2@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vasyl Gomonovych <gomonovych@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171212081310.ie5nmwxj25pb7qy4@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Perry Yuan <perry_yuan@dell.com>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Dec 12, 2017 at 02:39:10PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the char-misc tree, today's linux-next build
-> (x86_64_allmodconfig) produced this warning:
-> 
-> drivers/misc/mic/vop/vop_vringh.c: In function 'vop_ioctl':
-> drivers/misc/mic/vop/vop_vringh.c:1001:1: warning: label 'done' defined but not used [-Wunused-label]
->  done:
->  ^
-> 
-> Introduced by commit
-> 
->   30b7a2c19e29 ("misc: mic: Use memdup_user() as a cleanup")
+Hi Lee,
 
-Thanks, Colin sent a patch for this, will queue it up later today.
+On Tue, 12 Dec 2017 08:13:10 +0000 Lee Jones <lee.jones@linaro.org> wrote:
+>
+> Yes, it's in:
+> 
+>   next-20171212 as 51bd7125f740
+> 
+> Also, the pull request for it went out over a week ago:
+> 
+>   https://lkml.org/lkml/2017/12/4/142
+> 
+> What's missing?  Do you still see an issue with the build?
 
-greg k-h
+Sorry about that, my scripts have been applying the patch, but it
+automerges and doesn't fail even though it ends up applying
+nothing :-(  And I didn't notice :-( :-(
+
+Thanks.  All good.
+
+-- 
+Cheers,
+Stephen Rothwell
