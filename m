@@ -1,28 +1,29 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: the drivers-x86 tree has moved?
-Date: Wed, 13 Dec 2017 08:02:27 +1100
-Message-ID: <20171213080227.7b724f39@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the usb.current
+ tree
+Date: Tue, 12 Dec 2017 22:14:50 +0100
+Message-ID: <20171212211450.GA9919@kroah.com>
+References: <20171213075057.41f68b05@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60833 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752103AbdLLVC3 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 12 Dec 2017 16:02:29 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Darren Hart <dvhart@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171213075057.41f68b05@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrey Konovalov <andreyknvl@google.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Darren,
+On Wed, Dec 13, 2017 at 07:50:57AM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Commit
+> 
+>   32fd87b3bbf5 ("USB: core: only clean up what we allocated")
+> 
+> is missing a Signed-off-by from its author.
 
-I noticed commit
+Yeah, due to how it got to me, that makes sense, thanks for the notice.
+I really gotta go install that git hook now...
 
-  960652046899 ("MAINTAINERS: Update tree for platform-drivers-x86")
-
-Should I also change linu-next to use the new tree?
-
--- 
-Cheers,
-Stephen Rothwell
+greg k-h
