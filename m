@@ -1,67 +1,48 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Date: Tue, 12 Dec 2017 08:13:10 +0000
-Message-ID: <20171212081310.ie5nmwxj25pb7qy4@dell>
-References: <20171204141956.5b90bc18@canb.auug.org.au>
- <20171204093953.iwhew4w7wgzm6b3q@dell>
- <20171206103258.4920acde@canb.auug.org.au>
- <20171206085803.d2whwsmua3fm6ij5@dell>
- <20171212131316.02ead60b@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: build failure after merge of the mac80211-next tree
+Date: Tue, 12 Dec 2017 09:46:59 +0100
+Message-ID: <1513068419.26976.86.camel@sipsolutions.net>
+References: <20171212125805.5f7813fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20171212131316.02ead60b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rui Feng <rui_feng@realsil.com.cn>, Daniel Bristot de Oliveira <bristot@redhat.com>, Perry Yuan <perry_yuan@dell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20171212125805.5f7813fd@canb.auug.org.au>
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>, Toke =?ISO-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 12 Dec 2017, Stephen Rothwell wrote:
+Hi Stephen,
 
-> Hi Lee,
-> 
-> On Wed, 6 Dec 2017 08:58:03 +0000 Lee Jones <lee.jones@linaro.org> wrote:
-> >
-> > On Wed, 06 Dec 2017, Stephen Rothwell wrote:
-> > 
-> > > On Mon, 4 Dec 2017 09:39:53 +0000 Lee Jones <lee.jones@linaro.org> wrote:  
-> > > >  
-> > > > > I added the following fix patch:
-> > > > > 
-> > > > > From: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > > > Date: Mon, 4 Dec 2017 14:10:34 +1100
-> > > > > Subject: [PATCH] misc: rtsx: fix symbol clashes
-> > > > > 
-> > > > > Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>    
-> > > > 
-> > > > Although I'm not sure how to apply this manually without scissors.  
-> > > 
-> > > Just take everything from the From: line above to the end and give it
-> > > to "git am".  Yes, this may involve saving the email and editting it,
-> > > sorry about that.  
-> > 
-> > If you use the scissors, I can ask Git to deal with all that for me.
-> > 
-> > We like #lazymaintenance. :D
-> 
-> So is this going to be applied to the mfd tree?
+Thanks!
 
-Que?
+Felix made me aware of this yesterday evening and said he's going to
+work out the required changes to mt76.
 
-Yes, it's in:
+Kalle and I will make sure to submit the trees to Dave one by one so he
+doesn't have to deal with it :)
 
-  next-20171212 as 51bd7125f740
+Unfortunately, this might take a few days to resolve.
 
-Also, the pull request for it went out over a week ago:
+> -void mt76_wake_tx_queue(struct ieee80211_hw *hw, struct ieee80211_txq *txq)
+> +void mt76_wake_tx_queue(struct ieee80211_hw *hw)
+>  {
+> +	struct ieee80211_txq *txq;
+>  	struct mt76_dev *dev = hw->priv;
+> -	struct mt76_txq *mtxq = (struct mt76_txq *) txq->drv_priv;
+> -	struct mt76_queue *hwq = mtxq->hwq;
+> +	struct mt76_txq *mtxq;
+> +	struct mt76_queue *hwq;
+>  
+> +	txq = ieee80211_next_txq(hw);
+> +	mtxq = (struct mt76_txq *) txq->drv_priv;
+> +	hwq = mtxq->hwq;
 
-  https://lkml.org/lkml/2017/12/4/142
 
-What's missing?  Do you still see an issue with the build?
+Looks pretty much right to me - perhaps for safety there should be a
+NULL check on txq, but OTOH when you get here it should be non-NULL.
 
--- 
-Lee Jones
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sorry for the inconvenience, I hadn't realized mt76 went in now.
+
+johannes
