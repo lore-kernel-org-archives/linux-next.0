@@ -1,38 +1,33 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: error while fetching the spi-nor tree
-Date: Wed, 13 Dec 2017 10:40:23 +1100
-Message-ID: <20171213104023.2753e926@canb.auug.org.au>
-References: <20171213075845.5923cc80@canb.auug.org.au>
-        <12d92a91-bacc-38ae-9906-ac83ed32a0f6@wedev4u.fr>
-        <20171213093530.15c3ac0b@canb.auug.org.au>
+From: Darren Hart <dvhart@infradead.org>
+Subject: Re: linux-next: the drivers-x86 tree has moved?
+Date: Tue, 12 Dec 2017 15:43:30 -0800
+Message-ID: <20171212234330.GK27831@fury>
+References: <20171213080227.7b724f39@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:39675 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752723AbdLLXk0 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 12 Dec 2017 18:40:26 -0500
-In-Reply-To: <20171213093530.15c3ac0b@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20171213080227.7b724f39@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Cyrille,
-
-On Wed, 13 Dec 2017 09:35:30 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> [cc'ing Linus on the off chance he knows something relevant]
+On Wed, Dec 13, 2017 at 08:02:27AM +1100, Stephen Rothwell wrote:
+> Hi Darren,
 > 
-> On Tue, 12 Dec 2017 22:24:17 +0100 Cyrille Pitchen <cyrille.pitchen@wedev4u.fr> wrote:
-> >
-> > I've just added 2 commits about 8 hours ago, nothing special.
-> > Could the issue be explained by an unlikely bad timing?  
+> I noticed commit
+> 
+>   960652046899 ("MAINTAINERS: Update tree for platform-drivers-x86")
+> 
+> Should I also change linu-next to use the new tree?
 
-I assume you did something as the fetch works fine now (including the 2
-new commits).
+The new one is the correct location, but the old one points to it. I don't plan
+to destroy the old link, but updating linux-next to use the new one is a good
+idea.
+
+So, yes - please do :-)
 
 -- 
-Cheers,
-Stephen Rothwell
+Darren Hart
+VMware Open Source Technology Center
