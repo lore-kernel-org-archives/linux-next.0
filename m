@@ -1,39 +1,45 @@
-From: Randy Dunlab <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Dec 13 (pinctrl/axp209)
-Date: Wed, 13 Dec 2017 10:10:51 -0800
-Message-ID: <15215929-eba3-d958-46f1-3bc7e6b97c7a@infradead.org>
-References: <20171213163356.0a5e25ba@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes tree
+Date: Thu, 14 Dec 2017 10:59:50 +1100
+Message-ID: <20171214105950.5eca33b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:47510 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752175AbdLMSK7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 13 Dec 2017 13:10:59 -0500
-In-Reply-To: <20171213163356.0a5e25ba@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Quentin Schulz <quentin.schulz@free-electrons.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Keith Packard <keithp@keithp.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On 12/12/2017 09:33 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20171212:
-> 
-
-on x86_64:
-
-when CONFIG_OF is not enabled:
-
-../drivers/pinctrl/pinctrl-axp209.c:312:21: error: 'pinconf_generic_dt_node_to_map_group' undeclared here (not in a function)
-  .dt_node_to_map  = pinconf_generic_dt_node_to_map_group,
-
-../drivers/pinctrl/pinctrl-axp209.c:313:18: error: 'pinconf_generic_dt_free_map' undeclared here (not in a function)
-  .dt_free_map  = pinconf_generic_dt_free_map,
-
-
--- 
-~Randy
+SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0gdHJlZSBnb3QgYSBj
+b25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2RybV9lZGlkLmMKCmJldHdlZW4gY29tbWl0
+OgoKICA0YjRkZjU3MGI0MWQgKCJkcm06IFVwZGF0ZSBlZGlkLWRlcml2ZWQgZHJtX2Rpc3BsYXlf
+aW5mbyBmaWVsZHMgYXQgZWRpZCBwcm9wZXJ0eSBzZXQgW3YyXSIpCgpmcm9tIHRoZSBkcm0tbWlz
+Yy1maXhlcyB0cmVlIGFuZCBjb21taXQ6CgogIGM5NDViOGMxNGJiNyAoImRybS9lZGlkOiBidWls
+ZCBFTEQgaW4gZHJtX2FkZF9lZGlkX21vZGVzKCkiKQoKZnJvbSB0aGUgZHJtIHRyZWUuCgpJIGZp
+eGVkIGl0IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3Nhcnku
+IFRoaXMKaXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0
+IGFueSBub24gdHJpdmlhbApjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVw
+c3RyZWFtIG1haW50YWluZXIgd2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5n
+LiAgWW91IG1heSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFp
+bnRhaW5lciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxh
+cmx5CmNvbXBsZXggY29uZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlm
+ZiAtLWNjIGRyaXZlcnMvZ3B1L2RybS9kcm1fZWRpZC5jCmluZGV4IGNiNDg3MTQ4MzU5YSw1MjRl
+YWNlM2Q0NjAuLjAwMDAwMDAwMDAwMAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYwor
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2VkaWQuYwpAQEAgLTQ2NTMsNiAtNDY0NSwxMCArNDY3
+MSw4IEBAQCBpbnQgZHJtX2FkZF9lZGlkX21vZGVzKHN0cnVjdCBkcm1fY29ubmUKICAJCXJldHVy
+biAwOwogIAl9CiAgCiAtCXF1aXJrcyA9IGVkaWRfZ2V0X3F1aXJrcyhlZGlkKTsKIC0KKyAJZHJt
+X2VkaWRfdG9fZWxkKGNvbm5lY3RvciwgZWRpZCk7CisgCiAgCS8qCiAgCSAqIENFQS04NjEtRiBh
+ZGRzIHljYmNyIGNhcGFiaWxpdHkgbWFwIGJsb2NrLCBmb3IgSERNSSAyLjAgc2lua3MuCiAgCSAq
+IFRvIGF2b2lkIG11bHRpcGxlIHBhcnNpbmcgb2Ygc2FtZSBibG9jaywgbGV0cyBwYXJzZSB0aGF0
+IG1hcApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
