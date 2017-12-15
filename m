@@ -1,37 +1,49 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the akpm-current tree
-Date: Fri, 15 Dec 2017 13:48:37 +1100
-Message-ID: <20171215134837.671ea215@canb.auug.org.au>
+Subject: Re: Adding init_task consolidation patches to linux-next
+Date: Fri, 15 Dec 2017 13:49:26 +1100
+Message-ID: <20171215134926.1a836c99@canb.auug.org.au>
+References: <151274828194.9961.4230316917108602662.stgit@warthog.procyon.org.uk>
+        <10228.1512748600@warthog.procyon.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:60379 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754682AbdLOCsk (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 14 Dec 2017 21:48:40 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yang Shi <yang.s@alibaba-inc.com>
+Return-path: <linux-ia64-owner@vger.kernel.org>
+In-Reply-To: <10228.1512748600@warthog.procyon.org.uk>
+Sender: linux-ia64-owner@vger.kernel.org
+To: David Howells <dhowells@redhat.com>
+Cc: linux-arch@vger.kernel.org, x86@kernel.org, linux-ia64@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+List-Id: linux-next.vger.kernel.org
 
-Hi Andrew,
+Hi David,
 
-After merging the akpm-current tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+On Fri, 08 Dec 2017 15:56:40 +0000 David Howells <dhowells@redhat.com> wrote:
+>
+> Can you add the following to linux-next please?
+> 
+> 	http://git.kernel.org/cgit/linux/kernel/git/dhowells/linux-fs.git/log/?h=init_task
 
-mm/khugepaged.c: In function 'khugepaged':
-mm/khugepaged.c:1757:31: warning: 'vma' may be used uninitialized in this function [-Wmaybe-uninitialized]
-  if (khugepaged_test_exit(mm) || !vma) {
-                               ^
-mm/khugepaged.c:1659:25: note: 'vma' was declared here
-  struct vm_area_struct *vma;
-                         ^
+AKA git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git#init_task
 
-Introduced by commit
+Added from today.
 
-  0951b59acf3a ("mm: thp: use down_read_trylock() in khugepaged to avoid long block")
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window. 
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and 
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 -- 
 Cheers,
-Stephen Rothwell
+Stephen Rothwell 
+sfr@canb.auug.org.au
