@@ -1,44 +1,145 @@
-From: Vincent Pelletier <plr.vincent@gmail.com>
-Subject: Re: linux-next: Tree for Dec 14 (usb/dwc3)
-Date: Fri, 15 Dec 2017 14:53:32 +0000
-Message-ID: <20171215145325.7c4cd727@gmail.com>
-References: <20171214180617.5bbff2ec@canb.auug.org.au>
-        <9d07169a-c00d-e302-f373-f4431899941b@infradead.org>
-        <87wp1ol81e.fsf@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87wp1ol81e.fsf@linux.intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+From: Build bot for Mark Brown <broonie@kernel.org>
+Subject: next-20171215 build: 0 failures 13 warnings (next-20171215)
+Date: Fri, 15 Dec 2017 18:30:13 +0000
+Message-ID: <E1ePukP-0001RG-4k@optimist>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44598 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755419AbdLOSaP (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Fri, 15 Dec 2017 13:30:15 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org, linux-next@vger.kernel.org
 
-Hello,
+Tree/Branch: next-20171215
+Git describe: next-20171215
+Commit: 0c1f9d81ac Add linux-next specific files for 20171215
 
-On Fri, 15 Dec 2017 10:17:17 +0200, Felipe Balbi <balbi@kernel.org>
-wrote:
-> Randy Dunlap <rdunlap@infradead.org> writes:
-> > On 12/13/2017 11:06 PM, Stephen Rothwell wrote:  
-> >> Hi all,
-> >> 
-> >> Changes since 20171213:
-> >>   
-> >
-> > on i386:
-> >
-> > ERROR: "__tracepoint_dwc3_writel" [drivers/usb/dwc3/dwc3.ko] undefined!
-> > ERROR: "__tracepoint_dwc3_readl" [drivers/usb/dwc3/dwc3.ko] undefined!
-> >
-> >
-> >
-> > I can send the randconfig file is you need it.  
-> 
-> please do. write/readl tracepoints haven't changed in ages :-)
+Build Time: 123 min 43 sec
 
-Could it be related to this patch ?
-  https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git/commit/?h=next&id=204ec1af6257a52fb80f43317f949b345040f9d1
-It does touch dwc3_writel & dwc3_readl.
--- 
-Vincent Pelletier
+Passed:   10 / 10   (100.00 %)
+Failed:    0 / 10   (  0.00 %)
+
+Errors: 0
+Warnings: 13
+Section Mismatches: 0
+
+-------------------------------------------------------------------------------
+defconfigs with issues (other than build errors):
+     12 warnings    0 mismatches  : arm64-allmodconfig
+      4 warnings    0 mismatches  : arm-multi_v5_defconfig
+      6 warnings    0 mismatches  : arm-multi_v7_defconfig
+      4 warnings    0 mismatches  : x86_64-defconfig
+     11 warnings    0 mismatches  : arm-allmodconfig
+      1 warnings    0 mismatches  : arm-multi_v4t_defconfig
+      7 warnings    0 mismatches  : arm64-defconfig
+
+-------------------------------------------------------------------------------
+
+Warnings Summary: 13
+	  7 ../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  6 ../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	  6 ../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	  6 ../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  4 ../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  2 ../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	  1 ../mm/khugepaged.c:1757:31: warning: 'vma' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	  1 ../mm/khugepaged.c:1659:25: warning: 'vma' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+
+===============================================================================
+Detailed per-defconfig build reports below:
+
+
+-------------------------------------------------------------------------------
+arm64-allmodconfig : PASS, 0 errors, 12 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../mm/khugepaged.c:1757:31: warning: 'vma' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v5_defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v7_defconfig : PASS, 0 errors, 6 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+x86_64-defconfig : PASS, 0 errors, 4 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-allmodconfig : PASS, 0 errors, 11 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/android/binder_alloc.c:1012:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../fs/xfs/xfs_qm.c:698:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/md/dm-bufio.c:1756:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ion/ion_heap.c:306:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/staging/android/ashmem.c:857:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm-multi_v4t_defconfig : PASS, 0 errors, 1 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+
+-------------------------------------------------------------------------------
+arm64-defconfig : PASS, 0 errors, 7 warnings, 0 section mismatches
+
+Warnings:
+	../fs/super.c:520:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1400:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1877:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../kernel/cgroup/cgroup.c:1879:3: warning: ignoring return value of 'strscpy', declared with attribute warn_unused_result [-Wunused-result]
+	../mm/khugepaged.c:1659:25: warning: 'vma' may be used uninitialized in this function [-Wmaybe-uninitialized]
+	../drivers/gpu/drm/ttm/ttm_page_alloc.c:484:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+	../drivers/gpu/drm/ttm/ttm_page_alloc_dma.c:1185:2: warning: ignoring return value of 'register_shrinker', declared with attribute warn_unused_result [-Wunused-result]
+-------------------------------------------------------------------------------
+
+Passed with no errors, warnings or mismatches:
+
+x86_64-allnoconfig
+arm64-allnoconfig
+arm-allnoconfig
