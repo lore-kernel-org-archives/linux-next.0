@@ -1,34 +1,28 @@
-From: "chenxiang (M)" <chenxiang66@hisilicon.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the scsi tree
-Date: Tue, 19 Dec 2017 13:59:30 +0800
-Message-ID: <bd1a1faa-5876-a3c2-2f07-4cba2bcad2de@hisilicon.com>
-References: <20171218080037.4367d45d@canb.auug.org.au>
- <yq1r2rribp4.fsf@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Date: Wed, 20 Dec 2017 07:06:51 +1100
+Message-ID: <20171220070651.2816be29@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2733 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S936847AbdLSGAH (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 19 Dec 2017 01:00:07 -0500
-In-Reply-To: <yq1r2rribp4.fsf@oracle.com>
+Received: from ozlabs.org ([103.22.144.67]:44655 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750825AbdLSUGz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Dec 2017 15:06:55 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>, John Garry <john.garry@huawei.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-ÔÚ 2017/12/19 12:27, Martin K. Petersen Ð´µÀ:
-> Stephen,
->
->>    9188808c7760 ("scsi: hisi_sas: fix SAS_QUEUE_FULL problem while running IO")
->>
->> is missing a Signed-off-by from its author.
-> John?
+Hi all,
 
-Hi Stephen and Martin,
-John is on vacation. I have checked it and please add a "Signed-off-by: 
-Xiang Chen <chenxiang66@hisilicon.com>" or let me know if want us to 
-re-send this patch again .
+Commit
 
->
+  44d5c715330c ("x86/mm: Create asm/invpcid.h")
+
+is missing a Signed-off-by from its committer.
+
+-- 
+Cheers,
+Stephen Rothwell
