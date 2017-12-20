@@ -1,87 +1,62 @@
-From: Qu Wenruo <wqu@suse.com>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-Date: Wed, 20 Dec 2017 08:12:11 +0800
-Message-ID: <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
-References: <20171220092010.36825688@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Wed, 20 Dec 2017 13:09:49 +1100
+Message-ID: <20171220130949.51553723@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="FW0gM5iY2VA3EO7y0beQx3wnTGXJLhYeh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from victor.provo.novell.com ([137.65.250.26]:43325 "EHLO
-        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753375AbdLTAMU (ORCPT
-        <rfc822;groupwise-linux-next@vger.kernel.org:0:0>);
-        Tue, 19 Dec 2017 19:12:20 -0500
-In-Reply-To: <20171220092010.36825688@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:46129 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752716AbdLTCJv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Dec 2017 21:09:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Colin Ian King <colin.king@canonical.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---FW0gM5iY2VA3EO7y0beQx3wnTGXJLhYeh
-Content-Type: multipart/mixed; boundary="eF8vhR0ADAM7iHLRGZx3vePXJE3oTgPU1";
- protected-headers="v1"
-From: Qu Wenruo <wqu@suse.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-References: <20171220092010.36825688@canb.auug.org.au>
-In-Reply-To: <20171220092010.36825688@canb.auug.org.au>
+Hi Greg,
 
---eF8vhR0ADAM7iHLRGZx3vePXJE3oTgPU1
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Today's linux-next merge of the usb tree got a conflict in:
 
+  drivers/usb/usbip/vhci_rx.c
 
+between commit:
 
-On 2017=E5=B9=B412=E6=9C=8820=E6=97=A5 06:20, Stephen Rothwell wrote:
-> Hi David,
->=20
-> After merging the btrfs-kdave tree, today's linux-next build (powerpc
-> ppc64_defconfig) produced this warning:
->=20
-> fs/btrfs/qgroup.c: In function 'qgroup_reserve':
-> fs/btrfs/qgroup.c:2432:1: warning: label 'retry' defined but not used [=
--Wunused-label]
->  retry:
->  ^
->=20
-> Introduced by commit
->=20
->   b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on getting =
-EDQUOT"")
->=20
-Sorry, I forgot to clean it up.
+  8272d099d05f ("usbip: vhci: stop printing kernel pointer addresses in messages")
 
-I'll update the patchset along with new patches to handle qgroup limit
-better.
+from the usb.current tree and commit:
 
-Thanks,
-Qu
+  81d8a8eb0a97 ("USB: usbip: fix spelling mistake: "synchronuously" -> "synchronously"")
 
+from the usb tree.
 
---eF8vhR0ADAM7iHLRGZx3vePXJE3oTgPU1--
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
---FW0gM5iY2VA3EO7y0beQx3wnTGXJLhYeh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+-- 
+Cheers,
+Stephen Rothwell
 
------BEGIN PGP SIGNATURE-----
-
-iQFBBAEBCAArFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlo5qtwNHHdxdUBzdXNl
-LmNvbQAKCRDCPZHzoSX+qL75B/96tu1+F8HrYh/bRpF+wA96+RN5b1McoqsPVPyB
-wFWH+TZXYTYGl6pTPKOSrqsmg3N15wZoF75v+F14K5WqbwbQhWRtSD0Vjl0dIJpo
-2RJV4J/KL0iMrCXuHGjpWxryTa+WgsCfvfZ7PCKnHqUISHOW+/ao+KG2fnuvuUrI
-opWftN/Wl5TE9zuGg96WC0hhAg9vnIVTRXhgy+W7P0gcqk+JyefuMl43fANlaFBF
-S8Z+q7UbdSWa4VpauznbjNfAQG2R2B1RA5ecV3B64R1PoG0PXDYB22Iqn7oIb9vQ
-qQu1UVrtOPkruWtFVUnjSme6Z+CqSy9rPQij2eRUItA1n6di
-=1lUo
------END PGP SIGNATURE-----
-
---FW0gM5iY2VA3EO7y0beQx3wnTGXJLhYeh--
+diff --cc drivers/usb/usbip/vhci_rx.c
+index 112ebb90d8c9,a9813f1d507d..000000000000
+--- a/drivers/usb/usbip/vhci_rx.c
++++ b/drivers/usb/usbip/vhci_rx.c
+@@@ -29,9 -30,9 +29,9 @@@ struct urb *pickup_urb_and_free_priv(st
+  		case -ENOENT:
+  			/* fall through */
+  		case -ECONNRESET:
+ -			dev_info(&urb->dev->dev,
+ -				 "urb %p was unlinked %ssynchronously.\n", urb,
+ -				 status == -ENOENT ? "" : "a");
+ +			dev_dbg(&urb->dev->dev,
+- 				 "urb seq# %u was unlinked %ssynchronuously\n",
+++				 "urb seq# %u was unlinked %ssynchronously\n",
+ +				 seqnum, status == -ENOENT ? "" : "a");
+  			break;
+  		case -EINPROGRESS:
+  			/* no info output */
