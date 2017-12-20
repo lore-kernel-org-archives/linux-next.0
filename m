@@ -1,35 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the usb tree with the usb.current tree
-Date: Wed, 20 Dec 2017 13:09:49 +1100
-Message-ID: <20171220130949.51553723@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the
+ char-misc-next tree
+Date: Wed, 20 Dec 2017 13:32:49 +1100
+Message-ID: <20171220133249.37100a10@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46129 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:57657 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752716AbdLTCJv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 19 Dec 2017 21:09:51 -0500
+        id S1753452AbdLTCcv (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 19 Dec 2017 21:32:51 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Colin Ian King <colin.king@canonical.com>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUs=?= =?UTF-8?B?w7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, Sagar Dharia <sdharia@codeaurora.org>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, David Kershner <david.kershner@unisys.com>
 
 Hi Greg,
 
-Today's linux-next merge of the usb tree got a conflict in:
+Today's linux-next merge of the staging tree got conflicts in:
 
-  drivers/usb/usbip/vhci_rx.c
+  drivers/Kconfig
+  drivers/Makefile
 
-between commit:
+between commits:
 
-  8272d099d05f ("usbip: vhci: stop printing kernel pointer addresses in messages")
+  bbecb07fa0af ("siox: new driver framework for eckelmann SIOX")
+  3648e78ec701 ("slimbus: Add SLIMbus bus type")
 
-from the usb.current tree and commit:
+from the char-misc-next tree and commit:
 
-  81d8a8eb0a97 ("USB: usbip: fix spelling mistake: "synchronuously" -> "synchronously"")
+  93d3ad90c2d4 ("drivers: visorbus: move driver out of staging")
 
-from the usb tree.
+from the staging tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,21 +45,28 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/usb/usbip/vhci_rx.c
-index 112ebb90d8c9,a9813f1d507d..000000000000
---- a/drivers/usb/usbip/vhci_rx.c
-+++ b/drivers/usb/usbip/vhci_rx.c
-@@@ -29,9 -30,9 +29,9 @@@ struct urb *pickup_urb_and_free_priv(st
-  		case -ENOENT:
-  			/* fall through */
-  		case -ECONNRESET:
- -			dev_info(&urb->dev->dev,
- -				 "urb %p was unlinked %ssynchronously.\n", urb,
- -				 status == -ENOENT ? "" : "a");
- +			dev_dbg(&urb->dev->dev,
-- 				 "urb seq# %u was unlinked %ssynchronuously\n",
-++				 "urb seq# %u was unlinked %ssynchronously\n",
- +				 seqnum, status == -ENOENT ? "" : "a");
-  			break;
-  		case -EINPROGRESS:
-  			/* no info output */
+diff --cc drivers/Kconfig
+index 02b6fd0864c8,ef5fb8395d76..000000000000
+--- a/drivers/Kconfig
++++ b/drivers/Kconfig
+@@@ -213,8 -211,6 +213,10 @@@ source "drivers/mux/Kconfig
+  
+  source "drivers/opp/Kconfig"
+  
+ +source "drivers/siox/Kconfig"
+ +
+ +source "drivers/slimbus/Kconfig"
+ +
++ source "drivers/visorbus/Kconfig"
++ 
+  endmenu
+diff --cc drivers/Makefile
+index e09663776d8b,7a2330077e47..000000000000
+--- a/drivers/Makefile
++++ b/drivers/Makefile
+@@@ -186,4 -184,4 +186,5 @@@ obj-$(CONFIG_FPGA)		+= fpga
+  obj-$(CONFIG_FSI)		+= fsi/
+  obj-$(CONFIG_TEE)		+= tee/
+  obj-$(CONFIG_MULTIPLEXER)	+= mux/
+ +obj-$(CONFIG_SIOX)		+= siox/
++ obj-$(CONFIG_UNISYS_VISORBUS)	+= visorbus/
