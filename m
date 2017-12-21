@@ -1,42 +1,42 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: linux-next: Signed-off-by missing for commits in the drm tree
-Date: Thu, 21 Dec 2017 13:40:28 +0200
-Message-ID: <eb09f263-0097-9041-0a6b-74b1033e0648@ti.com>
+Date: Thu, 21 Dec 2017 14:06:36 +0100
+Message-ID: <20171221130636.GW26573@phenom.ffwll.local>
 References: <20171221161243.22a1b5ce@canb.auug.org.au>
+ <eb09f263-0097-9041-0a6b-74b1033e0648@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from lelnx193.ext.ti.com ([198.47.27.77]:65355 "EHLO
-        lelnx193.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751403AbdLULkk (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Dec 2017 06:40:40 -0500
-In-Reply-To: <20171221161243.22a1b5ce@canb.auug.org.au>
-Content-Language: en-US
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <eb09f263-0097-9041-0a6b-74b1033e0648@ti.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Dave Airlie <airlied@linux.ie>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
-
-On 21/12/17 07:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Commits
-> 
->    bb5cdf8d1c76 ("drm: omapdrm: Remove filename from header and fix copyright tag")
->    d66c36a3ee79 ("drm: omapdrm: Simplify platform registration")
-> 
-> are missing a Signed-off-by from their committer.
-
-Sorry about that, I missed those.
-
-I think I need to create a script to verify my pull requests for things 
-like this...
-
-  Tomi
-
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. 
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+T24gVGh1LCBEZWMgMjEsIDIwMTcgYXQgMDE6NDA6MjhQTSArMDIwMCwgVG9taSBWYWxrZWluZW4g
+d3JvdGU6Cj4gSGksCj4gCj4gT24gMjEvMTIvMTcgMDc6MTIsIFN0ZXBoZW4gUm90aHdlbGwgd3Jv
+dGU6Cj4gPiBIaSBhbGwsCj4gPiAKPiA+IENvbW1pdHMKPiA+IAo+ID4gICAgYmI1Y2RmOGQxYzc2
+ICgiZHJtOiBvbWFwZHJtOiBSZW1vdmUgZmlsZW5hbWUgZnJvbSBoZWFkZXIgYW5kIGZpeCBjb3B5
+cmlnaHQgdGFnIikKPiA+ICAgIGQ2NmMzNmEzZWU3OSAoImRybTogb21hcGRybTogU2ltcGxpZnkg
+cGxhdGZvcm0gcmVnaXN0cmF0aW9uIikKPiA+IAo+ID4gYXJlIG1pc3NpbmcgYSBTaWduZWQtb2Zm
+LWJ5IGZyb20gdGhlaXIgY29tbWl0dGVyLgo+IAo+IFNvcnJ5IGFib3V0IHRoYXQsIEkgbWlzc2Vk
+IHRob3NlLgo+IAo+IEkgdGhpbmsgSSBuZWVkIHRvIGNyZWF0ZSBhIHNjcmlwdCB0byB2ZXJpZnkg
+bXkgcHVsbCByZXF1ZXN0cyBmb3IgdGhpbmdzIGxpa2UKPiB0aGlzLi4uCgpXZSBoYXZlIG9uZSwg
+YnV0IGl0J3MgdGllZCB0byB0aGUgZW50aXJlIGdyb3VwIG1haW50YWluZXJzaGlwIHRoaW5nIC4u
+LgpCdXQgb21hcCBpcyBkZWZhY3RvIGdyb3VwLW1haW50YWluZWQgYmV0d2VlbiB5b3UgYW5kIExh
+dXJlbnQgYWxyZWFkeSwgc28KbWlnaHQgYmUgd29ydGggdG8gY2hlY2sgb3V0LgotRGFuaWVsCi0t
+IApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRw
+Oi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
+cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
