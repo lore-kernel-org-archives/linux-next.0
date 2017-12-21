@@ -1,61 +1,52 @@
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Wed, 20 Dec 2017 15:59:00 -0800
-Message-ID: <20171220155900.76409619@cakuba.netronome.com>
-References: <20171221104304.38f94a00@canb.auug.org.au>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH linux-next] KVM: x86: don't forget vcpu_put() in
+ kvm_arch_vcpu_ioctl_set_sregs()
+Date: Thu, 21 Dec 2017 01:30:30 +0100
+Message-ID: <5e98adf7-809f-3b98-e8fc-6ba89e2777cf@redhat.com>
+References: <001a1148cc3acf967c0560c7b760@google.com>
+ <20171221002427.82325-1-ebiggers3@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20171221104304.38f94a00@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171221002427.82325-1-ebiggers3@gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eric Biggers <ebiggers3@gmail.com>, kvm@vger.kernel.org
+Cc: rkrcmar@redhat.com, tianyu.lan@intel.com, christoffer.dall@linaro.org, x86@kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, Eric Biggers <ebiggers@google.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 21 Dec 2017 10:43:04 +1100, Stephen Rothwell wrote:
-> Hi all,
+On 21/12/2017 01:24, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> After merging the net-next tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
+> Due to a bad merge resolution between commit f29810335965 ("KVM/x86:
+> Check input paging mode when cs.l is set") and commit b4ef9d4e8cb8
+> ("KVM: Move vcpu_load to arch-specific kvm_arch_vcpu_ioctl_set_sregs"),
+> there is a case in kvm_arch_vcpu_ioctl_set_sregs() where vcpu_put() is
+> not called after vcpu_get().  Fix it.
 > 
-> drivers/net/netdevsim/bpf.c: In function 'nsim_bpf_setup_tc_block_cb':
-> drivers/net/netdevsim/bpf.c:127:7: error: 'TC_CLSBPF_REPLACE' undeclared (first use in this function)
->   case TC_CLSBPF_REPLACE:
->        ^
-> drivers/net/netdevsim/bpf.c:129:7: error: 'TC_CLSBPF_ADD' undeclared (first use in this function)
->   case TC_CLSBPF_ADD:
->        ^
-> drivers/net/netdevsim/bpf.c:131:7: error: 'TC_CLSBPF_DESTROY' undeclared (first use in this function)
->   case TC_CLSBPF_DESTROY:
->        ^
+> Reported-by: syzbot <syzkaller@googlegroups.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  arch/x86/kvm/x86.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Caused by commit
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index ea3a98196753..f4e8b5089b28 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7624,7 +7624,7 @@ int kvm_arch_vcpu_ioctl_set_sregs(struct kvm_vcpu *vcpu,
+>  		goto out;
+>  
+>  	if (kvm_valid_sregs(vcpu, sregs))
+> -		return -EINVAL;
+> +		goto out;
+>  
+>  	apic_base_msr.data = sregs->apic_base;
+>  	apic_base_msr.host_initiated = true;
 > 
->   31d3ad832948 ("netdevsim: add bpf offload support")
-> 
-> interacting with commit
-> 
->   102740bd9436 ("cls_bpf: fix offload assumptions after callback conversion")
-> 
-> from the net tree.
-> 
-> I applied the following merge fix patch:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Thu, 21 Dec 2017 10:18:46 +1100
-> Subject: [PATCH] netdevsim: fix up for "cls_bpf: fix offload assumptions after
->  callback conversion"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Hi Stephen, sorry about those merges today.  The proper fix is queued
-up in patchwork for when net-next is merged in to net:
+Thanks very much Eric, that was fast!  Adding Stephen and the linux-next
+mailing list to Cc.  Adding the kvm/master tree has already paid off.
 
-http://patchwork.ozlabs.org/patch/851063/
-
-I will CC you on patches which may cause/fix merge trouble in the
-future, often the information about how to resolve the conflict is
-not part of the commit message.
-
-Sorry I didn't think about CCing you earlier!
+Paolo
