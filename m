@@ -1,82 +1,109 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: linux-next: manual merge of the omap tree with the keystone tree
-Date: Thu, 21 Dec 2017 15:12:53 -0800
-Message-ID: <20171221231253.GX3875@atomide.com>
-References: <20171222084545.5bab63b5@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the jc_docs tree with the printk tree
+Date: Fri, 22 Dec 2017 10:45:30 +1100
+Message-ID: <20171222104530.70bef8ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from muru.com ([72.249.23.125]:33080 "EHLO muru.com"
+Received: from ozlabs.org ([103.22.144.67]:49015 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755179AbdLUXM5 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 21 Dec 2017 18:12:57 -0500
-Content-Disposition: inline
-In-Reply-To: <20171222084545.5bab63b5@canb.auug.org.au>
+        id S1752148AbdLUXpc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Dec 2017 18:45:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
+To: Jonathan Corbet <corbet@lwn.net>, Petr Mladek <pmladek@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "Tobin C. Harding" <me@tobin.cc>
 
-* Stephen Rothwell <sfr@canb.auug.org.au> [171221 21:48]:
-> Hi Tony,
-> 
-> Today's linux-next merge of the omap tree got a conflict in:
-> 
->   arch/arm/configs/multi_v7_defconfig
-> 
-> between commit:
-> 
->   d3b15c54ed7e ("ARM: config: sync multi-v7 config with keystone peripherals")
-> 
-> from the keystone tree and commit:
-> 
->   d03366dcbffc ("ARM: multi_v7_defconfig: Enable CONFIG_PCI_DRA7XX (Host & Device modes)")
-> 
-> from the omap tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi Jonathan,
 
-Thanks I'll wait on this one so Kishon can check the resulting next.
+Today's linux-next merge of the jc_docs tree got a conflict in:
 
-Santosh, the removal of CONFIG_PCI in multi_v7_defconfig looks a bit
-suspcicious to me, care to check if commit d3b15c54ed7e is correct?
+  Documentation/core-api/printk-formats.rst
 
-Regards,
+between commit:
 
-Tony
+  d7c6075efa6c ("symbol lookup: introduce dereference_symbol_descriptor()")
 
+from the printk tree and commit:
 
-> diff --cc arch/arm/configs/multi_v7_defconfig
-> index c4f4f6682ea5,6faecd55ccbd..000000000000
-> --- a/arch/arm/configs/multi_v7_defconfig
-> +++ b/arch/arm/configs/multi_v7_defconfig
-> @@@ -105,13 -113,24 +105,18 @@@ CONFIG_ARCH_VEXPRESS=
->   CONFIG_ARCH_VEXPRESS_TC2_PM=y
->   CONFIG_ARCH_WM8850=y
->   CONFIG_ARCH_ZYNQ=y
->  -CONFIG_TRUSTED_FOUNDATIONS=y
->  -CONFIG_PCI=y
->  -CONFIG_PCI_HOST_GENERIC=y
-> + CONFIG_PCI_DRA7XX=y
-> + CONFIG_PCI_DRA7XX_EP=y
->   CONFIG_PCI_KEYSTONE=y
->  -CONFIG_PCI_MSI=y
->   CONFIG_PCI_MVEBU=y
->   CONFIG_PCI_TEGRA=y
->   CONFIG_PCI_RCAR_GEN2=y
->   CONFIG_PCIE_RCAR=y
->  -CONFIG_PCIEPORTBUS=y
-> + CONFIG_PCI_ENDPOINT=y
-> + CONFIG_PCI_ENDPOINT_CONFIGFS=y
-> + CONFIG_PCI_EPF_TEST=m
->   CONFIG_SMP=y
->   CONFIG_NR_CPUS=16
->  -CONFIG_HIGHPTE=y
->   CONFIG_CMA=y
->   CONFIG_SECCOMP=y
->   CONFIG_ARM_APPENDED_DTB=y
+  b3ed23213eab ("doc: convert printk-formats.txt to rst")
+
+from the jc_docs tree.
+
+I fixed it up (I think, see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/core-api/printk-formats.rst
+index dc3551ef1a4b,258b46435320..000000000000
+--- a/Documentation/core-api/printk-formats.rst
++++ b/Documentation/core-api/printk-formats.rst
+@@@ -61,33 -68,44 +68,33 @@@ Symbols/Function Pointer
+  
+  ::
+  
+ +	%pS	versatile_init+0x0/0x110
+ +	%ps	versatile_init
+  	%pF	versatile_init+0x0/0x110
+  	%pf	versatile_init
+ -	%pS	versatile_init+0x0/0x110
+  	%pSR	versatile_init+0x9/0x110
+  		(with __builtin_extract_return_addr() translation)
+ -	%ps	versatile_init
+  	%pB	prev_fn_of_versatile_init+0x88/0x88
+  
+ +The ``S`` and ``s`` specifiers are used for printing a pointer in symbolic
+- format. They result in the symbol name with (``S``) or without (``s``)
+++format. They result in the symbol name with (S) or without (s)
+ +offsets. If KALLSYMS are disabled then the symbol address is printed instead.
+  
+- Note, that the ``F`` and ``f`` specifiers are identical to ``S`` (``s``)
+ -The ``F`` and ``f`` specifiers are for printing function pointers,
+ -for example, f->func, &gettimeofday. They have the same result as
+ -``S`` and ``s`` specifiers. But they do an extra conversion on
+ -ia64, ppc64 and parisc64 architectures where the function pointers
+ -are actually function descriptors.
+ -
+ -The ``S`` and ``s`` specifiers can be used for printing symbols
+ -from direct addresses, for example, __builtin_return_address(0),
+ -(void *)regs->ip. They result in the symbol name with (S) or
+ -without (s) offsets. If KALLSYMS are disabled then the symbol
+ -address is printed instead.
+++Note, that the ``F`` and ``f`` specifiers are identical to ``S`` (s)
+ +and thus deprecated. We have ``F`` and ``f`` because on ia64, ppc64 and
+ +parisc64 function pointers are indirect and, in fact, are function
+ +descriptors, which require additional dereferencing before we can lookup
+ +the symbol. As of now, ``S`` and ``s`` perform dereferencing on those
+ +platforms (when needed), so ``F`` and ``f`` exist for compatibility
+ +reasons only.
+  
+  The ``B`` specifier results in the symbol name with offsets and should be
+  used when printing stack backtraces. The specifier takes into
+  consideration the effect of compiler optimisations which may occur
+- when tail-call``s are used and marked with the noreturn GCC attribute.
++ when tail-calls are used and marked with the noreturn GCC attribute.
+  
+ -Examples::
+ -
+ -	printk("Going to call: %pF\n", gettimeofday);
+ -	printk("Going to call: %pF\n", p->func);
+ -	printk("%s: called from %pS\n", __func__, (void *)_RET_IP_);
+ -	printk("%s: called from %pS\n", __func__,
+ -				(void *)__builtin_return_address(0));
+ -	printk("Faulted at %pS\n", (void *)regs->ip);
+ -	printk(" %s%pB\n", (reliable ? "" : "? "), (void *)*stack);
+ -
+  Kernel Pointers
+- ===============
++ ---------------
+  
+  ::
+  
