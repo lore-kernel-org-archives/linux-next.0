@@ -1,42 +1,47 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: linux-next: Signed-off-by missing for commits in the drm tree
-Date: Thu, 21 Dec 2017 14:06:36 +0100
-Message-ID: <20171221130636.GW26573@phenom.ffwll.local>
-References: <20171221161243.22a1b5ce@canb.auug.org.au>
- <eb09f263-0097-9041-0a6b-74b1033e0648@ti.com>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the scsi tree
+Date: Thu, 21 Dec 2017 07:11:40 -0800
+Message-ID: <1513869100.3132.1.camel@HansenPartnership.com>
+References: <20171218080037.4367d45d@canb.auug.org.au>
+         <yq1r2rribp4.fsf@oracle.com>
+         <bd1a1faa-5876-a3c2-2f07-4cba2bcad2de@hisilicon.com>
+         <yq1k1xghlra.fsf@oracle.com> <20171221220501.29a0d8f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <eb09f263-0097-9041-0a6b-74b1033e0648@ti.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Dave Airlie <airlied@linux.ie>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59388 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753129AbdLUPLn (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Dec 2017 10:11:43 -0500
+In-Reply-To: <20171221220501.29a0d8f0@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: "chenxiang (M)" <chenxiang66@hisilicon.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>, John Garry <john.garry@huawei.com>
 
-T24gVGh1LCBEZWMgMjEsIDIwMTcgYXQgMDE6NDA6MjhQTSArMDIwMCwgVG9taSBWYWxrZWluZW4g
-d3JvdGU6Cj4gSGksCj4gCj4gT24gMjEvMTIvMTcgMDc6MTIsIFN0ZXBoZW4gUm90aHdlbGwgd3Jv
-dGU6Cj4gPiBIaSBhbGwsCj4gPiAKPiA+IENvbW1pdHMKPiA+IAo+ID4gICAgYmI1Y2RmOGQxYzc2
-ICgiZHJtOiBvbWFwZHJtOiBSZW1vdmUgZmlsZW5hbWUgZnJvbSBoZWFkZXIgYW5kIGZpeCBjb3B5
-cmlnaHQgdGFnIikKPiA+ICAgIGQ2NmMzNmEzZWU3OSAoImRybTogb21hcGRybTogU2ltcGxpZnkg
-cGxhdGZvcm0gcmVnaXN0cmF0aW9uIikKPiA+IAo+ID4gYXJlIG1pc3NpbmcgYSBTaWduZWQtb2Zm
-LWJ5IGZyb20gdGhlaXIgY29tbWl0dGVyLgo+IAo+IFNvcnJ5IGFib3V0IHRoYXQsIEkgbWlzc2Vk
-IHRob3NlLgo+IAo+IEkgdGhpbmsgSSBuZWVkIHRvIGNyZWF0ZSBhIHNjcmlwdCB0byB2ZXJpZnkg
-bXkgcHVsbCByZXF1ZXN0cyBmb3IgdGhpbmdzIGxpa2UKPiB0aGlzLi4uCgpXZSBoYXZlIG9uZSwg
-YnV0IGl0J3MgdGllZCB0byB0aGUgZW50aXJlIGdyb3VwIG1haW50YWluZXJzaGlwIHRoaW5nIC4u
-LgpCdXQgb21hcCBpcyBkZWZhY3RvIGdyb3VwLW1haW50YWluZWQgYmV0d2VlbiB5b3UgYW5kIExh
-dXJlbnQgYWxyZWFkeSwgc28KbWlnaHQgYmUgd29ydGggdG8gY2hlY2sgb3V0LgotRGFuaWVsCi0t
-IApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRw
-Oi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On Thu, 2017-12-21 at 22:05 +1100, Stephen Rothwell wrote:
+> Hi Martin,
+> 
+> On Wed, 20 Dec 2017 21:12:41 -0500 "Martin K. Petersen" <martin.peter
+> sen@oracle.com> wrote:
+> > 
+> > 
+> > chenxiang,
+> > 
+> > > 
+> > > John is on vacation. I have checked it and please add a
+> > > "Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>" or let me
+> > > know if want us to re-send this patch again .  
+> > 
+> > I fixed it up. Thanks!
+> 
+> Unfortunately, you have rebased (rewritten) several commits that
+> James has already pulled into the scsi tree ... :-(
+
+That's OK ... the problem isn't fixable without a rebase, as you know
+and since this is the merge window tree, we're well away from the point
+of merging it.
+
+James
