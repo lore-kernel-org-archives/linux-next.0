@@ -1,47 +1,43 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the scsi tree
-Date: Thu, 21 Dec 2017 07:11:40 -0800
-Message-ID: <1513869100.3132.1.camel@HansenPartnership.com>
-References: <20171218080037.4367d45d@canb.auug.org.au>
-         <yq1r2rribp4.fsf@oracle.com>
-         <bd1a1faa-5876-a3c2-2f07-4cba2bcad2de@hisilicon.com>
-         <yq1k1xghlra.fsf@oracle.com> <20171221220501.29a0d8f0@canb.auug.org.au>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
+Date: Thu, 21 Dec 2017 17:49:36 +0100
+Message-ID: <20171221164936.GN3553@suse.cz>
+References: <20171220092010.36825688@canb.auug.org.au>
+ <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:59388 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753129AbdLUPLn (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 21 Dec 2017 10:11:43 -0500
-In-Reply-To: <20171221220501.29a0d8f0@canb.auug.org.au>
+Received: from mx2.suse.de ([195.135.220.15]:56776 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754187AbdLUQvk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Dec 2017 11:51:40 -0500
+Content-Disposition: inline
+In-Reply-To: <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: "chenxiang (M)" <chenxiang66@hisilicon.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Xiaofei Tan <tanxiaofei@huawei.com>, John Garry <john.garry@huawei.com>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, arnd@arndb.de
 
-On Thu, 2017-12-21 at 22:05 +1100, Stephen Rothwell wrote:
-> Hi Martin,
+On Wed, Dec 20, 2017 at 08:12:11AM +0800, Qu Wenruo wrote:
+> On 2017年12月20日 06:20, Stephen Rothwell wrote:
+> > After merging the btrfs-kdave tree, today's linux-next build (powerpc
+> > ppc64_defconfig) produced this warning:
+> > 
+> > fs/btrfs/qgroup.c: In function 'qgroup_reserve':
+> > fs/btrfs/qgroup.c:2432:1: warning: label 'retry' defined but not used [-Wunused-label]
+> >  retry:
+> >  ^
+> > 
+> > Introduced by commit
+> > 
+> >   b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on getting EDQUOT"")
+> > 
+> Sorry, I forgot to clean it up.
 > 
-> On Wed, 20 Dec 2017 21:12:41 -0500 "Martin K. Petersen" <martin.peter
-> sen@oracle.com> wrote:
-> > 
-> > 
-> > chenxiang,
-> > 
-> > > 
-> > > John is on vacation. I have checked it and please add a
-> > > "Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>" or let me
-> > > know if want us to re-send this patch again .  
-> > 
-> > I fixed it up. Thanks!
-> 
-> Unfortunately, you have rebased (rewritten) several commits that
-> James has already pulled into the scsi tree ... :-(
+> I'll update the patchset along with new patches to handle qgroup limit
+> better.
 
-That's OK ... the problem isn't fixable without a rebase, as you know
-and since this is the merge window tree, we're well away from the point
-of merging it.
-
-James
+Meanwhile I've applied the fix from Arnd to silence the warning in
+linux-next builds.
