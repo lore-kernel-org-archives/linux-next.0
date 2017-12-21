@@ -1,38 +1,40 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
-Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
-Date: Thu, 21 Dec 2017 15:01:17 -0800
-Message-ID: <20171221230117.GB12613@magnolia>
-References: <20171222095041.3fe014ec@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
+ keystone tree
+Date: Fri, 22 Dec 2017 10:05:13 +1100
+Message-ID: <20171222100513.79b0d3c6@canb.auug.org.au>
+References: <20171204094558.19b80b4d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from aserp2130.oracle.com ([141.146.126.79]:34069 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750920AbdLUXB3 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 21 Dec 2017 18:01:29 -0500
-Content-Disposition: inline
-In-Reply-To: <20171222095041.3fe014ec@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:47279 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755207AbdLUXFP (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Dec 2017 18:05:15 -0500
+In-Reply-To: <20171204094558.19b80b4d@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
+To: Santosh Shilimkar <santosh.shilimkar@ti.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Dec 22, 2017 at 09:50:41AM +1100, Stephen Rothwell wrote:
-> Hi all,
+Hi all,
+
+On Mon, 4 Dec 2017 09:45:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the samsung-krzk tree got a conflict in:
 > 
-> Today's linux-next merge of the xfs tree got a conflict in:
-> 
->   fs/xfs/xfs_super.c
+>   arch/arm/configs/multi_v7_defconfig
 > 
 > between commit:
 > 
->   1751e8a6cb93 ("Rename superblock flags (MS_xyz -> SB_xyz)")
+>   f15187dcdbcd ("ARM: config: sync multi-v7 config with keystone peripherals")
 > 
-> from Linus' tree and commit:
+> from the keystone tree and commit:
 > 
->   10ddf64e420f ("xfs: remove leftover CoW reservations when remounting ro")
+>   453c63073185 ("ARM: multi_v7_defconfig: Enable missing drivers for supported Exynos boards")
 > 
-> from the xfs tree.
+> from the samsung-krzk tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -40,39 +42,56 @@ On Fri, Dec 22, 2017 at 09:50:41AM +1100, Stephen Rothwell wrote:
 > is submitted for merging.  You may also want to consider cooperating
 > with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
-
-Ok, that's exactly the merge conflict that I was expecting to see.
-I'll make a note if/when I get around to sending a pull request.
-Thank you.
-
---D
-
-> -- 
-> Cheers,
-> Stephen Rothwell
 > 
-> diff --cc fs/xfs/xfs_super.c
-> index 5122d3021117,2db6a40a96bd..000000000000
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@@ -1368,7 -1369,15 +1369,15 @@@ xfs_fs_remount
->   	}
->   
->   	/* rw -> ro */
->  -	if (!(mp->m_flags & XFS_MOUNT_RDONLY) && (*flags & MS_RDONLY)) {
->  +	if (!(mp->m_flags & XFS_MOUNT_RDONLY) && (*flags & SB_RDONLY)) {
-> + 		/* Get rid of any leftover CoW reservations... */
-> + 		cancel_delayed_work_sync(&mp->m_cowblocks_work);
-> + 		error = xfs_icache_free_cowblocks(mp, NULL);
-> + 		if (error) {
-> + 			xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_INCORE);
-> + 			return error;
-> + 		}
-> + 
->   		/* Free the per-AG metadata reservation pool. */
->   		error = xfs_fs_unreserve_ag_blocks(mp);
->   		if (error) {
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --cc arch/arm/configs/multi_v7_defconfig
+> index 6f2343e259f7,833892568d31..000000000000
+> --- a/arch/arm/configs/multi_v7_defconfig
+> +++ b/arch/arm/configs/multi_v7_defconfig
+> @@@ -558,7 -583,8 +559,9 @@@ CONFIG_VIDEO_STI_DELTA=
+>   CONFIG_VIDEO_RENESAS_JPU=m
+>   CONFIG_VIDEO_RENESAS_VSP1=m
+>   CONFIG_V4L_TEST_DRIVERS=y
+>  +CONFIG_VIDEO_VIVID=m
+> + CONFIG_CEC_PLATFORM_DRIVERS=y
+> + CONFIG_VIDEO_SAMSUNG_S5P_CEC=m
+>   # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+>   CONFIG_VIDEO_ADV7180=m
+>   CONFIG_VIDEO_ML86V7667=m
+> @@@ -582,16 -613,12 +585,17 @@@ CONFIG_DRM_RCAR_DU=
+>   CONFIG_DRM_RCAR_LVDS=y
+>   CONFIG_DRM_SUN4I=m
+>   CONFIG_DRM_TEGRA=y
+>  +CONFIG_DRM_PANEL_SIMPLE=y
+>   CONFIG_DRM_PANEL_SAMSUNG_LD9040=m
+>   CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0=m
+>  -CONFIG_DRM_PANEL_SIMPLE=y
+>  +CONFIG_DRM_DUMB_VGA_DAC=m
+>  +CONFIG_DRM_NXP_PTN3460=m
+>  +CONFIG_DRM_PARADE_PS8622=m
+>  +CONFIG_DRM_I2C_ADV7511=m
+>  +CONFIG_DRM_I2C_ADV7511_AUDIO=y
+> + CONFIG_DRM_SII9234=m
+>   CONFIG_DRM_STI=m
+>  -CONFIG_DRM_VC4=y
+>  +CONFIG_DRM_VC4=m
+>   CONFIG_FB_ARMCLCD=y
+>   CONFIG_FB_EFI=y
+>   CONFIG_FB_WM8505=y
+> @@@ -626,9 -655,10 +630,10 @@@ CONFIG_SND_SOC_SAMSUNG=
+>   CONFIG_SND_SOC_SAMSUNG_SMDK_WM8994=m
+>   CONFIG_SND_SOC_SMDK_WM8994_PCM=m
+>   CONFIG_SND_SOC_SNOW=m
+> + CONFIG_SND_SOC_ODROID=m
+>   CONFIG_SND_SOC_SH4_FSI=m
+>   CONFIG_SND_SOC_RCAR=m
+>  -CONFIG_SND_SIMPLE_SCU_CARD=m
+>  +CONFIG_SND_SOC_STI=m
+>   CONFIG_SND_SUN4I_CODEC=m
+>   CONFIG_SND_SOC_TEGRA=m
+>   CONFIG_SND_SOC_TEGRA20_I2S=m
+
+This is now a conflict between the arm-soc and keystone trees (I think).
+
+-- 
+Cheers,
+Stephen Rothwell
