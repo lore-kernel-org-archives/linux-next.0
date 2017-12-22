@@ -1,53 +1,52 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: linux-next: manual merge of the omap tree with the keystone tree
-Date: Fri, 22 Dec 2017 11:41:27 +0530
-Message-ID: <3b336c91-8416-191c-2f32-31e3e9b32318@ti.com>
-References: <20171222084545.5bab63b5@canb.auug.org.au>
- <20171221231253.GX3875@atomide.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Fri, 22 Dec 2017 08:39:36 +0100
+Message-ID: <CAKwiHFjfNkVp3k7Z3sVjybKJ-XVJHce4A5BvHMpXwLe14UOnXg@mail.gmail.com>
+References: <20171222131859.774260f9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fllnx210.ext.ti.com ([198.47.19.17]:15083 "EHLO
-        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751111AbdLVGLm (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 22 Dec 2017 01:11:42 -0500
-In-Reply-To: <20171221231253.GX3875@atomide.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Tony Lindgren <tony@atomide.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Santosh Shilimkar <santosh.shilimkar@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171222131859.774260f9@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
+
+On 22 December 2017 at 03:18, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Mark,
+>
+> After merging the spi tree, today's linux-next build (x86_64 allmodconfig
+> build) failed like this:
+>
+> drivers/spi/spi-pxa2xx.c: In function 'setup_cs':
+> drivers/spi/spi-pxa2xx.c:1240:3: error: implicit declaration of function 'gpiod_free' [-Werror=implicit-function-declaration]
+>    gpiod_free(chip->gpiod_cs);
+>    ^
+>
+> Caused by commit
+>
+>   221886646f75 ("spi: pxa2xx: avoid redundant gpio_to_desc(desc_to_gpio()) round-trip")
+>
+> Presumably a missing include file.
+
+Gaah, sorry, not sure when I learn to compile-test every single patch
+:( When I saw that gpiod_free wasn't static I didn't think to go look
+for any public declaration, assuming that it would be declared the
+same place as gpio_free, but apparently it's private to gpiolib.
+There's no public declaration in include/, but there's a public
+gpiod_put, which is nothing but a wrapper for gpiod_free. gpiod_put is
+declared in linux/gpio/consumer.h, which is already #included, so
+s/gpiod_free/gpiod_put/ should fix it.
+
+Want a follow-up patch or a replacement?
+
+Rasmus
 
 
 
-On Friday 22 December 2017 04:42 AM, Tony Lindgren wrote:
-> * Stephen Rothwell <sfr@canb.auug.org.au> [171221 21:48]:
->> Hi Tony,
->>
->> Today's linux-next merge of the omap tree got a conflict in:
->>
->>   arch/arm/configs/multi_v7_defconfig
->>
->> between commit:
->>
->>   d3b15c54ed7e ("ARM: config: sync multi-v7 config with keystone peripherals")
->>
->> from the keystone tree and commit:
->>
->>   d03366dcbffc ("ARM: multi_v7_defconfig: Enable CONFIG_PCI_DRA7XX (Host & Device modes)")
->>
->> from the omap tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
-> 
-> Thanks I'll wait on this one so Kishon can check the resulting next.
 
-omap2plus_defconfig on linux-next looks fine.
-
-Thanks
-Kishon
+> I have used the spi tree from next-20171221 for today.
+>
+> --
+> Cheers,
+> Stephen Rothwell
