@@ -1,47 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the spi tree
-Date: Fri, 22 Dec 2017 15:51:22 +0000
-Message-ID: <20171222155122.GL1827@finisterre>
-References: <20171222131859.774260f9@canb.auug.org.au>
- <CAKwiHFjfNkVp3k7Z3sVjybKJ-XVJHce4A5BvHMpXwLe14UOnXg@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: linux-next: manual merge of the omap tree with the keystone tree
+Date: Fri, 22 Dec 2017 08:41:45 -0800
+Message-ID: <20171222164145.GY3875@atomide.com>
+References: <20171222084545.5bab63b5@canb.auug.org.au>
+ <20171221231253.GX3875@atomide.com>
+ <2ec2df22-0f65-daf1-fe20-2dc3ad75f9cd@oracle.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5VuzLDXibKSJvVYD"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAKwiHFjfNkVp3k7Z3sVjybKJ-XVJHce4A5BvHMpXwLe14UOnXg@mail.gmail.com>
+In-Reply-To: <2ec2df22-0f65-daf1-fe20-2dc3ad75f9cd@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-next.vger.kernel.org
 
+* Santosh Shilimkar <santosh.shilimkar@oracle.com> [171222 02:01]:
+> On 12/21/2017 3:12 PM, Tony Lindgren wrote:
+> > * Stephen Rothwell <sfr@canb.auug.org.au> [171221 21:48]:
+> > > Hi Tony,
+> > > 
+> > > Today's linux-next merge of the omap tree got a conflict in:
+> > > 
+> > >    arch/arm/configs/multi_v7_defconfig
+> > > 
+> > > between commit:
+> > > 
+> > >    d3b15c54ed7e ("ARM: config: sync multi-v7 config with keystone peripherals")
+> > > 
+> > > from the keystone tree and commit:
+> > > 
+> > >    d03366dcbffc ("ARM: multi_v7_defconfig: Enable CONFIG_PCI_DRA7XX (Host & Device modes)")
+> > > 
+> > > from the omap tree.
+> > > 
+> > > I fixed it up (see below) and can carry the fix as necessary. This
+> > > is now fixed as far as linux-next is concerned, but any non trivial
+> > > conflicts should be mentioned to your upstream maintainer when your tree
+> > > is submitted for merging.  You may also want to consider cooperating
+> > > with the maintainer of the conflicting tree to minimise any particularly
+> > > complex conflicts.
+> > 
+> > Thanks I'll wait on this one so Kishon can check the resulting next.
+> > 
+> > Santosh, the removal of CONFIG_PCI in multi_v7_defconfig looks a bit
+> > suspcicious to me, care to check if commit d3b15c54ed7e is correct?
+> > 
+> I just used savedefconfig so not sure why some of those needed ones
+> got knocked off. For now, I will drop the v7_defconfig patch and
+> post it separately later post merge window.
 
---5VuzLDXibKSJvVYD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+OK thanks for checking. In that case I'll go ahead with Kishon's
+changes.
 
-On Fri, Dec 22, 2017 at 08:39:36AM +0100, Rasmus Villemoes wrote:
+Regards,
 
-> Want a follow-up patch or a replacement?
-
-As the mail you got when the patch was applied says:
-
-| If any updates are required or you are submitting further changes they
-| should be sent as incremental updates against current git, existing
-
---5VuzLDXibKSJvVYD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlo9KfkACgkQJNaLcl1U
-h9BnKQf8CdiqGYRyamb3xjeDCnp5LJSkZ4dQxuLE3vvSAHeAL/Ygj9GRH0dSMZPX
-Ht+eDAmMxLr+nYKVRERMnR0palZ1lwVYkBM084YDp5kX6scMhbpW60WMz8ospytx
-/vja+nkuurGmO5V5Xsfr0BszL8040uGRwcdtJ2Q2v8vf0FBBgqnTAar95gFRpuzn
-pzI7YSqnc7DB6TQy/ht3O9Pn/2wRFOirQJwx5xuZQGkapx6wDjfwcUepgn73bWDg
-br9BjbXe+QlxmFpLmXJBOcIbpvSZ8szI5jTOU6mZccvuTf0uY5eZEzGCXoxKKnsA
-BDU82HANwyf2WdaWqM91qCrOfqNOgQ==
-=6yDV
------END PGP SIGNATURE-----
-
---5VuzLDXibKSJvVYD--
+Tony
