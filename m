@@ -1,160 +1,106 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Fri, 22 Dec 2017 11:11:12 +1100
-Message-ID: <20171222111112.2615460a@canb.auug.org.au>
+From: Qu Wenruo <wqu@suse.com>
+Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
+Date: Fri, 22 Dec 2017 08:32:03 +0800
+Message-ID: <aac11853-d4fb-9308-8feb-b4686ca616c1@suse.com>
+References: <20171220092010.36825688@canb.auug.org.au>
+ <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
+ <20171221164936.GN3553@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:33187 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752863AbdLVALO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 21 Dec 2017 19:11:14 -0500
+Received: from prv3-mh.provo.novell.com ([137.65.250.26]:58583 "EHLO
+        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752165AbdLVAcM (ORCPT
+        <rfc822;groupwise-linux-next@vger.kernel.org:0:0>);
+        Thu, 21 Dec 2017 19:32:12 -0500
+In-Reply-To: <20171221164936.GN3553@suse.cz>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>
+To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, arnd@arndb.de
 
-Hi all,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J
+Content-Type: multipart/mixed; boundary="A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG";
+ protected-headers="v1"
+From: Qu Wenruo <wqu@suse.com>
+To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, arnd@arndb.de
+Message-ID: <aac11853-d4fb-9308-8feb-b4686ca616c1@suse.com>
+Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
+References: <20171220092010.36825688@canb.auug.org.au>
+ <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
+ <20171221164936.GN3553@suse.cz>
+In-Reply-To: <20171221164936.GN3553@suse.cz>
 
-Today's linux-next merge of the net-next tree got a conflict in:
+--A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-  kernel/bpf/verifier.c
 
-between commit:
 
-  0c17d1d2c619 ("bpf: fix incorrect tracking of register size truncation")
+On 2017=E5=B9=B412=E6=9C=8822=E6=97=A5 00:49, David Sterba wrote:
+> On Wed, Dec 20, 2017 at 08:12:11AM +0800, Qu Wenruo wrote:
+>> On 2017=E5=B9=B412=E6=9C=8820=E6=97=A5 06:20, Stephen Rothwell wrote:
+>>> After merging the btrfs-kdave tree, today's linux-next build (powerpc=
 
-from the net tree and commits:
+>>> ppc64_defconfig) produced this warning:
+>>>
+>>> fs/btrfs/qgroup.c: In function 'qgroup_reserve':
+>>> fs/btrfs/qgroup.c:2432:1: warning: label 'retry' defined but not used=
+ [-Wunused-label]
+>>>  retry:
+>>>  ^
+>>>
+>>> Introduced by commit
+>>>
+>>>   b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on gettin=
+g EDQUOT"")
+>>>
+>> Sorry, I forgot to clean it up.
+>>
+>> I'll update the patchset along with new patches to handle qgroup limit=
 
-  f4d7e40a5b71 ("bpf: introduce function calls (verification)")
-  1ea47e01ad6e ("bpf: add support for bpf_call to interpreter")
+>> better.
+>=20
+> Meanwhile I've applied the fix from Arnd to silence the warning in
+> linux-next builds.
+>=20
 
-from the net-next tree.
+Some (not much, may be 2 or 3) patches is going to be updated:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+btrfs: delayed-inode: Use new qgroup meta rsv for delayed inode and item
+Revert "btrfs: qgroups: Retry after commit on getting EDQUOT" ( For the
+lable)
 
--- 
-Cheers,
-Stephen Rothwell
+And with 2 more new patches.
 
-diff --cc kernel/bpf/verifier.c
-index 04b24876cd23,48b2901cf483..000000000000
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@@ -1072,29 -1425,54 +1430,77 @@@ static int check_ptr_alignment(struct b
-  					   strict);
-  }
-  
- +/* truncate register to smaller size (in bytes)
- + * must be called with size < BPF_REG_SIZE
- + */
- +static void coerce_reg_to_size(struct bpf_reg_state *reg, int size)
- +{
- +	u64 mask;
- +
- +	/* clear high bits in bit representation */
- +	reg->var_off = tnum_cast(reg->var_off, size);
- +
- +	/* fix arithmetic bounds */
- +	mask = ((u64)1 << (size * 8)) - 1;
- +	if ((reg->umin_value & ~mask) == (reg->umax_value & ~mask)) {
- +		reg->umin_value &= mask;
- +		reg->umax_value &= mask;
- +	} else {
- +		reg->umin_value = 0;
- +		reg->umax_value = mask;
- +	}
- +	reg->smin_value = reg->umin_value;
- +	reg->smax_value = reg->umax_value;
- +}
- +
-+ static int update_stack_depth(struct bpf_verifier_env *env,
-+ 			      const struct bpf_func_state *func,
-+ 			      int off)
-+ {
-+ 	u16 stack = env->subprog_stack_depth[func->subprogno], total = 0;
-+ 	struct bpf_verifier_state *cur = env->cur_state;
-+ 	int i;
-+ 
-+ 	if (stack >= -off)
-+ 		return 0;
-+ 
-+ 	/* update known max for given subprogram */
-+ 	env->subprog_stack_depth[func->subprogno] = -off;
-+ 
-+ 	/* compute the total for current call chain */
-+ 	for (i = 0; i <= cur->curframe; i++) {
-+ 		u32 depth = env->subprog_stack_depth[cur->frame[i]->subprogno];
-+ 
-+ 		/* round up to 32-bytes, since this is granularity
-+ 		 * of interpreter stack sizes
-+ 		 */
-+ 		depth = round_up(depth, 32);
-+ 		total += depth;
-+ 	}
-+ 
-+ 	if (total > MAX_BPF_STACK) {
-+ 		verbose(env, "combined stack size of %d calls is %d. Too large\n",
-+ 			cur->curframe, total);
-+ 		return -EACCES;
-+ 	}
-+ 	return 0;
-+ }
-+ 
-+ static int get_callee_stack_depth(struct bpf_verifier_env *env,
-+ 				  const struct bpf_insn *insn, int idx)
-+ {
-+ 	int start = idx + insn->imm + 1, subprog;
-+ 
-+ 	subprog = find_subprog(env, start);
-+ 	if (subprog < 0) {
-+ 		WARN_ONCE(1, "verifier bug. No program starts at insn %d\n",
-+ 			  start);
-+ 		return -EFAULT;
-+ 	}
-+ 	subprog++;
-+ 	return env->subprog_stack_depth[subprog];
-+ }
-+ 
-  /* check whether memory at (regno + off) is accessible for t = (read | write)
-   * if t==write, value_regno is a register which value is stored into memory
-   * if t==read, value_regno is a register which will receive the value from memory
-@@@ -1302,15 -1678,14 +1704,15 @@@ static int check_stack_boundary(struct 
-  	}
-  
-  	/* Only allow fixed-offset stack reads */
-- 	if (!tnum_is_const(regs[regno].var_off)) {
-+ 	if (!tnum_is_const(reg->var_off)) {
-  		char tn_buf[48];
-  
-- 		tnum_strn(tn_buf, sizeof(tn_buf), regs[regno].var_off);
-+ 		tnum_strn(tn_buf, sizeof(tn_buf), reg->var_off);
-  		verbose(env, "invalid variable stack read R%d var_off=%s\n",
-  			regno, tn_buf);
- +		return -EACCES;
-  	}
-- 	off = regs[regno].off + regs[regno].var_off.value;
-+ 	off = reg->off + reg->var_off.value;
-  	if (off >= 0 || off < -MAX_BPF_STACK || off + access_size > 0 ||
-  	    access_size < 0 || (access_size == 0 && !zero_size_allowed)) {
-  		verbose(env, "invalid stack type R%d off=%d access_size=%d\n",
-@@@ -2294,9 -2758,12 +2828,11 @@@ static int adjust_scalar_min_max_vals(s
-  static int adjust_reg_min_max_vals(struct bpf_verifier_env *env,
-  				   struct bpf_insn *insn)
-  {
-- 	struct bpf_reg_state *regs = cur_regs(env), *dst_reg, *src_reg;
-+ 	struct bpf_verifier_state *vstate = env->cur_state;
-+ 	struct bpf_func_state *state = vstate->frame[vstate->curframe];
-+ 	struct bpf_reg_state *regs = state->regs, *dst_reg, *src_reg;
-  	struct bpf_reg_state *ptr_reg = NULL, off_reg = {0};
-  	u8 opcode = BPF_OP(insn->code);
- -	int rc;
-  
-  	dst_reg = &regs[insn->dst_reg];
-  	src_reg = NULL;
+Do I need to resend the patchset or use separate patches for them?
+
+Thanks,
+Qu
+
+
+--A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG--
+
+--CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQFBBAEBCAArFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlo8UoMNHHdxdUBzdXNl
+LmNvbQAKCRDCPZHzoSX+qBKyB/0dpzL0V0mxevOh5F3PU4B0NBpXKexOWKNp7c6A
+lS7JrKp0p8UkZ3i/NGac/TUdCmTNS8E6gMJYgA7CMmZ7k7hHyNNur9jBCh+m0pGe
+iraucM/uM/oKsi84NgHMfLAoeCce+2N7PsXnKln9p6fZiH/xpjpoKAq8mqz7AR5w
+KWxJRuUZuIBuUk+uWQE63gq8FUEhAZj1K34fbizJ/e+89bwf6+mD0VQeR9BTxORn
+UzNpj2HorjzFWajE7ZktKEBJE7ga4oXXxY1OjlBcmBG0AX0RjcWMExauCaKT06Nk
+jkp75SrPbQxu75RMukJx/CxzioArdP/9VD6Rne5SC27PhIHy
+=ccrq
+-----END PGP SIGNATURE-----
+
+--CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J--
