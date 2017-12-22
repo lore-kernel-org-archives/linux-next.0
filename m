@@ -1,58 +1,47 @@
-From: Petr Mladek <pmladek@suse.com>
-Subject: Re: linux-next: manual merge of the jc_docs tree with the printk tree
-Date: Fri, 22 Dec 2017 12:08:54 +0100
-Message-ID: <20171222110854.fdxehxx3dbxq7vep@pathway.suse.cz>
-References: <20171222104530.70bef8ac@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the spi tree
+Date: Fri, 22 Dec 2017 15:51:22 +0000
+Message-ID: <20171222155122.GL1827@finisterre>
+References: <20171222131859.774260f9@canb.auug.org.au>
+ <CAKwiHFjfNkVp3k7Z3sVjybKJ-XVJHce4A5BvHMpXwLe14UOnXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:40605 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750786AbdLVLI4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 22 Dec 2017 06:08:56 -0500
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5VuzLDXibKSJvVYD"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20171222104530.70bef8ac@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "Tobin C. Harding" <me@tobin.cc>
+In-Reply-To: <CAKwiHFjfNkVp3k7Z3sVjybKJ-XVJHce4A5BvHMpXwLe14UOnXg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jonathan,
 
-On Fri 2017-12-22 10:45:30, Stephen Rothwell wrote:
-> Hi Jonathan,
-> 
-> Today's linux-next merge of the jc_docs tree got a conflict in:
-> 
->   Documentation/core-api/printk-formats.rst
-> 
-> between commit:
-> 
->   d7c6075efa6c ("symbol lookup: introduce dereference_symbol_descriptor()")
-> 
-> from the printk tree and commit:
-> 
->   b3ed23213eab ("doc: convert printk-formats.txt to rst")
-> 
-> from the jc_docs tree.
-> 
-> I fixed it up (I think, see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+--5VuzLDXibKSJvVYD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I guess that you have experience with these problems so you probably
-know how to handle this the best way.
+On Fri, Dec 22, 2017 at 08:39:36AM +0100, Rasmus Villemoes wrote:
 
-Anyway, the printk.git stuff is targeting kernel-4.16. I have no
-problem to take the document conversion via printk.git tree.
-We could do it also the other way. But note that the conflicting
-change in printk.git is part of a patchset (8 patches).
+> Want a follow-up patch or a replacement?
 
-Best Regards,
-Petr
+As the mail you got when the patch was applied says:
 
-PS: I will stay out of computers next week, so I probably
-won't be able to do anything about this until January 2, 2018.
+| If any updates are required or you are submitting further changes they
+| should be sent as incremental updates against current git, existing
+
+--5VuzLDXibKSJvVYD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlo9KfkACgkQJNaLcl1U
+h9BnKQf8CdiqGYRyamb3xjeDCnp5LJSkZ4dQxuLE3vvSAHeAL/Ygj9GRH0dSMZPX
+Ht+eDAmMxLr+nYKVRERMnR0palZ1lwVYkBM084YDp5kX6scMhbpW60WMz8ospytx
+/vja+nkuurGmO5V5Xsfr0BszL8040uGRwcdtJ2Q2v8vf0FBBgqnTAar95gFRpuzn
+pzI7YSqnc7DB6TQy/ht3O9Pn/2wRFOirQJwx5xuZQGkapx6wDjfwcUepgn73bWDg
+br9BjbXe+QlxmFpLmXJBOcIbpvSZ8szI5jTOU6mZccvuTf0uY5eZEzGCXoxKKnsA
+BDU82HANwyf2WdaWqM91qCrOfqNOgQ==
+=6yDV
+-----END PGP SIGNATURE-----
+
+--5VuzLDXibKSJvVYD--
