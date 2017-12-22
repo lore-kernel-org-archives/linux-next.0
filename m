@@ -1,106 +1,126 @@
-From: Qu Wenruo <wqu@suse.com>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-Date: Fri, 22 Dec 2017 08:32:03 +0800
-Message-ID: <aac11853-d4fb-9308-8feb-b4686ca616c1@suse.com>
-References: <20171220092010.36825688@canb.auug.org.au>
- <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
- <20171221164936.GN3553@suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Fri, 22 Dec 2017 11:45:19 +1100
+Message-ID: <20171222114519.612087d4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from prv3-mh.provo.novell.com ([137.65.250.26]:58583 "EHLO
-        prv3-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752165AbdLVAcM (ORCPT
-        <rfc822;groupwise-linux-next@vger.kernel.org:0:0>);
-        Thu, 21 Dec 2017 19:32:12 -0500
-In-Reply-To: <20171221164936.GN3553@suse.cz>
+Received: from ozlabs.org ([103.22.144.67]:54617 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753313AbdLVApW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 21 Dec 2017 19:45:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, arnd@arndb.de
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ido Schimmel <idosch@mellanox.com>, Eric Dumazet <edumazet@google.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J
-Content-Type: multipart/mixed; boundary="A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG";
- protected-headers="v1"
-From: Qu Wenruo <wqu@suse.com>
-To: dsterba@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, arnd@arndb.de
-Message-ID: <aac11853-d4fb-9308-8feb-b4686ca616c1@suse.com>
-Subject: Re: linux-next: build warning after merge of the btrfs-kdave tree
-References: <20171220092010.36825688@canb.auug.org.au>
- <686908b0-29d9-b7af-18c3-619bebbcd87e@suse.com>
- <20171221164936.GN3553@suse.cz>
-In-Reply-To: <20171221164936.GN3553@suse.cz>
+Hi all,
 
---A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+After merging the net-next tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
+net/ipv6/route.c: In function 'inet6_rtm_getroute':
+net/ipv6/route.c:4324:25: error: 'struct dst_entry' has no member named 'from'
+  if (fibmatch && rt->dst.from) {
+                         ^
+In file included from include/linux/uio.h:12:0,
+                 from include/linux/socket.h:8,
+                 from net/ipv6/route.c:34:
+net/ipv6/route.c:4325:46: error: 'struct dst_entry' has no member named 'from'
+   struct rt6_info *ort = container_of(rt->dst.from,
+                                              ^
+include/linux/kernel.h:929:26: note: in definition of macro 'container_of'
+  void *__mptr = (void *)(ptr);     \
+                          ^
+In file included from include/linux/kernel.h:10:0,
+                 from include/linux/uio.h:12,
+                 from include/linux/socket.h:8,
+                 from net/ipv6/route.c:34:
+net/ipv6/route.c:4325:46: error: 'struct dst_entry' has no member named 'from'
+   struct rt6_info *ort = container_of(rt->dst.from,
+                                              ^
+include/linux/compiler.h:301:19: note: in definition of macro '__compiletime_assert'
+   bool __cond = !(condition);    \
+                   ^
+include/linux/compiler.h:324:2: note: in expansion of macro '_compiletime_assert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+include/linux/build_bug.h:47:37: note: in expansion of macro 'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+include/linux/kernel.h:930:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+  BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+  ^
+include/linux/kernel.h:930:20: note: in expansion of macro '__same_type'
+  BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+                    ^
+net/ipv6/route.c:4325:26: note: in expansion of macro 'container_of'
+   struct rt6_info *ort = container_of(rt->dst.from,
+                          ^
+net/ipv6/route.c:4325:46: error: 'struct dst_entry' has no member named 'from'
+   struct rt6_info *ort = container_of(rt->dst.from,
+                                              ^
+include/linux/compiler.h:301:19: note: in definition of macro '__compiletime_assert'
+   bool __cond = !(condition);    \
+                   ^
+include/linux/compiler.h:324:2: note: in expansion of macro '_compiletime_assert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^
+include/linux/build_bug.h:47:37: note: in expansion of macro 'compiletime_assert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^
+include/linux/kernel.h:930:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+  BUILD_BUG_ON_MSG(!__same_type(*(ptr), ((type *)0)->member) && \
+  ^
+include/linux/kernel.h:931:6: note: in expansion of macro '__same_type'
+     !__same_type(*(ptr), void),   \
+      ^
+net/ipv6/route.c:4325:26: note: in expansion of macro 'container_of'
+   struct rt6_info *ort = container_of(rt->dst.from,
+                          ^
 
+Caused by commit
 
-On 2017=E5=B9=B412=E6=9C=8822=E6=97=A5 00:49, David Sterba wrote:
-> On Wed, Dec 20, 2017 at 08:12:11AM +0800, Qu Wenruo wrote:
->> On 2017=E5=B9=B412=E6=9C=8820=E6=97=A5 06:20, Stephen Rothwell wrote:
->>> After merging the btrfs-kdave tree, today's linux-next build (powerpc=
+  3a2232e92e87 ("ipv6: Move dst->from into struct rt6_info")
 
->>> ppc64_defconfig) produced this warning:
->>>
->>> fs/btrfs/qgroup.c: In function 'qgroup_reserve':
->>> fs/btrfs/qgroup.c:2432:1: warning: label 'retry' defined but not used=
- [-Wunused-label]
->>>  retry:
->>>  ^
->>>
->>> Introduced by commit
->>>
->>>   b283738ab0ad ("Revert "btrfs: qgroups: Retry after commit on gettin=
-g EDQUOT"")
->>>
->> Sorry, I forgot to clean it up.
->>
->> I'll update the patchset along with new patches to handle qgroup limit=
+interacting with commit
 
->> better.
->=20
-> Meanwhile I've applied the fix from Arnd to silence the warning in
-> linux-next builds.
->=20
+  58acfd714e6b ("ipv6: Honor specified parameters in fibmatch lookup"
 
-Some (not much, may be 2 or 3) patches is going to be updated:
+from the net tree.
 
-btrfs: delayed-inode: Use new qgroup meta rsv for delayed inode and item
-Revert "btrfs: qgroups: Retry after commit on getting EDQUOT" ( For the
-lable)
+I have added the following merge fix patch for today (I am guessing
+a bit here):
 
-And with 2 more new patches.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 22 Dec 2017 11:25:13 +1100
+Subject: [PATCH] ipv6: fix up for "ipv6: Move dst->from into struct rt6_info"
 
-Do I need to resend the patchset or use separate patches for them?
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/ipv6/route.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Thanks,
-Qu
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 4efaac956f0c..2490280b3394 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -4321,9 +4321,8 @@ static int inet6_rtm_getroute(struct sk_buff *in_skb, struct nlmsghdr *nlh,
+ 		goto errout;
+ 	}
+ 
+-	if (fibmatch && rt->dst.from) {
+-		struct rt6_info *ort = container_of(rt->dst.from,
+-						    struct rt6_info, dst);
++	if (fibmatch && rt->from) {
++		struct rt6_info *ort = rt->from;
+ 
+ 		dst_hold(&ort->dst);
+ 		ip6_rt_put(rt);
+-- 
+2.15.0
 
-
---A2MdNoGH8Eg7R2A1VMd3soeWIKPDzh0VG--
-
---CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQFBBAEBCAArFiEELd9y5aWlW6idqkLhwj2R86El/qgFAlo8UoMNHHdxdUBzdXNl
-LmNvbQAKCRDCPZHzoSX+qBKyB/0dpzL0V0mxevOh5F3PU4B0NBpXKexOWKNp7c6A
-lS7JrKp0p8UkZ3i/NGac/TUdCmTNS8E6gMJYgA7CMmZ7k7hHyNNur9jBCh+m0pGe
-iraucM/uM/oKsi84NgHMfLAoeCce+2N7PsXnKln9p6fZiH/xpjpoKAq8mqz7AR5w
-KWxJRuUZuIBuUk+uWQE63gq8FUEhAZj1K34fbizJ/e+89bwf6+mD0VQeR9BTxORn
-UzNpj2HorjzFWajE7ZktKEBJE7ga4oXXxY1OjlBcmBG0AX0RjcWMExauCaKT06Nk
-jkp75SrPbQxu75RMukJx/CxzioArdP/9VD6Rne5SC27PhIHy
-=ccrq
------END PGP SIGNATURE-----
-
---CglmviNMDpIdKM2w9pSr1q5UTZC2Tmt3J--
+-- 
+Cheers,
+Stephen Rothwell
