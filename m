@@ -1,36 +1,20 @@
-From: <gregkh@linuxfoundation.org>
-Subject: Patch "objtool: Fix cross-build" has been added to the 4.14-stable tree
-Date: Wed, 27 Dec 2017 13:57:47 +0100
-Message-ID: <151437946724245@kroah.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 4.14 04/74] objtool: Fix cross-build
+Date: Wed, 27 Dec 2017 17:45:37 +0100
+Message-ID: <20171227164614.285842950@linuxfoundation.org>
+References: <20171227164614.109898944@linuxfoundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ANSI_X3.4-1968
-Content-Transfer-Encoding: 8bit
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: jpoimboe@redhat.com, gregkh@linuxfoundation.org, linux-next@vger.kernel.org, mingo@kernel.org, peterz@infradead.org, sfr@canb.auug.org.au, tglx@linutronix.de, torvalds@linux-foundation.org
-Cc: stable@vger.kernel.org, stable-commits@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20171227164614.109898944@linuxfoundation.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-This is a note to let you know that I've just added the patch titled
-
-    objtool: Fix cross-build
-
-to the 4.14-stable tree which can be found at:
-    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
-
-The filename of the patch is:
-     objtool-fix-cross-build.patch
-and it can be found in the queue-4.14 subdirectory.
-
-If you, or anyone else, feels it should not be added to the stable tree,
-please let <stable@vger.kernel.org> know about it.
-
-
->From 9eb719855f6c9b21eb5889d9ac2ca1c60527ad89 Mon Sep 17 00:00:00 2001
-From: Josh Poimboeuf <jpoimboe@redhat.com>
-Date: Tue, 7 Nov 2017 21:01:52 -0600
-Subject: objtool: Fix cross-build
+------------------
 
 From: Josh Poimboeuf <jpoimboe@redhat.com>
 
@@ -74,13 +58,3 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
  CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
  LDFLAGS  += -lelf $(LIBSUBCMD)
-
-
-Patches currently in stable-queue which might be from jpoimboe@redhat.com are
-
-queue-4.14/x86-decoder-fix-and-update-the-opcodes-map.patch
-queue-4.14/tools-headers-sync-objtool-uapi-header.patch
-queue-4.14/objtool-fix-64-bit-build-on-32-bit-host.patch
-queue-4.14/objtool-move-synced-files-to-their-original-relative-locations.patch
-queue-4.14/objtool-move-kernel-headers-code-sync-check-to-a-script.patch
-queue-4.14/objtool-fix-cross-build.patch
