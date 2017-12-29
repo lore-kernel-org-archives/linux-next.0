@@ -1,60 +1,24 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4.14 04/74] objtool: Fix cross-build
-Date: Wed, 27 Dec 2017 17:45:37 +0100
-Message-ID: <20171227164614.285842950@linuxfoundation.org>
-References: <20171227164614.109898944@linuxfoundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the v4l-dvb tree
+Date: Sat, 30 Dec 2017 10:21:47 +1100
+Message-ID: <20171230102147.46ee15cd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20171227164614.109898944@linuxfoundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>, Josh Poimboeuf <jpoimboe@redhat.com>, Linus Torvalds <torvalds@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Mauro,
 
-------------------
+Commit
 
-From: Josh Poimboeuf <jpoimboe@redhat.com>
+  201b56737f4e ("media: fix semicolon.cocci warnings")
 
-commit 9eb719855f6c9b21eb5889d9ac2ca1c60527ad89 upstream.
+is missing a Signed-off-by from its committer.
 
-Stephen Rothwell reported this cross-compilation build failure:
-
-| In file included from orc_dump.c:19:0:
-| orc.h:21:10: fatal error: asm/orc_types.h: No such file or directory
-| ...
-
-Caused by:
-
-  6a77cff819ae ("objtool: Move synced files to their original relative locations")
-
-Use the proper arch header files location, not the host-arch location.
-
-Bisected-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20171108030152.bd76eahiwjwjt3kp@treble
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- tools/objtool/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/tools/objtool/Makefile
-+++ b/tools/objtool/Makefile
-@@ -27,7 +27,7 @@ all: $(OBJTOOL)
- 
- INCLUDES := -I$(srctree)/tools/include \
- 	    -I$(srctree)/tools/arch/$(HOSTARCH)/include/uapi \
--	    -I$(srctree)/tools/objtool/arch/$(HOSTARCH)/include
-+	    -I$(srctree)/tools/objtool/arch/$(ARCH)/include
- WARNINGS := $(EXTRA_WARNINGS) -Wno-switch-default -Wno-switch-enum -Wno-packed
- CFLAGS   += -Wall -Werror $(WARNINGS) -fomit-frame-pointer -O2 -g $(INCLUDES)
- LDFLAGS  += -lelf $(LIBSUBCMD)
+-- 
+Cheers,
+Stephen Rothwell
