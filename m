@@ -1,32 +1,34 @@
-From: Jeff Layton <jlayton@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the iversion
- tree
-Date: Mon, 01 Jan 2018 10:12:00 -0500
-Message-ID: <1514819520.3675.1.camel@kernel.org>
-References: <20180102014424.052eaa73@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the clk tree
+Date: Tue, 2 Jan 2018 08:51:34 +1100
+Message-ID: <20180102085134.198ea1f7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180102014424.052eaa73@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:53299 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751927AbeAAVvh (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jan 2018 16:51:37 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mike Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Georgi Djakov <georgi.djakov@linaro.org>
 
-On Tue, 2018-01-02 at 01:44 +1100, Stephen Rothwell wrote:
-> Hi Jeff,
-> 
-> Commit
-> 
->   e9f12c2601ee ("ima: Use i_version only when filesystem supports it")
-> 
-> is missing a Signed-off-by from its committer.
-> 
+Hi all,
 
-Thanks, I added my SoB. FWIW, my expectation is that that patch will go
-in via the IMA tree and not via this PR.
+After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-Cheers,
+ERROR: "clk_regmap_mux_div_ops" [drivers/clk/qcom/apcs-msm8916.ko] undefined!
+ERROR: "__mux_div_set_src_div" [drivers/clk/qcom/apcs-msm8916.ko] undefined!
+
+Caused by commit
+
+  8a77f61118a2 ("clk: qcom: Add APCS clock controller support")
+
+I have used the clk tree from next-20171222 for today.
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+Cheers,
+Stephen Rothwell
