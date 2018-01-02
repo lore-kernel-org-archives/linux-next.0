@@ -1,104 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm tree
-Date: Tue, 2 Jan 2018 12:48:59 +1100
-Message-ID: <20180102124859.27c2e1fd@canb.auug.org.au>
+Subject: linux-next: manual merge of the integrity tree with the iversion
+ tree
+Date: Tue, 2 Jan 2018 13:41:16 +1100
+Message-ID: <20180102134116.0187e064@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42217 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37653 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751130AbeABBtB (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jan 2018 20:49:01 -0500
+        id S1752707AbeABClS (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jan 2018 21:41:18 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Jeff Layton <jlayton@kernel.org>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
 
 Hi all,
 
-After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the integrity tree got a conflict in:
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:219:6: error: redefinition of 'dm_dp_mst_dc_sink_create'
- void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
-      ^
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:183:6: note: previous definition of 'dm_dp_mst_dc_sink_create' was here
- void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
-      ^
+  security/integrity/ima/ima_main.c
 
-Caused by commit
+between commits:
 
-  391ef035200f ("drm/amd/display: Fix rehook MST display not light back on")
+  ac0bf025d2c0 ("ima: Use i_version only when filesystem supports it")
+  57fe39d33423 ("IMA: switch IMA over to new i_version API")
 
-automatically mergeing badly with commit
+from the iversion tree and commit:
 
-  becd0875f439 ("drm/amd/display: Fix rehook MST display not light back on")
+  0d73a55208e9 ("ima: re-introduce own integrity cache lock")
+  a2a2c3c8580a ("ima: Use i_version only when filesystem supports it")
 
-from Linus' tree.
+from the integrity tree.
 
-I applied this merge fix patch (to remove the second copy of
-dm_dp_mst_dc_sink_create):
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 2 Jan 2018 12:43:32 +1100
-Subject: [PATCH] drm/amd/display: fix mismerge of identical patches
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 36 ----------------------
- 1 file changed, 36 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index 7ace4dd302c1..f3d87f418d2e 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -216,42 +216,6 @@ void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
- 					&aconnector->base, aconnector->edid);
- }
- 
--void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
--{
--	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
--	struct edid *edid;
--	struct dc_sink *dc_sink;
--	struct dc_sink_init_data init_params = {
--			.link = aconnector->dc_link,
--			.sink_signal = SIGNAL_TYPE_DISPLAY_PORT_MST };
--
--	edid = drm_dp_mst_get_edid(connector, &aconnector->mst_port->mst_mgr, aconnector->port);
--
--	if (!edid) {
--		drm_mode_connector_update_edid_property(
--			&aconnector->base,
--			NULL);
--		return;
--	}
--
--	aconnector->edid = edid;
--
--	dc_sink = dc_link_add_remote_sink(
--		aconnector->dc_link,
--		(uint8_t *)aconnector->edid,
--		(aconnector->edid->extensions + 1) * EDID_LENGTH,
--		&init_params);
--
--	dc_sink->priv = aconnector;
--	aconnector->dc_sink = dc_sink;
--
--	amdgpu_dm_add_sink_to_freesync_module(
--			connector, aconnector->edid);
--
--	drm_mode_connector_update_edid_property(
--					&aconnector->base, aconnector->edid);
--}
--
- static int dm_dp_mst_get_modes(struct drm_connector *connector)
- {
- 	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
--- 
-2.15.0
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc security/integrity/ima/ima_main.c
+index 06a70c5a2329,6d78cb26784d..000000000000
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@@ -126,10 -129,12 +130,12 @@@ static void ima_check_last_writer(struc
+  	if (!(mode & FMODE_WRITE))
+  		return;
+  
+- 	inode_lock(inode);
++ 	mutex_lock(&iint->mutex);
+  	if (atomic_read(&inode->i_writecount) == 1) {
++ 		update = test_and_clear_bit(IMA_UPDATE_XATTR,
++ 					    &iint->atomic_flags);
+  		if (!IS_I_VERSION(inode) ||
+ -		    (iint->version != inode->i_version) ||
+ +		    inode_cmp_iversion(inode, iint->version) ||
+  		    (iint->flags & IMA_NEW_FILE)) {
+  			iint->flags &= ~(IMA_DONE_MASK | IMA_NEW_FILE);
+  			iint->measured_pcrs = 0;
