@@ -1,154 +1,103 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the netfilter-next tree
-Date: Tue, 2 Jan 2018 12:14:51 +1100
-Message-ID: <20180102121451.3f8f792d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Tue, 2 Jan 2018 12:48:59 +1100
+Message-ID: <20180102124859.27c2e1fd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:49075 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:42217 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753019AbeABBOy (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 1 Jan 2018 20:14:54 -0500
+        id S1751130AbeABBtB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 1 Jan 2018 20:49:01 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Jerry (Fangzhi) Zuo" <Jerry.Zuo@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 
 Hi all,
 
-After merging the netfilter-next tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+After merging the drm tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-In file included from net/ipv6/af_inet6.c:45:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/route.c:87:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/ip6_input.c:34:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_input.c:145:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_fragment.c:50:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/ip6_output.c:44:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_forward.c:37:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/ndisc.c:74:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_output.c:79:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/raw.c:32:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/xfrm6_state.c:18:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/mcast.c:51:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/xfrm6_input.c:16:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/xfrm6_output.c:17:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/xfrm4_output.c:15:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/raw.c:79:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/xfrm4_input.c:17:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_tunnel_core.c:30:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/sit.c:36:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/icmp.c:78:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/xfrm4_state.c:15:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/igmp.c:102:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/af_inet.c:89:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv4/ip_tunnel.c:37:0:
-include/linux/netfilter_ipv4.h:29:53: warning: 'struct nf_queue_entry' declared inside parameter list
- int nf_ip_reroute(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                     ^
-include/linux/netfilter_ipv4.h:29:53: warning: its scope is only this definition or declaration, which is probably not what you want
-In file included from net/ipv6/ip6_tunnel.c:40:0:
-include/linux/netfilter_ipv6.h:38:51: warning: 'struct nf_queue_entry' declared inside parameter list
-  int (*reroute)(struct sk_buff *skb, const struct nf_queue_entry *entry);
-                                                   ^
-include/linux/netfilter_ipv6.h:38:51: warning: its scope is only this definition or declaration, which is probably not what you want
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:219:6: error: redefinition of 'dm_dp_mst_dc_sink_create'
+ void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
+      ^
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm_mst_types.c:183:6: note: previous definition of 'dm_dp_mst_dc_sink_create' was here
+ void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
+      ^
 
-Introduced by commit
+Caused by commit
 
-  9faa679ee7ec ("netfilter: move reroute indirection to struct nf_ipv6_ops")
+  391ef035200f ("drm/amd/display: Fix rehook MST display not light back on")
+
+automatically mergeing badly with commit
+
+  becd0875f439 ("drm/amd/display: Fix rehook MST display not light back on")
+
+from Linus' tree.
+
+I applied this merge fix patch (to remove the second copy of
+dm_dp_mst_dc_sink_create):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 2 Jan 2018 12:43:32 +1100
+Subject: [PATCH] drm/amd/display: fix mismerge of identical patches
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    | 36 ----------------------
+ 1 file changed, 36 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 7ace4dd302c1..f3d87f418d2e 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -216,42 +216,6 @@ void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
+ 					&aconnector->base, aconnector->edid);
+ }
+ 
+-void dm_dp_mst_dc_sink_create(struct drm_connector *connector)
+-{
+-	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
+-	struct edid *edid;
+-	struct dc_sink *dc_sink;
+-	struct dc_sink_init_data init_params = {
+-			.link = aconnector->dc_link,
+-			.sink_signal = SIGNAL_TYPE_DISPLAY_PORT_MST };
+-
+-	edid = drm_dp_mst_get_edid(connector, &aconnector->mst_port->mst_mgr, aconnector->port);
+-
+-	if (!edid) {
+-		drm_mode_connector_update_edid_property(
+-			&aconnector->base,
+-			NULL);
+-		return;
+-	}
+-
+-	aconnector->edid = edid;
+-
+-	dc_sink = dc_link_add_remote_sink(
+-		aconnector->dc_link,
+-		(uint8_t *)aconnector->edid,
+-		(aconnector->edid->extensions + 1) * EDID_LENGTH,
+-		&init_params);
+-
+-	dc_sink->priv = aconnector;
+-	aconnector->dc_sink = dc_sink;
+-
+-	amdgpu_dm_add_sink_to_freesync_module(
+-			connector, aconnector->edid);
+-
+-	drm_mode_connector_update_edid_property(
+-					&aconnector->base, aconnector->edid);
+-}
+-
+ static int dm_dp_mst_get_modes(struct drm_connector *connector)
+ {
+ 	struct amdgpu_dm_connector *aconnector = to_amdgpu_dm_connector(connector);
+-- 
+2.15.0
 
 -- 
 Cheers,
