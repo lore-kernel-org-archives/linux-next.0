@@ -1,31 +1,41 @@
-From: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the tpmdd tree
-Date: Tue, 2 Jan 2018 17:33:20 +0200
-Message-ID: <20180102153320.ylz3vlbgvbinujib@linux.intel.com>
-References: <20171230103213.5b596192@canb.auug.org.au>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: linux-next: build failure after merge of the clk tree
+Date: Tue, 2 Jan 2018 11:58:30 -0800
+Message-ID: <20180102195830.GK7997@codeaurora.org>
+References: <20180102085134.198ea1f7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from smtp.codeaurora.org ([198.145.29.96]:46658 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751014AbeABT6c (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 2 Jan 2018 14:58:32 -0500
 Content-Disposition: inline
-In-Reply-To: <20171230103213.5b596192@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <20180102085134.198ea1f7@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-List-Id: linux-next.vger.kernel.org
+Cc: Mike Turquette <mturquette@baylibre.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Georgi Djakov <georgi.djakov@linaro.org>
 
-On Sat, Dec 30, 2017 at 10:32:13AM +1100, Stephen Rothwell wrote:
-> Hi Jarkko,
+On 01/02, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Commit
+> After merging the clk tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
->   c01386d6129f ("tpm: Update MAINTAINERS for Jason Gunthorpe")
+> ERROR: "clk_regmap_mux_div_ops" [drivers/clk/qcom/apcs-msm8916.ko] undefined!
+> ERROR: "__mux_div_set_src_div" [drivers/clk/qcom/apcs-msm8916.ko] undefined!
 > 
-> is missing a Signed-off-by from its committer.
+> Caused by commit
 > 
-> -- 
-> Cheers,
-> Stephen Rothwell
+>   8a77f61118a2 ("clk: qcom: Add APCS clock controller support")
+> 
+> I have used the clk tree from next-20171222 for today.
+> 
 
-Oops, sorry. It's now fixed.
+Thanks for the report. I've fixed it up and I'm going to roll
+more build coverage into my scripts now.
 
-/Jarkko
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
