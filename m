@@ -1,102 +1,46 @@
-From: Christoffer Dall <cdall@kernel.org>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with Linus' tree
-Date: Wed, 3 Jan 2018 10:50:57 +0100
-Message-ID: <CAEDV+gJDjHNtHSoefFpcTLt0H+B2na5hFTWyvdAkq8b3D_c=oQ@mail.gmail.com>
-References: <20180103133804.441cd1e1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the cifs tree
+Date: Thu, 4 Jan 2018 09:33:59 +1100
+Message-ID: <20180104093359.4e012f2f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:44447 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751862AbeACJu7 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 3 Jan 2018 04:50:59 -0500
-Received: by mail-oi0-f51.google.com with SMTP id g6so629044oib.11
-        for <linux-next@vger.kernel.org>; Wed, 03 Jan 2018 01:50:58 -0800 (PST)
-In-Reply-To: <20180103133804.441cd1e1@canb.auug.org.au>
+Received: from ozlabs.org ([103.22.144.67]:34187 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751014AbeACWeD (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 3 Jan 2018 17:34:03 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Marc Zyngier <marc.zyngier@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Long Li <longli@microsoft.com>, Pavel Shilovsky <pshilov@microsoft.com>, Ronnie Sahlberg <lsahlber@redhat.com>
 
-Thanks Stephen,
+Hi all,
 
-On Wed, Jan 3, 2018 at 3:38 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
->
->   virt/kvm/arm/arch_timer.c
->
-> between commit:
->
->   36e5cfd410ad ("KVM: arm/arm64: Properly handle arch-timer IRQs after vtimer_save_state")
->
-> from Linus' tree and commit:
->
->   70450a9fbe06 ("KVM: arm/arm64: Don't cache the timer IRQ level")
->
-> from the kvm-arm tree.
->
-> I fixed it up (I think - see below) and can carry the fix as necessary.
-> This is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+After merging the cifs tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-The resolution looks correct to me.
+In file included from include/linux/seqlock.h:36:0,
+                 from include/linux/time.h:6,
+                 from include/linux/stat.h:19,
+                 from include/linux/module.h:10,
+                 from fs/cifs/smbdirect.c:16:
+fs/cifs/smbdirect.c: In function 'smbd_recv_buf':
+include/linux/spinlock.h:260:3: warning: 'flags' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   _raw_spin_unlock_irqrestore(lock, flags); \
+   ^
+fs/cifs/smbdirect.c:1865:16: note: 'flags' was declared here
+  unsigned long flags;
+                ^
 
-cc'ing the KVM maintainers in case they want to merge kvm/master into
-kvm/next to avoid the conflict going up to Linus.
+Introduced by commit
 
-Thanks,
--Christoffer
+  ac69f66e54ca ("CIFS: SMBD: Implement function to receive data via RDMA receive")
 
->
-> diff --cc virt/kvm/arm/arch_timer.c
-> index cc29a8148328,cfcd0323deab..000000000000
-> --- a/virt/kvm/arm/arch_timer.c
-> +++ b/virt/kvm/arm/arch_timer.c
-> @@@ -92,27 -92,19 +92,26 @@@ static irqreturn_t kvm_arch_timer_handl
->   {
->         struct kvm_vcpu *vcpu = *(struct kvm_vcpu **)dev_id;
->         struct arch_timer_context *vtimer;
->  +      u32 cnt_ctl;
->
->  -      if (!vcpu) {
->  -              pr_warn_once("Spurious arch timer IRQ on non-VCPU thread\n");
->  -              return IRQ_NONE;
->  -      }
->  -      vtimer = vcpu_vtimer(vcpu);
->  +      /*
->  +       * We may see a timer interrupt after vcpu_put() has been called which
->  +       * sets the CPU's vcpu pointer to NULL, because even though the timer
->  +       * has been disabled in vtimer_save_state(), the hardware interrupt
->  +       * signal may not have been retired from the interrupt controller yet.
->  +       */
->  +      if (!vcpu)
->  +              return IRQ_HANDLED;
->
->  -      vtimer->cnt_ctl = read_sysreg_el0(cntv_ctl);
->  -      if (kvm_timer_irq_can_fire(vtimer))
->  +      vtimer = vcpu_vtimer(vcpu);
-> -       if (!vtimer->irq.level) {
-> -               cnt_ctl = read_sysreg_el0(cntv_ctl);
-> -               cnt_ctl &= ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT |
-> -                          ARCH_TIMER_CTRL_IT_MASK;
-> -               if (cnt_ctl == (ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT))
-> -                       kvm_timer_update_irq(vcpu, true, vtimer);
-> -       }
-> -
-> -       if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
-> ++      cnt_ctl = read_sysreg_el0(cntv_ctl);
-> ++      cnt_ctl &= ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT |
-> ++                 ARCH_TIMER_CTRL_IT_MASK;
-> ++      if (cnt_ctl == (ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT))
-> +               kvm_timer_update_irq(vcpu, true, vtimer);
-> +
-> +       if (static_branch_unlikely(&userspace_irqchip_in_use) &&
-> +           unlikely(!irqchip_in_kernel(vcpu->kvm)))
->                 kvm_vtimer_update_mask_user(vcpu);
->
->         return IRQ_HANDLED;
+OK, this is a false positive, but annoying.
+
+I am using gcc 5.2.0.
+
+-- 
+Cheers,
+Stephen Rothwell
