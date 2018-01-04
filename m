@@ -1,36 +1,34 @@
-From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the cifs tree
-Date: Thu, 4 Jan 2018 16:52:17 +1100
-Message-ID: <20180104165217.7737a0bc@canb.auug.org.au>
-References: <20180104093359.4e012f2f@canb.auug.org.au>
-        <CAH2r5mvgtC3Y_aLxk7-_R8E=ohR1LoFSkiqZZ6rhn9azXY05xw@mail.gmail.com>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the usb tree with the usb.current
+ tree
+Date: Thu, 4 Jan 2018 17:06:42 +0100
+Message-ID: <20180104160642.GA9238@kroah.com>
+References: <20171220130949.51553723@canb.auug.org.au>
+ <20171220093615.GA17337@kroah.com>
+ <20180103115642.4653ce2f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAH2r5mvgtC3Y_aLxk7-_R8E=ohR1LoFSkiqZZ6rhn9azXY05xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-cifs-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: CIFS <linux-cifs-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Long Li <longli-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Pavel Shilovsky <pshilov-0li6OtcxBFHby3iVrkZq2A@public.gmane.org>, Ronnie Sahlberg <lsahlber-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180103115642.4653ce2f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shuah Khan <shuahkh@osg.samsung.com>, Colin Ian King <colin.king@canonical.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Steve,
+On Wed, Jan 03, 2018 at 11:56:42AM +1100, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> On Wed, 20 Dec 2017 10:36:15 +0100 Greg KH <greg@kroah.com> wrote:
+> >
+> > Thanks for the fixup, I'll do it when these trees converge in a week or
+> > so.
+> 
+> Unfortunately, it looks like when you back merged Linus' tree (to get
+> commit 8272d099d05f) you lost the spelling fix in commit 81d8a8eb0a97.
 
-On Wed, 3 Jan 2018 16:44:59 -0600 Steve French <smfrench-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->
-> I don't see this with gcc 5.4
+Colin was good, he just resent it :)
 
-Good to know.
+thanks,
 
-> Harmless to initialize flags here ... even if unneeded ... so if it
-> makes your life easier I don't mind initializes to 0.  Let me know.
-> Wonder why it doesn't generate the warning on the various other places
-> in the fs that do the same thing?
-
-I might just take the hint to upgrade my cross compilers :-)  Thanks anyway.
-
-In the mean time, my scripts will automatically skip reporting this
-warning to me.
--- 
-Cheers,
-Stephen Rothwell
+greg k-h
