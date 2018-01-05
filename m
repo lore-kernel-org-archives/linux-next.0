@@ -1,56 +1,80 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the
- drm-intel-fixes tree
-Date: Fri, 5 Jan 2018 12:00:33 +1100
-Message-ID: <20180105120033.2446d6d2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 5 Jan 2018 15:59:28 +1100
+Message-ID: <20180105155928.120ec516@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50085 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751205AbeAEE7a (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 4 Jan 2018 23:59:30 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 
-SGkgYWxsLAoKVG9kYXkncyBsaW51eC1uZXh0IG1lcmdlIG9mIHRoZSBkcm0gdHJlZSBnb3QgYSBj
-b25mbGljdCBpbjoKCiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfY2RjbGsuYwoKYmV0d2Vl
-biBjb21taXQ6CgogIDMwNDE0ZjMwMTBhZiAoImRybS9pOTE1OiBBcHBseSBEaXNwbGF5IFdBICMx
-MTgzIG9uIHNrbCwga2JsLCBhbmQgY2ZsIikKCmZyb20gdGhlIGRybS1pbnRlbC1maXhlcyB0cmVl
-IGFuZCBjb21taXQ6CgogIDJhYTk3NDkxZGE4YSAoImRybS9pOTE1OiBVc2UgY2RjbGtfc3RhdGUt
-PnZvbHRhZ2Ugb24gU0tML0tCTC9DRkwiKQoKZnJvbSB0aGUgZHJtIHRyZWUuCgpJIGZpeGVkIGl0
-IHVwIChzZWUgYmVsb3cpIGFuZCBjYW4gY2FycnkgdGhlIGZpeCBhcyBuZWNlc3NhcnkuIFRoaXMK
-aXMgbm93IGZpeGVkIGFzIGZhciBhcyBsaW51eC1uZXh0IGlzIGNvbmNlcm5lZCwgYnV0IGFueSBu
-b24gdHJpdmlhbApjb25mbGljdHMgc2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFt
-IG1haW50YWluZXIgd2hlbiB5b3VyIHRyZWUKaXMgc3VibWl0dGVkIGZvciBtZXJnaW5nLiAgWW91
-IG1heSBhbHNvIHdhbnQgdG8gY29uc2lkZXIgY29vcGVyYXRpbmcKd2l0aCB0aGUgbWFpbnRhaW5l
-ciBvZiB0aGUgY29uZmxpY3RpbmcgdHJlZSB0byBtaW5pbWlzZSBhbnkgcGFydGljdWxhcmx5CmNv
-bXBsZXggY29uZmxpY3RzLgoKLS0gCkNoZWVycywKU3RlcGhlbiBSb3Rod2VsbAoKZGlmZiAtLWNj
-IGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2NkY2xrLmMKaW5kZXggNjBjZjRlNTgzODlhLDlj
-NWNlYjk4ZDQ4Zi4uMDAwMDAwMDAwMDAwCi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVs
-X2NkY2xrLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfY2RjbGsuYwpAQEAgLTkx
-NywxMSAtOTk0LDkgKzk4OCw5IEBAQCBzdGF0aWMgdm9pZCBza2xfc2V0X2NkY2xrKHN0cnVjdCBk
-cm1faTkKICB7CiAgCWludCBjZGNsayA9IGNkY2xrX3N0YXRlLT5jZGNsazsKICAJaW50IHZjbyA9
-IGNkY2xrX3N0YXRlLT52Y287Ci0gCXUzMiBmcmVxX3NlbGVjdCwgcGN1X2FjaywgY2RjbGtfY3Rs
-OwogLQl1MzIgZnJlcV9zZWxlY3Q7CisrCXUzMiBmcmVxX3NlbGVjdCwgY2RjbGtfY3RsOwogIAlp
-bnQgcmV0OwogIAotIAlXQVJOX09OKChjZGNsayA9PSAyNDAwMCkgIT0gKHZjbyA9PSAwKSk7Ci0g
-CiAgCW11dGV4X2xvY2soJmRldl9wcml2LT5wY3VfbG9jayk7CiAgCXJldCA9IHNrbF9wY29kZV9y
-ZXF1ZXN0KGRldl9wcml2LCBTS0xfUENPREVfQ0RDTEtfQ09OVFJPTCwKICAJCQkJU0tMX0NEQ0xL
-X1BSRVBBUkVfRk9SX0NIQU5HRSwKQEBAIC05MzQsOCAtMTAwOSwxNiArMTAwMywxNiBAQEAKICAJ
-CXJldHVybjsKICAJfQogIAogLQkvKiBzZXQgQ0RDTEtfQ1RMICovCiArCS8qIENob29zZSBmcmVx
-dWVuY3kgZm9yIHRoaXMgY2RjbGsgKi8KICAJc3dpdGNoIChjZGNsaykgeworIAlkZWZhdWx0Ogor
-IAkJV0FSTl9PTihjZGNsayAhPSBkZXZfcHJpdi0+Y2RjbGsuaHcucmVmKTsKKyAJCVdBUk5fT04o
-dmNvICE9IDApOworIAkJLyogZmFsbCB0aHJvdWdoICovCisgCWNhc2UgMzA4NTcxOgorIAljYXNl
-IDMzNzUwMDoKKyAJCWZyZXFfc2VsZWN0ID0gQ0RDTEtfRlJFUV8zMzdfMzA4OworIAkJYnJlYWs7
-CiAgCWNhc2UgNDUwMDAwOgogIAljYXNlIDQzMjAwMDoKICAJCWZyZXFfc2VsZWN0ID0gQ0RDTEtf
-RlJFUV80NTBfNDMyOwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1n
-ZngK
+Hi Andrew,
+
+After merging the akpm-current tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+mm/migrate.c: In function 'migrate_misplaced_page':
+mm/migrate.c:1933:46: error: passing argument 2 of 'migrate_pages' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  nr_remaining = migrate_pages(&migratepages, alloc_misplaced_dst_page,
+                                              ^
+mm/migrate.c:1358:5: note: expected 'struct page * (*)(struct page *, long unsigned int)' but argument is of type 'struct page * (*)(struct page *, long unsigned int,  int **)'
+ int migrate_pages(struct list_head *from, new_page_t get_new_page,
+     ^
+
+Caused by commit
+
+  d6f08a86f78a ("mm, migrate: remove reason argument from new_page_t")
+
+I applied the following fix patch for today (the mm/memory-failure.c
+error turned up after fixing the above):
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 5 Jan 2018 15:46:02 +1100
+Subject: [PATCH] mm, migrate: remove reason argument from new_page_t fix
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/memory-failure.c | 2 +-
+ mm/migrate.c        | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 4acdf393a801..d530ac1db680 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1483,7 +1483,7 @@ int unpoison_memory(unsigned long pfn)
+ }
+ EXPORT_SYMBOL(unpoison_memory);
+ 
+-static struct page *new_page(struct page *p, unsigned long private, int **x)
++static struct page *new_page(struct page *p, unsigned long private)
+ {
+ 	int nid = page_to_nid(p);
+ 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 3cb0f5955b41..5d0dc7b85f90 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1797,8 +1797,7 @@ static bool migrate_balanced_pgdat(struct pglist_data *pgdat,
+ }
+ 
+ static struct page *alloc_misplaced_dst_page(struct page *page,
+-					   unsigned long data,
+-					   int **result)
++					   unsigned long data)
+ {
+ 	int nid = (int) data;
+ 	struct page *newpage;
+-- 
+2.15.0
+
+-- 
+Cheers,
+Stephen Rothwell
