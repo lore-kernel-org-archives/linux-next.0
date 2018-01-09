@@ -1,52 +1,79 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Date: Tue, 09 Jan 2018 09:12:49 +1100
-Message-ID: <87tvvw80f2.fsf@concordia.ellerman.id.au>
-References: <5a4ec4bc.u5I/HzCSE6TLVn02%akpm@linux-foundation.org> <7e35e16a-d71c-2ec8-03ed-b07c2af562f8@linux.vnet.ibm.com> <20180105084631.GG2801@dhcp22.suse.cz> <e81dce2b-5d47-b7d3-efbf-27bc171ba4ab@linux.vnet.ibm.com> <20180107090229.GB24862@dhcp22.suse.cz> <87mv1phptq.fsf@concordia.ellerman.id.au> <7a44f42e-39d0-1c4b-19e0-7df1b0842c18@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the bpf tree
+Date: Tue, 9 Jan 2018 11:21:25 +1100
+Message-ID: <20180109112125.78277253@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <7a44f42e-39d0-1c4b-19e0-7df1b0842c18@linux.vnet.ibm.com>
-Sender: owner-linux-mm@kvack.org
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>, Michal Hocko <mhocko@kernel.org>Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:45685 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753850AbeAIAV2 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 8 Jan 2018 19:21:28 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Anshuman Khandual <khandual@linux.vnet.ibm.com> writes:
+Hi all,
 
-> On 01/07/2018 04:56 PM, Michael Ellerman wrote:
->> Michal Hocko <mhocko@kernel.org> writes:
->> 
->>> On Sun 07-01-18 12:19:32, Anshuman Khandual wrote:
->>>> On 01/05/2018 02:16 PM, Michal Hocko wrote:
->>> [...]
->>>>> Could you give us more information about the failure please. Debugging
->>>>> patch from http://lkml.kernel.org/r/20171218091302.GL16951@dhcp22.suse.cz
->>>>> should help to see what is the clashing VMA.
->>>> Seems like its re-requesting the same mapping again.
->>> It always seems to be the same mapping which is a bit strange as we
->>> have multiple binaries here. Are these binaries any special? Does this
->>> happen to all bianries (except for init which has obviously started
->>> successfully)? Could you add an additional debugging (at the do_mmap
->>> layer) to see who is requesting the mapping for the first time?
->>>
->>>> [   23.423642] 9148 (sed): Uhuuh, elf segment at 0000000010030000 requested but the memory is mapped already
->>>> [   23.423706] requested [10030000, 10040000] mapped [10030000, 10040000] 100073 anon
->>> I also find it a bit unexpected that this is an anonymous mapping
->>> because the elf loader should always map a file backed one.
->> Anshuman what machine is this on, and what distro and toolchain is it running?
->> 
->> I don't see this on any of my machines, so I wonder if this is
->> toolchain/distro specific.
->
-> POWER9, RHEL 7.4, gcc (GCC) 4.8.5 20150623, GNU Make 3.82 etc.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-So what does readelf -a of /bin/sed look like?
+  tools/testing/selftests/bpf/test_align.c
 
-cheers
+between commit:
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+  2b36047e7889 ("selftests/bpf: fix test_align")
+
+from the bpf tree and commit:
+
+  6a28b446b7d2 ("selftests/bpf: adjust test_align expected output")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/bpf/test_align.c
+index 471bbbdb94db,fe916d29e166..000000000000
+--- a/tools/testing/selftests/bpf/test_align.c
++++ b/tools/testing/selftests/bpf/test_align.c
+@@@ -473,8 -473,28 +473,8 @@@ static struct bpf_align_test tests[] = 
+  		.prog_type = BPF_PROG_TYPE_SCHED_CLS,
+  		.result = REJECT,
+  		.matches = {
+- 			{4, "R5=pkt(id=0,off=0,r=0,imm=0)"},
++ 			{4, "R5_w=pkt(id=0,off=0,r=0,imm=0)"},
+ -			/* ptr & 0x40 == either 0 or 0x40 */
+ -			{5, "R5_w=inv(id=0,umax_value=64,var_off=(0x0; 0x40))"},
+ -			/* ptr << 2 == unknown, (4n) */
+ -			{7, "R5_w=inv(id=0,smax_value=9223372036854775804,umax_value=18446744073709551612,var_off=(0x0; 0xfffffffffffffffc))"},
+ -			/* (4n) + 14 == (4n+2).  We blow our bounds, because
+ -			 * the add could overflow.
+ -			 */
+ -			{8, "R5=inv(id=0,var_off=(0x2; 0xfffffffffffffffc))"},
+ -			/* Checked s>=0 */
+ -			{10, "R5=inv(id=0,umin_value=2,umax_value=9223372036854775806,var_off=(0x2; 0x7ffffffffffffffc))"},
+ -			/* packet pointer + nonnegative (4n+2) */
+ -			{12, "R6_w=pkt(id=1,off=0,r=0,umin_value=2,umax_value=9223372036854775806,var_off=(0x2; 0x7ffffffffffffffc))"},
+ -			{14, "R4=pkt(id=1,off=4,r=0,umin_value=2,umax_value=9223372036854775806,var_off=(0x2; 0x7ffffffffffffffc))"},
+ -			/* NET_IP_ALIGN + (4n+2) == (4n), alignment is fine.
+ -			 * We checked the bounds, but it might have been able
+ -			 * to overflow if the packet pointer started in the
+ -			 * upper half of the address space.
+ -			 * So we did not get a 'range' on R6, and the access
+ -			 * attempt will fail.
+ -			 */
+ -			{16, "R6=pkt(id=1,off=0,r=0,umin_value=2,umax_value=9223372036854775806,var_off=(0x2; 0x7ffffffffffffffc))"},
+ +			/* R5 bitwise operator &= on pointer prohibited */
+  		}
+  	},
+  	{
