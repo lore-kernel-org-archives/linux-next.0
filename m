@@ -1,55 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Wed, 10 Jan 2018 10:34:24 +1100
-Message-ID: <20180110103424.5312334f@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Wed, 10 Jan 2018 15:06:14 +1100
+Message-ID: <20180110150614.3fb5d9f1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jon Maloy <jon.maloy@ericsson.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:59071 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965124AbeAJEGR (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 9 Jan 2018 23:06:17 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Wang <jasowang@redhat.com>
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the net-next tree, today's linux-next build (sparc64
+defconfig) failed like this:
 
-  net/tipc/socket.c
+net/socket.o: In function `tun_xdp_to_ptr':
+(.text+0x3180): multiple definition of `tun_xdp_to_ptr'
+fs/compat_ioctl.o:compat_ioctl.c:(.text+0x0): first defined here
+net/socket.o: In function `tun_ptr_to_xdp':
+(.text+0x31a0): multiple definition of `tun_ptr_to_xdp'
+fs/compat_ioctl.o:compat_ioctl.c:(.text+0x20): first defined here
 
-between commit:
+Caused by commit
 
-  ade994f4f6c8 ("net: annotate ->poll() instances")
+  fc72d1d54dd9 ("tuntap: XDP transmission")
 
-from the vfs tree and commit:
+I applied the following fix for today:
 
-  eb929a91b213 ("tipc: improve poll() for group member socket")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 10 Jan 2018 15:01:41 +1100
+Subject: [PATCH] tuntap: fix for "tuntap: XDP transmission"
 
-from the net-next tree.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/if_tun.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/include/linux/if_tun.h b/include/linux/if_tun.h
+index 08e66827ad8e..c5b0a75a7812 100644
+--- a/include/linux/if_tun.h
++++ b/include/linux/if_tun.h
+@@ -42,11 +42,11 @@ static inline bool tun_is_xdp_buff(void *ptr)
+ {
+ 	return false;
+ }
+-void *tun_xdp_to_ptr(void *ptr)
++static inline void *tun_xdp_to_ptr(void *ptr)
+ {
+ 	return NULL;
+ }
+-void *tun_ptr_to_xdp(void *ptr)
++static inline void *tun_ptr_to_xdp(void *ptr)
+ {
+ 	return NULL;
+ }
+-- 
+2.15.1
+
+
+
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc net/tipc/socket.c
-index 2aa46e8cd8fe,1f236271766c..000000000000
---- a/net/tipc/socket.c
-+++ b/net/tipc/socket.c
-@@@ -715,8 -715,8 +715,8 @@@ static __poll_t tipc_poll(struct file *
-  {
-  	struct sock *sk = sock->sk;
-  	struct tipc_sock *tsk = tipc_sk(sk);
-- 	struct tipc_group *grp = tsk->group;
-+ 	struct tipc_group *grp;
- -	u32 revents = 0;
- +	__poll_t revents = 0;
-  
-  	sock_poll_wait(file, sk_sleep(sk), wait);
-  
