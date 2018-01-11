@@ -1,36 +1,43 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the staging tree
-Date: Thu, 11 Jan 2018 18:50:30 +0100
-Message-ID: <20180111175030.GA27093@kroah.com>
-References: <20180110071830.6c7ccd1f@canb.auug.org.au>
+From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: linux-next: Tree for Jan 11 (usb/mtu3/)
+Date: Thu, 11 Jan 2018 10:37:51 -0800
+Message-ID: <59531832-fe51-d57a-fcaf-8019eb1aaba7@infradead.org>
+References: <20180111171816.63e649fe@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out3-smtp.messagingengine.com ([66.111.4.27]:34689 "EHLO
-        out3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934484AbeAKRub (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Thu, 11 Jan 2018 12:50:31 -0500
-Content-Disposition: inline
-In-Reply-To: <20180110071830.6c7ccd1f@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180111171816.63e649fe-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 10, 2018 at 07:18:30AM +1100, Stephen Rothwell wrote:
-> Hi Greg,
+On 01/10/18 22:18, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Commits
+> Changes since 20180110:
 > 
->   97c6166001ef ("Staging: rtlwifi: Remove unused variable and the code")
->   357f862bd214 ("staging: comedi: adv_pci1760: fix typo in comments")
->   23cb746b5e9d ("staging: rtl8192u: Replace mdelay with msleep in rtl8192_usb_probe")
->   beac4303532f ("Staging: vt6656: Fix unnecessary 'out of memory' message")
-> 
-> are missing a Signed-off-by from their committer.
 
-Crap, this has been a long month, sorry about that.  I'll go work on
-getting that git hook in place to prevent this from happening again...
+on i386 or x86_64:
 
-greg k-h
+../drivers/usb/mtu3/mtu3_plat.c: In function 'mtu3_suspend':
+../drivers/usb/mtu3/mtu3_plat.c:462:2: error: implicit declaration of function 'ssusb_wakeup_set' [-Werror=implicit-function-declaration]
+  ssusb_wakeup_set(ssusb, true);
+
+when:
+CONFIG_USB_MTU3=m
+# CONFIG_USB_MTU3_HOST is not set
+CONFIG_USB_MTU3_GADGET=y
+# CONFIG_USB_MTU3_DUAL_ROLE is not set
+# CONFIG_USB_MTU3_DEBUG is not set
+
+
+
+-- 
+~Randy
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
