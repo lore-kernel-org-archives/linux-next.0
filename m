@@ -1,43 +1,46 @@
-From: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: linux-next: Tree for Jan 11 (usb/mtu3/)
-Date: Thu, 11 Jan 2018 10:37:51 -0800
-Message-ID: <59531832-fe51-d57a-fcaf-8019eb1aaba7@infradead.org>
-References: <20180111171816.63e649fe@canb.auug.org.au>
+From: Kees Cook <keescook@google.com>
+Subject: Re: linux-next: manual merge of the kspp tree with the net tree
+Date: Thu, 11 Jan 2018 12:52:07 -0800
+Message-ID: <CAGXu5j+QLEXhEap=emvz7kB7Z4gqucy_yy2RVfu1xrKq_hxx4A@mail.gmail.com>
+References: <20180111154031.577c213b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180111171816.63e649fe-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Chunfeng Yun <chunfeng.yun-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180111154031.577c213b@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Windsor <dave@nullcore.net>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 01/10/18 22:18, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180110:
-> 
+On Wed, Jan 10, 2018 at 8:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Kees,
+>
+> Today's linux-next merge of the kspp tree got a conflict in:
+>
+>   net/sctp/socket.c
+>
+> between commit:
+>
+>   c76f97c99ae6 ("sctp: make use of pre-calculated len")
+>
+> from the net tree and commit:
+>
+>   3511d716f5a8 ("sctp: Copy struct sctp_sock.autoclose to userspace using put_user()")
+>
+> from the kspp tree.
+>
+> I fixed it up (I just used the latter version) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-on i386 or x86_64:
+Thanks! And yes, confirmed, the kspp tree version should be used to
+resolve this conflict.
 
-../drivers/usb/mtu3/mtu3_plat.c: In function 'mtu3_suspend':
-../drivers/usb/mtu3/mtu3_plat.c:462:2: error: implicit declaration of function 'ssusb_wakeup_set' [-Werror=implicit-function-declaration]
-  ssusb_wakeup_set(ssusb, true);
-
-when:
-CONFIG_USB_MTU3=m
-# CONFIG_USB_MTU3_HOST is not set
-CONFIG_USB_MTU3_GADGET=y
-# CONFIG_USB_MTU3_DUAL_ROLE is not set
-# CONFIG_USB_MTU3_DEBUG is not set
-
-
+-Kees
 
 -- 
-~Randy
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kees Cook
+Pixel Security
