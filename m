@@ -1,36 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Fri, 12 Jan 2018 08:23:59 +1100
-Message-ID: <20180112082359.3d8c4c8d@canb.auug.org.au>
+Subject: linux-next: manual merge of the pm tree with the i2c tree
+Date: Fri, 12 Jan 2018 10:27:29 +1100
+Message-ID: <20180112102729.1868451c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56241 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:36837 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752634AbeAKVYD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 11 Jan 2018 16:24:03 -0500
+        id S1753715AbeAKX1c (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 11 Jan 2018 18:27:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, Will Deacon <will.deacon@arm.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Phil Reid <preid@electromag.com.au>
 
-Hi Catalin,
+Hi Rafael,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Today's linux-next merge of the pm tree got a conflict in:
 
-  arch/arm64/kernel/cpufeature.c
+  drivers/i2c/busses/i2c-designware-platdrv.c
 
 between commit:
 
-  3fab39997a98 ("arm64/sve: Report SVE to userspace via CPUID only if supported")
+  0326f9f801b2 ("i2c: designware: rename i2c_dw_plat_prepare_clk to i2c_dw_prepare_clk")
 
-from Linus' tree and commits:
+from the i2c tree and commit:
 
-  179a56f6f9fb ("arm64: Take into account ID_AA64PFR0_EL1.CSV3")
-  0f15adbb2861 ("arm64: Add skeleton to harden the branch predictor against aliasing attacks")
+  02e45646d53b ("PM: i2c-designware-platdrv: Optimize power management")
 
-from the arm64 tree.
+from the pm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,19 +42,46 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/kernel/cpufeature.c
-index a73a5928f09b,da6722db50b0..000000000000
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@@ -145,8 -146,9 +146,10 @@@ static const struct arm64_ftr_bits ftr_
-  };
+diff --cc drivers/i2c/busses/i2c-designware-platdrv.c
+index 6e0fd94faba1,153b947702c5..000000000000
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@@ -430,16 -471,9 +448,9 @@@ static int dw_i2c_plat_suspend(struct d
+  {
+  	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
   
-  static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
-+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
-+ 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
- -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
- +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
- +				   FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
-  	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_GIC_SHIFT, 4, 0),
-  	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
-  	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+- 	if (i_dev->suspended) {
+- 		i_dev->skip_resume = true;
+- 		return 0;
+- 	}
+- 
+  	i_dev->disable(i_dev);
+ -	i2c_dw_plat_prepare_clk(i_dev, false);
+ +	i2c_dw_prepare_clk(i_dev, false);
+  
+- 	i_dev->suspended = true;
+- 
+  	return 0;
+  }
+  
+@@@ -447,19 -481,9 +458,9 @@@ static int dw_i2c_plat_resume(struct de
+  {
+  	struct dw_i2c_dev *i_dev = dev_get_drvdata(dev);
+  
+- 	if (!i_dev->suspended)
+- 		return 0;
+- 
+- 	if (i_dev->skip_resume) {
+- 		i_dev->skip_resume = false;
+- 		return 0;
+- 	}
+- 
+ -	i2c_dw_plat_prepare_clk(i_dev, true);
+ +	i2c_dw_prepare_clk(i_dev, true);
+  	i_dev->init(i_dev);
+  
+- 	i_dev->suspended = false;
+- 
+  	return 0;
+  }
+  
