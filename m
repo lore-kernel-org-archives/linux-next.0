@@ -1,37 +1,37 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: linux-next: manual merge of the arm64 tree with Linus' tree
-Date: Fri, 12 Jan 2018 12:25:15 +0000
-Message-ID: <20180112122515.yrgewjb77epvl6zk@armageddon.cambridge.arm.com>
-References: <20180112082359.3d8c4c8d@canb.auug.org.au>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: linux-next: manual merge of the pm tree with the i2c tree
+Date: Fri, 12 Jan 2018 13:44:21 +0100
+Message-ID: <1560882.YLD57UpMaU@aspire.rjw.lan>
+References: <20180112102729.1868451c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180112082359.3d8c4c8d@canb.auug.org.au>
+In-Reply-To: <20180112102729.1868451c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Phil Reid <preid@electromag.com.au>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jan 12, 2018 at 08:23:59AM +1100, Stephen Rothwell wrote:
-> diff --cc arch/arm64/kernel/cpufeature.c
-> index a73a5928f09b,da6722db50b0..000000000000
-> --- a/arch/arm64/kernel/cpufeature.c
-> +++ b/arch/arm64/kernel/cpufeature.c
-> @@@ -145,8 -146,9 +146,10 @@@ static const struct arm64_ftr_bits ftr_
->   };
->   
->   static const struct arm64_ftr_bits ftr_id_aa64pfr0[] = {
-> + 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV3_SHIFT, 4, 0),
-> + 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64PFR0_CSV2_SHIFT, 4, 0),
->  -	ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
->  +	ARM64_FTR_BITS(FTR_VISIBLE_IF_IS_ENABLED(CONFIG_ARM64_SVE),
->  +				   FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_SVE_SHIFT, 4, 0),
->   	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_GIC_SHIFT, 4, 0),
->   	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_ASIMD_SHIFT, 4, ID_AA64PFR0_ASIMD_NI),
->   	S_ARM64_FTR_BITS(FTR_VISIBLE, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64PFR0_FP_SHIFT, 4, ID_AA64PFR0_FP_NI),
+On Friday, January 12, 2018 12:27:29 AM CET Stephen Rothwell wrote:
+> Hi Rafael,
+> 
+> Today's linux-next merge of the pm tree got a conflict in:
+> 
+>   drivers/i2c/busses/i2c-designware-platdrv.c
+> 
+> between commit:
+> 
+>   0326f9f801b2 ("i2c: designware: rename i2c_dw_plat_prepare_clk to i2c_dw_prepare_clk")
+> 
+> from the i2c tree and commit:
+> 
+>   02e45646d53b ("PM: i2c-designware-platdrv: Optimize power management")
+> 
+> from the pm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-It looks fine. Thanks.
+The fix looks good to me.
 
--- 
-Catalin
+Thanks!
