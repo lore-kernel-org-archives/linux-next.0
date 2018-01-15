@@ -1,52 +1,76 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' and the
- tip trees
-Date: Mon, 15 Jan 2018 11:28:19 +0100 (CET)
-Message-ID: <alpine.DEB.2.20.1801151125040.1810@nanos>
-References: <20180115133459.27b8f7f1@canb.auug.org.au>
+From: Leon Romanovsky <leon@kernel.org>
+Subject: Re: linux-next: manual merge of the rdma tree with the net tree
+Date: Mon, 15 Jan 2018 14:24:11 +0200
+Message-ID: <20180115122411.GA15760@mtr-leonro.local>
+References: <20180115115321.1d1abc11@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RUh7Gb6wQL2PrpWP"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180115133459.27b8f7f1@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180115115321.1d1abc11@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@alien8.de>
+Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eran Ben Elisha <eranbe@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Eugenia Emantayev <eugenia@mellanox.com>, Mark Bloch <markb@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 15 Jan 2018, Stephen Rothwell wrote:
+
+--RUh7Gb6wQL2PrpWP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jan 15, 2018 at 11:53:21AM +1100, Stephen Rothwell wrote:
 > Hi all,
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@@ -202,11 -201,9 +202,11 @@@
->   #define X86_FEATURE_HW_PSTATE		( 7*32+ 8) /* AMD HW-PState */
->   #define X86_FEATURE_PROC_FEEDBACK	( 7*32+ 9) /* AMD ProcFeedbackInterface */
->   #define X86_FEATURE_SME			( 7*32+10) /* AMD Secure Memory Encryption */
->  -#define X86_FEATURE_SEV			( 7*32+11) /* AMD Secure Encrypted Virtualization */
->  -
->  +#define X86_FEATURE_PTI			( 7*32+11) /* Kernel Page Table Isolation enabled */
->  +#define X86_FEATURE_RETPOLINE		( 7*32+12) /* Generic Retpoline mitigation for Spectre variant 2 */
->  +#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* AMD Retpoline mitigation for Spectre variant 2 */
->   #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
-> - #define X86_FEATURE_INTEL_PT		( 7*32+15) /* Intel Processor Trace */
+>
+> Today's linux-next merge of the rdma tree got a conflict in:
+>
+>   drivers/infiniband/hw/mlx5/main.c
+>
+> between commits:
+>
+>   8978cc921fc7 ("{net,ib}/mlx5: Don't disable local loopback multicast traffic when needed")
+>   72f36be06138 ("net/mlx5: Fix mlx5_get_uars_page to return error code")
+>
+> from the net tree and commits:
+>
+>   16c1975f1032 ("IB/mlx5: Create profile infrastructure to add and remove stages")
+>   c8b8992446a9 ("IB/mlx5: Move loopback initialization to the corresponding stage")
+>
+> from the rdma tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
 
-Where is that patch which moves INTEL_PT ?
+Thanks, Stephen.
+It looks right to me.
 
-commit 632218d8dee296c8b397c13b7b3b4be090a1c043
-Author: Paolo Bonzini <pbonzini@redhat.com>
-Date:   Mon Dec 11 04:30:50 2017 +0800
+--RUh7Gb6wQL2PrpWP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-    x86: cpufeature: move processor tracing out of scattered features
-    
-    Processor tracing is already enumerated in word 9 (CPUID[7,0].EBX),
-    so do not duplicate it in the scattered features word.
-    
-    Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+-----BEGIN PGP SIGNATURE-----
 
-Can KVM folks please stop doing random changes to the cpufeatures code
-without talking to x86 maintainers and Borislav?
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlpcnWsACgkQ5GN7iDZy
+WKf5Lg/9Hxtq8ei4jBInbhSAP9bXsiikHHBFf14y8Wp9BfbBzye3J/klvJUAw2LV
+QmxLYufVJUng5z9r0RLmywPTpuSjJpYl4X0aAAJ7GdAl0z6BOIA/5DM3eBzS++Z2
+jUmjeDeCRP3hDJbPFT/t99aQa8xJNg570koKLswFUf4gaaexptUmcDV1FjxJtcEM
+6qK8tC6xWIgyBOTihJPA1YAgEoJrfASEhp9IbjpUhVCnaG/49dbO2NPzWGr56Oe9
+3pjv6bIUJlDcj045zCtbSyaSRRckcjOo+OeH8hr5ZGlPbRsT5OfgX5EcFm1ZZWcR
+zp+zUYUPf6owoF+eDjj6qVccCNhyy2LAxIRaemGl6vk1RDTbVXZ2Aw7xScVFayuB
+wNYmhhw0vjF7URZzwWqt/GgawfRJYvW4Filqf8DBc5MPr+VasL5c5GL5gmZQRoIh
+YxQSbsonl0Cy8tlipT04iUSpuekO3Uhsj3Wmkzcj1grmt+TDsmDVki5Vp7po+eT6
+yWlVvUU2/Njay8pHLsH1s0ednYzwEk3NcGSoQiXIJk4uWnkMb0hWI4PoHa4fKsPk
+W0zQEpZGwgjMvz9xpBLjBOxdLU9but1wbgBftM1c7HVP0cHi+TUzI3YaeoXL5dX1
+0SxPBGhu7c0GssukXNEPc0nqZo4S1ugUaacsexpLb39QoDJzHi4=
+=sbJ4
+-----END PGP SIGNATURE-----
 
-This wants to go through TIP or at least reviewed and acked.
-
-Thanks,
-
-	tglx
+--RUh7Gb6wQL2PrpWP--
