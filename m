@@ -1,52 +1,60 @@
-From: Ming Lei <ming.lei@redhat.com>
-Subject: Re: 4.16 genirq change prevents HP servers from booting [was: Re:
- linux-next: Signed-off-by missing for commit in the device-mapper tree]
-Date: Mon, 15 Jan 2018 23:33:01 +0800
-Message-ID: <20180115153300.GB13816@ming.t460p>
-References: <20180116002736.4d464214@canb.auug.org.au>
- <20180115152501.GA24239@redhat.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' and the
+ tip trees
+Date: Mon, 15 Jan 2018 19:36:54 +0100 (CET)
+Message-ID: <alpine.DEB.2.20.1801151933470.2143@nanos>
+References: <20180115133459.27b8f7f1@canb.auug.org.au> <alpine.DEB.2.20.1801151125040.1810@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-block-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180115152501.GA24239@redhat.com>
-Sender: linux-block-owner@vger.kernel.org
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Alasdair G Kergon <agk@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laurence Oberman <loberman@redhat.com>, axboe@kernel.dk, linux-block@vger.kernel.org, hch@lst.de
+Content-Type: text/plain; charset=US-ASCII
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.20.1801151125040.1810@nanos>
+Sender: kvm-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, =?ISO-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@alien8.de>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jan 15, 2018 at 10:25:01AM -0500, Mike Snitzer wrote:
-> On Mon, Jan 15 2018 at  8:27am -0500,
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
+On Mon, 15 Jan 2018, Thomas Gleixner wrote:
+> On Mon, 15 Jan 2018, Stephen Rothwell wrote:
 > > Hi all,
-> > 
-> > Commit
-> > 
-> >   34e1467da673 ("Revert "genirq/affinity: assign vectors to all possible CPUs"")
-> > 
-> > is missing a Signed-off-by from its author and committer.
-> > 
-> > Reverts are commits as well.
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@@ -202,11 -201,9 +202,11 @@@
+> >   #define X86_FEATURE_HW_PSTATE		( 7*32+ 8) /* AMD HW-PState */
+> >   #define X86_FEATURE_PROC_FEEDBACK	( 7*32+ 9) /* AMD ProcFeedbackInterface */
+> >   #define X86_FEATURE_SME			( 7*32+10) /* AMD Secure Memory Encryption */
+> >  -#define X86_FEATURE_SEV			( 7*32+11) /* AMD Secure Encrypted Virtualization */
+> >  -
+> >  +#define X86_FEATURE_PTI			( 7*32+11) /* Kernel Page Table Isolation enabled */
+> >  +#define X86_FEATURE_RETPOLINE		( 7*32+12) /* Generic Retpoline mitigation for Spectre variant 2 */
+> >  +#define X86_FEATURE_RETPOLINE_AMD	( 7*32+13) /* AMD Retpoline mitigation for Spectre variant 2 */
+> >   #define X86_FEATURE_INTEL_PPIN		( 7*32+14) /* Intel Processor Inventory Number */
+> > - #define X86_FEATURE_INTEL_PT		( 7*32+15) /* Intel Processor Trace */
 > 
-> Right, I'm aware.  I staged the tree that made some HP servers finally
-> work with the latest linux-block 4.16 changes.  Without thinking about
-> the broader implications.  Anyway, I'll drop the revert from
-> linux-dm.git's 'for-next'.
+> Where is that patch which moves INTEL_PT ?
 > 
-> Because I'm confident others will hunt down the irq issues.
+> commit 632218d8dee296c8b397c13b7b3b4be090a1c043
+> Author: Paolo Bonzini <pbonzini@redhat.com>
+> Date:   Mon Dec 11 04:30:50 2017 +0800
 > 
-> I think Ming was looking to grab the queue mapping info and CPU related
-> info from the affected server.
+>     x86: cpufeature: move processor tracing out of scattered features
+>     
+>     Processor tracing is already enumerated in word 9 (CPUID[7,0].EBX),
+>     so do not duplicate it in the scattered features word.
+>     
+>     Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> 
+> Can KVM folks please stop doing random changes to the cpufeatures code
+> without talking to x86 maintainers and Borislav?
+> 
+> This wants to go through TIP or at least reviewed and acked.
 
-Hi Mike,
+In fact it needs to go through TIP. We spent a lot of effort to make the
+backporting of all this mess simple and this is just shooting a hole in it.
 
-I have cooked a fix today, please see the following link:
+Please drop that change and we sort something out how it can be done proper.
 
-	https://marc.info/?l=linux-kernel&m=151601867018444&w=2
+Dammit, we have a well established process for stuff like that.
 
-This issue is clear, and has been described in above link and the
-patch. If no objection, I will prepare a formal version.
+Thanks,
 
--- 
-Ming
+	tglx
