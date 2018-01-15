@@ -1,58 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the printk tree with Linus' tree
-Date: Tue, 16 Jan 2018 09:23:19 +1100
-Message-ID: <20180116092319.1575cac0@canb.auug.org.au>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' and the tip
+ trees
+Date: Mon, 15 Jan 2018 23:45:50 +0100
+Message-ID: <b4a6531c-3c5a-5ef4-ce57-48dfcec62f21@redhat.com>
+References: <20180115133459.27b8f7f1@canb.auug.org.au>
+ <alpine.DEB.2.20.1801151125040.1810@nanos>
+ <alpine.DEB.2.20.1801151933470.2143@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40419 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750732AbeAOWXV (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 15 Jan 2018 17:23:21 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.20.1801151933470.2143@nanos>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@alien8.de>
+List-Id: linux-next.vger.kernel.org
 
-Hi Petr,
+On 15/01/2018 19:36, Thomas Gleixner wrote:
+>> Can KVM folks please stop doing random changes to the cpufeatures code
+>> without talking to x86 maintainers and Borislav?
+>>
+>> This wants to go through TIP or at least reviewed and acked.
+> In fact it needs to go through TIP. We spent a lot of effort to make the
+> backporting of all this mess simple and this is just shooting a hole in it.
 
-Today's linux-next merge of the printk tree got a conflict in:
+I do understand why you want this to go through TIP, but I'm not sure
+why a change to Processor Tracing is related to PTI or retpolines.  I'm
+also not sure why it is a problem for backportability, since we always
+try to send pull requests after TIP.  Is it because 7*32+15 will be free
+in 4.16 but not earlier?
 
-  scripts/checkpatch.pl
+FWIW, no changes for IBRS or RSB stuffing are going through the KVM tree
+before the bare metal parts are there.  I posted those mostly for people
+(mostly the cloud providers that had been left in the dark) who wanted
+something to apply quickly and didn't care about bare metal protection
+because they could assume that any attack path passed through a vmexit.
 
-between commit:
+Paolo
 
-  7b1924a1d930 ("vsprintf: add printk specifier %px")
-
-from Linus' tree and commit:
-
-  1df7338ac965 ("checkpatch: add pF/pf deprecation warning")
-
-from the printk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc scripts/checkpatch.pl
-index 31031f10fe56,0bb68e7ff173..000000000000
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@@ -5753,7 -5753,7 +5753,7 @@@ sub process 
-  		        for (my $count = $linenr; $count <= $lc; $count++) {
-  				my $fmt = get_quoted_string($lines[$count - 1], raw_line($count, 0));
-  				$fmt =~ s/%%//g;
-- 				if ($fmt =~ /(\%[\*\d\.]*p(?![\WFfSsBKRraEhMmIiUDdgVCbGNOx]).)/) {
- -				if ($fmt =~ /(\%[\*\d\.]*p(?![\WSsBKRraEhMmIiUDdgVCbGNO]).)/) {
-++				if ($fmt =~ /(\%[\*\d\.]*p(?![\WSsBKRraEhMmIiUDdgVCbGNOx]).)/) {
-  					$bad_extension = $1;
-  					last;
-  				}
+> Please drop that change and we sort something out how it can be done proper.
+> 
+> Dammit, we have a well established process for stuff like that.
