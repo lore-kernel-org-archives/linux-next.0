@@ -1,31 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 15 Jan 2018 10:52:21 +1100
-Message-ID: <20180115105221.5f159c19@canb.auug.org.au>
+Subject: linux-next: manual merge of the bpf-next tree with Linus' tree
+Date: Mon, 15 Jan 2018 11:15:53 +1100
+Message-ID: <20180115111553.3687282a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eran Ben Elisha <eranbe@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Or Gerlitz <ogerlitz@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:48267 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753099AbeAOAPz (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 14 Jan 2018 19:15:55 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Thomas Gleixner <tglx@linutronix.de>, Masami Hiramatsu <mhiramat@kernel.org>
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-  include/linux/mlx5/mlx5_ifc.h
+  arch/x86/lib/Makefile
 
 between commit:
 
-  8978cc921fc7 ("{net,ib}/mlx5: Don't disable local loopback multicast traffic when needed")
+  76b043848fd2 ("x86/retpoline: Add initial retpoline support")
 
-from the net tree and commit:
+from Linus' tree and commit:
 
-  40817cdbb695 ("net/mlx5: Add hairpin definitions to the FW API")
+  540adea3809f ("error-injection: Separate error-injection from kprobe")
 
-from the net-next tree.
+from the bpf-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -38,21 +42,16 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/mlx5/mlx5_ifc.h
-index 1391a82da98e,78e36fc2609e..000000000000
---- a/include/linux/mlx5/mlx5_ifc.h
-+++ b/include/linux/mlx5/mlx5_ifc.h
-@@@ -1027,9 -1035,10 +1035,10 @@@ struct mlx5_ifc_cmd_hca_cap_bits 
-  	u8         log_max_wq_sz[0x5];
+diff --cc arch/x86/lib/Makefile
+index f23934bbaf4e,171377b83be1..000000000000
+--- a/arch/x86/lib/Makefile
++++ b/arch/x86/lib/Makefile
+@@@ -26,7 -26,7 +26,8 @@@ lib-y += memcpy_$(BITS).
+  lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) += rwsem.o
+  lib-$(CONFIG_INSTRUCTION_DECODER) += insn.o inat.o insn-eval.o
+  lib-$(CONFIG_RANDOMIZE_BASE) += kaslr.o
+ +lib-$(CONFIG_RETPOLINE) += retpoline.o
++ lib-$(CONFIG_FUNCTION_ERROR_INJECTION)	+= error-inject.o
   
-  	u8         nic_vport_change_event[0x1];
- -	u8         disable_local_lb[0x1];
- -	u8         reserved_at_3e2[0x1];
- +	u8         disable_local_lb_uc[0x1];
- +	u8         disable_local_lb_mc[0x1];
-- 	u8         reserved_at_3e3[0x8];
-+ 	u8         log_min_hairpin_wq_data_sz[0x5];
-+ 	u8         reserved_at_3e8[0x3];
-  	u8         log_max_vlan_list[0x5];
-  	u8         reserved_at_3f0[0x3];
-  	u8         log_max_current_mc_list[0x5];
+  obj-y += msr.o msr-reg.o msr-reg-export.o hweight.o
+  
