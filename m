@@ -1,46 +1,34 @@
-From: Chunfeng Yun <chunfeng.yun@mediatek.com>
-Subject: Re: linux-next: Tree for Jan 15 (drivers/usb/mtu3/)
-Date: Tue, 16 Jan 2018 10:13:34 +0800
-Message-ID: <1516068814.3717.3.camel@mhfsdcap03>
-References: <20180115164418.1661a9ec@canb.auug.org.au>
-         <5cf71ed6-c4ad-91a2-8f8a-cb044f9a9f90@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the staging tree
+Date: Tue, 16 Jan 2018 13:45:44 +1100
+Message-ID: <20180116134544.5f999209@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5cf71ed6-c4ad-91a2-8f8a-cb044f9a9f90@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:50239 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750807AbeAPCpq (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 15 Jan 2018 21:45:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
 
-Hi,
+Hi Greg,
 
-Arnd had sent a patch to fix this issue,
+After merging the staging tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-please refer to : https://patchwork.kernel.org/patch/10155685
+drivers/staging/lustre/lnet/selftest/module.c: In function 'lnet_selftest_init':
+drivers/staging/lustre/lnet/selftest/module.c:98:10: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+   return rc;
+          ^~
 
-thanks
+Introduced by commit
 
-On Mon, 2018-01-15 at 11:34 -0800, Randy Dunlap wrote:
-> On 01/14/2018 09:44 PM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180112:
-> > 
-> 
-> on i386:
-> 
-> ../drivers/usb/mtu3/mtu3_plat.c: In function 'mtu3_suspend':
-> ../drivers/usb/mtu3/mtu3_plat.c:462:2: error: implicit declaration of function 'ssusb_wakeup_set' [-Werror=implicit-function-declaration]
->   ssusb_wakeup_set(ssusb, true);
->   ^
-> 
-> when:
-> CONFIG_USB_MTU3=y
-> # CONFIG_USB_MTU3_HOST is not set
-> CONFIG_USB_MTU3_GADGET=y
-> # CONFIG_USB_MTU3_DUAL_ROLE is not set
-> # CONFIG_USB_MTU3_DEBUG is not set
-> 
-> 
+  6106c0f82481 ("staging: lustre: lnet: convert selftest to use workqueues")
+
+-- 
+Cheers,
+Stephen Rothwell
