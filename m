@@ -1,40 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warning after merge of the staging tree
-Date: Tue, 16 Jan 2018 06:59:01 +0100
-Message-ID: <20180116055901.GA20154@kroah.com>
-References: <20180116134544.5f999209@canb.auug.org.au>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: linux-next: manual merge of the mac80211-next tree with the
+ mac80211 tree
+Date: Tue, 16 Jan 2018 08:58:42 +0100
+Message-ID: <1516089522.410.41.camel@sipsolutions.net>
+References: <20180116111342.721301fc@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:35737 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1750798AbeAPF7B (ORCPT
-        <rfc822;linux-next@vger.kernel.org>);
-        Tue, 16 Jan 2018 00:59:01 -0500
-Content-Disposition: inline
-In-Reply-To: <20180116134544.5f999209@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180116111342.721301fc@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Benjamin Beichler <benjamin.beichler@uni-rostock.de>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, Jan 16, 2018 at 01:45:44PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/staging/lustre/lnet/selftest/module.c: In function 'lnet_selftest_init':
-> drivers/staging/lustre/lnet/selftest/module.c:98:10: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    return rc;
->           ^~
-> 
-> Introduced by commit
-> 
->   6106c0f82481 ("staging: lustre: lnet: convert selftest to use workqueues")
+Hi Stephen,
 
-Yeah, I told Neil about this, hopefully he sends me a fix soon :)
+> between commit:
+> 
+>   b71d856ab536 ("mac80211_hwsim: add workqueue to wait for deferred radio deletion on mod unload")
+> 
+> from the mac80211 tree and commit:
+> 
+>   c6509cc3b3e8 ("mac80211_hwsim: add hashtable with mac address keys for faster lookup")
+> 
+> from the mac80211-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary.
 
-thanks,
+Yeah, thanks. I was pondering whether I should knowingly generate that
+conflict, but I'll fix it up before merge anyway - might hold the -next
+for later anyway.
 
-greg k-h
+Thanks!
+
+johannes
