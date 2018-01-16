@@ -1,33 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the staging tree
-Date: Tue, 16 Jan 2018 13:45:44 +1100
-Message-ID: <20180116134544.5f999209@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the net-next tree
+Date: Tue, 16 Jan 2018 15:51:00 +1100
+Message-ID: <20180116155100.3ac44bf1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:50239 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750807AbeAPCpq (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 15 Jan 2018 21:45:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Greg KH <greg@kroah.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ido Schimmel <idosch@mellanox.com>, Emil S Tantilov <emils.tantilov@gmail.com>, David Ahern <dsahern@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Greg,
+Hi Andrew,
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-drivers/staging/lustre/lnet/selftest/module.c: In function 'lnet_selftest_init':
-drivers/staging/lustre/lnet/selftest/module.c:98:10: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   return rc;
-          ^~
+  net/ipv6/route.c
 
-Introduced by commit
+between commit:
 
-  6106c0f82481 ("staging: lustre: lnet: convert selftest to use workqueues")
+  6802f3adcb3f ("ipv6: Fix build with gcc-4.4.5")
+
+from the net-next tree and patch:
+
+  "net/ipv6/route.c: work around gcc-4.4.4 anon union initializer issue"
+
+from the akpm tree.
+
+I fixed it up (I just used the net-next tree version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 -- 
 Cheers,
