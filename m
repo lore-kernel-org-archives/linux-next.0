@@ -1,62 +1,60 @@
-From: Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' and the tip
- trees
-Date: Tue, 16 Jan 2018 14:37:32 +0100
-Message-ID: <1b2f251b-70ae-11fd-dab7-8d1180de483b@redhat.com>
-References: <20180115133459.27b8f7f1@canb.auug.org.au>
- <alpine.DEB.2.20.1801151125040.1810@nanos>
- <alpine.DEB.2.20.1801151933470.2143@nanos>
- <b4a6531c-3c5a-5ef4-ce57-48dfcec62f21@redhat.com>
- <20180116005508.bl4p7sdncqiihq6h@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: build warning after merge of the staging tree
+Date: Tue, 16 Jan 2018 16:02:17 +0100
+Message-ID: <20180116150217.GB27126@kroah.com>
+References: <20180116134544.5f999209@canb.auug.org.au>
+ <20180116055901.GA20154@kroah.com>
+ <CAK8P3a1VeGAe5tE5rRcVT=VzoNidVVFvdNkMuZyGq9nqhRkZpA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180116005508.bl4p7sdncqiihq6h@gmail.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a1VeGAe5tE5rRcVT=VzoNidVVFvdNkMuZyGq9nqhRkZpA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Tom Lendacky <thomas.lendacky@amd.com>, Brijesh Singh <brijesh.singh@amd.com>, Borislav Petkov <bp@alien8.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On 16/01/2018 01:55, Ingo Molnar wrote:
+On Tue, Jan 16, 2018 at 11:47:47AM +0100, Arnd Bergmann wrote:
+> On Tue, Jan 16, 2018 at 6:59 AM, Greg KH <greg@kroah.com> wrote:
+> > On Tue, Jan 16, 2018 at 01:45:44PM +1100, Stephen Rothwell wrote:
+> >> Hi Greg,
+> >>
+> >> After merging the staging tree, today's linux-next build (x86_64
+> >> allmodconfig) produced this warning:
+> >>
+> >> drivers/staging/lustre/lnet/selftest/module.c: In function 'lnet_selftest_init':
+> >> drivers/staging/lustre/lnet/selftest/module.c:98:10: warning: 'rc' may be used uninitialized in this function [-Wmaybe-uninitialized]
+> >>    return rc;
+> >>           ^~
+> >>
+> >> Introduced by commit
+> >>
+> >>   6106c0f82481 ("staging: lustre: lnet: convert selftest to use workqueues")
+> >
+> > Yeah, I told Neil about this, hopefully he sends me a fix soon :)
 > 
-> * Paolo Bonzini <pbonzini@redhat.com> wrote:
+> I sent a fix for that one, but now ran into another problem that I can't
+> easily figure out:
 > 
->> On 15/01/2018 19:36, Thomas Gleixner wrote:
->>>> Can KVM folks please stop doing random changes to the cpufeatures code
->>>> without talking to x86 maintainers and Borislav?
->>>>
->>>> This wants to go through TIP or at least reviewed and acked.
->>> In fact it needs to go through TIP. We spent a lot of effort to make the
->>> backporting of all this mess simple and this is just shooting a hole in it.
->>
->> I do understand why you want this to go through TIP, but I'm not sure
->> why a change to Processor Tracing is related to PTI or retpolines.  I'm
->> also not sure why it is a problem for backportability, since we always
->> try to send pull requests after TIP.  Is it because 7*32+15 will be free
->> in 4.16 but not earlier?
+> drivers/staging/lustre/lnet/selftest/module.c: In function 'lnet_selftest_init':
+> drivers/staging/lustre/lnet/selftest/module.c:128:49: error: 'struct
+> cfs_cpt_table' has no member named 'ctb_parts'; did you mean
+> 'ctb_nparts'?
+>    cpumask_copy(attrs.cpumask, lnet_cpt_table()->ctb_parts[i].cpt_cpumask);
 > 
-> It is because certain central x86 changes (such as changes to processor flags)
-> are kept on a v4.14 base to keep the PTI backporting efforts manageable.
+> I see that there are two definitions of 'struct cfs_cpt_table', and only
+> one of them has a ctb_parts member, but I don't know what this means
+> for its users.
 > 
-> Please revert (or rebase) this change from the KVM tree, and submit it separately, 
-> as it should have been done to begin with. Please also follow this process in the 
-> future: all x86 changes outside arch/x86/kvm/ need an explicit ack from an x86 
-> maintainer.
+> The build regression also comes from commit 6106c0f82481 ("staging:
+> lustre: lnet: convert selftest to use workqueues"), and I see that all
+> other references to ctb_parts are in
+> drivers/staging/lustre/lnet/libcfs/linux/linux-cpu.c.
 
-I've always done it like that until
-https://marc.info/?l=kvm&m=149335647027790 got no response for three
-months, then I thought you didn't care.
+Odd, I can't duplicate the build error here, but 0-day also complains
+about this.  Neil is out until Friday, so maybe he can fix it up then...
 
-We will drop Intel PT support and delay it to 4.17.  Luwei, since your
-patches have issues with incorrect use of the MSR bitmap, this is
-probably a good thing anyway (better bisectability).  Please repost your
-patches at the end of the merge window, then we will wait for an ack
-from Thomas/Ingo/Peter.
+thanks,
 
-(Radim, just tell me if you prefer to leave the git tree surgery to me.
-  Rebasing on top of commit 5cb0944c0c66004c0d9006a7f0fba5782ae38f69
-should be okay for other arches).
-
-Paolo
+greg k-h
