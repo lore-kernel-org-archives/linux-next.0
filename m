@@ -1,62 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the block tree with the dma-mapping
+From: Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
  tree
-Date: Wed, 17 Jan 2018 13:38:17 +1100
-Message-ID: <20180117133817.739d6751@canb.auug.org.au>
+Date: Tue, 16 Jan 2018 20:03:29 -0700
+Message-ID: <20180117030329.GC15750@mellanox.com>
+References: <20180117125145.731ba88b@canb.auug.org.au>
+ <20180117125537.06e46610@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:45555 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750816AbeAQCiT (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 16 Jan 2018 21:38:19 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180117125537.06e46610@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Leon Romanovsky <leon@kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Jens,
+On Wed, Jan 17, 2018 at 12:55:37PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 17 Jan 2018 12:51:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > diff --cc drivers/infiniband/hw/mlx5/qp.c
+> > index cffe5966aef9,ae36db3d0deb..000000000000
+> > +++ b/drivers/infiniband/hw/mlx5/qp.c
+> > @@@ -4361,12 -4674,12 +4674,11 @@@ static void to_rdma_ah_attr(struct mlx5
+> >   
+> >   	memset(ah_attr, 0, sizeof(*ah_attr));
+> >   
+> > - 	if (!path->port || path->port > MLX5_CAP_GEN(dev, num_ports))
+> >  -	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, path->port);
+> >  -	rdma_ah_set_port_num(ah_attr, path->port);
+> >  -	if (rdma_ah_get_port_num(ah_attr) == 0 ||
+> >  -	    rdma_ah_get_port_num(ah_attr) > ibdev->num_ports)
+> > ++	if (!path->port || path->port > ibdev->num_ports))
+> 
+> I fixed up the extra ')'.  Sorry about that,
 
-Today's linux-next merge of the block tree got a conflict in:
+Thanks, this looks correct to me, and the conflict was expected..
 
-  lib/Kconfig
-
-between commit:
-
-  002e67454f61 ("dma-direct: rename dma_noop to dma_direct")
-
-from the dma-mapping tree and commit:
-
-  e80a0af4759a ("lib/scatterlist: Introduce sgl_alloc() and sgl_free()")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
--- 
-Cheers,
-Stephen Rothwell
-
-diff --cc lib/Kconfig
-index 9d3d649c9dc9,4dd5c11366f9..000000000000
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@@ -409,7 -409,11 +409,11 @@@ config HAS_DM
-  	depends on !NO_DMA
-  	default y
-  
-+ config SGL_ALLOC
-+ 	bool
-+ 	default n
-+ 
- -config DMA_NOOP_OPS
- +config DMA_DIRECT_OPS
-  	bool
-  	depends on HAS_DMA && (!64BIT || ARCH_DMA_ADDR_T_64BIT)
-  	default n
+Jason
