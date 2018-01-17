@@ -1,41 +1,57 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Date: Tue, 16 Jan 2018 20:03:29 -0700
-Message-ID: <20180117030329.GC15750@mellanox.com>
-References: <20180117125145.731ba88b@canb.auug.org.au>
- <20180117125537.06e46610@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Wed, 17 Jan 2018 14:48:17 +1100
+Message-ID: <20180117144817.1cba736f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180117125537.06e46610@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Jurgens <danielj@mellanox.com>, Leon Romanovsky <leon@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jan 17, 2018 at 12:55:37PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 17 Jan 2018 12:51:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > diff --cc drivers/infiniband/hw/mlx5/qp.c
-> > index cffe5966aef9,ae36db3d0deb..000000000000
-> > +++ b/drivers/infiniband/hw/mlx5/qp.c
-> > @@@ -4361,12 -4674,12 +4674,11 @@@ static void to_rdma_ah_attr(struct mlx5
-> >   
-> >   	memset(ah_attr, 0, sizeof(*ah_attr));
-> >   
-> > - 	if (!path->port || path->port > MLX5_CAP_GEN(dev, num_ports))
-> >  -	ah_attr->type = rdma_ah_find_type(&ibdev->ib_dev, path->port);
-> >  -	rdma_ah_set_port_num(ah_attr, path->port);
-> >  -	if (rdma_ah_get_port_num(ah_attr) == 0 ||
-> >  -	    rdma_ah_get_port_num(ah_attr) > ibdev->num_ports)
-> > ++	if (!path->port || path->port > ibdev->num_ports))
-> 
-> I fixed up the extra ')'.  Sorry about that,
+Hi all,
 
-Thanks, this looks correct to me, and the conflict was expected..
+[This is the same conflict I reported the day before yesterday, but one
+of the commits has moved and another that contributed has been dropped.]
 
-Jason
+Today's linux-next merge of the kvm tree got a conflict in:
+
+  arch/x86/include/asm/cpufeatures.h
+
+between commits:
+
+  a89f040fa34e ("x86/cpufeatures: Add X86_BUG_CPU_INSECURE")
+  76b043848fd2 ("x86/retpoline: Add initial retpoline support")
+
+from Linus' tree, commit:
+
+  18c71ce9c882 ("x86/CPU/AMD: Add the Secure Encrypted Virtualization CPU feature")
+
+from the kvm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/include/asm/cpufeatures.h
+index aa09559b2c0b,19f35be95f16..000000000000
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@@ -211,7 -209,6 +211,8 @@@
+  #define X86_FEATURE_AVX512_4FMAPS	( 7*32+17) /* AVX-512 Multiply Accumulation Single precision */
+  
+  #define X86_FEATURE_MBA			( 7*32+18) /* Memory Bandwidth Allocation */
+ +#define X86_FEATURE_RSB_CTXSW		( 7*32+19) /* Fill RSB on context switches */
+++#define X86_FEATURE_SEV			( 7*32+20) /* AMD Secure Encrypted Virtualization */
+  
+  /* Virtualization flags: Linux defined, word 8 */
+  #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
