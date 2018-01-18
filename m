@@ -1,31 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Thu, 18 Jan 2018 12:20:34 +1100
-Message-ID: <20180118122034.22baa9bc@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the libata tree
+Date: Thu, 18 Jan 2018 15:26:01 +1100
+Message-ID: <20180118152601.31761830@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@mellanox.com>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:33391 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752184AbeARE0D (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 17 Jan 2018 23:26:03 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>
 
-Hi all,
+Hi Tejun,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the libata tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-net/sched/cls_api.c: In function 'tc_dump_tfilter':
-net/sched/cls_api.c:1362:8: warning: 'parent' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   if (!tcf_chain_dump(chain, q, parent, skb, cb,
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         index_start, &index))
-         ~~~~~~~~~~~~~~~~~~~~
+drivers/phy/broadcom/phy-brcm-sata.c: In function 'brcm_stb_sata_calibrate':
+drivers/phy/broadcom/phy-brcm-sata.c:514:24: warning: unused variable 'priv' [-Wunused-variable]
+  struct brcm_sata_phy *priv = port->phy_priv;
+                        ^~~~
 
-Probably introduced by commit
+Introduced by commit
 
-  7960d1daf278 ("net: sched: use block index as a handle instead of qdisc when block is shared")
+  3e507769d15e ("phy: brcm-sata: Implement calibrate callback")
 
 -- 
 Cheers,
