@@ -1,39 +1,43 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the f2fs tree
-Date: Thu, 18 Jan 2018 10:04:30 +1100
-Message-ID: <20180118100430.4fc0151e@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Thu, 18 Jan 2018 12:09:18 +1100
+Message-ID: <20180118120918.576deeb9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chris Mason <clm@fb.com>, Josef Bacik <jbacik@fb.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>, Tejun Heo <tj@kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>, Jason Wang <jasowang@redhat.com>, Jesper Dangaard Brouer <brouer@redhat.com>, Alexei Starovoitov <ast@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Jaegeuk,
+Hi all,
 
-After merging the f2fs tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-/home/sfr/next/next/fs/f2fs/super.c: In function 'f2fs_fill_super':
-/home/sfr/next/next/fs/f2fs/super.c:2563:18: error: 'SB_I_CGROUPWB' undeclared (first use in this function); did you mean 'S_CGROUPWB'?
-  sb->s_iflags |= SB_I_CGROUPWB;
-                  ^~~~~~~~~~~~~
-                  S_CGROUPWB
+  drivers/net/tun.c
 
-Caused by commit
+between commit:
 
-  578c647879f7 ("f2fs: implement cgroup writeback support")
+  4df0bfc79904 ("tun: fix a memory leak for tfile->tx_array")
 
-interacting with commit
+from the net tree and commits:
 
-  34934189a3dd ("cgroup, writeback: replace SB_I_CGROUPWB with per-inode S_CGROUPWB"
+  8bf5c4ee1889 ("tun: setup xdp_rxq_info")
+  5990a30510ed ("tun/tap: use ptr_ring instead of skb_array")
+  fc72d1d54dd9 ("tuntap: XDP transmission")
 
-from the btrfs tree.
+from the net-next tree.
 
-I have reverted the f2fs tree commit for today, but a better resolution
-would be appreciated.
+I have no idea how to clean this up, so I effectively reverted the net
+tree commit.
+
+I fixed it up (see above) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
