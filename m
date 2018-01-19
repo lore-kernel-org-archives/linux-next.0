@@ -1,34 +1,41 @@
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Subject: Re: linux-next: build warning after merge of the crypto tree
-Date: Fri, 19 Jan 2018 16:12:28 +1100
-Message-ID: <20180119051228.GA29033@gondor.apana.org.au>
-References: <20180119124926.1c22bb19@canb.auug.org.au>
- <2a629f26-de6b-803e-a07b-4cfec3b59d13@chelsio.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the powerpc tree
+Date: Fri, 19 Jan 2018 16:53:19 +1100
+Message-ID: <20180119165319.524cf2ff@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from [128.1.224.119] ([128.1.224.119]:55548 "EHLO ringil.hmeau.com"
-        rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-        id S1750720AbeASFMj (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 19 Jan 2018 00:12:39 -0500
-Content-Disposition: inline
-In-Reply-To: <2a629f26-de6b-803e-a07b-4cfec3b59d13@chelsio.com>
+Received: from ozlabs.org ([103.22.144.67]:42027 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750923AbeASFxW (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Fri, 19 Jan 2018 00:53:22 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Harsh Jain <harsh@chelsio.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
 
-On Fri, Jan 19, 2018 at 09:51:43AM +0530, Harsh Jain wrote:
-> Hi Herbert,
-> 
-> It's an indentation issue. Seems checkpatch and default compile options does not report this warning.
-> 
-> How would you like to take the fix. Should I sent whole series again with fix or only indentation patch.
+Hi all,
 
-Please send an incremental patch.
+After merging the powerpc tree, today's linux-next build (powerpc64
+allnoconfig) failed like this:
 
-Thanks,
+arch/powerpc/kernel/mce_power.o: In function `.mce_handle_error':
+mce_power.c:(.text+0x5a8): undefined reference to `.hash__tlbiel_all'
+mce_power.c:(.text+0x6b8): undefined reference to `.hash__tlbiel_all'
+arch/powerpc/mm/hash_utils_64.o: In function `.hash__early_init_mmu':
+hash_utils_64.c:(.init.text+0x9d0): undefined reference to `.hash__tlbiel_all'
+
+Caused by commit
+
+  d4748276ae14 ("powerpc/64s: Improve local TLB flush for boot and MCE on POWER9")
+
+The definition of hash__tlbiel_all() is in
+arch/powerpc/mm/hash_native_64.c which is only built if CONFIG_PPC_NATIVE
+is set, which it is not for this build.
+
+I applied a supplied fix patch.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Cheers,
+Stephen Rothwell
