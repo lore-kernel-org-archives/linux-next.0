@@ -1,10 +1,8 @@
-From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+From: Michal Hocko <mhocko@kernel.org>
 Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Date: Tue, 23 Jan 2018 16:55:18 +0530
-Message-ID: <082aa008-c56a-681d-0949-107245603a97@linux.vnet.ibm.com>
-References: <7e35e16a-d71c-2ec8-03ed-b07c2af562f8@linux.vnet.ibm.com>
- <20180105084631.GG2801@dhcp22.suse.cz>
- <e81dce2b-5d47-b7d3-efbf-27bc171ba4ab@linux.vnet.ibm.com>
+Date: Tue, 23 Jan 2018 13:45:45 +0100
+Message-ID: <20180123124545.GL1526@dhcp22.suse.cz>
+References: <e81dce2b-5d47-b7d3-efbf-27bc171ba4ab@linux.vnet.ibm.com>
  <20180107090229.GB24862@dhcp22.suse.cz>
  <87mv1phptq.fsf@concordia.ellerman.id.au>
  <7a44f42e-39d0-1c4b-19e0-7df1b0842c18@linux.vnet.ibm.com>
@@ -13,40 +11,55 @@ References: <7e35e16a-d71c-2ec8-03ed-b07c2af562f8@linux.vnet.ibm.com>
  <20180109161355.GL1732@dhcp22.suse.cz>
  <a495f210-0015-efb2-a6a7-868f30ac4ace@linux.vnet.ibm.com>
  <20180117080731.GA2900@dhcp22.suse.cz>
+ <082aa008-c56a-681d-0949-107245603a97@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20180117080731.GA2900@dhcp22.suse.cz>
+Content-Disposition: inline
+In-Reply-To: <082aa008-c56a-681d-0949-107245603a97@linux.vnet.ibm.com>
 Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>, Anshuman Khandual <khandual@linux.vnet.ibm.com>
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
 Cc: Michael Ellerman <mpe@ellerman.id.au>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 01/17/2018 01:37 PM, Michal Hocko wrote:
-> On Thu 11-01-18 15:38:37, Anshuman Khandual wrote:
->> On 01/09/2018 09:43 PM, Michal Hocko wrote:
-> [...]
->>> Did you manage to catch _who_ is requesting that anonymous mapping? Do
->>> you need a help with the debugging patch?
->>
->> Not yet, will get back on this.
+On Tue 23-01-18 16:55:18, Anshuman Khandual wrote:
+> On 01/17/2018 01:37 PM, Michal Hocko wrote:
+> > On Thu 11-01-18 15:38:37, Anshuman Khandual wrote:
+> >> On 01/09/2018 09:43 PM, Michal Hocko wrote:
+> > [...]
+> >>> Did you manage to catch _who_ is requesting that anonymous mapping? Do
+> >>> you need a help with the debugging patch?
+> >>
+> >> Not yet, will get back on this.
+> > 
+> > ping?
 > 
-> ping?
+> Hey Michal,
+> 
+> Missed this thread, my apologies. This problem is happening only with
+> certain binaries like 'sed', 'tmux', 'hostname', 'pkg-config' etc. As
+> you had mentioned before the map request collision is happening on
+> [10030000, 10040000] and [10030000, 10040000] ranges only which is
+> just a single PAGE_SIZE. You asked previously that who might have
+> requested the anon mapping which is already present in there ? Would
+> not that be the same process itself ? I am bit confused.
 
-Hey Michal,
+We are early in the ELF loading. If we are mapping over an existing
+mapping then we are effectivelly corrupting it. In other words exactly
+what this patch tries to prevent. I fail to see what would be a relevant
+anon mapping this early and why it would be colliding with elf
+segements.
 
-Missed this thread, my apologies. This problem is happening only with
-certain binaries like 'sed', 'tmux', 'hostname', 'pkg-config' etc. As
-you had mentioned before the map request collision is happening on
-[10030000, 10040000] and [10030000, 10040000] ranges only which is
-just a single PAGE_SIZE. You asked previously that who might have
-requested the anon mapping which is already present in there ? Would
-not that be the same process itself ? I am bit confused. Would it be
-helpful to trap all the mmap() requests from any of the binaries
-and see where we might have created that anon mapping ?
+> Would it be
+> helpful to trap all the mmap() requests from any of the binaries
+> and see where we might have created that anon mapping ?
 
+Yeah, that is exactly what I was suggesting. Sorry for not being clear
+about that.
 
+-- 
+Michal Hocko
+SUSE Labs
 
 --
 To unsubscribe, send a message with 'unsubscribe linux-mm' in
