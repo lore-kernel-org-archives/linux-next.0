@@ -1,25 +1,75 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the device-mapper
- tree
-Date: Thu, 25 Jan 2018 22:15:32 +1100
-Message-ID: <20180125221532.46e6a52e@canb.auug.org.au>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Thu, 25 Jan 2018 07:55:58 -0600
+Message-ID: <CAL_JsqKfKHL8fUxEwhrfytLfWgMLLtbBm2J6vf0Ab1t4i28nRA@mail.gmail.com>
+References: <20180125164937.32fef5a8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.99]:42882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750980AbeAYN4U (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Jan 2018 08:56:20 -0500
+In-Reply-To: <20180125164937.32fef5a8@canb.auug.org.au>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Wed, Jan 24, 2018 at 11:49 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Bjorn,
+>
+> After merging the pci tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> arch/powerpc/kernel/pci-common.c: In function 'pcibios_setup
+> _device':
+> arch/powerpc/kernel/pci-common.c:406:15: error: 'virq' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>   pci_dev->irq = virq;
+>   ~~~~~~~~~~~~~^~~~~~
+> arch/powerpc/kernel/pci-common.c:365:15: note: 'virq' was declared here
+>   unsigned int virq;
+>                ^~~~
 
-Commit
+I guess I need to update my PPC compiler from 4.8.0. It doesn't warn
+or error on this. Neither did 0-day.
 
-  d2412caad3e3 ("blk-mq: introduce BLK_STS_DEV_RESOURCE")
+>
+> Caused by commit
+>
+>   c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
+>
+> I have applied the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Thu, 25 Jan 2018 16:44:19 +1100
+> Subject: [PATCH] powerpc/pci: fix for "Use of_irq_parse_and_map_pci() helper"
+>
+> Fixes: c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  arch/powerpc/kernel/pci-common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-is missing a Signed-off-by from its committer.
+Acked-by: Rob Herring <robh@kernel.org>
 
--- 
-Cheers,
-Stephen Rothwell
+>
+> diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
+> index 6be3f2c22a9b..ae2ede4de6be 100644
+> --- a/arch/powerpc/kernel/pci-common.c
+> +++ b/arch/powerpc/kernel/pci-common.c
+> @@ -362,7 +362,7 @@ struct pci_controller* pci_find_hose_for_OF_device(struct device_node* node)
+>   */
+>  static int pci_read_irq_line(struct pci_dev *pci_dev)
+>  {
+> -       unsigned int virq;
+> +       unsigned int virq = 0;
+>
+>         pr_debug("PCI: Try to map irq for %s...\n", pci_name(pci_dev));
+>
+> --
+> 2.15.1
+>
+> --
+> Cheers,
+> Stephen Rothwell
