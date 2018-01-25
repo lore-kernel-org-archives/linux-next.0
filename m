@@ -1,58 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the iversion tree with the nfsd tree
-Date: Thu, 25 Jan 2018 15:42:13 +1100
-Message-ID: <20180125154213.19909bab@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Thu, 25 Jan 2018 16:49:37 +1100
+Message-ID: <20180125164937.32fef5a8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jeff Layton <jlayton@kernel.org>, "J. Bruce Fields" <bfields@fieldses.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Jeff,
+Hi Bjorn,
 
-Today's linux-next merge of the iversion tree got a conflict in:
+After merging the pci tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  fs/nfsd/nfsfh.h
+arch/powerpc/kernel/pci-common.c: In function 'pcibios_setup
+_device':
+arch/powerpc/kernel/pci-common.c:406:15: error: 'virq' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  pci_dev->irq = virq;
+  ~~~~~~~~~~~~~^~~~~~
+arch/powerpc/kernel/pci-common.c:365:15: note: 'virq' was declared here
+  unsigned int virq;
+               ^~~~
 
-between commit:
+Caused by commit
 
-  3ac71a649c3d ("nfsd: store stat times in fill_pre_wcc() instead of inode times")
+  c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
 
-from the nfsd tree and commit:
+I have applied the following patch for today:
 
-  8ace40dfbdf4 ("nfsd: convert to new i_version API")
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 25 Jan 2018 16:44:19 +1100
+Subject: [PATCH] powerpc/pci: fix for "Use of_irq_parse_and_map_pci() helper"
 
-from the iversion tree.
+Fixes: c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ arch/powerpc/kernel/pci-common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
+index 6be3f2c22a9b..ae2ede4de6be 100644
+--- a/arch/powerpc/kernel/pci-common.c
++++ b/arch/powerpc/kernel/pci-common.c
+@@ -362,7 +362,7 @@ struct pci_controller* pci_find_hose_for_OF_device(struct device_node* node)
+  */
+ static int pci_read_irq_line(struct pci_dev *pci_dev)
+ {
+-	unsigned int virq;
++	unsigned int virq = 0;
+ 
+ 	pr_debug("PCI: Try to map irq for %s...\n", pci_name(pci_dev));
+ 
+-- 
+2.15.1
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/nfsd/nfsfh.h
-index 99be87b50ebe,b8444189223b..000000000000
---- a/fs/nfsd/nfsfh.h
-+++ b/fs/nfsd/nfsfh.h
-@@@ -257,10 -257,10 +258,10 @@@ static inline u64 nfsd4_change_attribut
-  {
-  	u64 chattr;
-  
- -	chattr =  inode->i_ctime.tv_sec;
- +	chattr =  stat->ctime.tv_sec;
-  	chattr <<= 30;
- -	chattr += inode->i_ctime.tv_nsec;
- +	chattr += stat->ctime.tv_nsec;
-- 	chattr += inode->i_version;
-+ 	chattr += inode_query_iversion(inode);
-  	return chattr;
-  }
-  
