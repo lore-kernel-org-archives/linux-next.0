@@ -1,78 +1,32 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Thu, 25 Jan 2018 14:31:55 +1100
-Message-ID: <20180125143155.20b15b37@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs
+ tree
+Date: Thu, 25 Jan 2018 14:39:47 +1100
+Message-ID: <20180125143947.513e895a@canb.auug.org.au>
+References: <20180125143155.20b15b37@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:56249 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932956AbeAYDcD (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Wed, 24 Jan 2018 22:32:03 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180125143155.20b15b37@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi Al,
+Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+On Thu, 25 Jan 2018 14:31:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> + 	if (!disconnected) {
+>  -		hlist_bl_lock(&tmp->d_sb->s_roots);
+>  -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
+>  -		hlist_bl_unlock(&tmp->d_sb->s_roots);
+> ++		hlist_bl_lock(&dentry->d_sb->s_roots);
+> ++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
 
-  fs/dcache.c
-
-between commit:
-
-  f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()")
-
-from the overlayfs tree and commit:
-
-  f1ee616214cb ("VFS: don't keep disconnected dentries on d_anon")
-
-from the vfs tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed up the "tmp" here ... it should have been "dentry".
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc fs/dcache.c
-index 99bce0ed0213,17e6b84b9656..000000000000
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@@ -1954,16 -1961,18 +1953,18 @@@ static struct dentry *__d_instantiate_a
-  	if (disconnected)
-  		add_flags |= DCACHE_DISCONNECTED;
-  
- -	spin_lock(&tmp->d_lock);
- -	__d_set_inode_and_type(tmp, inode, add_flags);
- -	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
- +	spin_lock(&dentry->d_lock);
- +	__d_set_inode_and_type(dentry, inode, add_flags);
- +	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
-- 	hlist_bl_lock(&dentry->d_sb->s_anon);
-- 	hlist_bl_add_head(&dentry->d_hash, &dentry->d_sb->s_anon);
-- 	hlist_bl_unlock(&dentry->d_sb->s_anon);
-+ 	if (!disconnected) {
- -		hlist_bl_lock(&tmp->d_sb->s_roots);
- -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
- -		hlist_bl_unlock(&tmp->d_sb->s_roots);
-++		hlist_bl_lock(&dentry->d_sb->s_roots);
-++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
-++		hlist_bl_unlock(&dentry->d_sb->s_roots);
-+ 	}
- -	spin_unlock(&tmp->d_lock);
- +	spin_unlock(&dentry->d_lock);
-  	spin_unlock(&inode->i_lock);
-  
- -	return tmp;
- +	return dentry;
-  
-   out_iput:
-  	iput(inode);
