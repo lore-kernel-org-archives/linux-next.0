@@ -1,67 +1,61 @@
-From: Leon Romanovsky <leon@kernel.org>
-Subject: Re: linux-next: build failure after merge of the rdma tree
-Date: Thu, 25 Jan 2018 10:50:15 +0200
-Message-ID: <20180125085015.GN1393@mtr-leonro.local>
-References: <20180125182259.047e0c52@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the crypto tree with the net-next tree
+Date: Thu, 25 Jan 2018 21:52:19 +1100
+Message-ID: <20180125215219.3ec88466@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="GOdHDkIp180r3pqZ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180125182259.047e0c52@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Atul Gupta <atul.gupta@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>
 List-Id: linux-next.vger.kernel.org
 
+Hi Herbert,
 
---GOdHDkIp180r3pqZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Today's linux-next merge of the crypto tree got a conflict in:
 
-On Thu, Jan 25, 2018 at 06:22:59PM +1100, Stephen Rothwell wrote:
-> Hi all,
->
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> ERROR: "init_rcu_head" [drivers/infiniband/ulp/srpt/ib_srpt.ko] undefined!
->
-> Caused by commit
->
->   a11253142e6d ("IB/srpt: Rework multi-channel support")
->
-> I have used the rdma tree from next-20180119 for today.
+  drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
 
-Hi Stephen,
+between commit:
 
-Please see this patch: https://patchwork.kernel.org/patch/10181845/
+  9d5fd927d20b ("cxgb4/cxgb4vf: add support for ndo_set_vf_vlan")
 
-Thanks
+from the net-next tree and commit:
 
->
-> --
-> Cheers,
-> Stephen Rothwell
+  a6ec572bfa7d ("cxgb4: Add support for Inline IPSec Tx")
 
---GOdHDkIp180r3pqZ
-Content-Type: application/pgp-signature; name="signature.asc"
+from the crypto tree.
 
------BEGIN PGP SIGNATURE-----
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlppmkcACgkQ5GN7iDZy
-WKc3uRAAwPCNqEgqZshnvG+Zy8RPy5rDa+N/tWB5N6W49qKz40Mvm8Lr5ZUPSJFR
-+vJsTo33h6u11r4rv/VH1z4Tw02YPGJ6Yf24+DQreN7/0ATR/wtsKx654uDIIues
-NuUb+fUlhH2RJkSN7q0U5fNCehjXNNPXDSHIRycEjZi0lRREzVDNKrSEP3DVTAmW
-PAHPYKdi83dEn+YL/u99KYudJGVZABiXAKVzH2xMffVnWBEfWkbcAmFxjJZRSeZq
-cFiv0nol9AIK2r6UBHpKRlTGZqsFcSvq48Be98l8S8jlrAV/mQg1jqrX8ZmSD2S+
-RfwsMNTt/ef/d3/0n3g4QTAtPwLjK4QC5UokZJPOs5ANyqwk5fych056Iu4v3ewJ
-aLXJQoQDPpM+MJgKly0f/APXm82XANfy/NAsgDeIaw5cPxuFyL9CCQceYyuM7/wu
-XyJQeiYMBD1zX/Cb3T21/SHGosYyQcIcugFtIC+OMU6RyWJsoR8TqrjGB/KADbbL
-QkXzElWSb78JK05aLtbmDVN7xXiJaA+qDaKlfV97zFg0fMxZwz0SzOKc1sGygWAJ
-qHVSxnnYp+/OvLgaO49Z2icSTjHE6rOPVWJrbIoLDnNlwl3L10vR0s+fdo0DUPw2
-2/k7v9sbpIb9v2Rpsnqw4nhDf7sDm/0lzBfEjRuBkjmaPDSVWes=
-=2HBj
------END PGP SIGNATURE-----
+-- 
+Cheers,
+Stephen Rothwell
 
---GOdHDkIp180r3pqZ--
+diff --cc drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+index 429467364219,c48a7521d63e..000000000000
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4.h
+@@@ -1739,6 -1713,14 +1752,16 @@@ void free_rspq_fl(struct adapter *adap
+  void free_tx_desc(struct adapter *adap, struct sge_txq *q,
+  		  unsigned int n, bool unmap);
+  void free_txq(struct adapter *adap, struct sge_txq *q);
+ +int t4_set_vlan_acl(struct adapter *adap, unsigned int mbox, unsigned int vf,
+ +		    u16 vlan);
++ void cxgb4_reclaim_completed_tx(struct adapter *adap,
++ 				struct sge_txq *q, bool unmap);
++ int cxgb4_map_skb(struct device *dev, const struct sk_buff *skb,
++ 		  dma_addr_t *addr);
++ void cxgb4_inline_tx_skb(const struct sk_buff *skb, const struct sge_txq *q,
++ 			 void *pos);
++ void cxgb4_write_sgl(const struct sk_buff *skb, struct sge_txq *q,
++ 		     struct ulptx_sgl *sgl, u64 *end, unsigned int start,
++ 		     const dma_addr_t *addr);
++ void cxgb4_ring_tx_db(struct adapter *adap, struct sge_txq *q, int n);
+  #endif /* __CXGB4_H__ */
