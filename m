@@ -1,47 +1,46 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi-mkp tree with the scsi tree
-Date: Fri, 26 Jan 2018 09:39:14 +1100
-Message-ID: <20180126093914.4afaed4c@canb.auug.org.au>
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the scsi tree
+Date: Thu, 25 Jan 2018 15:18:19 -0800
+Message-ID: <1516922299.3044.55.camel@HansenPartnership.com>
+References: <20180126093914.4afaed4c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59377 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751219AbeAYWjW (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 25 Jan 2018 17:39:22 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:46670 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751431AbeAYXSW (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Jan 2018 18:18:22 -0500
+In-Reply-To: <20180126093914.4afaed4c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Trapp <darren.trapp@cavium.com>, Himanshu Madhani <himanshu.madhani@cavium.com>
 
-Hi Martin,
+On Fri, 2018-01-26 at 09:39 +1100, Stephen Rothwell wrote:
+> Hi Martin,
+> 
+> Today's linux-next merge of the scsi-mkp tree got a conflict in:
+> 
+>   drivers/scsi/qla2xxx/qla_init.c
+> 
+> between commit:
+> 
+>   07a21872cf2b ("scsi: qla2xxx: Fix queue ID for async abort with
+> Multiqueue")
+> 
+> from the scsi tree and commit:
+> 
+>   b027a5ace443 ("scsi: qla2xxx: Fix queue ID for async abort with
+> Multiqueue")
+> 
+> from the scsi-mkp tree.
+> 
+> Looks like you have updated your tree after James has merged it :-(
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+OK, I pulled my tree into sync now.  I also added the postmerge tree,
+which I can rebase if it causes you similar problems (it's based on the
+block tree).
 
-  drivers/scsi/qla2xxx/qla_init.c
-
-between commit:
-
-  07a21872cf2b ("scsi: qla2xxx: Fix queue ID for async abort with Multiqueue")
-
-from the scsi tree and commit:
-
-  b027a5ace443 ("scsi: qla2xxx: Fix queue ID for async abort with Multiqueue")
-
-from the scsi-mkp tree.
-
-Looks like you have updated your tree after James has merged it :-(
-
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
-
-
--- 
-Cheers,
-Stephen Rothwell
+James
