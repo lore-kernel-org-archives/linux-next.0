@@ -1,62 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Thu, 25 Jan 2018 16:49:37 +1100
-Message-ID: <20180125164937.32fef5a8@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the vfs tree
+Date: Thu, 25 Jan 2018 17:41:23 +1100
+Message-ID: <20180125174123.55443421@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:35263 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750769AbeAYGlc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 25 Jan 2018 01:41:32 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jon Maloy <jon.maloy@ericsson.com>
 
-Hi Bjorn,
+Hi all,
 
-After merging the pci tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-arch/powerpc/kernel/pci-common.c: In function 'pcibios_setup
-_device':
-arch/powerpc/kernel/pci-common.c:406:15: error: 'virq' may be used uninitialized in this function [-Werror=maybe-uninitialized]
-  pci_dev->irq = virq;
-  ~~~~~~~~~~~~~^~~~~~
-arch/powerpc/kernel/pci-common.c:365:15: note: 'virq' was declared here
-  unsigned int virq;
-               ^~~~
+  net/tipc/socket.c
 
-Caused by commit
+between commit:
 
-  c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
+  ade994f4f6c8 ("net: annotate ->poll() instances")
 
-I have applied the following patch for today:
+from the vfs tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Thu, 25 Jan 2018 16:44:19 +1100
-Subject: [PATCH] powerpc/pci: fix for "Use of_irq_parse_and_map_pci() helper"
+  60c253069632 ("tipc: fix race between poll() and setsockopt()")
 
-Fixes: c5042ac60fe5 ("powerpc/pci: Use of_irq_parse_and_map_pci() helper")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/powerpc/kernel/pci-common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+from the net-next tree.
 
-diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
-index 6be3f2c22a9b..ae2ede4de6be 100644
---- a/arch/powerpc/kernel/pci-common.c
-+++ b/arch/powerpc/kernel/pci-common.c
-@@ -362,7 +362,7 @@ struct pci_controller* pci_find_hose_for_OF_device(struct device_node* node)
-  */
- static int pci_read_irq_line(struct pci_dev *pci_dev)
- {
--	unsigned int virq;
-+	unsigned int virq = 0;
- 
- 	pr_debug("PCI: Try to map irq for %s...\n", pci_name(pci_dev));
- 
--- 
-2.15.1
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc net/tipc/socket.c
+index 2aa46e8cd8fe,473a096b6fba..000000000000
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@@ -715,8 -716,7 +716,7 @@@ static __poll_t tipc_poll(struct file *
+  {
+  	struct sock *sk = sock->sk;
+  	struct tipc_sock *tsk = tipc_sk(sk);
+- 	struct tipc_group *grp = tsk->group;
+ -	u32 revents = 0;
+ +	__poll_t revents = 0;
+  
+  	sock_poll_wait(file, sk_sleep(sk), wait);
+  
