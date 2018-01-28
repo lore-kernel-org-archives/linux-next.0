@@ -1,72 +1,28 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Date: Fri, 26 Jan 2018 15:04:15 +0100
-Message-ID: <20180126140415.GD5027@dhcp22.suse.cz>
-References: <20180109161355.GL1732@dhcp22.suse.cz>
- <a495f210-0015-efb2-a6a7-868f30ac4ace@linux.vnet.ibm.com>
- <20180117080731.GA2900@dhcp22.suse.cz>
- <082aa008-c56a-681d-0949-107245603a97@linux.vnet.ibm.com>
- <20180123124545.GL1526@dhcp22.suse.cz>
- <ef63c070-dcd7-3f26-f6ec-d95404007ae2@linux.vnet.ibm.com>
- <20180123160653.GU1526@dhcp22.suse.cz>
- <2a05eaf2-20fd-57a8-d4bd-5a1fbf57686c@linux.vnet.ibm.com>
- <20180124090539.GH1526@dhcp22.suse.cz>
- <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Date: Mon, 29 Jan 2018 08:21:48 +1100
+Message-ID: <20180129082148.434bc2d8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
-Sender: owner-linux-mm@kvack.org
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, akpm@linux-foundation.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:56087 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752830AbeA1VV6 (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 28 Jan 2018 16:21:58 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri 26-01-18 18:04:27, Anshuman Khandual wrote:
-[...]
-> I tried to instrument mmap_region() for a single instance of 'sed'
-> binary and traced all it's VMA creation. But there is no trace when
-> that 'anon' VMA got created which suddenly shows up during subsequent
-> elf_map() call eventually failing it. Please note that the following
-> VMA was never created through call into map_region() in the process
-> which is strange.
+Hi all,
 
-Could you share your debugging patch?
+Commit
 
-> =================================================================
-> [    9.076867] Details for VMA[3] c000001fce42b7c0
-> [    9.076925] vma c000001fce42b7c0 start 0000000010030000 end 0000000010040000
-> next c000001fce42b580 prev c000001fce42b880 mm c000001fce40fa00
-> prot 8000000000000104 anon_vma           (null) vm_ops           (null)
-> pgoff 1003 file           (null) private_data           (null)
-> flags: 0x100073(read|write|mayread|maywrite|mayexec|account)
-> =================================================================
+  20ffa1caecca ("x86/speculation: Add basic IBPB (Indirect Branch Prediction Barrier) support")
 
-Isn't this vdso or some other special mapping? It is not really an
-anonymous vma. Please hook into __install_special_mapping
+is missing a Signed-off-by from its committer.
 
-> VMA creation for 'sed' binary
-> =============================
-> [    9.071902] XXX: mm c000001fce40fa00 registered
-> 
-> [    9.071971] Total VMAs 2 on MM c000001fce40fa00
-> ----
-> [    9.072010] Details for VMA[1] c000001fce42bdc0
-> [    9.072064] vma c000001fce42bdc0 start 0000000010000000 end 0000000010020000
-> next c000001fce42b580 prev           (null) mm c000001fce40fa00
-> prot 8000000000000105 anon_vma           (null) vm_ops c008000011ddca18
-> pgoff 0 file c000001fe2969a00 private_data           (null)
-> flags: 0x875(read|exec|mayread|maywrite|mayexec|denywrite)
-
-This one doesn't have any stack trace either... Yet it is a file
-mapping obviously. Special mappings shouldn't have any file associated.
-Strange...
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Cheers,
+Stephen Rothwell
