@@ -1,41 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Mon, 29 Jan 2018 15:02:08 +1100
-Message-ID: <20180129150208.4073e973@canb.auug.org.au>
-References: <20180117144817.1cba736f@canb.auug.org.au>
-        <alpine.DEB.2.20.1801171243230.1777@nanos>
-        <b54c26df-cee2-a930-7e34-47701e852f9e@redhat.com>
-        <alpine.DEB.2.20.1801171321580.1777@nanos>
-        <20180117234326.24a2c0c3@canb.auug.org.au>
-        <alpine.DEB.2.20.1801171353100.1777@nanos>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Mon, 29 Jan 2018 15:41:46 +1100
+Message-ID: <874ln52s51.fsf@concordia.ellerman.id.au>
+References: <20180125164937.32fef5a8@canb.auug.org.au> <CAL_JsqKfKHL8fUxEwhrfytLfWgMLLtbBm2J6vf0Ab1t4i28nRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.20.1801171353100.1777@nanos>
+In-Reply-To: <CAL_JsqKfKHL8fUxEwhrfytLfWgMLLtbBm2J6vf0Ab1t4i28nRA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Ingo Molnar <mingo@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>
+To: Rob Herring <robh@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Rob Herring <robh@kernel.org> writes:
 
-On Wed, 17 Jan 2018 13:53:26 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Wed, Jan 24, 2018 at 11:49 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Hi Bjorn,
+>>
+>> After merging the pci tree, today's linux-next build (powerpc
+>> ppc64_defconfig) failed like this:
+>>
+>> arch/powerpc/kernel/pci-common.c: In function 'pcibios_setup
+>> _device':
+>> arch/powerpc/kernel/pci-common.c:406:15: error: 'virq' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+>>   pci_dev->irq = virq;
+>>   ~~~~~~~~~~~~~^~~~~~
+>> arch/powerpc/kernel/pci-common.c:365:15: note: 'virq' was declared here
+>>   unsigned int virq;
+>>                ^~~~
 >
-> On Wed, 17 Jan 2018, Stephen Rothwell wrote:
-> > On Wed, 17 Jan 2018 13:23:17 +0100 (CET) Thomas Gleixner <tglx@linutronix.de> wrote:  
-> > > No. Keep it and lets next time coordinate the relevant bits and pieces
-> > > better. I reserve that bit 20 and let Linus sort out the trivial conflict
-> > > when merging the stuff.  
-> > 
-> > I just picked that bit 20 when resolving the conflict.  The original patch used
-> > bit 11, so the resolution could use any other sensible bit.  
-> 
-> 20 is fine :)
+> I guess I need to update my PPC compiler from 4.8.0. It doesn't warn
+> or error on this. Neither did 0-day.
 
-So maybe this (X86_FEATURE_SEV) should be fixed up to use "( 7*32+20)" in
-the kvm tree?  (Just a followup patch changing the value/position in the
-file would be fine).
--- 
-Cheers,
-Stephen Rothwell
+https://toolchains.free-electrons.com/
+
+Has 5.4.0 and 7.2.0 for both big and little endian.
+
+cheers
