@@ -1,80 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the powerpc tree
-Date: Mon, 29 Jan 2018 11:36:04 +1100
-Message-ID: <20180129113604.015da99d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Mon, 29 Jan 2018 12:50:28 +1100
+Message-ID: <20180129125028.75774df6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:51773 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752946AbeA2AgO (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 28 Jan 2018 19:36:14 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Bryant G. Ly" <bryantly@linux.vnet.ibm.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kirill Tkhai <ktkhai@virtuozzo.com>, Dan Streetman <ddstreet@ieee.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi Bjorn,
+Hi all,
 
-Today's linux-next merge of the pci tree got a conflict in:
+After merging the net-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  arch/powerpc/platforms/powernv/eeh-powernv.c
+In file included from /home/sfr/next/next/include/linux/init_task.h:17:0,
+                 from /home/sfr/next/next/init/init_task.c:2:
+/home/sfr/next/next/include/net/net_namespace.h: In function 'check_net':
+/home/sfr/next/next/include/net/net_namespace.h:228:21: error: passing argument 1 of 'atomic_read' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  return atomic_read(&net->count) != 0;
+                     ^
+In file included from /home/sfr/next/next/include/linux/atomic.h:5:0,
+                 from /home/sfr/next/next/include/linux/rcupdate.h:38,
+                 from /home/sfr/next/next/include/linux/init_task.h:5,
+                 from /home/sfr/next/next/init/init_task.c:2:
+/home/sfr/next/next/arch/powerpc/include/asm/atomic.h:34:23: note: expected 'const atomic_t * {aka const struct <anonymous> *}' but argument is of type 'const refcount_t * {aka const struct refcount_struct *}'
+ static __inline__ int atomic_read(const atomic_t *v)
+                       ^~~~~~~~~~~
 
-between commit:
+and several others similar.
 
-  64ba3dc7bf7c ("powerpc/eeh: Update VF config space after EEH")
+Caused by commit
 
-from the powerpc tree and commit:
+  273c28bc57ca ("net: Convert atomic_t net::count to refcount_t")
 
-  fdabc3fe9982 ("PCI: Add #defines for Completion Timeout Disable feature")
+interacting with commit
 
-from the pci tree.
+  4ee806d51176 ("net: tcp: close sock if net namespace is exiting")
 
-The former commit moved the code changed by the latter to another file.
-I have added the following merge fix patch:
+from the net tree.
+
+I have applied the following merge fix patch for today:
 
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 29 Jan 2018 11:33:24 +1100
-Subject: [PATCH] PCI: fix up for "powerpc/eeh: Update VF config space after EEH"
+Date: Mon, 29 Jan 2018 12:34:37 +1100
+Subject: [PATCH] net: fixup for "net: tcp: close sock if net namespace is exiting"
 
 Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- arch/powerpc/kernel/eeh.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/net/net_namespace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/eeh.c b/arch/powerpc/kernel/eeh.c
-index cc649809885e..2b9df0040d6b 100644
---- a/arch/powerpc/kernel/eeh.c
-+++ b/arch/powerpc/kernel/eeh.c
-@@ -756,14 +756,14 @@ int eeh_restore_vf_config(struct pci_dn *pdn)
- 		eeh_ops->write_config(pdn, edev->pcie_cap + PCI_EXP_DEVCTL,
- 				      2, devctl);
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index 235105afa5e1..f306b2aa15a4 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -225,7 +225,7 @@ int net_eq(const struct net *net1, const struct net *net2)
  
--		/* Disable Completion Timeout */
-+		/* Disable Completion Timeout if possible */
- 		eeh_ops->read_config(pdn, edev->pcie_cap + PCI_EXP_DEVCAP2,
- 				     4, &cap2);
--		if (cap2 & 0x10) {
-+		if (cap2 & PCI_EXP_DEVCAP2_COMP_TMOUT_DIS) {
- 			eeh_ops->read_config(pdn,
- 					     edev->pcie_cap + PCI_EXP_DEVCTL2,
- 					     4, &cap2);
--			cap2 |= 0x10;
-+			cap2 |= PCI_EXP_DEVCTL2_COMP_TMOUT_DIS;
- 			eeh_ops->write_config(pdn,
- 					      edev->pcie_cap + PCI_EXP_DEVCTL2,
- 					      4, cap2);
+ static inline int check_net(const struct net *net)
+ {
+-	return atomic_read(&net->count) != 0;
++	return refcount_read(&net->count) != 0;
+ }
+ 
+ void net_drop_ns(void *);
 -- 
 2.15.1
-
-
-I fixed it up (see above) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 -- 
 Cheers,
