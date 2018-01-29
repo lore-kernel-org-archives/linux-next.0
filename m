@@ -1,32 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mfd tree with the powerpc tree
-Date: Mon, 29 Jan 2018 14:02:10 +1100
-Message-ID: <20180129140210.0deffb8c@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the i2c tree
+Date: Mon, 29 Jan 2018 14:41:14 +1100
+Message-ID: <20180129144114.2580e099@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Frederic Barrat <fbarrat@linux.vnet.ibm.com>, Rui Feng <rui_feng@realsil.com.cn>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:60821 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750771AbeA2DlY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 28 Jan 2018 22:41:24 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gregory CLEMENT <gregory.clement@free-electrons.com>
 
-Hi Lee,
+Hi all,
 
-Today's linux-next merge of the mfd tree got conflicts in:
+Today's linux-next merge of the tip tree got a conflict in:
 
-  drivers/misc/Kconfig
-  drivers/misc/Makefile
+  MAINTAINERS
 
 between commit:
 
-  b97f02246e0d ("ocxl: Add Makefile and Kconfig")
+  e38c85644e11 ("i2c: mv64xxx: Add myself as maintainer for this driver")
 
-from the powerpc tree and commit:
+from the i2c tree and commit:
 
-  e455b69ddf9b ("misc: rtsx: Move Realtek Card Reader Driver to misc")
+  8a95b74d5082 ("x86: Mark hpa as a "Designated Reviewer" for the time being")
 
-from the mfd tree.
+from the tip tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -39,27 +42,30 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/misc/Kconfig
-index 0534f338c84a,7c0fa24f9067..000000000000
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@@ -508,5 -512,5 +512,6 @@@ source "drivers/misc/mic/Kconfig
-  source "drivers/misc/genwqe/Kconfig"
-  source "drivers/misc/echo/Kconfig"
-  source "drivers/misc/cxl/Kconfig"
- +source "drivers/misc/ocxl/Kconfig"
-+ source "drivers/misc/cardreader/Kconfig"
-  endmenu
-diff --cc drivers/misc/Makefile
-index 73326d54e246,8d8cc096063b..000000000000
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@@ -55,7 -55,7 +55,8 @@@ obj-$(CONFIG_CXL_BASE)		+= cxl
-  obj-$(CONFIG_ASPEED_LPC_CTRL)	+= aspeed-lpc-ctrl.o
-  obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
-  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- +obj-$(CONFIG_OCXL)		+= ocxl/
-+ obj-$(CONFIG_MISC_RTSX)	+= cardreader/
+diff --cc MAINTAINERS
+index 0df7565ff14e,c2ed8dc7cb42..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -6641,22 -6624,6 +6648,12 @@@ L:	linux-i2c@vger.kernel.or
+  S:	Maintained
+  F:	drivers/i2c/i2c-stub.c
   
-  lkdtm-$(CONFIG_LKDTM)		+= lkdtm_core.o
-  lkdtm-$(CONFIG_LKDTM)		+= lkdtm_bugs.o
+ +I2C MV64XXX MARVELL AND ALLWINNER DRIVER
+ +M:	Gregory CLEMENT <gregory.clement@free-electrons.com>
+ +L:	linux-i2c@vger.kernel.org
+ +S:	Maintained
+ +F:	drivers/i2c/busses/i2c-mv64xxx.c
+ +
+- i386 BOOT CODE
+- M:	"H. Peter Anvin" <hpa@zytor.com>
+- S:	Maintained
+- F:	arch/x86/boot/
+- 
+- i386 SETUP CODE / CPU ERRATA WORKAROUNDS
+- M:	"H. Peter Anvin" <hpa@zytor.com>
+- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hpa/linux-2.6-x86setup.git
+- S:	Maintained
+- 
+  IA64 (Itanium) PLATFORM
+  M:	Tony Luck <tony.luck@intel.com>
+  M:	Fenghua Yu <fenghua.yu@intel.com>
