@@ -1,84 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs
- tree
-Date: Thu, 1 Feb 2018 10:25:53 +1100
-Message-ID: <20180201102553.73370fa6@canb.auug.org.au>
-References: <20180125143155.20b15b37@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Thu, 1 Feb 2018 10:51:14 +1100
+Message-ID: <20180201105114.562aef46@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180125143155.20b15b37@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Niklas Cassel <niklas.cassel@axis.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Bjorn,
 
-On Thu, 25 Jan 2018 14:31:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Today's linux-next merge of the vfs tree got a conflict in:
-> 
->   fs/dcache.c
-> 
-> between commit:
-> 
->   f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()")
-> 
-> from the overlayfs tree and commit:
-> 
->   f1ee616214cb ("VFS: don't keep disconnected dentries on d_anon")
-> 
-> from the vfs tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc fs/dcache.c
-> index 99bce0ed0213,17e6b84b9656..000000000000
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@@ -1954,16 -1961,18 +1953,18 @@@ static struct dentry *__d_instantiate_a
->   	if (disconnected)
->   		add_flags |= DCACHE_DISCONNECTED;
->   
->  -	spin_lock(&tmp->d_lock);
->  -	__d_set_inode_and_type(tmp, inode, add_flags);
->  -	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
->  +	spin_lock(&dentry->d_lock);
->  +	__d_set_inode_and_type(dentry, inode, add_flags);
->  +	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
-> - 	hlist_bl_lock(&dentry->d_sb->s_anon);
-> - 	hlist_bl_add_head(&dentry->d_hash, &dentry->d_sb->s_anon);
-> - 	hlist_bl_unlock(&dentry->d_sb->s_anon);
-> + 	if (!disconnected) {
->  -		hlist_bl_lock(&tmp->d_sb->s_roots);
->  -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
->  -		hlist_bl_unlock(&tmp->d_sb->s_roots);
-> ++		hlist_bl_lock(&dentry->d_sb->s_roots);
-> ++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
-> ++		hlist_bl_unlock(&dentry->d_sb->s_roots);
-> + 	}
->  -	spin_unlock(&tmp->d_lock);
->  +	spin_unlock(&dentry->d_lock);
->   	spin_unlock(&inode->i_lock);
->   
->  -	return tmp;
->  +	return dentry;
->   
->    out_iput:
->   	iput(inode);
+After merging the pci tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-This is now a conflict between the overlayfs tree and Linus' tree.
+drivers/pci/dwc/pcie-designware-ep.c: In function 'dw_pcie_ep_raise_msi_irq':
+drivers/pci/dwc/pcie-designware-ep.c:293:8: error: too few arguments to function 'dw_pcie_ep_map_addr'
+  ret = dw_pcie_ep_map_addr(epc, ep->msi_mem_phys, msg_addr,
+        ^~~~~~~~~~~~~~~~~~~
+drivers/pci/dwc/pcie-designware-ep.c:177:12: note: declared here
+ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+            ^~~~~~~~~~~~~~~~~~~
+drivers/pci/dwc/pcie-designware-ep.c:300:2: error: too few arguments to function 'dw_pcie_ep_unmap_addr'
+  dw_pcie_ep_unmap_addr(epc, ep->msi_mem_phys);
+  ^~~~~~~~~~~~~~~~~~~~~
+drivers/pci/dwc/pcie-designware-ep.c:161:13: note: declared here
+ static void dw_pcie_ep_unmap_addr(struct pci_epc *epc, u8 func_no,
+             ^~~~~~~~~~~~~~~~~~~~~
+
+Caused by commit
+
+  4494738de0d9 ("PCI: endpoint: Add the function number as argument to EPC ops")
+
+interacting with commit
+
+  6f6d7873711c ("PCI: designware-ep: Add generic function for raising MSI irq")
+
+This should have been fixed up in commit
+
+  26b259ab4fe8 ("Merge remote-tracking branch 'lorenzo/pci/dwc' into next")
+
+I have used the pci tree from next-20180131 for today.
+
+
 
 -- 
 Cheers,
