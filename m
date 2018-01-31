@@ -1,19 +1,85 @@
-From: "Martin Kelly" <a1719322a@fie.umich.mx>
-Subject: =?utf-8?q?Kredit=3F_so_schnell_wie_m=C3=B6glich=3F?=
-Date: Wed, 31 Jan 2018 09:56:17 -0800
-Message-ID: <20180131174611.1D8E12AA46BE__38202.2041398615$1517421833$gmane$org@correo.fie.umich.mx>
-Reply-To: kellyauthentic@gmail.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs
+ tree
+Date: Thu, 1 Feb 2018 10:25:53 +1100
+Message-ID: <20180201102553.73370fa6@canb.auug.org.au>
+References: <20180125143155.20b15b37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from correo.fie.umich.mx ([148.216.17.22]:51476 "EHLO
-        correo.fie.umich.mx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752296AbeAaSFf (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 31 Jan 2018 13:05:35 -0500
-Content-Description: Mail message body
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Recipients <a1719322a@fie.umich.mx>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180125143155.20b15b37@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+List-Id: linux-next.vger.kernel.org
 
-Kredit? so schnell wie möglich? unkompliziert und seriös ? Bei uns genau richtig. Wir arbeiten europaweit. Wir vermitteln Kredite und Darlehen zu fairen Konditionen. Durch unsere seriöse, kompetente und ehrliche Kreditberatung haben wir über Jahre eine starke Position auf dem Markt.
+Hi all,
+
+On Thu, 25 Jan 2018 14:31:55 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Today's linux-next merge of the vfs tree got a conflict in:
+> 
+>   fs/dcache.c
+> 
+> between commit:
+> 
+>   f9c34674bc60 ("vfs: factor out helpers d_instantiate_anon() and d_alloc_anon()")
+> 
+> from the overlayfs tree and commit:
+> 
+>   f1ee616214cb ("VFS: don't keep disconnected dentries on d_anon")
+> 
+> from the vfs tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc fs/dcache.c
+> index 99bce0ed0213,17e6b84b9656..000000000000
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@@ -1954,16 -1961,18 +1953,18 @@@ static struct dentry *__d_instantiate_a
+>   	if (disconnected)
+>   		add_flags |= DCACHE_DISCONNECTED;
+>   
+>  -	spin_lock(&tmp->d_lock);
+>  -	__d_set_inode_and_type(tmp, inode, add_flags);
+>  -	hlist_add_head(&tmp->d_u.d_alias, &inode->i_dentry);
+>  +	spin_lock(&dentry->d_lock);
+>  +	__d_set_inode_and_type(dentry, inode, add_flags);
+>  +	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+> - 	hlist_bl_lock(&dentry->d_sb->s_anon);
+> - 	hlist_bl_add_head(&dentry->d_hash, &dentry->d_sb->s_anon);
+> - 	hlist_bl_unlock(&dentry->d_sb->s_anon);
+> + 	if (!disconnected) {
+>  -		hlist_bl_lock(&tmp->d_sb->s_roots);
+>  -		hlist_bl_add_head(&tmp->d_hash, &tmp->d_sb->s_roots);
+>  -		hlist_bl_unlock(&tmp->d_sb->s_roots);
+> ++		hlist_bl_lock(&dentry->d_sb->s_roots);
+> ++		hlist_bl_add_head(&dentry->d_hash, &tmp->d_sb->s_roots);
+> ++		hlist_bl_unlock(&dentry->d_sb->s_roots);
+> + 	}
+>  -	spin_unlock(&tmp->d_lock);
+>  +	spin_unlock(&dentry->d_lock);
+>   	spin_unlock(&inode->i_lock);
+>   
+>  -	return tmp;
+>  +	return dentry;
+>   
+>    out_iput:
+>   	iput(inode);
+
+This is now a conflict between the overlayfs tree and Linus' tree.
+
+-- 
+Cheers,
+Stephen Rothwell
