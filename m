@@ -1,89 +1,64 @@
-From: Christoffer Dall <christoffer.dall@linaro.org>
-Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
-Date: Thu, 1 Feb 2018 11:47:07 +0100
-Message-ID: <20180201104707.GA21802@cbox>
-References: <20180201125512.7bc96674@canb.auug.org.au>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Thu, 1 Feb 2018 11:10:54 +0000
+Message-ID: <20180201111054.GA3983@e107981-ln.cambridge.arm.com>
+References: <20180201105114.562aef46@canb.auug.org.au>
+ <20180201085608.GA22568@axis.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <kvm-owner@vger.kernel.org>
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47944 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751761AbeBALLB (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 1 Feb 2018 06:11:01 -0500
 Content-Disposition: inline
-In-Reply-To: <20180201125512.7bc96674@canb.auug.org.au>
-Sender: kvm-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
-List-Id: linux-next.vger.kernel.org
+In-Reply-To: <20180201085608.GA22568@axis.com>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Niklas Cassel <niklas.cassel@axis.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cyrille Pitchen <cyrille.pitchen@free-electrons.com>
 
-Hi,
+On Thu, Feb 01, 2018 at 09:56:09AM +0100, Niklas Cassel wrote:
+> On Thu, Feb 01, 2018 at 10:51:14AM +1100, Stephen Rothwell wrote:
+> > Hi Bjorn,
+> > 
+> > After merging the pci tree, today's linux-next build (arm
+> > multi_v7_defconfig) failed like this:
+> > 
+> > drivers/pci/dwc/pcie-designware-ep.c: In function 'dw_pcie_ep_raise_msi_irq':
+> > drivers/pci/dwc/pcie-designware-ep.c:293:8: error: too few arguments to function 'dw_pcie_ep_map_addr'
+> >   ret = dw_pcie_ep_map_addr(epc, ep->msi_mem_phys, msg_addr,
+> >         ^~~~~~~~~~~~~~~~~~~
+> > drivers/pci/dwc/pcie-designware-ep.c:177:12: note: declared here
+> >  static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+> >             ^~~~~~~~~~~~~~~~~~~
+> > drivers/pci/dwc/pcie-designware-ep.c:300:2: error: too few arguments to function 'dw_pcie_ep_unmap_addr'
+> >   dw_pcie_ep_unmap_addr(epc, ep->msi_mem_phys);
+> >   ^~~~~~~~~~~~~~~~~~~~~
+> > drivers/pci/dwc/pcie-designware-ep.c:161:13: note: declared here
+> >  static void dw_pcie_ep_unmap_addr(struct pci_epc *epc, u8 func_no,
+> >              ^~~~~~~~~~~~~~~~~~~~~
+> > 
+> > Caused by commit
+> > 
+> >   4494738de0d9 ("PCI: endpoint: Add the function number as argument to EPC ops")
+> > 
+> > interacting with commit
+> > 
+> >   6f6d7873711c ("PCI: designware-ep: Add generic function for raising MSI irq")
+> > 
+> > This should have been fixed up in commit
+> > 
+> >   26b259ab4fe8 ("Merge remote-tracking branch 'lorenzo/pci/dwc' into next")
+> > 
+> > I have used the pci tree from next-20180131 for today.
+> 
+> Hello,
+> 
+> A suggested merge resolution included as an attachment.
 
-On Thu, Feb 01, 2018 at 12:55:12PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   virt/kvm/arm/arch_timer.c
-> 
-> between commit:
-> 
->   36e5cfd410ad ("KVM: arm/arm64: Properly handle arch-timer IRQs after vtimer_save_state")
-> 
-> from Linus' tree and commits:
-> 
->   70450a9fbe06 ("KVM: arm/arm64: Don't cache the timer IRQ level")
->   13e59ece5b30 ("KVM: arm/arm64: Fix incorrect timer_is_pending logic")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
-> 
-While the suggested fix is functional it does result in some code
-duplication, and the better resolution is the following:
+The resolution is OK to me - we have not spotted it since
+PCI_ENDPOINT is being turned on in the config file in question only
+in -next, it is not on by default in current mainline, apologies.
 
-diff --cc virt/kvm/arm/arch_timer.c
-index cc29a8148328,fb6bd9b9845e..000000000000
---- a/virt/kvm/arm/arch_timer.c
-+++ b/virt/kvm/arm/arch_timer.c
-@@@ -92,27 -92,18 +92,22 @@@ static irqreturn_t kvm_arch_timer_handl
-  {
-  	struct kvm_vcpu *vcpu = *(struct kvm_vcpu **)dev_id;
-  	struct arch_timer_context *vtimer;
-- 	u32 cnt_ctl;
-  
- -	if (!vcpu) {
- -		pr_warn_once("Spurious arch timer IRQ on non-VCPU thread\n");
- -		return IRQ_NONE;
- -	}
- +	/*
- +	 * We may see a timer interrupt after vcpu_put() has been called which
- +	 * sets the CPU's vcpu pointer to NULL, because even though the timer
- +	 * has been disabled in vtimer_save_state(), the hardware interrupt
- +	 * signal may not have been retired from the interrupt controller yet.
- +	 */
- +	if (!vcpu)
- +		return IRQ_HANDLED;
-  
-  	vtimer = vcpu_vtimer(vcpu);
-- 	if (!vtimer->irq.level) {
-- 		cnt_ctl = read_sysreg_el0(cntv_ctl);
-- 		cnt_ctl &= ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT |
-- 			   ARCH_TIMER_CTRL_IT_MASK;
-- 		if (cnt_ctl == (ARCH_TIMER_CTRL_ENABLE | ARCH_TIMER_CTRL_IT_STAT))
-- 			kvm_timer_update_irq(vcpu, true, vtimer);
-- 	}
-+ 	if (kvm_timer_should_fire(vtimer))
-+ 		kvm_timer_update_irq(vcpu, true, vtimer);
-  
-- 	if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
-+ 	if (static_branch_unlikely(&userspace_irqchip_in_use) &&
-+ 	    unlikely(!irqchip_in_kernel(vcpu->kvm)))
-  		kvm_vtimer_update_mask_user(vcpu);
-  
-  	return IRQ_HANDLED;
-
-
-Thanks,
--Christoffer
+Lorenzo
