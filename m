@@ -1,90 +1,35 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Date: Thu, 1 Feb 2018 14:48:29 +0100
-Message-ID: <20180201134829.GL21609@dhcp22.suse.cz>
-References: <5acba3c2-754d-e449-24ff-a72a0ad0d895@linux.vnet.ibm.com>
- <20180126140415.GD5027@dhcp22.suse.cz>
- <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
- <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
- <20180131131937.GA6740@dhcp22.suse.cz>
- <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+From: Christoffer Dall <christoffer.dall@linaro.org>
+Subject: Re: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Thu, 1 Feb 2018 15:05:03 +0100
+Message-ID: <20180201140503.GE21802@cbox>
+References: <20180201125512.7bc96674@canb.auug.org.au>
+ <20180201104707.GA21802@cbox>
+ <20180202002227.36db3356@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+In-Reply-To: <20180202002227.36db3356@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu 01-02-18 08:43:34, Anshuman Khandual wrote:
-[...]
-> $dmesg | grep elf_brk
-> [    9.571192] elf_brk 10030328 elf_bss 10030000
+On Fri, Feb 02, 2018 at 12:22:27AM +1100, Stephen Rothwell wrote:
+> Hi Christoffer,
 > 
-> static int load_elf_binary(struct linux_binprm *bprm)
-> ---------------------
+> On Thu, 1 Feb 2018 11:47:07 +0100 Christoffer Dall <christoffer.dall@linaro.org> wrote:
+> >
+> > While the suggested fix is functional it does result in some code
+> > duplication, and the better resolution is the following:
 > 
-> 	if (unlikely (elf_brk > elf_bss)) {
-> 			unsigned long nbyte;
-> 	            
-> 			/* There was a PT_LOAD segment with p_memsz > p_filesz
-> 			   before this one. Map anonymous pages, if needed,
-> 			   and clear the area.  */
-> 			retval = set_brk(elf_bss + load_bias,
-> 					 elf_brk + load_bias,
-> 					 bss_prot);
+> OK, I will use that resolution form tomorrow on.
 > 
+> Someone needs to remember to let Linus know when the pull request is
+> sent.
 > 
-> ---------------------
+I've sent a separate notice to Paolo and Radim, so I'm sure they'll take
+care of it.
 
-Just a blind shot... Does the following make any difference?
----
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 021fe78998ea..04b24d00c911 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	   the correct location in memory. */
- 	for(i = 0, elf_ppnt = elf_phdata;
- 	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
--		int elf_prot = 0, elf_flags;
-+		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
- 		unsigned long k, vaddr;
- 		unsigned long total_size = 0;
- 
-@@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 					 */
- 				}
- 			}
-+			elf_fixed = MAP_FIXED;
- 		}
- 
- 		if (elf_ppnt->p_flags & PF_R)
-@@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		 * the ET_DYN load_addr calculations, proceed normally.
- 		 */
- 		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
--			elf_flags |= MAP_FIXED_NOREPLACE;
-+			elf_flags |= elf_fixed;
- 		} else if (loc->elf_ex.e_type == ET_DYN) {
- 			/*
- 			 * This logic is run once for the first LOAD Program
-@@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 				load_bias = ELF_ET_DYN_BASE;
- 				if (current->flags & PF_RANDOMIZE)
- 					load_bias += arch_mmap_rnd();
--				elf_flags |= MAP_FIXED_NOREPLACE;
-+				elf_flags |= elf_fixed;
- 			} else
- 				load_bias = 0;
- 
-
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+-Christoffer
