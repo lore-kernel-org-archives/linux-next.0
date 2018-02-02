@@ -1,85 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm tree with the tip tree
-Date: Fri, 2 Feb 2018 11:51:13 +1100
-Message-ID: <20180202115113.1bcc04be@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the fscrypt tree
+Date: Fri, 2 Feb 2018 14:17:36 +1100
+Message-ID: <20180202141736.00f13fff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:40777 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751569AbeBBAvQ (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 1 Feb 2018 19:51:16 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, Jim Mattson <jmattson@google.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the kvm tree got a conflict in:
+Today's linux-next merge of the akpm tree got a conflict in:
 
-  arch/x86/kvm/vmx.c
+  fs/crypto/hooks.c
 
 between commit:
 
-  085331dfc6bb ("x86/kvm: Update spectre-v1 mitigation")
+  0b1dfa4cc6c6 ("fscrypt: fix build with pre-4.6 gcc versions")
 
-from the tip tree and commit:
+from the fscrypt tree and patch:
 
-  58e9ffae5efd ("kvm: vmx: Reduce size of vmcs_field_to_offset_table")
+  "fs/crypto/hooks.c: fix build with gcc-4.4.4"
 
-from the kvm tree.
+from the akpm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I just dropped the akpm tree version) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
-
-diff --cc arch/x86/kvm/vmx.c
-index 28942823cc3a,bb5b4888505b..000000000000
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@@ -899,18 -856,25 +857,22 @@@ static const unsigned short vmcs_field_
-  
-  static inline short vmcs_field_to_offset(unsigned long field)
-  {
- +	const size_t size = ARRAY_SIZE(vmcs_field_to_offset_table);
- +	unsigned short offset;
-+ 	unsigned index;
-  
-- 	BUILD_BUG_ON(size > SHRT_MAX);
-- 	if (field >= size)
-+ 	if (field >> 15)
-  		return -ENOENT;
-  
-- 	field = array_index_nospec(field, size);
-- 	offset = vmcs_field_to_offset_table[field];
-+ 	index = ROL16(field, 6);
- -	if (index >= ARRAY_SIZE(vmcs_field_to_offset_table))
-++	if (index >= size)
-+ 		return -ENOENT;
-+ 
- -	/*
- -	 * FIXME: Mitigation for CVE-2017-5753.  To be replaced with a
- -	 * generic mechanism.
- -	 */
- -	asm("lfence");
- -
- -	if (vmcs_field_to_offset_table[index] == 0)
-++	index = array_index_nospec(index, size);
-++	offset = vmcs_field_to_offset_table[index];
- +	if (offset == 0)
-  		return -ENOENT;
- -
- -	return vmcs_field_to_offset_table[index];
- +	return offset;
-  }
-  
-  static inline struct vmcs12 *get_vmcs12(struct kvm_vcpu *vcpu)
