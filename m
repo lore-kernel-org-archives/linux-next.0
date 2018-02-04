@@ -1,28 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the s390 tree
-Date: Sat, 3 Feb 2018 13:03:48 +1100
-Message-ID: <20180203130348.74f7b89b@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Mon, 5 Feb 2018 09:28:18 +1100
+Message-ID: <20180205092818.5ba62766@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:58089 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59683 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751669AbeBCCDv (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Fri, 2 Feb 2018 21:03:51 -0500
+        id S1751797AbeBDW2V (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Feb 2018 17:28:21 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi all,
+Hi Linus,
 
-Commits
+Just building you tree, today's linux-next build (arm multi_v7_defconfig)
+failed like this:
 
-  a39892ed47bf ("s390/runtime_instrumentation: re-add signum system call parameter")
-  279d2cea3aad ("s390/cio: fix kernel-doc usage")
+drivers/usb/host/ehci-st.c: In function 'st_ehci_suspend':
+drivers/usb/host/ehci-st.c:300:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_sleep_state(dev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/usb/host/ehci-st.c: In function 'st_ehci_resume':
+drivers/usb/host/ehci-st.c:312:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_default_state(dev);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-are missing a Signed-off-by from their committer.
+Caused by commit
+
+  23c35f48f5fb ("pinctrl: remove include file from <linux/device.h>")
+
+I have added teh following fix patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 5 Feb 2018 09:24:30 +1100
+Subject: [PATCH] pinctrl: files should directly include apis they use
+
+Fixes: 23c35f48f5fb ("pinctrl: remove include file from <linux/device.h>")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/host/ehci-st.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/host/ehci-st.c b/drivers/usb/host/ehci-st.c
+index 3c1362ab70be..dc42981047c9 100644
+--- a/drivers/usb/host/ehci-st.c
++++ b/drivers/usb/host/ehci-st.c
+@@ -23,6 +23,7 @@
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+ #include <linux/usb/ehci_pdriver.h>
++#include <linux/pinctrl/consumer.h>
+ 
+ #include "ehci.h"
+ 
+-- 
+2.15.1
 
 -- 
 Cheers,
