@@ -1,43 +1,26 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] net: mediatek: Explicitly include pinctrl headers
-Date: Mon,  5 Feb 2018 13:54:36 +0100
-Message-ID: <20180205125436.24005-1-thierry.reding@gmail.com>
-References: <20180205124750.19305-1-thierry.reding@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] net: mediatek: Explicitly include pinctrl headers
+Date: Mon, 5 Feb 2018 09:42:21 -0800
+Message-ID: <CA+55aFy--bQRDZEUsBfiWhyP+Of3+s4zEcKo1T8cCoAMXBrwsw@mail.gmail.com>
+References: <20180205124750.19305-1-thierry.reding@gmail.com> <20180205125436.24005-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20180205124750.19305-1-thierry.reding@gmail.com>
+In-Reply-To: <20180205125436.24005-1-thierry.reding@gmail.com>
 Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Mon, Feb 5, 2018 at 4:54 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
+>
+> Include these headers explicitly to avoid the build failure.
 
-The Mediatek ethernet driver fails to build after commit 23c35f48f5fb
-("pinctrl: remove include file from <linux/device.h>") because it relies
-on the pinctrl/consumer.h and pinctrl/devinfo.h being pulled in by the
-device.h header implicitly.
+I don't think you need to include *both*.
 
-Include these headers explicitly to avoid the build failure.
+<linux/device.h> used to include just <linux/pinctrl/devinfo.h>.
 
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 ++
- 1 file changed, 2 insertions(+)
+I'll edit your patches to include just that.
+<linux/pinctrl/consumer.h> will come in automatically through it.
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 29826dd15204..9e74c165f3ca 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -23,6 +23,8 @@
- #include <linux/reset.h>
- #include <linux/tcp.h>
- #include <linux/interrupt.h>
-+#include <linux/pinctrl/consumer.h>
-+#include <linux/pinctrl/devinfo.h>
- 
- #include "mtk_eth_soc.h"
- 
--- 
-2.15.1
-
+             Linus
