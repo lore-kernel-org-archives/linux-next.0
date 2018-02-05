@@ -1,34 +1,39 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the s390 tree
-Date: Mon, 5 Feb 2018 07:53:18 +0100
-Message-ID: <20180205075318.32ef7fd4@mschwideX1>
-References: <20180203130348.74f7b89b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180203130348.74f7b89b@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 0/2] pinctrl: Implicit inclusion fallout fixes
+Date: Mon,  5 Feb 2018 13:47:48 +0100
+Message-ID: <20180205124750.19305-1-thierry.reding@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+From: Thierry Reding <treding@nvidia.com>
 
-On Sat, 3 Feb 2018 13:03:48 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Hi Linus,
 
-> Commits
-> 
->   a39892ed47bf ("s390/runtime_instrumentation: re-add signum system call parameter")
->   279d2cea3aad ("s390/cio: fix kernel-doc usage")
-> 
-> are missing a Signed-off-by from their committer.
+these are two patches to fix build errors I've run into that are fallout
+from your removal of the pinctrl/devinfo.h include from device.h. I sure
+can imagine that there are more like this, but these seem to be the
+common ones, judging by my own build tests and the kernel-build-reports
+mailing list.
 
-Thanks for the heads up, fixed it.
+I'm sending these to you directly because I think it makes sense for you
+to apply these on top of 23c35f48f5fb ("pinctrl: remove include file
+from <linux/device.h>") rather than have these go in through their
+respective maintainer trees, so that the build gets fixed as quickly as
+possible.
+
+Thierry
+
+Thierry Reding (2):
+  drm/rockchip: lvds: Explicitly include pinctrl headers
+  mmc: meson-gx-mmc: Explicitly include pinctr/consumer.h
+
+ drivers/gpu/drm/rockchip/rockchip_lvds.c | 2 ++
+ drivers/mmc/host/meson-gx-mmc.c          | 1 +
+ 2 files changed, 3 insertions(+)
 
 -- 
-blue skies,
-   Martin.
+2.15.1
 
-"Reality continues to ruin my life." - Calvin.
