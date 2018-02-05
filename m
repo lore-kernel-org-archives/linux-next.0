@@ -1,65 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure in Linus' tree
-Date: Mon, 5 Feb 2018 09:28:18 +1100
-Message-ID: <20180205092818.5ba62766@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with Linus' tree
+Date: Mon, 5 Feb 2018 12:06:30 +1100
+Message-ID: <20180205120630.4c924d00@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59683 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:59917 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751797AbeBDW2V (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 4 Feb 2018 17:28:21 -0500
+        id S1751916AbeBEBGc (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 4 Feb 2018 20:06:32 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ashok Raj <ashok.raj@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Peter Zijlstra (Intel)" <peterz@infradead.org>, David Woodhouse <dwmw@amazon.co.uk>, KarimAllah Ahmed <karahmed@amazon.de>, Brijesh Singh <brijesh.singh@amd.com>
 
-Hi Linus,
+Hi all,
 
-Just building you tree, today's linux-next build (arm multi_v7_defconfig)
-failed like this:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-drivers/usb/host/ehci-st.c: In function 'st_ehci_suspend':
-drivers/usb/host/ehci-st.c:300:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
-  pinctrl_pm_select_sleep_state(dev);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-drivers/usb/host/ehci-st.c: In function 'st_ehci_resume':
-drivers/usb/host/ehci-st.c:312:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
-  pinctrl_pm_select_default_state(dev);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  arch/x86/kvm/svm.c
 
-Caused by commit
+between commit:
 
-  23c35f48f5fb ("pinctrl: remove include file from <linux/device.h>")
+  15d45071523d ("KVM/x86: Add IBPB support")
 
-I have added teh following fix patch for today:
+from Linus' tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 5 Feb 2018 09:24:30 +1100
-Subject: [PATCH] pinctrl: files should directly include apis they use
+  70cd94e60c73 ("KVM: SVM: VMRUN should use associated ASID when SEV is enabled")
 
-Fixes: 23c35f48f5fb ("pinctrl: remove include file from <linux/device.h>")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/usb/host/ehci-st.c | 1 +
- 1 file changed, 1 insertion(+)
+from the kvm tree.
 
-diff --git a/drivers/usb/host/ehci-st.c b/drivers/usb/host/ehci-st.c
-index 3c1362ab70be..dc42981047c9 100644
---- a/drivers/usb/host/ehci-st.c
-+++ b/drivers/usb/host/ehci-st.c
-@@ -23,6 +23,7 @@
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
- #include <linux/usb/ehci_pdriver.h>
-+#include <linux/pinctrl/consumer.h>
- 
- #include "ehci.h"
- 
--- 
-2.15.1
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 -- 
 Cheers,
 Stephen Rothwell
+
+diff --cc arch/x86/kvm/svm.c
+index 4e3c79530526,1bf20e9160bd..000000000000
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@@ -533,7 -573,9 +577,10 @@@ struct svm_cpu_data 
+  	struct kvm_ldttss_desc *tss_desc;
+  
+  	struct page *save_area;
+ +	struct vmcb *current_vmcb;
++ 
++ 	/* index = sev_asid, value = vmcb pointer */
++ 	struct vmcb **sev_vmcbs;
+  };
+  
+  static DEFINE_PER_CPU(struct svm_cpu_data *, svm_data);
