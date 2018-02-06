@@ -1,52 +1,71 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] net: mediatek: Explicitly include pinctrl headers
-Date: Tue, 6 Feb 2018 00:03:26 +0100
-Message-ID: <CACRpkdbKF5-A63_-U62OcAyy5Juntuym9N96nkicqHtc2TUC+Q@mail.gmail.com>
-References: <20180205124750.19305-1-thierry.reding@gmail.com>
- <20180205125436.24005-1-thierry.reding@gmail.com> <CA+55aFy--bQRDZEUsBfiWhyP+Of3+s4zEcKo1T8cCoAMXBrwsw@mail.gmail.com>
- <20180205175906.GA8237@ulmo> <CACRpkdYrG6=qwJgOTW2ccyq-UBSOkH+EBBui54PtGqJF7CMRDw@mail.gmail.com>
- <20180205190858.GA22699@ulmo>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Tue, 6 Feb 2018 11:40:48 +1100
+Message-ID: <20180206114048.6c8ced1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20180205190858.GA22699@ulmo>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-gpio@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Will Deacon <will.deacon@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Feb 5, 2018 at 8:08 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> On Mon, Feb 05, 2018 at 08:02:40PM +0100, Linus Walleij wrote:
->> On Mon, Feb 5, 2018 at 6:59 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
->>
->> > Anyway, I think going with the pinctrl/devinfo.h include only is fine
->> > for now. If it turns out that the Mediatek ethernet and Rockchip LVDS
->> > drivers can just omit the bits fiddling with struct dev_pin_info, we can
->> > swap out the pinctrl/devinfo.h include for pinctrl/consumer.h at that
->> > time.
->> >
->> > LinusW: what are your thoughts on the struct dev_pin_info usage by these
->> > drivers? Does their code seem redundant to you, too?
->>
->> I don't think they should use struct dev_pin_info at all,
->> that thing is for the device core only.
->>
->> I like to think that <linux/pinctrl/consumer.h> is for drivers that
->> explicitly grab and control pin control states so this driver should
->> only include <linux/pinctrl/consumer.h>.
->>
->> Torvalds: can you do it like that instead? Either way will
->> make the compile work again, we can also tidy it up later.
->> (i.e. I will grep for includes of pinctrl/dev_info.h and replace
->> it with consumer.h) at some point.
->
-> That won't work, unfortunately, because these drivers actually try to
-> dereference pointers to struct dev_pin_info and hence need that include
-> for the structure's definition. Those are the only two drivers I can see
-> that access this structure directly (other than the device core).
+Hi all,
 
-Grrr OK I thought I was aiming for encapsulation here but then
-what can I do, sigh.
+Today's linux-next merge of the tip tree got a conflict in:
 
-Yours,
-Linus Walleij
+  arch/arm64/kernel/entry.S
+
+between commit:
+
+  4bf3286d29f3 ("arm64: entry: Hook up entry trampoline to exception vectors")
+
+from Linus' tree and commit:
+
+  f1e3a12b6543 ("membarrier/arm64: Provide core serializing command")
+
+from the tip tree.
+
+I fixed it up (probably not completely - see below) and can carry the
+fix as necessary. This is now fixed as far as linux-next is concerned,
+but any non trivial conflicts should be mentioned to your upstream
+maintainer when your tree is submitted for merging.  You may also want
+to consider cooperating with the maintainer of the conflicting tree to
+minimise any particularly complex conflicts.
+
+-- 
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/kernel/entry.S
+index b34e717d7597,5edde1c2e93e..000000000000
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@@ -324,21 -302,11 +324,25 @@@ alternative_else_nop_endi
+  	ldp	x28, x29, [sp, #16 * 14]
+  	ldr	lr, [sp, #S_LR]
+  	add	sp, sp, #S_FRAME_SIZE		// restore sp
+ +
+ +	.if	\el == 0
+ +alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
+ +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+ +	bne	4f
+ +	msr	far_el1, x30
+ +	tramp_alias	x30, tramp_exit_native
+ +	br	x30
+ +4:
+ +	tramp_alias	x30, tramp_exit_compat
+ +	br	x30
+ +#endif
+ +	.else
++ 	/*
++ 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
++ 	 * when returning from IPI handler, and when returning to user-space.
++ 	 */
+ -	eret					// return to kernel
+ +	eret
+ +	.endif
+  	.endm
+  
+  	.macro	irq_stack_entry
