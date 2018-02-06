@@ -1,31 +1,143 @@
-From: Peter Zijlstra <peterz@infradead.org>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Tue, 6 Feb 2018 10:14:11 +0100
-Message-ID: <20180206091411.GB2269@hirez.programming.kicks-ass.net>
-References: <20180206115438.7008ac91@canb.auug.org.au>
+Date: Tue, 6 Feb 2018 12:52:34 +0000 (UTC)
+Message-ID: <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
+References: <20180206114048.6c8ced1c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([65.50.211.133]:44121 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752302AbeBFJOX (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Feb 2018 04:14:23 -0500
-Content-Disposition: inline
-In-Reply-To: <20180206115438.7008ac91@canb.auug.org.au>
+Received: from mail.efficios.com ([167.114.142.141]:37903 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752403AbeBFMvu (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 6 Feb 2018 07:51:50 -0500
+In-Reply-To: <20180206114048.6c8ced1c@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>
 
-On Tue, Feb 06, 2018 at 11:54:38AM +1100, Stephen Rothwell wrote:
+----- On Feb 5, 2018, at 7:40 PM, Stephen Rothwell sfr@canb.auug.org.au wrote:
+
 > Hi all,
 > 
 > Today's linux-next merge of the tip tree got a conflict in:
 > 
->   include/linux/sched/mm.h
+>  arch/arm64/kernel/entry.S
 > 
 > between commit:
 > 
->   d70f2a14b72a ("include/linux/sched/mm.h: uninline mmdrop_async(), etc")
+>  4bf3286d29f3 ("arm64: entry: Hook up entry trampoline to exception vectors")
+> 
+> from Linus' tree and commit:
+> 
+>  f1e3a12b6543 ("membarrier/arm64: Provide core serializing command")
+> 
+> from the tip tree.
+> 
+> I fixed it up (probably not completely - see below) and can carry the
+> fix as necessary. This is now fixed as far as linux-next is concerned,
+> but any non trivial conflicts should be mentioned to your upstream
+> maintainer when your tree is submitted for merging.  You may also want
+> to consider cooperating with the maintainer of the conflicting tree to
+> minimise any particularly complex conflicts.
 
-FWIW, akpm has a patch that re-inlines mmdrop().
+The change introduced by 4bf3286d29 "arm64: entry: Hook up entry trampoline
+to exception vectors" adds a trampoline as mechanism for return:
+
+-       eret                                    // return to kernel
++
++#ifndef CONFIG_UNMAP_KERNEL_AT_EL0
++       eret
++#else
++       .if     \el == 0
++       bne     4f
++       msr     far_el1, x30
++       tramp_alias     x30, tramp_exit_native
++       br      x30
++4:
++       tramp_alias     x30, tramp_exit_compat
++       br      x30
++       .else
++       eret
++       .endif
++#endif
+
+Which means that with CONFIG_UNMAP_KERNEL_AT_EL0, for return to EL0,
+the eret is in the trampoline:
+
+        .macro tramp_exit, regsize = 64
+        adr     x30, tramp_vectors
+        msr     vbar_el1, x30
+        tramp_unmap_kernel      x30
+        .if     \regsize == 64
+        mrs     x30, far_el1
+        .endif
+        eret
+        .endm
+
+ENTRY(tramp_exit_native)
+        tramp_exit
+END(tramp_exit_native)
+
+ENTRY(tramp_exit_compat)
+        tramp_exit      32
+END(tramp_exit_compat)
+
+
+One approach I would consider for this is to duplicate this
+comment and add it just above the "eret" instruction within the
+macro:
+
+	/*
+	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
+	 * when returning from IPI handler, and when returning to user-space.
+	 */
+
+Or perhaps Will has something else in mind ?
+
+Thanks,
+
+Mathieu
+
+> 
+> --
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc arch/arm64/kernel/entry.S
+> index b34e717d7597,5edde1c2e93e..000000000000
+> --- a/arch/arm64/kernel/entry.S
+> +++ b/arch/arm64/kernel/entry.S
+> @@@ -324,21 -302,11 +324,25 @@@ alternative_else_nop_endi
+>  	ldp	x28, x29, [sp, #16 * 14]
+>  	ldr	lr, [sp, #S_LR]
+>  	add	sp, sp, #S_FRAME_SIZE		// restore sp
+> +
+> +	.if	\el == 0
+> +alternative_insn eret, nop, ARM64_UNMAP_KERNEL_AT_EL0
+> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> +	bne	4f
+> +	msr	far_el1, x30
+> +	tramp_alias	x30, tramp_exit_native
+> +	br	x30
+> +4:
+> +	tramp_alias	x30, tramp_exit_compat
+> +	br	x30
+> +#endif
+> +	.else
+> + 	/*
+> + 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on eret context synchronization
+> + 	 * when returning from IPI handler, and when returning to user-space.
+> + 	 */
+> -	eret					// return to kernel
+> +	eret
+> +	.endif
+>  	.endm
+>  
+>   	.macro	irq_stack_entry
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
