@@ -1,46 +1,35 @@
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the s390 tree
-Date: Thu, 8 Feb 2018 07:08:12 +0100
-Message-ID: <20180208070812.7dd4e1b6@mschwideX1>
-References: <20180208073539.706e942f@canb.auug.org.au>
+From: Ingo Molnar <mingo@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
+Date: Thu, 8 Feb 2018 08:03:50 +0100
+Message-ID: <20180208070350.mxirhg32zljp2e4k@gmail.com>
+References: <20180206114048.6c8ced1c@canb.auug.org.au>
+ <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
+ <20180206135512.GB22740@arm.com>
+ <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
+ <20180206141118.GC22740@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38270 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751796AbeBHGIU (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Feb 2018 01:08:20 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1864Teh005379
-        for <linux-next@vger.kernel.org>; Thu, 8 Feb 2018 01:08:20 -0500
-Received: from e06smtp15.uk.ibm.com (e06smtp15.uk.ibm.com [195.75.94.111])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2g0d9u76e3-1
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
-        for <linux-next@vger.kernel.org>; Thu, 08 Feb 2018 01:08:19 -0500
-Received: from localhost
-        by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-next@vger.kernel.org> from <schwidefsky@de.ibm.com>;
-        Thu, 8 Feb 2018 06:08:18 -0000
-In-Reply-To: <20180208073539.706e942f@canb.auug.org.au>
+Received: from mail-wm0-f42.google.com ([74.125.82.42]:33036 "EHLO
+        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750749AbeBHHDz (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Feb 2018 02:03:55 -0500
+Content-Disposition: inline
+In-Reply-To: <20180206141118.GC22740@arm.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Carstens <heiko.carstens@de.ibm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
 
-On Thu, 8 Feb 2018 07:35:39 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-> Commit
-> 
->   b175210bd231 ("s390/kconfig: Remove ARCH_WANTS_PROT_NUMA_PROT_NONE select")
-> 
-> is missing a Signed-off-by from its committer.
- 
-It is always that "last" one you add. Fixed. Thanks.
+* Will Deacon <will.deacon@arm.com> wrote:
 
--- 
-blue skies,
-   Martin.
+> For the sake of avoiding the conflict, can we just drop it for now, please?
 
-"Reality continues to ruin my life." - Calvin.
+Yeah, so I resolved the conflict by merging the (already upstream) bits and Linus 
+pulled that resolution. From now on the level of comments you want there is up to 
+you! :-)
+
+Thanks,
+
+	Ingo
