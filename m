@@ -1,35 +1,28 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Thu, 8 Feb 2018 08:03:50 +0100
-Message-ID: <20180208070350.mxirhg32zljp2e4k@gmail.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au>
- <750091485.16756.1517921554396.JavaMail.zimbra@efficios.com>
- <20180206135512.GB22740@arm.com>
- <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com>
- <20180206141118.GC22740@arm.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the netfilter
+ tree
+Date: Thu, 8 Feb 2018 13:19:59 +0100
+Message-ID: <20180208121959.2ob2vgbhhk55izib@salvia>
+References: <20180208073301.209de5a0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f42.google.com ([74.125.82.42]:33036 "EHLO
-        mail-wm0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750749AbeBHHDz (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 8 Feb 2018 02:03:55 -0500
+Return-path: <netfilter-devel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180206141118.GC22740@arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Will Deacon <will.deacon@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180208073301.209de5a0@canb.auug.org.au>
+Sender: netfilter-devel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
+Hi Stephen,
 
-* Will Deacon <will.deacon@arm.com> wrote:
+On Thu, Feb 08, 2018 at 07:33:01AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   d8ed9600581d ("netfilter: remove useless prototype")
+> 
+> is missing a Signed-off-by from its committer.
 
-> For the sake of avoiding the conflict, can we just drop it for now, please?
-
-Yeah, so I resolved the conflict by merging the (already upstream) bits and Linus 
-pulled that resolution. From now on the level of comments you want there is up to 
-you! :-)
-
-Thanks,
-
-	Ingo
+That's my fault, sorry about that, it was unintentional.
