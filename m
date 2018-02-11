@@ -1,63 +1,25 @@
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Fri, 9 Feb 2018 20:35:45 +0000 (UTC)
-Message-ID: <1504422181.19125.1518208545731.JavaMail.zimbra@efficios.com>
-References: <20180206114048.6c8ced1c@canb.auug.org.au> <20180206135512.GB22740@arm.com> <1815310787.16844.1517926010063.JavaMail.zimbra@efficios.com> <20180206141118.GC22740@arm.com> <20180208070350.mxirhg32zljp2e4k@gmail.com> <20180208185637.GB16314@arm.com> <989035723.18493.1518116696482.JavaMail.zimbra@efficios.com> <20180209182530.GB21542@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the nios2 tree
+Date: Mon, 12 Feb 2018 09:20:43 +1100
+Message-ID: <20180212092043.33045460@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.efficios.com ([167.114.142.141]:55193 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750993AbeBIUe4 (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Fri, 9 Feb 2018 15:34:56 -0500
-In-Reply-To: <20180209182530.GB21542@arm.com>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ley Foon Tan <lftan@altera.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
------ On Feb 9, 2018, at 1:25 PM, Will Deacon will.deacon@arm.com wrote:
+Hi Ley,
 
-> On Thu, Feb 08, 2018 at 07:04:56PM +0000, Mathieu Desnoyers wrote:
->> ----- On Feb 8, 2018, at 1:56 PM, Will Deacon will.deacon@arm.com wrote:
->> 
->> > On Thu, Feb 08, 2018 at 08:03:50AM +0100, Ingo Molnar wrote:
->> >> 
->> >> * Will Deacon <will.deacon@arm.com> wrote:
->> >> 
->> >> > For the sake of avoiding the conflict, can we just drop it for now, please?
->> >> 
->> >> Yeah, so I resolved the conflict by merging the (already upstream) bits and
->> >> Linus
->> >> pulled that resolution. From now on the level of comments you want there is up
->> >> to
->> >> you! :-)
->> > 
->> > Haha, ok! Mathieu -- are you still planning to add something under
->> > Documentation/? Regardless of my preference on comments, I think it would
->> > be useful.
->> 
->> I submitted it as RFC a few days ago, and I'm still awaiting feedback:
->> 
->> http://lkml.kernel.org/r/1517936413-19675-1-git-send-email-mathieu.desnoyers@efficios.com
->> 
->> If you guys are OK with the approach, I can submit it again, this time without
->> the RFC
->> tag.
-> 
-> Yes, please!
+Commits
 
-Done: https://lkml.kernel.org/r/1518208256-22034-1-git-send-email-mathieu.desnoyers@efficios.com
+  5d13c7317998 ("nios2: dts: Remove leading 0x and 0s from bindings notation")
+  e0691ebb33c1 ("nios2: defconfig: Cleanup from old Kconfig options")
 
-Let's see what Thomas/Ingo/PeterZ have to say about this approach to documentation.
-Ingo, if you are OK with it, this feature documentation patch could go through the scheduler tree.
-
-Thanks,
-
-Mathieu
+are missing a Signed-off-by from their committer.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Cheers,
+Stephen Rothwell
