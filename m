@@ -1,40 +1,61 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the nand tree
-Date: Mon, 12 Feb 2018 23:48:39 +0100
-Message-ID: <20180212234839.7097af7e@bbrezillon>
-References: <20180213093153.0958cff1@canb.auug.org.au>
+From: Junio C Hamano <gitster@pobox.com>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Date: Mon, 12 Feb 2018 15:42:44 -0800
+Message-ID: <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail.free-electrons.com ([62.4.15.54]:37603 "EHLO
-        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933119AbeBLWsv (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Feb 2018 17:48:51 -0500
-In-Reply-To: <20180213093153.0958cff1@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        (Linus Torvalds's message of "Mon, 12 Feb 2018 13:59:27 -0800")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-On Tue, 13 Feb 2018 09:31:53 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-> Hi Boris,
-> 
-> A whole series of commits
-> 
->   558783726c98 ("mtd: nand: mxc: reorder functions to avoid forward declarations")
-> to
->   e385e291129e ("mtd: nand: mxc: remove now unused code")
-> 
-> are missing a Signed-off-by from their committer.
-> 
+> And some maintainers end up using multiple repositories as branches
+> (the old _original_ git model). Again, you can just use "git fetch +
+> git reset", of course, but that's a bit unsafe. In contrast, doing
+> "git pull --ff-only" is a safe convenient operation that does both the
+> fetch and the update to whatever state.
+>
+> But you do need that "--ff-only" to avoid the merge.
 
-Should be fixed now. Thanks for this report. Time for me to add an
-applypatch-msg hook :-).
+OK.  I guess it is legit (and semi-sensible) for downstream
+contributors to "git pull --ff-only $upstream $release_tag_X" to
+bring their long-running topic currently based on release X-1 up to
+date with respect to release X.  It probably makes more sense than
+rebasing on top of release X, even though it makes a lot less sense
+than merging their topics into release X.
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+As you said, pull of a tag that forbids fast-forward by default is
+rather old development (I am kind of surprised that it was so old,
+in v1.7.9), so it may be a bit difficult to transition.
+
+There is 
+
+	[pull]
+                ff = only
+
+but pull.ff is quite global, and not good for intermediate level
+maintainers who pull to integrate work of their downstream (for
+which they do want the current "do not ff, record the tag in a merge
+commit" behaviour) and also pull to catch up from their upstream
+(which they want "ff-when-able").  They need to control between
+ff=only and ff=when-able, depending on whom they are pulling from.
+
+We may want per-remote equivalent for it, i.e. e.g.
+
+	[pull]
+		ff=false ;# good default for collecting contributions
+
+	[remote "torvalds"] 
+		pullFF = only ;# good default for catching up
+
+or something like that, perhaps?
