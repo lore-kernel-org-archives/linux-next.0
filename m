@@ -1,78 +1,31 @@
-From: Michal Hocko <mhocko@kernel.org>
-Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
-Date: Mon, 12 Feb 2018 15:48:31 +0100
-Message-ID: <20180212144831.GF3443@dhcp22.suse.cz>
-References: <20180126140415.GD5027@dhcp22.suse.cz>
- <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
- <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
- <20180129132235.GE21609@dhcp22.suse.cz>
- <87k1w081e7.fsf@concordia.ellerman.id.au>
- <20180130094205.GS21609@dhcp22.suse.cz>
- <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
- <20180131131937.GA6740@dhcp22.suse.cz>
- <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
- <20180201134829.GL21609@dhcp22.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: unnecessary merge in the v4l-dvb tree
+Date: Tue, 13 Feb 2018 08:00:36 +1100
+Message-ID: <20180213080036.3bf3a908@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
-Content-Disposition: inline
-In-Reply-To: <20180201134829.GL21609@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:42623 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754025AbeBLVAl (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:00:41 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
 
-Did you have any chance to test the following hack, Anshuman?
+Hi Mauro,
 
-On Thu 01-02-18 14:48:29, Michal Hocko wrote:
-[...]
-> Just a blind shot... Does the following make any difference?
-> ---
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 021fe78998ea..04b24d00c911 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	   the correct location in memory. */
->  	for(i = 0, elf_ppnt = elf_phdata;
->  	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
-> -		int elf_prot = 0, elf_flags;
-> +		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
->  		unsigned long k, vaddr;
->  		unsigned long total_size = 0;
->  
-> @@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  					 */
->  				}
->  			}
-> +			elf_fixed = MAP_FIXED;
->  		}
->  
->  		if (elf_ppnt->p_flags & PF_R)
-> @@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  		 * the ET_DYN load_addr calculations, proceed normally.
->  		 */
->  		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
-> -			elf_flags |= MAP_FIXED_NOREPLACE;
-> +			elf_flags |= elf_fixed;
->  		} else if (loc->elf_ex.e_type == ET_DYN) {
->  			/*
->  			 * This logic is run once for the first LOAD Program
-> @@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  				load_bias = ELF_ET_DYN_BASE;
->  				if (current->flags & PF_RANDOMIZE)
->  					load_bias += arch_mmap_rnd();
-> -				elf_flags |= MAP_FIXED_NOREPLACE;
-> +				elf_flags |= elf_fixed;
->  			} else
->  				load_bias = 0;
->  
+By merging the v4.16-rc1 tag into the v4l-dvb tree, you have created an
+unnecessary merge commit.  The v4l-dvb tree was already contained in
+v4.16-rc1, so a fast forward merge was possible, but explicitly merging
+a signed tag will give you a commit instead.  In this case, you could
+have just reset your branch to v4.16-rc1 or merged v4.16-rc1^0.
+
+Linus, this happens a bit after the merge window, so I am wondering
+about the rational of not doing a fast forward merge when merging a
+signed tag (I forget the reasoning).
 -- 
-Michal Hocko
-SUSE Labs
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Cheers,
+Stephen Rothwell
