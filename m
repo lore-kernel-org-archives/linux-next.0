@@ -1,31 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unnecessary merge in the v4l-dvb tree
-Date: Tue, 13 Feb 2018 08:00:36 +1100
-Message-ID: <20180213080036.3bf3a908@canb.auug.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Date: Mon, 12 Feb 2018 13:15:04 -0800
+Message-ID: <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:42623 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754025AbeBLVAl (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:00:41 -0500
+Received: from mail-it0-f51.google.com ([209.85.214.51]:34648 "EHLO
+        mail-it0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751441AbeBLVPF (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Feb 2018 16:15:05 -0500
+In-Reply-To: <20180213080036.3bf3a908@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Junio C Hamano <gitster@pobox.com>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 
-Hi Mauro,
+On Mon, Feb 12, 2018 at 1:00 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Linus, this happens a bit after the merge window, so I am wondering
+> about the rational of not doing a fast forward merge when merging a
+> signed tag (I forget the reasoning).
 
-By merging the v4.16-rc1 tag into the v4l-dvb tree, you have created an
-unnecessary merge commit.  The v4l-dvb tree was already contained in
-v4.16-rc1, so a fast forward merge was possible, but explicitly merging
-a signed tag will give you a commit instead.  In this case, you could
-have just reset your branch to v4.16-rc1 or merged v4.16-rc1^0.
+The reasoning is to avoid losing the signature from the tag (when
+merging a signed tag, the signature gets inserted into the merge
+commit itself - use "git log --show-signature" to see them).
 
-Linus, this happens a bit after the merge window, so I am wondering
-about the rational of not doing a fast forward merge when merging a
-signed tag (I forget the reasoning).
--- 
-Cheers,
-Stephen Rothwell
+So when I merge a signed tag, I do *not* want to fast-forward to the
+top commit, because then I'd lose the signature from the tag. Thus the
+"merging signed tags are non-fast-forward by default" reasoning.
+
+But, yes, that reasoning is really only valid for proper merges of new
+features, not for back-merges.
+
+The problem, of course, is that since git is distributed, git doesn't
+know who is "upstream" and who is "downstream", so there's no
+_technical_ difference between merging a development tree, and a
+development tree doing a back-merge of the upstream tree.
+
+Maybe it was a mistake to make signed tag merges non-fast-forward,
+since they cause these kinds of issues with people who use "pull" to
+update their otherwise unmodified trees.
+
+I can always teach myself to just use --no-ff, since I end up doing
+things like verifying at the signatures anyway.
+
+Junio, comments?
+
+               Linus
