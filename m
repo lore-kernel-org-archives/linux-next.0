@@ -1,29 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: lots of merges in the sound-asoc tree
-Date: Tue, 13 Feb 2018 09:38:57 +1100
-Message-ID: <20180213093857.2fe78090@canb.auug.org.au>
+From: Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the nand tree
+Date: Mon, 12 Feb 2018 23:48:39 +0100
+Message-ID: <20180212234839.7097af7e@bbrezillon>
+References: <20180213093153.0958cff1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:46129 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932628AbeBLWjA (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 12 Feb 2018 17:39:00 -0500
+Received: from mail.free-electrons.com ([62.4.15.54]:37603 "EHLO
+        mail.free-electrons.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933119AbeBLWsv (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Feb 2018 17:48:51 -0500
+In-Reply-To: <20180213093153.0958cff1@canb.auug.org.au>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hi all,
+On Tue, 13 Feb 2018 09:31:53 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-I know that you usually like to keep one topic branch per soc and then
-merge them all, but currently your tree seems to only contain a couple
-logical changes (platform to component and codec to component), so
-surely that could have been done in (maybe) 2 topic branches and saved
-large number of very small branches (often a single commit) and a large
-number of merges.
+> Hi Boris,
+> 
+> A whole series of commits
+> 
+>   558783726c98 ("mtd: nand: mxc: reorder functions to avoid forward declarations")
+> to
+>   e385e291129e ("mtd: nand: mxc: remove now unused code")
+> 
+> are missing a Signed-off-by from their committer.
+> 
+
+Should be fixed now. Thanks for this report. Time for me to add an
+applypatch-msg hook :-).
 
 -- 
-Cheers,
-Stephen Rothwell
+Boris Brezillon, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+http://bootlin.com
