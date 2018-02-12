@@ -1,92 +1,78 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Date: Mon, 12 Feb 2018 08:19:05 +0100
-Message-ID: <20180212071905.tjsu56rvru7smss4@gmail.com>
-References: <20180212122735.19094883@canb.auug.org.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+Date: Mon, 12 Feb 2018 15:48:31 +0100
+Message-ID: <20180212144831.GF3443@dhcp22.suse.cz>
+References: <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+ <20180201134829.GL21609@dhcp22.suse.cz>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-wm0-f44.google.com ([74.125.82.44]:34256 "EHLO
-        mail-wm0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750838AbeBLHTK (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Mon, 12 Feb 2018 02:19:10 -0500
+Return-path: <owner-linux-mm@kvack.org>
 Content-Disposition: inline
-In-Reply-To: <20180212122735.19094883@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, KarimAllah Ahmed <karahmed@amazon.de>, David Woodhouse <dwmw@amazon.co.uk>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>
+In-Reply-To: <20180201134829.GL21609@dhcp22.suse.cz>
+Sender: owner-linux-mm@kvack.org
+To: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
+List-Id: linux-next.vger.kernel.org
 
-* Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Did you have any chance to test the following hack, Anshuman?
 
-> Hi all,
-> 
-> Today's linux-next merge of the tip tree got a conflict in:
-> 
->   arch/x86/kvm/vmx.c
-> 
-> between commit:
-> 
->   c992384bde84 ("KVM: vmx: speed up MSR bitmap merge")
-> 
-> from Linus' tree and commit:
-> 
->   ff37dc0cd96c ("KVM/nVMX: Set the CPU_BASED_USE_MSR_BITMAPS if we have a valid L02 MSR bitmap")
-> 
-> from the tip tree.
-> 
-> I fixed it up (I think - see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc arch/x86/kvm/vmx.c
-> index f427723dc7db,91e3539cba02..000000000000
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@@ -10136,7 -10127,12 +10136,10 @@@ static void nested_get_vmcs12_pages(str
->   			(unsigned long)(vmcs12->posted_intr_desc_addr &
->   			(PAGE_SIZE - 1)));
->   	}
-> - 	if (!nested_vmx_prepare_msr_bitmap(vcpu, vmcs12))
->  -	if (cpu_has_vmx_msr_bitmap() &&
->  -	    nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS) &&
->  -	    nested_vmx_merge_msr_bitmap(vcpu, vmcs12))
-> ++	if (nested_vmx_prepare_msr_bitmap(vcpu, vmcs12))
-> + 		vmcs_set_bits(CPU_BASED_VM_EXEC_CONTROL,
-> + 			      CPU_BASED_USE_MSR_BITMAPS);
-> + 	else
->   		vmcs_clear_bits(CPU_BASED_VM_EXEC_CONTROL,
->   				CPU_BASED_USE_MSR_BITMAPS);
->   }
->
-> @@@ -10224,14 -10220,9 +10227,14 @@@ static inline bool nested_vmx_prepare_m
->   	 *    updated to reflect this when L1 (or its L2s) actually write to
->   	 *    the MSR.
->   	 */
-> - 	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
-> - 	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
-> + 	bool pred_cmd = !msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
-> + 	bool spec_ctrl = !msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
->   
->  +	/* Nothing to do if the MSR bitmap is not in use.  */
->  +	if (!cpu_has_vmx_msr_bitmap() ||
->  +	    !nested_cpu_has(vmcs12, CPU_BASED_USE_MSR_BITMAPS))
->  +		return false;
->  +
->   	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
->   	    !pred_cmd && !spec_ctrl)
->   		return false;
+On Thu 01-02-18 14:48:29, Michal Hocko wrote:
+[...]
+> Just a blind shot... Does the following make any difference?
+> ---
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 021fe78998ea..04b24d00c911 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -895,7 +895,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	   the correct location in memory. */
+>  	for(i = 0, elf_ppnt = elf_phdata;
+>  	    i < loc->elf_ex.e_phnum; i++, elf_ppnt++) {
+> -		int elf_prot = 0, elf_flags;
+> +		int elf_prot = 0, elf_flags, elf_fixed = MAP_FIXED_NOREPLACE;
+>  		unsigned long k, vaddr;
+>  		unsigned long total_size = 0;
+>  
+> @@ -927,6 +927,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  					 */
+>  				}
+>  			}
+> +			elf_fixed = MAP_FIXED;
+>  		}
+>  
+>  		if (elf_ppnt->p_flags & PF_R)
+> @@ -944,7 +945,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  		 * the ET_DYN load_addr calculations, proceed normally.
+>  		 */
+>  		if (loc->elf_ex.e_type == ET_EXEC || load_addr_set) {
+> -			elf_flags |= MAP_FIXED_NOREPLACE;
+> +			elf_flags |= elf_fixed;
+>  		} else if (loc->elf_ex.e_type == ET_DYN) {
+>  			/*
+>  			 * This logic is run once for the first LOAD Program
+> @@ -980,7 +981,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  				load_bias = ELF_ET_DYN_BASE;
+>  				if (current->flags & PF_RANDOMIZE)
+>  					load_bias += arch_mmap_rnd();
+> -				elf_flags |= MAP_FIXED_NOREPLACE;
+> +				elf_flags |= elf_fixed;
+>  			} else
+>  				load_bias = 0;
+>  
+-- 
+Michal Hocko
+SUSE Labs
 
-The resolution looks good to me, I did a similar resolution and diffed the 
-linux-next version to the tip:msater version.
-
-Thanks,
-
-	Ingo
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
