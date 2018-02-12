@@ -1,62 +1,69 @@
 From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
 Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Date: Mon, 12 Feb 2018 19:27:30 -0200
-Message-ID: <20180212192730.4b4df411@vento.lan>
+Date: Mon, 12 Feb 2018 19:36:17 -0200
+Message-ID: <20180212193617.4993398a@vento.lan>
 References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from osg.samsung.com ([64.30.133.232]:62825 "EHLO osg.samsung.com"
+Received: from osg.samsung.com ([64.30.133.232]:57089 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932104AbeBLV1h (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Mon, 12 Feb 2018 16:27:37 -0500
-In-Reply-To: <20180213080036.3bf3a908@canb.auug.org.au>
+        id S932204AbeBLVgY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Feb 2018 16:36:24 -0500
+In-Reply-To: <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus <torvalds@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Junio C Hamano <gitster@pobox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 
-Hi Stephen,
+Em Mon, 12 Feb 2018 13:15:04 -0800
+Linus Torvalds <torvalds@linux-foundation.org> escreveu:
 
-Em Tue, 13 Feb 2018 08:00:36 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
-
-> Hi Mauro,
+> On Mon, Feb 12, 2018 at 1:00 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Linus, this happens a bit after the merge window, so I am wondering
+> > about the rational of not doing a fast forward merge when merging a
+> > signed tag (I forget the reasoning).  
 > 
-> By merging the v4.16-rc1 tag into the v4l-dvb tree, you have created an
-> unnecessary merge commit.  The v4l-dvb tree was already contained in
-> v4.16-rc1, so a fast forward merge was possible, but explicitly merging
-> a signed tag will give you a commit instead.  In this case, you could
-> have just reset your branch to v4.16-rc1 or merged v4.16-rc1^0.
+> The reasoning is to avoid losing the signature from the tag (when
+> merging a signed tag, the signature gets inserted into the merge
+> commit itself - use "git log --show-signature" to see them).
+> 
+> So when I merge a signed tag, I do *not* want to fast-forward to the
+> top commit, because then I'd lose the signature from the tag. Thus the
+> "merging signed tags are non-fast-forward by default" reasoning.
+> 
+> But, yes, that reasoning is really only valid for proper merges of new
+> features, not for back-merges.
+> 
+> The problem, of course, is that since git is distributed, git doesn't
+> know who is "upstream" and who is "downstream", so there's no
+> _technical_ difference between merging a development tree, and a
+> development tree doing a back-merge of the upstream tree.
+> 
+> Maybe it was a mistake to make signed tag merges non-fast-forward,
+> since they cause these kinds of issues with people who use "pull" to
+> update their otherwise unmodified trees.
+> 
+> I can always teach myself to just use --no-ff, since I end up doing
+> things like verifying at the signatures anyway.
 
-I did the usual way I used to do in the past. Not sure why it ended
-by being an explicit merge instead of a fast forward.
+Hmm... at least at git version 2.14.3, git documentation doesn't
+mention that signed pull requests won't do fast forward. Instead,
+it says that --ff is the default behavior:
 
-On a quick test here, doing:
 
-$ git checkout -b test media/v4.16-2
-$ git merge v4.16-rc1
+       --ff
+           When the merge resolves as a fast-forward, only update the branch pointer, without creating a merge commit. This is the
+           default behavior.
 
-indeed makes produce a merging commit.
+Btw, even doing:
 
-I never realized that I could force a fast forward using the weird
+	$ git merge -ff v4.16-rc1
 
-	$ git merge v4.16-rc1^0
-
-If this is the way we should do git merges, are there a way to make
-it default, suppressing the need of a "^0" (either via some .git/config
-parameter or changing at git code)? Doing just one such merge once
-or twice on every Kernel cycle, I'm pretty sure I'll forget to do 
-it next time :-)
-
-> Linus, this happens a bit after the merge window, so I am wondering
-> about the rational of not doing a fast forward merge when merging a
-> signed tag (I forget the reasoning).
-
-Reset my tree on the top of v4.16-rc1 doesn't seem a good option,
-as it causes merge issues from media sub-maintainers and from other
-developer's trees.
+it will still produce a git commit for the merge.
 
 
 -- 
