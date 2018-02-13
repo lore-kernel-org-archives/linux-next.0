@@ -1,36 +1,38 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: linux-next: build warning after merge of the libata tree
-Date: Tue, 13 Feb 2018 06:42:07 -0800
-Message-ID: <20180213144207.GO695913@devbig577.frc2.facebook.com>
-References: <20180213140449.35e337cb@canb.auug.org.au>
+From: "Peter Williams" <tusong@bxcm2016.com>
+Subject: this is what you need
+Date: Tue, 13 Feb 2018 14:28:31 +0100
+Message-ID: <98f8e000a182f83f7141467b5c68c209@footballshirtsutd.com>
+Reply-To: qizongyos@aliyun.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180213140449.35e337cb@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>, Hien Dang <hien.dang.eb@rvc.renesas.com>, Yoshihiro Kaneko <ykaneko0929@gmail.com>
-List-Id: linux-next.vger.kernel.org
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from unassigned.psychz.net ([45.35.35.151]:54084 "EHLO jkkgjt.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934716AbeBMQ0q (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Tue, 13 Feb 2018 11:26:46 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: linux-next@vger.kernel.org
 
-On Tue, Feb 13, 2018 at 02:04:49PM +1100, Stephen Rothwell wrote:
-> Hi Tejun,
-> 
-> After merging the libata tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> drivers/ata/sata_rcar.c: In function 'sata_rcar_init_controller':
-> drivers/ata/sata_rcar.c:821:16: warning: unused variable 'base' [-Wunused-variable]
->   void __iomem *base = priv->base;
->                 ^~~~
-> 
-> Introduced by commit
-> 
->   da77d76b95a0 ("sata_rcar: Reset SATA PHY when Salvator-X board resumes")
+Hi,
 
-Just applied Geert's patch to remove the warning.
+I wanted to check in with you, did you receive my email from last week?
 
-Thanks.
+I want to share a proven system with you.
 
--- 
-tejun
+This system allows you to try the whole thing for f.r_ee for 30 days.
+
+You can finally change your future without giving up any sensitive
+information in advance.
+
+I s-ig-ned up myself just a while ago and I'm already making more than in
+my regular nine to five job that I plan on quitting any day now.
+
+Despite of this, this is probably the best thing that ever happened to you
+if you take action now.
+
+Please reply if interested.
+
+Thanks,
+Peter
