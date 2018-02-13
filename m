@@ -1,29 +1,36 @@
-From: David Sterba <dsterba@suse.cz>
-Subject: Re: linux-next: Signed-off-by missing for commit in the btrfs-kdave
- tree
-Date: Tue, 13 Feb 2018 12:42:33 +0100
-Message-ID: <20180213114233.GS3003@suse.cz>
-References: <20180209141152.774f1205@canb.auug.org.au>
-Reply-To: dsterba@suse.cz
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: linux-next: build warning after merge of the libata tree
+Date: Tue, 13 Feb 2018 06:42:07 -0800
+Message-ID: <20180213144207.GO695913@devbig577.frc2.facebook.com>
+References: <20180213140449.35e337cb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx2.suse.de ([195.135.220.15]:34773 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934078AbeBMLov (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Feb 2018 06:44:51 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180209141152.774f1205@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
+In-Reply-To: <20180213140449.35e337cb@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Filipe Manana <fdmanana@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Khiem Nguyen <khiem.nguyen.xt@rvc.renesas.com>, Hien Dang <hien.dang.eb@rvc.renesas.com>, Yoshihiro Kaneko <ykaneko0929@gmail.com>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+On Tue, Feb 13, 2018 at 02:04:49PM +1100, Stephen Rothwell wrote:
+> Hi Tejun,
+> 
+> After merging the libata tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+> 
+> drivers/ata/sata_rcar.c: In function 'sata_rcar_init_controller':
+> drivers/ata/sata_rcar.c:821:16: warning: unused variable 'base' [-Wunused-variable]
+>   void __iomem *base = priv->base;
+>                 ^~~~
+> 
+> Introduced by commit
+> 
+>   da77d76b95a0 ("sata_rcar: Reset SATA PHY when Salvator-X board resumes")
 
-On Fri, Feb 09, 2018 at 02:11:52PM +1100, Stephen Rothwell wrote:
-> Commit
->   7f53a77da963 ("Btrfs: fix btrfs_evict_inode to handle abnormal inodes correctly")
-> is missing a Signed-off-by from its committer.
+Just applied Geert's patch to remove the warning.
 
-thanks for the notice, this has been fixed.
+Thanks.
+
+-- 
+tejun
