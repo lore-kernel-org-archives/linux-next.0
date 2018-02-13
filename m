@@ -1,47 +1,45 @@
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Date: Tue, 13 Feb 2018 09:33:02 -0800
-Message-ID: <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
-References: <20180213080036.3bf3a908@canb.auug.org.au> <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
- <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
- <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com> <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
- <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com> <20180212222157.0a3bd472@vento.lan>
- <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 13 (i386: apm_32.c)
+Date: Tue, 13 Feb 2018 10:54:00 -0800
+Message-ID: <88ad6845-4350-d328-f5f4-c8486b962e79@infradead.org>
+References: <20180213151545.43e078ca@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-io0-f171.google.com ([209.85.223.171]:33363 "EHLO
-        mail-io0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964849AbeBMRdD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Tue, 13 Feb 2018 12:33:03 -0500
-In-Reply-To: <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+Received: from bombadil.infradead.org ([198.137.202.133]:60740 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965473AbeBMSyC (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Tue, 13 Feb 2018 13:54:02 -0500
+In-Reply-To: <20180213151545.43e078ca@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Junio C Hamano <gitster@pobox.com>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>
 
-On Tue, Feb 13, 2018 at 9:18 AM, Junio C Hamano <gitster@pobox.com> wrote:
->
-> That makes me wonder if another heuristic I floated earlier is more
-> appropriate.  When merging a tag object T, if refs/tags/T exists and
-> it is that tag object, then an updated "merge" would default to "--ff";
-> otherwise, it would keep the current default of creating a merge even
-> when we could fast-forward, in order to record that tag T in the
-> resulting history.
+On 02/12/2018 08:15 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180212:
+> 
+> Non-merge commits (relative to Linus' tree): 963
+>  1297 files changed, 63627 insertions(+), 31515 deletions(-)
+> 
+> ----------------------------------------------------------------------------
 
-Oooh. Yes, that sounds like the right thing to do.
+on i386:
 
-So the "no fast-forward" logic would trigger only if the name we used
-for merging is one of the temporary ones (ie .git/{FETCH,MERGE}_HEAD),
-not if the mentioned tag is already a normal tag reference.
+arch/x86/kernel/apm_32.o: In function `apm_init':
+apm_32.c:(.init.text+0x47a): undefined reference to `cpuidle_poll_state_init'
 
-Then it's very explicitly about "don't lose the signing information".
+drivers/cpuidle/ is not being built:
 
-I'd still have to teach people to use "--only-ff" if they don't do the
-"fetch and merge" model but literally just do  "git pull upstream
-vX.Y", but at least the case Mauro describes would automatically just
-DTRT.
+# CONFIG_CPU_IDLE is not set
+CONFIG_ARCH_HAS_CPU_RELAX=y
+obj-$(CONFIG_CPU_IDLE)		+= cpuidle/
 
-Me likey.
 
-           Linus
+
+-- 
+~Randy
