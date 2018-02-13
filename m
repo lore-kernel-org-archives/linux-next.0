@@ -1,38 +1,61 @@
-From: "Peter Williams" <tusong@bxcm2016.com>
-Subject: this is what you need
-Date: Tue, 13 Feb 2018 14:28:31 +0100
-Message-ID: <98f8e000a182f83f7141467b5c68c209@footballshirtsutd.com>
-Reply-To: qizongyos@aliyun.com
+From: Junio C Hamano <gitster@pobox.com>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Date: Tue, 13 Feb 2018 09:18:03 -0800
+Message-ID: <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+        <20180212222157.0a3bd472@vento.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from unassigned.psychz.net ([45.35.35.151]:54084 "EHLO jkkgjt.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934716AbeBMQ0q (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Tue, 13 Feb 2018 11:26:46 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: linux-next@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180212222157.0a3bd472@vento.lan> (Mauro Carvalho Chehab's
+        message of "Mon, 12 Feb 2018 22:21:57 -0200")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
+Mauro Carvalho Chehab <mchehab@osg.samsung.com> writes:
 
-I wanted to check in with you, did you receive my email from last week?
+> Yes, that's my pain. I don't want ff only when pulling from others,
+> only when pulling from upstream tree.
+>
+>> 
+>> We may want per-remote equivalent for it, i.e. e.g.
+>> 
+>> 	[pull]
+>> 		ff=false ;# good default for collecting contributions
+>> 
+>> 	[remote "torvalds"] 
+>> 		pullFF = only ;# good default for catching up
+>> 
+>> or something like that, perhaps?
+>
+>
+> Yeah, something like that works. Please notice, however, that what I
+> usually do is:
+>
+> 	$ git remote update torvalds
+> 	$ git merge <tag>
+> 	  (or git pull . <tag>)
+>
+> So, for the above to work, it should store somehow the remote from
+> where a tag came from.
 
-I want to share a proven system with you.
+That makes me wonder if another heuristic I floated earlier is more
+appropriate.  When merging a tag object T, if refs/tags/T exists and
+it is that tag object, then an updated "merge" would default to "--ff";
+otherwise, it would keep the current default of creating a merge even
+when we could fast-forward, in order to record that tag T in the
+resulting history.
 
-This system allows you to try the whole thing for f.r_ee for 30 days.
-
-You can finally change your future without giving up any sensitive
-information in advance.
-
-I s-ig-ned up myself just a while ago and I'm already making more than in
-my regular nine to five job that I plan on quitting any day now.
-
-Despite of this, this is probably the best thing that ever happened to you
-if you take action now.
-
-Please reply if interested.
-
-Thanks,
-Peter
+Of course, end users can use command line options to override such
+heuristics anyway, but if the behaviour based on the new heuristic
+is easy to explain and understand, and covers majority of the use
+cases without command line override, then we might not even need a
+new configuration mechanism like remove.torvalds.pullFF mentioned
+above.
