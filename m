@@ -1,97 +1,45 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Date: Mon, 12 Feb 2018 22:21:57 -0200
-Message-ID: <20180212222157.0a3bd472@vento.lan>
-References: <20180213080036.3bf3a908@canb.auug.org.au>
-        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
-        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
-        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
-        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
-        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Subject: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE
+Date: Tue, 13 Feb 2018 06:32:48 +0530
+Message-ID: <f81a5ef6-724a-6667-c5ce-47a6b1706c2c@linux.vnet.ibm.com>
+References: <20180126140415.GD5027@dhcp22.suse.cz>
+ <15da8c87-e6db-13aa-01c8-a913656bfdb6@linux.vnet.ibm.com>
+ <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
+ <20180129132235.GE21609@dhcp22.suse.cz>
+ <87k1w081e7.fsf@concordia.ellerman.id.au>
+ <20180130094205.GS21609@dhcp22.suse.cz>
+ <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
+ <20180131131937.GA6740@dhcp22.suse.cz>
+ <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
+ <20180201134829.GL21609@dhcp22.suse.cz>
+ <20180212144831.GF3443@dhcp22.suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Junio C Hamano <gitster@pobox.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47482 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932877AbeBMBDA (ORCPT
+        <rfc822;linux-next@vger.kernel.org>);
+        Mon, 12 Feb 2018 20:03:00 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w1D0sVu9071572
+        for <linux-next@vger.kernel.org>; Mon, 12 Feb 2018 20:03:00 -0500
+Received: from e06smtp12.uk.ibm.com (e06smtp12.uk.ibm.com [195.75.94.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2g3g25cbv4-1
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NOT)
+        for <linux-next@vger.kernel.org>; Mon, 12 Feb 2018 20:02:59 -0500
+Received: from localhost
+        by e06smtp12.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-next@vger.kernel.org> from <khandual@linux.vnet.ibm.com>;
+        Tue, 13 Feb 2018 01:02:58 -0000
+In-Reply-To: <20180212144831.GF3443@dhcp22.suse.cz>
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Michal Hocko <mhocko@kernel.org>, Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-next@vger.kernel.org, sfr@canb.auug.org.au, broonie@kernel.org
 
-Em Mon, 12 Feb 2018 15:42:44 -0800
-Junio C Hamano <gitster@pobox.com> escreveu:
+On 02/12/2018 08:18 PM, Michal Hocko wrote:
+> Did you have any chance to test the following hack, Anshuman?
 
-> Linus Torvalds <torvalds@linux-foundation.org> writes:
-> 
-> > And some maintainers end up using multiple repositories as branches
-> > (the old _original_ git model). Again, you can just use "git fetch +
-> > git reset", of course, but that's a bit unsafe. In contrast, doing
-> > "git pull --ff-only" is a safe convenient operation that does both the
-> > fetch and the update to whatever state.
-> >
-> > But you do need that "--ff-only" to avoid the merge.  
-> 
-> OK.  I guess it is legit (and semi-sensible) for downstream
-> contributors to "git pull --ff-only $upstream $release_tag_X" to
-> bring their long-running topic currently based on release X-1 up to
-> date with respect to release X.  It probably makes more sense than
-> rebasing on top of release X, even though it makes a lot less sense
-> than merging their topics into release X.
-> 
-> As you said, pull of a tag that forbids fast-forward by default is
-> rather old development (I am kind of surprised that it was so old,
-> in v1.7.9), so it may be a bit difficult to transition.
-> 
-> There is 
-> 
-> 	[pull]
->                 ff = only
-> 
-> but pull.ff is quite global, and not good for intermediate level
-> maintainers who pull to integrate work of their downstream (for
-> which they do want the current "do not ff, record the tag in a merge
-> commit" behaviour) and also pull to catch up from their upstream
-> (which they want "ff-when-able").  They need to control between
-> ff=only and ff=when-able, depending on whom they are pulling from.
-
-Yes, that's my pain. I don't want ff only when pulling from others,
-only when pulling from upstream tree.
-
-> 
-> We may want per-remote equivalent for it, i.e. e.g.
-> 
-> 	[pull]
-> 		ff=false ;# good default for collecting contributions
-> 
-> 	[remote "torvalds"] 
-> 		pullFF = only ;# good default for catching up
-> 
-> or something like that, perhaps?
-
-
-Yeah, something like that works. Please notice, however, that what I
-usually do is:
-
-	$ git remote update torvalds
-	$ git merge <tag>
-	  (or git pull . <tag>)
-
-So, for the above to work, it should store somehow the remote from
-where a tag came from.
-
-
-
-
-The reason is that I keep locally a cache with several tree clones
-(in bare mode) s that I bother enough to cache (linus, -stable, -next),
-as pulling from BR is time consuming, and I want to do it only once
-and use the same "cache" for all my git clones.
-
-I have a few git workdirs for my upstream work, but, as a patch
-developer, I also have "independent"[1] git repositories.
-
-[1] Due to disk constraints, the clones actually use --shared. So,
-the common objects are actually stored inside a single tree.
-
-Thanks,
-Mauro
+The system has some issues at the moment, will get back on this.
