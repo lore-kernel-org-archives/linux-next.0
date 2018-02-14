@@ -1,41 +1,58 @@
-From: Progyan Bhattacharya <bprogyan@gmail.com>
-Subject: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-Date: Wed, 14 Feb 2018 14:55:58 +0530
-Message-ID: <20180214092558.5846-1-progyanb@acm.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
+Date: Wed, 14 Feb 2018 22:49:37 +1100
+Message-ID: <20180214224937.3f2feb80@canb.auug.org.au>
+References: <20180214092558.5846-1-progyanb@acm.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:46070 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966567AbeBNJ0G (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Wed, 14 Feb 2018 04:26:06 -0500
+Received: from ozlabs.org ([103.22.144.67]:52069 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S967378AbeBNLtk (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Wed, 14 Feb 2018 06:49:40 -0500
+In-Reply-To: <20180214092558.5846-1-progyanb@acm.org>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
-Cc: narmstrong@baylibre.com, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Progyan Bhattacharya <bprogyan@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, narmstrong@baylibre.com, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>
 
-Last two lines of code was repreated and was causing build error.
+Hi Progyan,
 
-Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Golle <daniel@makrotopia.org>
-Cc: Joe Perches <joe@perches.com>
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
----
- scripts/Makefile.kasan | 4 ----
- 1 file changed, 4 deletions(-)
+On Wed, 14 Feb 2018 14:55:58 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
+>
+> Last two lines of code was repreated and was causing build error.
+> 
+> Signed-off-by: Progyan Bhattacharya <progyanb@acm.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Daniel Golle <daniel@makrotopia.org>
+> Cc: Joe Perches <joe@perches.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  scripts/Makefile.kasan | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
+> index b7b9ecef44cc..69552a39951d 100644
+> --- a/scripts/Makefile.kasan
+> +++ b/scripts/Makefile.kasan
+> @@ -45,7 +45,3 @@ endif
+>  CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+>  
+>  endif
+> -
+> -CFLAGS_KASAN_NOSANITIZE := -fno-builtin
+> -
+> -endif
+> -- 
+> 2.16.1
+> 
 
-diff --git a/scripts/Makefile.kasan b/scripts/Makefile.kasan
-index b7b9ecef44cc..69552a39951d 100644
---- a/scripts/Makefile.kasan
-+++ b/scripts/Makefile.kasan
-@@ -45,7 +45,3 @@ endif
- CFLAGS_KASAN_NOSANITIZE := -fno-builtin
- 
- endif
--
--CFLAGS_KASAN_NOSANITIZE := -fno-builtin
--
--endif
+This file in linux-next and Linus' tree does not have the repeated
+lines.  What tree did you see this in?
+
 -- 
-2.16.1
+Cheers,
+Stephen Rothwell
