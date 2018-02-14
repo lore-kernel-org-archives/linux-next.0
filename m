@@ -1,89 +1,162 @@
-From: Khalid Aziz <khalid.aziz@oracle.com>
-Subject: Re: [RFC PATCH] elf: enforce MAP_FIXED on overlaying elf segments
- (was: Re: ppc elf_map breakage with MAP_FIXED_NOREPLACE)
-Date: Wed, 14 Feb 2018 09:30:18 -0700
-Message-ID: <1518625818.24026.2.camel@oracle.com>
-References: <6db9b33d-fd46-c529-b357-3397926f0733@linux.vnet.ibm.com>
-	 <20180129132235.GE21609@dhcp22.suse.cz>
-	 <87k1w081e7.fsf@concordia.ellerman.id.au>
-	 <20180130094205.GS21609@dhcp22.suse.cz>
-	 <5eccdc1b-6a10-b48a-c63f-295f69473d97@linux.vnet.ibm.com>
-	 <20180131131937.GA6740@dhcp22.suse.cz>
-	 <bfecda5e-ae8b-df91-0add-df6322b42a70@linux.vnet.ibm.com>
-	 <20180201131007.GJ21609@dhcp22.suse.cz>
-	 <20180201134026.GK21609@dhcp22.suse.cz>
-	 <CAGXu5j+fo0Z_ax2O10A-3D3puLhnX+o5M4Lp3TBsnE=NtFCjpw@mail.gmail.com>
-	 <20180213100440.GM3443@dhcp22.suse.cz>
+From: Junio C Hamano <gitster@pobox.com>
+Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
+Date: Wed, 14 Feb 2018 10:12:44 -0800
+Message-ID: <xmqqfu63o2xv.fsf@gitster-ct.c.googlers.com>
+References: <20180213080036.3bf3a908@canb.auug.org.au>
+        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
+        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
+        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
+        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
+        <20180212222157.0a3bd472@vento.lan>
+        <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
+        <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20180213100440.GM3443@dhcp22.suse.cz>
-Sender: owner-linux-mm@kvack.org
-To: Michal Hocko <mhocko@kernel.org>, Kees Cook <keescook@chromium.org>
-Cc: Anshuman Khandual <khandual@linux.vnet.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, mm-commits@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Linux-Next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain
+Return-path: <git-owner@vger.kernel.org>
+In-Reply-To: <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
+        (Linus Torvalds's message of "Tue, 13 Feb 2018 09:33:02 -0800")
+Sender: git-owner@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2018-02-13 at 11:04 +0100, Michal Hocko wrote:
->=20
-> From 97e7355a6dc31a73005fa806566a57eb5c38032b Mon Sep 17 00:00:00
-> 2001
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Tue, 13 Feb 2018 10:50:53 +0100
-> Subject: [PATCH] elf: enforce MAP_FIXED on overlaying elf segments
->=20
-> Anshuman has reported that some ELF binaries in his environment fail
-> to
-> start with
-> =C2=A0[=C2=A0=C2=A0=C2=A023.423642] 9148 (sed): Uhuuh, elf segment at 000=
-0000010030000
-> requested but the memory is mapped already
-> =C2=A0[=C2=A0=C2=A0=C2=A023.423706] requested [10030000, 10040000] mapped=
- [10030000,
-> 10040000] 100073 anon
->=20
-> The reason is that the above binary has overlapping elf segments:
-> =C2=A0 LOAD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A00x0000000000000000 0x0000000010000000
-> 0x0000000010000000
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0000000000013a8c 0x0000000000013a8c=C2=A0=
-=C2=A0R E=C2=A0=C2=A0=C2=A0=C2=A010000
-> =C2=A0 LOAD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A00x000000000001fd40 0x000000001002fd40
-> 0x000000001002fd40
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x00000000000002c0 0x00000000000005e8=C2=A0=
-=C2=A0RW=C2=A0=C2=A0=C2=A0=C2=A0=C2=A010000
-> =C2=A0 LOAD=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A00x0000000000020328 0x0000000010030328
-> 0x0000000010030328
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00x0000000000000384 0x00000000000094a0=C2=A0=
-=C2=A0RW=C2=A0=C2=A0=C2=A0=C2=A0=C2=A010000
->=20
-> That binary has two RW LOAD segments, the first crosses a page border
-> into the second
->=20
-> 0x1002fd40 (LOAD2-vaddr) + 0x5e8 (LOAD2-memlen) =3D=3D 0x10030328 (LOAD3-
-> vaddr)
->=20
-> Handle this situation by enforcing MAP_FIXED when we establish a
-> temporary brk VMA to handle overlapping segments. All other mappings
-> will still use MAP_FIXED_NOREPLACE.
->=20
-> Fixes: fs, elf: drop MAP_FIXED usage from elf_map
-> Reported-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->=20
+Linus Torvalds <torvalds@linux-foundation.org> writes:
 
-Looks reasonable to me.
+> On Tue, Feb 13, 2018 at 9:18 AM, Junio C Hamano <gitster@pobox.com> wrote:
+>>
+>> That makes me wonder if another heuristic I floated earlier is more
+>> appropriate.  When merging a tag object T, if refs/tags/T exists and
+>> it is that tag object, then an updated "merge" would default to "--ff";
+>> otherwise, it would keep the current default of creating a merge even
+>> when we could fast-forward, in order to record that tag T in the
+>> resulting history.
+>
+> Oooh. Yes, that sounds like the right thing to do.
+>
+> So the "no fast-forward" logic would trigger only if the name we used
+> for merging is one of the temporary ones (ie .git/{FETCH,MERGE}_HEAD),
+> not if the mentioned tag is already a normal tag reference.
+>
+> Then it's very explicitly about "don't lose the signing information".
+>
+> I'd still have to teach people to use "--only-ff" if they don't do the
+> "fetch and merge" model but literally just do  "git pull upstream
+> vX.Y", but at least the case Mauro describes would automatically just
+> DTRT.
+>
+> Me likey.
 
-Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+The implementation cannot exactly be "did the user give FETCH_HEAD
+or v4.16-rc1 from the command line?", because we'd want to catch it
+when Mauro says "git fetch linus && git merge v4.16-rc1" and behave
+identically as "git pull linus v4.16-rc1" (and the latter internally
+gets turned into "git merge FETCH_HEAD").
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+So, instead, we read the "tag" line from the tag object to learn the
+tagname T, see if refs/tags/T exists and points at that object, to
+see if we are Mauro who follows your tags, or if we are you who
+fetch and merge contributors' "for-linus" signed tag (which I am
+assuming you won't contaminate your refs/tags/ hierarchy with).
+
+There are a few fallouts in the testsuite if we go this route.  I am
+not quite decided if I like the approach.
+
+ builtin/merge.c          | 42 ++++++++++++++++++++++++++++++++++++++----
+ t/t6200-fmt-merge-msg.sh |  2 +-
+ t/t7600-merge.sh         |  2 +-
+ 3 files changed, 40 insertions(+), 6 deletions(-)
+
+diff --git a/builtin/merge.c b/builtin/merge.c
+index 30264cfd7c..45c7916505 100644
+--- a/builtin/merge.c
++++ b/builtin/merge.c
+@@ -33,6 +33,7 @@
+ #include "sequencer.h"
+ #include "string-list.h"
+ #include "packfile.h"
++#include "tag.h"
+ 
+ #define DEFAULT_TWOHEAD (1<<0)
+ #define DEFAULT_OCTOPUS (1<<1)
+@@ -1125,6 +1126,42 @@ static struct commit_list *collect_parents(struct commit *head_commit,
+ 	return remoteheads;
+ }
+ 
++static int merging_a_throwaway_tag(struct commit *commit)
++{
++	const char *tag_ref;
++	struct object_id oid;
++
++	/* Are we merging a tag? */
++	if (!merge_remote_util(commit) ||
++	    !merge_remote_util(commit)->obj ||
++	    merge_remote_util(commit)->obj->type != OBJ_TAG)
++		return 0;
++
++	/*
++	 * Now we know we are merging a tag object.  Are we downstream
++	 * and following the tags from upstream?  If so, we must have
++	 * the tag object pointed at by "refs/tags/$T" where $T is the
++	 * tagname recorded in the tag object.  We want to allow such
++	 * a "just to catch up" merge to fast-forward.
++	 */
++	tag_ref = xstrfmt("refs/tags/%s",
++			  ((struct tag *)merge_remote_util(commit)->obj)->tag);
++
++	if (!read_ref(tag_ref, &oid) &&
++	    !oidcmp(&oid, &merge_remote_util(commit)->obj->oid))
++		return 0;
++
++	/*
++	 * Otherwise, we are playing an integrator's role, making a
++	 * merge with a throw-away tag from a contributor with
++	 * something like "git pull $contributor $signed_tag".
++	 * We want to forbid such a merge from fast-forwarding
++	 * by default; otherwise we would not keep the signature
++	 * anywhere.
++	 */
++	return 1;
++}
++
+ int cmd_merge(int argc, const char **argv, const char *prefix)
+ {
+ 	struct object_id result_tree, stash, head_oid;
+@@ -1322,10 +1359,7 @@ int cmd_merge(int argc, const char **argv, const char *prefix)
+ 			    oid_to_hex(&commit->object.oid));
+ 		setenv(buf.buf, merge_remote_util(commit)->name, 1);
+ 		strbuf_reset(&buf);
+-		if (fast_forward != FF_ONLY &&
+-		    merge_remote_util(commit) &&
+-		    merge_remote_util(commit)->obj &&
+-		    merge_remote_util(commit)->obj->type == OBJ_TAG)
++		if (fast_forward != FF_ONLY && merging_a_throwaway_tag(commit))
+ 			fast_forward = FF_NO;
+ 	}
+ 
+diff --git a/t/t6200-fmt-merge-msg.sh b/t/t6200-fmt-merge-msg.sh
+index 2e2fb0e957..a54a52aaa4 100755
+--- a/t/t6200-fmt-merge-msg.sh
++++ b/t/t6200-fmt-merge-msg.sh
+@@ -512,7 +512,7 @@ test_expect_success 'merge-msg with "merging" an annotated tag' '
+ 
+ 	test_when_finished "git reset --hard" &&
+ 	annote=$(git rev-parse annote) &&
+-	git merge --no-commit $annote &&
++	git merge --no-commit --no-ff $annote &&
+ 	{
+ 		cat <<-EOF
+ 		Merge tag '\''$annote'\''
+diff --git a/t/t7600-merge.sh b/t/t7600-merge.sh
+index dfde6a675a..28a1c43ca7 100755
+--- a/t/t7600-merge.sh
++++ b/t/t7600-merge.sh
+@@ -718,7 +718,7 @@ test_expect_success GPG 'merge --no-edit tag should skip editor' '
+ 	git tag -f -s -m "A newer commit" signed &&
+ 	git reset --hard c0 &&
+ 
+-	EDITOR=false git merge --no-edit signed &&
++	EDITOR=false git merge --no-edit --no-ff signed &&
+ 	git rev-parse signed^0 >expect &&
+ 	git rev-parse HEAD^2 >actual &&
+ 	test_cmp expect actual
