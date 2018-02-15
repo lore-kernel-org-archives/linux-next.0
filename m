@@ -1,62 +1,50 @@
-From: "Ewan D. Milne" <emilne@redhat.com>
-Subject: Re: [PATCH] lpfc: add missing Kconfig NVME dependencies
-Date: Thu, 15 Feb 2018 14:02:54 -0500
-Message-ID: <1518721374.2427.84.camel@localhost.localdomain>
-References: <58adba5f.BoP49Cv2S5zD9ZuD%jsmart2021@gmail.com>
-         <1518721230.2427.82.camel@localhost.localdomain>
-Reply-To: emilne@redhat.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: change contact address for the sunxi tree?
+Date: Fri, 16 Feb 2018 07:28:39 +1100
+Message-ID: <20180216072839.62261e43@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/7fvRF5k707dZyWiTRE79zw7"; protocol="application/pgp-signature"
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48168 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1161274AbeBOTC4 (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Feb 2018 14:02:56 -0500
-In-Reply-To: <1518721230.2427.82.camel@localhost.localdomain>
+Received: from ozlabs.org ([103.22.144.67]:34185 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751998AbeBOU3Y (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Feb 2018 15:29:24 -0500
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: James Smart <jsmart2021@gmail.com>
-Cc: hare@suse.com, martin.petersen@oracle.com, dick.kennedy@broadcom.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-nvme@lists.infradead.org, sagi@grimberg.me, linux-scsi@vger.kernel.org
+To: Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Thu, 2018-02-15 at 14:00 -0500, Ewan D. Milne wrote:
-> On Wed, 2017-02-22 at 08:20 -0800, James Smart wrote:
-> > add missing Kconfig NVME dependencies
-> > 
-> > Can't believe I missed posting this
-> > 
-> > -- james
-> > 
-> > Signed-off-by: James Smart <james.smart@broadcom.com>
-> > ---
-> >  drivers/scsi/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-> > index d4023bf..2558434 100644
-> > --- a/drivers/scsi/Kconfig
-> > +++ b/drivers/scsi/Kconfig
-> > @@ -1240,6 +1240,7 @@ config SCSI_LPFC
-> >  	tristate "Emulex LightPulse Fibre Channel Support"
-> >  	depends on PCI && SCSI
-> >  	depends on SCSI_FC_ATTRS
-> > +	depends on NVME_FC && NVME_TARGET_FC
-> >  	select CRC_T10DIF
-> >  	help
-> >            This lpfc driver supports the Emulex LightPulse
-> 
-> I thought this was why you had
-> 
-> #if (IS_ENABLED(CONFIG_NVME_FC))
-> #if (IS_ENABLED(CONFIG_NVME_TARGET_FC))
-> 
-> at various places in the lpfc driver.  Do you actually depend
-> on having NVME_FC and NVME_TARGET_FC, or do you selectively
-> include code if they are config'ed in?
-> 
-> Or do you want to force-enable it at this point?
-> 
-> -Ewan
-> 
+--Sig_/7fvRF5k707dZyWiTRE79zw7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry, never mind, accidentally to very old mail message.
+Hi all,
+
+I noticed commit
+
+  0a815fc929e6 ("MAINTAINERS: update email address for Maxime Ripard")
+
+Should I change the contact address I have for Maxime as well?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7fvRF5k707dZyWiTRE79zw7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqF7XcACgkQAVBC80lX
+0Gy34wf/ZBqaa7TYyxcbCMnGgG0TBUEGNslenvZGvzw8KX0YdNQNgajNdXgVFbYz
+bhWQBGyszET3WdEU5zMXAiNExzuxx5Q3pab7thOekJytFTek4UHgoZ/6yqqUsYgE
+zvd3pnow+9Dx6tnt0K/bFvnTqfYttL1hfUPRg+wAuiURZufnDpDTqy4WW3HNZes8
+xwXuLE99zZqwUc0A/J9CrcqY/fXsNLhjmCZgiLQG2HDxD9XizAmFngM3kUPpUesJ
+nuu3XQ9YN2wOvycvXX/CeX/REprFkPG/DWWS2nHs3YhtENyXqpsaExIUDHPvRGhx
+NPhbEE4etFsKcmbVEmRGBMyRrb6Znw==
+=rd+S
+-----END PGP SIGNATURE-----
+
+--Sig_/7fvRF5k707dZyWiTRE79zw7--
