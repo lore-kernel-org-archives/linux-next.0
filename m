@@ -1,162 +1,35 @@
-From: Junio C Hamano <gitster@pobox.com>
-Subject: Re: linux-next: unnecessary merge in the v4l-dvb tree
-Date: Wed, 14 Feb 2018 10:12:44 -0800
-Message-ID: <xmqqfu63o2xv.fsf@gitster-ct.c.googlers.com>
-References: <20180213080036.3bf3a908@canb.auug.org.au>
-        <CA+55aFwM0vy+pw-Xv=gA19ULMwAXNPhdO3qR5A3hkMrZKJFNSQ@mail.gmail.com>
-        <CA+55aFzxsNxgKD1uGZQCiib+=+wCMSa0=B+Ye3Zi-u6kpz8Vrg@mail.gmail.com>
-        <xmqqfu65sx20.fsf@gitster-ct.c.googlers.com>
-        <CA+55aFwTp8gg70sHXqOgR01Liv5c8nnfUP0yTdwpkh-rg+2EMA@mail.gmail.com>
-        <xmqqzi4drczv.fsf@gitster-ct.c.googlers.com>
-        <20180212222157.0a3bd472@vento.lan>
-        <xmqqmv0crepg.fsf@gitster-ct.c.googlers.com>
-        <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 15 Feb 2018 11:35:03 +1100
+Message-ID: <20180215113503.052d5a22@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <git-owner@vger.kernel.org>
-In-Reply-To: <CA+55aFxkYTeY9h=VHFXi=gbXsnsHCRMAVZ9=1_EsFGSqr0sj9g@mail.gmail.com>
-        (Linus Torvalds's message of "Tue, 13 Feb 2018 09:33:02 -0800")
-Sender: git-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Git Mailing List <git@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-next.vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+Hi all,
 
-> On Tue, Feb 13, 2018 at 9:18 AM, Junio C Hamano <gitster@pobox.com> wrote:
->>
->> That makes me wonder if another heuristic I floated earlier is more
->> appropriate.  When merging a tag object T, if refs/tags/T exists and
->> it is that tag object, then an updated "merge" would default to "--ff";
->> otherwise, it would keep the current default of creating a merge even
->> when we could fast-forward, in order to record that tag T in the
->> resulting history.
->
-> Oooh. Yes, that sounds like the right thing to do.
->
-> So the "no fast-forward" logic would trigger only if the name we used
-> for merging is one of the temporary ones (ie .git/{FETCH,MERGE}_HEAD),
-> not if the mentioned tag is already a normal tag reference.
->
-> Then it's very explicitly about "don't lose the signing information".
->
-> I'd still have to teach people to use "--only-ff" if they don't do the
-> "fetch and merge" model but literally just do  "git pull upstream
-> vX.Y", but at least the case Mauro describes would automatically just
-> DTRT.
->
-> Me likey.
+After merging the sound-asoc tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-The implementation cannot exactly be "did the user give FETCH_HEAD
-or v4.16-rc1 from the command line?", because we'd want to catch it
-when Mauro says "git fetch linus && git merge v4.16-rc1" and behave
-identically as "git pull linus v4.16-rc1" (and the latter internally
-gets turned into "git merge FETCH_HEAD").
+/home/sfr/next/next/sound/soc/soc-core.c: In function 'snd_soc_register_codec':
+/home/sfr/next/next/sound/soc/soc-core.c:3818:8: error: too many arguments to function 'snd_soc_register_dais'
+  ret = snd_soc_register_dais(&codec->component, dai_drv, num_dai, false);
+        ^~~~~~~~~~~~~~~~~~~~~
+/home/sfr/next/next/sound/soc/soc-core.c:3114:12: note: declared here
+ static int snd_soc_register_dais(struct snd_soc_component *component,
+            ^~~~~~~~~~~~~~~~~~~~~   
 
-So, instead, we read the "tag" line from the tag object to learn the
-tagname T, see if refs/tags/T exists and points at that object, to
-see if we are Mauro who follows your tags, or if we are you who
-fetch and merge contributors' "for-linus" signed tag (which I am
-assuming you won't contaminate your refs/tags/ hierarchy with).
+Caused by commit
 
-There are a few fallouts in the testsuite if we go this route.  I am
-not quite decided if I like the approach.
+  a8768c52c511 ("ASoC: soc-core: remove legacy_dai_naming from snd_soc_register_dais()")
 
- builtin/merge.c          | 42 ++++++++++++++++++++++++++++++++++++++----
- t/t6200-fmt-merge-msg.sh |  2 +-
- t/t7600-merge.sh         |  2 +-
- 3 files changed, 40 insertions(+), 6 deletions(-)
+I have used the sound-asoc tree from next-20180214 for today.
 
-diff --git a/builtin/merge.c b/builtin/merge.c
-index 30264cfd7c..45c7916505 100644
---- a/builtin/merge.c
-+++ b/builtin/merge.c
-@@ -33,6 +33,7 @@
- #include "sequencer.h"
- #include "string-list.h"
- #include "packfile.h"
-+#include "tag.h"
- 
- #define DEFAULT_TWOHEAD (1<<0)
- #define DEFAULT_OCTOPUS (1<<1)
-@@ -1125,6 +1126,42 @@ static struct commit_list *collect_parents(struct commit *head_commit,
- 	return remoteheads;
- }
- 
-+static int merging_a_throwaway_tag(struct commit *commit)
-+{
-+	const char *tag_ref;
-+	struct object_id oid;
-+
-+	/* Are we merging a tag? */
-+	if (!merge_remote_util(commit) ||
-+	    !merge_remote_util(commit)->obj ||
-+	    merge_remote_util(commit)->obj->type != OBJ_TAG)
-+		return 0;
-+
-+	/*
-+	 * Now we know we are merging a tag object.  Are we downstream
-+	 * and following the tags from upstream?  If so, we must have
-+	 * the tag object pointed at by "refs/tags/$T" where $T is the
-+	 * tagname recorded in the tag object.  We want to allow such
-+	 * a "just to catch up" merge to fast-forward.
-+	 */
-+	tag_ref = xstrfmt("refs/tags/%s",
-+			  ((struct tag *)merge_remote_util(commit)->obj)->tag);
-+
-+	if (!read_ref(tag_ref, &oid) &&
-+	    !oidcmp(&oid, &merge_remote_util(commit)->obj->oid))
-+		return 0;
-+
-+	/*
-+	 * Otherwise, we are playing an integrator's role, making a
-+	 * merge with a throw-away tag from a contributor with
-+	 * something like "git pull $contributor $signed_tag".
-+	 * We want to forbid such a merge from fast-forwarding
-+	 * by default; otherwise we would not keep the signature
-+	 * anywhere.
-+	 */
-+	return 1;
-+}
-+
- int cmd_merge(int argc, const char **argv, const char *prefix)
- {
- 	struct object_id result_tree, stash, head_oid;
-@@ -1322,10 +1359,7 @@ int cmd_merge(int argc, const char **argv, const char *prefix)
- 			    oid_to_hex(&commit->object.oid));
- 		setenv(buf.buf, merge_remote_util(commit)->name, 1);
- 		strbuf_reset(&buf);
--		if (fast_forward != FF_ONLY &&
--		    merge_remote_util(commit) &&
--		    merge_remote_util(commit)->obj &&
--		    merge_remote_util(commit)->obj->type == OBJ_TAG)
-+		if (fast_forward != FF_ONLY && merging_a_throwaway_tag(commit))
- 			fast_forward = FF_NO;
- 	}
- 
-diff --git a/t/t6200-fmt-merge-msg.sh b/t/t6200-fmt-merge-msg.sh
-index 2e2fb0e957..a54a52aaa4 100755
---- a/t/t6200-fmt-merge-msg.sh
-+++ b/t/t6200-fmt-merge-msg.sh
-@@ -512,7 +512,7 @@ test_expect_success 'merge-msg with "merging" an annotated tag' '
- 
- 	test_when_finished "git reset --hard" &&
- 	annote=$(git rev-parse annote) &&
--	git merge --no-commit $annote &&
-+	git merge --no-commit --no-ff $annote &&
- 	{
- 		cat <<-EOF
- 		Merge tag '\''$annote'\''
-diff --git a/t/t7600-merge.sh b/t/t7600-merge.sh
-index dfde6a675a..28a1c43ca7 100755
---- a/t/t7600-merge.sh
-+++ b/t/t7600-merge.sh
-@@ -718,7 +718,7 @@ test_expect_success GPG 'merge --no-edit tag should skip editor' '
- 	git tag -f -s -m "A newer commit" signed &&
- 	git reset --hard c0 &&
- 
--	EDITOR=false git merge --no-edit signed &&
-+	EDITOR=false git merge --no-edit --no-ff signed &&
- 	git rev-parse signed^0 >expect &&
- 	git rev-parse HEAD^2 >actual &&
- 	test_cmp expect actual
+-- 
+Cheers,
+Stephen Rothwell
