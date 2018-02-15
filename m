@@ -1,19 +1,20 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-Date: Thu, 15 Feb 2018 16:05:20 +1100
-Message-ID: <20180215160520.5828f900@canb.auug.org.au>
+Date: Thu, 15 Feb 2018 16:09:22 +1100
+Message-ID: <20180215160922.39ea6c5d@canb.auug.org.au>
 References: <20180214092558.5846-1-progyanb@acm.org>
         <20180214224937.3f2feb80@canb.auug.org.au>
         <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+        <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:59359 "EHLO ozlabs.org"
+Received: from ozlabs.org ([103.22.144.67]:37671 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750713AbeBOFFX (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:05:23 -0500
-In-Reply-To: <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+        id S1750730AbeBOFJY (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Feb 2018 00:09:24 -0500
+In-Reply-To: <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
 To: Progyan Bhattacharya <bprogyan@gmail.com>
@@ -21,27 +22,37 @@ Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, narmstrong@baylibr
 
 Hi Progyan,
 
-On Thu, 15 Feb 2018 09:50:03 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
+On Thu, 15 Feb 2018 10:04:18 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
 >
-> The last commit I have in here:
+> I did some ground work and found this particular commit that causing the
+> error.
 > 
-> 8396647363e1 (origin/next, next) Add linux-next specific files for 20180206
+> Commit Hash: d96977a8c2266792397ed9814bb84b5129a278ad
 
-I don't know where you got that from, as my copy of that commit has
-SHA1 417c85c22818aefd973fa957b62fb1fe081404dd (as does the copy on
-git.kernel.org).  So you do not have a clean copy of the linux-next tree.
+That hash does not appear in linux-next (or Linus' tree).
 
-> It was not building properly because of repeated lines in
-> scripts/Makefile.kasan
+> Commit Body:
+> 
+> kasan: rework Kconfig settings
+> 
+> We get a lot of very large stack frames using gcc-7.0.1 with the default
+> -fsanitize-address-use-after-scope --param asan-stack=1 options, which can
+> easily cause an overflow of the kernel stack, e.g....
+> 
+> Author(s):
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Andrey Konovalov <andreyknvl@google.com>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-That file is also correct in my next-20180206.
-
-> PS: I have another question, Is use of range expression within case
-> statements allowed in Kernel? If not, are we using If-Else ladder for that?
-
-I am not sure if we have a policy on ranges in case labels, but it is
-not standard C (well, C11 at least).  If-else ladders are certainly
-common.
+That patch is in Linus' tree now (was in linux-next) but has SHA1 e7c52b84fb18
 
 -- 
 Cheers,
