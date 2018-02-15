@@ -1,59 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
 Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-Date: Thu, 15 Feb 2018 16:09:22 +1100
-Message-ID: <20180215160922.39ea6c5d@canb.auug.org.au>
+Date: Wed, 14 Feb 2018 21:24:55 -0800
+Message-ID: <bec02b84-316b-a41a-91ea-e0957d358ee3@infradead.org>
 References: <20180214092558.5846-1-progyanb@acm.org>
-        <20180214224937.3f2feb80@canb.auug.org.au>
-        <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
-        <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
+ <20180214224937.3f2feb80@canb.auug.org.au>
+ <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
+ <20180215160520.5828f900@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:37671 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750730AbeBOFJY (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Thu, 15 Feb 2018 00:09:24 -0500
-In-Reply-To: <CAGyWO1-356ncU=122yrqCoL96pCVfaqJwdFvkmqfot3fzVF6pg@mail.gmail.com>
+Received: from bombadil.infradead.org ([198.137.202.133]:49726 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751074AbeBOFZI (ORCPT
+        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Feb 2018 00:25:08 -0500
+In-Reply-To: <20180215160520.5828f900@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Progyan Bhattacharya <bprogyan@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Progyan Bhattacharya <bprogyan@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, narmstrong@baylibre.com, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>
 
-Hi Progyan,
+On 02/14/2018 09:05 PM, Stephen Rothwell wrote:
+> Hi Progyan,
+> 
+> On Thu, 15 Feb 2018 09:50:03 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
+>>
+> 
+>> PS: I have another question, Is use of range expression within case
+>> statements allowed in Kernel? If not, are we using If-Else ladder for that?
+> 
+> I am not sure if we have a policy on ranges in case labels, but it is
+> not standard C (well, C11 at least).  If-else ladders are certainly
+> common.
 
-On Thu, 15 Feb 2018 10:04:18 +0530 Progyan Bhattacharya <bprogyan@gmail.com> wrote:
->
-> I did some ground work and found this particular commit that causing the
-> error.
-> 
-> Commit Hash: d96977a8c2266792397ed9814bb84b5129a278ad
+I found 964 case ranges in 4.16-rc1.
 
-That hash does not appear in linux-next (or Linus' tree).
+or you use something like:
 
-> Commit Body:
-> 
-> kasan: rework Kconfig settings
-> 
-> We get a lot of very large stack frames using gcc-7.0.1 with the default
-> -fsanitize-address-use-after-scope --param asan-stack=1 options, which can
-> easily cause an overflow of the kernel stack, e.g....
-> 
-> Author(s):
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Alexander Potapenko <glider@google.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Andrey Konovalov <andreyknvl@google.com>
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+	switch (val) {
+	case 5:
+	case 10:
+	case 15:
+		// handle multiples of 5:
+		break;
+	default:
+	}
 
-That patch is in Linus' tree now (was in linux-next) but has SHA1 e7c52b84fb18
+
 
 -- 
-Cheers,
-Stephen Rothwell
+~Randy
