@@ -1,39 +1,57 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] Build: Scripts/Makefile: Remove Repeated Lines
-Date: Thu, 15 Feb 2018 09:52:54 -0800
-Message-ID: <45b314c4-a087-ee0e-d4ad-79f5ee6ac807@infradead.org>
-References: <20180214092558.5846-1-progyanb@acm.org>
- <20180214224937.3f2feb80@canb.auug.org.au>
- <CAGyWO1-9scERtpPw5CCwQcUbCU0SpcqpNq2eiBWRtwpRC-kB-A@mail.gmail.com>
- <20180215160520.5828f900@canb.auug.org.au>
- <bec02b84-316b-a41a-91ea-e0957d358ee3@infradead.org>
- <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
+From: "Ewan D. Milne" <emilne@redhat.com>
+Subject: Re: [PATCH] lpfc: add missing Kconfig NVME dependencies
+Date: Thu, 15 Feb 2018 14:00:30 -0500
+Message-ID: <1518721230.2427.82.camel@localhost.localdomain>
+References: <58adba5f.BoP49Cv2S5zD9ZuD%jsmart2021@gmail.com>
+Reply-To: emilne@redhat.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-next-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.133]:46230 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1164213AbeBORxD (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Feb 2018 12:53:03 -0500
-In-Reply-To: <CAGyWO1_tmrSB8WwyARGWXhYCz=SL-xqqU4d3Y0A1vqGWQ_8Trg@mail.gmail.com>
-Content-Language: en-US
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:52008 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1161457AbeBOTAd (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Thu, 15 Feb 2018 14:00:33 -0500
+In-Reply-To: <58adba5f.BoP49Cv2S5zD9ZuD%jsmart2021@gmail.com>
 Sender: linux-next-owner@vger.kernel.org
 List-ID: <linux-next.vger.kernel.org>
-To: Progyan Bhattacharya <bprogyan@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, narmstrong@baylibre.com, akpm@linux-foundation.org, Arnd Bergmann <arnd@arndb.de>, Daniel Golle <daniel@makrotopia.org>, Joe Perches <joe@perches.com>
+To: James Smart <jsmart2021@gmail.com>
+Cc: hare@suse.com, martin.petersen@oracle.com, dick.kennedy@broadcom.com, linux-next@vger.kernel.org, sfr@canb.auug.org.au, linux-nvme@lists.infradead.org, sagi@grimberg.me, linux-scsi@vger.kernel.org
 
-On 02/15/2018 01:38 AM, Progyan Bhattacharya wrote:
-> I think some merge error happened in my local workspace.
+On Wed, 2017-02-22 at 08:20 -0800, James Smart wrote:
+> add missing Kconfig NVME dependencies
 > 
-> Yes the file is correct in Linus's tree as well as current HEAD of linux-next.
-> Thanks.
-> I will update my tree accordingly.
+> Can't believe I missed posting this
 > 
-> About the nonstandard range statements in case, should I rewrite them. I think If-Else will be easier to read and understand.
+> -- james
+> 
+> Signed-off-by: James Smart <james.smart@broadcom.com>
+> ---
+>  drivers/scsi/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+> index d4023bf..2558434 100644
+> --- a/drivers/scsi/Kconfig
+> +++ b/drivers/scsi/Kconfig
+> @@ -1240,6 +1240,7 @@ config SCSI_LPFC
+>  	tristate "Emulex LightPulse Fibre Channel Support"
+>  	depends on PCI && SCSI
+>  	depends on SCSI_FC_ATTRS
+> +	depends on NVME_FC && NVME_TARGET_FC
+>  	select CRC_T10DIF
+>  	help
+>            This lpfc driver supports the Emulex LightPulse
 
-I don't see a need for any such change.
+I thought this was why you had
 
+#if (IS_ENABLED(CONFIG_NVME_FC))
+#if (IS_ENABLED(CONFIG_NVME_TARGET_FC))
 
--- 
-~Randy
+at various places in the lpfc driver.  Do you actually depend
+on having NVME_FC and NVME_TARGET_FC, or do you selectively
+include code if they are config'ed in?
+
+Or do you want to force-enable it at this point?
+
+-Ewan
