@@ -1,65 +1,49 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: linux-next: build failure after merge of the mmc tree
-Date: Thu, 15 Feb 2018 10:59:38 +0530
-Message-ID: <c278d6eb-8ca2-c25c-3ff9-2d62d758317d@ti.com>
-References: <20180215114954.689cc952@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 15 Feb 2018 15:33:21 +0000
+Message-ID: <20180215153321.GE8374@sirena.org.uk>
+References: <20180215113503.052d5a22@canb.auug.org.au>
+ <878tbvrmsi.wl%kuninori.morimoto.gx@renesas.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from fllnx209.ext.ti.com ([198.47.19.16]:35810 "EHLO
-        fllnx209.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751490AbeBOF3t (ORCPT
-        <rfc822;linux-next@vger.kernel.org>); Thu, 15 Feb 2018 00:29:49 -0500
-In-Reply-To: <20180215114954.689cc952@canb.auug.org.au>
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YkJPYEFdoxh/AXLE"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <878tbvrmsi.wl%kuninori.morimoto.gx@renesas.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Id: linux-next.vger.kernel.org
 
-Hi,
 
-On Thursday 15 February 2018 06:19 AM, Stephen Rothwell wrote:
-> Hi Ulf,
-> 
-> After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_set_timing':
-> drivers/mmc/host/sdhci-omap.c:466:8: error: implicit declaration of function 'pinctrl_select_state'; did you mean 'inc_node_state'? [-Werror=implicit-function-declaration]
->   ret = pinctrl_select_state(omap_host->pinctrl, pinctrl_state);
->         ^~~~~~~~~~~~~~~~~~~~
->         inc_node_state
-> drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_iodelay_pinctrl_state':
-> drivers/mmc/host/sdhci-omap.c:740:18: error: implicit declaration of function 'pinctrl_lookup_state'; did you mean 'inc_node_state'? [-Werror=implicit-function-declaration]
->   pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
->                   ^~~~~~~~~~~~~~~~~~~~
->                   inc_node_state
-> drivers/mmc/host/sdhci-omap.c:740:16: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->   pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
->                 ^
-> drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_config_iodelay_pinctrl_state':
-> drivers/mmc/host/sdhci-omap.c:769:23: error: implicit declaration of function 'devm_pinctrl_get'; did you mean 'devm_clk_get'? [-Werror=implicit-function-declaration]
->   omap_host->pinctrl = devm_pinctrl_get(omap_host->dev);
->                        ^~~~~~~~~~~~~~~~
->                        devm_clk_get
-> drivers/mmc/host/sdhci-omap.c:769:21: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->   omap_host->pinctrl = devm_pinctrl_get(omap_host->dev);
->                      ^
-> drivers/mmc/host/sdhci-omap.c:775:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
->   state = pinctrl_lookup_state(omap_host->pinctrl, "default");
->         ^
-> 
-> Caused by commit
-> 
->   713190bb14aa ("mmc: sdhci_omap: Add support to set IODELAY values")
-> 
-> Forgot to include linux/pinctrl/consumer.h?
+--YkJPYEFdoxh/AXLE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-yeah, looks like it though I didn't observe this error with omap2plus_defconfig.
+On Thu, Feb 15, 2018 at 02:49:44AM +0000, Kuninori Morimoto wrote:
+>=20
+> Hi Stephen
+>=20
+> Thank you for reporting.
+> It is my fault, this patch might cause other issue.
+> I'm asking to Mark to remove it from his branch.
 
-Ulf, can you drop "mmc: sdhci_omap: Add support to set IODELAY values" patch
-from your next. I'll resend the patch after fixing it.
+Dropped.
 
-Thanks
-Kishon
+--YkJPYEFdoxh/AXLE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqFqEAACgkQJNaLcl1U
+h9CraAf+PzhJorQCQ4+N5GD78Ee9ujp7eGo9LJknzWEsMeDshKUTMbCMoKSednQL
+0htXLHI2SYpO967l6iMo6ImyJcM0pZXhpyQK3cWkX2G1XKYWKH7sf60sRc9zpJQz
+YHH+pVL486TYPKFaozIcB4v46/jYgg6sSlDHMxLEFpDH+VeBijHVsvvGaWjqgvdC
+Z2yt2gc4ogko2Hz1BSrwFu1UF2wRu2Fd6FEdYZ2zrSE+9NuvqcUx8mh0kSFqKKMC
+RGsj12qw8QTJYMVOkQul5a8DOji/C360DZnCfkb94aqvr1nY3e3lxD082QfoRnto
+Z0gkWamhFNv4Fj28AFK1gI66dNdr4w==
+=vl1j
+-----END PGP SIGNATURE-----
+
+--YkJPYEFdoxh/AXLE--
