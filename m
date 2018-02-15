@@ -1,34 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 15 Feb 2018 11:35:03 +1100
-Message-ID: <20180215113503.052d5a22@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the mmc tree
+Date: Thu, 15 Feb 2018 11:49:54 +1100
+Message-ID: <20180215114954.689cc952@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi all,
+Hi Ulf,
 
-After merging the sound-asoc tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the mmc tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-/home/sfr/next/next/sound/soc/soc-core.c: In function 'snd_soc_register_codec':
-/home/sfr/next/next/sound/soc/soc-core.c:3818:8: error: too many arguments to function 'snd_soc_register_dais'
-  ret = snd_soc_register_dais(&codec->component, dai_drv, num_dai, false);
-        ^~~~~~~~~~~~~~~~~~~~~
-/home/sfr/next/next/sound/soc/soc-core.c:3114:12: note: declared here
- static int snd_soc_register_dais(struct snd_soc_component *component,
-            ^~~~~~~~~~~~~~~~~~~~~   
+drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_set_timing':
+drivers/mmc/host/sdhci-omap.c:466:8: error: implicit declaration of function 'pinctrl_select_state'; did you mean 'inc_node_state'? [-Werror=implicit-function-declaration]
+  ret = pinctrl_select_state(omap_host->pinctrl, pinctrl_state);
+        ^~~~~~~~~~~~~~~~~~~~
+        inc_node_state
+drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_iodelay_pinctrl_state':
+drivers/mmc/host/sdhci-omap.c:740:18: error: implicit declaration of function 'pinctrl_lookup_state'; did you mean 'inc_node_state'? [-Werror=implicit-function-declaration]
+  pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
+                  ^~~~~~~~~~~~~~~~~~~~
+                  inc_node_state
+drivers/mmc/host/sdhci-omap.c:740:16: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+  pinctrl_state = pinctrl_lookup_state(omap_host->pinctrl, mode);
+                ^
+drivers/mmc/host/sdhci-omap.c: In function 'sdhci_omap_config_iodelay_pinctrl_state':
+drivers/mmc/host/sdhci-omap.c:769:23: error: implicit declaration of function 'devm_pinctrl_get'; did you mean 'devm_clk_get'? [-Werror=implicit-function-declaration]
+  omap_host->pinctrl = devm_pinctrl_get(omap_host->dev);
+                       ^~~~~~~~~~~~~~~~
+                       devm_clk_get
+drivers/mmc/host/sdhci-omap.c:769:21: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+  omap_host->pinctrl = devm_pinctrl_get(omap_host->dev);
+                     ^
+drivers/mmc/host/sdhci-omap.c:775:8: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+  state = pinctrl_lookup_state(omap_host->pinctrl, "default");
+        ^
 
 Caused by commit
 
-  a8768c52c511 ("ASoC: soc-core: remove legacy_dai_naming from snd_soc_register_dais()")
+  713190bb14aa ("mmc: sdhci_omap: Add support to set IODELAY values")
 
-I have used the sound-asoc tree from next-20180214 for today.
+Forgot to include linux/pinctrl/consumer.h?
+
+I have used the mmc tree from next-20180214 for today.
 
 -- 
 Cheers,
