@@ -1,50 +1,108 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the tip tree
-Date: Sun, 18 Feb 2018 19:25:55 +1100
-Message-ID: <20180218192555.73537987@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 19 Feb 2018 10:02:21 +1100
+Message-ID: <20180219100221.2da15c53@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/owyJgx.grxFGcTYjGywLaXi"; protocol="application/pgp-signature"
-Return-path: <linux-next-owner@vger.kernel.org>
-Received: from ozlabs.org ([103.22.144.67]:54965 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751052AbeBRI0l (ORCPT <rfc822;linux-next@vger.kernel.org>);
-        Sun, 18 Feb 2018 03:26:41 -0500
-Sender: linux-next-owner@vger.kernel.org
-List-ID: <linux-next.vger.kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
+Content-Type: multipart/mixed; boundary="===============1566059411=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+List-Id: linux-next.vger.kernel.org
 
---Sig_/owyJgx.grxFGcTYjGywLaXi
+--===============1566059411==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/acrhl4ZSM1ESndSOb845hAT"; protocol="application/pgp-signature"
+
+--Sig_/acrhl4ZSM1ESndSOb845hAT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Commit
+Today's linux-next merge of the drm tree got a conflict in:
 
-  f091f1d6a2b4 ("tools/headers: Synchronize kernel ABI headers, v4.16-rc1")
+  drivers/gpu/drm/i915/i915_pmu.h
 
-is missing a Signed-off-by from its committer.
+between commit:
+
+  4c83f0a788cc ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+
+from Linus' tree and commit:
+
+  109ec558370f ("drm/i915/pmu: Only enumerate available counters in sysfs")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/owyJgx.grxFGcTYjGywLaXi
+diff --cc drivers/gpu/drm/i915/i915_pmu.h
+index bb62df15afa4,5a2e013a56bb..000000000000
+--- a/drivers/gpu/drm/i915/i915_pmu.h
++++ b/drivers/gpu/drm/i915/i915_pmu.h
+@@@ -96,10 -94,14 +96,18 @@@ struct i915_pmu=20
+  	 * struct intel_engine_cs.
+  	 */
+  	struct i915_pmu_sample sample[__I915_NUM_PMU_SAMPLERS];
+ +	/**
+ +	 * @suspended_jiffies_last: Cached suspend time from PM core.
+ +	 */
+ +	unsigned long suspended_jiffies_last;
++ 	/**
++ 	 * @i915_attr: Memory block holding device attributes.
++ 	 */
++ 	void *i915_attr;
++ 	/**
++ 	 * @pmu_attr: Memory block holding device attributes.
++ 	 */
++ 	void *pmu_attr;
+  };
+ =20
+  #ifdef CONFIG_PERF_EVENTS
+
+--Sig_/acrhl4ZSM1ESndSOb845hAT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqJOJMACgkQAVBC80lX
-0Gx1JQf/WyWEGejyCrXI7rhrs1PhIZa1S7MopA0YexpxviQGImamRfJEX5ofQr5i
-upd1kb40qKc1gAbxuQ1wIyMFjbyH/BtdhZ3+NpwMzF6wPaQvJeGHLwHiKKcjPW5e
-z+BlfZ2EiXdg2V0Wg/JmHQS4n5EEhuIPe7nsNaHPuBZ/svrcyhZdEpiAAv3s92WE
-O9KbPEG3NIZlw/0SSY4zSWt9K/h7Elp/3sCeQh6bQ9J7XBBadMRNL+efuxVAlVSw
-wxZzbIlR6INuRkbzN0+6q3uGJg4VdEuxfsVh1JryzhFise63vGkXtEivWhIfDJ27
-gdGpUlsgss1AI/o7EwFkTK0zHZ9oBQ==
-=lWW8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKBf0ACgkQAVBC80lX
+0GxrfQgAkqqbnXetbSRLCjV92RgdyN2NSfF6DmrF0h1Q8Gq25KOLW1YwAgACWakJ
+Aii1O0eaLTrJTFy4qWtgpZj46IHumz89S3snkDsoxsCKyj7AEPrFWyU+v0EzEs2b
+Q/dT357rxjzFDsFJHZxJoH+RzYGx1pVdqjmA3+VhsyaGQahsAtNuG6GSNfoN1lOh
+kPOmC/u9GuzuHpj4FdnlrwZJ3Nm1/OUmBe2odE6MQgT2s/hjAcQEg9mE2behU7yy
+JM8RaXNXljbhbnsRutoriZFNCK/E/QNPOOZjsvbK7Rj0qByuzxBFc+2hhH4tl0ri
+zoF1K0SPbZE3TwenHBdrvWTNeAMn/w==
+=kHbH
 -----END PGP SIGNATURE-----
 
---Sig_/owyJgx.grxFGcTYjGywLaXi--
+--Sig_/acrhl4ZSM1ESndSOb845hAT--
+
+--===============1566059411==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1566059411==--
