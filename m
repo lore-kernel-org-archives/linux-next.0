@@ -1,9 +1,9 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 19 Feb 2018 10:02:21 +1100
-Message-ID: <20180219100221.2da15c53@canb.auug.org.au>
+Date: Mon, 19 Feb 2018 10:10:50 +1100
+Message-ID: <20180219101050.0a1514e5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1566059411=="
+Content-Type: multipart/mixed; boundary="===============1238047540=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
@@ -15,14 +15,14 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tvrtko Ursulin <tvrtko.ursulin@intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============1566059411==
+--===============1238047540==
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/acrhl4ZSM1ESndSOb845hAT"; protocol="application/pgp-signature"
+ boundary="Sig_/P17WcQI3Tc.MVWsW1UimB00"; protocol="application/pgp-signature"
 
---Sig_/acrhl4ZSM1ESndSOb845hAT
+--Sig_/P17WcQI3Tc.MVWsW1UimB00
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -30,19 +30,27 @@ Hi all,
 
 Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/gpu/drm/i915/i915_pmu.h
+  drivers/gpu/drm/i915/intel_breadcrumbs.c
 
 between commit:
 
-  4c83f0a788cc ("drm/i915/pmu: Fix sleep under atomic in RC6 readout")
+  117172c8f9d4 ("drm/i915/breadcrumbs: Ignore unsubmitted signalers")
 
 from Linus' tree and commit:
 
-  109ec558370f ("drm/i915/pmu: Only enumerate available counters in sysfs")
+  b7a3f33bd5ab ("drm/i915/breadcrumbs: Drop request reference for the signa=
+ler thread")
 
 from the drm tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
+These are basically identical for the conflicting section except that
+the former added a line:
+
+	GEM_BUG_ON(!i915_gem_request_completed(request));
+
+which I left in.
+
+I fixed it up (see above) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
@@ -53,49 +61,25 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/gpu/drm/i915/i915_pmu.h
-index bb62df15afa4,5a2e013a56bb..000000000000
---- a/drivers/gpu/drm/i915/i915_pmu.h
-+++ b/drivers/gpu/drm/i915/i915_pmu.h
-@@@ -96,10 -94,14 +96,18 @@@ struct i915_pmu=20
-  	 * struct intel_engine_cs.
-  	 */
-  	struct i915_pmu_sample sample[__I915_NUM_PMU_SAMPLERS];
- +	/**
- +	 * @suspended_jiffies_last: Cached suspend time from PM core.
- +	 */
- +	unsigned long suspended_jiffies_last;
-+ 	/**
-+ 	 * @i915_attr: Memory block holding device attributes.
-+ 	 */
-+ 	void *i915_attr;
-+ 	/**
-+ 	 * @pmu_attr: Memory block holding device attributes.
-+ 	 */
-+ 	void *pmu_attr;
-  };
- =20
-  #ifdef CONFIG_PERF_EVENTS
-
---Sig_/acrhl4ZSM1ESndSOb845hAT
+--Sig_/P17WcQI3Tc.MVWsW1UimB00
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKBf0ACgkQAVBC80lX
-0GxrfQgAkqqbnXetbSRLCjV92RgdyN2NSfF6DmrF0h1Q8Gq25KOLW1YwAgACWakJ
-Aii1O0eaLTrJTFy4qWtgpZj46IHumz89S3snkDsoxsCKyj7AEPrFWyU+v0EzEs2b
-Q/dT357rxjzFDsFJHZxJoH+RzYGx1pVdqjmA3+VhsyaGQahsAtNuG6GSNfoN1lOh
-kPOmC/u9GuzuHpj4FdnlrwZJ3Nm1/OUmBe2odE6MQgT2s/hjAcQEg9mE2behU7yy
-JM8RaXNXljbhbnsRutoriZFNCK/E/QNPOOZjsvbK7Rj0qByuzxBFc+2hhH4tl0ri
-zoF1K0SPbZE3TwenHBdrvWTNeAMn/w==
-=kHbH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqKB/oACgkQAVBC80lX
+0GxxNgf/ZUzIScORpShGKUS2sZtpz5ALI5/Si3ZkVsv5xBP89x1ELA5WjCvpa1ey
+PigMK34/jMmXtewX8CB2IU0tQukEKRhOu7SKDT1tj9dUcHvk0iRPT5ENMCQnEFb5
+5MX5G5WgJPl+i0TvxbTGSZCt0XDRaigCwmac/Gf6TR+4w6wG8SF+CYWafme9JPrD
+t+UYUwj33kONOtb2FDqsWvB3IBblHMlwvbevP9o7f8GgBAKgsHOsP9Ketxpk7dmt
+kVFyjtLXQYt3YGHJ1ujL7HaFlPmeBZCzcjPmwQAldet+YwWBDInbSZjdsRvMOvu5
+k79R6qTl0WVP6vJAkhrimOg8O9lVhw==
+=5lv5
 -----END PGP SIGNATURE-----
 
---Sig_/acrhl4ZSM1ESndSOb845hAT--
+--Sig_/P17WcQI3Tc.MVWsW1UimB00--
 
---===============1566059411==
+--===============1238047540==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -105,4 +89,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============1566059411==--
+--===============1238047540==--
