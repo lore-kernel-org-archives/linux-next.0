@@ -1,62 +1,50 @@
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: linux-next: change contact address for the sunxi tree?
-Date: Fri, 16 Feb 2018 11:13:52 +0100
-Message-ID: <20180216101352.2bephy65nrant6r2@flea.lan>
-References: <20180216072839.62261e43@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Date: Sun, 18 Feb 2018 19:25:55 +1100
+Message-ID: <20180218192555.73537987@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="shtfhqahpqpubtyl"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180216072839.62261e43@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Chen-Yu Tsai <wens@csie.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-List-Id: linux-next.vger.kernel.org
+ boundary="Sig_/owyJgx.grxFGcTYjGywLaXi"; protocol="application/pgp-signature"
+Return-path: <linux-next-owner@vger.kernel.org>
+Received: from ozlabs.org ([103.22.144.67]:54965 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751052AbeBRI0l (ORCPT <rfc822;linux-next@vger.kernel.org>);
+        Sun, 18 Feb 2018 03:26:41 -0500
+Sender: linux-next-owner@vger.kernel.org
+List-ID: <linux-next.vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>
 
-
---shtfhqahpqpubtyl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/owyJgx.grxFGcTYjGywLaXi
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi all,
 
-On Fri, Feb 16, 2018 at 07:28:39AM +1100, Stephen Rothwell wrote:
-> Hi all,
->=20
-> I noticed commit
->=20
->   0a815fc929e6 ("MAINTAINERS: update email address for Maxime Ripard")
->=20
-> Should I change the contact address I have for Maxime as well?
+Commit
 
-Yes, definitely. Sorry for forgetting to tell you :/
-Maxime
+  f091f1d6a2b4 ("tools/headers: Synchronize kernel ABI headers, v4.16-rc1")
+
+is missing a Signed-off-by from its committer.
 
 --=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-http://bootlin.com
+Cheers,
+Stephen Rothwell
 
---shtfhqahpqpubtyl
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/owyJgx.grxFGcTYjGywLaXi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlqGrt8ACgkQ0rTAlCFN
-r3RI+w//TMQpFlof3F98wSPZ0IIsL5jKNbUgYKS+Gq55Nh4KEiEncVIb3Ogr8Q/E
-ONTnLFaxaRLwlsw2mufGtkoCgowqZqJeui87xtT+UYNeJdWxQIJytn0SJglbeACY
-1fqFVMobEbL86Js/Y+jFmb+PiSHcDBfoYUN1XwG4sudDMRmcB3Dvph4nCHDEfndo
-RbgyLURaRwHCoB7MmAQoCCkdDa2qHmI13EmmNtuX7mCxqkhRbUn8ta93DaDsttrZ
-PTHKKC7xYrxwUJvUNFk72rGN1LYxQm4GhOZcjJdOtrRPSgLtOE0Vr5XLmlXbLHDi
-3yGaeZ1IuDKJgzSBJdhzZj9z66GVvHViMSxc4Fl5v1J9hSinYrsR+WiEa14lX8G1
-RDg4UnQOyv0sNJWB2nRLpiVtSqEBsOnZWJNWKBpVnWdWpD627mt2ysn1aFz4HdLW
-7mPexsYgAImlvtwpq7uLBhtnRd3HfQ88AjPtd7mj9bCI1NWH55RfOI7Hi7yMEMlS
-FaLip6ErWv454HyeC0PPh6/MMu8WyIV0HEbViF6RvIky0sDMFqQINpdDp0dqW2Y4
-FXjLbnWreQqtLlCmBEB+cV/E6C0MbAVSEkpYACWnK+I0CaajM17RXT0WZs01+K0m
-ZbiqWc6YkW5QqerDGsW/TVVILRmm68p8seVec0sE8YfK1i5IXw0=
-=JO5C
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqJOJMACgkQAVBC80lX
+0Gx1JQf/WyWEGejyCrXI7rhrs1PhIZa1S7MopA0YexpxviQGImamRfJEX5ofQr5i
+upd1kb40qKc1gAbxuQ1wIyMFjbyH/BtdhZ3+NpwMzF6wPaQvJeGHLwHiKKcjPW5e
+z+BlfZ2EiXdg2V0Wg/JmHQS4n5EEhuIPe7nsNaHPuBZ/svrcyhZdEpiAAv3s92WE
+O9KbPEG3NIZlw/0SSY4zSWt9K/h7Elp/3sCeQh6bQ9J7XBBadMRNL+efuxVAlVSw
+wxZzbIlR6INuRkbzN0+6q3uGJg4VdEuxfsVh1JryzhFise63vGkXtEivWhIfDJ27
+gdGpUlsgss1AI/o7EwFkTK0zHZ9oBQ==
+=lWW8
 -----END PGP SIGNATURE-----
 
---shtfhqahpqpubtyl--
+--Sig_/owyJgx.grxFGcTYjGywLaXi--
