@@ -1,129 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 1 Mar 2018 09:51:45 +1100
-Message-ID: <20180301095145.40b1fef5@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Feb 19 (gpu/drm/pl111/)
+Date: Mon, 19 Feb 2018 10:30:06 -0800
+Message-ID: <b1028c02-9633-47bf-e930-a20926e14ca9@infradead.org>
+References: <20180219131426.14ecac87@canb.auug.org.au>
+ <5a671632-f746-52d2-1a9c-1e72a7e2f42b@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8IIh3SSSJXsbJBOiW261dry"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jiri Pirko <jiri@mellanox.com>, Arkadi Sharshevsky <arkadis@mellanox.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5a671632-f746-52d2-1a9c-1e72a7e2f42b@infradead.org>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/8IIh3SSSJXsbJBOiW261dry
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the net-next tree got a conflict in:
-
-  drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-
-between commit:
-
-  77d270967c5f ("mlxsw: spectrum: Fix handling of resource_size_param")
-
-from the net tree and commit:
-
-  4f4bbf7c4e3d ("devlink: Perform cleanup of resource_set cb")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-index c7e941aecc2a,7c6204f701ae..000000000000
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@@ -4204,21 -3816,13 +3822,12 @@@ static struct devlink_resource_ops mlxs
-  	.occ_get =3D mlxsw_sp_resource_kvd_linear_occ_get,
-  };
- =20
-- static struct devlink_resource_ops mlxsw_sp_resource_kvd_hash_single_ops =
-=3D {
-- 	.size_validate =3D mlxsw_sp_resource_kvd_hash_single_size_validate,
-- };
--=20
-- static struct devlink_resource_ops mlxsw_sp_resource_kvd_hash_double_ops =
-=3D {
-- 	.size_validate =3D mlxsw_sp_resource_kvd_hash_double_size_validate,
-- };
- -static struct devlink_resource_size_params mlxsw_sp_kvd_size_params;
- -static struct devlink_resource_size_params mlxsw_sp_linear_size_params;
- -static struct devlink_resource_size_params mlxsw_sp_hash_single_size_para=
-ms;
- -static struct devlink_resource_size_params mlxsw_sp_hash_double_size_para=
-ms;
---
-  static void
- -mlxsw_sp_resource_size_params_prepare(struct mlxsw_core *mlxsw_core)
- +mlxsw_sp_resource_size_params_prepare(struct mlxsw_core *mlxsw_core,
- +				      struct devlink_resource_size_params *kvd_size_params,
- +				      struct devlink_resource_size_params *linear_size_params,
- +				      struct devlink_resource_size_params *hash_double_size_params,
- +				      struct devlink_resource_size_params *hash_single_size_params)
-  {
-  	u32 single_size_min =3D MLXSW_CORE_RES_GET(mlxsw_core,
-  						 KVD_SINGLE_MIN_SIZE);
-@@@ -4274,8 -3876,8 +3883,8 @@@ static int mlxsw_sp_resources_register(
-  					true, kvd_size,
-  					MLXSW_SP_RESOURCE_KVD,
-  					DEVLINK_RESOURCE_ID_PARENT_TOP,
- -					&mlxsw_sp_kvd_size_params,
- +					&kvd_size_params,
-- 					&mlxsw_sp_resource_kvd_ops);
-+ 					NULL);
-  	if (err)
-  		return err;
- =20
-@@@ -4298,8 -3904,8 +3911,8 @@@
-  					false, double_size,
-  					MLXSW_SP_RESOURCE_KVD_HASH_DOUBLE,
-  					MLXSW_SP_RESOURCE_KVD,
- -					&mlxsw_sp_hash_double_size_params,
- +					&hash_double_size_params,
-- 					&mlxsw_sp_resource_kvd_hash_double_ops);
-+ 					NULL);
-  	if (err)
-  		return err;
- =20
-@@@ -4308,8 -3914,8 +3921,8 @@@
-  					false, single_size,
-  					MLXSW_SP_RESOURCE_KVD_HASH_SINGLE,
-  					MLXSW_SP_RESOURCE_KVD,
- -					&mlxsw_sp_hash_single_size_params,
- +					&hash_single_size_params,
-- 					&mlxsw_sp_resource_kvd_hash_single_ops);
-+ 					NULL);
-  	if (err)
-  		return err;
- =20
-
---Sig_/8IIh3SSSJXsbJBOiW261dry
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqXMoEACgkQAVBC80lX
-0GzF8ggAoJlDgMLoQzBQz7LGtC5KscZhhhRvNDytL8gVTf9CHAhzuXK3JSOpMU7r
-HL2OYTwve6fIZppECdULIonwQjrID1WK5vSKxK1b2eyJV/srWVeap0gvcxT6I+Q4
-nNJgas4RILvDdXCyFAZXP4AuNTy2vmgVAsp6leCt0rl4E/H/D9ukJC4dXSO64S8q
-UVvmvwUxPfzA3X0OfOESjjLpyv0J3ZgwdUDAYKOFW3jZzAa8v/x0nqFLmGaeK3i1
-RWSTwtPMbKm7n8uyS5CUWiFH40LbITV1/60AAV1AbKeuYkCrI5DeTf38J7PwQlEB
-qcusCqYml2ZK2zJKx+PCm/OqrlCbkA==
-=exiD
------END PGP SIGNATURE-----
-
---Sig_/8IIh3SSSJXsbJBOiW261dry--
+W2FkZCBFcmljICsgZHJpLWRldmVsXQoKT24gMDIvMTkvMTggMDk6MjYsIFJhbmR5IER1bmxhcCB3
+cm90ZToKPiBPbiAwMi8xOC8xOCAxODoxNCwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPj4gSGkg
+YWxsLAo+Pgo+PiBDaGFuZ2VzIHNpbmNlIDIwMTgwMjE2Ogo+Pgo+PiBUaGUgbmFuZCB0cmVlIGdh
+aW5lZCBhIGNvbmZsaWN0IGFnYWluc3QgTGludXMnIHRyZWUuCj4+Cj4+IFRoZSBkcm0gdHJlZSBn
+YWluZWQgY29uZmxpY3RzIGFnYWluc3QgTGludXMnIHRyZWUuCj4gCj4gb24gaTM4NiAocmFuZGNv
+bmZpZyk6Cj4gCj4gd2FybmluZzogKERSTV9QTDExMSkgc2VsZWN0cyBEUk1fRFVNQl9WR0FfREFD
+IHdoaWNoIGhhcyB1bm1ldCBkaXJlY3QgZGVwZW5kZW5jaWVzIChIQVNfSU9NRU0gJiYgRFJNICYm
+IERSTV9CUklER0UgJiYgT0YpCj4gCj4gYW5kIHRoZW4KPiAKPiAuLi9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL2R1bWItdmdhLWRhYy5jOiBJbiBmdW5jdGlvbiAnZHVtYl92Z2FfcHJvYmUnOgo+IC4u
+L2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvZHVtYi12Z2EtZGFjLmM6MjA3OjEzOiBlcnJvcjogJ3N0
+cnVjdCBkcm1fYnJpZGdlJyBoYXMgbm8gbWVtYmVyIG5hbWVkICdvZl9ub2RlJwo+ICAgdmdhLT5i
+cmlkZ2Uub2Zfbm9kZSA9IHBkZXYtPmRldi5vZl9ub2RlOwo+ICAgICAgICAgICAgICBeCj4gCj4g
+CgoKLS0gCn5SYW5keQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
