@@ -1,41 +1,76 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-Date: Mon, 26 Feb 2018 10:03:49 +0100
-Message-ID: <0df3cf32-9f64-b0f0-3a1c-00c1ab52c939@iogearbox.net>
-References: <20180226114147.2ab5c647@canb.auug.org.au>
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH] drm/pl111: Remove reverse dependency on DRM_DUMB_VGA_DAC
+Date: Mon, 26 Feb 2018 15:46:55 +0530
+Message-ID: <f44952c8-214a-7565-3887-572b3df9560c@codeaurora.org>
+References: <b1028c02-9633-47bf-e930-a20926e14ca9@infradead.org>
+ <20180220102903.27787-1-thierry.reding@gmail.com>
+ <da4fe9ea-0aac-880d-ba2a-da2a523dd16b@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180226114147.2ab5c647@canb.auug.org.au>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <da4fe9ea-0aac-880d-ba2a-da2a523dd16b@codeaurora.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linus.walleij@linaro.org
+Cc: Randy Dunlap <rdunlap@infradead.org>, linux-next@vger.kernel.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 List-Id: linux-next.vger.kernel.org
 
-On 02/26/2018 01:41 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the bpf-next tree got a conflict in:
-> 
->   tools/testing/selftests/bpf/test_verifier.c
-> 
-> between commit:
-> 
->   ca36960211eb ("bpf: allow xadd only on aligned memory")
-> 
-> from the bpf tree and commit:
-> 
->   23d191a82c13 ("bpf: add various jit test cases")
-> 
-> from the bpf-next tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-
-Looks good, thanks!
+CgpPbiBUdWVzZGF5IDIwIEZlYnJ1YXJ5IDIwMTggMDQ6NDQgUE0sIEFyY2hpdCBUYW5lamEgd3Jv
+dGU6Cj4gCj4gCj4gT24gVHVlc2RheSAyMCBGZWJydWFyeSAyMDE4IDAzOjU5IFBNLCBUaGllcnJ5
+IFJlZGluZyB3cm90ZToKPj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNv
+bT4KPj4KPj4gRFJNX0RVTUJfVkdBX0RBQyBpcyBhIHVzZXItdmlzaWJsZSBzeW1ib2wuIFNlbGVj
+dGluZyBpdCBjYW4gY2F1c2UgdW5tZXQKPj4gZGlyZWN0IGRlcGVuZGVuY2llcyBzdWNoIGFzIHRo
+aXMgKG9uIGkzODYsIHJhbmRjb25maWcpOgo+Pgo+PiDCoMKgwqDCoHdhcm5pbmc6IChEUk1fUEwx
+MTEpIHNlbGVjdHMgRFJNX0RVTUJfVkdBX0RBQyB3aGljaCBoYXMgdW5tZXQgCj4+IGRpcmVjdCBk
+ZXBlbmRlbmNpZXMgKEhBU19JT01FTSAmJiBEUk0gJiYgRFJNX0JSSURHRSAmJiBPRikKPj4KPj4g
+VGhpcyBpcyBiZWNhdXNlIERSTV9EVU1CX1ZHQV9EQUMgZGVwZW5kcyBvbiBPRiB3aGlsZSBEUk1f
+UEwxMTEgZG9lcyBub3QuCj4+IEl0IGRvZXMgaW5kaXJlY3RseSBkZXBlbmQgb24gT0YgdmlhIHRo
+ZSBBUk0gYW5kIEFSTTY0IGRlcGVuZGVuY2llcywgYnV0Cj4+IHNpbmNlIGl0IGNhbiBhbHNvIGJl
+IGVuYWJsZWQgdW5kZXIgQ09NUElMRV9URVNULCByYW5kY29uZmlnIGNhbiBmaW5kIGEKPj4gY2Fz
+ZSB3aGVyZSBEUk1fUEwxMTEgaXMgc2VsZWN0ZWQgd2l0aG91dCBwdWxsaW5nIGluIE9GIGFuZCBu
+b3QgbWVldGluZwo+PiB0aGUgZGVwZW5kZW5jeSBmb3IgRFJNX0RVTUJfVkdBX0RBQy4KPj4KPj4g
+U2luY2Ugc2VsZWN0IGlzICJoZWF2eSBoYW5kZWQiLCBEUk1fRFVNQl9WR0FfREFDIGlzIGdvaW5n
+IHRvIGJlIGVuYWJsZWQKPj4gcmVnYXJkbGVzcyBvZiB0aGUgYWJvdmUgd2FybmluZyBhbmQgY2F1
+c2VzIHRoZSBmb2xsb3dpbmcgYnVpbGQgZXJyb3I6Cj4+Cj4+IMKgwqDCoMKgLi4vZHJpdmVycy9n
+cHUvZHJtL2JyaWRnZS9kdW1iLXZnYS1kYWMuYzogSW4gZnVuY3Rpb24gCj4+ICdkdW1iX3ZnYV9w
+cm9iZSc6Cj4+IMKgwqDCoMKgLi4vZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9kdW1iLXZnYS1kYWMu
+YzoyMDc6MTM6IGVycm9yOiAnc3RydWN0IAo+PiBkcm1fYnJpZGdlJyBoYXMgbm8gbWVtYmVyIG5h
+bWVkICdvZl9ub2RlJwo+PiDCoMKgwqDCoMKgIHZnYS0+YnJpZGdlLm9mX25vZGUgPSBwZGV2LT5k
+ZXYub2Zfbm9kZTsKPj4KPj4gU2VlIERvY3VtZW50YXRpb24va2J1aWxkL2tjb25maWctbGFuZ3Vh
+Z2UudHh0LCAicmV2ZXJzZSBkZXBlbmRlbmNpZXMiLgo+IAo+ICtMaW51cy4KPiAKPiBJIGd1ZXNz
+IHRoaXMgbmVlZHMgdG8gZ28gaW4gZHJtLW1pc2MtZml4ZXMgb25jZSBpdCBpcyB1cGRhdGVkIHRv
+Cj4gNC4xNi1yYzIuCgpMb29rcyBsaWtlIHRoaXMgd2FzIGhlYWRlZCBmb3IgNC4xNywgaXQgaXNu
+J3QgYSBwYXJ0IG9mIDQuMTYuIFF1ZXVlZCB0byAKZHJtLW1pc2MtbmV4dC4KClRoYW5rcywKQXJj
+aGl0Cgo+IAo+IFRoYW5rcywKPiBBcmNoaXQKPiAKPj4KPj4gRml4ZXM6IDQ5ZjgxZDgwYWI4NCAo
+ImRybS9wbDExMTogU3VwcG9ydCBoYW5kbGluZyBicmlkZ2UgdGltaW5ncyIpCj4+IFJlcG9ydGVk
+LWJ5OiBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFkZWFkLm9yZz4KPj4gQ2M6IExhdXJlbnQg
+UGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4KPj4gQ2M6IEFyY2hp
+dCBUYW5lamEgPGFyY2hpdHRAY29kZWF1cm9yYS5vcmc+Cj4+IENjOiBFcmljIEFuaG9sdCA8ZXJp
+Y0BhbmhvbHQubmV0Pgo+PiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0Bu
+dmlkaWEuY29tPgo+PiAtLS0KPj4gwqAgZHJpdmVycy9ncHUvZHJtL3BsMTExL0tjb25maWcgfCAx
+IC0KPj4gwqAgMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkKPj4KPj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9wbDExMS9LY29uZmlnIAo+PiBiL2RyaXZlcnMvZ3B1L2RybS9wbDEx
+MS9LY29uZmlnCj4+IGluZGV4IDgyY2IzZTYwZGRjOC4uZTVlMmFiZDY2NDkxIDEwMDY0NAo+PiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vcGwxMTEvS2NvbmZpZwo+PiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vcGwxMTEvS2NvbmZpZwo+PiBAQCAtOCw3ICs4LDYgQEAgY29uZmlnIERSTV9QTDExMQo+PiDC
+oMKgwqDCoMKgIHNlbGVjdCBEUk1fR0VNX0NNQV9IRUxQRVIKPj4gwqDCoMKgwqDCoCBzZWxlY3Qg
+RFJNX0JSSURHRQo+PiDCoMKgwqDCoMKgIHNlbGVjdCBEUk1fUEFORUxfQlJJREdFCj4+IC3CoMKg
+wqAgc2VsZWN0IERSTV9EVU1CX1ZHQV9EQUMKPj4gwqDCoMKgwqDCoCBzZWxlY3QgVlRfSFdfQ09O
+U09MRV9CSU5ESU5HIGlmIEZSQU1FQlVGRkVSX0NPTlNPTEUKPj4gwqDCoMKgwqDCoCBoZWxwCj4+
+IMKgwqDCoMKgwqDCoMKgIENob29zZSB0aGlzIG9wdGlvbiBmb3IgRFJNIHN1cHBvcnQgZm9yIHRo
+ZSBQTDExMSBDTENEIGNvbnRyb2xsZXIuCj4+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
