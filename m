@@ -1,82 +1,62 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the percpu tree
-Date: Mon, 26 Feb 2018 14:57:56 +1100
-Message-ID: <20180226145756.228d1e23@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the metag
+ tree
+Date: Mon, 26 Feb 2018 15:01:55 +1100
+Message-ID: <20180226150155.6cbddcfb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mtTtVY7XKF=aWFkX/2MNmCb"; protocol="application/pgp-signature"
+ boundary="Sig_/_bK+/gGAVMz5qU6VyCnaf.M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, James Hogan <james.hogan@imgtec.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@suse.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/mtTtVY7XKF=aWFkX/2MNmCb
+--Sig_/_bK+/gGAVMz5qU6VyCnaf.M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-After merging the percpu tree, today's linux-next build (sparc defconfig)
-failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-mm/percpu.c: In function 'pcpu_balance_workfn':
-mm/percpu.c:1613:3: error: implicit declaration of function 'cond_resched';=
- did you mean 'should_resched'? [-Werror=3Dimplicit-function-declaration]
-   cond_resched();
-   ^~~~~~~~~~~~
-   should_resched
+  arch/metag/kernel/process.c
 
-Caused by commit
+between commit:
 
-  accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()")
+  bb6fb6dfcc17 ("metag: Remove arch/metag/")
 
-I have added this patch for today:
+from the metag tree and commit:
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 26 Feb 2018 14:47:39 +1100
-Subject: [PATCH] percpu: include sched.h for cond_resched()
+  3c365ca66bd0 ("fs, elf: drop MAP_FIXED usage from elf_map")
 
-Fixes: accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()=
-")
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/percpu.c | 1 +
- 1 file changed, 1 insertion(+)
+from the akpm-current tree.
 
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 36e7b65ba6cf..15a398c00791 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -80,6 +80,7 @@
- #include <linux/vmalloc.h>
- #include <linux/workqueue.h>
- #include <linux/kmemleak.h>
-+#include <linux/sched.h>
-=20
- #include <asm/cacheflush.h>
- #include <asm/sections.h>
---=20
-2.16.1
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/mtTtVY7XKF=aWFkX/2MNmCb
+--Sig_/_bK+/gGAVMz5qU6VyCnaf.M
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqThcQACgkQAVBC80lX
-0Gxp2Af/R0uJKlQL9fAltStm4xJtBSVe+P4tdTRCn2t0A3x6hWn6w/N/AX3a4e8O
-Fgb0ycThY19E5oWmLq/6nzRrDoVW72VaVqbGNrQ6LncXsjBSX+3prK9tQM7NN6un
-gNKuVmS+Zl5tcf+NAYusodye3n2fNyXfsohACb6ITR8KfxcdYEmg44ZL1iwq/cKi
-cUspBGiEx1DFpHTckRzHdpEk580nanOlruWyIS+P0XtTloPUfcOtFU25t8a/go3k
-gLMw5YU4jkFcDDNVmyp0/m0lBHNA1oMiVBLxfBmndF5COk5nTEQusUQuK9e03HDD
-XGi+T/ZC4xqn+pt0rYG05NuF1pANvg==
-=ibhL
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqThrMACgkQAVBC80lX
+0GxPXwf/cnjmDi2y3809hkctE9PB8bWS8m3f2bRkCaRHEz+PZOySpuPz3K9B72Le
+60fYDK/32iy1CZ77MesaWJLOXnF+2+h78kYItPf3HVBRMAC9LhITI1oG+I7uqnsG
+6/uezEt29Rwu77G4cc5SjZWdB3laXv6DqWaEvU83Yzcpuk5vlUhIOlW/dtUJDqf8
+7SV7dujYfHKKnpzu54Iblqzb0QjJlqFlAx/g5sYYthEFaLF7A6Je/lAn9z3d9Cou
+qybYGZj0NLY12zSi9/UDVgOBZ02acOAbQV4d5bJj8ozvjFxRqKfEVzoQoqqENMrF
+/XlrTD1Aq0ORLyLhMU30Pf1laqZzBQ==
+=Kouq
 -----END PGP SIGNATURE-----
 
---Sig_/mtTtVY7XKF=aWFkX/2MNmCb--
+--Sig_/_bK+/gGAVMz5qU6VyCnaf.M--
