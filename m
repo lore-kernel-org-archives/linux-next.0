@@ -1,80 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvms390 tree with the nds32 tree
-Date: Mon, 26 Feb 2018 13:34:45 +1100
-Message-ID: <20180226133445.6544ad34@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the percpu tree
+Date: Mon, 26 Feb 2018 14:57:56 +1100
+Message-ID: <20180226145756.228d1e23@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dfkQ7_wa2r4qO0oWWCcB842"; protocol="application/pgp-signature"
+ boundary="Sig_/mtTtVY7XKF=aWFkX/2MNmCb"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>, Greentime Hu <green.hu@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Farhan Ali <alifm@linux.vnet.ibm.com>
+To: Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux-foundation.org>, Ingo Molnar <mingo@elte.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/dfkQ7_wa2r4qO0oWWCcB842
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
+After merging the percpu tree, today's linux-next build (sparc defconfig)
+failed like this:
 
-  drivers/video/console/Kconfig
+mm/percpu.c: In function 'pcpu_balance_workfn':
+mm/percpu.c:1613:3: error: implicit declaration of function 'cond_resched';=
+ did you mean 'should_resched'? [-Werror=3Dimplicit-function-declaration]
+   cond_resched();
+   ^~~~~~~~~~~~
+   should_resched
 
-between commit:
+Caused by commit
 
-  2312dbf7462b ("drivers/video/concole: add negative dependency for VGA_CON=
-SOLE on nds32")
+  accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()")
 
-from the nds32 tree and commits:
+I have added this patch for today:
 
-  8da93aca3729 ("Kconfig : Remove HAS_IOMEM dependency for Graphics support=
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 26 Feb 2018 14:47:39 +1100
+Subject: [PATCH] percpu: include sched.h for cond_resched()
+
+Fixes: accd4f36a7d1 ("percpu: add a schedule point in pcpu_balance_workfn()=
 ")
-  416b744f4494 ("s390/setup : enable display support for KVM guest")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/percpu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-from the kvms390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+diff --git a/mm/percpu.c b/mm/percpu.c
+index 36e7b65ba6cf..15a398c00791 100644
+--- a/mm/percpu.c
++++ b/mm/percpu.c
+@@ -80,6 +80,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/workqueue.h>
+ #include <linux/kmemleak.h>
++#include <linux/sched.h>
+=20
+ #include <asm/cacheflush.h>
+ #include <asm/sections.h>
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/video/console/Kconfig
-index 27bb893cf6b2,b9c2c916247e..000000000000
---- a/drivers/video/console/Kconfig
-+++ b/drivers/video/console/Kconfig
-@@@ -9,7 -9,7 +9,7 @@@ config VGA_CONSOL
-  	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
-  		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
-  		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
-- 		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32
- -		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && HAS_IOMEM && !S390
-++		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32 && HAS_IOMEM && !S=
-390
-  	default y
-  	help
-  	  Saying Y here will allow you to use Linux in text mode through a
-
---Sig_/dfkQ7_wa2r4qO0oWWCcB842
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqTckUACgkQAVBC80lX
-0GwjqggAobhutCauWvf9iIdFOJEpunmcYkUVNg5IEPR7lJqX6gg/nMpPeosUIi+y
-pDou5qgCDFRCCt+P6QFOW5ejom+tcD2OfuG0z8u5ry0LQbwhuxnh0ZdpQ6Soynin
-YqGj7cag5In0R/aXZKY8gUyplqVkLb7/s/Z3u2zYGFb1I65F5Ro+HT/bxBx/DSfu
-LXX3MPWJVLUflerPOOFez8t09bRw/N6i34MRh4fYbJf4CwRA8t+6VjRzqztpcFFc
-g4pOYKebwKctb7UCL4AYqlB5fnrcBqNbiVitlU85LqVCS+8+hv6zLUZYsr9Z5gv8
-PYHF1QWJRhYhsZCjM6CzwRnYyq/pNw==
-=heql
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqThcQACgkQAVBC80lX
+0Gxp2Af/R0uJKlQL9fAltStm4xJtBSVe+P4tdTRCn2t0A3x6hWn6w/N/AX3a4e8O
+Fgb0ycThY19E5oWmLq/6nzRrDoVW72VaVqbGNrQ6LncXsjBSX+3prK9tQM7NN6un
+gNKuVmS+Zl5tcf+NAYusodye3n2fNyXfsohACb6ITR8KfxcdYEmg44ZL1iwq/cKi
+cUspBGiEx1DFpHTckRzHdpEk580nanOlruWyIS+P0XtTloPUfcOtFU25t8a/go3k
+gLMw5YU4jkFcDDNVmyp0/m0lBHNA1oMiVBLxfBmndF5COk5nTEQusUQuK9e03HDD
+XGi+T/ZC4xqn+pt0rYG05NuF1pANvg==
+=ibhL
 -----END PGP SIGNATURE-----
 
---Sig_/dfkQ7_wa2r4qO0oWWCcB842--
+--Sig_/mtTtVY7XKF=aWFkX/2MNmCb--
