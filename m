@@ -1,63 +1,47 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: build warnings after merge of the block tree
-Date: Thu, 1 Mar 2018 08:37:58 -0700
-Message-ID: <bd4fd250-645e-6521-d95f-6d2ab60f2f0c@kernel.dk>
-References: <20180301112624.652612c7@canb.auug.org.au>
- <1f3b4275-b346-d768-681e-b180ec351140@linux.vnet.ibm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the btrfs-kdave
+ tree
+Date: Fri, 2 Mar 2018 07:37:33 +1100
+Message-ID: <20180302073733.789343f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/b6Nj45Y_C2Bb3jGEnwyuaAj"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1f3b4275-b346-d768-681e-b180ec351140@linux.vnet.ibm.com>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anshuman Khandual <khandual@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Sterba <dsterba@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Filipe Manana <fdmanana@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On 2/28/18 9:02 PM, Anshuman Khandual wrote:
-> On 03/01/2018 05:56 AM, Stephen Rothwell wrote:
->> Hi Jens,
->>
->> After merging the block tree, today's linux-next build (x86_64
->> allmodconfig) produced these warning:
->>
->> In file included from drivers/misc/cardreader/rts5209.c:24:0:
->> include/linux/rtsx_pci.h:40:0: warning: "SG_END" redefined
->>  #define   SG_END   0x02
->>  
->> In file included from include/linux/dmapool.h:14:0,
->>                  from include/linux/pci.h:1311,
->>                  from include/linux/rtsx_pci.h:26,
->>                  from drivers/misc/cardreader/rts5209.c:24:
->> include/linux/scatterlist.h:69:0: note: this is the location of the previous definition
->>  #define SG_END  0x02UL
->>  
->> In file included from drivers/staging/rts5208/rtsx.h:180:0,
->>                  from drivers/staging/rts5208/rtsx.c:28:
->> drivers/staging/rts5208/rtsx_chip.h:343:0: warning: "SG_END" redefined
->>  #define SG_END   0x02
->>  
->> In file included from include/linux/blkdev.h:28:0,
->>                  from drivers/staging/rts5208/rtsx.c:23:
->> include/linux/scatterlist.h:69:0: note: this is the location of the previous definition
->>  #define SG_END  0x02UL
->>  
->>
->> and many more the same.
->>
->> Introduced by commit
->>
->>   723fbf563a6a ("lib/scatterlist: Add SG_CHAIN and SG_END macros for LSB encodings")
-> 
-> IIRC this was already detected and hence sent a new version changing
-> this to SG_LAST.
-> 
-> https://patchwork.kernel.org/patch/10227897/
+--Sig_/b6Nj45Y_C2Bb3jGEnwyuaAj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The right fix is for drivers to not use defines that end up conflicting
-with the global namespace. Should have been fixed up earlier, but I
-have applied the patches from Arnd to rectify that.
+Hi David,
 
--- 
-Jens Axboe
+Commit
+
+  001cafe3c03c ("Btrfs: fix unexpected -EEXIST when creating new inode")
+
+is missing a Signed-off-by from its committer.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/b6Nj45Y_C2Bb3jGEnwyuaAj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqYZI0ACgkQAVBC80lX
+0Gz4pQf/Y1bnNPOKnG/bDGKIH+6WkQ4WSNOihPow/92RIeEfd3bQuYxbY5VT9g/t
+VsMxPxWXU1x+1R3Q3Z+6Oudn1+SVJbPnF7toWWTHIgWcHFUVkusWZIKFdMQ6Uy/n
+M0G8+dB9z5gfEX0Hj/DpQdeZG/wpcw52hRE2AA4rFKkXtBVXhMYspBr2HmfCP70b
+uROKfUxYaOS2H2QDCU2Crpt88/EnyLOVaoKDqszg0ez80i1VMbPHt+YL/VUPhj1s
++Ojfrxv+q1B/cyhfkcwJgd363j11BaxUlMWW1yp4ZhQw1C2nBcPso9nqVo1BGoos
+woXbDNMh5/AX7+rAYb3arcBYQAx4pg==
+=X9v6
+-----END PGP SIGNATURE-----
+
+--Sig_/b6Nj45Y_C2Bb3jGEnwyuaAj--
