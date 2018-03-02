@@ -1,97 +1,44 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the drm tree
-Date: Fri, 2 Mar 2018 12:49:48 +1100
-Message-ID: <20180302124948.0adff130@canb.auug.org.au>
-References: <20180219101817.5f4fd5c2@canb.auug.org.au>
+From: John Hsu <KCHSU0@nuvoton.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Fri, 2 Mar 2018 10:49:37 +0800
+Message-ID: <5A98BBC1.2060608@nuvoton.com>
+References: <20180302105434.16280703@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0358353146=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180219101817.5f4fd5c2@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Michel =?UTF-8?B?RMOkbnplcg==?= <michel.daenzer@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Monk Liu <monk.liu@amd.com>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180302105434.16280703@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============0358353146==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4qIN0cVcPxb9YXK_Mo8TmWd"; protocol="application/pgp-signature"
-
---Sig_/4qIN0cVcPxb9YXK_Mo8TmWd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Mon, 19 Feb 2018 10:18:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
+On 3/2/2018 7:54 AM, Stephen Rothwell wrote:
+> Hi all,
 >
-> After merging the drm tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->=20
-> In file included from include/linux/list.h:9:0,
->                  from include/linux/wait.h:7,
->                  from include/linux/wait_bit.h:8,
->                  from include/linux/fs.h:6,
->                  from include/linux/highmem.h:5,
->                  from drivers/gpu/drm/drm_memory.c:36:
-> drivers/gpu/drm/drm_memory.c: In function 'drm_get_max_iomem':
-> include/linux/kernel.h:808:16: warning: comparison of distinct pointer ty=
-pes lacks a cast
->   (void) (&max1 =3D=3D &max2);   \
->                 ^
-> include/linux/kernel.h:817:2: note: in expansion of macro '__max'
->   __max(typeof(x), typeof(y),   \
->   ^~~~~
-> drivers/gpu/drm/drm_memory.c:159:15: note: in expansion of macro 'max'
->    max_iomem =3D max(max_iomem,  tmp->end);
->                ^~~
->=20
-> Introduced by commit
->=20
->   82626363a217 ("drm: add func to get max iomem address v2")
->=20
-> tmp->end is a resource_size_t ...
+> After merging the sound-asoc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> sound/soc/intel/boards/cht_bsw_nau8824.c: In function 'cht_codec_init':
+> sound/soc/intel/boards/cht_bsw_nau8824.c:137:29: error: passing argument 1 of 'nau8824_enable_jack_detect' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   nau8824_enable_jack_detect(codec, jack);
+>                              ^~~~~
+> In file included from sound/soc/intel/boards/cht_bsw_nau8824.c:31:0:
+> sound/soc/intel/boards/../../codecs/nau8824.h:474:5: note: expected 'struct snd_soc_component *' but argument is of type 'struct snd_soc_codec *'
+>  int nau8824_enable_jack_detect(struct snd_soc_component *component,
+>      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   5b00ce63e07f ("ASoC: Intel: add nau8824 sound card")
+>
+> I have used the sound-asoc tree from next-20180301 for today.
+>
 
-I am still getting this warning ...
+The fix patch has submitted. Please check the link as follows:
+http://mailman.alsa-project.org/pipermail/alsa-devel/2018-March/132811.html
+[alsa-devel] [PATCH] ASoC: Intel: fix argument error in nau8824 machine
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/4qIN0cVcPxb9YXK_Mo8TmWd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqYrbwACgkQAVBC80lX
-0GxqQAf+IfcopMg9JqtumT1vVWSmHZesOLBlLkfMoPqgBcEzct4dn/AYBGClw0so
-ojgDMssQlICsini79AOk3/QuHOM5WGqV9dCst0wDiAeLgl2IGw68aLmTzdHtfntu
-l05FyfEl0Sa6Ovi99YBe/FQoY9IDRWPAYIpCu9RvJF/HquYFKTin0yEm4JOc+4QU
-xV8XJhDeukdzApKGtYYk2bn1TaK8oxjnSGXOaKLtqKw2FTtmw8TCRFDahuP2/sJl
-PlRco21GGoztcXhJp3UEyVF+Ro8qSMTXxtEZkkeB33X+oZpMGFw+ksI295kLqXNf
-WswhrFfcinTceu4TBOdmyi1kd2+zaA==
-=m4r+
------END PGP SIGNATURE-----
-
---Sig_/4qIN0cVcPxb9YXK_Mo8TmWd--
-
---===============0358353146==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0358353146==--
+===========================================================================================
+The privileged confidential information contained in this email is intended for use only by the addressees as indicated by the original sender of this email. If you are not the addressee indicated in this email or are not responsible for delivery of the email to such a person, please kindly reply to the sender indicating this fact and delete all copies of it from your computer and network server immediately. Your cooperation is highly appreciated. It is advised that any unauthorized use of confidential information of Nuvoton is strictly prohibited; and any information in this email irrelevant to the official business of Nuvoton shall be deemed as neither given nor endorsed by Nuvoton.
