@@ -1,61 +1,97 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Fri, 2 Mar 2018 10:54:34 +1100
-Message-ID: <20180302105434.16280703@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the drm tree
+Date: Fri, 2 Mar 2018 12:49:48 +1100
+Message-ID: <20180302124948.0adff130@canb.auug.org.au>
+References: <20180219101817.5f4fd5c2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gQSKj6fy8.fs8IIGtipn.=V"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Hsu <KCHSU0@nuvoton.com>
+Content-Type: multipart/mixed; boundary="===============0358353146=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180219101817.5f4fd5c2@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Michel =?UTF-8?B?RMOkbnplcg==?= <michel.daenzer@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Alex Deucher <alexander.deucher@amd.com>, Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Monk Liu <monk.liu@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gQSKj6fy8.fs8IIGtipn.=V
+--===============0358353146==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4qIN0cVcPxb9YXK_Mo8TmWd"; protocol="application/pgp-signature"
+
+--Sig_/4qIN0cVcPxb9YXK_Mo8TmWd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Mon, 19 Feb 2018 10:18:17 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the drm tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>=20
+> In file included from include/linux/list.h:9:0,
+>                  from include/linux/wait.h:7,
+>                  from include/linux/wait_bit.h:8,
+>                  from include/linux/fs.h:6,
+>                  from include/linux/highmem.h:5,
+>                  from drivers/gpu/drm/drm_memory.c:36:
+> drivers/gpu/drm/drm_memory.c: In function 'drm_get_max_iomem':
+> include/linux/kernel.h:808:16: warning: comparison of distinct pointer ty=
+pes lacks a cast
+>   (void) (&max1 =3D=3D &max2);   \
+>                 ^
+> include/linux/kernel.h:817:2: note: in expansion of macro '__max'
+>   __max(typeof(x), typeof(y),   \
+>   ^~~~~
+> drivers/gpu/drm/drm_memory.c:159:15: note: in expansion of macro 'max'
+>    max_iomem =3D max(max_iomem,  tmp->end);
+>                ^~~
+>=20
+> Introduced by commit
+>=20
+>   82626363a217 ("drm: add func to get max iomem address v2")
+>=20
+> tmp->end is a resource_size_t ...
 
-sound/soc/intel/boards/cht_bsw_nau8824.c: In function 'cht_codec_init':
-sound/soc/intel/boards/cht_bsw_nau8824.c:137:29: error: passing argument 1 =
-of 'nau8824_enable_jack_detect' from incompatible pointer type [-Werror=3Di=
-ncompatible-pointer-types]
-  nau8824_enable_jack_detect(codec, jack);
-                             ^~~~~
-In file included from sound/soc/intel/boards/cht_bsw_nau8824.c:31:0:
-sound/soc/intel/boards/../../codecs/nau8824.h:474:5: note: expected 'struct=
- snd_soc_component *' but argument is of type 'struct snd_soc_codec *'
- int nau8824_enable_jack_detect(struct snd_soc_component *component,
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  5b00ce63e07f ("ASoC: Intel: add nau8824 sound card")
-
-I have used the sound-asoc tree from next-20180301 for today.
+I am still getting this warning ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/gQSKj6fy8.fs8IIGtipn.=V
+--Sig_/4qIN0cVcPxb9YXK_Mo8TmWd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqYkroACgkQAVBC80lX
-0GycVAgAnrW0u1d0Mv5eaBhZOveujE8flCrQPhXuP+MwUXQLSUmreuh7sQ+dCCrr
-RR2xwapD2ZO9oFyDwZiVLoh0Vl+c/Wj87F/UG8P/+w4E3D4YMWdwM/o0RFt1XJOg
-vS7dN+A+LysimmxU662IQeitgm4kMXPpOzVFMAbmlpmOZNATG9xkSk2V0PZKFhl8
-X32XiRBRnP+Wag7ZsogtCsWwPDqtix9MiMlE0OysOnXhtjOmBcwxm+A2V/JiiZmD
-xy1lroHmFoiItORnNS4b64/lwPs8wcVgay2bUOTVOClW1xvpPlDpR12P1oM3ml3v
-GiAyePh6ZvDJoiBvUiRpZrC2ddHTUg==
-=Z24F
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqYrbwACgkQAVBC80lX
+0GxqQAf+IfcopMg9JqtumT1vVWSmHZesOLBlLkfMoPqgBcEzct4dn/AYBGClw0so
+ojgDMssQlICsini79AOk3/QuHOM5WGqV9dCst0wDiAeLgl2IGw68aLmTzdHtfntu
+l05FyfEl0Sa6Ovi99YBe/FQoY9IDRWPAYIpCu9RvJF/HquYFKTin0yEm4JOc+4QU
+xV8XJhDeukdzApKGtYYk2bn1TaK8oxjnSGXOaKLtqKw2FTtmw8TCRFDahuP2/sJl
+PlRco21GGoztcXhJp3UEyVF+Ro8qSMTXxtEZkkeB33X+oZpMGFw+ksI295kLqXNf
+WswhrFfcinTceu4TBOdmyi1kd2+zaA==
+=m4r+
 -----END PGP SIGNATURE-----
 
---Sig_/gQSKj6fy8.fs8IIGtipn.=V--
+--Sig_/4qIN0cVcPxb9YXK_Mo8TmWd--
+
+--===============0358353146==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0358353146==--
