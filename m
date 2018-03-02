@@ -1,50 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the net-next tree
-Date: Fri, 2 Mar 2018 15:52:15 +1100
-Message-ID: <20180302155215.7653987d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the printk tree
+Date: Fri, 2 Mar 2018 16:07:32 +1100
+Message-ID: <20180302160732.12691fbc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/o_XjIvKMJhbRFFIt+hmhf_R"; protocol="application/pgp-signature"
+ boundary="Sig_/yoqieWGv87Mi0RcsMD8bxDF"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Young <dyoung@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R
+--Sig_/yoqieWGv87Mi0RcsMD8bxDF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Petr,
 
-Commits
+After merging the printk tree, today's linux-next build (bfin
+BF518F-EZBRD_defconfig) failed like this:
 
-  568477045f80 (" phy: marvell10g: Utilize gen10g_no_soft_reset()")
-  0adfdb667ab5 (" phy: cortina: Utilize generic functions")
-  aebc78a40b88 (" phy: teranetics: Utilize generic functions")
-  e8a714e086e4 (" phy: Export gen10g_* functions")
-  6ed33d3a06e6 (" phy: aquantia: Utilize genphy_c45_aneg_done()")
+lib/dump_stack.o: In function `dump_stack':
+lib/dump_stack.c:122: multiple definition of `dump_stack'
+arch/blackfin/kernel/dumpstack.o:arch/blackfin/kernel/dumpstack.c:166: firs=
+t defined here
 
-are missing a Signed-off-by from their committer.
+Presumably caused by commit
+
+  8040af489957 ("printk: move dump stack related code to lib/dump_stack.c")
+
+(Though it is not immediately obvious why.)
+
+This fails all the blackfin builds.  nds32 (a new architecture) also
+has a dump_stack function.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R
+--Sig_/yoqieWGv87Mi0RcsMD8bxDF
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqY2H8ACgkQAVBC80lX
-0GxCAQf/StJ7Z4Hq6ZrMaHRrjcJtn7A+UJrIaRUtjt2SabZgKrCkQrw5sfMAsH1d
-ezb2ZMoewHmJnOkbmwd314HKOzslRQ6QNS4krX8rC8xVbTl1Dw3KIaHOaBaCzqQ1
-zrSF85CmTDV7auRWuy9+VU8bp59iVD6AagS/L6loKeqXFonakwJ9k+slnP5Hifmj
-ixTaTuoao3duXvJSP9ciWhaIwkRGM8NDTE8pyJtEajQCo246kRz+rWXuLoyNWBbT
-nfMRfmNlaIl/PVmTi/aL1h/bpGzsyba+jC6YNUVb3gtfpDCFjLrNVqU7oSVlcupc
-VxlqtAGDa38oksStGtwV8kR3ECgUgQ==
-=IdR8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqY3BQACgkQAVBC80lX
+0GygNQf+IRQoifxVZuc0RnIl0ixRgCPwQA/9e0XnKOSupZbQX2WvNs6Anm89O14R
+EblB3JzPU/BcGtCqPeVfrsCC5ILM9YniTecd97W6yjaASdcxG+GZc3lATb7Ao7vY
+VS9oJoH1zQH/BE8tQ+TVl6tNA0r+Avx9HDekwEXtj5CyzHHcWdnPfkhKY9Vcpi7d
+2/og4vXKsjeDTwvnhkzX9Bmg5YBpJnSoLKlOLpSAt2uXWzPVO9rfZos42XyTHX95
+2CHkjEd3A2epgx+ggP9Pc/6vOxIvFhuJYx86Zz4j6qWlCkB5X2aymTT7NE7N6HpR
+lOH/u1Zb6WqMyNHP0HYQxWVU0P5OdA==
+=EiWY
 -----END PGP SIGNATURE-----
 
---Sig_/o_XjIvKMJhbRFFIt+hmhf_R--
+--Sig_/yoqieWGv87Mi0RcsMD8bxDF--
