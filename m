@@ -1,54 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the printk tree
-Date: Sat, 3 Mar 2018 13:43:26 +1100
-Message-ID: <20180303134326.26b89eec@canb.auug.org.au>
-References: <20180302160732.12691fbc@canb.auug.org.au>
-        <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
+Subject: linux-next: Signed-off-by missing for commit in the pci tree
+Date: Sat, 3 Mar 2018 15:44:14 +1100
+Message-ID: <20180303154414.695b814c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kdN1EfT/IxrlU6CnHa8saOE"; protocol="application/pgp-signature"
+ boundary="Sig_/8qoDeWtpQKDewipKAfuTRlM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Young <dyoung@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kdN1EfT/IxrlU6CnHa8saOE
+--Sig_/8qoDeWtpQKDewipKAfuTRlM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
+Hi Bjorn,
 
-On Fri, 2 Mar 2018 16:54:54 +0100 Petr Mladek <pmladek@suse.com> wrote:
->
-> It is a mistery to me. The error appears when I move any of
-> dump_stack_print_info() or show_regs_print_info() function
-> definitions from kernel/printk/printk.c to lib/dump_stack.c.
-> All the other changes seems unrelated.
+Commit
 
-Presumably because the Blackfin dumpstack() calls
-dump_stack_print_info() so if you move that into lib/dumpstack.o, then
-that file is dragged in and it contains another copy of dumpstack().
+  a1a9f434c900 ("PCI: Rename pci_flr_wait() to pci_dev_wait() and make it g=
+eneric")
+
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/kdN1EfT/IxrlU6CnHa8saOE
+--Sig_/8qoDeWtpQKDewipKAfuTRlM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqaC84ACgkQAVBC80lX
-0Gyp8wf8DKNBSaFXIDJPIrmjMVSL26G6uaz0Kr8RSfMoyI/HS5CwR3m5OELHVFto
-8ONR6RIz6Td9kMMrL3+e0n7Xc26v4itEMRFSaXz2hjT8R+IgU+uhNVJxjqaiJm5y
-PXwNfJxw3bnLoMSQjCJTQ46h8u+ENFV7/BBW7efpC9Q0ugDvK2cTe1HRHPGZaahU
-VYCFK5/BeI9q5nZeK7Lr5xR3O4VX5DdBkySXz2LKDeoVeuzbWTcyvImNqBkdbzHo
-J/GVvGCbUPyeg9+LsoXBMuR7oFQ+AJMZguG4HuK7W+7ai88s8SxwsIk2leBDO7y/
-GVEzRv3AOKUakJZniJZDYkyw/Xt5wQ==
-=+FSk
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqaKB4ACgkQAVBC80lX
+0Gw6agf/cQF5+7q8mMEhhH0Jzri5/uMWQYleYz24ueDOwKd+Cj3fa4wMJfv/wQSS
+GD+OC1NQMxWlT3i1WhmShdjMZF5qTpsCKNe9F37IwtKOMDPQoS+Rjnh2UvZjaCOA
+/uP9/UMQHngvcDZBIFsW2Vrt/AaBR+Bfyf6Vnt0ovqpBW1TukMKZDk9HNIphg38K
+6Y8eBYADFUQXrqHo4Lm59L5mkOKRLJzYXSVWF3b5wwRaE5RaVaS/Ql7dbN1347bQ
+dOhcf+5KRmUZsaT321NaHThKrSmaFs+9ICfVZHDiX83F9a0ITRdyf1JS+Fr41kTZ
+XBGCh35xqCzOLrPl9Rs968lm8mlPvw==
+=QJon
 -----END PGP SIGNATURE-----
 
---Sig_/kdN1EfT/IxrlU6CnHa8saOE--
+--Sig_/8qoDeWtpQKDewipKAfuTRlM--
