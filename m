@@ -1,118 +1,77 @@
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: linux-next: build failure after merge of the printk tree
-Date: Sat, 3 Mar 2018 23:47:39 +0900
-Message-ID: <20180303144739.GA516@tigerII.localdomain>
-References: <20180302160732.12691fbc@canb.auug.org.au>
- <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Mon, 5 Mar 2018 10:00:22 +1100
+Message-ID: <20180305100022.066aefa7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/L1SNENcV6P8iK/RV1lWjdAp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180302155454.eme5gplxdcltvwkw@pathway.suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Young <dyoung@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, akpm@linux-foundation.org, Andi Kleen <ak@linux.intel.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, David Ahern <dsahern@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Cc-ing Tejun
+--Sig_/L1SNENcV6P8iK/RV1lWjdAp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On (03/02/18 16:54), Petr Mladek wrote:
-[..]
-> > (Though it is not immediately obvious why.)
-> 
-> It is a mistery to me. The error appears when I move any of
-> dump_stack_print_info() or show_regs_print_info() function
-> definitions from kernel/printk/printk.c to lib/dump_stack.c.
-> All the other changes seems unrelated.
-> 
-> The thing is that we basically do not touch dump_stack() definition
-> by that patch.
+Hi all,
 
-Apparently dump_stack_print_info() was in lib/dump_stack.c a long
-time ago, but it was deliberately moved to printk.c, when kernel gained
-a "generic" (dummy) dump_stack() fallback. Some archs, like blackfin,
-define their own dump_stack() symbol and make it global via EXPORT_SYMBOL.
+Today's linux-next merge of the net-next tree got a conflict in:
 
-In case of blackfin that arch-specific dump_stack() symbol invokes a
-global dump_stack_print_info(). If we move dump_stack_print_info() back
-to lib/dump_stack.c then we link both with arch/blackfin/dumpstack.o
-and lib/dump_stack.o, which results in multiple definitions error.
-If we move dump_stack_print_info() out on libdump_stack.o, then we
-never link with lib/dump_stack.o
+  net/ipv6/netfilter/nft_fib_ipv6.c
 
-... so what are we going to do with that.
+between commit:
 
-a) we can drop the patch and cherry pick only the kexec part
+  47b7e7f82802 ("netfilter: don't set F_IFACE on ipv6 fib lookups")
 
-b) we can try to mark dummy lib/dump_stack() as __weak
-   EXPORT_SYMBOL and remove EXPORT_SYMBOL from arch-specific
-   definitions.
+from the net tree and commit:
 
-   So we will end up with EXPORT_SYMBOL dump_stack() and archs
-   may re-define it. If some arch will accidentally mark its
-   own dump_stack() as EXPORT_SYMBOL then there should be a
-   linkage warning - a symbol is exported twice.
+  b75cc8f90f07 ("net/ipv6: Pass skb to route lookup")
 
+from the net-next tree.
 
-Something like below.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-Opinions? Will this work?
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc net/ipv6/netfilter/nft_fib_ipv6.c
+index 62fc84d7bdff,3230b3d7b11b..000000000000
+--- a/net/ipv6/netfilter/nft_fib_ipv6.c
++++ b/net/ipv6/netfilter/nft_fib_ipv6.c
+@@@ -180,7 -180,9 +180,8 @@@ void nft_fib6_eval(const struct nft_exp
+  	}
+ =20
+  	*dest =3D 0;
+- 	rt =3D (void *)ip6_route_lookup(nft_net(pkt), &fl6, lookup_flags);
+ - again:
++ 	rt =3D (void *)ip6_route_lookup(nft_net(pkt), &fl6, pkt->skb,
++ 				      lookup_flags);
+  	if (rt->dst.error)
+  		goto put_rt_err;
+ =20
 
-========= 8< =========
+--Sig_/L1SNENcV6P8iK/RV1lWjdAp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH] dump_stack: mark dummy dump_stack() as weak
+-----BEGIN PGP SIGNATURE-----
 
----
- arch/blackfin/kernel/dumpstack.c | 1 -
- arch/nds32/kernel/traps.c        | 2 --
- lib/dump_stack.c                 | 4 ++--
- 3 files changed, 2 insertions(+), 5 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqceoYACgkQAVBC80lX
+0Gy45wf/XJTzbWirrcEwtDp+66Xf8gGiRaokrUk/vm/B7kTY5h70fEuEhfnhEM8H
+RNUSoJxeV2eRu2vNyVnfd0nGPlCdshEoUHIZT7dnCApjdGcIFGmnmzb/jaLSwHjq
+bAMaEFEw4y1PnEgQ0nMLJqQAFa4oMZVrk2CuESSXiXjhp1cVKC4QcPStDccrADYd
+o/0fTSJUgKNcxZXLISK8XRZwjWbRCeB1ioyngktfzDjZAuqFZOj9I2+3meTcD0FY
+NyE4eSDhcMAn7gl7ffa+M8yaWDOz3wNo62JaSKdDS8lu/KBBsOMn2agaT4mY+jzw
+atvMI3H6VKwXJn2elFR3niKa8aEOIQ==
+=NMvr
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/blackfin/kernel/dumpstack.c b/arch/blackfin/kernel/dumpstack.c
-index 3c992c1f8ef2..61af017130cd 100644
---- a/arch/blackfin/kernel/dumpstack.c
-+++ b/arch/blackfin/kernel/dumpstack.c
-@@ -174,4 +174,3 @@ void dump_stack(void)
- 	show_stack(current, &stack);
- 	trace_buffer_restore(tflags);
- }
--EXPORT_SYMBOL(dump_stack);
-diff --git a/arch/nds32/kernel/traps.c b/arch/nds32/kernel/traps.c
-index 8828b4aeb72b..455bb0787367 100644
---- a/arch/nds32/kernel/traps.c
-+++ b/arch/nds32/kernel/traps.c
-@@ -166,8 +166,6 @@ void dump_stack(void)
- 	__dump(NULL, base_reg);
- }
- 
--EXPORT_SYMBOL(dump_stack);
--
- void show_stack(struct task_struct *tsk, unsigned long *sp)
- {
- 	unsigned long *base_reg;
-diff --git a/lib/dump_stack.c b/lib/dump_stack.c
-index 5cff72f18c4a..9cf4465dbffa 100644
---- a/lib/dump_stack.c
-+++ b/lib/dump_stack.c
-@@ -85,7 +85,7 @@ static void __dump_stack(void)
- #ifdef CONFIG_SMP
- static atomic_t dump_lock = ATOMIC_INIT(-1);
- 
--asmlinkage __visible void dump_stack(void)
-+asmlinkage __weak __visible void dump_stack(void)
- {
- 	unsigned long flags;
- 	int was_locked;
-@@ -118,7 +118,7 @@ asmlinkage __visible void dump_stack(void)
- 	local_irq_restore(flags);
- }
- #else
--asmlinkage __visible void dump_stack(void)
-+asmlinkage __weak __visible void dump_stack(void)
- {
- 	__dump_stack();
- }
--- 
-2.16.2
+--Sig_/L1SNENcV6P8iK/RV1lWjdAp--
