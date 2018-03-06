@@ -1,83 +1,65 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the mali-dp tree with the drm-misc tree
-Date: Tue, 6 Mar 2018 10:52:01 +1100
-Message-ID: <20180306105201.562aa149@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the devicetree tree
+Date: Tue, 6 Mar 2018 12:03:34 +1100
+Message-ID: <20180306120334.0411e8eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/w6UMv.4asVBVgjO9/G4a.Wm"; protocol="application/pgp-signature"
+ boundary="Sig_/1J7UQABhlpEMDhgUFj0PhTz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Liviu Dudau <Liviu.Dudau@arm.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Dan Carpenter <dan.carpenter@oracle.com>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/w6UMv.4asVBVgjO9/G4a.Wm
+--Sig_/1J7UQABhlpEMDhgUFj0PhTz
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liviu,
+Hi Rob,
 
-Today's linux-next merge of the mali-dp tree got a conflict in:
+After merging the devicetree tree, today's linux-next build
+(powerpc_ppc64_defconfig) produced this warning:
 
-  drivers/gpu/drm/arm/malidp_planes.c
+arch/powerpc/boot/fdt_ro.c: In function 'fdt_get_name':
+arch/powerpc/boot/fdt_ro.c:253:10: warning: implicit declaration of functio=
+n 'strrchr'; did you mean 'strchr'? [-Wimplicit-function-declaration]
+   leaf =3D strrchr(nameptr, '/');
+          ^~~~~~~
+          strchr
+arch/powerpc/boot/fdt_ro.c:253:8: warning: assignment makes pointer from in=
+teger without a cast [-Wint-conversion]
+   leaf =3D strrchr(nameptr, '/');
+        ^
 
-between commit:
+Introduced by commit
 
-  81af63a4af82 ("drm: Don't pass clip to drm_atomic_helper_check_plane_stat=
-e()")
+  c0e8e5234671 ("scripts/dtc: Update to upstream version v1.4.6-9-gaadd0b65=
+c987")
 
-from the drm-misc tree and commit:
+I presume that commit
 
-  4968211e7b8f ("drm: mali-dp: Uninitialized variable in malidp_se_check_sc=
-aling()")
+  d308701979aa ("powerpc: boot: add strrchr function")
 
-from the mali-dp tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+was meant to address this, but it seems that it has no completely.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/gpu/drm/arm/malidp_planes.c
-index ee32361c87ac,b2d11df6b5e1..000000000000
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@@ -147,7 -147,13 +146,9 @@@ static int malidp_se_check_scaling(stru
-  	if (!crtc_state)
-  		return -EINVAL;
- =20
- -	if (crtc_state->enable)
- -		drm_mode_get_hv_timing(&crtc_state->mode,
- -				       &clip.x2, &clip.y2);
- -
-+ 	mc =3D to_malidp_crtc_state(crtc_state);
-+=20
- -	ret =3D drm_atomic_helper_check_plane_state(state, crtc_state, &clip,
- +	ret =3D drm_atomic_helper_check_plane_state(state, crtc_state,
-  						  0, INT_MAX, true, true);
-  	if (ret)
-  		return ret;
-
---Sig_/w6UMv.4asVBVgjO9/G4a.Wm
+--Sig_/1J7UQABhlpEMDhgUFj0PhTz
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqd2CEACgkQAVBC80lX
-0GwHiggAmC2CiY8TcYow3sqv67EosXBCmtZebHu+/G2mEYRlBWV+mQnDetgGpSaR
-JXbzcAILmMrn4XdN0fyt0G14I7Gb78xjCxin8227km04fdv90CcqoZ2ydMdmrjEl
-WmM1hgno2eVkVh8c6Z6aueSZPwskI7Vjttwrjq3OO6rSEXbB3mvnW24l0g0oaJwn
-p4qvNRpBlwBVMT3R55WrhaFuMBoC5YfTo1Ro8o6ACnftDrSsJ6D7gz1wEPJOfLzu
-QPpBqm4NLjQB1ST+3QBcuqupwMdRzRy5xljY0+wpCvLKScF2tknhB7SrphcqCmVK
-jO5YNrycdspIlnvKuLOGdJkQq11Dgw==
-=2DrE
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqd6OYACgkQAVBC80lX
+0GxL9Af/WZfjYWqWTdFGyMilT7NAPEe0iZ1FH2HKRdj1VifdI66r0vWW3plPBMni
+wtFsxrEGslf6G0g6xhLsz0i8eiyy9cip6iBri0TrOwaqun+uT5unRqxkceH5V+AL
+OlieUXRm2SFsa5RU2zE22fxhv5Cm5dah6QPCeMlfcFs0kXr93C1YbgWhBIQZLt4C
+Eke57PyPm17KRDgcl0Bo0g8LU02KXaey7X0hGdpXDLncjsruaVTqZadJa1umr6qk
+fTmYXdsuzM9C8rhCwvUqI1tRsN2SqVBwBrNQKvqErlF10V50SgS4jby2iY/YaG8+
+p3uAMnlArICqAJnX2vKxM4nEFawkjQ==
+=2uOf
 -----END PGP SIGNATURE-----
 
---Sig_/w6UMv.4asVBVgjO9/G4a.Wm--
+--Sig_/1J7UQABhlpEMDhgUFj0PhTz--
