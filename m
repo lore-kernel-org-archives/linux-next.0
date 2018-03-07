@@ -1,40 +1,47 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next
- tree
-Date: Wed, 07 Mar 2018 15:26:16 -0500 (EST)
-Message-ID: <20180307.152616.19450694775691873.davem@davemloft.net>
-References: <CAHC9VhTUORhy1dADEza8tr4DW6gTjqxXyg0wb0cwFCRy+WRkMQ@mail.gmail.com>
-        <20180307.124500.1863183408172828694.davem@davemloft.net>
-        <CAHC9VhRQb50EYD6BVTxNv2x=S_tTLq57OZBsWbXFdfJEunNUiA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Date: Thu, 8 Mar 2018 07:39:21 +1100
+Message-ID: <20180308073921.5c104e74@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AY4ut3Ltsegz7HJcIBs+xRe"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHC9VhRQb50EYD6BVTxNv2x=S_tTLq57OZBsWbXFdfJEunNUiA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: paul@paul-moore.com
-Cc: lucien.xin@gmail.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, richard_c_haines@btinternet.com
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 7 Mar 2018 15:20:33 -0500
+--Sig_/AY4ut3Ltsegz7HJcIBs+xRe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->> So you would only have to wait until my tree went in before
->> sending your pull request.
-> 
-> So you would want me to rebase selinux/next on top of Linus' tree in
-> the middle of the merge window?  I'm sure that isn't what you meant,
-> but that's how I keep reading the above ... which can't be right,
-> because in my experience that's one way to piss off Linus.  Help me
-> understand what you are saying.
+Hi Linus,
 
-I never said you rebase anything.  I wonder where you get that from.
+Commit
 
-I'm saying, you just defer your pull request until Linus takes my
-networking tree in.
+  fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin i=
+n pinmux_pins[]")
 
-No changes or rebasing of your tree is necessary whatsoever.  You just
-ask him to pull your tree as-is.
+is missing a Signed-off-by from its committer.
 
-Again, this is what other smaller subsystem trees do when they have a
-situation like this.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AY4ut3Ltsegz7HJcIBs+xRe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqgTfkACgkQAVBC80lX
+0Gy0jQf/dOK5CE+vY9IR8xZ0gNZWtMpff6wH2R+si5pElt/kFi3oZS/uWA06YDoA
+kgOwRJOMG+5VEYomVbI0uRP8EcCxtVOGK1yhkzaHw/j5APVwRsdspNOqJzUB6KEk
+ot4ix3cPosZgSCdOddpk8yzXW3cc3cgx/DvFooPcuLwvIpg5Q3vBCLNKN/+DB7lC
+R6wMnPDn7IwUYfYDtQa0PRYT1YVenISQWYrn7gO+MtG1iMvVgIaNZZ8GZ0ECTNWp
+OARcakW+AuKSCTYxnU5Sgf7k67A+Y9MpWjIl7VGfk/r6Z9rekxGPOxBjCGN+f2jQ
+bTTRmwPt1iwovO2iBzWugv3MRjfeNg==
+=B4R3
+-----END PGP SIGNATURE-----
+
+--Sig_/AY4ut3Ltsegz7HJcIBs+xRe--
