@@ -1,69 +1,79 @@
-From: Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
- tree
-Date: Thu, 8 Mar 2018 08:09:20 +0200
-Message-ID: <20180308060920.GQ15340@mtr-leonro.local>
-References: <20180308164058.2ad5a158@canb.auug.org.au>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: mmotm 2018-03-07-16-19 uploaded (UML & memcg)
+Date: Wed, 7 Mar 2018 18:41:41 -0800
+Message-ID: <20180307184141.3dff2f6c0f7d415912e50030@linux-foundation.org>
+References: <20180308002016.L3JwBaNZ9%akpm@linux-foundation.org>
+        <41ec9eeb-f0bf-e26d-e3ae-4a684c314360@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TxukmIqg3MmZ0Kmh"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180308164058.2ad5a158@canb.auug.org.au>
+In-Reply-To: <41ec9eeb-f0bf-e26d-e3ae-4a684c314360@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, Shakeel Butt <shakeelb@google.com>
 List-Id: linux-next.vger.kernel.org
 
+On Wed, 7 Mar 2018 18:20:12 -0800 Randy Dunlap <rdunlap@infradead.org> wrote:
 
---TxukmIqg3MmZ0Kmh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 03/07/2018 04:20 PM, akpm@linux-foundation.org wrote:
+> > The mm-of-the-moment snapshot 2018-03-07-16-19 has been uploaded to
+> > 
+> >    http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > mmotm-readme.txt says
+> > 
+> > README for mm-of-the-moment:
+> > 
+> > http://www.ozlabs.org/~akpm/mmotm/
+> > 
+> > This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> > more than once a week.
+> 
+> UML on i386 and/or x86_64:
+> 
+> defconfig, CONFIG_MEMCG is not set:
+> 
+> ../fs/notify/group.c: In function 'fsnotify_final_destroy_group':
+> ../fs/notify/group.c:41:24: error: dereferencing pointer to incomplete type
+>    css_put(&group->memcg->css);
 
-On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
-> Hi all,
->
-> Commit
->
->   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
->
-> is missing a Signed-off-by from its author.
+oops.
 
-Doug, something went wrong with your scripts
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix
 
-In patchworks it is with SOB and lengthy commit message:
-https://patchwork.kernel.org/patch/10264089/
+fix CONFIG_MEMCG=n build
 
-In the tree, it is cut:
-https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=for-rc&id=aa0de36a40f446f5a21a7c1e677b98206e242edb
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
 
-Thanks
+ fs/notify/group.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> --
-> Cheers,
-> Stephen Rothwell
-
-
-
---TxukmIqg3MmZ0Kmh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqg05AACgkQ5GN7iDZy
-WKfRhQ/+IZU4ysCMzB/R/rFY0lxz12aVh36TMFWBkgO6zB3Hbf3RlhNYmV4v23qe
-zQ+hZDPrScO9fuqLHCMNq78TKvJLdicRg6DZFzv30FTtaoy61JZ+j/b/33anPOBD
-dKv7vuzTVYMUCwLlnk0tUBd2loGeGAJS/QrjE+ys8z2aNT7Vv5v+vYVIOXX9zJH7
-91PzLNd486MdjpZcPl2x1Ek9DyyvWk+cH3a3XEvQrrjbAdkkvUunqj2ll5w/BpHK
-qpGbQrCdn2ik439CEXrFsgvxTZJijFwWZdaJRhyq6zlv3kc1k+4L64sMeo8plzJD
-IPXpKu/8gsCORKGhAC2JMQTbwTaMt1jwWMqo4lRLFRbAeGKKwqzzCMby8zpnwA4t
-sbfGF+4RSfVNW9+w5c8hBEshbhwsyvnHrkQPwulnMxGQChhURQ+QakWphswXZqfv
-VL4nD32Kz33P0eisLJcvbfEp5kB9+XgMhc2QgzZ4aZDMVPrpQ4apNUMCVIoy6rTw
-+iqWLXcoVT/CEjk7zcVIIqobzAUlIid8nAQ0xQL+E9P5sactSetXcXAKlzr4QDjs
-MR+NDvepda1vNlg1VcnaN7J+WMF9AJxT5zoUFaxur4+boGM/dY5TESM9eW65bxNM
-PwtrX39BOWpG0d+FPQSr2b6lTtYjM6nmfIRnTI5V9Ia6DCWn2YQ=
-=3ftX
------END PGP SIGNATURE-----
-
---TxukmIqg3MmZ0Kmh--
+--- a/fs/notify/group.c~fs-fsnotify-account-fsnotify-metadata-to-kmemcg-fix
++++ a/fs/notify/group.c
+@@ -38,7 +38,7 @@ static void fsnotify_final_destroy_group
+ 		group->ops->free_group_priv(group);
+ 
+ 	if (group->memcg)
+-		css_put(&group->memcg->css);
++		mem_cgroup_put(group->memcg);
+ 
+ 	kfree(group);
+ }
+_
