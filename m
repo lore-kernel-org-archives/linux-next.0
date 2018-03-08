@@ -1,85 +1,50 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with the drm-misc-fixes
- tree
-Date: Thu, 8 Mar 2018 11:47:54 +1100
-Message-ID: <20180308114754.139c45bf@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: linux-next: manual merge of the mfd tree with Linus' tree
+Date: Thu, 8 Mar 2018 08:12:15 +0000
+Message-ID: <20180308081215.n2m6hixmpfhpgn6f@dell>
+References: <20180308123331.36eab22c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/c7CLoHS8jabwDQ+JQRQ=e8F"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180308123331.36eab22c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jernej Skrabec <jernej.skrabec@siol.net>, Maxime Ripard <maxime.ripard@bootlin.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baolin Wang <baolin.wang@linaro.org>, Mark Brown <broonie@kernel.org>, David Lechner <david@lechnology.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/c7CLoHS8jabwDQ+JQRQ=e8F
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 08 Mar 2018, Stephen Rothwell wrote:
 
-Hi all,
+> Hi Lee,
+> 
+> Today's linux-next merge of the mfd tree got a conflict in:
+> 
+>   drivers/mfd/syscon.c
+> 
+> between commit:
+> 
+>   3bafc09e7797 ("mfd: syscon: Add hardware spinlock support")
+> 
+> from Linus' tree and commit:
+> 
+>   34c90dcce6b1 ("mfd: syscon: Set regmap name to DT node name")
+> 
+> from the mfd tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Today's linux-next merge of the drm tree got a conflict in:
+Now fixed in my tree.  You may withdraw your patch.
 
-  drivers/gpu/drm/sun4i/sun4i_tcon.c
+Thanks Stephen.
 
-between commit:
-
-  e742a17cd360 ("drm/sun4i: tcon: Reduce the scope of the LVDS error a bit")
-
-from the drm-misc-fixes tree and commit:
-
-  34d698f6e349 ("drm/sun4i: Add has_channel_0 TCON quirk")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/sun4i/sun4i_tcon.c
-index 2de586b7c98b,0d6c5ed44795..000000000000
---- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-@@@ -1143,11 -1155,15 +1164,16 @@@ static const struct sun4i_tcon_quirks s
-  };
- =20
-  static const struct sun4i_tcon_quirks sun8i_a83t_lcd_quirks =3D {
-+ 	.has_channel_0		=3D true,
- +	.supports_lvds		=3D true,
-  };
- =20
-+ static const struct sun4i_tcon_quirks sun8i_a83t_tv_quirks =3D {
-+ 	.has_channel_1		=3D true,
-+ };
-+=20
-  static const struct sun4i_tcon_quirks sun8i_v3s_quirks =3D {
-- 	/* nothing is supported */
-+ 	.has_channel_0		=3D true,
-  };
- =20
-  /* sun4i_drv uses this list to check if a device node is a TCON */
-
---Sig_/c7CLoHS8jabwDQ+JQRQ=e8F
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqgiDoACgkQAVBC80lX
-0Gzl3Qf+N9w7amVhbRjbNX9gPYWr0V8DpSWyLwKxyTgo/RWLPSq702l78cgYjWdL
-p8QNziACmrPx9Ef8QN5L0cJAJATkFwRbRKXwfxy90yZi0N758EvpLt+Cq9Sbils4
-Ac1tGKP3XPu0cXnWTZEOuihk+NVCy2zQJHBcGtsL7ynPBbSItGHuLuT8Tx3ijCvO
-3/CUxCHunKzIy4lx1dTx+Zk9mH/7+345nfz6Za31tpTnPtakCIvj+EsowKCjGudc
-+fFPmsOOG2xKy/1rgijucylK5LKXK8CpNe4qwGLEE7AXcJ4oRCnnNiuAOVwhWcS3
-7RMwB2lncBVH7EFwvoBKyTUxapQi+w==
-=xSRh
------END PGP SIGNATURE-----
-
---Sig_/c7CLoHS8jabwDQ+JQRQ=e8F--
+-- 
+Lee Jones
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
