@@ -1,30 +1,30 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
- tree
-Date: Thu, 08 Mar 2018 09:52:10 -0800
-Message-ID: <1520531530.11634.18.camel@perches.com>
-References: <20180308164058.2ad5a158@canb.auug.org.au>
-         <20180308161845.GC6773@mellanox.com> <1520527178.11634.9.camel@perches.com>
-         <20180308170317.GE6773@mellanox.com>
-         <1520529792.11634.12.camel@perches.com>
-         <20180308174444.GG6773@mellanox.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Mar 8 (md/dm-mpath.c)
+Date: Thu, 8 Mar 2018 09:56:33 -0800
+Message-ID: <c4f96fc4-8e90-4682-8190-5ae99b804136@infradead.org>
+References: <20180308163336.2943012b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180308174444.GG6773@mellanox.com>
+In-Reply-To: <20180308163336.2943012b@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jason Gunthorpe <jgg@mellanox.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andy Whitcroft <apw@canonical.com>, Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Thornber <dm-devel@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2018-03-08 at 10:44 -0700, Jason Gunthorpe wrote:
-> I only ask becuase I keep seeing these reports from Stephen and
-> usuaully by the time it gets to him it requires a disruptive rebase to
-> fix..
+On 03/07/2018 09:33 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180307:
+> 
 
-If it's a part of a series, it will always require a rebase.
+on i386: when CONFIG_SCSI is not enabled:
 
-Generally, I think it's a small and relatively unlikely
-problem for checkpatch to bother with as there's already
-a reporting mechanism in-place.
+drivers/md/dm-mpath.o: In function `multipath_ctr':
+dm-mpath.c:(.text+0x1ab7): undefined reference to `scsi_device_from_queue'
+
+
+-- 
+~Randy
