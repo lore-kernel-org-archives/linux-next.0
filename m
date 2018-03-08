@@ -1,45 +1,47 @@
-From: Emmanuel Vadot <manu@bidouilliste.com>
-Subject: Re: linux-next: build failure after merge of the sunxi tree
-Date: Thu, 8 Mar 2018 03:37:46 +0100
-Message-ID: <20180308033746.fc65a8101bf9255b742b2f56@bidouilliste.com>
-References: <20180308093532.7fcfb205@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Date: Thu, 8 Mar 2018 13:04:37 +0100
+Message-ID: <CACRpkdYcBrL_o4ygShJ=Tzt+UxOVQnekgd576Ko1zGkgNQrkPg@mail.gmail.com>
+References: <20180308073921.5c104e74@canb.auug.org.au> <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
+ <20180308113647.75279391@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180308093532.7fcfb205@canb.auug.org.au>
+In-Reply-To: <20180308113647.75279391@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Emmanuel Vadot <manu@freebsd.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Thu, Mar 8, 2018 at 1:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
- Hi All,
+> Hi Linus,
+>
+> On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
+>>
+>> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> > Commit
+>> >
+>> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
+>> >
+>> > is missing a Signed-off-by from its committer.
+>>
+>> Looping in Geert,
+>>
+>> I guess this came in through the Renesas PFC pull request.
+>>
+>> Geert do you prefer that I back it all out so you can send me
+>> a new pull request? Or some other solution?
+>
+> But you are listed as the committer ...
 
-On Thu, 8 Mar 2018 09:35:32 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Bah yeah this commit is on the fixes branch like Geert says, sorry it
+is 100% my sloppy mistake.
 
-> Hi all,
-> 
-> After merging the sunxi tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> arch/arm/boot/dts/sun8i-h3-nanopi-m1-plus.dtb: ERROR (phandle_references): Reference to non-existent node or label "mmc2_8bits_pins"
-> 
-> Caused by commit
-> 
->   89fd776b2b9f ("dts: sunxi: Add eMMC for NanoPi M1 Plus")
-> 
-> I have merged the version of the sunxi tree from next-20180307 for today.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+I fixed it up and pushed the result for-next.
 
- I don't even know how I managed to screw this patch.
- Maxime, Chen-Yu,  how would you like this problem to be handled ?
+Sorry for the fuzz!
 
- Cheers,
-
--- 
-Emmanuel Vadot <manu@bidouilliste.com> <manu@freebsd.org>
+Yours,
+Linus Walleij
