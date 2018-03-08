@@ -1,49 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the rdma tree
-Date: Fri, 9 Mar 2018 07:51:19 +1100
-Message-ID: <20180309075119.7b536dcd@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the modules tree
+Date: Fri, 9 Mar 2018 07:54:57 +1100
+Message-ID: <20180309075457.5fb444d1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LlBxNeKIfEg24y=8bDH65p0"; protocol="application/pgp-signature"
+ boundary="Sig_/iv3AWUYQh9ry3AgmJsSKH/j"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+To: Jessica Yu <jeyu@kernel.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/LlBxNeKIfEg24y=8bDH65p0
+--Sig_/iv3AWUYQh9ry3AgmJsSKH/j
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Jessica,
 
-Commits
+Commit
 
-  63cf1a902c9d ("IB/srpt: Add RDMA/CM support")
-  86af61764151 ("IB/rxe: remove unnecessary skb_clone")
-  31f1bd14cbfe ("IB/rxe: remove unnecessary rxe in rxe_send")
-  befd8d98f230 ("IB/rxe: change the function rxe_init_device_param type")
+  934ccf7248dd ("module: propagate error in modules_open()")
 
-are missing a Signed-off-by from their committer.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/LlBxNeKIfEg24y=8bDH65p0
+--Sig_/iv3AWUYQh9ry3AgmJsSKH/j
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhokcACgkQAVBC80lX
-0GyHyQgApLL5laroPtc+4Z2GOyunGs1dmdfMTfMGxeTVm2FQzRAeFIxtRc/0SK3B
-sW+cfyKMOaZMxaWl0uZbin03WyKS/Tj/1NdewrAaTqnUZ4cJ7/ui+r1vU5qd8v83
-PFZhGvzeje7O2P/zwpPjrez86H2+W8IKE+s41Fqd5A9TLNvDc6z+gj0NK962xunh
-6SJWup0HwVEBW4AHeZRyJkTRdjP5Qgv6uOo+mM/KmikHcP9CNJcR6cmY2kGVs6oG
-JqiRMljLCCT96kt7A1Q0Hs7jbiBDDa8FI15IhZMAhWEzof/c79vQt3CxYny6ubcK
-nUCwxSTDiaozmz9AHrP8bpee+7t7yQ==
-=dKGq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqhoyEACgkQAVBC80lX
+0GzcMAf/a0Kga2lq0fFUrPt/V7lqSjlGLk3jms5XJBPHZWd52HS7u+kczuo3ZA9Y
+ybZ62eAJQq3WAT12m8YzBgL11YdiFBFqNymrLbZqhEbWIs00Zdz8eDdJQhQKRN61
+kTRgAIysaa5zc93X680XUsV9+m+cdP4LtwHrzkMbW/K4SMsZo5RpG0gGhKsvR/W9
+eV1D95/hcyKHKhbjnz/AqUSLkbOmcliXL37XzBZDVgyVY7ZN2+mUa1y4Mmdy2pBm
+o/EZi3vZqCTin4P16ILVk+PxCkQfuSr444oVfJkiam47p2KwPzFfBBNeW2sWjipI
+0WT06IW1IBK6J37ewipwBK2aVjYz2A==
+=5wn+
 -----END PGP SIGNATURE-----
 
---Sig_/LlBxNeKIfEg24y=8bDH65p0--
+--Sig_/iv3AWUYQh9ry3AgmJsSKH/j--
