@@ -1,29 +1,32 @@
 From: Jason Gunthorpe <jgg@mellanox.com>
 Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
  tree
-Date: Thu, 8 Mar 2018 08:10:42 -0700
-Message-ID: <20180308151042.GA6773@mellanox.com>
+Date: Thu, 8 Mar 2018 09:18:45 -0700
+Message-ID: <20180308161845.GC6773@mellanox.com>
 References: <20180308164058.2ad5a158@canb.auug.org.au>
- <20180308060920.GQ15340@mtr-leonro.local>
- <1520515725.3126.88.camel@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1520515725.3126.88.camel@redhat.com>
+In-Reply-To: <20180308164058.2ad5a158@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Leon Romanovsky <leonro@mellanox.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
+Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 08, 2018 at 08:28:45AM -0500, Doug Ledford wrote:
+On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
+> 
+> is missing a Signed-off-by from its author.
 
-> Anyway, I've hand edited the mbox file and I pushed a rebased version of
-> my wip branch.  However, during the night Jason must have moved my
-> wip/for-rc branch to the official for-rc because it's there now, so the
-> only way to fix this (that I know of) in our official for-rc branch is a
-> rebase :-(
+Thanks Stephen,
 
-Yes, to get it into for-next so we could send to linus soon
+May I suggest to the checkpatch maintainers that checkpack should look
+for this too?
 
+Thanks,
 Jason
