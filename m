@@ -1,49 +1,44 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Date: Thu, 8 Mar 2018 08:05:50 +0100
-Message-ID: <CAMuHMdX05OjHcTyKXx4o7is2Vpi1ToQeuB-xGkGj-Cx7vOcTrQ@mail.gmail.com>
-References: <20180308073921.5c104e74@canb.auug.org.au> <CACRpkdaWd_7QWd7t5i6DvU3_Gu1giR9v2uoqQiLNXVWTPEty8w@mail.gmail.com>
- <20180308113647.75279391@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2018-03-07-16-19 uploaded (UML & memcg)
+Date: Wed, 7 Mar 2018 18:20:12 -0800
+Message-ID: <41ec9eeb-f0bf-e26d-e3ae-4a684c314360@infradead.org>
+References: <20180308002016.L3JwBaNZ9%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180308113647.75279391@canb.auug.org.au>
+In-Reply-To: <20180308002016.L3JwBaNZ9%akpm@linux-foundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, Shakeel Butt <shakeelb@google.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+On 03/07/2018 04:20 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-03-07-16-19 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
 
-On Thu, Mar 8, 2018 at 1:36 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Wed, 7 Mar 2018 23:25:48 +0100 Linus Walleij <linus.walleij@linaro.org> wrote:
->> On Wed, Mar 7, 2018 at 9:39 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> > Commit
->> >
->> >   fc08fa6009a0 ("pinctrl: sh-pfc: r8a7795: remove duplicate of CLKOUT pin in pinmux_pins[]")
->> >
->> > is missing a Signed-off-by from its committer.
->>
->> Looping in Geert,
->>
->> I guess this came in through the Renesas PFC pull request.
->>
->> Geert do you prefer that I back it all out so you can send me
->> a new pull request? Or some other solution?
->
-> But you are listed as the committer ...
+UML on i386 and/or x86_64:
 
-Right, that's the bug fix I had asked Linus to take directly, as a fix
-for v4.16.
+defconfig, CONFIG_MEMCG is not set:
 
-Gr{oetje,eeting}s,
+../fs/notify/group.c: In function 'fsnotify_final_destroy_group':
+../fs/notify/group.c:41:24: error: dereferencing pointer to incomplete type
+   css_put(&group->memcg->css);
+                        ^
 
-                        Geert
+From: Shakeel Butt <shakeelb@google.com>
+Subject: fs: fsnotify: account fsnotify metadata to kmemcg
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-- 
+~Randy
