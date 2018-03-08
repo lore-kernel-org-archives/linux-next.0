@@ -1,47 +1,106 @@
-From: Xin Long <lucien.xin@gmail.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the net-next tree
-Date: Thu, 8 Mar 2018 21:29:45 +0800
-Message-ID: <CADvbK_e7uif+suSaoVygvdDwvffJ=j6LunCdh25vor2Qj+_DUw@mail.gmail.com>
-References: <20180305124054.09966cb0@canb.auug.org.au> <20180308130703.7365f733@canb.auug.org.au>
+From: Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rdma-fixes
+ tree
+Date: Thu, 8 Mar 2018 15:38:30 +0200
+Message-ID: <20180308133830.GU15340@mtr-leonro.local>
+References: <20180308164058.2ad5a158@canb.auug.org.au>
+ <20180308060920.GQ15340@mtr-leonro.local>
+ <1520515725.3126.88.camel@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RtGa12sjXv8gVUZO"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180308130703.7365f733@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <1520515725.3126.88.camel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <paul@paul-moore.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Haines <richard_c_haines@btinternet.com>, Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To: Doug Ledford <dledford@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 8, 2018 at 10:07 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
+
+--RtGa12sjXv8gVUZO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Mar 08, 2018 at 08:28:45AM -0500, Doug Ledford wrote:
+> On Thu, 2018-03-08 at 08:09 +0200, Leon Romanovsky wrote:
+> > On Thu, Mar 08, 2018 at 04:40:58PM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Commit
+> > >
+> > >   aa0de36a40f4 ("RDMA/mlx5: Fix integer overflow while resizing CQ")
+> > >
+> > > is missing a Signed-off-by from its author.
+> >
+> > Doug, something went wrong with your scripts
+> >
+> > In patchworks it is with SOB and lengthy commit message:
+> > https://patchwork.kernel.org/patch/10264089/
+> >
+> > In the tree, it is cut:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=for-rc&id=aa0de36a40f446f5a21a7c1e677b98206e242edb
 >
-> On Mon, 5 Mar 2018 12:40:54 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>
->> Today's linux-next merge of the selinux tree got a conflict in:
->>
->>   net/sctp/socket.c
->>
->> between several refactoring commits from the net-next tree and commit:
->>
->>   2277c7cd75e3 ("sctp: Add LSM hooks")
->>
->> from the selinux tree.
->>
->> I fixed it up (I think - see below) and can carry the fix as
->> necessary. This is now fixed as far as linux-next is concerned, but any
->> non trivial conflicts should be mentioned to your upstream maintainer
->> when your tree is submitted for merging.  You may also want to consider
->> cooperating with the maintainer of the conflicting tree to minimise any
->> particularly complex conflicts.
->>
->> --
->> Cheers, it
->> Stephen Rothwell
+> I use git am -s <mboxfile> to bring the patch in, so this usually
+> indicates that there was something wrong with the email and it caused
+> patchworks to improperly parse it.  Sure enough, when I look in
+> patchworks (https://patchwork.kernel.org/patch/10264089/, the exact link
+> you listed above so I'm surprised you didn't catch this), patchworks
+> parsed that separator line you put in the commit message:
+> ====================================================================
+> as the end of message and start of patch.  So, in patchworks, that line
+> and everything after it is considered part of the patch and not part of
+> the message.  So, when I download the mbox file, patchworks placed this:
 >
-> The resolution now looks like below (there were more changes to this
-> file in the net-next tree).  It will keep changing every time this file
-> is touched :-(
-This is the last change causing this conflict, as it touched
-sctp_sendmsg_new_asoc.
-The following patches for sctp update that will be posted soon will
-NOT touch this function again.
+> ---
+> 2.6.12
+>
+> at the end of the truncated commit message, so git am would also ignore
+> everything after your separator line.
+>
+> Anyway, I've hand edited the mbox file and I pushed a rebased version of
+> my wip branch.  However, during the night Jason must have moved my
+> wip/for-rc branch to the official for-rc because it's there now, so the
+> only way to fix this (that I know of) in our official for-rc branch is a
+> rebase :-(
+
+It is harmless and not worth of rebase at all. Leave it as is. Thanks Doug.
+
+>
+> FWIW, be careful using those big separator lines like that.  They can
+> and, as you see here, do trip up the automated tools sometimes :-(.
+> Would be better to just not put a guard around the copied in stuff.
+
+I'll do and will clean it from my next patches.
+
+Thanks again.
+
+>
+> --
+> Doug Ledford <dledford@redhat.com>
+>     GPG KeyID: B826A3330E572FDD
+>     Key fingerprint = AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+
+
+--RtGa12sjXv8gVUZO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkhr/r4Op1/04yqaB5GN7iDZyWKcFAlqhPNUACgkQ5GN7iDZy
+WKdLCA//e7iVwDHNgfe7HeA5CoGWQsR7W0cXjW4SHJ/wXpB2piA0QvMBbjNpD9Fi
+2W986cFko5KS3pcdy2Fc684BOc1nljgZad/ybKoUAkuyQnhUKumQIR7aAQrHypgx
+YT/2iD2Zr2/LnTwqWFEoAw7bWg93gWfpre86aGfhAZAGEe9Ia0mBTQjoUD3H89+G
+ZiM1p7lUnh6ZLgzejRyNlPYXIzHVn1HhiYY+kIACpAdkiDHiicFglZ/ZWMOUVI0P
++xoBIcvNutuliTY7vZUm6XAYccMfkatjByQo44t301Anw4uQbpDzl2OYYZitLlab
+jQ0TW3FNkqGZDzIslqzQkdj6xwKLSqZ/wqyMNkkfWkp93QbW/TSgM+SilUDmwr7n
+gmYbnzg7/FkUWwXvpmrUbwPB30mAB82yoBeqR8+r5b9jaleEz5lZeRrMhYnw/NH4
+qj6Er0I8YN/tdcJZZdD8xiDHPMoi0MHykL69dYQtPXWTn2cBeaNCz1yz8B3CXlB0
+JhhwALEEoMRJNYir9HnqYXjjHzjSidslyJm7Me3EuIKkz+GWgpA4Y3qd7dOAtK9o
+VgPSMe90dybYAeN6UGPKRcqgPy1gQGMOttfUj9ft3Ql6vowkg231cmB/wcesGdF+
+MEPDyJbzaH7V54A0Pxci7bLiz8yP5DWExtw3bCSc4YWtwlsbrYM=
+=6CaH
+-----END PGP SIGNATURE-----
+
+--RtGa12sjXv8gVUZO--
