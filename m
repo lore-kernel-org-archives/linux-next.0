@@ -1,49 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Mar 9
-Date: Fri, 9 Mar 2018 16:07:44 +1100
-Message-ID: <20180309160744.501dfb6b@canb.auug.org.au>
-References: <20180309153037.1c77364d@canb.auug.org.au>
+From: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the net-next
+ tree
+Date: Fri, 9 Mar 2018 09:52:45 -0300
+Message-ID: <20180309125244.GA5105@localhost.localdomain>
+References: <20180305124054.09966cb0@canb.auug.org.au>
+ <20180308130703.7365f733@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RALJYHNLQMUJv36gMbKAs+4"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180309153037.1c77364d@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180308130703.7365f733@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Paul Moore <paul@paul-moore.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Haines <richard_c_haines@btinternet.com>, Xin Long <lucien.xin@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RALJYHNLQMUJv36gMbKAs+4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 08, 2018 at 01:07:03PM +1100, Stephen Rothwell wrote:
+> The resolution now looks like below (there were more changes to this
+> file in the net-next tree).  It will keep changing every time this file
+> is touched :-(
 
-Hi all,
+Ugh, sorry for that, Stephen.
 
-On Fri, 9 Mar 2018 15:30:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Changes since 20180308:
+Considering how much of a hassle this already is, I'll hold off the
+mtu refactoring I have and only post it when all this reaches Linus'
+tree.  This refactoring is touching nearly every single line that the
+SELinux patches touched too (where it added accounting for the IP
+options) and the fixup would be a complete nightmare.
 
-I forgot to mention that there will be no linux-next release on Monday.
+Probably I won't be able to post the sctp_outq_flush refactoring too,
+but I have to check that more carefully.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RALJYHNLQMUJv36gMbKAs+4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqiFqAACgkQAVBC80lX
-0GzEDAf/XBvt7a2ZB824MhAVAGxedExw2LeJIWeXL0hOw9ASAmVUUUI2hc3SDwJ9
-Z7EzoHWj3wis+JBbzqZeHb6YuQkcJN6nOAtmBMsDFRmsuUP9cjoLN4SBfSTdiAmY
-qlE5QlADg9WS2MR/QfH4xT2CaM0hGIPtZ4xT8vDRBaideq2KQ0Q+3ooQhuz3cYCL
-FxelRq+lvlXP18E7K98+t0mqrHUBNbChbLI6rh21237SU0YlrRX6O8ntCTk3/k6g
-Qhyng25a7T+zHoEAbCZhNcBgI5giffiQ4Fz5QZPWiAHjUeMAWsS7yVGR8q6xtqLW
-+m0sed/eDdu3/kcLx/bzZeY7Y0TjWg==
-=be5s
------END PGP SIGNATURE-----
-
---Sig_/RALJYHNLQMUJv36gMbKAs+4--
+  Marcelo
