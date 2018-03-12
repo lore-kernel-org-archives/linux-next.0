@@ -1,46 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the usb-gadget tree
-Date: Tue, 13 Mar 2018 07:40:34 +1100
-Message-ID: <20180313074034.1ce73155@canb.auug.org.au>
+Subject: linux-next: manual merge of the qcom tree with the amlogic tree
+Date: Tue, 13 Mar 2018 08:45:16 +1100
+Message-ID: <20180313084516.49718221@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/r2OruyXJodQf8+5NZ3_Aqgm"; protocol="application/pgp-signature"
+ boundary="Sig_/5XX3mInVEPgUs6+wuJ2GbmB"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Youn <johnyoun@synopsys.com>, Sevak Arakelyan <sevaka@synopsys.com>, Grigor Tovmasyan <tovmasya@synopsys.com>
+To: Andy Gross <agross@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, Amit Kucheria <amit.kucheria@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/r2OruyXJodQf8+5NZ3_Aqgm
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Felipe,
+Hi Andy,
 
-Commit
+Today's linux-next merge of the qcom tree got a conflict in:
 
-  969d58abe57d ("usb: dwc2: Enable LPM")
+  arch/arm64/configs/defconfig
 
-is missing a Signed-off-by from its author.
+between commit:
+
+  266c157de3b2 ("arm64: defconfig: enable MESON EFUSE")
+
+from the amlogic tree and commit:
+
+  52fe48c2b9bb ("arm64: defconfig: enable thermal sensor on QCOM platforms")
+
+from the qcom tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/r2OruyXJodQf8+5NZ3_Aqgm
+diff --cc arch/arm64/configs/defconfig
+index df2b08b1554f,a37130b54fae..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -565,7 -572,7 +575,8 @@@ CONFIG_PHY_XGENE=3D
+  CONFIG_PHY_TEGRA_XUSB=3Dy
+  CONFIG_QCOM_L2_PMU=3Dy
+  CONFIG_QCOM_L3_PMU=3Dy
+ +CONFIG_MESON_EFUSE=3Dm
++ CONFIG_QCOM_QFPROM=3Dy
+  CONFIG_UNIPHIER_EFUSE=3Dy
+  CONFIG_TEE=3Dy
+  CONFIG_OPTEE=3Dy
+
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm5cIACgkQAVBC80lX
-0GzGNgf/fcy2BbLU9xFb8g2XNI9idLZw0SflusfJv3SjmS+xhITZnEeGKWlPoPmY
-JZ9k6CshVXFXdt96lrQvGwfNnn0NQv0/5gzIQRSYhQd6xfVwSobEHypue1gIaQFr
-6NZRVftq8GJFSTWoeJvGgL4vWWqW5OHPoLz/5tQ4y+r8olMezADeBCdBcxRBIFVU
-dbCwdS8d26BE+Rjd02tbHbc7TVpkY9+LEgQ9T3wfDyycUxnQ3/PRtKUBSI/UIm8d
-1nklkEyHwxn8KvBSaYah7OndXJYunbGXfrbwXR1eNmrbZjueixptIVsXrGTpziHU
-YKTLSs9XNmpLEbQvpmzuhBhB6clSIw==
-=lp5k
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm9OwACgkQAVBC80lX
+0GxOdQf/ZvQsipdh+fg8zd4azJ2CuMwF9J7LGXRIsaCoL/pTwxg3pRroH9G6970B
+t2wuBNkjqa4jqhLDb7tgqIdnF6GqutbqhlWNtFi9sxyq8iG7KDp78yO9iOJaWmwo
+/4D1vxSnwrsmqvRfMb6W1E472IBVBm8zUa3kjw4IOzxIgSf+ttcDbuSgeyYMXycw
++KqFyvgcBayaWPAEdkg+yrKqZD6j9A+7PWssDm34V0oPmCYW3LsCgpvBBLD+Do4p
+T2r051BInb+oCIsLIuISAJnCOpFHB81NzW8WeFzOdIe+32TdyR3XeJQsXueqp2Ti
+Hb3LjywFIFrPnRfvZjQ0C5zM+Hrs9A==
+=mdCv
 -----END PGP SIGNATURE-----
 
---Sig_/r2OruyXJodQf8+5NZ3_Aqgm--
+--Sig_/5XX3mInVEPgUs6+wuJ2GbmB--
