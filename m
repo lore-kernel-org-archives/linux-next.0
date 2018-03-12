@@ -1,80 +1,46 @@
-From: Sebastian Reichel <sre@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
-Date: Mon, 12 Mar 2018 14:40:21 +0100
-Message-ID: <20180312134021.3x5dboqj5wfjhgoq@earth.universe>
-References: <20180312124007.61288892@canb.auug.org.au>
- <CANEr7oV8GTU8X1ijUYJKZjF6Pdr1i7+mvUqoDCaaKBCPkvrFgg@mail.gmail.com>
- <CANEr7oWy2ATCnExdoFkCt9Sz3OUEgEQpQQiqmKnOh7iVDekiKg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the usb-gadget tree
+Date: Tue, 13 Mar 2018 07:40:34 +1100
+Message-ID: <20180313074034.1ce73155@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="wrk2jlvvhhilgn2q"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/r2OruyXJodQf8+5NZ3_Aqgm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CANEr7oWy2ATCnExdoFkCt9Sz3OUEgEQpQQiqmKnOh7iVDekiKg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Pierre Bourdon (delroth)" <delroth@google.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andre Heider <a.heider@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: Felipe Balbi <balbi@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Youn <johnyoun@synopsys.com>, Sevak Arakelyan <sevaka@synopsys.com>, Grigor Tovmasyan <tovmasya@synopsys.com>
 List-Id: linux-next.vger.kernel.org
 
-
---wrk2jlvvhhilgn2q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/r2OruyXJodQf8+5NZ3_Aqgm
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen and Pierre,
+Hi Felipe,
 
-On Mon, Mar 12, 2018 at 10:46:08AM +0100, Pierre Bourdon (delroth) wrote:
-> On Mon, Mar 12, 2018 at 10:35 AM, Pierre Bourdon (delroth)
-> <delroth@google.com> wrote:
-> > On Mon, 12 Mar 2018 at 02:40, Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
-> >>
-> >> Hi Sebastian,
-> >>
-> >> Commit
-> >>
-> >>   5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
-> >>
-> >> is missing a Signed-off-by from its author.
+Commit
 
-Thanks for the hint!
+  969d58abe57d ("usb: dwc2: Enable LPM")
 
-> > I failed hard :) will resend.
->=20
-> So, since I'm very clearly not familiar with the process... is sending
-> a v2 with proper s-o-b the Right Way to do it, or are you just fine
-> with a correction by email?
->=20
-> If the latter:
->=20
-> Signed-off-by: Pierre Bourdon <delroth@google.com>
->=20
-> Sorry for the screwup, slowly learning (I hope).
-> Best,
+is missing a Signed-off-by from its author.
 
-Thanks for your SoB. I fixed this up in the existing patch.
+--=20
+Cheers,
+Stephen Rothwell
 
--- Sebastian
-
---wrk2jlvvhhilgn2q
-Content-Type: application/pgp-signature; name="signature.asc"
+--Sig_/r2OruyXJodQf8+5NZ3_Aqgm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlqmgz4ACgkQ2O7X88g7
-+prdoxAApwkolmWURlRPJLSBnHm9L5ez2Jwo6ydXGbRVvgIpgBYMaYTfNoxRWOh8
-2IXTd8yLteAyHUVVXTOrY31JA/NWPmLVCxWRt2ce91C62VbG2HYwdHm13e/GFVrD
-RNJJFTVwZ482BAQF0p7mHnk3VxX7c4URLLJKq9taiq+1owTTOi1FuVj8Cho02h0S
-1XZQyqjiXSjO/vBKaGuzpZjvzgoq4hqNh9jl10JqGAiwlXUxdVaefqrCLk0y8tss
-GTtpdELz2KR0N4AiDCddEK2wERmcGPuraTIiAZuBFsUSeBeQ6oc4t19kF0b7rs/K
-h/Tr6NojOfE7ydI6mZ1LLLzxuEZxLlJL7jv150UMlAi+FPtUEKhy14A87HCsAle5
-Xn93BMQM569pRY+5SYbxo8+cb5H8PNP9IiRhquN/p5OtYunxGegV/qVGbPt9+krh
-62wcg+QVXPye0bcQU8l+4G3jXfOo7IMRewrx3wuQOxtStYSu6IpdggGcDNUfdLDy
-smCUpXYkj/fiK+jAh3VzaYZYkXFUGjGtFZtg0hWGwdEAJW100iRD9IpK56pf1s4c
-k5RoSZbxYZ6PWpBmfu2pwSZy567XXmy8bW/y1MRRfKhIHP4OvKaUc+8efMbjqaJT
-+9D8AhEW+gIrsiT/mR5AfgZQUD1O7ej+ZQXVPj/iNItqC9Th3Gg=
-=xr/6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm5cIACgkQAVBC80lX
+0GzGNgf/fcy2BbLU9xFb8g2XNI9idLZw0SflusfJv3SjmS+xhITZnEeGKWlPoPmY
+JZ9k6CshVXFXdt96lrQvGwfNnn0NQv0/5gzIQRSYhQd6xfVwSobEHypue1gIaQFr
+6NZRVftq8GJFSTWoeJvGgL4vWWqW5OHPoLz/5tQ4y+r8olMezADeBCdBcxRBIFVU
+dbCwdS8d26BE+Rjd02tbHbc7TVpkY9+LEgQ9T3wfDyycUxnQ3/PRtKUBSI/UIm8d
+1nklkEyHwxn8KvBSaYah7OndXJYunbGXfrbwXR1eNmrbZjueixptIVsXrGTpziHU
+YKTLSs9XNmpLEbQvpmzuhBhB6clSIw==
+=lp5k
 -----END PGP SIGNATURE-----
 
---wrk2jlvvhhilgn2q--
+--Sig_/r2OruyXJodQf8+5NZ3_Aqgm--
