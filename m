@@ -1,46 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the battery tree
-Date: Mon, 12 Mar 2018 12:40:07 +1100
-Message-ID: <20180312124007.61288892@canb.auug.org.au>
+From: "Pierre Bourdon (delroth)" <delroth@google.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the battery tree
+Date: Mon, 12 Mar 2018 10:46:08 +0100
+Message-ID: <CANEr7oWy2ATCnExdoFkCt9Sz3OUEgEQpQQiqmKnOh7iVDekiKg@mail.gmail.com>
+References: <20180312124007.61288892@canb.auug.org.au> <CANEr7oV8GTU8X1ijUYJKZjF6Pdr1i7+mvUqoDCaaKBCPkvrFgg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tdX_uVXC7iujCXZws49o4cF"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CANEr7oV8GTU8X1ijUYJKZjF6Pdr1i7+mvUqoDCaaKBCPkvrFgg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pierre Bourdon <delroth@google.com>, Andre Heider <a.heider@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andre Heider <a.heider@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Sebastian Reichel <sre@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/tdX_uVXC7iujCXZws49o4cF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Mar 12, 2018 at 10:35 AM, Pierre Bourdon (delroth)
+<delroth@google.com> wrote:
+> On Mon, 12 Mar 2018 at 02:40, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Hi Sebastian,
+>>
+>> Commit
+>>
+>>   5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
+>>
+>> is missing a Signed-off-by from its author.
+>
+> I failed hard :) will resend.
 
-Hi Sebastian,
+So, since I'm very clearly not familiar with the process... is sending
+a v2 with proper s-o-b the Right Way to do it, or are you just fine
+with a correction by email?
 
-Commit
+If the latter:
 
-  5e0dfcbb1194 ("max17042: propagate of_node to power supply device")
+Signed-off-by: Pierre Bourdon <delroth@google.com>
 
-is missing a Signed-off-by from its author.
+Sorry for the screwup, slowly learning (I hope).
+Best,
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/tdX_uVXC7iujCXZws49o4cF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlql2ncACgkQAVBC80lX
-0GzxvQgAh5kFT4cwqJnq1X856kadaoIoDRmaOJX1BL6XqNQ/RAlgy8v6tU8GozUp
-8GEqbS5Xlr5gCWsYuEHaXMHLjO15dwPz5JCg0W2c89OeBY/XT21M1+MYXxs9m4TI
-eUUKeG60OhUQuOc9A3KdFKkdErm8MyxfQfq0hhZjfIRIcwRAjbXFCuFEANaFibI4
-+Ym3X+J0XkXjjABy3/J5X45Y6VX+4aBi0mFmsr23FKlg355orH4Th0B+Z1zUnDws
-mMBDud+Odep0tASj1EO84GLPAUKc8gH1mw5cWP+9AVdKzTqfMTz6MCeYHIbbU9ZV
-XgWL/Ja406X4qDsAexNqdS0e81xfxw==
-=1sfl
------END PGP SIGNATURE-----
-
---Sig_/tdX_uVXC7iujCXZws49o4cF--
+-- 
+Pierre Bourdon (delroth@)
