@@ -1,59 +1,61 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Mar 13
-Date: Wed, 14 Mar 2018 07:08:46 +1100
-Message-ID: <20180314070707.2d3c1807@canb.auug.org.au>
-References: <20180313183326.0e93f359@canb.auug.org.au>
-        <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Tue, 13 Mar 2018 15:28:16 -0500
+Message-ID: <f69bb910-23c8-0354-d78b-db097194048d@embeddedor.com>
+References: <20180313171153.1614c11e@canb.auug.org.au>
+ <67db5ac6-9816-4bf1-c594-72697c426466@embeddedor.com>
+ <20180313.113313.629581257230548483.davem@davemloft.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vP9o.KcDVRvvpOiZdHzSAhD"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
+In-Reply-To: <20180313.113313.629581257230548483.davem@davemloft.net>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Snitzer <snitzer@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Andrew Morton <akpm@linux-foundation.org>
+To: David Miller <davem@davemloft.net>
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vP9o.KcDVRvvpOiZdHzSAhD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mike,
 
-On Tue, 13 Mar 2018 11:57:40 -0400 Mike Snitzer <snitzer@redhat.com> wrote:
->
-> I had to revert the following commits to get this kernel to build
-> (otherwise I got macro expansion errors, using RHEL7
-> gcc-4.8.5-28.el7.x86_64):
+On 03/13/2018 10:33 AM, David Miller wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> Date: Tue, 13 Mar 2018 06:46:24 -0500
+> 
+>> Hi Stephen,
+>>
+>> On 03/13/2018 01:11 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>> After merging the net-next tree, today's linux-next build (sparc
+>>> defconfig) produced this warning:
+>>> net/core/pktgen.c: In function 'pktgen_if_write':
+>>> net/core/pktgen.c:1710:1: warning: the frame size of 1048 bytes is
+>>> larger than 1024 bytes [-Wframe-larger-than=]
+>>>    }
+>>>    ^
+>>> Introduced by commit
+>>>     35951393bbff ("pktgen: Remove VLA usage")
+>>>
+>>
+>> Thanks for the report.
+>>
+>> David:
+>>
+>> If this code is not going to be executed very often [1], then I think
+>> it is safe to use dynamic memory allocation instead, as this is not
+>> going to impact the performance.
+>>
+>> What do you think?
+>>
+>> [1] https://lkml.org/lkml/2018/3/9/630
+> 
+> Sure, that works.
+> 
+> It is only invoked when pktgen configuration changes are made.
+> 
 
-Yeah, I reported that earlier (216 of my 244 builds failed - gcc 4.6.3)
+OK. I'll send a new patch for this.
 
-> beb7eb2 kernelh-skip-single-eval-logic-on-literals-in-min-max-v3
-> 19ff7e5 kernelh-skip-single-eval-logic-on-literals-in-min-max-v2
-> c7c133f kernel.h: skip single-eval logic on literals in min()/max()
->=20
-> (it wasn't until I reverted commit c7c133f that the kernel build worked)
-
-I will revert those from linux-next today unless someone sends a fix.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vP9o.KcDVRvvpOiZdHzSAhD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoL84ACgkQAVBC80lX
-0GxZkwf/boqkV4EvJb9dYtrjCj7A6h4qnngIYqL1d7DdrPFXd1GqjBjiFfE6OIQ6
-IZ4pFGWteIDAOASMA6ggHgysxFaRlCRdo9+/jPSBa2vs+I3qcVDyUUZdISjyY4TA
-Hf73qp40p9rwTXLKkhjtp/3SMug9hWooyrAAkyICV8dMLT8nxYoHAyAbOKxIvFXx
-1f8hGH3SwFPUicfZXetIfRbl0ZfYUUnh/t+FpnIF+6Oqm+bxaTPgmYVONpNRi42G
-+ZtCRAjfe6K6MPBbUXNZSpQmvZPsYdgF8Q2n3JaBDD3p3o6mAEoR7cz/fOcPjmVK
-eiH/IH58iCXh3jZ8nClgiNROzqQHFA==
-=AMIk
------END PGP SIGNATURE-----
-
---Sig_/vP9o.KcDVRvvpOiZdHzSAhD--
+Thanks
+--
+Gustavo
