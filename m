@@ -1,75 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for Mar 13
-Date: Wed, 14 Mar 2018 07:48:32 +1100
-Message-ID: <20180314074832.0fb08b90@canb.auug.org.au>
-References: <20180313183326.0e93f359@canb.auug.org.au>
-        <20180313175205.GA15734@light.dominikbrodowski.net>
+Subject: Re: linux-next: build failure after merge of the akpm-current tree
+Date: Wed, 14 Mar 2018 07:58:00 +1100
+Message-ID: <20180314075800.49fc10e5@canb.auug.org.au>
+References: <20180313205119.6ca3c1aa@canb.auug.org.au>
+        <20180313124434.6f91b499b16080e766ab070f@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Up4weG3Z39ZovDdlJz62UAq"; protocol="application/pgp-signature"
+ boundary="Sig_/m.dZac+qbtJxaFjAizv+2eg"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180313175205.GA15734@light.dominikbrodowski.net>
+In-Reply-To: <20180313124434.6f91b499b16080e766ab070f@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linus <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Up4weG3Z39ZovDdlJz62UAq
+--Sig_/m.dZac+qbtJxaFjAizv+2eg
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dominik,
+Hi Andrew,
 
-On Tue, 13 Mar 2018 18:52:05 +0100 Dominik Brodowski <linux@dominikbrodowsk=
-i.net> wrote:
+On Tue, 13 Mar 2018 12:44:34 -0700 Andrew Morton <akpm@linux-foundation.org=
+> wrote:
 >
-> would it be possible to have
+> On Tue, 13 Mar 2018 20:51:19 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
 >=20
->    https://git.kernel.org/pub/scm/linux/kernel/git/brodo/linux.git syscal=
-ls-next
+> > After merging the akpm-current tree, today's linux-next build (lots of
+> > configuations) failed like this:
+> >=20
+> > (from the i386 defconfig build)
+> >=20
+> > In file included from include/linux/memcontrol.h:29:0,
+> >                  from include/linux/swap.h:9,
+> >                  from include/linux/suspend.h:5,
+> >                  from arch/x86/kernel/asm-offsets.c:13:
+> > include/linux/mm.h: In function 'get_mm_hiwater_rss':
+> > include/linux/mm.h:1569:9: error: first argument to '__builtin_choose_e=
+xpr' not a constant
+> > include/linux/mm.h: In function 'get_mm_hiwater_vm':
+> > include/linux/mm.h:1574:9: error: first argument to '__builtin_choose_e=
+xpr' not a constant
+> >=20
+> > and many more ...
+> >=20
+> > Caused by commit
+> >=20
+> >   c7c133f3d5ff ("kernel.h: skip single-eval logic on literals in min()/=
+max()")
+> > (and perhaps the folloups)
+> >=20
+> > Just a few of my builds actaully worked (including those I do
+> > during the day).  For complete logs see
+> > http://kisskb.ellerman.id.au/kisskb/head/13556/ .
+> >=20
+> > I guess it could be compiler version specific.  The failing ones are
+> > done with gcc 4.6.3.  My successful ones with gcc 7.3.1. =20
 >=20
-> added to -next? This will probably only be for one or two release cycles,
-> but it might easen the development process of that patch series.
+> Yes, this is being a pain in the butt.  I guess we should drop the
+> patches for now.
 
-Added from today.  I put it near the start since Linus said he may take
-(some of) it this release.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+OK, I have removed them from my copy of your tree (rather than add
+reverts on top).
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell
 
---Sig_/Up4weG3Z39ZovDdlJz62UAq
+--Sig_/m.dZac+qbtJxaFjAizv+2eg
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoOSAACgkQAVBC80lX
-0GxheQf/ejxB7t4jQANFEBGnxuHtIZTX1GRKkCzBrBItuQ+nlLoNE71zSj07zuV+
-M91HNTlK+mFSRpVW985wmAXqYr6YdQq5kmeB3h5LRgCoWnOf198sFQLvO7ejBWdq
-k5xXYBYX2rl1ruDKsWmLwbP6vtHyHJXfF//Yum5opTwpuTn9xjxdEaZfdYc2gQJV
-x1bLRQLNwIENBKW+lRgC1vzplsksXw9r0QKJKt1vQELVeg2jVdCFvey4y/LD4h22
-REXjnhhkwIsFa64ZWNgFm3RMW1bhp9Q81PmMlDNLvQ1FKEv9WrAnd36yVQ36YldE
-yBxBP8nDPrUyfvWyS4mAYfbV83ARXA==
-=SrND
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqoO1gACgkQAVBC80lX
+0GwErAf/b9mDemDFZRPlflJQJt/k6uZc20pHlSDz+FtXVmHeGJ8UHir4WYghxhAd
+M1PpSA7TKYJBPt4YR0nrXgsvvpNZOLBcYr3GPp+Qb47t44UA/D4iCUG0nGfbUCrz
+imkwVxonj/BWGR7Bm78mT4ioF0dZ84DfJqQFmLOzDB/9AHGkQHEAGAZ6XPY0mDqA
+JSL7XqLTuzTEkcS9KLhi9dFdlCI6uCAHSbi0RrhJgiv0JPm6ZOZCXvfhqrkviL/E
+zuTyCDImfVLZED/4ZK+/kMULqf7RbfbPMDKO/K60feRoiTeYoyjnnHR0h6LdGwlg
++4hfXlIKfOhnr3XUGegnyisDa0Nk/Q==
+=oXPu
 -----END PGP SIGNATURE-----
 
---Sig_/Up4weG3Z39ZovDdlJz62UAq--
+--Sig_/m.dZac+qbtJxaFjAizv+2eg--
