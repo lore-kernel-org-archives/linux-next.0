@@ -1,91 +1,49 @@
-From: Mike Snitzer <snitzer@redhat.com>
-Subject: Re: linux-next: Tree for Mar 13
-Date: Tue, 13 Mar 2018 11:57:40 -0400
-Message-ID: <CAMM=eLdZ6adSV6Q0JLkRi9k=7g5o4SEAyGfOm0P_nqw71Jbing@mail.gmail.com>
-References: <20180313183326.0e93f359@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: build warning after merge of the net-next tree
+Date: Tue, 13 Mar 2018 11:33:13 -0400 (EDT)
+Message-ID: <20180313.113313.629581257230548483.davem@davemloft.net>
+References: <20180313171153.1614c11e@canb.auug.org.au>
+        <67db5ac6-9816-4bf1-c594-72697c426466@embeddedor.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180313183326.0e93f359@canb.auug.org.au>
+In-Reply-To: <67db5ac6-9816-4bf1-c594-72697c426466@embeddedor.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@chromium.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>
+To: gustavo@embeddedor.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-I had to revert the following commits to get this kernel to build
-(otherwise I got macro expansion errors, using RHEL7
-gcc-4.8.5-28.el7.x86_64):
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Date: Tue, 13 Mar 2018 06:46:24 -0500
 
-beb7eb2 kernelh-skip-single-eval-logic-on-literals-in-min-max-v3
-19ff7e5 kernelh-skip-single-eval-logic-on-literals-in-min-max-v2
-c7c133f kernel.h: skip single-eval logic on literals in min()/max()
+> Hi Stephen,
+> 
+> On 03/13/2018 01:11 AM, Stephen Rothwell wrote:
+>> Hi all,
+>> After merging the net-next tree, today's linux-next build (sparc
+>> defconfig) produced this warning:
+>> net/core/pktgen.c: In function 'pktgen_if_write':
+>> net/core/pktgen.c:1710:1: warning: the frame size of 1048 bytes is
+>> larger than 1024 bytes [-Wframe-larger-than=]
+>>   }
+>>   ^
+>> Introduced by commit
+>>    35951393bbff ("pktgen: Remove VLA usage")
+>> 
+> 
+> Thanks for the report.
+> 
+> David:
+> 
+> If this code is not going to be executed very often [1], then I think
+> it is safe to use dynamic memory allocation instead, as this is not
+> going to impact the performance.
+> 
+> What do you think?
+> 
+> [1] https://lkml.org/lkml/2018/3/9/630
 
-(it wasn't until I reverted commit c7c133f that the kernel build worked)
+Sure, that works.
 
-Here is a snippet of the errors if commit c7c133f was applied:
-
-[root@rhel-storage-02 linux]# make
-  CHK     include/config/kernel.release
-  CHK     include/generated/uapi/linux/version.h
-  CHK     include/generated/utsrelease.h
-  CC      kernel/bounds.s
-  CHK     include/generated/bounds.h
-  CHK     include/generated/timeconst.h
-  CC      arch/x86/kernel/asm-offsets.s
-In file included from ./include/linux/crypto.h:21:0,
-                 from arch/x86/kernel/asm-offsets.c:9:
-./include/linux/jiffies.h: In function =E2=80=98jiffies_delta_to_clock_t=E2=
-=80=99:
-./include/linux/kernel.h:856:2: error: first argument to
-=E2=80=98__builtin_choose_expr=E2=80=99 not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro =E2=80=98__max=
-=E2=80=99
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/jiffies.h:444:28: note: in expansion of macro =E2=80=98max=
-=E2=80=99
-  return jiffies_to_clock_t(max(0L, delta));
-                            ^
-./include/linux/mm.h: In function =E2=80=98get_mm_hiwater_rss=E2=80=99:
-./include/linux/kernel.h:856:2: error: first argument to
-=E2=80=98__builtin_choose_expr=E2=80=99 not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro =E2=80=98__max=
-=E2=80=99
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/mm.h:1569:9: note: in expansion of macro =E2=80=98max=E2=80=
-=99
-  return max(mm->hiwater_rss, get_mm_rss(mm));
-         ^
-./include/linux/mm.h: In function =E2=80=98get_mm_hiwater_vm=E2=80=99:
-./include/linux/kernel.h:856:2: error: first argument to
-=E2=80=98__builtin_choose_expr=E2=80=99 not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:869:19: note: in expansion of macro =E2=80=98__max=
-=E2=80=99
- #define max(x, y) __max(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/mm.h:1574:9: note: in expansion of macro =E2=80=98max=E2=80=
-=99
-  return max(mm->hiwater_vm, mm->total_vm);
-         ^
-./include/linux/bvec.h: In function =E2=80=98bvec_iter_advance=E2=80=99:
-./include/linux/kernel.h:833:2: error: first argument to
-=E2=80=98__builtin_choose_expr=E2=80=99 not a constant
-  __builtin_choose_expr(__builtin_constant_p(x) &&  \
-  ^
-./include/linux/kernel.h:847:19: note: in expansion of macro =E2=80=98__min=
-=E2=80=99
- #define min(x, y) __min(typeof(x), typeof(y), x, y)
-                   ^
-./include/linux/bvec.h:59:2: note: in expansion of macro =E2=80=98min=E2=80=
-=99
-  min((iter).bi_size,     \
-  ^
-...
+It is only invoked when pktgen configuration changes are made.
