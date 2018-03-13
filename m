@@ -1,40 +1,37 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the vfs tree
-Date: Tue, 13 Mar 2018 09:47:40 +0100
-Message-ID: <20180313084740.GA8901@kroah.com>
-References: <20180313152240.3a64e0c9@canb.auug.org.au>
+From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Subject: RE: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 13 Mar 2018 08:52:12 +0000
+Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1D9561@SW-EX-MBX01.diasemi.com>
+References: <20180313170922.2fa1ea99@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180313152240.3a64e0c9@canb.auug.org.au>
+In-Reply-To: <20180313170922.2fa1ea99@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 13, 2018 at 03:22:40PM +1100, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> Today's linux-next merge of the staging tree got conflicts in:
-> 
->   drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c
->   drivers/staging/lustre/lnet/libcfs/linux/linux-prim.c
-> 
-> between commit:
-> 
->   304ec482f562 ("get rid of pointless includes of fs_struct.h")
-> 
-> from the vfs tree and commits:
-> 
->   37d3b407dc14 ("staging: lustre: remove linux-curproc.c")
->   6b7936ceefa7 ("staging: lustre: make signal-blocking functions inline")
-> 
-> from the staging tree.
-> 
-> I fixed it up (I just removed the files) and can carry the fix as
-> necessary.
+On 13 March 2018 06:09, Stephen Rothwell wrote:
 
-Sounds like the correct fix, thanks.
+> Hi all,
+> 
+> After merging the sound-asoc tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> sound/soc/codecs/da7219.o: In function `.da7219_remove':
+> da7219.c:(.text+0xcbc): undefined reference to `.clkdev_drop'
+> 
+> Caused by commit
+> 
+>   fc8f7ea2d6c0 ("ASoC: da7219: Add common clock usage for providing DAI clks")
+> 
+> CONFIG_CLKDEV_LOOKUP is not set for this build.
+> 
+> I have reverted that commit for today.
 
-greg k-h
+My bad. Apologies for this. :(
+
+Mark, I'll send a follow up patch to fix this ASAP.
