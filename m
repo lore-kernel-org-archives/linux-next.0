@@ -1,163 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 13 Mar 2018 11:29:41 +1100
-Message-ID: <20180313112941.7971ba0c@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Tue, 13 Mar 2018 12:15:28 +1100
+Message-ID: <20180313121528.36120e37@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/frLOy=jyCYIrEK1ptviZ+79"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>, Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>
+Content-Type: multipart/mixed; boundary="===============1717111929=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Eric Huang <JinHuiEric.Huang@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Rex Zhu <Rex.Zhu@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/frLOy=jyCYIrEK1ptviZ+79
+--===============1717111929==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/wrPZgJZxY4WI2A2sGLGYPP+"; protocol="application/pgp-signature"
+
+--Sig_/wrPZgJZxY4WI2A2sGLGYPP+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got conflicts in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  drivers/net/ethernet/mellanox/mlxsw/spectrum.h
-  drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+  drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
 
 between commit:
 
-  663f1b26f9c1 ("mlxsw: spectrum: Prevent duplicate mirrors")
+  a0aaa03062be ("drm/amd/powerplay: fix power over limit on Fiji")
 
-from the net tree and commit:
+from the Linus' and commit:
 
-  a629ef210d89 ("mlxsw: spectrum: Move SPAN code to separate module")
+  a5278e511dce ("drm/amd/pp: Revert gfx/compute profile switch sysfs")
 
-from the net-next tree.
+from the drm tree.
 
-I fixed it up (the code changed in the former was moved in the latter -
-I applied the below merge fix patch) and can carry the fix as
+I fixed it up (I just used the latter version) and can carry the fix as
 necessary. This is now fixed as far as linux-next is concerned, but any
 non trivial conflicts should be mentioned to your upstream maintainer
 when your tree is submitted for merging.  You may also want to consider
 cooperating with the maintainer of the conflicting tree to minimise any
 particularly complex conflicts.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 13 Mar 2018 11:25:13 +1100
-Subject: [PATCH] mlxsw: merge fix for move of SPAN code
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- .../net/ethernet/mellanox/mlxsw/spectrum_span.c    | 28 ++++++++++++++++++=
-----
- .../net/ethernet/mellanox/mlxsw/spectrum_span.h    |  3 +++
- 2 files changed, 27 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c b/drivers/=
-net/ethernet/mellanox/mlxsw/spectrum_span.c
-index ae22a3daffbf..4d6ed207b4af 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
-@@ -600,13 +600,17 @@ int mlxsw_sp_span_port_mtu_update(struct mlxsw_sp_por=
-t *port, u16 mtu)
- }
-=20
- static struct mlxsw_sp_span_inspected_port *
--mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_port *port,
--				    struct mlxsw_sp_span_entry *span_entry)
-+mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_span_entry *span_entry,
-+				    enum mlxsw_sp_span_type type,
-+				    struct mlxsw_sp_port *port,
-+				    bool bind)
- {
- 	struct mlxsw_sp_span_inspected_port *p;
-=20
- 	list_for_each_entry(p, &span_entry->bound_ports_list, list)
--		if (port->local_port =3D=3D p->local_port)
-+		if (type =3D=3D p->type &&
-+		    port->local_port =3D=3D p->local_port &&
-+		    bind =3D=3D p->bound)
- 			return p;
- 	return NULL;
- }
-@@ -636,8 +640,22 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port =
-*port,
- 	struct mlxsw_sp_span_inspected_port *inspected_port;
- 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
- 	char sbib_pl[MLXSW_REG_SBIB_LEN];
-+	int i;
- 	int err;
-=20
-+	/* A given (source port, direction) can only be bound to one analyzer,
-+	 * so if a binding is requested, check for conflicts.
-+	 */
-+	if (bind)
-+		for (i =3D 0; i < mlxsw_sp->span.entries_count; i++) {
-+			struct mlxsw_sp_span_entry *curr =3D
-+				&mlxsw_sp->span.entries[i];
-+
-+			if (mlxsw_sp_span_entry_bound_port_find(curr, type,
-+								port, bind))
-+				return -EEXIST;
-+		}
-+
- 	/* if it is an egress SPAN, bind a shared buffer to it */
- 	if (type =3D=3D MLXSW_SP_SPAN_EGRESS) {
- 		u32 buffsize =3D mlxsw_sp_span_mtu_to_buffsize(mlxsw_sp,
-@@ -665,6 +683,7 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port *=
-port,
- 	}
- 	inspected_port->local_port =3D port->local_port;
- 	inspected_port->type =3D type;
-+	inspected_port->bound =3D bind;
- 	list_add_tail(&inspected_port->list, &span_entry->bound_ports_list);
-=20
- 	return 0;
-@@ -691,7 +710,8 @@ mlxsw_sp_span_inspected_port_del(struct mlxsw_sp_port *=
-port,
- 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
- 	char sbib_pl[MLXSW_REG_SBIB_LEN];
-=20
--	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(port, span_entry);
-+	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(span_entry, type,
-+							     port, bind);
- 	if (!inspected_port)
- 		return;
-=20
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h b/drivers/=
-net/ethernet/mellanox/mlxsw/spectrum_span.h
-index 948aceb512c5..4b87ec20e658 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
-@@ -51,6 +51,9 @@ struct mlxsw_sp_span_inspected_port {
- 	struct list_head list;
- 	enum mlxsw_sp_span_type type;
- 	u8 local_port;
-+
-+	/* Whether this is a directly bound mirror (port-to-port) or an ACL. */
-+	bool bound;
- };
-=20
- struct mlxsw_sp_span_parms {
---=20
-2.16.1
-
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/frLOy=jyCYIrEK1ptviZ+79
+--Sig_/wrPZgJZxY4WI2A2sGLGYPP+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnG3UACgkQAVBC80lX
-0GykGggAiiuHOkzeoNqW1nqtpCRLsMTYjDvCIjnsLpgPjBXTHvqzOPqk0u0pvNVR
-QMWo76yIgW9wUc9vkdE2I4ZYi4ax6yju3NVSFbJvfGLNkBwQnQIsuhDL3mHoKBiv
-+dWcHfJy8a84D0mY4AMgq9ZGfBocZR4p9oKbwhTnrpSXmSaY98d/FArsEqNdR73F
-s+tk5+9OEDKdOmKerk9gwJ+LupARC2v036GjsjojcWbu6721AT6VkvMXiCTLsEme
-5/hys4jOPWIX6pkZ3TuZ5P1Zu9q4/uPw0XrquCJ0wlDlIe6dKythCP5VYB4XvG4/
-U8S8yIGjrlPytfqpXhRnlqnDWvLPog==
-=ltqn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnJjAACgkQAVBC80lX
+0GzVYgf+PdWjze0sLpZoFAOIfJSZRRiYeI2e7jk+LnQErOnbJV89MK/8yGm+7Cr4
+lx3KHXqsuSRVJUdFTUokAA5/bhOzWafs8D+3owWQfZ8AiI+MxaRbDqrDhoFfj3tb
+dmMjmyEDu9oI670vKvmTdDzAEL5/eqqA2M/Uh948fE3Wy70B1gjTqS9A1xih0WAK
+drfcblR94dm0RjqOPmCYtmGHzGLpxB99D/13mMiOdZfKCdjXe97BY3Ez5WZV1EfH
+C7Qd3xhcaHkIBnHYHVCJs3WZw3A13ph9O6RNsvg5zlRhjrTuY1Deh88fFXNPQcbB
+GJ5KHRGN542tf8q33G3JTTPKNG4QLQ==
+=rwMR
 -----END PGP SIGNATURE-----
 
---Sig_/frLOy=jyCYIrEK1ptviZ+79--
+--Sig_/wrPZgJZxY4WI2A2sGLGYPP+--
+
+--===============1717111929==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1717111929==--
