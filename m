@@ -1,37 +1,71 @@
-From: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Subject: RE: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 13 Mar 2018 08:52:12 +0000
-Message-ID: <2E89032DDAA8B9408CB92943514A0337014C1D9561@SW-EX-MBX01.diasemi.com>
-References: <20180313170922.2fa1ea99@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Tue, 13 Mar 2018 20:51:19 +1100
+Message-ID: <20180313205119.6ca3c1aa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/9BBFIhizv9ofbGLUrbIy8xR"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180313170922.2fa1ea99@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
-On 13 March 2018 06:09, Stephen Rothwell wrote:
+--Sig_/9BBFIhizv9ofbGLUrbIy8xR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
-> 
-> After merging the sound-asoc tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
-> 
-> sound/soc/codecs/da7219.o: In function `.da7219_remove':
-> da7219.c:(.text+0xcbc): undefined reference to `.clkdev_drop'
-> 
-> Caused by commit
-> 
->   fc8f7ea2d6c0 ("ASoC: da7219: Add common clock usage for providing DAI clks")
-> 
-> CONFIG_CLKDEV_LOOKUP is not set for this build.
-> 
-> I have reverted that commit for today.
+Hi Andrew,
 
-My bad. Apologies for this. :(
+After merging the akpm-current tree, today's linux-next build (lots of
+configuations) failed like this:
 
-Mark, I'll send a follow up patch to fix this ASAP.
+(from the i386 defconfig build)
+
+In file included from include/linux/memcontrol.h:29:0,
+                 from include/linux/swap.h:9,
+                 from include/linux/suspend.h:5,
+                 from arch/x86/kernel/asm-offsets.c:13:
+include/linux/mm.h: In function 'get_mm_hiwater_rss':
+include/linux/mm.h:1569:9: error: first argument to '__builtin_choose_expr'=
+ not a constant
+include/linux/mm.h: In function 'get_mm_hiwater_vm':
+include/linux/mm.h:1574:9: error: first argument to '__builtin_choose_expr'=
+ not a constant
+
+and many more ...
+
+Caused by commit
+
+  c7c133f3d5ff ("kernel.h: skip single-eval logic on literals in min()/max(=
+)")
+(and perhaps the folloups)
+
+Just a few of my builds actaully worked (including those I do
+during the day).  For complete logs see
+http://kisskb.ellerman.id.au/kisskb/head/13556/ .
+
+I guess it could be compiler version specific.  The failing ones are
+done with gcc 4.6.3.  My successful ones with gcc 7.3.1.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9BBFIhizv9ofbGLUrbIy8xR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnnxgACgkQAVBC80lX
+0Gz3JggAowomfSVljr6M6qFqE/Eoa2rb7wJLq3KrB81NDc4G0s4Q2W4sIrop44IV
+KuNybNR2LvduG8/dw9aFVQKQRzT4ClPmI8oj8uAnK1sC52lDteKrDQ3wnRMN2tLv
+AE1zMyT+ttUKU8QUC7M/bqMZkb5yfAf/vnrUvspS23ZZFcvUtukrYZ/J2jTukbEg
+kwxNcKwXjvy0vvbIaQ/Ne9ws/F0UzvIxpyAVKZ8GvnSxAG5c+9do0O37aW9WRb/I
+R5OVrVuFbQj/jBd5GzV5RUpKP64o3j6zPt8EfhB3ql7SA7fUnAQVTlB1fWP9Qae9
+naJBhfEUU2850jEG5TyQ++CJumYb5A==
+=Skke
+-----END PGP SIGNATURE-----
+
+--Sig_/9BBFIhizv9ofbGLUrbIy8xR--
