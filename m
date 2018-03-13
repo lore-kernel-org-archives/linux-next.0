@@ -1,63 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the vfs tree
-Date: Tue, 13 Mar 2018 15:22:40 +1100
-Message-ID: <20180313152240.3a64e0c9@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Tue, 13 Mar 2018 16:46:37 +1100
+Message-ID: <20180313164637.781c48d2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KdvKorGuRcP1CaxidPbpYGc"; protocol="application/pgp-signature"
+ boundary="Sig_/C6fPjAkpIyHxdRTAUqojV=a"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rex Zhu <Rex.Zhu@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/KdvKorGuRcP1CaxidPbpYGc
+--Sig_/C6fPjAkpIyHxdRTAUqojV=a
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got conflicts in:
+After merging the drm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-  drivers/staging/lustre/lnet/libcfs/linux/linux-curproc.c
-  drivers/staging/lustre/lnet/libcfs/linux/linux-prim.c
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c: In function 'sm=
+u7_notify_link_speed_change_after_state_change':
+drivers/gpu/drm/amd/amdgpu/../powerplay/hwmgr/smu7_hwmgr.c:3830:7: error: i=
+mplicit declaration of function 'amdgpu_acpi_pcie_performance_request'; did=
+ you mean 'smu7_pcie_performance_request'? [-Werror=3Dimplicit-function-dec=
+laration]
+   if (amdgpu_acpi_pcie_performance_request(hwmgr->adev, request, false)) {
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+       smu7_pcie_performance_request
 
-between commit:
+Caused by commit
 
-  304ec482f562 ("get rid of pointless includes of fs_struct.h")
+  e1deba285156 ("drm/amd/pp: Use amdgpu acpi helper functions in powerplay")
 
-from the vfs tree and commits:
+and commit
 
-  37d3b407dc14 ("staging: lustre: remove linux-curproc.c")
-  6b7936ceefa7 ("staging: lustre: make signal-blocking functions inline")
+  37a94791a097 ("drm/amd/pp: Add #ifdef checks for CONFIG_ACPI")
 
-from the staging tree.
+missed this instance.
 
-I fixed it up (I just removed the files) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I added this hack patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Mar 2018 16:24:31 +1100
+Subject: [PATCH] drm/amd/pp: add another CONFIG_ACPI check
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu=
+/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+index d4d1d2e7e233..df2a312ca6c9 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
+@@ -3827,12 +3827,14 @@ static int smu7_notify_link_speed_change_after_stat=
+e_change(
+ 				smu7_get_current_pcie_speed(hwmgr) > 0)
+ 			return 0;
+=20
++#ifdef CONFIG_ACPI
+ 		if (amdgpu_acpi_pcie_performance_request(hwmgr->adev, request, false)) {
+ 			if (PP_PCIEGen2 =3D=3D target_link_speed)
+ 				pr_info("PSPP request to switch to Gen2 from Gen3 Failed!");
+ 			else
+ 				pr_info("PSPP request to switch to Gen1 from Gen2 Failed!");
+ 		}
++#endif
+ 	}
+=20
+ 	return 0;
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/KdvKorGuRcP1CaxidPbpYGc
+--Sig_/C6fPjAkpIyHxdRTAUqojV=a
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnUhEACgkQAVBC80lX
-0Gx8Xwf+LX35efVZ2lyRoHIQJ50G6oQo64JOXhp44sFq3qYPxeZ66kO73KTB6pXG
-PhP5bqsAjceuAwFYT09pPzB7Bbar02fIMXmJOZPIgrY2nPGp2Dg1ydlBwbUxIPAp
-hCKpp+onwPVjcIv6C9K9+byQ4SYdFv+6GbJhg5an0IMeBlvI2qxPtQVQKxNYIT4C
-Gekv43sM8tDzJ2sx3+h9ZsFC+nbwNIynU0PzwadlFMQHcVySE27LP7sL2BDIlfxC
-M6005QBj487QseDI8Qvz8u7qiw9omKLfXcyNtTComi5OITBn01m6IH/jBCjp3xzb
-3qII7H9SWjmbBZjMbgq6QdthX8elBQ==
-=P9uI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnZb0ACgkQAVBC80lX
+0Gw95Af+M7XACBLsv3vxMzgs31DJixtQYisjRdlvWSlM8SbLyDIKRKD8GREqwamx
+q+BhKjdrXYDLunCHNADXTMO/8sgHLgsA8W1lFAjUMsg6OwRqY3ZMkWs8pajMakqM
+hE9HPNn+iNuEI4Ftda9ioAW1h3jkcW/34lTZcwOl094Q/ry6ZZNv60sG/rybELb4
+IeoY/zkDxBLhDuy1t+nqFvNVxWShWbiXhWpT9I2PwwZp2xR2MXrX5jZXXnq+C6uZ
+EGZMnkweNz34KsVAd/whQKUWqTdmNA2p0IZIOx0C4CaYYamR/LJwrLU5+PP8yi7W
+Nlp2Eg8OoQzpeW6zt6KJTzjtQiXrQA==
+=PdNe
 -----END PGP SIGNATURE-----
 
---Sig_/KdvKorGuRcP1CaxidPbpYGc--
+--Sig_/C6fPjAkpIyHxdRTAUqojV=a--
