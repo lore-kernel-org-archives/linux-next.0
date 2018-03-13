@@ -1,148 +1,163 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Tue, 13 Mar 2018 11:04:51 +1100
-Message-ID: <20180313110451.384886eb@canb.auug.org.au>
+Date: Tue, 13 Mar 2018 11:29:41 +1100
+Message-ID: <20180313112941.7971ba0c@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Fm/Z6NMU1vj.usZZALOpR5k"; protocol="application/pgp-signature"
+ boundary="Sig_/frLOy=jyCYIrEK1ptviZ+79"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brad Mouring <brad.mouring@ni.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>, Jiri Pirko <jiri@mellanox.com>, Ido Schimmel <idosch@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Fm/Z6NMU1vj.usZZALOpR5k
+--Sig_/frLOy=jyCYIrEK1ptviZ+79
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the net-next tree got conflicts in:
 
-  drivers/net/phy/phy.c
+  drivers/net/ethernet/mellanox/mlxsw/spectrum.h
+  drivers/net/ethernet/mellanox/mlxsw/spectrum.c
 
 between commit:
 
-  a2c054a896b8 ("net: phy: Tell caller result of phy_change()")
+  663f1b26f9c1 ("mlxsw: spectrum: Prevent duplicate mirrors")
 
 from the net tree and commit:
 
-  4fff2d33c707 ("net: phy: remove phy_error from phy_disable_interrupts")
+  a629ef210d89 ("mlxsw: spectrum: Move SPAN code to separate module")
 
 from the net-next tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (the code changed in the former was moved in the latter -
+I applied the below merge fix patch) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 13 Mar 2018 11:25:13 +1100
+Subject: [PATCH] mlxsw: merge fix for move of SPAN code
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ .../net/ethernet/mellanox/mlxsw/spectrum_span.c    | 28 ++++++++++++++++++=
+----
+ .../net/ethernet/mellanox/mlxsw/spectrum_span.h    |  3 +++
+ 2 files changed, 27 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c b/drivers/=
+net/ethernet/mellanox/mlxsw/spectrum_span.c
+index ae22a3daffbf..4d6ed207b4af 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.c
+@@ -600,13 +600,17 @@ int mlxsw_sp_span_port_mtu_update(struct mlxsw_sp_por=
+t *port, u16 mtu)
+ }
+=20
+ static struct mlxsw_sp_span_inspected_port *
+-mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_port *port,
+-				    struct mlxsw_sp_span_entry *span_entry)
++mlxsw_sp_span_entry_bound_port_find(struct mlxsw_sp_span_entry *span_entry,
++				    enum mlxsw_sp_span_type type,
++				    struct mlxsw_sp_port *port,
++				    bool bind)
+ {
+ 	struct mlxsw_sp_span_inspected_port *p;
+=20
+ 	list_for_each_entry(p, &span_entry->bound_ports_list, list)
+-		if (port->local_port =3D=3D p->local_port)
++		if (type =3D=3D p->type &&
++		    port->local_port =3D=3D p->local_port &&
++		    bind =3D=3D p->bound)
+ 			return p;
+ 	return NULL;
+ }
+@@ -636,8 +640,22 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port =
+*port,
+ 	struct mlxsw_sp_span_inspected_port *inspected_port;
+ 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
+ 	char sbib_pl[MLXSW_REG_SBIB_LEN];
++	int i;
+ 	int err;
+=20
++	/* A given (source port, direction) can only be bound to one analyzer,
++	 * so if a binding is requested, check for conflicts.
++	 */
++	if (bind)
++		for (i =3D 0; i < mlxsw_sp->span.entries_count; i++) {
++			struct mlxsw_sp_span_entry *curr =3D
++				&mlxsw_sp->span.entries[i];
++
++			if (mlxsw_sp_span_entry_bound_port_find(curr, type,
++								port, bind))
++				return -EEXIST;
++		}
++
+ 	/* if it is an egress SPAN, bind a shared buffer to it */
+ 	if (type =3D=3D MLXSW_SP_SPAN_EGRESS) {
+ 		u32 buffsize =3D mlxsw_sp_span_mtu_to_buffsize(mlxsw_sp,
+@@ -665,6 +683,7 @@ mlxsw_sp_span_inspected_port_add(struct mlxsw_sp_port *=
+port,
+ 	}
+ 	inspected_port->local_port =3D port->local_port;
+ 	inspected_port->type =3D type;
++	inspected_port->bound =3D bind;
+ 	list_add_tail(&inspected_port->list, &span_entry->bound_ports_list);
+=20
+ 	return 0;
+@@ -691,7 +710,8 @@ mlxsw_sp_span_inspected_port_del(struct mlxsw_sp_port *=
+port,
+ 	struct mlxsw_sp *mlxsw_sp =3D port->mlxsw_sp;
+ 	char sbib_pl[MLXSW_REG_SBIB_LEN];
+=20
+-	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(port, span_entry);
++	inspected_port =3D mlxsw_sp_span_entry_bound_port_find(span_entry, type,
++							     port, bind);
+ 	if (!inspected_port)
+ 		return;
+=20
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h b/drivers/=
+net/ethernet/mellanox/mlxsw/spectrum_span.h
+index 948aceb512c5..4b87ec20e658 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_span.h
+@@ -51,6 +51,9 @@ struct mlxsw_sp_span_inspected_port {
+ 	struct list_head list;
+ 	enum mlxsw_sp_span_type type;
+ 	u8 local_port;
++
++	/* Whether this is a directly bound mirror (port-to-port) or an ACL. */
++	bool bound;
+ };
+=20
+ struct mlxsw_sp_span_parms {
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/phy/phy.c
-index 9aabfa1a455a,c2d9027be863..000000000000
---- a/drivers/net/phy/phy.c
-+++ b/drivers/net/phy/phy.c
-@@@ -617,77 -617,6 +617,68 @@@ static void phy_error(struct phy_devic
-  	phy_trigger_machine(phydev, false);
-  }
- =20
- +/**
- + * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
- + * @phydev: target phy_device struct
- + */
- +static int phy_disable_interrupts(struct phy_device *phydev)
- +{
- +	int err;
- +
- +	/* Disable PHY interrupts */
- +	err =3D phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
- +	if (err)
-- 		goto phy_err;
-++		return err;
- +
- +	/* Clear the interrupt */
-- 	err =3D phy_clear_interrupt(phydev);
-- 	if (err)
-- 		goto phy_err;
--=20
-- 	return 0;
--=20
-- phy_err:
-- 	phy_error(phydev);
--=20
-- 	return err;
-++	return phy_clear_interrupt(phydev);
- +}
- +
- +/**
- + * phy_change - Called by the phy_interrupt to handle PHY changes
- + * @phydev: phy_device struct that interrupted
- + */
- +static irqreturn_t phy_change(struct phy_device *phydev)
- +{
- +	if (phy_interrupt_is_valid(phydev)) {
- +		if (phydev->drv->did_interrupt &&
- +		    !phydev->drv->did_interrupt(phydev))
- +			return IRQ_NONE;
- +
- +		if (phydev->state =3D=3D PHY_HALTED)
- +			if (phy_disable_interrupts(phydev))
- +				goto phy_err;
- +	}
- +
- +	mutex_lock(&phydev->lock);
- +	if ((PHY_RUNNING =3D=3D phydev->state) || (PHY_NOLINK =3D=3D phydev->sta=
-te))
- +		phydev->state =3D PHY_CHANGELINK;
- +	mutex_unlock(&phydev->lock);
- +
- +	/* reschedule state queue work to run as soon as possible */
- +	phy_trigger_machine(phydev, true);
- +
- +	if (phy_interrupt_is_valid(phydev) && phy_clear_interrupt(phydev))
- +		goto phy_err;
- +	return IRQ_HANDLED;
- +
- +phy_err:
- +	phy_error(phydev);
- +	return IRQ_NONE;
- +}
- +
- +/**
- + * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY cha=
-nges
- + * @work: work_struct that describes the work to be done
- + */
- +void phy_change_work(struct work_struct *work)
- +{
- +	struct phy_device *phydev =3D
- +		container_of(work, struct phy_device, phy_queue);
- +
- +	phy_change(phydev);
- +}
- +
-  /**
-   * phy_interrupt - PHY interrupt handler
-   * @irq: interrupt line
-
---Sig_/Fm/Z6NMU1vj.usZZALOpR5k
+--Sig_/frLOy=jyCYIrEK1ptviZ+79
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnFaMACgkQAVBC80lX
-0Gyywwf/WyvZVTF9G3nBjHuszibU4akTAi9hAsnEvCtBTKXx7W0gGC0Bnk24Vy7L
-Wl3iTM2JUGtRDTNgLDfX5GatNti+1u3k4fBIva51lYfQzQysQcuIqo22ojiidsth
-0xk1QOwxXjOBZhXUCoh7dl61DFvZsgolbpeo4qMpOvMAuKvRuZNeIlTkC3MK8WR2
-vEsvJoB8cGoejfjuli2A/BO5IAQRqyxlR/xTUzAa9ZzMtKldUH8szvJpeCE1Khbs
-qbXkI45klWJ/fzAgrwtbimJ6ep/nsgl8IVxzGrpkvEY6iRlunwN5eMCuZBKLwkuc
-6JOTPrpBQJcFWpKYuTQhk+0IGKKn3w==
-=nSOI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnG3UACgkQAVBC80lX
+0GykGggAiiuHOkzeoNqW1nqtpCRLsMTYjDvCIjnsLpgPjBXTHvqzOPqk0u0pvNVR
+QMWo76yIgW9wUc9vkdE2I4ZYi4ax6yju3NVSFbJvfGLNkBwQnQIsuhDL3mHoKBiv
++dWcHfJy8a84D0mY4AMgq9ZGfBocZR4p9oKbwhTnrpSXmSaY98d/FArsEqNdR73F
+s+tk5+9OEDKdOmKerk9gwJ+LupARC2v036GjsjojcWbu6721AT6VkvMXiCTLsEme
+5/hys4jOPWIX6pkZ3TuZ5P1Zu9q4/uPw0XrquCJ0wlDlIe6dKythCP5VYB4XvG4/
+U8S8yIGjrlPytfqpXhRnlqnDWvLPog==
+=ltqn
 -----END PGP SIGNATURE-----
 
---Sig_/Fm/Z6NMU1vj.usZZALOpR5k--
+--Sig_/frLOy=jyCYIrEK1ptviZ+79--
