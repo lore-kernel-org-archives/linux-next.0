@@ -1,35 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the qcom tree with the amlogic tree
-Date: Tue, 13 Mar 2018 08:45:16 +1100
-Message-ID: <20180313084516.49718221@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the net tree
+Date: Tue, 13 Mar 2018 11:04:51 +1100
+Message-ID: <20180313110451.384886eb@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5XX3mInVEPgUs6+wuJ2GbmB"; protocol="application/pgp-signature"
+ boundary="Sig_/Fm/Z6NMU1vj.usZZALOpR5k"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>, Kevin Hilman <khilman@baylibre.com>, Carlo Caione <carlo@caione.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, Amit Kucheria <amit.kucheria@linaro.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Brad Mouring <brad.mouring@ni.com>, Heiner Kallweit <hkallweit1@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi all,
 
-Today's linux-next merge of the qcom tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  arch/arm64/configs/defconfig
+  drivers/net/phy/phy.c
 
 between commit:
 
-  266c157de3b2 ("arm64: defconfig: enable MESON EFUSE")
+  a2c054a896b8 ("net: phy: Tell caller result of phy_change()")
 
-from the amlogic tree and commit:
+from the net tree and commit:
 
-  52fe48c2b9bb ("arm64: defconfig: enable thermal sensor on QCOM platforms")
+  4fff2d33c707 ("net: phy: remove phy_error from phy_disable_interrupts")
 
-from the qcom tree.
+from the net-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,34 +42,107 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/configs/defconfig
-index df2b08b1554f,a37130b54fae..000000000000
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@@ -565,7 -572,7 +575,8 @@@ CONFIG_PHY_XGENE=3D
-  CONFIG_PHY_TEGRA_XUSB=3Dy
-  CONFIG_QCOM_L2_PMU=3Dy
-  CONFIG_QCOM_L3_PMU=3Dy
- +CONFIG_MESON_EFUSE=3Dm
-+ CONFIG_QCOM_QFPROM=3Dy
-  CONFIG_UNIPHIER_EFUSE=3Dy
-  CONFIG_TEE=3Dy
-  CONFIG_OPTEE=3Dy
+diff --cc drivers/net/phy/phy.c
+index 9aabfa1a455a,c2d9027be863..000000000000
+--- a/drivers/net/phy/phy.c
++++ b/drivers/net/phy/phy.c
+@@@ -617,77 -617,6 +617,68 @@@ static void phy_error(struct phy_devic
+  	phy_trigger_machine(phydev, false);
+  }
+ =20
+ +/**
+ + * phy_disable_interrupts - Disable the PHY interrupts from the PHY side
+ + * @phydev: target phy_device struct
+ + */
+ +static int phy_disable_interrupts(struct phy_device *phydev)
+ +{
+ +	int err;
+ +
+ +	/* Disable PHY interrupts */
+ +	err =3D phy_config_interrupt(phydev, PHY_INTERRUPT_DISABLED);
+ +	if (err)
+- 		goto phy_err;
+++		return err;
+ +
+ +	/* Clear the interrupt */
+- 	err =3D phy_clear_interrupt(phydev);
+- 	if (err)
+- 		goto phy_err;
+-=20
+- 	return 0;
+-=20
+- phy_err:
+- 	phy_error(phydev);
+-=20
+- 	return err;
+++	return phy_clear_interrupt(phydev);
+ +}
+ +
+ +/**
+ + * phy_change - Called by the phy_interrupt to handle PHY changes
+ + * @phydev: phy_device struct that interrupted
+ + */
+ +static irqreturn_t phy_change(struct phy_device *phydev)
+ +{
+ +	if (phy_interrupt_is_valid(phydev)) {
+ +		if (phydev->drv->did_interrupt &&
+ +		    !phydev->drv->did_interrupt(phydev))
+ +			return IRQ_NONE;
+ +
+ +		if (phydev->state =3D=3D PHY_HALTED)
+ +			if (phy_disable_interrupts(phydev))
+ +				goto phy_err;
+ +	}
+ +
+ +	mutex_lock(&phydev->lock);
+ +	if ((PHY_RUNNING =3D=3D phydev->state) || (PHY_NOLINK =3D=3D phydev->sta=
+te))
+ +		phydev->state =3D PHY_CHANGELINK;
+ +	mutex_unlock(&phydev->lock);
+ +
+ +	/* reschedule state queue work to run as soon as possible */
+ +	phy_trigger_machine(phydev, true);
+ +
+ +	if (phy_interrupt_is_valid(phydev) && phy_clear_interrupt(phydev))
+ +		goto phy_err;
+ +	return IRQ_HANDLED;
+ +
+ +phy_err:
+ +	phy_error(phydev);
+ +	return IRQ_NONE;
+ +}
+ +
+ +/**
+ + * phy_change_work - Scheduled by the phy_mac_interrupt to handle PHY cha=
+nges
+ + * @work: work_struct that describes the work to be done
+ + */
+ +void phy_change_work(struct work_struct *work)
+ +{
+ +	struct phy_device *phydev =3D
+ +		container_of(work, struct phy_device, phy_queue);
+ +
+ +	phy_change(phydev);
+ +}
+ +
+  /**
+   * phy_interrupt - PHY interrupt handler
+   * @irq: interrupt line
 
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqm9OwACgkQAVBC80lX
-0GxOdQf/ZvQsipdh+fg8zd4azJ2CuMwF9J7LGXRIsaCoL/pTwxg3pRroH9G6970B
-t2wuBNkjqa4jqhLDb7tgqIdnF6GqutbqhlWNtFi9sxyq8iG7KDp78yO9iOJaWmwo
-/4D1vxSnwrsmqvRfMb6W1E472IBVBm8zUa3kjw4IOzxIgSf+ttcDbuSgeyYMXycw
-+KqFyvgcBayaWPAEdkg+yrKqZD6j9A+7PWssDm34V0oPmCYW3LsCgpvBBLD+Do4p
-T2r051BInb+oCIsLIuISAJnCOpFHB81NzW8WeFzOdIe+32TdyR3XeJQsXueqp2Ti
-Hb3LjywFIFrPnRfvZjQ0C5zM+Hrs9A==
-=mdCv
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqnFaMACgkQAVBC80lX
+0Gyywwf/WyvZVTF9G3nBjHuszibU4akTAi9hAsnEvCtBTKXx7W0gGC0Bnk24Vy7L
+Wl3iTM2JUGtRDTNgLDfX5GatNti+1u3k4fBIva51lYfQzQysQcuIqo22ojiidsth
+0xk1QOwxXjOBZhXUCoh7dl61DFvZsgolbpeo4qMpOvMAuKvRuZNeIlTkC3MK8WR2
+vEsvJoB8cGoejfjuli2A/BO5IAQRqyxlR/xTUzAa9ZzMtKldUH8szvJpeCE1Khbs
+qbXkI45klWJ/fzAgrwtbimJ6ep/nsgl8IVxzGrpkvEY6iRlunwN5eMCuZBKLwkuc
+6JOTPrpBQJcFWpKYuTQhk+0IGKKn3w==
+=nSOI
 -----END PGP SIGNATURE-----
 
---Sig_/5XX3mInVEPgUs6+wuJ2GbmB--
+--Sig_/Fm/Z6NMU1vj.usZZALOpR5k--
