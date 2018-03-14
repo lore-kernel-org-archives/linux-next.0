@@ -1,58 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: please clean up the clockevents tree
-Date: Wed, 14 Mar 2018 19:01:37 +1100
-Message-ID: <20180314190137.3704602b@canb.auug.org.au>
-References: <20180314100213.61168207@canb.auug.org.au>
-        <ce514c90-f9ec-fc9e-e205-cd822cd766b2@linaro.org>
+From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Subject: [linux-next][bisected c7c133f3][gcc 4.8.5] build fail with error:
+ first argument to
+ =?UTF-8?Q?=E2=80=98=5F=5Fbuiltin=5Fchoose=5Fexpr=E2=80=99?= not a constant
+Date: Wed, 14 Mar 2018 13:59:54 +0530
+Message-ID: <1521016194.31953.9.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uJA0QYGPf4LPxYtqkojBPTO"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <ce514c90-f9ec-fc9e-e205-cd822cd766b2@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Kees Cook <keescook@chromium.org>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/uJA0QYGPf4LPxYtqkojBPTO
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Greetings,
 
-Hi Daniel,
+Today's next kernel fails to build with gcc 4.8.5 on powerpc machine.
 
-On Wed, 14 Mar 2018 07:56:00 +0100 Daniel Lezcano <daniel.lezcano@linaro.or=
-g> wrote:
->
-> On 14/03/2018 00:02, Stephen Rothwell wrote:
-> > Hi Daniel,
-> >=20
-> > The clockevents tree appears to only contain an old version of patches
-> > that have been committed upstream.  As such, it is only causing conflic=
-ts.
-> > Please resync with your upstream tree. =20
->=20
-> Done.
 
-Excellent, thanks.
+./include/linux/jiffies.h: In function ‘jiffies_delta_to_clock_t’:
+./include/linux/kernel.h:855:2: error: first argument to ‘__builtin_choose_expr’ not a constant
+  __builtin_choose_expr(__builtin_constant_p(x) &&  \
+  ^
+./include/linux/kernel.h:867:19: note: in expansion of macro ‘__max’
+ #define max(x, y) __max(typeof(x), typeof(y), x, y)
 
---=20
-Cheers,
-Stephen Rothwell
+Machine Type: Power8 Baremetal
+gcc: 4.8.5
 
---Sig_/uJA0QYGPf4LPxYtqkojBPTO
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+Builds fine when below patch is reverted
+c7c133f3 kernel.h: skip single-eval logic on literals in min()/max()
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqo1uEACgkQAVBC80lX
-0Gxmlgf+NM3gNSxo75j2JdE+0da8nmZo+VyjTXVtE7PtWe/P+yqdBiJiZbIPeMR9
-8NyUHQHJNCq1Bz0bY7ZyrrfC8a+4BURzWqb+jUSwrzTUbcrfWpQgYvPdG8Kq/ODf
-+AQ9+kjvhiPixYmo5UVSlt/RAgdNPIIC2W9qFHHT7FyY8IfG/x7wmIQe1AxJbsh8
-S4MRk8R7uwLK+tffPSVOA2uqyxw5TKJgKasZaFlPcugE8UCNDuA8e1VtLJtLW2pf
-7GERkxEKeERCJR7M1n1OmsmLoJ+d/Wzd0IfZnQab/uzOHIwl0m+WXDQ1wSiDtPwI
-Bmv3ni7447ayLcaNUqBXm5F0jfKRkQ==
-=ETQm
------END PGP SIGNATURE-----
+-- 
+Regard's
 
---Sig_/uJA0QYGPf4LPxYtqkojBPTO--
+Abdul Haleem
+IBM Linux Technology Centre
