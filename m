@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the asm-generic tree with the syscalls
  tree
-Date: Thu, 15 Mar 2018 09:44:30 +1100
-Message-ID: <20180315094430.5d6f3e3e@canb.auug.org.au>
+Date: Thu, 15 Mar 2018 09:46:17 +1100
+Message-ID: <20180315094617.7c2a11b0@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m5491f2i1Dk+uN.5ZT6YgZb"; protocol="application/pgp-signature"
+ boundary="Sig_/qkJ0JBwy.utBj.8=7wiOemP"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jesper Nilsson <jesper@jni.nu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/m5491f2i1Dk+uN.5ZT6YgZb
+--Sig_/qkJ0JBwy.utBj.8=7wiOemP
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,7 +20,7 @@ Hi Arnd,
 
 Today's linux-next merge of the asm-generic tree got a conflict in:
 
-  arch/cris/kernel/sys_cris.c
+  arch/frv/kernel/sys_frv.c
 
 between commit:
 
@@ -29,7 +29,7 @@ o sys_mmap_pgoff()")
 
 from the syscalls tree and commit:
 
-  77b0b77f7812 ("CRIS: Drop support for the CRIS port")
+  fd8773f9f544 ("arch: remove frv port")
 
 from the asm-generic tree.
 
@@ -44,20 +44,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/m5491f2i1Dk+uN.5ZT6YgZb
+--Sig_/qkJ0JBwy.utBj.8=7wiOemP
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppc4ACgkQAVBC80lX
-0GyjmQf+IdK/yKZI9TfHUudjvNJNZIBpXe4chtB80BP0ey6hpdF8e8usYC4cwlV1
-ulnZp6EWjGRi0N0je1p0DcYWiDImJcAPOvJLoqXckck08jdgQ5mj1shwoPpA/hri
-5wvohUFiiWWIVyLxbThPM2gfEPTidR0iw5ce2+BAcJm4vWNPDLq5Sv3rGXhq0MDf
-HVd+aH+fcKTYqlzjsjr7z1O6noUECJbltuLJY3JvA0qyUrEICmc0XD1AfyrkK+XJ
-IOiiPmoNg/2690vcDqE1F449XfP95GbBzmXqXqF3u/VI67Pe8NcRQZzNJ2Prxxxn
-lneK1pEekR8Uvy2hCvEEvqpddZf6tA==
-=mUBa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppjkACgkQAVBC80lX
+0GzjIgf8CMMBhePpFl+ZxK0uvdLwIw+jCaHJS6+h2n3SzM5JZTyIcCbWnbe/4ACj
+SgGN7wxMoo8sM7BPv8m+bafXaWFXA+7hngL0YnF8/U74l80Zy5hc0A9cJV+qiqBA
+82fc36cilOmE+J2ZOnhZovEGqOak7dmb9xWOoW1JLmwDg2oqHMx4JYRbvDUF5x3u
+Jm2mPOBFcDU9wg8bfsjoRrqlLAHzBF+Qx71VbzXn/Gju/Iw5G5qdmXHbKBJLAQrU
+tQarxqqF7PAemMGV2sS7WnlN2cVi7EaV7CieSNwZtywFUMZhSbuO0vvyf7z+wLAS
+PETqPJ2oREW5mEZRPz+vMpfWRyQB7g==
+=nylQ
 -----END PGP SIGNATURE-----
 
---Sig_/m5491f2i1Dk+uN.5ZT6YgZb--
+--Sig_/qkJ0JBwy.utBj.8=7wiOemP--
