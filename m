@@ -1,51 +1,31 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: Re: [linux-next][bisected c7c133f3][gcc 4.8.5] build fail with
- error: first argument to
- =?UTF-8?Q?=E2=80=98=5F=5Fbuiltin=5Fchoose=5Fexpr=E2=80=99?= not a constant
-Date: Wed, 14 Mar 2018 15:29:06 +0530
-Message-ID: <1521021546.31953.12.camel@abdul.in.ibm.com>
-References: <1521016194.31953.9.camel@abdul.in.ibm.com>
-         <20180314193957.5f835d33@canb.auug.org.au>
+From: Michal Hocko <mhocko@kernel.org>
+Subject: Re: mmotm 2018-03-13-15-15 uploaded
+Date: Wed, 14 Mar 2018 14:03:13 +0100
+Message-ID: <20180314130313.GB23100@dhcp22.suse.cz>
+References: <20180313221617.IBhUuE5FL%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180314193957.5f835d33@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180313221617.IBhUuE5FL%akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mm-commits@vger.kernel.org, sfr@canb.auug.org.au
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2018-03-14 at 19:39 +1100, Stephen Rothwell wrote:
-> Hi Abdul,
+On Tue 13-03-18 15:16:17, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2018-03-13-15-15 has been uploaded to
+[...]
+> To develop on top of mmotm git:
 > 
-> On Wed, 14 Mar 2018 13:59:54 +0530 Abdul Haleem <abdhalee@linux.vnet.ibm.com> wrote:
-> >
-> > Today's next kernel fails to build with gcc 4.8.5 on powerpc machine.
-> 
-> Thanks for the report.  Just for the future, please include  the
-> next-XXXXXXXX tag when making reports about linux-next.
+>   $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+>   $ git remote update mmotm
+>   $ git checkout -b topic mmotm/master
+>   <make changes, commit>
+>   $ git send-email mmotm/master.. [...]
 
-Sure, I will. next-20180313 is the bad tag
-> 
-> > ./include/linux/jiffies.h: In function ‘jiffies_delta_to_clock_t’:
-> > ./include/linux/kernel.h:855:2: error: first argument to ‘__builtin_choose_expr’ not a constant
-> >   __builtin_choose_expr(__builtin_constant_p(x) &&  \
-> >   ^
-> > ./include/linux/kernel.h:867:19: note: in expansion of macro ‘__max’
-> >  #define max(x, y) __max(typeof(x), typeof(y), x, y)
-> > 
-> > Machine Type: Power8 Baremetal
-> > gcc: 4.8.5
-> > 
-> > 
-> > Builds fine when below patch is reverted
-> > c7c133f3 kernel.h: skip single-eval logic on literals in min()/max()
-> 
-> Those patches have been removed from today's linux-next (next-20180314).
-
+JFYI. After few missed mmotm updates while I was offline the tree is
+back up-to-date.
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+Michal Hocko
+SUSE Labs
