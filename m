@@ -1,46 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the edac-amd tree
-Date: Thu, 15 Mar 2018 07:38:51 +1100
-Message-ID: <20180315073851.0124d37a@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the nvdimm tree
+Date: Thu, 15 Mar 2018 07:43:16 +1100
+Message-ID: <20180315074316.3bd7c719@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/t81ftmIZjWB==0Y=C3ZzJq6"; protocol="application/pgp-signature"
+ boundary="Sig_/CQ_gA1KSnkNKxfjfpSGpzG3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tony Luck <tony.luck@intel.com>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/t81ftmIZjWB==0Y=C3ZzJq6
+--Sig_/CQ_gA1KSnkNKxfjfpSGpzG3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Borislav,
+Hi Dan,
 
 Commit
 
-  aefa4bb56ca8 ("EDAC, skx_edac: Detect non-volatile DIMMs")
+  07974c130d5d ("libnvdimm: remove redundant assignment to pointer 'dev'")
 
-is missing a Signed-off-by from its author.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/t81ftmIZjWB==0Y=C3ZzJq6
+--Sig_/CQ_gA1KSnkNKxfjfpSGpzG3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpiFsACgkQAVBC80lX
-0Gxlegf+Nr4OVgntA0WcIYaVkWcR+c5nE9lWY4dHCWTtn+LVdkBVAyTqobWRqS0h
-TOJjYo3heWCnV90C8B+whQQ3y171AP/F7dKhROj+jlRcqW/U0cq1e6s9hicLAAqi
-c2KuHz4JEf8pKsXg59tyX2uyzIvh+2cftS2j450GH9MPKeqVFHOyNHISO44zhvj7
-5dpqJbVvAViJlfL8eQDC2VkbrpMqyVv2lSqEFNQOsd+3qpeOJY6j4EYG+py0/6yQ
-alDxHmdFplUFbWUxU7HaJX5uT/xaR2W1Vl0bNmHr3G/pKE5oveQiP4gDfN3TY1fy
-8qknpZeXRm16A7SNFH22VeFpAt1pvA==
-=Y1aj
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqpiWQACgkQAVBC80lX
+0GyqgAf9E2noHJXueyHLG94DtoRUvOZBP159BVaQyj/CWOhkUzlFrS+/2vnm1hlV
+AHb95iVvGB1Ziq9jlDMcUIVm9f93hkffkBpMktEXyLGvVNU6iJ//A2KGzl0rojLb
+03AJD4Zn0OCc6d3+UjRI6u19OWg24JjUMKVYjnO5Pa/8eDIoAtqMrGrsbKpUuuus
+eX6VIYUXfpgtvWxRQ/u+ba+JTVNVKuDwNC+cCKIbUtWA96NGSv9c6u3R5Gwq0/4p
+MpHcJJHCVups6Z6tP8ZWTxWn8rgJjy9RcsMwNTvzxxqNc7ush/MpY+QHUc0QY1eb
+qNS8cS3cRy4713eokZh6TlAbPVe8mQ==
+=P1ak
 -----END PGP SIGNATURE-----
 
---Sig_/t81ftmIZjWB==0Y=C3ZzJq6--
+--Sig_/CQ_gA1KSnkNKxfjfpSGpzG3--
