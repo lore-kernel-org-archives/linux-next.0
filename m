@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the asm-generic tree with the syscalls
  tree
-Date: Thu, 15 Mar 2018 09:48:10 +1100
-Message-ID: <20180315094810.799c7388@canb.auug.org.au>
+Date: Thu, 15 Mar 2018 09:49:40 +1100
+Message-ID: <20180315094940.12690ce1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4._gFti0+ajKbk_/kW0s=/D"; protocol="application/pgp-signature"
+ boundary="Sig_/v09z2RdGDI=xQsfV_mTIdpI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4._gFti0+ajKbk_/kW0s=/D
+--Sig_/v09z2RdGDI=xQsfV_mTIdpI
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,7 +20,7 @@ Hi Arnd,
 
 Today's linux-next merge of the asm-generic tree got a conflict in:
 
-  arch/mn10300/kernel/sys_mn10300.c
+  arch/score/kernel/sys_score.c
 
 between commit:
 
@@ -29,7 +29,7 @@ o sys_mmap_pgoff()")
 
 from the syscalls tree and commit:
 
-  739d875dd698 ("mn10300: Remove the architecture")
+  b8c9c8f0190f ("arch: remove score port")
 
 from the asm-generic tree.
 
@@ -44,20 +44,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/4._gFti0+ajKbk_/kW0s=/D
+--Sig_/v09z2RdGDI=xQsfV_mTIdpI
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppqoACgkQAVBC80lX
-0GxReQgAhe0b1Oj2PpQg7fKRFHXA5C7GtImwCPqkOngHRCiH1Gg3MMu5jJjOBNvS
-l3zvACgbHMaroJ3MOM8lYK9VkIhyHds/2882iR6gUaMOGVU5RKVpU5M16OKes04+
-X0HDZbphfvq0PNdJNTlAlOgpy9IzJAUuzP085EauX/JSFmI3ZAwwOFCCeLzVBhEa
-o9SrqNUQVhZ3QAco16xx3pYmsizAeTeHqtRZM7g5AzAksFs/07oT6tQsp25SZSeU
-d2W5sAITS+HiMmas0ogtwqpAqyTNhKToQ8CRvlvR5//dugj/fpEzbry6TTipQNtu
-AERzYw+nk0KPBHr4xdBl/RJEwQ9Wpg==
-=LvVB
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqppwQACgkQAVBC80lX
+0Gwrkwf+PJjQxNEEeH8gOABhGNsmUjN5X3ZjIoyis2qMTXNZjH21Z0GJqjQ/2z4c
+lULotduA05wUJr7nRLzQe1/1oQp0MKN6Ef4SbjkluXwGqjF1d+tcKgLIElgbalUq
+KTKtdOs73TNSjMfnqF08+9dizBh1fZHDP1qW1hR8ckeriiAljDYuPJCLUdCl4+8n
+oi6Ba6VgBW05VeAcVNZXESRyJAOEIHlBp2xh04X/kx/n71x7HYp45w6jrUjlbUqv
+ymZcLTHPonT13AonQ4w/SAYcSvFsxkzAhSNtK8msqeCV8Pu55PhG7rQluqSC2ft/
+QJGwrcSSTGIUcy8xQKGJ+w+cTglTHA==
+=zHDs
 -----END PGP SIGNATURE-----
 
---Sig_/4._gFti0+ajKbk_/kW0s=/D--
+--Sig_/v09z2RdGDI=xQsfV_mTIdpI--
