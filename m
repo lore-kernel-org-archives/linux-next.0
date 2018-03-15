@@ -1,41 +1,53 @@
-From: Petr Mladek <pmladek@suse.com>
-Subject: Re: linux-next: manual merge of the printk tree with the asm-generic
- tree
-Date: Thu, 15 Mar 2018 13:52:52 +0100
-Message-ID: <20180315125252.2igbbslfrmtp6kqq@pathway.suse.cz>
-References: <20180315114500.65daa865@canb.auug.org.au>
- <20180315075006.GC3628@jagdpanzerIV>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: mmotm 2018-03-14-16-24 uploaded (lustre)
+Date: Thu, 15 Mar 2018 10:17:52 -0700
+Message-ID: <5c65e935-a6d9-2f80-18ac-470ed38ba439@infradead.org>
+References: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180315075006.GC3628@jagdpanzerIV>
+In-Reply-To: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, lustre-devel@lists.lustre.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu 2018-03-15 16:50:06, Sergey Senozhatsky wrote:
-> On (03/15/18 11:45), Stephen Rothwell wrote:
-> > Hi Petr,
-> > 
-> > Today's linux-next merge of the printk tree got a conflict in:
-> > 
-> >   arch/blackfin/kernel/dumpstack.c
-> > 
-> > between commit:
-> > 
-> >   e7e57f690e38 ("arch: remove blackfin port")
-> > 
-> > from the asm-generic tree and commit:
-> > 
-> >   33251b634b4a ("dump_stack: convert generic dump_stack into a weak symbol")
-> > 
-> > from the printk tree.
+On 03/14/2018 04:24 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-03-14-16-24 has been uploaded to
 > 
-> If blackfin is gone and nds32 was fixed then we can drop my patch.
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-I have just dropped the patch.
+(not from the mmotm patches, but in its linux-next.patch)
 
-Thanks,
-Petr
+CONFIG_LUSTRE_FS=y
+# CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK is not set
+
+
+In file included from ../drivers/staging/lustre/include/linux/libcfs/libcfs.h:42:0,
+                 from ../drivers/staging/lustre/lustre/obdclass/lu_object.c:44:
+../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_degister':
+../drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: dereferencing pointer to incomplete type
+          __func__, key->lct_owner ? key->lct_owner->name : "",
+                                                   ^
+../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
+   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
+                                         ^
+../drivers/staging/lustre/lustre/obdclass/lu_object.c:1409:3: note: in expansion of macro 'CDEBUG'
+   CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
+   ^
+../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_quiesce':
+../drivers/staging/lustre/lustre/obdclass/lu_object.c:1550:42: error: dereferencing pointer to incomplete type
+           key->lct_owner ? key->lct_owner->name : "",
+                                          ^
+../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
+   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
+                                         ^
+../drivers/staging/lustre/lustre/obdclass/lu_object.c:1548:4: note: in expansion of macro 'CDEBUG'
+    CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
+    ^
+
+
+
+-- 
+~Randy
