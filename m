@@ -1,53 +1,35 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2018-03-14-16-24 uploaded (lustre)
-Date: Thu, 15 Mar 2018 10:17:52 -0700
-Message-ID: <5c65e935-a6d9-2f80-18ac-470ed38ba439@infradead.org>
-References: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warnings after merge of the tty tree
+Date: Thu, 15 Mar 2018 18:34:03 +0100
+Message-ID: <20180315173403.GA29986@kroah.com>
+References: <20180315174331.6c7b600b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180314232442.rL_lhWQqT%akpm@linux-foundation.org>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <20180315174331.6c7b600b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-next@vger.kernel.org, mhocko@suse.cz, mm-commits@vger.kernel.org, sfr@canb.auug.org.au, lustre-devel@lists.lustre.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bich HEMON <bich.hemon@st.com>
 List-Id: linux-next.vger.kernel.org
 
-On 03/14/2018 04:24 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-03-14-16-24 has been uploaded to
+On Thu, Mar 15, 2018 at 05:43:31PM +1100, Stephen Rothwell wrote:
+> Hi Greg,
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+> After merging the tty tree, today's linux-next build (arm
+> multi_v7_defconfig) produced these warnings:
+> 
+> drivers/tty/serial/stm32-usart.c:155:12: warning: 'stm32_init_rs485' defined but not used [-Wunused-function]
+>  static int stm32_init_rs485(struct uart_port *port,
+>             ^~~~~~~~~~~~~~~~
+> drivers/tty/serial/stm32-usart.c:100:12: warning: 'stm32_config_rs485' defined but not used [-Wunused-function]
+>  static int stm32_config_rs485(struct uart_port *port,
+>             ^~~~~~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   1bcda09d2910 ("serial: stm32: add support for RS485 hardware control mode")
 
-(not from the mmotm patches, but in its linux-next.patch)
+Fix for this just hit my tree, thanks for the notice.
 
-CONFIG_LUSTRE_FS=y
-# CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK is not set
-
-
-In file included from ../drivers/staging/lustre/include/linux/libcfs/libcfs.h:42:0,
-                 from ../drivers/staging/lustre/lustre/obdclass/lu_object.c:44:
-../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_degister':
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1410:51: error: dereferencing pointer to incomplete type
-          __func__, key->lct_owner ? key->lct_owner->name : "",
-                                                   ^
-../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
-   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
-                                         ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1409:3: note: in expansion of macro 'CDEBUG'
-   CDEBUG(D_INFO, "%s: \"%s\" %p, %d\n",
-   ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c: In function 'lu_context_key_quiesce':
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1550:42: error: dereferencing pointer to incomplete type
-           key->lct_owner ? key->lct_owner->name : "",
-                                          ^
-../drivers/staging/lustre/include/linux/libcfs/libcfs_debug.h:123:41: note: in definition of macro '__CDEBUG'
-   libcfs_debug_msg(&msgdata, format, ## __VA_ARGS__); \
-                                         ^
-../drivers/staging/lustre/lustre/obdclass/lu_object.c:1548:4: note: in expansion of macro 'CDEBUG'
-    CDEBUG(D_INFO, "%s: \"%s\" %p, %d (%d)\n",
-    ^
-
-
-
--- 
-~Randy
+greg k-h
