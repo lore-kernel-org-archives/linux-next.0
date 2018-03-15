@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the arm-soc tree
-Date: Thu, 15 Mar 2018 17:28:58 +1100
-Message-ID: <20180315172858.7928ed93@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the asm-generic tree
+Date: Thu, 15 Mar 2018 17:36:04 +1100
+Message-ID: <20180315173604.5c858ed8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4ha+r0qvfPKGPW1D4+qMNM."; protocol="application/pgp-signature"
+ boundary="Sig_/iGXVQ7fEF9Uy8H_Bob4g059"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>, Rob Herring <robh@kernel.org>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Palmer Dabbelt <palmer@sifive.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4ha+r0qvfPKGPW1D4+qMNM.
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,19 +19,16 @@ Hi Greg,
 
 Today's linux-next merge of the tty tree got conflicts in:
 
-  arch/arm/boot/dts/stih407-b2120.dts
-  arch/arm/boot/dts/stih410-b2120.dts
-  arch/arm/boot/dts/stih410-b2260.dts
-  arch/arm/boot/dts/stih418-b2199.dts
+  drivers/tty/hvc/Kconfig
+  drivers/tty/hvc/Makefile
 
 between commit:
 
-  db5430663017 ("arm: dts: replace 'linux,stdout-path' with 'stdout-path'")
+  c235c62f99e6 ("tty: remove bfin_jtag_comm and hvc_bfin_jtag drivers")
 
-from the arm-soc tree and commit:
+from the asm-generic tree and commit:
 
-  dbb3fb45edff ("ARM: dts: STi: Remove "console=3DttyASN" from bootargs for=
- STi boards")
+  afa6b1ccfad5 ("tty: New RISC-V SBI console driver")
 
 from the tty tree.
 
@@ -46,97 +43,63 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/boot/dts/stih407-b2120.dts
-index de3c8bf129b5,a7a0f76e9cbc..000000000000
---- a/arch/arm/boot/dts/stih407-b2120.dts
-+++ b/arch/arm/boot/dts/stih407-b2120.dts
-@@@ -14,11 -14,11 +14,11 @@@
-  	compatible =3D "st,stih407-b2120", "st,stih407";
+diff --cc drivers/tty/hvc/Kconfig
+index 3bade5ad3d71,e7cc617d6e45..000000000000
+--- a/drivers/tty/hvc/Kconfig
++++ b/drivers/tty/hvc/Kconfig
+@@@ -88,6 -88,25 +88,16 @@@ config HVC_DC
+  	 driver. This console is used through a JTAG only on ARM. If you don't h=
+ave
+  	 a JTAG then you probably don't want this option.
  =20
-  	chosen {
-- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
-+ 		bootargs =3D "clk_ignore_unused";
- -		linux,stdout-path =3D &sbc_serial0;
- +		stdout-path =3D &sbc_serial0;
-  	};
- =20
- -	memory {
- +	memory@40000000 {
-  		device_type =3D "memory";
-  		reg =3D <0x40000000 0x80000000>;
-  	};
-diff --cc arch/arm/boot/dts/stih410-b2120.dts
-index 0a59b7b0f4b2,6c6b4cc37e97..000000000000
---- a/arch/arm/boot/dts/stih410-b2120.dts
-+++ b/arch/arm/boot/dts/stih410-b2120.dts
-@@@ -14,11 -14,11 +14,11 @@@
-  	compatible =3D "st,stih410-b2120", "st,stih410";
- =20
-  	chosen {
-- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
-+ 		bootargs =3D "clk_ignore_unused";
- -		linux,stdout-path =3D &sbc_serial0;
- +		stdout-path =3D &sbc_serial0;
-  	};
- =20
- -	memory {
- +	memory@40000000 {
-  		device_type =3D "memory";
-  		reg =3D <0x40000000 0x80000000>;
-  	};
-diff --cc arch/arm/boot/dts/stih410-b2260.dts
-index feb8834478fa,50d36758391c..000000000000
---- a/arch/arm/boot/dts/stih410-b2260.dts
-+++ b/arch/arm/boot/dts/stih410-b2260.dts
-@@@ -15,11 -15,11 +15,11 @@@
-  	compatible =3D "st,stih410-b2260", "st,stih410";
- =20
-  	chosen {
-- 		bootargs =3D "console=3DttyAS1,115200 clk_ignore_unused";
-+ 		bootargs =3D "clk_ignore_unused";
- -		linux,stdout-path =3D &uart1;
- +		stdout-path =3D &uart1;
-  	};
- =20
- -	memory {
- +	memory@40000000 {
-  		device_type =3D "memory";
-  		reg =3D <0x40000000 0x40000000>;
-  	};
-diff --cc arch/arm/boot/dts/stih418-b2199.dts
-index 39b4db2e3507,7f5f3252bfc7..000000000000
---- a/arch/arm/boot/dts/stih418-b2199.dts
-+++ b/arch/arm/boot/dts/stih418-b2199.dts
-@@@ -14,11 -14,11 +14,11 @@@
-  	compatible =3D "st,stih418-b2199", "st,stih418";
- =20
-  	chosen {
-- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
-+ 		bootargs =3D "clk_ignore_unused";
- -		linux,stdout-path =3D &sbc_serial0;
- +		stdout-path =3D &sbc_serial0;
-  	};
- =20
- -	memory {
- +	memory@40000000 {
-  		device_type =3D "memory";
-  		reg =3D <0x40000000 0xc0000000>;
-  	};
+ -config HVC_BFIN_JTAG
+ -	bool "Blackfin JTAG console"
+ -	depends on BLACKFIN
+ -	select HVC_DRIVER
+ -	help
+ -	 This console uses the Blackfin JTAG to create a console under the
+ -	 the HVC driver.  If you don't have JTAG, then you probably don't
+ -	 want this option.
+ -
++ config HVC_RISCV_SBI
++ 	bool "RISC-V SBI console support"
++ 	depends on RISCV
++ 	select HVC_DRIVER
++ 	help
++ 	  This enables support for console output via RISC-V SBI calls, which
++ 	  is normally used only during boot to output printk.
++=20
++ 	  If you don't know what do to here, say Y.
++=20
+  config HVCS
+  	tristate "IBM Hypervisor Virtual Console Server support"
+  	depends on PPC_PSERIES && HVC_CONSOLE
+diff --cc drivers/tty/hvc/Makefile
+index 7da1934d34e8,83079ae000ae..000000000000
+--- a/drivers/tty/hvc/Makefile
++++ b/drivers/tty/hvc/Makefile
+@@@ -9,4 -10,6 +9,5 @@@ obj-$(CONFIG_HVC_IRQ)		+=3D hvc_irq.
+  obj-$(CONFIG_HVC_XEN)		+=3D hvc_xen.o
+  obj-$(CONFIG_HVC_IUCV)		+=3D hvc_iucv.o
+  obj-$(CONFIG_HVC_UDBG)		+=3D hvc_udbg.o
+ -obj-$(CONFIG_HVC_BFIN_JTAG)	+=3D hvc_bfin_jtag.o
++ obj-$(CONFIG_HVC_RISCV_SBI)	+=3D hvc_riscv_sbi.o
+  obj-$(CONFIG_HVCS)		+=3D hvcs.o
 
---Sig_/4ha+r0qvfPKGPW1D4+qMNM.
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqEqoACgkQAVBC80lX
-0GzXvwf/T1hgz4WxTULRxPjm33O5iSXCnTGteV5a2YWbJy4xlzcB+6FOhyKYz0r2
-ibpc+lETcxYrS2oOXHSYQxo/jXY1hME7L1BQ/GKlCLWNkrEqslKNnKY1iI9YfPvc
-3Mm4T9qNFKq1blv7fdnKZkLELRCII60ehZEAy0BpHGMmkb3VeG3bGQj0Uu4SwKZK
-u66r7+XH804AwVwGJR/Zr/mfyaVD5jERLSsEKL7B74CfJ8xRDNWXBva7gh9roQAS
-bkXQGM0+lsrLF63Yx8KbOLR4YKKXf20sGer61/pMjzTAkE+CvgkamL79YCmYmviz
-Xtgx4T571eAD7TLW65PIXS83YLhixw==
-=SQkC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqFFQACgkQAVBC80lX
+0Gw84Af+JSpHXDpB1HfEw0JrSom98lezyVgJAJf6E9WlOiU8qe/N7SjMhbEFNok0
+YQFjhpnmtf6yev+ZYSKoyNi8ccODX4wJ2R/dqHGnyZdfbmGsCsH3m4GsA0OoO9QJ
+1SHNJvaB/hQTc6UoMGYYcSwhXMLcHOpJT4GwgmDJ4EQdcSkJcIUEomMMHHIlGXkH
+syfu/AcsCFWc7if74PbzpIYsJZUI0eYZk8TtMX7RjWcIDBXcHi3wDhbZWadS5Bg0
+RJD7DcXN02DWLQ8WPdvSBevBkUxaNLTcHIUf7cBsyMpDwtzYTzQ7s3a7fd9Fow8n
+0KG06HVfNULvQtrV67jsf8lyUTppqg==
+=9NgR
 -----END PGP SIGNATURE-----
 
---Sig_/4ha+r0qvfPKGPW1D4+qMNM.--
+--Sig_/iGXVQ7fEF9Uy8H_Bob4g059--
