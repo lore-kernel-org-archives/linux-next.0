@@ -1,78 +1,146 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 15 Mar 2018 12:55:25 +1100
-Message-ID: <20180315125525.110a3d7c@canb.auug.org.au>
+Subject: linux-next: manual merge of the nand tree with the asm-generic tree
+Date: Thu, 15 Mar 2018 13:46:57 +1100
+Message-ID: <20180315134657.05fbcbb6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CVnpJA+3Bo0knTH5218AAtT"; protocol="application/pgp-signature"
+ boundary="Sig_/WxOyjJmb+5OHHRY_bxf+RpN"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sabrina Dubroca <sd@queasysnail.net>, David Ahern <dsahern@gmail.com>
+To: Boris Brezillon <boris.brezillon@bootlin.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jesper Nilsson <jesper@jni.nu>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CVnpJA+3Bo0knTH5218AAtT
+--Sig_/WxOyjJmb+5OHHRY_bxf+RpN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Boris,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the nand tree got a conflict in:
 
-  net/ipv4/xfrm4_policy.c
+  drivers/mtd/nand/Kconfig
+  (mostly moved to drivers/mtd/nand/raw/Kconfig)
+  drivers/mtd/nand/Makefile
+  (mostly moved to drivers/mtd/nand/raw/Makefile)
+  drivers/mtd/nand/bf5xx_nand.c
+  (renamed to drivers/mtd/nand/raw/bf5xx_nand.c)
+  arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+  arch/cris/arch-v32/drivers/mach-fs/nandflash.c
 
-between commit:
+between commits:
 
-  d52e5a7e7ca4 ("ipv4: lock mtu in fnhe when received PMTU < net.ipv4.route=
-.min_pmtu")
+  2180873c59e1 ("mtd: nand: remove bf5xx_nand driver")
+  77b0b77f7812 ("CRIS: Drop support for the CRIS port")
 
-from the net tree and commit:
+from the asm-generic tree and commits:
 
-  68e813aa4307 ("net/ipv4: Remove fib table id from rtable")
+  93db446a424c ("mtd: nand: move raw NAND related code to the raw/ subdir")
+  187c54488ead ("mtd: nand: State when references to other drivers are no l=
+onger valid")
 
-from the net-next tree.
+from the nand tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up:
+
+    I removed:
+	drivers/mtd/nand/raw/bf5xx_nand.c
+	arch/cris/arch-v32/drivers/mach-a3/nandflash.c
+	arch/cris/arch-v32/drivers/mach-fs/nandflash.c
+    added the following merge fix patch
+
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 15 Mar 2018 13:43:02 +1100
+Subject: [PATCH] mtd: nand: fix up for blackfin removal
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/mtd/nand/raw/Kconfig  | 32 --------------------------------
+ drivers/mtd/nand/raw/Makefile |  1 -
+ 2 files changed, 33 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index 605ec8cce67b..0f2b6f348a0a 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -116,38 +116,6 @@ config MTD_NAND_AU1550
+ 	  This enables the driver for the NAND flash controller on the
+ 	  AMD/Alchemy 1550 SOC.
+=20
+-config MTD_NAND_BF5XX
+-	tristate "Blackfin on-chip NAND Flash Controller driver"
+-	depends on BF54x || BF52x
+-	help
+-	  This enables the Blackfin on-chip NAND flash controller
+-
+-	  No board specific support is done by this driver, each board
+-	  must advertise a platform_device for the driver to attach.
+-
+-	  This driver can also be built as a module. If so, the module
+-	  will be called bf5xx-nand.
+-
+-config MTD_NAND_BF5XX_HWECC
+-	bool "BF5XX NAND Hardware ECC"
+-	default y
+-	depends on MTD_NAND_BF5XX
+-	help
+-	  Enable the use of the BF5XX's internal ECC generator when
+-	  using NAND.
+-
+-config MTD_NAND_BF5XX_BOOTROM_ECC
+-	bool "Use Blackfin BootROM ECC Layout"
+-	default n
+-	depends on MTD_NAND_BF5XX_HWECC
+-	help
+-	  If you wish to modify NAND pages and allow the Blackfin on-chip
+-	  BootROM to boot from them, say Y here.  This is only necessary
+-	  if you are booting U-Boot out of NAND and you wish to update
+-	  U-Boot from Linux' userspace.  Otherwise, you should say N here.
+-
+-	  If unsure, say N.
+-
+ config MTD_NAND_S3C2410
+ 	tristate "NAND Flash support for Samsung S3C SoCs"
+ 	depends on ARCH_S3C24XX || ARCH_S3C64XX
+diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+index f16f59a197a3..165b7ef9e9a1 100644
+--- a/drivers/mtd/nand/raw/Makefile
++++ b/drivers/mtd/nand/raw/Makefile
+@@ -11,7 +11,6 @@ obj-$(CONFIG_MTD_NAND_DENALI)		+=3D denali.o
+ obj-$(CONFIG_MTD_NAND_DENALI_PCI)	+=3D denali_pci.o
+ obj-$(CONFIG_MTD_NAND_DENALI_DT)	+=3D denali_dt.o
+ obj-$(CONFIG_MTD_NAND_AU1550)		+=3D au1550nd.o
+-obj-$(CONFIG_MTD_NAND_BF5XX)		+=3D bf5xx_nand.o
+ obj-$(CONFIG_MTD_NAND_S3C2410)		+=3D s3c2410.o
+ obj-$(CONFIG_MTD_NAND_TANGO)		+=3D tango_nand.o
+ obj-$(CONFIG_MTD_NAND_DAVINCI)		+=3D davinci_nand.o
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/ipv4/xfrm4_policy.c
-index fbebda67ac1b,0c752dc3f93b..000000000000
---- a/net/ipv4/xfrm4_policy.c
-+++ b/net/ipv4/xfrm4_policy.c
-@@@ -100,10 -100,7 +100,9 @@@ static int xfrm4_fill_dst(struct xfrm_d
-  	xdst->u.rt.rt_gateway =3D rt->rt_gateway;
-  	xdst->u.rt.rt_uses_gateway =3D rt->rt_uses_gateway;
-  	xdst->u.rt.rt_pmtu =3D rt->rt_pmtu;
- +	xdst->u.rt.rt_mtu_locked =3D rt->rt_mtu_locked;
-- 	xdst->u.rt.rt_table_id =3D rt->rt_table_id;
-  	INIT_LIST_HEAD(&xdst->u.rt.rt_uncached);
- +	rt_add_uncached_list(&xdst->u.rt);
- =20
-  	return 0;
-  }
-
---Sig_/CVnpJA+3Bo0knTH5218AAtT
+--Sig_/WxOyjJmb+5OHHRY_bxf+RpN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqp0o0ACgkQAVBC80lX
-0GzYPAf/SbKjgqlPGyMtfzb6MN2RFW+5dLQLLUg1ojk96i0B+2Gs4vTr5xAkwpCt
-j3IA3CLlAyyQWYvmvmeG6rwPbc6gReCzqTC4JWIpCi4E3EaPQoep6YK+bMTXEZS8
-9RO4vxdLRvCrvBHl28BtidTOAvbD94ToJ04cIBA1L3uAsyYYuKGh0dhGqEoNMzUA
-+3g84D0i9nvxaILjITM9HS8IMHweoo+ioeqCOBGF2VvLok3S0ZU+4W2zzRqUWFqG
-+mbJthVNixB7r6gkXvypknFXxOkJeoNuyaGRfuJKjXth46aD1FIZYurcxAS9ICkO
-rzchUhrjPwxJuRgMXBNsxBzl4yDDKg==
-=9gTS
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqp3qEACgkQAVBC80lX
+0GyKuAf/cZTcNDIT0EufU08KO8QSEOG1KjPQItJWHv+49YDUoflTvQINEoGacgqU
+bBQyup3qgiXgfKT+GF3vg5j0TDvDpSvL+48JNbvwogHq54kHyLlrAPB3lAun8DZC
+70xkfkEipJk0Lm6qMQ6/yx/fHGCog/MVrbUS8P6JZMJqGHUQf8sOjj74uOJ3CuAJ
+oT+P3IqRoS0qG6c63ZUuWL0mtx+zFFqugiWos+wdz9xiJn1HZWcvkjE/7r4aDKyB
+SnwpGWNEysHoBGwPFdV7jXdehHug3YRZUMZ9vNhniH8E5FZhMK61RAtKGzzAKP2l
++NJqUKwywEBVX6CNT7I+zobHEnGvlA==
+=HpFs
 -----END PGP SIGNATURE-----
 
---Sig_/CVnpJA+3Bo0knTH5218AAtT--
+--Sig_/WxOyjJmb+5OHHRY_bxf+RpN--
