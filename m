@@ -1,61 +1,73 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the spi tree with the asm-generic tree
-Date: Thu, 15 Mar 2018 16:11:33 +1100
-Message-ID: <20180315161133.0d3867a2@canb.auug.org.au>
+Subject: linux-next: manual merge of the irqchip tree with the nds32 tree
+Date: Thu, 15 Mar 2018 16:32:38 +1100
+Message-ID: <20180315163238.3a257f86@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oXD8UiSXlv0iMz.JlU4Zz4b"; protocol="application/pgp-signature"
+ boundary="Sig_/W9JEON=u4+pdO8EdsSkghqa"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ulf Magnusson <ulfalizer@gmail.com>
+To: Marc Zyngier <marc.zyngier@arm.com>, Greentime Hu <green.hu@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Archana Sathyakumar <asathyak@codeaurora.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/oXD8UiSXlv0iMz.JlU4Zz4b
+--Sig_/W9JEON=u4+pdO8EdsSkghqa
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
+Hi Marc,
 
-Today's linux-next merge of the spi tree got a conflict in:
+Today's linux-next merge of the irqchip tree got a conflict in:
 
-  drivers/spi/Kconfig
+  drivers/irqchip/Makefile
 
 between commit:
 
-  588020dcb92a ("treewide: simplify Kconfig dependencies for removed archs")
+  abe45fd9f1b0 ("irqchip: Andestech Internal Vector Interrupt Controller dr=
+iver")
 
-from the asm-generic tree and commit:
+from the nds32 tree and commit:
 
-  e3d001a0c29d ("spi: kconfig: Remove AVR32 dep. from SPI_ATMEL")
+  f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
 
-from the spi tree.
+from the irqchip tree.
 
-I fixed it up (I just used the former version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/oXD8UiSXlv0iMz.JlU4Zz4b
+diff --cc drivers/irqchip/Makefile
+index 110de02bb215,c35ee5345a53..000000000000
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@@ -83,4 -85,4 +83,5 @@@ obj-$(CONFIG_IRQ_UNIPHIER_AIDET)	+=3D irq
+  obj-$(CONFIG_ARCH_SYNQUACER)		+=3D irq-sni-exiu.o
+  obj-$(CONFIG_MESON_IRQ_GPIO)		+=3D irq-meson-gpio.o
+  obj-$(CONFIG_GOLDFISH_PIC) 		+=3D irq-goldfish-pic.o
+ +obj-$(CONFIG_NDS32)			+=3D irq-ativic32.o
++ obj-$(CONFIG_QCOM_PDC)			+=3D qcom-pdc.o
+
+--Sig_/W9JEON=u4+pdO8EdsSkghqa
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqAIUACgkQAVBC80lX
-0GzLhgf/cGOau1IOxt7Md9dTRl8VtYOrbE2JApg/ePcu5W6xVjbQSxJpqTrZPv1H
-Wd0ZsiUqznszPFN+E4r8rqfOBs6cbUp+Rs0MwqBwp4aTh4Rgtn6hU+2QovKGcOsr
-hRmgg2SY5Kjd1/fAZihpWIjMfoRUgwgyEb3RpFzTkLkWd7bLzE5MJG0FCzJAoA9+
-d/iD2Cq6hkfaSfyku1vVeeP+SZpY475wqnr+n7RJKvNzsb5Wj7h9Rsv/f9e6Ux28
-3JCSLa3/MLE4SS4pY4cldbW3gziZXaFZxsYxHC8gmYFNH7oJ91/jVtEC3JavzPzz
-6BwcvHUoEjQkZ7IqNmzRfRxdT7CohA==
-=bxD8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqBXYACgkQAVBC80lX
+0Gyc7wf/Q09ahH0VRTsWGi5ylxSt2+B1DG19qfRgwdFNItpQeYTcE6UkSplT/U4o
+wj+6CaMK7X0tts8Ff3zD61hF3CgDPm9c7n8b5u9ThIPJnPhbXjk6SPz3ghotQCMh
+j9uq75iZmkzgA2XZEikUqRfIF3xXRix9Cq6FLb4GbR5rfvkXS+Rl5KEHA1gal0do
+PRdJmTrF/AIuXAzDMj6XEgHCftR+zgr/FrT9dCz3ONmjVEyOH4+qKqtJngh7TX4m
+HVa+VoWaTe2pfqZVuH2h3VhMKErsA9Qi9iIcnZiZNvKX467nCZ9bzupfv7UaueTE
+KFAoKBD8iPwfCnN0Umm2CFNeMLQAUw==
+=aBjd
 -----END PGP SIGNATURE-----
 
---Sig_/oXD8UiSXlv0iMz.JlU4Zz4b--
+--Sig_/W9JEON=u4+pdO8EdsSkghqa--
