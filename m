@@ -1,18 +1,18 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the
  asm-generic tree
-Date: Thu, 15 Mar 2018 20:00:15 +1100
-Message-ID: <20180315200015.63d54b51@canb.auug.org.au>
+Date: Thu, 15 Mar 2018 20:05:33 +1100
+Message-ID: <20180315200533.7a3c52a7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YgfL4y/AkGSkM47vpcQ+unT"; protocol="application/pgp-signature"
+ boundary="Sig_/jSOPd4VSlD+3M2DPGFTvOpu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YgfL4y/AkGSkM47vpcQ+unT
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -20,71 +20,43 @@ Hi Andrew,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  mm/sparse.c
+  arch/score/mm/cache.c
 
 between commit:
 
-  123d3239fb65 ("mm: remove obsolete alloc_remap()")
+  b8c9c8f0190f ("arch: remove score port")
 
 from the asm-generic tree and commit:
 
-  9c6a14b65e50 ("mm/sparse.c: optimize memmap allocation during sparse_init=
-()")
+  32a8c02959cd ("mm: fix races between swapoff and flush dcache")
 
 from the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc mm/sparse.c
-index 65bb52599f90,873617fab5ff..000000000000
---- a/mm/sparse.c
-+++ b/mm/sparse.c
-@@@ -441,7 -454,21 +450,8 @@@ void __init sparse_mem_maps_populate_no
-  	void *map;
-  	unsigned long pnum;
-  	unsigned long size =3D sizeof(struct page) * PAGES_PER_SECTION;
-+ 	int idx_present;
- =20
- -	map =3D alloc_remap(nodeid, size * map_count);
- -	if (map) {
- -		idx_present =3D 0;
- -		for (pnum =3D pnum_begin; pnum < pnum_end; pnum++) {
- -			if (!present_section_nr(pnum))
- -				continue;
- -			map_map[idx_present] =3D map;
- -			map +=3D size;
- -			idx_present++;
- -		}
- -		return;
- -	}
- -
-  	size =3D PAGE_ALIGN(size);
-  	map =3D memblock_virt_alloc_try_nid_raw(size * map_count,
-  					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
-
---Sig_/YgfL4y/AkGSkM47vpcQ+unT
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqNh8ACgkQAVBC80lX
-0Gz/GQf8CDoUOZLqIDTKKNvUWee0AQGPRFnUbWBRJuvOnUvNMrjcM32XFKytNGp3
-dKBKVbjedSMXOJH5j4rRiTOWmfRH8ozDOL/+Etc4GvZQSf4ic7roND+jhdzBhQZD
-GgQeNEsA/EHjfNzbBe5pfK9mYff7h754Zhuwb/A24phmmfGO/DFrl9sqO3MFvjaW
-DXiDFvHrR5A7B4raoilD17QryYksEUrPsRxExgOMMQVjM/Y3sWJGmFJfB5JRd161
-+n1vw0zTPeJRgE9Bi+buiKFcH23ywczEbizTE8eHDJWYLZyqswEtMwVelYYaaqL8
-PzS3MX3cEqB6P0gBydQFoNQDVkRNYg==
-=ycLm
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqN10ACgkQAVBC80lX
+0GwRGwf+PXr/DnXjWN9JqVWkIxYtovhe4/Wrlm6JGbYAlGa9UYK71raazAQexTUJ
+T5UegtYsKSL/Ii/Weo8H9RFTMHRtc/pP5pXrqToGqiX45TU510n2vIbuyMxjgube
+chHIbF8wbwGSAAByVuo/pIVDp66wdeKqhoBJAjbITygclilHe8e1VGR6Y7TaY/lH
+NGxZ9chagOI08SUrZKCJ91rIYns75mSf9uwGDoOYUHUkWkDnF/EHUBI4QhjFaeZZ
+atVEeQgJOI22NzCsO/8AnhevsSd+bO1GWElfZsUY/GnXYMQ6RTaoBACJNMszRaLo
+xSa7qu+qjoKjXQ/Qi+9aD29aiqHNyQ==
+=6hsN
 -----END PGP SIGNATURE-----
 
---Sig_/YgfL4y/AkGSkM47vpcQ+unT--
+--Sig_/jSOPd4VSlD+3M2DPGFTvOpu--
