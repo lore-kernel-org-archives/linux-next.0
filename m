@@ -1,62 +1,75 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the net-next tree
-Date: Thu, 15 Mar 2018 18:35:31 +1100
-Message-ID: <20180315183531.0e987f82@canb.auug.org.au>
+Subject: linux-next: manual merge of the rpmsg tree with the asm-generic
+ tree
+Date: Thu, 15 Mar 2018 18:36:33 +1100
+Message-ID: <20180315183633.7da597e2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DH7i9N3rfEpuhujVBpBjLDd"; protocol="application/pgp-signature"
+ boundary="Sig_/Gv7Ekw1nP6fYHnKxhNq8acW"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denys Vlasenko <dvlasenk@redhat.com>
+To: Bjorn Andersson <bjorn.andersson@linaro.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/DH7i9N3rfEpuhujVBpBjLDd
+--Sig_/Gv7Ekw1nP6fYHnKxhNq8acW
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bjorn,
 
-Today's linux-next merge of the staging tree got a conflict in:
+Today's linux-next merge of the rpmsg tree got a conflict in:
 
-  drivers/staging/irda/net/af_irda.c
+  samples/Makefile
 
 between commit:
 
-  9b2c45d479d0 ("net: make getname() functions return length rather than us=
-e int* parameter")
+  e7e57f690e38 ("arch: remove blackfin port")
 
-from the net-next tree and commit:
+from the asm-generic tree and commit:
 
-  d64c2a76123f ("staging: irda: remove the irda network stack and drivers")
+  842891be96bd ("samples: Introduce Qualcomm QMI sample client")
 
-from the staging tree.
+from the rpmsg tree.
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/DH7i9N3rfEpuhujVBpBjLDd
+diff --cc samples/Makefile
+index 70cf3758dcf2,a30833a2a19e..000000000000
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@@ -2,5 -2,5 +2,5 @@@
+ =20
+  obj-$(CONFIG_SAMPLES)	+=3D kobject/ kprobes/ trace_events/ livepatch/ \
+  			   hw_breakpoint/ kfifo/ kdb/ hidraw/ rpmsg/ seccomp/ \
+ -			   configfs/ connector/ v4l/ trace_printk/ blackfin/ \
+ +			   configfs/ connector/ v4l/ trace_printk/ \
+- 			   vfio-mdev/ statx/
++ 			   vfio-mdev/ statx/ qmi/
+
+--Sig_/Gv7Ekw1nP6fYHnKxhNq8acW
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqIkMACgkQAVBC80lX
-0Gx97wf+My6j91q7HyvMD6sBNz7Tml29Q8ibMCk/b5NcXZVWB99HeVPR/yuOEkGl
-F6OYC+n5DDYNLStrOQnqnm1m8pWpsSTmly6xdX1DV+vfKMC1Po9adc2UWftdfKXM
-dBfAaLwXOwHyZ69YKlJ7JXmZCVS97FCVPpef3OAS83tzV5GzyLgE2lKL2xMCQAdV
-Er5hxuUnPuLxv9Bfgulg9V9VK01vTP5RO2wJqh5bJCQ08Ox01CIfFlClqY2yNSN8
-4BLleYzaTxxoOQERRTFl/CAfBZ6Njay1xTtYmE7QhO6jv+7oye7WEdiluDEQ23lQ
-yjSzeNj/ToRN7RITIuP8W9PrKTI23Q==
-=5jAI
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqIoEACgkQAVBC80lX
+0GyJFQf+OJ9O/EAJYA/uIntYfBoQB1zofONsrQzr58GhwxSJgr0fP3JZeH1OpUqc
+4p9EXcLABB8pyGkWfcPLk1KLMGqc/0503QH/WzPoadBAMLrEK7mWnBkjrYaqxJK2
+gkaPguwWtxETO7V8ukz/i1D9yKPKcJc/wzyVBxffvKGl4vUUu99r8uKgI55AgRnJ
+9laPmG7wPpYbX6yOhThul4MLKl7hjG8Mw2oP12B4ewpvvJZmdC1P0Or7jxUZtbNh
+flrA5ZTz8W8kMW/lVmnfFaxe+yNbJ95jGIIQLyJX87wn/ZG5lP9im5iAEFcniI63
+3KoBWXUtEwkbCHr/F8UxA6OCTF6/yA==
+=RbU6
 -----END PGP SIGNATURE-----
 
---Sig_/DH7i9N3rfEpuhujVBpBjLDd--
+--Sig_/Gv7Ekw1nP6fYHnKxhNq8acW--
