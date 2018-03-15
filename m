@@ -1,34 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the akpm-current tree with the
  asm-generic tree
-Date: Thu, 15 Mar 2018 20:05:33 +1100
-Message-ID: <20180315200533.7a3c52a7@canb.auug.org.au>
+Date: Thu, 15 Mar 2018 20:10:53 +1100
+Message-ID: <20180315201053.2467aa92@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jSOPd4VSlD+3M2DPGFTvOpu"; protocol="application/pgp-signature"
+ boundary="Sig_/vk2wWtnm42fhUSnn/JFLMG6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Huang Ying <ying.huang@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dou Liyang <douly.fnst@cn.fujitsu.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu
+--Sig_/vk2wWtnm42fhUSnn/JFLMG6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/score/mm/cache.c
+  arch/tile/kernel/pci_gx.c
 
 between commit:
 
-  b8c9c8f0190f ("arch: remove score port")
+  0373506fe580 ("arch: remove tile port")
 
 from the asm-generic tree and commit:
 
-  32a8c02959cd ("mm: fix races between swapoff and flush dcache")
+  4b36a05ab086 ("arch/tile/kernel/pci_gx.c: make setup_pcie_rc_delay() __in=
+it")
 
 from the akpm-current tree.
 
@@ -43,20 +44,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu
+--Sig_/vk2wWtnm42fhUSnn/JFLMG6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqN10ACgkQAVBC80lX
-0GwRGwf+PXr/DnXjWN9JqVWkIxYtovhe4/Wrlm6JGbYAlGa9UYK71raazAQexTUJ
-T5UegtYsKSL/Ii/Weo8H9RFTMHRtc/pP5pXrqToGqiX45TU510n2vIbuyMxjgube
-chHIbF8wbwGSAAByVuo/pIVDp66wdeKqhoBJAjbITygclilHe8e1VGR6Y7TaY/lH
-NGxZ9chagOI08SUrZKCJ91rIYns75mSf9uwGDoOYUHUkWkDnF/EHUBI4QhjFaeZZ
-atVEeQgJOI22NzCsO/8AnhevsSd+bO1GWElfZsUY/GnXYMQ6RTaoBACJNMszRaLo
-xSa7qu+qjoKjXQ/Qi+9aD29aiqHNyQ==
-=6hsN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqOJ0ACgkQAVBC80lX
+0GzQ6Qf+MleyLWDD0B2BpyF55M6l9CRJPQ/MMRDkNXVOxxMtdROZrA0mBK0qQgwU
+BVwCze8xI2T06qiPiI9BnK9WxEGyYcs8IvxIFeA+/rwaoDd10ofeXS7J8QF6VBkv
+1bbIZ9Ku9YmDUWnagvlimE26wHJAl1gVyISuLpU9ZR/tHEzYCtveewt/lkJJpCvO
+xZXI7A5XrzTJDvWrCwUooq1B1qubxwv211XJ4u5agaaBHDT+vi8EsukxCPFPivFX
+Osun1uCUoN5n+CD6pHqO8aSid3+Z/ccetxdtvGyXcKAeS09FDaLRUJBFiue6J4KA
+ZXc9/7pYJVBHTEba7X215Y9MHKTldg==
+=2ff+
 -----END PGP SIGNATURE-----
 
---Sig_/jSOPd4VSlD+3M2DPGFTvOpu--
+--Sig_/vk2wWtnm42fhUSnn/JFLMG6--
