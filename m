@@ -1,105 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tty tree with the asm-generic tree
-Date: Thu, 15 Mar 2018 17:36:04 +1100
-Message-ID: <20180315173604.5c858ed8@canb.auug.org.au>
+Subject: linux-next: build warnings after merge of the tty tree
+Date: Thu, 15 Mar 2018 17:43:31 +1100
+Message-ID: <20180315174331.6c7b600b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/iGXVQ7fEF9Uy8H_Bob4g059"; protocol="application/pgp-signature"
+ boundary="Sig_/ackI8q0np7VJh5Tz=d1M9Fd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Palmer Dabbelt <palmer@sifive.com>
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bich HEMON <bich.hemon@st.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/iGXVQ7fEF9Uy8H_Bob4g059
+--Sig_/ackI8q0np7VJh5Tz=d1M9Fd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Greg,
 
-Today's linux-next merge of the tty tree got conflicts in:
+After merging the tty tree, today's linux-next build (arm
+multi_v7_defconfig) produced these warnings:
 
-  drivers/tty/hvc/Kconfig
-  drivers/tty/hvc/Makefile
+drivers/tty/serial/stm32-usart.c:155:12: warning: 'stm32_init_rs485' define=
+d but not used [-Wunused-function]
+ static int stm32_init_rs485(struct uart_port *port,
+            ^~~~~~~~~~~~~~~~
+drivers/tty/serial/stm32-usart.c:100:12: warning: 'stm32_config_rs485' defi=
+ned but not used [-Wunused-function]
+ static int stm32_config_rs485(struct uart_port *port,
+            ^~~~~~~~~~~~~~~~~~
 
-between commit:
+Introduced by commit
 
-  c235c62f99e6 ("tty: remove bfin_jtag_comm and hvc_bfin_jtag drivers")
-
-from the asm-generic tree and commit:
-
-  afa6b1ccfad5 ("tty: New RISC-V SBI console driver")
-
-from the tty tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  1bcda09d2910 ("serial: stm32: add support for RS485 hardware control mode=
+")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/tty/hvc/Kconfig
-index 3bade5ad3d71,e7cc617d6e45..000000000000
---- a/drivers/tty/hvc/Kconfig
-+++ b/drivers/tty/hvc/Kconfig
-@@@ -88,6 -88,25 +88,16 @@@ config HVC_DC
-  	 driver. This console is used through a JTAG only on ARM. If you don't h=
-ave
-  	 a JTAG then you probably don't want this option.
- =20
- -config HVC_BFIN_JTAG
- -	bool "Blackfin JTAG console"
- -	depends on BLACKFIN
- -	select HVC_DRIVER
- -	help
- -	 This console uses the Blackfin JTAG to create a console under the
- -	 the HVC driver.  If you don't have JTAG, then you probably don't
- -	 want this option.
- -
-+ config HVC_RISCV_SBI
-+ 	bool "RISC-V SBI console support"
-+ 	depends on RISCV
-+ 	select HVC_DRIVER
-+ 	help
-+ 	  This enables support for console output via RISC-V SBI calls, which
-+ 	  is normally used only during boot to output printk.
-+=20
-+ 	  If you don't know what do to here, say Y.
-+=20
-  config HVCS
-  	tristate "IBM Hypervisor Virtual Console Server support"
-  	depends on PPC_PSERIES && HVC_CONSOLE
-diff --cc drivers/tty/hvc/Makefile
-index 7da1934d34e8,83079ae000ae..000000000000
---- a/drivers/tty/hvc/Makefile
-+++ b/drivers/tty/hvc/Makefile
-@@@ -9,4 -10,6 +9,5 @@@ obj-$(CONFIG_HVC_IRQ)		+=3D hvc_irq.
-  obj-$(CONFIG_HVC_XEN)		+=3D hvc_xen.o
-  obj-$(CONFIG_HVC_IUCV)		+=3D hvc_iucv.o
-  obj-$(CONFIG_HVC_UDBG)		+=3D hvc_udbg.o
- -obj-$(CONFIG_HVC_BFIN_JTAG)	+=3D hvc_bfin_jtag.o
-+ obj-$(CONFIG_HVC_RISCV_SBI)	+=3D hvc_riscv_sbi.o
-  obj-$(CONFIG_HVCS)		+=3D hvcs.o
-
---Sig_/iGXVQ7fEF9Uy8H_Bob4g059
+--Sig_/ackI8q0np7VJh5Tz=d1M9Fd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqFFQACgkQAVBC80lX
-0Gw84Af+JSpHXDpB1HfEw0JrSom98lezyVgJAJf6E9WlOiU8qe/N7SjMhbEFNok0
-YQFjhpnmtf6yev+ZYSKoyNi8ccODX4wJ2R/dqHGnyZdfbmGsCsH3m4GsA0OoO9QJ
-1SHNJvaB/hQTc6UoMGYYcSwhXMLcHOpJT4GwgmDJ4EQdcSkJcIUEomMMHHIlGXkH
-syfu/AcsCFWc7if74PbzpIYsJZUI0eYZk8TtMX7RjWcIDBXcHi3wDhbZWadS5Bg0
-RJD7DcXN02DWLQ8WPdvSBevBkUxaNLTcHIUf7cBsyMpDwtzYTzQ7s3a7fd9Fow8n
-0KG06HVfNULvQtrV67jsf8lyUTppqg==
-=9NgR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqFhMACgkQAVBC80lX
+0Gy5GQf+N67+p6m6motxVAYn91y0eWQ3EIr6wcl6n+k2/4arhfqBOILx0/culEBV
+J9dHeuhd3YWe4g745vssGANmBSHuaYlhuyAd9XtyOIEE7nv9vOnvX880+IZOJAye
+VaEUmisNAjr58DwdDBW6+OOrJbGaEwZ4C6SF4z9d9XrJX5qms74QmI8DgPKMJSHJ
+NB4ywHpZ9MmU0jc5YH2/l1bHbBvQ7fMgJX+dT2FVmbSScnXLUvevXHiRyaC8oG10
+HsenwdL6p54325YwwAXm7Y5RcHZoEPxMxaqAKuo3xTB/B76baVMn68+GxrJ6p88c
+yJpBmIryzOgNLHE7OeeQmfly4tVwqw==
+=4ShK
 -----END PGP SIGNATURE-----
 
---Sig_/iGXVQ7fEF9Uy8H_Bob4g059--
+--Sig_/ackI8q0np7VJh5Tz=d1M9Fd--
