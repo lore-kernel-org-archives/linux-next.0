@@ -1,36 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the irqchip tree with the nds32 tree
-Date: Thu, 15 Mar 2018 16:32:38 +1100
-Message-ID: <20180315163238.3a257f86@canb.auug.org.au>
+Subject: linux-next: manual merge of the tty tree with the arm-soc tree
+Date: Thu, 15 Mar 2018 17:28:58 +1100
+Message-ID: <20180315172858.7928ed93@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W9JEON=u4+pdO8EdsSkghqa"; protocol="application/pgp-signature"
+ boundary="Sig_/4ha+r0qvfPKGPW1D4+qMNM."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Greentime Hu <green.hu@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Archana Sathyakumar <asathyak@codeaurora.org>
+To: Greg KH <greg@kroah.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/W9JEON=u4+pdO8EdsSkghqa
+--Sig_/4ha+r0qvfPKGPW1D4+qMNM.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
+Hi Greg,
 
-Today's linux-next merge of the irqchip tree got a conflict in:
+Today's linux-next merge of the tty tree got conflicts in:
 
-  drivers/irqchip/Makefile
+  arch/arm/boot/dts/stih407-b2120.dts
+  arch/arm/boot/dts/stih410-b2120.dts
+  arch/arm/boot/dts/stih410-b2260.dts
+  arch/arm/boot/dts/stih418-b2199.dts
 
 between commit:
 
-  abe45fd9f1b0 ("irqchip: Andestech Internal Vector Interrupt Controller dr=
-iver")
+  db5430663017 ("arm: dts: replace 'linux,stdout-path' with 'stdout-path'")
 
-from the nds32 tree and commit:
+from the arm-soc tree and commit:
 
-  f55c73aef890 ("irqchip/pdc: Add PDC interrupt controller for QCOM SoCs")
+  dbb3fb45edff ("ARM: dts: STi: Remove "console=3DttyASN" from bootargs for=
+ STi boards")
 
-from the irqchip tree.
+from the tty tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,31 +46,97 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/irqchip/Makefile
-index 110de02bb215,c35ee5345a53..000000000000
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@@ -83,4 -85,4 +83,5 @@@ obj-$(CONFIG_IRQ_UNIPHIER_AIDET)	+=3D irq
-  obj-$(CONFIG_ARCH_SYNQUACER)		+=3D irq-sni-exiu.o
-  obj-$(CONFIG_MESON_IRQ_GPIO)		+=3D irq-meson-gpio.o
-  obj-$(CONFIG_GOLDFISH_PIC) 		+=3D irq-goldfish-pic.o
- +obj-$(CONFIG_NDS32)			+=3D irq-ativic32.o
-+ obj-$(CONFIG_QCOM_PDC)			+=3D qcom-pdc.o
+diff --cc arch/arm/boot/dts/stih407-b2120.dts
+index de3c8bf129b5,a7a0f76e9cbc..000000000000
+--- a/arch/arm/boot/dts/stih407-b2120.dts
++++ b/arch/arm/boot/dts/stih407-b2120.dts
+@@@ -14,11 -14,11 +14,11 @@@
+  	compatible =3D "st,stih407-b2120", "st,stih407";
+ =20
+  	chosen {
+- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
++ 		bootargs =3D "clk_ignore_unused";
+ -		linux,stdout-path =3D &sbc_serial0;
+ +		stdout-path =3D &sbc_serial0;
+  	};
+ =20
+ -	memory {
+ +	memory@40000000 {
+  		device_type =3D "memory";
+  		reg =3D <0x40000000 0x80000000>;
+  	};
+diff --cc arch/arm/boot/dts/stih410-b2120.dts
+index 0a59b7b0f4b2,6c6b4cc37e97..000000000000
+--- a/arch/arm/boot/dts/stih410-b2120.dts
++++ b/arch/arm/boot/dts/stih410-b2120.dts
+@@@ -14,11 -14,11 +14,11 @@@
+  	compatible =3D "st,stih410-b2120", "st,stih410";
+ =20
+  	chosen {
+- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
++ 		bootargs =3D "clk_ignore_unused";
+ -		linux,stdout-path =3D &sbc_serial0;
+ +		stdout-path =3D &sbc_serial0;
+  	};
+ =20
+ -	memory {
+ +	memory@40000000 {
+  		device_type =3D "memory";
+  		reg =3D <0x40000000 0x80000000>;
+  	};
+diff --cc arch/arm/boot/dts/stih410-b2260.dts
+index feb8834478fa,50d36758391c..000000000000
+--- a/arch/arm/boot/dts/stih410-b2260.dts
++++ b/arch/arm/boot/dts/stih410-b2260.dts
+@@@ -15,11 -15,11 +15,11 @@@
+  	compatible =3D "st,stih410-b2260", "st,stih410";
+ =20
+  	chosen {
+- 		bootargs =3D "console=3DttyAS1,115200 clk_ignore_unused";
++ 		bootargs =3D "clk_ignore_unused";
+ -		linux,stdout-path =3D &uart1;
+ +		stdout-path =3D &uart1;
+  	};
+ =20
+ -	memory {
+ +	memory@40000000 {
+  		device_type =3D "memory";
+  		reg =3D <0x40000000 0x40000000>;
+  	};
+diff --cc arch/arm/boot/dts/stih418-b2199.dts
+index 39b4db2e3507,7f5f3252bfc7..000000000000
+--- a/arch/arm/boot/dts/stih418-b2199.dts
++++ b/arch/arm/boot/dts/stih418-b2199.dts
+@@@ -14,11 -14,11 +14,11 @@@
+  	compatible =3D "st,stih418-b2199", "st,stih418";
+ =20
+  	chosen {
+- 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
++ 		bootargs =3D "clk_ignore_unused";
+ -		linux,stdout-path =3D &sbc_serial0;
+ +		stdout-path =3D &sbc_serial0;
+  	};
+ =20
+ -	memory {
+ +	memory@40000000 {
+  		device_type =3D "memory";
+  		reg =3D <0x40000000 0xc0000000>;
+  	};
 
---Sig_/W9JEON=u4+pdO8EdsSkghqa
+--Sig_/4ha+r0qvfPKGPW1D4+qMNM.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqBXYACgkQAVBC80lX
-0Gyc7wf/Q09ahH0VRTsWGi5ylxSt2+B1DG19qfRgwdFNItpQeYTcE6UkSplT/U4o
-wj+6CaMK7X0tts8Ff3zD61hF3CgDPm9c7n8b5u9ThIPJnPhbXjk6SPz3ghotQCMh
-j9uq75iZmkzgA2XZEikUqRfIF3xXRix9Cq6FLb4GbR5rfvkXS+Rl5KEHA1gal0do
-PRdJmTrF/AIuXAzDMj6XEgHCftR+zgr/FrT9dCz3ONmjVEyOH4+qKqtJngh7TX4m
-HVa+VoWaTe2pfqZVuH2h3VhMKErsA9Qi9iIcnZiZNvKX467nCZ9bzupfv7UaueTE
-KFAoKBD8iPwfCnN0Umm2CFNeMLQAUw==
-=aBjd
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqEqoACgkQAVBC80lX
+0GzXvwf/T1hgz4WxTULRxPjm33O5iSXCnTGteV5a2YWbJy4xlzcB+6FOhyKYz0r2
+ibpc+lETcxYrS2oOXHSYQxo/jXY1hME7L1BQ/GKlCLWNkrEqslKNnKY1iI9YfPvc
+3Mm4T9qNFKq1blv7fdnKZkLELRCII60ehZEAy0BpHGMmkb3VeG3bGQj0Uu4SwKZK
+u66r7+XH804AwVwGJR/Zr/mfyaVD5jERLSsEKL7B74CfJ8xRDNWXBva7gh9roQAS
+bkXQGM0+lsrLF63Yx8KbOLR4YKKXf20sGer61/pMjzTAkE+CvgkamL79YCmYmviz
+Xtgx4T571eAD7TLW65PIXS83YLhixw==
+=SQkC
 -----END PGP SIGNATURE-----
 
---Sig_/W9JEON=u4+pdO8EdsSkghqa--
+--Sig_/4ha+r0qvfPKGPW1D4+qMNM.--
