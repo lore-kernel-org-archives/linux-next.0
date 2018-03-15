@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rtc tree with the asm-generic tree
-Date: Thu, 15 Mar 2018 18:59:17 +1100
-Message-ID: <20180315185917.3316d781@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with the tip tree
+Date: Thu, 15 Mar 2018 19:06:06 +1100
+Message-ID: <20180315190606.27ce1f4e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/b6CSQU/PkJDhO/EygTvpcBL"; protocol="application/pgp-signature"
+ boundary="Sig_/_vnPT/XHZkwvJNm+Q9XcCCF"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/b6CSQU/PkJDhO/EygTvpcBL
+--Sig_/_vnPT/XHZkwvJNm+Q9XcCCF
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+Hi all,
 
-Today's linux-next merge of the rtc tree got a conflict in:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-  drivers/rtc/rtc-tile.c
+  arch/x86/mm/init_64.c
 
 between commit:
 
-  909ce75a0665 ("rtc: remove tile driver")
+  91f606a8fa68 ("x86/mm: Replace compile-time checks for 5-level paging wit=
+h runtime-time checks")
 
-from the asm-generic tree and commit:
+from the tip tree and commit:
 
-  1fbcb2aa1d64 ("rtc: tile: remove useless message")
+  a7e6c7015bf3 ("x86, memremap: fix altmap accounting at free")
 
-from the rtc tree.
+from the nvdimm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,20 +43,36 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/b6CSQU/PkJDhO/EygTvpcBL
+diff --cc arch/x86/mm/init_64.c
+index 9bbc51ae54a6,af11a2890235..000000000000
+--- a/arch/x86/mm/init_64.c
++++ b/arch/x86/mm/init_64.c
+@@@ -1099,8 -1089,8 +1095,8 @@@ remove_p4d_table(p4d_t *p4d_start, unsi
+  		 * 5-level case we should free them. This code will have to change
+  		 * to adapt for boot-time switching between 4 and 5 level page tables.
+  		 */
+ -		if (CONFIG_PGTABLE_LEVELS =3D=3D 5)
+ +		if (pgtable_l5_enabled)
+- 			free_pud_table(pud_base, p4d, altmap);
++ 			free_pud_table(pud_base, p4d);
+  	}
+ =20
+  	if (direct)
+
+--Sig_/_vnPT/XHZkwvJNm+Q9XcCCF
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqJ9UACgkQAVBC80lX
-0GweIAgAgcZMYSNV59Rx8Tunj7Wyrpz/ZlAqV1vEceqUSKAaM9rxZAunjKWq8xJU
-gVsNhFjrt7Ec5SNiMKwYdKzaAZsLo5XT+N/fM8kUYl2lgPiiPgiLtxewgZoAKYaN
-ar8++/+iOgC4VPTK0Q6ZWAxBBvlLdQnPSRdjMURTuMVWMBLzmDnkz1rk7RjCGvMk
-tSWVXE6jiieUZMMzEhjrSpoXMROflr6WTtvHEC5Wkww+xK5nityCMQMhxfFBqqHj
-SSe1H/Q4AR4SOLGjXD9CvC183VP54Ye9yxTfhAOz7ZH2EiGwaYMR+57TjV1r7a6L
-RDwYWzWYnuEu0dCWIPQkHlKJyZdiyA==
-=LUMj
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqKW4ACgkQAVBC80lX
+0Gz+iQgAi0jowIjNC+CKNgjBdEIcE0nUpLAynjOX+FauGP03BzvfsOIimBRBvXIy
+b5Frvgbpz/AFsob0nDOeLKYPgS8CN7+4Ci/NeFUERLQupWcXTC3qa1lSG7/iz+4X
+S5Tk+NAeM1FuA3Uwn4KKORy1q/GprSsMsglB1/p6LSO763jcwWPkzTyl99APHf4f
+7dd/1RWEBZy5ARMC0u1s/YdtqPBLu2gmFJYKe4aMsDYxMTt6orFN/vr9Yz6/V4vD
+S00dLxLSY+x13mXOOyY3hQ7Lq7shBkXPKmBh7vStwSqoZE3esDQBcM72qxMeAuxo
+ue7DOQeQQWpUqLCmCnXNU1Kwg+ueOA==
+=mCbu
 -----END PGP SIGNATURE-----
 
---Sig_/b6CSQU/PkJDhO/EygTvpcBL--
+--Sig_/_vnPT/XHZkwvJNm+Q9XcCCF--
