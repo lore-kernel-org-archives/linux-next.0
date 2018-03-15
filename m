@@ -1,38 +1,38 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with the crypto tree
-Date: Thu, 15 Mar 2018 17:58:41 +1100
-Message-ID: <20180315175841.5c3de18d@canb.auug.org.au>
+Subject: linux-next: manual merge of the scsi-mkp tree with the
+ efi-lock-down tree
+Date: Thu, 15 Mar 2018 18:34:12 +1100
+Message-ID: <20180315183412.01412755@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/K52V4NaoQ0ltlVX35WfriE3"; protocol="application/pgp-signature"
+ boundary="Sig_/nX3i2UYX.tvbaVBnXGnMu4I"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gilad Ben-Yossef <gilad@benyossef.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>, David Howells <dhowells@redhat.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/K52V4NaoQ0ltlVX35WfriE3
+--Sig_/nX3i2UYX.tvbaVBnXGnMu4I
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+Hi all,
 
-Today's linux-next merge of the staging tree got conflicts in:
+Today's linux-next merge of the scsi-mkp tree got a conflict in:
 
-  drivers/staging/ccree/Kconfig
-  drivers/staging/ccree/Makefile
+  drivers/scsi/eata.c
 
 between commit:
 
-  e294ca1cca3a ("staging: ccree: rename staging ver and mark as broken")
+  5b76b160badb ("scsi: Lock down the eata driver")
 
-from the crypto tree and commit:
+from the efi-lock-down tree and commit:
 
-  8b0217965418 ("staging: ccree: remove ccree staging driver copy")
+  6b1745caa14a ("scsi: eata: eata-pio: Deprecate legacy EATA drivers")
 
-from the staging tree.
+from the scsi-mkp tree.
 
-I fixed it up (I just removed the files) and can carry the fix as
+I fixed it up (I just removed the file) and can carry the fix as
 necessary. This is now fixed as far as linux-next is concerned, but any
 non trivial conflicts should be mentioned to your upstream maintainer
 when your tree is submitted for merging.  You may also want to consider
@@ -43,20 +43,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/K52V4NaoQ0ltlVX35WfriE3
+--Sig_/nX3i2UYX.tvbaVBnXGnMu4I
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqGaEACgkQAVBC80lX
-0GyX0wf/YOb5rCX8ND3YA+qaCuEpZ8bdjwBni/eYAeCv3v5CVjbmxTBnrETZALRh
-2jgadtl2p6VcWZWchHRaiQXeu30+t4GO1GhKkS6hDPtEHaudP0ucS2jnzp38xZhe
-JCx5P6YYcS6kFqUcISIxA6Rd+ab+s19uLAx/Ft9p/OMxdkZkTeUlGzeNSgzJR6eI
-3u7E8/MmHRruyxbmzWTu+J55toJAFm9DwNcA6LmBLeSoIYFZ4V+GKJQz/tl5i1og
-evdy8wRf1Jg6OJteiYyCFC1vG7tkwqxPhlsCtGwRuJmP35aGNpdAM2QXZRYLpo89
-AMO7nowe7gx+PjgXzRIZrPIZPEe+Qw==
-=6k7/
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqIfQACgkQAVBC80lX
+0GxG4Qf/exik1BbI+H5UsC6pUY+XAUhZoipRtgOvgvt8Xv/TnZPIXgVvbk03AnnA
+9SKucaC29+2OSVbt5cP92VYkNipjni+madhSPT80M94bQk9p/ZPOUfyfvxQg64P5
+cI8PufREK7h3yKBP8x7+90tXPwtKOIjtpzwy56WYznBTBMYvHVaKzJ/w0XXvps+n
+n+U55S3N4CNjHqUG0xLutxPOfTGRxZnnhRguvo34Y/cnoXL138j8T6L/7II2T1mF
+jzheHxNl6fufa40DR9ulovMbZE8CHkQEk1fV6NRXrB5SvMqDGnocHlPwtfRWU7JB
+1H+lQMoAT94gsH8X+5L9+ojHjWI/Mw==
+=8UoR
 -----END PGP SIGNATURE-----
 
---Sig_/K52V4NaoQ0ltlVX35WfriE3--
+--Sig_/nX3i2UYX.tvbaVBnXGnMu4I--
