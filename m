@@ -1,46 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Date: Fri, 16 Mar 2018 07:56:29 +1100
-Message-ID: <20180316075629.019b6560@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Date: Thu, 15 Mar 2018 22:06:29 +0100
+Message-ID: <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
+References: <20180316075629.019b6560@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CtyQ/K0PVmIdC=bJE6dxSvV"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180316075629.019b6560@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Olof Johansson <olof@lixom.net>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Mar 15, 2018 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Commit
+>
+>   9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
+>
+> is missing a Signed-off-by from its committer.
 
-Hi all,
+Thanks for the report.
 
-Commit
+What script do you use to find those? I guess I should check for
+missing signoffs as well when pulling a branch.
 
-  9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
+Patrice, I've dropped the merge now, and picked up the one
+patch in it directly, with my signoff. This should fix the issue this
+time, but please make sure you always sign off patches when
+you apply them from the list.
 
-is missing a Signed-off-by from its committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqq3f0ACgkQAVBC80lX
-0Gzzdwf/TCh9xFq7P3e7iZ1uPdvXbI5mfqfWin9rUZnUAcmDLARW4nskkFav5YyQ
-K3aTo4BqsIEaNM3yi1W+S7Unq2zHrryauzlPh76eQlm0KiMWV240e5uvI0fLG8vB
-jht8YE9OY/6y+lMI/l5F8dVD9vY/2FCC/sdoxekezQ3JrtEExvAhWhlAtC/Tv/w5
-sU4PSw92X8qec4koQWwFERlg3v9ZgUzFd+elJ5YeUyqK/RUMAzf8MiDRKjIupDy3
-NOoBbCckAIZJHFnpSA2xi6tJa/W5X52RVUr655JK1Ukm4zahMMZdg2wUso2oM3tl
-wdW5RStcgMWEePSP2e4FFVtpYX7GPQ==
-=IQ/1
------END PGP SIGNATURE-----
-
---Sig_/CtyQ/K0PVmIdC=bJE6dxSvV--
+        Arnd
