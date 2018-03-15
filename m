@@ -1,36 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nvdimm tree with the tip tree
-Date: Thu, 15 Mar 2018 19:06:06 +1100
-Message-ID: <20180315190606.27ce1f4e@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ asm-generic tree
+Date: Thu, 15 Mar 2018 20:00:15 +1100
+Message-ID: <20180315200015.63d54b51@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_vnPT/XHZkwvJNm+Q9XcCCF"; protocol="application/pgp-signature"
+ boundary="Sig_/YgfL4y/AkGSkM47vpcQ+unT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Baoquan He <bhe@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_vnPT/XHZkwvJNm+Q9XcCCF
+--Sig_/YgfL4y/AkGSkM47vpcQ+unT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-Today's linux-next merge of the nvdimm tree got a conflict in:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  arch/x86/mm/init_64.c
+  mm/sparse.c
 
 between commit:
 
-  91f606a8fa68 ("x86/mm: Replace compile-time checks for 5-level paging wit=
-h runtime-time checks")
+  123d3239fb65 ("mm: remove obsolete alloc_remap()")
 
-from the tip tree and commit:
+from the asm-generic tree and commit:
 
-  a7e6c7015bf3 ("x86, memremap: fix altmap accounting at free")
+  9c6a14b65e50 ("mm/sparse.c: optimize memmap allocation during sparse_init=
+()")
 
-from the nvdimm tree.
+from the akpm-current tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,36 +44,47 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/mm/init_64.c
-index 9bbc51ae54a6,af11a2890235..000000000000
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@@ -1099,8 -1089,8 +1095,8 @@@ remove_p4d_table(p4d_t *p4d_start, unsi
-  		 * 5-level case we should free them. This code will have to change
-  		 * to adapt for boot-time switching between 4 and 5 level page tables.
-  		 */
- -		if (CONFIG_PGTABLE_LEVELS =3D=3D 5)
- +		if (pgtable_l5_enabled)
-- 			free_pud_table(pud_base, p4d, altmap);
-+ 			free_pud_table(pud_base, p4d);
-  	}
+diff --cc mm/sparse.c
+index 65bb52599f90,873617fab5ff..000000000000
+--- a/mm/sparse.c
++++ b/mm/sparse.c
+@@@ -441,7 -454,21 +450,8 @@@ void __init sparse_mem_maps_populate_no
+  	void *map;
+  	unsigned long pnum;
+  	unsigned long size =3D sizeof(struct page) * PAGES_PER_SECTION;
++ 	int idx_present;
  =20
-  	if (direct)
+ -	map =3D alloc_remap(nodeid, size * map_count);
+ -	if (map) {
+ -		idx_present =3D 0;
+ -		for (pnum =3D pnum_begin; pnum < pnum_end; pnum++) {
+ -			if (!present_section_nr(pnum))
+ -				continue;
+ -			map_map[idx_present] =3D map;
+ -			map +=3D size;
+ -			idx_present++;
+ -		}
+ -		return;
+ -	}
+ -
+  	size =3D PAGE_ALIGN(size);
+  	map =3D memblock_virt_alloc_try_nid_raw(size * map_count,
+  					      PAGE_SIZE, __pa(MAX_DMA_ADDRESS),
 
---Sig_/_vnPT/XHZkwvJNm+Q9XcCCF
+--Sig_/YgfL4y/AkGSkM47vpcQ+unT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqKW4ACgkQAVBC80lX
-0Gz+iQgAi0jowIjNC+CKNgjBdEIcE0nUpLAynjOX+FauGP03BzvfsOIimBRBvXIy
-b5Frvgbpz/AFsob0nDOeLKYPgS8CN7+4Ci/NeFUERLQupWcXTC3qa1lSG7/iz+4X
-S5Tk+NAeM1FuA3Uwn4KKORy1q/GprSsMsglB1/p6LSO763jcwWPkzTyl99APHf4f
-7dd/1RWEBZy5ARMC0u1s/YdtqPBLu2gmFJYKe4aMsDYxMTt6orFN/vr9Yz6/V4vD
-S00dLxLSY+x13mXOOyY3hQ7Lq7shBkXPKmBh7vStwSqoZE3esDQBcM72qxMeAuxo
-ue7DOQeQQWpUqLCmCnXNU1Kwg+ueOA==
-=mCbu
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqNh8ACgkQAVBC80lX
+0Gz/GQf8CDoUOZLqIDTKKNvUWee0AQGPRFnUbWBRJuvOnUvNMrjcM32XFKytNGp3
+dKBKVbjedSMXOJH5j4rRiTOWmfRH8ozDOL/+Etc4GvZQSf4ic7roND+jhdzBhQZD
+GgQeNEsA/EHjfNzbBe5pfK9mYff7h754Zhuwb/A24phmmfGO/DFrl9sqO3MFvjaW
+DXiDFvHrR5A7B4raoilD17QryYksEUrPsRxExgOMMQVjM/Y3sWJGmFJfB5JRd161
++n1vw0zTPeJRgE9Bi+buiKFcH23ywczEbizTE8eHDJWYLZyqswEtMwVelYYaaqL8
+PzS3MX3cEqB6P0gBydQFoNQDVkRNYg==
+=ycLm
 -----END PGP SIGNATURE-----
 
---Sig_/_vnPT/XHZkwvJNm+Q9XcCCF--
+--Sig_/YgfL4y/AkGSkM47vpcQ+unT--
