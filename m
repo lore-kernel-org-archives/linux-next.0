@@ -1,64 +1,135 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the crypto tree with the asm-generic
- tree
-Date: Thu, 15 Mar 2018 13:51:53 +1100
-Message-ID: <20180315135153.493712ac@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm-misc tree with Linus' tree
+Date: Thu, 15 Mar 2018 14:14:25 +1100
+Message-ID: <20180315141425.49479b8b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fUabfP7OpigJFAOAKd/3fN2"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Herbert Xu <herbert@gondor.apana.org.au>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Markus Elfring <elfring@users.sourceforge.net>, Kamil Konieczny <k.konieczny@partner.samsung.com>
+Content-Type: multipart/mixed; boundary="===============2086967056=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fUabfP7OpigJFAOAKd/3fN2
+--===============2086967056==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/s0Of4vZo6n6iD+GjmQff4YC"; protocol="application/pgp-signature"
+
+--Sig_/s0Of4vZo6n6iD+GjmQff4YC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Herbert,
+Hi all,
 
-Today's linux-next merge of the crypto tree got a conflict in:
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-  drivers/crypto/bfin_crc.c
+  sound/pci/hda/hda_intel.c
 
-between commit:
+between commits:
 
-  1d77094897bc ("crypto: remove blackfin CRC driver")
+  1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
+  40088dc4e1ea ("ALSA: hda - Revert power_save option default value")
 
-from the asm-generic tree and commits:
+from Linus' tree and commit:
 
-  f1b298103e14 ("crypto: bfin_crc - Add empty hash export and import")
-  5471f2e2b5ea ("crypto: bfin_crc - Delete an error message for a failed me=
-mory allocation in bfin_crypto_crc_probe()")
+  07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
 
-from the crypto tree.
+from the drm-misc tree.
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/fUabfP7OpigJFAOAKd/3fN2
+diff --cc sound/pci/hda/hda_intel.c
+index d5017adf9feb,ec4e6b829ee2..000000000000
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@@ -2219,8 -2201,8 +2223,9 @@@ static int azx_probe_continue(struct az
+  	struct hda_intel *hda =3D container_of(chip, struct hda_intel, chip);
+  	struct hdac_bus *bus =3D azx_bus(chip);
+  	struct pci_dev *pci =3D chip->pci;
++ 	struct hda_codec *codec;
+  	int dev =3D chip->dev_index;
+ +	int val;
+  	int err;
+ =20
+  	hda->probe_continued =3D 1;
+@@@ -2302,21 -2284,16 +2307,30 @@@
+  	chip->running =3D 1;
+  	azx_add_card_list(chip);
+ =20
+ +	val =3D power_save;
+ +#ifdef CONFIG_PM
+ +	if (pm_blacklist) {
+ +		const struct snd_pci_quirk *q;
+ +
+ +		q =3D snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
+ +		if (q && val) {
+ +			dev_info(chip->card->dev, "device %04x:%04x is on the power_save black=
+list, forcing power_save to 0\n",
+ +				 q->subvendor, q->subdevice);
+ +			val =3D 0;
+ +		}
+ +	}
+ +#endif /* CONFIG_PM */
+++
++ 	/*
++ 	 * The discrete GPU cannot power down unless the HDA controller runtime
++ 	 * suspends, so activate runtime PM on codecs even if power_save =3D=3D =
+0.
++ 	 */
++ 	if (use_vga_switcheroo(hda))
++ 		list_for_each_codec(codec, &chip->bus)
++ 			codec->auto_runtime_pm =3D 1;
++=20
+ -	snd_hda_set_power_save(&chip->bus, power_save * 1000);
+ +	snd_hda_set_power_save(&chip->bus, val * 1000);
+- 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
++ 	if (azx_has_pm_runtime(chip))
+  		pm_runtime_put_autosuspend(&pci->dev);
+ =20
+  out_free:
+
+--Sig_/s0Of4vZo6n6iD+GjmQff4YC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqp38kACgkQAVBC80lX
-0Gy3lgf+Odtdzp3zexoe/cthTjIKijFco6kZa3xN06GMqnIXfWmpuiSfgXySjpjW
-a4mA/w4FIChLIuoM984qsHZQ8g58njFhMgbqiPnaR2+sC7B88HUo3AoWM7eBiv0a
-k6JO4Exr3q3eVtVfo940CRfRytb3S2/6n9BfUKUSah+4Fl2J19bHAJ+f0t+5LWaO
-Vxiap0h45rSyPMdAFO6nQ6/16JesM8SBr1u9mCt6Zs8Won2HYlkU7iJXcfKHVuWY
-7VKkJdzM+8gew4Fbv+gIJheKOE1o5YO8cMijQPJ/Fpfx346cOiO1BN3bRO6GOMzQ
-9YoeX8Hu8G8fzcSztCW1jm7KJYb7fw==
-=Femr
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqp5REACgkQAVBC80lX
+0GxoIwf/Ynl6aTsk6eMadOxM6MmWPcaZODrISV04xbpLC9jrizJgX/r+vBht+e92
+8rrtwqo4cctahri2YR26GQvwvNKJ28N8mmidk8TL3LWKpqXedvYtfl+ol72e40hx
+TfIiyihHLnmiDy+df0XhqwvYk5DI81RGufXoOGaXC/fXOZ5FniOyBt0/lhs0Bi3R
+q/viy1bh0w7ZQJGEaunKrgRlcaKtVTg49RjSXiCjgg593M5FFPi2b4UQt+sOjEAh
+xE719bDJ/K6N5m+UWbWZ+CMU25Z9mP490W/OAoVDwgeGavWKL3oYwWXDThYIR9am
++3A26bfbGDvV9fshzUcafBpsktCC8A==
+=0AgE
 -----END PGP SIGNATURE-----
 
---Sig_/fUabfP7OpigJFAOAKd/3fN2--
+--Sig_/s0Of4vZo6n6iD+GjmQff4YC--
+
+--===============2086967056==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============2086967056==--
