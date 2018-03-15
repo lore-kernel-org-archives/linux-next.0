@@ -1,36 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi-mkp tree with the
- efi-lock-down tree
-Date: Thu, 15 Mar 2018 18:34:12 +1100
-Message-ID: <20180315183412.01412755@canb.auug.org.au>
+Subject: linux-next: manual merge of the staging tree with the net-next tree
+Date: Thu, 15 Mar 2018 18:35:31 +1100
+Message-ID: <20180315183531.0e987f82@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nX3i2UYX.tvbaVBnXGnMu4I"; protocol="application/pgp-signature"
+ boundary="Sig_/DH7i9N3rfEpuhujVBpBjLDd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Martin K. Petersen" <martin.petersen@oracle.com>, David Howells <dhowells@redhat.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Greg KH <greg@kroah.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Denys Vlasenko <dvlasenk@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nX3i2UYX.tvbaVBnXGnMu4I
+--Sig_/DH7i9N3rfEpuhujVBpBjLDd
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+Today's linux-next merge of the staging tree got a conflict in:
 
-  drivers/scsi/eata.c
+  drivers/staging/irda/net/af_irda.c
 
 between commit:
 
-  5b76b160badb ("scsi: Lock down the eata driver")
+  9b2c45d479d0 ("net: make getname() functions return length rather than us=
+e int* parameter")
 
-from the efi-lock-down tree and commit:
+from the net-next tree and commit:
 
-  6b1745caa14a ("scsi: eata: eata-pio: Deprecate legacy EATA drivers")
+  d64c2a76123f ("staging: irda: remove the irda network stack and drivers")
 
-from the scsi-mkp tree.
+from the staging tree.
 
 I fixed it up (I just removed the file) and can carry the fix as
 necessary. This is now fixed as far as linux-next is concerned, but any
@@ -43,20 +43,20 @@ particularly complex conflicts.
 Cheers,
 Stephen Rothwell
 
---Sig_/nX3i2UYX.tvbaVBnXGnMu4I
+--Sig_/DH7i9N3rfEpuhujVBpBjLDd
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqIfQACgkQAVBC80lX
-0GxG4Qf/exik1BbI+H5UsC6pUY+XAUhZoipRtgOvgvt8Xv/TnZPIXgVvbk03AnnA
-9SKucaC29+2OSVbt5cP92VYkNipjni+madhSPT80M94bQk9p/ZPOUfyfvxQg64P5
-cI8PufREK7h3yKBP8x7+90tXPwtKOIjtpzwy56WYznBTBMYvHVaKzJ/w0XXvps+n
-n+U55S3N4CNjHqUG0xLutxPOfTGRxZnnhRguvo34Y/cnoXL138j8T6L/7II2T1mF
-jzheHxNl6fufa40DR9ulovMbZE8CHkQEk1fV6NRXrB5SvMqDGnocHlPwtfRWU7JB
-1H+lQMoAT94gsH8X+5L9+ojHjWI/Mw==
-=8UoR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqqIkMACgkQAVBC80lX
+0Gx97wf+My6j91q7HyvMD6sBNz7Tml29Q8ibMCk/b5NcXZVWB99HeVPR/yuOEkGl
+F6OYC+n5DDYNLStrOQnqnm1m8pWpsSTmly6xdX1DV+vfKMC1Po9adc2UWftdfKXM
+dBfAaLwXOwHyZ69YKlJ7JXmZCVS97FCVPpef3OAS83tzV5GzyLgE2lKL2xMCQAdV
+Er5hxuUnPuLxv9Bfgulg9V9VK01vTP5RO2wJqh5bJCQ08Ox01CIfFlClqY2yNSN8
+4BLleYzaTxxoOQERRTFl/CAfBZ6Njay1xTtYmE7QhO6jv+7oye7WEdiluDEQ23lQ
+yjSzeNj/ToRN7RITIuP8W9PrKTI23Q==
+=5jAI
 -----END PGP SIGNATURE-----
 
---Sig_/nX3i2UYX.tvbaVBnXGnMu4I--
+--Sig_/DH7i9N3rfEpuhujVBpBjLDd--
