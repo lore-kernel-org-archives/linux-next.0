@@ -1,32 +1,53 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the
- rdma-fixes tree
-Date: Thu, 15 Mar 2018 20:05:28 -0600
-Message-ID: <20180316020528.GA27212@mellanox.com>
-References: <20180316115610.3d7f232a@canb.auug.org.au>
- <1521163082.18703.191.camel@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the y2038 tree
+Date: Fri, 16 Mar 2018 13:25:29 +1100
+Message-ID: <20180316132529.45126501@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5ZRLpJR4xNCkH3bZP8CRY14"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1521163082.18703.191.camel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Bloch <markb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Deepa Dinamani <deepa.kernel@gmail.com>, heiko.carstens@de.ibm.com
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Mar 15, 2018 at 09:18:02PM -0400, Doug Ledford wrote:
- 
-> Here's the commit (from the rdma git repo) with the proper merge fix
-> (although it also has other minor merge stuff that needs to be ignored):
-> 
-> 2d873449a202 (Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next)
+--Sig_/5ZRLpJR4xNCkH3bZP8CRY14
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi Arnd,
 
-If you merge the branches in the order:
-  rdma for-next, rdma for-rc, then net-next
-you should not see a merge conflict as rdma for-next already has the
-correct resolution.
+After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
+failed like this:
 
-Jason
+In file included from include/linux/elf.h:5:0,
+                 from include/linux/module.h:15,
+                 from init/main.c:16:
+arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_re=
+gs'
+
+Caused by commit
+
+  f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/5ZRLpJR4xNCkH3bZP8CRY14
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqrKxkACgkQAVBC80lX
+0GxGUAf/TO6OACPRD1h7hm/aoE0a6NqBesrxMP9hsw0GE2WLQvKaZiBSf+vpNZSs
+BwjWtuXTZw6v0pjMs2xy1beNgtGR0mimIi292Xm9s5HpWnjnsypBURjWfJInvUv6
+3Z6FKdHlV5CGmptieivPQCLVf6WVrnQeAojZLrwJKfAixwbvM1J7c8myFDadIXea
+y5imG7hZZuliGz++nr9dsvoDnt2xL5MyltGb411J3e48h0gSNFolhfy/fxHAccLm
+GAkTL5f0WWR5Uqq/tWi+Z8XvQ5JO2gvKc70ktsbuC80p3nVomhEI4ykaxUIUrFSl
+CP/706sRfWj9ByWxgGN/KP8XclZP/Q==
+=4ztu
+-----END PGP SIGNATURE-----
+
+--Sig_/5ZRLpJR4xNCkH3bZP8CRY14--
