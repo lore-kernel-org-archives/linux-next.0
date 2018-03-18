@@ -1,78 +1,49 @@
-From: Deepa Dinamani <deepa.kernel@gmail.com>
-Subject: Re: linux-next: build failure after merge of the y2038 tree
-Date: Sat, 17 Mar 2018 16:13:18 -0700
-Message-ID: <CABeXuvpoXWx3ndJ93aKA0ARQqdx4iJXn9FN4MnceYC3RTsAvvA@mail.gmail.com>
-References: <20180316132529.45126501@canb.auug.org.au> <CABeXuvrFkASp1g5LDW0MsENqtHRiT=Vp=F5GN3XdhGzaXkHNsw@mail.gmail.com>
- <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the kvm tree
+Date: Mon, 19 Mar 2018 00:44:21 +1100
+Message-ID: <20180319004421.44b18d1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/doOM47Y7bOWvP_3kqrHL.9+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3Vf-ubqgdH67HE6LEfR=Vg6ZCf6+77qE+ZrwUocLCWTQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiko Carstens <heiko.carstens@de.ibm.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-I posted the patch.
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The patch has simple changes. Let me know if maybe posting a new
-version makes sense.
+Hi all,
 
-I also needed this patch to build linux-next:
+There is a series if commits
 
-commit b784c76bb7c1c440a4ce06a18f4b3a936f33967d
-Author: Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Fri Mar 16 20:57:10 2018 -0700
+  e84b7119e891 ("x86/msr: Add AMD Core Perf Extension MSRs")
+to
+  e1de91ccab31 ("KVM: VMX: WARN on a MOV CR3 exit w/ unrestricted guest")
 
-    i40iw: add missing irq.h include
+that are missing a Signed-off-by from their committer.  It looks like
+they have been rebased?
 
-    iwarp driver began using irq_get_affinity_mask in commit 7e952b19eb638.
-    Add the needed include irq.h to get the definition.
+--=20
+Cheers,
+Stephen Rothwell
 
-    This was found while trying allmodconfig for arm64, s390, and sparc.
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-    Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-index a51798578f27..506b10e8ea4e 100644
---- a/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-+++ b/drivers/infiniband/hw/i40iw/i40iw_verbs.c
-@@ -32,6 +32,7 @@
- *
- *******************************************************************************/
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqubTUACgkQAVBC80lX
+0GwfPwf/ZJ7WDY7gv6uE+mBG0GBcbTikuEb/BFBOIBMtLdy8MJv+UPJauFmDDvu0
+u9s+0T/U6LCq91M9xThBpjIiemQdkOSMJOZh2CslG/YCdyceihKP0yy+3NMdAKj3
+SeqXHfXIYm+HsXTNzIAkJIyQmIkjEBuZgCuUzrNB4aJdOZdray2EQRmTKn2jOAFG
+uTVRD60iJo0xuDcRT7OQMhrWZOG1eEZnNnBSjSyOiKayWhJ3DUDn9HFMSmssrfdZ
+TPVp7tynVMU2v/3zHXPQ1M/kL5mvW49AwZwREgcLw/OL+63rjJ7ukOIdfEl1SxHT
++xxG1JEB14Xire8FJle4WXuk73N0eA==
+=kcaQ
+-----END PGP SIGNATURE-----
 
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/random.h>
-
--Deepa
-
-On Fri, Mar 16, 2018 at 1:14 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Mar 16, 2018 at 6:23 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->> Hi Arnd,
->>
->> Do you want me to send the fix as a patch or should I re-post the series?
->
-> Please send a fix relative to linux-next. Due to my travel next week, I might
-> not be able to apply it right away but maybe Stephen can add it on top until
-> I get back.
->
->       Arnd
->
->> On Thu, Mar 15, 2018 at 7:25 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>> Hi Arnd,
->>>
->>> After merging the y2038 tree, today's linux-next build (s390 allnoconfig)
->>> failed like this:
->>>
->>> In file included from include/linux/elf.h:5:0,
->>>                  from include/linux/module.h:15,
->>>                  from init/main.c:16:
->>> arch/s390/include/asm/elf.h:138:1: error: unknown type name 's390_compat_regs'
->>>
->>> Caused by commit
->>>
->>>   f00689038f71 ("include: Move compat_timespec/ timeval to compat_time.h")
->>>
+--Sig_/doOM47Y7bOWvP_3kqrHL.9+--
