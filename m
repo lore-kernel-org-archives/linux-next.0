@@ -1,48 +1,93 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the sound-asoc
- tree
-Date: Mon, 19 Mar 2018 16:20:55 +0800
-Message-ID: <20180319082055.GI2186@sirena.org.uk>
-References: <20180319191244.34ac823a@canb.auug.org.au>
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Subject: Re: linux-next: manual merge of the drm-misc tree with the drm tree
+Date: Mon, 19 Mar 2018 16:14:07 +0200
+Message-ID: <20180319141407.GM5453@intel.com>
+References: <20180319122929.2ac3dfd8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="s8zlJy+nbqKJ93gX"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180319191244.34ac823a@canb.auug.org.au>
+In-Reply-To: <20180319122929.2ac3dfd8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Kelly <jamespeterkelly@gmail.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-
---s8zlJy+nbqKJ93gX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Mar 19, 2018 at 07:12:44PM +1100, Stephen Rothwell wrote:
+On Mon, Mar 19, 2018 at 12:29:29PM +1100, Stephen Rothwell wrote:
 > Hi all,
->=20
-> Commit
->=20
->   b9f6c09ae07c ("ASoC: ssm2602: Replace reg_default_raw with reg_default")
+> 
+> Today's linux-next merge of the drm-misc tree got a conflict in:
+> 
+>   drivers/gpu/drm/i915/intel_color.c
+> 
+> between commit:
+> 
+>   db61d160b3ed ("drm/i915: Remove the pointless 1:1 matrix copy")
+> 
+> from the drm tree and commit:
+> 
+>   d5517a39dce4 ("drm/i915: Remove the blob->data casts")
+> 
+> from the drm-misc tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/gpu/drm/i915/intel_color.c
+> index 89ab0f70aa22,768f1c26080e..000000000000
+> --- a/drivers/gpu/drm/i915/intel_color.c
+> +++ b/drivers/gpu/drm/i915/intel_color.c
+> @@@ -140,28 -140,20 +140,27 @@@ static void ilk_load_csc_matrix(struct 
+>   	int i, pipe = intel_crtc->pipe;
+>   	uint16_t coeffs[9] = { 0, };
+>   	struct intel_crtc_state *intel_crtc_state = to_intel_crtc_state(crtc_state);
+>  +	bool limited_color_range = false;
+>  +
+>  +	/*
+>  +	 * FIXME if there's a gamma LUT after the CSC, we should
+>  +	 * do the range compression using the gamma LUT instead.
+>  +	 */
+>  +	if (INTEL_GEN(dev_priv) >= 8 || IS_HASWELL(dev_priv))
+>  +		limited_color_range = intel_crtc_state->limited_color_range;
+>   
+>   	if (intel_crtc_state->ycbcr420) {
+>  -		i9xx_load_ycbcr_conversion_matrix(intel_crtc);
+>  +		ilk_load_ycbcr_conversion_matrix(intel_crtc);
+>   		return;
+>   	} else if (crtc_state->ctm) {
+> - 		struct drm_color_ctm *ctm =
+> - 			(struct drm_color_ctm *)crtc_state->ctm->data;
+> + 		struct drm_color_ctm *ctm = crtc_state->ctm->data;
+>  -		uint64_t input[9] = { 0, };
+>  +		const u64 *input;
+>  +		u64 temp[9];
 
-Dropped.
+Yep. Looks correct.
 
---s8zlJy+nbqKJ93gX
-Content-Type: application/pgp-signature; name="signature.asc"
+>   
+>  -		if (intel_crtc_state->limited_color_range) {
+>  -			ctm_mult_by_limited(input, ctm->matrix);
+>  -		} else {
+>  -			for (i = 0; i < ARRAY_SIZE(input); i++)
+>  -				input[i] = ctm->matrix[i];
+>  -		}
+>  +		if (limited_color_range)
+>  +			input = ctm_mult_by_limited(temp, ctm->matrix);
+>  +		else
+>  +			input = ctm->matrix;
+>   
+>   		/*
+>   		 * Convert fixed point S31.32 input to format supported by the
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqvcuYACgkQJNaLcl1U
-h9B+rwf+KZfz6dMkHJRuGNg+UmlaJs7/32snfkzp12UWL/ZJrAfID/u43ah0e1a9
-gW767bzLo5hVbS/6GozxyHAnvl4/T+TP1fYaAj2dftDtRALW2BIgpEEw31kyigKR
-LpwJGcgHyJribkA8FD5zHebMwkZFZkIRZXKZtNwgkSJE/ShSj2kMruUSiXHlgTbx
-OE3BRnEh4kxEiOo75nbomoXKKHwQiFbIZbPuOspR+8lCb45PreMAQ4LpG3VxdLNf
-OVyQlezWp17UdbjIsaR0ov0KloHmTQkSwc4K0W1EyrOq3JfLk0CAIVt3f9zmAs02
-XDpiXO0ab5Rk0asQWRA2XopvxALsBg==
-=eiGd
------END PGP SIGNATURE-----
-
---s8zlJy+nbqKJ93gX--
+-- 
+Ville Syrjälä
+Intel OTC
