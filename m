@@ -1,92 +1,77 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the block
- tree
-Date: Mon, 19 Mar 2018 17:36:43 +1100
-Message-ID: <20180319173643.38aa4562@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the
+ sparc-next tree
+Date: Mon, 19 Mar 2018 17:43:55 +1100
+Message-ID: <20180319174355.02725f8f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/je+8IFxL0/ng+2=PSN2vjpV"; protocol="application/pgp-signature"
+ boundary="Sig_/e6..Ev2Ip4VFe7Pc3HaN7Vi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>, David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yu Zhao <yuzhao@google.com>, Khalid Aziz <khalid.aziz@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/je+8IFxL0/ng+2=PSN2vjpV
+--Sig_/e6..Ev2Ip4VFe7Pc3HaN7Vi
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+Hi all,
 
 Today's linux-next merge of the akpm-current tree got a conflict in:
 
-  drivers/block/zram/zram_drv.h
+  mm/memory.c
 
 between commit:
 
-  233bde21aa43 ("block: Move SECTOR_SIZE and SECTOR_SHIFT definitions into =
-<linux/blkdev.h>")
+  ca827d55ebaa ("mm, swap: Add infrastructure for saving page metadata on s=
+wap")
 
-from the block tree and commit:
+from the sparc-next tree and commit:
 
-  5d95e0f3a22b ("zram: drop max_zpage_size and use zs_huge_class_size()")
+  f2986f002986 ("mm: don't expose page to fast gup before it's ready")
 
 from the akpm-current tree.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I fixed it up (please check, I just did the obvious fix up - see below)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/block/zram/zram_drv.h
-index 1e9bf65c0bfb,d71c8000a964..000000000000
---- a/drivers/block/zram/zram_drv.h
-+++ b/drivers/block/zram/zram_drv.h
-@@@ -21,22 -21,7 +21,6 @@@
+diff --cc mm/memory.c
+index aed37325d94e,e0ae4999c824..000000000000
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@@ -3052,8 -3035,6 +3035,7 @@@ int do_swap_page(struct vm_fault *vmf
+  	flush_icache_page(vma, page);
+  	if (pte_swp_soft_dirty(vmf->orig_pte))
+  		pte =3D pte_mksoft_dirty(pte);
+- 	set_pte_at(vma->vm_mm, vmf->address, vmf->pte, pte);
+ +	arch_do_swap_page(vma->vm_mm, vma, vmf->address, pte, vmf->orig_pte);
+  	vmf->orig_pte =3D pte;
  =20
-  #include "zcomp.h"
- =20
-- /*-- Configurable parameters */
--=20
-- /*
--  * Pages that compress to size greater than this are stored
--  * uncompressed in memory.
--  */
-- static const size_t max_zpage_size =3D PAGE_SIZE / 4 * 3;
--=20
-- /*
--  * NOTE: max_zpage_size must be less than or equal to:
--  *   ZS_MAX_ALLOC_SIZE. Otherwise, zs_malloc() would
--  * always return failure.
--  */
--=20
-- /*-- End of configurable params */
--=20
- -#define SECTOR_SHIFT		9
-  #define SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
-  #define SECTORS_PER_PAGE	(1 << SECTORS_PER_PAGE_SHIFT)
-  #define ZRAM_LOGICAL_BLOCK_SHIFT 12
+  	/* ksm created a completely new copy */
 
---Sig_/je+8IFxL0/ng+2=PSN2vjpV
+--Sig_/e6..Ev2Ip4VFe7Pc3HaN7Vi
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvWnsACgkQAVBC80lX
-0GxSuwf/aGFNKjgOpURxXfjzzTZoYolneMkGmlB9ma/nuX7iRlynNPgCMUmiS1kg
-C6/muBgIWgBU+8T6Z14OozQ6/Euf1fX4kgIOqroBCGxSUu8pkHUKHoTzvn5DkUqC
-5ygubgZDlXWWdX34EjukVu3tCe1FzidPs0q+DIPDlZQFGFHa4Gocv5AEMxrYIzsW
-CN+aZANAur/ppFYU5PNsSq5KUgwrD3jyG3ZQ7b7F6PJDZOHbxbl/1rN+FJLCkkUf
-1RTjbd2QghkP/gydeykpGFjdh8SmRn28lsEq41gViBkHKoed7Hlgv1HK3im25aJW
-OpiA1AhFqns7Fm4gq4ehRjQuYJzj9w==
-=+WFu
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvXCsACgkQAVBC80lX
+0Gz9LQf/Tbj3su/83xrC77vxQR+eWvjxXw4aRVcAuLyWCXV48VFc2IdvNs+fRIAN
+hinRAFYPQpN9U/4mmG03L/Zjea3jnZRSNqWfMI65KuNQ5v8vLkxC+Z5z8rdNGA7u
+5FI8RGv+qIJI1hjJI0cCKcJ+g08crI1vULrQoLadLmPxWCNeBqGjIw36wAb0Vw17
+IjDC8uxcEOcztYpUVXYAtINGm6MwP3FFCCiQlp38LDKIJzW4AK26RWbygyHRO8Rh
+f2YD1DVeDj+8amnSI1er7sSblimn945smKrXZzqgw0ZLGwnnDbbcZw2obF1zG/ss
+obd14Nx1ZPMtgafy0bEMmkgjl2THhQ==
+=dTgo
 -----END PGP SIGNATURE-----
 
---Sig_/je+8IFxL0/ng+2=PSN2vjpV--
+--Sig_/e6..Ev2Ip4VFe7Pc3HaN7Vi--
