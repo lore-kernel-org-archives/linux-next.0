@@ -1,49 +1,105 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the kvm tree
-Date: Mon, 19 Mar 2018 00:44:21 +1100
-Message-ID: <20180319004421.44b18d1e@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the syscalls
+ tree
+Date: Mon, 19 Mar 2018 11:25:10 +1100
+Message-ID: <20180319112510.5492f274@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/doOM47Y7bOWvP_3kqrHL.9+"; protocol="application/pgp-signature"
+ boundary="Sig_/iTvzUgPCCujS9G0ZQSTcM/L"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kirill Tkhai <ktkhai@virtuozzo.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/doOM47Y7bOWvP_3kqrHL.9+
+--Sig_/iTvzUgPCCujS9G0ZQSTcM/L
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-There is a series if commits
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  e84b7119e891 ("x86/msr: Add AMD Core Perf Extension MSRs")
-to
-  e1de91ccab31 ("KVM: VMX: WARN on a MOV CR3 exit w/ unrestricted guest")
+  include/linux/socket.h
 
-that are missing a Signed-off-by from their committer.  It looks like
-they have been rebased?
+between commits:
+
+  06947f40e3e9 ("net: socket: add __sys_recvfrom() helper; remove in-kernel=
+ call to syscall")
+  bd4053a762c6 ("net: socket: move check for forbid_cmsg_compat to __sys_..=
+.msg()")
+
+from the syscalls tree and commit:
+
+  d8d211a2a0c3 ("net: Make extern and export get_net_ns()")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/doOM47Y7bOWvP_3kqrHL.9+
+diff --cc include/linux/socket.h
+index e2b6bd4fe977,1ce1f768a58c..000000000000
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@@ -356,30 -352,7 +356,31 @@@ extern long __sys_sendmsg(int fd, struc
+  extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned i=
+nt vlen,
+  			  unsigned int flags, struct timespec *timeout);
+  extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
+ -			  unsigned int vlen, unsigned int flags);
+ +			  unsigned int vlen, unsigned int flags,
+ +			  bool forbid_cmsg_compat);
+ +
+ +/* helpers which do the actual work for syscalls */
+ +extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
+ +			  unsigned int flags, struct sockaddr __user *addr,
+ +			  int __user *addr_len);
+ +extern int __sys_sendto(int fd, void __user *buff, size_t len,
+ +			unsigned int flags, struct sockaddr __user *addr,
+ +			int addr_len);
+ +extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
+ +			 int __user *upeer_addrlen, int flags);
+ +extern int __sys_socket(int family, int type, int protocol);
+ +extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrle=
+n);
+ +extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
+ +			 int addrlen);
+ +extern int __sys_listen(int fd, int backlog);
+ +extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
+ +			     int __user *usockaddr_len);
+ +extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
+ +			     int __user *usockaddr_len);
+ +extern int __sys_socketpair(int family, int type, int protocol,
+ +			    int __user *usockvec);
+ +extern int __sys_shutdown(int fd, int how);
+ +
+ =20
++ extern struct ns_common *get_net_ns(struct ns_common *ns);
+  #endif /* _LINUX_SOCKET_H */
+
+--Sig_/iTvzUgPCCujS9G0ZQSTcM/L
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqubTUACgkQAVBC80lX
-0GwfPwf/ZJ7WDY7gv6uE+mBG0GBcbTikuEb/BFBOIBMtLdy8MJv+UPJauFmDDvu0
-u9s+0T/U6LCq91M9xThBpjIiemQdkOSMJOZh2CslG/YCdyceihKP0yy+3NMdAKj3
-SeqXHfXIYm+HsXTNzIAkJIyQmIkjEBuZgCuUzrNB4aJdOZdray2EQRmTKn2jOAFG
-uTVRD60iJo0xuDcRT7OQMhrWZOG1eEZnNnBSjSyOiKayWhJ3DUDn9HFMSmssrfdZ
-TPVp7tynVMU2v/3zHXPQ1M/kL5mvW49AwZwREgcLw/OL+63rjJ7ukOIdfEl1SxHT
-+xxG1JEB14Xire8FJle4WXuk73N0eA==
-=kcaQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvA2YACgkQAVBC80lX
+0Gz3Rwf9EcG3WGavtC+wbJ06s7CNuhrUgSY+M6CdWNGH6mWowcRfY1RbWrQAnsNj
+DQKX5ZDInOPH3MdzCGbNtW+KzVYYQwguHHBv2nhLOUcvIiIp+2YHQ3rEcYAJ0MXj
+8SxBzQY11dcfi+e8/U2YA6IMOvGsy5z1wqfSV5yHUZbPPePIoohriq5CxYPHqU1W
+t+YJD3TMXMc5iuhxG5mv+Pej1lCq42vLQastxH5PNMs6pKI/UmOmUO1dALJ622BB
+wuvR09Vfr3z6FmvGzG5paWaOTVtPoZko1UCbgQZCIZpNAOn+YaLDBpC5Ifs85472
+KeFYaHnc3qRz05CdnyZXNx+Bvw3ORw==
+=kAgj
 -----END PGP SIGNATURE-----
 
---Sig_/doOM47Y7bOWvP_3kqrHL.9+--
+--Sig_/iTvzUgPCCujS9G0ZQSTcM/L--
