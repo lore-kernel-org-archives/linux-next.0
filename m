@@ -1,57 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the vfs tree
-Date: Mon, 19 Mar 2018 17:06:27 +1100
-Message-ID: <20180319170627.04eae43b@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the block
+ tree
+Date: Mon, 19 Mar 2018 17:36:43 +1100
+Message-ID: <20180319173643.38aa4562@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/M1UKsN7kwrOeuzdlQbOCNtr"; protocol="application/pgp-signature"
+ boundary="Sig_/je+8IFxL0/ng+2=PSN2vjpV"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mateusz Guzik <mguzik@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/M1UKsN7kwrOeuzdlQbOCNtr
+--Sig_/je+8IFxL0/ng+2=PSN2vjpV
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi Andrew,
 
-After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
-failed like this:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-fs/super.c: In function 'do_thaw_all_callback':
-fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw_b=
-dev'; did you mean 'emergency_remount'? [-Werror=3Dimplicit-function-declar=
-ation]
-   emergency_thaw_bdev(sb);
-   ^~~~~~~~~~~~~~~~~~~
-   emergency_remount
+  drivers/block/zram/zram_drv.h
 
-Caused by commit
+between commit:
 
-  92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
+  233bde21aa43 ("block: Move SECTOR_SIZE and SECTOR_SHIFT definitions into =
+<linux/blkdev.h>")
 
-I have reverted that commit for today.
+from the block tree and commit:
+
+  5d95e0f3a22b ("zram: drop max_zpage_size and use zs_huge_class_size()")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/M1UKsN7kwrOeuzdlQbOCNtr
+diff --cc drivers/block/zram/zram_drv.h
+index 1e9bf65c0bfb,d71c8000a964..000000000000
+--- a/drivers/block/zram/zram_drv.h
++++ b/drivers/block/zram/zram_drv.h
+@@@ -21,22 -21,7 +21,6 @@@
+ =20
+  #include "zcomp.h"
+ =20
+- /*-- Configurable parameters */
+-=20
+- /*
+-  * Pages that compress to size greater than this are stored
+-  * uncompressed in memory.
+-  */
+- static const size_t max_zpage_size =3D PAGE_SIZE / 4 * 3;
+-=20
+- /*
+-  * NOTE: max_zpage_size must be less than or equal to:
+-  *   ZS_MAX_ALLOC_SIZE. Otherwise, zs_malloc() would
+-  * always return failure.
+-  */
+-=20
+- /*-- End of configurable params */
+-=20
+ -#define SECTOR_SHIFT		9
+  #define SECTORS_PER_PAGE_SHIFT	(PAGE_SHIFT - SECTOR_SHIFT)
+  #define SECTORS_PER_PAGE	(1 << SECTORS_PER_PAGE_SHIFT)
+  #define ZRAM_LOGICAL_BLOCK_SHIFT 12
+
+--Sig_/je+8IFxL0/ng+2=PSN2vjpV
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvU2MACgkQAVBC80lX
-0GzYIQgAn2ZoY9tpTcyyhL34y5Fu6JDDOEmOihPE4l/5KPQD0OUdaBs3690SX37e
-mJrMuRiQwQD4qoyS8x/waqK20w/Cid8hg5saELuOWpbOfrgMOXSRN2/8vOGaXMmv
-5E8/0ms4qwnVG8d03oaS4+VL/QYxg/CuVpc9QDBe0dTGUunKfDcbDWipwj/ZrjHo
-SglQkLxTnan5swyda2xkJPvPk2rVemXAyHduwzgjoYJ2sqnkbSlvjFItz1SB3LIZ
-rDFMCNh/mmlIxGTslNX7fFqZ6h/eqtj4g/PgBzmCeljSNEJWyuKxnje0eChu3szF
-RvdJhsD/pxa+cSdf0kQ7LCI/qjWx/w==
-=LnUB
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvWnsACgkQAVBC80lX
+0GxSuwf/aGFNKjgOpURxXfjzzTZoYolneMkGmlB9ma/nuX7iRlynNPgCMUmiS1kg
+C6/muBgIWgBU+8T6Z14OozQ6/Euf1fX4kgIOqroBCGxSUu8pkHUKHoTzvn5DkUqC
+5ygubgZDlXWWdX34EjukVu3tCe1FzidPs0q+DIPDlZQFGFHa4Gocv5AEMxrYIzsW
+CN+aZANAur/ppFYU5PNsSq5KUgwrD3jyG3ZQ7b7F6PJDZOHbxbl/1rN+FJLCkkUf
+1RTjbd2QghkP/gydeykpGFjdh8SmRn28lsEq41gViBkHKoed7Hlgv1HK3im25aJW
+OpiA1AhFqns7Fm4gq4ehRjQuYJzj9w==
+=+WFu
 -----END PGP SIGNATURE-----
 
---Sig_/M1UKsN7kwrOeuzdlQbOCNtr--
+--Sig_/je+8IFxL0/ng+2=PSN2vjpV--
