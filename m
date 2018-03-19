@@ -1,93 +1,61 @@
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-Subject: Re: linux-next: manual merge of the drm-misc tree with the drm tree
-Date: Mon, 19 Mar 2018 16:14:07 +0200
-Message-ID: <20180319141407.GM5453@intel.com>
-References: <20180319122929.2ac3dfd8@canb.auug.org.au>
+From: Mateusz Guzik <mguzik@redhat.com>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Mon, 19 Mar 2018 20:56:24 +0100
+Message-ID: <20180319195623.o7h7munci7pixilo@mguzik>
+References: <20180319170627.04eae43b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180319122929.2ac3dfd8@canb.auug.org.au>
+In-Reply-To: <20180319170627.04eae43b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 19, 2018 at 12:29:29PM +1100, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Mar 19, 2018 at 05:06:27PM +1100, Stephen Rothwell wrote:
+> Hi Al,
 > 
-> Today's linux-next merge of the drm-misc tree got a conflict in:
+> After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
+> failed like this:
 > 
->   drivers/gpu/drm/i915/intel_color.c
+> fs/super.c: In function 'do_thaw_all_callback':
+> fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw_bdev'; did you mean 'emergency_remount'? [-Werror=implicit-function-declaration]
+>    emergency_thaw_bdev(sb);
+>    ^~~~~~~~~~~~~~~~~~~
+>    emergency_remount
 > 
-> between commit:
+> Caused by commit
 > 
->   db61d160b3ed ("drm/i915: Remove the pointless 1:1 matrix copy")
+>   92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
 > 
-> from the drm tree and commit:
+> I have reverted that commit for today.
 > 
->   d5517a39dce4 ("drm/i915: Remove the blob->data casts")
-> 
-> from the drm-misc tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/gpu/drm/i915/intel_color.c
-> index 89ab0f70aa22,768f1c26080e..000000000000
-> --- a/drivers/gpu/drm/i915/intel_color.c
-> +++ b/drivers/gpu/drm/i915/intel_color.c
-> @@@ -140,28 -140,20 +140,27 @@@ static void ilk_load_csc_matrix(struct 
->   	int i, pipe = intel_crtc->pipe;
->   	uint16_t coeffs[9] = { 0, };
->   	struct intel_crtc_state *intel_crtc_state = to_intel_crtc_state(crtc_state);
->  +	bool limited_color_range = false;
->  +
->  +	/*
->  +	 * FIXME if there's a gamma LUT after the CSC, we should
->  +	 * do the range compression using the gamma LUT instead.
->  +	 */
->  +	if (INTEL_GEN(dev_priv) >= 8 || IS_HASWELL(dev_priv))
->  +		limited_color_range = intel_crtc_state->limited_color_range;
->   
->   	if (intel_crtc_state->ycbcr420) {
->  -		i9xx_load_ycbcr_conversion_matrix(intel_crtc);
->  +		ilk_load_ycbcr_conversion_matrix(intel_crtc);
->   		return;
->   	} else if (crtc_state->ctm) {
-> - 		struct drm_color_ctm *ctm =
-> - 			(struct drm_color_ctm *)crtc_state->ctm->data;
-> + 		struct drm_color_ctm *ctm = crtc_state->ctm->data;
->  -		uint64_t input[9] = { 0, };
->  +		const u64 *input;
->  +		u64 temp[9];
 
-Yep. Looks correct.
+Oops, did not test with CONFIG_BLOCK disabled. The sysrq func itself is guarded
+with it so imho the right fixup is to do the same thing:
 
->   
->  -		if (intel_crtc_state->limited_color_range) {
->  -			ctm_mult_by_limited(input, ctm->matrix);
->  -		} else {
->  -			for (i = 0; i < ARRAY_SIZE(input); i++)
->  -				input[i] = ctm->matrix[i];
->  -		}
->  +		if (limited_color_range)
->  +			input = ctm_mult_by_limited(temp, ctm->matrix);
->  +		else
->  +			input = ctm->matrix;
->   
->   		/*
->   		 * Convert fixed point S31.32 input to format supported by the
+diff --git a/fs/super.c b/fs/super.c
+index 5fa9a8d..86b5575 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -935,6 +935,7 @@ void emergency_remount(void)
+        }
+ }
+ 
++#ifdef CONFIG_BLOCK
+ static void do_thaw_all_callback(struct super_block *sb)
+ {
+        down_write(&sb->s_umount);
+@@ -968,6 +969,7 @@ void emergency_thaw_all(void)
+                schedule_work(work);
+        }
+ }
++#endif
+ 
+ /*
+  * Unnamed block devices are dummy devices used by virtual
+
 
 -- 
-Ville Syrjälä
-Intel OTC
+Mateusz Guzik
