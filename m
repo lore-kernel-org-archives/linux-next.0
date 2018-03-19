@@ -1,105 +1,54 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the syscalls
- tree
-Date: Mon, 19 Mar 2018 11:25:10 +1100
-Message-ID: <20180319112510.5492f274@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the crypto tree
+Date: Mon, 19 Mar 2018 12:04:33 +1100
+Message-ID: <20180319120433.24cc4be1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/iTvzUgPCCujS9G0ZQSTcM/L"; protocol="application/pgp-signature"
+ boundary="Sig_/rvvOt6xsja+.U4n9.FFTr/X"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kirill Tkhai <ktkhai@virtuozzo.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Harsh Jain <harsh@chelsio.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/iTvzUgPCCujS9G0ZQSTcM/L
+--Sig_/rvvOt6xsja+.U4n9.FFTr/X
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Herbert,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the crypto tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  include/linux/socket.h
+In file included from drivers/crypto/chelsio/chcr_ipsec.c:66:0:
+drivers/crypto/chelsio/chcr_crypto.h:343:12: warning: 'chcr_ahash_continue'=
+ declared 'static' but never defined [-Wunused-function]
+ static int chcr_ahash_continue(struct ahash_request *req);
+            ^~~~~~~~~~~~~~~~~~~
 
-between commits:
+Introduced by commit
 
-  06947f40e3e9 ("net: socket: add __sys_recvfrom() helper; remove in-kernel=
- call to syscall")
-  bd4053a762c6 ("net: socket: move check for forbid_cmsg_compat to __sys_..=
-.msg()")
-
-from the syscalls tree and commit:
-
-  d8d211a2a0c3 ("net: Make extern and export get_net_ns()")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  5110e65536f3 ("crypto: chelsio -Split Hash requests for large scatter gat=
+her list")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/socket.h
-index e2b6bd4fe977,1ce1f768a58c..000000000000
---- a/include/linux/socket.h
-+++ b/include/linux/socket.h
-@@@ -356,30 -352,7 +356,31 @@@ extern long __sys_sendmsg(int fd, struc
-  extern int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned i=
-nt vlen,
-  			  unsigned int flags, struct timespec *timeout);
-  extern int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg,
- -			  unsigned int vlen, unsigned int flags);
- +			  unsigned int vlen, unsigned int flags,
- +			  bool forbid_cmsg_compat);
- +
- +/* helpers which do the actual work for syscalls */
- +extern int __sys_recvfrom(int fd, void __user *ubuf, size_t size,
- +			  unsigned int flags, struct sockaddr __user *addr,
- +			  int __user *addr_len);
- +extern int __sys_sendto(int fd, void __user *buff, size_t len,
- +			unsigned int flags, struct sockaddr __user *addr,
- +			int addr_len);
- +extern int __sys_accept4(int fd, struct sockaddr __user *upeer_sockaddr,
- +			 int __user *upeer_addrlen, int flags);
- +extern int __sys_socket(int family, int type, int protocol);
- +extern int __sys_bind(int fd, struct sockaddr __user *umyaddr, int addrle=
-n);
- +extern int __sys_connect(int fd, struct sockaddr __user *uservaddr,
- +			 int addrlen);
- +extern int __sys_listen(int fd, int backlog);
- +extern int __sys_getsockname(int fd, struct sockaddr __user *usockaddr,
- +			     int __user *usockaddr_len);
- +extern int __sys_getpeername(int fd, struct sockaddr __user *usockaddr,
- +			     int __user *usockaddr_len);
- +extern int __sys_socketpair(int family, int type, int protocol,
- +			    int __user *usockvec);
- +extern int __sys_shutdown(int fd, int how);
- +
- =20
-+ extern struct ns_common *get_net_ns(struct ns_common *ns);
-  #endif /* _LINUX_SOCKET_H */
-
---Sig_/iTvzUgPCCujS9G0ZQSTcM/L
+--Sig_/rvvOt6xsja+.U4n9.FFTr/X
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvA2YACgkQAVBC80lX
-0Gz3Rwf9EcG3WGavtC+wbJ06s7CNuhrUgSY+M6CdWNGH6mWowcRfY1RbWrQAnsNj
-DQKX5ZDInOPH3MdzCGbNtW+KzVYYQwguHHBv2nhLOUcvIiIp+2YHQ3rEcYAJ0MXj
-8SxBzQY11dcfi+e8/U2YA6IMOvGsy5z1wqfSV5yHUZbPPePIoohriq5CxYPHqU1W
-t+YJD3TMXMc5iuhxG5mv+Pej1lCq42vLQastxH5PNMs6pKI/UmOmUO1dALJ622BB
-wuvR09Vfr3z6FmvGzG5paWaOTVtPoZko1UCbgQZCIZpNAOn+YaLDBpC5Ifs85472
-KeFYaHnc3qRz05CdnyZXNx+Bvw3ORw==
-=kAgj
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvDKIACgkQAVBC80lX
+0GxosAf/Z4LngXkrYhHqp9Ilzv/yc+qjlyf+w+l+AUhHZh6MLU11Mm8wEqP8mUxA
+gM29tdlsxL1XnardbXiTG+EjphAZGIP6g5uv+P8at+gtytOMi1vLzGXvL1ibEKAm
+g3RLyBOjNGgC46O1yd7PW4FOFAaL7VFxboZA3GpLj8EdWOtfz6cnc0KtcAq8Z/XH
+EWmhERAqMt8mUoY/iERj8FFSwnChBeBzNDPnkT41zPcV2TEXylROyljv3VTzZpVB
++H+SqNwiAlZzsdAbhnbh8xMNOsZLrjovLNR5d9yUJuQ+Mudt5PvoyOEeCniCjbpn
+5yyBGiX/o8+p+7VRcjj2TNfYBNHdpg==
+=Emsn
 -----END PGP SIGNATURE-----
 
---Sig_/iTvzUgPCCujS9G0ZQSTcM/L--
+--Sig_/rvvOt6xsja+.U4n9.FFTr/X--
