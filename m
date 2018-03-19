@@ -1,88 +1,92 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the arm-soc tree
-Date: Mon, 19 Mar 2018 14:06:57 +1100
-Message-ID: <20180319140657.223852a1@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the kvms390 tree with the nds32
+ tree
+Date: Mon, 19 Mar 2018 14:49:24 +1100
+Message-ID: <20180319144924.290abdd3@canb.auug.org.au>
+References: <20180226133445.6544ad34@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ycXnFGlPPACtBDhfS29zcpt"; protocol="application/pgp-signature"
+ boundary="Sig_/LGEnlZW.OIKC+x8h59yr9CR"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180226133445.6544ad34@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Robin Murphy <robin.murphy@arm.com>
+To: Greentime Hu <green.hu@gmail.com>, Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>, Cornelia Huck <cohuck@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Farhan Ali <alifm@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ycXnFGlPPACtBDhfS29zcpt
+--Sig_/LGEnlZW.OIKC+x8h59yr9CR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+On Mon, 26 Feb 2018 13:34:45 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the kvms390 tree got a conflict in:
+>=20
+>   drivers/video/console/Kconfig
+>=20
+> between commit:
+>=20
+>   2312dbf7462b ("drivers/video/concole: add negative dependency for VGA_C=
+ONSOLE on nds32")
+>=20
+> from the nds32 tree and commits:
+>=20
+>   8da93aca3729 ("Kconfig : Remove HAS_IOMEM dependency for Graphics suppo=
+rt")
+>   416b744f4494 ("s390/setup : enable display support for KVM guest")
+>=20
+> from the kvms390 tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc drivers/video/console/Kconfig
+> index 27bb893cf6b2,b9c2c916247e..000000000000
+> --- a/drivers/video/console/Kconfig
+> +++ b/drivers/video/console/Kconfig
+> @@@ -9,7 -9,7 +9,7 @@@ config VGA_CONSOL
+>   	depends on !4xx && !PPC_8xx && !SPARC && !M68K && !PARISC && !FRV && \
+>   		!SUPERH && !BLACKFIN && !AVR32 && !MN10300 && !CRIS && \
+>   		(!ARM || ARCH_FOOTBRIDGE || ARCH_INTEGRATOR || ARCH_NETWINDER) && \
+> - 		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32
+>  -		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && HAS_IOMEM && !S390
+> ++		!ARM64 && !ARC && !MICROBLAZE && !OPENRISC && !NDS32 && HAS_IOMEM && =
+!S390
+>   	default y
+>   	help
+>   	  Saying Y here will allow you to use Linux in text mode through a
 
-  drivers/bus/arm-cci.c
-
-between commit:
-
-  3de6be7a3dd8 ("drivers/bus: Split Arm CCI driver")
-
-from the arm-soc tree and commit:
-
-  edb39592a587 ("perf: Fix sibling iteration")
-
-from the tip tree.
-
-I fixed it up (I added the following merge fix patch) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 19 Mar 2018 14:04:52 +1100
-Subject: [PATCH] perf/core: another merge fix for "drivers/bus: Split Arm C=
-CI
- driver"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/perf/arm-cci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 192d23b760a0..383b2d3dcbc6 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1265,7 +1265,7 @@ static int validate_group(struct perf_event *event)
- 	if (!validate_event(event->pmu, &fake_pmu, leader))
- 		return -EINVAL;
-=20
--	list_for_each_entry(sibling, &leader->sibling_list, sibling_list) {
-+	for_each_sibling_event(sibling, leader) {
- 		if (!validate_event(event->pmu, &fake_pmu, sibling))
- 			return -EINVAL;
- 	}
---=20
-2.16.1
+This conflict is now between the kvm tree and the nds32 tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ycXnFGlPPACtBDhfS29zcpt
+--Sig_/LGEnlZW.OIKC+x8h59yr9CR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvKVEACgkQAVBC80lX
-0GzY5wgAmU1uu/AwBVMODMupzQk9pM8iOIq+YWhs/nUAgETQVnMyfcVLD9UhUtwa
-7xQOzeEF3MYv8gDH4of/DSclUlkzLUnzGFQDmOPXHFDQHRYDwT1g8PxZWspQSvde
-QJPJgaQiniUn1RWX1APs8XXnMrCDKna8ktIjgD2/qVvonX0yX32IZ4hqtsLLG403
-4Njpu4Iht+eTeRrZhL2172dK/9SS4JRT+fOVjYcqmS+TJGufGGKgMxRbDqqjoNdF
-9aQypedUklcoqGsbeo/pQAi5LN0/7BkYY48GAImAn5Dz3KvXu8BZsk3SdxSuuZKW
-+fTYbIgNmaeNOrSBC6AWfN7UcOzdvg==
-=YC53
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqvM0QACgkQAVBC80lX
+0Gww7ggAmuUnq/DDK9sif2IPkD9iawYPRUHSk8vSmw8xPeKAIho6oXi0BtETJnb9
+YOpWQjZ0tzQxzDUu1+tSZR2YK2R0eIzNq1XRV6C6iqBvbMrYWLdT137NVKCHTdWS
+bt/oIy9uqhOJQMoHQeFBbt8sjP/1DQWsONOGE/jGKdAqkH7NjaRWVVJ/p4DZN9mX
+I23BxOB6GGc1D7m5Ch4lxUamyOF2vVws7HC/MoOW964k0fpX9z2XH0HfZdkZQIVX
+we0oqe2LTJhlZwt1ykvfYL70sIDipNENEC0FYbYJEBPDdkKWsfDh2DY9xuaP/SHS
+CVaV6jGxGrNZ1Q6mPIPRIGs/QD8Ldw==
+=phw+
 -----END PGP SIGNATURE-----
 
---Sig_/ycXnFGlPPACtBDhfS29zcpt--
+--Sig_/LGEnlZW.OIKC+x8h59yr9CR--
