@@ -1,38 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm64 tree with the asm-generic
+Subject: linux-next: manual merge of the powerpc tree with the asm-generic
  tree
-Date: Wed, 21 Mar 2018 09:50:47 +1100
-Message-ID: <20180321095047.3aee181e@canb.auug.org.au>
+Date: Wed, 21 Mar 2018 10:26:18 +1100
+Message-ID: <20180321102618.4b46f1b4@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xBNHTtxHG4m6.K59ZtSdJPi"; protocol="application/pgp-signature"
+ boundary="Sig_/TFT4Q.A+2o0jDHqMgMsW+KA"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matt Brown <matthew.brown.dev@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-  include/uapi/asm-generic/siginfo.h
+  lib/raid6/test/Makefile
 
 between commit:
 
-  0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally=
-")
+  fa523d54a7eb ("raid: remove tile specific raid6 implementation")
 
 from the asm-generic tree and commit:
 
-  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
-ions")
+  751ba79cc552 ("lib/raid6/altivec: Add vpermxor implementation for raid6 Q=
+ syndrome")
 
-from the arm64 tree.
+from the powerpc tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,50 +44,59 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/uapi/asm-generic/siginfo.h
-index 5528cdb0b54a,4b3520bf67ba..000000000000
---- a/include/uapi/asm-generic/siginfo.h
-+++ b/include/uapi/asm-generic/siginfo.h
-@@@ -202,12 -219,18 +202,13 @@@ typedef struct siginfo=20
-  #define FPE_FLTRES	6	/* floating point inexact result */
-  #define FPE_FLTINV	7	/* floating point invalid operation */
-  #define FPE_FLTSUB	8	/* subscript out of range */
- -#ifdef __frv__
- -# define FPE_MDAOVF	9	/* media overflow */
- -#endif
- -#ifdef __ia64__
- -# define __FPE_DECOVF	9	/* decimal overflow */
- -# define __FPE_DECDIV	10	/* decimal division by zero */
- -# define __FPE_DECERR	11	/* packed decimal error */
- -# define __FPE_INVASC	12	/* invalid ASCII digit */
- -# define __FPE_INVDEC	13	/* invalid decimal digit */
- -#endif
- +#define __FPE_DECOVF	9	/* decimal overflow */
- +#define __FPE_DECDIV	10	/* decimal division by zero */
- +#define __FPE_DECERR	11	/* packed decimal error */
- +#define __FPE_INVASC	12	/* invalid ASCII digit */
- +#define __FPE_INVDEC	13	/* invalid decimal digit */
-- #define NSIGFPE		13
-+ #define FPE_FLTUNK	14	/* undiagnosed floating-point exception */
-+ #define NSIGFPE		14
+diff --cc lib/raid6/test/Makefile
+index fabc477b1417,5050e270c06b..000000000000
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@@ -45,12 -45,17 +45,14 @@@ else ifeq ($(HAS_NEON),yes
+          CFLAGS +=3D -DCONFIG_KERNEL_MODE_NEON=3D1
+  else
+          HAS_ALTIVEC :=3D $(shell printf '\#include <altivec.h>\nvector in=
+t a;\n' |\
+-                          gcc -c -x c - >&/dev/null && \
+-                          rm ./-.o && echo yes)
++                          gcc -c -x c - >/dev/null && rm ./-.o && echo yes)
+          ifeq ($(HAS_ALTIVEC),yes)
+-                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o
++                 CFLAGS +=3D -I../../../arch/powerpc/include
++                 CFLAGS +=3D -DCONFIG_ALTIVEC
++                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o \
++                         vpermxor1.o vpermxor2.o vpermxor4.o vpermxor8.o
+          endif
+  endif
+ -ifeq ($(ARCH),tilegx)
+ -OBJS +=3D tilegx8.o
+ -endif
  =20
-  /*
-   * SIGSEGV si_codes
+  .c.o:
+  	$(CC) $(CFLAGS) -c -o $@ $<
+@@@ -117,7 -137,8 +131,7 @@@ tables.c: mktable
+  	./mktables > tables.c
+ =20
+  clean:
+- 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.=
+c raid6test
++ 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c vpermxor*.c neo=
+n*.c tables.c raid6test
+ -	rm -f tilegx*.c
+ =20
+  spotless: clean
+  	rm -f *~
 
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxkEcACgkQAVBC80lX
-0GybuQf8CE9hVBIuyWFTpYLEZWAU3/U80XmAyL8dyzgNtoYt1QbPbFLApWZOtBL1
-clRYXy3I6+o/wmRCQK5eaMzbWHSrNlmpCbHLI0C9tLGrugsuDtUJBQ4UR2UZqUxj
-So4I/XKXu+9CO/f72aK5/Pct6aT+DOQV0trzGEgNUlD07QfRhAQ7kHF83Oi6N4cZ
-haZFJEstrk8+KCBaqgCy4R2ZFL1HN8V2G1+XVCBWFlGxQdYZU2R3B/KLUVFGxkHL
-0DEl5N2ybbqNAwuda0Xf+uMdz83Agkyb94n5qQLvKvseigTd4qHURgdQxe+7rDaN
-/F9/RSlhehVSFz93iXZ5HxAzvMSuBw==
-=4WZn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmJoACgkQAVBC80lX
+0GychAf8DhcRUr84maMuU87eiGD0vPno6tdlBjG5Ssr9udvsirhDssuRzktRxRXN
+AFz8v3wQlm8HRVprTHrXNfsxAhApAtN6TejsslV0UeNDtIsG7dFrPX/OGo9UvNh3
+BnIc1s1dYyjh/jJlA+aZC5bCjlk7JVtEIEwqnxYjUBL7dgnraYVMUkKseiD/BmhZ
+N2bSnFSJIb3OJUqqQnC+/QEM0WMb0OWWGmDY23+GF4Y2Psnkz3oLJzmvNJkMQ574
+oAyCc5L7vwGzCMW2hpW0QVZW2IwvDkXri13fu4frVsJPCYRW1jDwdF5Nl3uIQbxY
+2HGBG6pO07KD0LCknZfj7TZGPekhpQ==
+=gxRa
 -----END PGP SIGNATURE-----
 
---Sig_/xBNHTtxHG4m6.K59ZtSdJPi--
+--Sig_/TFT4Q.A+2o0jDHqMgMsW+KA--
