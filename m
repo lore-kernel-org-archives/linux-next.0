@@ -1,37 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the powerpc tree with the asm-generic
- tree
-Date: Wed, 21 Mar 2018 10:26:18 +1100
-Message-ID: <20180321102618.4b46f1b4@canb.auug.org.au>
+Subject: linux-next: manual merge of the sparc-next tree with the arm64 tree
+Date: Wed, 21 Mar 2018 10:34:08 +1100
+Message-ID: <20180321103408.49e62310@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/TFT4Q.A+2o0jDHqMgMsW+KA"; protocol="application/pgp-signature"
+ boundary="Sig_/xelN5VzTy5GEMv40EPAOBoo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matt Brown <matthew.brown.dev@gmail.com>
+To: David Miller <davem@davemloft.net>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Khalid Aziz <khalid.aziz@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
+--Sig_/xelN5VzTy5GEMv40EPAOBoo
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi David,
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+Today's linux-next merge of the sparc-next tree got a conflict in:
 
-  lib/raid6/test/Makefile
+  arch/x86/kernel/signal_compat.c
 
 between commit:
 
-  fa523d54a7eb ("raid: remove tile specific raid6 implementation")
+  266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp except=
+ions")
 
-from the asm-generic tree and commit:
+from the arm64 tree and commit:
 
-  751ba79cc552 ("lib/raid6/altivec: Add vpermxor implementation for raid6 Q=
- syndrome")
+  d84bb709aa4a ("signals, sparc: Add signal codes for ADI violations")
 
-from the powerpc tree.
+from the sparc-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -44,59 +43,36 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc lib/raid6/test/Makefile
-index fabc477b1417,5050e270c06b..000000000000
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@@ -45,12 -45,17 +45,14 @@@ else ifeq ($(HAS_NEON),yes
-          CFLAGS +=3D -DCONFIG_KERNEL_MODE_NEON=3D1
-  else
-          HAS_ALTIVEC :=3D $(shell printf '\#include <altivec.h>\nvector in=
-t a;\n' |\
--                          gcc -c -x c - >&/dev/null && \
--                          rm ./-.o && echo yes)
-+                          gcc -c -x c - >/dev/null && rm ./-.o && echo yes)
-          ifeq ($(HAS_ALTIVEC),yes)
--                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o
-+                 CFLAGS +=3D -I../../../arch/powerpc/include
-+                 CFLAGS +=3D -DCONFIG_ALTIVEC
-+                 OBJS +=3D altivec1.o altivec2.o altivec4.o altivec8.o \
-+                         vpermxor1.o vpermxor2.o vpermxor4.o vpermxor8.o
-          endif
-  endif
- -ifeq ($(ARCH),tilegx)
- -OBJS +=3D tilegx8.o
- -endif
- =20
-  .c.o:
-  	$(CC) $(CFLAGS) -c -o $@ $<
-@@@ -117,7 -137,8 +131,7 @@@ tables.c: mktable
-  	./mktables > tables.c
- =20
-  clean:
-- 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c neon*.c tables.=
-c raid6test
-+ 	rm -f *.o *.a mktables mktables.c *.uc int*.c altivec*.c vpermxor*.c neo=
-n*.c tables.c raid6test
- -	rm -f tilegx*.c
- =20
-  spotless: clean
-  	rm -f *~
+diff --cc arch/x86/kernel/signal_compat.c
+index d2884e951bb5,838a4dc90a6d..000000000000
+--- a/arch/x86/kernel/signal_compat.c
++++ b/arch/x86/kernel/signal_compat.c
+@@@ -26,8 -26,8 +26,8 @@@ static inline void signal_compat_build_
+  	 * new fields are handled in copy_siginfo_to_user32()!
+  	 */
+  	BUILD_BUG_ON(NSIGILL  !=3D 11);
+ -	BUILD_BUG_ON(NSIGFPE  !=3D 13);
+ +	BUILD_BUG_ON(NSIGFPE  !=3D 14);
+- 	BUILD_BUG_ON(NSIGSEGV !=3D 4);
++ 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
+  	BUILD_BUG_ON(NSIGBUS  !=3D 5);
+  	BUILD_BUG_ON(NSIGTRAP !=3D 4);
+  	BUILD_BUG_ON(NSIGCHLD !=3D 6);
 
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA
+--Sig_/xelN5VzTy5GEMv40EPAOBoo
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmJoACgkQAVBC80lX
-0GychAf8DhcRUr84maMuU87eiGD0vPno6tdlBjG5Ssr9udvsirhDssuRzktRxRXN
-AFz8v3wQlm8HRVprTHrXNfsxAhApAtN6TejsslV0UeNDtIsG7dFrPX/OGo9UvNh3
-BnIc1s1dYyjh/jJlA+aZC5bCjlk7JVtEIEwqnxYjUBL7dgnraYVMUkKseiD/BmhZ
-N2bSnFSJIb3OJUqqQnC+/QEM0WMb0OWWGmDY23+GF4Y2Psnkz3oLJzmvNJkMQ574
-oAyCc5L7vwGzCMW2hpW0QVZW2IwvDkXri13fu4frVsJPCYRW1jDwdF5Nl3uIQbxY
-2HGBG6pO07KD0LCknZfj7TZGPekhpQ==
-=gxRa
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxmnAACgkQAVBC80lX
+0GxDbQf+Ln9ODONtb5cYvaYlHsL+eBUbncVaSG/WGwAhuNOhwg1YP9FPlNEleOvX
+89zlt3y65wi3B+QgRP7MGh4FxCWJLLlhILbrNpfFYYZETpGnZUemFnluqnlX+Hcx
+faPBcHv01sPuVhN0dWQGMAFQmav4duTDSs6wwD9UaZq05wPCJqw55bdkMbGV54rw
+yOZbXEiPyWQw3EeKgm+oMKT0JxnLdvCpp7y/xY80jEY0NhHeVJ2Oz4rBIRVQHwBa
+ZNAoSZlgmZnk/cJFcz/GXZpUBb2sqWOg8Ju2mMvSJ2SWLgqpDDs/erH5pb+e7c0A
+iJxTMh9FWB72fw7pgzyW6m0lwYpSXA==
+=XtU2
 -----END PGP SIGNATURE-----
 
---Sig_/TFT4Q.A+2o0jDHqMgMsW+KA--
+--Sig_/xelN5VzTy5GEMv40EPAOBoo--
