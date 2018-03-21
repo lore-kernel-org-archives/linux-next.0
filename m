@@ -1,31 +1,74 @@
-From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 21 Mar 2018 11:15:16 +0530
-Message-ID: <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
-References: <20180321133040.6754c372@canb.auug.org.au>
- <20180321024556.GX2186@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the fuse tree
+Date: Wed, 21 Mar 2018 17:26:58 +1100
+Message-ID: <20180321172658.45b892a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iy/.I4KvP.Gk.uKk1+ldxAv"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321024556.GX2186@sirena.org.uk>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On Wednesday 21 March 2018 08:15 AM, Mark Brown wrote:
-> On Wed, Mar 21, 2018 at 01:30:40PM +1100, Stephen Rothwell wrote:
->
->> Caused by commit
->>    363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instance")
->> I have used the sound-asoc tree from next-20180320 for today.
-> Dropped.
+Today's linux-next merge of the userns tree got a conflict in:
 
+  fs/fuse/dev.c
 
-There is a patch dependency .
-Below patch not merged yet. We submitted for upstream review.
-[PATCH V2] ASoC: dwc: I2S Controller instance param added
+between commits:
+
+  dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_d=
+o_read")
+  c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+  8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
+
+from the fuse tree and commits:
+
+  dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_d=
+o_read")
+  c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+  8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
+
+from the userns tree.
+
+These commits seem to have been rebased in the fuse tree on top of
+
+  3b7008b226f3 ("fuse: return -ECONNABORTED on /dev/fuse read after abort")
+
+and modified a bit.
+
+I fixed it up (I used the fuse tree version, but please come to
+some arrangement about which is correct) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqx+zIACgkQAVBC80lX
+0Gzwsgf9EePQMmSSMJ67jqC2T5H/txCLpHUvXWjkyhKIEmilQzlo2Vl0lCC521eH
+Q1sa6kf2rINNOhis0HAE5vtvJYGqUI9DQCGtHRM/TbxilemM0zt41xaIQB9Fg7MZ
+ESkDhFnsKQMUin3FKjoM2f537BOw8Fy6Lb1up2IJlAH2mNuGTrQ0QigPlBzzFvwx
+GIm5fnog5vy86O2H1qkEf2U+9iR8uOU1NH2Ad7nKtQ/PQ8BV0gRkULG5uuayPinU
+otrFKTbLk5Znm2Fpr1+8chf1aqOtdJCZCgR4HCYakdN6Cqb8bHhvUIx394B8z2Ai
+M4N7MaHx+2rNwgTHkUQfQ3/BxSZzsA==
+=PK/j
+-----END PGP SIGNATURE-----
+
+--Sig_/iy/.I4KvP.Gk.uKk1+ldxAv--
