@@ -1,84 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 21 Mar 2018 13:30:40 +1100
-Message-ID: <20180321133040.6754c372@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 21 Mar 2018 10:45:56 +0800
+Message-ID: <20180321024556.GX2186@sirena.org.uk>
+References: <20180321133040.6754c372@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9GBRwumKv_kUus_VfHV7B_K"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="7v2SkOxZkOkgWk1E"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180321133040.6754c372@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9GBRwumKv_kUus_VfHV7B_K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+--7v2SkOxZkOkgWk1E
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Wed, Mar 21, 2018 at 01:30:40PM +1100, Stephen Rothwell wrote:
 
-sound/soc/amd/acp-pcm-dma.c: In function 'acp_dma_open':
-sound/soc/amd/acp-pcm-dma.c:714:35: error: 'struct dw_i2s_dev' has no membe=
-r named 'i2s_instance'; did you mean 'i2s_base'?
-   adata->i2s_play_instance =3D dev->i2s_instance;
-                                   ^~~~~~~~~~~~
-                                   i2s_base
-sound/soc/amd/acp-pcm-dma.c:715:35: error: 'I2S_SP_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'SS_ONSTACK'?
-   if (adata->i2s_play_instance =3D=3D I2S_SP_INSTANCE)
-                                   ^~~~~~~~~~~~~~~
-                                   SS_ONSTACK
-sound/soc/amd/acp-pcm-dma.c:715:35: note: each undeclared identifier is rep=
-orted only once for each function it appears in
-sound/soc/amd/acp-pcm-dma.c:717:40: error: 'I2S_BT_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'I2S_SP_INSTANCE'?
-   else if (adata->i2s_play_instance =3D=3D I2S_BT_INSTANCE)
-                                        ^~~~~~~~~~~~~~~
-                                        I2S_SP_INSTANCE
-sound/soc/amd/acp-pcm-dma.c:722:38: error: 'struct dw_i2s_dev' has no membe=
-r named 'i2s_instance'; did you mean 'i2s_base'?
-   adata->i2s_capture_instance =3D dev->i2s_instance;
-                                      ^~~~~~~~~~~~
-                                      i2s_base
-sound/soc/amd/acp-pcm-dma.c: In function 'acp_dma_close':
-sound/soc/amd/acp-pcm-dma.c:1046:8: error: 'I2S_BT_INSTANCE' undeclared (fi=
-rst use in this function)
-   case I2S_BT_INSTANCE:
-        ^~~~~~~~~~~~~~~
-sound/soc/amd/acp-pcm-dma.c:1049:8: error: 'I2S_SP_INSTANCE' undeclared (fi=
-rst use in this function); did you mean 'I2S_BT_INSTANCE'?
-   case I2S_SP_INSTANCE:
-        ^~~~~~~~~~~~~~~
-        I2S_BT_INSTANCE
+> Caused by commit
 
-Caused by commit
+>   363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instance")
 
-  363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instan=
-ce")
+> I have used the sound-asoc tree from next-20180320 for today.
 
-I have used the sound-asoc tree from next-20180320 for today.
+Dropped.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9GBRwumKv_kUus_VfHV7B_K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--7v2SkOxZkOkgWk1E
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqxw9AACgkQAVBC80lX
-0Gwf0Af/bF9Ix2oPc9rY2e/QDU2AlUmkn651wPFz4DZJO8CJJ/qV/kF1Dp0NC0we
-miZ7e5f5dZsUIpfo6UBFvn0Fk6zV55dyWiY9q/B9gFqf1WAJih4ymncysUcFbt6b
-xBsFABOBEp88A9MDpsUb7aKYfCzLYgS1a5zd9RfxntZ77Rg6VUf+Wf4yuaxNorko
-N9/6NRpd6vEHnJAOPCdikPeAt0X4rVTKXPmae9QxWyfbwdsxxag02R4b+rLR8Q9p
-lVnzvkxUcpKaCpJJkrAPEv5i7YGYiYHRDcsWDUbu9Q3LjXlDs+vlOXIczX7dgyhJ
-NiF7n2UBobDZ9Wa+gI0fSmULmCKVYw==
-=KSNR
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqxx2QACgkQJNaLcl1U
+h9Admgf9FMvVqJ0CxkBfS+tBa//MpqHCPZFOiG/NJHelkPyHCIBO1XwPUKJ3DNla
+W8gEWNm4h7wUHhbHL6J9jdpTipjprUYSD61xoFGIsLAN6O0kL83P5FF/AjijVI92
+FibS82IOfpz22kg3gUktZgLh9N6m+FpJfyuTBcmwcw6iBhHImA/eCi5YBG4c2a9r
+0kbc5CKXk2OzIqtolMDPThUO7ZAkgLStc4rHONSKquDMae2FlI1M5YnNord19eL8
+veBNu4kIm5bdmo7BnMyPudLQfeWN/xCIGW+HdcisGGJvBuRnzkC+KEXr4s8MZZ4Q
+ZFraxWoZdpO4XF/ed0njP4E54u1qwA==
+=bB3A
 -----END PGP SIGNATURE-----
 
---Sig_/9GBRwumKv_kUus_VfHV7B_K--
+--7v2SkOxZkOkgWk1E--
