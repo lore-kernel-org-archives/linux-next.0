@@ -1,48 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: manual merge of the arm64 tree with the asm-generic tree
-Date: Wed, 21 Mar 2018 17:38:28 +0800
-Message-ID: <CAK8P3a1Njy=PWw+V0bc06z9VU-wPqGn1W8e1Lvc_hkb5A5UPLw@mail.gmail.com>
-References: <20180321095047.3aee181e@canb.auug.org.au>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: build failure after merge of the akpm tree
+Date: Wed, 21 Mar 2018 11:02:08 +0100
+Message-ID: <20180321100208.GA18281@kroah.com>
+References: <20180321191727.4d421df3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321095047.3aee181e@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180321191727.4d421df3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Mar 21, 2018 at 6:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Today's linux-next merge of the arm64 tree got a conflict in:
->
->   include/uapi/asm-generic/siginfo.h
->
-> between commit:
->
->   0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally")
->
-> from the asm-generic tree and commit:
->
->   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exceptions")
->
-> from the arm64 tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Wed, Mar 21, 2018 at 07:17:27PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+> 
+> After merging the akpm tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+> 
+> drivers/base/firmware_loader/fallback.c: In function 'map_fw_priv_pages':
+> drivers/base/firmware_loader/fallback.c:232:2: error: implicit declaration of function 'vunmap'; did you mean 'kunmap'? [-Werror=implicit-function-declaration]
+>   vunmap(fw_priv->data);
+>   ^~~~~~
+>   kunmap
+> drivers/base/firmware_loader/fallback.c:233:18: error: implicit declaration of function 'vmap'; did you mean 'kmap'? [-Werror=implicit-function-declaration]
+>   fw_priv->data = vmap(fw_priv->pages, fw_priv->nr_pages, 0,
+>                   ^~~~
+>                   kmap
+> drivers/base/firmware_loader/fallback.c:233:16: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>   fw_priv->data = vmap(fw_priv->pages, fw_priv->nr_pages, 0,
+>                 ^
+> drivers/base/firmware_loader/fallback.c: In function 'firmware_loading_store':
+> drivers/base/firmware_loader/fallback.c:274:4: error: implicit declaration of function 'vfree'; did you mean 'kvfree'? [-Werror=implicit-function-declaration]
+>     vfree(fw_priv->pages);
+>     ^~~~~
+>     kvfree
+> drivers/base/firmware_loader/fallback.c: In function 'fw_realloc_pages':
+> drivers/base/firmware_loader/fallback.c:405:15: error: implicit declaration of function 'vmalloc'; did you mean 'kvmalloc'? [-Werror=implicit-function-declaration]
+>    new_pages = vmalloc(new_array_size * sizeof(void *));
+>                ^~~~~~~
+>                kvmalloc
+> drivers/base/firmware_loader/fallback.c:405:13: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+>    new_pages = vmalloc(new_array_size * sizeof(void *));
+>              ^
+> 
+> Maybe caused by patch
+> 
+>   "headers: untangle kmemleak.h from mm.h"
+> 
+> Anyway this file should explicitly include linux/vmalloc.h since it uses
+> stuff in there, so I have added the following patch for today (I think
+> this could just be applied to the driver-core tree ...):
 
->  +#define __FPE_INVDEC  13      /* invalid decimal digit */
-> - #define NSIGFPE               13
-> + #define FPE_FLTUNK    14      /* undiagnosed floating-point exception */
-> + #define NSIGFPE               14
+Patch is now queued up, thanks.
 
-The merge looks correct to me. I'm still rebasing my asm-generic tree
-to integrate incoming Acks, so I think we're stuck with this one for a
-bit.
-
-        Arnd
+greg k-h
