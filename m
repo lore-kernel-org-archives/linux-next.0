@@ -1,61 +1,69 @@
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
  tree
-Date: Wed, 21 Mar 2018 15:55:52 -0500
-Message-ID: <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
+Date: Thu, 22 Mar 2018 09:21:08 +1100
+Message-ID: <20180322092108.0d821abc@canb.auug.org.au>
 References: <20180321153127.23737f6e@canb.auug.org.au>
-         <20180321153715.3a571e5b@canb.auug.org.au>
-         <20180321091554.2b38ee57@gandalf.local.home>
+ <20180321153715.3a571e5b@canb.auug.org.au>
+ <20180321091554.2b38ee57@gandalf.local.home>
+ <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jukMgl9Tr8iGmeWA19hTRO5"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321091554.2b38ee57@gandalf.local.home>
+In-Reply-To: <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@intel.com>
+To: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 2018-03-21 at 09:15 -0400, Steven Rostedt wrote:
-> On Wed, 21 Mar 2018 15:37:15 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> > 
-> > On Wed, 21 Mar 2018 15:31:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Today's linux-next merge of the ftrace tree got a conflict in:
-> > > 
-> > >   Documentation/trace/ftrace.txt
-> > >   (converted to Documentation/trace/ftrace.rst)  
-> > 
-> > There was another conflict involving
-> > 
-> >   Documentation/trace/events.{txt,rst}
-> > 
-> > Unfortunately, I accidentally deleted the report email before sending
-> > it :-(
-> > 
-> 
-> Ug yeah. All the histogram code was ripped out of the events.txt and
-> a new file was created called histogram.txt. I'm guessing that should
-> also be converted into an .rst file.
-> 
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, linux-next has changes to Documentation/trace/* that converts
-those files to .rst, which linux-trace/frace/core doesn't have.
+Hi Tom,
 
-I've rebased the inter-event patches to linux-next/next-20180320 to
-reflect those changes, which affect 9 of the files in the patchset.  The
-updated patchset is here:
+On Wed, 21 Mar 2018 15:55:52 -0500 Tom Zanussi <tom.zanussi@linux.intel.com=
+> wrote:
+>
+> Yeah, linux-next has changes to Documentation/trace/* that converts
+> those files to .rst, which linux-trace/frace/core doesn't have.
+>=20
+> I've rebased the inter-event patches to linux-next/next-20180320 to
+> reflect those changes, which affect 9 of the files in the patchset.  The
+> updated patchset is here:
+>=20
+> https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-201=
+80320-inter-event-v10                                              =20
+> https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20=
+180320-inter-event-v10
+>=20
+> I can repost the whole thing as v10, or whatever makes sense here.
 
-https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
-https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
+Thanks, I assume that they apply on top of the jc_docs tree as well
+(git://git.lwn.net/linux.git#docs-next).  If so, then I can use them as
+merge resolutions, or Steve can rebase his tree (minus your old
+patches) on top of the (hopefully unchanging) jc_docs tree and then he
+could apply your patches there.
 
-I can repost the whole thing as v10, or whatever makes sense here.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Tom
+-----BEGIN PGP SIGNATURE-----
 
-> -- Steve
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqy2tQACgkQAVBC80lX
+0GwUpwf9FLZBeLWijBIpDrFJxrpwmgOwLHcRWbL2y3tjl/oudJ0z8RQrm2JLBdP2
+4yRubYErBOWW9C9qzJrncNmiGzy2dz29HgJ9QPlvQdk/30robC6iex7Y4oT1aYd/
+BiqY9ZKG9IKEeKhNgo2JFboo16jIFp6juP7YWKOofL/i/cckfuQbMBx8jzB9Hfz4
+CRiWSPR5czra7J6WtUninx1eUH6RZp2m6m9su4/mfpvxrCofygieigxBgTW24M5V
+RNbJA0fyzLYe7Aw/rBDct9OKTa7QSA17BKhhyS/g69x4M53WULLrhaJtJRyaleMD
+USAs+uP0wybMcpufAZIQGHztSfhQ3g==
+=Yo4m
+-----END PGP SIGNATURE-----
+
+--Sig_/jukMgl9Tr8iGmeWA19hTRO5--
