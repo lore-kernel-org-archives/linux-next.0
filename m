@@ -1,85 +1,59 @@
-From: Michal Simek <monstr@monstr.eu>
-Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
+From: Dave Martin <Dave.Martin@arm.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the asm-generic
  tree
-Date: Wed, 21 Mar 2018 12:50:35 +0100
-Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
-References: <20180321075251.49f3c1a3@canb.auug.org.au>
-Reply-To: monstr@monstr.eu
+Date: Wed, 21 Mar 2018 12:06:27 +0000
+Message-ID: <20180321120612.GA16308@e103592.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- protocol="application/pgp-signature";
- boundary="pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
 List-Id: linux-next.vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
-Content-Type: multipart/mixed; boundary="yskl06NdrmMUJpHyP1fgvyRXHe8refFJX";
- protected-headers="v1"
-From: Michal Simek <monstr@monstr.eu>
-Reply-To: monstr@monstr.eu
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
-Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
- tree
-References: <20180321075251.49f3c1a3@canb.auug.org.au>
-In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
+On Wed, Mar 21, 2018 at 09:38:28AM +0000, Arnd Bergmann wrote:
+> On Wed, Mar 21, 2018 at 6:50 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > Hi all,
+> >
+> > Today's linux-next merge of the arm64 tree got a conflict in:
+> >
+> >   include/uapi/asm-generic/siginfo.h
+> >
+> > between commit:
+> >
+> >   0d7d2a23a347 ("asm-generic: siginfo: define ia64 si_codes unconditionally")
+> >
+> > from the asm-generic tree and commit:
+> >
+> >   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exceptions")
+> >
+> > from the arm64 tree.
+> >
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> 
+> >  +#define __FPE_INVDEC  13      /* invalid decimal digit */
+> > - #define NSIGFPE               13
+> > + #define FPE_FLTUNK    14      /* undiagnosed floating-point exception */
+> > + #define NSIGFPE               14
+> 
+> The merge looks correct to me. I'm still rebasing my asm-generic tree
+> to integrate incoming Acks, so I think we're stuck with this one for a
+> bit.
 
---yskl06NdrmMUJpHyP1fgvyRXHe8refFJX
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Ack.
 
-Hi Stephen,
+There are some overlapping patches here due to Eric's signal rework,
+related arch fixes and apparently some other unrelated updates.
 
-On 20.3.2018 21:52, Stephen Rothwell wrote:
-> Hi Michal,
->=20
-> Commit
->=20
->   39a21eefea04 ("MICROBLAZE")
->=20
-> is missing any Signed-off-bys.  In fact, it is a very strange commit
-> message.
->=20
+IIUC, some patches overlap between arm64's and Eric's -next trees for
+dependency reasons, but I believe the affected arm64 patches are due to
+merge via Eric's tree for v4.17.
 
-Thanks for reporting it. It was just my testing commit not it shouldn't
-be there. I have fixed that just now. Interesting is that my local
-branch showed that this commit is not there.
-Anyway thank you so much for reporting.
-
-Thanks,
-Michal
-
-
---=20
-Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
-w: www.monstr.eu p: +42-0-721842854
-Maintainer of Linux kernel - Xilinx Microblaze
-Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
-U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
-
-
-
---yskl06NdrmMUJpHyP1fgvyRXHe8refFJX--
-
---pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iEYEARECAAYFAlqyRw8ACgkQykllyylKDCEu3wCdEf6dvOJRS/+Svx2OjjK8HWsG
-OlcAoIDQ6hyJe7mNLSDn2v4myuDAN0x3
-=Ac5b
------END PGP SIGNATURE-----
-
---pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4--
+Cheers
+---Dave
