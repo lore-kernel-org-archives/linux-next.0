@@ -1,50 +1,67 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the akpm tree
-Date: Wed, 21 Mar 2018 21:38:22 +1100
-Message-ID: <20180321213822.31f8c0c8@canb.auug.org.au>
-References: <20180321191727.4d421df3@canb.auug.org.au>
-        <20180321100208.GA18281@kroah.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: manual merge of the selinux tree with the security tree
+Date: Wed, 21 Mar 2018 07:18:55 -0400
+Message-ID: <CAHC9VhTfHja9-NYG2boM6mv+5FSBSBEEX8E3tLNLNyaJm4c4TQ@mail.gmail.com>
+References: <20180321143120.6d9bbe0f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/3WvXyeN2DsCsY8ydzGIVpN0"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321100208.GA18281@kroah.com>
+In-Reply-To: <20180321143120.6d9bbe0f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Luis R. Rodriguez" <mcgrof@kernel.org>, Randy Dunlap <rdunlap@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: James Morris <jmorris@namei.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov
 List-Id: linux-next.vger.kernel.org
 
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Greg,
-
-On Wed, 21 Mar 2018 11:02:08 +0100 Greg Kroah-Hartman <gregkh@linuxfoundati=
-on.org> wrote:
+On Tue, Mar 20, 2018 at 11:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Paul,
 >
-> Patch is now queued up, thanks.
+> Today's linux-next merge of the selinux tree got a conflict in:
+>
+>   security/selinux/hooks.c
+>
+> between commit:
+>
+>   6b4f3d01052a ("usb, signal, security: only pass the cred, not the secid, to kill_pid_info_as_cred and security_task_kill")
+>
+> from the security tree and commit:
+>
+>   6b6bc6205d98 ("selinux: wrap AVC state")
+>
+> from the selinux tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> --
+> Cheers,
+> Stephen Rothwell
+>
+> diff --cc security/selinux/hooks.c
+> index fdd523e575e3,21b377aef69a..000000000000
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@@ -4050,11 -4164,10 +4170,12 @@@ static int selinux_task_kill(struct tas
+>                 perm = PROCESS__SIGNULL; /* null signal; existence test */
+>         else
+>                 perm = signal_to_av(sig);
+>  -      if (!secid)
+>  +      if (!cred)
+>                 secid = current_sid();
+>  +      else
+>  +              secid = cred_sid(cred);
+> -       return avc_has_perm(secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+> +       return avc_has_perm(&selinux_state,
+> +                           secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+>   }
+>
+>   static void selinux_task_to_inode(struct task_struct *p,
 
-Excellent.
+Thanks Stephen, that looks correct to me.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqyNh4ACgkQAVBC80lX
-0GwUjQf/fqv5gWqizAo2LJFX2g+3obauUPYG77/OBJsKnYo5nM4h0ttDZNZpVQFU
-YsYSrrlZe3d96O4psV/C5hFNKc7je9aQeNhuV4UnROFyjWCOjoM/f5qiShsUtGBU
-78sw6SZNLNjbi2EIJ0XN4e+y6X8o7ZSX0+pX0G9ENQYaLKwFPFprdFLPTvqc7S9/
-1VymLhyBZB0zY8HKSBdVlwF3KVp92ycvhia8R8K+rMR2HzvrsQDK15/c8IHHyYQA
-1jh4uucdivennLw4Dxc+1OB49YiJz27kaemOHWbukTX6xybgTt0zBPdJdM0AYOI/
-N+p4hF0vXsFB5W0JzwIDhE0h/UASCA==
-=GqTN
------END PGP SIGNATURE-----
-
---Sig_/3WvXyeN2DsCsY8ydzGIVpN0--
+-- 
+paul moore
+www.paul-moore.com
