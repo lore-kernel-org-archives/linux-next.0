@@ -1,67 +1,85 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the security tree
-Date: Wed, 21 Mar 2018 07:18:55 -0400
-Message-ID: <CAHC9VhTfHja9-NYG2boM6mv+5FSBSBEEX8E3tLNLNyaJm4c4TQ@mail.gmail.com>
-References: <20180321143120.6d9bbe0f@canb.auug.org.au>
+From: Michal Simek <monstr@monstr.eu>
+Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
+ tree
+Date: Wed, 21 Mar 2018 12:50:35 +0100
+Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
+References: <20180321075251.49f3c1a3@canb.auug.org.au>
+Reply-To: monstr@monstr.eu
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321143120.6d9bbe0f@canb.auug.org.au>
+In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>, selinux@tycho.nsa.gov
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Mar 20, 2018 at 11:31 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Paul,
->
-> Today's linux-next merge of the selinux tree got a conflict in:
->
->   security/selinux/hooks.c
->
-> between commit:
->
->   6b4f3d01052a ("usb, signal, security: only pass the cred, not the secid, to kill_pid_info_as_cred and security_task_kill")
->
-> from the security tree and commit:
->
->   6b6bc6205d98 ("selinux: wrap AVC state")
->
-> from the selinux tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc security/selinux/hooks.c
-> index fdd523e575e3,21b377aef69a..000000000000
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@@ -4050,11 -4164,10 +4170,12 @@@ static int selinux_task_kill(struct tas
->                 perm = PROCESS__SIGNULL; /* null signal; existence test */
->         else
->                 perm = signal_to_av(sig);
->  -      if (!secid)
->  +      if (!cred)
->                 secid = current_sid();
->  +      else
->  +              secid = cred_sid(cred);
-> -       return avc_has_perm(secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
-> +       return avc_has_perm(&selinux_state,
-> +                           secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
->   }
->
->   static void selinux_task_to_inode(struct task_struct *p,
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
+Content-Type: multipart/mixed; boundary="yskl06NdrmMUJpHyP1fgvyRXHe8refFJX";
+ protected-headers="v1"
+From: Michal Simek <monstr@monstr.eu>
+Reply-To: monstr@monstr.eu
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <31dbebc4-8889-85de-aa12-7dab4cc0494f@monstr.eu>
+Subject: Re: linux-next: Signed-off-bys missing for commit in the microblaze
+ tree
+References: <20180321075251.49f3c1a3@canb.auug.org.au>
+In-Reply-To: <20180321075251.49f3c1a3@canb.auug.org.au>
 
-Thanks Stephen, that looks correct to me.
+--yskl06NdrmMUJpHyP1fgvyRXHe8refFJX
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
--- 
-paul moore
-www.paul-moore.com
+Hi Stephen,
+
+On 20.3.2018 21:52, Stephen Rothwell wrote:
+> Hi Michal,
+>=20
+> Commit
+>=20
+>   39a21eefea04 ("MICROBLAZE")
+>=20
+> is missing any Signed-off-bys.  In fact, it is a very strange commit
+> message.
+>=20
+
+Thanks for reporting it. It was just my testing commit not it shouldn't
+be there. I have fixed that just now. Interesting is that my local
+branch showed that this commit is not there.
+Anyway thank you so much for reporting.
+
+Thanks,
+Michal
+
+
+--=20
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP SoCs
+
+
+
+--yskl06NdrmMUJpHyP1fgvyRXHe8refFJX--
+
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iEYEARECAAYFAlqyRw8ACgkQykllyylKDCEu3wCdEf6dvOJRS/+Svx2OjjK8HWsG
+OlcAoIDQ6hyJe7mNLSDn2v4myuDAN0x3
+=Ac5b
+-----END PGP SIGNATURE-----
+
+--pHdN8pa1OqTaeOabyfQTMvDtMFzoj6oi4--
