@@ -1,47 +1,82 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 21 Mar 2018 10:45:56 +0800
-Message-ID: <20180321024556.GX2186@sirena.org.uk>
-References: <20180321133040.6754c372@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the selinux tree with the security tree
+Date: Wed, 21 Mar 2018 14:31:20 +1100
+Message-ID: <20180321143120.6d9bbe0f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="7v2SkOxZkOkgWk1E"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KqbkvA9l0_pCmesndrQd5vm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180321133040.6754c372@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Smalley <sds@tycho.nsa.gov>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/KqbkvA9l0_pCmesndrQd5vm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---7v2SkOxZkOkgWk1E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Paul,
 
-On Wed, Mar 21, 2018 at 01:30:40PM +1100, Stephen Rothwell wrote:
+Today's linux-next merge of the selinux tree got a conflict in:
 
-> Caused by commit
+  security/selinux/hooks.c
 
->   363fe37948e2 ("ASoC: amd: dma driver changes for BT I2S controller instance")
+between commit:
 
-> I have used the sound-asoc tree from next-20180320 for today.
+  6b4f3d01052a ("usb, signal, security: only pass the cred, not the secid, =
+to kill_pid_info_as_cred and security_task_kill")
 
-Dropped.
+from the security tree and commit:
 
---7v2SkOxZkOkgWk1E
-Content-Type: application/pgp-signature; name="signature.asc"
+  6b6bc6205d98 ("selinux: wrap AVC state")
+
+from the selinux tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc security/selinux/hooks.c
+index fdd523e575e3,21b377aef69a..000000000000
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@@ -4050,11 -4164,10 +4170,12 @@@ static int selinux_task_kill(struct tas
+  		perm =3D PROCESS__SIGNULL; /* null signal; existence test */
+  	else
+  		perm =3D signal_to_av(sig);
+ -	if (!secid)
+ +	if (!cred)
+  		secid =3D current_sid();
+ +	else
+ +		secid =3D cred_sid(cred);
+- 	return avc_has_perm(secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
++ 	return avc_has_perm(&selinux_state,
++ 			    secid, task_sid(p), SECCLASS_PROCESS, perm, NULL);
+  }
+ =20
+  static void selinux_task_to_inode(struct task_struct *p,
+
+--Sig_/KqbkvA9l0_pCmesndrQd5vm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqxx2QACgkQJNaLcl1U
-h9Admgf9FMvVqJ0CxkBfS+tBa//MpqHCPZFOiG/NJHelkPyHCIBO1XwPUKJ3DNla
-W8gEWNm4h7wUHhbHL6J9jdpTipjprUYSD61xoFGIsLAN6O0kL83P5FF/AjijVI92
-FibS82IOfpz22kg3gUktZgLh9N6m+FpJfyuTBcmwcw6iBhHImA/eCi5YBG4c2a9r
-0kbc5CKXk2OzIqtolMDPThUO7ZAkgLStc4rHONSKquDMae2FlI1M5YnNord19eL8
-veBNu4kIm5bdmo7BnMyPudLQfeWN/xCIGW+HdcisGGJvBuRnzkC+KEXr4s8MZZ4Q
-ZFraxWoZdpO4XF/ed0njP4E54u1qwA==
-=bB3A
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqx0ggACgkQAVBC80lX
+0GzwGQgAiduTSGQiurTzsVxygfFfrI0tRXKj73z66sS6bXeYu0e5Rbd8WAFoG1o2
+PPAr9NHk8w3MFTF/yheeLJTcB7b6hO0vgLZW5THxYWVeiuugCzKqBW8yu+moFKP/
+6M4Bgd6Xa2d9RwBhZewCZApBONgJEN6dld7sXSJIbf2+u2k++Q/FgOgM1xBCTXe0
+LWd9DHnOTWEfM1KeNdPGjBgUpHfz4UOtV1yXdrAOHF8SFOqyUSZhrHZ5haSPRP7q
+megKAboRgOb/tyzQ6bzvcqoDjFA7GZWQOsAAYt1za8ArusCuZ0vJZnIolSwu8JwA
+kw4vUMXjCV75z6+8J8wF9Xabys9HvQ==
+=1/zO
 -----END PGP SIGNATURE-----
 
---7v2SkOxZkOkgWk1E--
+--Sig_/KqbkvA9l0_pCmesndrQd5vm--
