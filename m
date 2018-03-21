@@ -1,42 +1,54 @@
-From: Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
- tree
-Date: Wed, 21 Mar 2018 09:15:54 -0400
-Message-ID: <20180321091554.2b38ee57@gandalf.local.home>
-References: <20180321153127.23737f6e@canb.auug.org.au>
-        <20180321153715.3a571e5b@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the userns tree with the fuse tree
+Date: Wed, 21 Mar 2018 09:02:06 -0500
+Message-ID: <87zi31y1b5.fsf@xmission.com>
+References: <20180321172658.45b892a3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180321153715.3a571e5b@canb.auug.org.au>
+In-Reply-To: <20180321172658.45b892a3@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 21 Mar 2018 17:26:58 +1100")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@intel.com>, Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 21 Mar 2018 15:37:15 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
 > Hi all,
-> 
-> On Wed, 21 Mar 2018 15:31:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the ftrace tree got a conflict in:
-> > 
-> >   Documentation/trace/ftrace.txt
-> >   (converted to Documentation/trace/ftrace.rst)  
-> 
-> There was another conflict involving
-> 
->   Documentation/trace/events.{txt,rst}
-> 
-> Unfortunately, I accidentally deleted the report email before sending
-> it :-(
-> 
+>
+> Today's linux-next merge of the userns tree got a conflict in:
+>
+>   fs/fuse/dev.c
+>
+> between commits:
+>
+>   dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_do_read")
+>   c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+>   8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
+>
+> from the fuse tree and commits:
+>
+>   dbf107b2a7f3 ("fuse: Remove the buggy retranslation of pids in fuse_dev_do_read")
+>   c9582eb0ff7d ("fuse: Fail all requests with invalid uids or gids")
+>   8cb08329b080 ("fuse: Support fuse filesystems outside of init_user_ns")
+>
+> from the userns tree.
+>
+> These commits seem to have been rebased in the fuse tree on top of
+>
+>   3b7008b226f3 ("fuse: return -ECONNABORTED on /dev/fuse read after abort")
+>
+> and modified a bit.
+>
+> I fixed it up (I used the fuse tree version, but please come to
+> some arrangement about which is correct) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Ug yeah. All the histogram code was ripped out of the events.txt and
-a new file was created called histogram.txt. I'm guessing that should
-also be converted into an .rst file.
+As Miklos has merged these I plan to drop these changes from my tree.
 
--- Steve
+Eric
