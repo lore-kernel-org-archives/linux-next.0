@@ -1,38 +1,56 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Mar 22 (thermal)
-Date: Thu, 22 Mar 2018 10:36:38 -0700
-Message-ID: <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
-References: <20180322193847.63181403@canb.auug.org.au>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
+Date: Thu, 22 Mar 2018 22:01:44 +0100
+Message-ID: <20180322210144.GB3417@piout.net>
+References: <20180316075629.019b6560@canb.auug.org.au>
+ <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
+ <6b239ab5-5ded-b32b-eefc-601075d33f25@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180322193847.63181403@canb.auug.org.au>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <6b239ab5-5ded-b32b-eefc-601075d33f25@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+To: Patrice CHOTARD <patrice.chotard@st.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ARM <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On 03/22/2018 01:38 AM, Stephen Rothwell wrote:
-> Hi all,
+On 16/03/2018 at 07:34:06 +0000, Patrice CHOTARD wrote:
+> Hi Arnd, Stephen
 > 
-> Changes since 20180321:
+> On 03/15/2018 10:06 PM, Arnd Bergmann wrote:
+> > On Thu, Mar 15, 2018 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> Hi all,
+> >>
+> >> Commit
+> >>
+> >>    9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
+> >>
+> >> is missing a Signed-off-by from its committer.
+> > 
+> > Thanks for the report.
+> > 
+> > What script do you use to find those? I guess I should check for
+> > missing signoffs as well when pulling a branch.
+> > 
+> > Patrice, I've dropped the merge now, and picked up the one
+> > patch in it directly, with my signoff. This should fix the issue this
+> > time, but please make sure you always sign off patches when
+> > you apply them from the list.
+> > 
+> >          Arnd
+> > 
 > 
-> The vfs tree still had its build failure for which I reverted a commit.
+> Ok i will update my script on my side with Stephen's script to avoid 
+> this in the future.
 > 
 
-on i386:
-
-ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
-
-so in drivers/thermal/thermal_sysfs.c, please add:
-
-#include <linux/jiffies.h>
+FWIW, last time this happened in the at91 tree, I've switched to use
+Stephen's script as a pre-push hook:
+https://raw.githubusercontent.com/alexandrebelloni/tools/master/pre-push_signed-off
 
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-
-thanks,
 -- 
-~Randy
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
