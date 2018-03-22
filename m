@@ -1,73 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm tree with Linus' tree
-Date: Thu, 22 Mar 2018 17:37:22 +1100
-Message-ID: <20180322173722.78d012c5@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with the xfs tree
+Date: Thu, 22 Mar 2018 17:54:24 +1100
+Message-ID: <20180322175424.032cf417@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0081964174=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/zhlqNwi8=c7E+bgT2RVlLmj"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dan Williams <dan.j.williams@intel.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---===============0081964174==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Z9KNElp.WKMlbYCpqfQ=Q8u"; protocol="application/pgp-signature"
-
---Sig_/Z9KNElp.WKMlbYCpqfQ=Q8u
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dan,
 
-Today's linux-next merge of the drm tree got conflicts in several amdgpu
-files because there are a set of (mostly identical) patches that appear
-Linus' tree and the drm tree.  In each case I just used the version fo
-the file from the drm tree.
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-You should do a test merge between your tree and Linus' tree and see what
-you want to do about the resolution (either do the back merge (I think
-with v4.16-rc6), or provide Linus with branch that has the merge done).
-Its a bit of a mess :-(
+  fs/xfs/xfs_inode.h
+
+between commit:
+
+  f5c54717bf2b ("xfs: remove xfs_zero_range")
+
+from the xfs tree and commit:
+
+  6ea4108852e9 ("xfs: prepare xfs_break_layouts() for another layout type")
+
+from the nvdimm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Z9KNElp.WKMlbYCpqfQ=Q8u
+diff --cc fs/xfs/xfs_inode.h
+index 132d8aa2afc4,6951d57aae71..000000000000
+--- a/fs/xfs/xfs_inode.h
++++ b/fs/xfs/xfs_inode.h
+@@@ -443,6 -457,12 +457,8 @@@ enum xfs_prealloc_flags=20
+ =20
+  int	xfs_update_prealloc_flags(struct xfs_inode *ip,
+  				  enum xfs_prealloc_flags flags);
+ -int	xfs_zero_eof(struct xfs_inode *ip, xfs_off_t offset,
+ -		     xfs_fsize_t isize, bool *did_zeroing);
+ -int	xfs_zero_range(struct xfs_inode *ip, xfs_off_t pos, xfs_off_t count,
+ -		bool *did_zero);
++ int	xfs_break_layouts(struct inode *inode, uint *iolock,
++ 		enum layout_break_reason reason);
+ =20
+  /* from xfs_iops.c */
+  extern void xfs_setup_inode(struct xfs_inode *ip);
+
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzTyIACgkQAVBC80lX
-0GwVgggApZvAvAblCkES91oKgvH7ZydJaoAG8ice8wQdAPJD2lbtzwUwVp1geMGd
-jwds66ii74Znr3LbUhxZ+tipoDGsAk8HgabMm4OuRjXmwWjFvGutZt2q9/vCpHbq
-tS4RJx2XLmzxEzfVEMnQ3GMEVlwwjCyluhL2Of8VGY6f1e7WJesKl2/B8DyhnITw
-vd8dj7cRYRydlyLHB/KV3ahjYpV75hLNAjZ0u366rslJ04pQADLCdIAiJY/hr0bv
-PhGmoo5+SHVlXDXKbrfwR6+ApGe1vyBATAP3weanagOubEgVW9RoUG33HAcaNt9e
-gCOOJhDQxFrdFDYWbHUClRSESqXeYA==
-=isrG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzUyAACgkQAVBC80lX
+0Gw9xAf/XuOHM+g8CadIj8I7WyuqazqOWlDHqJzlgTYJNkTLFAkBm1Z6JpxohFCl
+uEmbYfRwtq90appMzVbPpQeidXPaEAN56gDYQ1CP1ZDeLKbXJMm8DYkVXINx5Ucn
+shpeF+M1/uJPkpwiRrdiujhiErM7ECeGW84TCqWO4qJFtt4OVRK+gmLBSCU0VXy9
+jAKFC4qPR3wlBMQUcXvQczqo8qmIWXvd5HSbBP7TIkdqnasf6N/qv7pPgyur0gJs
+53YyvOrH6mI7fbyplT6981gFVzv/lF3LbnJFXEISIlkx61iyPGExKWHCPg9J0sKI
+oIo+LAwc79423uw8o6V8iuJGrA32GQ==
+=JL83
 -----END PGP SIGNATURE-----
 
---Sig_/Z9KNElp.WKMlbYCpqfQ=Q8u--
-
---===============0081964174==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0081964174==--
+--Sig_/zhlqNwi8=c7E+bgT2RVlLmj--
