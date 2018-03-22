@@ -1,61 +1,109 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the scsi-mkp tree with Linus' tree
-Date: Thu, 22 Mar 2018 16:54:38 +1100
-Message-ID: <20180322165438.3b928745@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the scsi-mkp tree
+Date: Thu, 22 Mar 2018 17:25:03 +1100
+Message-ID: <20180322172503.2d8e72ef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/A8i/COzi_VNakG1=/PYJ6af"; protocol="application/pgp-signature"
+ boundary="Sig_/.sejq5UpwT/Hp8Gk=6rRAqc"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: "Martin K. Petersen" <martin.petersen@oracle.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Trapp <darren.trapp@cavium.com>, Himanshu Madhani <himanshu.madhani@cavium.com>, Quinn Tran <quinn.tran@cavium.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/A8i/COzi_VNakG1=/PYJ6af
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Martin,
 
-Today's linux-next merge of the scsi-mkp tree got a conflict in:
+After merging the scsi-mkp tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  drivers/scsi/qla2xxx/qla_os.c
+drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
+drivers/scsi/qla2xxx/qla_gs.c:3974:7: error: 'fc4type' undeclared (first us=
+e in this function); did you mean 'fc4type_t'?
+  if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+       ^~~~~~~
+       fc4type_t
+drivers/scsi/qla2xxx/qla_gs.c:3974:7: note: each undeclared identifier is r=
+eported only once for each function it appears in
+drivers/scsi/qla2xxx/qla_gs.c:3975:3: error: too few arguments to function =
+'qla24xx_async_gpnft'
+   qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
+   ^~~~~~~~~~~~~~~~~~~
+In file included from drivers/scsi/qla2xxx/qla_def.h:4633:0,
+                 from drivers/scsi/qla2xxx/qla_gs.c:7:
+drivers/scsi/qla2xxx/qla_gbl.h:661:5: note: declared here
+ int qla24xx_async_gpnft(scsi_qla_host_t *, u8, srb_t *);
+     ^~~~~~~~~~~~~~~~~~~
 
-between commit:
-
-  2b5b96473efc ("scsi: qla2xxx: Fix FC-NVMe LUN discovery")
-
-from Linus' tree and commit:
+Caused by commit
 
   33b28357dd00 ("scsi: qla2xxx: Fix Async GPN_FT for FCP and FC-NVMe scan")
 
-from the scsi-mkp tree.
+interacting with commit
 
-I fixed it up (I just used the latter version) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  2b5b96473efc ("scsi: qla2xxx: Fix FC-NVMe LUN discovery")
+
+from Linus' tree.
+
+I have added the following merge fix patch for today. Unfortunately it
+produces this warning, so a better merge resolution is needed ...
+
+drivers/scsi/qla2xxx/qla_gs.c: In function 'qla24xx_async_gnnft_done':
+drivers/scsi/qla2xxx/qla_gs.c:3974:9: warning: 'rp' may be used uninitializ=
+ed in this function [-Wmaybe-uninitialized]
+  if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+       ~~^~~~~~~~~
+
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Thu, 22 Mar 2018 17:09:38 +1100
+Subject: [PATCH] scsi: qla2xxx: merge fix in qla_gs.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/scsi/qla2xxx/qla_gs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/qla2xxx/qla_gs.c b/drivers/scsi/qla2xxx/qla_gs.c
+index f84807e850c3..d33f4619332e 100644
+--- a/drivers/scsi/qla2xxx/qla_gs.c
++++ b/drivers/scsi/qla2xxx/qla_gs.c
+@@ -3971,8 +3971,8 @@ void qla24xx_async_gnnft_done(scsi_qla_host_t *vha, s=
+rb_t *sp)
+ 	vha->scan.scan_flags &=3D ~SF_SCANNING;
+ 	spin_unlock_irqrestore(&vha->work_lock, flags);
+=20
+-	if ((fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
+-		qla24xx_async_gpnft(vha, FC4_TYPE_NVME);
++	if ((rp->fc4type =3D=3D FC4_TYPE_FCP_SCSI) && vha->flags.nvme_enabled)
++		qla24xx_async_gpnft(vha, FC4_TYPE_NVME, NULL);
+ }
+=20
+ static void qla2x00_find_free_fcp_nvme_slot(struct scsi_qla_host *vha,
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/A8i/COzi_VNakG1=/PYJ6af
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzRR4ACgkQAVBC80lX
-0Gz21gf/flwrouQUC4pfKoRZd2Qmm7dkvbOi9XzTfO9cfd3P6gta3OAwx6KxCPLM
-es2M6wK8sn6VNxGwduIHiWifnopJmB2YZ4z0WOrBOyO8kFRDil2SgNFN2vv22NY5
-eUDH4CM5k7SK6fowpm5FU3JwFEy8JDvHU+HD4imfvmrWB+s/PZQectmDcX3lmmJq
-//0J0dmZ9JpOVqOZnfXgbsbelKBIw+FB4bvNRJ3GLmScFrZaqj16AcuWl+8aqAtS
-VIUNaeQ4pm22q8LOBO6ivJfxQt59E/Af9J3lquWwVXcNfdIMHj/EQFbeND0B265D
-ELvPtUC1Syn2Ee+8Cn6kl8WclCTvKg==
-=sI+d
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzTD8ACgkQAVBC80lX
+0GzcQAf9HN781CPZrW7AHoK7heULX0fNP0I6CzAQqTwz2g0Cwse3uoSv1SOKItGE
+PKOZG171mHvbRRs+YfKKr4GeS1L8YFesRnB8MmaK2IhtJVz3cfPFkHCseTlwmNdM
+EDBMpy14+nca3TWMLSmqrQOedEFUrAZeXoIZWQO0ni7rbRJ5YgXyTa0wNupsGATF
+XPlB+KIU+KgHQgCZcIDRFmiycKTPIYsNcyZuZtjydDfiTn+363KaLk4Y9whWNPiI
+gxy2s5lwc5ytaae+4K4TMlI7it6c9X3vam2W8cI6Inc4gB1b9LdiMtsBQRVzy2sK
+2PWLYd5h8SfkRGZs/5Z+4ABn0tD0mQ==
+=h5Ct
 -----END PGP SIGNATURE-----
 
---Sig_/A8i/COzi_VNakG1=/PYJ6af--
+--Sig_/.sejq5UpwT/Hp8Gk=6rRAqc--
