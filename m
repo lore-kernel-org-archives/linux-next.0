@@ -1,56 +1,50 @@
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Date: Thu, 22 Mar 2018 22:01:44 +0100
-Message-ID: <20180322210144.GB3417@piout.net>
-References: <20180316075629.019b6560@canb.auug.org.au>
- <CAK8P3a2-fUi0nnsLVJ6h_UuJCgwoNs2OEroYed2ofLd=FiPG0g@mail.gmail.com>
- <6b239ab5-5ded-b32b-eefc-601075d33f25@st.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: please clean up the alpine tree
+Date: Fri, 23 Mar 2018 08:33:15 +1100
+Message-ID: <20180323083315.58976d73@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2IV5wW/2i0j_PavOz9IjbOK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6b239ab5-5ded-b32b-eefc-601075d33f25@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Patrice CHOTARD <patrice.chotard@st.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, ARM <linux-arm-kernel@lists.infradead.org>
+To: Antoine Tenart <antoine.tenart@bootlin.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tsahee Zidenberg <tsahee@annapurnalabs.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On 16/03/2018 at 07:34:06 +0000, Patrice CHOTARD wrote:
-> Hi Arnd, Stephen
-> 
-> On 03/15/2018 10:06 PM, Arnd Bergmann wrote:
-> > On Thu, Mar 15, 2018 at 9:56 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >> Hi all,
-> >>
-> >> Commit
-> >>
-> >>    9a5f4879cd8d ("ARM: dts: stih4xx: Add missing #sound-dai-cells")
-> >>
-> >> is missing a Signed-off-by from its committer.
-> > 
-> > Thanks for the report.
-> > 
-> > What script do you use to find those? I guess I should check for
-> > missing signoffs as well when pulling a branch.
-> > 
-> > Patrice, I've dropped the merge now, and picked up the one
-> > patch in it directly, with my signoff. This should fix the issue this
-> > time, but please make sure you always sign off patches when
-> > you apply them from the list.
-> > 
-> >          Arnd
-> > 
-> 
-> Ok i will update my script on my side with Stephen's script to avoid 
-> this in the future.
-> 
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FWIW, last time this happened in the at91 tree, I've switched to use
-Stephen's script as a pre-push hook:
-https://raw.githubusercontent.com/alexandrebelloni/tools/master/pre-push_signed-off
+Hi Antoine,
 
+The alpine tree
+(git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for=
+-next)
+only contains commits that have been upstreamed as different commits.
+It also hasn't been updated since late March 2017.  Please clean it up
+(it takes some time to merge - presumably just because of its age).
 
--- 
-Alexandre Belloni, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Or, if it is no longer being used, please let me know and I will remove
+it from linux-next.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0IRsACgkQAVBC80lX
+0Gx62wf/ahhhKNL4e7QdHS4yy+ZnqasYtHlqjrH2a+X9QqOuKB57XTOv2U0I7v14
+MdAXQouxZsmKXZZc45+NLYEqX8+Tno4inaitqjIkIFvOzKhasmRLii0DIMeHtWU1
+w3HA0v+YosFYx57C5ID1VkKKfrqJhXxnBHaTJqeKasUcxwWp1sA7MnaXosxZNGGp
+OM0tFBRrM9hO/dfRSG0HilHZj1IsKyUiWboAd7ISVxpr8fKWbJ03YbQvH0DIN3sa
+bYzf/bJFFkFBmo8jp5yIxDSnwBv4zxqnEdMWJIrZOYkxdS+4IoV/PSzGuuJa2jDC
+MR1cVjR8GF9y5UYss8/u+srks4xgyQ==
+=y75j
+-----END PGP SIGNATURE-----
+
+--Sig_/2IV5wW/2i0j_PavOz9IjbOK--
