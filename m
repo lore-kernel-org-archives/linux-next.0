@@ -1,49 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Thu, 22 Mar 2018 09:38:17 +0800
-Message-ID: <20180322013817.GY2186@sirena.org.uk>
-References: <20180321133040.6754c372@canb.auug.org.au>
- <20180321024556.GX2186@sirena.org.uk>
- <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the scsi-mkp tree
+Date: Thu, 22 Mar 2018 13:14:02 +1100
+Message-ID: <20180322131402.2367f42c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kKplKE35C9I8SQOF"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/SoxzR34PV2QlIOKxOaj..0v"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kevin Barnett <kevin.barnett@microsemi.com>, Don Brace <don.brace@microsemi.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/SoxzR34PV2QlIOKxOaj..0v
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---kKplKE35C9I8SQOF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Martin,
 
-On Wed, Mar 21, 2018 at 11:15:16AM +0530, Mukunda,Vijendar wrote:
+Commit
 
-> There is a patch dependency .
-> Below patch not merged yet. We submitted for upstream review.
-> [PATCH V2] ASoC: dwc: I2S Controller instance param added
+  339faa8150fd ("scsi: smartpqi: workaround fw bug for oq deletion")
 
-You need to mention dependencies between patches when publishing and I
-don't seem to have a copy of that patch, according to the list archives
-Alex asked you to make some chnages to it.
+is missing a Signed-off-by from its author.
 
---kKplKE35C9I8SQOF
-Content-Type: application/pgp-signature; name="signature.asc"
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/SoxzR34PV2QlIOKxOaj..0v
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlqzCQYACgkQJNaLcl1U
-h9A/BQf/SsRk7fub/qqkfI0T5kgHQ8aF+hpGsXodUmmoHbm1XYMAh8UY5mQU712q
-C51a+sHY0SwkzanhPPQrvYD/+siKpfFAu3/cslPwOdLfDv4A7NqXEXgmloerUb6d
-TIT/H7lvY5yTG9Pj2s1HqT0x002wX+taETRk0zRIWE0mMrYO+JGWPcdqJK7fS8Jc
-jKsbM78nTDGuxhheIFJmD3jYlBPbGtfqfwdwqNeTTJyoEJQ0Y/FVZ31I5iTuiqdc
-5tduJkrYrx09ZT0yvfWcIc4VS2lSEm7Yke3ZARy7ez+nX+Ed0MVFzlzjnRoGduI8
-Fo5OvMBbqfx9HiwZrx6hBFB0Q5YyEA==
-=iCQm
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzEWoACgkQAVBC80lX
+0GzzQgf5ASxw5dZ5H/VnQmGNKQp3pK4/zqoILOenPaQMQqPZhrM+WEN55rPtBYwy
+16hsOwZ9Zt7cpxCJ/ZQF9pUL3WLpztYlTWxJQWWKI3q4vX+d+UygzHUNw4BW3h2n
+6pGjXfyqEmVtTD1Xw+u4koidHIBN0isjD0j8X5Cn6KE3trjdQouKRQeaVMKBovts
+uwnkTSqvlfxIGwc37UhmdhPpwB5i727z41m0BPTNvJqgS5KrOiCM73+z6uuaCYgb
+CmOrfS91EAdStt7fI6Q6HWaAqGw3ijXoK0QQ96+3ZTwv7Q8nyNxcXgGlpo3mMJvB
+X46sixK7zI86SJMRbKHseo59YAUiTA==
+=0bFF
 -----END PGP SIGNATURE-----
 
---kKplKE35C9I8SQOF--
+--Sig_/SoxzR34PV2QlIOKxOaj..0v--
