@@ -1,52 +1,83 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the nvdimm tree
-Date: Thu, 22 Mar 2018 18:07:56 +1100
-Message-ID: <20180322180756.3978942f@canb.auug.org.au>
+From: Felipe Balbi <balbi@kernel.org>
+Subject: Re: linux-next: Tree for Mar 21 (usb/dwc3)
+Date: Thu, 22 Mar 2018 10:20:25 +0200
+Message-ID: <87efkcplme.fsf@linux.intel.com>
+References: <20180321192511.2d40e4ce@canb.auug.org.au> <03aae369-e923-64e7-bac9-133ad0c8afc5@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5Uq.KlDv7KJbIjjSjvthpz9"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <03aae369-e923-64e7-bac9-133ad0c8afc5@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5Uq.KlDv7KJbIjjSjvthpz9
-Content-Type: text/plain; charset=US-ASCII
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
 
-After merging the nvdimm tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+Hi,
 
-fs/xfs/xfs_file.c: In function 'xfs_break_layouts':
-fs/xfs/xfs_file.c:759:20: warning: unused variable 'ip' [-Wunused-variable]
-  struct xfs_inode *ip =3D XFS_I(inode);
-                    ^~
+Randy Dunlap <rdunlap@infradead.org> writes:
+> On 03/21/2018 01:25 AM, Stephen Rothwell wrote:
+>> Hi all,
+>>=20
+>> Changes since 20180320:
+>>=20
+>
+>
+> on i386:
+>
+> ERROR: "__tracepoint_dwc3_gadget_generic_cmd" [drivers/usb/dwc3/dwc3.ko] =
+undefined!
+> ERROR: "__tracepoint_dwc3_ep_queue" [drivers/usb/dwc3/dwc3.ko] undefined!
+> ERROR: "__tracepoint_dwc3_free_request" [drivers/usb/dwc3/dwc3.ko] undefi=
+ned!
+> ERROR: "__tracepoint_dwc3_event" [drivers/usb/dwc3/dwc3.ko] undefined!
+> ERROR: "__tracepoint_dwc3_gadget_ep_enable" [drivers/usb/dwc3/dwc3.ko] un=
+defined!
+> ERROR: "__tracepoint_dwc3_alloc_request" [drivers/usb/dwc3/dwc3.ko] undef=
+ined!
+> ERROR: "__tracepoint_dwc3_prepare_trb" [drivers/usb/dwc3/dwc3.ko] undefin=
+ed!
+> ERROR: "__tracepoint_dwc3_complete_trb" [drivers/usb/dwc3/dwc3.ko] undefi=
+ned!
+> ERROR: "__tracepoint_dwc3_writel" [drivers/usb/dwc3/dwc3.ko] undefined!
+> ERROR: "__tracepoint_dwc3_readl" [drivers/usb/dwc3/dwc3.ko] undefined!
+> ERROR: "__tracepoint_dwc3_gadget_ep_cmd" [drivers/usb/dwc3/dwc3.ko] undef=
+ined!
+> ERROR: "__tracepoint_dwc3_ctrl_req" [drivers/usb/dwc3/dwc3.ko] undefined!
+> ERROR: "__tracepoint_dwc3_ep_dequeue" [drivers/usb/dwc3/dwc3.ko] undefine=
+d!
+> ERROR: "__tracepoint_dwc3_gadget_giveback" [drivers/usb/dwc3/dwc3.ko] und=
+efined!
+> ERROR: "__tracepoint_dwc3_gadget_ep_disable" [drivers/usb/dwc3/dwc3.ko] u=
+ndefined!
 
-Introduced by commit
+compiling here to test it out. Thanks
 
-  6ea4108852e9 ("xfs: prepare xfs_break_layouts() for another layout type")
+=2D-=20
+balbi
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5Uq.KlDv7KJbIjjSjvthpz9
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzVkwACgkQAVBC80lX
-0GwieQf+LKZJUZXobAhHD13R2rkoSKLUntzDycI9khOXunhkKNiIQkMh5E+VW+DB
-b2RtuxawkCaG6d4HtDx/ZRtLotnIFvJugaEw09sd/IzgistZNQlbSkIpc+pVVY7i
-Ih89FT3t8++fPBG2/lciaXskOdYzuq825nhC3PfC3E8HLNXbO1nqs7vFFHsnPrm6
-tLMmGwJwqZ9x2MWPlMovnPcj3e3hHwu9s5SHpkn02zwmGrlqppPKSToxz0YICXtp
-uHaap/pcCjb+TmM9vLfZ892xRHdsx0uVax+4Q3YAXnlsihl1zQcBAG7/2LLdX2rm
-Q7j69Uk2IJWreXXdTOsUtHbijwpMvw==
-=FdHn
+iQIzBAEBCgAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlqzZ0kACgkQzL64meEa
+mQYFhA/7BC1eIzCT/ba3St3AiKOJ2Gio3bayhJAzsuCesvMHTvwLVPSpAl9ZxRBc
+ulUToTWIqag6dPmUmk0WJAlLyxYV5Cxt5AO7IYmGfIiWUPcxJkXbzxs6PopvU/X8
+2qUciz4fK+jOdswb2HjzqRaoniFugD44JlY8PHGkx3wkpWhO5bpgGWapygQa37+l
+GHEXvbQzZ6GgWGeAzzE3Kf0mN7RKP0wU3/H65Z1oNwQ2XnhY+jCy+QUmD4PmSL/K
+0QUULZXWeEGwVqakAzln4SsQtoXs7EBdswFQAIkbS8LpahVhx0upUpkCvs1+SIwn
+3ejuRae4wVYShMSc1hQ6Nh4zNEEPKjDwDyBSVwS0xN431zY22KVkbUHly1U5svtr
+06m/MbzZ7O+eiTObxE749h0nd7dRKjaBBMb2RRBD1zjfUcy/A9IAO1jQAXlonF6l
+e0Dpb6VNUBEEZ7LP9hISwJf8mVyopdIucbyvO+TIZxHQaBRKcGd8dNowuI61z4Qo
+BV2Vts7Y+WORb6rSrWb1Ht/PjQObSIc5B5Qa7JJKTvwjHtMZi4zn8+pNsnh+R82U
+idp0y6xOOISAy6Crpz04PtNzxYtKw8mBzQbXroB0AeowFgC8mXQwTH2nlTFoODDs
+jodPu3R6ZMmira4QWZhO4Vf8k9pd4vqKNsw1FvwQrrnN3jrTTQ0=
+=fKef
 -----END PGP SIGNATURE-----
-
---Sig_/5Uq.KlDv7KJbIjjSjvthpz9--
+--=-=-=--
