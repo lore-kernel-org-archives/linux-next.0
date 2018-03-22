@@ -1,171 +1,38 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the drm-intel tree with
- Linus' tree
-Date: Thu, 22 Mar 2018 13:21:29 +1100
-Message-ID: <20180322132129.6b953166@canb.auug.org.au>
+From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Thu, 22 Mar 2018 11:24:43 +0530
+Message-ID: <3d47f2cb-0a73-98a7-bb3a-f40baf00123b@amd.com>
+References: <20180321133040.6754c372@canb.auug.org.au>
+ <20180321024556.GX2186@sirena.org.uk>
+ <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
+ <20180322013817.GY2186@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0906059833=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180322013817.GY2186@sirena.org.uk>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0906059833==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9rALYzwp.zLPmq8p/6K6l1a"; protocol="application/pgp-signature"
 
---Sig_/9rALYzwp.zLPmq8p/6K6l1a
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Thursday 22 March 2018 07:08 AM, Mark Brown wrote:
+> On Wed, Mar 21, 2018 at 11:15:16AM +0530, Mukunda,Vijendar wrote:
+>
+>> There is a patch dependency .
+>> Below patch not merged yet. We submitted for upstream review.
+>> [PATCH V2] ASoC: dwc: I2S Controller instance param added
+> You need to mention dependencies between patches when publishing and I
+> don't seem to have a copy of that patch, according to the list archives
+> Alex asked you to make some chnages to it.
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+    Changes suggested by Alex already implemented and posted .
+    Current patch (https://patchwork.kernel.org/patch/10298281/ ) is
+    dependent on below patch.
 
-  drivers/gpu/drm/i915/gvt/scheduler.c
+    https://patchwork.kernel.org/patch/10296597/
 
-between commit:
-
-  fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
-
-from Linus' tree and commit:
-
-  b20c0d5ce104 ("drm/i915/gvt: Update PDPs after a vGPU mm object is pinned=
-.")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/gvt/scheduler.c
-index 068126404151,a55b4975c154..000000000000
---- a/drivers/gpu/drm/i915/gvt/scheduler.c
-+++ b/drivers/gpu/drm/i915/gvt/scheduler.c
-@@@ -52,54 -52,29 +52,77 @@@ static void set_context_pdp_root_pointe
-  		pdp_pair[i].val =3D pdp[7 - i];
-  }
- =20
- +/*
- + * when populating shadow ctx from guest, we should not overrride oa rela=
-ted
- + * registers, so that they will not be overlapped by guest oa configs. Th=
-us
- + * made it possible to capture oa data from host for both host and guests.
- + */
- +static void sr_oa_regs(struct intel_vgpu_workload *workload,
- +		u32 *reg_state, bool save)
- +{
- +	struct drm_i915_private *dev_priv =3D workload->vgpu->gvt->dev_priv;
- +	u32 ctx_oactxctrl =3D dev_priv->perf.oa.ctx_oactxctrl_offset;
- +	u32 ctx_flexeu0 =3D dev_priv->perf.oa.ctx_flexeu0_offset;
- +	int i =3D 0;
- +	u32 flex_mmio[] =3D {
- +		i915_mmio_reg_offset(EU_PERF_CNTL0),
- +		i915_mmio_reg_offset(EU_PERF_CNTL1),
- +		i915_mmio_reg_offset(EU_PERF_CNTL2),
- +		i915_mmio_reg_offset(EU_PERF_CNTL3),
- +		i915_mmio_reg_offset(EU_PERF_CNTL4),
- +		i915_mmio_reg_offset(EU_PERF_CNTL5),
- +		i915_mmio_reg_offset(EU_PERF_CNTL6),
- +	};
- +
- +	if (!workload || !reg_state || workload->ring_id !=3D RCS)
- +		return;
- +
- +	if (save) {
- +		workload->oactxctrl =3D reg_state[ctx_oactxctrl + 1];
- +
- +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
- +			u32 state_offset =3D ctx_flexeu0 + i * 2;
- +
- +			workload->flex_mmio[i] =3D reg_state[state_offset + 1];
- +		}
- +	} else {
- +		reg_state[ctx_oactxctrl] =3D
- +			i915_mmio_reg_offset(GEN8_OACTXCONTROL);
- +		reg_state[ctx_oactxctrl + 1] =3D workload->oactxctrl;
- +
- +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
- +			u32 state_offset =3D ctx_flexeu0 + i * 2;
- +			u32 mmio =3D flex_mmio[i];
- +
- +			reg_state[state_offset] =3D mmio;
- +			reg_state[state_offset + 1] =3D workload->flex_mmio[i];
- +		}
- +	}
- +}
- +
-+ static void update_shadow_pdps(struct intel_vgpu_workload *workload)
-+ {
-+ 	struct intel_vgpu *vgpu =3D workload->vgpu;
-+ 	int ring_id =3D workload->ring_id;
-+ 	struct i915_gem_context *shadow_ctx =3D vgpu->submission.shadow_ctx;
-+ 	struct drm_i915_gem_object *ctx_obj =3D
-+ 		shadow_ctx->engine[ring_id].state->obj;
-+ 	struct execlist_ring_context *shadow_ring_context;
-+ 	struct page *page;
-+=20
-+ 	if (WARN_ON(!workload->shadow_mm))
-+ 		return;
-+=20
-+ 	if (WARN_ON(!atomic_read(&workload->shadow_mm->pincount)))
-+ 		return;
-+=20
-+ 	page =3D i915_gem_object_get_page(ctx_obj, LRC_STATE_PN);
-+ 	shadow_ring_context =3D kmap(page);
-+ 	set_context_pdp_root_pointer(shadow_ring_context,
-+ 			(void *)workload->shadow_mm->ppgtt_mm.shadow_pdps);
-+ 	kunmap(page);
-+ }
-+=20
-  static int populate_shadow_context(struct intel_vgpu_workload *workload)
-  {
-  	struct intel_vgpu *vgpu =3D workload->vgpu;
-
---Sig_/9rALYzwp.zLPmq8p/6K6l1a
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzEykACgkQAVBC80lX
-0GxuKQf9G9nLIMP0dgOYy2/sl6nQUehyuQo3gZBILO3+nVKtM/0VWMb0GTnSqTJl
-B1blQwE6Zc/xBVHsv1v4i8LTZLyn1XVgSSuo+1qjzslpcAWM+0LtQ0FS4M07v6Ap
-RWsv7mtFWd5S0giqNR6ZARa07tyQN8t9sUNDRuRN+0AEeYrfvl3OFVvI3wTMNMP2
-BWZUpV9IlDN9gzJz6VLQuo9RpzFLOV70FNvnyORc0SQvtootPgBi/rS0pHdRYNTx
-2aBNxkYXtnbQ4CnNK0KJhw8Ul1k25dI0msRTkuFpjtBXUd7nne1U3IzL7J4ecFkd
-eNdoJcCKHKbOrWf4AdcPwos7CMQ8rQ==
-=teZW
------END PGP SIGNATURE-----
-
---Sig_/9rALYzwp.zLPmq8p/6K6l1a--
-
---===============0906059833==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============0906059833==--
+    We will publish patch dependencies while sending patches.
