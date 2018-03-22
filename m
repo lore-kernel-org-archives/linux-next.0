@@ -1,79 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the nvdimm tree with the xfs tree
-Date: Thu, 22 Mar 2018 17:54:24 +1100
-Message-ID: <20180322175424.032cf417@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nvdimm tree
+Date: Thu, 22 Mar 2018 18:07:56 +1100
+Message-ID: <20180322180756.3978942f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zhlqNwi8=c7E+bgT2RVlLmj"; protocol="application/pgp-signature"
+ boundary="Sig_/5Uq.KlDv7KJbIjjSjvthpz9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>, "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/zhlqNwi8=c7E+bgT2RVlLmj
+--Sig_/5Uq.KlDv7KJbIjjSjvthpz9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Dan,
 
-Today's linux-next merge of the nvdimm tree got a conflict in:
+After merging the nvdimm tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-  fs/xfs/xfs_inode.h
+fs/xfs/xfs_file.c: In function 'xfs_break_layouts':
+fs/xfs/xfs_file.c:759:20: warning: unused variable 'ip' [-Wunused-variable]
+  struct xfs_inode *ip =3D XFS_I(inode);
+                    ^~
 
-between commit:
-
-  f5c54717bf2b ("xfs: remove xfs_zero_range")
-
-from the xfs tree and commit:
+Introduced by commit
 
   6ea4108852e9 ("xfs: prepare xfs_break_layouts() for another layout type")
-
-from the nvdimm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/xfs/xfs_inode.h
-index 132d8aa2afc4,6951d57aae71..000000000000
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@@ -443,6 -457,12 +457,8 @@@ enum xfs_prealloc_flags=20
- =20
-  int	xfs_update_prealloc_flags(struct xfs_inode *ip,
-  				  enum xfs_prealloc_flags flags);
- -int	xfs_zero_eof(struct xfs_inode *ip, xfs_off_t offset,
- -		     xfs_fsize_t isize, bool *did_zeroing);
- -int	xfs_zero_range(struct xfs_inode *ip, xfs_off_t pos, xfs_off_t count,
- -		bool *did_zero);
-+ int	xfs_break_layouts(struct inode *inode, uint *iolock,
-+ 		enum layout_break_reason reason);
- =20
-  /* from xfs_iops.c */
-  extern void xfs_setup_inode(struct xfs_inode *ip);
-
---Sig_/zhlqNwi8=c7E+bgT2RVlLmj
+--Sig_/5Uq.KlDv7KJbIjjSjvthpz9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzUyAACgkQAVBC80lX
-0Gw9xAf/XuOHM+g8CadIj8I7WyuqazqOWlDHqJzlgTYJNkTLFAkBm1Z6JpxohFCl
-uEmbYfRwtq90appMzVbPpQeidXPaEAN56gDYQ1CP1ZDeLKbXJMm8DYkVXINx5Ucn
-shpeF+M1/uJPkpwiRrdiujhiErM7ECeGW84TCqWO4qJFtt4OVRK+gmLBSCU0VXy9
-jAKFC4qPR3wlBMQUcXvQczqo8qmIWXvd5HSbBP7TIkdqnasf6N/qv7pPgyur0gJs
-53YyvOrH6mI7fbyplT6981gFVzv/lF3LbnJFXEISIlkx61iyPGExKWHCPg9J0sKI
-oIo+LAwc79423uw8o6V8iuJGrA32GQ==
-=JL83
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqzVkwACgkQAVBC80lX
+0GwieQf+LKZJUZXobAhHD13R2rkoSKLUntzDycI9khOXunhkKNiIQkMh5E+VW+DB
+b2RtuxawkCaG6d4HtDx/ZRtLotnIFvJugaEw09sd/IzgistZNQlbSkIpc+pVVY7i
+Ih89FT3t8++fPBG2/lciaXskOdYzuq825nhC3PfC3E8HLNXbO1nqs7vFFHsnPrm6
+tLMmGwJwqZ9x2MWPlMovnPcj3e3hHwu9s5SHpkn02zwmGrlqppPKSToxz0YICXtp
+uHaap/pcCjb+TmM9vLfZ892xRHdsx0uVax+4Q3YAXnlsihl1zQcBAG7/2LLdX2rm
+Q7j69Uk2IJWreXXdTOsUtHbijwpMvw==
+=FdHn
 -----END PGP SIGNATURE-----
 
---Sig_/zhlqNwi8=c7E+bgT2RVlLmj--
+--Sig_/5Uq.KlDv7KJbIjjSjvthpz9--
