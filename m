@@ -1,52 +1,83 @@
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: linux-next: manual merge of the ftrace tree with the jc_docs
- tree
-Date: Wed, 21 Mar 2018 18:09:34 -0500
-Message-ID: <1521673774.6961.4.camel@tzanussi-mobl.amr.corp.intel.com>
-References: <20180321153127.23737f6e@canb.auug.org.au>
-         <20180321153715.3a571e5b@canb.auug.org.au>
-         <20180321091554.2b38ee57@gandalf.local.home>
-         <1521665752.31081.10.camel@tzanussi-mobl.amr.corp.intel.com>
-         <20180322092108.0d821abc@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
+Date: Thu, 22 Mar 2018 11:45:28 +1100
+Message-ID: <20180322114528.471e30fa@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Jtw.tT1Ukc2S1Gu+T4_ghvo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180322092108.0d821abc@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@intel.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve Wise <swise@opengridcomputing.com>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/Jtw.tT1Ukc2S1Gu+T4_ghvo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2018-03-22 at 09:21 +1100, Stephen Rothwell wrote:
-> Hi Tom,
-> 
-> On Wed, 21 Mar 2018 15:55:52 -0500 Tom Zanussi <tom.zanussi@linux.intel.com> wrote:
-> >
-> > Yeah, linux-next has changes to Documentation/trace/* that converts
-> > those files to .rst, which linux-trace/frace/core doesn't have.
-> > 
-> > I've rebased the inter-event patches to linux-next/next-20180320 to
-> > reflect those changes, which affect 9 of the files in the patchset.  The
-> > updated patchset is here:
-> > 
-> > https://github.com/tzanussi/linux-trace-inter-event.git tzanussi/next-20180320-inter-event-v10                                               
-> > https://github.com/tzanussi/linux-trace-inter-event/tree/tzanussi/next-20180320-inter-event-v10
-> > 
-> > I can repost the whole thing as v10, or whatever makes sense here.
-> 
-> Thanks, I assume that they apply on top of the jc_docs tree as well
-> (git://git.lwn.net/linux.git#docs-next).  If so, then I can use them as
-> merge resolutions, or Steve can rebase his tree (minus your old
-> patches) on top of the (hopefully unchanging) jc_docs tree and then he
-> could apply your patches there.
-> 
+Hi all,
 
-Yes, just checked and they do apply on top of the jc_docs branch
-mentioned.
+Today's linux-next merge of the rdma tree got a conflict in:
 
-Thanks,
+  drivers/infiniband/core/ucma.c
 
-Tom 
+between commit:
+
+  e8980d67d601 ("RDMA/ucma: Ensure that CM_ID exists prior to access it")
+
+from the rdma-fixes tree and commit:
+
+  00313983cda6 ("DMA/nldev: provide detailed CM_ID information")
+
+from the rdma tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/infiniband/core/ucma.c
+index e5a1e7d81326,4bb5bed596c9..000000000000
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@@ -477,10 -476,10 +477,10 @@@ static ssize_t ucma_create_id(struct uc
+  		return -ENOMEM;
+ =20
+  	ctx->uid =3D cmd.uid;
+- 	cm_id =3D rdma_create_id(current->nsproxy->net_ns,
+- 			       ucma_event_handler, ctx, cmd.ps, qp_type);
+ -	ctx->cm_id =3D __rdma_create_id(current->nsproxy->net_ns,
+ -			      ucma_event_handler, ctx, cmd.ps, qp_type, NULL);
+ -	if (IS_ERR(ctx->cm_id)) {
+ -		ret =3D PTR_ERR(ctx->cm_id);
+++	cm_id =3D __rdma_create_id(current->nsproxy->net_ns,
+++				ucma_event_handler, ctx, cmd.ps, qp_type, NULL);
+ +	if (IS_ERR(cm_id)) {
+ +		ret =3D PTR_ERR(cm_id);
+  		goto err1;
+  	}
+ =20
+
+--Sig_/Jtw.tT1Ukc2S1Gu+T4_ghvo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlqy/KgACgkQAVBC80lX
+0GyTXggAoa6hdCtLkjvn4JAf+C4syeEAN/W/eCn2eJk7S4Ec9s3felKMF5v3C41q
+ytwC3tYIDcj/svP+hRQwAhDLl6+d0TuYFrUlKItgOe1ch7sDzYOt+tE/wXpQQN13
+FwTX3vGmVfwpqM51Pl3X4bhrv6fmk8HThDhYIDWBtWPec3hSaiadrgI4TDnqFFBg
+o5sdUGMU3A0kVyqzymNoHiLnxfBIzj/9aEC8A1kP/Uf/+7bYDUoor9K/ptddJmbv
+ELJ7krr7tSWfrcc7Bpy/pgcu5KxjD1Zng2o5CZchoInsLOyPiP+fXGWQO9h1iq4C
+Kq5iMoexAJwDuKlaDvPxN9pIbW+tqQ==
+=sEwo
+-----END PGP SIGNATURE-----
+
+--Sig_/Jtw.tT1Ukc2S1Gu+T4_ghvo--
