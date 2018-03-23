@@ -1,49 +1,62 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Fri, 23 Mar 2018 20:57:55 +1100
-Message-ID: <20180323205755.465b3f9f@canb.auug.org.au>
-References: <20180323132853.67195c47@canb.auug.org.au>
-        <20180323083134.GB23865@lst.de>
+From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Subject: Re: [Intel-gfx] linux-next: manual merge of the drm-intel tree with
+ Linus' tree
+Date: Fri, 23 Mar 2018 16:16:21 +0200
+Message-ID: <152181458133.5713.10693056590259814245@jlahtine-desk.ger.corp.intel.com>
+References: <20180322132129.6b953166@canb.auug.org.au>
+ <20180323115018.1ae3ca1d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ws2TWC89h/wNzzKkjQ3PrHa"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180323083134.GB23865@lst.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20180323115018.1ae3ca1d@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Ws2TWC89h/wNzzKkjQ3PrHa
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Christoph,
-
-On Fri, 23 Mar 2018 09:31:34 +0100 Christoph Hellwig <hch@lst.de> wrote:
->
-> True.  I'll send a fixup.
-
-Thanks.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ws2TWC89h/wNzzKkjQ3PrHa
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0z6MACgkQAVBC80lX
-0GxV7Af/ZLWTng48hrdXUYnlHtC8t5EPNRyH62cULW3Cs6NsrQUcoxKy1obemRu4
-CLGVoUhx8OLfkTurh22N59lCvHhKMn30vt9YZojZL4Uk3stFXgPUcJtauf/ke0qo
-93KzoEzzFZ3z5mGc8A/+1fZ1grzecjpdCaLM2fwzNdVw4SZld/tGIffsFKgzm/2/
-TW+TfEuv45W8HURcgy2oQMFccxV/kOQAa/g/FU+pu6yQcf9stE3Soq+SDUh8SWKI
-10d9qVaYKgjSFKlpWy13ByV0wZ//ah1DGg6LfZeupQUpzgaM22SgsZSBnmP4OJbD
-TAcC/9oVpxa2i164f9dug2vIlRzQ1Q==
-=/wg8
------END PGP SIGNATURE-----
-
---Sig_/Ws2TWC89h/wNzzKkjQ3PrHa--
+UXVvdGluZyBTdGVwaGVuIFJvdGh3ZWxsICgyMDE4LTAzLTIzIDAyOjUwOjE4KQo+IEhpIGFsbCwK
+PiAKPiBPbiBUaHUsIDIyIE1hciAyMDE4IDEzOjIxOjI5ICsxMTAwIFN0ZXBoZW4gUm90aHdlbGwg
+PHNmckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPiA+Cj4gPiBUb2RheSdzIGxpbnV4LW5leHQg
+bWVyZ2Ugb2YgdGhlIGRybS1pbnRlbCB0cmVlIGdvdCBhIGNvbmZsaWN0IGluOgo+ID4gCj4gPiAg
+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L2d2dC9zY2hlZHVsZXIuYwo+ID4gCj4gPiBiZXR3ZWVuIGNv
+bW1pdDoKPiA+IAo+ID4gICBmYTNkZDYyM2U1NTkgKCJkcm0vaTkxNS9ndnQ6IGtlZXAgb2EgY29u
+ZmlnIGluIHNoYWRvdyBjdHgiKQo+ID4gCj4gPiBmcm9tIExpbnVzJyB0cmVlIGFuZCBjb21taXQ6
+Cj4gPiAKPiA+ICAgYjIwYzBkNWNlMTA0ICgiZHJtL2k5MTUvZ3Z0OiBVcGRhdGUgUERQcyBhZnRl
+ciBhIHZHUFUgbW0gb2JqZWN0IGlzIHBpbm5lZC4iKQo+ID4gCj4gPiBmcm9tIHRoZSBkcm0taW50
+ZWwgdHJlZS4KPiA+IAo+ID4gSSBmaXhlZCBpdCB1cCAoc2VlIGJlbG93KSBhbmQgY2FuIGNhcnJ5
+IHRoZSBmaXggYXMgbmVjZXNzYXJ5LiBUaGlzCj4gPiBpcyBub3cgZml4ZWQgYXMgZmFyIGFzIGxp
+bnV4LW5leHQgaXMgY29uY2VybmVkLCBidXQgYW55IG5vbiB0cml2aWFsCj4gPiBjb25mbGljdHMg
+c2hvdWxkIGJlIG1lbnRpb25lZCB0byB5b3VyIHVwc3RyZWFtIG1haW50YWluZXIgd2hlbiB5b3Vy
+IHRyZWUKPiA+IGlzIHN1Ym1pdHRlZCBmb3IgbWVyZ2luZy4gIFlvdSBtYXkgYWxzbyB3YW50IHRv
+IGNvbnNpZGVyIGNvb3BlcmF0aW5nCj4gPiB3aXRoIHRoZSBtYWludGFpbmVyIG9mIHRoZSBjb25m
+bGljdGluZyB0cmVlIHRvIG1pbmltaXNlIGFueSBwYXJ0aWN1bGFybHkKPiA+IGNvbXBsZXggY29u
+ZmxpY3RzLgoKSGkgU3RlcGhlbiwKClRoYW5rcyBmb3Igc29sdmluZyB0aGlzLCB0aGUgcmVzb2x1
+dGlvbiBpcyBjb3JyZWN0LgoKWW91IG1heSB3YW50IHRvIHJlcGxhY2UgRGFuaWVsLCBhcyB0aGUg
+cmVjaXBpZW50IGhlcmUsIHdpdGggdGhlIGN1cnJlbnQKaTkxNSBtYWludGFpbmVycyB0byBnZXQg
+YSBmYXN0ZXIgZmVlZGJhY2sgbmV4dCB0aW1lIDopCgo8U05JUD4KCj4gVGhpcyBpcyBub3cgYSBj
+b25mbGljdCBiZXR3ZWVuIHRoZSBkcm0gdHJlZSBhbmQgTGludXMnIHRyZWUuCj4gCgpNeSBiYWQg
+Zm9yIG5vdCBoaWdobGlnaHRpbmcgdGhlIG1lcmdlIGNvbmZsaWN0IGluIG15IFBSIHRvIERhdmUu
+IEhlCnByb2JhYmx5IGRpZCBub3Qgbm90aWNlLCBnZXR0aW5nIHRoZSByZXNvbHV0aW9uIGF1dG9t
+YXRpY2FsbHkgZnJvbQpkcm0tcmVyZXJlLCBJJ2QgZ3Vlc3MuIEkndmUgbm90ZWQgaXQgaW4gdGhl
+IGV2ZXIgaW1wcm92aW5nIGRyYWZ0IG9mCnRoaW5ncyB0byByZW1lbWJlciB3aXRoIHRoZSBQUnMu
+CgpJJ20gdmVyeSBtdWNoIGN1cnJlbnRseSBmbHlpbmcgYmFzZWQgb24gd2hhdCB0aGUgcHJldmlv
+dXMgUFIgYXV0aG9ycwpoYXZlIHJlbWVtYmVyZWQgdG8gdGVsbCBtZS4gQnV0IGFmdGVyIDQuMTcs
+IHRoZSBjeWNsZSBpcyBjb21wbGV0ZSBhbmQgd2UKYWxsICJoYXZlIGJlZW4gdGhlcmUsIGRvbmUg
+dGhhdCIsIGFuZCB5b3UgY2FuIGV4cGVjdCBsZXNzIG9mIGEgdHVyYnVsZW5jZS4KCihXZSdsbCBw
+cm9iYWJseSBoYXZlIG1vcmUgbWFnbmlmaWNlbnQgZG9jdW1lbnRhdGlvbiwgdG9vLikKClJlZ2Fy
+ZHMsIEpvb25hcwoKPiAtLSAKPiBDaGVlcnMsCj4gU3RlcGhlbiBSb3Rod2VsbAo+IAo+IAo+IF9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdAo+IEludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeApfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
