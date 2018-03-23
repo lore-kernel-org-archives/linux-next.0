@@ -1,35 +1,45 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build warning after merge of the tip tree
-Date: Fri, 23 Mar 2018 09:31:34 +0100
-Message-ID: <20180323083134.GB23865@lst.de>
-References: <20180323132853.67195c47@canb.auug.org.au>
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Subject: Re: linux-next: please clean up the alpine tree
+Date: Fri, 23 Mar 2018 09:51:53 +0100
+Message-ID: <20180323085153.GB9682@kwain>
+References: <20180323083315.58976d73@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180323132853.67195c47@canb.auug.org.au>
+In-Reply-To: <20180323083315.58976d73@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tsahee Zidenberg <tsahee@annapurnalabs.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 23, 2018 at 01:28:53PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the tip tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
-> 
-> lib/swiotlb.c:748:13: warning: 'swiotlb_free_buffer' defined but not used [-Wunused-function]
->  static bool swiotlb_free_buffer(struct device *dev, size_t size,
->              ^~~~~~~~~~~~~~~~~~~
-> lib/swiotlb.c:706:1: warning: 'swiotlb_alloc_buffer' defined but not used [-Wunused-function]
->  swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_handle,
->  ^~~~~~~~~~~~~~~~~~~~
-> 
-> Introduced by commit
-> 
->   16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
-> 
-> These are now only used with CONFIG_DMA_DIRECT_OPS.
+Hi Stephen,
 
-True.  I'll send a fixup.
+On Fri, Mar 23, 2018 at 08:33:15AM +1100, Stephen Rothwell wrote:
+> 
+> The alpine tree
+> (git://git.kernel.org/pub/scm/linux/kernel/git/atenart/linux.git#alpine/for-next)
+> only contains commits that have been upstreamed as different commits.
+> It also hasn't been updated since late March 2017.  Please clean it up
+> (it takes some time to merge - presumably just because of its age).
+> 
+> Or, if it is no longer being used, please let me know and I will remove
+> it from linux-next.
+
+Thanks for pointing this out, and sorry for the inconvenience. The
+Alpine tree isn't very active and I haven't got patches for quite
+some time.
+
+I updated alpine/next to point to v4.16-rc1 to fix the issue. It's not
+completely dead, but as it's not active you can also remove the
+alpine/for-next tree from linux-next. And when/if I get patches to merge
+in the future I'll ask to add it back. As you wish :)
+
+Thank you for making linux-next!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
