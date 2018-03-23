@@ -1,42 +1,62 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: manual merge of the net-next tree with the
- rdma-fixes tree
-Date: Thu, 22 Mar 2018 22:33:15 -0600
-Message-ID: <20180323043315.GB13185@mellanox.com>
-References: <20180316115610.3d7f232a@canb.auug.org.au>
- <1521163082.18703.191.camel@redhat.com>
- <20180323.001900.849305099701511845.davem@davemloft.net>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the tip tree
+Date: Fri, 23 Mar 2018 16:59:26 +1100
+Message-ID: <20180323165926.2c24fe1a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/UnUKL2HpCovp0Fwrtkh0y7Q"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180323.001900.849305099701511845.davem@davemloft.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: dledford@redhat.com, sfr@canb.auug.org.au, netdev@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, markb@mellanox.com, leonro@mellanox.com
+To: Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gang He <ghe@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Mar 23, 2018 at 12:19:00AM -0400, David Miller wrote:
-> From: Doug Ledford <dledford@redhat.com>
-> Date: Thu, 15 Mar 2018 21:18:02 -0400
-> 
-> > Here's the commit (from the rdma git repo) with the proper merge fix
-> > (although it also has other minor merge stuff that needs to be ignored):
-> > 
-> > 2d873449a202 (Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next)
-> 
-> Really?
-> 
-> [davem@localhost GIT]$ git clone --reference linux/.git git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma.git
-> Cloning into 'rdma'...
+--Sig_/UnUKL2HpCovp0Fwrtkh0y7Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Doug and I moved to a shared repo location when we started maintain it
-as a team:
+Hi Andrew,
 
-git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-The commit is here:
+  fs/ocfs2/filecheck.c
 
-https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=for-next&id=2d873449a202d02e0c4d90009fb2beb7013ac575
+between commit:
 
-Jason
+  e24e960c7fe2 ("sched/wait, fs/ocfs2: Convert wait_on_atomic_t() usage to =
+the new wait_var_event() API")
+
+from the tip tree and commit:
+
+  5a5b76d17dc4 ("ocfs2: add kobject for online file check")
+
+from the akpm-current tree.
+
+I fixed it up (the latter removed the code updated by the former) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/UnUKL2HpCovp0Fwrtkh0y7Q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0l74ACgkQAVBC80lX
+0GzXxQf/bfMBLFj/qUb++egG1hYpqEVMevXa2b3x3iCRdzLyo0Z1PXJNfNhcqYJs
+cDnHuUDpVkFhyGDhr8wMKS20QWY+pwe+rC/+nM0tvtnm8iMKWSBsWTyJ2xmrUc2g
+saV1j0l1RTvriwPoYE3xFOKs90QTYivQqdsUlDBEXbX5y6VQ5LCm1pje7xuQQw9z
+FxivVE7cU+5rvjQf/y6m+7g2v8icij3FLpH7vmI80y58VWxuXUcFG9+UmMzSRzl2
+kLmB38+Pv+gzUZ9cupIJ25LQcxhdmk/UjqLPR/yq/fy7Wvun9dl6jyatuSRRjDg4
+BGao1NsS7GrrQsQg/e/cXr2zwcN++Q==
+=AXru
+-----END PGP SIGNATURE-----
+
+--Sig_/UnUKL2HpCovp0Fwrtkh0y7Q--
