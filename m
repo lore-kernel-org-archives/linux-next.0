@@ -1,93 +1,59 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with the pm tree
-Date: Fri, 23 Mar 2018 13:20:01 +1100
-Message-ID: <20180323132001.7da7f3c4@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the tip tree
+Date: Fri, 23 Mar 2018 13:28:53 +1100
+Message-ID: <20180323132853.67195c47@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qWvjTvuySbM=9Uxz_p9U+ti"; protocol="application/pgp-signature"
+ boundary="Sig_/yJu7wesszgLs6Fc3Q.9qCaA"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Claudio Scordino <claudio@evidence.eu.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti
+--Sig_/yJu7wesszgLs6Fc3Q.9qCaA
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  kernel/sched/cpufreq_schedutil.c
+lib/swiotlb.c:748:13: warning: 'swiotlb_free_buffer' defined but not used [=
+-Wunused-function]
+ static bool swiotlb_free_buffer(struct device *dev, size_t size,
+             ^~~~~~~~~~~~~~~~~~~
+lib/swiotlb.c:706:1: warning: 'swiotlb_alloc_buffer' defined but not used [=
+-Wunused-function]
+ swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_hand=
+le,
+ ^~~~~~~~~~~~~~~~~~~~
 
-between commit:
+Introduced by commit
 
-  0953feed3400 ("cpufreq: schedutil: rate limits for SCHED_DEADLINE")
+  16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
 
-from the pm tree and commit:
-
-  8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
-
-from the tip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+These are now only used with CONFIG_DMA_DIRECT_OPS.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc kernel/sched/cpufreq_schedutil.c
-index 04d3fe9ba7d2,89fe78ecb88c..000000000000
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@@ -280,11 -276,9 +286,11 @@@ static void sugov_update_single(struct=20
-  	unsigned int next_f;
-  	bool busy;
- =20
-- 	sugov_set_iowait_boost(sg_cpu, time);
-+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
-  	sg_cpu->last_update =3D time;
- =20
- +	ignore_dl_rate_limit(sg_cpu, sg_policy);
- +
-  	if (!sugov_should_update_freq(sg_policy, time))
-  		return;
- =20
-@@@ -366,12 -353,7 +365,9 @@@ sugov_update_shared(struct update_util_
- =20
-  	raw_spin_lock(&sg_policy->update_lock);
- =20
- +	ignore_dl_rate_limit(sg_cpu, sg_policy);
- +
-- 	sugov_get_util(sg_cpu);
-- 	sg_cpu->flags =3D flags;
--=20
-- 	sugov_set_iowait_boost(sg_cpu, time);
-+ 	sugov_set_iowait_boost(sg_cpu, time, flags);
-  	sg_cpu->last_update =3D time;
- =20
-  	if (sugov_should_update_freq(sg_policy, time)) {
-
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti
+--Sig_/yJu7wesszgLs6Fc3Q.9qCaA
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZFEACgkQAVBC80lX
-0GwtjQf9H0HOALtMFdAwpRtMhNetBnrumX7u25Vij+HuYZWWZXtUll7p37AB/12b
-RB0lkzRvBPbs4pxd+ReePMc2m4OaBFKn4eNE4mZUPcOuJdCZXy2jBI/S8TsPGewL
-DSOziAIFa6fcYf4n93T3gRWGnAQ1i+/nr2lIrC2WoavKNfigeJ/bvf2pZS530EGE
-mRcdcQROoFC6SSBOTCT6+PZBWNFSRAY6jt+uI+4omnu4kxfu7ZI3nQOjO7KC36N+
-20Y5NekmMOkjqUA2VJSnEhef8TFJKXy10GmhVdywQshEK+C/ax1zQ+XHECH1P4Uy
-BmUWpx4CXuAJ+5EcFliIVPsr/yO2qg==
-=T7L6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZmUACgkQAVBC80lX
+0GwnvQf/VilaxNYGNsf03m40RUOIMk913zVktU4IKXlCurYx5qJm961j47f5Bx5q
+nslyhGmi2tb1AEVRYRstz4aUyNk7D6Hc1YzB8wTNBSEXIyIxBvT9kBp6eVK+Qgpf
+oLMZaXbsszT8cNc7/vKDia/LbteWm4B0qibJUtmWAhgNiXUaHj0XZAU16kld+F+V
+fDfdV8C8qe8UQaY759iwTU4cIjhp64FWJW0lR3Qk8Q8Z+X+GDD9MfGwSIzjw7+S3
++xG9tkQJOvcj+8U9AKUjgMFNVDP8h7j4t8l5znIHtQVeXc6ZPTY8JQypqSGYEhZD
+ZLHI3TJyXUJA+FhrdgRVGuFc2Jo3xQ==
+=4zGW
 -----END PGP SIGNATURE-----
 
---Sig_/qWvjTvuySbM=9Uxz_p9U+ti--
+--Sig_/yJu7wesszgLs6Fc3Q.9qCaA--
