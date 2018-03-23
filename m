@@ -1,59 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the tip tree
-Date: Fri, 23 Mar 2018 13:28:53 +1100
-Message-ID: <20180323132853.67195c47@canb.auug.org.au>
+From: David Miller <davem@davemloft.net>
+Subject: Re: linux-next: manual merge of the net-next tree with the
+ rdma-fixes tree
+Date: Fri, 23 Mar 2018 00:19:00 -0400 (EDT)
+Message-ID: <20180323.001900.849305099701511845.davem@davemloft.net>
+References: <20180316115610.3d7f232a@canb.auug.org.au>
+        <1521163082.18703.191.camel@redhat.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yJu7wesszgLs6Fc3Q.9qCaA"; protocol="application/pgp-signature"
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1521163082.18703.191.camel@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: dledford@redhat.com
+Cc: sfr@canb.auug.org.au, netdev@vger.kernel.org, jgg@mellanox.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, markb@mellanox.com, leonro@mellanox.com
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Doug Ledford <dledford@redhat.com>
+Date: Thu, 15 Mar 2018 21:18:02 -0400
 
-Hi all,
+> Here's the commit (from the rdma git repo) with the proper merge fix
+> (although it also has other minor merge stuff that needs to be ignored):
+> 
+> 2d873449a202 (Merge branch 'k.o/wip/dl-for-rc' into k.o/wip/dl-for-next)
 
-After merging the tip tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+Really?
 
-lib/swiotlb.c:748:13: warning: 'swiotlb_free_buffer' defined but not used [=
--Wunused-function]
- static bool swiotlb_free_buffer(struct device *dev, size_t size,
-             ^~~~~~~~~~~~~~~~~~~
-lib/swiotlb.c:706:1: warning: 'swiotlb_alloc_buffer' defined but not used [=
--Wunused-function]
- swiotlb_alloc_buffer(struct device *dev, size_t size, dma_addr_t *dma_hand=
-le,
- ^~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  16e73adbca76 ("dma/swiotlb: Remove swiotlb_{alloc,free}_coherent()")
-
-These are now only used with CONFIG_DMA_DIRECT_OPS.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZmUACgkQAVBC80lX
-0GwnvQf/VilaxNYGNsf03m40RUOIMk913zVktU4IKXlCurYx5qJm961j47f5Bx5q
-nslyhGmi2tb1AEVRYRstz4aUyNk7D6Hc1YzB8wTNBSEXIyIxBvT9kBp6eVK+Qgpf
-oLMZaXbsszT8cNc7/vKDia/LbteWm4B0qibJUtmWAhgNiXUaHj0XZAU16kld+F+V
-fDfdV8C8qe8UQaY759iwTU4cIjhp64FWJW0lR3Qk8Q8Z+X+GDD9MfGwSIzjw7+S3
-+xG9tkQJOvcj+8U9AKUjgMFNVDP8h7j4t8l5znIHtQVeXc6ZPTY8JQypqSGYEhZD
-ZLHI3TJyXUJA+FhrdgRVGuFc2Jo3xQ==
-=4zGW
------END PGP SIGNATURE-----
-
---Sig_/yJu7wesszgLs6Fc3Q.9qCaA--
+[davem@localhost GIT]$ git clone --reference linux/.git git://git.kernel.org/pub/scm/linux/kernel/git/dledford/rdma.git
+Cloning into 'rdma'...
+remote: Counting objects: 32, done.        
+remote: Compressing objects: 100% (31/31), done.        
+remote: Total 32 (delta 0), reused 32 (delta 0)        
+Receiving objects: 100% (32/32), 186.52 KiB | 3.01 MiB/s, done.
+Checking connectivity: 5706198, done.
+Checking out files: 100% (61622/61622), done.
+[davem@localhost GIT]$ cd rdma
+[davem@localhost rdma]$ git show 2d873449a202
+fatal: ambiguous argument '2d873449a202': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+[davem@localhost rdma]$
