@@ -1,183 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm-intel tree with
- Linus' tree
-Date: Fri, 23 Mar 2018 11:50:18 +1100
-Message-ID: <20180323115018.1ae3ca1d@canb.auug.org.au>
-References: <20180322132129.6b953166@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the pm tree
+Date: Fri, 23 Mar 2018 13:20:01 +1100
+Message-ID: <20180323132001.7da7f3c4@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1729495148=="
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20180322132129.6b953166@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/qWvjTvuySbM=9Uxz_p9U+ti"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Claudio Scordino <claudio@evidence.eu.com>
 List-Id: linux-next.vger.kernel.org
 
---===============1729495148==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6GYT71yLkaIpBNvnDM8_2Y1"; protocol="application/pgp-signature"
-
---Sig_/6GYT71yLkaIpBNvnDM8_2Y1
+--Sig_/qWvjTvuySbM=9Uxz_p9U+ti
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 22 Mar 2018 13:21:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the drm-intel tree got a conflict in:
->=20
->   drivers/gpu/drm/i915/gvt/scheduler.c
->=20
-> between commit:
->=20
->   fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
->=20
-> from Linus' tree and commit:
->=20
->   b20c0d5ce104 ("drm/i915/gvt: Update PDPs after a vGPU mm object is pinn=
-ed.")
->=20
-> from the drm-intel tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/gpu/drm/i915/gvt/scheduler.c
-> index 068126404151,a55b4975c154..000000000000
-> --- a/drivers/gpu/drm/i915/gvt/scheduler.c
-> +++ b/drivers/gpu/drm/i915/gvt/scheduler.c
-> @@@ -52,54 -52,29 +52,77 @@@ static void set_context_pdp_root_pointe
->   		pdp_pair[i].val =3D pdp[7 - i];
->   }
->  =20
->  +/*
->  + * when populating shadow ctx from guest, we should not overrride oa re=
-lated
->  + * registers, so that they will not be overlapped by guest oa configs. =
-Thus
->  + * made it possible to capture oa data from host for both host and gues=
-ts.
->  + */
->  +static void sr_oa_regs(struct intel_vgpu_workload *workload,
->  +		u32 *reg_state, bool save)
->  +{
->  +	struct drm_i915_private *dev_priv =3D workload->vgpu->gvt->dev_priv;
->  +	u32 ctx_oactxctrl =3D dev_priv->perf.oa.ctx_oactxctrl_offset;
->  +	u32 ctx_flexeu0 =3D dev_priv->perf.oa.ctx_flexeu0_offset;
->  +	int i =3D 0;
->  +	u32 flex_mmio[] =3D {
->  +		i915_mmio_reg_offset(EU_PERF_CNTL0),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL1),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL2),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL3),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL4),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL5),
->  +		i915_mmio_reg_offset(EU_PERF_CNTL6),
->  +	};
->  +
->  +	if (!workload || !reg_state || workload->ring_id !=3D RCS)
->  +		return;
->  +
->  +	if (save) {
->  +		workload->oactxctrl =3D reg_state[ctx_oactxctrl + 1];
->  +
->  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
->  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
->  +
->  +			workload->flex_mmio[i] =3D reg_state[state_offset + 1];
->  +		}
->  +	} else {
->  +		reg_state[ctx_oactxctrl] =3D
->  +			i915_mmio_reg_offset(GEN8_OACTXCONTROL);
->  +		reg_state[ctx_oactxctrl + 1] =3D workload->oactxctrl;
->  +
->  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
->  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
->  +			u32 mmio =3D flex_mmio[i];
->  +
->  +			reg_state[state_offset] =3D mmio;
->  +			reg_state[state_offset + 1] =3D workload->flex_mmio[i];
->  +		}
->  +	}
->  +}
->  +
-> + static void update_shadow_pdps(struct intel_vgpu_workload *workload)
-> + {
-> + 	struct intel_vgpu *vgpu =3D workload->vgpu;
-> + 	int ring_id =3D workload->ring_id;
-> + 	struct i915_gem_context *shadow_ctx =3D vgpu->submission.shadow_ctx;
-> + 	struct drm_i915_gem_object *ctx_obj =3D
-> + 		shadow_ctx->engine[ring_id].state->obj;
-> + 	struct execlist_ring_context *shadow_ring_context;
-> + 	struct page *page;
-> +=20
-> + 	if (WARN_ON(!workload->shadow_mm))
-> + 		return;
-> +=20
-> + 	if (WARN_ON(!atomic_read(&workload->shadow_mm->pincount)))
-> + 		return;
-> +=20
-> + 	page =3D i915_gem_object_get_page(ctx_obj, LRC_STATE_PN);
-> + 	shadow_ring_context =3D kmap(page);
-> + 	set_context_pdp_root_pointer(shadow_ring_context,
-> + 			(void *)workload->shadow_mm->ppgtt_mm.shadow_pdps);
-> + 	kunmap(page);
-> + }
-> +=20
->   static int populate_shadow_context(struct intel_vgpu_workload *workload)
->   {
->   	struct intel_vgpu *vgpu =3D workload->vgpu;
+Today's linux-next merge of the tip tree got a conflict in:
 
-This is now a conflict between the drm tree and Linus' tree.
+  kernel/sched/cpufreq_schedutil.c
+
+between commit:
+
+  0953feed3400 ("cpufreq: schedutil: rate limits for SCHED_DEADLINE")
+
+from the pm tree and commit:
+
+  8f111bc357aa ("cpufreq/schedutil: Rewrite CPUFREQ_RT support")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/6GYT71yLkaIpBNvnDM8_2Y1
+diff --cc kernel/sched/cpufreq_schedutil.c
+index 04d3fe9ba7d2,89fe78ecb88c..000000000000
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@@ -280,11 -276,9 +286,11 @@@ static void sugov_update_single(struct=20
+  	unsigned int next_f;
+  	bool busy;
+ =20
+- 	sugov_set_iowait_boost(sg_cpu, time);
++ 	sugov_set_iowait_boost(sg_cpu, time, flags);
+  	sg_cpu->last_update =3D time;
+ =20
+ +	ignore_dl_rate_limit(sg_cpu, sg_policy);
+ +
+  	if (!sugov_should_update_freq(sg_policy, time))
+  		return;
+ =20
+@@@ -366,12 -353,7 +365,9 @@@ sugov_update_shared(struct update_util_
+ =20
+  	raw_spin_lock(&sg_policy->update_lock);
+ =20
+ +	ignore_dl_rate_limit(sg_cpu, sg_policy);
+ +
+- 	sugov_get_util(sg_cpu);
+- 	sg_cpu->flags =3D flags;
+-=20
+- 	sugov_set_iowait_boost(sg_cpu, time);
++ 	sugov_set_iowait_boost(sg_cpu, time, flags);
+  	sg_cpu->last_update =3D time;
+ =20
+  	if (sugov_should_update_freq(sg_policy, time)) {
+
+--Sig_/qWvjTvuySbM=9Uxz_p9U+ti
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0T0oACgkQAVBC80lX
-0GxkeAf/VlX26jRufxf3NEO+fNBaJd0x1rIOloax6hd7boo6wk4xXeirpZu8NtAy
-JSgmWBrHuO5wKzZfLqfnpzEuLVCuYOUtduejZn+C+XeFW6UDMOS4dFSB9DSL1hAv
-dl4Nx4SUbiss9WEer5lvkQt8Ax2wMF2nftewJPdU3JwrH6+t3vT5evLgr7xqH1pm
-/js84TdXvwVOq66DTkek9hPVKvSo8pWWQ2QlXz7/UhUR5FY7UH4Rp7GFYIQXFaQt
-X0LHEkfXR+VRmr/92QoR/xWYR+5+ez3Agsh4FljOlYT29HVdqbILGzIztj9VHSY8
-N0Lm+exzf6oosPPPqTfmUUsKLP9wRg==
-=hLXn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0ZFEACgkQAVBC80lX
+0GwtjQf9H0HOALtMFdAwpRtMhNetBnrumX7u25Vij+HuYZWWZXtUll7p37AB/12b
+RB0lkzRvBPbs4pxd+ReePMc2m4OaBFKn4eNE4mZUPcOuJdCZXy2jBI/S8TsPGewL
+DSOziAIFa6fcYf4n93T3gRWGnAQ1i+/nr2lIrC2WoavKNfigeJ/bvf2pZS530EGE
+mRcdcQROoFC6SSBOTCT6+PZBWNFSRAY6jt+uI+4omnu4kxfu7ZI3nQOjO7KC36N+
+20Y5NekmMOkjqUA2VJSnEhef8TFJKXy10GmhVdywQshEK+C/ax1zQ+XHECH1P4Uy
+BmUWpx4CXuAJ+5EcFliIVPsr/yO2qg==
+=T7L6
 -----END PGP SIGNATURE-----
 
---Sig_/6GYT71yLkaIpBNvnDM8_2Y1--
-
---===============1729495148==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
-IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
-
---===============1729495148==--
+--Sig_/qWvjTvuySbM=9Uxz_p9U+ti--
