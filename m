@@ -1,52 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm-misc tree with Linus' tree
-Date: Fri, 23 Mar 2018 11:45:48 +1100
-Message-ID: <20180323114548.11171d5b@canb.auug.org.au>
-References: <20180315141425.49479b8b@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the drm-intel tree with
+ Linus' tree
+Date: Fri, 23 Mar 2018 11:50:18 +1100
+Message-ID: <20180323115018.1ae3ca1d@canb.auug.org.au>
+References: <20180322132129.6b953166@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0847580212=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180315141425.49479b8b@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/mixed; boundary="===============1729495148=="
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <20180322132129.6b953166@canb.auug.org.au>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: DRI <dri-devel@lists.freedesktop.org>, Dave Airlie <airlied@linux.ie>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---===============0847580212==
+--===============1729495148==
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OBMZ_RtA822_CskO9ubQ5uD"; protocol="application/pgp-signature"
+ boundary="Sig_/6GYT71yLkaIpBNvnDM8_2Y1"; protocol="application/pgp-signature"
 
---Sig_/OBMZ_RtA822_CskO9ubQ5uD
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 15 Mar 2018 14:14:25 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 22 Mar 2018 13:21:29 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> Today's linux-next merge of the drm-misc tree got a conflict in:
+> Today's linux-next merge of the drm-intel tree got a conflict in:
 >=20
->   sound/pci/hda/hda_intel.c
+>   drivers/gpu/drm/i915/gvt/scheduler.c
 >=20
-> between commits:
+> between commit:
 >=20
->   1ba8f9d30817 ("ALSA: hda: Add a power_save blacklist")
->   40088dc4e1ea ("ALSA: hda - Revert power_save option default value")
+>   fa3dd623e559 ("drm/i915/gvt: keep oa config in shadow ctx")
 >=20
 > from Linus' tree and commit:
 >=20
->   07f4f97d7b4b ("vga_switcheroo: Use device link for HDA controller")
+>   b20c0d5ce104 ("drm/i915/gvt: Update PDPs after a vGPU mm object is pinn=
+ed.")
 >=20
-> from the drm-misc tree.
+> from the drm-intel tree.
 >=20
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
@@ -59,55 +60,91 @@ wrote:
 > Cheers,
 > Stephen Rothwell
 >=20
-> diff --cc sound/pci/hda/hda_intel.c
-> index d5017adf9feb,ec4e6b829ee2..000000000000
-> --- a/sound/pci/hda/hda_intel.c
-> +++ b/sound/pci/hda/hda_intel.c
-> @@@ -2219,8 -2201,8 +2223,9 @@@ static int azx_probe_continue(struct az
->   	struct hda_intel *hda =3D container_of(chip, struct hda_intel, chip);
->   	struct hdac_bus *bus =3D azx_bus(chip);
->   	struct pci_dev *pci =3D chip->pci;
-> + 	struct hda_codec *codec;
->   	int dev =3D chip->dev_index;
->  +	int val;
->   	int err;
+> diff --cc drivers/gpu/drm/i915/gvt/scheduler.c
+> index 068126404151,a55b4975c154..000000000000
+> --- a/drivers/gpu/drm/i915/gvt/scheduler.c
+> +++ b/drivers/gpu/drm/i915/gvt/scheduler.c
+> @@@ -52,54 -52,29 +52,77 @@@ static void set_context_pdp_root_pointe
+>   		pdp_pair[i].val =3D pdp[7 - i];
+>   }
 >  =20
->   	hda->probe_continued =3D 1;
-> @@@ -2302,21 -2284,16 +2307,30 @@@
->   	chip->running =3D 1;
->   	azx_add_card_list(chip);
->  =20
->  +	val =3D power_save;
->  +#ifdef CONFIG_PM
->  +	if (pm_blacklist) {
->  +		const struct snd_pci_quirk *q;
+>  +/*
+>  + * when populating shadow ctx from guest, we should not overrride oa re=
+lated
+>  + * registers, so that they will not be overlapped by guest oa configs. =
+Thus
+>  + * made it possible to capture oa data from host for both host and gues=
+ts.
+>  + */
+>  +static void sr_oa_regs(struct intel_vgpu_workload *workload,
+>  +		u32 *reg_state, bool save)
+>  +{
+>  +	struct drm_i915_private *dev_priv =3D workload->vgpu->gvt->dev_priv;
+>  +	u32 ctx_oactxctrl =3D dev_priv->perf.oa.ctx_oactxctrl_offset;
+>  +	u32 ctx_flexeu0 =3D dev_priv->perf.oa.ctx_flexeu0_offset;
+>  +	int i =3D 0;
+>  +	u32 flex_mmio[] =3D {
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL0),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL1),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL2),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL3),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL4),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL5),
+>  +		i915_mmio_reg_offset(EU_PERF_CNTL6),
+>  +	};
 >  +
->  +		q =3D snd_pci_quirk_lookup(chip->pci, power_save_blacklist);
->  +		if (q && val) {
->  +			dev_info(chip->card->dev, "device %04x:%04x is on the power_save bla=
-cklist, forcing power_save to 0\n",
->  +				 q->subvendor, q->subdevice);
->  +			val =3D 0;
+>  +	if (!workload || !reg_state || workload->ring_id !=3D RCS)
+>  +		return;
+>  +
+>  +	if (save) {
+>  +		workload->oactxctrl =3D reg_state[ctx_oactxctrl + 1];
+>  +
+>  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
+>  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
+>  +
+>  +			workload->flex_mmio[i] =3D reg_state[state_offset + 1];
+>  +		}
+>  +	} else {
+>  +		reg_state[ctx_oactxctrl] =3D
+>  +			i915_mmio_reg_offset(GEN8_OACTXCONTROL);
+>  +		reg_state[ctx_oactxctrl + 1] =3D workload->oactxctrl;
+>  +
+>  +		for (i =3D 0; i < ARRAY_SIZE(workload->flex_mmio); i++) {
+>  +			u32 state_offset =3D ctx_flexeu0 + i * 2;
+>  +			u32 mmio =3D flex_mmio[i];
+>  +
+>  +			reg_state[state_offset] =3D mmio;
+>  +			reg_state[state_offset + 1] =3D workload->flex_mmio[i];
 >  +		}
 >  +	}
->  +#endif /* CONFIG_PM */
-> ++
-> + 	/*
-> + 	 * The discrete GPU cannot power down unless the HDA controller runtime
-> + 	 * suspends, so activate runtime PM on codecs even if power_save =3D=
-=3D 0.
-> + 	 */
-> + 	if (use_vga_switcheroo(hda))
-> + 		list_for_each_codec(codec, &chip->bus)
-> + 			codec->auto_runtime_pm =3D 1;
+>  +}
+>  +
+> + static void update_shadow_pdps(struct intel_vgpu_workload *workload)
+> + {
+> + 	struct intel_vgpu *vgpu =3D workload->vgpu;
+> + 	int ring_id =3D workload->ring_id;
+> + 	struct i915_gem_context *shadow_ctx =3D vgpu->submission.shadow_ctx;
+> + 	struct drm_i915_gem_object *ctx_obj =3D
+> + 		shadow_ctx->engine[ring_id].state->obj;
+> + 	struct execlist_ring_context *shadow_ring_context;
+> + 	struct page *page;
 > +=20
->  -	snd_hda_set_power_save(&chip->bus, power_save * 1000);
->  +	snd_hda_set_power_save(&chip->bus, val * 1000);
-> - 	if (azx_has_pm_runtime(chip) || hda->use_vga_switcheroo)
-> + 	if (azx_has_pm_runtime(chip))
->   		pm_runtime_put_autosuspend(&pci->dev);
->  =20
->   out_free:
+> + 	if (WARN_ON(!workload->shadow_mm))
+> + 		return;
+> +=20
+> + 	if (WARN_ON(!atomic_read(&workload->shadow_mm->pincount)))
+> + 		return;
+> +=20
+> + 	page =3D i915_gem_object_get_page(ctx_obj, LRC_STATE_PN);
+> + 	shadow_ring_context =3D kmap(page);
+> + 	set_context_pdp_root_pointer(shadow_ring_context,
+> + 			(void *)workload->shadow_mm->ppgtt_mm.shadow_pdps);
+> + 	kunmap(page);
+> + }
+> +=20
+>   static int populate_shadow_context(struct intel_vgpu_workload *workload)
+>   {
+>   	struct intel_vgpu *vgpu =3D workload->vgpu;
 
 This is now a conflict between the drm tree and Linus' tree.
 
@@ -115,32 +152,32 @@ This is now a conflict between the drm tree and Linus' tree.
 Cheers,
 Stephen Rothwell
 
---Sig_/OBMZ_RtA822_CskO9ubQ5uD
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0TjwACgkQAVBC80lX
-0Gxo1Af9E2i+YLoJIQRVuU4I+CVf5O7s1i13MsSytqyu0bU/k8zcmbc1flUZsta3
-1uVWsVsq/L4bofzdskAkw8IluPEQyKlDg63VoPUPbItXwfHQw8N/Q0ZZMz7GaQE5
-7ce/muy7Nb5XpJaed2pxlZYjMAn0EPwg37OnjogHsLtWk0uLa2PAmv77qJQBTmoa
-RFipB8UvRbeD1ddv+3HsIUe4KMcF+hAAY+c8MZViyJgedTfzrV8aUFpVPTnDAToE
-aKiCua89D1EXVsdHS73Lj7Wtvy/x+PfV3J/nBEEk9KimxCjPUw3FFdT9PGzRLE80
-zUN+UNP+J6lRaURt5Mm2pW1THK+HFQ==
-=yNYw
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq0T0oACgkQAVBC80lX
+0GxkeAf/VlX26jRufxf3NEO+fNBaJd0x1rIOloax6hd7boo6wk4xXeirpZu8NtAy
+JSgmWBrHuO5wKzZfLqfnpzEuLVCuYOUtduejZn+C+XeFW6UDMOS4dFSB9DSL1hAv
+dl4Nx4SUbiss9WEer5lvkQt8Ax2wMF2nftewJPdU3JwrH6+t3vT5evLgr7xqH1pm
+/js84TdXvwVOq66DTkek9hPVKvSo8pWWQ2QlXz7/UhUR5FY7UH4Rp7GFYIQXFaQt
+X0LHEkfXR+VRmr/92QoR/xWYR+5+ez3Agsh4FljOlYT29HVdqbILGzIztj9VHSY8
+N0Lm+exzf6oosPPPqTfmUUsKLP9wRg==
+=hLXn
 -----END PGP SIGNATURE-----
 
---Sig_/OBMZ_RtA822_CskO9ubQ5uD--
+--Sig_/6GYT71yLkaIpBNvnDM8_2Y1--
 
---===============0847580212==
+--===============1729495148==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
 Content-Disposition: inline
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4
+IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
 
---===============0847580212==--
+--===============1729495148==--
