@@ -1,53 +1,84 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Date: Sat, 24 Mar 2018 09:15:49 +0100
-Message-ID: <20180324081549.lqqh6w65d4mfyax5@gmail.com>
-References: <20180323132001.7da7f3c4@canb.auug.org.au>
- <20180323060924.jeppeix62c3wza6l@gmail.com>
- <6072268.CPFKWgAbKZ@aspire.rjw.lan>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the ipsec tree with the net tree
+Date: Mon, 26 Mar 2018 09:16:10 +1100
+Message-ID: <20180326091610.148fc62d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AGKA7W5SO0LhGtX/vHyOH=f"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6072268.CPFKWgAbKZ@aspire.rjw.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Claudio Scordino <claudio@evidence.eu.com>
+To: Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>, Stefano Brivio <sbrivio@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/AGKA7W5SO0LhGtX/vHyOH=f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-* Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+Hi Steffen,
 
-> On Friday, March 23, 2018 7:09:24 AM CET Ingo Molnar wrote:
-> > 
-> > * Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > 
-> > > Hi all,
-> > > 
-> > > Today's linux-next merge of the tip tree got a conflict in:
-> > > 
-> > >   kernel/sched/cpufreq_schedutil.c
-> > > 
-> > > between commit:
-> > > 
-> > >   0953feed3400 ("cpufreq: schedutil: rate limits for SCHED_DEADLINE")
-> > 
-> > Rafael, could you please send that to the scheduler tree?
-> 
-> You can apply from
-> 
-> https://patchwork.kernel.org/patch/10278127/
-> 
-> and I will drop it from my tree.
-> 
-> Thanks!
+Today's linux-next merge of the ipsec tree got a conflict in:
 
-Great - Thomas picked it up and it's now in tip:sched/core:
+  net/ipv4/ip_tunnel.c
 
-  e97a90f7069b: sched/cpufreq: Rate limits for SCHED_DEADLINE
+between commit:
 
-and it should hit -next on Monday.
+  f6cc9c054e77 ("ip_tunnel: Emit events for post-register MTU changes")
 
-Thanks,
+from the net tree and commit:
 
-	Ingo
+  24fc79798b8d ("ip_tunnel: Clamp MTU to bounds on new link")
+
+from the ipsec tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/ipv4/ip_tunnel.c
+index 7b85ffad5d74,7c76dd17b6b9..000000000000
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@@ -1117,10 -1108,13 +1117,15 @@@ int ip_tunnel_newlink(struct net_devic
+  		eth_hw_addr_random(dev);
+ =20
+  	mtu =3D ip_tunnel_bind_dev(dev);
+- 	if (!tb[IFLA_MTU]) {
++ 	if (tb[IFLA_MTU]) {
++ 		unsigned int max =3D 0xfff8 - dev->hard_header_len - nt->hlen;
++=20
++ 		dev->mtu =3D clamp(dev->mtu, (unsigned int)ETH_MIN_MTU,
++ 				 (unsigned int)(max - sizeof(struct iphdr)));
++ 	} else {
+ -		dev->mtu =3D mtu;
+ +		err =3D dev_set_mtu(dev, mtu);
+ +		if (err)
+ +			goto err_dev_set_mtu;
+  	}
+ =20
+  	ip_tunnel_add(itn, nt);
+
+--Sig_/AGKA7W5SO0LhGtX/vHyOH=f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4H6oACgkQAVBC80lX
+0GxzLAf/WJixZ/2PDm7qU4hfAgAnRJhWcx3SH+xi/W2LIA5GmUVVgb4IlomYFoPC
+fc2fVdmqtAt3mhyEjuIoRudcu1TYFXaH4y9MJssCgTrIjdhrIjnylHIm0e9JiaYe
+cfh+tBHgcmIXGS9e2tGty40ANGtCdiC3hATxcroEHBp5uwvB/lUBx0HtQj7Wfx7X
+OoJwmTpmHIodVev2hcJVwUr1xWoYs6bCFxEEJxNkXpBoL7RzYc87DvHkomzfhJzp
+kcg98cY+w9LRNRXBqlFw3xJxILQ2mQjI6FezKP9FB5GkPQfYsmmc9Z9OmUPRTvy9
+k8a9FqtFP96sJenxgAQZkk6zuDu5Ew==
+=aR5m
+-----END PGP SIGNATURE-----
+
+--Sig_/AGKA7W5SO0LhGtX/vHyOH=f--
