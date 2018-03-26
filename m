@@ -1,44 +1,61 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: linux-next: Tree for Mar 22 (thermal)
-Date: Mon, 26 Mar 2018 14:05:27 -0700
-Message-ID: <20180326210524.GB1899@localhost.localdomain>
-References: <20180322193847.63181403@canb.auug.org.au>
- <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the imx-mxs tree with the arm-soc tree
+Date: Tue, 27 Mar 2018 09:10:26 +1100
+Message-ID: <20180327091026.3facbb9d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/EjaiM/xotWtyMHu8jYh=NjR"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>
+To: Shawn Guo <shawn.guo@linaro.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
-Rui,
+--Sig_/EjaiM/xotWtyMHu8jYh=NjR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 22, 2018 at 10:36:38AM -0700, Randy Dunlap wrote:
-> On 03/22/2018 01:38 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180321:
-> > 
-> > The vfs tree still had its build failure for which I reverted a commit.
-> > 
-> 
-> on i386:
-> 
-> ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
-> 
-> so in drivers/thermal/thermal_sysfs.c, please add:
-> 
-> #include <linux/jiffies.h>
-> 
-> 
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Hi Shawn,
 
-Are you taking care of this?
+Today's linux-next merge of the imx-mxs tree got a conflict in:
 
-> 
-> thanks,
-> -- 
-> ~Randy
+  arch/arm/configs/mxs_defconfig
+
+between commit:
+
+  e3e583e7a293 ("ARM: mxs_defconfig: Re-sync defconfig")
+
+from the arm-soc tree and commit:
+
+  8bc2c29b550c ("ARM: mxs_defconfig: Re-sync defconfig")
+
+from the imx-mxs tree.
+
+I fixed it up (I just used the latter version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/EjaiM/xotWtyMHu8jYh=NjR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5b9IACgkQAVBC80lX
+0GyRCAf/fWlN1Tug/qbP4tMXBJJ9N7XBLAt4W7+q5vGWM4Fg+hyqSIH9v/VMfI00
+rg4UjEiR4d5GKiq/Dz/vxFfj3rR3oj/1nneMyWpkZWPm0FfpudiTUh84X2egfEqz
+A3y5X8HVF544BPc1Pm7cz/1rg8L2nYmeDgQKvOvUjDmQPwyLOccaqr3VWe/ilnJQ
+cjGLbVOv77F64CY3Z2Q0kvYOi7oxzw4PDuNotsXpWRDqvgE6XMc36VtnUm4js8L9
+2ohKeV3/5njj6WBMX5R94+hXtJSGwBnSSToIloXEA/zYtS3K8F7ieNAPDmJuH9sh
+mguzlyBEOu69FvJaAklFWc7u1fNQFg==
+=6CJA
+-----END PGP SIGNATURE-----
+
+--Sig_/EjaiM/xotWtyMHu8jYh=NjR--
