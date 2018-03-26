@@ -1,35 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the ipsec tree with the net tree
-Date: Mon, 26 Mar 2018 09:16:10 +1100
-Message-ID: <20180326091610.148fc62d@canb.auug.org.au>
+Subject: linux-next: manual merge of the pci tree with Linus' tree
+Date: Mon, 26 Mar 2018 12:23:06 +1100
+Message-ID: <20180326122306.546ecb6d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/AGKA7W5SO0LhGtX/vHyOH=f"; protocol="application/pgp-signature"
+ boundary="Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Machata <petrm@mellanox.com>, Stefano Brivio <sbrivio@redhat.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/AGKA7W5SO0LhGtX/vHyOH=f
+--Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Steffen,
+Hi Bjorn,
 
-Today's linux-next merge of the ipsec tree got a conflict in:
+Today's linux-next merge of the pci tree got a conflict in:
 
-  net/ipv4/ip_tunnel.c
+  include/linux/of_pci.h
 
 between commit:
 
-  f6cc9c054e77 ("ip_tunnel: Emit events for post-register MTU changes")
+  a6f1086e29e9 ("PCI: Move of_irq_parse_and_map_pci() declaration under OF_=
+IRQ")
 
-from the net tree and commit:
+from Linus' tree and commit:
 
-  24fc79798b8d ("ip_tunnel: Clamp MTU to bounds on new link")
+  effab67ffe90 ("PCI: Move private DT related functions into private header=
+")
 
-from the ipsec tree.
+from the pci tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,43 +44,87 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc net/ipv4/ip_tunnel.c
-index 7b85ffad5d74,7c76dd17b6b9..000000000000
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@@ -1117,10 -1108,13 +1117,15 @@@ int ip_tunnel_newlink(struct net_devic
-  		eth_hw_addr_random(dev);
+diff --cc include/linux/of_pci.h
+index 091033a6b836,41155181ecbd..000000000000
+--- a/include/linux/of_pci.h
++++ b/include/linux/of_pci.h
+@@@ -13,9 -13,7 +13,6 @@@ struct device_node
+  struct device_node *of_pci_find_child_device(struct device_node *parent,
+  					     unsigned int devfn);
+  int of_pci_get_devfn(struct device_node *np);
+- int of_pci_parse_bus_range(struct device_node *node, struct resource *res=
+);
+- int of_get_pci_domain_nr(struct device_node *node);
+- int of_pci_get_max_link_speed(struct device_node *node);
+ -int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
+  void of_pci_check_probe_only(void);
+  int of_pci_map_rid(struct device_node *np, u32 rid,
+  		   const char *map_name, const char *map_mask_name,
+@@@ -32,18 -30,12 +29,6 @@@ static inline int of_pci_get_devfn(stru
+  	return -EINVAL;
+  }
  =20
-  	mtu =3D ip_tunnel_bind_dev(dev);
-- 	if (!tb[IFLA_MTU]) {
-+ 	if (tb[IFLA_MTU]) {
-+ 		unsigned int max =3D 0xfff8 - dev->hard_header_len - nt->hlen;
-+=20
-+ 		dev->mtu =3D clamp(dev->mtu, (unsigned int)ETH_MIN_MTU,
-+ 				 (unsigned int)(max - sizeof(struct iphdr)));
-+ 	} else {
- -		dev->mtu =3D mtu;
- +		err =3D dev_set_mtu(dev, mtu);
- +		if (err)
- +			goto err_dev_set_mtu;
-  	}
+- static inline int
+- of_pci_parse_bus_range(struct device_node *node, struct resource *res)
+- {
+- 	return -EINVAL;
+- }
+-=20
+--static inline int
+- of_get_pci_domain_nr(struct device_node *node)
+ -of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+--{
+- 	return -1;
+ -	return 0;
+--}
+--
+  static inline int of_pci_map_rid(struct device_node *np, u32 rid,
+  			const char *map_name, const char *map_mask_name,
+  			struct device_node **target, u32 *id_out)
+@@@ -54,33 -46,4 +39,13 @@@
+  static inline void of_pci_check_probe_only(void) { }
+  #endif
  =20
-  	ip_tunnel_add(itn, nt);
+ +#if IS_ENABLED(CONFIG_OF_IRQ)
+ +int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
+ +#else
+ +static inline int
+ +of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
+ +{
+ +	return 0;
+ +}
+ +#endif
+-=20
+- #if defined(CONFIG_OF_ADDRESS)
+- int of_pci_get_host_bridge_resources(struct device_node *dev,
+- 			unsigned char busno, unsigned char bus_max,
+- 			struct list_head *resources, resource_size_t *io_base);
+- #else
+- static inline int of_pci_get_host_bridge_resources(struct device_node *de=
+v,
+- 			unsigned char busno, unsigned char bus_max,
+- 			struct list_head *resources, resource_size_t *io_base)
+- {
+- 	return -EINVAL;
+- }
+- #endif
+-=20
+  #endif
 
---Sig_/AGKA7W5SO0LhGtX/vHyOH=f
+--Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4H6oACgkQAVBC80lX
-0GxzLAf/WJixZ/2PDm7qU4hfAgAnRJhWcx3SH+xi/W2LIA5GmUVVgb4IlomYFoPC
-fc2fVdmqtAt3mhyEjuIoRudcu1TYFXaH4y9MJssCgTrIjdhrIjnylHIm0e9JiaYe
-cfh+tBHgcmIXGS9e2tGty40ANGtCdiC3hATxcroEHBp5uwvB/lUBx0HtQj7Wfx7X
-OoJwmTpmHIodVev2hcJVwUr1xWoYs6bCFxEEJxNkXpBoL7RzYc87DvHkomzfhJzp
-kcg98cY+w9LRNRXBqlFw3xJxILQ2mQjI6FezKP9FB5GkPQfYsmmc9Z9OmUPRTvy9
-k8a9FqtFP96sJenxgAQZkk6zuDu5Ew==
-=aR5m
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4S3oACgkQAVBC80lX
+0GzZGQf7BAv+lQvZSgcULWthai9xXOFMKxscoNYHOvPm+gFcx6x9jnhnbs+8VwGS
+fVn1fSnjupPZW+fEAXBqgoTU5+HsKe0g3ago/jrhKjh4SbjmRHYlv9IauTbjRMYf
+CaYxlln2ZZ64qdgyy/1urZnbx/LuFJp/U0Obapf8Bpc8vT72OK6BvShQueA3cNqc
+o8QlFmtzSXZQZY28XEKy/yHrmyTicOhr0HbxjskoR2lBPliKMAlYkQbVdN0Motl8
+zwDPPYZFrewktBl66IPQBk2NdhcCvvxwe2+wBll79mFnmlQNm8Io9H/bze0AL9tN
+q74SBkKKY1ZP/sXhup9+hQwfDrrgWQ==
+=a9O8
 -----END PGP SIGNATURE-----
 
---Sig_/AGKA7W5SO0LhGtX/vHyOH=f--
+--Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs--
