@@ -1,82 +1,40 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: Failure to build using next-20180326 and
-        next-20180323
-Date: Mon, 26 Mar 2018 15:40:07 +0200
-Message-ID: <20180326134007.GA15204@lst.de>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: linux-next: build failure after merge of the pci tree
+Date: Mon, 26 Mar 2018 14:53:36 -0500
+Message-ID: <20180326195336.GB224629@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180326123143.38630ea3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20180326123143.38630ea3@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Ingo Molnar <mingo@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-The real problem is commit 1f85b42a691cd8329ba82dbcaeec80ac1231b32a from
-the arm64 tree, which eventually need to be reverted and redone properly.
+On Mon, Mar 26, 2018 at 12:31:43PM +1100, Stephen Rothwell wrote:
+> Hi Bjorn,
+> 
+> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> In file included from /home/sfr/next/next/drivers/pci/host/pcie-iproc.c:16:0:  
+> /home/sfr/next/next/include/linux/irqchip/arm-gic-v3.h:560:10: fatal error: asm/arch_gicv3.h: No such file or directory
+>  #include <asm/arch_gicv3.h>
+>           ^~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   af3c73473d10 ("PCI: Improve host drivers compile test coverage")
+> 
+> I used the pci tree from next-20180323 for today.
 
-But for now a fixup to rename the arm64 dma_to_phys and phys_to_dma
-helper is enough to build.
+Thanks, I updated my tree to drop af3c73473d10 ("PCI: Improve host
+drivers compile test coverage") for now.
 
-On Mon, Mar 26, 2018 at 12:20:30PM +0200, Neil Armstrong wrote:
-> Hi,
-> 
-> While building on arm64, the commit b6e05477c10c ("dma/direct: Handle the memory encryption bit in common code") breaks the compilation using defconfig:
-> 
->   CC      arch/arm64/mm/dma-mapping.o
-> In file included from arch/arm64/mm/dma-mapping.c:27:0:
-> ./include/linux/dma-direct.h:40:26: error: redefinition of ‘phys_to_dma’
->  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->                           ^~~~~~~~~~~
-> In file included from ./include/linux/dma-direct.h:9:0,
->                  from arch/arm64/mm/dma-mapping.c:27:
-> ./arch/arm64/include/asm/dma-direct.h:12:26: note: previous definition of ‘phys_to_dma’ was here
->  static inline dma_addr_t phys_to_dma(struct device *dev, phys_addr_t paddr)
->                           ^~~~~~~~~~~
-> In file included from ./include/linux/dma-mapping.h:13:0,
->                  from ./include/linux/dma-direct.h:5,
->                  from arch/arm64/mm/dma-mapping.c:27:
-> ./include/linux/dma-direct.h: In function ‘phys_to_dma’:
-> ./include/linux/dma-direct.h:42:19: error: implicit declaration of function ‘__phys_to_dma’ [-Werror=implicit-function-declaration]
->   return __sme_set(__phys_to_dma(dev, paddr));
->                    ^
-> ./include/linux/mem_encrypt.h:50:24: note: in definition of macro ‘__sme_set’
->  #define __sme_set(x)  (x)
->                         ^
-> In file included from arch/arm64/mm/dma-mapping.c:27:0:
-> ./include/linux/dma-direct.h: At top level:
-> ./include/linux/dma-direct.h:45:27: error: redefinition of ‘dma_to_phys’
->  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t daddr)
->                            ^~~~~~~~~~~
-> In file included from ./include/linux/dma-direct.h:9:0,
->                  from arch/arm64/mm/dma-mapping.c:27:
-> ./arch/arm64/include/asm/dma-direct.h:19:27: note: previous definition of ‘dma_to_phys’ was here
->  static inline phys_addr_t dma_to_phys(struct device *dev, dma_addr_t dev_addr)
->                            ^~~~~~~~~~~
-> In file included from ./include/linux/dma-mapping.h:13:0,
->                  from ./include/linux/dma-direct.h:5,
->                  from arch/arm64/mm/dma-mapping.c:27:
-> ./include/linux/dma-direct.h: In function ‘dma_to_phys’:
-> ./include/linux/dma-direct.h:47:19: error: implicit declaration of function ‘__dma_to_phys’ [-Werror=implicit-function-declaration]
->   return __sme_clr(__dma_to_phys(dev, daddr));
->                    ^
-> ./include/linux/mem_encrypt.h:51:24: note: in definition of macro ‘__sme_clr’
->  #define __sme_clr(x)  (x)
->                         ^
-> cc1: some warnings being treated as errors
-> scripts/Makefile.build:312: recipe for target 'arch/arm64/mm/dma-mapping.o' failed
-> make[1]: *** [arch/arm64/mm/dma-mapping.o] Error 1
-> Makefile:1057: recipe for target 'arch/arm64/mm' failed
-> make: *** [arch/arm64/mm] Error 2
-> 
-> Reverting the commit fixes the build.
-> 
-> Neil
-> 
-> -- 
-> Neil Armstrong
-> Embedded Linux Software Engineer
-> BayLibre - At the Heart of Embedded Linux
-> www.baylibre.com
----end quoted text---
+I know Lorenzo is out this week, so he may not be able to do an
+update, but if you post a new version, Rob, I'll see if I can pull it
+in.
+
+Bjorn
