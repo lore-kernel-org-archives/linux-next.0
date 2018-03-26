@@ -1,56 +1,88 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the drm tree with Linus' tree
-Date: Mon, 26 Mar 2018 14:45:12 +1100
-Message-ID: <20180326144512.74706ad6@canb.auug.org.au>
-References: <20180322173722.78d012c5@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
+Date: Mon, 26 Mar 2018 16:43:51 +1100
+Message-ID: <20180326164351.72336a33@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/y6xsWNGkUj0Qy.0ksgwbGCe"; protocol="application/pgp-signature"
+ boundary="Sig_/yTuUM.hG5VtWE2wj.EQs4K4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180322173722.78d012c5@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Christopherson <sean.j.christopherson@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/y6xsWNGkUj0Qy.0ksgwbGCe
+--Sig_/yTuUM.hG5VtWE2wj.EQs4K4
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 22 Mar 2018 17:37:22 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the drm tree got conflicts in several amdgpu
-> files because there are a set of (mostly identical) patches that appear
-> Linus' tree and the drm tree.  In each case I just used the version fo
-> the file from the drm tree.
->=20
-> You should do a test merge between your tree and Linus' tree and see what
-> you want to do about the resolution (either do the back merge (I think
-> with v4.16-rc6), or provide Linus with branch that has the merge done).
-> Its a bit of a mess :-(
+Today's linux-next merge of the kvm tree got a conflict in:
 
-I got a few more of these today.
+  arch/x86/kvm/vmx.c
+
+between commit:
+
+  9d1887ef3252 ("KVM: nVMX: sync vmcs02 segment regs prior to vmx_set_cr0")
+
+from the kvm-fixes tree and commit:
+
+  2bb8cafea80b ("KVM: vVMX: signal failure for nested VMEntry if emulation_=
+required")
+
+from the kvm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/y6xsWNGkUj0Qy.0ksgwbGCe
+diff --cc arch/x86/kvm/vmx.c
+index 92496b9b5f2b,b4d8da6c62c8..000000000000
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@@ -10952,6 -11010,19 +11021,14 @@@ static int prepare_vmcs02(struct kvm_vc
+  	/* Note: modifies VM_ENTRY/EXIT_CONTROLS and GUEST/HOST_IA32_EFER */
+  	vmx_set_efer(vcpu, vcpu->arch.efer);
+ =20
+ -	if (vmx->nested.dirty_vmcs12) {
+ -		prepare_vmcs02_full(vcpu, vmcs12, from_vmentry);
+ -		vmx->nested.dirty_vmcs12 =3D false;
+ -	}
+ -
++ 	/*
++ 	 * Guest state is invalid and unrestricted guest is disabled,
++ 	 * which means L1 attempted VMEntry to L2 with invalid state.
++ 	 * Fail the VMEntry.
++ 	 */
++ 	if (vmx->emulation_required)
++ 		return 1;
++=20
+  	/* Shadow page tables on either EPT or shadow page tables. */
+  	if (nested_vmx_load_cr3(vcpu, vmcs12->guest_cr3, nested_cpu_has_ept(vmcs=
+12),
+  				entry_failure_code))
+
+--Sig_/yTuUM.hG5VtWE2wj.EQs4K4
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4bMgACgkQAVBC80lX
-0GwQ8Af9H1GFH4QTihz/dTbHjqJPdgqiKTSmxJbfyS24jqwaflvJanDjc3Pdpj3D
-/WG+gzng9qn58tjSZU3yqsC+usPXEanwviU2nTGPQuOegEhVN88nOo9Wf7UANYtW
-GweXQJQigGqCPIvUQhehYXEWJ2J9VRM9jKQIdsb1ceHQzOorIK65iMZEaufSy4yB
-jhwY8gpZ0ASz74eUwP/ao6ZL7c/2GrOGv+Q8/XxK5auZn9v3cjTfDIi6MIJxpBt1
-2eT+Au5IiaVcnQ4sM41wxqzsgT1N1b73WfVzu9U9gOd2F4OqqJkHasRTQlk96lzG
-EFv8tN5FSkx7/qapsYV7c9E19GNu2A==
-=376y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4iJcACgkQAVBC80lX
+0Gz9EQf/W5RoGOVKkxcbJfe0BcnzZonlQzvILfuJ5cIhMBOYIAbW/SMrmxNrgvpT
+yLVkDwwZqJuZKLTexDJ+eKEQHP9OhimxM9+/ZaJcqiExD49a21biJ+fL96koJcJI
+x5bhAgKWYBtEbETluWKtDQjVG6K1TiHj9LpDcoW83lgSuo1IUQa3q5HIOemWPF1L
+k6rXOvPdZjwWFOr/aumnEukwRtcpZq8PeTCTAEsudWnTtXgFBKPgbuojVrpPhLrF
+rqBMOM3Xv65vZiOwmjDALK28Prr1/j2jNBvmpsLcbJn6jeMPmPTzAVSQ9MwWVXH9
+rbSCpMvB8/bHJQdatyrHzaZ2lqOxMA==
+=KDCQ
 -----END PGP SIGNATURE-----
 
---Sig_/y6xsWNGkUj0Qy.0ksgwbGCe--
+--Sig_/yTuUM.hG5VtWE2wj.EQs4K4--
