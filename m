@@ -1,58 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the pci tree
-Date: Mon, 26 Mar 2018 12:31:43 +1100
-Message-ID: <20180326123143.38630ea3@canb.auug.org.au>
+Subject: linux-next: manual merge of the i2c tree with the asm-generic tree
+Date: Mon, 26 Mar 2018 13:06:25 +1100
+Message-ID: <20180326130625.46b94712@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/L79H_nkXR/UMWki4toIs6c9"; protocol="application/pgp-signature"
+ boundary="Sig_/Vw/+VGODpb3pYak+6voHrrM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Wolfram Sang <wsa@the-dreams.de>, Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/L79H_nkXR/UMWki4toIs6c9
+--Sig_/Vw/+VGODpb3pYak+6voHrrM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi Wolfram,
 
-After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Today's linux-next merge of the i2c tree got a conflict in:
 
-In file included from /home/sfr/next/next/drivers/pci/host/pcie-iproc.c:16:=
-0: =20
-/home/sfr/next/next/include/linux/irqchip/arm-gic-v3.h:560:10: fatal error:=
- asm/arch_gicv3.h: No such file or directory
- #include <asm/arch_gicv3.h>
-          ^~~~~~~~~~~~~~~~~~
+  arch/blackfin/mach-bf561/boards/acvilon.c
 
-Caused by commit
+between commit:
 
-  af3c73473d10 ("PCI: Improve host drivers compile test coverage")
+  120090af2745 ("arch: remove blackfin port")
 
-I used the pci tree from next-20180323 for today.
+from the asm-generic tree and commit:
 
+  eb49778c8c6c ("i2c: pca-platform: drop gpio from platform data")
 
+from the i2c tree.
+
+I fixed it up (I removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/L79H_nkXR/UMWki4toIs6c9
+--Sig_/Vw/+VGODpb3pYak+6voHrrM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4TX8ACgkQAVBC80lX
-0Gy5hwgAi/xRcCmWvcTfCwjQARDpRh2xb07XoWph9iUwKiFdBdlzIUjaTDya4cve
-h6R3S9ahj00PdTud8lEQZURhT/2xtyZVhuxbfaQF+EJoBPU5fwp5L8+Bk3wFwzMx
-GnMDnZkq6vwF5Fwcd+h1gs9nr+Ji3V8U9uGVbH8+4r3GaDjrnOSqVjm9+bHxk1Xn
-F6OkW/p8T8BN7MAxryOBYEhNj7tevnzk7TaaaQqpXxnPQiwL2LOlo+nYCdIfVTs7
-rId+uRlliLVLK9XeNUqsQl4jqN/9vYNYKttxJ6SFuWW/XBOTB9/nEJkr+SemKoYV
-OSqjjZ2mwPqZdnstm5uet9benRpp7Q==
-=y6+H
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4VaEACgkQAVBC80lX
+0Gxdlwf+Puj4YXCpigp37W29PKgBvMwJl9a45CEgdMEz1MfdY1aT6cr/Cqv/kAFE
+wmw3S/ZFiqniPGEHJr5fgV252d1Ma6jR9G6NqW2hK80C2c/2Hki8490UIdFfsGl9
+2Hq+iOy5lUlG2pKiHuMLn+w118738GEpZ85UCHAU3cc8RBulHZdYlVfXR4ufhso7
+kBgMvLqf5BSzJaP5xHBAF6liJ59f54jzealy8/2/nyv09UKEqfBZrSsdJL6QjADS
+5kL+ALjcsXP7+6W0N3Fmj1Iwr889ITLJbKPeTnB+KqLk35y9X+sig5HCioa433LZ
+eCYyvxnGMcLy8heSqxD1BTpNenJzgg==
+=KFGQ
 -----END PGP SIGNATURE-----
 
---Sig_/L79H_nkXR/UMWki4toIs6c9--
+--Sig_/Vw/+VGODpb3pYak+6voHrrM--
