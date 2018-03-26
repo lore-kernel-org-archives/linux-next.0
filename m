@@ -1,130 +1,58 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Mon, 26 Mar 2018 12:23:06 +1100
-Message-ID: <20180326122306.546ecb6d@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the pci tree
+Date: Mon, 26 Mar 2018 12:31:43 +1100
+Message-ID: <20180326123143.38630ea3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs"; protocol="application/pgp-signature"
+ boundary="Sig_/L79H_nkXR/UMWki4toIs6c9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs
+--Sig_/L79H_nkXR/UMWki4toIs6c9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Bjorn,
 
-Today's linux-next merge of the pci tree got a conflict in:
+After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-  include/linux/of_pci.h
+In file included from /home/sfr/next/next/drivers/pci/host/pcie-iproc.c:16:=
+0: =20
+/home/sfr/next/next/include/linux/irqchip/arm-gic-v3.h:560:10: fatal error:=
+ asm/arch_gicv3.h: No such file or directory
+ #include <asm/arch_gicv3.h>
+          ^~~~~~~~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  a6f1086e29e9 ("PCI: Move of_irq_parse_and_map_pci() declaration under OF_=
-IRQ")
+  af3c73473d10 ("PCI: Improve host drivers compile test coverage")
 
-from Linus' tree and commit:
+I used the pci tree from next-20180323 for today.
 
-  effab67ffe90 ("PCI: Move private DT related functions into private header=
-")
 
-from the pci tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/of_pci.h
-index 091033a6b836,41155181ecbd..000000000000
---- a/include/linux/of_pci.h
-+++ b/include/linux/of_pci.h
-@@@ -13,9 -13,7 +13,6 @@@ struct device_node
-  struct device_node *of_pci_find_child_device(struct device_node *parent,
-  					     unsigned int devfn);
-  int of_pci_get_devfn(struct device_node *np);
-- int of_pci_parse_bus_range(struct device_node *node, struct resource *res=
-);
-- int of_get_pci_domain_nr(struct device_node *node);
-- int of_pci_get_max_link_speed(struct device_node *node);
- -int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
-  void of_pci_check_probe_only(void);
-  int of_pci_map_rid(struct device_node *np, u32 rid,
-  		   const char *map_name, const char *map_mask_name,
-@@@ -32,18 -30,12 +29,6 @@@ static inline int of_pci_get_devfn(stru
-  	return -EINVAL;
-  }
- =20
-- static inline int
-- of_pci_parse_bus_range(struct device_node *node, struct resource *res)
-- {
-- 	return -EINVAL;
-- }
--=20
---static inline int
-- of_get_pci_domain_nr(struct device_node *node)
- -of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
---{
-- 	return -1;
- -	return 0;
---}
---
-  static inline int of_pci_map_rid(struct device_node *np, u32 rid,
-  			const char *map_name, const char *map_mask_name,
-  			struct device_node **target, u32 *id_out)
-@@@ -54,33 -46,4 +39,13 @@@
-  static inline void of_pci_check_probe_only(void) { }
-  #endif
- =20
- +#if IS_ENABLED(CONFIG_OF_IRQ)
- +int of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin);
- +#else
- +static inline int
- +of_irq_parse_and_map_pci(const struct pci_dev *dev, u8 slot, u8 pin)
- +{
- +	return 0;
- +}
- +#endif
--=20
-- #if defined(CONFIG_OF_ADDRESS)
-- int of_pci_get_host_bridge_resources(struct device_node *dev,
-- 			unsigned char busno, unsigned char bus_max,
-- 			struct list_head *resources, resource_size_t *io_base);
-- #else
-- static inline int of_pci_get_host_bridge_resources(struct device_node *de=
-v,
-- 			unsigned char busno, unsigned char bus_max,
-- 			struct list_head *resources, resource_size_t *io_base)
-- {
-- 	return -EINVAL;
-- }
-- #endif
--=20
-  #endif
-
---Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs
+--Sig_/L79H_nkXR/UMWki4toIs6c9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4S3oACgkQAVBC80lX
-0GzZGQf7BAv+lQvZSgcULWthai9xXOFMKxscoNYHOvPm+gFcx6x9jnhnbs+8VwGS
-fVn1fSnjupPZW+fEAXBqgoTU5+HsKe0g3ago/jrhKjh4SbjmRHYlv9IauTbjRMYf
-CaYxlln2ZZ64qdgyy/1urZnbx/LuFJp/U0Obapf8Bpc8vT72OK6BvShQueA3cNqc
-o8QlFmtzSXZQZY28XEKy/yHrmyTicOhr0HbxjskoR2lBPliKMAlYkQbVdN0Motl8
-zwDPPYZFrewktBl66IPQBk2NdhcCvvxwe2+wBll79mFnmlQNm8Io9H/bze0AL9tN
-q74SBkKKY1ZP/sXhup9+hQwfDrrgWQ==
-=a9O8
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq4TX8ACgkQAVBC80lX
+0Gy5hwgAi/xRcCmWvcTfCwjQARDpRh2xb07XoWph9iUwKiFdBdlzIUjaTDya4cve
+h6R3S9ahj00PdTud8lEQZURhT/2xtyZVhuxbfaQF+EJoBPU5fwp5L8+Bk3wFwzMx
+GnMDnZkq6vwF5Fwcd+h1gs9nr+Ji3V8U9uGVbH8+4r3GaDjrnOSqVjm9+bHxk1Xn
+F6OkW/p8T8BN7MAxryOBYEhNj7tevnzk7TaaaQqpXxnPQiwL2LOlo+nYCdIfVTs7
+rId+uRlliLVLK9XeNUqsQl4jqN/9vYNYKttxJ6SFuWW/XBOTB9/nEJkr+SemKoYV
+OSqjjZ2mwPqZdnstm5uet9benRpp7Q==
+=y6+H
 -----END PGP SIGNATURE-----
 
---Sig_/n2nO6uHiaJ=UxlaZ1_bGgTs--
+--Sig_/L79H_nkXR/UMWki4toIs6c9--
