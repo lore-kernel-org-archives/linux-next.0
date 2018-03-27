@@ -1,47 +1,96 @@
-From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 27 Mar 2018 18:15:52 +0530
-Message-ID: <1173f854-804a-0346-1f56-0999c5ce9f58@amd.com>
-References: <20180321133040.6754c372@canb.auug.org.au>
- <20180321024556.GX2186@sirena.org.uk>
- <3bc6e9ca-b1d9-3458-6399-758be07fd7f3@amd.com>
- <20180322013817.GY2186@sirena.org.uk>
- <3d47f2cb-0a73-98a7-bb3a-f40baf00123b@amd.com>
- <20180327112738.GA29239@sirena.org.uk>
+From: Petr Machata <petrm@mellanox.com>
+Subject: Re: linux-next: manual merge of the ipsec tree with the net tree
+Date: Tue, 27 Mar 2018 17:33:43 +0300
+Message-ID: <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+References: <20180326091610.148fc62d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180327112738.GA29239@sirena.org.uk>
-Content-Language: en-US
+In-Reply-To: <20180326091610.148fc62d@canb.auug.org.au> (Stephen Rothwell's
+        message of "Mon, 26 Mar 2018 09:16:10 +1100")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Akshu Agrawal <akshu.agrawal@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
+> Hi Steffen,
+>
+> Today's linux-next merge of the ipsec tree got a conflict in:
+>
+>   net/ipv4/ip_tunnel.c
+>
+> between commit:
+>
+>   f6cc9c054e77 ("ip_tunnel: Emit events for post-register MTU changes")
+>
+> from the net tree and commit:
+>
+>   24fc79798b8d ("ip_tunnel: Clamp MTU to bounds on new link")
+>
+> from the ipsec tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-On Tuesday 27 March 2018 04:57 PM, Mark Brown wrote:
-> On Thu, Mar 22, 2018 at 11:24:43AM +0530, Mukunda,Vijendar wrote:
->> On Thursday 22 March 2018 07:08 AM, Mark Brown wrote:
-> 
->>> You need to mention dependencies between patches when publishing and I
->>> don't seem to have a copy of that patch, according to the list archives
->>> Alex asked you to make some chnages to it.
-> 
->>     Changes suggested by Alex already implemented and posted .
->>     Current patch (https://patchwork.kernel.org/patch/10298281/ ) is
->>     dependent on below patch.
-> 
->>     https://patchwork.kernel.org/patch/10296597/
-> 
-> I'm working offline so these links aren't doing anything useful for me,
-> sorry.
+Hi, this conflict needs to be resolved differently. Below I'm adding a
+patch on top of linux-next. Squash or apply as you see fit.
 
-submitted fresh patch set which includes dependent patch.
-Please ignore this mail thread.
-> 
->>     We will publish patch dependencies while sending patches.
-> 
-> Please.
-> 
+What's the right way to proceed from here? It looks to me like Stefano
+or Steffen should take this into the ipsec tree (possibly just squash to
+the clamping fix), as they'll hit this conflict the next time they
+rebase on top of net...? Let me know what to do, please.
+
+Thanks,
+Petr
+
+>From 2c2210e59cd94571ac67d491026d6ea0f4d69ae4 Mon Sep 17 00:00:00 2001
+Message-Id: <2c2210e59cd94571ac67d491026d6ea0f4d69ae4.1522155963.git.petrm@mellanox.com>
+From: Petr Machata <petrm@mellanox.com>
+Date: Tue, 27 Mar 2018 16:00:38 +0300
+Subject: [PATCH linux-next] net: ip_tunnel: Call dev_set_mtu to set
+ clamped MTU
+
+When adding a new IP tunnel link, MTU is clamped to sane bounds.
+However, since the new MTU value is directly assigned to the netdevice,
+instead of going through dev_set_mtu, the change is done without sending
+the usual NETDEV_PRECHANGEMTU and NETDEV_CHANGEMTU events. Thus drivers
+don't get to learn about the clamped MTU value.
+
+Signed-off-by: Petr Machata <petrm@mellanox.com>
+---
+ net/ipv4/ip_tunnel.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index a57cf0d..de6d944 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -1108,14 +1108,14 @@ int ip_tunnel_newlink(struct net_device *dev, struct nlattr *tb[],
+ 	if (tb[IFLA_MTU]) {
+ 		unsigned int max = 0xfff8 - dev->hard_header_len - nt->hlen;
+ 
+-		dev->mtu = clamp(dev->mtu, (unsigned int)ETH_MIN_MTU,
+-				 (unsigned int)(max - sizeof(struct iphdr)));
+-	} else {
+-		err = dev_set_mtu(dev, mtu);
+-		if (err)
+-			goto err_dev_set_mtu;
++		mtu = clamp(dev->mtu, (unsigned int)ETH_MIN_MTU,
++			    (unsigned int)(max - sizeof(struct iphdr)));
+ 	}
+ 
++	err = dev_set_mtu(dev, mtu);
++	if (err)
++		goto err_dev_set_mtu;
++
+ 	ip_tunnel_add(itn, nt);
+ 	return 0;
+ 
+-- 
+2.4.11
