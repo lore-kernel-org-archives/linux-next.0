@@ -1,51 +1,42 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: linux-next: build failure after merge of the pci tree
-Date: Tue, 27 Mar 2018 11:53:09 -0500
-Message-ID: <CAL_JsqL_VuUH0MZ72zz5QZRj_8SjgcG8f22yYD7ntB5XBEmJOA@mail.gmail.com>
-References: <20180326123143.38630ea3@canb.auug.org.au> <20180326195336.GB224629@bhelgaas-glaptop.roam.corp.google.com>
+From: Stefano Brivio <sbrivio@redhat.com>
+Subject: Re: linux-next: manual merge of the ipsec tree with the net tree
+Date: Tue, 27 Mar 2018 19:23:59 +0200
+Message-ID: <20180327192359.4b1bb7d6@epycfail>
+References: <20180326091610.148fc62d@canb.auug.org.au>
+        <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180326195336.GB224629@bhelgaas-glaptop.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>, Scott Branden <sbranden@broadcom.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+Sender: netdev-owner@vger.kernel.org
+To: Petr Machata <petrm@mellanox.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Steffen Klassert <steffen.klassert@secunet.com>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Mar 26, 2018 at 2:53 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Mon, Mar 26, 2018 at 12:31:43PM +1100, Stephen Rothwell wrote:
->> Hi Bjorn,
->>
->> After merging the pci tree, today's linux-next build (x86_64 allmodconfig)
->> failed like this:
->>
->> In file included from /home/sfr/next/next/drivers/pci/host/pcie-iproc.c:16:0:
->> /home/sfr/next/next/include/linux/irqchip/arm-gic-v3.h:560:10: fatal error: asm/arch_gicv3.h: No such file or directory
->>  #include <asm/arch_gicv3.h>
->>           ^~~~~~~~~~~~~~~~~~
->>
->> Caused by commit
->>
->>   af3c73473d10 ("PCI: Improve host drivers compile test coverage")
->>
->> I used the pci tree from next-20180323 for today.
->
-> Thanks, I updated my tree to drop af3c73473d10 ("PCI: Improve host
-> drivers compile test coverage") for now.
->
-> I know Lorenzo is out this week, so he may not be able to do an
-> update, but if you post a new version, Rob, I'll see if I can pull it
-> in.
+On Tue, 27 Mar 2018 17:33:43 +0300
+Petr Machata <petrm@mellanox.com> wrote:
 
-The simple fix is to just drop this hunk. Alternatively, we can add a
-"depends on ARM_GIC_V3" and keep the compile coverage for arm64.
+> Hi, this conflict needs to be resolved differently. Below I'm adding a
+> patch on top of linux-next. Squash or apply as you see fit.
 
-@@ -128,7 +128,7 @@ config PCIE_IPROC_PLATFORM
+Petr, thanks for spotting this. Stephen, you can carry these tags for
+Petr's patch:
 
- config PCIE_IPROC_BCMA
-        tristate "Broadcom iProc PCIe BCMA bus driver"
--       depends on ARM && (ARCH_BCM_IPROC || COMPILE_TEST)
-+       depends on (ARM && ARCH_BCM_IPROC) || COMPILE_TEST
-        select PCIE_IPROC
-        select BCMA
-        default ARCH_BCM_5301X
+Fixes: adab890d00dc ("Merge remote-tracking branch 'ipsec/master'")
+Reviewed-by: Stefano Brivio <sbrivio@redhat.com>
+Tested-by: Stefano Brivio <sbrivio@redhat.com>
+
+> What's the right way to proceed from here? It looks to me like Stefano
+> or Steffen should take this into the ipsec tree (possibly just squash to
+> the clamping fix), as they'll hit this conflict the next time they
+> rebase on top of net...? Let me know what to do, please.
+
+Steffen, please let me know if you want me to submit anything for the
+ipsec tree on top of my previous patches.
+
+I guess another alternative would be that David fixes the conflict the
+way Petr solved it, when merging to net?
+
+-- 
+Stefano
