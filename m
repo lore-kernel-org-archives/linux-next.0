@@ -1,111 +1,23 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the y2038 tree
-Date: Tue, 27 Mar 2018 18:26:19 +1100
-Message-ID: <20180327182619.745e28b1@canb.auug.org.au>
+From: Jiri Kosina <jikos@kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the trivial tree
+Date: Tue, 27 Mar 2018 09:51:42 +0200 (CEST)
+Message-ID: <nycvar.YFH.7.76.1803270951320.15778@cbobk.fhfr.pm>
+References: <20180327144325.545af4fd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_bPO/pHG2AGpxZj7AkK4wis"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180327144325.545af4fd@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lihao Liang <lianglihao@huawei.com>, Lai Jiangshan <jiangshanlai@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_bPO/pHG2AGpxZj7AkK4wis
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 27 Mar 2018, Stephen Rothwell wrote:
 
-Hi Arnd,
+> Jiri, you could drop (or revert) the commit in your tree.
 
-After merging the y2038 tree, today's linux-next build (sparc defconfig)
-failed like this:
+Dropped. Thanks,
 
-In file included from include/linux/compat.h:22:0,
-                 from arch/sparc/kernel/systbls.h:7,
-                 from arch/sparc/kernel/sys_sparc_32.c:30:
-arch/sparc/include/asm/compat.h: In function 'arch_compat_alloc_user_space':
-arch/sparc/include/asm/compat.h:162:46: error: 'struct thread_info' has no =
-member named 'kregs'
-  struct pt_regs *regs =3D current_thread_info()->kregs;
-                                              ^~
-arch/sparc/include/asm/compat.h:165:6: error: implicit declaration of funct=
-ion 'test_thread_64bit_stack'; did you mean 'setup_thread_stack'? [-Werror=
-=3Dimplicit-function-declaration]
-  if (test_thread_64bit_stack(usp))
-      ^~~~~~~~~~~~~~~~~~~~~~~
-      setup_thread_stack
-In file included from include/asm-generic/preempt.h:5:0,
-                 from ./arch/sparc/include/generated/asm/preempt.h:1,
-                 from include/linux/preempt.h:81,
-                 from include/linux/rcupdate.h:40,
-                 from include/linux/rculist.h:11,
-                 from include/linux/sched/signal.h:5,
-                 from arch/sparc/kernel/sys_sparc_32.c:11:
-arch/sparc/include/asm/compat.h:168:23: error: 'TIF_32BIT' undeclared (firs=
-t use in this function); did you mean 'MAP_32BIT'?
-  if (test_thread_flag(TIF_32BIT))
-                       ^
-include/linux/thread_info.h:91:45: note: in definition of macro 'test_threa=
-d_flag'
-  test_ti_thread_flag(current_thread_info(), flag)
-                                             ^~~~
-arch/sparc/include/asm/compat.h:168:23: note: each undeclared identifier is=
- reported only once for each function it appears in
-  if (test_thread_flag(TIF_32BIT))
-                       ^
-include/linux/thread_info.h:91:45: note: in definition of macro 'test_threa=
-d_flag'
-  test_ti_thread_flag(current_thread_info(), flag)
-                                             ^~~~
-arch/sparc/include/asm/compat.h: In function 'is_compat_task':
-arch/sparc/include/asm/compat.h:237:26: error: 'TIF_32BIT' undeclared (firs=
-t use in this function); did you mean 'MAP_32BIT'?
-  return test_thread_flag(TIF_32BIT);
-                          ^
-include/linux/thread_info.h:91:45: note: in definition of macro 'test_threa=
-d_flag'
-  test_ti_thread_flag(current_thread_info(), flag)
-                                             ^~~~
-In file included from include/linux/compat.h:22:0,
-                 from arch/sparc/kernel/systbls.h:7,
-                 from arch/sparc/kernel/sys_sparc_32.c:30:
-arch/sparc/include/asm/compat.h: In function 'in_compat_syscall':
-arch/sparc/include/asm/compat.h:243:9: error: implicit declaration of funct=
-ion 'pt_regs_trap_type'; did you mean 'resource_type'? [-Werror=3Dimplicit-=
-function-declaration]
-  return pt_regs_trap_type(current_pt_regs()) =3D=3D 0x110;
-         ^~~~~~~~~~~~~~~~~
-         resource_type
-
-and lots more :-(
-
-I suspect it is caused by commit
-
-  d1a353a4a8cc ("compat: add an asm-generic/compat.h file")
-
-It looks like the sparc asm/compat.h does not expect to be included in
-32 bit builds?
-
-I have reverted the entire y2038 tree merge for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/_bPO/pHG2AGpxZj7AkK4wis
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq58hsACgkQAVBC80lX
-0GyP8wf9Euk2d8wNufrRxMl5o04ZRVuFY1GXEv94czR0ERQHJ2AS0zr6Q2PowIXE
-rrEFDngIQJMMFCFP4Fqoa4RqzOHkjli12EssrNQtN4hFRSqi40Q07/Obz8gT6IQK
-n6Y3QviPeIEN3FhwU02RUOdWDo6tLW0H+WYvUxzhC1v3gOI7Ub0+pndSotWnmoQV
-yOFRYOCwte5aqOgsdMlOfUp0BJTHO133jFI3DjieBtjW5MNQOC+dxAhTibDB5sVq
-2GCW3dqMLqoVxJhRaRfKEsH0EzjSLUk/EKDEgpfPC6Ia/BzY52AvrsBxcVtwV/bg
-vtXLRwrk1aChIKGOYRKJKaqCixZn/A==
-=CzDR
------END PGP SIGNATURE-----
-
---Sig_/_bPO/pHG2AGpxZj7AkK4wis--
+-- 
+Jiri Kosina
+SUSE Labs
