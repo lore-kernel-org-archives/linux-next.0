@@ -1,63 +1,90 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the asm-generic tree with the kbuild
+Subject: linux-next: manual merge of the arm64 tree with the arm64-fixes
  tree
-Date: Wed, 28 Mar 2018 09:02:22 +1100
-Message-ID: <20180328090222.0f3c34da@canb.auug.org.au>
+Date: Wed, 28 Mar 2018 10:19:11 +1100
+Message-ID: <20180328101911.3a07eb89@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//QhUNAk4SqR+7IFcMV3udDS"; protocol="application/pgp-signature"
+ boundary="Sig_/teGBpzZQ_oaaCeWqeg4YZp/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Hogan <jhogan@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>, Dave Martin <dave.martin@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//QhUNAk4SqR+7IFcMV3udDS
+--Sig_/teGBpzZQ_oaaCeWqeg4YZp/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the asm-generic tree got a conflict in:
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-  arch/metag/boot/dts/Makefile
+  arch/arm64/kernel/cpu_errata.c
 
 between commit:
 
-  b985b71d295f ("kbuild: mark $(targets) as .SECONDARY and remove .PRECIOUS=
- markers")
+  e21da1c99200 ("arm64: Relax ARM_SMCCC_ARCH_WORKAROUND_1 discovery")
 
-from the kbuild tree and commit:
+from the arm64-fixes tree and commit:
 
-  bb6fb6dfcc17 ("metag: Remove arch/metag/")
+  c0cda3b8ee6b ("arm64: capabilities: Update prototype for enable call back=
+")
 
-from the asm-generic tree.
+from the arm64 tree.
 
-I fixed it up (I just removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//QhUNAk4SqR+7IFcMV3udDS
+diff --cc arch/arm64/kernel/cpu_errata.c
+index b5a28336c077,4613e4d75c73..000000000000
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@@ -178,8 -196,8 +196,8 @@@ enable_smccc_arch_workaround_1(const st
+  	case PSCI_CONDUIT_HVC:
+  		arm_smccc_1_1_hvc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+  				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ -		if (res.a0)
+ +		if ((int)res.a0 < 0)
+- 			return 0;
++ 			return;
+  		cb =3D call_hvc_arch_workaround_1;
+  		smccc_start =3D __smccc_workaround_1_hvc_start;
+  		smccc_end =3D __smccc_workaround_1_hvc_end;
+@@@ -188,8 -206,8 +206,8 @@@
+  	case PSCI_CONDUIT_SMC:
+  		arm_smccc_1_1_smc(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
+  				  ARM_SMCCC_ARCH_WORKAROUND_1, &res);
+ -		if (res.a0)
+ +		if ((int)res.a0 < 0)
+- 			return 0;
++ 			return;
+  		cb =3D call_smc_arch_workaround_1;
+  		smccc_start =3D __smccc_workaround_1_smc_start;
+  		smccc_end =3D __smccc_workaround_1_smc_end;
+
+--Sig_/teGBpzZQ_oaaCeWqeg4YZp/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq6v24ACgkQAVBC80lX
-0Gw/VQf/TNvKlcI+j0uJ/vEMgGzy7j0oc462k0SmWQPs5vhPrFcGl5Dwk/mrAReg
-XXK1xbI3Yxg1DvmrJquXh9g8z/U2PkJNgZ0C0MG5Kki/T7ZKyqgaOvH/QrgcHB1h
-GN7VClrG25fDh6/u03shkMx5yccFmagzzLHi+Y5Ir7XCw/4hVy8EpWshaxdel6ze
-2pziRnkqTp0ZU+ZQhMura10pKQZvshPTllY+euugHB//l7Ia2oCDJzPP8aZpO6Xi
-psiMpLZrZmt9CPg0VhoRvfs/h3lJg43guY4TApqPys0xld0c3NOGmAmBTXFLv8mr
-f47vlVaSKHmVKFUx/ly8KK7dMsv0Aw==
-=4lXp
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq60W8ACgkQAVBC80lX
+0GxD8gf/VsnwGnwYC4Pd2gLNMD0yN0oxqCDSrPS2N/zHuX50M5/9+OyLknPW1eyw
+IFhGr7FH2qoqojnzvUG5RY9wJdyv/FxDxk8KInlZ7JJyEDH+0qwaOgvGIS6cwHuQ
+ZISPQJVMyTRcodVpb7OXlj1XomR6vcSUGtgoE1AgpvFjevRQuFrCG4jrF49bwoLp
+fVDgzjY4FOYT0CR46U++CjCgtnxCKDukYPAGullOPLGeh160CXIKqaXGw+SerOXT
+UgNVWsH0/nqIi1rd5fo0Q2VU+On4q1UHP6yvSphLUFJOq73NiyiaoU7U5BeO7ahl
+lr+u7LioUr7vMKOAZVKK4WZKxmlnlg==
+=yKs/
 -----END PGP SIGNATURE-----
 
---Sig_//QhUNAk4SqR+7IFcMV3udDS--
+--Sig_/teGBpzZQ_oaaCeWqeg4YZp/--
