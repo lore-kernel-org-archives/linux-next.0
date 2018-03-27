@@ -1,91 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the device-mapper tree
-Date: Tue, 27 Mar 2018 13:39:23 +1100
-Message-ID: <20180327133923.53b8954d@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the trivial tree
+Date: Tue, 27 Mar 2018 14:43:25 +1100
+Message-ID: <20180327144325.545af4fd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/621_aMtf8JsobZ0xa4VbrsT"; protocol="application/pgp-signature"
+ boundary="Sig_/gEMDPZB2slrjFZBKx/kNh9L"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>, Denis Semakin <d.semakin@omprussia.ru>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Jiri Kosina <jikos@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lihao Liang <lianglihao@huawei.com>, Lai Jiangshan <jiangshanlai@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/621_aMtf8JsobZ0xa4VbrsT
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the device-mapper tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Today's linux-next merge of the tip tree got a conflict in:
 
-/home/sfr/next/next/drivers/md/dm-table.c: In function 'dm_table_set_restri=
-ctions':
-/home/sfr/next/next/drivers/md/dm-table.c:1899:3: error: implicit declarati=
-on of function 'queue_flag_set_unlocked'; did you mean 'lookup_one_len_unlo=
-cked'? [-Werror=3Dimplicit-function-declaration]
-   queue_flag_set_unlocked(QUEUE_FLAG_SECERASE, q);
-   ^~~~~~~~~~~~~~~~~~~~~~~
+  kernel/cpu.c
 
-Caused by commit
+between commit:
 
-  9723d9db1a84 ("dm: add support for secure erase forwarding")
+  ccd8c1c5926a ("CPU: Fix comment in cpuhp_bp_states[]")
 
-interacting with commit
+from the trivial tree and commit:
 
-  8a0ac14b8da9 ("block: Move the queue_flag_*() functions from a public int=
-o a private header file")
+  17a2f1ced028 ("cpu/hotplug: Merge cpuhp_bp_states and cpuhp_ap_states")
 
-from the block tree.
+from the tip tree.
 
-I have added the following merge fix patch:
+I fixed it up (the latter removed the comment updated by the former, so
+I just did that) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 27 Mar 2018 13:36:49 +1100
-Subject: [PATCH] dm: merge fix for queue_flag_set_unlocked to
- blk_queue_flag_set API change
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/md/dm-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index d5db9df7ea4b..0589a4da12bb 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -1896,7 +1896,7 @@ void dm_table_set_restrictions(struct dm_table *t, st=
-ruct request_queue *q,
- 		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
-=20
- 	if (dm_table_supports_secure_erase(t))
--		queue_flag_set_unlocked(QUEUE_FLAG_SECERASE, q);
-+		blk_queue_flag_set(QUEUE_FLAG_SECERASE, q);
-=20
- 	if (dm_table_supports_flush(t, (1UL << QUEUE_FLAG_WC))) {
- 		wc =3D true;
---=20
-2.16.1
+Jiri, you could drop (or revert) the commit in your tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/621_aMtf8JsobZ0xa4VbrsT
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5rtsACgkQAVBC80lX
-0GxwCwf/XVi8A8EsALHwrXTc5gc9QxUo+yYPq66htfJHZNlPu/TG2z6uksFFs66N
-S2V2DC1iVZIeAxAv+6GEAFhA7SKkF/Z1ts95tEH7DKVRXB0V2RpfJhUEPWJLHlmI
-9sSC0gv1Di7FC28oJ6uG0UBW9XNLBiNJz54H6IrWfyIVc7pad0z/njrQiXreSsej
-TPIQkpbg/YjSFG0Ozs86r7svg2kH0CF0Y6M0TdTgT4JEeFjvXEvpWG9pYSxbDSqX
-154HpHG/FEyp2yZezq6jITdmhM3tI4d4U14S2625APnq1AIrkE7bXdTDX9+M00vV
-TjR3gT4MqoHDvyaAcMrhHV6EJsjQLQ==
-=A5rF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5vd0ACgkQAVBC80lX
+0Gy1HQf/fkP9YYpXqNUpBPR4KyRGTH7wakPC+odyOs6Rg/5STR4DE2iOA9fCIMBK
+pktOQdFRFAq2bHWof3PeAqoamFhqXKaCxN0jBgx8minEJG1Us5muM6I/IXeZydht
+K2dL8BLSmWXoC8ybuUZBHgveIP1f4a6Dm+UrWjepSli+IPvMCYbHCGk3BWSyULOd
+Ws5pHhxDsyQX3pqvWW3/zRAWVHtrY3LW/ruiZPfKY924xABRMKkjWMTQzmrnERIs
+XBQv1tb3J9et84HlxWKutAVg43Ye8uuKtjvkMihZtvXbM+FdJdNNqbABop8h3lpq
+MYf9CQJ1tqk9hKUWY+UJW7Z22isVXQ==
+=ozXD
 -----END PGP SIGNATURE-----
 
---Sig_/621_aMtf8JsobZ0xa4VbrsT--
+--Sig_/gEMDPZB2slrjFZBKx/kNh9L--
