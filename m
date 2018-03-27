@@ -1,59 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the thermal-soc tree
-Date: Tue, 27 Mar 2018 12:23:33 +1100
-Message-ID: <20180327122333.1647bf10@canb.auug.org.au>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: RE: linux-next: Tree for Mar 22 (thermal)
+Date: Tue, 27 Mar 2018 02:09:00 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B9092636BF28012@SHSMSX101.ccr.corp.intel.com>
+References: <20180322193847.63181403@canb.auug.org.au>
+ <5449db25-c11e-68a1-532c-044689794aad@infradead.org>
+ <20180326210524.GB1899@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.AN3DsL_R4KPyrNlfSGS+=j"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180326210524.GB1899@localhost.localdomain>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Eduardo Valentin <edubezval@gmail.com>, Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Eduardo,
 
-After merging the thermal-soc tree, today's linux-next build (arm
-multi_v7_defconfig) produced these warnings:
+> -----Original Message-----
+> From: Eduardo Valentin [mailto:edubezval@gmail.com]
+> Sent: Tuesday, March 27, 2018 5:05 AM
+> To: Randy Dunlap <rdunlap@infradead.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>; Linux-Next Mailing List <linux-
+> next@vger.kernel.org>; Linux Kernel Mailing List <linux-
+> kernel@vger.kernel.org>; Linux PM list <linux-pm@vger.kernel.org>; Zhang,
+> Rui <rui.zhang@intel.com>
+> Subject: Re: linux-next: Tree for Mar 22 (thermal)
+> Importance: High
+> 
+> Rui,
+> 
+> On Thu, Mar 22, 2018 at 10:36:38AM -0700, Randy Dunlap wrote:
+> > On 03/22/2018 01:38 AM, Stephen Rothwell wrote:
+> > > Hi all,
+> > >
+> > > Changes since 20180321:
+> > >
+> > > The vfs tree still had its build failure for which I reverted a commit.
+> > >
+> >
+> > on i386:
+> >
+> > ERROR: "nsec_to_clock_t" [drivers/thermal/thermal_sys.ko] undefined!
+> >
+> > so in drivers/thermal/thermal_sysfs.c, please add:
+> >
+> > #include <linux/jiffies.h>
+> >
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> 
+> Are you taking care of this?
+> 
+No, I missed that email.
+Will check it today.
 
-drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_get_temp':
-drivers/thermal/samsung/exynos_tmu.c:931:37: warning: 'temp' may be used un=
-initialized in this function [-Wmaybe-uninitialized]
-   *temp =3D code_to_temp(data, value) * MCELSIUS;
-                                     ^
-drivers/thermal/samsung/exynos_tmu.c: In function 'temp_to_code':
-drivers/thermal/samsung/exynos_tmu.c:304:9: warning: 'temp_code' may be use=
-d uninitialized in this function [-Wmaybe-uninitialized]
-  return temp_code;
-         ^~~~~~~~~
-
-Introduced by commit
-
-  480b5bfc16e1 ("thermal: exynos: remove parsing of samsung, tmu_default_te=
-mp_offset property")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq5nRUACgkQAVBC80lX
-0GxWYAf/UH9SPcPyYjQSFxNsEIwHIs5m+gR9RP4YO3P57ecZzSTYgSX3ZYjHTeCp
-+Fd/zzIKQANJHN0MWLcjguTz/SFzd7Uu+UXOq8Na6+Vp3mWpBzeXuYanjYzlV6/Q
-iL9xIhYUPxa7vaJWTu+AwXYNg9idFqgzh2fav+g4Ll48Y5gUETTjT3Llzo0doHSU
-Am/lSby5Dt+nwc66nMLnSW1u3Dh2m5OYJfbjwyMJuGOuarfGJ1dfp60TiKM9R/tk
-PExqW0gV1QZHReaVSSrO0G5n4X4BUcOrmLJnXmDrI0WedvjcsH47MCHV8i2b9ND/
-16vX5afGBrcRX6sPlc+HS/1rQRF6uw==
-=ZH0v
------END PGP SIGNATURE-----
-
---Sig_/.AN3DsL_R4KPyrNlfSGS+=j--
+Thanks,
+rui
+> >
+> > thanks,
+> > --
+> > ~Randy
