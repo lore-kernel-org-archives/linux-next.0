@@ -1,57 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the ipsec tree with the net tree
-Date: Wed, 28 Mar 2018 04:41:40 +1100
-Message-ID: <20180328044140.18bab804@canb.auug.org.au>
-References: <20180326091610.148fc62d@canb.auug.org.au>
-        <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
+Subject: linux-next: manual merge of the asm-generic tree with the kbuild
+ tree
+Date: Wed, 28 Mar 2018 09:02:22 +1100
+Message-ID: <20180328090222.0f3c34da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H2mH2IuD14TjPrI08+G8TUG"; protocol="application/pgp-signature"
+ boundary="Sig_//QhUNAk4SqR+7IFcMV3udDS"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <wih7epx8u60.fsf@dev-r-vrt-156.mtr.labs.mlnx>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Machata <petrm@mellanox.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stefano Brivio <sbrivio@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, James Hogan <jhogan@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/H2mH2IuD14TjPrI08+G8TUG
+--Sig_//QhUNAk4SqR+7IFcMV3udDS
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
+Hi all,
 
-On Tue, 27 Mar 2018 17:33:43 +0300 Petr Machata <petrm@mellanox.com> wrote:
->
-> Hi, this conflict needs to be resolved differently. Below I'm adding a
-> patch on top of linux-next. Squash or apply as you see fit.
->=20
-> What's the right way to proceed from here? It looks to me like Stefano
-> or Steffen should take this into the ipsec tree (possibly just squash to
-> the clamping fix), as they'll hit this conflict the next time they
-> rebase on top of net...? Let me know what to do, please.
+Today's linux-next merge of the asm-generic tree got a conflict in:
 
-I fixed up the resolution in linux-next to match your patch from
-today.  Dave will need to do this when he merges the ipsec tree into
-the net tree before sending it to Linus.
+  arch/metag/boot/dts/Makefile
+
+between commit:
+
+  b985b71d295f ("kbuild: mark $(targets) as .SECONDARY and remove .PRECIOUS=
+ markers")
+
+from the kbuild tree and commit:
+
+  bb6fb6dfcc17 ("metag: Remove arch/metag/")
+
+from the asm-generic tree.
+
+I fixed it up (I just removed the file) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/H2mH2IuD14TjPrI08+G8TUG
+--Sig_//QhUNAk4SqR+7IFcMV3udDS
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq6glQACgkQAVBC80lX
-0GxWuQf8DzBm0vcumNlIYygzeh1tTKOOcVxdVlC/f3Gdj6Dly7esxhW7xHN0PeCW
-wN02A7o/HJZlKceZMHiuJU6aZbQUA6MydZCutQEBPRhiqa2g0PWH5E6HC8JgjXct
-D1LMzqR99FEw1J//5GF3R7e4/lWqKuE9c2PVWg6d5kMMfr2scltB+9amSm4K1rVG
-s6bwycV9hGy4y+CHSFkjGp5n19DP+nGNw/hNxw96sv7hb5LLbily+W/djPqVqQgF
-9NEbSE1cYjG3yPdST3HFkUj90p2RQg9izqPqBTKNJfkUC7YKiQa6e/GAdDRh0FkY
-Sv9TM4pz7xJpjyBsA3lqy/GCi/ORZQ==
-=EXRF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq6v24ACgkQAVBC80lX
+0Gw/VQf/TNvKlcI+j0uJ/vEMgGzy7j0oc462k0SmWQPs5vhPrFcGl5Dwk/mrAReg
+XXK1xbI3Yxg1DvmrJquXh9g8z/U2PkJNgZ0C0MG5Kki/T7ZKyqgaOvH/QrgcHB1h
+GN7VClrG25fDh6/u03shkMx5yccFmagzzLHi+Y5Ir7XCw/4hVy8EpWshaxdel6ze
+2pziRnkqTp0ZU+ZQhMura10pKQZvshPTllY+euugHB//l7Ia2oCDJzPP8aZpO6Xi
+psiMpLZrZmt9CPg0VhoRvfs/h3lJg43guY4TApqPys0xld0c3NOGmAmBTXFLv8mr
+f47vlVaSKHmVKFUx/ly8KK7dMsv0Aw==
+=4lXp
 -----END PGP SIGNATURE-----
 
---Sig_/H2mH2IuD14TjPrI08+G8TUG--
+--Sig_//QhUNAk4SqR+7IFcMV3udDS--
