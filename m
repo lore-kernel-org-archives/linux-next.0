@@ -1,85 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with the syscalls tree
-Date: Wed, 28 Mar 2018 18:19:56 +1100
-Message-ID: <20180328181956.309565cd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the userns tree
+Date: Wed, 28 Mar 2018 18:41:25 +1100
+Message-ID: <20180328184125.3dbcfbf5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/RS8HspKY6+BbNneaSS/2p3T"; protocol="application/pgp-signature"
+ boundary="Sig_/v4.foYZPa8UEMEN4NoXkpfH"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Dominik Brodowski <linux@dominikbrodowski.net>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/RS8HspKY6+BbNneaSS/2p3T
+--Sig_/v4.foYZPa8UEMEN4NoXkpfH
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Eric,
 
-Today's linux-next merge of the userns tree got a conflict in:
+After merging the userns tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
 
-  ipc/msg.c
+In file included from include/linux/sched.h:16:0,
+                 from arch/powerpc/lib/xor_vmx_glue.c:14:
+include/linux/shm.h:17:35: error: 'struct file' declared inside parameter l=
+ist will not be visible outside of this definition or declaration [-Werror]
+ bool is_file_shm_hugepages(struct file *file);
+                                   ^~~~
 
-between commit:
+and many, many more (most warnings, but some errors - arch/powerpc is
+mostly built with -Werror)
 
-  370c8f44ce16 ("ipc: add msgget syscall wrapper")
+Maybe caused by commit
 
-from the syscalls tree and commit:
+  1a5c1349d105 ("sem: Move struct sem and struct sem_array into ipc/sem.c")
 
-  50ab44b1c5d1 ("ipc: Directly call the security hook in ipc_ops.associate")
+I have appplied the following fix patch for today:
 
-from the userns tree.
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 28 Mar 2018 18:36:27 +1100
+Subject: [PATCH] fix up for struct file no longer being available in shm.h
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/shm.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/shm.h b/include/linux/shm.h
+index 3a8eae3ca33c..d8e69aed3d32 100644
+--- a/include/linux/shm.h
++++ b/include/linux/shm.h
+@@ -7,6 +7,8 @@
+ #include <uapi/linux/shm.h>
+ #include <asm/shmparam.h>
+=20
++struct file;
++
+ #ifdef CONFIG_SYSVIPC
+ struct sysv_shm {
+ 	struct list_head shm_clist;
+--=20
+2.16.1
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc ipc/msg.c
-index 9de48065c1ac,d667dd8e97ab..000000000000
---- a/ipc/msg.c
-+++ b/ipc/msg.c
-@@@ -253,17 -272,7 +272,7 @@@ static void freeque(struct ipc_namespac
-  	ipc_rcu_putref(&msq->q_perm, msg_rcu_free);
-  }
- =20
-- /*
--  * Called with msg_ids.rwsem and ipcp locked.
--  */
-- static inline int msg_security(struct kern_ipc_perm *ipcp, int msgflg)
-- {
-- 	struct msg_queue *msq =3D container_of(ipcp, struct msg_queue, q_perm);
--=20
-- 	return security_msg_queue_associate(msq, msgflg);
-- }
--=20
- -SYSCALL_DEFINE2(msgget, key_t, key, int, msgflg)
- +long ksys_msgget(key_t key, int msgflg)
-  {
-  	struct ipc_namespace *ns;
-  	static const struct ipc_ops msg_ops =3D {
-
---Sig_/RS8HspKY6+BbNneaSS/2p3T
+--Sig_/v4.foYZPa8UEMEN4NoXkpfH
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq7QhwACgkQAVBC80lX
-0Gx/Ugf/Szx1s7HTiBPJztfWDpJMHwPbQA5u09OL5aOM+BI+t0HmLvVM8wChCz4g
-m6fQo30Y8n6u5QyOX0aEeCMHz03LWZa0zdU1qwNKxCgZiLCxpAAoFnqhxBRszAvr
-ZBS6AO1zwso3ongGm8VdnDBbGvPGGdcOeNZVvdXLKLqN6Va9zQaxR6w+j1ci4XwI
-VQMwtB447WCwvfZKdsUpNJKaZBy8zk15HfzVcGzsgDMZZQ4vV0p7h9IR3r8nQZV7
-5cOd8kzN81Yipx99nl2kVhz/fG6lLWVa3KqYSfEKjiTFH+oWYuGKq/TVSWP46Xfv
-jbIJzCD/DJCQzdqBOmcTpS6KTF54cw==
-=xJ1I
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq7RyUACgkQAVBC80lX
+0GzdFwgAmqFjHLk1tRKi8FtbIYW/3ZpBRnp4V+QZnP2hYg3gpdzTEmxt2XZjKvi7
+sqWfzsZBlKkxSYIg9zsM3zbl/9cmm2+ZGgoUqZu/YB70jHYGOE/D+z0XK8nJ+WNZ
+XB/wlawGMi4fndOQhq0gg5BiuNN0GZZs6na77Ec4KbAvOv9nC5ttDbWU3L+jsTSs
+WmJuqy4DznkPXZB0jhbRtweMKH8W2sqyoKy6M0ilMQFUbWOpvdXEhCVWg0dKZpz3
+Kf4VJbLDhaPViJRH72RjLk2U0YNhLzERh+u9OHynxbOw0DeMIuHoJoT7C2Lxrea8
+DXWMkwVk7z61D1ZPwKsa/c1WFB0IHA==
+=HScI
 -----END PGP SIGNATURE-----
 
---Sig_/RS8HspKY6+BbNneaSS/2p3T--
+--Sig_/v4.foYZPa8UEMEN4NoXkpfH--
