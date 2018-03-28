@@ -1,54 +1,58 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Wed, 28 Mar 2018 12:53:59 +0100
-Message-ID: <20180328115358.GC30850@arm.com>
-References: <20180328160034.61e0e588@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: build failure after merge of the userns tree
+Date: Wed, 28 Mar 2018 13:32:25 -0500
+Message-ID: <87efk4aw5i.fsf@xmission.com>
+References: <20180328184125.3dbcfbf5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180328160034.61e0e588@canb.auug.org.au>
+In-Reply-To: <20180328184125.3dbcfbf5@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 28 Mar 2018 18:41:25 +1100")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shanker Donthineni <shankerd@codeaurora.org>, Dave Martin <dave.martin@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-On Wed, Mar 28, 2018 at 04:00:34PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm-arm tree got a conflict in:
-> 
->   arch/arm64/kernel/cpu_errata.c
-> 
-> between commit:
-> 
->   c0cda3b8ee6b ("arm64: capabilities: Update prototype for enable call back")
->   followed by a series of patches cleaning up capabilities
-> 
-> from the arm64 tree and commits:
-> 
->   4b472ffd1513 ("arm64: Enable ARM64_HARDEN_EL2_VECTORS on Cortex-A57 and A72")
->   f9f5dc19509b ("arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP hardening")
-> 
-> from the kvm-arm tree.
-> 
-> I fixed it up (maybe, please check the result and see below) and can
-> carry the fix as necessary. This is now fixed as far as linux-next is
-> concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+> Hi Eric,
+>
+> After merging the userns tree, today's linux-next build (powerpc
+> ppc64_defconfig) produced this warning:
+>
+> In file included from include/linux/sched.h:16:0,
+>                  from arch/powerpc/lib/xor_vmx_glue.c:14:
+> include/linux/shm.h:17:35: error: 'struct file' declared inside parameter list will not be visible outside of this definition or declaration [-Werror]
+>  bool is_file_shm_hugepages(struct file *file);
+>                                    ^~~~
+>
+> and many, many more (most warnings, but some errors - arch/powerpc is
+> mostly built with -Werror)
+>
+> Maybe caused by commit
+>
+>   1a5c1349d105 ("sem: Move struct sem and struct sem_array into ipc/sem.c")
+>
+> I have appplied the following fix patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Wed, 28 Mar 2018 18:36:27 +1100
+> Subject: [PATCH] fix up for struct file no longer being available in shm.h
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-This is a really grotty conflict, so Marc and I have decided to revert
-f9f5dc19509b ("arm64: KVM: Use SMCCC_ARCH_WORKAROUND_1 for Falkor BP hardening")
-from kvm-arm for now. There's a little hack necessary to keep things
-building after that, but we can clean that up at -rc1.
+Applied.  With the addition of:
 
-Shanker -- I'm still aiming to get your patch into 4.17, either during the
-second half of the merge window or at -rc1.
+> I dug through this and I discovered that the error was caused by the
+> removal of struct shmid_kernel from shm.h when building on powerpc.
+> Except for observing the existence of "struct file *shm_file" in
+> struct shmid_kernel I have no clue why the structure move would
+> cause such a failure.  I suspect shm.h always needed the forward
+> declaration and someting had been confusing gcc into not issuing the
+> warning. --EWB
+> 
+> Fixes: a2e102cd3cdd ("shm: Move struct shmid_kernel into ipc/shm.c")
 
-Cheers,
+Has anyone ever seen anything like that?
 
-Will
+Eric
