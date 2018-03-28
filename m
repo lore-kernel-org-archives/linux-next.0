@@ -1,38 +1,35 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Wed, 28 Mar 2018 16:05:41 +1100
-Message-ID: <20180328160541.5b900f71@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the syscalls tree
+Date: Wed, 28 Mar 2018 18:19:56 +1100
+Message-ID: <20180328181956.309565cd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=VjY42lkaS4LMKFp4zpUwi+"; protocol="application/pgp-signature"
+ boundary="Sig_/RS8HspKY6+BbNneaSS/2p3T"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Suzuki K Poulose <suzuki.poulose@arm.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=VjY42lkaS4LMKFp4zpUwi+
+--Sig_/RS8HspKY6+BbNneaSS/2p3T
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Eric,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the userns tree got a conflict in:
 
-  arch/arm64/kernel/cpufeature.c
+  ipc/msg.c
 
-between commits:
+between commit:
 
-  143ba05d867a ("arm64: capabilities: Prepare for fine grained capabilities=
-")
-  12eb369125ab ("arm64: cpufeature: Avoid warnings due to unused symbols")
+  370c8f44ce16 ("ipc: add msgget syscall wrapper")
 
-from the arm64 tree and commit:
+from the syscalls tree and commit:
 
-  a1efdff442ec ("arm64: cpufeatures: Drop the ARM64_HYP_OFFSET_LOW feature =
-flag")
+  50ab44b1c5d1 ("ipc: Directly call the security hook in ipc_ops.associate")
 
-from the kvm-arm tree.
+from the userns tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -45,49 +42,44 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/kernel/cpufeature.c
-index 96b15d7b10a8,5b25d56bccfd..000000000000
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@@ -838,19 -826,11 +838,6 @@@ static bool has_no_hw_prefetch(const st
-  		MIDR_CPU_VAR_REV(1, MIDR_REVISION_MASK));
+diff --cc ipc/msg.c
+index 9de48065c1ac,d667dd8e97ab..000000000000
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@@ -253,17 -272,7 +272,7 @@@ static void freeque(struct ipc_namespac
+  	ipc_rcu_putref(&msq->q_perm, msg_rcu_free);
   }
  =20
-- static bool hyp_offset_low(const struct arm64_cpu_capabilities *entry,
-- 			   int __unused)
- -static bool runs_at_el2(const struct arm64_cpu_capabilities *entry, int _=
-_unused)
---{
-- 	phys_addr_t idmap_addr =3D __pa_symbol(__hyp_idmap_text_start);
+- /*
+-  * Called with msg_ids.rwsem and ipcp locked.
+-  */
+- static inline int msg_security(struct kern_ipc_perm *ipcp, int msgflg)
+- {
+- 	struct msg_queue *msq =3D container_of(ipcp, struct msg_queue, q_perm);
 -=20
-- 	/*
-- 	 * Activate the lower HYP offset only if:
-- 	 * - the idmap doesn't clash with it,
-- 	 * - the kernel is not running at EL2.
-- 	 */
-- 	return idmap_addr > GENMASK(VA_BITS - 2, 0) && !is_kernel_in_hyp_mode();
- -	return is_kernel_in_hyp_mode();
---}
---
-  static bool has_no_fpsimd(const struct arm64_cpu_capabilities *entry, int=
- __unused)
+- 	return security_msg_queue_associate(msq, msgflg);
+- }
+-=20
+ -SYSCALL_DEFINE2(msgget, key_t, key, int, msgflg)
+ +long ksys_msgget(key_t key, int msgflg)
   {
-  	u64 pfr0 =3D read_sanitised_ftr_reg(SYS_ID_AA64PFR0_EL1);
+  	struct ipc_namespace *ns;
+  	static const struct ipc_ops msg_ops =3D {
 
---Sig_/=VjY42lkaS4LMKFp4zpUwi+
+--Sig_/RS8HspKY6+BbNneaSS/2p3T
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq7IqUACgkQAVBC80lX
-0Gx9EwgAhtB95k4OAHs+vYLuZhujx/apeePo7o5lfLL3l9jKlBRXfT/S4QUEQoKw
-shMlpH6YbsiQtwr95/51bjshT0zLupO72eYr3OhqHzHCJQ/RGMgg6ajmSybeV16s
-9OY0H03N1MPTdUGYjbNMgAUCMuBUeA74dLWLtkVVfe/m9TfLqZ0SMtPNJVbKy8Ok
-JCMIJ/KDiNPdvt+PbrpaQQKjbBQWxv09siPvKTlOxE9YExEQ8SlBtyGcy+Dv18LX
-dG+nmAJfjLmrvQ0miyMTfXfVRGHcX7yfjLLZJJRxptANBDffuMjozcb7yQKXiywu
-0wU/0+SVh+Ixdz03BSe84CsWiaXhag==
-=voGw
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq7QhwACgkQAVBC80lX
+0Gx/Ugf/Szx1s7HTiBPJztfWDpJMHwPbQA5u09OL5aOM+BI+t0HmLvVM8wChCz4g
+m6fQo30Y8n6u5QyOX0aEeCMHz03LWZa0zdU1qwNKxCgZiLCxpAAoFnqhxBRszAvr
+ZBS6AO1zwso3ongGm8VdnDBbGvPGGdcOeNZVvdXLKLqN6Va9zQaxR6w+j1ci4XwI
+VQMwtB447WCwvfZKdsUpNJKaZBy8zk15HfzVcGzsgDMZZQ4vV0p7h9IR3r8nQZV7
+5cOd8kzN81Yipx99nl2kVhz/fG6lLWVa3KqYSfEKjiTFH+oWYuGKq/TVSWP46Xfv
+jbIJzCD/DJCQzdqBOmcTpS6KTF54cw==
+=xJ1I
 -----END PGP SIGNATURE-----
 
---Sig_/=VjY42lkaS4LMKFp4zpUwi+--
+--Sig_/RS8HspKY6+BbNneaSS/2p3T--
