@@ -1,90 +1,87 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Date: Thu, 29 Mar 2018 10:59:44 +0900
-Message-ID: <CAK7LNARRbEacK7Y9+yYjLEDVOu7iz8BJetaFd82NMw2cEnbaJg@mail.gmail.com>
-References: <20180329085809.78af08ff@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
+Date: Thu, 29 Mar 2018 16:02:54 +1100
+Message-ID: <20180329160254.01e82ff7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/5VyX6VOKtJD5nMZrO2KM_bK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180329085809.78af08ff@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Taehee Yoo <ap420073@gmail.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wanpeng Li <wanpengli@tencent.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-2018-03-29 6:58 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
->
-> After merging the kbuild tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->
-> net/ipv4/netfilter/nf_nat_snmp_basic_main.c:57:10: fatal err
-> or: nf_nat_snmp_basic.asn1.h: No such file or directory
->  #include "nf_nat_snmp_basic.asn1.h"
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Presuambly caused by commit
->
->   9ee1b1bb8743 ("kbuild: rename *-asn1.[ch] to *.asn1.[ch]")
->
-> though I am not sure why it didn't fail yesterday.
->
-> I reverted that commit (and the following one because of a conflict)
-> for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Hi all,
 
+Today's linux-next merge of the kvm tree got conflicts in:
 
-Thanks for the report.
+  arch/x86/kernel/kvm.c
 
-I think my patch is just a coincidence.
+between commit:
 
-The netfilter Makefile seems weird.
+  17a1079d9c63 ("KVM: x86: Fix pv tlb flush dependencies")
 
-I queued up the following fix-up to my kbuild tree.
-Hopefully linux-next will be OK tomorrow.
+from the kvm-fixes tree and commit:
 
+  6beacf74c257 ("KVM: X86: Don't use PV TLB flush with dedicated physical C=
+PUs")
 
+from the kvm tree.
 
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
 
+diff --cc arch/x86/kernel/kvm.c
+index fae86e36e399,4ccbff63cb86..000000000000
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@@ -546,7 -546,8 +546,8 @@@ static void __init kvm_guest_init(void
+  	}
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
++ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
+ -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+ +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
+  		pv_mmu_ops.flush_tlb_others =3D kvm_flush_tlb_others;
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
+@@@ -635,7 -641,8 +641,8 @@@ static __init int kvm_setup_pv_tlb_flus
+  	int cpu;
+ =20
+  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
++ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
+ -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+ +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
+  		for_each_possible_cpu(cpu) {
+  			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
+  				GFP_KERNEL, cpu_to_node(cpu));
 
-commit 28913ee8191adf4bbc01cbfb9ee18cca782ab141
-Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu Mar 29 09:24:28 2018 +0900
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-    netfilter: nf_nat_snmp_basic: add correct dependency to Makefile
+-----BEGIN PGP SIGNATURE-----
 
-    nf_nat_snmp_basic_main.c includes a generated header, but the
-    necessary dependency is missing in Makefile. This could cause
-    build error in parallel building.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8c34ACgkQAVBC80lX
+0GzdwAf/RVJ60DLqr/+aluZdJwYHrOEiXYsDVAm9cN7z0m40rcwPu2xxRYTekbTB
+2y9N136MLxSP44jfeN0opgTRl8eq7gQsAy81QFXk/HHTEpiRtHkfaj2rlqouVeOj
+rBNzCcdw7zDYxZEvdzq+jFQ+SotmCfdLethMfVFGudGDZeSjIJuEVTNOLhq1f/oY
+Xd9DqhoISXMdgXezaTBo4STiZpJTjjp9iuDXqVw/VBOTegx5315i8NAosEDyZjX6
++eggepGlUaYUTIKb9gkJ3grAueSdXHzgWYacqtRzoEE8cvxHzTS1dZwcQ4Z8iqY5
+bJQjzNii/9TQdzRQLHxV6X8XvuOFBg==
+=NrYb
+-----END PGP SIGNATURE-----
 
-    Remove a weird line, and add a correct one.
-
-    Fixes: cc2d58634e0f ("netfilter: nf_nat_snmp_basic: use asn1
-decoder library")
-    Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-    Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-diff --git a/net/ipv4/netfilter/Makefile b/net/ipv4/netfilter/Makefile
-index 2dad20e..9bd19cd 100644
---- a/net/ipv4/netfilter/Makefile
-+++ b/net/ipv4/netfilter/Makefile
-@@ -29,7 +29,7 @@ obj-$(CONFIG_NF_NAT_H323) += nf_nat_h323.o
- obj-$(CONFIG_NF_NAT_PPTP) += nf_nat_pptp.o
-
- nf_nat_snmp_basic-y := nf_nat_snmp_basic-asn1.o nf_nat_snmp_basic_main.o
--nf_nat_snmp_basic-y : nf_nat_snmp_basic-asn1.h nf_nat_snmp_basic-asn1.c
-+$(obj)/nf_nat_snmp_basic_main.o: $(obj)/nf_nat_snmp_basic-asn1.h
- obj-$(CONFIG_NF_NAT_SNMP_BASIC) += nf_nat_snmp_basic.o
- clean-files := nf_nat_snmp_basic-asn1.c nf_nat_snmp_basic-asn1.h
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+--Sig_/5VyX6VOKtJD5nMZrO2KM_bK--
