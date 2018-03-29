@@ -1,34 +1,34 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
-Date: Thu, 29 Mar 2018 16:02:54 +1100
-Message-ID: <20180329160254.01e82ff7@canb.auug.org.au>
+Date: Thu, 29 Mar 2018 16:11:57 +1100
+Message-ID: <20180329161157.692371b9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5VyX6VOKtJD5nMZrO2KM_bK"; protocol="application/pgp-signature"
+ boundary="Sig_/xtKjDh0m5V9HKV0B7=+SJxM"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Paolo Bonzini <pbonzini@redhat.com>, Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Wanpeng Li <wanpengli@tencent.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Christopherson <sean.j.christopherson@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+--Sig_/xtKjDh0m5V9HKV0B7=+SJxM
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm tree got conflicts in:
+Today's linux-next merge of the kvm tree got a conflict in:
 
-  arch/x86/kernel/kvm.c
+  arch/x86/kvm/vmx.c
 
 between commit:
 
-  17a1079d9c63 ("KVM: x86: Fix pv tlb flush dependencies")
+  9d1887ef3252 ("KVM: nVMX: sync vmcs02 segment regs prior to vmx_set_cr0")
 
 from the kvm-fixes tree and commit:
 
-  6beacf74c257 ("KVM: X86: Don't use PV TLB flush with dedicated physical C=
-PUs")
+  2bb8cafea80b ("KVM: vVMX: signal failure for nested VMEntry if emulation_=
+required")
 
 from the kvm tree.
 
@@ -43,45 +43,48 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/x86/kernel/kvm.c
-index fae86e36e399,4ccbff63cb86..000000000000
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@@ -546,7 -546,8 +546,8 @@@ static void __init kvm_guest_init(void
-  	}
+diff --cc arch/x86/kvm/vmx.c
+index 92496b9b5f2b,9bc05f5349c8..000000000000
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@@ -10952,6 -11081,21 +11092,16 @@@ static int prepare_vmcs02(struct kvm_vc
+  	/* Note: modifies VM_ENTRY/EXIT_CONTROLS and GUEST/HOST_IA32_EFER */
+  	vmx_set_efer(vcpu, vcpu->arch.efer);
  =20
-  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
- -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
- +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME))
-  		pv_mmu_ops.flush_tlb_others =3D kvm_flush_tlb_others;
- =20
-  	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
-@@@ -635,7 -641,8 +641,8 @@@ static __init int kvm_setup_pv_tlb_flus
-  	int cpu;
- =20
-  	if (kvm_para_has_feature(KVM_FEATURE_PV_TLB_FLUSH) &&
-+ 	    !kvm_para_has_hint(KVM_HINTS_DEDICATED) &&
- -	    !kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
- +	    kvm_para_has_feature(KVM_FEATURE_STEAL_TIME)) {
-  		for_each_possible_cpu(cpu) {
-  			zalloc_cpumask_var_node(per_cpu_ptr(&__pv_tlb_mask, cpu),
-  				GFP_KERNEL, cpu_to_node(cpu));
+ -	if (vmx->nested.dirty_vmcs12) {
+ -		prepare_vmcs02_full(vcpu, vmcs12, from_vmentry);
+ -		vmx->nested.dirty_vmcs12 =3D false;
+ -	}
+ -
++ 	/*
++ 	 * Guest state is invalid and unrestricted guest is disabled,
++ 	 * which means L1 attempted VMEntry to L2 with invalid state.
++ 	 * Fail the VMEntry.
++ 	 */
++ 	if (vmx->emulation_required) {
++ 		*entry_failure_code =3D ENTRY_FAIL_DEFAULT;
++ 		return 1;
++ 	}
++=20
+  	/* Shadow page tables on either EPT or shadow page tables. */
+  	if (nested_vmx_load_cr3(vcpu, vmcs12->guest_cr3, nested_cpu_has_ept(vmcs=
+12),
+  				entry_failure_code))
 
---Sig_/5VyX6VOKtJD5nMZrO2KM_bK
+--Sig_/xtKjDh0m5V9HKV0B7=+SJxM
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8c34ACgkQAVBC80lX
-0GzdwAf/RVJ60DLqr/+aluZdJwYHrOEiXYsDVAm9cN7z0m40rcwPu2xxRYTekbTB
-2y9N136MLxSP44jfeN0opgTRl8eq7gQsAy81QFXk/HHTEpiRtHkfaj2rlqouVeOj
-rBNzCcdw7zDYxZEvdzq+jFQ+SotmCfdLethMfVFGudGDZeSjIJuEVTNOLhq1f/oY
-Xd9DqhoISXMdgXezaTBo4STiZpJTjjp9iuDXqVw/VBOTegx5315i8NAosEDyZjX6
-+eggepGlUaYUTIKb9gkJ3grAueSdXHzgWYacqtRzoEE8cvxHzTS1dZwcQ4Z8iqY5
-bJQjzNii/9TQdzRQLHxV6X8XvuOFBg==
-=NrYb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlq8dZ0ACgkQAVBC80lX
+0GyxOgf/UoGIEdsWueZrvrHbwHdu+zS1PjUUc21a2oblc+w2reNO6LLXdJGGjNRz
+/g09EyXKUqSZipKxwSE0yTcaiv6zutHxoQ3jNgJIfB4f6I1O0QFUdznLwfrSqtu+
+2HPXKkBZe9V5V3KHmS31HBQ2Gn0qHGlZL9v8aYGE17ec5hj7VyRmgTSMR+Iv36lX
+OKfpfcJ2RTXbSzrrDrLnwW8/c4+JZwkGsnlJuPGclDc00sYuSXnX6N212H5Od0xZ
+L3gDhIG6vbT5KQiY72Qr1EY5iHyYBVavccG7Ds87hM7xo1Q0Ab31aNBkgx06OJqm
+/fLALB+BEu0raCNgK03f79qN6V34ew==
+=xwCR
 -----END PGP SIGNATURE-----
 
---Sig_/5VyX6VOKtJD5nMZrO2KM_bK--
+--Sig_/xtKjDh0m5V9HKV0B7=+SJxM--
