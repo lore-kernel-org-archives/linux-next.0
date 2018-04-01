@@ -1,45 +1,48 @@
-From: Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the spi-nor
- tree
-Date: Fri, 30 Mar 2018 10:04:23 +0200
-Message-ID: <20180330100423.3958e59a@bbrezillon>
-References: <20180330142741.4266629f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the cifs tree
+Date: Sun, 1 Apr 2018 11:38:28 +1000
+Message-ID: <20180401113828.05bf52d5@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Mw6kmUKCKhy7k7bSojDqmeQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180330142741.4266629f@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>, Marek Vasut <marex@denx.de>
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve French <stfrench@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 30 Mar 2018 14:27:41 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+--Sig_/Mw6kmUKCKhy7k7bSojDqmeQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi Cyrille,
-> 
-> Commits
-> 
->   3efa50903ff3 ("mtd: fsl-quadspi: Distinguish the mtd device names")
->   85da6da22843 ("dt-bindings: fsl-quadspi: Add the example of two SPI NOR")
-> 
-> are missing a Signed-off-by from their committer.
+Hi all,
 
-Oops, my bad. I amended the commits to change the subject prefix and
-now I'm the commiter :-).
+Commit
 
-Will add my SoB.
+  7127583a1b4b ("cifs: add server->vals->header_preamble_size")
 
-> 
-> P.S. should I be changing the contact I have for the spi-nor trees?
+is missing a Signed-off-by from its committer.
 
-Yes, Cyrille is no longer maintaining spi-nor. You can put me as the
-contact until someone takes over (I think Marek, the other spi-nor
-maintainer, does not have access to the repo yet).
+[I am assuming that smfrench@gmail.com =3D=3D stfrench@microsoft.com]
 
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-Boris Brezillon, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+--Sig_/Mw6kmUKCKhy7k7bSojDqmeQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrAOBQACgkQAVBC80lX
+0GxyAwf9EaEJUTwOC+LTuEXVMkBBUHXC2l60K30NLbi59HXjQEBCZRzPxh2R+GWZ
+G/bj2Wotq7ABgVcfAIfLt/S0ML0lbecherseRiDooBpcQrqY/MpuKtWAAOzDaivD
+pcR90JkLbejsMZsPro9LxQFA8IKsTMJ65n/2rtNSwi3CYFo2YUI34zQUwrYpc2Ja
+to9N2NXt+gXtqR5NOpdZX+2C3hYEOAEGa/+nFz1c24v2d0O3Us2clggPcX6kD0P+
+Bvc57P30B9xvrAkfDNgTtWaq4nUAOLANgsA9MaDDyACKIWPkY4IVhN0tz8rmEJTV
+IFOiXuff7nzEFcGLyPEwuUNmnFsMKA==
+=+5Py
+-----END PGP SIGNATURE-----
+
+--Sig_/Mw6kmUKCKhy7k7bSojDqmeQ--
