@@ -1,48 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the cifs tree
-Date: Sun, 1 Apr 2018 11:38:28 +1000
-Message-ID: <20180401113828.05bf52d5@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the pci tree
+Date: Sun, 1 Apr 2018 11:41:43 +1000
+Message-ID: <20180401114143.77a9b4a5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Mw6kmUKCKhy7k7bSojDqmeQ"; protocol="application/pgp-signature"
+ boundary="Sig_/eMl.xZoI.=snyHa1.w3EunB"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Steve French <stfrench@microsoft.com>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Mw6kmUKCKhy7k7bSojDqmeQ
+--Sig_/eMl.xZoI.=snyHa1.w3EunB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Bjorn,
 
 Commit
 
-  7127583a1b4b ("cifs: add server->vals->header_preamble_size")
+  0d852407c377 ("HISI LPC: Support the LPC host on Hip06/Hip07 with DT bind=
+ings")
 
 is missing a Signed-off-by from its committer.
-
-[I am assuming that smfrench@gmail.com =3D=3D stfrench@microsoft.com]
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Mw6kmUKCKhy7k7bSojDqmeQ
+--Sig_/eMl.xZoI.=snyHa1.w3EunB
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrAOBQACgkQAVBC80lX
-0GxyAwf9EaEJUTwOC+LTuEXVMkBBUHXC2l60K30NLbi59HXjQEBCZRzPxh2R+GWZ
-G/bj2Wotq7ABgVcfAIfLt/S0ML0lbecherseRiDooBpcQrqY/MpuKtWAAOzDaivD
-pcR90JkLbejsMZsPro9LxQFA8IKsTMJ65n/2rtNSwi3CYFo2YUI34zQUwrYpc2Ja
-to9N2NXt+gXtqR5NOpdZX+2C3hYEOAEGa/+nFz1c24v2d0O3Us2clggPcX6kD0P+
-Bvc57P30B9xvrAkfDNgTtWaq4nUAOLANgsA9MaDDyACKIWPkY4IVhN0tz8rmEJTV
-IFOiXuff7nzEFcGLyPEwuUNmnFsMKA==
-=+5Py
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrAONcACgkQAVBC80lX
+0GwztAf/exKVwr6VIuvuikK278H2a3nKTlnOP+rcNBQNJdUNZMHePLXhiletW+R3
+HwSXtaAacSRXKs8F52tjT+3AsUDLPgdCCzAwEo2La9uNEIQTEzPHP3tpOVyiTyuL
+GR6gQi7Jf3wduPwUn2YuZEJa+RWChALeW7KOJ1+AuiVBvrDbvbmGUIv5ItVKykLo
++P3P5GpdGS1aluyJ3oDjZqiaLBrd1TfWge2QwI3XouGAYuYVY719QkQvOeioQDq8
+bhzv50ezrY964mTWm1TpTBgHvdcm7sauKYSrRSZdzFBmgygMthGEcUsG96uHMMCu
+e8U3qiV1HxGyVGJTfLLlip+e1DJs6g==
+=vyNv
 -----END PGP SIGNATURE-----
 
---Sig_/Mw6kmUKCKhy7k7bSojDqmeQ--
+--Sig_/eMl.xZoI.=snyHa1.w3EunB--
