@@ -1,43 +1,28 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: manual merge of the selinux tree with the security tree
-Date: Tue, 3 Apr 2018 07:59:19 -0400
-Message-ID: <CAHC9VhTFbYC68eS_S3N+Q6h6JFdNBuYC5SUAdYp=TS91kkm3Xg@mail.gmail.com>
-References: <20180403144349.7db7f5e0@canb.auug.org.au>
+From: David Howells <dhowells@redhat.com>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Date: Tue, 03 Apr 2018 13:39:08 +0100
+Message-ID: <29149.1522759148@warthog.procyon.org.uk>
+References: <20180403093030.GB4082@hirez.programming.kicks-ass.net> <20180403154122.00d76d61@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403144349.7db7f5e0@canb.auug.org.au>
+In-Reply-To: <20180403093030.GB4082@hirez.programming.kicks-ass.net>
+Content-ID: <29148.1522759148.1@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: James Morris <jmorris@namei.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Richard Haines <richard_c_haines@btinternet.com>, Sargun Dhillon <sargun@sargun.me>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 3, 2018 at 12:43 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Paul,
->
-> Today's linux-next merge of the selinux tree got a conflict in:
->
->   include/linux/lsm_hooks.h
->
-> between commit:
->
->   22402b0b736d ("security: convert security hooks to use hlist")
->
-> from the security tree and commit:
->
->   72e89f50084c ("security: Add support for SCTP security hooks")
->
-> from the selinux tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-That looks right, thanks Stephen.
+> I figured that since there were only a handful of users it wasn't a
+> popular API, also David very much knew of those patches changing it so
+> could easily have pulled in the special tip/sched/wait branch :/
 
--- 
-paul moore
-www.paul-moore.com
+I'm not sure I could, since I have to base on net-next.  I'm not sure what
+DaveM's policy on that is.
+
+Also, it might've been better not to simply erase the atomic_t wait API
+immediately, but substitute wrappers for it to be removed one iteration hence.
+
+David
