@@ -1,100 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the asm-generic tree with the
- input-current tree
-Date: Wed, 4 Apr 2018 09:06:00 +1000
-Message-ID: <20180404090600.1ea10f79@canb.auug.org.au>
-References: <20180315093705.4e75ab90@canb.auug.org.au>
-        <20180315095656.6007fe3a@canb.auug.org.au>
+ kbuild tree
+Date: Wed, 4 Apr 2018 09:07:35 +1000
+Message-ID: <20180404090735.2c8f0231@canb.auug.org.au>
+References: <20180315094201.1a70ed2a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dz0QU.sXmxaqfyUBSfgpgGo"; protocol="application/pgp-signature"
+ boundary="Sig_/1fJo3Vz.PVmOhB5=qIUzOI6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180315095656.6007fe3a@canb.auug.org.au>
+In-Reply-To: <20180315094201.1a70ed2a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+--Sig_/1fJo3Vz.PVmOhB5=qIUzOI6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Thu, 15 Mar 2018 09:56:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Thu, 15 Mar 2018 09:42:01 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> [Just adding Dimitry to cc]
+> Today's linux-next merge of the asm-generic tree got a conflict in:
 >=20
-> On Thu, 15 Mar 2018 09:37:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > Today's linux-next merge of the asm-generic tree got a conflict in:
-> >=20
-> >   drivers/input/joystick/analog.c
-> >=20
-> > between commit:
-> >=20
-> >   c9ab800167e1 ("Input: analog - use get_cycles() on PPC")
-> >=20
-> > from the input-current tree and commits:
-> >=20
-> >   739d875dd698 ("mn10300: Remove the architecture")
-> >   588020dcb92a ("treewide: simplify Kconfig dependencies for removed ar=
-chs")
-> >=20
-> > from the asm-generic tree.
-> >=20
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
-> >=20
-> > --=20
-> > Cheers,
-> > Stephen Rothwell
-> >=20
-> > diff --cc drivers/input/joystick/analog.c
-> > index a942c4ccd2af,eefac7978f93..000000000000
-> > --- a/drivers/input/joystick/analog.c
-> > +++ b/drivers/input/joystick/analog.c
-> > @@@ -163,7 -163,7 +163,7 @@@ static unsigned int get_time_pit(void
-> >   #define GET_TIME(x)	do { x =3D (unsigned int)rdtsc(); } while (0)
-> >   #define DELTA(x,y)	((y)-(x))
-> >   #define TIME_NAME	"TSC"
-> > - #elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG=
-_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RIS=
-CV) || defined(CONFIG_TILE)
-> >  -#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
-64) || defined(CONFIG_RISCV)
-> > ++#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
-64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV)
-> >   #define GET_TIME(x)	do { x =3D get_cycles(); } while (0)
-> >   #define DELTA(x,y)	((y)-(x))
-> >   #define TIME_NAME	"get_cycles" =20
+>   arch/blackfin/kernel/bfin_ksyms.c
+>=20
+> between commit:
+>=20
+>   4d9c7a5907dd ("kbuild: rename built-in.o to built-in.a")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   e7e57f690e38 ("arch: remove blackfin port")
+>=20
+> from the asm-generic tree.
+>=20
+> I fixed it up (I just removed the file) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-This conflict now exists between the input-current tree and Linus' tree.
+This conflict now exists between the kbuild tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+--Sig_/1fJo3Vz.PVmOhB5=qIUzOI6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrECNgACgkQAVBC80lX
-0Gy2Lwf+OgItgNnMppo741qAvkZubHM7v/FUe1RmCo1UTAdnY5afMQtBsTK4cDQY
-PMTTAU6Coj7GT/Ils2dkhABbeP2/L1QGb1CxbvCvvwvIJ+mvF7wiFhbvBsYZlfNj
-lMSI2O3/n2KGm1bS4SS5lGHT8M9bAQg8U+wz4cNbQBE9+pLaqpuk50X9mdHUSrLS
-aV7czL+7F5cq3WgEwoZ7eJDp+1nYwMghTw4hA7O4NwMXdG01weX9Lpq2NLk8rX4w
-C6W7JvTUY62EEse7cvhqBeAxse4/emOFcPKrkQTJ4v0MMRdu0WuZKnxei8mHrAd5
-wIKI/uzSryqhvHVkO6NQq6hs5I46/A==
-=W1nA
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrECTcACgkQAVBC80lX
+0GxgWAgAhEOFS5fA75ohZ4C3BYG+rUDJ5sXGtEuzZsa/e+/IXGnKE4cYKiuk/vYS
++scdFSYoi5klaA2+8pED8zyDMDQn6AhXMPa830zap+e6rUTlwUO89COYT/yzMxdm
+vnl7siEYplai2ZVJpZqDbckoHy4iFO3Ryg+i+0nG2+SdhTjUl6URakBzy+abh15j
+DSD08lAaVOQX9vpmSzXqruJCv5FM1wMpNlONU9VW3UsupNhEHufRXWUvf9Yb2XO7
+2wFVMFPuS4qnSQr1Ezh6C9+HZa1R8jjncoeXO0S4SJCy2qGcVSoDeEpfw4xoH5C9
+MrdK0Aouh+W9z4xl/KplMV3JRznS3g==
+=H1Vv
 -----END PGP SIGNATURE-----
 
---Sig_/dz0QU.sXmxaqfyUBSfgpgGo--
+--Sig_/1fJo3Vz.PVmOhB5=qIUzOI6--
