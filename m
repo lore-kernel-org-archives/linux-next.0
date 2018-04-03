@@ -1,24 +1,34 @@
-From: David Howells <dhowells@redhat.com>
+From: Peter Zijlstra <peterz@infradead.org>
 Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 03 Apr 2018 13:41:19 +0100
-Message-ID: <29194.1522759279@warthog.procyon.org.uk>
-References: <20180403154122.00d76d61@canb.auug.org.au>
+Date: Tue, 3 Apr 2018 14:42:02 +0200
+Message-ID: <20180403124202.GD4082@hirez.programming.kicks-ass.net>
+References: <20180403093030.GB4082@hirez.programming.kicks-ass.net>
+ <20180403154122.00d76d61@canb.auug.org.au>
+ <29149.1522759148@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403154122.00d76d61@canb.auug.org.au>
-Content-ID: <29193.1522759279.1@warthog.procyon.org.uk>
+Content-Disposition: inline
+In-Reply-To: <29149.1522759148@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Tue, Apr 03, 2018 at 01:39:08PM +0100, David Howells wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > I figured that since there were only a handful of users it wasn't a
+> > popular API, also David very much knew of those patches changing it so
+> > could easily have pulled in the special tip/sched/wait branch :/
+> 
+> I'm not sure I could, since I have to base on net-next.  I'm not sure what
+> DaveM's policy on that is.
+> 
+> Also, it might've been better not to simply erase the atomic_t wait API
+> immediately, but substitute wrappers for it to be removed one iteration hence.
 
-> +	wait_var_event(&rxnet->nr_calls, !atomic_read(&rxnet->nr_calls));
+Yeah, I know, but I really wasn't expecting new users of this thing, it
+seemed like quite an exotic API with very limited users.
 
-I would prefer == 0 to ! as it's not really a true/false value.
-
-But apart from that, it's looks okay and you can add my Reviewed-by.
-
-David
+A well..
