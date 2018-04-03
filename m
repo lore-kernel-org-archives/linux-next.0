@@ -1,34 +1,100 @@
-From: Peter Zijlstra <peterz@infradead.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Date: Tue, 3 Apr 2018 14:42:02 +0200
-Message-ID: <20180403124202.GD4082@hirez.programming.kicks-ass.net>
-References: <20180403093030.GB4082@hirez.programming.kicks-ass.net>
- <20180403154122.00d76d61@canb.auug.org.au>
- <29149.1522759148@warthog.procyon.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the asm-generic tree with the
+ input-current tree
+Date: Wed, 4 Apr 2018 09:06:00 +1000
+Message-ID: <20180404090600.1ea10f79@canb.auug.org.au>
+References: <20180315093705.4e75ab90@canb.auug.org.au>
+        <20180315095656.6007fe3a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/dz0QU.sXmxaqfyUBSfgpgGo"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <29149.1522759148@warthog.procyon.org.uk>
+In-Reply-To: <20180315095656.6007fe3a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Howells <dhowells@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Michael Ellerman <mpe@ellerman.id.au>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Apr 03, 2018 at 01:39:08PM +0100, David Howells wrote:
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > I figured that since there were only a handful of users it wasn't a
-> > popular API, also David very much knew of those patches changing it so
-> > could easily have pulled in the special tip/sched/wait branch :/
-> 
-> I'm not sure I could, since I have to base on net-next.  I'm not sure what
-> DaveM's policy on that is.
-> 
-> Also, it might've been better not to simply erase the atomic_t wait API
-> immediately, but substitute wrappers for it to be removed one iteration hence.
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, I know, but I really wasn't expecting new users of this thing, it
-seemed like quite an exotic API with very limited users.
+Hi all,
 
-A well..
+On Thu, 15 Mar 2018 09:56:56 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> [Just adding Dimitry to cc]
+>=20
+> On Thu, 15 Mar 2018 09:37:05 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > Today's linux-next merge of the asm-generic tree got a conflict in:
+> >=20
+> >   drivers/input/joystick/analog.c
+> >=20
+> > between commit:
+> >=20
+> >   c9ab800167e1 ("Input: analog - use get_cycles() on PPC")
+> >=20
+> > from the input-current tree and commits:
+> >=20
+> >   739d875dd698 ("mn10300: Remove the architecture")
+> >   588020dcb92a ("treewide: simplify Kconfig dependencies for removed ar=
+chs")
+> >=20
+> > from the asm-generic tree.
+> >=20
+> > I fixed it up (see below) and can carry the fix as necessary. This
+> > is now fixed as far as linux-next is concerned, but any non trivial
+> > conflicts should be mentioned to your upstream maintainer when your tree
+> > is submitted for merging.  You may also want to consider cooperating
+> > with the maintainer of the conflicting tree to minimise any particularly
+> > complex conflicts.
+> >=20
+> > --=20
+> > Cheers,
+> > Stephen Rothwell
+> >=20
+> > diff --cc drivers/input/joystick/analog.c
+> > index a942c4ccd2af,eefac7978f93..000000000000
+> > --- a/drivers/input/joystick/analog.c
+> > +++ b/drivers/input/joystick/analog.c
+> > @@@ -163,7 -163,7 +163,7 @@@ static unsigned int get_time_pit(void
+> >   #define GET_TIME(x)	do { x =3D (unsigned int)rdtsc(); } while (0)
+> >   #define DELTA(x,y)	((y)-(x))
+> >   #define TIME_NAME	"TSC"
+> > - #elif defined(__alpha__) || defined(CONFIG_MN10300) || defined(CONFIG=
+_ARM) || defined(CONFIG_ARM64) || defined(CONFIG_PPC) || defined(CONFIG_RIS=
+CV) || defined(CONFIG_TILE)
+> >  -#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
+64) || defined(CONFIG_RISCV)
+> > ++#elif defined(__alpha__) || defined(CONFIG_ARM) || defined(CONFIG_ARM=
+64) || defined(CONFIG_PPC) || defined(CONFIG_RISCV)
+> >   #define GET_TIME(x)	do { x =3D get_cycles(); } while (0)
+> >   #define DELTA(x,y)	((y)-(x))
+> >   #define TIME_NAME	"get_cycles" =20
+
+This conflict now exists between the input-current tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrECNgACgkQAVBC80lX
+0Gy2Lwf+OgItgNnMppo741qAvkZubHM7v/FUe1RmCo1UTAdnY5afMQtBsTK4cDQY
+PMTTAU6Coj7GT/Ils2dkhABbeP2/L1QGb1CxbvCvvwvIJ+mvF7wiFhbvBsYZlfNj
+lMSI2O3/n2KGm1bS4SS5lGHT8M9bAQg8U+wz4cNbQBE9+pLaqpuk50X9mdHUSrLS
+aV7czL+7F5cq3WgEwoZ7eJDp+1nYwMghTw4hA7O4NwMXdG01weX9Lpq2NLk8rX4w
+C6W7JvTUY62EEse7cvhqBeAxse4/emOFcPKrkQTJ4v0MMRdu0WuZKnxei8mHrAd5
+wIKI/uzSryqhvHVkO6NQq6hs5I46/A==
+=W1nA
+-----END PGP SIGNATURE-----
+
+--Sig_/dz0QU.sXmxaqfyUBSfgpgGo--
