@@ -1,135 +1,129 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with Linus' tree
-Date: Tue, 3 Apr 2018 12:29:55 +1000
-Message-ID: <20180403122955.1822dbc5@canb.auug.org.au>
+Subject: linux-next: manual merge of the net-next tree with the pci tree
+Date: Tue, 3 Apr 2018 13:14:54 +1000
+Message-ID: <20180403131454.4f9f032d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ry7YLf==porYJlWAXwk89wS"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Casey Leedom <leedom@chelsio.com>, Arjun Vynipadath <arjun@chelsio.com>, Ganesh Goudar <ganeshgr@chelsio.com>, "David S. Miller" <davem@davemloft.net>
+ boundary="Sig_/kLc5NKrAQe+OKKbEqT4VXk+"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tariq Toukan <tariqt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Tal Gilboa <talgi@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Ry7YLf==porYJlWAXwk89wS
+--Sig_/kLc5NKrAQe+OKKbEqT4VXk+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi all,
 
-Today's linux-next merge of the pci tree got a conflict in:
+Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/pci/quirks.c
+  drivers/net/ethernet/mellanox/mlx5/core/en_main.c
 
 between commit:
 
-  7dcf688d4c78 ("PCI/cxgb4: Extend T3 PCI quirk to T4+ devices")
+  2907938d2375 ("net/mlx5e: Use pcie_bandwidth_available() to compute bandw=
+idth")
 
-from Linus' tree and commit:
+from the pci tree and commit:
 
-  996058573b22 ("PCI/VPD: Move VPD quirks to vpd.c")
+  0608d4dbaf4e ("net/mlx5e: Unify slow PCI heuristic")
 
-from the pci tree.
+from the net-next tree.
 
-I fixed it up (I removed the section from this file and added the
-following merge fix patch) and can carry the fix as necessary. This
+I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
 conflicts should be mentioned to your upstream maintainer when your tree
 is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 3 Apr 2018 12:17:20 +1000
-Subject: [PATCH] PCI/cxgb4: merge fix up for move of quirk_chelsio_extend_v=
-pd()
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/pci/vpd.c | 37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
-index 00b8b5d37056..8617565ba561 100644
---- a/drivers/pci/vpd.c
-+++ b/drivers/pci/vpd.c
-@@ -617,19 +617,28 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_BROADCOM,
-=20
- static void quirk_chelsio_extend_vpd(struct pci_dev *dev)
- {
--	pci_set_vpd_size(dev, 8192);
-+	int chip =3D (dev->device & 0xf000) >> 12;
-+	int func =3D (dev->device & 0x0f00) >>  8;
-+	int prod =3D (dev->device & 0x00ff) >>  0;
-+
-+	/*
-+	 * If this is a T3-based adapter, there's a 1KB VPD area at offset
-+	 * 0xc00 which contains the preferred VPD values.  If this is a T4 or
-+	 * later based adapter, the special VPD is at offset 0x400 for the
-+	 * Physical Functions (the SR-IOV Virtual Functions have no VPD
-+	 * Capabilities).  The PCI VPD Access core routines will normally
-+	 * compute the size of the VPD by parsing the VPD Data Structure at
-+	 * offset 0x000.  This will result in silent failures when attempting
-+	 * to accesses these other VPD areas which are beyond those computed
-+	 * limits.
-+	 */
-+	if (chip =3D=3D 0x0 && prod >=3D 0x20)
-+		pci_set_vpd_size(dev, 8192);
-+	else if (chip >=3D 0x4 && func < 0x8)
-+		pci_set_vpd_size(dev, 2048);
- }
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x20, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x21, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x22, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x23, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x24, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x25, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x26, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x30, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x31, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x32, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x35, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x36, quirk_chelsio_extend_=
-vpd);
--DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, 0x37, quirk_chelsio_extend_=
-vpd);
-+
-+DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_CHELSIO, PCI_ANY_ID,
-+			quirk_chelsio_extend_vpd);
-+
- #endif
---=20
-2.16.1
-
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Ry7YLf==porYJlWAXwk89wS
+diff --cc drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 884337f88589,0aab3afc6885..000000000000
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@@ -3880,16 -4026,50 +4033,20 @@@ void mlx5e_build_default_indir_rqt(u32=20
+  		indirection_rqt[i] =3D i % num_channels;
+  }
+ =20
+- static bool cqe_compress_heuristic(u32 link_speed, u32 pci_bw)
+ -static int mlx5e_get_pci_bw(struct mlx5_core_dev *mdev, u32 *pci_bw)
+ -{
+ -	enum pcie_link_width width;
+ -	enum pci_bus_speed speed;
+ -	int err =3D 0;
+ -
+ -	err =3D pcie_get_minimum_link(mdev->pdev, &speed, &width);
+ -	if (err)
+ -		return err;
+ -
+ -	if (speed =3D=3D PCI_SPEED_UNKNOWN || width =3D=3D PCIE_LNK_WIDTH_UNKNOW=
+N)
+ -		return -EINVAL;
+ -
+ -	switch (speed) {
+ -	case PCIE_SPEED_2_5GT:
+ -		*pci_bw =3D 2500 * width;
+ -		break;
+ -	case PCIE_SPEED_5_0GT:
+ -		*pci_bw =3D 5000 * width;
+ -		break;
+ -	case PCIE_SPEED_8_0GT:
+ -		*pci_bw =3D 8000 * width;
+ -		break;
+ -	default:
+ -		return -EINVAL;
+ -	}
+ -
+ -	return 0;
+ -}
+ -
++ static bool slow_pci_heuristic(struct mlx5_core_dev *mdev)
+  {
+- 	return (link_speed && pci_bw &&
+- 		(pci_bw < 40000) && (pci_bw < link_speed));
+- }
++ 	u32 link_speed =3D 0;
++ 	u32 pci_bw =3D 0;
+ =20
+- static bool hw_lro_heuristic(u32 link_speed, u32 pci_bw)
+- {
+- 	return !(link_speed && pci_bw &&
+- 		 (pci_bw <=3D 16000) && (pci_bw < link_speed));
++ 	mlx5e_get_max_linkspeed(mdev, &link_speed);
+ -	mlx5e_get_pci_bw(mdev, &pci_bw);
+++	pci_bw =3D pcie_bandwidth_available(mdev->pdev, NULL, NULL, NULL);
++ 	mlx5_core_dbg_once(mdev, "Max link speed =3D %d, PCI BW =3D %d\n",
++ 			   link_speed, pci_bw);
++=20
++ #define MLX5E_SLOW_PCI_RATIO (2)
++=20
++ 	return link_speed && pci_bw &&
++ 		link_speed > MLX5E_SLOW_PCI_RATIO * pci_bw;
+  }
+ =20
+  void mlx5e_set_tx_cq_mode_params(struct mlx5e_params *params, u8 cq_perio=
+d_mode)
+
+--Sig_/kLc5NKrAQe+OKKbEqT4VXk+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC5yMACgkQAVBC80lX
-0Gwb4ggAkUIY+UJoWYmSZ65t/NsCX/vsiYx+wArSDvPnNr0FVqc3/dXIl2+oS1N9
-MPBLlXRTpD1Y8isOm4dI9HD/TFGsbqM50UOAVSS+E4lD7YU4gck0/qHbrmJUXU+x
-m6gBBUgbZ+uEZmm8aArwtY1jF3hKKf0LdX/J1w2JRpJuj8u3bvzqx0Cc3PQTLnug
-suYPQz031fA5gh86qCNSKA0yjZ2ipo04Ii8OVRSthJ2WQjjAcL3Jwv7+SXIhbtMa
-saUexz6LBY4q+LM5XsPcb8Ac3O4P1FhQOtJHmp00v15jpUOTsrQLUgCQ0+kYs8kh
-Af2EKLMX4MsiKiFcqpiIHx8XIsZ3Gw==
-=ar49
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC8a4ACgkQAVBC80lX
+0Gxv4AgAjHVEdipcMHuSq6GbgjgcHJ9+Maf0XBZOszt9XWJyOPqYUvhDMvT+EqJk
+2Jcwe/N5uhwwQn+EGk5cy2mJzTqlz3QEXFejF4YFwnOwWW5XVYNbTCiopl4aKLWe
+qb5IS3MLZ0txG+5hmGDWJvFVnoh5dSputUTaPKo8xzOUtZdUFuHYjsGcxNbNUpy7
+QkkyDKILhnf7XO4IYFf0+DC/qKxLS+aBqXy9BWizGDewCXBdax5ekiLyuC8MmPw5
+nRLyJaVdaoYhDZDbTzAlSDdiD4Gm0+zsIkfLbRDARt81/2d1YHoRWO71WMpVeBg5
+7sZQvhkWE4yIOsAeb1Nu7cL8LuW8mg==
+=vMbS
 -----END PGP SIGNATURE-----
 
---Sig_/Ry7YLf==porYJlWAXwk89wS--
+--Sig_/kLc5NKrAQe+OKKbEqT4VXk+--
