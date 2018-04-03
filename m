@@ -1,63 +1,64 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the pci tree with the asm-generic tree
-Date: Tue, 3 Apr 2018 12:14:15 +1000
-Message-ID: <20180403121415.20c4843e@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Date: Tue, 3 Apr 2018 12:26:29 +1000
+Message-ID: <20180403122629.688f2cab@canb.auug.org.au>
+References: <20180319170627.04eae43b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EtAJOtp6TzJsOUSKgvjaxlK"; protocol="application/pgp-signature"
+ boundary="Sig_/2j93cYseQ+/pdycqKHdsIJE"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180319170627.04eae43b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jesper Nilsson <jesper@jni.nu>, David Howells <dhowells@redhat.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mateusz Guzik <mguzik@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK
+--Sig_/2j93cYseQ+/pdycqKHdsIJE
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the pci tree got a conflict in:
+On Mon, 19 Mar 2018 17:06:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the vfs tree, today's linux-next build (x86_64 allnoconfig)
+> failed like this:
+>=20
+> fs/super.c: In function 'do_thaw_all_callback':
+> fs/super.c:942:3: error: implicit declaration of function 'emergency_thaw=
+_bdev'; did you mean 'emergency_remount'? [-Werror=3Dimplicit-function-decl=
+aration]
+>    emergency_thaw_bdev(sb);
+>    ^~~~~~~~~~~~~~~~~~~
+>    emergency_remount
+>=20
+> Caused by commit
+>=20
+>   92afc556e622 ("buffer.c: call thaw_super during emergency thaw")
+>=20
+> I have reverted that commit for today.
 
-  arch/cris/arch-v32/drivers/pci/bios.c
-
-between commits:
-
-  c690eddc2f3b ("CRIS: Drop support for the CRIS port")
-  fd8773f9f544 ("arch: remove frv port")
-  739d875dd698 ("mn10300: Remove the architecture")
-
-from the asm-generic tree and commit:
-
-  31cbca85df15 ("PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled")
-
-from the pci tree.
-
-I fixed it up (I just removed the files) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+I am still doing that revert ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK
+--Sig_/2j93cYseQ+/pdycqKHdsIJE
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC43cACgkQAVBC80lX
-0GyIUQf9EX5A9NuqbXV4L7ruOh/idShldigxDgznAFj0zujYZGleB9FuUl4nzP6O
-HmaCRVVFgG67UDjj+pTkp+T5Q7Ixx0nqP94VrpRh7AeDK6caHXG8k5+NlM+qSYER
-NhiQAl6oRoYw7JQpMzxRistijWqrys0+rOXCUmakz98u2Etb8Zj33JOd8xh0iFLW
-pVxykVuCKzMbO7loU2cyx3XUEssVYu3c2DaouiheORoJ/FhG/BCR0bLsLLhdjH+p
-reI2IJUIGoRdjMZKfGH+himXXbzVcS7lSzBC6ebDhYpgZa2iMi4YIGpEhFQBPQsy
-nQca983JJCoulyjJb1a9Yd6bq7cy5Q==
-=3YYZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrC5lUACgkQAVBC80lX
+0Gyx6Af/f2yVMI3cSY69kghx2iiBw7se/h0Vmw5k75gTvzLylWeztVTQnibtVs2F
+B43Nx7hKLGKbIhinCVsoOWCGVyUfyWqZ3QqNoGUHAW78meLoXOm4894juuoGLlPg
+JWEITdEDA3NKRw9+F5mN+RLc0RTl060phD0j3hTdzREN9aonmQOrKjMhw6MLYech
+nQgXro7dIUghLhWe5yrNZcxA0PGpU+olCRliiYcZPbOCWxk3CNFlfdq/eg0nNErp
+bvSaZLojapNXNLVoVR6GtQhloEOw2lkGFb89OAt7tywp15sqx0j93s1EpyLtBJ9G
+bcgFjEbDiXbAiEZ48PoncIiNOzeK8w==
+=ZKV7
 -----END PGP SIGNATURE-----
 
---Sig_/EtAJOtp6TzJsOUSKgvjaxlK--
+--Sig_/2j93cYseQ+/pdycqKHdsIJE--
