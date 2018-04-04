@@ -1,66 +1,52 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: x32 suspend failuer in Re: linux-next: Tree for Apr 4
-Date: Wed, 4 Apr 2018 10:49:05 +0200
-Message-ID: <20180404084905.GA12303@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404075047.GB9342@amd>
- <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: linux-next: manual merge of the v4l-dvb tree with the
+ asm-generic tree
+Date: Wed, 4 Apr 2018 06:41:20 -0300
+Message-ID: <20180404064112.747dbe14@vento.lan>
+References: <20180315122921.24520368@canb.auug.org.au>
+        <20180404090900.2cc0645e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0hxyXtyKacJufivL9HWbQBsxTBYVipnHK4+QquTYjpc+A@mail.gmail.com>
+In-Reply-To: <20180404090900.2cc0645e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans Verkuil <hans.verkuil@cisco.com>
 List-Id: linux-next.vger.kernel.org
 
+Em Wed, 4 Apr 2018 09:09:00 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> escreveu:
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed 2018-04-04 09:58:17, Rafael J. Wysocki wrote:
-> On Wed, Apr 4, 2018 at 9:50 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
+> Hi all,
+> 
+> On Thu, 15 Mar 2018 12:29:21 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 > >
-> >> Please do not add any v4.18 destined stuff to your linux-next included
-> >> trees until after v4.17-rc1 has been released.
-> >
-> > On thinkpad x60, suspend does not suspend at all with this -next
-> > version. Previous versions suspended/resumed fine but broke networking.
-> >
-> > Any ideas? I guess bisecting on next would not be easy?
->=20
-> Well, why would it be different from a bisect on any other git repo?
+> > Today's linux-next merge of the v4l-dvb tree got a conflict in:
+> > 
+> >   drivers/media/platform/blackfin/bfin_capture.c
+> > 
+> > between commit:
+> > 
+> >   b9ec40bf7d29 ("media: platform: remove blackfin capture driver")
+> > 
+> > from the asm-generic tree and commit:
+> > 
+> >   4471109e3894 ("media: convert g/s_parm to g/s_frame_interval in subdevs")
+> > 
+> > from the v4l-dvb tree.
+> > 
+> > I fixed it up (I just removed the file) and can carry the fix as
+> > necessary. This is now fixed as far as linux-next is concerned, but any
+> > non trivial conflicts should be mentioned to your upstream maintainer
+> > when your tree is submitted for merging.  You may also want to consider
+> > cooperating with the maintainer of the conflicting tree to minimise any
+> > particularly complex conflicts.  
+> 
+> This conflict now exists between the v4l-dvb tree and Linus' tree.
 
-Well, v4.16-rc4 is parent of v4.16-rc6, but next-20180304 is not
-parent of next-20180307.
+Thanks for warning me. Merged from Linus on all media trees/branches.
 
-But you are right that if I do bisect between -linus and -next, it
-should work.
-
-Anyway, does s2ram work for you in -next? Are you testing 32bit?
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrEkYEACgkQMOfwapXb+vLG4QCgsFeKGFXML6N/TenjjVMvDLz5
-eW0An2VftGX/HEQTmpKPKF9iGVJJD0Oo
-=pdrV
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
+-- 
+Thanks,
+Mauro
