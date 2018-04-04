@@ -1,99 +1,37 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Date: Wed, 4 Apr 2018 20:15:13 +0200
-Message-ID: <20180404181513.GA29233@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: manual merge of the pci tree with the asm-generic tree
+Date: Wed, 04 Apr 2018 18:38:51 +0000
+Message-ID: <CAErSpo5UpMrBn2VFyMD4VHvKnC04vGy5Wpzi76ZhD=ne6kdLtw@mail.gmail.com>
+References: <20180403121415.20c4843e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180404175852.GI5700@atomide.com>
+In-Reply-To: <20180403121415.20c4843e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pali.rohar@gmail.com, sre@kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com, Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, jesper@jni.nu, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
+On Mon, Apr 2, 2018 at 9:15 PM Stephen Rothwell <sfr@canb.auug.org.au>
+wrote:
 
---pWyiEgJYm5f9v55/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Hi all,
 
-Hi!
+> Today's linux-next merge of the pci tree got a conflict in:
 
-> > > Please do not add any v4.18 destined stuff to your linux-next included
-> > > trees until after v4.17-rc1 has been released.
-> > >=20
-> > > Changes since 20180403:
-> > >=20
-> > > The vfs tree still had its build failure for which I reverted a commi=
-t.
-> > >=20
-> > > Non-merge commits (relative to Linus' tree): 8505
-> > >  8493 files changed, 392779 insertions(+), 275941 deletions(-)
-> > >=20
-> > > ---------------------------------------------------------------------=
--------
-> >=20
-> > When trying to build kernel for N900, I get:
-> >=20
-> >   CC      lib/timerqueue.o
-> >     CC      lib/vsprintf.o
-> >     lib/string.c: In function 'strstr':
-> >     lib/string.c:478:8: error: inlining failed in call to
-> >     always_inline 'strlen': function not inlinable
-> >     lib/string.c:903:5: error: called from here
-> >     lib/string.c:478:8: error: inlining failed in call to
-> >     always_inline 'strlen': function not inlinable
-> >     lib/string.c:906:5: error: called from here
-> >     lib/string.c:855:15: error: inlining failed in call to
-> >     always_inline 'memcmp': function not inlinable
-> >     ...
-> > pavel@duo:/data/l/linux-next-n900$ git branch -l
-> > * (detached from next-20180403)
-> >=20
-> > I'm using
-> >=20
-> > eval ` eldk-switch.sh -r 5.4 armv7a`
-> >=20
-> > for cross-compilation.
->=20
-> Hmm I'm not seeing build issues with next-20180404, did this somehow
-> already get sorted out?
+>     arch/cris/arch-v32/drivers/pci/bios.c
 
-Let me check...
+> between commits:
 
-  CC      lib/vsprintf.o
-  lib/string.c: In function 'strstr':
-  lib/string.c:478:8: error: inlining failed in call to always_inline
-  'strlen': function not inlinable
+>     c690eddc2f3b ("CRIS: Drop support for the CRIS port")
+>     fd8773f9f544 ("arch: remove frv port")
+>     739d875dd698 ("mn10300: Remove the architecture")
 
-Same problem.
+> from the asm-generic tree and commit:
 
-pavel@duo:~$ eval ` eldk-switch.sh -r 5.4 armv7a`
-pavel@duo:~$ arm-linux-gnueabi-gcc --version
-arm-linux-gnueabi-gcc (GCC) 4.7.2
+>     31cbca85df15 ("PCI/MSI: Don't set up INTx if MSI or MSI-X is enabled")
 
-Best regards,								Pavel
+> from the pci tree.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---pWyiEgJYm5f9v55/
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrFFjEACgkQMOfwapXb+vJ0EwCgjB9Z0OHv1LOJNBBQP4y5WsOO
-e2MAnAmCW/yDxrTr7BjPi5Zj3GT+77TC
-=eqyS
------END PGP SIGNATURE-----
-
---pWyiEgJYm5f9v55/--
+FWIW, I dropped the cris, frv, and mn10300 parts from my patch
+(31cbca85df15).
