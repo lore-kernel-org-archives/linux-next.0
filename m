@@ -1,141 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the net-next tree with the pci tree
-Date: Thu, 5 Apr 2018 11:40:27 +1000
-Message-ID: <20180405114027.500aefad@canb.auug.org.au>
-References: <20180403131454.4f9f032d@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the nvdimm tree
+Date: Thu, 5 Apr 2018 16:30:07 +1000
+Message-ID: <20180405163007.38ec8cc6@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/4jscNMpAMVqPqe3mSiipYop"; protocol="application/pgp-signature"
+ boundary="Sig_/BH+ATAiL4v0b46msLvX5ols"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180403131454.4f9f032d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tariq Toukan <tariqt@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>, Tal Gilboa <talgi@mellanox.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <mawilcox@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/4jscNMpAMVqPqe3mSiipYop
+--Sig_/BH+ATAiL4v0b46msLvX5ols
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andrew,
 
-On Tue, 3 Apr 2018 13:14:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the net-next tree got a conflict in:
->=20
->   drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->=20
-> between commit:
->=20
->   2907938d2375 ("net/mlx5e: Use pcie_bandwidth_available() to compute ban=
-dwidth")
->=20
-> from the pci tree and commit:
->=20
->   0608d4dbaf4e ("net/mlx5e: Unify slow PCI heuristic")
->=20
-> from the net-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> --=20
-> Cheers,
-> Stephen Rothwell
->=20
-> diff --cc drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> index 884337f88589,0aab3afc6885..000000000000
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-> @@@ -3880,16 -4026,50 +4033,20 @@@ void mlx5e_build_default_indir_rqt(u32=
-=20
->   		indirection_rqt[i] =3D i % num_channels;
->   }
->  =20
-> - static bool cqe_compress_heuristic(u32 link_speed, u32 pci_bw)
->  -static int mlx5e_get_pci_bw(struct mlx5_core_dev *mdev, u32 *pci_bw)
->  -{
->  -	enum pcie_link_width width;
->  -	enum pci_bus_speed speed;
->  -	int err =3D 0;
->  -
->  -	err =3D pcie_get_minimum_link(mdev->pdev, &speed, &width);
->  -	if (err)
->  -		return err;
->  -
->  -	if (speed =3D=3D PCI_SPEED_UNKNOWN || width =3D=3D PCIE_LNK_WIDTH_UNKN=
-OWN)
->  -		return -EINVAL;
->  -
->  -	switch (speed) {
->  -	case PCIE_SPEED_2_5GT:
->  -		*pci_bw =3D 2500 * width;
->  -		break;
->  -	case PCIE_SPEED_5_0GT:
->  -		*pci_bw =3D 5000 * width;
->  -		break;
->  -	case PCIE_SPEED_8_0GT:
->  -		*pci_bw =3D 8000 * width;
->  -		break;
->  -	default:
->  -		return -EINVAL;
->  -	}
->  -
->  -	return 0;
->  -}
->  -
-> + static bool slow_pci_heuristic(struct mlx5_core_dev *mdev)
->   {
-> - 	return (link_speed && pci_bw &&
-> - 		(pci_bw < 40000) && (pci_bw < link_speed));
-> - }
-> + 	u32 link_speed =3D 0;
-> + 	u32 pci_bw =3D 0;
->  =20
-> - static bool hw_lro_heuristic(u32 link_speed, u32 pci_bw)
-> - {
-> - 	return !(link_speed && pci_bw &&
-> - 		 (pci_bw <=3D 16000) && (pci_bw < link_speed));
-> + 	mlx5e_get_max_linkspeed(mdev, &link_speed);
->  -	mlx5e_get_pci_bw(mdev, &pci_bw);
-> ++	pci_bw =3D pcie_bandwidth_available(mdev->pdev, NULL, NULL, NULL);
-> + 	mlx5_core_dbg_once(mdev, "Max link speed =3D %d, PCI BW =3D %d\n",
-> + 			   link_speed, pci_bw);
-> +=20
-> + #define MLX5E_SLOW_PCI_RATIO (2)
-> +=20
-> + 	return link_speed && pci_bw &&
-> + 		link_speed > MLX5E_SLOW_PCI_RATIO * pci_bw;
->   }
->  =20
->   void mlx5e_set_tx_cq_mode_params(struct mlx5e_params *params, u8 cq_per=
-iod_mode)
+Today's linux-next merge of the akpm tree got a conflict in:
 
-This is now a conflict between the pci tree and Linus' tree.
+  fs/dax.c
+
+between commit:
+
+  fab6964f22b9 ("mm, fs, dax: handle layout changes to pinned dax mappings")
+
+which was removed from the nvdimm tree today and patch:
+
+  "page cache: use xa_lock"
+
+from the akpm tree.
+
+I fixed it up (I removed the dax_layout_busy_page() function) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/4jscNMpAMVqPqe3mSiipYop
+--Sig_/BH+ATAiL4v0b46msLvX5ols
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFfosACgkQAVBC80lX
-0GzdzggAhmCtpnHho/TwyuyGBtJsGZQg8lqqXoyvhBb0mjkxniYRXsX6MRpVp+gV
-HWKw5NICmmhtwE8JSxJagcq+Vm6dBZxb/UbdOf5o+TfaoQDaM5qgNzFJlLlOITbW
-SkAqCuAxlCmOEc6GGAB2ow7vKF1Ya1Vg5ozjFInAILfg91kEZOHwtXBqmMvRzKkR
-4pfaj4GOp7sQIdwzr/HAfMpIzstSIJS+M+3QQrbnvKdLebsPpXZkS/7CmTSrB/Vk
-Gdh9q4TX6OM10SSl0/+TUXS94ZKOqGqoEGyMNaXJl5wL9WoetS3I3bOgKVRAhRRs
-FriddmBI6W6bXU1miqhIvMfMYuHkkQ==
-=qIQe
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFwm8ACgkQAVBC80lX
+0GwUmwf/bK0Sz92Vicl5Vk5hp8WbK2JfhuDNXMvyAaMx2PYJwtuKHAJJlzucQOCI
+07uBAw71VzkcSVcpu2feFPjsL8CCphwvavHDZKbY6PZGITGlyn4BM2+snicplijU
+Dh2GnJYpF1i6AtHBR5l4ORjWImx4hAPRcK4tsMU+rwpGF/A3MBtE/ens0kjfLum2
+SeoSh2T4irit8mKngh2mh2KWo4h6X+odh0ThVbtbObsp0FEEsdrgOM71EqpYxIkZ
+KIeTJ5+W+czNayAU/N3eMXJAwh7ExtuU0cg0Cn1aCwnCyPlGBCf5z/JDPiqxMBcj
+xpgSRfieHvb8XNfJLZ0Z0HEdynjQTA==
+=OJZa
 -----END PGP SIGNATURE-----
 
---Sig_/4jscNMpAMVqPqe3mSiipYop--
+--Sig_/BH+ATAiL4v0b46msLvX5ols--
