@@ -1,129 +1,90 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: FORTIFY_SOURCE breaks ARM compilation in -next -- was Re: ARM
- compile failure in Re: linux-next: Tree for Apr 4
-Date: Wed, 4 Apr 2018 22:18:37 +0200
-Message-ID: <20180404201837.GA9710@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
- <20180404184622.GA8608@amd>
- <20180404195951.GJ5700@atomide.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the sparc-next tree with the arm64
+ tree
+Date: Thu, 5 Apr 2018 10:41:24 +1000
+Message-ID: <20180405104124.10695ee0@canb.auug.org.au>
+References: <20180321103408.49e62310@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fKO8QIT9t/eUiBCb0sVSha6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180404195951.GJ5700@atomide.com>
+In-Reply-To: <20180321103408.49e62310@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pali.rohar@gmail.com, sre@kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, khilman@kernel.org, aaro.koskinen@iki.fi, ivo.g.dimitrov.75@gmail.com, patrikbachan@gmail.com, serge@hallyn.com, abcloriens@gmail.com, clayton@craftyguy.net, martijn@brixit.nl, sakari.ailus@linux.intel.com, Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>, jinb.park7@gmail.com, keescook@chromium.org, rmk+kernel@armlinux.org.uk
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: David Miller <davem@davemloft.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Khalid Aziz <khalid.aziz@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-
---lrZ03NoBR/3+SXJZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-04-04 12:59:51, Tony Lindgren wrote:
-> * Pavel Machek <pavel@ucw.cz> [180404 18:47]:
-> > Hi!
-> >=20
-> > > > When trying to build kernel for N900, I get:
-> > > >=20
-> > > >   CC      lib/timerqueue.o
-> > > >     CC      lib/vsprintf.o
-> > > >     lib/string.c: In function 'strstr':
-> > > >     lib/string.c:478:8: error: inlining failed in call to
-> > > >     always_inline 'strlen': function not inlinable
-> > > >     lib/string.c:903:5: error: called from here
-> > > >     lib/string.c:478:8: error: inlining failed in call to
-> > > >     always_inline 'strlen': function not inlinable
-> > > >     lib/string.c:906:5: error: called from here
-> > > >     lib/string.c:855:15: error: inlining failed in call to
-> > > >     always_inline 'memcmp': function not inlinable
-> > > >     ...
-> > > > pavel@duo:/data/l/linux-next-n900$ git branch -l
-> > > > * (detached from next-20180403)
-> > > >=20
-> > > > I'm using
-> > > >=20
-> > > > eval ` eldk-switch.sh -r 5.4 armv7a`
-> > > >=20
-> > > > for cross-compilation.
-> > >=20
-> > > Hmm I'm not seeing build issues with next-20180404, did this somehow
-> > > already get sorted out?
-> >=20
-> > It seems it is config-dependend. omap2plus_defconfig compiles ok for
-> > me.
-> >=20
-> > Can you try with attached .config?
+Hi all,
+
+On Wed, 21 Mar 2018 10:34:08 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the sparc-next tree got a conflict in:
 >=20
-> That still builds for me. This with plain gcc-7.3.0 binutils-2.30
-> built with buildall script.
+>   arch/x86/kernel/signal_compat.c
+>=20
+> between commit:
+>=20
+>   266da65e9156 ("signal: Add FPE_FLTUNK si_code for undiagnosable fp exce=
+ptions")
+>=20
+> from the arm64 tree and commit:
+>=20
+>   d84bb709aa4a ("signals, sparc: Add signal codes for ADI violations")
+>=20
+> from the sparc-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/x86/kernel/signal_compat.c
+> index d2884e951bb5,838a4dc90a6d..000000000000
+> --- a/arch/x86/kernel/signal_compat.c
+> +++ b/arch/x86/kernel/signal_compat.c
+> @@@ -26,8 -26,8 +26,8 @@@ static inline void signal_compat_build_
+>   	 * new fields are handled in copy_siginfo_to_user32()!
+>   	 */
+>   	BUILD_BUG_ON(NSIGILL  !=3D 11);
+>  -	BUILD_BUG_ON(NSIGFPE  !=3D 13);
+>  +	BUILD_BUG_ON(NSIGFPE  !=3D 14);
+> - 	BUILD_BUG_ON(NSIGSEGV !=3D 4);
+> + 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
+>   	BUILD_BUG_ON(NSIGBUS  !=3D 5);
+>   	BUILD_BUG_ON(NSIGTRAP !=3D 4);
+>   	BUILD_BUG_ON(NSIGCHLD !=3D 6);
 
-Thanks.
+This is now a conflict between the adm64 tree and Linus' tree.
 
-Ok, let me try to bisect it. Compile-problem should be easy...
-
-Hmm. And as it is compile-problem in single file, it should even be
-reasonably fast. I did not realize how easy it would be:
-
-#!/bin/bash
-set -e
-cp config.ok .config
-yes '' | ARCH=3Darm make lib/string.o
-
-And the winner is:
-
-ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
-commit ee333554fed55555a986a90bb097ac7f9d6f05bf
-Author: Jinbum Park <jinb.park7@gmail.com>
-Date:   Tue Mar 6 01:39:24 2018 +0100
-
-    ARM: 8749/1: Kconfig: Add ARCH_HAS_FORTIFY_SOURCE
-
-    CONFIG_FORTIFY_SOURCE detects various overflows at compile-time.
-        (6974f0c4555e ("include/linux/string.h:
-    add the option of fortified string.h functions)
-   =20
-    ARCH_HAS_FORTIFY_SOURCE means that the architecture can be built
-    and
-    run with CONFIG_FORTIFY_SOURCE.
-   =20
-    Since ARM can be built and run with that flag like other
-    architectures,
-    select ARCH_HAS_FORTIFY_SOURCE as default.
-   =20
-    Acked-by: Kees Cook <keescook@chromium.org>
-    Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-    Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-
-:040000 040000 2bff2f75ba36dd838a8ded3028b745d9f13f4c4a
-									e61289e33a1fb71b1a6c05c442d45ea40bd5aba0
-									M
-									arch
-bisect run success
-pavel@duo:/data/l/linux-next-n900$=20
-
-
-									Pavel
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Cheers,
+Stephen Rothwell
 
---lrZ03NoBR/3+SXJZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlrFMx0ACgkQMOfwapXb+vIr9QCbBhT4nZ8xYIgT15jzxo4EoP3J
-QiQAn0b+e+VyPD+fPDyBaC/BByfnmXhZ
-=vsoP
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrFcLQACgkQAVBC80lX
+0GxDYQf+NUSTrDps/TuobY2PK12cmfiZ6nsXKyZvmUsj56QwCydMkcGIpRLkqshh
+rc9ztvww9tVmeo3xamOBoe4Dnk167avnKtVJkkWqG+LhR0thZHnD2A/DYd5kvCz/
+sZm8rahBdklAlQ6wE8MfKCmH7Zdwm6ECatj0NDrjKy4Gxo37YtZ4yxU5/QAUeFIT
+fXyWi2JvToYNFggFLurqW8Iqz5PDSK9FJd3eRTqn9MwM8GCEJwfcXDI+YUn94YBZ
+0loYhW0/nLtuzaOnXyu6Eo9B6hgJPUctfWioP4/D+ClrEvQdZdCZKxeqCf+dC+1b
+Y/3Za/8gi4lcn7y+zKjB8XLjWRfGYA==
+=IeRE
 -----END PGP SIGNATURE-----
 
---lrZ03NoBR/3+SXJZ--
+--Sig_/fKO8QIT9t/eUiBCb0sVSha6--
