@@ -1,77 +1,50 @@
-From: Matthew Wilcox <willy@infradead.org>
-Subject: Re: mmotm 2018-04-05-16-59 uploaded
-Date: Fri, 6 Apr 2018 07:54:15 -0700
-Message-ID: <20180406145415.GB20605@bombadil.infradead.org>
-References: <20180406000009.l1ebV%akpm@linux-foundation.org>
+From: Johannes Weiner <hannes@cmpxchg.org>
+Subject: [patch] mm: memcg: make sure memory.events is uptodate when waking
+ pollers fix
+Date: Fri, 6 Apr 2018 11:54:41 -0400
+Message-ID: <20180406155441.GA20806@cmpxchg.org>
+References: <20180406145330.4d166464@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180406000009.l1ebV%akpm@linux-foundation.org>
+In-Reply-To: <20180406145330.4d166464@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org
-Cc: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 05, 2018 at 05:00:09PM -0700, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-04-05-16-59 has been uploaded to
+On Fri, Apr 06, 2018 at 02:53:30PM +1000, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
->    http://www.ozlabs.org/~akpm/mmotm/
+> After merging the akpm-current tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> mm/memcontrol.c: In function 'memory_events_show':
+> mm/memcontrol.c:5453:23: warning: array subscript is above array bounds [-Warray-bounds]
+>       atomic_long_read(&memcg->memory_events[OOM_KILL]));
+>                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Introduced by commit
+> 
+>   725844c87a0d ("mm: memcg: make sure memory.events is uptodate when waking pollers")
 
-> * page-cache-use-xa_lock.patch
+Ah, silly, I missed that warning. The below fixes it.
 
-Hi Andrew.  Could I trouble you to add page-cache-use-xa_lock-fix.patch?
-
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- arch/nds32/include/asm/cacheflush.h | 4 ++--
- fs/dax.c                            | 6 +++---
- 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
-index 7b9b20a381cb..1240f148ec0f 100644
---- a/arch/nds32/include/asm/cacheflush.h
-+++ b/arch/nds32/include/asm/cacheflush.h
-@@ -34,8 +34,8 @@ void flush_anon_page(struct vm_area_struct *vma,
- void flush_kernel_dcache_page(struct page *page);
- void flush_icache_range(unsigned long start, unsigned long end);
- void flush_icache_page(struct vm_area_struct *vma, struct page *page);
--#define flush_dcache_mmap_lock(mapping)   spin_lock_irq(&(mapping)->tree_lock)
--#define flush_dcache_mmap_unlock(mapping) spin_unlock_irq(&(mapping)->tree_lock)
-+#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
-+#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 04ea2b104ee2..9bac6dc26e09 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -5199,8 +5199,7 @@ static int memory_events_show(struct seq_file *m, void *v)
+ 		   atomic_long_read(&memcg->memory_events[MEMCG_MAX]));
+ 	seq_printf(m, "oom %lu\n",
+ 		   atomic_long_read(&memcg->memory_events[MEMCG_OOM]));
+-	seq_printf(m, "oom_kill %lu\n",
+-		   atomic_long_read(&memcg->memory_events[OOM_KILL]));
++	seq_printf(m, "oom_kill %lu\n", memcg_sum_events(memcg, OOM_KILL));
  
- #else
- #include <asm-generic/cacheflush.h>
-diff --git a/fs/dax.c b/fs/dax.c
-index fef7d458fd7d..aaec72ded1b6 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -499,7 +499,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	void *entry;
- 	struct radix_tree_root *pages = &mapping->i_pages;
- 
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_irq(pages);
- 	entry = get_unlocked_mapping_entry(mapping, index, NULL);
- 	if (!entry || WARN_ON_ONCE(!radix_tree_exceptional_entry(entry)))
- 		goto out;
-@@ -513,7 +513,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
- 	ret = 1;
- out:
- 	put_unlocked_mapping_entry(mapping, index, entry);
--	xa_unlock_irq(&mapping->i_pages);
-+	xa_unlock_irq(pages);
- 	return ret;
+ 	return 0;
  }
- /*
-@@ -600,7 +600,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
- 			unmap_mapping_pages(mapping, vmf->pgoff, 1, false);
- 	}
- 
--	xa_lock_irq(&mapping->i_pages);
-+	xa_lock_irq(pages);
- 	new_entry = dax_radix_locked_entry(pfn, flags);
- 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
- 		dax_disassociate_entry(entry, mapping, false);
--- 
-2.16.3
