@@ -1,51 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: bad commits in the nfs-anna tree
-Date: Sat, 7 Apr 2018 00:41:14 +1000
-Message-ID: <20180407004114.287f1ee6@canb.auug.org.au>
-References: <20180406074314.7ae8652e@canb.auug.org.au>
-        <f728fad9-bc15-b968-2965-d17c6893efc3@Netapp.com>
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: mmotm 2018-04-05-16-59 uploaded
+Date: Fri, 6 Apr 2018 07:54:15 -0700
+Message-ID: <20180406145415.GB20605@bombadil.infradead.org>
+References: <20180406000009.l1ebV%akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/G+koPrJ8KL5P.7DhvXB=vc2"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f728fad9-bc15-b968-2965-d17c6893efc3@Netapp.com>
+Content-Disposition: inline
+In-Reply-To: <20180406000009.l1ebV%akpm@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Anna Schumaker <Anna.Schumaker@Netapp.com>
-Cc: Trond Myklebust <trondmy@gmail.com>, NFS Mailing List <linux-nfs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: akpm@linux-foundation.org
+Cc: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/G+koPrJ8KL5P.7DhvXB=vc2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Apr 05, 2018 at 05:00:09PM -0700, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2018-04-05-16-59 has been uploaded to
+> 
+>    http://www.ozlabs.org/~akpm/mmotm/
 
-Hi Anna,
+> * page-cache-use-xa_lock.patch
 
-On Fri, 6 Apr 2018 09:44:07 -0400 Anna Schumaker <Anna.Schumaker@Netapp.com=
-> wrote:
->
-> Weird.  I removed a few patches from the middle of my tree after
-> finding a bug, but I guess I gave my interactive rebase a slightly
-> too wide range.  It should be fixed now.
+Hi Andrew.  Could I trouble you to add page-cache-use-xa_lock-fix.patch?
 
-Thanks.
---=20
-Cheers,
-Stephen Rothwell
+---
+ arch/nds32/include/asm/cacheflush.h | 4 ++--
+ fs/dax.c                            | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
---Sig_/G+koPrJ8KL5P.7DhvXB=vc2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrHhwoACgkQAVBC80lX
-0GxdLwf7BsC9NwM3Y/PpiuDCg5s5PYLMb3GC6ElKKkbOCF8b0KLAcQXVaOZNqi/R
-A/ICA3FEQHh0dnB4S/nRkbiO/2ctEG018uKr9SskIH4uw6IofPEhfGy8H346319R
-lpfcMGkNnuhqAfFK6NLUhDsb2ng5eaWLay9Mr2hAsmg07HmeH1kRnnog7lTdDDb1
-ei+pcjpi2ZTtomdRrzFoXheH2d8H8hpZt53RfPRgKfvfSZjUkSOmYX/GdPeV165v
-xzjT1FftK+hWK+EDWz8jMUl+fuOwNT5bEOBV49iHzHDmPGvnOFROJL3HnfQ6PCY7
-McsBupnafGaF83YE0CLNFDimfLsttA==
-=MWGl
------END PGP SIGNATURE-----
-
---Sig_/G+koPrJ8KL5P.7DhvXB=vc2--
+diff --git a/arch/nds32/include/asm/cacheflush.h b/arch/nds32/include/asm/cacheflush.h
+index 7b9b20a381cb..1240f148ec0f 100644
+--- a/arch/nds32/include/asm/cacheflush.h
++++ b/arch/nds32/include/asm/cacheflush.h
+@@ -34,8 +34,8 @@ void flush_anon_page(struct vm_area_struct *vma,
+ void flush_kernel_dcache_page(struct page *page);
+ void flush_icache_range(unsigned long start, unsigned long end);
+ void flush_icache_page(struct vm_area_struct *vma, struct page *page);
+-#define flush_dcache_mmap_lock(mapping)   spin_lock_irq(&(mapping)->tree_lock)
+-#define flush_dcache_mmap_unlock(mapping) spin_unlock_irq(&(mapping)->tree_lock)
++#define flush_dcache_mmap_lock(mapping)   xa_lock_irq(&(mapping)->i_pages)
++#define flush_dcache_mmap_unlock(mapping) xa_unlock_irq(&(mapping)->i_pages)
+ 
+ #else
+ #include <asm-generic/cacheflush.h>
+diff --git a/fs/dax.c b/fs/dax.c
+index fef7d458fd7d..aaec72ded1b6 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -499,7 +499,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	void *entry;
+ 	struct radix_tree_root *pages = &mapping->i_pages;
+ 
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_irq(pages);
+ 	entry = get_unlocked_mapping_entry(mapping, index, NULL);
+ 	if (!entry || WARN_ON_ONCE(!radix_tree_exceptional_entry(entry)))
+ 		goto out;
+@@ -513,7 +513,7 @@ static int __dax_invalidate_mapping_entry(struct address_space *mapping,
+ 	ret = 1;
+ out:
+ 	put_unlocked_mapping_entry(mapping, index, entry);
+-	xa_unlock_irq(&mapping->i_pages);
++	xa_unlock_irq(pages);
+ 	return ret;
+ }
+ /*
+@@ -600,7 +600,7 @@ static void *dax_insert_mapping_entry(struct address_space *mapping,
+ 			unmap_mapping_pages(mapping, vmf->pgoff, 1, false);
+ 	}
+ 
+-	xa_lock_irq(&mapping->i_pages);
++	xa_lock_irq(pages);
+ 	new_entry = dax_radix_locked_entry(pfn, flags);
+ 	if (dax_entry_size(entry) != dax_entry_size(new_entry)) {
+ 		dax_disassociate_entry(entry, mapping, false);
+-- 
+2.16.3
