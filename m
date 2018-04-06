@@ -1,118 +1,154 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the parisc-hd tree
-Date: Fri, 6 Apr 2018 10:15:42 +1000
-Message-ID: <20180406101542.0bfa38a1@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tty tree with the arm-soc tree
+Date: Fri, 6 Apr 2018 10:38:57 +1000
+Message-ID: <20180406103857.02c15ff4@canb.auug.org.au>
+References: <20180315172858.7928ed93@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/jMvWOgf64Sy1ND_kyJLEGTL"; protocol="application/pgp-signature"
+ boundary="Sig_/pEQT=.bz1dZ_Ko8F6ch/4Vs"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180315172858.7928ed93@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Helge Deller <deller@gmx.de>, Parisc List <linux-parisc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Greg KH <greg@kroah.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Patrice Chotard <patrice.chotard@st.com>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/jMvWOgf64Sy1ND_kyJLEGTL
+--Sig_/pEQT=.bz1dZ_Ko8F6ch/4Vs
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi All,
 
-After merging the parisc-hd tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+On Thu, 15 Mar 2018 17:28:58 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the tty tree got conflicts in:
+>=20
+>   arch/arm/boot/dts/stih407-b2120.dts
+>   arch/arm/boot/dts/stih410-b2120.dts
+>   arch/arm/boot/dts/stih410-b2260.dts
+>   arch/arm/boot/dts/stih418-b2199.dts
+>=20
+> between commit:
+>=20
+>   db5430663017 ("arm: dts: replace 'linux,stdout-path' with 'stdout-path'=
+")
+>=20
+> from the arm-soc tree and commit:
+>=20
+>   dbb3fb45edff ("ARM: dts: STi: Remove "console=3DttyASN" from bootargs f=
+or STi boards")
+>=20
+> from the tty tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc arch/arm/boot/dts/stih407-b2120.dts
+> index de3c8bf129b5,a7a0f76e9cbc..000000000000
+> --- a/arch/arm/boot/dts/stih407-b2120.dts
+> +++ b/arch/arm/boot/dts/stih407-b2120.dts
+> @@@ -14,11 -14,11 +14,11 @@@
+>   	compatible =3D "st,stih407-b2120", "st,stih407";
+>  =20
+>   	chosen {
+> - 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
+> + 		bootargs =3D "clk_ignore_unused";
+>  -		linux,stdout-path =3D &sbc_serial0;
+>  +		stdout-path =3D &sbc_serial0;
+>   	};
+>  =20
+>  -	memory {
+>  +	memory@40000000 {
+>   		device_type =3D "memory";
+>   		reg =3D <0x40000000 0x80000000>;
+>   	};
+> diff --cc arch/arm/boot/dts/stih410-b2120.dts
+> index 0a59b7b0f4b2,6c6b4cc37e97..000000000000
+> --- a/arch/arm/boot/dts/stih410-b2120.dts
+> +++ b/arch/arm/boot/dts/stih410-b2120.dts
+> @@@ -14,11 -14,11 +14,11 @@@
+>   	compatible =3D "st,stih410-b2120", "st,stih410";
+>  =20
+>   	chosen {
+> - 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
+> + 		bootargs =3D "clk_ignore_unused";
+>  -		linux,stdout-path =3D &sbc_serial0;
+>  +		stdout-path =3D &sbc_serial0;
+>   	};
+>  =20
+>  -	memory {
+>  +	memory@40000000 {
+>   		device_type =3D "memory";
+>   		reg =3D <0x40000000 0x80000000>;
+>   	};
+> diff --cc arch/arm/boot/dts/stih410-b2260.dts
+> index feb8834478fa,50d36758391c..000000000000
+> --- a/arch/arm/boot/dts/stih410-b2260.dts
+> +++ b/arch/arm/boot/dts/stih410-b2260.dts
+> @@@ -15,11 -15,11 +15,11 @@@
+>   	compatible =3D "st,stih410-b2260", "st,stih410";
+>  =20
+>   	chosen {
+> - 		bootargs =3D "console=3DttyAS1,115200 clk_ignore_unused";
+> + 		bootargs =3D "clk_ignore_unused";
+>  -		linux,stdout-path =3D &uart1;
+>  +		stdout-path =3D &uart1;
+>   	};
+>  =20
+>  -	memory {
+>  +	memory@40000000 {
+>   		device_type =3D "memory";
+>   		reg =3D <0x40000000 0x40000000>;
+>   	};
+> diff --cc arch/arm/boot/dts/stih418-b2199.dts
+> index 39b4db2e3507,7f5f3252bfc7..000000000000
+> --- a/arch/arm/boot/dts/stih418-b2199.dts
+> +++ b/arch/arm/boot/dts/stih418-b2199.dts
+> @@@ -14,11 -14,11 +14,11 @@@
+>   	compatible =3D "st,stih418-b2199", "st,stih418";
+>  =20
+>   	chosen {
+> - 		bootargs =3D "console=3DttyAS0,115200 clk_ignore_unused";
+> + 		bootargs =3D "clk_ignore_unused";
+>  -		linux,stdout-path =3D &sbc_serial0;
+>  +		stdout-path =3D &sbc_serial0;
+>   	};
+>  =20
+>  -	memory {
+>  +	memory@40000000 {
+>   		device_type =3D "memory";
+>   		reg =3D <0x40000000 0xc0000000>;
+>   	};
 
-In file included from include/linux/kernel.h:10:0,
-                 from include/linux/list.h:9,
-                 from include/linux/preempt.h:11,
-                 from include/linux/spinlock.h:51,
-                 from include/linux/seqlock.h:36,
-                 from include/linux/time.h:6,
-                 from include/linux/stat.h:19,
-                 from include/linux/compat.h:13,
-                 from arch/x86/kernel/signal_compat.c:2:
-In function 'signal_compat_build_tests',
-    inlined from 'sigaction_compat_abi' at arch/x86/kernel/signal_compat.c:=
-166:2:
-include/linux/compiler.h:339:38: error: call to '__compiletime_assert_29' d=
-eclared with attribute error: BUILD_BUG_ON failed: NSIGFPE !=3D 14
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-                                      ^
-include/linux/compiler.h:319:4: note: in definition of macro '__compiletime=
-_assert'
-    prefix ## suffix();    \
-    ^~~~~~
-include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_a=
-ssert'
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^~~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_a=
-ssert'
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_M=
-SG'
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-arch/x86/kernel/signal_compat.c:29:2: note: in expansion of macro 'BUILD_BU=
-G_ON'
-  BUILD_BUG_ON(NSIGFPE  !=3D 14);
-  ^~~~~~~~~~~~
-
-Caused by commit
-
-  186536608fd1 ("parisc/signal: Add FPE_CONDTRAP for conditional trap handl=
-ing")
-
-I applied the following patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 6 Apr 2018 10:10:26 +1000
-Subject: [PATCH] parisc/signal: Add FPE_CONDTRAP for conditional trap handl=
-ing
- fix
-
-Update the X86 NSIGFPE check as well.  There are no new fields associated
-with this change, so this should be fine.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- arch/x86/kernel/signal_compat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/signal_compat.c b/arch/x86/kernel/signal_compa=
-t.c
-index df92605d8724..14c057f29979 100644
---- a/arch/x86/kernel/signal_compat.c
-+++ b/arch/x86/kernel/signal_compat.c
-@@ -26,7 +26,7 @@ static inline void signal_compat_build_tests(void)
- 	 * new fields are handled in copy_siginfo_to_user32()!
- 	 */
- 	BUILD_BUG_ON(NSIGILL  !=3D 11);
--	BUILD_BUG_ON(NSIGFPE  !=3D 14);
-+	BUILD_BUG_ON(NSIGFPE  !=3D 15);
- 	BUILD_BUG_ON(NSIGSEGV !=3D 7);
- 	BUILD_BUG_ON(NSIGBUS  !=3D 5);
- 	BUILD_BUG_ON(NSIGTRAP !=3D 4);
---=20
-2.16.1
+These are now conflicts between the arm-soc tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/jMvWOgf64Sy1ND_kyJLEGTL
+--Sig_/pEQT=.bz1dZ_Ko8F6ch/4Vs
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrGvC8ACgkQAVBC80lX
-0GyHggf/Ue/TkyWf/aXonIxndTJovt4jqgWtuzA03MlzKWT0snXKkFQUveFOLALi
-1yNSd+QJWwq0FtcjrdYppGvQ9vOafXVdjFgGIWYjQ8vICGAfZRlJsYhJV64/bbG8
-hjd3svTEKiae/Qq7cOmdvfpmXwwA8zqpUKwiMccgVu3oLcI76BIfyIQbYyPsxQoJ
-b3EYy3YYfkb+wwiFVEKJz4jqr3mYq/TM7VRETLzzMnhSo5/lhnFke+cM45hignmS
-pJKzPYsItBRuBmR7LD8TIQOR7pHiHrogMV6FNLfpJduvaqknqWL8E2lzpQDQ/jZx
-Krc2rtFMyM5u3WcoRIoCAw2xvsZjZw==
-=+UWV
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrGwaEACgkQAVBC80lX
+0GwoiAf+ISjuR9YMTwQ/CAwXl93St7eITUDdpyGhdiguuZgW5YU4pz5wQ7b4YvJ7
+puRUpTm/2D/3CNJY6k56TN5z+AJYJH6pfLiJ9TIBJGprJibK3iA03gTFiJTEuCi4
+L10r16USA3S8y5LgWtZ3ysnn0J0dPLrE+43LJm4pF6C1YmzLyWx3iNCFLJdxpmKa
+gk640DqL3AaNg+0lAPK5kqx9fV4oucVvpD3tZEXz0QkMQnd/FxzStt61q/x9EUNH
+pfXMk0DYMT3egWjxQwuW1PG6zIJ5nkUjBSqz+ls/7ZniryE7UzbD330er7W6gepk
+zmtPTZqni0jDhIaewEfguBjYjX2XzA==
+=6MAp
 -----END PGP SIGNATURE-----
 
---Sig_/jMvWOgf64Sy1ND_kyJLEGTL--
+--Sig_/pEQT=.bz1dZ_Ko8F6ch/4Vs--
