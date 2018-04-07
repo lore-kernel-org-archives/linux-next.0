@@ -1,60 +1,46 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: x32 suspend failuer in Re: linux-next: Tree for Apr 4
-Date: Sat, 7 Apr 2018 00:41:12 +0200
-Message-ID: <20180406224112.GA5940@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404075047.GB9342@amd>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the openrisc tree
+Date: Sat, 7 Apr 2018 23:36:24 +1000
+Message-ID: <20180407233624.18bdb1d8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/njSbMCObApmg+VX/oiJ_C2u"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180404075047.GB9342@amd>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-pm mailing list <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Stafford Horne <shorne@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/njSbMCObApmg+VX/oiJ_C2u
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Wed 2018-04-04 09:50:47, Pavel Machek wrote:
-> Hi!
->=20
-> > Please do not add any v4.18 destined stuff to your linux-next included
-> > trees until after v4.17-rc1 has been released.
->=20
-> On thinkpad x60, suspend does not suspend at all with this -next
-> version. Previous versions suspended/resumed fine but broke networking.
+Hi Stafford,
 
-I bisected networking breakage to
+Commit
 
-c16add24522547bf52c189b3c0d1ab6f5c2b4375
+  bf118b74c385 ("openrisc: remove unused __ARCH_HAVE_MMU define")
 
-which is slightly weird. But it modifies ACPI in strange way, so maybe
-not that weird.
+is missing a Signed-off-by from its committer.
 
-Networking breakage is still in next-20180406.
-
-									Pavel
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Cheers,
+Stephen Rothwell
 
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/njSbMCObApmg+VX/oiJ_C2u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlrH94gACgkQMOfwapXb+vKrCACgnBzeRARVDy5dGoLek+mGucou
-lN8An1ExBHyO73ypHm1chtJRXLdtgUNP
-=Lzuj
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrIyVgACgkQAVBC80lX
+0GzG2ggAmbfF6tAtaPTezUfRZgOeWo+GzwSqMkzAJC6SQ3ftHXQuFfpuelPqN1lJ
+rJHGRJiEOHSG5DZrY2kWSfgP+ZA31QCSOxWynjh66gvyVWXjSsBDtyvHcZWeSFZ3
+oOMDjQKF+rhHmaHO5/s89nGOPh64x6TohFPPtJaiM0toMLbU8jRtuWo8t5jpR9mj
+2mODe/2dnOMcE+e+OWhi5KhkEI7RUoT886xGL8v6Q2cvs+AO6o8Sw5B0seY4wbbi
+A+iklTebmzBg5VPBv1fAQ4zZBnzu/jleOTpAwql536dAOtPpKMWHdjZZJK4kOM5J
+IkkmTVCIFzntk2P32TGhfgLbwluzXQ==
+=eu5v
 -----END PGP SIGNATURE-----
 
---7AUc2qLy4jB3hD7Z--
+--Sig_/njSbMCObApmg+VX/oiJ_C2u--
