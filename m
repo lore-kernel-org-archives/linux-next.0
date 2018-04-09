@@ -1,54 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the nvdimm tree
-Date: Mon, 9 Apr 2018 13:16:19 +1000
-Message-ID: <20180409131619.0bc5fb45@canb.auug.org.au>
+From: Oliver <oohall@gmail.com>
+Subject: Re: linux-next: build failure after merge of the nvdimm tree
+Date: Mon, 9 Apr 2018 13:38:11 +1000
+Message-ID: <CAOSf1CHToZ5+k90n_sgh_9ezJjXpx21E5-K66TWkdU7t7kUiEw@mail.gmail.com>
+References: <20180409131619.0bc5fb45@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/5hwoHcGrw4QE8IXDvwO3B+y"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180409131619.0bc5fb45@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Oliver O'Halloran <oohall@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dan Williams <dan.j.williams@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/5hwoHcGrw4QE8IXDvwO3B+y
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Apr 9, 2018 at 1:16 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dan,
+>
+> After merging the nvdimm tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
+>
+> Caused by commit
+>
+>   717197608952 ("libnvdimm: Add device-tree based driver")
+>
+> X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
+> and CONFIG_NUMA are both 'y' in this build.
 
-Hi Dan,
+It's a side effect of a driver selecting CONFIG_OF accidently. There's
+a patch to fix this in the drm-misc-next tree:
 
-After merging the nvdimm tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+https://lkml.org/lkml/2018/4/3/17
 
-ERROR: "of_node_to_nid" [drivers/nvdimm/of_pmem.ko] undefined!
+> I have used the nvdimm tree from next-20180406 for today.
 
-Caused by commit
+That works too.
 
-  717197608952 ("libnvdimm: Add device-tree based driver")
-
-X86 seems to not have a version of of_node_to_nid() even though CONFIG_OF
-and CONFIG_NUMA are both 'y' in this build.
-
-I have used the nvdimm tree from next-20180406 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5hwoHcGrw4QE8IXDvwO3B+y
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrK2wQACgkQAVBC80lX
-0GyZoQf+KEOKWub2lWSqItFYQpcFmrCVWdp/5A+I3QG4GTZvq1e1MDVmgZVcgOS8
-uRlkOMLWBiHVDeP2vH//UraJiMc+8kEFNNUKVQ7waEdZeBZ8ocidZVobQ4CghAL+
-1DbbBNwoGaDB6fAR5UfYEboz6mtGnR65bS0jbLyyHs3jLEiKjlWgQAE80aaHB5Ts
-aWoIKefZGolth+lxkH5z1dzMDc141pzTfCwI6XwjVtN+lXQ1SavGFW/kzSI47roK
-MFXf7qkL+qjGjXDwJ0FEvB4XiAECpWYHOI0FqLg0P/IKVx5fx8gc8VwXUF2oVmuF
-D5ey9piew20WD2BW07c2NJKlB4bnZA==
-=E15y
------END PGP SIGNATURE-----
-
---Sig_/5hwoHcGrw4QE8IXDvwO3B+y--
+Oliver
