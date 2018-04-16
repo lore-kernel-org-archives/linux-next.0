@@ -1,97 +1,83 @@
-From: Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: build failure after merge of the bpf tree
-Date: Mon, 16 Apr 2018 11:04:11 +0200
-Message-ID: <f79728c9-fa0c-ad04-f5cf-578172ec1712@iogearbox.net>
-References: <20180416123000.30fd8a04@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the netfilter tree
+Date: Tue, 17 Apr 2018 09:28:59 +1000
+Message-ID: <20180417092859.358573be@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xGmb.tbd_m2j/9+ca6DNz7="; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180416123000.30fd8a04@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Fastabend <john.fastabend@gmail.com>
+To: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Cong Wang <xiyou.wangcong@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen, hi John,
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 04/16/2018 04:30 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the bpf tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
-> 
-> kernel/bpf/core.o: In function `sock_map_release':
-> core.c:(.text+0xd04): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> kernel/events/core.o: In function `sock_map_release':
-> core.c:(.text+0x85cc): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> block/blk-core.o: In function `sock_map_release':
-> blk-core.c:(.text+0x58e8): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> drivers/net/virtio_net.o: In function `sock_map_release':
-> virtio_net.c:(.text+0x53ec): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/dev.o: In function `sock_map_release':
-> dev.c:(.text+0x6c68): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/rtnetlink.o: In function `sock_map_release':
-> rtnetlink.c:(.text+0x63e0): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/filter.o: In function `sock_map_release':
-> filter.c:(.text+0x8c8c): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/core/sock_reuseport.o: In function `sock_map_release':
-> sock_reuseport.c:(.text+0x398): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/bpf/test_run.o: In function `sock_map_release':
-> test_run.c:(.text+0x3dc): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> net/packet/af_packet.o: In function `sock_map_release':
-> af_packet.c:(.text+0x6958): multiple definition of `sock_map_release'
-> kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
-> 
-> Caused by commit
-> 
->   9b2e8bbc4e7a ("bpf: sockmap, map_release does not hold refcnt for pinned maps")
-> 
-> I applied the following patch for today:
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 16 Apr 2018 12:27:24 +1000
-> Subject: [PATCH] fix for "bpf: sockmap, map_release does not hold refcnt for
->  pinned maps"
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  include/linux/bpf.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index f46561de5154..3b6c2b66f414 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -660,7 +660,7 @@ static inline int sock_map_prog(struct bpf_map *map,
->  	return -EOPNOTSUPP;
->  }
->  
-> -void sock_map_release(struct bpf_map *map) {}
-> +static inline void sock_map_release(struct bpf_map *map) {}
->  #endif
->  
->  /* verifier prototypes for helper functions called from eBPF programs */
+Hi all,
 
-Sigh, yeah, that's buggy. Thanks for catching it!
+After merging the netfilter tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-John, given bpf tree hasn't been pushed out, I'm considering to drop the
-series from the bpf tree so we can have a clean respin of it with this fixed
-initially and not as follow-up churn.
+net/netfilter/nf_conntrack_extend.c: In function 'nf_ct_ext_
+add':
+net/netfilter/nf_conntrack_extend.c:74:2: error: implicit declaration of fu=
+nction 'kmemleak_not_leak' [-Werror=3Dimplicit-function-declaration]
+  kmemleak_not_leak(old);
+  ^~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
 
-While you're at it, can you just make this a bpf callback, so we have the
-'clear' handlers private in prog array and sockmap respectively? This would
-also have avoided the bug in the first place.
+Caused by commit
 
-Thanks,
-Daniel
+  114aa35d06d4 ("netfilter: conntrack: silent a memory leak warning")
+
+I have added this patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 17 Apr 2018 09:26:49 +1000
+Subject: [PATCH] netfilter: conntrack: include kmemleak.h for
+ kmemleak_not_leak()
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ net/netfilter/nf_conntrack_extend.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/netfilter/nf_conntrack_extend.c b/net/netfilter/nf_conntra=
+ck_extend.c
+index bd71a828ebde..277bbfe26478 100644
+--- a/net/netfilter/nf_conntrack_extend.c
++++ b/net/netfilter/nf_conntrack_extend.c
+@@ -9,6 +9,7 @@
+  *      2 of the License, or (at your option) any later version.
+  */
+ #include <linux/kernel.h>
++#include <linux/kmemleak.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/rcupdate.h>
+--=20
+2.16.3
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVMbsACgkQAVBC80lX
+0GxZ7wf/WOhRUi85MTU9MkKgs5QnmbKMxPMN1AMN4JHpCtFH8GhZrOJoHKBeRnI8
+nNlcCHW0P5tN8IzoDdUgvxX41g4IQc/doujuktE8nozsH5EbeshN3n5BT3BAssYK
+/5pnMNrpziCsxdFJnAQ99gsWAc1NScAsfcqxvH5JnnW5Tk//QPNcC3cDM3XGja0n
+QAH8JVSclPcnKZfcfbYpp3CFOacvF87WnsV0AgsMdUj8bGC8gR0gAv9Hiq0LFUwX
+FVwMmvBwrsQKozYxhZgACzJXdxWDwjLsKez5jjVnSbtAjnIBECQRUs2SJh8L/2Tj
+y2zMopyfzkNUHeu18vUnD/lZeTJ0JA==
+=bv6w
+-----END PGP SIGNATURE-----
+
+--Sig_/xGmb.tbd_m2j/9+ca6DNz7=--
