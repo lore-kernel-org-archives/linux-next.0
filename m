@@ -1,91 +1,107 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
- in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Date: Sun, 15 Apr 2018 22:58:07 +0200
-Message-ID: <20180415205807.GA4182@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
- <20180404184622.GA8608@amd>
- <20180404195951.GJ5700@atomide.com>
- <20180404201837.GA9710@amd>
- <20180415173908.GA2024@amd>
- <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the bpf tree
+Date: Mon, 16 Apr 2018 12:30:00 +1000
+Message-ID: <20180416123000.30fd8a04@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/z/+uyHLVn+3.ksDUOgyPIfK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Daniel Micay <danielmicay@gmail.com>, Tony Lindgren <tony@atomide.com>, Thorsten Leemhuis <regressions@leemhuis.info>, Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pali.rohar@gmail.com, sre@kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, "Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>, Clayton Craft <clayton@craftyguy.net>, Martijn
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, John Fastabend <john.fastabend@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-
---l76fUT7nc3MelDdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/z/+uyHLVn+3.ksDUOgyPIfK
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sun 2018-04-15 11:00:06, Kees Cook wrote:
-> On Sun, Apr 15, 2018 at 10:39 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
-> >
-> >> Thanks.
-> >>
-> >> Ok, let me try to bisect it. Compile-problem should be easy...
-> >>
-> >> Hmm. And as it is compile-problem in single file, it should even be
-> >> reasonably fast. I did not realize how easy it would be:
-> >>
-> >> #!/bin/bash
-> >> set -e
-> >> cp config.ok .config
-> >> yes '' | ARCH=3Darm make lib/string.o
-> >>
-> >> And the winner is:
-> >>
-> >> ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
-> >> commit ee333554fed55555a986a90bb097ac7f9d6f05bf
-> >> Author: Jinbum Park <jinb.park7@gmail.com>
-> >> Date:   Tue Mar 6 01:39:24 2018 +0100
-> > ...
-> >
-> >>     Acked-by: Kees Cook <keescook@chromium.org>
-> >>     Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-> >>     Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> >
-> > So I bisect a problem in -next, and patch is merged to Linus,
-> > _anyway_, breaking compilation there? Neither Jinbum nor Russell even
-> > bother to comment.
->=20
-> Hi! Sorry I lost this email in my inbox. It seems this is specific to
-> a particular subset of arm architectures? (My local builds of arm all
-> succeed, for example. Can you send your failing config?) I'll take a
-> closer look on Monday if Daniel doesn't beat me to it.
+Hi all,
 
-I believe it depends on gcc version really. I should get some sleep
-now, but details should be in the corresponding thread on lkml.
+After merging the bpf tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-I'll send you my .config privately.
-								Pavel
+kernel/bpf/core.o: In function `sock_map_release':
+core.c:(.text+0xd04): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+kernel/events/core.o: In function `sock_map_release':
+core.c:(.text+0x85cc): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+block/blk-core.o: In function `sock_map_release':
+blk-core.c:(.text+0x58e8): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+drivers/net/virtio_net.o: In function `sock_map_release':
+virtio_net.c:(.text+0x53ec): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/core/dev.o: In function `sock_map_release':
+dev.c:(.text+0x6c68): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/core/rtnetlink.o: In function `sock_map_release':
+rtnetlink.c:(.text+0x63e0): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/core/filter.o: In function `sock_map_release':
+filter.c:(.text+0x8c8c): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/core/sock_reuseport.o: In function `sock_map_release':
+sock_reuseport.c:(.text+0x398): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/bpf/test_run.o: In function `sock_map_release':
+test_run.c:(.text+0x3dc): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+net/packet/af_packet.o: In function `sock_map_release':
+af_packet.c:(.text+0x6958): multiple definition of `sock_map_release'
+kernel/sysctl.o:sysctl.c:(.text+0x1a50): first defined here
+
+Caused by commit
+
+  9b2e8bbc4e7a ("bpf: sockmap, map_release does not hold refcnt for pinned =
+maps")
+
+I applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 16 Apr 2018 12:27:24 +1000
+Subject: [PATCH] fix for "bpf: sockmap, map_release does not hold refcnt for
+ pinned maps"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ include/linux/bpf.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index f46561de5154..3b6c2b66f414 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -660,7 +660,7 @@ static inline int sock_map_prog(struct bpf_map *map,
+ 	return -EOPNOTSUPP;
+ }
+=20
+-void sock_map_release(struct bpf_map *map) {}
++static inline void sock_map_release(struct bpf_map *map) {}
+ #endif
+=20
+ /* verifier prototypes for helper functions called from eBPF programs */
+--=20
+2.16.3
 
 --=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Cheers,
+Stephen Rothwell
 
---l76fUT7nc3MelDdI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--Sig_/z/+uyHLVn+3.ksDUOgyPIfK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iEYEARECAAYFAlrTvN8ACgkQMOfwapXb+vLhTgCcDvOONplDwZ2uDNCkiG3G/Bdl
-r+IAnRjHLy9V9BdOAYE8Gwk4ejKlbl0k
-=MBNZ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrUCqgACgkQAVBC80lX
+0GwJSQf/bE61HpqdcNVK65k6QMq+KhnOJrII8d0UqpvUZsM2zKJ9H2VOzqokvwxs
+HYvbSwIYJ/fTXgDBpb+hMP+ghlCzhAprdHobVeplffsQPV5LVMTbcwpdqpg8nC3U
+vdXW2LUZoJPKGW9iPaC56ULf/QE8mDdeXr4sO6cDQ0e1Rpplmz+T43PPfgjUAKle
+ktP/3Xw/DQEvoDIhkh64zCBTFQoE35Mr1sC6uXpBIp6ccEJ9NscCQU3cXKDALUH0
+piD8kbgQCXD6F4gxJFVUtQ2HEqPnAbgv1pxDfkTKV+xjpYZETSdL0kAVNENitQrH
+PKpOhCihtTgGdDZWOxTwMicV9EeZXg==
+=IQvX
 -----END PGP SIGNATURE-----
 
---l76fUT7nc3MelDdI--
+--Sig_/z/+uyHLVn+3.ksDUOgyPIfK--
