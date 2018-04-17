@@ -1,41 +1,56 @@
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: Re: linux-next: build failure after merge of the netfilter tree
-Date: Tue, 17 Apr 2018 11:00:52 +0200
-Message-ID: <20180417090052.h5ilsnezy66exmrr@salvia>
-References: <20180417092859.358573be@canb.auug.org.au>
- <CAM_iQpXT2p1tQFHdRG9iZf_Wc5=H6P+0Q493k3VOLJ+fqr8GYQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the efi-lock-down tree with the
+ modules tree
+Date: Tue, 17 Apr 2018 20:01:42 +1000
+Message-ID: <20180417200142.6eb2c629@canb.auug.org.au>
+References: <20180417113218.4e6ba307@canb.auug.org.au>
+        <25950.1523951172@warthog.procyon.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/gkaOe9cMOGfEGdBt03gB5iK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAM_iQpXT2p1tQFHdRG9iZf_Wc5=H6P+0Q493k3VOLJ+fqr8GYQ@mail.gmail.com>
+In-Reply-To: <25950.1523951172@warthog.procyon.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Cong Wang <xiyou.wangcong@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jessica Yu <jeyu@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jia Zhang <zhang.jia@linux.alibaba.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Apr 16, 2018 at 05:51:12PM -0700, Cong Wang wrote:
-> On Mon, Apr 16, 2018 at 4:28 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > After merging the netfilter tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >
-> > net/netfilter/nf_conntrack_extend.c: In function 'nf_ct_ext_
-> > add':
-> > net/netfilter/nf_conntrack_extend.c:74:2: error: implicit declaration of function 'kmemleak_not_leak' [-Werror=implicit-function-declaration]
-> >   kmemleak_not_leak(old);
-> >   ^~~~~~~~~~~~~~~~~
-> > cc1: some warnings being treated as errors
-> >
-> > Caused by commit
-> >
-> >   114aa35d06d4 ("netfilter: conntrack: silent a memory leak warning")
-> >
-> > I have added this patch for today:
-> 
-> Ouch, this is actually a correct fix.
-> 
-> Can you please send it formally or maybe Pablo can just take it directly?
+--Sig_/gkaOe9cMOGfEGdBt03gB5iK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I have applied Stephen's patch, thanks!
+Hi David,
+
+On Tue, 17 Apr 2018 08:46:12 +0100 David Howells <dhowells@redhat.com> wrot=
+e:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>=20
+> > Today's linux-next merge of the efi-lock-down tree got a conflict in: =
+=20
+>=20
+> Can you drop my branch for the moment?
+
+Sure, no problem.  Just let me know when to grab it again.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gkaOe9cMOGfEGdBt03gB5iK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVxgYACgkQAVBC80lX
+0GzRcQf/a3OnaBT495zp6dZKXzqp8K6VIre+sq+SujLr1afZPv2FLxqS6fjKPgQv
+JixVKrBZm9N5Lh3CSxYSE6h5pdKf6fPtUJbCLZG1ddSeihVdPy6QV0UmQltO4MAl
+axfTinalUg+OYEuBp5yLKoUFryWfFNLMAIP9uxWzyiX/9S9BPmF4adXY/dya56IH
+F049Lq7EjKMz8tAnALkyjCy3adz8isouKN+9xp/B8/GTEFBiNNLnUFbL1eahDKei
+j53CsGRx+wiAgjbQgtQLqUnN1KJDx4EPl+6k5iCfrs4KBEjkkF37HSUIAXHc7GAF
+sECPG+4MSmfYY7ROs0/DoHKzKiytZA==
+=+/HC
+-----END PGP SIGNATURE-----
+
+--Sig_/gkaOe9cMOGfEGdBt03gB5iK--
