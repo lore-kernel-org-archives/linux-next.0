@@ -1,52 +1,54 @@
-From: =?big5?B?U2h1bWluZyBbrVOu0bvKXQ==?= <shumingf@realtek.com>
-Subject: RE: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 17 Apr 2018 02:14:12 +0000
-Message-ID: <10317AB43303BA4884D7AF9C2EBCFF40020DBC26@RTITMBSV02.realtek.com.tw>
-References: <20180417110232.19225908@canb.auug.org.au>
- <10317AB43303BA4884D7AF9C2EBCFF40020DBB1B@RTITMBSV02.realtek.com.tw>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the scsi tree
+Date: Tue, 17 Apr 2018 12:25:40 +1000
+Message-ID: <20180417122540.1c0a3fee@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="big5"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nUewiLCP1OyDtWn/KeIPAp4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <10317AB43303BA4884D7AF9C2EBCFF40020DBB1B@RTITMBSV02.realtek.com.tw>
-Content-Language: zh-TW
 Sender: linux-kernel-owner@vger.kernel.org
-To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'Mark Brown' <broonie@kernel.org>, 'Liam Girdwood' <lgirdwood@gmail.com>
-Cc: 'Linux-Next Mailing List' <linux-next@vger.kernel.org>, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>, Bard Liao <bardliao@realtek.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Long Li <longli@microsoft.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgYWxsLA0KDQpJIGFscmVhZHkgc2VudCB0aGUgcGF0Y2guIA0KaHR0cDovL21haWxtYW4uYWxz
-YS1wcm9qZWN0Lm9yZy9waXBlcm1haWwvYWxzYS1kZXZlbC8yMDE4LUFwcmlsLzEzNDUyMi5odG1s
-DQoNCkkgYXBvbG9naXplIGZvciB0aGUgaW5jb252ZW5pZW5jZS4NCg0KVGhhbmtzIQ0KDQpSZWdh
-cmRzLA0KU2h1bWluZyBGYW4NCg0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTog
-U2h1bWluZyBbrVOu0bvKXSANClNlbnQ6IFR1ZXNkYXksIEFwcmlsIDE3LCAyMDE4IDk6MjMgQU0N
-ClRvOiAnU3RlcGhlbiBSb3Rod2VsbCc7IE1hcmsgQnJvd247IExpYW0gR2lyZHdvb2QNCkNjOiBM
-aW51eC1OZXh0IE1haWxpbmcgTGlzdDsgTGludXggS2VybmVsIE1haWxpbmcgTGlzdA0KU3ViamVj
-dDogUkU6IGxpbnV4LW5leHQ6IGJ1aWxkIGZhaWx1cmUgYWZ0ZXIgbWVyZ2Ugb2YgdGhlIHNvdW5k
-LWFzb2MgdHJlZQ0KDQpIaSBhbGwsDQoNCkkgdGhpbmsgSSBtaXNzIHRoZSBoZWFkZXIgZmlsZSAo
-I2luY2x1ZGUgPGxpbnV4L2FjcGkuaD4pIEkgd2lsbCBmaXggaXQgQVNBUC4gU29ycnkgYWJvdXQg
-dGhhdC4NCg0KVGhhbmtzIQ0KDQpSZWdhcmRzLA0KU2h1bWluZyBGYW4NCg0KDQotLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogU3RlcGhlbiBSb3Rod2VsbCBbbWFpbHRvOnNmckBjYW5i
-LmF1dWcub3JnLmF1XQ0KU2VudDogVHVlc2RheSwgQXByaWwgMTcsIDIwMTggOTowMyBBTQ0KVG86
-IE1hcmsgQnJvd247IExpYW0gR2lyZHdvb2QNCkNjOiBMaW51eC1OZXh0IE1haWxpbmcgTGlzdDsg
-TGludXggS2VybmVsIE1haWxpbmcgTGlzdDsgU2h1bWluZyBbrVOu0bvKXQ0KU3ViamVjdDogbGlu
-dXgtbmV4dDogYnVpbGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgc291bmQtYXNvYyB0cmVl
-DQoNCkhpIGFsbCwNCg0KQWZ0ZXIgbWVyZ2luZyB0aGUgc291bmQtYXNvYyB0cmVlLCB0b2RheSdz
-IGxpbnV4LW5leHQgYnVpbGQgKHg4Nl82NA0KYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlz
-Og0KDQpzb3VuZC9zb2MvY29kZWNzL3J0MTMwNS5jOjExNzk6MjM6IGVycm9yOiBpbXBsaWNpdCBk
-ZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiAnQUNQSV9QVFInOyBkaWQgeW91IG1lYW4gJ0VSUl9QVFIn
-PyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0NCiAgIC5hY3BpX21hdGNo
-X3RhYmxlID0gQUNQSV9QVFIocnQxMzA1X2FjcGlfbWF0Y2gpDQogICAgICAgICAgICAgICAgICAg
-ICAgIF5+fn5+fn5+DQogICAgICAgICAgICAgICAgICAgICAgIEVSUl9QVFINCnNvdW5kL3NvYy9j
-b2RlY3MvcnQxMzA1LmM6MTE3OToyMzogd2FybmluZzogaW5pdGlhbGl6YXRpb24gbWFrZXMgcG9p
-bnRlciBmcm9tIGludGVnZXIgd2l0aG91dCBhIGNhc3QgWy1XaW50LWNvbnZlcnNpb25dDQpzb3Vu
-ZC9zb2MvY29kZWNzL3J0MTMwNS5jOjExNzk6MjM6IG5vdGU6IChuZWFyIGluaXRpYWxpemF0aW9u
-IGZvciAncnQxMzA1X2kyY19kcml2ZXIuZHJpdmVyLmFjcGlfbWF0Y2hfdGFibGUnKQ0Kc291bmQv
-c29jL2NvZGVjcy9ydDEzMDUuYzoxMTc5OjIzOiBlcnJvcjogaW5pdGlhbGl6ZXIgZWxlbWVudCBp
-cyBub3QgY29uc3RhbnQNCnNvdW5kL3NvYy9jb2RlY3MvcnQxMzA1LmM6MTE3OToyMzogbm90ZTog
-KG5lYXIgaW5pdGlhbGl6YXRpb24gZm9yICdydDEzMDVfaTJjX2RyaXZlci5kcml2ZXIuYWNwaV9t
-YXRjaF90YWJsZScpDQoNCkNhdXNlZCBieSBjb21taXQNCg0KICAyOWJjNjQzZGRkN2UgKCJBU29D
-OiBydDEzMDU6IEFkZCBSVDEzMDUvUlQxMzA2IGFtcGxpZmllciBkcml2ZXIiKQ0KDQpJIGhhdmUg
-dXNlZCB0aGUgc291bmQtYXNvYyB0cmVlIGZyb20gbmV4dC0yMDE4MDQxNiBmb3IgdG9kYXkuDQoN
-Ci0tDQpDaGVlcnMsDQpTdGVwaGVuIFJvdGh3ZWxsDQoNCi0tLS0tLVBsZWFzZSBjb25zaWRlciB0
-aGUgZW52aXJvbm1lbnQgYmVmb3JlIHByaW50aW5nIHRoaXMgZS1tYWlsLg0K
+--Sig_/nUewiLCP1OyDtWn/KeIPAp4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi James,
+
+After merging the scsi tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
+
+drivers/scsi/storvsc_drv.c: In function 'storvsc_do_io':
+drivers/scsi/storvsc_drv.c:1402:1: warning: the frame size of 2216 bytes is=
+ larger than 2048 bytes [-Wframe-larger-than=3D]
+ }
+ ^
+
+Introduced by commit
+
+  0b9bc24b8304 ("csi: storvsc: Select channel based on available percentage=
+ of ring buffer to write")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nUewiLCP1OyDtWn/KeIPAp4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVWyQACgkQAVBC80lX
+0GyQJgf/dtALnzIauOrC3rekB49szfvR34WNakITPxvFhwhLX7hCuO8DoSsAD3ek
+saXO1qPs7007H45Q3JO2ATxbS7WQsE65cd15/+GPivz9QiRi8iwQ4mYn9pAkoifP
+s21/dSaX9USNkgimRC+cVa96KlIfBSxrxliqn5XR+rrZBBiJNXT3aIJ/9qE1Qj7C
+4suA7eNyZRAy6tvDUU7fJEYkvEXoYW5NcTu4N5zJsSxXKzUfb0YJonDUyMr9h31B
+fraW0sLO7YSJB2kycoD/8bgsUKZ9CZgYQHfGUf5bCxmIjBaheWTEaKlW52NsEGP2
+liTqr6Tu7j1dI6jc7ZyQPp7pAfiP4A==
+=7Okp
+-----END PGP SIGNATURE-----
+
+--Sig_/nUewiLCP1OyDtWn/KeIPAp4--
