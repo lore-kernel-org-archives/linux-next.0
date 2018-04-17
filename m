@@ -1,64 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sound-asoc tree
-Date: Tue, 17 Apr 2018 11:02:32 +1000
-Message-ID: <20180417110232.19225908@canb.auug.org.au>
+From: =?big5?B?U2h1bWluZyBbrVOu0bvKXQ==?= <shumingf@realtek.com>
+Subject: RE: linux-next: build failure after merge of the sound-asoc tree
+Date: Tue, 17 Apr 2018 01:22:53 +0000
+Message-ID: <10317AB43303BA4884D7AF9C2EBCFF40020DBB1B@RTITMBSV02.realtek.com.tw>
+References: <20180417110232.19225908@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ah7BZ6fB0KAVxG=rOF2nG+x"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="big5"
+Content-Transfer-Encoding: base64
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180417110232.19225908@canb.auug.org.au>
+Content-Language: zh-TW
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Shuming Fan <shumingf@realtek.com>
+To: 'Stephen Rothwell' <sfr@canb.auug.org.au>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-After merging the sound-asoc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-sound/soc/codecs/rt1305.c:1179:23: error: implicit declaration of function =
-'ACPI_PTR'; did you mean 'ERR_PTR'? [-Werror=3Dimplicit-function-declaratio=
-n]
-   .acpi_match_table =3D ACPI_PTR(rt1305_acpi_match)
-                       ^~~~~~~~
-                       ERR_PTR
-sound/soc/codecs/rt1305.c:1179:23: warning: initialization makes pointer fr=
-om integer without a cast [-Wint-conversion]
-sound/soc/codecs/rt1305.c:1179:23: note: (near initialization for 'rt1305_i=
-2c_driver.driver.acpi_match_table')
-sound/soc/codecs/rt1305.c:1179:23: error: initializer element is not consta=
-nt
-sound/soc/codecs/rt1305.c:1179:23: note: (near initialization for 'rt1305_i=
-2c_driver.driver.acpi_match_table')
-
-Caused by commit
-
-  29bc643ddd7e ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-
-I have used the sound-asoc tree from next-20180416 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrVR6gACgkQAVBC80lX
-0Gw4bwf/Zn6nbHIe4ozQsNhKJZP9P5bTUdzMDcTW1E4KsmExP8D8DSJ2q3HCyq4A
-zj1t+278PlDtWqaM6SwKqQ7+FoUgcOvL3n6kV33lGAHIrJVhF8FEMLlTwqTzq8UB
-OAcdUpvu6xIfVlHjnSSDEK7x7QMgTBk9xfqPnvY+OCjmjT2AA1n4b6yZ0l6wHbef
-YAeYpNy44ftdgWsFz5w8I96MP8MsUiUcpm3hMQWZluaE3t1FRX548NhtX9D61+45
-Pxl8cez/wC6pla7PtpCsWOymJcsBWaKadTTRVUI76lpy6AzLdVfC1vF0fikXV8KM
-yB7ffNX5g0sEj4Yt9l3txjXNOeN8fQ==
-=p2VR
------END PGP SIGNATURE-----
-
---Sig_/ah7BZ6fB0KAVxG=rOF2nG+x--
+SGkgYWxsLA0KDQpJIHRoaW5rIEkgbWlzcyB0aGUgaGVhZGVyIGZpbGUgKCNpbmNsdWRlIDxsaW51
+eC9hY3BpLmg+KQ0KSSB3aWxsIGZpeCBpdCBBU0FQLiBTb3JyeSBhYm91dCB0aGF0Lg0KDQpUaGFu
+a3MhDQoNClJlZ2FyZHMsDQpTaHVtaW5nIEZhbg0KDQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0t
+LS0tDQpGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIFttYWlsdG86c2ZyQGNhbmIuYXV1Zy5vcmcuYXVd
+IA0KU2VudDogVHVlc2RheSwgQXByaWwgMTcsIDIwMTggOTowMyBBTQ0KVG86IE1hcmsgQnJvd247
+IExpYW0gR2lyZHdvb2QNCkNjOiBMaW51eC1OZXh0IE1haWxpbmcgTGlzdDsgTGludXggS2VybmVs
+IE1haWxpbmcgTGlzdDsgU2h1bWluZyBbrVOu0bvKXQ0KU3ViamVjdDogbGludXgtbmV4dDogYnVp
+bGQgZmFpbHVyZSBhZnRlciBtZXJnZSBvZiB0aGUgc291bmQtYXNvYyB0cmVlDQoNCkhpIGFsbCwN
+Cg0KQWZ0ZXIgbWVyZ2luZyB0aGUgc291bmQtYXNvYyB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQg
+YnVpbGQgKHg4Nl82NA0KYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOg0KDQpzb3VuZC9z
+b2MvY29kZWNzL3J0MTMwNS5jOjExNzk6MjM6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBv
+ZiBmdW5jdGlvbiAnQUNQSV9QVFInOyBkaWQgeW91IG1lYW4gJ0VSUl9QVFInPyBbLVdlcnJvcj1p
+bXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbl0NCiAgIC5hY3BpX21hdGNoX3RhYmxlID0gQUNQ
+SV9QVFIocnQxMzA1X2FjcGlfbWF0Y2gpDQogICAgICAgICAgICAgICAgICAgICAgIF5+fn5+fn5+
+DQogICAgICAgICAgICAgICAgICAgICAgIEVSUl9QVFINCnNvdW5kL3NvYy9jb2RlY3MvcnQxMzA1
+LmM6MTE3OToyMzogd2FybmluZzogaW5pdGlhbGl6YXRpb24gbWFrZXMgcG9pbnRlciBmcm9tIGlu
+dGVnZXIgd2l0aG91dCBhIGNhc3QgWy1XaW50LWNvbnZlcnNpb25dDQpzb3VuZC9zb2MvY29kZWNz
+L3J0MTMwNS5jOjExNzk6MjM6IG5vdGU6IChuZWFyIGluaXRpYWxpemF0aW9uIGZvciAncnQxMzA1
+X2kyY19kcml2ZXIuZHJpdmVyLmFjcGlfbWF0Y2hfdGFibGUnKQ0Kc291bmQvc29jL2NvZGVjcy9y
+dDEzMDUuYzoxMTc5OjIzOiBlcnJvcjogaW5pdGlhbGl6ZXIgZWxlbWVudCBpcyBub3QgY29uc3Rh
+bnQNCnNvdW5kL3NvYy9jb2RlY3MvcnQxMzA1LmM6MTE3OToyMzogbm90ZTogKG5lYXIgaW5pdGlh
+bGl6YXRpb24gZm9yICdydDEzMDVfaTJjX2RyaXZlci5kcml2ZXIuYWNwaV9tYXRjaF90YWJsZScp
+DQoNCkNhdXNlZCBieSBjb21taXQNCg0KICAyOWJjNjQzZGRkN2UgKCJBU29DOiBydDEzMDU6IEFk
+ZCBSVDEzMDUvUlQxMzA2IGFtcGxpZmllciBkcml2ZXIiKQ0KDQpJIGhhdmUgdXNlZCB0aGUgc291
+bmQtYXNvYyB0cmVlIGZyb20gbmV4dC0yMDE4MDQxNiBmb3IgdG9kYXkuDQoNCi0tIA0KQ2hlZXJz
+LA0KU3RlcGhlbiBSb3Rod2VsbA0KDQotLS0tLS1QbGVhc2UgY29uc2lkZXIgdGhlIGVudmlyb25t
+ZW50IGJlZm9yZSBwcmludGluZyB0aGlzIGUtbWFpbC4NCg==
