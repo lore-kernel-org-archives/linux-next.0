@@ -1,54 +1,82 @@
 From: Russell King <rmk@armlinux.org.uk>
 Subject: Re: linux-next: build failure after merge of the arm-current tree
-Date: Wed, 18 Apr 2018 18:54:43 +0100
-Message-ID: <20180418175442.GA7234@flint.armlinux.org.uk>
+Date: Wed, 18 Apr 2018 19:17:23 +0100
+Message-ID: <20180418181722.GA7852@flint.armlinux.org.uk>
 References: <20180418133155.0931baf7@canb.auug.org.au>
+ <20180418175442.GA7234@flint.armlinux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180418133155.0931baf7@canb.auug.org.au>
+In-Reply-To: <20180418175442.GA7234@flint.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
-> Hi Russell,
+On Wed, Apr 18, 2018 at 06:54:42PM +0100, Russell King wrote:
+> On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
+> > Hi Russell,
+> > 
+> > After merging the arm-current tree, today's linux-next build
+> > (lots of configs) failed like this:
+> > 
+> > /bin/sh: 1: arithmetic expression: expecting primary: " "
+> > (lots of these)
+> > 
+> > Caused by commit
+> > 
+> >   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
+> > 
+> > (pointed out by Michael Ellerman)
+> > 
+> > Our /bin/sh is dash not bash ...
 > 
-> After merging the arm-current tree, today's linux-next build
-> (lots of configs) failed like this:
+> I tested this on 32-bit ARM with dash:
 > 
-> /bin/sh: 1: arithmetic expression: expecting primary: " "
-> (lots of these)
+> foo# dash
+> # echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
+> 6409680
+> #
 > 
-> Caused by commit
+> Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
+> actually means in reality?
 > 
->   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
+> I don't see why you should end up with lots of them either, unless maybe
+> the sed expression isn't working for you.
 > 
-> (pointed out by Michael Ellerman)
+> The sed expression should end up producing output such as:
 > 
-> Our /bin/sh is dash not bash ...
+> -0xc09138c4
+> +0xc0f30694
+> 
+> and that's it, two values, one preceded by a + and the other by a -.
 
-I tested this on 32-bit ARM with dash:
+Hmm, I guess it's a result of:
 
-foo# dash
-# echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
-6409680
-#
+# echo $(( ))
+dash: 4: arithmetic expression: expecting primary: " "
 
-Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
-actually means in reality?
+which points to the sed expression producing no output.  If that's the
+case, then something else went wrong with the build earlier - there
+should be no case where the built vmlinux does not contain the
+__bss_start and __bss_stop symbols on ARM, since every kernel contains
+a .bss section.
 
-I don't see why you should end up with lots of them either, unless maybe
-the sed expression isn't working for you.
+Olof's autobuilder shows no errors, but that could be because it's
+using bash - I don't know.  kernelci.org also shows no failures.
 
-The sed expression should end up producing output such as:
+I think more information is needed to debug this, such as:
 
--0xc09138c4
-+0xc0f30694
+- does nm of the vmlinux contain the __bss_start and __bss_stop
+  symbols, and are they formatted as one would expect (iow, marked
+  as a global BSS symbol?)
+- does the nm | sed pipeline produce the expected output when run
+  outside of everything else?
+- does dash evaluate the output correctly outside of the makefile?
 
-and that's it, two values, one preceded by a + and the other by a -.
+As I'm not currently aware of a failing environment that I have
+access to, I'm not able to debug this myself, sorry.
 
 -- 
 Russell King
