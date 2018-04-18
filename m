@@ -1,55 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the arm-current tree
-Date: Wed, 18 Apr 2018 13:31:55 +1000
-Message-ID: <20180418133155.0931baf7@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: build failure after merge of the sound-asoc tree
+Date: Wed, 18 Apr 2018 15:49:08 +0100
+Message-ID: <20180418144908.GE10061@sirena.org.uk>
+References: <20180418095113.21c84c83@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Y3hgY4AeRmmxpTuTCb=qRl2"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180418095113.21c84c83@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
+--sfyO1m2EN8ZOtJL6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-After merging the arm-current tree, today's linux-next build
-(lots of configs) failed like this:
+On Wed, Apr 18, 2018 at 09:51:13AM +1000, Stephen Rothwell wrote:
 
-/bin/sh: 1: arithmetic expression: expecting primary: " "
-(lots of these)
+> Caused by commit
 
-Caused by commit
+>   81e9b0a07889 ("ASoC: topology: Give more data to clients via callbacks")
 
-  fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )=
-) operator")
+> I have used the sound-aoc tree from next-20180416 again today.
 
-(pointed out by Michael Ellerman)
+Ugh, reverted that and the following commit which depends on it.
 
-Our /bin/sh is dash not bash ...
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--sfyO1m2EN8ZOtJL6
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrWvCsACgkQAVBC80lX
-0GwXUgf9G06XjDPKVrEcDo+cs4LQk7TU0o3/ZNzHtILTXpt4cnQZeWLXpGvwDSEk
-JxPjqFp/VHmHZDRkI1mr/Pxvc8Pu5PACZXonKF6yh2SlDgXrm8imGPLampWA4HlQ
-O5nFa8zEyYvLPxvY8NaU9v+jxDdg6UH5yPHg7/f6QuU/zxiqdcRW1fgbOqVT6Ede
-+VUIgvh88HVn8WAOKRmDs8MwZ3kwzCSquooL/qkkZYqZ6fYePeqVRaspUwzExAwM
-KfkQx1oMtsJphIj7iDj7sBApudND5rSWnkcIuEGp5ctAdeaTwvKw4FZeQ9nO5mUt
-1sGKil1QRXp8D8XKkl2plZFHrRX4Qw==
-=4V5q
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXWuMACgkQJNaLcl1U
+h9AnRgf7B0ogG9V8ubU5Jn6zvsNDUSyuJKHKJRGItycMv7zcXc7gjL7N06TbOW0V
+L/WWo0+g5ncADhLIPsHBOF1EbTK/5CIHJZARIXSQhSTgIggN4tJcUdOu+SijOI6+
+gNABrP1z/vI8ODYcBkoQK3qoIqLbaXq/T5qTk/jux/l8VdHEmGtaTRUOfYdl/T1i
+pbS4aBPiZdPQ8mU9zotHxc4vNhTeW3sf4/lCYSOOG50eMU3WRJgf44wQzzMalXfP
+lBqTMmyFDAVzuExsD97QtIgvMXXdCSsuAGiFjYQgHC2Bca3XIFnij5sQp7jblU+m
+tK0Mps5ck21faErjn4x1gNRxIUdgPQ==
+=BSMR
 -----END PGP SIGNATURE-----
 
---Sig_/Y3hgY4AeRmmxpTuTCb=qRl2--
+--sfyO1m2EN8ZOtJL6--
