@@ -1,47 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: build failure after merge of the sound-asoc tree
-Date: Wed, 18 Apr 2018 15:49:08 +0100
-Message-ID: <20180418144908.GE10061@sirena.org.uk>
-References: <20180418095113.21c84c83@canb.auug.org.au>
+From: Russell King <rmk@armlinux.org.uk>
+Subject: Re: linux-next: build failure after merge of the arm-current tree
+Date: Wed, 18 Apr 2018 18:54:43 +0100
+Message-ID: <20180418175442.GA7234@flint.armlinux.org.uk>
+References: <20180418133155.0931baf7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sfyO1m2EN8ZOtJL6"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180418095113.21c84c83@canb.auug.org.au>
+In-Reply-To: <20180418133155.0931baf7@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
 List-Id: linux-next.vger.kernel.org
 
-
---sfyO1m2EN8ZOtJL6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Apr 18, 2018 at 09:51:13AM +1000, Stephen Rothwell wrote:
-
+On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
+> Hi Russell,
+> 
+> After merging the arm-current tree, today's linux-next build
+> (lots of configs) failed like this:
+> 
+> /bin/sh: 1: arithmetic expression: expecting primary: " "
+> (lots of these)
+> 
 > Caused by commit
+> 
+>   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
+> 
+> (pointed out by Michael Ellerman)
+> 
+> Our /bin/sh is dash not bash ...
 
->   81e9b0a07889 ("ASoC: topology: Give more data to clients via callbacks")
+I tested this on 32-bit ARM with dash:
 
-> I have used the sound-aoc tree from next-20180416 again today.
+foo# dash
+# echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
+6409680
+#
 
-Ugh, reverted that and the following commit which depends on it.
+Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
+actually means in reality?
 
---sfyO1m2EN8ZOtJL6
-Content-Type: application/pgp-signature; name="signature.asc"
+I don't see why you should end up with lots of them either, unless maybe
+the sed expression isn't working for you.
 
------BEGIN PGP SIGNATURE-----
+The sed expression should end up producing output such as:
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrXWuMACgkQJNaLcl1U
-h9AnRgf7B0ogG9V8ubU5Jn6zvsNDUSyuJKHKJRGItycMv7zcXc7gjL7N06TbOW0V
-L/WWo0+g5ncADhLIPsHBOF1EbTK/5CIHJZARIXSQhSTgIggN4tJcUdOu+SijOI6+
-gNABrP1z/vI8ODYcBkoQK3qoIqLbaXq/T5qTk/jux/l8VdHEmGtaTRUOfYdl/T1i
-pbS4aBPiZdPQ8mU9zotHxc4vNhTeW3sf4/lCYSOOG50eMU3WRJgf44wQzzMalXfP
-lBqTMmyFDAVzuExsD97QtIgvMXXdCSsuAGiFjYQgHC2Bca3XIFnij5sQp7jblU+m
-tK0Mps5ck21faErjn4x1gNRxIUdgPQ==
-=BSMR
------END PGP SIGNATURE-----
+-0xc09138c4
++0xc0f30694
 
---sfyO1m2EN8ZOtJL6--
+and that's it, two values, one preceded by a + and the other by a -.
+
+-- 
+Russell King
+ARM architecture Linux Kernel maintainer
