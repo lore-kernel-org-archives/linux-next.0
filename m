@@ -1,83 +1,25 @@
-From: Russell King <rmk@armlinux.org.uk>
-Subject: Re: linux-next: build failure after merge of the arm-current tree
-Date: Wed, 18 Apr 2018 19:17:23 +0100
-Message-ID: <20180418181722.GA7852@flint.armlinux.org.uk>
-References: <20180418133155.0931baf7@canb.auug.org.au>
- <20180418175442.GA7234@flint.armlinux.org.uk>
+From: Jessica Yu <jeyu@kernel.org>
+Subject: Adding modules-linus branch to linux-next
+Date: Wed, 18 Apr 2018 22:57:39 +0200
+Message-ID: <20180418205739.7bvi3hfmhozztbnf@redbean>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180418175442.GA7234@flint.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Apr 18, 2018 at 06:54:42PM +0100, Russell King wrote:
-> On Wed, Apr 18, 2018 at 01:31:55PM +1000, Stephen Rothwell wrote:
-> > Hi Russell,
-> > 
-> > After merging the arm-current tree, today's linux-next build
-> > (lots of configs) failed like this:
-> > 
-> > /bin/sh: 1: arithmetic expression: expecting primary: " "
-> > (lots of these)
-> > 
-> > Caused by commit
-> > 
-> >   fe680ca02c1e ("ARM: replace unnecessary perl with sed and the shell $(( )) operator")
-> > 
-> > (pointed out by Michael Ellerman)
-> > 
-> > Our /bin/sh is dash not bash ...
-> 
-> I tested this on 32-bit ARM with dash:
-> 
-> foo# dash
-> # echo $(($(nm /boot/vmlinux-4.16.0+ | sed -n -e 's/^\([^ ]*\) B __bss_start$/-0x\1/p' -e 's/^\([^ ]*\) B __bss_stop$/+0x\1/p') ))
-> 6409680
-> #
-> 
-> Any clues what '/bin/sh: 1: arithmetic expression: expecting primary: " "'
-> actually means in reality?
-> 
-> I don't see why you should end up with lots of them either, unless maybe
-> the sed expression isn't working for you.
-> 
-> The sed expression should end up producing output such as:
-> 
-> -0xc09138c4
-> +0xc0f30694
-> 
-> and that's it, two values, one preceded by a + and the other by a -.
+Hi Stephen,
 
-Hmm, I guess it's a result of:
+Could you please add the modules-linus branch at:
 
-# echo $(( ))
-dash: 4: arithmetic expression: expecting primary: " "
+    git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git modules-linus
 
-which points to the sed expression producing no output.  If that's the
-case, then something else went wrong with the build earlier - there
-should be no case where the built vmlinux does not contain the
-__bss_start and __bss_stop symbols on ARM, since every kernel contains
-a .bss section.
+to linux-next? The branch will contain rc fixes intended for the
+current release. A good name for it might be modules-current.
 
-Olof's autobuilder shows no errors, but that could be because it's
-using bash - I don't know.  kernelci.org also shows no failures.
+Thanks!
 
-I think more information is needed to debug this, such as:
-
-- does nm of the vmlinux contain the __bss_start and __bss_stop
-  symbols, and are they formatted as one would expect (iow, marked
-  as a global BSS symbol?)
-- does the nm | sed pipeline produce the expected output when run
-  outside of everything else?
-- does dash evaluate the output correctly outside of the makefile?
-
-As I'm not currently aware of a failing environment that I have
-access to, I'm not able to debug this myself, sorry.
-
--- 
-Russell King
-ARM architecture Linux Kernel maintainer
+Jessica
