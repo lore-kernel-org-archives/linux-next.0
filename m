@@ -1,72 +1,84 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Adding modules-linus branch to linux-next
-Date: Thu, 19 Apr 2018 10:02:21 +1000
-Message-ID: <20180419100221.6e39d072@canb.auug.org.au>
-References: <20180418205739.7bvi3hfmhozztbnf@redbean>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QHUwvJwfThRqgnbXkMeNe.5"; protocol="application/pgp-signature"
+From: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Subject: [PATCH -next] user_namespace: Replace gotos with return statements
+Date: Wed, 18 Apr 2018 23:46:38 -0300
+Message-ID: <20180419024641.24213-1-marcos.souza.org@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180418205739.7bvi3hfmhozztbnf@redbean>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jessica Yu <jeyu@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-next@vger.kernel.org
+Cc: Marcos Paulo de Souza <marcos.souza.org@gmail.com>, "Eric W. Biederman" <ebiederm@xmission.com>, Christian Brauner <christian.brauner@ubuntu.com>, Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, Serge Hallyn <serge@hallyn.com>, Seth Forshee <seth.forshee@canonical.com>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/QHUwvJwfThRqgnbXkMeNe.5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Found while inspecting the code that handles the setgroups procfs file.
 
-Hi Jessica,
+Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+---
+Tested locally setting up a new userns, and setting setgroups as deny and allow,
+worked as before.
 
-On Wed, 18 Apr 2018 22:57:39 +0200 Jessica Yu <jeyu@kernel.org> wrote:
->
-> Could you please add the modules-linus branch at:
->=20
->     git://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git modules-=
-linus
->=20
-> to linux-next? The branch will contain rc fixes intended for the
-> current release. A good name for it might be modules-current.
+ kernel/user_namespace.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-Added from today.  I called it modules-fixes.
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/QHUwvJwfThRqgnbXkMeNe.5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrX3I0ACgkQAVBC80lX
-0GwcNAf/ajEon3h10ZzSENQ+6Nu0Lo4WTdP6DbUKqunTrBhF1OfStpoJZkb4aarf
-yRQqSnZeOvmlVnaAeXf5c9SQPiStebRXkZMP87K0Gw8lxglyzGBm0FBnUB+wLfkQ
-UXKIv+3OSf/4Nkxq/db1SnjmNNsxFjhoWAv9ROczvVYkdbUdVL+dDApv7F+tsiKf
-onVx4GdigBj/jWHxfXM3tG2J40tkT8dTHKfq+Q2upbl6lIUzNcUwp9ak7oxpY2Na
-qtkKHP6XmEorO3kke89iaz2hQGg2sTX5Hl5/Jrk2IjtC0g7L0idmVi53CP4Kngm/
-4DV1zfkaSUSG1qL5Q9g2CIG+9xNNNQ==
-=xhXa
------END PGP SIGNATURE-----
-
---Sig_/QHUwvJwfThRqgnbXkMeNe.5--
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 246d4d4ce5c7..64a01254ac6b 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -1142,22 +1142,18 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+ 	struct user_namespace *ns = seq->private;
+ 	char kbuf[8], *pos;
+ 	bool setgroups_allowed;
+-	ssize_t ret;
+ 
+ 	/* Only allow a very narrow range of strings to be written */
+-	ret = -EINVAL;
+ 	if ((*ppos != 0) || (count >= sizeof(kbuf)))
+-		goto out;
++		return -EINVAL;
+ 
+ 	/* What was written? */
+-	ret = -EFAULT;
+ 	if (copy_from_user(kbuf, buf, count))
+-		goto out;
++		return -EFAULT;
+ 	kbuf[count] = '\0';
+ 	pos = kbuf;
+ 
+ 	/* What is being requested? */
+-	ret = -EINVAL;
+ 	if (strncmp(pos, "allow", 5) == 0) {
+ 		pos += 5;
+ 		setgroups_allowed = true;
+@@ -1167,14 +1163,13 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+ 		setgroups_allowed = false;
+ 	}
+ 	else
+-		goto out;
++		return -EINVAL;
+ 
+ 	/* Verify there is not trailing junk on the line */
+ 	pos = skip_spaces(pos);
+ 	if (*pos != '\0')
+-		goto out;
++		return -EINVAL;
+ 
+-	ret = -EPERM;
+ 	mutex_lock(&userns_state_mutex);
+ 	if (setgroups_allowed) {
+ 		/* Enabling setgroups after setgroups has been disabled
+@@ -1194,12 +1189,11 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+ 
+ 	/* Report a successful write */
+ 	*ppos = count;
+-	ret = count;
+-out:
+-	return ret;
++	return count;
++
+ out_unlock:
+ 	mutex_unlock(&userns_state_mutex);
+-	goto out;
++	return -EPERM;
+ }
+ 
+ bool userns_may_setgroups(const struct user_namespace *ns)
+-- 
+2.14.3
