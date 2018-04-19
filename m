@@ -1,53 +1,80 @@
-From: Anders Roxell <anders.roxell@linaro.org>
-Subject: Re: [PATCH] gpu/drm/amd/amdkfd: fix build, select MMU_NOTIFIER
-Date: Thu, 19 Apr 2018 12:46:14 +0200
-Message-ID: <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
-References: <20180414002933.6h3S5%akpm@linux-foundation.org> <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [BUG] NULL pointer on next-20180419 on Odroid XU3
+ (snd_soc_register_card)
+Date: Thu, 19 Apr 2018 12:22:32 +0100
+Message-ID: <20180419112232.GB27188@sirena.org.uk>
+References: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, sfr@canb.auug.org.au, linux-next@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, Oded Gabbay <oded.gabbay@gmail.com>
+Content-Type: multipart/mixed; boundary="===============8812564637728187832=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAJKOXPd-+jp99p=5MsCa=68TNSJk57+drcFgUr2Y1rWW3RPbSA@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, alsa-devel@alsa-project.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-On 14 April 2018 at 04:49, Randy Dunlap <rdunlap@infradead.org> wrote:
-> From: Randy Dunlap <rdunlap@infradead.org>
->
-> When CONFIG_MMU_NOTIFIER is not enabled, struct mmu_notifier has an
-> incomplete type definition, which causes build errors.
->
-> ../drivers/gpu/drm/amd/amdkfd/kfd_priv.h:607:22: error: field 'mmu_notifier' has incomplete type
-> ../include/linux/kernel.h:979:32: error: dereferencing pointer to incomplete type
-> ../include/linux/kernel.h:980:18: error: dereferencing pointer to incomplete type
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:434:2: error: implicit declaration of function 'mmu_notifier_unregister_no_release' [-Werror=implicit-function-declaration]
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:435:2: error: implicit declaration of function 'mmu_notifier_call_srcu' [-Werror=implicit-function-declaration]
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:438:21: error: variable 'kfd_process_mmu_notifier_ops' has initializer but incomplete type
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: error: unknown field 'release' specified in initializer
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: excess elements in struct initializer [enabled by default]
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:439:2: warning: (near initialization for 'kfd_process_mmu_notifier_ops') [enabled by default]
-> ../drivers/gpu/drm/amd/amdkfd/kfd_process.c:534:2: error: implicit declaration of function 'mmu_notifier_register' [-Werror=implicit-function-declaration]
->
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Oded Gabbay <oded.gabbay@gmail.com>
-> Cc: dri-devel@lists.freedesktop.org
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+--===============8812564637728187832==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DKU6Jbt7q3WqK7+M"
+Content-Disposition: inline
 
-> ---
-> From linux-next, not mmotm, but found in mmotm builds.
->
->  drivers/gpu/drm/amd/amdkfd/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> --- mmotm-2018-0413-1728.orig/drivers/gpu/drm/amd/amdkfd/Kconfig
-> +++ mmotm-2018-0413-1728/drivers/gpu/drm/amd/amdkfd/Kconfig
-> @@ -6,5 +6,6 @@ config HSA_AMD
->         tristate "HSA kernel driver for AMD GPU devices"
->         depends on DRM_AMDGPU && X86_64
->         imply AMD_IOMMU_V2
-> +       select MMU_NOTIFIER
->         help
->           Enable this if you want to use HSA features on AMD GPU devices.
->
+
+--DKU6Jbt7q3WqK7+M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Apr 19, 2018 at 09:08:07AM +0200, Krzysztof Kozlowski wrote:
+
+> On today's next-20180419, NULL pointer exception appeared in
+> snd_soc_instantiate_card() on Odroid XU3 and XU boards (Samsung,
+> Exynos5422, Exynos5410, max98090 codec). Built with exynos_defconfig
+> (ARM).
+
+> I bisected it to:
+> 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b is the first bad commit
+> commit 45f8cb57da0d7a9ead4b39d7f5def333a5b0c08b
+> Author: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+> Date:   Tue Mar 27 14:30:40 2018 +0100
+>=20
+>     ASoC: core: Allow topology to override machine driver FE DAI link con=
+fig.
+
+OK, reverting this one as well for now along with f11a5c27f9287 "ASoC:
+core: Add name prefix for machines with topology rewrites" which depends
+on it :(
+
+--DKU6Jbt7q3WqK7+M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlrYe/cACgkQJNaLcl1U
+h9B76gf9HlWxBpQgKJSERvvphkwHewaLd2GMKeK+9jQtL3CelbLKeJgs4BKKPj3S
+iCcYpC+wTumtc/xV41okaOZLalAKDRR+Skhrjb94RDKK4wmFFB9sFRqxAEMK6yF4
+baQJ0gyKB35kIdsBFuc/zUXD4rm8icOCiEuivvz8dgFE6uHVRdeOYlq8deqde+6G
+dQ11do0uEQNBMvTvKE3cQP/Dlq4MFz29k0VjD0/zNTo7RqBBWAHBuO+eVSTEHB1D
+JzjsJxDqG7qlqniqpHjt//7yGuMpXp/g0JpzGAkSUtceqp2x1OyLI6w4w9+feRaQ
+F3KvpNdhBuLrKW4/M08tc0FWRS2Huw==
+=R69U
+-----END PGP SIGNATURE-----
+
+--DKU6Jbt7q3WqK7+M--
+
+--===============8812564637728187832==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8812564637728187832==--
