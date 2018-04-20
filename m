@@ -1,90 +1,66 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [regression v4.17-rc0] Re: FORTIFY_SOURCE breaks ARM compilation
- in -next -- was Re: ARM compile failure in Re: linux-next: Tree for Apr 4
-Date: Fri, 20 Apr 2018 09:34:02 +0200
-Message-ID: <20180420073402.GA9356@amd>
-References: <20180404165559.4cd0c12c@canb.auug.org.au>
- <20180404074856.GA9342@amd>
- <20180404175852.GI5700@atomide.com>
- <20180404184622.GA8608@amd>
- <20180404195951.GJ5700@atomide.com>
- <20180404201837.GA9710@amd>
- <20180415173908.GA2024@amd>
- <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+From: <Mario.Limonciello@dell.com>
+Subject: RE: linux-next: Tree for Apr 19 (dell smbios SMM)
+Date: Fri, 20 Apr 2018 14:29:30 +0000
+Message-ID: <43bec7e798f5491284d2c049f835d339@ausx13mpc120.AMER.DELL.COM>
+References: <20180419143545.63c0c639@canb.auug.org.au>
+ <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jK9f62n95sOdJViXHXzQFyCdcsWt9HPvcdSFRp9Qqg0bg@mail.gmail.com>
+In-Reply-To: <6aec5528-d6f1-3e05-1ac2-6eddbd0ac64f@infradead.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Daniel Micay <danielmicay@gmail.com>, Tony Lindgren <tony@atomide.com>, Thorsten Leemhuis <regressions@leemhuis.info>, Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, pali.rohar@gmail.com, sre@kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-omap@vger.kernel.org, Kevin Hilman <khilman@kernel.org>, Aaro Koskinen <aaro.koskinen@iki.fi>, ivo.g.dimitrov.75@gmail.com, Patrik Bachan <patrikbachan@gmail.com>, "Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?B?TWlja3Vsw6HFoQ==?= Qwertz <abcloriens@gmail.com>, Clayton Craft <clayton@craftyguy.net>, Martijn
+To: rdunlap@infradead.org, sfr@canb.auug.org.au, linux-next@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun 2018-04-15 11:00:06, Kees Cook wrote:
-> On Sun, Apr 15, 2018 at 10:39 AM, Pavel Machek <pavel@ucw.cz> wrote:
-> > Hi!
-> >
-> >> Thanks.
-> >>
-> >> Ok, let me try to bisect it. Compile-problem should be easy...
-> >>
-> >> Hmm. And as it is compile-problem in single file, it should even be
-> >> reasonably fast. I did not realize how easy it would be:
-> >>
-> >> #!/bin/bash
-> >> set -e
-> >> cp config.ok .config
-> >> yes '' | ARCH=3Darm make lib/string.o
-> >>
-> >> And the winner is:
-> >>
-> >> ee333554fed55555a986a90bb097ac7f9d6f05bf is the first bad commit
-> >> commit ee333554fed55555a986a90bb097ac7f9d6f05bf
-> >> Author: Jinbum Park <jinb.park7@gmail.com>
-> >> Date:   Tue Mar 6 01:39:24 2018 +0100
-> > ...
-> >
-> >>     Acked-by: Kees Cook <keescook@chromium.org>
-> >>     Signed-off-by: Jinbum Park <jinb.park7@gmail.com>
-> >>     Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-> >
-> > So I bisect a problem in -next, and patch is merged to Linus,
-> > _anyway_, breaking compilation there? Neither Jinbum nor Russell even
-> > bother to comment.
+> -----Original Message-----
+> From: Randy Dunlap [mailto:rdunlap@infradead.org]
+> Sent: Thursday, April 19, 2018 1:00 PM
+> To: Stephen Rothwell; Linux-Next Mailing List
+> Cc: Linux Kernel Mailing List; Platform Driver; Limonciello, Mario
+> Subject: Re: linux-next: Tree for Apr 19 (dell smbios SMM)
 >=20
-> Hi! Sorry I lost this email in my inbox. It seems this is specific to
-> a particular subset of arm architectures? (My local builds of arm all
-> succeed, for example. Can you send your failing config?) I'll take a
-> closer look on Monday if Daniel doesn't beat me to it.
+> On 04/18/18 21:35, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20180418:
+> >
+>=20
+>=20
+> I see some patches from about 1 month ago for this, but it was either
+> never fixed ... or it's back.
+>=20
+>=20
+> on x86_64:
+>=20
+> WARNING: unmet direct dependencies detected for DELL_SMBIOS
+>   Depends on [m]: X86 [=3Dy] && X86_PLATFORM_DEVICES [=3Dy] && (DCDBAS [=
+=3Dm] ||
+> DCDBAS [=3Dm]=3Dn) && (ACPI_WMI [=3Dn] || ACPI_WMI [=3Dn]=3Dn)
+>   Selected by [y]:
+>   - DELL_LAPTOP [=3Dy] && X86 [=3Dy] && X86_PLATFORM_DEVICES [=3Dy] && DM=
+I [=3Dy]
+> && BACKLIGHT_CLASS_DEVICE [=3Dy] && (ACPI_VIDEO [=3Dn] || ACPI_VIDEO [=3D=
+n]=3Dn)
+> && (RFKILL [=3Dn] || RFKILL [=3Dn]=3Dn) && SERIO_I8042 [=3Dy]
+>=20
+>=20
+> drivers/platform/x86/dell-smbios-smm.o: In function `dell_smbios_smm_call=
+':
+> dell-smbios-smm.c:(.text+0x7d): undefined reference to `dcdbas_smi_reques=
+t'
+>=20
+>=20
+> --
+> ~Randy
 
-Daniel, Kees: any news?
+Randy,
 
-I'm aware you did not specify which Monday :-).
-									Pavel
-								=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+Would you mind posting your kernel config somewhere like a pastebin or gith=
+ub gist
+so we can try to easily reproduce with your combination of configure option=
+s?
 
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlrZl+oACgkQMOfwapXb+vLGxACgnUWU7elGHoUB+imnWbgYBiI3
-68MAn0ELo3vHant0cpVvmgH7A1s28SKe
-=jvDh
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+Thanks,
