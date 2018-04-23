@@ -1,202 +1,107 @@
-From: akpm@linux-foundation.org
-Subject: mmotm 2018-04-20-14-58 uploaded
-Date: Fri, 20 Apr 2018 14:59:18 -0700
-Message-ID: <20180420215918.JSraH%akpm@linux-foundation.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Mon, 23 Apr 2018 13:04:44 +1000
+Message-ID: <20180423130444.0672fb80@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/uZ5j=z4kN.lWQG5GAv0C5jt"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Johan Hovold <johan@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-The mm-of-the-moment snapshot 2018-04-20-14-58 has been uploaded to
+--Sig_/uZ5j=z4kN.lWQG5GAv0C5jt
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-   http://www.ozlabs.org/~akpm/mmotm/
+Hi Greg,
 
-mmotm-readme.txt says
+Today's linux-next merge of the usb tree got a conflict in:
 
-README for mm-of-the-moment:
+  drivers/usb/core/hcd.c
 
-http://www.ozlabs.org/~akpm/mmotm/
+between commit:
 
-This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-more than once a week.
+  63cb03f5c11e ("usb: core: split usb_phy_roothub_{init,alloc}")
 
-You will need quilt to apply these patches to the latest Linus release (4.x
-or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
-http://ozlabs.org/~akpm/mmotm/series
+from the usb.current tree and commit:
 
-The file broken-out.tar.gz contains two datestamp files: .DATE and
-.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
-followed by the base kernel version against which this patch series is to
-be applied.
+  bc40f5341741 ("USB: core: hcd: drop support for legacy phys")
 
-This tree is partially included in linux-next.  To see which patches are
-included in linux-next, consult the `series' file.  Only the patches
-within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
-linux-next.
+from the usb tree.
 
-A git tree which contains the memory management portion of this tree is
-maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-by Michal Hocko.  It contains the patches which are between the
-"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
-file, http://www.ozlabs.org/~akpm/mmotm/series.
+I fixed it up (see below - though I am not sure what happens to the
+phy_roothub allocation when usb_phy_roothub_init fails) and can carry
+the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-A full copy of the full kernel tree with the linux-next and mmotm patches
-already applied is available through git within an hour of the mmotm
-release.  Individual mmotm releases are tagged.  The master branch always
-points to the latest release, so it's constantly rebasing.
+diff --cc drivers/usb/core/hcd.c
+index 0a42c5df3c0f,ac5bcf449d7d..000000000000
+--- a/drivers/usb/core/hcd.c
++++ b/drivers/usb/core/hcd.c
+@@@ -2742,35 -2740,11 +2743,15 @@@ int usb_add_hcd(struct usb_hcd *hcd
+  	int retval;
+  	struct usb_device *rhdev;
+ =20
+- 	if (IS_ENABLED(CONFIG_USB_PHY) && !hcd->skip_phy_initialization) {
+- 		struct usb_phy *phy =3D usb_get_phy_dev(hcd->self.sysdev, 0);
+-=20
+- 		if (IS_ERR(phy)) {
+- 			retval =3D PTR_ERR(phy);
+- 			if (retval =3D=3D -EPROBE_DEFER)
+- 				return retval;
+- 		} else {
+- 			retval =3D usb_phy_init(phy);
+- 			if (retval) {
+- 				usb_put_phy(phy);
+- 				return retval;
+- 			}
+- 			hcd->usb_phy =3D phy;
+- 			hcd->remove_phy =3D 1;
+- 		}
+- 	}
+-=20
+  	if (!hcd->skip_phy_initialization && usb_hcd_is_primary_hcd(hcd)) {
+ -		hcd->phy_roothub =3D usb_phy_roothub_init(hcd->self.sysdev);
+ +		hcd->phy_roothub =3D usb_phy_roothub_alloc(hcd->self.sysdev);
+- 		if (IS_ERR(hcd->phy_roothub)) {
+- 			retval =3D PTR_ERR(hcd->phy_roothub);
+- 			goto err_phy_roothub_alloc;
+- 		}
++ 		if (IS_ERR(hcd->phy_roothub))
++ 			return PTR_ERR(hcd->phy_roothub);
+ =20
+ +		retval =3D usb_phy_roothub_init(hcd->phy_roothub);
+ +		if (retval)
+- 			goto err_phy_roothub_alloc;
+++			return retval;
+ +
+  		retval =3D usb_phy_roothub_power_on(hcd->phy_roothub);
+  		if (retval)
+  			goto err_usb_phy_roothub_power_on;
 
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+--Sig_/uZ5j=z4kN.lWQG5GAv0C5jt
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-To develop on top of mmotm git:
+-----BEGIN PGP SIGNATURE-----
 
-  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
-  $ git remote update mmotm
-  $ git checkout -b topic mmotm/master
-  <make changes, commit>
-  $ git send-email mmotm/master.. [...]
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrdTUwACgkQAVBC80lX
+0GyJzAf/XsUbMyl+PGcUI17TBq5diJZcAjTPPJTiNKzHhAWLKXLqSZTZ9dla/a0s
+jI39LaS18lIn0Jl09AMS63DfEVIAFWMCeW9iscrYPad1GyMhpc4dcw7eWKUZDDNn
+kNx7+jfvUbCP/zTe0yLg+jStne8CwLSGVoH2Iglq54NRS6W0vaMkQuC0L+ZoIrXf
+JaV/kHVrfztlOlXQ2DM5jVriCBzdjncnUT3KS80blbBYYtBtneGK6BzaWzQqRo2L
+DthjGkOc/ozgkWoYvxEq5qfq4hHlpQxk77q8XRS4qtmmlRRDzuRGIRidYiis+lO3
+mFEywEQlAKOzx4KRW7nPVZe4mZMnjw==
+=LjKn
+-----END PGP SIGNATURE-----
 
-To rebase a branch with older patches to a new mmotm release:
-
-  $ git remote update mmotm
-  $ git rebase --onto mmotm/master <topic base> topic
-
-
-
-
-The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
-contains daily snapshots of the -mm tree.  It is updated more frequently
-than mmotm, and is untested.
-
-A git copy of this tree is available at
-
-	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
-
-and use of this tree is similar to
-http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
-
-
-This mmotm tree contains the following patches against 4.17-rc1:
-(patches marked "*" will be included in linux-next)
-
-  origin.patch
-  i-need-old-gcc.patch
-* fork-unconditionally-clear-stack-on-fork.patch
-* mm-fix-do_pages_move-status-handling.patch
-* mm-pagemap-fix-swap-offset-value-for-pmd-migration-entry.patch
-* writeback-safer-lock-nesting.patch
-* mm-enable-thp-migration-for-shmem-thp.patch
-* rapidio-fix-rio_dma_transfer-error-handling.patch
-* kasan-add-no_sanitize-attribute-for-clang-builds.patch
-* maintainers-add-personal-addresses-for-sascha-and-me.patch
-* autofs-mount-point-create-should-honour-passed-in-mode.patch
-* proc-revalidate-kernel-thread-inodes-to-root-root.patch
-* proc-fix-proc-loadavg-regression.patch
-* kexec_file-do-not-add-extra-alignment-to-efi-memmap.patch
-* fs-elf-dont-complain-map_fixed_noreplace-unless-eexist-error.patch
-* mm-memcg-add-__gfp_nowarn-in-__memcg_schedule_kmem_cache_create.patch
-* fix-null-pointer-in-page_cache_tree_insert.patch
-* mm-oom-fix-concurrent-munlock-and-oom-reaper-unmap.patch
-* mm-oom-fix-concurrent-munlock-and-oom-reaper-unmap-v2.patch
-* kasan-prohibit-kasanstructleak-combination.patch
-* lib-avoid-soft-lockup-in-test_find_first_bit.patch
-* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
-* ocfs2-submit-another-bio-if-current-bio-is-full.patch
-* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
-* prctl-add-pr_et_pdeathsig_proc.patch
-* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
-* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
-* ocfs2-dont-put-and-assign-null-to-bh-allocated-outside.patch
-* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
-* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
-* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
-* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
-  mm.patch
-* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
-* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
-* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct-fix.patch
-* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
-* mm-memcontrol-implement-memoryswapevents.patch
-* zram-correct-flag-name-of-zram_access.patch
-* zram-mark-incompressible-page-as-zram_huge.patch
-* zram-record-accessed-second.patch
-* zram-introduce-zram-memory-tracking.patch
-* zram-introduce-zram-memory-tracking-update.patch
-* zram-introduce-zram-memory-tracking-update-fix.patch
-* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
-* mm-shmem-update-file-sealing-comments-and-file-checking.patch
-* mm-restructure-memfd-code.patch
-* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
-* mm-introduce-arch_has_pte_special.patch
-* mm-remove-odd-have_pte_special.patch
-* mm-check-for-sigkill-inside-dup_mmap-loop.patch
-* mm-check-for-sigkill-inside-dup_mmap-loop-fix.patch
-* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
-* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
-* mm-memblock-introduce-phys_addr_max.patch
-* mm-rename-page_counters-count-limit-into-usage-max.patch
-* mm-memorylow-hierarchical-behavior.patch
-* mm-treat-memorylow-value-inclusive.patch
-* mm-docs-describe-memorylow-refinements.patch
-* prctl-deprecate-non-pr_set_mm_map-operations.patch
-* prctl-deprecate-non-pr_set_mm_map-operations-fix.patch
-* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
-* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
-* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
-* mm-sparse-add-a-static-variable-nr_present_sections.patch
-* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
-* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
-* mm-fix-race-between-swapoff-and-mincore.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
-* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
-* mm-oom-refactor-the-oom_kill_process-function.patch
-* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
-* mm-oom-cgroup-aware-oom-killer.patch
-* mm-oom-cgroup-aware-oom-killer-fix.patch
-* mm-oom-introduce-memoryoom_group.patch
-* mm-oom-introduce-memoryoom_group-fix.patch
-* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
-* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
-* mm-oom-cgroup-aware-oom-killer-fix-fix.patch
-* cgroup-list-groupoom-in-cgroup-features.patch
-* mm-add-strictlimit-knob-v2.patch
-* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
-* mm-page_owner-align-with-pageblock_nr_pages.patch
-* mm-page_owner-align-with-pageblock_nr-pages.patch
-* mm-kasan-dont-vfree-nonexistent-vm_area.patch
-* proc-make-proc-cmdline-go-through-lsm.patch
-* proc-more-unsigned-int-in-proc-cmdline.patch
-* proc-somewhat-simpler-code-for-proc-cmdline.patch
-* proc-simpler-iterations-for-proc-cmdline.patch
-* proc-simpler-iterations-for-proc-cmdline-fix.patch
-* proc-deduplicate-proc-cmdline-implementation.patch
-* locking-hung_task-show-all-hung-tasks-before-panic.patch
-* lib-micro-optimization-for-__bitmap_complement.patch
-* ida-remove-simple_ida_lock.patch
-* ida-remove-simple_ida_lock-fix.patch
-* rslib-remove-vlas-by-setting-upper-bound-on-nroots.patch
-* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
-* coredump-fix-spam-with-zero-vma-process.patch
-* seq_file-delete-small-value-optimization.patch
-* exofs-avoid-vla-in-structures.patch
-* exofs-avoid-vla-in-structures-v2.patch
-  linux-next.patch
-  linux-next-git-rejects.patch
-* mm-use-octal-not-symbolic-permissions.patch
-* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
-* resource-add-walk_system_ram_res_rev.patch
-* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
-* fix-read-buffer-overflow-in-delta-ipc.patch
-* sparc64-ng4-memset-32-bits-overflow.patch
-  make-sure-nobodys-leaking-resources.patch
-  releasing-resources-with-children.patch
-  mutex-subsystem-synchro-test-module.patch
-  kernel-forkc-export-kernel_thread-to-modules.patch
-  slab-leaks3-default-y.patch
-  workaround-for-a-pci-restoring-bug.patch
+--Sig_/uZ5j=z4kN.lWQG5GAv0C5jt--
