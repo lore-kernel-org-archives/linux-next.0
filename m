@@ -1,46 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the rcu tree
-Date: Tue, 24 Apr 2018 07:48:44 +1000
-Message-ID: <20180424074844.36464221@canb.auug.org.au>
+From: Steve French <smfrench@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the cifs tree
+Date: Mon, 23 Apr 2018 16:52:05 -0500
+Message-ID: <CAH2r5mtHjjMZy8zWcUKFmKsF3X4b1iEt-otbGpiu0-n2G9bohw@mail.gmail.com>
+References: <20180424073840.39b99c2e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/eS6qZoFExssgQwzkQE868cd"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180424073840.39b99c2e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/eS6qZoFExssgQwzkQE868cd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Fixed - thx
 
-Hi Paul,
+On Mon, Apr 23, 2018 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> Commits
+>
+>   dee4bf3f21d8 ("cifs: smbd: Don't use RDMA read/write when signing is used")
+>   553018657de2 ("ifs: smbd: Avoid allocating iov on the stack")
+>
+> are missing a Signed-off-by from their committer.
+>
+> --
+> Cheers,
+> Stephen Rothwell
 
-Commit
 
-  bbf9d3657c39 ("doc: Ensure whatisRCU.txt actually says what RCU is")
 
-is missing a Signed-off-by from its committer.
+-- 
+Thanks,
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/eS6qZoFExssgQwzkQE868cd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlreVLwACgkQAVBC80lX
-0Gy2OAgAplJgsbowjUuZIyI1llluS61zyTglm9L1UfGIPZuG34BjdU1RqIC5qhDY
-VxyHWIoL+BmGS+QNLengIL90P0cy0MsvAKxaZOAI2sAydAcmyMAWhw+KBld3UUh0
-Ak+yDDWXQr2m7dpngXUFa8i1LPi0rdT5FmzPCvaYKVRq4OekO44hqOyJ/0YBzcRX
-JMgtbU3pYOf5w7Xf7vrN/cPiNP2qgG9w0loO0rzlGqhPk75nt1hITWk+2bdINc+h
-ItnjxPLYKvXo0GMyiKMXAhD3V/7n5a8Er2Hv0l5Bxq6A6Luezcc9u2O7gNROj55d
-h9RjrrVHav1tQ3mSm1IoZHIj0imEuw==
-=oD9e
------END PGP SIGNATURE-----
-
---Sig_/eS6qZoFExssgQwzkQE868cd--
+Steve
