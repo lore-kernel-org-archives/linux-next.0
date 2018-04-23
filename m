@@ -1,36 +1,28 @@
-From: Steve French <smfrench@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the cifs tree
-Date: Mon, 23 Apr 2018 16:52:05 -0500
-Message-ID: <CAH2r5mtHjjMZy8zWcUKFmKsF3X4b1iEt-otbGpiu0-n2G9bohw@mail.gmail.com>
-References: <20180424073840.39b99c2e@canb.auug.org.au>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the rcu tree
+Date: Mon, 23 Apr 2018 15:16:29 -0700
+Message-ID: <20180423221628.GS26088@linux.vnet.ibm.com>
+References: <20180424074844.36464221@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180424073840.39b99c2e@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180424074844.36464221@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: CIFS <linux-cifs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Fixed - thx
+On Tue, Apr 24, 2018 at 07:48:44AM +1000, Stephen Rothwell wrote:
+> Hi Paul,
+> 
+> Commit
+> 
+>   bbf9d3657c39 ("doc: Ensure whatisRCU.txt actually says what RCU is")
+> 
+> is missing a Signed-off-by from its committer.
 
-On Mon, Apr 23, 2018 at 4:38 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> Commits
->
->   dee4bf3f21d8 ("cifs: smbd: Don't use RDMA read/write when signing is used")
->   553018657de2 ("ifs: smbd: Avoid allocating iov on the stack")
->
-> are missing a Signed-off-by from their committer.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Good catch, fixed!
 
-
-
--- 
-Thanks,
-
-Steve
+							Thanx, Paul
