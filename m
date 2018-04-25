@@ -1,71 +1,47 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Subject: Re: [PATCH] gpu/drm/amd/amdkfd: fix build, select MMU_NOTIFIER
-Date: Tue, 24 Apr 2018 12:51:55 +0300
-Message-ID: <CAFCwf10nfNixtZrWkP7kGBfGyctrqZP2kwaFp1-KUDFtTgu-4g@mail.gmail.com>
-References: <20180414002933.6h3S5%akpm@linux-foundation.org>
- <cf7fe470-1b8f-a4a2-d3a1-3360ec1cc578@infradead.org>
- <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
+From: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Subject: linux-next: Signed-off-by missing for commit in the
+ wireless-drivers-next tree
+Date: Wed, 25 Apr 2018 10:56:19 +1000
+Message-ID: <20180425105619.09f58e39@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CADYN=9KhMhgCzmwg1P5FHEt0EaTH-EoELeF7mCCc-KtWocEGOQ@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-next@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/RFXR6VoHeFIt_oJdiO.0g=u"; protocol="application/pgp-signature"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gregory Greenman <gregory.greenman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sara Sharon <sara.sharon-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Luca Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVGh1LCBBcHIgMTksIDIwMTggYXQgMTo0NiBQTSwgQW5kZXJzIFJveGVsbCA8YW5kZXJzLnJv
-eGVsbEBsaW5hcm8ub3JnPiB3cm90ZToKPiBPbiAxNCBBcHJpbCAyMDE4IGF0IDA0OjQ5LCBSYW5k
-eSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFkZWFkLm9yZz4gd3JvdGU6Cj4+IEZyb206IFJhbmR5IER1
-bmxhcCA8cmR1bmxhcEBpbmZyYWRlYWQub3JnPgo+Pgo+PiBXaGVuIENPTkZJR19NTVVfTk9USUZJ
-RVIgaXMgbm90IGVuYWJsZWQsIHN0cnVjdCBtbXVfbm90aWZpZXIgaGFzIGFuCj4+IGluY29tcGxl
-dGUgdHlwZSBkZWZpbml0aW9uLCB3aGljaCBjYXVzZXMgYnVpbGQgZXJyb3JzLgo+Pgo+PiAuLi9k
-cml2ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9rZmRfcHJpdi5oOjYwNzoyMjogZXJyb3I6IGZpZWxk
-ICdtbXVfbm90aWZpZXInIGhhcyBpbmNvbXBsZXRlIHR5cGUKPj4gLi4vaW5jbHVkZS9saW51eC9r
-ZXJuZWwuaDo5Nzk6MzI6IGVycm9yOiBkZXJlZmVyZW5jaW5nIHBvaW50ZXIgdG8gaW5jb21wbGV0
-ZSB0eXBlCj4+IC4uL2luY2x1ZGUvbGludXgva2VybmVsLmg6OTgwOjE4OiBlcnJvcjogZGVyZWZl
-cmVuY2luZyBwb2ludGVyIHRvIGluY29tcGxldGUgdHlwZQo+PiAuLi9kcml2ZXJzL2dwdS9kcm0v
-YW1kL2FtZGtmZC9rZmRfcHJvY2Vzcy5jOjQzNDoyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRp
-b24gb2YgZnVuY3Rpb24gJ21tdV9ub3RpZmllcl91bnJlZ2lzdGVyX25vX3JlbGVhc2UnIFstV2Vy
-cm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+PiAuLi9kcml2ZXJzL2dwdS9kcm0v
-YW1kL2FtZGtmZC9rZmRfcHJvY2Vzcy5jOjQzNToyOiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRp
-b24gb2YgZnVuY3Rpb24gJ21tdV9ub3RpZmllcl9jYWxsX3NyY3UnIFstV2Vycm9yPWltcGxpY2l0
-LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQo+PiAuLi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9r
-ZmRfcHJvY2Vzcy5jOjQzODoyMTogZXJyb3I6IHZhcmlhYmxlICdrZmRfcHJvY2Vzc19tbXVfbm90
-aWZpZXJfb3BzJyBoYXMgaW5pdGlhbGl6ZXIgYnV0IGluY29tcGxldGUgdHlwZQo+PiAuLi9kcml2
-ZXJzL2dwdS9kcm0vYW1kL2FtZGtmZC9rZmRfcHJvY2Vzcy5jOjQzOToyOiBlcnJvcjogdW5rbm93
-biBmaWVsZCAncmVsZWFzZScgc3BlY2lmaWVkIGluIGluaXRpYWxpemVyCj4+IC4uL2RyaXZlcnMv
-Z3B1L2RybS9hbWQvYW1ka2ZkL2tmZF9wcm9jZXNzLmM6NDM5OjI6IHdhcm5pbmc6IGV4Y2VzcyBl
-bGVtZW50cyBpbiBzdHJ1Y3QgaW5pdGlhbGl6ZXIgW2VuYWJsZWQgYnkgZGVmYXVsdF0KPj4gLi4v
-ZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRrZmQva2ZkX3Byb2Nlc3MuYzo0Mzk6Mjogd2FybmluZzog
-KG5lYXIgaW5pdGlhbGl6YXRpb24gZm9yICdrZmRfcHJvY2Vzc19tbXVfbm90aWZpZXJfb3BzJykg
-W2VuYWJsZWQgYnkgZGVmYXVsdF0KPj4gLi4vZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRrZmQva2Zk
-X3Byb2Nlc3MuYzo1MzQ6MjogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9u
-ICdtbXVfbm90aWZpZXJfcmVnaXN0ZXInIFstV2Vycm9yPWltcGxpY2l0LWZ1bmN0aW9uLWRlY2xh
-cmF0aW9uXQo+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFk
-ZWFkLm9yZz4KPj4gQ2M6IE9kZWQgR2FiYmF5IDxvZGVkLmdhYmJheUBnbWFpbC5jb20+Cj4+IENj
-OiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4KPiBUZXN0ZWQtYnk6IEFuZGVycyBS
-b3hlbGwgPGFuZGVycy5yb3hlbGxAbGluYXJvLm9yZz4KPgo+PiAtLS0KPj4gRnJvbSBsaW51eC1u
-ZXh0LCBub3QgbW1vdG0sIGJ1dCBmb3VuZCBpbiBtbW90bSBidWlsZHMuCj4+Cj4+ICBkcml2ZXJz
-L2dwdS9kcm0vYW1kL2FtZGtmZC9LY29uZmlnIHwgICAgMSArCj4+ICAxIGZpbGUgY2hhbmdlZCwg
-MSBpbnNlcnRpb24oKykKPj4KPj4gLS0tIG1tb3RtLTIwMTgtMDQxMy0xNzI4Lm9yaWcvZHJpdmVy
-cy9ncHUvZHJtL2FtZC9hbWRrZmQvS2NvbmZpZwo+PiArKysgbW1vdG0tMjAxOC0wNDEzLTE3Mjgv
-ZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRrZmQvS2NvbmZpZwo+PiBAQCAtNiw1ICs2LDYgQEAgY29u
-ZmlnIEhTQV9BTUQKPj4gICAgICAgICB0cmlzdGF0ZSAiSFNBIGtlcm5lbCBkcml2ZXIgZm9yIEFN
-RCBHUFUgZGV2aWNlcyIKPj4gICAgICAgICBkZXBlbmRzIG9uIERSTV9BTURHUFUgJiYgWDg2XzY0
-Cj4+ICAgICAgICAgaW1wbHkgQU1EX0lPTU1VX1YyCj4+ICsgICAgICAgc2VsZWN0IE1NVV9OT1RJ
-RklFUgo+PiAgICAgICAgIGhlbHAKPj4gICAgICAgICAgIEVuYWJsZSB0aGlzIGlmIHlvdSB3YW50
-IHRvIHVzZSBIU0EgZmVhdHVyZXMgb24gQU1EIEdQVSBkZXZpY2VzLgo+PgoKVGhhbmtzLCB0YWtl
-biB0byAtZml4ZXMKT2RlZApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+--Sig_/RFXR6VoHeFIt_oJdiO.0g=u
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Commit
+
+  84226ca1c5d3 ("iwlwifi: mvm: support offload of AMSDU rate control")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/RFXR6VoHeFIt_oJdiO.0g=u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrf0jMACgkQAVBC80lX
+0Gwa8Qf/QuBcS+25nQp7e+Hh228TN+RsfXMihPjwcMkDvaJkWSLRcGUMv06QKucQ
+o7LlmNYJf+ozTyID6/+40gsvTRlc9UaiZb4JcHJ+CP2XbJnibWSF3AIjuHLfe7Am
+SOWn7o9EGEKtJLNknUF5DcXvLyu97KO0Jo+0q6rU/LPfOhjucfEKKX+QZe6aZDpi
+wUjOllQvpkkMXOB4XqiXdDRv+L4Lcu/bhzTvGgqfMmNtV19SkVxLYDOmZUaJhZIy
+tSyK8w6fnV/OCzgIReiwd/EOxtL1Tz38s2GK8IKZqMdd1ECuXeX0ZPNXvbNF2YNa
+5jM9vGzCnWpUBevJkskqYMQfqRoiCw==
+=Wc59
+-----END PGP SIGNATURE-----
+
+--Sig_/RFXR6VoHeFIt_oJdiO.0g=u--
