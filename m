@@ -1,66 +1,51 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the rpmsg tree
-Date: Thu, 26 Apr 2018 13:33:10 +1000
-Message-ID: <20180426133310.0ec74122@canb.auug.org.au>
+From: Evan Green <evgreen@chromium.org>
+Subject: Re: linux-next: build failure after merge of the qcom tree
+Date: Thu, 26 Apr 2018 03:39:25 +0000
+Message-ID: <CAE=gft6e6wo1nj+Rw5=f+UXxhx3Hof7Nt=E9+-OAzvvv8Gct1g@mail.gmail.com>
+References: <20180426084041.5cf81918@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6.KL=Q6=KT_sHpA9WmOruHH"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426084041.5cf81918@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joerg Roedel <jroedel@suse.de>
+To: sfr@canb.auug.org.au
+Cc: agross@codeaurora.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Karthikeyan Ramasubramanian <kramasub@codeaurora.org>, Sagar Dharia <sdharia@codeaurora.org>, Girish Mahadevan <girishm@codeaurora.org>, groeck@chromium.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6.KL=Q6=KT_sHpA9WmOruHH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Apr 25, 2018 at 3:42 PM Stephen Rothwell <sfr@canb.auug.org.au>
+wrote:
 
-Hi Bjorn,
+> Hi Andy,
 
-After merging the rpmsg tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+> After merging the qcom tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 
-drivers/remoteproc/remoteproc_core.c: In function 'rproc_handle_devmem':
-drivers/remoteproc/remoteproc_core.c:557:8: error: implicit declaration of =
-function 'iommu_map_sync'; did you mean 'iommu_map_sg'? [-Werror=3Dimplicit=
--function-declaration]
-  ret =3D iommu_map_sync(rproc->domain, rsc->da,
-        ^~~~~~~~~~~~~~
-        iommu_map_sg
-drivers/remoteproc/remoteproc_core.c: In function 'rproc_resource_cleanup':
-drivers/remoteproc/remoteproc_core.c:845:14: error: implicit declaration of=
- function 'iommu_unmap_sync'; did you mean 'iommu_unmap_fast'? [-Werror=3Di=
-mplicit-function-declaration]
-   unmapped =3D iommu_unmap_sync(rproc->domain, entry->da,
-              ^~~~~~~~~~~~~~~~
-              iommu_unmap_fast
+> ERROR: "geni_se_select_mode" [drivers/tty/serial/qcom_geni_serial.ko]
+undefined!
+> ERROR: "geni_se_init" [drivers/tty/serial/qcom_geni_serial.ko] undefined!
+> ERROR: "geni_se_config_packing" [drivers/tty/serial/qcom_geni_serial.ko]
+undefined!
+> ERROR: "geni_se_resources_off" [drivers/tty/serial/qcom_geni_serial.ko]
+undefined!
+> ERROR: "geni_se_resources_on" [drivers/tty/serial/qcom_geni_serial.ko]
+undefined!
 
-Caused by commit
+> Probably caused by commit
 
-  aace25b18cbd ("remoteproc: Use sychronized interface of the IOMMU-API")
+>    eddac5af0654 ("soc: qcom: Add GENI based QUP Wrapper driver")
 
-I suspect that part of the commit is missing ...
+> I have used the qcom tree from next-20180424 for today.
 
-I have use the rpmsg tree from next-20180424 for today.
+> --
+> Cheers,
+> Stephen Rothwell
 
---=20
-Cheers,
-Stephen Rothwell
+Guenter and I had a fix for compile test here, which had failures that
+looked similar:
 
---Sig_/6.KL=Q6=KT_sHpA9WmOruHH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+https://lkml.org/lkml/2018/4/18/752
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrhSHYACgkQAVBC80lX
-0GwCigf/U1mKADsObcKGlS1L6LbQkISKvwAKk608t4T9xcnBam+WzCxd+PJd7Th2
-77OxfZaVPESWjPEvITCfYI6wbfGQJtlittKnkURzloHyTmL1tkLFujKa8UG4SKk5
-Bbw2VyvnoN6AgYR3qZR4pZ9iiug6/1Xkquj5anRxFX3dO2HE+12rf1KEyX36ZqS1
-gSPlBbJwCgUduK38+O/EoyqJcT2pFz7W4p3QPrBBa5ZesiHJ0p1psBwYbGlsomHe
-iY0EUkh7nvTv+aq5R+NJugweiz424GBaRpv5uXDOOj7jw2IhstiXuHtSAyRxVVpz
-0G4cwwGkZa+vz5IraBwaQDObKtjKbA==
-=rrJO
------END PGP SIGNATURE-----
-
---Sig_/6.KL=Q6=KT_sHpA9WmOruHH--
+I was hoping to verify myself whether or not this fixed allmodconfig, but
+my machine at home is not so fast, and I must be missing something, either
+in the configuration or the tree. Which tree exactly are you building?
+-Evan
