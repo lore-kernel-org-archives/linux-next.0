@@ -1,45 +1,52 @@
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: linux-next: build failure after merge of the clk-samsung tree
-Date: Thu, 26 Apr 2018 09:29:14 +0200
-Message-ID: <CAJKOXPexiwOyPwmAV8KQj4JAnWHYYP4o8eVYodhvRYfKFGVbNw@mail.gmail.com>
-References: <20180426091940.16bb1faf@canb.auug.org.au>
+From: Luciano Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with
+ the wireless-drivers tree
+Date: Thu, 26 Apr 2018 10:38:11 +0300
+Message-ID: <6f5ba028f120d092bd5c96557144750518faf9c1.camel@intel.com>
+References: <20180426110917.446204af@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180426091940.16bb1faf@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20180426110917.446204af-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Haim Dreyfuss <haim.dreyfuss-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shaul Triebitz <shaul.triebitz-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 26, 2018 at 1:19 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Sylwester,
->
-> After merging the clk-samsung tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->
-> In file included from arch/arm/boot/dts/exynos5440-sd5v1.dts:10:0:
-> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
->  #include <dt-bindings/clock/exynos5440.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> scripts/Makefile.lib:291: recipe for target 'arch/arm/boot/dts/exynos5440-sd5v1.dtb' failed
-> In file included from arch/arm/boot/dts/exynos5440-ssdk5440.dts:10:0:
-> arch/arm/boot/dts/exynos5440.dtsi:9:10: fatal error: dt-bindings/clock/exynos5440.h: No such file or directory
->  #include <dt-bindings/clock/exynos5440.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   f986c0e40ff5 ("clk: samsung: Remove support for Exynos5440")
->
-> I used the version of the clk-samsung tree from next-20180424 for today.
+On Thu, 2018-04-26 at 11:09 +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the wireless-drivers-next tree got a
+> conflict in:
+> 
+>   drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+> 
+> between commit:
+> 
+>   77e30e10ee28 ("iwlwifi: mvm: query regdb for wmm rule if needed")
+> 
+> from the wireless-drivers tree and commits:
+> 
+>   9c4f7d512740 ("iwlwifi: move all NVM parsing code to the common
+> files")
+>   4c625c564ba2 ("iwlwifi: get rid of fw/nvm.c")
+> 
+> from the wireless-drivers-next tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your
+> tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any
+> particularly
+> complex conflicts.
 
-Thanks for the report, kbuild also mentioned this. The DTS which are
-using this header are removed in first patch of patchset... which was
-not applied yet and anyway would end in different tree. I think the
-patch removing clk header should wait till DTS change get merged into
-mainline.
+Thanks for resolving this, Stephen!
 
-Best regards,
-Krzysztof
+I checked your resolution and it's spot on.
+
+--
+Cheers,
+Luca.
