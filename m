@@ -1,52 +1,42 @@
-From: Luciano Coelho <luciano.coelho-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: linux-next: manual merge of the wireless-drivers-next tree with
- the wireless-drivers tree
-Date: Thu, 26 Apr 2018 10:38:11 +0300
-Message-ID: <6f5ba028f120d092bd5c96557144750518faf9c1.camel@intel.com>
-References: <20180426110917.446204af@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the net-next
+ tree
+Date: Thu, 26 Apr 2018 09:56:21 +0200
+Message-ID: <946a88a7-a12b-ab57-9f6a-17cf4f9aecfb@iogearbox.net>
+References: <20180426104902.548c3fdb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20180426110917.446204af-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Haim Dreyfuss <haim.dreyfuss-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Shaul Triebitz <shaul.triebitz-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180426104902.548c3fdb@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, David Miller <davem@davemloft.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 2018-04-26 at 11:09 +1000, Stephen Rothwell wrote:
+On 04/26/2018 02:49 AM, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the wireless-drivers-next tree got a
-> conflict in:
+> Today's linux-next merge of the bpf-next tree got a conflict in:
 > 
->   drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+>   tools/testing/selftests/bpf/.gitignore
 > 
 > between commit:
 > 
->   77e30e10ee28 ("iwlwifi: mvm: query regdb for wmm rule if needed")
+>   0abf854d7cbb ("selftests: bpf: update .gitignore with missing generated files")
 > 
-> from the wireless-drivers tree and commits:
+> from the net-next tree and commit:
 > 
->   9c4f7d512740 ("iwlwifi: move all NVM parsing code to the common
-> files")
->   4c625c564ba2 ("iwlwifi: get rid of fw/nvm.c")
+>   b6fd9cf796e6 ("selftests: bpf: update .gitignore with missing file")
 > 
-> from the wireless-drivers-next tree.
+> from the bpf-next tree.
 > 
 > I fixed it up (see below) and can carry the fix as necessary. This
 > is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your
-> tree
+> conflicts should be mentioned to your upstream maintainer when your tree
 > is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any
-> particularly
+> with the maintainer of the conflicting tree to minimise any particularly
 > complex conflicts.
 
-Thanks for resolving this, Stephen!
-
-I checked your resolution and it's spot on.
-
---
-Cheers,
-Luca.
+Looks good, thanks!
