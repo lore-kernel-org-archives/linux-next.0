@@ -1,35 +1,46 @@
-From: Andy Gross <andy.gross@linaro.org>
-Subject: Re: linux-next: build failure after merge of the qcom tree
-Date: Thu, 26 Apr 2018 16:23:30 -0500
-Message-ID: <20180426212330.GD25699@hector.attlocal.net>
-References: <20180426084041.5cf81918@canb.auug.org.au>
- <CAE=gft6e6wo1nj+Rw5=f+UXxhx3Hof7Nt=E9+-OAzvvv8Gct1g@mail.gmail.com>
- <20180426145255.0141300e@canb.auug.org.au>
- <CAE=gft625-cWjBQXcNRumFRGrmF6nJDf0pAjBbG+gAAS_YXtWg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net tree
+Date: Mon, 30 Apr 2018 07:18:43 +1000
+Message-ID: <20180430071843.2687dd5b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAE=gft625-cWjBQXcNRumFRGrmF6nJDf0pAjBbG+gAAS_YXtWg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Evan Green <evgreen@chromium.org>
-Cc: sfr@canb.auug.org.au, agross@codeaurora.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Karthikeyan Ramasubramanian <kramasub@codeaurora.org>, Sagar Dharia <sdharia@codeaurora.org>, Girish Mahadevan <girishm@codeaurora.org>, groeck@chromium.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/R4ZTTxk_jW_VrOsu/tDUFwa"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Israel Rukshin <israelr@mellanox.com>, Saeed Mahameed <saeedm@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Apr 26, 2018 at 04:42:17PM +0000, Evan Green wrote:
-> > I suspect that just Linus' tree merged with the qcom tree would have
-> > been enough to cause the failure.
+--Sig_/R4ZTTxk_jW_VrOsu/tDUFwa
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for missing this in my testing.
+Hi all,
 
-> 
-> 
-> I've verified that the patch listed above fixes the issue for me. Andy, if
-> it looks okay to you, go ahead an pull it in. Apologies for the trouble,
-> and thanks Guenter for having builders that notice this stuff early!
-> -Evan
+Commit
 
-Thanks for looking at this Evan.
+  6082d9c9c94a ("net/mlx5: Fix mlx5_get_vector_affinity function")
 
+is missing a Signed-off-by from its committer.
 
-Andy
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/R4ZTTxk_jW_VrOsu/tDUFwa
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrmNrMACgkQAVBC80lX
+0Gyl0Af/bNVJi5EVgz6s1yiV72JSz5AjvM0d9+ZX9cgOj5Sb52OeAEAMUKFc3ixH
+VHXPGnueGIUL0AtPH+VnrQH5NWvXL1yCx19sPJ18cPUJg4TYWAR/gx/EeHatsN2V
+6jd0ADv6vbxUViPToNT1QZa+68Hhl1Lll3oTiAktDGsnEm7KgkzlN09+Dugzw7lK
+FVN0KlF8qWGu2TBQpfFAFoMA2EGRlb/ASgkqrUN11+lisIEbQKrndX8KXtQG7oIy
+TGel5TQi1JAs5c7xR4Bdacu3/lNTl5J+Dc3Fj5NoiE096O0gPgR23TwIGmPYFoaS
+VsbkpDy/MZrpi/S+xVo+Z5RTdxGbig==
+=Vg+g
+-----END PGP SIGNATURE-----
+
+--Sig_/R4ZTTxk_jW_VrOsu/tDUFwa--
