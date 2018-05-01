@@ -1,94 +1,77 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
-Date: Tue, 1 May 2018 10:10:17 +1000
-Message-ID: <20180501101017.517b38af@canb.auug.org.au>
+From: Doug Ledford <dledford@redhat.com>
+Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
+ tree
+Date: Mon, 30 Apr 2018 20:55:35 -0400
+Message-ID: <1525136135.11756.94.camel@redhat.com>
+References: <20180501101017.517b38af@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Wl9dmyWBlHaq7dgRMcNuJ32"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-I9SppQfX8HkOfcQA5L16"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180501101017.517b38af@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Gunthorpe <jgg@mellanox.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yanjun <yanjun.zhu@oracle.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
-Content-Type: text/plain; charset=US-ASCII
+
+--=-I9SppQfX8HkOfcQA5L16
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> Today's linux-next merge of the rdma tree got a conflict in:
+>=20
+>   drivers/infiniband/sw/rxe/rxe_resp.c
+>=20
+> between commit:
+>=20
+>   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
+>=20
+> from the rdma-fixes tree and commit:
+>=20
+>   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
+>=20
+> from the rdma tree.
+>=20
+> I fixed it up (I think - see below) and can carry the fix as necessary.
+> This is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
 
-Today's linux-next merge of the rdma tree got a conflict in:
-
-  drivers/infiniband/sw/rxe/rxe_resp.c
-
-between commit:
-
-  9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-
-from the rdma-fixes tree and commit:
-
-  2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-
-from the rdma tree.
-
-I fixed it up (I think - see below) and can carry the fix as necessary.
-This is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+We will probably merge the for-rc branch into the for-next branch in the
+next few days, at which point we will do the conflict resolution
+ourselves and your need to carry anything should drop out.
 
 --=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/infiniband/sw/rxe/rxe_resp.c
-index 955ff3b6da9c,c45c1ff24497..000000000000
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@@ -1121,23 -1123,13 +1120,12 @@@ static enum resp_states duplicate_reque
-  		/* Find the operation in our list of responder resources. */
-  		res =3D find_resource(qp, pkt->psn);
-  		if (res) {
-- 			struct sk_buff *skb_copy;
--=20
-- 			skb_copy =3D skb_clone(res->atomic.skb, GFP_ATOMIC);
-- 			if (skb_copy) {
-- 				rxe_add_ref(qp); /* for the new SKB */
-- 			} else {
-- 				pr_warn("Couldn't clone atomic resp\n");
-- 				rc =3D RESPST_CLEANUP;
-- 				goto out;
-- 			}
--=20
-+ 			skb_get(res->atomic.skb);
-  			/* Resend the result. */
-  			rc =3D rxe_xmit_packet(to_rdev(qp->ibqp.device), qp,
-- 					     pkt, skb_copy);
-+ 					     pkt, res->atomic.skb);
-  			if (rc) {
-  				pr_err("Failed resending result. This flow is not handled - skb ignor=
-ed\n");
-- 				rxe_drop_ref(qp);
- -				kfree_skb(res->atomic.skb);
-  				rc =3D RESPST_CLEANUP;
-  				goto out;
-  			}
-
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+--=-I9SppQfX8HkOfcQA5L16
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrnsGkACgkQAVBC80lX
-0GwYKggAieq6QngquggXeIH9/2RF2XQaDmmbOBIpVKsZPF25aO89hyHbRklwdPdF
-/sZ2+BZ3OjKrJc/OjLWiApCHUHOGoEqDrkLji1gYuOX3PT6iGPTBZSAFsFFKZgZv
-sFuJd0faDPmhFfr7mrbUqm6c0gJEc5+e5SDXixyNJ340tus0lYXS9QLZZny0WZzt
-YhKySTSBryciFj1BOdH8Ev9bI9Uk6KVWTSq4i1xMBdW4s5ZmPN8Fg5SHkGMPc0zQ
-q/gBydvibmHWAUUruKqlfcH4gZJqYGc1zQxmVQdFCCVqieZvaeHyAAfKyoNP2KSL
-mSiloMgyIjN+FUUaXj2RpePsdhs+zg==
-=3GkS
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrnuwcACgkQuCajMw5X
+L93OIhAAmYPokQ6hbId+nYkcCLSfK7EG/hfwXDARB4AQV44pcZEPa0yo5DclvIj4
+j6dHtDl9EZZSrfT7KTB9a/4M+uXVjdUVyyf5fPuABj7axCn43DkIaOftfixzKfUq
+zw/Lm3zb1wD7FXwpT2o++x2uZtkZ58T2zbvKDAmEG6g7ntLPMts4+ZNaFVr0MiEk
+Jl7eXoigIVEJfWXU72o/fSWhbZiXvWGLD4Iuoht8KAzL/r+x74cObBscoGRNoiPr
+KEc5SNfES7zG76fJfSaIYcDzsC3td5R/+mB5ljSMLQQpM/BZ2/OphO7Iz8HeAaAn
+VnEIVfPF+TkLNjkzmDP2wfurRzC7A+aPCovemiWTecIqccTwfgDM3zeF/vLM/TzT
+vDWRYCiQ/aricZA48OloeEyDMjKC1vkpIKMdqOzuS/dbBUMJl5wzNgI3FG6UAIkx
+k6SPKWx3U1/5dThvRPpZiTT8UEQBVe1zPEaFGAccjpqmnRFvd9zI8VcewtHTbZkr
+2BB4YQDxHq7LScVgXZ8QKu+5yfHOiz0w0B+cIolHlEj9yDbB1+KxrdujVLpJV/b4
+IPOAdvM7KSMRvWKkDKe3ftvjPMUajp1LwuYWdID7zMIFRZY99wuFxSxR4MFBVidr
+n8IByKlxZowW57A5PmbZYxLUVYfLdAsZFMWYc+H/qU9Ukg/F3tg=
+=ES9A
 -----END PGP SIGNATURE-----
 
---Sig_/Wl9dmyWBlHaq7dgRMcNuJ32--
+--=-I9SppQfX8HkOfcQA5L16--
