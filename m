@@ -1,99 +1,96 @@
-From: Doug Ledford <dledford@redhat.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Date: Wed, 02 May 2018 10:00:52 -0400
-Message-ID: <1525269652.11756.134.camel@redhat.com>
-References: <20180501101017.517b38af@canb.auug.org.au>
-         <1525136135.11756.94.camel@redhat.com>
-         <20180502102237.GG20375@mtr-leonro.local>
+From: Christian Brauner <christian.brauner@canonical.com>
+Subject: Re: [PATCH -next] user_namespace: Replace gotos with return statements
+Date: Wed, 2 May 2018 16:12:18 +0200
+Message-ID: <CAPP7u0XztHVja18pJV+0cfRNr7cGmKq4i0nYKt03Sd6oyKUuVQ@mail.gmail.com>
+References: <20180419024641.24213-1-marcos.souza.org@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-eMP6AqRXDUkEHD4UIcWj"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180502102237.GG20375@mtr-leonro.local>
+In-Reply-To: <20180419024641.24213-1-marcos.souza.org@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yanjun <yanjun.zhu@oracle.com>
+To: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, Serge Hallyn <serge@hallyn.com>, Seth Forshee <seth.forshee@canonical.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+On Wed, Apr 18, 2018 at 11:46:38PM -0300, Marcos Paulo de Souza wrote:
+> Found while inspecting the code that handles the setgroups procfs file.
 
---=-eMP6AqRXDUkEHD4UIcWj
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This is not really improving anything so I unfortunately don't really
+see why we should take this.
 
-On Wed, 2018-05-02 at 13:22 +0300, Leon Romanovsky wrote:
-> On Mon, Apr 30, 2018 at 08:55:35PM -0400, Doug Ledford wrote:
-> > On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
-> > > Hi all,
-> > >=20
-> > > Today's linux-next merge of the rdma tree got a conflict in:
-> > >=20
-> > >   drivers/infiniband/sw/rxe/rxe_resp.c
-> > >=20
-> > > between commit:
-> > >=20
-> > >   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-> > >=20
-> > > from the rdma-fixes tree and commit:
-> > >=20
-> > >   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-> > >=20
-> > > from the rdma tree.
-> > >=20
-> > > I fixed it up (I think - see below) and can carry the fix as necessar=
-y.
-> > > This is now fixed as far as linux-next is concerned, but any non triv=
-ial
-> > > conflicts should be mentioned to your upstream maintainer when your t=
-ree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particula=
-rly
-> > > complex conflicts.
-> > >=20
-> >=20
-> > We will probably merge the for-rc branch into the for-next branch in th=
-e
-> > next few days, at which point we will do the conflict resolution
-> > ourselves and your need to carry anything should drop out.
->=20
-> Isn't "rdma/wip/for-testing" branch intended for this?
+Christian
 
-Not really.  It's there to provide a pre-merged branch for people to
-test.  But, I've rarely seen a release cycle where, *sometime*, we
-didn't get a patch set in the for-next that depends on changes in the
-for-rc area, and in that case, you need to merge for-rc into for-next.=20
-If we don't have that this cycle, then you're right, I won't merge for-
-rc into for-next and for-testing will be the throwaway merge branch.  On
-occasion, if the merge fixups needed between for-rc and for-next get too
-difficult for a non-RDMA person to sus out, then we will do a merge of
-for-rc into for-next simply so we can provide the right merge fixup, but
-I doubt this merge fixup rises to that level.
-
---=20
-Doug Ledford <dledford@redhat.com>
-    GPG KeyID: B826A3330E572FDD
-    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
---=-eMP6AqRXDUkEHD4UIcWj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlrpxJQACgkQuCajMw5X
-L934eBAAjucQJds1M425l/yZ0FBrq7ZAmx/z+HaSyTbzk+0vjeSXEnKNWKhS3VNH
-MeR13EfT1Jag2e8+WvbetjGEL+fIjZxKVCER0cT9+tJPXaK+kzGlLwsVXcPAbNeX
-iAIxOcgh6DQWQ5jU0dfkQdj8omEC8lEZOkY5uGWgqrwtWTAdAQgVPnxJ7cADprGf
-1tX9M3GyLU44WCOrxx6UYi1TRJ67ulmwJWaSH7mRocBwvSWaz79phAgVPj9NqJAi
-4492FxReszSK0IUl6ckKIGgQKGqPXimyh5Si6Pg1snlsnUMbHsqxPdmWQ11f/7c7
-smVT6sh8lTMa2DZj34754dpyRVl9c2l61stjYEeho4LqIGQma+VFmHhSsg5j0+pS
-tS88NWmzO2pD9xWBMKkfzmn1N//X+ZClH6IvLzvcQHH/MaKNGBXM6yJ7ONNR8Xsl
-G0TbtG3UpeipO3SAQ02oVV/53zxRmIV7+iKhHMboEmwLOwW0EVZ7x/mE3htNHMdy
-3NDEN/B5zrpx/61B9vTzxlVBQQwj6qkqBqjA8wXZHUuKJtqeW151g03gbcItEerT
-jt7+7wDstW0YfToOumPt9TlfUI2SorXzan9TAHPyUEGW4jaVdNWk9IH2dVgB1ksN
-gFxN2rhQnyeESqfBE8O0CISsmAMphF0ws6yDtF/dXnNEsrW9QJ8=
-=rqS9
------END PGP SIGNATURE-----
-
---=-eMP6AqRXDUkEHD4UIcWj--
+>
+> Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+> ---
+> Tested locally setting up a new userns, and setting setgroups as deny and allow,
+> worked as before.
+>
+>  kernel/user_namespace.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+> index 246d4d4ce5c7..64a01254ac6b 100644
+> --- a/kernel/user_namespace.c
+> +++ b/kernel/user_namespace.c
+> @@ -1142,22 +1142,18 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+>   struct user_namespace *ns = seq->private;
+>   char kbuf[8], *pos;
+>   bool setgroups_allowed;
+> - ssize_t ret;
+>
+>   /* Only allow a very narrow range of strings to be written */
+> - ret = -EINVAL;
+>   if ((*ppos != 0) || (count >= sizeof(kbuf)))
+> - goto out;
+> + return -EINVAL;
+>
+>   /* What was written? */
+> - ret = -EFAULT;
+>   if (copy_from_user(kbuf, buf, count))
+> - goto out;
+> + return -EFAULT;
+>   kbuf[count] = '\0';
+>   pos = kbuf;
+>
+>   /* What is being requested? */
+> - ret = -EINVAL;
+>   if (strncmp(pos, "allow", 5) == 0) {
+>   pos += 5;
+>   setgroups_allowed = true;
+> @@ -1167,14 +1163,13 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+>   setgroups_allowed = false;
+>   }
+>   else
+> - goto out;
+> + return -EINVAL;
+>
+>   /* Verify there is not trailing junk on the line */
+>   pos = skip_spaces(pos);
+>   if (*pos != '\0')
+> - goto out;
+> + return -EINVAL;
+>
+> - ret = -EPERM;
+>   mutex_lock(&userns_state_mutex);
+>   if (setgroups_allowed) {
+>   /* Enabling setgroups after setgroups has been disabled
+> @@ -1194,12 +1189,11 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
+>
+>   /* Report a successful write */
+>   *ppos = count;
+> - ret = count;
+> -out:
+> - return ret;
+> + return count;
+> +
+>  out_unlock:
+>   mutex_unlock(&userns_state_mutex);
+> - goto out;
+> + return -EPERM;
+>  }
+>
+>  bool userns_may_setgroups(const struct user_namespace *ns)
+> --
+> 2.14.3
+>
