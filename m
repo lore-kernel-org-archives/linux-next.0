@@ -1,79 +1,63 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Date: Wed, 2 May 2018 11:50:21 -0600
-Message-ID: <20180502175021.GC5972@mellanox.com>
-References: <20180501101017.517b38af@canb.auug.org.au>
- <1525136135.11756.94.camel@redhat.com>
- <20180502102237.GG20375@mtr-leonro.local>
- <1525269652.11756.134.camel@redhat.com>
+From: Josh Poimboeuf <jpoimboe@redhat.com>
+Subject: Re: linux-next: Tree for May 2 (objtool bug!)
+Date: Wed, 2 May 2018 16:06:25 -0500
+Message-ID: <20180502210625.pehvcgtlqwqznnry@treble>
+References: <20180502165939.2375cf6a@canb.auug.org.au>
+ <fb41f3ee-705e-4886-3f78-c7f88db5276d@infradead.org>
+ <20180502154319.cbi47tw2fmhxlnr4@treble>
+ <5ed0305b-bca8-3b50-7d33-32c5754a81fc@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1525269652.11756.134.camel@redhat.com>
+In-Reply-To: <5ed0305b-bca8-3b50-7d33-32c5754a81fc@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Ledford <dledford@redhat.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhu Yanjun <yanjun.zhu@oracle.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, May 02, 2018 at 10:00:52AM -0400, Doug Ledford wrote:
-> On Wed, 2018-05-02 at 13:22 +0300, Leon Romanovsky wrote:
-> > On Mon, Apr 30, 2018 at 08:55:35PM -0400, Doug Ledford wrote:
-> > > On Tue, 2018-05-01 at 10:10 +1000, Stephen Rothwell wrote:
-> > > > Hi all,
-> > > > 
-> > > > Today's linux-next merge of the rdma tree got a conflict in:
-> > > > 
-> > > >   drivers/infiniband/sw/rxe/rxe_resp.c
-> > > > 
-> > > > between commit:
-> > > > 
-> > > >   9fd4350ba895 ("B/rxe: avoid double kfree_skb")
-> > > > 
-> > > > from the rdma-fixes tree and commit:
-> > > > 
-> > > >   2e47350789eb ("IB/rxe: optimize the function duplicate_request")
-> > > > 
-> > > > from the rdma tree.
-> > > > 
-> > > > I fixed it up (I think - see below) and can carry the fix as necessary.
-> > > > This is now fixed as far as linux-next is concerned, but any non trivial
-> > > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > > is submitted for merging.  You may also want to consider cooperating
-> > > > with the maintainer of the conflicting tree to minimise any particularly
-> > > > complex conflicts.
-> > > > 
-> > > 
-> > > We will probably merge the for-rc branch into the for-next branch in the
-> > > next few days, at which point we will do the conflict resolution
-> > > ourselves and your need to carry anything should drop out.
+On Wed, May 02, 2018 at 08:59:38AM -0700, Randy Dunlap wrote:
+> On 05/02/2018 08:43 AM, Josh Poimboeuf wrote:
+> > On Wed, May 02, 2018 at 08:37:53AM -0700, Randy Dunlap wrote:
+> >> On 05/01/2018 11:59 PM, Stephen Rothwell wrote:
+> >>> Hi all,
+> >>>
+> >>> Changes since 20180501:
+> >>>
+> >>
+> >> on x86_64 randconfig:
+> >>
+> >>   CC      fs/cifs/smbencrypt.o
+> >> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: return_hosed_msg()+0x0: infinite recursion (objtool bug!)
+> >> drivers/char/ipmi/ipmi_ssif.o: warning: objtool: deliver_recv_msg()+0x0: infinite recursion (objtool bug!)
 > > 
-> > Isn't "rdma/wip/for-testing" branch intended for this?
+> > Can you share the object file (or at least the .config and GCC version)?
+> > 
 > 
-> Not really.  It's there to provide a pre-merged branch for people to
-> test.  But, I've rarely seen a release cycle where, *sometime*, we
-> didn't get a patch set in the for-next that depends on changes in the
-> for-rc area, and in that case, you need to merge for-rc into for-next. 
-> If we don't have that this cycle, then you're right, I won't merge for-
-> rc into for-next and for-testing will be the throwaway merge branch.  On
-> occasion, if the merge fixups needed between for-rc and for-next get too
-> difficult for a non-RDMA person to sus out, then we will do a merge of
-> for-rc into for-next simply so we can provide the right merge fixup, but
-> I doubt this merge fixup rises to that level.
+> gcc (SUSE Linux) 4.8.5
+> 
+> config and .o file are attached.
 
-What I've been doing is storing the resolutions in for-testing and
-then when the PR is made I create two branches
-  merge for-testing, for-next, linus/master
-  merge for-next, linus/master
+Thanks, can you verify this fixes it?
 
-Then I directly diff them to ensure the merge resolutions are all
-matching properly.
-
-ditto when merging for-rc and linus/master
-
-Basically for-testing becomes a place to store the merge resolutions
-that we can create when the conflict comes up and people still
-remember what the right resolution is...
-
-Jason
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 92b6a2c21631..dae568fef2c1 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -190,9 +190,13 @@ static int __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 					continue;
+ 
+ 				if (recursion == 5) {
+-					WARN_FUNC("infinite recursion (objtool bug!)",
+-						  dest->sec, dest->offset);
+-					return -1;
++					/*
++					 * Infinite recursion: two functions
++					 * have sibling calls to each other.
++					 * This is a very rare case.  It means
++					 * they aren't dead ends.
++					 */
++					return 0;
+ 				}
+ 
+ 				return __dead_end_function(file, dest_func,
