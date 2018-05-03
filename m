@@ -1,82 +1,223 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: manual merge of the rockchip tree with the renesas
- tree
-Date: Thu, 3 May 2018 08:43:34 +0200
-Message-ID: <20180503064333.q3cr5biacnd5ccg2@verge.net.au>
-References: <20180503083654.625b1f9b@canb.auug.org.au>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: akpm@linux-foundation.org
+Subject: mmotm 2018-05-03-15-54 uploaded
+Date: Thu, 03 May 2018 15:54:43 -0700
+Message-ID: <20180503225443.HrMI9%akpm@linux-foundation.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180503083654.625b1f9b@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Heiko Stuebner <heiko@sntech.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Ezequiel Garcia <ezequiel@collabora.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+To: broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-[CC Arnd, Olof, Kevin, Linux-Renesas-SoC ML]
+The mm-of-the-moment snapshot 2018-05-03-15-54 has been uploaded to
 
-Thanks Stephen,
+   http://www.ozlabs.org/~akpm/mmotm/
 
-the resolution seems correct to me.
+mmotm-readme.txt says
 
-Arnd, Olof, Kevin, how would you like to handle this?
-I'd be quite happy for the commits in my tree, the first two mentioned
-below to be merged elsewhere or deferred until the next release if
-it would make things easier for you.
+README for mm-of-the-moment:
 
-On Thu, May 03, 2018 at 08:36:54AM +1000, Stephen Rothwell wrote:
-> Hi Heiko,
-> 
-> Today's linux-next merge of the rockchip tree got a conflict in:
-> 
->   arch/arm64/configs/defconfig
-> 
-> between commits:
-> 
->   93f7bfd930c0 ("arm64: defconfig: makes SND_SIMPLE_CARD to module")
->   ddf3fa8b8a16 ("arm64: defconfig: Enable CONFIG_SND_AUDIO_GRAPH_CARD")
-> 
-> from the renesas tree and commit:
-> 
->   e9cfce4195ec ("arm64: defconfig: Enable HID over I2C drivers")
-> 
-> from the rockchip tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc arch/arm64/configs/defconfig
-> index 7930caf5dde4,34037d24fbf4..000000000000
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@@ -158,9 -157,9 +158,10 @@@ CONFIG_BT_HIDP=
->   # CONFIG_BT_LE is not set
->   CONFIG_BT_LEDS=y
->   # CONFIG_BT_DEBUGFS is not set
-> + CONFIG_BT_HCIBTUSB=m
->   CONFIG_BT_HCIUART=m
->   CONFIG_BT_HCIUART_LL=y
->  +CONFIG_BT_HCIUART_BCM=y
->   CONFIG_CFG80211=m
->   CONFIG_MAC80211=m
->   CONFIG_MAC80211_LEDS=y
-> @@@ -443,8 -447,8 +451,9 @@@ CONFIG_SND_BCM2835_SOC_I2S=
->   CONFIG_SND_SOC_SAMSUNG=y
->   CONFIG_SND_SOC_RCAR=m
->   CONFIG_SND_SOC_AK4613=m
->  -CONFIG_SND_SIMPLE_CARD=y
->  +CONFIG_SND_SIMPLE_CARD=m
->  +CONFIG_SND_AUDIO_GRAPH_CARD=m
-> + CONFIG_I2C_HID=m
->   CONFIG_USB=y
->   CONFIG_USB_OTG=y
->   CONFIG_USB_XHCI_HCD=y
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.17-rc3:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+  i-need-old-gcc.patch
+* maintainers-update-email-address-in-maintainers-entries.patch
+* kasan-prohibit-kasanstructleak-combination.patch
+* lib-avoid-soft-lockup-in-test_find_first_bit.patch
+* memcg-remove-memcg_cgroup-id-from-idr-on-mem_cgroup_css_alloc-failure.patch
+* ocfs2-submit-another-bio-if-current-bio-is-full.patch
+* init-fix-false-positives-in-wx-checking.patch
+* z3fold-fix-reclaim-lock-ups.patch
+* z3fold-fix-reclaim-lock-ups-checkpatch-fixes.patch
+* mm-sections-are-not-offlined-during-memory-hotremove.patch
+* mm-access-to-uninitialized-struct-page.patch
+* mm-dont-show-nr_indirectly_reclaimable-in-proc-vmstat.patch
+* proc-kcore-dont-bounds-check-against-address-0.patch
+* mm-migrate-fix-double-call-of-radix_tree_replace_slot.patch
+* mm-oom-fix-concurrent-munlock-and-oom-reaper-unmap.patch
+* ocfs2-take-inode-cluster-lock-before-moving-reflinked-inode-from-orphan-dir.patch
+* scripts-faddr2line-fix-error-when-addr2line-output-contains-discriminator.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* prctl-add-pr_et_pdeathsig_proc.patch
+* ocfs2-clean-up-redundant-function-declarations.patch
+* ocfs2-get-rid-of-ocfs2_is_o2cb_active-function.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery.patch
+* ocfs2-without-quota-support-try-to-avoid-calling-quota-recovery-checkpatch-fixes.patch
+* ocfs2-dont-put-and-assign-null-to-bh-allocated-outside.patch
+* ocfs2-dont-use-iocb-when-eiocbqueued-returns.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+* dentry-fix-kmemcheck-splat-at-take_dentry_name_snapshot.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files.patch
+* namei-allow-restricted-o_creat-of-fifos-and-regular-files-fix.patch
+  mm.patch
+* slab-__gfp_zero-is-incompatible-with-a-constructor.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct.patch
+* mm-introduce-arg_lock-to-protect-arg_startend-and-env_startend-in-mm_struct-fix.patch
+* mm-memcontrol-move-swap-charge-handling-into-get_swap_page.patch
+* mm-memcontrol-implement-memoryswapevents.patch
+* zram-correct-flag-name-of-zram_access.patch
+* zram-mark-incompressible-page-as-zram_huge.patch
+* zram-record-accessed-second.patch
+* zram-introduce-zram-memory-tracking.patch
+* zram-introduce-zram-memory-tracking-fix.patch
+* zram-introduce-zram-memory-tracking-update.patch
+* zram-introduce-zram-memory-tracking-update-fix.patch
+* zram-introduce-zram-memory-tracking-update-fix-fix.patch
+* mm-shmem-add-__rcu-annotations-and-properly-deref-radix-entry.patch
+* mm-shmem-update-file-sealing-comments-and-file-checking.patch
+* mm-restructure-memfd-code.patch
+* mm-page_alloc-remove-realsize-in-free_area_init_core.patch
+* mm-introduce-arch_has_pte_special.patch
+* mm-remove-odd-have_pte_special.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop.patch
+* mm-check-for-sigkill-inside-dup_mmap-loop-fix.patch
+* mm-memcg-remote-memcg-charging-for-kmem-allocations.patch
+* fs-fsnotify-account-fsnotify-metadata-to-kmemcg.patch
+* mm-memblock-introduce-phys_addr_max.patch
+* mm-rename-page_counters-count-limit-into-usage-max.patch
+* mm-memorylow-hierarchical-behavior.patch
+* mm-treat-memorylow-value-inclusive.patch
+* mm-docs-describe-memorylow-refinements.patch
+* prctl-deprecate-non-pr_set_mm_map-operations.patch
+* prctl-deprecate-non-pr_set_mm_map-operations-fix.patch
+* mm-gup-prevent-pmd-checking-race-in-follow_pmd_mask.patch
+* mm-sparse-check-__highest_present_section_nr-only-for-a-present-section.patch
+* mm-sparse-pass-the-__highest_present_section_nr-1-to-alloc_func.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice.patch
+* mm-vmalloc-clean-up-vunmap-to-avoid-pgtable-ops-twice-v3.patch
+* mm-vmalloc-avoid-racy-handling-of-debugobjects-in-vunmap.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects.patch
+* mm-vmalloc-pass-proper-vm_start-into-debugobjects-fix.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on.patch
+* mm-shmem-make-statst_blksize-return-huge-page-size-if-thp-is-on-fix.patch
+* lockdep-fix-fs_reclaim-annotation.patch
+* mm-ksm-remove-unused-page_referenced_ksm-declaration.patch
+* mm-ksm-move-page_stable_node-from-ksmh-to-ksmc.patch
+* tmpfs-allow-decoding-a-file-handle-of-an-unlinked-file.patch
+* memcg-writeback-use-memcg-cgwb_list-directly.patch
+* memcg-replace-mm-owner-with-mm-memcg.patch
+* mm-memcontrolc-add-mem_cgroup_from_task-as-a-local-helper.patch
+* memcg-mark-memcg1_events-static-const.patch
+* mm-sparse-add-a-static-variable-nr_present_sections.patch
+* mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+* mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock.patch
+* list_lru-prefetch-neighboring-list-entries-before-acquiring-lock-fix.patch
+* mm-oom-refactor-the-oom_kill_process-function.patch
+* mm-implement-mem_cgroup_scan_tasks-for-the-root-memory-cgroup.patch
+* mm-oom-cgroup-aware-oom-killer.patch
+* mm-oom-cgroup-aware-oom-killer-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-introduce-memoryoom_group.patch
+* mm-oom-introduce-memoryoom_group-fix.patch
+* mm-oom-add-cgroup-v2-mount-option-for-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2.patch
+* mm-oom-docs-describe-the-cgroup-aware-oom-killer-fix-2-fix.patch
+* mm-oom-cgroup-aware-oom-killer-fix-fix.patch
+* cgroup-list-groupoom-in-cgroup-features.patch
+* mm-add-strictlimit-knob-v2.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* mm-kasan-dont-vfree-nonexistent-vm_area.patch
+* proc-more-unsigned-int-in-proc-cmdline.patch
+* proc-somewhat-simpler-code-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline.patch
+* proc-simpler-iterations-for-proc-cmdline-fix.patch
+* proc-deduplicate-proc-cmdline-implementation.patch
+* proc-smaller-rcu-section-in-getattr.patch
+* proc-use-unsigned-int-in-proc_fill_cache.patch
+* proc-skip-branch-in-proc-lookup.patch
+* proc-use-unsigned-int-for-sigqueue-length.patch
+* proc-use-unsigned-int-for-proc-stack.patch
+* locking-hung_task-show-all-hung-tasks-before-panic.patch
+* lib-micro-optimization-for-__bitmap_complement.patch
+* ida-remove-simple_ida_lock.patch
+* ida-remove-simple_ida_lock-fix.patch
+* checkpatch-add-a-strict-test-for-structs-with-bool-member-definitions.patch
+* coredump-fix-spam-with-zero-vma-process.patch
+* seq_file-delete-small-value-optimization.patch
+* exofs-avoid-vla-in-structures.patch
+* exofs-avoid-vla-in-structures-v2.patch
+* fault-injection-reorder-config-entries.patch
+* ipc-sem-mitigate-semnum-index-against-spectre-v1.patch
+* revert-ipc-shm-fix-shmat-mmap-nil-page-protection.patch
+* ipc-shm-fix-shmat-nil-address-after-round-down-when-remapping.patch
+  linux-next.patch
+* mm-use-octal-not-symbolic-permissions.patch
+* treewide-use-phys_addr_max-to-avoid-type-casting-ullong_max.patch
+* resource-add-walk_system_ram_res_rev.patch
+* kexec_file-load-kernel-at-top-of-system-ram-if-required.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+* sparc64-ng4-memset-32-bits-overflow.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
