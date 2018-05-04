@@ -1,111 +1,57 @@
-From: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-Subject: Re: [PATCH -next] user_namespace: Replace gotos with return
- statements
-Date: Thu, 3 May 2018 22:23:31 -0300
-Message-ID: <20180504012328.GA4719@bebop>
-References: <20180419024641.24213-1-marcos.souza.org@gmail.com>
- <CAPP7u0XztHVja18pJV+0cfRNr7cGmKq4i0nYKt03Sd6oyKUuVQ@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the akpm-current tree
+Date: Fri, 4 May 2018 14:17:56 +1000
+Message-ID: <20180504141756.670dc3f3@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAPP7u0XztHVja18pJV+0cfRNr7cGmKq4i0nYKt03Sd6oyKUuVQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christian Brauner <christian.brauner@canonical.com>
-Cc: linux-next@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, Mark Rutland <mark.rutland@arm.com>, Ingo Molnar <mingo@kernel.org>, Serge Hallyn <serge@hallyn.com>, Seth Forshee <seth.forshee@canonical.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Minchan Kim <minchan@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, May 02, 2018 at 04:12:18PM +0200, Christian Brauner wrote:
-> On Wed, Apr 18, 2018 at 11:46:38PM -0300, Marcos Paulo de Souza wrote:
-> > Found while inspecting the code that handles the setgroups procfs file.
-> 
-> This is not really improving anything so I unfortunately don't really
-> see why we should take this.
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the late reply. My idea was to make the code more straightforward,
-never happened to me this would led to a worse code being generated. So, please
-discard the patch.
+Hi Andrew,
 
-Thanks,
+After merging the akpm-current tree, today's linux-next build
+(x86_64_allmodconfig) produced this warning:
 
-> 
-> Christian
-> 
-> >
-> > Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
-> > ---
-> > Tested locally setting up a new userns, and setting setgroups as deny and allow,
-> > worked as before.
-> >
-> >  kernel/user_namespace.c | 20 +++++++-------------
-> >  1 file changed, 7 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-> > index 246d4d4ce5c7..64a01254ac6b 100644
-> > --- a/kernel/user_namespace.c
-> > +++ b/kernel/user_namespace.c
-> > @@ -1142,22 +1142,18 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
-> >   struct user_namespace *ns = seq->private;
-> >   char kbuf[8], *pos;
-> >   bool setgroups_allowed;
-> > - ssize_t ret;
-> >
-> >   /* Only allow a very narrow range of strings to be written */
-> > - ret = -EINVAL;
-> >   if ((*ppos != 0) || (count >= sizeof(kbuf)))
-> > - goto out;
-> > + return -EINVAL;
-> >
-> >   /* What was written? */
-> > - ret = -EFAULT;
-> >   if (copy_from_user(kbuf, buf, count))
-> > - goto out;
-> > + return -EFAULT;
-> >   kbuf[count] = '\0';
-> >   pos = kbuf;
-> >
-> >   /* What is being requested? */
-> > - ret = -EINVAL;
-> >   if (strncmp(pos, "allow", 5) == 0) {
-> >   pos += 5;
-> >   setgroups_allowed = true;
-> > @@ -1167,14 +1163,13 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
-> >   setgroups_allowed = false;
-> >   }
-> >   else
-> > - goto out;
-> > + return -EINVAL;
-> >
-> >   /* Verify there is not trailing junk on the line */
-> >   pos = skip_spaces(pos);
-> >   if (*pos != '\0')
-> > - goto out;
-> > + return -EINVAL;
-> >
-> > - ret = -EPERM;
-> >   mutex_lock(&userns_state_mutex);
-> >   if (setgroups_allowed) {
-> >   /* Enabling setgroups after setgroups has been disabled
-> > @@ -1194,12 +1189,11 @@ ssize_t proc_setgroups_write(struct file *file, const char __user *buf,
-> >
-> >   /* Report a successful write */
-> >   *ppos = count;
-> > - ret = count;
-> > -out:
-> > - return ret;
-> > + return count;
-> > +
-> >  out_unlock:
-> >   mutex_unlock(&userns_state_mutex);
-> > - goto out;
-> > + return -EPERM;
-> >  }
-> >
-> >  bool userns_may_setgroups(const struct user_namespace *ns)
-> > --
-> > 2.14.3
-> >
+drivers/block/zram/zram_drv.c: In function 'read_block_state':
+drivers/block/zram/zram_drv.c:674:16: warning: format '%llu' expects argume=
+nt of type 'long long unsigned int', but argument 5 has type '__kernel_time=
+_t {aka long int}' [-Wformat=3D]
+    "%12lu %12llu.%06lu %c%c%c\n",
+           ~~~~~^
+           %12lu
+    (unsigned long)index, ts.tv_sec,
+                          ~~~~~~~~~
 
--- 
-Thanks,
-	Marcos
+Introduced by commit
+
+  827c7dbda8eb ("zram-introduce-zram-memory-tracking-update-fix-fix")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrr3vQACgkQAVBC80lX
+0GzoEAgApamxJmvlwEytxiGZwDhW3CYK3Za0jtTD7LMd+b17SyZIAT/Ah95K6j7L
+3XcgiI6GbJ+YUhSVHbAfcvMb5HoLD+IDegl+0Ma+9NqfS18vYEciiXl0RM5LPtT2
+Pn1CdUy0xaKYJThBbcWcKR41MlpaMWxlqzj7ihGXJa1JzG53d343g7fDQCIgEFjJ
+hNZZYGeIVbOqQGFxI9e/R5EZtUvJtfuE2+dOwCjqrs7NM6bIpyWszWoUDZb3GjCL
+GMdV3nBB5JsQVJWF+Q/brOk5RgwcZaMYc/4rOk1kfuDXVYv6R8UzdXjZPtStIBqX
+u27JHdNU8yzktdiQWrWsvuBIgG0VVw==
+=sutG
+-----END PGP SIGNATURE-----
+
+--Sig_/=/Tc5mW9Nj5Wdyl8rOBY+ij--
