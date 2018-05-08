@@ -1,58 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the netfilter-next
- tree
-Date: Tue, 8 May 2018 10:21:01 +1000
-Message-ID: <20180508102101.768d5c52@canb.auug.org.au>
-References: <20180507105519.1d34f19e@canb.auug.org.au>
+Subject: linux-next: manual merge of the bpf-next tree with the s390 tree
+Date: Tue, 8 May 2018 10:26:38 +1000
+Message-ID: <20180508102638.1e19b7f2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/DRyahoiRLh3pKKmFXe7CPkb"; protocol="application/pgp-signature"
+ boundary="Sig_/kXzFUC_=Cczq4v52YPlNUFN"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180507105519.1d34f19e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/DRyahoiRLh3pKKmFXe7CPkb
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> After merging the netfilter-next tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->=20
-> ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type =
-without #include <linux/types.h>
->=20
-> Introduced by commit
->=20
->   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure=
- from xt_osf")
+Today's linux-next merge of the bpf-next tree got a conflict in:
 
-This warning now occurs after the merge of the net-next tree.
+  arch/s390/net/bpf_jit.S
+
+between commit:
+
+  de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+
+from the s390 tree and commit:
+
+  e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+
+from the bpf-next tree.
+
+I fixed it up (I just removed the file as the latter does) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/DRyahoiRLh3pKKmFXe7CPkb
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7W0ACgkQAVBC80lX
-0Gx8WwgAoQEm9540+l+yDdKza3hAvDXzRRnaA5Ie/W9ttfsz2xjbBgrV3nax1pZq
-tfi5UmrnoBicN9bpCCQ8AWFXQhqim5KhePVU3LfCCyHSwcOlJbOSnda6aAQxVrhN
-3LdEWFbLdQilRpJb7+FbacLmLTbU3y6vbwMe13pemB+m/F9lLH+sLdXBjW7ADWv5
-/ZDI3TJ40ynmjBGOfjJHTuQaKktZDNuDQXOMcoOz110jK4LU1y1LSV743iB3CnCD
-DZD1h8+bqaCCELhhtFsY13p5ESjRPixh2wd+QIIlJ66emH3nWr7sDYKohFd/f2h6
-2y3EXvPS03/Rj4K+SsAlte2/liiEpg==
-=t49L
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7r4ACgkQAVBC80lX
+0Gy4PAf8DgK2t+x5p9ltMzupAQvkJvFQ0YnwQ+AVZx2PUsoWQdPe/ucpwl8s3DJa
+zxtDzbPFY6gauE4tLVMOZJPO6wMMtK2cE17h/VRMIvPZVO8TWhehIOPeFmzffBtB
+qbKIP2aywKUwvOEzL4n+rNCvY9D1cNZzdljaJBeDU4iVZwHTmnx65+ldZK6jSmc7
+ox/Ns986SwztFk8kGM65ywYz8u4NP3g5JlXQCKE1cOeW8eF27Ni7C/gknsoqXKHH
+ai01w3xM6rD4S+K4D3FFW3BVw960VkE4gxjXimenI1qQnt4+w4sKQVmT8KDu/nXg
+af44oXT7nWpfGg52X8eor9jEZJf1vA==
+=VLxK
 -----END PGP SIGNATURE-----
 
---Sig_/DRyahoiRLh3pKKmFXe7CPkb--
+--Sig_/kXzFUC_=Cczq4v52YPlNUFN--
