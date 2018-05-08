@@ -1,61 +1,98 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the bpf-next tree with the s390 tree
-Date: Tue, 8 May 2018 10:26:38 +1000
-Message-ID: <20180508102638.1e19b7f2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm-intel tree
+Date: Tue, 8 May 2018 11:07:16 +1000
+Message-ID: <20180508110716.53dfef41@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kXzFUC_=Cczq4v52YPlNUFN"; protocol="application/pgp-signature"
+ boundary="Sig_/k0hUUyUdcszqUbV+EP9.O15"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nipun Gupta <nipun.gupta@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>, Dave Airlie <airlied@linux.ie>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kXzFUC_=Cczq4v52YPlNUFN
+--Sig_/k0hUUyUdcszqUbV+EP9.O15
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the bpf-next tree got a conflict in:
+After merging the drm-intel tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-  arch/s390/net/bpf_jit.S
+drivers/gpu/drm/xen/xen_drm_front.c: In function 'xen_drv_probe':
+drivers/gpu/drm/xen/xen_drm_front.c:740:10: error: 'struct bus_type' has no=
+ member named 'force_dma'
+  dev->bus->force_dma =3D true;
+          ^~
+drivers/gpu/drm/xen/xen_drm_front.c:742:8: error: too few arguments to func=
+tion 'of_dma_configure'
+  ret =3D of_dma_configure(dev, NULL);
+        ^~~~~~~~~~~~~~~~
+In file included from drivers/gpu/drm/xen/xen_drm_front.c:16:0:
+include/linux/of_device.h:58:5: note: declared here
+ int of_dma_configure(struct device *dev,
+     ^~~~~~~~~~~~~~~~
 
-between commit:
+Caused by commit
 
-  de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+  c575b7eeb89f ("drm/xen-front: Add support for Xen PV display frontend")
 
-from the s390 tree and commit:
+interacting with commit
 
-  e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+  3d6ce86ee794 ("drivers: remove force dma flag from buses")
 
-from the bpf-next tree.
+from the dma-mapping tree.
 
-I fixed it up (I just removed the file as the latter does) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+I have added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 8 May 2018 11:02:24 +1000
+Subject: [PATCH] drm/xen-front: merge fix for "drivers: remove force dma fl=
+ag from buses"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/xen/xen_drm_front.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/xen/xen_drm_front.c b/drivers/gpu/drm/xen/xen_=
+drm_front.c
+index 1b0ea9ac330e..0e486cb1c10c 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front.c
++++ b/drivers/gpu/drm/xen/xen_drm_front.c
+@@ -737,9 +737,8 @@ static int xen_drv_probe(struct xenbus_device *xb_dev,
+ 	 * is not correct: to fix this call of_dma_configure() with a NULL
+ 	 * node to set default DMA ops.
+ 	 */
+-	dev->bus->force_dma =3D true;
+ 	dev->coherent_dma_mask =3D DMA_BIT_MASK(32);
+-	ret =3D of_dma_configure(dev, NULL);
++	ret =3D of_dma_configure(dev, NULL, true);
+ 	if (ret < 0) {
+ 		DRM_ERROR("Cannot setup DMA ops, ret %d", ret);
+ 		return ret;
+--=20
+2.17.0
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/kXzFUC_=Cczq4v52YPlNUFN
+--Sig_/k0hUUyUdcszqUbV+EP9.O15
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw7r4ACgkQAVBC80lX
-0Gy4PAf8DgK2t+x5p9ltMzupAQvkJvFQ0YnwQ+AVZx2PUsoWQdPe/ucpwl8s3DJa
-zxtDzbPFY6gauE4tLVMOZJPO6wMMtK2cE17h/VRMIvPZVO8TWhehIOPeFmzffBtB
-qbKIP2aywKUwvOEzL4n+rNCvY9D1cNZzdljaJBeDU4iVZwHTmnx65+ldZK6jSmc7
-ox/Ns986SwztFk8kGM65ywYz8u4NP3g5JlXQCKE1cOeW8eF27Ni7C/gknsoqXKHH
-ai01w3xM6rD4S+K4D3FFW3BVw960VkE4gxjXimenI1qQnt4+w4sKQVmT8KDu/nXg
-af44oXT7nWpfGg52X8eor9jEZJf1vA==
-=VLxK
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrw+EQACgkQAVBC80lX
+0GwnEggAigTGbaLZ40fM73MkHEMVZLhrBEMvHQ2Ir4FIpihoR+14WIxIPHlzsp7t
+XbgSaxEqVwKShEWs7QV02Py3f3qPlAOr+5eLY395KIxYy1pVfYcNK9/huhWws5ec
+wapfCUIAS3wOduguokR/55DbfXkwN68bOYtrdUK7CdkS10Q7kV5iwE0wyf/loJwi
+HK3VjqXmlzJda7dIVf7EbCYjPdbnHqXL26mNE99ahDdWpW5Nwm8SfpkeAocr9cx3
+4/jV88dxJ36lXE1j1EXOQ6OVmykCFRlsc7U1wOXfuSAIppNqc08ZgIDTsgbT2jEa
+1oPWy8i6zz8wm4Lbb0J8B0iXlG1O2w==
+=KvmS
 -----END PGP SIGNATURE-----
 
---Sig_/kXzFUC_=Cczq4v52YPlNUFN--
+--Sig_/k0hUUyUdcszqUbV+EP9.O15--
