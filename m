@@ -1,68 +1,29 @@
-From: Oleksandr Andrushchenko <andr2000@gmail.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel tree
-Date: Tue, 8 May 2018 10:08:35 +0300
-Message-ID: <9043c118-6095-1eca-3bac-455ad136823e@gmail.com>
-References: <20180508110716.53dfef41@canb.auug.org.au>
+From: Florian Westphal <fw@strlen.de>
+Subject: Re: linux-next: build warning after merge of the netfilter-next tree
+Date: Tue, 8 May 2018 09:17:56 +0200
+Message-ID: <20180508071756.grie5wln2lpo52un@breakpoint.cc>
+References: <20180507105519.1d34f19e@canb.auug.org.au>
+ <20180508102101.768d5c52@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20180508110716.53dfef41@canb.auug.org.au>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>, Christoph Hellwig <hch@lst.de>
-Cc: Dave Airlie <airlied@linux.ie>, Bjorn Helgaas <bhelgaas@google.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nipun Gupta <nipun.gupta@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180508102101.768d5c52@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
 List-Id: linux-next.vger.kernel.org
 
-T24gMDUvMDgvMjAxOCAwNDowNyBBTSwgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPiBIaSBhbGws
-Cj4KPiBBZnRlciBtZXJnaW5nIHRoZSBkcm0taW50ZWwgdHJlZSwgdG9kYXkncyBsaW51eC1uZXh0
-IGJ1aWxkICh4ODZfNjQKPiBhbGxtb2Rjb25maWcpIGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2
-ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnQuYzogSW4gZnVuY3Rpb24gJ3hlbl9kcnZfcHJv
-YmUnOgo+IGRyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udC5jOjc0MDoxMDogZXJyb3I6
-ICdzdHJ1Y3QgYnVzX3R5cGUnIGhhcyBubyBtZW1iZXIgbmFtZWQgJ2ZvcmNlX2RtYScKPiAgICBk
-ZXYtPmJ1cy0+Zm9yY2VfZG1hID0gdHJ1ZTsKPiAgICAgICAgICAgIF5+Cj4gZHJpdmVycy9ncHUv
-ZHJtL3hlbi94ZW5fZHJtX2Zyb250LmM6NzQyOjg6IGVycm9yOiB0b28gZmV3IGFyZ3VtZW50cyB0
-byBmdW5jdGlvbiAnb2ZfZG1hX2NvbmZpZ3VyZScKPiAgICByZXQgPSBvZl9kbWFfY29uZmlndXJl
-KGRldiwgTlVMTCk7Cj4gICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fgo+IEluIGZpbGUgaW5jbHVk
-ZWQgZnJvbSBkcml2ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnQuYzoxNjowOgo+IGluY2x1
-ZGUvbGludXgvb2ZfZGV2aWNlLmg6NTg6NTogbm90ZTogZGVjbGFyZWQgaGVyZQo+ICAgaW50IG9m
-X2RtYV9jb25maWd1cmUoc3RydWN0IGRldmljZSAqZGV2LAo+ICAgICAgIF5+fn5+fn5+fn5+fn5+
-fn4KPgo+IENhdXNlZCBieSBjb21taXQKPgo+ICAgIGM1NzViN2VlYjg5ZiAoImRybS94ZW4tZnJv
-bnQ6IEFkZCBzdXBwb3J0IGZvciBYZW4gUFYgZGlzcGxheSBmcm9udGVuZCIpCj4KPiBpbnRlcmFj
-dGluZyB3aXRoIGNvbW1pdAo+Cj4gICAgM2Q2Y2U4NmVlNzk0ICgiZHJpdmVyczogcmVtb3ZlIGZv
-cmNlIGRtYSBmbGFnIGZyb20gYnVzZXMiKQo+Cj4gZnJvbSB0aGUgZG1hLW1hcHBpbmcgdHJlZS4K
-Pgo+IEkgaGF2ZSBhZGRlZCB0aGUgZm9sbG93aW5nIG1lcmdlIGZpeCBwYXRjaDoKPgo+IEZyb206
-IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pgo+IERhdGU6IFR1ZSwgOCBN
-YXkgMjAxOCAxMTowMjoyNCArMTAwMAo+IFN1YmplY3Q6IFtQQVRDSF0gZHJtL3hlbi1mcm9udDog
-bWVyZ2UgZml4IGZvciAiZHJpdmVyczogcmVtb3ZlIGZvcmNlIGRtYSBmbGFnIGZyb20gYnVzZXMi
-Cj4KPiBTaWduZWQtb2ZmLWJ5OiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5h
-dT4KVGhhbmsgeW91LApSZXZpZXdlZC1ieTogT2xla3NhbmRyIEFuZHJ1c2hjaGVua28gPG9sZWtz
-YW5kcl9hbmRydXNoY2hlbmtvQGVwYW0uY29tPgo+IC0tLQo+ICAgZHJpdmVycy9ncHUvZHJtL3hl
-bi94ZW5fZHJtX2Zyb250LmMgfCAzICstLQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCAyIGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS94ZW4v
-eGVuX2RybV9mcm9udC5jIGIvZHJpdmVycy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250LmMKPiBp
-bmRleCAxYjBlYTlhYzMzMGUuLjBlNDg2Y2IxYzEwYyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0veGVuL3hlbl9kcm1fZnJvbnQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS94ZW4veGVu
-X2RybV9mcm9udC5jCj4gQEAgLTczNyw5ICs3MzcsOCBAQCBzdGF0aWMgaW50IHhlbl9kcnZfcHJv
-YmUoc3RydWN0IHhlbmJ1c19kZXZpY2UgKnhiX2RldiwKPiAgIAkgKiBpcyBub3QgY29ycmVjdDog
-dG8gZml4IHRoaXMgY2FsbCBvZl9kbWFfY29uZmlndXJlKCkgd2l0aCBhIE5VTEwKPiAgIAkgKiBu
-b2RlIHRvIHNldCBkZWZhdWx0IERNQSBvcHMuCj4gICAJICovCj4gLQlkZXYtPmJ1cy0+Zm9yY2Vf
-ZG1hID0gdHJ1ZTsKPiAgIAlkZXYtPmNvaGVyZW50X2RtYV9tYXNrID0gRE1BX0JJVF9NQVNLKDMy
-KTsKPiAtCXJldCA9IG9mX2RtYV9jb25maWd1cmUoZGV2LCBOVUxMKTsKPiArCXJldCA9IG9mX2Rt
-YV9jb25maWd1cmUoZGV2LCBOVUxMLCB0cnVlKTsKPiAgIAlpZiAocmV0IDwgMCkgewo+ICAgCQlE
-Uk1fRVJST1IoIkNhbm5vdCBzZXR1cCBETUEgb3BzLCByZXQgJWQiLCByZXQpOwo+ICAgCQlyZXR1
-cm4gcmV0Owo+Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-CkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the netfilter-next tree, today's linux-next build (x86_64
+> > allmodconfig) produced this warning:
+> > 
+> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
+>
+> > Introduced by commit
+> > 
+> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
+
+I'll send a fix for this, thanks for reporting.
