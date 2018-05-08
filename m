@@ -1,29 +1,41 @@
-From: Florian Westphal <fw@strlen.de>
-Subject: Re: linux-next: build warning after merge of the netfilter-next tree
-Date: Tue, 8 May 2018 09:17:56 +0200
-Message-ID: <20180508071756.grie5wln2lpo52un@breakpoint.cc>
-References: <20180507105519.1d34f19e@canb.auug.org.au>
- <20180508102101.768d5c52@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the s390 tree
+Date: Tue, 8 May 2018 10:19:54 +0200
+Message-ID: <06ca5230-bce9-626e-02e3-3083b23a2600@iogearbox.net>
+References: <20180508102638.1e19b7f2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180508102101.768d5c52@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180508102638.1e19b7f2@canb.auug.org.au>
+Content-Language: en-US
+Sender: netdev-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the netfilter-next tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> > 
-> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
->
-> > Introduced by commit
-> > 
-> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
+On 05/08/2018 02:26 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the bpf-next tree got a conflict in:
+> 
+>   arch/s390/net/bpf_jit.S
+> 
+> between commit:
+> 
+>   de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+> 
+> from the s390 tree and commit:
+> 
+>   e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+> 
+> from the bpf-next tree.
+> 
+> I fixed it up (I just removed the file as the latter does) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-I'll send a fix for this, thanks for reporting.
+Yep, sounds good, thanks!
