@@ -1,48 +1,32 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the thermal tree
-Date: Wed, 9 May 2018 21:43:41 +1000
-Message-ID: <20180509214341.1d490677@canb.auug.org.au>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+Date: Wed, 9 May 2018 07:17:06 -0500
+Message-ID: <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
+References: <20180509160449.68b865a2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6y1WxWGFFE1sCTC830RL8g6"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180509160449.68b865a2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6y1WxWGFFE1sCTC830RL8g6
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 9, 2018 at 1:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Rob,
+>
+> After merging the devicetree tree, today's linux-next build (arm
+> multi_v7_defconfig) produced this warning:
+>
+> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@3/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirectional
+> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@1/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirectional
+> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@2/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb94000/ports/port@0/endpoint' is not bidirectional
 
-Hi Zhang,
+I forgot about this one hiding in the tree.
 
-Commits
+> and over 2000 more :-(
 
-  a2ace598c00a ("thermal: exynos: Reading temperature makes sense only when=
- TMU is turned on")
-  f9cd6a904e6e ("thermal: exynos: Propagate error value from tmu_read()")
+I assume you mean on other files. I've already sent out patches for
+arm and arm64 dts files.
 
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6y1WxWGFFE1sCTC830RL8g6
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlry3u0ACgkQAVBC80lX
-0GxERwf/WvjO5TL1qR9yVxGf+BMoIVbhaA7qwslel1k94mN7QNERgt1OIF1NSZkl
-TtyoNnNP1TSt4ZW+HBDDsCJoewTuKjX0BbIhpdkBo4GSZG9HAH3wgfux8v9VDR1j
-M+2qQsk5H9CaLnFY1uzpMFz24foS7FxdGIhzlBDLJbzLgz5r1JefhoQfeE1GPM3c
-jztwfaCqUsjgysq1nEwivp/nuW7j5lBJl9vBxPJ0WYbW/etXty1RAsdddrt7QITW
-lSwmMcEIdyLeHmdrJNc367Ub0ipT2nGWsEEPdNcEcmS4gRKKpWK7hxS78MJ//jfY
-o5/s7z+q+wbjQAR7ZELD0xP1aCwfrg==
-=qOM9
------END PGP SIGNATURE-----
-
---Sig_/6y1WxWGFFE1sCTC830RL8g6--
+Rob
