@@ -1,64 +1,30 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the samsung-krzk tree with the
- dma-mapping tree
-Date: Thu, 10 May 2018 09:16:34 +1000
-Message-ID: <20180510091634.7fb3aaf2@canb.auug.org.au>
+From: Saeed Mahameed <saeedm@mellanox.com>
+Subject: Re: linux-next: Tree for May 9 (mlx5)
+Date: Wed, 9 May 2018 23:21:39 +0000
+Message-ID: <1525908096.19800.3.camel@mellanox.com>
+References: <20180509212133.41a59f2f@canb.auug.org.au>
+         <826ab15b-f2bc-0c5d-8d5e-6466badcd3e0@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WW99soGBEf=QXqtwQTt8NWj"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <826ab15b-f2bc-0c5d-8d5e-6466badcd3e0@infradead.org>
+Content-Language: en-US
+Content-ID: <52EF7AE0E693B34EA321511E8EC69DFA@eurprd05.prod.outlook.com>
+Sender: netdev-owner@vger.kernel.org
+To: "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>, "rdunlap@infradead.org" <rdunlap@infradead.org>, Israel Rukshin <israelr@mellanox.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Max Gurtovoy <maxg@mellanox.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>, Matan Barak <matanb@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WW99soGBEf=QXqtwQTt8NWj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Krzysztof,
-
-Today's linux-next merge of the samsung-krzk tree got a conflict in:
-
-  arch/arm/mach-exynos/Kconfig
-
-between commit:
-
-  4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in li=
-b/Kconfig")
-
-from the dma-mapping tree and commit:
-
-  c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
-
-from the samsung-krzk tree.
-
-I fixed it up (the latter removed the whole section modified by
-the former, so I just removed the section) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/WW99soGBEf=QXqtwQTt8NWj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzgVIACgkQAVBC80lX
-0GwcTQf/bzNuHHKkZ+W/c17Gj4ti/CCEn4Vgy2z84XnbdGkf/AbMO1uiqrGxG3bb
-gUq2mQ7AGxWqmDsZ37rEv+4VMWuqiIQDpRQBwGbqWK4uNGedUktHQPovTnqSewpv
-RIL0qRNtDv8ZbpOP9AQHcFqmKlbwCLQuZgeWW+eaHG1TzksEeake9Zj2ENsUswqv
-1Z1Y0++LHwfV8mU9mqv+ie0Zc+dYDh3FGenV+VQExKSmPlyx/wlOfv9DHY9w9w9U
-XJ8FidvR4sr3D5b/tCBCI2z/4Tu2Qt/E9f1LaBq44vvF5BD/urzR5BEfyQpl4ijr
-YhUTq6cLu2QhqWmiM1q4Bh/s64oYuw==
-=rjMY
------END PGP SIGNATURE-----
-
---Sig_/WW99soGBEf=QXqtwQTt8NWj--
+T24gV2VkLCAyMDE4LTA1LTA5IGF0IDA4OjMxIC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6DQo+
+IE9uIDA1LzA5LzIwMTggMDQ6MjEgQU0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gSGkg
+YWxsLA0KPiA+IA0KPiA+IENoYW5nZXMgc2luY2UgMjAxODA1MDg6DQo+ID4gDQo+IA0KPiBvbiB4
+ODZfNjQ6DQo+ICMgQ09ORklHX1NNUCBpcyBub3Qgc2V0DQo+IA0KPiBJbiBmaWxlIGluY2x1ZGVk
+IGZyb20NCj4gLi4vZHJpdmVycy9uZXQvZXRoZXJuZXQvbWVsbGFub3gvbWx4NS9jb3JlL21haW4u
+Yzo0MzowOg0KPiAuLi9pbmNsdWRlL2xpbnV4L21seDUvZHJpdmVyLmg6IEluIGZ1bmN0aW9uDQo+
+ICdtbHg1X2dldF92ZWN0b3JfYWZmaW5pdHlfaGludCc6DQo+IC4uL2luY2x1ZGUvbGludXgvbWx4
+NS9kcml2ZXIuaDoxMjk5OjEzOiBlcnJvcjogJ3N0cnVjdCBpcnFfZGVzYycgaGFzDQo+IG5vIG1l
+bWJlciBuYW1lZCAnYWZmaW5pdHlfaGludCcNCj4gICByZXR1cm4gZGVzYy0+YWZmaW5pdHlfaGlu
+dDsNCj4gICAgICAgICAgICAgIF4NCj4gDQo+IA0KDQpIaSBTdGVwaGVuLA0KDQpJc3JhZWwgYW5k
+IE1heCBhcmUgd29ya2luZyBvbiBhIHNvbHV0aW9uLCB3aWxsIHByb3ZpZGUgaXQgQVNBUC4NCg0K
+VGhhbmtzLA0KU2FlZWQuDQo=
