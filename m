@@ -1,34 +1,37 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 9 (mlx5)
-Date: Wed, 9 May 2018 08:31:30 -0700
-Message-ID: <826ab15b-f2bc-0c5d-8d5e-6466badcd3e0@infradead.org>
-References: <20180509212133.41a59f2f@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH bpf-next] xsk: fix 64-bit division
+Date: Wed, 9 May 2018 18:13:33 +0200
+Message-ID: <17967788-2811-892b-0126-1bc49a5b9929@iogearbox.net>
+References: <e9890e95-16b4-4540-301b-43f17a824808@infradead.org>
+ <20180507174350.3534-1-bjorn.topel@gmail.com>
+ <baf737cf-a0c4-b542-8d37-fd9cdfe7101d@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509212133.41a59f2f@canb.auug.org.au>
+In-Reply-To: <baf737cf-a0c4-b542-8d37-fd9cdfe7101d@infradead.org>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
+To: Randy Dunlap <rdunlap@infradead.org>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>, ast@fb.com, netdev@vger.kernel.org
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>, magnus.karlsson@intel.com, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 05/09/2018 04:21 AM, Stephen Rothwell wrote:
-> Hi all,
+On 05/07/2018 08:25 PM, Randy Dunlap wrote:
+> On 05/07/2018 10:43 AM, Björn Töpel wrote:
+>> From: Björn Töpel <bjorn.topel@intel.com>
+>>
+>> i386 builds report:
+>>   net/xdp/xdp_umem.o: In function `xdp_umem_reg':
+>>   xdp_umem.c:(.text+0x47e): undefined reference to `__udivdi3'
+>>
+>> This fix uses div_u64 instead of the GCC built-in.
+>>
+>> Fixes: c0c77d8fb787 ("xsk: add user memory registration support sockopt")
+>> Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
 > 
-> Changes since 20180508:
+> I don't know why the subject says xsk (instead of xdp), but anyway:
 > 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-on x86_64:
-# CONFIG_SMP is not set
-
-In file included from ../drivers/net/ethernet/mellanox/mlx5/core/main.c:43:0:
-../include/linux/mlx5/driver.h: In function 'mlx5_get_vector_affinity_hint':
-../include/linux/mlx5/driver.h:1299:13: error: 'struct irq_desc' has no member named 'affinity_hint'
-  return desc->affinity_hint;
-             ^
-
-
--- 
-~Randy
+Applied to bpf-next, thanks everyone!
