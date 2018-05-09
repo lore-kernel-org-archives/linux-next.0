@@ -1,67 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the devicetree tree
-Date: Wed, 9 May 2018 16:04:49 +1000
-Message-ID: <20180509160449.68b865a2@canb.auug.org.au>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the s390 tree
+Date: Wed, 9 May 2018 08:31:13 +0200
+Message-ID: <537b8dd9-798e-f5d2-2595-cd0adfd1123c@iogearbox.net>
+References: <20180508102638.1e19b7f2@canb.auug.org.au>
+ <20180509142154.73ff5772@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/IL3STJjhnP56oio3HG38gOG"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180509142154.73ff5772@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, linux-kbuild@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, David Miller <davem@davemloft.net>
+Cc: Alexei Starovoitov <ast@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/IL3STJjhnP56oio3HG38gOG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 05/09/2018 06:21 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Tue, 8 May 2018 10:26:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Today's linux-next merge of the bpf-next tree got a conflict in:
+>>
+>>   arch/s390/net/bpf_jit.S
+>>
+>> between commit:
+>>
+>>   de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
+>>
+>> from the s390 tree and commit:
+>>
+>>   e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
+>>
+>> from the bpf-next tree.
+>>
+>> I fixed it up (I just removed the file as the latter does) and can
+>> carry the fix as necessary. This is now fixed as far as linux-next is
+>> concerned, but any non trivial conflicts should be mentioned to your
+>> upstream maintainer when your tree is submitted for merging.  You may
+>> also want to consider cooperating with the maintainer of the conflicting
+>> tree to minimise any particularly complex conflicts.
+> 
+> This is now a conflict between the net-next and s390 trees.
 
-Hi Rob,
-
-After merging the devicetree tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
-
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@3/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirection=
-al
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@1/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirection=
-al
-drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoin=
-t): /fragment@1/__overlay__/port@2/endpoint: graph connection to node '/fra=
-gment@0/__overlay__/lvds@feb94000/ports/port@0/endpoint' is not bidirection=
-al
-
-and over 2000 more :-(
-
-Presumably introduced by commit
-
-  0698fc8b542f ("scripts/dtc: Update to upstream version v1.4.6-21-g84e414b=
-0b5bc")
-
-but not suppressed by commit
-
-  b63caea4b5b5 ("kbuild: disable new dtc graph and unit-address warnings")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/IL3STJjhnP56oio3HG38gOG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryj4EACgkQAVBC80lX
-0GyrFgf+J8ahqnp2Qy+xapk3K59kiIjZZn/KuDeSFU1x3Ael0CaBCbjYajMXn2uz
-J7LdRmbpOFfS8oF7LhWyUeOBDL3enDw6NtGw9OWlML8j0z2zzAhIAzntjinKP7e5
-aooI/yYAfh4W3ONPUHXPxBSobOA0U9WxCVWouilnxWHd5CL2asn0F9YMVWiFuKN0
-PFi0JrwQgET/ErQrCESZWKabxTvdofLtInZN79tpQXzlaHefXebsS1B2nnQ7zbkw
-N3AuDP3WJNMF++jePraBKAYZuH00M00yk6secT6NHzUZ3nOxeHpAhbZfbaBwVaxr
-XgMsm1qQkinD0A6y++0QZQYUnl1SUQ==
-=OITf
------END PGP SIGNATURE-----
-
---Sig_/IL3STJjhnP56oio3HG38gOG--
+Right, bpf-next merged as usual into net-next two days ago; so same
+resolution applies.
