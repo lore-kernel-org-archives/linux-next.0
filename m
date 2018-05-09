@@ -1,69 +1,99 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the s390
- tree
-Date: Wed, 9 May 2018 14:21:54 +1000
-Message-ID: <20180509142154.73ff5772@canb.auug.org.au>
-References: <20180508102638.1e19b7f2@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the bpf-next tree
+Date: Wed, 9 May 2018 14:49:08 +1000
+Message-ID: <20180509144908.179afbc3@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZEI8h3kHyu3upTWz_00lbu/"; protocol="application/pgp-signature"
+ boundary="Sig_/w23Z3wnS7TjxDzPpTq/0fTU"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508102638.1e19b7f2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Networking <netdev@vger.kernel.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Heiko Carstens <heiko.carstens@de.ibm.com>, David Miller <davem@davemloft.net>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Ahern <dsahern@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZEI8h3kHyu3upTWz_00lbu/
+--Sig_/w23Z3wnS7TjxDzPpTq/0fTU
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Tue, 8 May 2018 10:26:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the bpf-next tree got a conflict in:
->=20
->   arch/s390/net/bpf_jit.S
->=20
-> between commit:
->=20
->   de5cb6eb514e ("s390: use expoline thunks in the BPF JIT")
->=20
-> from the s390 tree and commit:
->=20
->   e1cf4befa297 ("bpf, s390x: remove ld_abs/ld_ind")
->=20
-> from the bpf-next tree.
->=20
-> I fixed it up (I just removed the file as the latter does) and can
-> carry the fix as necessary. This is now fixed as far as linux-next is
-> concerned, but any non trivial conflicts should be mentioned to your
-> upstream maintainer when your tree is submitted for merging.  You may
-> also want to consider cooperating with the maintainer of the conflicting
-> tree to minimise any particularly complex conflicts.
+After merging the bpf-next tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-This is now a conflict between the net-next and s390 trees.
+In file included from include/linux/dma-mapping.h:5:0,
+                 from include/linux/skbuff.h:34,
+                 from include/linux/if_ether.h:23,
+                 from include/uapi/linux/bpf.h:13,
+                 from include/linux/bpf-cgroup.h:6,
+                 from include/linux/cgroup-defs.h:22,
+                 from include/linux/cgroup.h:28,
+                 from include/linux/perf_event.h:57,
+                 from include/linux/trace_events.h:10,
+                 from include/trace/trace_events.h:20,
+                 from include/trace/define_trace.h:96,
+                 from drivers/android/binder_trace.h:387,
+                 from drivers/android/binder.c:5702:
+include/linux/sizes.h:24:0: warning: "SZ_1K" redefined
+ #define SZ_1K    0x00000400
+drivers/android/binder.c:116:0: note: this is the location of the previous =
+definition
+ #define SZ_1K                               0x400
+In file included from include/linux/dma-mapping.h:5:0,
+                 from include/linux/skbuff.h:34,
+                 from include/linux/if_ether.h:23,
+                 from include/uapi/linux/bpf.h:13,
+                 from include/linux/bpf-cgroup.h:6,
+                 from include/linux/cgroup-defs.h:22,
+                 from include/linux/cgroup.h:28,
+                 from include/linux/perf_event.h:57,
+                 from include/linux/trace_events.h:10,
+                 from include/trace/trace_events.h:20,
+                 from include/trace/define_trace.h:96,
+                 from drivers/android/binder_trace.h:387,
+                 from drivers/android/binder.c:5702:
+include/linux/sizes.h:37:0: warning: "SZ_4M" redefined
+ #define SZ_4M    0x00400000
+drivers/android/binder.c:120:0: note: this is the location of the previous =
+definition
+ #define SZ_4M                               0x400000
+fs/ecryptfs/miscdev.c:206:0: warning: "PKT_TYPE_OFFSET" redefined
+ #define PKT_TYPE_OFFSET  0
+In file included from include/linux/if_ether.h:23:0,
+                 from include/uapi/linux/bpf.h:13,
+                 from include/linux/bpf-cgroup.h:6,
+                 from include/linux/cgroup-defs.h:22,
+                 from include/linux/cgroup.h:28,
+                 from include/linux/writeback.h:183,
+                 from include/linux/backing-dev.h:16,
+                 from fs/ecryptfs/ecryptfs_kernel.h:41,
+                 from fs/ecryptfs/miscdev.c:30:
+include/linux/skbuff.h:753:0: note: this is the location of the previous de=
+finition
+ #define PKT_TYPE_OFFSET() offsetof(struct sk_buff, __pkt_type_offset)
+
+Introduced by commit
+
+  9c38f3c8b153 ("bpf: Provide helper to do forwarding lookups in kernel FIB=
+ table")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ZEI8h3kHyu3upTWz_00lbu/
+--Sig_/w23Z3wnS7TjxDzPpTq/0fTU
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryd2IACgkQAVBC80lX
-0GxO0Af/WFqKfLIxODePDRc7kJDTY44CC0jXkQCc5YiGInrk9zBSBMGrhLZUpSv9
-Vfgt+EA/r98zfpCDFwg+PJ7q6WIzRK6CnP1p8O+twQjXI+CQlJFr+4s/hAJ7KfYQ
-/RQauRNEJge4hfxqk8JEUjeO+yY9LNUzzHf4Pb9TJN7jt/kImBRHFPpZ+RU6uQf8
-jeNk/1UtGujazY9Ys0K4ZWwbbET5cKBuMQcWJMWeyC6hT3u68JhM9b+EK0upv9A3
-66OT0AwBkNqI2PWi2paA2hyxyPjljhZFIPiiW5ceMXx4m1Dg6AYFbWyHEZVgakY1
-zhLJHZW5e1dgdcer733VqMS6ukJxfw==
-=ZCsq
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryfcQACgkQAVBC80lX
+0GwQpQgAjz1elfOwEFqBgsw1TkROUBaOO3KutNL/26M/pQkzkS4Hi97a6jWsZ4Gx
+y2skq6a6HVGY7+O6U76lPp1Or5OEwZAu00udQbO8qDxucy9664rIOviG1V3VeXAH
+YJ0f6+BVyBnY7+AxqDNXssvyQ/4znikYrvbp2+h7WeIcJ+yXqT8/jAX1UK1aoDAT
+kdccy+sEfFhmlBqR3eCZwM7lyUlH64Z1IdqjscNEPxi/4hA355NJQ8gxjaYmocIz
+ZjSV7PVNxDTTikH7hw9XljtKJw4sJZ5gqFYW6vqsfWpA00XSP+SK5i4kT0foJ/bL
+h9ip79eznjk3E3ddOhJtLRzXawVXZQ==
+=CUGF
 -----END PGP SIGNATURE-----
 
---Sig_/ZEI8h3kHyu3upTWz_00lbu/--
+--Sig_/w23Z3wnS7TjxDzPpTq/0fTU--
