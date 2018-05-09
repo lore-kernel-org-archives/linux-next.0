@@ -1,32 +1,60 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Date: Wed, 9 May 2018 07:17:06 -0500
-Message-ID: <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
-References: <20180509160449.68b865a2@canb.auug.org.au>
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: linux-next: manual merge of the akpm-current tree with the
+ jc_docs tree
+Date: Wed, 9 May 2018 15:28:24 +0200
+Message-ID: <20180509132824.GA14503@andrea>
+References: <20180509202508.15c3435a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509160449.68b865a2@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180509202508.15c3435a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laurent Dufour <ldufour@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, May 9, 2018 at 1:04 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Rob,
->
-> After merging the devicetree tree, today's linux-next build (arm
-> multi_v7_defconfig) produced this warning:
->
-> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7795.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@3/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirectional
-> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@1/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb90000/ports/port@0/endpoint' is not bidirectional
-> drivers/gpu/drm/rcar-du/rcar_du_of_lvds_r8a7790.dtb: Warning (graph_endpoint): /fragment@1/__overlay__/port@2/endpoint: graph connection to node '/fragment@0/__overlay__/lvds@feb94000/ports/port@0/endpoint' is not bidirectional
+On Wed, May 09, 2018 at 08:25:26PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the akpm-current tree got a conflict in:
+> 
+>   Documentation/features/vm/pte_special/arch-support.txt
+> 
+> between commit:
+> 
+>   2bef69a385b4 ("Documentation/features/vm: Remove arch support status file for 'pte_special'")
+> 
+> from the jc_docs tree and commit:
+> 
+>   1099dc900e93 ("mm: introduce ARCH_HAS_PTE_SPECIAL")
+> 
+> from the akpm-current tree.
+> 
+> I fixed it up (the former removed the file, so I did that) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
+> 
+> BTW, it would be nice if the the question "Why was this file removed?" was
+> answered by that jc_docs commit message ...  I actually wonder if this
+> file needs to return (I have no way of knowing).
 
-I forgot about this one hiding in the tree.
+My bad; thanks for pointing this out.
 
-> and over 2000 more :-(
+Mmh... "why" would have been something like "the feature has no Kconfig". ;-)
 
-I assume you mean on other files. I've already sent out patches for
-arm and arm64 dts files.
+I defer to your (community) decision regarding "if this file needs to return"
+(Cc-ing Ingo, who created the file and also suggested its removal); I remain
+available for preparing the patch to restore (and refresh) this file, should
+you agree with this approach.
 
-Rob
+  Andrea
+
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
