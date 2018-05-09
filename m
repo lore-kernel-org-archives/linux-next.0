@@ -1,51 +1,34 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: manual merge of the akpm-current tree with the
- jc_docs tree
-Date: Wed, 9 May 2018 08:59:20 -0600
-Message-ID: <20180509085920.5fbb32f5@lwn.net>
-References: <20180509202508.15c3435a@canb.auug.org.au>
-        <20180509132824.GA14503@andrea>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 9 (mlx5)
+Date: Wed, 9 May 2018 08:31:30 -0700
+Message-ID: <826ab15b-f2bc-0c5d-8d5e-6466badcd3e0@infradead.org>
+References: <20180509212133.41a59f2f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509132824.GA14503@andrea>
+In-Reply-To: <20180509212133.41a59f2f@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Andrew Morton <akpm@linux-foundation.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Laurent Dufour <ldufour@linux.vnet.ibm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Matan Barak <matanb@mellanox.com>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, 9 May 2018 15:28:24 +0200
-Andrea Parri <andrea.parri@amarulasolutions.com> wrote:
-
-> > BTW, it would be nice if the the question "Why was this file removed?" was
-> > answered by that jc_docs commit message ...  I actually wonder if this
-> > file needs to return (I have no way of knowing).  
+On 05/09/2018 04:21 AM, Stephen Rothwell wrote:
+> Hi all,
 > 
-> My bad; thanks for pointing this out.
+> Changes since 20180508:
 > 
-> Mmh... "why" would have been something like "the feature has no Kconfig". ;-)
-> 
-> I defer to your (community) decision regarding "if this file needs to return"
-> (Cc-ing Ingo, who created the file and also suggested its removal); I remain
-> available for preparing the patch to restore (and refresh) this file, should
-> you agree with this approach.
 
-So I'll confess that I balked on the lack of a changelog, but then decided
-to proceed with the patch (and the other removal as well) due to the lack
-of the Kconfig option.
+on x86_64:
+# CONFIG_SMP is not set
 
-Now that I look a little closer, I think the real issue is that the
-"features" documentation assumes that there's a Kconfig option for each,
-but there isn't in this case.  The lack of a Kconfig option does not,
-this time around, imply that the feature has gone away.
+In file included from ../drivers/net/ethernet/mellanox/mlx5/core/main.c:43:0:
+../include/linux/mlx5/driver.h: In function 'mlx5_get_vector_affinity_hint':
+../include/linux/mlx5/driver.h:1299:13: error: 'struct irq_desc' has no member named 'affinity_hint'
+  return desc->affinity_hint;
+             ^
 
-I think that I should probably revert this patch in the short term.
-Longer-term, it would be good to have an alternative syntax for "variable
-set in the arch headers" to describe situations like this.
 
-Make sense?
-
-Thanks,
-
-jon
+-- 
+~Randy
