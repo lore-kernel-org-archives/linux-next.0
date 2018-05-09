@@ -1,99 +1,61 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the bpf-next tree
-Date: Wed, 9 May 2018 14:49:08 +1000
-Message-ID: <20180509144908.179afbc3@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the mac80211-next tree
+Date: Wed, 9 May 2018 14:56:24 +1000
+Message-ID: <20180509145624.643d2e56@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/w23Z3wnS7TjxDzPpTq/0fTU"; protocol="application/pgp-signature"
+ boundary="Sig_/hlS.Gq/id/tlEVDlzOM.jCP"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Ahern <dsahern@gmail.com>
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Toke =?UTF-8?B?SMO4aWxhbmQt?= =?UTF-8?B?SsO4cmdlbnNlbg==?= <toke@toke.dk>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/w23Z3wnS7TjxDzPpTq/0fTU
+--Sig_/hlS.Gq/id/tlEVDlzOM.jCP
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Johannes,
 
-After merging the bpf-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+After merging the mac80211-next tree, today's linux-next build (arm_multi
+v7_defconfig) produced this warning:
 
-In file included from include/linux/dma-mapping.h:5:0,
-                 from include/linux/skbuff.h:34,
-                 from include/linux/if_ether.h:23,
-                 from include/uapi/linux/bpf.h:13,
-                 from include/linux/bpf-cgroup.h:6,
-                 from include/linux/cgroup-defs.h:22,
-                 from include/linux/cgroup.h:28,
-                 from include/linux/perf_event.h:57,
-                 from include/linux/trace_events.h:10,
-                 from include/trace/trace_events.h:20,
-                 from include/trace/define_trace.h:96,
-                 from drivers/android/binder_trace.h:387,
-                 from drivers/android/binder.c:5702:
-include/linux/sizes.h:24:0: warning: "SZ_1K" redefined
- #define SZ_1K    0x00000400
-drivers/android/binder.c:116:0: note: this is the location of the previous =
-definition
- #define SZ_1K                               0x400
-In file included from include/linux/dma-mapping.h:5:0,
-                 from include/linux/skbuff.h:34,
-                 from include/linux/if_ether.h:23,
-                 from include/uapi/linux/bpf.h:13,
-                 from include/linux/bpf-cgroup.h:6,
-                 from include/linux/cgroup-defs.h:22,
-                 from include/linux/cgroup.h:28,
-                 from include/linux/perf_event.h:57,
-                 from include/linux/trace_events.h:10,
-                 from include/trace/trace_events.h:20,
-                 from include/trace/define_trace.h:96,
-                 from drivers/android/binder_trace.h:387,
-                 from drivers/android/binder.c:5702:
-include/linux/sizes.h:37:0: warning: "SZ_4M" redefined
- #define SZ_4M    0x00400000
-drivers/android/binder.c:120:0: note: this is the location of the previous =
-definition
- #define SZ_4M                               0x400000
-fs/ecryptfs/miscdev.c:206:0: warning: "PKT_TYPE_OFFSET" redefined
- #define PKT_TYPE_OFFSET  0
-In file included from include/linux/if_ether.h:23:0,
-                 from include/uapi/linux/bpf.h:13,
-                 from include/linux/bpf-cgroup.h:6,
-                 from include/linux/cgroup-defs.h:22,
-                 from include/linux/cgroup.h:28,
-                 from include/linux/writeback.h:183,
-                 from include/linux/backing-dev.h:16,
-                 from fs/ecryptfs/ecryptfs_kernel.h:41,
-                 from fs/ecryptfs/miscdev.c:30:
-include/linux/skbuff.h:753:0: note: this is the location of the previous de=
-finition
- #define PKT_TYPE_OFFSET() offsetof(struct sk_buff, __pkt_type_offset)
+drivers/net/wireless/marvell/mwifiex/uap_event.c: In function 'mwifiex_proc=
+ess_uap_event':
+drivers/net/wireless/marvell/mwifiex/uap_event.c:333:1: warning: the frame =
+size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=3D]
+ }
+ ^
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: In function 'b=
+rcmf_notify_connect_status_ap':
+drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:5530:1: warning=
+: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-th=
+an=3D]
+ }
+ ^
 
-Introduced by commit
+Maybe introduced by commit
 
-  9c38f3c8b153 ("bpf: Provide helper to do forwarding lookups in kernel FIB=
- table")
+  52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/w23Z3wnS7TjxDzPpTq/0fTU
+--Sig_/hlS.Gq/id/tlEVDlzOM.jCP
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryfcQACgkQAVBC80lX
-0GwQpQgAjz1elfOwEFqBgsw1TkROUBaOO3KutNL/26M/pQkzkS4Hi97a6jWsZ4Gx
-y2skq6a6HVGY7+O6U76lPp1Or5OEwZAu00udQbO8qDxucy9664rIOviG1V3VeXAH
-YJ0f6+BVyBnY7+AxqDNXssvyQ/4znikYrvbp2+h7WeIcJ+yXqT8/jAX1UK1aoDAT
-kdccy+sEfFhmlBqR3eCZwM7lyUlH64Z1IdqjscNEPxi/4hA355NJQ8gxjaYmocIz
-ZjSV7PVNxDTTikH7hw9XljtKJw4sJZ5gqFYW6vqsfWpA00XSP+SK5i4kT0foJ/bL
-h9ip79eznjk3E3ddOhJtLRzXawVXZQ==
-=CUGF
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlryf3gACgkQAVBC80lX
+0GxqrggAjA5GohA+vLw21E0YcEVw05I8gpMaX+pWFevpGEZEWOFjNkNvf8k7rqmK
+HVlx97/uiM6k9WdVE9cRWccqEviCc6lkMMkPxDLCT21wSR12Yl3SacpsQmrFzAnG
+5ON1Fzzj4X0LTB4GvWxVZrHQZY776AYSz5rSTA4sPoIFZaj6g1AhUWcm/o7ci0Xg
+by5UcfF09/B9uE8C4Ud+V/IthEZqO0X4qqgupbCdT9m+MrYVn8AA73qSiTe5TALf
+zJ+QxAJR/Yp39PJ9ThS3xdoerZflM8ny1tuYf25Lm/pFxwZ34c7jdanJ8DqrhkCr
+YUgHBdwXg3T+4uzu2y0V6V2cZ3XD7Q==
+=UjYP
 -----END PGP SIGNATURE-----
 
---Sig_/w23Z3wnS7TjxDzPpTq/0fTU--
+--Sig_/hlS.Gq/id/tlEVDlzOM.jCP--
