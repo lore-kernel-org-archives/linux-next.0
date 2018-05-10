@@ -1,146 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 10 May 2018 12:13:30 +1000
-Message-ID: <20180510121330.3b78a5a9@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the sound-asoc tree
+Date: Thu, 10 May 2018 13:09:20 +1000
+Message-ID: <20180510130920.75313152@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Nn9ni4/CUuW.SmmUnxG9wQo"; protocol="application/pgp-signature"
+ boundary="Sig_/Nc9O6YBumJlvAKs6egxH60o"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Peter Ujfalusi <peter.ujfalusi@ti.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Nn9ni4/CUuW.SmmUnxG9wQo
+--Sig_/Nc9O6YBumJlvAKs6egxH60o
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the sound-asoc tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  drivers/net/ethernet/realtek/r8169.c
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
+see include/linux/module.h for more information
+WARNING: modpost: missing MODULE_LICENSE() in sound/soc/omap/snd-soc-sdma.o
+see include/linux/module.h for more information
 
-between commit:
+Introduced by commit
 
-  3148dedfe79e ("r8169: fix powering up RTL8168h")
-
-from the net tree and commit:
-
-  4f447d296982 ("r8169: drop member pll_power_ops from struct rtl8169_priva=
-te")
-
-from the net-next tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
+  dde637f2daf1 ("ASoC: omap: Introduce the generic_dmaengine_pcm based sdma=
+-pcm")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/realtek/r8169.c
-index c7aac1fc99e8,6d99b141a7aa..000000000000
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@@ -4980,72 -4767,13 +4767,16 @@@ static void rtl_pll_power_down(struct r
- =20
-  static void rtl_pll_power_up(struct rtl8169_private *tp)
-  {
-- 	rtl_generic_op(tp, tp->pll_power_ops.up);
--=20
-- 	/* give MAC/PHY some time to resume */
-- 	msleep(20);
-- }
--=20
-- static void rtl_init_pll_power_ops(struct rtl8169_private *tp)
-- {
-- 	struct pll_power_ops *ops =3D &tp->pll_power_ops;
--=20
-  	switch (tp->mac_version) {
-- 	case RTL_GIGA_MAC_VER_07:
-- 	case RTL_GIGA_MAC_VER_08:
-- 	case RTL_GIGA_MAC_VER_09:
-- 	case RTL_GIGA_MAC_VER_10:
-- 	case RTL_GIGA_MAC_VER_16:
-- 	case RTL_GIGA_MAC_VER_29:
-- 	case RTL_GIGA_MAC_VER_30:
-- 	case RTL_GIGA_MAC_VER_37:
-- 	case RTL_GIGA_MAC_VER_39:
-- 	case RTL_GIGA_MAC_VER_43:
-- 	case RTL_GIGA_MAC_VER_47:
-- 	case RTL_GIGA_MAC_VER_48:
-- 		ops->down	=3D r810x_pll_power_down;
-- 		ops->up		=3D r810x_pll_power_up;
-- 		break;
--=20
-- 	case RTL_GIGA_MAC_VER_11:
-- 	case RTL_GIGA_MAC_VER_12:
-- 	case RTL_GIGA_MAC_VER_17:
-- 	case RTL_GIGA_MAC_VER_18:
-- 	case RTL_GIGA_MAC_VER_19:
-- 	case RTL_GIGA_MAC_VER_20:
-- 	case RTL_GIGA_MAC_VER_21:
-- 	case RTL_GIGA_MAC_VER_22:
-- 	case RTL_GIGA_MAC_VER_23:
-- 	case RTL_GIGA_MAC_VER_24:
-- 	case RTL_GIGA_MAC_VER_25:
-- 	case RTL_GIGA_MAC_VER_26:
-- 	case RTL_GIGA_MAC_VER_27:
-- 	case RTL_GIGA_MAC_VER_28:
-- 	case RTL_GIGA_MAC_VER_31:
-- 	case RTL_GIGA_MAC_VER_32:
-- 	case RTL_GIGA_MAC_VER_33:
-- 	case RTL_GIGA_MAC_VER_34:
-- 	case RTL_GIGA_MAC_VER_35:
-- 	case RTL_GIGA_MAC_VER_36:
-- 	case RTL_GIGA_MAC_VER_38:
-- 	case RTL_GIGA_MAC_VER_40:
-- 	case RTL_GIGA_MAC_VER_41:
-- 	case RTL_GIGA_MAC_VER_42:
-- 	case RTL_GIGA_MAC_VER_44:
-- 	case RTL_GIGA_MAC_VER_45:
-- 	case RTL_GIGA_MAC_VER_46:
-- 	case RTL_GIGA_MAC_VER_49:
-- 	case RTL_GIGA_MAC_VER_50:
-- 	case RTL_GIGA_MAC_VER_51:
-- 		ops->down	=3D r8168_pll_power_down;
-- 		ops->up		=3D r8168_pll_power_up;
-+ 	case RTL_GIGA_MAC_VER_01 ... RTL_GIGA_MAC_VER_06:
-+ 	case RTL_GIGA_MAC_VER_13 ... RTL_GIGA_MAC_VER_15:
-  		break;
--=20
-  	default:
-- 		ops->down	=3D NULL;
-- 		ops->up		=3D NULL;
-- 		break;
-+ 		r8168_pll_power_up(tp);
-  	}
-++
-++	/* give MAC/PHY some time to resume */
-++	msleep(20);
-  }
- =20
-  static void rtl_init_rxcfg(struct rtl8169_private *tp)
-
---Sig_/Nn9ni4/CUuW.SmmUnxG9wQo
+--Sig_/Nc9O6YBumJlvAKs6egxH60o
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzqsoACgkQAVBC80lX
-0GwmSQgAgraBcMfkbUoAoHv8uYUWx/sSvmrDWF4rblJNt8wWxh26lCVhK6WDE9x1
-/8Uq3HCYkQZeegApW1QwUCMLoBUqusN2+tvNkf1ON4qVX1/Cj1wMf8yWV6H0iQck
-AtXAIKC6lrdOfGTSfzWMBzkS3Zsz3OvTqWHbs+9n/2PnUzw7C8Gsj05x2dFodylc
-2FTE+MbQCu/65yQ5UR3bK+cYFPPqHIggwehbU3nqBpcocCtZYw8Hc9zuWqtg8yHT
-CE4hoAtXs+8/9XhcyhUadMD1XVjqIfNu16JatgaaAtyEjNGwdoh7uSHQmrkysB1/
-eHyoMW7iG99ViO/8mS8dafK4AQpKtA==
-=XmWc
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlrzt+AACgkQAVBC80lX
+0GzahQf+P5Zm3SfRPLeou+/wvUK4B2k/bAYwtU00gOyHmZBZHGHjwB3FO2NMoflP
+y8B+nFMXyBqK47g6QF+SIEth8ECAS/I+oSKpbedaLYqpC1ktfr7SMuBRzZidURFf
+6sWLigEYvuohVIw3saW4eMNHuRymlxY8ACJVnETmdYyqAdn7nRqvSlTDo9rTYjb9
+132JcVUt3VI7jl77R6gUKf9T3e0xpC4MmEc11ak0OQZkBcHfLB8mcmcO0aWsbMz/
+64aHSchBFB/aB/FbDpHASClEOehPrXPTx/lIl/kdEfgYGbauxxFLqqiJv2lKbzJY
+tbkp2DncXZDeeYaPAPUxqoABqwLNvQ==
+=Uycg
 -----END PGP SIGNATURE-----
 
---Sig_/Nn9ni4/CUuW.SmmUnxG9wQo--
+--Sig_/Nc9O6YBumJlvAKs6egxH60o--
