@@ -1,44 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: unable to fetch the mips tree
-Date: Fri, 11 May 2018 07:20:58 +1000
-Message-ID: <20180511072058.2fbe785e@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the nds32 tree
+Date: Fri, 11 May 2018 07:24:02 +1000
+Message-ID: <20180511072402.16a5f3d7@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gJzc=CCJgvW2YcYnXbojxnZ"; protocol="application/pgp-signature"
+ boundary="Sig_/ZI4zjYjw_0WnAbMRz46MVup"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Ralf Baechle <ralf@linux-mips.org>
+To: Greentime Hu <green.hu@gmail.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gJzc=CCJgvW2YcYnXbojxnZ
+--Sig_/ZI4zjYjw_0WnAbMRz46MVup
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ralf,
+Hi Greentime,
 
-For the past few days I have been unable to fetch the mips tree
-(git://git.linux-mips.org/pub/scm/ralf/upstream-sfr#mips-next).
-The initial connection just times out.
+Commits
+
+  711b53601ac1 ("nds32: Renaming the file for unaligned access")
+  fd3a79dbf575 ("nds32: Fix the unaligned access handler")
+
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/gJzc=CCJgvW2YcYnXbojxnZ
+--Sig_/ZI4zjYjw_0WnAbMRz46MVup
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0t7oACgkQAVBC80lX
-0GzjIAf9HzMFFIz3iBSsqMpHGo8aHH/ESH3XSy9lSA5r5FiWbn+5n25uyMAaSl6N
-qKZDVI4kis4vbj+sE5bA3Yy5VnInAhVXOvdhrQ4TTzXSskMksMPFaBZaOtE2AJo2
-03kexPt65TJBC7K65arqvNLD0SzYSqdiEh6XVQ9ccDuRJ2AtKXiYwWtxC18iWUF9
-ijF+XoOo+mbygA9PQerGVynM5cqgcd71jN2sSUyPW8MG0nSB7AYBQBUrTfQ0MhN/
-MXKPUkRzQySbgkH+wStO38ozhUMgqUSJCMxHGDZoSspLWpmgqRpBzgfxWHOtrRHr
-svj9DEc98+07fxLhcSA9RxJG8P3Hnw==
-=IVPe
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0uHIACgkQAVBC80lX
+0GyqTgf/d51ikH/BELBphmquD0fC7PPSmIq4etsY3u4gM9D3D1pio055zdmqMA6N
+v26G780xNasimlpsHNt9FpoEoXjENR0ghcu/M/Z15r+KpPVWaKVn0QYQIJYerYJi
+axOTNM79JWjMFvEBFWD0/g995zv2XkVslnKHfzq7IJSFKVdC5eWbZK1/jEFGo8I7
+vjptCE7YqqlYtTVLDu06pzz4nXjt6s4s51VDM10TgcGqjYSeWByICKeOo7FANRW3
+SOXt1/Fj/2+v8X6UdxoTMzcAkWB6pH2nr/9Og04ft4hfL56R/UmxVbYMtN4UVpPF
+SnmNej9NOeB2IApJOoj6io4xbHTu5w==
+=IlJN
 -----END PGP SIGNATURE-----
 
---Sig_/gJzc=CCJgvW2YcYnXbojxnZ--
+--Sig_/ZI4zjYjw_0WnAbMRz46MVup--
