@@ -1,47 +1,48 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the nds32 tree
-Date: Fri, 11 May 2018 07:24:02 +1000
-Message-ID: <20180511072402.16a5f3d7@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the jc_docs tree
+Date: Fri, 11 May 2018 07:40:49 +1000
+Message-ID: <20180511074049.26072ec8@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZI4zjYjw_0WnAbMRz46MVup"; protocol="application/pgp-signature"
+ boundary="Sig_/BA03Ek0kRyOd/q5Mz/CcKq1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greentime Hu <green.hu@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZI4zjYjw_0WnAbMRz46MVup
+--Sig_/BA03Ek0kRyOd/q5Mz/CcKq1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greentime,
+Hi Jon,
 
-Commits
+Commit
 
-  711b53601ac1 ("nds32: Renaming the file for unaligned access")
-  fd3a79dbf575 ("nds32: Fix the unaligned access handler")
+  5a779c40a8ad ("Revert "Documentation/features/vm: Remove arch support sta=
+tus file for 'pte_special'"")
 
-are missing a Signed-off-by from their committer.
+is missing a Signed-off-by from its author and committer.  Reverts are
+commits too. ;-)
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ZI4zjYjw_0WnAbMRz46MVup
+--Sig_/BA03Ek0kRyOd/q5Mz/CcKq1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0uHIACgkQAVBC80lX
-0GyqTgf/d51ikH/BELBphmquD0fC7PPSmIq4etsY3u4gM9D3D1pio055zdmqMA6N
-v26G780xNasimlpsHNt9FpoEoXjENR0ghcu/M/Z15r+KpPVWaKVn0QYQIJYerYJi
-axOTNM79JWjMFvEBFWD0/g995zv2XkVslnKHfzq7IJSFKVdC5eWbZK1/jEFGo8I7
-vjptCE7YqqlYtTVLDu06pzz4nXjt6s4s51VDM10TgcGqjYSeWByICKeOo7FANRW3
-SOXt1/Fj/2+v8X6UdxoTMzcAkWB6pH2nr/9Og04ft4hfL56R/UmxVbYMtN4UVpPF
-SnmNej9NOeB2IApJOoj6io4xbHTu5w==
-=IlJN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0vGEACgkQAVBC80lX
+0GwEDggAi1vAYk7B6yPUh8XbPuHLdCjwgOOms2Gyd5QcPW8gzut67xr7uKNcqBKr
+1JNtAy91vzkdKSTPfa/UCX5u4MsUCXbmgIjK2KM9fQ1ISy3aZ9LHpATnhSdAxJFU
+45TeeMucGm8UjZUqPcetd0LDzxQSKzzwtK6meaBDr5JzJADBNFMa+v3u5nI+Bbzg
+fZ+XOuo2ezPxdr488RNpLvuz/AczuDiWGNjdSDLDmKS/MLxlc1Ol0FwiZHsfZf0M
+Y/GUjq8x6LMx5uItsBxlHWf1Q5GPLEQp2zFNUfHOjMifisvVWikR0yVUyDDfrmvm
+drtxG7IOHv/3GEOWjt+oFBAxwPSW1w==
+=aZ6W
 -----END PGP SIGNATURE-----
 
---Sig_/ZI4zjYjw_0WnAbMRz46MVup--
+--Sig_/BA03Ek0kRyOd/q5Mz/CcKq1--
