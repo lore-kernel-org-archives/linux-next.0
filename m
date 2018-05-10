@@ -1,34 +1,87 @@
-From: Jonathan Corbet <corbet@lwn.net>
-Subject: Re: linux-next: Signed-off-by missing for commit in the jc_docs
- tree
-Date: Thu, 10 May 2018 15:44:08 -0600
-Message-ID: <20180510154359.4aea2351@lwn.net>
-References: <20180511074049.26072ec8@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 10 (mm/ksm.c)
+Date: Thu, 10 May 2018 15:03:04 -0700
+Message-ID: <91e95111-eb0c-205b-722b-18016da93c04@infradead.org>
+References: <20180510172842.2619e058@canb.auug.org.au>
+ <e55fad49-6c19-7c43-ef37-eb148bd3d55d@infradead.org>
+ <20180510134825.372f4a7ec17ce3e945640ac2@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180511074049.26072ec8@canb.auug.org.au>
+In-Reply-To: <20180510134825.372f4a7ec17ce3e945640ac2@linux-foundation.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 11 May 2018 07:40:49 +1000
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Commit
+On 05/10/2018 01:48 PM, Andrew Morton wrote:
+> On Thu, 10 May 2018 09:37:51 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
 > 
->   5a779c40a8ad ("Revert "Documentation/features/vm: Remove arch support status file for 'pte_special'"")
+>> On 05/10/2018 12:28 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20180509:
+>>>
+>>
+>> on i386:
+>>
+>> ../mm/ksm.c: In function 'try_to_merge_one_page':
+>> ../mm/ksm.c:1244:4: error: implicit declaration of function 'set_page_stable_node' [-Werror=implicit-function-declaration]
+>>     set_page_stable_node(page, NULL);
 > 
-> is missing a Signed-off-by from its author and committer.  Reverts are
-> commits too. ;-)
+> Thanks.
+> 
+> From: Andrew Morton <akpm@linux-foundation.org>
+> Subject: mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+> 
+> fix SYSFS=n build
+> 
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
 
-Argh.  I'm really not having a good time with this.
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-I've rebase-fixed it, I doubt anybody (except you! :) has pulled my tree
-in the half-hour it was there...apologies if I'm wrong.
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+> 
+>  mm/ksm.c |    9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
+> 
+> diff -puN include/linux/ksm.h~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix include/linux/ksm.h
+> diff -puN mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix mm/ksm.c
+> --- a/mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+> +++ a/mm/ksm.c
+> @@ -823,11 +823,6 @@ static int unmerge_ksm_pages(struct vm_a
+>  	return err;
+>  }
+>  
+> -#ifdef CONFIG_SYSFS
+> -/*
+> - * Only called through the sysfs control interface:
+> - */
+> -
+>  static inline struct stable_node *page_stable_node(struct page *page)
+>  {
+>  	return PageKsm(page) ? page_rmapping(page) : NULL;
+> @@ -839,6 +834,10 @@ static inline void set_page_stable_node(
+>  	page->mapping = (void *)((unsigned long)stable_node | PAGE_MAPPING_KSM);
+>  }
+>  
+> +#ifdef CONFIG_SYSFS
+> +/*
+> + * Only called through the sysfs control interface:
+> + */
+>  static int remove_stable_node(struct stable_node *stable_node)
+>  {
+>  	struct page *page;
+> _
 
-Thanks,
 
-jon
+-- 
+~Randy
