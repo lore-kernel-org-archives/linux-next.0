@@ -1,48 +1,34 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the jc_docs tree
-Date: Fri, 11 May 2018 07:40:49 +1000
-Message-ID: <20180511074049.26072ec8@canb.auug.org.au>
+From: Jonathan Corbet <corbet@lwn.net>
+Subject: Re: linux-next: Signed-off-by missing for commit in the jc_docs
+ tree
+Date: Thu, 10 May 2018 15:44:08 -0600
+Message-ID: <20180510154359.4aea2351@lwn.net>
+References: <20180511074049.26072ec8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BA03Ek0kRyOd/q5Mz/CcKq1"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180511074049.26072ec8@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Corbet <corbet@lwn.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BA03Ek0kRyOd/q5Mz/CcKq1
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 11 May 2018 07:40:49 +1000
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Hi Jon,
+> Commit
+> 
+>   5a779c40a8ad ("Revert "Documentation/features/vm: Remove arch support status file for 'pte_special'"")
+> 
+> is missing a Signed-off-by from its author and committer.  Reverts are
+> commits too. ;-)
 
-Commit
+Argh.  I'm really not having a good time with this.
 
-  5a779c40a8ad ("Revert "Documentation/features/vm: Remove arch support sta=
-tus file for 'pte_special'"")
+I've rebase-fixed it, I doubt anybody (except you! :) has pulled my tree
+in the half-hour it was there...apologies if I'm wrong.
 
-is missing a Signed-off-by from its author and committer.  Reverts are
-commits too. ;-)
+Thanks,
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/BA03Ek0kRyOd/q5Mz/CcKq1
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0vGEACgkQAVBC80lX
-0GwEDggAi1vAYk7B6yPUh8XbPuHLdCjwgOOms2Gyd5QcPW8gzut67xr7uKNcqBKr
-1JNtAy91vzkdKSTPfa/UCX5u4MsUCXbmgIjK2KM9fQ1ISy3aZ9LHpATnhSdAxJFU
-45TeeMucGm8UjZUqPcetd0LDzxQSKzzwtK6meaBDr5JzJADBNFMa+v3u5nI+Bbzg
-fZ+XOuo2ezPxdr488RNpLvuz/AczuDiWGNjdSDLDmKS/MLxlc1Ol0FwiZHsfZf0M
-Y/GUjq8x6LMx5uItsBxlHWf1Q5GPLEQp2zFNUfHOjMifisvVWikR0yVUyDDfrmvm
-drtxG7IOHv/3GEOWjt+oFBAxwPSW1w==
-=aZ6W
------END PGP SIGNATURE-----
-
---Sig_/BA03Ek0kRyOd/q5Mz/CcKq1--
+jon
