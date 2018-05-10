@@ -1,75 +1,46 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: linux-next: Tree for May 10 (mm/ksm.c)
-Date: Thu, 10 May 2018 13:48:25 -0700
-Message-ID: <20180510134825.372f4a7ec17ce3e945640ac2@linux-foundation.org>
-References: <20180510172842.2619e058@canb.auug.org.au>
-        <e55fad49-6c19-7c43-ef37-eb148bd3d55d@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the net tree
+Date: Fri, 11 May 2018 07:17:16 +1000
+Message-ID: <20180511071716.038a9095@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/XTrBRb.gUvpaOdyj_1G8dYp"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e55fad49-6c19-7c43-ef37-eb148bd3d55d@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hangbin Liu <liuhangbin@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 10 May 2018 09:37:51 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On 05/10/2018 12:28 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180509:
-> > 
-> 
-> on i386:
-> 
-> ../mm/ksm.c: In function 'try_to_merge_one_page':
-> ../mm/ksm.c:1244:4: error: implicit declaration of function 'set_page_stable_node' [-Werror=implicit-function-declaration]
->     set_page_stable_node(page, NULL);
+Hi all,
 
-Thanks.
+Commit
 
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
+  0e8411e426e2 ("ipv4: reset fnhe_mtu_locked after cache route flushed")
 
-fix SYSFS=n build
+is missing a Signed-off-by from its author.
 
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
+--=20
+Cheers,
+Stephen Rothwell
 
- mm/ksm.c |    9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff -puN include/linux/ksm.h~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix include/linux/ksm.h
-diff -puN mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix mm/ksm.c
---- a/mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
-+++ a/mm/ksm.c
-@@ -823,11 +823,6 @@ static int unmerge_ksm_pages(struct vm_a
- 	return err;
- }
- 
--#ifdef CONFIG_SYSFS
--/*
-- * Only called through the sysfs control interface:
-- */
--
- static inline struct stable_node *page_stable_node(struct page *page)
- {
- 	return PageKsm(page) ? page_rmapping(page) : NULL;
-@@ -839,6 +834,10 @@ static inline void set_page_stable_node(
- 	page->mapping = (void *)((unsigned long)stable_node | PAGE_MAPPING_KSM);
- }
- 
-+#ifdef CONFIG_SYSFS
-+/*
-+ * Only called through the sysfs control interface:
-+ */
- static int remove_stable_node(struct stable_node *stable_node)
- {
- 	struct page *page;
-_
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0ttwACgkQAVBC80lX
+0GxpFwf/RnGxZS4x+O/f1PVDtXeueAtMOWuiOW0z2oLkB2bMchUBAdJAFAJ/TdRO
+AkXbxDyZ5aFsULDUU8SLlWG9C2MPjSJm5ADwx2s5dIzNjThW1eAG9/jJoXcrz6uc
+WGHrNDhi+TVgjxKpWMqwsJvgPN1Nau+hiClT+SCroMDipyuv8aPjZMK28UeTGtsU
+o9uG7ilcEJKn5OOSaN/NKhtCCRmjo2fvwvpROqTNjVLFkclNrQx1SbQ+WD7HjRgg
+QoaHiL399TZxAlZ4orJWFXsW0E8cADedeJ6Wpe8GB6nlc5k45/mqEwsOlJW8/ORj
+rQTQe3R1LeE2cGTqiBXw5Fb/W8qAbw==
+=af6P
+-----END PGP SIGNATURE-----
+
+--Sig_/XTrBRb.gUvpaOdyj_1G8dYp--
