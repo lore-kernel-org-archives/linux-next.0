@@ -1,46 +1,44 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Date: Fri, 11 May 2018 07:17:16 +1000
-Message-ID: <20180511071716.038a9095@canb.auug.org.au>
+Subject: linux-next: unable to fetch the mips tree
+Date: Fri, 11 May 2018 07:20:58 +1000
+Message-ID: <20180511072058.2fbe785e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XTrBRb.gUvpaOdyj_1G8dYp"; protocol="application/pgp-signature"
+ boundary="Sig_/gJzc=CCJgvW2YcYnXbojxnZ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hangbin Liu <liuhangbin@gmail.com>
+To: Ralf Baechle <ralf@linux-mips.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+--Sig_/gJzc=CCJgvW2YcYnXbojxnZ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ralf,
 
-Commit
-
-  0e8411e426e2 ("ipv4: reset fnhe_mtu_locked after cache route flushed")
-
-is missing a Signed-off-by from its author.
+For the past few days I have been unable to fetch the mips tree
+(git://git.linux-mips.org/pub/scm/ralf/upstream-sfr#mips-next).
+The initial connection just times out.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/XTrBRb.gUvpaOdyj_1G8dYp
+--Sig_/gJzc=CCJgvW2YcYnXbojxnZ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0ttwACgkQAVBC80lX
-0GxpFwf/RnGxZS4x+O/f1PVDtXeueAtMOWuiOW0z2oLkB2bMchUBAdJAFAJ/TdRO
-AkXbxDyZ5aFsULDUU8SLlWG9C2MPjSJm5ADwx2s5dIzNjThW1eAG9/jJoXcrz6uc
-WGHrNDhi+TVgjxKpWMqwsJvgPN1Nau+hiClT+SCroMDipyuv8aPjZMK28UeTGtsU
-o9uG7ilcEJKn5OOSaN/NKhtCCRmjo2fvwvpROqTNjVLFkclNrQx1SbQ+WD7HjRgg
-QoaHiL399TZxAlZ4orJWFXsW0E8cADedeJ6Wpe8GB6nlc5k45/mqEwsOlJW8/ORj
-rQTQe3R1LeE2cGTqiBXw5Fb/W8qAbw==
-=af6P
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr0t7oACgkQAVBC80lX
+0GzjIAf9HzMFFIz3iBSsqMpHGo8aHH/ESH3XSy9lSA5r5FiWbn+5n25uyMAaSl6N
+qKZDVI4kis4vbj+sE5bA3Yy5VnInAhVXOvdhrQ4TTzXSskMksMPFaBZaOtE2AJo2
+03kexPt65TJBC7K65arqvNLD0SzYSqdiEh6XVQ9ccDuRJ2AtKXiYwWtxC18iWUF9
+ijF+XoOo+mbygA9PQerGVynM5cqgcd71jN2sSUyPW8MG0nSB7AYBQBUrTfQ0MhN/
+MXKPUkRzQySbgkH+wStO38ozhUMgqUSJCMxHGDZoSspLWpmgqRpBzgfxWHOtrRHr
+svj9DEc98+07fxLhcSA9RxJG8P3Hnw==
+=IVPe
 -----END PGP SIGNATURE-----
 
---Sig_/XTrBRb.gUvpaOdyj_1G8dYp--
+--Sig_/gJzc=CCJgvW2YcYnXbojxnZ--
