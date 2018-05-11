@@ -1,45 +1,42 @@
-From: Hangbin Liu <liuhangbin@gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
-Date: Fri, 11 May 2018 09:30:03 +0800
-Message-ID: <20180511013003.GG8958@leo.usersys.redhat.com>
-References: <20180511071716.038a9095@canb.auug.org.au>
+From: Zhang Rui <rui.zhang@intel.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the thermal
+ tree
+Date: Fri, 11 May 2018 09:53:30 +0800
+Message-ID: <1526003610.19343.1.camel@intel.com>
+References: <20180509214341.1d490677@canb.auug.org.au>
+         <20180510021011.GA3765@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180511071716.038a9095@canb.auug.org.au>
+In-Reply-To: <20180510021011.GA3765@localhost.localdomain>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Eduardo Valentin <edubezval@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 11, 2018 at 07:17:16AM +1000, Stephen Rothwell wrote:
-> Hi all,
+On 三, 2018-05-09 at 19:10 -0700, Eduardo Valentin wrote:
+> Hey Rui,
 > 
-> Commit
+> On Wed, May 09, 2018 at 09:43:41PM +1000, Stephen Rothwell wrote:
+> > 
+> > Hi Zhang,
+> > 
+> > Commits
+> > 
+> >   a2ace598c00a ("thermal: exynos: Reading temperature makes sense
+> > only when TMU is turned on")
+> >   f9cd6a904e6e ("thermal: exynos: Propagate error value from
+> > tmu_read()")
+> > 
+> > are missing a Signed-off-by from their committer.
+> Did you cherry-pick them instead of merging? If cherry-picking you
+> have
+> to add your Signed-off-by..
 > 
->   0e8411e426e2 ("ipv4: reset fnhe_mtu_locked after cache route flushed")
-> 
-> is missing a Signed-off-by from its author.
+I merged them, and then did a rebase to drop some of the patch, hmmm,
+could that be the problem?
+Anyway, I will re-merge your tree and push them out sometime tomorrow.
 
-Opps, My bad.
-
-> After route cache is flushed via ipv4_sysctl_rtcache_flush(), we forget
-> to reset fnhe_mtu_locked in rt_bind_exception(). When pmtu is updated
-> in __ip_rt_update_pmtu(), it will return directly since the pmtu is
-> still locked. e.g.
->
-> + ip netns exec client ping 10.10.1.1 -c 1 -s 1400 -M do
-> PING 10.10.1.1 (10.10.1.1) 1400(1428) bytes of data.
-> From 10.10.0.254 icmp_seq=1 Frag needed and DF set (mtu = 0)
->
-> --- 10.10.1.1 ping statistics ---
-> 1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms
-
-I shouldn't add comments with the '---' lines. David reminded me before. But
-I didn't realise it when pasted the ping logs. Another lesson learned...
-
-Thanks Stephen.
-
-Regards
-Hangbin
+thanks,
+rui
