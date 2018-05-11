@@ -1,95 +1,106 @@
-From: Mike Rapoprt <rppt@linux.vnet.ibm.com>
-Subject: Re: linux-next: Tree for May 10 (mm/ksm.c)
-Date: Fri, 11 May 2018 10:17:05 +0300
-Message-ID: <5574BF43-F2BB-4A19-BCCE-37F402DCED06@linux.vnet.ibm.com>
-References: <20180510172842.2619e058@canb.auug.org.au> <e55fad49-6c19-7c43-ef37-eb148bd3d55d@infradead.org> <20180510134825.372f4a7ec17ce3e945640ac2@linux-foundation.org> <91e95111-eb0c-205b-722b-18016da93c04@infradead.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Gilad Ben-Yossef <gilad@benyossef.com>
+Subject: [PATCH] crypto: reorder paes test lexicographically
+Date: Fri, 11 May 2018 09:04:06 +0100
+Message-ID: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <91e95111-eb0c-205b-722b-18016da93c04@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux MM <linux-mm@kvack.org>
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Cc: Ofir Drang <ofir.drang@arm.com>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
+Due to a snafu "paes" testmgr tests were not ordered
+lexicographically, which led to boot time warnings.
+Reorder the tests as needed.
 
+Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
+Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+---
+ crypto/testmgr.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-On May 11, 2018 1:03:04 AM GMT+03:00, Randy Dunlap <rdunlap@infradead.org> wrote:
->On 05/10/2018 01:48 PM, Andrew Morton wrote:
->> On Thu, 10 May 2018 09:37:51 -0700 Randy Dunlap
-><rdunlap@infradead.org> wrote:
->> 
->>> On 05/10/2018 12:28 AM, Stephen Rothwell wrote:
->>>> Hi all,
->>>>
->>>> Changes since 20180509:
->>>>
->>>
->>> on i386:
->>>
->>> ../mm/ksm.c: In function 'try_to_merge_one_page':
->>> ../mm/ksm.c:1244:4: error: implicit declaration of function
->'set_page_stable_node' [-Werror=implicit-function-declaration]
->>>     set_page_stable_node(page, NULL);
-
-Oops, missed that, sorry.
-
->> Thanks.
->> 
->> From: Andrew Morton <akpm@linux-foundation.org>
->> Subject: mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
->> 
->> fix SYSFS=n build
->> 
->> Cc: Andrea Arcangeli <aarcange@redhat.com>
->> Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
->> Cc: Randy Dunlap <rdunlap@infradead.org>
->
->Acked-by: Randy Dunlap <rdunlap@infradead.org>
->Reported-by: Randy Dunlap <rdunlap@infradead.org>
->Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-
->> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
->> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->> ---
->> 
->>  mm/ksm.c |    9 ++++-----
->>  1 file changed, 4 insertions(+), 5 deletions(-)
->> 
->> diff -puN
->include/linux/ksm.h~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
->include/linux/ksm.h
->> diff -puN mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
->mm/ksm.c
->> --- a/mm/ksm.c~mm-ksm-move-page_stable_node-from-ksmh-to-ksmc-fix
->> +++ a/mm/ksm.c
->> @@ -823,11 +823,6 @@ static int unmerge_ksm_pages(struct vm_a
->>  	return err;
->>  }
->>  
->> -#ifdef CONFIG_SYSFS
->> -/*
->> - * Only called through the sysfs control interface:
->> - */
->> -
->>  static inline struct stable_node *page_stable_node(struct page
->*page)
->>  {
->>  	return PageKsm(page) ? page_rmapping(page) : NULL;
->> @@ -839,6 +834,10 @@ static inline void set_page_stable_node(
->>  	page->mapping = (void *)((unsigned long)stable_node |
->PAGE_MAPPING_KSM);
->>  }
->>  
->> +#ifdef CONFIG_SYSFS
->> +/*
->> + * Only called through the sysfs control interface:
->> + */
->>  static int remove_stable_node(struct stable_node *stable_node)
->>  {
->>  	struct page *page;
->> _
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index c31da0f..b1b8ebb 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -3012,13 +3012,6 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			}
+ 		}
+ 	}, {
+-		/* Same as ecb(aes) except the key is stored in
+-		 * hardware secure memory which we reference by index
+-		 */
+-		.alg = "ecb(paes)",
+-		.test = alg_test_null,
+-		.fips_allowed = 1,
+-	}, {
+ 		.alg = "ecb(khazad)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+@@ -3028,6 +3021,13 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			}
+ 		}
+ 	}, {
++		/* Same as ecb(aes) except the key is stored in
++		 * hardware secure memory which we reference by index
++		 */
++		.alg = "ecb(paes)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
+ 		.alg = "ecb(seed)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+@@ -3610,21 +3610,6 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			}
+ 		}
+ 	}, {
+-		/* Same as xts(aes) except the key is stored in
+-		 * hardware secure memory which we reference by index
+-		 */
+-		.alg = "xts(paes)",
+-		.test = alg_test_null,
+-		.fips_allowed = 1,
+-	}, {
+-		.alg = "xts4096(paes)",
+-		.test = alg_test_null,
+-		.fips_allowed = 1,
+-	}, {
+-		.alg = "xts512(paes)",
+-		.test = alg_test_null,
+-		.fips_allowed = 1,
+-	}, {
+ 		.alg = "xts(camellia)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+@@ -3643,6 +3628,13 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			}
+ 		}
+ 	}, {
++		/* Same as xts(aes) except the key is stored in
++		 * hardware secure memory which we reference by index
++		 */
++		.alg = "xts(paes)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
+ 		.alg = "xts(serpent)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+@@ -3679,6 +3671,14 @@ static const struct alg_test_desc alg_test_descs[] = {
+ 			}
+ 		}
+ 	}, {
++		.alg = "xts4096(paes)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
++		.alg = "xts512(paes)",
++		.test = alg_test_null,
++		.fips_allowed = 1,
++	}, {
+ 		.alg = "zlib-deflate",
+ 		.test = alg_test_comp,
+ 		.fips_allowed = 1,
+-- 
+2.7.4
