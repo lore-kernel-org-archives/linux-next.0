@@ -1,106 +1,38 @@
-From: Gilad Ben-Yossef <gilad@benyossef.com>
-Subject: [PATCH] crypto: reorder paes test lexicographically
-Date: Fri, 11 May 2018 09:04:06 +0100
-Message-ID: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
+From: Kalle Valo <kvalo@codeaurora.org>
+Subject: Re: linux-next: build warning after merge of the mac80211-next tree
+Date: Fri, 11 May 2018 15:20:23 +0300
+Message-ID: <87po221j08.fsf@purkki.adurom.net>
+References: <20180509145624.643d2e56@canb.auug.org.au>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180509145624.643d2e56@canb.auug.org.au> (Stephen Rothwell's
+        message of "Wed, 9 May 2018 14:56:24 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-Cc: Ofir Drang <ofir.drang@arm.com>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgens?= =?utf-8?Q?en?= <toke@toke.dk>
 List-Id: linux-next.vger.kernel.org
 
-Due to a snafu "paes" testmgr tests were not ordered
-lexicographically, which led to boot time warnings.
-Reorder the tests as needed.
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
-Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
----
- crypto/testmgr.c | 44 ++++++++++++++++++++++----------------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+> After merging the mac80211-next tree, today's linux-next build (arm_multi
+> v7_defconfig) produced this warning:
+>
+> drivers/net/wireless/marvell/mwifiex/uap_event.c: In function 'mwifiex_process_uap_event':
+> drivers/net/wireless/marvell/mwifiex/uap_event.c:333:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: In function 'brcmf_notify_connect_status_ap':
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:5530:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+>
+> Maybe introduced by commit
+>
+>   52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index c31da0f..b1b8ebb 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3012,13 +3012,6 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			}
- 		}
- 	}, {
--		/* Same as ecb(aes) except the key is stored in
--		 * hardware secure memory which we reference by index
--		 */
--		.alg = "ecb(paes)",
--		.test = alg_test_null,
--		.fips_allowed = 1,
--	}, {
- 		.alg = "ecb(khazad)",
- 		.test = alg_test_skcipher,
- 		.suite = {
-@@ -3028,6 +3021,13 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			}
- 		}
- 	}, {
-+		/* Same as ecb(aes) except the key is stored in
-+		 * hardware secure memory which we reference by index
-+		 */
-+		.alg = "ecb(paes)",
-+		.test = alg_test_null,
-+		.fips_allowed = 1,
-+	}, {
- 		.alg = "ecb(seed)",
- 		.test = alg_test_skcipher,
- 		.suite = {
-@@ -3610,21 +3610,6 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			}
- 		}
- 	}, {
--		/* Same as xts(aes) except the key is stored in
--		 * hardware secure memory which we reference by index
--		 */
--		.alg = "xts(paes)",
--		.test = alg_test_null,
--		.fips_allowed = 1,
--	}, {
--		.alg = "xts4096(paes)",
--		.test = alg_test_null,
--		.fips_allowed = 1,
--	}, {
--		.alg = "xts512(paes)",
--		.test = alg_test_null,
--		.fips_allowed = 1,
--	}, {
- 		.alg = "xts(camellia)",
- 		.test = alg_test_skcipher,
- 		.suite = {
-@@ -3643,6 +3628,13 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			}
- 		}
- 	}, {
-+		/* Same as xts(aes) except the key is stored in
-+		 * hardware secure memory which we reference by index
-+		 */
-+		.alg = "xts(paes)",
-+		.test = alg_test_null,
-+		.fips_allowed = 1,
-+	}, {
- 		.alg = "xts(serpent)",
- 		.test = alg_test_skcipher,
- 		.suite = {
-@@ -3679,6 +3671,14 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			}
- 		}
- 	}, {
-+		.alg = "xts4096(paes)",
-+		.test = alg_test_null,
-+		.fips_allowed = 1,
-+	}, {
-+		.alg = "xts512(paes)",
-+		.test = alg_test_null,
-+		.fips_allowed = 1,
-+	}, {
- 		.alg = "zlib-deflate",
- 		.test = alg_test_comp,
- 		.fips_allowed = 1,
+Btw Stephen for mac80211 reports it would be a good idea to also cc
+linux-wireless list, in case Johannes is not around etc.
+
 -- 
-2.7.4
+Kalle Valo
