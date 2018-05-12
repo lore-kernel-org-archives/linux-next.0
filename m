@@ -1,39 +1,56 @@
-From: Kalle Valo <kvalo@codeaurora.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: a new pending-fixes branch
-Date: Sat, 12 May 2018 10:14:19 +0300
-Message-ID: <87603t1h2s.fsf@purkki.adurom.net>
+Date: Sat, 12 May 2018 17:50:41 +1000
+Message-ID: <20180512175041.70f99991@canb.auug.org.au>
 References: <20180512143523.250ab803@canb.auug.org.au>
+        <87603t1h2s.fsf@purkki.adurom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/=s/nL1DnZGwh4F=_vWaA4or"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180512143523.250ab803@canb.auug.org.au> (Stephen Rothwell's
-        message of "Sat, 12 May 2018 14:35:23 +1000")
+In-Reply-To: <87603t1h2s.fsf@purkki.adurom.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kalle Valo <kvalo@codeaurora.org>
 Cc: Linux-kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, 0-Day Mailing List <lkp@lists.01.org>, Sasha Levin <Alexander.Levin@microsoft.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Sig_/=s/nL1DnZGwh4F=_vWaA4or
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> As an outcome of some discussion, I have added a pending-fixes branch
-> to linux-next.  This branch contains Linus' tree merged with branches
-> containing only fixes pending for the current release.  The branch is a
-> strict subset of linux-next each day (as so rebases like linux-next
-> does).
->
-> It would be good if this branch could be tested by the 0-Day service
-> and any other testing that people do - in the hope of sending fewer
-> "fixes causing bugs" patches to Linus.
->
-> There is not intention that bug fixes for Linus' tree should
-> necessarily be tested in linux-next before being forwarded, but
-> (especially for slightly less urgent bugs, at least) it seems like a
-> good idea.
->
-> I currently have 55 branches of bug fixes included.
+Hi Kalle,
 
-Is there a list of branches you use available somewhere? I would like to
-check that wireless-drivers is included.
+On Sat, 12 May 2018 10:14:19 +0300 Kalle Valo <kvalo@codeaurora.org> wrote:
+>
+> Is there a list of branches you use available somewhere? I would like to
+> check that wireless-drivers is included.
 
--- 
-Kalle Valo
+The current list of trees is always here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Ne=
+xt/Trees
+
+The pending-fixes included trees are all the ones down to
+drm-misc-fixes.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=s/nL1DnZGwh4F=_vWaA4or
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr2nNEACgkQAVBC80lX
+0GyP0Qf+Lu3uIkVFGGw+WHBQHyZOcxY+Mll4DK6RZvRzc82VQYj9sbSc9DH1QYRN
+mC/iBbqZVwp3yjQdWxBDHNiixPNeMBC4c/egm5ADn8L5crK+q+cG4kZSkQM7+Ruz
+sj6ED+bF6dkhwi5J3B6j0mdDV8PeSSuqO4lZa33D9sBb3WBdhTB7NU0ApE8dpgRW
+A/PpoBIXfRinQ4L3nlkZ7VY/EMngaGJfjdoKCLSXjKsaZgbr478xFyhBQ7c5nwuo
+aLhymiPW8sRYNkPQcmTg9PPgDZC7FaRmKxPWXsfz4lCmKKu3gVzRQIPEEkXEOh3w
+qIiEhmvP7+dGUOEAORumJpnnSeqhHg==
+=sG4C
+-----END PGP SIGNATURE-----
+
+--Sig_/=s/nL1DnZGwh4F=_vWaA4or--
