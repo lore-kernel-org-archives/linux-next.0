@@ -1,26 +1,26 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the
- dma-mapping-fixes tree
-Date: Mon, 14 May 2018 07:31:39 +1000
-Message-ID: <20180514073139.38ded4cd@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the mediatek tree
+Date: Mon, 14 May 2018 07:57:45 +1000
+Message-ID: <20180514075745.168494a9@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/BV+FHuqD7/iIFNLJ.71SaBl"; protocol="application/pgp-signature"
+ boundary="Sig_/svJhzfUwds8bOQU2QaR_QVm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Christoph Hellwig <hch@lst.de>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/BV+FHuqD7/iIFNLJ.71SaBl
+--Sig_/svJhzfUwds8bOQU2QaR_QVm
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Christoph,
+Hi Matthias,
 
 Commit
 
-  05e13bb57e6f ("swiotlb: silent unwanted warning "buffer is full"")
+  f039c4193c93 ("iregmap: include <linux/ktime.h> from include/linux/regmap=
+.h")
 
 is missing a Signed-off-by from its committer.
 
@@ -28,20 +28,20 @@ is missing a Signed-off-by from its committer.
 Cheers,
 Stephen Rothwell
 
---Sig_/BV+FHuqD7/iIFNLJ.71SaBl
+--Sig_/svJhzfUwds8bOQU2QaR_QVm
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4rrsACgkQAVBC80lX
-0Gwobgf+LDITrGIT8b8k3RQm6R1/XETI/bU+PjgQvMfu0uvzlptd/Jcn8Ofy4KZZ
-sIryeS/OzVIor/0CA8cH2Kan+a1ZlgN5UirxJ10o31T9t2NNMydbNcFElMl84zIn
-lOtfeWkTwbxUe11SgUhukcSVrDLaw6bcd4Pm1Tnouobeo5zd6MprvFI7sHRHWrp5
-MWe7RJVr3xwrM3WVxREZ8oVIp0GtecJJNT7gk/E6sVPCF3H9dfVueNXDGnaqvEoz
-cdLddynbgphfWC3CvnuzrhDZElw/KWN8geyhZTQIYLICseBzu+49hGbSWcw8uKZ0
-HZAHoQmcg55K1FCrEPYBFJU8xwWZZg==
-=wJpn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4tNkACgkQAVBC80lX
+0Gy8wAf/TiaQxUgRZnzuNbJJjV0ZrlkJ1nS7M6+41HHWzp1TS2hOSK5R8tV/SaZx
+NgYjRNKD/cAItztDhMTSYR+HBdPsFTbc+9dp7YpUXAW8sGsJhgCbK6qVsqwLBuFD
+vSbxBbFjY6rOshbwBwCME6r6/cgyZlng9lDqMkGMTI6FrS33F1GcSHEsOmnA0+f7
+KpYCh/DBX7HmXPoZ6bY15Hcavn/6evc586sTcXmCEmwsBEQJ9gFTW7UP7XOr7h2W
+2XRkibexOmEeQli4TutOVaRge/UgCVGX6Be9n/Rk/LLeqgktfWv5R4smF1jkpWRt
+GfC/mFOTE3XP4xfkVAvGX3W4Ng3I8Q==
+=/gme
 -----END PGP SIGNATURE-----
 
---Sig_/BV+FHuqD7/iIFNLJ.71SaBl--
+--Sig_/svJhzfUwds8bOQU2QaR_QVm--
