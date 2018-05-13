@@ -1,56 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: a new pending-fixes branch
-Date: Sat, 12 May 2018 17:50:41 +1000
-Message-ID: <20180512175041.70f99991@canb.auug.org.au>
-References: <20180512143523.250ab803@canb.auug.org.au>
-        <87603t1h2s.fsf@purkki.adurom.net>
+Subject: linux-next: Signed-off-by missing for commit in the
+ dma-mapping-fixes tree
+Date: Mon, 14 May 2018 07:31:39 +1000
+Message-ID: <20180514073139.38ded4cd@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=s/nL1DnZGwh4F=_vWaA4or"; protocol="application/pgp-signature"
+ boundary="Sig_/BV+FHuqD7/iIFNLJ.71SaBl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87603t1h2s.fsf@purkki.adurom.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kalle Valo <kvalo@codeaurora.org>
-Cc: Linux-kernel Mailing List <linux-kernel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, 0-Day Mailing List <lkp@lists.01.org>, Sasha Levin <Alexander.Levin@microsoft.com>, Linus <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=s/nL1DnZGwh4F=_vWaA4or
+--Sig_/BV+FHuqD7/iIFNLJ.71SaBl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kalle,
+Hi Christoph,
 
-On Sat, 12 May 2018 10:14:19 +0300 Kalle Valo <kvalo@codeaurora.org> wrote:
->
-> Is there a list of branches you use available somewhere? I would like to
-> check that wireless-drivers is included.
+Commit
 
-The current list of trees is always here:
+  05e13bb57e6f ("swiotlb: silent unwanted warning "buffer is full"")
 
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Ne=
-xt/Trees
-
-The pending-fixes included trees are all the ones down to
-drm-misc-fixes.
+is missing a Signed-off-by from its committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/=s/nL1DnZGwh4F=_vWaA4or
+--Sig_/BV+FHuqD7/iIFNLJ.71SaBl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr2nNEACgkQAVBC80lX
-0GyP0Qf+Lu3uIkVFGGw+WHBQHyZOcxY+Mll4DK6RZvRzc82VQYj9sbSc9DH1QYRN
-mC/iBbqZVwp3yjQdWxBDHNiixPNeMBC4c/egm5ADn8L5crK+q+cG4kZSkQM7+Ruz
-sj6ED+bF6dkhwi5J3B6j0mdDV8PeSSuqO4lZa33D9sBb3WBdhTB7NU0ApE8dpgRW
-A/PpoBIXfRinQ4L3nlkZ7VY/EMngaGJfjdoKCLSXjKsaZgbr478xFyhBQ7c5nwuo
-aLhymiPW8sRYNkPQcmTg9PPgDZC7FaRmKxPWXsfz4lCmKKu3gVzRQIPEEkXEOh3w
-qIiEhmvP7+dGUOEAORumJpnnSeqhHg==
-=sG4C
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4rrsACgkQAVBC80lX
+0Gwobgf+LDITrGIT8b8k3RQm6R1/XETI/bU+PjgQvMfu0uvzlptd/Jcn8Ofy4KZZ
+sIryeS/OzVIor/0CA8cH2Kan+a1ZlgN5UirxJ10o31T9t2NNMydbNcFElMl84zIn
+lOtfeWkTwbxUe11SgUhukcSVrDLaw6bcd4Pm1Tnouobeo5zd6MprvFI7sHRHWrp5
+MWe7RJVr3xwrM3WVxREZ8oVIp0GtecJJNT7gk/E6sVPCF3H9dfVueNXDGnaqvEoz
+cdLddynbgphfWC3CvnuzrhDZElw/KWN8geyhZTQIYLICseBzu+49hGbSWcw8uKZ0
+HZAHoQmcg55K1FCrEPYBFJU8xwWZZg==
+=wJpn
 -----END PGP SIGNATURE-----
 
---Sig_/=s/nL1DnZGwh4F=_vWaA4or--
+--Sig_/BV+FHuqD7/iIFNLJ.71SaBl--
