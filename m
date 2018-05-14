@@ -1,36 +1,52 @@
-From: Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: linux-next: manual merge of the f2fs tree with the vfs-fixes tree
-Date: Mon, 14 May 2018 01:36:59 +0100
-Message-ID: <20180514003659.GA30522@ZenIV.linux.org.uk>
-References: <20180514102624.76a4097e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Mon, 14 May 2018 10:56:32 +1000
+Message-ID: <20180514105632.391d0cd0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/T9vX==h=pKIziTO00Q7NwWc"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180514102624.76a4097e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Eric Biggers <ebiggers@google.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Linux-Arch Mailing List <linux-arch@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 10:26:24AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the f2fs tree got a conflict in:
-> 
->   fs/f2fs/namei.c
-> 
-> between commit:
-> 
->   1e2e547a93a0 ("do d_instantiate/unlock_new_inode combinations safely")
-> 
-> from the vfs-fixes tree and commit:
-> 
->   ab3835aae642 ("f2fs: call unlock_new_inode() before d_instantiate()")
-> 
-> from the f2fs tree.
-> 
-> I think that the vfs-fixes commit supercedes the f2fs tree one, so I
-> used that.
+--Sig_/T9vX==h=pKIziTO00Q7NwWc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, it does.
+Hi all,
+
+After merging the vfs tree, today's linux-next build (arm
+multi_v7_defconfig and others) produced this warning:
+
+<stdin>:1332:2: warning: #warning syscall io_pgetevents not implemented [-W=
+cpp]
+
+Introduced by commit
+
+  7a074e96dee6 ("aio: implement io_pgetevents")
+
+Just a heads up to all the other architectures.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/T9vX==h=pKIziTO00Q7NwWc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr43sAACgkQAVBC80lX
+0Gzv6wf/bmoWQVU3UNpEDBsJO9RwHJ2ARTojpLq1gPyuAoaCEvL8UygF5G+Iuc+t
+8vf33Zu/rHSPiXjNY1Dx+t3YlJwfRMJ4lUz+0M9AvQDkQsH80bUhfmcQRx6DJboP
+fxNIE3tZXIXhaiH47Ani/QZBFmiDeMiSpRrLEfPM9qEssHnrG5jzWY5qiTHZ94EX
+s4gE1AvbJ2UXiUtvxqXNEe36/vkJjiOEcE+7Gh3NYwTlvaX6M5rTUCC7wsP19Xbm
+8fmyBtSTM0ADcYdP5S/CW9VntoA3SqJrT4LS0IFKL/9zQ+XY7825N3QJuemlKnBH
+WoRq+vpm1yqWH8W02W0q8H7DuOfPFA==
+=y+25
+-----END PGP SIGNATURE-----
+
+--Sig_/T9vX==h=pKIziTO00Q7NwWc--
