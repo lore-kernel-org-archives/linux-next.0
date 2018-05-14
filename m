@@ -1,71 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
-Date: Tue, 15 May 2018 07:57:23 +1000
-Message-ID: <20180515075723.658e19fd@canb.auug.org.au>
-References: <20180514115700.0faadd6f@canb.auug.org.au>
-        <20180514134140.0c468174@cakuba>
+Subject: linux-next: Signed-off-by missing for commit in the pm tree
+Date: Tue, 15 May 2018 08:21:09 +1000
+Message-ID: <20180515082109.3b57619a@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Pr=9fcFrD43j/RAAXwnkS8h"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180514134140.0c468174@cakuba>
-Sender: netdev-owner@vger.kernel.org
-To: Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+ boundary="Sig_/LKqNOwcm4.nPHJQHAB_CO6g"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Pr=9fcFrD43j/RAAXwnkS8h
+--Sig_/LKqNOwcm4.nPHJQHAB_CO6g
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jakub,
+Hi Rafael,
 
-On Mon, 14 May 2018 13:41:40 -0700 Jakub Kicinski <jakub.kicinski@netronome=
-.com> wrote:
->
-> On Mon, 14 May 2018 11:57:00 +1000, Stephen Rothwell wrote:
-> > diff --cc tools/lib/bpf/libbpf.c
-> > index 8da4eeb101a6,df54c4c9e48a..000000000000
-> > --- a/tools/lib/bpf/libbpf.c
-> > +++ b/tools/lib/bpf/libbpf.c
-> > @@@ -2163,9 -2193,12 +2193,12 @@@ int bpf_prog_load_xattr(const struct =
-bp
-> >  =20
-> >   	if (!attr)
-> >   		return -EINVAL;
-> > + 	if (!attr->file)
-> > + 		return -EINVAL;
-> >  =20
-> > - 	obj =3D bpf_object__open(attr->file);
-> > + 	obj =3D __bpf_object__open(attr->file, NULL, 0,
-> > + 				 bpf_prog_type__needs_kver(attr->prog_type));
-> >  -	if (IS_ERR(obj))
-> >  +	if (IS_ERR_OR_NULL(obj))
-> >   		return -ENOENT; =20
->=20
-> This is okay, thanks.  The OR_NULL is unnecessary just using the
-> bpf-next code is a better merge IMO.
+Commit
 
-Thanks, I have updated my merge resolution from today.
+  e689ba60f1f0 ("Merge branch 'opp/genpd-pstate-updates' of git://git.kerne=
+l.org/pub/scm/linux/kernel/git/vireshk/pm")
+
+is missing a Signed-off-by from its author and committer.
+
+This is probably because (despite its description) this is not a merge
+commit - it seems to have been flattened in the rebase :-(
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/Pr=9fcFrD43j/RAAXwnkS8h
+--Sig_/LKqNOwcm4.nPHJQHAB_CO6g
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6BkMACgkQAVBC80lX
-0GzYCggApJbT2qM26AAH+0X4WpBUcKTUrVY9PGu8tuVJABfTNrxHe66WGhYJYYU6
-QZmZBD+Q8OpGWqssPMk/LphbOKtiNi7cZh5gUiOtVwcV84z6Oh0Cj5KqW0OROmtQ
-QCsZjTThKsDgL0R0DHou1TeOOTK1OgMQThfE4nnNRKDy8eX9T8r0eTssZPegQv2I
-Al+3pnphZota2eV19oKhxYTqyx7TbGbPZqUxYcMlRKR1v1bquNhTzHBmPUoekztj
-MwvxQJiniaVU2CDVu//wR3yfp2OSW45l+e3YC/1TorwjETRj2AgximwJbtkFjdo9
-0wKvT14XD3Olmd+tL9MpFOLxgBgP5Q==
-=XrJg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6C9UACgkQAVBC80lX
+0Gxkcgf+MyAN7c+JKK6o8UuErih3oy4BEVABQox3PL3w7Pw4Ai9YaKRII1I2efM6
+QbjKLwY2MLIEOT1VtOjlC0yslaiobtD6bXKHBHrbhs0pjfsLEz3elEbz+bCMIIBH
+0WysIdS9dfMA3uOBi8+OhvJ4gU7ELH7DqFX1AW00d543j2Ny4vBuULK+O2v02xfb
+i9o3NLVp7dfyzNtiAJGuvRjZ00itd5ubaTOq+/WLM0sB+rf5E1wZXhZMUkioh7un
+HqodRIuMpfhyQFHJqhITsx9YVnQdM7h1KBfAZqR4Z6RE11bm/6fQYI6GWS4xS51d
+dEt7pxXIk1ZR9/BRaKcZgP45j22qTg==
+=I+fN
 -----END PGP SIGNATURE-----
 
---Sig_/Pr=9fcFrD43j/RAAXwnkS8h--
+--Sig_/LKqNOwcm4.nPHJQHAB_CO6g--
