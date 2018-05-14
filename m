@@ -1,53 +1,66 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the drm-intel tree
-Date: Tue, 15 May 2018 07:33:49 +1000
-Message-ID: <20180515073349.6efabb21@canb.auug.org.au>
+Subject: Re: linux-next: Tree for May 14
+Date: Tue, 15 May 2018 07:54:28 +1000
+Message-ID: <20180515075428.0caf9ca3@canb.auug.org.au>
+References: <20180514172042.093bd880@canb.auug.org.au>
+        <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
+        <20180514224006.06827f71@canb.auug.org.au>
+        <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_TI0gA6aNcqaWj2eNPbpFU1"; protocol="application/pgp-signature"
+ boundary="Sig_/kuq/_ygt42GKBlbl=yb.cme"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhi Wang <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Hart <dvhart@infradead.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1
+--Sig_/kuq/_ygt42GKBlbl=yb.cme
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andy,
 
-Commits
+On Mon, 14 May 2018 20:14:57 +0300 Andy Shevchenko <andy.shevchenko@gmail.c=
+om> wrote:
+>
+> On Mon, May 14, 2018 at 3:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> > On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gma=
+il.com> wrote: =20
+>=20
+> > BTW, the drivers-x86 tree I have is
+> >
+> > https://github.com/dvhart/linux-pdx86.git#for-next
+> >
+> > and the contact is Darren Hart.  Is that expected? =20
+>=20
+> That URL was temporary workaround for kernel.org inavailability.
+> Please, switch to URL I posted before with for-next branch.
+>=20
+> Darren is aright contact, but not the only one. You might add me to
+> the list as well.
 
-  cb8ba171ae6c ("drm/i915/gvt: let force_to_nonpriv cmd handler only valid =
-for LRI cmd")
-  0438a1059877 ("drm/i915/gvt: do not return error on handling force_to_non=
-priv registers")
-  3d8b9e258b9d ("drm/i915/gvt: let NOPID be the default value of force_to_n=
-onpriv registers")
-  b99f514f5dfa ("drm/i915/gvt: Remove disable_warn_untrack and print untrac=
-ked mmio with debug level")
-
-are missing a Signed-off-by from their committer.
-
+OK, updated.
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1
+--Sig_/kuq/_ygt42GKBlbl=yb.cme
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6AL0ACgkQAVBC80lX
-0Gw5Jgf/TBz3S1c+Sk4txq2RsY/Z6VFvLoaFCQDs2FLG+aPhLcHIh5K1+gzhnJGy
-bo9Aw0T7llGqQ0W3jthluG/qVVciSZZTc4ISXhazUNsJqTuLLucC6TvfGnbjcYM6
-KMI7wwCfOf4OKne/HU58H02fe1g1cpfG+ilNODp/EcfuNaC/iqQMiu9f5+eqmdac
-miJ2Ilu2CBY+br6hb+lFPHmCggD1+UDw/ZvFv/Iu0gglRAi5rbrAMRpx07A4wi45
-AMq59dcVkdsgpDPVcS3jJi4FdDEORjezhLd+8fDF/I5i4j8HxfuUKrUkZveM+cA4
-uYNA2BnEJjcVTXl+DVEpZAWkHt/HAw==
-=V/Ve
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6BZQACgkQAVBC80lX
+0Gzahwf9EavywIujGx/6snPhthPilW7kkMap9pnjMGG18m+d2F2nYRrdG+cq6/i4
+QQnuMNE6a61OtyGjLsbci3z0vXDbnk9NVkdaO3dA+SNVniGZsAa35TAdbMkRPbsM
+9C0VUqk35tIkJj7fKWz8LL7iwyavwoCGCWDEI8iR7C2iU9qa7Z9jwI8DNPkkG+M7
+uE8L3iEm1wKoPsKXDQoQNEQcRrYFyHOpiYyNMx44x2fAKaqp1ay5vRvnI5V8s/ZQ
+gpxLskiwwFSflVZZvRoEfYSVAfMsJtozNBktyEfFNWWRPCv7pbLPbMQj09dINhpz
+nPiU8I5WywUy5mFC08nTRuZp8zBA+Q==
+=I6CH
 -----END PGP SIGNATURE-----
 
---Sig_/_TI0gA6aNcqaWj2eNPbpFU1--
+--Sig_/kuq/_ygt42GKBlbl=yb.cme--
