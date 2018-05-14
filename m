@@ -1,79 +1,41 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 14
-Date: Mon, 14 May 2018 22:40:06 +1000
-Message-ID: <20180514224006.06827f71@canb.auug.org.au>
-References: <20180514172042.093bd880@canb.auug.org.au>
-        <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: linux-next: build warning after merge of the imx-mxs tree
+Date: Mon, 14 May 2018 08:05:29 -0500
+Message-ID: <CAL_JsqJDj3Gx__L7Dc2WSEQ+MnJp-e2aO4K498qq5odkco-dCQ@mail.gmail.com>
+References: <20180514092158.297b4fe4@canb.auug.org.au> <20180514005629.GA11867@dragon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/HLu2GBtwTdRzKUVWCtipxYB"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
+In-Reply-To: <20180514005629.GA11867@dragon>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Hart <dvhart@infradead.org>
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabio Estevam <fabio.estevam@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/HLu2GBtwTdRzKUVWCtipxYB
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Andy,
-
-On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gmail.c=
-om> wrote:
+On Sun, May 13, 2018 at 7:56 PM, Shawn Guo <shawn.guo@linaro.org> wrote:
+> Hi Stephen,
 >
-> Hmm... It seems my message was buried in the pile of the thread WRT
-> fixes branches.
+> On Mon, May 14, 2018 at 09:21:58AM +1000, Stephen Rothwell wrote:
+>> Hi Shawn,
+>>
+>> After merging the imx-mxs tree, today's linux-next build (arm
+>> multi_v7_defconfig) produced this warning:
+>>
+>> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (reg_format): /soc/ipu@2400000/port@2/endpoint@0:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
+>> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
+>> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
+>> arch/arm/boot/dts/imx6dl-aristainetos_7.dtb: Warning (avoid_default_addr_size): /soc/ipu@2400000/port@2/endpoint@0: Relying on default #address-cells value
+>>
+>> and about 7000 more lines across several files ...
+>>
+>> It is hard tell what introduced these warnings ...
+>
+> Commit e6bb17850d1e ("ARM: dts: imx: fix IPU OF graph endpoint node
+> names") introduced the warnings.  I will submit a patch to fix them.
+> Sorry for this.
 
-No, I just didn't read enough email early enough this morning.
+Well, it was the combination of that and commit ed94e3c3ceb4 ("ARM:
+dts: imx6: Remove #address/#size-cells from ipu nodes"). Commit
+ed94e3c3ceb4q should be reverted.
 
-> Please, add our PDx86 fixes branch as well:
-> git://git.infradead.org/linux-platform-drivers-x86.git fixes
-
-Added from tomorrow (called drivers-x86-fixes).
-
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
-
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
-
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
-
-BTW, the drivers-x86 tree I have is
-
-https://github.com/dvhart/linux-pdx86.git#for-next
-
-and the contact is Darren Hart.  Is that expected?
---=20
-Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
-
---Sig_/HLu2GBtwTdRzKUVWCtipxYB
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5g6YACgkQAVBC80lX
-0GyEFgf+MwlBVSThFGIEcxXS73pJy10rOmY3u8zFWHxEwSgJ3pwlPne/QHpXpfBa
-WBR5rb6TWkVM1gyVtwiceuQAVMDLNq0hNsvvZfk9OfWFcp1nxeD25U6A8HafFJR6
-CvKrst6kKTMC9QZ6NEj7sJZHHmXIVl2JSBy0PsO8gfW3KUXzVueml6Z+2lult9PZ
-n7cUZFAb9iAcfd/3DWrcxSAh53/OT1bwfd/yYNlrEJdoZxl3iK64Gz5BAYUL3B3V
-/fRkiuPf1DKbPWrueVsc1ArWGjJkdLj/Hrxt1vkHFOXG52AaiBavfySQGakTQreG
-acQq40RgTssB5UvHf7h+R+GzsMIvEg==
-=ItA6
------END PGP SIGNATURE-----
-
---Sig_/HLu2GBtwTdRzKUVWCtipxYB--
+Rob
