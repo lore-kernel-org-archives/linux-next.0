@@ -1,66 +1,46 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: build warning after merge of the block tree
-Date: Mon, 14 May 2018 10:29:51 +0200
-Message-ID: <20180514082951.GA20978@lst.de>
-References: <20180514125139.459a058d@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: build warnings after merge of the staging tree
+Date: Mon, 14 May 2018 11:26:56 +0200
+Message-ID: <20180514092656.GB11384@kroah.com>
+References: <20180514143404.28f0f4da@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180514125139.459a058d@canb.auug.org.au>
+In-Reply-To: <20180514143404.28f0f4da@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abdun Nihaal <abdun.nihaal@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 12:51:39PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Mon, May 14, 2018 at 02:34:04PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
 > 
-> After merging the block tree, today's linux-next build (x86_64
+> After merging the staging tree, today's linux-next build (x86_64
 > allmodconfig) produced this warning:
+> 
+> drivers/staging/most/video/video.c: In function 'vidioc_enum_fmt_vid_cap':
+> drivers/staging/most/video/video.c:265:25: warning: unused variable 'mdev' [-Wunused-variable]
+>   struct most_video_dev *mdev = fh->mdev;
+>                          ^~~~
+> drivers/staging/most/video/video.c: In function 'vidioc_g_fmt_vid_cap':
+> drivers/staging/most/video/video.c:282:25: warning: unused variable 'mdev' [-Wunused-variable]
+>   struct most_video_dev *mdev = fh->mdev;
+>                          ^~~~
+> drivers/staging/most/video/video.c: In function 'vidioc_g_std':
+> drivers/staging/most/video/video.c:309:25: warning: unused variable 'mdev' [-Wunused-variable]
+>   struct most_video_dev *mdev = fh->mdev;
+>                          ^~~~
+> 
+> Introduced by commit
+> 
+>   7d7cdb4fa552 ("staging: most: video: remove debugging code")
 
-The look entirely correct, but oddly enough my compiler did not bother
-to warn.
+Sorry about this.  This warning, and the other one in the staging tree,
+were not noticed by me due to my system updating to gcc-8 and the huge
+numbers of warnings it produced.  Then 0-day went on a bender and didn't
+spit out anything for a few days...
 
-Fix below:
+I'll go fix this up now, thanks for the report.
 
---
->From 6610bd5bbbf05fa1d925b0601a09e84cada9e0a2 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Mon, 14 May 2018 10:24:34 +0200
-Subject: memstick: remove unused variables
-
-Fixes: 7c2d748e8476 ("memstick: don't call blk_queue_bounce_limit")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/memstick/core/ms_block.c    | 1 -
- drivers/memstick/core/mspro_block.c | 1 -
- 2 files changed, 2 deletions(-)
-
-diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
-index b2d025f42d14..a15181fa45f7 100644
---- a/drivers/memstick/core/ms_block.c
-+++ b/drivers/memstick/core/ms_block.c
-@@ -2094,7 +2094,6 @@ static const struct block_device_operations msb_bdops = {
- static int msb_init_disk(struct memstick_dev *card)
- {
- 	struct msb_data *msb = memstick_get_drvdata(card);
--	struct memstick_host *host = card->host;
- 	int rc;
- 	unsigned long capacity;
- 
-diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
-index a2fadc605750..5ee932631fae 100644
---- a/drivers/memstick/core/mspro_block.c
-+++ b/drivers/memstick/core/mspro_block.c
-@@ -1170,7 +1170,6 @@ static int mspro_block_init_card(struct memstick_dev *card)
- static int mspro_block_init_disk(struct memstick_dev *card)
- {
- 	struct mspro_block_data *msb = memstick_get_drvdata(card);
--	struct memstick_host *host = card->host;
- 	struct mspro_devinfo *dev_info = NULL;
- 	struct mspro_sys_info *sys_info = NULL;
- 	struct mspro_sys_attr *s_attr = NULL;
--- 
-2.17.0
+greg k-h
