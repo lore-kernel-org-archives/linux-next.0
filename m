@@ -1,50 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the pm tree
-Date: Tue, 15 May 2018 08:21:09 +1000
-Message-ID: <20180515082109.3b57619a@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the samsung-krzk tree with the
+ dma-mapping tree
+Date: Tue, 15 May 2018 09:09:01 +1000
+Message-ID: <20180515090901.74c9429e@canb.auug.org.au>
+References: <20180510091634.7fb3aaf2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/LKqNOwcm4.nPHJQHAB_CO6g"; protocol="application/pgp-signature"
+ boundary="Sig_/GMW0qBhCSwxNPm2W8A8H_3S"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180510091634.7fb3aaf2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christoph Hellwig <hch@lst.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/LKqNOwcm4.nPHJQHAB_CO6g
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rafael,
+Hi all,
 
-Commit
+On Thu, 10 May 2018 09:16:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the samsung-krzk tree got a conflict in:
+>=20
+>   arch/arm/mach-exynos/Kconfig
+>=20
+> between commit:
+>=20
+>   4965a68780c5 ("arch: define the ARCH_DMA_ADDR_T_64BIT config symbol in =
+lib/Kconfig")
+>=20
+> from the dma-mapping tree and commit:
+>=20
+>   c5deb598089c ("ARM: exynos: Remove support for Exynos5440")
+>=20
+> from the samsung-krzk tree.
+>=20
+> I fixed it up (the latter removed the whole section modified by
+> the former, so I just removed the section) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-  e689ba60f1f0 ("Merge branch 'opp/genpd-pstate-updates' of git://git.kerne=
-l.org/pub/scm/linux/kernel/git/vireshk/pm")
-
-is missing a Signed-off-by from its author and committer.
-
-This is probably because (despite its description) this is not a merge
-commit - it seems to have been flattened in the rebase :-(
+This is now a conflict between the arm-soc tree and the dma-mapping tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/LKqNOwcm4.nPHJQHAB_CO6g
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6C9UACgkQAVBC80lX
-0Gxkcgf+MyAN7c+JKK6o8UuErih3oy4BEVABQox3PL3w7Pw4Ai9YaKRII1I2efM6
-QbjKLwY2MLIEOT1VtOjlC0yslaiobtD6bXKHBHrbhs0pjfsLEz3elEbz+bCMIIBH
-0WysIdS9dfMA3uOBi8+OhvJ4gU7ELH7DqFX1AW00d543j2Ny4vBuULK+O2v02xfb
-i9o3NLVp7dfyzNtiAJGuvRjZ00itd5ubaTOq+/WLM0sB+rf5E1wZXhZMUkioh7un
-HqodRIuMpfhyQFHJqhITsx9YVnQdM7h1KBfAZqR4Z6RE11bm/6fQYI6GWS4xS51d
-dEt7pxXIk1ZR9/BRaKcZgP45j22qTg==
-=I+fN
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6Fw0ACgkQAVBC80lX
+0GzaRQgAhplWggt/EOx/th8EogHsYGQ62l0YeXwMjc7E5A2kUAo4JLNS/79hOL+w
+Kp1YoB3Yph38T0LyfqycMb6ibup5wemtRhr8PkDm9JJlqdSmhIMxTWv85qbYSJL3
+cDOX4eIap1KHL+/+SCMlNNQGyUGo6ihgvXbUZhehh/9R5fYZWYBahLGdwynByJog
+f9XLk8zJwPm93IRpJ7tMKN/miW5WiezD3Fv7Nqc3JjRWePKuW5gQEvP4pDgo7FEV
+h7P6FvRZnOwxCNutPyevCKH3PYnzFPQMOlEvGFmuTljEAZeGTS5U0slRn159U4kA
+UmZ1aBuiDMEb831JX4xRS4mfwvdEgw==
+=KATa
 -----END PGP SIGNATURE-----
 
---Sig_/LKqNOwcm4.nPHJQHAB_CO6g--
+--Sig_/GMW0qBhCSwxNPm2W8A8H_3S--
