@@ -1,46 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the qcom tree
-Date: Tue, 15 May 2018 07:26:02 +1000
-Message-ID: <20180515072602.0cbf1a07@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the drm-intel tree
+Date: Tue, 15 May 2018 07:33:49 +1000
+Message-ID: <20180515073349.6efabb21@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YpBrBLM7Jb=unWP66fbhLW3"; protocol="application/pgp-signature"
+ boundary="Sig_/_TI0gA6aNcqaWj2eNPbpFU1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Gross <agross@codeaurora.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yossi Mansharoff <yossim@codeaurora.org>, Stephen Boyd <stephen.boyd@linaro.org>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zhi Wang <zhi.a.wang@intel.com>, Zhenyu Wang <zhenyuw@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YpBrBLM7Jb=unWP66fbhLW3
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi all,
 
-Commit
+Commits
 
-  f1f74f1c01ec ("arm64: dts: qcom: Collapse usb support into one node")
+  cb8ba171ae6c ("drm/i915/gvt: let force_to_nonpriv cmd handler only valid =
+for LRI cmd")
+  0438a1059877 ("drm/i915/gvt: do not return error on handling force_to_non=
+priv registers")
+  3d8b9e258b9d ("drm/i915/gvt: let NOPID be the default value of force_to_n=
+onpriv registers")
+  b99f514f5dfa ("drm/i915/gvt: Remove disable_warn_untrack and print untrac=
+ked mmio with debug level")
 
-is missing a Signed-off-by from its author.
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/YpBrBLM7Jb=unWP66fbhLW3
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5/uoACgkQAVBC80lX
-0GwH0Af+NZPZCBt4LnHHw5Q+XqLfFS9ko6ev+HxcyQtdoBZVVelMOyGax7+orxux
-hntsVm9sEBsj2aBQetNZs3LL10CD9TVeSWtFFqslns/zmi11uGmOTny8SrX4zycW
-0QbVjhBSYy5u1NYN4myLpHNMNvZdk3qt/GyfA8XDDH2YhOR3YPkgC56cTAe/hcfz
-P3jy7r556B6UNOiOGxA+gVcRhAxj24hiI5ZY5OWsJBU6gzAIFRsGy+9CfvzNAROu
-8axEUU3IsbVRxC5KekW+hAzGxW4r7y6YMLwkFgTcxf0GWPh4Qim2eQyl1nGD5PMt
-k4RK+oOPB+fyQQmQBzbibP7F9+0X0g==
-=DmXR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6AL0ACgkQAVBC80lX
+0Gw5Jgf/TBz3S1c+Sk4txq2RsY/Z6VFvLoaFCQDs2FLG+aPhLcHIh5K1+gzhnJGy
+bo9Aw0T7llGqQ0W3jthluG/qVVciSZZTc4ISXhazUNsJqTuLLucC6TvfGnbjcYM6
+KMI7wwCfOf4OKne/HU58H02fe1g1cpfG+ilNODp/EcfuNaC/iqQMiu9f5+eqmdac
+miJ2Ilu2CBY+br6hb+lFPHmCggD1+UDw/ZvFv/Iu0gglRAi5rbrAMRpx07A4wi45
+AMq59dcVkdsgpDPVcS3jJi4FdDEORjezhLd+8fDF/I5i4j8HxfuUKrUkZveM+cA4
+uYNA2BnEJjcVTXl+DVEpZAWkHt/HAw==
+=V/Ve
 -----END PGP SIGNATURE-----
 
---Sig_/YpBrBLM7Jb=unWP66fbhLW3--
+--Sig_/_TI0gA6aNcqaWj2eNPbpFU1--
