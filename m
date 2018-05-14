@@ -1,47 +1,46 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the arm-soc tree
-Date: Tue, 15 May 2018 07:22:17 +1000
-Message-ID: <20180515072217.0a2ffe25@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the qcom tree
+Date: Tue, 15 May 2018 07:26:02 +1000
+Message-ID: <20180515072602.0cbf1a07@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/.9yCL6CB+.8Q=rtYcoWvhTg"; protocol="application/pgp-signature"
+ boundary="Sig_/YpBrBLM7Jb=unWP66fbhLW3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Torgue <alexandre.torgue@st.com>
+To: Andy Gross <agross@codeaurora.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Yossi Mansharoff <yossim@codeaurora.org>, Stephen Boyd <stephen.boyd@linaro.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg
+--Sig_/YpBrBLM7Jb=unWP66fbhLW3
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Andy,
 
 Commit
 
-  949a0c0dec85 ("ARM: dts: stm32: add USB Host (USBH) support to stm32mp157=
-c")
+  f1f74f1c01ec ("arm64: dts: qcom: Collapse usb support into one node")
 
-is missing a Signed-off-by from its committer.
+is missing a Signed-off-by from its author.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg
+--Sig_/YpBrBLM7Jb=unWP66fbhLW3
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5/gkACgkQAVBC80lX
-0Gzk3gf/b6grPX/h+SXXksBQDkYi5T3LgtYvbqDaEdU6+JL01CFjxCS6LoFMcjBB
-uSAytNKApm+Dapg+dgK835tBP4bAcKXt4aak4PGT6lpxF6BLmA1+50xYLcpzdrqB
-F6tDQH84zSEZRARsBpO958RnQo5TKs8u1BeIp6G3bYsI7whOSqQtESYPvt/BxwRT
-zHg2Vraxdmg8VYKQ5t77RmlETqTEd3S3/xtJLnLlQQOTPiDOeXkBjWwcJgvjBxGJ
-M8Pa22NL/ExVucko11rEPDegPgN4O8j4z5ownmNWirB8ocYMzR2NNsaPHBJqXq3R
-ZA537QS05O4yfktrYRdN5uVzW+rrxw==
-=jp9s
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5/uoACgkQAVBC80lX
+0GwH0Af+NZPZCBt4LnHHw5Q+XqLfFS9ko6ev+HxcyQtdoBZVVelMOyGax7+orxux
+hntsVm9sEBsj2aBQetNZs3LL10CD9TVeSWtFFqslns/zmi11uGmOTny8SrX4zycW
+0QbVjhBSYy5u1NYN4myLpHNMNvZdk3qt/GyfA8XDDH2YhOR3YPkgC56cTAe/hcfz
+P3jy7r556B6UNOiOGxA+gVcRhAxj24hiI5ZY5OWsJBU6gzAIFRsGy+9CfvzNAROu
+8axEUU3IsbVRxC5KekW+hAzGxW4r7y6YMLwkFgTcxf0GWPh4Qim2eQyl1nGD5PMt
+k4RK+oOPB+fyQQmQBzbibP7F9+0X0g==
+=DmXR
 -----END PGP SIGNATURE-----
 
---Sig_/.9yCL6CB+.8Q=rtYcoWvhTg--
+--Sig_/YpBrBLM7Jb=unWP66fbhLW3--
