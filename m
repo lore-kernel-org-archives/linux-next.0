@@ -1,66 +1,71 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Tree for May 14
-Date: Tue, 15 May 2018 07:54:28 +1000
-Message-ID: <20180515075428.0caf9ca3@canb.auug.org.au>
-References: <20180514172042.093bd880@canb.auug.org.au>
-        <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
-        <20180514224006.06827f71@canb.auug.org.au>
-        <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
+Subject: Re: linux-next: manual merge of the bpf-next tree with the bpf tree
+Date: Tue, 15 May 2018 07:57:23 +1000
+Message-ID: <20180515075723.658e19fd@canb.auug.org.au>
+References: <20180514115700.0faadd6f@canb.auug.org.au>
+        <20180514134140.0c468174@cakuba>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kuq/_ygt42GKBlbl=yb.cme"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHp75VcpLA2Y_98vUJrjzJwFoNq5Ys68Y4j6RFiK7B_dO=4vrw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Darren Hart <dvhart@infradead.org>
+ boundary="Sig_/Pr=9fcFrD43j/RAAXwnkS8h"; protocol="application/pgp-signature"
+Return-path: <netdev-owner@vger.kernel.org>
+In-Reply-To: <20180514134140.0c468174@cakuba>
+Sender: netdev-owner@vger.kernel.org
+To: Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/kuq/_ygt42GKBlbl=yb.cme
+--Sig_/Pr=9fcFrD43j/RAAXwnkS8h
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy,
+Hi Jakub,
 
-On Mon, 14 May 2018 20:14:57 +0300 Andy Shevchenko <andy.shevchenko@gmail.c=
-om> wrote:
+On Mon, 14 May 2018 13:41:40 -0700 Jakub Kicinski <jakub.kicinski@netronome=
+.com> wrote:
 >
-> On Mon, May 14, 2018 at 3:40 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > On Mon, 14 May 2018 10:26:07 +0300 Andy Shevchenko <andy.shevchenko@gma=
-il.com> wrote: =20
+> On Mon, 14 May 2018 11:57:00 +1000, Stephen Rothwell wrote:
+> > diff --cc tools/lib/bpf/libbpf.c
+> > index 8da4eeb101a6,df54c4c9e48a..000000000000
+> > --- a/tools/lib/bpf/libbpf.c
+> > +++ b/tools/lib/bpf/libbpf.c
+> > @@@ -2163,9 -2193,12 +2193,12 @@@ int bpf_prog_load_xattr(const struct =
+bp
+> >  =20
+> >   	if (!attr)
+> >   		return -EINVAL;
+> > + 	if (!attr->file)
+> > + 		return -EINVAL;
+> >  =20
+> > - 	obj =3D bpf_object__open(attr->file);
+> > + 	obj =3D __bpf_object__open(attr->file, NULL, 0,
+> > + 				 bpf_prog_type__needs_kver(attr->prog_type));
+> >  -	if (IS_ERR(obj))
+> >  +	if (IS_ERR_OR_NULL(obj))
+> >   		return -ENOENT; =20
 >=20
-> > BTW, the drivers-x86 tree I have is
-> >
-> > https://github.com/dvhart/linux-pdx86.git#for-next
-> >
-> > and the contact is Darren Hart.  Is that expected? =20
->=20
-> That URL was temporary workaround for kernel.org inavailability.
-> Please, switch to URL I posted before with for-next branch.
->=20
-> Darren is aright contact, but not the only one. You might add me to
-> the list as well.
+> This is okay, thanks.  The OR_NULL is unnecessary just using the
+> bpf-next code is a better merge IMO.
 
-OK, updated.
+Thanks, I have updated my merge resolution from today.
+
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/kuq/_ygt42GKBlbl=yb.cme
+--Sig_/Pr=9fcFrD43j/RAAXwnkS8h
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6BZQACgkQAVBC80lX
-0Gzahwf9EavywIujGx/6snPhthPilW7kkMap9pnjMGG18m+d2F2nYRrdG+cq6/i4
-QQnuMNE6a61OtyGjLsbci3z0vXDbnk9NVkdaO3dA+SNVniGZsAa35TAdbMkRPbsM
-9C0VUqk35tIkJj7fKWz8LL7iwyavwoCGCWDEI8iR7C2iU9qa7Z9jwI8DNPkkG+M7
-uE8L3iEm1wKoPsKXDQoQNEQcRrYFyHOpiYyNMx44x2fAKaqp1ay5vRvnI5V8s/ZQ
-gpxLskiwwFSflVZZvRoEfYSVAfMsJtozNBktyEfFNWWRPCv7pbLPbMQj09dINhpz
-nPiU8I5WywUy5mFC08nTRuZp8zBA+Q==
-=I6CH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6BkMACgkQAVBC80lX
+0GzYCggApJbT2qM26AAH+0X4WpBUcKTUrVY9PGu8tuVJABfTNrxHe66WGhYJYYU6
+QZmZBD+Q8OpGWqssPMk/LphbOKtiNi7cZh5gUiOtVwcV84z6Oh0Cj5KqW0OROmtQ
+QCsZjTThKsDgL0R0DHou1TeOOTK1OgMQThfE4nnNRKDy8eX9T8r0eTssZPegQv2I
+Al+3pnphZota2eV19oKhxYTqyx7TbGbPZqUxYcMlRKR1v1bquNhTzHBmPUoekztj
+MwvxQJiniaVU2CDVu//wR3yfp2OSW45l+e3YC/1TorwjETRj2AgximwJbtkFjdo9
+0wKvT14XD3Olmd+tL9MpFOLxgBgP5Q==
+=XrJg
 -----END PGP SIGNATURE-----
 
---Sig_/kuq/_ygt42GKBlbl=yb.cme--
+--Sig_/Pr=9fcFrD43j/RAAXwnkS8h--
