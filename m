@@ -1,53 +1,66 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: Tree for May 14
-Date: Mon, 14 May 2018 10:26:07 +0300
-Message-ID: <CAHp75Vfs_Za5d8YLJ5FNJDmytRJE-P+q_Kds9V+ivBGy3v+p8g@mail.gmail.com>
-References: <20180514172042.093bd880@canb.auug.org.au>
+From: Christoph Hellwig <hch@lst.de>
+Subject: Re: linux-next: build warning after merge of the block tree
+Date: Mon, 14 May 2018 10:29:51 +0200
+Message-ID: <20180514082951.GA20978@lst.de>
+References: <20180514125139.459a058d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180514172042.093bd880@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <20180514125139.459a058d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 10:20 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On Mon, May 14, 2018 at 12:51:39PM +1000, Stephen Rothwell wrote:
 > Hi all,
->
-> Changes since 20180511:
->
-> New trees: btrfs-fixes
->         vfs-fixes
->         dma-mapping-fixes
->
-> The f2fs tree gained a conflict against the vfs-fixes tree.
->
-> The bpf-next tree gained a conflict against the bpf tree.
->
-> The rcu tree gained a conflict against Linus' tree.
->
-> The kselftest tree gained a conflict against the kvm-fixes tree.
->
-> Non-merge commits (relative to Linus' tree): 5724
->  5580 files changed, 217262 insertions(+), 101414 deletions(-)
->
-> ----------------------------------------------------------------------------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
+> 
+> After merging the block tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 
-Hmm... It seems my message was buried in the pile of the thread WRT
-fixes branches.
+The look entirely correct, but oddly enough my compiler did not bother
+to warn.
 
-Please, add our PDx86 fixes branch as well:
-git://git.infradead.org/linux-platform-drivers-x86.git fixes
+Fix below:
 
+--
+>From 6610bd5bbbf05fa1d925b0601a09e84cada9e0a2 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Mon, 14 May 2018 10:24:34 +0200
+Subject: memstick: remove unused variables
+
+Fixes: 7c2d748e8476 ("memstick: don't call blk_queue_bounce_limit")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/memstick/core/ms_block.c    | 1 -
+ drivers/memstick/core/mspro_block.c | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/drivers/memstick/core/ms_block.c b/drivers/memstick/core/ms_block.c
+index b2d025f42d14..a15181fa45f7 100644
+--- a/drivers/memstick/core/ms_block.c
++++ b/drivers/memstick/core/ms_block.c
+@@ -2094,7 +2094,6 @@ static const struct block_device_operations msb_bdops = {
+ static int msb_init_disk(struct memstick_dev *card)
+ {
+ 	struct msb_data *msb = memstick_get_drvdata(card);
+-	struct memstick_host *host = card->host;
+ 	int rc;
+ 	unsigned long capacity;
+ 
+diff --git a/drivers/memstick/core/mspro_block.c b/drivers/memstick/core/mspro_block.c
+index a2fadc605750..5ee932631fae 100644
+--- a/drivers/memstick/core/mspro_block.c
++++ b/drivers/memstick/core/mspro_block.c
+@@ -1170,7 +1170,6 @@ static int mspro_block_init_card(struct memstick_dev *card)
+ static int mspro_block_init_disk(struct memstick_dev *card)
+ {
+ 	struct mspro_block_data *msb = memstick_get_drvdata(card);
+-	struct memstick_host *host = card->host;
+ 	struct mspro_devinfo *dev_info = NULL;
+ 	struct mspro_sys_info *sys_info = NULL;
+ 	struct mspro_sys_attr *s_attr = NULL;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.0
