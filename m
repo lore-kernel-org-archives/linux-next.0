@@ -1,58 +1,76 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the block tree
-Date: Mon, 14 May 2018 12:51:39 +1000
-Message-ID: <20180514125139.459a058d@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Mon, 14 May 2018 13:46:36 +1000
+Message-ID: <20180514134636.61831bcc@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vkAwqzOFvi=RYL4MGC/Bm=="; protocol="application/pgp-signature"
+ boundary="Sig_/=MXtluWoWD1TnJVOJ94aOq1"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitzan Carmi <nitzanc@mellanox.com>, Jianchao Wang <jianchao.w.wang@oracle.com>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==
+--Sig_/=MXtluWoWD1TnJVOJ94aOq1
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the rcu tree got a conflict in:
 
-drivers/memstick/core/mspro_block.c: In function 'mspro_block_init_disk':
-drivers/memstick/core/mspro_block.c:1173:24: warning: unused variable 'host=
-' [-Wunused-variable]
-  struct memstick_host *host =3D card->host;
-                        ^~~~
-drivers/memstick/core/ms_block.c: In function 'msb_init_disk':
-drivers/memstick/core/ms_block.c:2097:24: warning: unused variable 'host' [=
--Wunused-variable]
-  struct memstick_host *host =3D card->host;
-                        ^~~~
+  drivers/nvme/host/core.c
 
-Introduced by commit
+between commit:
 
-  7c2d748e8476 ("memstick: don't call blk_queue_bounce_limit")
+  12d9f07022dc ("nvme: fix use-after-free in nvme_free_ns_head")
+
+from Linus' tree and commit:
+
+  d9cf21bae6cf ("nvme: Avoid flush dependency in delete controller flow")
+
+from the rcu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==
+diff --cc drivers/nvme/host/core.c
+index 99b857e5a7a9,c3cea8a29843..000000000000
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@@ -351,8 -349,7 +351,8 @@@ static void nvme_free_ns_head(struct kr
+  	nvme_mpath_remove_disk(head);
+  	ida_simple_remove(&head->subsys->ns_ida, head->instance);
+  	list_del_init(&head->entry);
+- 	cleanup_srcu_struct(&head->srcu);
++ 	cleanup_srcu_struct_quiesced(&head->srcu);
+ +	nvme_put_subsystem(head->subsys);
+  	kfree(head);
+  }
+ =20
+
+--Sig_/=MXtluWoWD1TnJVOJ94aOq1
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr4+bsACgkQAVBC80lX
-0Gy3Ogf/ZMmpZ7jEVr1JdpXD9VKzSLFUKAhizk+xPukkakGaFHBwbfa30yrZlPv/
-6Uy++2VBa3eEnWD+mZAkntQmL9MBYhC3dIxIvJJ5z5WXJ3IVoKouABhlmPIubhi3
-YQCx7RBi69IudrPNVhPu0IMsEhLrLM/cZnMJ+rmM4cCibkm116JJWHdojIaV/c5p
-SKo/tbYWEmMNpYSMSNAxFRwE80lKh1AMSEefGedTTM2M5g1cjojBF/Me9lDSOi9B
-JZHFtsjVkiNBgaSlsQ3w6krNviwMQ+MAR5LJ9Hw0mp3D4D4LKi/K3tzrDCkhLkI7
-kdYj0Tko+icXYQKnvYqacNh6Dj5Acg==
-=yhI6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr5BpwACgkQAVBC80lX
+0GwlxAf/b4IxOHL6BjlJGOQEDsvCDL5p2PX8Fb3b+boAU9pavH8Ubsq9jYKaUZbe
+WtuhmNpnaqQ2qtj+aMT+VCRXP+rQpHsNJZsxhi8esF+dIVtyXbcnHMH3a+zmFZle
+ItwYavJr20Hb2hcrvoKForXHSxC567XvVq/5pLaRWW98Th2GLk0KHRcCGCxzopkc
+hdrCGUJTJlCkEm6zKvyBTx58lFJp9SaOp6AuVMoVUfXC9aQxKmHHh7O0bmTEP81X
+GnqBheDDGHSzucMWRU1huN8MUaWva2PFLiultXPcHLO9+928jXT2ddMLf1hhRsYK
+aIV5h7XHZ/5pJc7YzpiIzGfVBWDeoA==
+=rUci
 -----END PGP SIGNATURE-----
 
---Sig_/vkAwqzOFvi=RYL4MGC/Bm==--
+--Sig_/=MXtluWoWD1TnJVOJ94aOq1--
