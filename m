@@ -1,46 +1,53 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: build warnings after merge of the staging tree
-Date: Mon, 14 May 2018 11:26:56 +0200
-Message-ID: <20180514092656.GB11384@kroah.com>
-References: <20180514143404.28f0f4da@canb.auug.org.au>
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the mediatek tree
+Date: Mon, 14 May 2018 12:47:48 +0200
+Message-ID: <01b4e66c-8c1d-1ea7-d35e-3555a3c3eeb0@gmail.com>
+References: <20180514075745.168494a9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180514143404.28f0f4da@canb.auug.org.au>
+In-Reply-To: <20180514075745.168494a9@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Abdun Nihaal <abdun.nihaal@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 02:34:04PM +1000, Stephen Rothwell wrote:
-> Hi Greg,
-> 
-> After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/staging/most/video/video.c: In function 'vidioc_enum_fmt_vid_cap':
-> drivers/staging/most/video/video.c:265:25: warning: unused variable 'mdev' [-Wunused-variable]
->   struct most_video_dev *mdev = fh->mdev;
->                          ^~~~
-> drivers/staging/most/video/video.c: In function 'vidioc_g_fmt_vid_cap':
-> drivers/staging/most/video/video.c:282:25: warning: unused variable 'mdev' [-Wunused-variable]
->   struct most_video_dev *mdev = fh->mdev;
->                          ^~~~
-> drivers/staging/most/video/video.c: In function 'vidioc_g_std':
-> drivers/staging/most/video/video.c:309:25: warning: unused variable 'mdev' [-Wunused-variable]
->   struct most_video_dev *mdev = fh->mdev;
->                          ^~~~
-> 
-> Introduced by commit
-> 
->   7d7cdb4fa552 ("staging: most: video: remove debugging code")
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-Sorry about this.  This warning, and the other one in the staging tree,
-were not noticed by me due to my system updating to gcc-8 and the huge
-numbers of warnings it produced.  Then 0-day went on a bender and didn't
-spit out anything for a few days...
+Hi Stephen,
 
-I'll go fix this up now, thanks for the report.
+On 05/13/2018 11:57 PM, Stephen Rothwell wrote:
+> Hi Matthias,
+> 
+> Commit
+> 
+> f039c4193c93 ("iregmap: include <linux/ktime.h> from
+> include/linux/regmap.h")
+> 
+> is missing a Signed-off-by from its committer.
+> 
 
-greg k-h
+My tree was broken and the merge commit disappeared which pulled this commit
+into my tree. Should be fixed by now.
+
+Regards,
+Matthias
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEiUuSfQSYnG8EMsBltDliWyzx00MFAlr5aU0ACgkQtDliWyzx
+00O68Q//eXk6z6PiRXG+30Pk5z5Wl3vmEvEokwivO1I1kCErktyAcvjMNYA5CJS+
+Df7FWAg3p17G7e6p7w5NOteOxBI4leCsebLnRMKOja2m6IrulxHb98koAjcx14sx
+twKsa2YEMI7GjhwE93ozkoqkeGeQ0i/IxyFRqn0brcpmUv/49AY8Qw4VTi/Q5rxm
+ma6YFWygcQ7x603eWrkxJKG5pmExmUTwNU7B+9Ycqp/yMaikUYW9RedToDxjILAJ
+OGQ2uexySNyUJaX2ECpHeM7FnSkOBKzqAjzCD8bDQTL82hiUla5mDFRsOhtzg9be
+pe/CdChbeLxZ0v8fv1n2WEO4Bb1E6OXp7YmL8hH6nbmWVxQf448QX0POV5IrJX+V
+46/iMzwUtjTasAj50RoI8cb3mhj0fcJgmB/Ivk6OZQfy1UoZ0VrPjIiNlymfgTGM
+aP28Dx8RUxysZCvj0Uy/CX+kxMxJU77OgOMDxotf8iTAVnbC2dSqiHSkqZCj7ncK
+1cVQkfUHvqEgtCdsEyHN+k7fcu2vmYwvISE5IpoKZyHPU1CNc5+cFdEbxlCvUVVJ
+K9PNYz8VFJsYJyYcVG+1C4EUJHLRrnhTK6cdp5GaKlSHagV8UKaefuUvXU8GRBZm
+BO+xTm6qRX5ZnQI57MPaq/xEvhVevMRG4xp0wZ5Bf86uIvlP97w=
+=gxCq
+-----END PGP SIGNATURE-----
