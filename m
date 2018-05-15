@@ -1,113 +1,46 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: manual merge of the audit tree with the selinux tree
-Date: Tue, 15 May 2018 16:18:19 -0400
-Message-ID: <CAHC9VhS02=ectGbx2EFQiZayR=vv9-scrN_mf9whT1KN5NWV8Q@mail.gmail.com>
-References: <20180515130619.2e9e033c@canb.auug.org.au> <20180515031612.3k4hzaihrr6rmnhz@madcap2.tricolour.ca>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the hid tree
+Date: Wed, 16 May 2018 07:17:40 +1000
+Message-ID: <20180516071731.59cf5d23@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/BRRv7rsYZSfyzlkFFM9XpJQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180515031612.3k4hzaihrr6rmnhz@madcap2.tricolour.ca>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Richard Guy Briggs <rgb@redhat.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rodrigo Rivas Costa <rodrigorivascosta@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 11:16 PM, Richard Guy Briggs <rgb@redhat.com> wrote:
-> On 2018-05-15 13:06, Stephen Rothwell wrote:
->> Hi Paul,
->>
->> Today's linux-next merge of the audit tree got a conflict in:
->>
->>   security/selinux/selinuxfs.c
->>
->> between commit:
->>
->>   4195ed425d3c ("audit: normalize MAC_STATUS record")
->>
->> from the selinux tree and commits:
->>
->>   cdfb6b341f0f ("audit: use inline function to get audit context")
->>   d141136f523a ("audit: normalize MAC_POLICY_LOAD record")
->>
->> from the audit tree.
->>
->> I fixed it up (see below) and can carry the fix as necessary. This
->> is now fixed as far as linux-next is concerned, but any non trivial
->> conflicts should be mentioned to your upstream maintainer when your tree
->> is submitted for merging.  You may also want to consider cooperating
->> with the maintainer of the conflicting tree to minimise any particularly
->> complex conflicts.
->
-> This was expected...  It looks ok.
+--Sig_/BRRv7rsYZSfyzlkFFM9XpJQ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Agreed.  I had to apply the same patch to my testing kernels.
+Hi Jiri,
 
->> --
->> Cheers,
->> Stephen Rothwell
->>
->> diff --cc security/selinux/selinuxfs.c
->> index c0cadbc5f85c,35fd77737c59..000000000000
->> --- a/security/selinux/selinuxfs.c
->> +++ b/security/selinux/selinuxfs.c
->> @@@ -167,13 -167,11 +167,13 @@@ static ssize_t sel_write_enforce(struc
->>                                     NULL);
->>               if (length)
->>                       goto out;
->> -             audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> +             audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
->>  -                    "enforcing=%d old_enforcing=%d auid=%u ses=%u",
->>  +                    "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->>  +                    " enabled=%d old-enabled=%d lsm=selinux res=1",
->>                       new_value, old_value,
->>                       from_kuid(&init_user_ns, audit_get_loginuid(current)),
->>  -                    audit_get_sessionid(current));
->>  +                    audit_get_sessionid(current),
->>  +                    selinux_enabled, selinux_enabled);
->>               enforcing_set(state, new_value);
->>               if (new_value)
->>                       avc_ss_reset(state->avc, 0);
->> @@@ -303,12 -299,10 +303,12 @@@ static ssize_t sel_write_disable(struc
->>               length = selinux_disable(fsi->state);
->>               if (length)
->>                       goto out;
->> -             audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
->> +             audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
->>  -                    "selinux=0 auid=%u ses=%u",
->>  +                    "enforcing=%d old_enforcing=%d auid=%u ses=%u"
->>  +                    " enabled=%d old-enabled=%d lsm=selinux res=1",
->>  +                    enforcing, enforcing,
->>                       from_kuid(&init_user_ns, audit_get_loginuid(current)),
->>  -                    audit_get_sessionid(current));
->>  +                    audit_get_sessionid(current), 0, 1);
->>       }
->>
->>       length = count;
->> @@@ -581,8 -575,8 +581,8 @@@ static ssize_t sel_write_load(struct fi
->>       length = count;
->>
->>   out1:
->> -     audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
->> +     audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
->>  -            "policy loaded auid=%u ses=%u",
->>  +            "auid=%u ses=%u lsm=selinux res=1",
->>               from_kuid(&init_user_ns, audit_get_loginuid(current)),
->>               audit_get_sessionid(current));
->>   out:
->
->
->
-> - RGB
->
-> --
-> Richard Guy Briggs <rgb@redhat.com>
-> Sr. S/W Engineer, Kernel Security, Base Operating Systems
-> Remote, Ottawa, Red Hat Canada
-> IRC: rgb, SunRaycer
-> Voice: +1.647.777.2635, Internal: (81) 32635
+Commit
 
+  f82719790751 ("HID: steam: add battery device.")
 
+is missing a Signed-off-by from its author.
 
--- 
-paul moore
-www.paul-moore.com
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BRRv7rsYZSfyzlkFFM9XpJQ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr7TnQACgkQAVBC80lX
+0GxC1Af/T2EyExKX2WjLoS6kZMpE+qAuQSy5H+2b0trAeuQyvOIRUWTO4P/f7rUO
+yXoySPxQIanvhH+/iUsltUolDsXSmKjIDpmqhw+QuEN47YYMv043kZVPwui03i4v
+3dfrz17CWfInst3n6L9li4wSUyUdC48sKIi3aPlrbp7vehYRpzg3lzfrRpYyP8fZ
+yO48f1+W/iApBY9kAdb2/Fvn7k8uTvlzKE3W1cESz07tBGkOpvZkJ9J0MeI4LDB7
+FPdu7C9UfPToM00I7cmfdscYnsJQ/tyCXuTStH2F9uImMFiagq/NaxlwwBa/3bia
+mCZVmDhYvqxRyQv1JHGr44GMNpTcdg==
+=RSzN
+-----END PGP SIGNATURE-----
+
+--Sig_/BRRv7rsYZSfyzlkFFM9XpJQ--
