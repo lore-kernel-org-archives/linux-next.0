@@ -1,52 +1,125 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: build warning after merge of the netfilter-next tree
-Date: Tue, 15 May 2018 12:54:22 +0200
-Message-ID: <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
-References: <20180507105519.1d34f19e@canb.auug.org.au> <20180508102101.768d5c52@canb.auug.org.au>
- <20180508071756.grie5wln2lpo52un@breakpoint.cc>
+From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Subject: Re: [PATCH] crypto: reorder paes test lexicographically
+Date: Tue, 15 May 2018 19:23:04 +0530
+Message-ID: <1526392384.19317.3.camel@abdul>
+References: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180508071756.grie5wln2lpo52un@breakpoint.cc>
+In-Reply-To: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Westphal <fw@strlen.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, linux-crypto@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Ofir Drang <ofir.drang@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Florian,
+On Fri, 2018-05-11 at 09:04 +0100, Gilad Ben-Yossef wrote:
+> Due to a snafu "paes" testmgr tests were not ordered
+> lexicographically, which led to boot time warnings.
+> Reorder the tests as needed.
+> 
+> Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> ---
+>  crypto/testmgr.c | 44 ++++++++++++++++++++++----------------------
+>  1 file changed, 22 insertions(+), 22 deletions(-)
+> 
+> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+> index c31da0f..b1b8ebb 100644
+> --- a/crypto/testmgr.c
+> +++ b/crypto/testmgr.c
+> @@ -3012,13 +3012,6 @@ static const struct alg_test_desc alg_test_descs[] = {
+>  			}
+>  		}
+>  	}, {
+> -		/* Same as ecb(aes) except the key is stored in
+> -		 * hardware secure memory which we reference by index
+> -		 */
+> -		.alg = "ecb(paes)",
+> -		.test = alg_test_null,
+> -		.fips_allowed = 1,
+> -	}, {
+>  		.alg = "ecb(khazad)",
+>  		.test = alg_test_skcipher,
+>  		.suite = {
+> @@ -3028,6 +3021,13 @@ static const struct alg_test_desc alg_test_descs[] = {
+>  			}
+>  		}
+>  	}, {
+> +		/* Same as ecb(aes) except the key is stored in
+> +		 * hardware secure memory which we reference by index
+> +		 */
+> +		.alg = "ecb(paes)",
+> +		.test = alg_test_null,
+> +		.fips_allowed = 1,
+> +	}, {
+>  		.alg = "ecb(seed)",
+>  		.test = alg_test_skcipher,
+>  		.suite = {
+> @@ -3610,21 +3610,6 @@ static const struct alg_test_desc alg_test_descs[] = {
+>  			}
+>  		}
+>  	}, {
+> -		/* Same as xts(aes) except the key is stored in
+> -		 * hardware secure memory which we reference by index
+> -		 */
+> -		.alg = "xts(paes)",
+> -		.test = alg_test_null,
+> -		.fips_allowed = 1,
+> -	}, {
+> -		.alg = "xts4096(paes)",
+> -		.test = alg_test_null,
+> -		.fips_allowed = 1,
+> -	}, {
+> -		.alg = "xts512(paes)",
+> -		.test = alg_test_null,
+> -		.fips_allowed = 1,
+> -	}, {
+>  		.alg = "xts(camellia)",
+>  		.test = alg_test_skcipher,
+>  		.suite = {
+> @@ -3643,6 +3628,13 @@ static const struct alg_test_desc alg_test_descs[] = {
+>  			}
+>  		}
+>  	}, {
+> +		/* Same as xts(aes) except the key is stored in
+> +		 * hardware secure memory which we reference by index
+> +		 */
+> +		.alg = "xts(paes)",
+> +		.test = alg_test_null,
+> +		.fips_allowed = 1,
+> +	}, {
+>  		.alg = "xts(serpent)",
+>  		.test = alg_test_skcipher,
+>  		.suite = {
+> @@ -3679,6 +3671,14 @@ static const struct alg_test_desc alg_test_descs[] = {
+>  			}
+>  		}
+>  	}, {
+> +		.alg = "xts4096(paes)",
+> +		.test = alg_test_null,
+> +		.fips_allowed = 1,
+> +	}, {
+> +		.alg = "xts512(paes)",
+> +		.test = alg_test_null,
+> +		.fips_allowed = 1,
+> +	}, {
+>  		.alg = "zlib-deflate",
+>  		.test = alg_test_comp,
+>  		.fips_allowed = 1,
 
-On Tue, May 8, 2018 at 9:17 AM, Florian Westphal <fw@strlen.de> wrote:
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->> >
->> > After merging the netfilter-next tree, today's linux-next build (x86_64
->> > allmodconfig) produced this warning:
->> >
->> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
->>
->> > Introduced by commit
->> >
->> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
->
-> I'll send a fix for this, thanks for reporting.
 
-+config NF_OSF
-+       tristate 'Passive OS fingerprint infrastructure'
+Gilad, 
 
-"There is no help available for this option."
+The given patch fixes the boot warnings.
 
-Is this meant to be a user-visible symbol?
-I noticed it is selected by NETFILTER_XT_MATCH_OSF.
+Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
+Thanks for the fix.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regard's
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Abdul Haleem
+IBM Linux Technology Centre
