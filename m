@@ -1,125 +1,62 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: Re: [PATCH] crypto: reorder paes test lexicographically
-Date: Tue, 15 May 2018 19:23:04 +0530
-Message-ID: <1526392384.19317.3.camel@abdul>
-References: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Tue, 15 May 2018 10:44:16 -0700
+Message-ID: <20180515174416.GJ26088@linux.vnet.ibm.com>
+References: <20180514134636.61831bcc@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
+Content-Disposition: inline
+In-Reply-To: <20180514134636.61831bcc@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Gilad Ben-Yossef <gilad@benyossef.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, linux-next <linux-next@vger.kernel.org>, linux-crypto@vger.kernel.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, Ofir Drang <ofir.drang@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitzan Carmi <nitzanc@mellanox.com>, Jianchao Wang <jianchao.w.wang@oracle.com>, Keith Busch <keith.busch@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 2018-05-11 at 09:04 +0100, Gilad Ben-Yossef wrote:
-> Due to a snafu "paes" testmgr tests were not ordered
-> lexicographically, which led to boot time warnings.
-> Reorder the tests as needed.
+On Mon, May 14, 2018 at 01:46:36PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
-> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> ---
->  crypto/testmgr.c | 44 ++++++++++++++++++++++----------------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
+> Today's linux-next merge of the rcu tree got a conflict in:
 > 
-> diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-> index c31da0f..b1b8ebb 100644
-> --- a/crypto/testmgr.c
-> +++ b/crypto/testmgr.c
-> @@ -3012,13 +3012,6 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> -		/* Same as ecb(aes) except the key is stored in
-> -		 * hardware secure memory which we reference by index
-> -		 */
-> -		.alg = "ecb(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
->  		.alg = "ecb(khazad)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3028,6 +3021,13 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		/* Same as ecb(aes) except the key is stored in
-> +		 * hardware secure memory which we reference by index
-> +		 */
-> +		.alg = "ecb(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "ecb(seed)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3610,21 +3610,6 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> -		/* Same as xts(aes) except the key is stored in
-> -		 * hardware secure memory which we reference by index
-> -		 */
-> -		.alg = "xts(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
-> -		.alg = "xts4096(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
-> -		.alg = "xts512(paes)",
-> -		.test = alg_test_null,
-> -		.fips_allowed = 1,
-> -	}, {
->  		.alg = "xts(camellia)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3643,6 +3628,13 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		/* Same as xts(aes) except the key is stored in
-> +		 * hardware secure memory which we reference by index
-> +		 */
-> +		.alg = "xts(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "xts(serpent)",
->  		.test = alg_test_skcipher,
->  		.suite = {
-> @@ -3679,6 +3671,14 @@ static const struct alg_test_desc alg_test_descs[] = {
->  			}
->  		}
->  	}, {
-> +		.alg = "xts4096(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
-> +		.alg = "xts512(paes)",
-> +		.test = alg_test_null,
-> +		.fips_allowed = 1,
-> +	}, {
->  		.alg = "zlib-deflate",
->  		.test = alg_test_comp,
->  		.fips_allowed = 1,
+>   drivers/nvme/host/core.c
+> 
+> between commit:
+> 
+>   12d9f07022dc ("nvme: fix use-after-free in nvme_free_ns_head")
+> 
+> from Linus' tree and commit:
+> 
+>   d9cf21bae6cf ("nvme: Avoid flush dependency in delete controller flow")
+> 
+> from the rcu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
+Thank you, Stephen!!!
 
-Gilad, 
+							Thanx, Paul
 
-The given patch fixes the boot warnings.
-
-Tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-
-Thanks for the fix.
-
--- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc drivers/nvme/host/core.c
+> index 99b857e5a7a9,c3cea8a29843..000000000000
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@@ -351,8 -349,7 +351,8 @@@ static void nvme_free_ns_head(struct kr
+>   	nvme_mpath_remove_disk(head);
+>   	ida_simple_remove(&head->subsys->ns_ida, head->instance);
+>   	list_del_init(&head->entry);
+> - 	cleanup_srcu_struct(&head->srcu);
+> + 	cleanup_srcu_struct_quiesced(&head->srcu);
+>  +	nvme_put_subsystem(head->subsys);
+>   	kfree(head);
+>   }
+>   
