@@ -1,39 +1,52 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in
- the drm-intel tree
-Date: Tue, 15 May 2018 12:06:36 +0300
-Message-ID: <87po1x1e5f.fsf@intel.com>
-References: <20180515073349.6efabb21@canb.auug.org.au>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: linux-next: build warning after merge of the netfilter-next tree
+Date: Tue, 15 May 2018 12:54:22 +0200
+Message-ID: <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
+References: <20180507105519.1d34f19e@canb.auug.org.au> <20180508102101.768d5c52@canb.auug.org.au>
+ <20180508071756.grie5wln2lpo52un@breakpoint.cc>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20180515073349.6efabb21@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180508071756.grie5wln2lpo52un@breakpoint.cc>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Westphal <fw@strlen.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCAxNSBNYXkgMjAxOCwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcu
-YXU+IHdyb3RlOgo+IEhpIGFsbCwKPgo+IENvbW1pdHMKPgo+ICAgY2I4YmExNzFhZTZjICgiZHJt
-L2k5MTUvZ3Z0OiBsZXQgZm9yY2VfdG9fbm9ucHJpdiBjbWQgaGFuZGxlciBvbmx5IHZhbGlkIGZv
-ciBMUkkgY21kIikKPiAgIDA0MzhhMTA1OTg3NyAoImRybS9pOTE1L2d2dDogZG8gbm90IHJldHVy
-biBlcnJvciBvbiBoYW5kbGluZyBmb3JjZV90b19ub25wcml2IHJlZ2lzdGVycyIpCj4gICAzZDhi
-OWUyNThiOWQgKCJkcm0vaTkxNS9ndnQ6IGxldCBOT1BJRCBiZSB0aGUgZGVmYXVsdCB2YWx1ZSBv
-ZiBmb3JjZV90b19ub25wcml2IHJlZ2lzdGVycyIpCj4gICBiOTlmNTE0ZjVkZmEgKCJkcm0vaTkx
-NS9ndnQ6IFJlbW92ZSBkaXNhYmxlX3dhcm5fdW50cmFjayBhbmQgcHJpbnQgdW50cmFja2VkIG1t
-aW8gd2l0aCBkZWJ1ZyBsZXZlbCIpCj4KPiBhcmUgbWlzc2luZyBhIFNpZ25lZC1vZmYtYnkgZnJv
-bSB0aGVpciBjb21taXR0ZXIuCgpaaGkncyByZWJhc2UgZmFpbCBsZWFkaW5nIHRvIGNoYW5nZSBv
-ZiBjb21taXR0ZXIgdGhhdCBJIGZhaWxlZCB0bwpyZWplY3QuIDooCgpCUiwKSmFuaS4KCi0tIApK
-YW5pIE5pa3VsYSwgSW50ZWwgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXIKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcg
-bGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Hi Florian,
+
+On Tue, May 8, 2018 at 9:17 AM, Florian Westphal <fw@strlen.de> wrote:
+> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> >
+>> > After merging the netfilter-next tree, today's linux-next build (x86_64
+>> > allmodconfig) produced this warning:
+>> >
+>> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
+>>
+>> > Introduced by commit
+>> >
+>> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
+>
+> I'll send a fix for this, thanks for reporting.
+
++config NF_OSF
++       tristate 'Passive OS fingerprint infrastructure'
+
+"There is no help available for this option."
+
+Is this meant to be a user-visible symbol?
+I noticed it is selected by NETFILTER_XT_MATCH_OSF.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
