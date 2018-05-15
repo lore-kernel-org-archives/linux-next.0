@@ -1,62 +1,42 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Tue, 15 May 2018 10:44:16 -0700
-Message-ID: <20180515174416.GJ26088@linux.vnet.ibm.com>
-References: <20180514134636.61831bcc@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Florian Westphal <fw@strlen.de>
+Subject: Re: linux-next: build warning after merge of the netfilter-next tree
+Date: Tue, 15 May 2018 19:51:23 +0200
+Message-ID: <20180515175123.ncxzaaexp3ehcpwx@breakpoint.cc>
+References: <20180507105519.1d34f19e@canb.auug.org.au>
+ <20180508102101.768d5c52@canb.auug.org.au>
+ <20180508071756.grie5wln2lpo52un@breakpoint.cc>
+ <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180514134636.61831bcc@canb.auug.org.au>
+In-Reply-To: <CAMuHMdU0iUBbkPL5ZKxKuORnQA9ujX1J+5NLw=ft80hJh20VxQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitzan Carmi <nitzanc@mellanox.com>, Jianchao Wang <jianchao.w.wang@oracle.com>, Keith Busch <keith.busch@intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Florian Westphal <fw@strlen.de>, Stephen Rothwell <sfr@canb.auug.org.au>, David Miller <davem@davemloft.net>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fernando Fernandez Mancera <ffmancera@riseup.net>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, May 14, 2018 at 01:46:36PM +1000, Stephen Rothwell wrote:
-> Hi all,
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Tue, May 8, 2018 at 9:17 AM, Florian Westphal <fw@strlen.de> wrote:
+> > Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> On Mon, 7 May 2018 10:55:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >> >
+> >> > After merging the netfilter-next tree, today's linux-next build (x86_64
+> >> > allmodconfig) produced this warning:
+> >> >
+> >> > ./usr/include/linux/netfilter/nf_osf.h:25: found __[us]{8,16,32,64} type without #include <linux/types.h>
+> >>
+> >> > Introduced by commit
+> >> >
+> >> >   bfb15f2a95cb ("netfilter: extract Passive OS fingerprint infrastructure from xt_osf")
+> >
+> > I'll send a fix for this, thanks for reporting.
 > 
-> Today's linux-next merge of the rcu tree got a conflict in:
+> +config NF_OSF
+> +       tristate 'Passive OS fingerprint infrastructure'
 > 
->   drivers/nvme/host/core.c
+> "There is no help available for this option."
 > 
-> between commit:
-> 
->   12d9f07022dc ("nvme: fix use-after-free in nvme_free_ns_head")
-> 
-> from Linus' tree and commit:
-> 
->   d9cf21bae6cf ("nvme: Avoid flush dependency in delete controller flow")
-> 
-> from the rcu tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> Is this meant to be a user-visible symbol?
 
-Thank you, Stephen!!!
-
-							Thanx, Paul
-
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/nvme/host/core.c
-> index 99b857e5a7a9,c3cea8a29843..000000000000
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@@ -351,8 -349,7 +351,8 @@@ static void nvme_free_ns_head(struct kr
->   	nvme_mpath_remove_disk(head);
->   	ida_simple_remove(&head->subsys->ns_ida, head->instance);
->   	list_del_init(&head->entry);
-> - 	cleanup_srcu_struct(&head->srcu);
-> + 	cleanup_srcu_struct_quiesced(&head->srcu);
->  +	nvme_put_subsystem(head->subsys);
->   	kfree(head);
->   }
->   
+No, its not.  I can send a patch in case you're too busy, let me know.
