@@ -1,105 +1,80 @@
-From: Richard Guy Briggs <rgb@redhat.com>
-Subject: Re: linux-next: manual merge of the audit tree with the selinux tree
-Date: Mon, 14 May 2018 23:16:12 -0400
-Message-ID: <20180515031612.3k4hzaihrr6rmnhz@madcap2.tricolour.ca>
-References: <20180515130619.2e9e033c@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kbuild tree
+Date: Tue, 15 May 2018 15:50:38 +1000
+Message-ID: <20180515155038.7387bf2c@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Cn+fxNSFYl4oymnJw0bH2Se"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180515130619.2e9e033c@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paul Moore <paul@paul-moore.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 List-Id: linux-next.vger.kernel.org
 
-On 2018-05-15 13:06, Stephen Rothwell wrote:
-> Hi Paul,
-> 
-> Today's linux-next merge of the audit tree got a conflict in:
-> 
->   security/selinux/selinuxfs.c
-> 
-> between commit:
-> 
->   4195ed425d3c ("audit: normalize MAC_STATUS record")
-> 
-> from the selinux tree and commits:
-> 
->   cdfb6b341f0f ("audit: use inline function to get audit context")
->   d141136f523a ("audit: normalize MAC_POLICY_LOAD record")
-> 
-> from the audit tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+--Sig_/Cn+fxNSFYl4oymnJw0bH2Se
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This was expected...  It looks ok.
+Hi Masahiro,
 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc security/selinux/selinuxfs.c
-> index c0cadbc5f85c,35fd77737c59..000000000000
-> --- a/security/selinux/selinuxfs.c
-> +++ b/security/selinux/selinuxfs.c
-> @@@ -167,13 -167,11 +167,13 @@@ static ssize_t sel_write_enforce(struc
->   				      NULL);
->   		if (length)
->   			goto out;
-> - 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> + 		audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
->  -			"enforcing=%d old_enforcing=%d auid=%u ses=%u",
->  +			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
->  +			" enabled=%d old-enabled=%d lsm=selinux res=1",
->   			new_value, old_value,
->   			from_kuid(&init_user_ns, audit_get_loginuid(current)),
->  -			audit_get_sessionid(current));
->  +			audit_get_sessionid(current),
->  +			selinux_enabled, selinux_enabled);
->   		enforcing_set(state, new_value);
->   		if (new_value)
->   			avc_ss_reset(state->avc, 0);
-> @@@ -303,12 -299,10 +303,12 @@@ static ssize_t sel_write_disable(struc
->   		length = selinux_disable(fsi->state);
->   		if (length)
->   			goto out;
-> - 		audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_STATUS,
-> + 		audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_STATUS,
->  -			"selinux=0 auid=%u ses=%u",
->  +			"enforcing=%d old_enforcing=%d auid=%u ses=%u"
->  +			" enabled=%d old-enabled=%d lsm=selinux res=1",
->  +			enforcing, enforcing,
->   			from_kuid(&init_user_ns, audit_get_loginuid(current)),
->  -			audit_get_sessionid(current));
->  +			audit_get_sessionid(current), 0, 1);
->   	}
->   
->   	length = count;
-> @@@ -581,8 -575,8 +581,8 @@@ static ssize_t sel_write_load(struct fi
->   	length = count;
->   
->   out1:
-> - 	audit_log(current->audit_context, GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
-> + 	audit_log(audit_context(), GFP_KERNEL, AUDIT_MAC_POLICY_LOAD,
->  -		"policy loaded auid=%u ses=%u",
->  +		"auid=%u ses=%u lsm=selinux res=1",
->   		from_kuid(&init_user_ns, audit_get_loginuid(current)),
->   		audit_get_sessionid(current));
->   out:
+After merging the kbuild tree, today's linux-next build (x86_64
+modules_install) failed like this:
 
+Usage: scripts/depmod.sh /sbin/depmod <kernelrelease> <symbolprefix>
+Makefile:1314: recipe for target '_modinst_post' failed
 
+Caused by commit
 
-- RGB
+  ea7ad9856a2c ("depmod.sh: remove symbol prefix support")
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+I added the following fix for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 15 May 2018 15:47:33 +1000
+Subject: [PATCH] depmod.sh: fix syntax check and uage message
+
+fixes: ea7ad9856a2c ("depmod.sh: remove symbol prefix support")
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ scripts/depmod.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/depmod.sh b/scripts/depmod.sh
+index 421d1aa01304..1a6f85e0e6e1 100755
+--- a/scripts/depmod.sh
++++ b/scripts/depmod.sh
+@@ -3,8 +3,8 @@
+ #
+ # A depmod wrapper used by the toplevel Makefile
+=20
+-if test $# -ne 3; then
+-	echo "Usage: $0 /sbin/depmod <kernelrelease> <symbolprefix>" >&2
++if test $# -ne 2; then
++	echo "Usage: $0 /sbin/depmod <kernelrelease>" >&2
+ 	exit 1
+ fi
+ DEPMOD=3D$1
+--=20
+2.17.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Cn+fxNSFYl4oymnJw0bH2Se
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr6dS4ACgkQAVBC80lX
+0GxxCwf/dz+wGoEpoYgpS3nhPTOZniUqhX5WU0hOPbVLE1Q40s0+WVQ5Cb3zIrMg
+Qh1W7ItSiQV1R3nZ17yEgtvrk0NCyMPQV5DU6TOxkxg0EG4MC14rkydw6cge7xBg
+4Ig93GU07Y67sm9VDUW3AO4f1XmKOuZC66AY+n22+1wJEsklGHpg6VzpQjD/E4jB
+iM6p7I/SAgkh8LKZ4BCoScIIKBHDjhiZgxL1UD0UvRqF4aepdLKQMrZE30ZdjPdK
+XIqm+q1hiLCMhSGdF4O9+c43vryeGPyTYaWVEn0FZRP1Dsy4iRXhFD1EW9/nAMcx
+LApymayqqdsyVi1G8acljhqwu9wNoQ==
+=UMO3
+-----END PGP SIGNATURE-----
+
+--Sig_/Cn+fxNSFYl4oymnJw0bH2Se--
