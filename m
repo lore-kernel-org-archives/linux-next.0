@@ -1,66 +1,55 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Date: Wed, 16 May 2018 19:40:43 +0200
-Message-ID: <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
-References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
- <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
- <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com> <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
+Date: Thu, 17 May 2018 07:37:02 +1000
+Message-ID: <20180517073702.5497e72e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DMzexEs34ryTjaDGznQFWtf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Chen <jasonx.z.chen@intel.com>, Andy Yeh <andy.yeh@intel.com>, Alan Chiang <alanx.chiang@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, Tomasz Figa <tfiga@chromium.org>, Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Linus,
+--Sig_/DMzexEs34ryTjaDGznQFWtf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 16, 2018 at 1:33 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Wed, May 16, 2018 at 1:29 PM, Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
->> On Wed, May 16, 2018 at 1:24 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
->>> On Wed, May 16, 2018 at 9:16 AM, Geert Uytterhoeven
->>> <geert@linux-m68k.org> wrote:
->>>> On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->>>>> Commit
->>>>>
->>>>>   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
->>>>>
->>>>> is missing a Signed-off-by from its comitter.
->>>>
->>>> Sorry, I forgot to add it.
->>>>
->>>> Linus, as the merge of sh-pfc is your top commit, shall I fix it up
->>>> and send a new
->>>> pull request?
->>>> Please let me know how to proceed. Thanks!
->>>
->>> If it's just missing your SoB I can add it with your permission
->>> I guess? That is less trouble.
->>
->> You have my permission.
->> But I'm afraid that won't help, as then you'll become the committer with your
->> SoB missing...
->
-> Bah I just sign them all off then. It's still quicker.
->
-> Done!
+Hi Mauro,
 
-Thanks! I'll be more careful next time.
+Commit
 
-I guess I should base my next pull request on the new commit
-73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") in your
-tree, instead of on my previous pull request? Else there will be some
-conflicts (I checked: so far in one file only).
+  af76c93aa36d ("media: cadence: csi2rx: Fix csi2rx_start error handling")
 
-Gr{oetje,eeting}s,
+is missing a Signed-off-by from its committer.
 
-                        Geert
+Commits
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  c578c7710712 ("media: imx258: Add imx258 camera sensor driver")
+  3a8fdc1426c3 ("media: dw9807: Add dw9807 vcm driver")
+  2f9c1c88369f ("media: dt-bindings: Add bindings for Dongwoon DW9807 voice=
+ coil")
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+are missing a Signed-off-by from their author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/DMzexEs34ryTjaDGznQFWtf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr8pH4ACgkQAVBC80lX
+0GzylQf9FBl5xIo19SpzlHUiUDH7DWTX4EGTdrLOjV8BXZEogY1YAe+P1+NEQ0BC
+g1Hn2+d7ub0fkRcjTKS2bcmpuFNQdf3oETg4G87AfMZ8PCwX0qku5iBWpkqXrk+V
+vNE3Pvvl+njU/+oHBKKX7vF9Oa8iknniBqFv0QsQdDHQPoWVKIE8Bo6dpLreOViG
+ciDciQHlLgmBZngruv8UuNO+Upcc8HVgwPUAqxbUfUBphXzmDGYFij49WSXkVhM/
+GbmQwrEf0JiSqfvYHNZTc5U/hl78wASBM9y7iq9/GUupVYN4LVJ40FVBNBwh3wzu
+C/M3tnbmLLQWH4o/en+YDWr2PaEpcw==
+=TY+K
+-----END PGP SIGNATURE-----
+
+--Sig_/DMzexEs34ryTjaDGznQFWtf--
