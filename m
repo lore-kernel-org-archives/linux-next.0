@@ -1,90 +1,109 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: linux-next: manual merge of the rockchip tree with the renesas
- tree
-Date: Wed, 16 May 2018 08:44:45 +0200
-Message-ID: <20180516064440.xpwm7liozhvx4aro@verge.net.au>
-References: <20180503083654.625b1f9b@canb.auug.org.au>
- <20180516113918.1ccdd8ec@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the drm tree
+Date: Wed, 16 May 2018 16:53:26 +1000
+Message-ID: <20180516165326.47e96000@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180516113918.1ccdd8ec@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Heiko Stuebner <heiko@sntech.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Ezequiel Garcia <ezequiel@collabora.com>
+Content-Type: multipart/mixed; boundary="===============0602677448=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Thanks Stephen,
+--===============0602677448==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4uWz8KvzxHV.9r69gAfwYoI"; protocol="application/pgp-signature"
 
-On Wed, May 16, 2018 at 11:39:18AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Thu, 3 May 2018 08:36:54 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the rockchip tree got a conflict in:
-> > 
-> >   arch/arm64/configs/defconfig
-> > 
-> > between commits:
-> > 
-> >   93f7bfd930c0 ("arm64: defconfig: makes SND_SIMPLE_CARD to module")
-> >   ddf3fa8b8a16 ("arm64: defconfig: Enable CONFIG_SND_AUDIO_GRAPH_CARD")
-> > 
-> > from the renesas tree and commit:
-> > 
-> >   e9cfce4195ec ("arm64: defconfig: Enable HID over I2C drivers")
-> > 
-> > from the rockchip tree.
-> > 
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
+--Sig_/4uWz8KvzxHV.9r69gAfwYoI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The resolution looks correct to me.
+Hi all,
 
-As the renesas tree reaches Linus via the arm-soc tree I believe
-this is likely best resolved by the arm-soc maintainers once I
-send them a pull-request for the renesas tree. And I do not expect
-it to bubble-up to Linus.
+After merging the drm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-> > 
-> > -- 
-> > Cheers,
-> > Stephen Rothwell
-> > 
-> > diff --cc arch/arm64/configs/defconfig
-> > index 7930caf5dde4,34037d24fbf4..000000000000
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@@ -158,9 -157,9 +158,10 @@@ CONFIG_BT_HIDP=
-> >   # CONFIG_BT_LE is not set
-> >   CONFIG_BT_LEDS=y
-> >   # CONFIG_BT_DEBUGFS is not set
-> > + CONFIG_BT_HCIBTUSB=m
-> >   CONFIG_BT_HCIUART=m
-> >   CONFIG_BT_HCIUART_LL=y
-> >  +CONFIG_BT_HCIUART_BCM=y
-> >   CONFIG_CFG80211=m
-> >   CONFIG_MAC80211=m
-> >   CONFIG_MAC80211_LEDS=y
-> > @@@ -443,8 -447,8 +451,9 @@@ CONFIG_SND_BCM2835_SOC_I2S=
-> >   CONFIG_SND_SOC_SAMSUNG=y
-> >   CONFIG_SND_SOC_RCAR=m
-> >   CONFIG_SND_SOC_AK4613=m
-> >  -CONFIG_SND_SIMPLE_CARD=y
-> >  +CONFIG_SND_SIMPLE_CARD=m
-> >  +CONFIG_SND_AUDIO_GRAPH_CARD=m
-> > + CONFIG_I2C_HID=m
-> >   CONFIG_USB=y
-> >   CONFIG_USB_OTG=y
-> >   CONFIG_USB_XHCI_HCD=y
-> 
-> This is now a conflict between the renesas tree and the arm-soc tree.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c: In function 'init_user_pa=
+ges':
+drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c:632:3: error: implicit dec=
+laration of function 'release_pages'; did you mean 'release_task'? [-Werror=
+=3Dimplicit-function-declaration]
+   release_pages(mem->user_pages, bo->tbo.ttm->num_pages);
+   ^~~~~~~~~~~~~
+   release_task
+
+Caused by commit
+
+  5ae0283e831a ("drm/amdgpu: Add userptr support for KFD")
+
+I have applied the following patch for today:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 16 May 2018 16:43:34 +1000
+Subject: [PATCH] drm/amdgpu: include pagemap.h for release_pages()
+
+Fixes: 5ae0283e831a ("drm/amdgpu: Add userptr support for KFD"
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Oded Gabbay <oded.gabbay@gmail.com>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c b/drivers/gpu=
+/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+index 72ab2b1ffe75..ff8fd75f7ca5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c
+@@ -23,6 +23,7 @@
+ #define pr_fmt(fmt) "kfd2kgd: " fmt
+=20
+ #include <linux/list.h>
++#include <linux/pagemap.h>
+ #include <linux/sched/mm.h>
+ #include <drm/drmP.h>
+ #include "amdgpu_object.h"
+--=20
+2.17.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4uWz8KvzxHV.9r69gAfwYoI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr71WYACgkQAVBC80lX
+0GxilAf+L7waF+pLjSAURRnM7EX5K6l2Qx9L53mqRE48P0/DypNldvHs9/bLYnMv
+7TH6sAZEDkJm2lTWFD+3uekc6/WeIuukJZa2STHreqifkgN/CDA8+eMDV6LeOpOD
+FApuBg0bjLXpu4fW8rbj/TjdgQ0AwlW9QgaUZO877G+ll+qDMMAwSL6I27lbZsKZ
+0znYgc3tu84wCrAkD6Aj64hS8s4qPPsPB/b9FH95hO02SM3ETNwuHZPly0ylPMqG
+5NOV1Orr5epilqdqHLBcFGfmXBdr37nzEXcrj4MjxBltdJlUXw18bIR0BEGYEBt0
+wppKsu9xdLg+WkIpanMonaxmc/1jMQ==
+=RnWL
+-----END PGP SIGNATURE-----
+
+--Sig_/4uWz8KvzxHV.9r69gAfwYoI--
+
+--===============0602677448==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0602677448==--
