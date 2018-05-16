@@ -1,38 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Date: Wed, 16 May 2018 09:16:33 +0200
-Message-ID: <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
-References: <20180516072753.49dd4d88@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the kbuild tree
+Date: Wed, 16 May 2018 17:26:01 +1000
+Message-ID: <20180516172601.03188b22@canb.auug.org.au>
+References: <20180515155038.7387bf2c@canb.auug.org.au>
+        <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/NCfuoTAPXRkf9v+T2kpLIVN"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180516072753.49dd4d88@canb.auug.org.au>
+In-Reply-To: <CAK7LNASNMZbz=re1sRzh8Ffkt8g78=ddV7d_TZm4MVq1+JS-hA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sam Ravnborg <sam@ravnborg.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Commit
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Masahiro,
+
+On Wed, 16 May 2018 15:01:38 +0900 Masahiro Yamada <yamada.masahiro@socione=
+xt.com> wrote:
 >
->   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
->
-> is missing a Signed-off-by from its comitter.
+> How should I handle your fix-up?
+>=20
+> May I squash into the original one if you ack to do it,
+> or is it better to keep it as a separate patch?
 
-Sorry, I forgot to add it.
+Either way is fine by me, but the former reduces the bisection gap.  So
+it depends on whether you want to rebase your tree or not.
 
-Linus, as the merge of sh-pfc is your top commit, shall I fix it up
-and send a new
-pull request?
-Please let me know how to proceed. Thanks!
+Acked-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-Gr{oetje,eeting}s,
+--=20
+Cheers,
+Stephen Rothwell
 
-                        Geert
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr73QkACgkQAVBC80lX
+0GzABwf/e/qRmPZqUY2UDk1i0wqlaZ7jpY83UhcvVJKKo3BmWTSvdjgyo7kvhNbv
+BgINZYx726O7cr2KjkNzvNyoMGBcTb3DPyHpa1fL2anC/E6zrVFqgOK+qitBLumb
+6kpqtDyJo1ebCBmeU71o5NIJIQ56AV68gerUVJDCtlKt7uzG8hHPd3H2VcxQ/m6g
+GXoVnwzqdaX4V3SXhWbM53MQfSy77Elu9yjX/0KmZAbF6Vd1uyRSWtH/enRKQpah
+5sA98mmxrA3fmpsxLYxL36PstcOi8HSWSWiZnqjHrw/Ia2iCpJv+nR/GymWCKPFy
+0V10vdczDJNihtDY9VLDZL1HkYMOWA==
+=ABeq
+-----END PGP SIGNATURE-----
+
+--Sig_/NCfuoTAPXRkf9v+T2kpLIVN--
