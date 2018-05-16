@@ -1,57 +1,35 @@
-From: Oded Gabbay <oded.gabbay@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Wed, 16 May 2018 11:09:16 +0300
-Message-ID: <CAFCwf119c0vsR8uxqHZu6h12tWhaW6mh9pDYqGPriC60s-+h6Q@mail.gmail.com>
-References: <20180516165326.47e96000@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Date: Wed, 16 May 2018 13:24:13 +0200
+Message-ID: <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180516165326.47e96000@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Airlie <airlied@linux.ie>, Felix Kuehling <Felix.Kuehling@amd.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-next.vger.kernel.org
 
-T24gV2VkLCBNYXkgMTYsIDIwMTggYXQgOTo1MyBBTSwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNh
-bmIuYXV1Zy5vcmcuYXU+IHdyb3RlOgo+IEhpIGFsbCwKPgo+IEFmdGVyIG1lcmdpbmcgdGhlIGRy
-bSB0cmVlLCB0b2RheSdzIGxpbnV4LW5leHQgYnVpbGQgKHBvd2VycGMKPiBhbGx5ZXNjb25maWcp
-IGZhaWxlZCBsaWtlIHRoaXM6Cj4KPiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVf
-YW1ka2ZkX2dwdXZtLmM6IEluIGZ1bmN0aW9uICdpbml0X3VzZXJfcGFnZXMnOgo+IGRyaXZlcnMv
-Z3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYzo2MzI6MzogZXJyb3I6IGlt
-cGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdyZWxlYXNlX3BhZ2VzJzsgZGlkIHlvdSBt
-ZWFuICdyZWxlYXNlX3Rhc2snPyBbLVdlcnJvcj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlv
-bl0KPiAgICByZWxlYXNlX3BhZ2VzKG1lbS0+dXNlcl9wYWdlcywgYm8tPnRiby50dG0tPm51bV9w
-YWdlcyk7Cj4gICAgXn5+fn5+fn5+fn5+fgo+ICAgIHJlbGVhc2VfdGFzawo+Cj4gQ2F1c2VkIGJ5
-IGNvbW1pdAo+Cj4gICA1YWUwMjgzZTgzMWEgKCJkcm0vYW1kZ3B1OiBBZGQgdXNlcnB0ciBzdXBw
-b3J0IGZvciBLRkQiKQo+Cj4gSSBoYXZlIGFwcGxpZWQgdGhlIGZvbGxvd2luZyBwYXRjaCBmb3Ig
-dG9kYXk6Cj4KPiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4K
-PiBEYXRlOiBXZWQsIDE2IE1heSAyMDE4IDE2OjQzOjM0ICsxMDAwCj4gU3ViamVjdDogW1BBVENI
-XSBkcm0vYW1kZ3B1OiBpbmNsdWRlIHBhZ2VtYXAuaCBmb3IgcmVsZWFzZV9wYWdlcygpCj4KPiBG
-aXhlczogNWFlMDI4M2U4MzFhICgiZHJtL2FtZGdwdTogQWRkIHVzZXJwdHIgc3VwcG9ydCBmb3Ig
-S0ZEIgo+IENjOiBGZWxpeCBLdWVobGluZyA8RmVsaXguS3VlaGxpbmdAYW1kLmNvbT4KPiBDYzog
-T2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4KPiBTaWduZWQtb2ZmLWJ5OiBTdGVw
-aGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPiAtLS0KPiAgZHJpdmVycy9ncHUv
-ZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2FtZGtmZF9ncHV2bS5jIHwgMSArCj4gIDEgZmlsZSBjaGFu
-Z2VkLCAxIGluc2VydGlvbigrKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hbWQv
-YW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1
-L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYwo+IGluZGV4IDcyYWIyYjFmZmU3NS4uZmY4ZmQ3NWY3Y2E1
-IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRf
-Z3B1dm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRf
-Z3B1dm0uYwo+IEBAIC0yMyw2ICsyMyw3IEBACj4gICNkZWZpbmUgcHJfZm10KGZtdCkgImtmZDJr
-Z2Q6ICIgZm10Cj4KPiAgI2luY2x1ZGUgPGxpbnV4L2xpc3QuaD4KPiArI2luY2x1ZGUgPGxpbnV4
-L3BhZ2VtYXAuaD4KPiAgI2luY2x1ZGUgPGxpbnV4L3NjaGVkL21tLmg+Cj4gICNpbmNsdWRlIDxk
-cm0vZHJtUC5oPgo+ICAjaW5jbHVkZSAiYW1kZ3B1X29iamVjdC5oIgo+IC0tCj4gMi4xNy4wCj4K
-PiAtLQo+IENoZWVycywKPiBTdGVwaGVuIFJvdGh3ZWxsCgpUaGFua3MgU3RlcGhlbiwKCkknbGwg
-YWRkIGl0IHRvIGFtZGtmZC1uZXh0IGFuZCBzZW5kIGl0IHRvIERhdmUgd2l0aCBvdGhlciBmaXhl
-cy4KCk9kZWQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Wed, May 16, 2018 at 9:16 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, May 15, 2018 at 11:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> Commit
+>>
+>>   f18fab4bcb4f ("pinctrl: sh-pfc: Add r8a77470 PFC support")
+>>
+>> is missing a Signed-off-by from its comitter.
+>
+> Sorry, I forgot to add it.
+>
+> Linus, as the merge of sh-pfc is your top commit, shall I fix it up
+> and send a new
+> pull request?
+> Please let me know how to proceed. Thanks!
+
+If it's just missing your SoB I can add it with your permission
+I guess? That is less trouble.
+
+Yours,
+Linus Walleij
