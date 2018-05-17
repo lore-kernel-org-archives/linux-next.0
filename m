@@ -1,65 +1,100 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: linux-next: build failure after merge of the drm tree
-Date: Thu, 17 May 2018 15:00:36 +1000
-Message-ID: <CAPM=9tyj60nGzA0R8iCPONWL1OXRFi-n5=5rhGu501ZVQy4kEQ@mail.gmail.com>
-References: <20180516165326.47e96000@canb.auug.org.au>
- <CAFCwf119c0vsR8uxqHZu6h12tWhaW6mh9pDYqGPriC60s-+h6Q@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm tree with the vfs tree
+Date: Thu, 17 May 2018 16:36:00 +1000
+Message-ID: <20180517163600.4d3e585d@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAFCwf119c0vsR8uxqHZu6h12tWhaW6mh9pDYqGPriC60s-+h6Q@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Oded Gabbay <oded.gabbay@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Dave Airlie <airlied@linux.ie>, Felix Kuehling <Felix.Kuehling@amd.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4aB8OO75BG5.VGCyc0EL1Rq"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Joe Perches <joe@perches.com>
 List-Id: linux-next.vger.kernel.org
 
-SSd2ZSBhcHBsaWVkIHRoaXMgbG9jYWxseSBmb3Igbm93IHNvIEkgY2FuIGNvbnRpbnVlIGFybTY0
-IGJ1aWxkcyA6LSkKCkRhdmUuCgpPbiAxNiBNYXkgMjAxOCBhdCAxODowOSwgT2RlZCBHYWJiYXkg
-PG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gV2VkLCBNYXkgMTYsIDIwMTggYXQg
-OTo1MyBBTSwgU3RlcGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+IHdyb3RlOgo+
-PiBIaSBhbGwsCj4+Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIGRybSB0cmVlLCB0b2RheSdzIGxpbnV4
-LW5leHQgYnVpbGQgKHBvd2VycGMKPj4gYWxseWVzY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+
-Pgo+PiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdwdS9hbWRncHVfYW1ka2ZkX2dwdXZtLmM6IElu
-IGZ1bmN0aW9uICdpbml0X3VzZXJfcGFnZXMnOgo+PiBkcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdw
-dS9hbWRncHVfYW1ka2ZkX2dwdXZtLmM6NjMyOjM6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlv
-biBvZiBmdW5jdGlvbiAncmVsZWFzZV9wYWdlcyc7IGRpZCB5b3UgbWVhbiAncmVsZWFzZV90YXNr
-Jz8gWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVjbGFyYXRpb25dCj4+ICAgIHJlbGVhc2Vf
-cGFnZXMobWVtLT51c2VyX3BhZ2VzLCBiby0+dGJvLnR0bS0+bnVtX3BhZ2VzKTsKPj4gICAgXn5+
-fn5+fn5+fn5+fgo+PiAgICByZWxlYXNlX3Rhc2sKPj4KPj4gQ2F1c2VkIGJ5IGNvbW1pdAo+Pgo+
-PiAgIDVhZTAyODNlODMxYSAoImRybS9hbWRncHU6IEFkZCB1c2VycHRyIHN1cHBvcnQgZm9yIEtG
-RCIpCj4+Cj4+IEkgaGF2ZSBhcHBsaWVkIHRoZSBmb2xsb3dpbmcgcGF0Y2ggZm9yIHRvZGF5Ogo+
-Pgo+PiBGcm9tOiBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4KPj4gRGF0
-ZTogV2VkLCAxNiBNYXkgMjAxOCAxNjo0MzozNCArMTAwMAo+PiBTdWJqZWN0OiBbUEFUQ0hdIGRy
-bS9hbWRncHU6IGluY2x1ZGUgcGFnZW1hcC5oIGZvciByZWxlYXNlX3BhZ2VzKCkKPj4KPj4gRml4
-ZXM6IDVhZTAyODNlODMxYSAoImRybS9hbWRncHU6IEFkZCB1c2VycHRyIHN1cHBvcnQgZm9yIEtG
-RCIKPj4gQ2M6IEZlbGl4IEt1ZWhsaW5nIDxGZWxpeC5LdWVobGluZ0BhbWQuY29tPgo+PiBDYzog
-T2RlZCBHYWJiYXkgPG9kZWQuZ2FiYmF5QGdtYWlsLmNvbT4KPj4gU2lnbmVkLW9mZi1ieTogU3Rl
-cGhlbiBSb3Rod2VsbCA8c2ZyQGNhbmIuYXV1Zy5vcmcuYXU+Cj4+IC0tLQo+PiAgZHJpdmVycy9n
-cHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2FtZGtmZF9ncHV2bS5jIHwgMSArCj4+ICAxIGZpbGUg
-Y2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
-bS9hbWQvYW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQv
-YW1kZ3B1L2FtZGdwdV9hbWRrZmRfZ3B1dm0uYwo+PiBpbmRleCA3MmFiMmIxZmZlNzUuLmZmOGZk
-NzVmN2NhNSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1
-X2FtZGtmZF9ncHV2bS5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdw
-dV9hbWRrZmRfZ3B1dm0uYwo+PiBAQCAtMjMsNiArMjMsNyBAQAo+PiAgI2RlZmluZSBwcl9mbXQo
-Zm10KSAia2ZkMmtnZDogIiBmbXQKPj4KPj4gICNpbmNsdWRlIDxsaW51eC9saXN0Lmg+Cj4+ICsj
-aW5jbHVkZSA8bGludXgvcGFnZW1hcC5oPgo+PiAgI2luY2x1ZGUgPGxpbnV4L3NjaGVkL21tLmg+
-Cj4+ICAjaW5jbHVkZSA8ZHJtL2RybVAuaD4KPj4gICNpbmNsdWRlICJhbWRncHVfb2JqZWN0Lmgi
-Cj4+IC0tCj4+IDIuMTcuMAo+Pgo+PiAtLQo+PiBDaGVlcnMsCj4+IFN0ZXBoZW4gUm90aHdlbGwK
-Pgo+IFRoYW5rcyBTdGVwaGVuLAo+Cj4gSSdsbCBhZGQgaXQgdG8gYW1ka2ZkLW5leHQgYW5kIHNl
-bmQgaXQgdG8gRGF2ZSB3aXRoIG90aGVyIGZpeGVzLgo+Cj4gT2RlZAo+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlz
-dAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbApfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+--Sig_/4aB8OO75BG5.VGCyc0EL1Rq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+Today's linux-next merge of the akpm-current tree got a conflict in:
+
+  mm/vmalloc.c
+
+between commits:
+
+  fddda2b7b521 ("proc: introduce proc_create_seq{,_data}")
+  44414d82cfe0 ("proc: introduce proc_create_seq_private")
+
+from the vfs tree and patch:
+
+  "mm: use octal not symbolic permissions"
+
+from the akpm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc mm/vmalloc.c
+index 89efac3a020e,abf54a3e71e6..000000000000
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@@ -2738,14 -2738,25 +2738,14 @@@ static const struct seq_operations vmal
+  	.show =3D s_show,
+  };
+ =20
+ -static int vmalloc_open(struct inode *inode, struct file *file)
+ +static int __init proc_vmalloc_init(void)
+  {
+  	if (IS_ENABLED(CONFIG_NUMA))
+- 		proc_create_seq_private("vmallocinfo", S_IRUSR, NULL,
+ -		return seq_open_private(file, &vmalloc_op,
+ -					nr_node_ids * sizeof(unsigned int));
+++		proc_create_seq_private("vmallocinfo", 0400, NULL,
+ +				&vmalloc_op,
+ +				nr_node_ids * sizeof(unsigned int), NULL);
+  	else
+- 		proc_create_seq("vmallocinfo", S_IRUSR, NULL, &vmalloc_op);
+ -		return seq_open(file, &vmalloc_op);
+ -}
+ -
+ -static const struct file_operations proc_vmalloc_operations =3D {
+ -	.open		=3D vmalloc_open,
+ -	.read		=3D seq_read,
+ -	.llseek		=3D seq_lseek,
+ -	.release	=3D seq_release_private,
+ -};
+ -
+ -static int __init proc_vmalloc_init(void)
+ -{
+ -	proc_create("vmallocinfo", 0400, NULL, &proc_vmalloc_operations);
+++		proc_create_seq("vmallocinfo", 0400, NULL, &vmalloc_op);
+  	return 0;
+  }
+  module_init(proc_vmalloc_init);
+
+--Sig_/4aB8OO75BG5.VGCyc0EL1Rq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr9ItAACgkQAVBC80lX
+0GzHmQf9GAVNklBpqE+zyiWcVymQSr2WnuFVAGUOkz7mZrooJNytFzSaSWGZpJ5H
+vTSp2T3oevXpjvRj2PwGVoStzWbIWnZiwPdY3PUON8m6HYbAZlSF0GlcAUijyii8
+F2mziyF8f9d23Mz2ZsChFVCHAO+w0CNsQcg8mUG2FrIus28HY1F78zWW+hlPBAyZ
+d0bpqFB6z7yViRQIUajlVx9GimrIhbI2+/7Ew1aqMj6C0C7FJGasNNu6e7b0yXgJ
+Xg39bU9rgYSlp2NJi2baKyl8iSNvl452nJzFMDBd1MHxR1SpFi5Y2O4z32A00HTb
+0rV/YA3CKTZOV57pARfl1XzoRSMrzA==
+=U1Uj
+-----END PGP SIGNATURE-----
+
+--Sig_/4aB8OO75BG5.VGCyc0EL1Rq--
