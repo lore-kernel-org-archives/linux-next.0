@@ -1,92 +1,33 @@
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Subject: Re: linux-next: Tree for May 17
-Date: Thu, 17 May 2018 23:33:05 +0530
-Message-ID: <CA+G9fYsJ01fWgD1ER1s46VNtHG57dZ26javkLtqwftjQTnA=rw@mail.gmail.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 17 (drivers/pwm/pwm-stm32.c)
+Date: Thu, 17 May 2018 11:34:59 -0700
+Message-ID: <b611bea0-d77b-7841-2127-277acda55747@infradead.org>
 References: <20180517170656.1f746914@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20180517170656.1f746914@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gerald Baeza <gerald.baeza@st.com>, linux-pwm@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 17 May 2018 at 12:36, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 05/17/2018 12:06 AM, Stephen Rothwell wrote:
 > Hi all,
->
-> News: I will not be doing any linux-next releases between Friday 18 May
-> and Friday 25 May inclusive.
->
-> Changes since 20180516:
->
-> New trees: devicetree-fixes
->
-> The kbuild tree still had its build failure for which I applied a patch.
->
-> The mvebu tree gained a conflict against the arm-soc tree.
->
-> The renesas tree gained conflicts against the mvebu tree.
->
-> The net-next tree gained a conflict against the vfs tree.
->
-> The drm tree still had its build failure for which I applied a patch.
->
-> The usb-gadget tree gained a conflict against the usb tree.
->
-> The staging tree gained a conflict against the v4l-dvb tree.
->
-> The akpm tree gained a conflict against the vfs tree.
->
-> Non-merge commits (relative to Linus' tree): 7398
->  7852 files changed, 294207 insertions(+), 302289 deletions(-)
->
-> ----------------------------------------------------------------------------
->
-> I have created today's linux-next tree at
-> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> (patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-> are tracking the linux-next tree using git, you should not use "git pull"
-> to do so as that will try to merge the new linux-next release with the
-> old one.  You should use "git fetch" and checkout or reset to the new
-> master.
->
-> You can see which trees have been included by looking in the Next/Trees
-> file in the source.  There are also quilt-import.log and merge.log
-> files in the Next directory.  Between each merge, the tree was built
-> with a ppc64_defconfig for powerpc, an allmodconfig for x86_64, a
-> multi_v7_defconfig for arm and a native build of tools/perf. After
-> the final fixups (if any), I do an x86_64 modules_install followed by
-> builds for x86_64 allnoconfig, powerpc allnoconfig (32 and 64 bit),
-> ppc44x_defconfig, allyesconfig and pseries_le_defconfig and i386, sparc
-> and sparc64 defconfig. And finally, a simple boot test of the powerpc
-> pseries_le_defconfig kernel in qemu (with and without kvm enabled).
+> 
 
-Linux-20180517 - arm64 build failed.
-Build failed for HiKey, Juno and dragonboard 410c.
+on x86_64:
 
-Build failed log:
----------------------
-  CC [M]  drivers/gpu/drm/msm/hdmi/hdmi_phy_8960.o
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c: In function
- 'rcar_du_vsp_plane_atomic_duplicate_state':
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:6: error:
- 'struct rcar_du_vsp_plane_state' has no member named 'alpha'
-  copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
-      ^~
-drivers/gpu/drm/rcar-du/rcar_du_vsp.c:325:53: error:
- 'struct rcar_du_vsp_plane_state' has no member named 'alpha'
-  copy->alpha = to_rcar_vsp_plane_state(plane->state)->alpha;
-                                                     ^~
-scripts/Makefile.build:311: recipe for target
- 'drivers/gpu/drm/rcar-du/rcar_du_vsp.o' failed
-make[6]: *** [drivers/gpu/drm/rcar-du/rcar_du_vsp.o] Error 1
-make[6]: *** Waiting for unfinished jobs....
-  CC [M]  drivers/gpu/drm/msm/hdmi/hdmi_phy_8x60.o
-  CC [M]  net/bluetooth/mgmt_util.o
-scripts/Makefile.build:552: recipe for target 'drivers/gpu/drm/rcar-du' failed
-make[5]: *** [drivers/gpu/drm/rcar-du] Error 2
+drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture':
+pwm-stm32.c:(.text+0x53d): undefined reference to `stm32_timers_dma_burst_read'
 
-Complete log link:
-------------------------
-https://ci.linaro.org/job/openembedded-lkft-linux-next/DISTRO=rpb,MACHINE=juno,label=docker-stretch-amd64/263/console
+when COMPILE_TEST=y and MFD_STM32_TIMERS is not set.
+
+
+Any suggestions?
+
+thanks,
+-- 
+~Randy
