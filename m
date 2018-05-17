@@ -1,43 +1,60 @@
-From: Christoph Hellwig <hch@lst.de>
-Subject: Re: linux-next: manual merge of the net-next tree with the vfs tree
-Date: Thu, 17 May 2018 08:47:37 +0200
-Message-ID: <20180517064737.GA24336@lst.de>
-References: <20180517113450.182c8259@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the integrity tree
+Date: Thu, 17 May 2018 16:51:10 +1000
+Message-ID: <20180517165110.6a014e12@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/wiM8keOEQv5.dp58dGNfUTz"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180517113450.182c8259@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>, Chris Novakovic <chris@chrisn.me.uk>
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Petr Vorel <pvorel@suse.cz>
 List-Id: linux-next.vger.kernel.org
 
-> + /* Create a new file under /proc/net/ipconfig */
-> + static int ipconfig_proc_net_create(const char *name,
-> + 				    const struct file_operations *fops)
-> + {
-> + 	char *pname;
-> + 	struct proc_dir_entry *p;
-> + 
-> + 	if (!ipconfig_dir)
-> + 		return -ENOMEM;
-> + 
-> + 	pname = kasprintf(GFP_KERNEL, "%s%s", "ipconfig/", name);
-> + 	if (!pname)
-> + 		return -ENOMEM;
-> + 
-> + 	p = proc_create(pname, 0444, init_net.proc_net, fops);
-> + 	kfree(pname);
-> + 	if (!p)
-> + 		return -ENOMEM;
-> + 
-> + 	return 0;
+--Sig_/wiM8keOEQv5.dp58dGNfUTz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This code doesn't exist in the above mentioned commit.  But event
-without knowing the details of the /proc/net code this looks somewhat
-bogus.  For one I thought all the /proc/net files should be per-net
-namespace.  Second the ntp file really should be using proc_create_net,
-to handle all that under the hood - with the merge of the VFS
-tree it will take a seq_ops, which is what this code really wants
-anyway.
+Hi all,
+
+After merging the integrity tree, today's linux-next build (powerpc
+allyesconfig) produced this warning:
+
+security/integrity/ima/ima_kexec.c:18:0: warning: "pr_fmt" redefined
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+In file included from include/linux/kernel.h:14:0,
+                 from include/asm-generic/bug.h:18,
+                 from arch/powerpc/include/asm/bug.h:128,
+                 from include/linux/bug.h:5,
+                 from include/linux/seq_file.h:7,
+                 from security/integrity/ima/ima_kexec.c:13:
+include/linux/printk.h:288:0: note: this is the location of the previous de=
+finition
+ #define pr_fmt(fmt) fmt
+
+Introduced by commit
+
+  3dea0d93d257 ("ima: Unify logging")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/wiM8keOEQv5.dp58dGNfUTz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr9Jl4ACgkQAVBC80lX
+0GxGsQf/TScM5JgDHnr/o2YfzYeXwgN58KIpcApjma/mgKp9GdVUD/AdNf9tfU9l
+KahOOYcrO+3JFP3GRYNqoa25H5QFE6MDGpOvcj3chM/iXsJ9ULhAOxbI/kyVvyka
+fXqB+M7tJAjn20CQAL3FdZCyn3Y2zh5gfIlZl9oicl9NLiLtPuGwXEFsaFW5h1Bi
++OHt8I7IFRayNzfD01Qf7wlVMzB7Ccf6ymwH0/2ptbgoPcmWdvNvn18MJDVVOgQO
+zTMs35ozRhl1wIM4Oi2z3JxAU64/fhUmb2RFyFI0baktxruussaNc3n3apCt6cj+
+TPqA3qKTxtdQo6kxITXAuq6hHEtnqg==
+=TTqO
+-----END PGP SIGNATURE-----
+
+--Sig_/wiM8keOEQv5.dp58dGNfUTz--
