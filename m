@@ -1,98 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the renesas tree with the mvebu tree
-Date: Thu, 17 May 2018 08:57:28 +1000
-Message-ID: <20180517085728.680dd1bd@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Thu, 17 May 2018 10:39:32 +1000
+Message-ID: <20180517103932.3d7014d1@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wspZCVMZBK1pehs9ntEVrs5"; protocol="application/pgp-signature"
+ boundary="Sig_/hMiEqv1IeAmIv/pC_idrwj/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Simon Horman <horms@verge.net.au>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/wspZCVMZBK1pehs9ntEVrs5
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Al,
 
-Today's linux-next merge of the renesas tree got a conflict in:
+After merging the vfs tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-  arch/arm/configs/multi_v7_defconfig
+drivers/isdn/gigaset/capi.c:2344:14: warning: 'gigaset_procinfo' defined bu=
+t not used [-Wunused-function]
+ static char *gigaset_procinfo(struct capi_ctr *ctr)
+              ^~~~~~~~~~~~~~~~
 
-between commit:
+Introduced by commit
 
-  873edb2930ef ("ARM: multi_v7_defconfig: Update with current configuration=
-")
-
-from the mvebu tree and commits:
-
-  57eec170e954 ("ARM: multi_v7_defconfig: Disable CONFIG_FB_SH_MOBILE_MERAM=
-")
-  eedd7902366b ("ARM: multi_v7_defconfig: Enable RENESAS_WDT")
-
-from the renesas tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  2cd1f0ddbb56 ("isdn: replace ->proc_fops with ->proc_show")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/configs/multi_v7_defconfig
-index 8bcf3be58047,374a40945b0f..000000000000
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@@ -463,23 -489,20 +464,24 @@@ CONFIG_XILINX_WATCHDOG=3D
-  CONFIG_ARM_SP805_WATCHDOG=3Dy
-  CONFIG_AT91SAM9X_WATCHDOG=3Dy
-  CONFIG_SAMA5D4_WATCHDOG=3Dy
- +CONFIG_DW_WATCHDOG=3Dy
- +CONFIG_DAVINCI_WATCHDOG=3Dm
-  CONFIG_ORION_WATCHDOG=3Dy
-  CONFIG_RN5T618_WATCHDOG=3Dy
- -CONFIG_ST_LPC_WATCHDOG=3Dy
-  CONFIG_SUNXI_WATCHDOG=3Dy
-  CONFIG_IMX2_WDT=3Dy
- +CONFIG_ST_LPC_WATCHDOG=3Dy
-  CONFIG_TEGRA_WATCHDOG=3Dm
-  CONFIG_MESON_WATCHDOG=3Dy
- -CONFIG_DW_WATCHDOG=3Dy
-  CONFIG_DIGICOLOR_WATCHDOG=3Dy
-+ CONFIG_RENESAS_WDT=3Dm
- -CONFIG_BCM2835_WDT=3Dy
-  CONFIG_BCM47XX_WDT=3Dy
- -CONFIG_BCM7038_WDT=3Dm
- +CONFIG_BCM2835_WDT=3Dy
-  CONFIG_BCM_KONA_WDT=3Dy
- +CONFIG_BCM7038_WDT=3Dm
- +CONFIG_BCMA_HOST_SOC=3Dy
- +CONFIG_BCMA_DRIVER_GMAC_CMN=3Dy
- +CONFIG_BCMA_DRIVER_GPIO=3Dy
-  CONFIG_MFD_ACT8945A=3Dy
-  CONFIG_MFD_AS3711=3Dy
-  CONFIG_MFD_AS3722=3Dy
-
---Sig_/wspZCVMZBK1pehs9ntEVrs5
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr8t1gACgkQAVBC80lX
-0Gw7uggAgZFIj8Uu1wcbJYYfQIQbTafhhW7KLFqfmvqWaFkzX54PtlASNxq92QY0
-M31bVDct2r8OCZ03I0VsYtpaDMpbpphq4rZiwJnA3qpZPMz9JPCD80bwJaKfGPDF
-9G084MpComkDKZptNtDnhsNQJRBGp9b5Uaf1Y0GD2un/OmllsMoo6Yg6nsxiKFfh
-2+uJ+PCYH2LuLfpPOWgjzdzGB6xeiaECByzDC/YBauhUc/acG/Jr/N9Vo1T6ba8v
-1EBunbfSs8BGPxEen+neCBGuDfN5FWZWF0Y2SUPkcJLdS3R/3xzoWjiCLxKAMqIW
-/z1snNUNQbbJ2LhOsAjgGhzY57sLIQ==
-=vaWe
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlr8z0QACgkQAVBC80lX
+0GzjNQf+OQNY5dsyKGqqVazQZJhTgbKu9hfiEeNASyXx+p9C05o/6DKCpHY9l2xV
+EiuoTbQwMwEE6R9zQgsk/ocsh4uuoDNYiEC2MKS8yV5L/GBuIKIHHKXuRmpMu7wT
+7c7LIDNCpIx2UZYRHYfU8E2I/ZeoCwSm7ai/B57tBdmTyPv7C3PfotJptXCob+ra
+uB0J80qHOSv6HX/w/cvpnctwi/J81vrjELXjpaYHneKfciVwR1mVBljt6Od6P+so
+6MyQVEBIFd32AFM8Td3k2YkLwm+Oz396zdw9IXmc9X0dckucXSsrR1MGrMzrc+TL
+hUx4tH6bU8HOeuVLMLyJ7WaqtKp0AA==
+=XU5q
 -----END PGP SIGNATURE-----
 
---Sig_/wspZCVMZBK1pehs9ntEVrs5--
+--Sig_/hMiEqv1IeAmIv/pC_idrwj/--
