@@ -1,61 +1,42 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the usb-gadget tree with the usb tree
-Date: Thu, 17 May 2018 09:07:24 +0200
-Message-ID: <20180517070724.GD13919@kroah.com>
-References: <20180517140318.5333cfee@canb.auug.org.au>
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the v4l-dvb tree
+Date: Thu, 17 May 2018 10:17:20 +0300
+Message-ID: <20180517071720.rb6sdozr5bwy543e@paasikivi.fi.intel.com>
+References: <20180517073702.5497e72e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180517140318.5333cfee@canb.auug.org.au>
+In-Reply-To: <20180517073702.5497e72e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Felipe Balbi <balbi@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jason Chen <jasonx.z.chen@intel.com>, Andy Yeh <andy.yeh@intel.com>, Alan Chiang <alanx.chiang@intel.com>, Tomasz Figa <tfiga@chromium.org>, Jacopo Mondi <jacopo@jmondi.org>, Rob Herring <robh@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 17, 2018 at 02:03:18PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Thu, May 17, 2018 at 07:37:02AM +1000, Stephen Rothwell wrote:
+> Hi Mauro,
 > 
-> Today's linux-next merge of the usb-gadget tree got a conflict in:
+> Commit
 > 
->   drivers/usb/mtu3/Kconfig
+>   af76c93aa36d ("media: cadence: csi2rx: Fix csi2rx_start error handling")
 > 
-> between commit:
-> 
->   cd91a0e9d38f ("usb: Remove depends on HAS_DMA in case of platform dependency")
-> 
-> from the usb tree and commit:
-> 
->   f39846824cd6 ("usb: mtu3: make USB_MTU3_DUAL_ROLE depend on EXTCON but not USB_MTU3")
-> 
-> from the usb-gadget tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc drivers/usb/mtu3/Kconfig
-> index c0c0eb88e5ea,8daf27768888..000000000000
-> --- a/drivers/usb/mtu3/Kconfig
-> +++ b/drivers/usb/mtu3/Kconfig
-> @@@ -2,7 -2,7 +2,7 @@@
->   
->   config USB_MTU3
->   	tristate "MediaTek USB3 Dual Role controller"
-> - 	depends on EXTCON && (USB || USB_GADGET)
->  -	depends on (USB || USB_GADGET) && HAS_DMA
-> ++	depends on (USB || USB_GADGET)
->   	depends on ARCH_MEDIATEK || COMPILE_TEST
->   	select USB_XHCI_MTK if USB_SUPPORT && USB_XHCI_HCD
->   	help
+> is missing a Signed-off-by from its committer.
 
-Looks good to me, thanks!
+Mauro's SoB line is indeed missing. I wonder what happened.
 
-greg k-h
+> 
+> Commits
+> 
+>   c578c7710712 ("media: imx258: Add imx258 camera sensor driver")
+>   3a8fdc1426c3 ("media: dw9807: Add dw9807 vcm driver")
+>   2f9c1c88369f ("media: dt-bindings: Add bindings for Dongwoon DW9807 voice coil")
+> 
+> are missing a Signed-off-by from their author.
+
+Thanks for pointing this out. We'll be more careful going forward.
+
+-- 
+Regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
