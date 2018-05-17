@@ -1,45 +1,27 @@
-From: Greg KH <greg@kroah.com>
-Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
- tree
-Date: Thu, 17 May 2018 09:22:14 +0200
-Message-ID: <20180517072214.GA15351@kroah.com>
-References: <20180517141727.3119e1da@canb.auug.org.au>
+From: Corentin Labbe <clabbe.montjoie@gmail.com>
+Subject: Re: [PATCH] crypto: reorder paes test lexicographically
+Date: Thu, 17 May 2018 10:14:12 +0200
+Message-ID: <20180517081412.GA1801@Red>
+References: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180517141727.3119e1da@canb.auug.org.au>
+In-Reply-To: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alan Cox <alan@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 17, 2018 at 02:17:27PM +1000, Stephen Rothwell wrote:
-> Hi all,
+On Fri, May 11, 2018 at 09:04:06AM +0100, Gilad Ben-Yossef wrote:
+> Due to a snafu "paes" testmgr tests were not ordered
+> lexicographically, which led to boot time warnings.
+> Reorder the tests as needed.
 > 
-> Today's linux-next merge of the staging tree got a conflict in:
-> 
->   drivers/staging/media/atomisp/TODO
-> 
-> between commit:
-> 
->   51b8dc5163d2 ("media: staging: atomisp: Remove driver")
-> 
-> from the v4l-dvb tree and commit:
-> 
->   1bd421154821 ("staging: atomisp: Augment TODO file with GPIO work item")
-> 
-> from the staging tree.
-> 
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+> Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Looks correct, glad to see this code be removed :)
+Tested-by: Corentin Labbe <clabbe.montjoie@gmail.com>
 
-thanks,
-
-greg k-h
+Thanks
