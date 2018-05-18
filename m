@@ -1,65 +1,29 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 1/2] mfd: stm32-timers: fix pwm-stm32 linker issue with
- COMPILE_TEST
-Date: Fri, 18 May 2018 09:56:24 -0700
-Message-ID: <0f03fe4b-0b5f-92f1-2929-c6c585432159@infradead.org>
-References: <1526657044-14879-1-git-send-email-fabrice.gasnier@st.com>
- <1526657044-14879-2-git-send-email-fabrice.gasnier@st.com>
+From: Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH] crypto: reorder paes test lexicographically
+Date: Sat, 19 May 2018 02:21:15 +0800
+Message-ID: <20180518182114.aqrkeoypuh2wlucy@gondor.apana.org.au>
+References: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1526657044-14879-2-git-send-email-fabrice.gasnier@st.com>
-Content-Language: en-US
+Content-Disposition: inline
+In-Reply-To: <1526025847-13134-1-git-send-email-gilad@benyossef.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Fabrice Gasnier <fabrice.gasnier@st.com>, lee.jones@linaro.org, thierry.reding@gmail.com
-Cc: sfr@canb.auug.org.au, gerald.baeza@st.com, alexandre.torgue@st.com, mcoquelin.stm32@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+To: Gilad Ben-Yossef <gilad@benyossef.com>
+Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, "David S. Miller" <davem@davemloft.net>, Ofir Drang <ofir.drang@arm.com>, linux-next <linux-next@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On 05/18/2018 08:24 AM, Fabrice Gasnier wrote:
-> This is seen when COMPILE_TEST=y and MFD_STM32_TIMERS=n.
-> drivers/pwm/pwm-stm32.o: In function 'stm32_pwm_raw_capture':
-> pwm-stm32.c:... undefined reference to 'stm32_timers_dma_burst_read'
-> Fixes: 0c6609805b63 ("mfd: stm32-timers: Add support for DMAs")
+On Fri, May 11, 2018 at 09:04:06AM +0100, Gilad Ben-Yossef wrote:
+> Due to a snafu "paes" testmgr tests were not ordered
+> lexicographically, which led to boot time warnings.
+> Reorder the tests as needed.
 > 
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> Fixes: a794d8d ("crypto: ccree - enable support for hardware keys")
+> Reported-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  include/linux/mfd/stm32-timers.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/linux/mfd/stm32-timers.h b/include/linux/mfd/stm32-timers.h
-> index 9da1d7e..067d146 100644
-> --- a/include/linux/mfd/stm32-timers.h
-> +++ b/include/linux/mfd/stm32-timers.h
-> @@ -124,8 +124,20 @@ struct stm32_timers {
->  	struct stm32_timers_dma dma; /* Only to be used by the parent */
->  };
->  
-> +#if IS_REACHABLE(CONFIG_MFD_STM32_TIMERS)
->  int stm32_timers_dma_burst_read(struct device *dev, u32 *buf,
->  				enum stm32_timers_dmas id, u32 reg,
->  				unsigned int num_reg, unsigned int bursts,
->  				unsigned long tmo_ms);
-> +#else
-> +static inline int stm32_timers_dma_burst_read(struct device *dev, u32 *buf,
-> +					      enum stm32_timers_dmas id,
-> +					      u32 reg,
-> +					      unsigned int num_reg,
-> +					      unsigned int bursts,
-> +					      unsigned long tmo_ms)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
->  #endif
-> 
-
-
+Patch applied.  Thanks.
 -- 
-~Randy
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
