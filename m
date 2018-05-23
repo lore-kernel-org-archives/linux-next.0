@@ -1,133 +1,55 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the printk tree with Linus' tree
-Date: Wed, 23 May 2018 23:37:39 +0100
-Message-ID: <20180523223739.GP4828@sirena.org.uk>
+Subject: Re: linux-next: Tree for May 17
+Date: Thu, 24 May 2018 00:07:13 +0100
+Message-ID: <20180523230713.GQ4828@sirena.org.uk>
+References: <20180517170656.1f746914@canb.auug.org.au>
+ <20180522141843.GC24776@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CUrluEZVXmx7ezWQ"
+        protocol="application/pgp-signature"; boundary="de1H0RjRxOSdb4we"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <20180522141843.GC24776@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Petr Mladek <pmladek@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---CUrluEZVXmx7ezWQ
+--de1H0RjRxOSdb4we
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
+On Tue, May 22, 2018 at 03:18:43PM +0100, Mark Brown wrote:
+> On Thu, May 17, 2018 at 05:06:56PM +1000, Stephen Rothwell wrote:
+>=20
+> > News: I will not be doing any linux-next releases between Friday 18 May
+> > and Friday 25 May inclusive.
+>=20
+> Just noticed this, I'm going to try to cover starting tomorrow.  The
+> usual caveats about reduced service and reliability apply.
 
-Today's linux-next merge of the printk tree got a conflict in:
+This isn't going to happen for today, I ran into some scripting/infrastruct=
+ure
+issues which effectively delayed the start of the build by about six
+hours.  Those are fixed now so fingers crossed things should be fine
+tomorrow, I'll let the build run for a while longer today and report any
+further issues but there won't be a tree.
 
-  lib/vsprintf.c
-
-between commit:
-
-  85f4f12d51397f164 ("vsprintf: Replace memory barrier with static_key for =
-random_ptr_key update")
-
-=66rom Linus' tree and commits:
-
-  558594f3c2a5cd65f ("lib/vsprintf: Move pointer_string() upper)"
-  496a9a5f3806d58b1 ("lib/vsprintf: Deduplicate pointer_string()")
-
-=66rom the printk tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc lib/vsprintf.c
-index 23920c5ff728,7649ef4ed7d0..000000000000
---- a/lib/vsprintf.c
-+++ b/lib/vsprintf.c
-@@@ -1655,36 -1644,19 +1654,22 @@@ char *device_node_string(char *buf, cha
-  	return widen_string(buf, buf - buf_start, end, spec);
-  }
- =20
-- static noinline_for_stack
-- char *pointer_string(char *buf, char *end, const void *ptr,
-- 		     struct printf_spec spec)
-- {
-- 	spec.base =3D 16;
-- 	spec.flags |=3D SMALL;
-- 	if (spec.field_width =3D=3D -1) {
-- 		spec.field_width =3D 2 * sizeof(ptr);
-- 		spec.flags |=3D ZEROPAD;
-- 	}
--=20
-- 	return number(buf, end, (unsigned long int)ptr, spec);
-- }
--=20
- -static bool have_filled_random_ptr_key __read_mostly;
- +static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
-  static siphash_key_t ptr_key __read_mostly;
- =20
- -static void fill_random_ptr_key(struct random_ready_callback *unused)
- +static void enable_ptr_key_workfn(struct work_struct *work)
-  {
-  	get_random_bytes(&ptr_key, sizeof(ptr_key));
- -	/*
- -	 * have_filled_random_ptr_key=3D=3Dtrue is dependent on get_random_bytes=
-().
- -	 * ptr_to_id() needs to see have_filled_random_ptr_key=3D=3Dtrue
- -	 * after get_random_bytes() returns.
- -	 */
- -	smp_mb();
- -	WRITE_ONCE(have_filled_random_ptr_key, true);
- +	/* Needs to run from preemptible context */
- +	static_branch_disable(&not_filled_random_ptr_key);
- +}
- +
- +static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
- +
- +static void fill_random_ptr_key(struct random_ready_callback *unused)
- +{
- +	/* This may be in an interrupt handler. */
- +	queue_work(system_unbound_wq, &enable_ptr_key_work);
-  }
- =20
-  static struct random_ready_callback random_ready =3D {
-@@@ -1710,13 -1681,13 +1695,13 @@@ early_initcall(initialize_ptr_random)
-  /* Maps a pointer to a 32 bit unique identifier. */
-  static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spe=
-c spec)
-  {
-+ 	const char *str =3D sizeof(ptr) =3D=3D 8 ? "(____ptrval____)" : "(ptrval=
-)";
-  	unsigned long hashval;
-- 	const int default_width =3D 2 * sizeof(ptr);
- =20
- -	if (unlikely(!have_filled_random_ptr_key)) {
- +	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
-- 		spec.field_width =3D default_width;
-+ 		spec.field_width =3D 2 * sizeof(ptr);
-  		/* string length must be less than default_width */
-- 		return string(buf, end, "(ptrval)", spec);
-+ 		return string(buf, end, str, spec);
-  	}
- =20
-  #ifdef CONFIG_64BIT
-
---CUrluEZVXmx7ezWQ
+--de1H0RjRxOSdb4we
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsF7TIACgkQJNaLcl1U
-h9AFdwf/YgdjIavRRQ2/3TTIF6wvD9SGotx7Iq0J8574YCSnae6dx+lerHfDI+tu
-qV1jORZ8Ps3Hw4JzgdS5Z1VO5P+1k6e9vBfASIKub24VAENO7uGff+oLrzAkkLw3
-MuqF3IQoB4aOCc3yNPk1f19K1KhKSmsWQDb/7tdtY/aCqUmVI/jMias/SuYHVw0/
-4g/oXblXoumvFbqtXpj+lu0mxWVKyS2SXkxPa/JbbmYlyL4FGnJyePy1ZiUIB0UL
-+KnjgDHvGIjnUbcOFZARZjLkJhG5QJ8PHWWHo/D+bMV/H3dV6GQWSS1cULBzcW4j
-AzE0mj50wHY1rriFF6U/snadIGfrDw==
-=jeJA
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsF9CEACgkQJNaLcl1U
+h9B5Awf9GK92w7QS1c8BjUvYg9yw61GzpW9RNkeHxHXezeHoyFvlGh1GlQNrOwfm
+diu3aDYyrNCgMpi1rnJdV5h/WIrwTPuo2UzLLIpSii5u5q2NaAPgFGiS1NX3IIio
+T8yst3k5v7y0pUWBYL6Ow3+DrcG8u+Zz5rWW8ZhxXu0b+BVyKVL64BuclJ2l+OH9
+Axv7VLaMzyUeWO/rZvFzmYuszI1dhgEgErj74jVPurcHMPpNdwK+QL9u/K+8aC1S
+Rie9CKsK1wvPSVfoy05ngEBRN5fUeX+loLO+IwEFMxB9m7Jqo7s8gS2fPBj+CxZ7
+AzHOb+M54VudD3zX9jeljYpH7D1q1g==
+=Zu3k
 -----END PGP SIGNATURE-----
 
---CUrluEZVXmx7ezWQ--
+--de1H0RjRxOSdb4we--
