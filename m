@@ -1,43 +1,133 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: linux-next: build warning after merge of the mac80211-next tree
-Date: Wed, 23 May 2018 23:55:00 +0200
-Message-ID: <CAK8P3a1tdhO6FX76vMXdpd6FxN87RjhLeKW4ws8GgOHqAwr4qA@mail.gmail.com>
-References: <20180509145624.643d2e56@canb.auug.org.au> <87po221j08.fsf@purkki.adurom.net>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the printk tree with Linus' tree
+Date: Wed, 23 May 2018 23:37:39 +0100
+Message-ID: <20180523223739.GP4828@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <87po221j08.fsf-5ukZ45wKbUHoml4zekdYB16hYfS7NtTn@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke-LJ9M9ZcSy1A@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="CUrluEZVXmx7ezWQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Petr Mladek <pmladek@suse.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Steven Rostedt <rostedt@goodmis.org>, Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 11, 2018 at 2:20 PM, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
-> Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> writes:
->
->> After merging the mac80211-next tree, today's linux-next build (arm_multi
->> v7_defconfig) produced this warning:
->>
->> drivers/net/wireless/marvell/mwifiex/uap_event.c: In function 'mwifiex_process_uap_event':
->> drivers/net/wireless/marvell/mwifiex/uap_event.c:333:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>  }
->>  ^
->> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: In function 'brcmf_notify_connect_status_ap':
->> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:5530:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>  }
->>  ^
->>
->> Maybe introduced by commit
->>
->>   52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
->
-> Btw Stephen for mac80211 reports it would be a good idea to also cc
-> linux-wireless list, in case Johannes is not around etc.
 
-I also bisected this new warning to the same commit above:
+--CUrluEZVXmx7ezWQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-net/batman-adv/bat_v_elp.c: In function 'batadv_v_elp_get_throughput':
-net/batman-adv/bat_v_elp.c:154:1: warning: the frame size of 1736
-bytes is larger than 1024 bytes [-Wframe-larger-than=]
+Hi Petr,
 
-      Arnd
+Today's linux-next merge of the printk tree got a conflict in:
+
+  lib/vsprintf.c
+
+between commit:
+
+  85f4f12d51397f164 ("vsprintf: Replace memory barrier with static_key for =
+random_ptr_key update")
+
+=66rom Linus' tree and commits:
+
+  558594f3c2a5cd65f ("lib/vsprintf: Move pointer_string() upper)"
+  496a9a5f3806d58b1 ("lib/vsprintf: Deduplicate pointer_string()")
+
+=66rom the printk tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc lib/vsprintf.c
+index 23920c5ff728,7649ef4ed7d0..000000000000
+--- a/lib/vsprintf.c
++++ b/lib/vsprintf.c
+@@@ -1655,36 -1644,19 +1654,22 @@@ char *device_node_string(char *buf, cha
+  	return widen_string(buf, buf - buf_start, end, spec);
+  }
+ =20
+- static noinline_for_stack
+- char *pointer_string(char *buf, char *end, const void *ptr,
+- 		     struct printf_spec spec)
+- {
+- 	spec.base =3D 16;
+- 	spec.flags |=3D SMALL;
+- 	if (spec.field_width =3D=3D -1) {
+- 		spec.field_width =3D 2 * sizeof(ptr);
+- 		spec.flags |=3D ZEROPAD;
+- 	}
+-=20
+- 	return number(buf, end, (unsigned long int)ptr, spec);
+- }
+-=20
+ -static bool have_filled_random_ptr_key __read_mostly;
+ +static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
+  static siphash_key_t ptr_key __read_mostly;
+ =20
+ -static void fill_random_ptr_key(struct random_ready_callback *unused)
+ +static void enable_ptr_key_workfn(struct work_struct *work)
+  {
+  	get_random_bytes(&ptr_key, sizeof(ptr_key));
+ -	/*
+ -	 * have_filled_random_ptr_key=3D=3Dtrue is dependent on get_random_bytes=
+().
+ -	 * ptr_to_id() needs to see have_filled_random_ptr_key=3D=3Dtrue
+ -	 * after get_random_bytes() returns.
+ -	 */
+ -	smp_mb();
+ -	WRITE_ONCE(have_filled_random_ptr_key, true);
+ +	/* Needs to run from preemptible context */
+ +	static_branch_disable(&not_filled_random_ptr_key);
+ +}
+ +
+ +static DECLARE_WORK(enable_ptr_key_work, enable_ptr_key_workfn);
+ +
+ +static void fill_random_ptr_key(struct random_ready_callback *unused)
+ +{
+ +	/* This may be in an interrupt handler. */
+ +	queue_work(system_unbound_wq, &enable_ptr_key_work);
+  }
+ =20
+  static struct random_ready_callback random_ready =3D {
+@@@ -1710,13 -1681,13 +1695,13 @@@ early_initcall(initialize_ptr_random)
+  /* Maps a pointer to a 32 bit unique identifier. */
+  static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spe=
+c spec)
+  {
++ 	const char *str =3D sizeof(ptr) =3D=3D 8 ? "(____ptrval____)" : "(ptrval=
+)";
+  	unsigned long hashval;
+- 	const int default_width =3D 2 * sizeof(ptr);
+ =20
+ -	if (unlikely(!have_filled_random_ptr_key)) {
+ +	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
+- 		spec.field_width =3D default_width;
++ 		spec.field_width =3D 2 * sizeof(ptr);
+  		/* string length must be less than default_width */
+- 		return string(buf, end, "(ptrval)", spec);
++ 		return string(buf, end, str, spec);
+  	}
+ =20
+  #ifdef CONFIG_64BIT
+
+--CUrluEZVXmx7ezWQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsF7TIACgkQJNaLcl1U
+h9AFdwf/YgdjIavRRQ2/3TTIF6wvD9SGotx7Iq0J8574YCSnae6dx+lerHfDI+tu
+qV1jORZ8Ps3Hw4JzgdS5Z1VO5P+1k6e9vBfASIKub24VAENO7uGff+oLrzAkkLw3
+MuqF3IQoB4aOCc3yNPk1f19K1KhKSmsWQDb/7tdtY/aCqUmVI/jMias/SuYHVw0/
+4g/oXblXoumvFbqtXpj+lu0mxWVKyS2SXkxPa/JbbmYlyL4FGnJyePy1ZiUIB0UL
++KnjgDHvGIjnUbcOFZARZjLkJhG5QJ8PHWWHo/D+bMV/H3dV6GQWSS1cULBzcW4j
+AzE0mj50wHY1rriFF6U/snadIGfrDw==
+=jeJA
+-----END PGP SIGNATURE-----
+
+--CUrluEZVXmx7ezWQ--
