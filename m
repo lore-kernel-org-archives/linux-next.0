@@ -1,45 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: linux-next: Tree for May 17
-Date: Tue, 22 May 2018 15:18:43 +0100
-Message-ID: <20180522141843.GC24776@sirena.org.uk>
-References: <20180517170656.1f746914@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Date: Wed, 23 May 2018 11:49:29 +0200
+Message-ID: <CACRpkdYH5ik_TJeouGh0CfhM8Kt=p7Sr3pUceVPBBjEGS2rZ_g@mail.gmail.com>
+References: <20180516072753.49dd4d88@canb.auug.org.au> <CAMuHMdVEOmrd9da8XR0_wKJw9+KygkCUTSWvQjtP2Xh9aOkSFQ@mail.gmail.com>
+ <CACRpkdYgE+UWqTZPSbxBP0ucQK5xS7qCsT=5hne-LevXdU3O5A@mail.gmail.com>
+ <CAMuHMdVPonsrrmEeTmBR+3YW65hSaHbVOz-8_A10cLoAd2SXyw@mail.gmail.com>
+ <CACRpkdZTMqf0sFCMPaX2aAcxrJ3LXAi7-Cfx5qevvp7To0V6NA@mail.gmail.com> <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ALfTUftag+2gvp1h"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180517170656.1f746914@canb.auug.org.au>
+In-Reply-To: <CAMuHMdXhE8WZnL5fR9pvDkMDVrRXQdajL0r=113eHuK9RKoigw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: linux-next.vger.kernel.org
 
+On Wed, May 16, 2018 at 7:40 PM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
 
---ALfTUftag+2gvp1h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> I guess I should base my next pull request on the new commit
+> 73dacc3403436fc2 ("pinctrl: sh-pfc: Add r8a77470 PFC support") in your
+> tree, instead of on my previous pull request? Else there will be some
+> conflicts (I checked: so far in one file only).
 
-On Thu, May 17, 2018 at 05:06:56PM +1000, Stephen Rothwell wrote:
+Yeah that should work. I try not to rebase my tree too much,
+sometimes it happens anyway. This commit should be stable
+and nice.
 
-> News: I will not be doing any linux-next releases between Friday 18 May
-> and Friday 25 May inclusive.
-
-Just noticed this, I'm going to try to cover starting tomorrow.  The
-usual caveats about reduced service and reliability apply.
-
---ALfTUftag+2gvp1h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsEJsIACgkQJNaLcl1U
-h9BNZgf/Tiy9WvLEIbwnqlqjFc5nClndscpWn7h2FL89kxloiDwfRhojwG7Je6sg
-tTbf3RwR6IrtK96ChWHzcx8JlDwa/kEzOx6EIUc46mTwhFMfaxnPnx9y9cMPfQq/
-6+dsmCRDCfysveNQRA/Nc3HgARG6MJeE28v/okpQQu7KWYqP3Jj91DD6K360EWDv
-+BsgNYszjKXSWevfrmaBUPXAY4MjdX/rUetF00TWfa7Q7pnPM9mB9rAmT8wLDGp3
-gytlRT2kqNVFQFssfqbcvkvtsrR1mAZ3Yz8u2EsErAtCC5JONktPzlqrowMLL8MV
-UWjC5R4sZpdu6TC6Vg6LgdV+pduRHQ==
-=o5kR
------END PGP SIGNATURE-----
-
---ALfTUftag+2gvp1h--
+Yours,
+Linus Walleij
