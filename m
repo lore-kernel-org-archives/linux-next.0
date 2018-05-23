@@ -1,79 +1,43 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 23 May 2018 13:25:30 +0100
-Message-ID: <20180523122530.GJ4828@sirena.org.uk>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: linux-next: build warning after merge of the mac80211-next tree
+Date: Wed, 23 May 2018 23:55:00 +0200
+Message-ID: <CAK8P3a1tdhO6FX76vMXdpd6FxN87RjhLeKW4ws8GgOHqAwr4qA@mail.gmail.com>
+References: <20180509145624.643d2e56@canb.auug.org.au> <87po221j08.fsf@purkki.adurom.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="YPJ8CVbwFUtL7OFW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@armlinux.org.uk>, Florian Fainelli <f.fainelli@gmail.com>, Doug Berger <opendmb@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <87po221j08.fsf-5ukZ45wKbUHoml4zekdYB16hYfS7NtTn@public.gmane.org>
+Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Linux-Next Mailing List <linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke-LJ9M9ZcSy1A@public.gmane.org>, linux-wireless <linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-next.vger.kernel.org
 
+On Fri, May 11, 2018 at 2:20 PM, Kalle Valo <kvalo-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+> Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org> writes:
+>
+>> After merging the mac80211-next tree, today's linux-next build (arm_multi
+>> v7_defconfig) produced this warning:
+>>
+>> drivers/net/wireless/marvell/mwifiex/uap_event.c: In function 'mwifiex_process_uap_event':
+>> drivers/net/wireless/marvell/mwifiex/uap_event.c:333:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c: In function 'brcmf_notify_connect_status_ap':
+>> drivers/net/wireless/broadcom/brcm80211/brcmfmac/cfg80211.c:5530:1: warning: the frame size of 1680 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>>
+>> Maybe introduced by commit
+>>
+>>   52539ca89f36 ("cfg80211: Expose TXQ stats and parameters to userspace")
+>
+> Btw Stephen for mac80211 reports it would be a good idea to also cc
+> linux-wireless list, in case Johannes is not around etc.
 
---YPJ8CVbwFUtL7OFW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I also bisected this new warning to the same commit above:
 
-Hi all,
+net/batman-adv/bat_v_elp.c: In function 'batadv_v_elp_get_throughput':
+net/batman-adv/bat_v_elp.c:154:1: warning: the frame size of 1736
+bytes is larger than 1024 bytes [-Wframe-larger-than=]
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
-
-  arch/arm/include/asm/cputype.h
-
-between commit:
-
-  b2ccaa851e9882c10 ("ARM: add CPU part numbers for Cortex A73, A75 and Bra=
-hma B15")
-
-=66rom the arm tree and several commits from the arm-soc tree:
-
-  842fa17d6c95368d7 ("ARM: add Broadcom Brahma-B15 main ID definition")
-  9e35ddc962a656bf4 ("ARM: add Broadcom Brahma-B53 main ID definition")
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc arch/arm/include/asm/cputype.h
-index adc4a3eef815,d1b62ee69f3b..000000000000
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@@ -77,12 -75,11 +75,13 @@@
-  #define ARM_CPU_PART_CORTEX_A12		0x4100c0d0
-  #define ARM_CPU_PART_CORTEX_A17		0x4100c0e0
-  #define ARM_CPU_PART_CORTEX_A15		0x4100c0f0
- +#define ARM_CPU_PART_CORTEX_A73		0x4100d090
- +#define ARM_CPU_PART_CORTEX_A75		0x4100d0a0
-  #define ARM_CPU_PART_MASK		0xff00fff0
- =20
- -/* Broadcom implemented processors */
- +/* Broadcom cores */
-  #define ARM_CPU_PART_BRAHMA_B15		0x420000f0
-+ #define ARM_CPU_PART_BRAHMA_B53		0x42001000
- =20
-  /* DEC implemented cores */
-  #define ARM_CPU_PART_SA1100		0x4400a110
-
---YPJ8CVbwFUtL7OFW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsFXbkACgkQJNaLcl1U
-h9B44Qf+IV0QSACk3u+0oDrLeggpqItPMwZuS8Rxh9zAbNsIa9fCBZ3KzriX3T+t
-pFV26OSD5tWRn2YvI3IBPanaJqnJYvGq/nicIjc7LV65BMBcA/lDu81eYkCvDZ/r
-w0WNb88y7StUnMdHdiGVsLuvh/m12jZJMOMqJoRAZGA5rF+NHtl8Z0kQ+o3ej2r7
-0fs/nGdQqgGblp40h3QN7Sx90J2PX29IN02HA9/LB/5uvfjHZJOSYIaiUAqF4AF2
-5bDT/BlGc9QpfDGq71s2eIt5za0KomePilJzHAza7AhFTvYOcLssbHtcUmv6Z7z6
-Wp0QwdluQkcNYPm8+IcgnTguWUqkpg==
-=7lBX
------END PGP SIGNATURE-----
-
---YPJ8CVbwFUtL7OFW--
+      Arnd
