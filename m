@@ -1,43 +1,52 @@
-From: Kalle Valo <kvalo@codeaurora.org>
-Subject: Re: linux-next: build warning after merge of the mac80211-next tree
-Date: Thu, 24 May 2018 13:08:38 +0300
-Message-ID: <87efi1cqmx.fsf@kamboji.qca.qualcomm.com>
-References: <20180509145624.643d2e56@canb.auug.org.au>
-        <87po221j08.fsf@purkki.adurom.net>
-        <CAK8P3a1tdhO6FX76vMXdpd6FxN87RjhLeKW4ws8GgOHqAwr4qA@mail.gmail.com>
-        <87muwpd76a.fsf@kamboji.qca.qualcomm.com>
-        <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: linux-next: build failure after merge of the pm tree
+Date: Thu, 24 May 2018 15:16:51 +0100
+Message-ID: <20180524141651.GV4828@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="YwTTlJgQ7QoYB9ta"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a3MMjg5oDVM_OAZ_nKeJ4zKK5PrDE+6UgQQfNxwEhRbMA@mail.gmail.com>
-        (Arnd Bergmann's message of "Thu, 24 May 2018 10:51:17 +0200")
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Johannes Berg <johannes@sipsolutions.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgens?= =?utf-8?Q?en?= <toke@toke.dk>, linux-wireless <linux-wireless@vger.kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Wendy Wang <wendy.wang@intel.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-next.vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
 
-> On Thu, May 24, 2018 at 6:11 AM, Kalle Valo <kvalo@codeaurora.org> wrote:
->> Arnd Bergmann <arnd@arndb.de> writes:
->>> I also bisected this new warning to the same commit above:
->>>
->>> net/batman-adv/bat_v_elp.c: In function 'batadv_v_elp_get_throughput':
->>> net/batman-adv/bat_v_elp.c:154:1: warning: the frame size of 1736
->>> bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>
->> This should fix it:
->>
->> 8689c051a201 cfg80211: dynamically allocate per-tid stats for station info
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/jberg/mac80211-next.git/commit/?id=8689c051a20195b228e19acb155c7d6e48a86753
->
-> Thanks for the pointer, I'll just wait for that to make it into
-> linux-next (which hasn't been released in a few days now) then.
+--YwTTlJgQ7QoYB9ta
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yeah, Stephen announced that he won't be making linux-next builds this
-week. I think he will be back next week.
+Hi Rafael,
 
--- 
-Kalle Valo
+After merging the pm tree, today's linux-next build (arm64 defconfig)
+failed like this:
+
+drivers/acpi/ec.o: In function `acpi_ec_dispatch_gpe':
+/home/broonie/next/next/drivers/acpi/ec.c:1040: undefined reference to `acpi_dispatch_gpe'
+/home/broonie/next/next/drivers/acpi/ec.c:1040:(.text+0x228c): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `acpi_dispatch_gpe'
+
+Probably caused by commit
+
+  8f81c457105b5d4 ("ACPI: EC: Dispatch the EC GPE directly on s2idle wake")
+
+(though the symbol appears to be there and like it should be built and
+the relocation warning looks funky...).  I've used the PM tree from the
+last -next.
+
+--YwTTlJgQ7QoYB9ta
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGyVIACgkQJNaLcl1U
+h9BPBAf+Lo9wQmffH4H2EV4dSINIApOkXivOXJ7jydPy3Srx6sXD0kbYPZdV/eA3
+mPmSaaF631sgU0tgVIwyoP6zpjnY5JIDAEQVoqj/xm+trfnCqzXMa25peTMPR0kR
+Lt4MDQzua0GqPFh8cQtOAQQcMRboZgcPPymu5JILIILoe1/t6JVxrOjl34KOlFOg
+WmBJ4abBtcydtHEufjumZ4jzIA0uHSM6raWcEPrOqD7BlHD3PU2NZRJIFY45j+Ns
+B3NHp+ICvuMTnqSJtDHmvNG3zmV0XSrkW7v/T0VgklyQd48Oq4aZNFW2r6opFb9L
+pJ9Ap1khBoh/j1xfOAzwEyPqNBsR0Q==
+=zbJe
+-----END PGP SIGNATURE-----
+
+--YwTTlJgQ7QoYB9ta--
