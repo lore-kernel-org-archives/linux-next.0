@@ -1,40 +1,39 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Thu, 24 May 2018 15:35:47 +0100
-Message-ID: <20180524143547.GX4828@sirena.org.uk>
+Subject: linux-next: manual merge of the netfilter-next tree with the
+ netfilter tree
+Date: Thu, 24 May 2018 17:19:02 +0100
+Message-ID: <20180524161902.GZ4828@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jn/MQTzma+jNUHFC"
-Return-path: <netdev-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="RGnAp+RkZMffi58C"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Roopa Prabhu <roopa@cumulusnetworks.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---jn/MQTzma+jNUHFC
+--RGnAp+RkZMffi58C
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Today's linux-next merge of the netfilter-next tree got a conflict in:
 
-  net/ipv4/fib_frontend.c
+  net/netfilter/core.c
 
 between commit:
 
-  2eabd764cb5512f1338 ("net: ipv4: add missing RTA_TABLE to rtm_ipv4_policy=
-")
+  25fd386e0bc065849 ("netfilter: core: add missing __rcu annotation")
 
-=66rom the net tree and commit:
+=66rom the netfilter tree and commit:
 
-  404eb77ea766260c45c ("ipv4: support sport, dport and ip_proto in RTM_GETR=
-OUTE")
+  2c205dd3981f79cef ("netfilter: add struct nf_nat_hook and use it")
 
-=66rom the net-next tree.
+=66rom the netfilter-next tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,35 +42,40 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc net/ipv4/fib_frontend.c
-index e66172aaf241,897ae92dff0f..000000000000
---- a/net/ipv4/fib_frontend.c
-+++ b/net/ipv4/fib_frontend.c
-@@@ -649,7 -649,9 +649,10 @@@ const struct nla_policy rtm_ipv4_policy
-  	[RTA_ENCAP]		=3D { .type =3D NLA_NESTED },
-  	[RTA_UID]		=3D { .type =3D NLA_U32 },
-  	[RTA_MARK]		=3D { .type =3D NLA_U32 },
- +	[RTA_TABLE]		=3D { .type =3D NLA_U32 },
-+ 	[RTA_IP_PROTO]		=3D { .type =3D NLA_U8 },
-+ 	[RTA_SPORT]		=3D { .type =3D NLA_U16 },
-+ 	[RTA_DPORT]		=3D { .type =3D NLA_U16 },
-  };
+diff --cc net/netfilter/core.c
+index 206fb2c4c319,e0ae4aae96f5..000000000000
+--- a/net/netfilter/core.c
++++ b/net/netfilter/core.c
+@@@ -580,13 -611,7 +611,8 @@@ const struct nf_conntrack_zone nf_ct_zo
+  EXPORT_SYMBOL_GPL(nf_ct_zone_dflt);
+  #endif /* CONFIG_NF_CONNTRACK */
  =20
-  static int rtm_to_fib_config(struct net *net, struct sk_buff *skb,
+- #ifdef CONFIG_NF_NAT_NEEDED
+- void (*nf_nat_decode_session_hook)(struct sk_buff *, struct flowi *);
+- EXPORT_SYMBOL(nf_nat_decode_session_hook);
+- #endif
+-=20
+ -static void __net_init __netfilter_net_init(struct nf_hook_entries **e, i=
+nt max)
+ +static void __net_init
+ +__netfilter_net_init(struct nf_hook_entries __rcu **e, int max)
+  {
+  	int h;
+ =20
 
---jn/MQTzma+jNUHFC
+--RGnAp+RkZMffi58C
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsGzcMACgkQJNaLcl1U
-h9BOOQf/dEd3dgnQoHZ1R7iNPxskfyOPRxIrn3NkV4ifMns+b9p+e5wr9AlQiCA5
-ciHLDSEoAkwCbEolflaOtoNa10dJwLY9Tjpz/4FGSzQwSCvQJfk7shDvjLs7JNth
-f0DWcYSQND16BmGkxgP97ONOqICgIP1lCzTVDSbWjDAvVFD11pCeM4DmpDO78kfv
-3PXQVWZQqjaM6jABKlRfiOyp72EuDMhff1Ha+8F6acnHF4D1tOVv8Jfnv2Jr2DTb
-yg+TEBXCtvVzlGgoIFXaFad8eMVslbOAoZoRAfnIAbRMTYqpRRdvuQXSEmgy37Ri
-9thh2+0uI65Ib7MadEuqCCcDIV0zmQ==
-=k5AT
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG5fUACgkQJNaLcl1U
+h9BN8wf+IVcMrcMA4ND9qi4tLCsDQTmXVIPSQuIpuM+UlT2LhYmrpiWdRn2Tw5Kj
+h4gD8YTMxERppNLkJbSl2yg/qcJ0Zo3vlnd1TM174g7ny4VD4w6PxYEqw49ovqLu
+y5w0i1YkHpbHhy4QvWWgsJwGIzeVHe4Ikv4DLxwHALMm1Nr/UnK0v3CM1UzQN8z4
+Rv3vYxWjWOdyv75tTZrqqMxk/QF2qU2Hlg5P5dFLXnNPQUUT30zcOguvUC4jTR1n
+Jg3Jsl+qzPcbf38kcQ+iMdR5x6p4NSW46iPRlFCUYq6Tx2U7W/iSm11UxDCCz8ab
+YMTCRdplwxsoqFspnFSuap9SFBD4MQ==
+=+lEi
 -----END PGP SIGNATURE-----
 
---jn/MQTzma+jNUHFC--
+--RGnAp+RkZMffi58C--
