@@ -1,39 +1,38 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: linux-next: manual merge of the netfilter-next tree with the
- netfilter tree
-Date: Thu, 24 May 2018 17:19:02 +0100
-Message-ID: <20180524161902.GZ4828@sirena.org.uk>
+Subject: linux-next: manual merge of the scsi tree with the net-next tree
+Date: Fri, 25 May 2018 02:38:10 +0100
+Message-ID: <20180525013810.GG4828@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RGnAp+RkZMffi58C"
+        protocol="application/pgp-signature"; boundary="SKW69dzTt3T8RCN0"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Florian Westphal <fw@strlen.de>, Pablo Neira Ayuso <pablo@netfilter.org>, NetFilter <netfilter-devel@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Chad Dupuis <chad.dupuis@cavium.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 
---RGnAp+RkZMffi58C
+--SKW69dzTt3T8RCN0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi James,
 
-Today's linux-next merge of the netfilter-next tree got a conflict in:
+Today's linux-next merge of the scsi tree got a conflict in:
 
-  net/netfilter/core.c
+  drivers/scsi/qedf/qedf.h
 
 between commit:
 
-  25fd386e0bc065849 ("netfilter: core: add missing __rcu annotation")
+  8673daf4f55bf3b91 ("qedf: Add get_generic_tlv_data handler.")
 
-=66rom the netfilter tree and commit:
+=66rom the net-next tree and commit:
 
-  2c205dd3981f79cef ("netfilter: add struct nf_nat_hook and use it")
+  4b9b7fabb39b3e9d7 ("scsi: qedf: Improve firmware debug dump handling")
 
-=66rom the netfilter-next tree.
+=66rom the scsi tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,40 +41,36 @@ is submitted for merging.  You may also want to consider cooperating
 with the maintainer of the conflicting tree to minimise any particularly
 complex conflicts.
 
-diff --cc net/netfilter/core.c
-index 206fb2c4c319,e0ae4aae96f5..000000000000
---- a/net/netfilter/core.c
-+++ b/net/netfilter/core.c
-@@@ -580,13 -611,7 +611,8 @@@ const struct nf_conntrack_zone nf_ct_zo
-  EXPORT_SYMBOL_GPL(nf_ct_zone_dflt);
-  #endif /* CONFIG_NF_CONNTRACK */
+diff --cc drivers/scsi/qedf/qedf.h
+index cabb6af60fb8,2372a40326f8..000000000000
+--- a/drivers/scsi/qedf/qedf.h
++++ b/drivers/scsi/qedf/qedf.h
+@@@ -501,9 -499,8 +504,10 @@@ extern int qedf_post_io_req(struct qedf
+  extern void qedf_process_seq_cleanup_compl(struct qedf_ctx *qedf,
+  	struct fcoe_cqe *cqe, struct qedf_ioreq *io_req);
+  extern int qedf_send_flogi(struct qedf_ctx *qedf);
+ +extern void qedf_get_protocol_tlv_data(void *dev, void *data);
+  extern void qedf_fp_io_handler(struct work_struct *work);
+ +extern void qedf_get_generic_tlv_data(void *dev, struct qed_generic_tlvs =
+*data);
++ extern void qedf_wq_grcdump(struct work_struct *work);
  =20
-- #ifdef CONFIG_NF_NAT_NEEDED
-- void (*nf_nat_decode_session_hook)(struct sk_buff *, struct flowi *);
-- EXPORT_SYMBOL(nf_nat_decode_session_hook);
-- #endif
--=20
- -static void __net_init __netfilter_net_init(struct nf_hook_entries **e, i=
-nt max)
- +static void __net_init
- +__netfilter_net_init(struct nf_hook_entries __rcu **e, int max)
-  {
-  	int h;
- =20
+  #define FCOE_WORD_TO_BYTE  4
+  #define QEDF_MAX_TASK_NUM	0xFFFF
 
---RGnAp+RkZMffi58C
+--SKW69dzTt3T8RCN0
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsG5fUACgkQJNaLcl1U
-h9BN8wf+IVcMrcMA4ND9qi4tLCsDQTmXVIPSQuIpuM+UlT2LhYmrpiWdRn2Tw5Kj
-h4gD8YTMxERppNLkJbSl2yg/qcJ0Zo3vlnd1TM174g7ny4VD4w6PxYEqw49ovqLu
-y5w0i1YkHpbHhy4QvWWgsJwGIzeVHe4Ikv4DLxwHALMm1Nr/UnK0v3CM1UzQN8z4
-Rv3vYxWjWOdyv75tTZrqqMxk/QF2qU2Hlg5P5dFLXnNPQUUT30zcOguvUC4jTR1n
-Jg3Jsl+qzPcbf38kcQ+iMdR5x6p4NSW46iPRlFCUYq6Tx2U7W/iSm11UxDCCz8ab
-YMTCRdplwxsoqFspnFSuap9SFBD4MQ==
-=+lEi
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsHaQEACgkQJNaLcl1U
+h9BCBQf9HYovTcLyzEevPpMrSMw/PDiJEa4qIOuKgyLZpYpYp2B0pyj1f0ZdBaQU
+92hg5u8EfxBAS61uL0PErXluj/YZZCRqe0Nzej/tE++FnqNI/4PQNLnMFVjXOsll
+rR4fmLZ6cxtcwYJPn0pu8Ld4tosMhQnYKyoiS8Atty0G6CIPnPyAwrrzcQEV14gN
+jJddhR3bZEwdc8n6U8eCgj35KFHFItxSU1QXW6zhOTJD+tBvoeZjErG+VgB3U2BK
+9m1nl4W5iukWOK9GH9D1sLFk994hMRAPTI0KfPdDD817REKAzznVDgokDZvjC9qT
+8JPi0x+Q/m0+CdvP66QPIqWgkWptrQ==
+=a1U6
 -----END PGP SIGNATURE-----
 
---RGnAp+RkZMffi58C--
+--SKW69dzTt3T8RCN0--
