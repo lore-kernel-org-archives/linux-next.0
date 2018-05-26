@@ -1,111 +1,50 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: mmotm 2018-05-25-14-52 uploaded
- (drivers/net/ethernet/ti/davinci_mdio.c)
-Date: Fri, 25 May 2018 16:15:42 -0700
-Message-ID: <7c5dcc2c-a6d4-b13d-c093-4a40a372ff54@infradead.org>
-References: <20180525215254.VTc61%akpm@linux-foundation.org>
- <26483e60-ab26-494c-b923-86c267cfdac0@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the rdma tree
+Date: Sat, 26 May 2018 13:31:12 +1000
+Message-ID: <20180526132829.0cbb8826@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1dZX0jbVyoDaE/35gobvpOl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <26483e60-ab26-494c-b923-86c267cfdac0@infradead.org>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-Cc: Anant Gole <anantgole@ti.com>, Chaithrika U S <chaithrika@ti.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-[forgot to add netdev]
+--Sig_/1dZX0jbVyoDaE/35gobvpOl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 05/25/2018 04:14 PM, Randy Dunlap wrote:
-> On 05/25/2018 02:52 PM, akpm@linux-foundation.org wrote:
->> The mm-of-the-moment snapshot 2018-05-25-14-52 has been uploaded to
->>
->>    http://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> http://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
-> 
-> on x86_64:
-> # CONFIG_OF is not set
-> 
->   CC      drivers/net/ethernet/ti/davinci_cpdma.o
-> ../drivers/net/ethernet/ti/davinci_mdio.c: In function 'davinci_mdio_probe':
-> ../drivers/net/ethernet/ti/davinci_mdio.c:380:3: error: implicit declaration of function 'davinci_mdio_probe_dt' [-Werror=implicit-function-declaration]
->    ret = davinci_mdio_probe_dt(&data->pdata, pdev);
-> 
-> 
-> 
->>
->> You will need quilt to apply these patches to the latest Linus release (4.x
->> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->> http://ozlabs.org/~akpm/mmotm/series
->>
->> The file broken-out.tar.gz contains two datestamp files: .DATE and
->> .DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
->> followed by the base kernel version against which this patch series is to
->> be applied.
->>
->> This tree is partially included in linux-next.  To see which patches are
->> included in linux-next, consult the `series' file.  Only the patches
->> within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
->> linux-next.
->>
->> A git tree which contains the memory management portion of this tree is
->> maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
->> by Michal Hocko.  It contains the patches which are between the
->> "#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
->> file, http://www.ozlabs.org/~akpm/mmotm/series.
->>
->>
->> A full copy of the full kernel tree with the linux-next and mmotm patches
->> already applied is available through git within an hour of the mmotm
->> release.  Individual mmotm releases are tagged.  The master branch always
->> points to the latest release, so it's constantly rebasing.
->>
->> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
->>
->> To develop on top of mmotm git:
->>
->>   $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
->>   $ git remote update mmotm
->>   $ git checkout -b topic mmotm/master
->>   <make changes, commit>
->>   $ git send-email mmotm/master.. [...]
->>
->> To rebase a branch with older patches to a new mmotm release:
->>
->>   $ git remote update mmotm
->>   $ git rebase --onto mmotm/master <topic base> topic
->>
->>
->>
->>
->> The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
->> contains daily snapshots of the -mm tree.  It is updated more frequently
->> than mmotm, and is untested.
->>
->> A git copy of this tree is available at
->>
->> 	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
->>
->> and use of this tree is similar to
->> http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
->>
->>
->> This mmotm tree contains the following patches against 4.17-rc6:
->> (patches marked "*" will be included in linux-next)
->>
-> 
-> 
+Hi all,
 
+Commits
 
--- 
-~Randy
+  116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID informa=
+tion")
+to
+  0252f73334f9 ("IB/qib: Fix DMA api warning with debug kernel")
+
+are missing a Signed-off-by from their committer.  I presume they have
+been rebased?
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1dZX0jbVyoDaE/35gobvpOl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI1QAACgkQAVBC80lX
+0GybhQgAg3N/9/DTlAdDSRfpxZuVnMUpQF3hEIp0OnjNXx6+mAWykey/c4dhd7gE
+HRNqyi8xRXp/QUBOfld9jUVN3vTtNpg25rXUZWC7Ht3sfo7XrSCleVQzccPvWDcs
+FLGbWOPUvJH/wrVFm/C/usL4VsnK1vN8qvuMac9odEnyr/Gz8aebmk395wWE1Xvl
+xKrgbzZdfeAZQzO113yJnbq14oAxTrrtpGE4avsb4/eeMvrxc0z0KMODCV9vuuXz
+H1OPyo99fyq5a6+7wLGxhvellXnKzefNX1H0fB8p/pLF0/wttIRJSNRk7jOQ0tGi
+6knuJz0TPA/XW88S7GHS8pkmGpsoJg==
+=RSAu
+-----END PGP SIGNATURE-----
+
+--Sig_/1dZX0jbVyoDaE/35gobvpOl--
