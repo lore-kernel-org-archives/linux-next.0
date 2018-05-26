@@ -1,62 +1,104 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the arm-soc
+Subject: Re: linux-next: manual merge of the staging tree with the v4l-dvb
  tree
-Date: Sat, 26 May 2018 14:34:16 +1000
-Message-ID: <20180526143416.5eeea2d8@canb.auug.org.au>
-References: <20180515072217.0a2ffe25@canb.auug.org.au>
-        <80df07c8-b89c-503e-ad25-9f235cb08038@st.com>
+Date: Sat, 26 May 2018 14:45:39 +1000
+Message-ID: <20180526144539.242ec752@canb.auug.org.au>
+References: <20180517141727.3119e1da@canb.auug.org.au>
+        <20180517070657.642d3784@vento.lan>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/WQyqSeLa0C9MvHIQlquDk5Q"; protocol="application/pgp-signature"
+ boundary="Sig_/K2ngPDwybejZ=SdgVNohLTh"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <80df07c8-b89c-503e-ad25-9f235cb08038@st.com>
+In-Reply-To: <20180517070657.642d3784@vento.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Greg KH <greg@kroah.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alan Cox <alan@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/WQyqSeLa0C9MvHIQlquDk5Q
+--Sig_/K2ngPDwybejZ=SdgVNohLTh
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Alexandre,
+Hi Mauro,
 
-On Tue, 15 May 2018 09:15:23 +0200 Alexandre Torgue <alexandre.torgue@st.co=
-m> wrote:
+On Thu, 17 May 2018 07:06:57 -0300 Mauro Carvalho Chehab <mchehab+samsung@k=
+ernel.org> wrote:
 >
-> On 05/14/2018 11:22 PM, Stephen Rothwell wrote:
-> >=20
-> > Commit
-> >=20
-> >    949a0c0dec85 ("ARM: dts: stm32: add USB Host (USBH) support to stm32=
-mp157c")
-> >=20
-> > is missing a Signed-off-by from its committer.
->=20
-> My fault, I forgot it when I applied patch on my branch. Do we need an=20
-> update or it is just a reminder?
+> What do you use in order to check it? Maybe we could have some git
+> hook running such check, in order to prevent merging patches without
+> the right SOBs.
 
-Some people rebase their tree to fix these up, some just take it as a
-learning experience :-)
+I run the script below on the range of new commits each time a fetch a
+tree ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/WQyqSeLa0C9MvHIQlquDk5Q
+------------------------------------------------------------------------
+#!/bin/bash
+
+if [ "$#" -lt 1 ]; then
+	printf "Usage: %s <commit range>\n", "$0" 1>&2
+	exit 1
+fi
+
+commits=3D$(git rev-list --no-merges "$@")
+if [ -z "$commits" ]; then
+	printf "No commits\n"
+	exit 0
+fi
+
+for c in $commits; do
+	ae=3D$(git log -1 --format=3D'%ae' "$c")
+	aE=3D$(git log -1 --format=3D'%aE' "$c")
+	an=3D$(git log -1 --format=3D'%an' "$c")
+	aN=3D$(git log -1 --format=3D'%aN' "$c")
+	ce=3D$(git log -1 --format=3D'%ce' "$c")
+	cE=3D$(git log -1 --format=3D'%cE' "$c")
+	cn=3D$(git log -1 --format=3D'%cn' "$c")
+	cN=3D$(git log -1 --format=3D'%cN' "$c")
+	sob=3D$(git log -1 --format=3D'%b' "$c" | grep -i '^[[:space:]]*Signed-off=
+-by:')
+
+	am=3Dfalse
+	cm=3Dfalse
+	grep -i -q "<$ae>" <<<"$sob" ||
+		grep -i -q "<$aE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$an[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$aN[[:space:]]*<" <<<"$sob" ||
+		am=3Dtrue
+	grep -i -q "<$ce>" <<<"$sob" ||
+		grep -i -q "<$cE>" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cn[[:space:]]*<" <<<"$sob" ||
+		grep -i -q ":[[:space:]]*$cN[[:space:]]*<" <<<"$sob" ||
+		cm=3Dtrue
+
+	if "$am" || "$cm"; then
+		printf "Commit %s\n" "$c"
+		"$am" && printf "\tauthor SOB missing\n"
+		"$cm" && printf "\tcommitter SOB missing\n"
+		printf "%s %s\n%s\n" "$ae" "$ce" "$sob"
+	fi
+done
+
+exec gitk "$@"
+------------------------------------------------------------------------
+
+--Sig_/K2ngPDwybejZ=SdgVNohLTh
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI48gACgkQAVBC80lX
-0Gz6PQf+PfTQbubqyUAglH4nBgrX5viZJ8RNA+hdAHKfF2N1h1UOjupYrZOOtQ+d
-RAszyWuxW5Yd1iK9zy7tar3OF2870A89KA4CQIJ7QSE882mdUxdhTb/q7Z24ooCr
-kKNZPX70vpG1Kpn3o1eSJEtdHQSpXcTCDF4mF4Sg/ONYIB8xbJ5D04/VhCVXC12U
-kfYA5S0SFyIaxzT+tVE8btp2G4geMBcH7Ktz1Ra4kXEHMjry32Ad6nubWssL+NI1
-3xkRdJSL91jQ/LSqZowcnIUtgVn3ieotJkJ0Qpdga9ISwyKE40jVHDWqaM20jtQj
-TKv3INxsPPgcKvma0iDTuZtTDNZyQA==
-=bkua
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsI5nMACgkQAVBC80lX
+0GyOfAf+I9bNLP9pH2jc8zi8IrajqxRQOb3szaQfFGzAGmEEJw9IWcb55srOrtjp
+v9/TToFHMYjuFdyocEcBueau5Hi61aYfeTGp87K1dX80nUkyJcEPJdUa+EZnDYWE
+Djm6aQDys2j5QdwXg4x19lLSiNqZTWbPStIfCmsBWddzq/pNaUcE5SUTaBQQl0vZ
+OcpZBDJ4au7VlXm41N0DTGJSXTeNqfbOPITzPSPQHIVXdh5k4VqfsyBPVk/vuPPW
+qhQIhcxRxcDFKnk7s+L0vQAugyRHPWUoV3UlALqsLWTIogDCE0WIb6j5p4yngS5d
+NbZOCyAmZvPgetz8fBFJl/JcRjVc5A==
+=xVEf
 -----END PGP SIGNATURE-----
 
---Sig_/WQyqSeLa0C9MvHIQlquDk5Q--
+--Sig_/K2ngPDwybejZ=SdgVNohLTh--
