@@ -1,27 +1,31 @@
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: linux-next: Tree for May 24
-Date: Mon, 28 May 2018 15:23:26 +0300
-Message-ID: <CAHp75VdV-rpqjkGxjAa_7q2rpkuGgy+6OScsP8BGCgRcbtgiaA@mail.gmail.com>
-References: <20180525173025.GO4828@sirena.org.uk>
+From: Jason Gunthorpe <jgg@mellanox.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the rdma tree
+Date: Mon, 28 May 2018 09:57:47 -0600
+Message-ID: <20180528155747.GC17491@mellanox.com>
+References: <20180526132829.0cbb8826@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180525173025.GO4828@sirena.org.uk>
+Content-Disposition: inline
+In-Reply-To: <20180526132829.0cbb8826@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, May 25, 2018 at 8:30 PM, Mark Brown <broonie@kernel.org> wrote:
+On Sat, May 26, 2018 at 01:31:12PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   116aeb887371 ("iw_cxgb4: provide detailed provider-specific CM_ID information")
+> to
+>   0252f73334f9 ("IB/qib: Fix DMA api warning with debug kernel")
+> 
+> are missing a Signed-off-by from their committer.  I presume they have
+> been rebased?
 
-> Stephen should be back on Monday.
+Yes, there was a compilation problem and I rebased some of Doug's
+commits before finalizing them.
 
-Your version has no tag which is crucial detail for easily getting
-info what the current version is.
-
-P.S. It broke my scripts to automatically rebase my local working
-branches, though it's not big deal per se, rather above is an issue.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Jason
