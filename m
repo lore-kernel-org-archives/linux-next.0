@@ -1,58 +1,40 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Date: Wed, 30 May 2018 07:40:12 +1000
-Message-ID: <20180530074012.393b74b1@canb.auug.org.au>
-References: <20180529143357.2a66b0af@canb.auug.org.au>
-        <20180529081205.GB1416@lst.de>
-        <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
+Date: Wed, 30 May 2018 08:16:04 +1000
+Message-ID: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
+References: <20180529204410.63477f88@canb.auug.org.au>
+         <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SqvX5CREKlQODG_3uzAwLJY"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+In-Reply-To: <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/SqvX5CREKlQODG_3uzAwLJY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
+> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20180525:
+> > 
+> 
+> on i386:
+> 
+> when builtin:
+> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
+> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
+> 
+> or when modular:
+> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
+> 
+> 
+> Full randconfig for modular build is attached.
 
-Hi Jens,
+Somebody already sent a fix for this. Thanks. (Missing a dependency on
+LIBCOMPOSITE).
 
-On Tue, 29 May 2018 08:22:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 5/29/18 2:12 AM, Christoph Hellwig wrote:
-> > Meh.  Do we really need these switch to octal patches to start
-> > with?  I mean, I personally prefer octal, but just switching around
-> > in random code that isn't otherwise changed creates nothing but churn. =
-=20
->=20
-> This is exactly why I hesitated doing it, I knew it would end up
-> with conflicts. The main reason was to get rid of the inconsistency,
-> since we had a fair mix of octal and symbolic names.
-
-But the conflicts are all trivial ...
-
---=20
 Cheers,
-Stephen Rothwell
-
---Sig_/SqvX5CREKlQODG_3uzAwLJY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNyLwACgkQAVBC80lX
-0Gx2qwf/YkMzvHbny1c26A2RmIIr+VRQYUDpUXCpTGhrQpAAwLLgOACPmyJDHNbF
-5Vvk34hPq74T13Qm8IrmpblfD0N4g4gSxaBvsIHYjzoKwGxz9KiKhkP0uiCo2zZ2
-a9E1IEc/u9rr2EMXqJ8ajD06a7Z56zJm0Vj8eYwOPP72ezCX0tOA3X6fuSQSl7Qw
-OOAClSbgSWU5DDma7Nf9695NCcO9UdEeY6DEflSF4QOV2uhQnANGWuz/FkWBsPSx
-Y377Xmoubm7woiVIf+gn6Js87ApmmApo2nNb81KRvr49U/qhH2G+Ex4R9BM7K2ub
-LIVwTv1qcLzGOY9IFS1pqx/eysMzRg==
-=Gfao
------END PGP SIGNATURE-----
-
---Sig_/SqvX5CREKlQODG_3uzAwLJY--
+Ben.
