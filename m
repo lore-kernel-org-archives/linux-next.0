@@ -1,39 +1,39 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the overlayfs tree with the btrfs-kdave
- tree
-Date: Tue, 29 May 2018 09:52:50 +1000
-Message-ID: <20180529095250.097524cf@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
+Date: Tue, 29 May 2018 11:30:35 +1000
+Message-ID: <20180529113025.0eb4b16d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/XlVtWaiTkhi=Q4vmBquEQMt"; protocol="application/pgp-signature"
+ boundary="Sig_/2pXBlRdy5/s5QWPPvauDZuT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miklos Szeredi <miklos@szeredi.hu>, David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Timofey Titovets <nefelim4ag@gmail.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Zev Weiss <zev@bewilderbeest.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt
+--Sig_/2pXBlRdy5/s5QWPPvauDZuT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Miklos,
+Hi all,
 
-Today's linux-next merge of the overlayfs tree got a conflict in:
+Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/btrfs/ioctl.c
+  fs/read_write.c
 
 between commit:
 
-  0b4dc087e29a ("Btrfs: dedupe_file_range ioctl: remove 16MiB restriction")
+  63ea46a359b2 ("vfs: dedupe: extract helper for a single dedup")
 
-from the btrfs-kdave tree and commits:
+from the overlayfs tree and commit:
 
-  83d499febfac ("vfs: dedpue: return loff_t")
-  7765f19ed5f9 ("vfs: dedupe: rationalize args")
+  227627114799 ("fs: avoid fdput() after failed fdget() in vfs_dedupe_file_=
+range()")
 
-from the overlayfs tree.
+from the vfs tree.
 
-[I note the typo in the subject of commit 83d499febfac]
+I can't see how to easily fix up this conflict, so I effectively dropped
+the vfs tree change.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -46,49 +46,69 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/btrfs/ioctl.c
-index 4d88d54d042d,70eac76804df..000000000000
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@@ -3637,14 -3192,20 +3637,15 @@@ out_free
-  	return ret;
-  }
+diff --cc fs/read_write.c
+index 4d61375a0de4,e83bd9744b5d..000000000000
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@@ -2055,21 -2021,46 +2055,20 @@@ int vfs_dedupe_file_range(struct file *
  =20
-- ssize_t btrfs_dedupe_file_range(struct file *src_file, u64 loff, u64 olen,
-- 				struct file *dst_file, u64 dst_loff)
- -#define BTRFS_MAX_DEDUPE_LEN	SZ_16M
- -
-+ loff_t btrfs_dedupe_file_range(struct file *src_file, loff_t loff,
-+ 			       struct file *dst_file, loff_t dst_loff,
-+ 			       loff_t olen)
-  {
-  	struct inode *src =3D file_inode(src_file);
-  	struct inode *dst =3D file_inode(dst_file);
-  	u64 bs =3D BTRFS_I(src)->root->fs_info->sb->s_blocksize;
-- 	ssize_t res;
-+ 	int res;
+  		if (info->reserved) {
+  			info->status =3D -EINVAL;
+ -		} else if (!(is_admin || (dst_file->f_mode & FMODE_WRITE))) {
+ -			info->status =3D -EINVAL;
+ -		} else if (file->f_path.mnt !=3D dst_file->f_path.mnt) {
+ -			info->status =3D -EXDEV;
+ -		} else if (S_ISDIR(dst->i_mode)) {
+ -			info->status =3D -EISDIR;
+ -		} else if (dst_file->f_op->dedupe_file_range =3D=3D NULL) {
+ -			info->status =3D -EINVAL;
+ -		} else {
+ -			deduped =3D dst_file->f_op->dedupe_file_range(file, off,
+ -							len, dst_file,
+ -							info->dest_offset);
+ -			if (deduped =3D=3D -EBADE)
+ -				info->status =3D FILE_DEDUPE_RANGE_DIFFERS;
+ -			else if (deduped < 0)
+ -				info->status =3D deduped;
+ -			else
+ -				info->bytes_deduped +=3D deduped;
+ +			goto next_loop;
+  		}
  =20
- -	if (olen > BTRFS_MAX_DEDUPE_LEN)
- -		olen =3D BTRFS_MAX_DEDUPE_LEN;
- -
-  	if (WARN_ON_ONCE(bs < PAGE_SIZE)) {
-  		/*
-  		 * Btrfs does not support blocksize < page_size. As a
+ -next_file:
+ -		mnt_drop_write_file(dst_file);
+ -next_fdput:
+ -		fdput(dst_fd);
+ +		deduped =3D vfs_dedupe_file_range_one(file, off, dst_file,
+ +						    info->dest_offset, len);
+ +		if (deduped =3D=3D -EBADE)
+ +			info->status =3D FILE_DEDUPE_RANGE_DIFFERS;
+ +		else if (deduped < 0)
+ +			info->status =3D deduped;
+ +		else
+ +			info->bytes_deduped +=3D deduped;
+ +
+  next_loop:
+ +		fdput(dst_fd);
+-=20
+  		if (fatal_signal_pending(current))
+  			goto out;
+  	}
 
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt
+--Sig_/2pXBlRdy5/s5QWPPvauDZuT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMllIACgkQAVBC80lX
-0GzHYQf/bTxDXA8buRp/5DNnq73+rUwPtK5SYt5CCCR1NFlI5uOhHzWeHNd7AvE+
-DjVVqI+3KVD/ArZpt/xqH2NWpYx9FvQZw68p4nuRA/gPdnrbROJX9jCRNtBQybuF
-Nx0gOMuafnDlLS2/R0/zvVoCdudkQ5GwFvkcajpz5Qy+rI53Qagv914AA3f8O5S4
-eMYtF564mf6wZBlFOWUOa2dkzRflVze0gVCZ20F9MW8CxPyGJUSTiJOSNFlE+mtD
-U4yp0ehcY00AMDQkPhtL2QzHNamEtKFUf29cHfoXObtJRS8U7pOkG4hG7wnLxdso
-RptAMTM3m4k3msX620BVa6I/cYHLyw==
-=mKvG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMrTsACgkQAVBC80lX
+0Gx9ngf/bmtt58sWoOTxsHKdxhQHENEJRD6WpWVmfM3O79PXeXQa8Eu80yYh8hMg
+TPAcbifFZTqB0NGSbozfYC4fn0SABhGFJhrshl1vDlj4NtlLoB3aUTj4CFfGYp/b
+Y1qaFV/NRpJwiSiZ7WxjHDsfC6miE1860/JPnnkr5/MQ13LyF0mtHs3j4oFWSO77
+eGS9HHztJlZmy8PV/VhiFg8tP9IckixIuBOj6Hjh4WrUHlJZyvxoUm2UrD2f6feE
+uN1S5R+/NKKuNImsLMp6vaC4HljwX9JkLWs+K+08+q/bQxqYykV3aS4gb8ajn8vo
+SEaASClXXvwj24i2K/+JItTWJOEFBQ==
+=VBXm
 -----END PGP SIGNATURE-----
 
---Sig_/XlVtWaiTkhi=Q4vmBquEQMt--
+--Sig_/2pXBlRdy5/s5QWPPvauDZuT--
