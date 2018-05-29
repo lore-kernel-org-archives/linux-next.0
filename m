@@ -1,89 +1,102 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the akpm-current tree with the vfs tree
-Date: Tue, 29 May 2018 19:37:13 +1000
-Message-ID: <20180529193713.317619d5@canb.auug.org.au>
+From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+Subject: Re: linux-next: build failure after merge of the crypto tree
+Date: Tue, 29 May 2018 12:16:59 +0200
+Message-ID: <CAAUqJDu=Ez2CQY0JPTWA+K2UKVZbjRF-YFQdpP0=xmtqd7kEzQ@mail.gmail.com>
+References: <20180529190846.764421ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZrbYxbM/.RU+1pgQj4E_.=e"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180529190846.764421ea@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen,
 
-Hi all,
+there is already a patch pending that fixes the issue:
 
-Today's linux-next merge of the akpm-current tree got a conflict in:
+https://patchwork.kernel.org/patch/10416245/
 
-  fs/proc/base.c
-
-between commit:
-
-  0168b9e38c42 ("procfs: switch instantiate_t to d_splice_alias()")
-
-from the vfs tree and commit:
-
-  a1cb629945be ("proc: skip branch in /proc/*/* lookup")
-
-from the akpm-current tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
 Cheers,
-Stephen Rothwell
+Ondrej
 
-diff --cc fs/proc/base.c
-index af128b374143,9b02b88e0b91..000000000000
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@@ -2479,17 -2457,14 +2451,14 @@@ static struct dentry *proc_pident_looku
-  	for (p =3D ents; p < last; p++) {
-  		if (p->len !=3D dentry->d_name.len)
-  			continue;
-- 		if (!memcmp(dentry->d_name.name, p->name, p->len))
-+ 		if (!memcmp(dentry->d_name.name, p->name, p->len)) {
- -			error =3D proc_pident_instantiate(dir, dentry, task, p);
-++			res =3D proc_pident_instantiate(dentry, task, p);
-  			break;
-+ 		}
-  	}
-- 	if (p >=3D last)
-- 		goto out;
--=20
-- 	res =3D proc_pident_instantiate(dentry, task, p);
-- out:
-  	put_task_struct(task);
-  out_no_task:
- -	return ERR_PTR(error);
- +	return res;
-  }
- =20
-  static int proc_pident_readdir(struct file *file, struct dir_context *ctx,
-
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNH0kACgkQAVBC80lX
-0Gzerwf/eH1X4aMft7XXlVcUNdzE4TbP/5c3DR6uYrDsP8FmWpU9KS2nbia18a05
-Q45scT7fFWiRMuQQIAZV4z3JMJNBPzoTKEN/ruuQajE6LYht0AkuwNgYwFIWKZH2
-xsK+1u0gK8cHXanWGdwFwE0USRtcYUZdpVrsisaJ2z86yMlbhSlXZYhEZdgc9GON
-YyZMR4AILnzt/+ICDrbJ0xbWQAfKnkEUY/L9QeckiGk+X1MJu/Mi9r+U3wXT7++l
-Mjj5/pFUVL2nAxpl+SxMVCTS6erDi4OA1k5WB5AsXAtjY/GIYzJxpQwdtBEkb0Tq
-pfS7R64mmVOYf9qtw1OopIRGGFoICw==
-=bEu0
------END PGP SIGNATURE-----
-
---Sig_/ZrbYxbM/.RU+1pgQj4E_.=e--
+2018-05-29 11:08 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Herbert,
+>
+> After merging the crypto tree, today's linux-next build (powerpc
+> allyesconfig) failed like this:
+>
+> /home/sfr/next/next/crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+>  #include <asm/fpu/api.h>
+>           ^~~~~~~~~~~~~~~
+> /home/sfr/next/next/crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
+>  #include <asm/fpu/api.h>
+>           ^~~~~~~~~~~~~~~
+>
+> Caused by commit
+>
+>   56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
+>
+> I have marked them as broken for now:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Tue, 29 May 2018 18:59:17 +1000
+> Subject: [PATCH] crypto: make common SIMD glue code for MORUS as BROKEN for
+>  now
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  crypto/Kconfig | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 75f5efde9aa3..ad69785dc9d3 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -342,6 +342,7 @@ config CRYPTO_MORUS640
+>
+>  config CRYPTO_MORUS640_GLUE
+>         tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
+> +       depends on BROKEN
+>         select CRYPTO_AEAD
+>         select CRYPTO_CRYPTD
+>         help
+> @@ -351,6 +352,7 @@ config CRYPTO_MORUS640_GLUE
+>  config CRYPTO_MORUS640_SSE2
+>         tristate "MORUS-640 AEAD algorithm (x86_64 SSE2 implementation)"
+>         depends on X86 && 64BIT
+> +       depends on BROKEN
+>         select CRYPTO_AEAD
+>         select CRYPTO_MORUS640_GLUE
+>         help
+> @@ -364,6 +366,7 @@ config CRYPTO_MORUS1280
+>
+>  config CRYPTO_MORUS1280_GLUE
+>         tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
+> +       depends on BROKEN
+>         select CRYPTO_AEAD
+>         select CRYPTO_CRYPTD
+>         help
+> @@ -373,6 +376,7 @@ config CRYPTO_MORUS1280_GLUE
+>  config CRYPTO_MORUS1280_SSE2
+>         tristate "MORUS-1280 AEAD algorithm (x86_64 SSE2 implementation)"
+>         depends on X86 && 64BIT
+> +       depends on BROKEN
+>         select CRYPTO_AEAD
+>         select CRYPTO_MORUS1280_GLUE
+>         help
+> @@ -382,6 +386,7 @@ config CRYPTO_MORUS1280_SSE2
+>  config CRYPTO_MORUS1280_AVX2
+>         tristate "MORUS-1280 AEAD algorithm (x86_64 AVX2 implementation)"
+>         depends on X86 && 64BIT
+> +       depends on BROKEN
+>         select CRYPTO_AEAD
+>         select CRYPTO_MORUS1280_GLUE
+>         help
+> --
+> 2.17.0
+>
+> --
+> Cheers,
+> Stephen Rothwell
