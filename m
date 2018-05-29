@@ -1,52 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the net-next tree
-Date: Tue, 29 May 2018 13:10:36 +1000
-Message-ID: <20180529131036.09e95ef2@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the net-next tree
+Date: Tue, 29 May 2018 13:25:48 +1000
+Message-ID: <20180529132548.7f71c2ff@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qzAxrcJtsb24Z8bXAfIoZo0"; protocol="application/pgp-signature"
+ boundary="Sig_/0tK3ll5x8Ha1Nll4mTtSUBw"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/qzAxrcJtsb24Z8bXAfIoZo0
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the net-next tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+After merging the net-next tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-net/core/filter.c: In function 'sk_msg_convert_ctx_access':
-net/core/filter.c:6450:6: warning: unused variable 'off' [-Wunused-variable]
-  int off;
-      ^~~
+x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_=
+umh.o' is incompatible with i386:x86-64 output
 
-Introduced by commit
+Caused by commit
 
-  303def35f64e ("bpf: allow sk_msg programs to read sock fields")
+  d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+
+In my builds, the host is PowerPC 64 LE ...
+
+I have reverted that commit along with
+
+  61a552eb487f ("bpfilter: fix build dependency")
+  13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debu=
+g")
+
+for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/qzAxrcJtsb24Z8bXAfIoZo0
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMxKwACgkQAVBC80lX
-0GyHxAf+JpYuH0Lc1dCMuDEwC8b/l/VJL19zR5D9P+50NmUF48IuoDwSoZPDYPqr
-zYQ1VWkw5Sl55yPCqQbcKwP2/yVudODaEFSX7Yg0YSLN5WjQOfKUxIWaoZfQw2Q1
-Hs2nfgkUf1uOSKud9pN7eVWCcV4wt+cZpBiTuxiJ5uHqqoR/7qOiC3+afyI2qaV1
-T4Yl0ZNAmfGxp0aoq3WK+9mA64jXW3F68ESKixFwunYu8jQ/plEOegcyiZtPizCv
-Ui5ZfzFw4FJwqksO1YtAXCVrTbWUS1lKU7QmXhg7Z6qcWP+SGPOjAq6DwXkFAWWO
-89eQHk7zEZu2z30F4bUETImZDVpXXA==
-=Nl9J
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsMyDwACgkQAVBC80lX
+0GxKdAf/UMaaj2S350stVP/Rpt4Y9DGTKl8D/EQpZSpfZ+eUnIsutZTCVEjo6yYW
+LB237YXsHQUMr28YpN8F2std5nPgUuFRtWdLHzUoqpzvcRmoXlJn9hZj7wu3DK24
+8CFVvPwG1a/gu9Zg8qsfTHIPWHU/I0tNXB+joY+0jYfzn//nGjn3S5CQCsoAnZGM
+spEYiZ1M5CnLLfgFqD2XmhmsNv5JazsbEPETgHrWvsdXTK2v6iJ5xo6iGUMqmel/
+K5dJjJWufZhnLf7amlVthptCfNfjdMGO2t9EyIS/iLygg462xLNWPcN1FV5ysuQR
+XynQvyVsuChTo2m/6SX7qXD+Smc6hQ==
+=r6JH
 -----END PGP SIGNATURE-----
 
---Sig_/qzAxrcJtsb24Z8bXAfIoZo0--
+--Sig_/0tK3ll5x8Ha1Nll4mTtSUBw--
