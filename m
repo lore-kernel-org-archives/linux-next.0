@@ -1,40 +1,39 @@
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
-Date: Wed, 30 May 2018 08:16:04 +1000
-Message-ID: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
-References: <20180529204410.63477f88@canb.auug.org.au>
-         <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the block tree with the vfs tree
+Date: Tue, 29 May 2018 16:17:51 -0600
+Message-ID: <20d640dc-77df-1eb1-7310-8282a542cb59@kernel.dk>
+References: <20180529143357.2a66b0af@canb.auug.org.au>
+ <20180529081205.GB1416@lst.de>
+ <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+ <20180530074012.393b74b1@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
+In-Reply-To: <20180530074012.393b74b1@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
-> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Changes since 20180525:
-> > 
+On 5/29/18 3:40 PM, Stephen Rothwell wrote:
+> Hi Jens,
 > 
-> on i386:
+> On Tue, 29 May 2018 08:22:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 5/29/18 2:12 AM, Christoph Hellwig wrote:
+>>> Meh.  Do we really need these switch to octal patches to start
+>>> with?  I mean, I personally prefer octal, but just switching around
+>>> in random code that isn't otherwise changed creates nothing but churn.  
+>>
+>> This is exactly why I hesitated doing it, I knew it would end up
+>> with conflicts. The main reason was to get rid of the inconsistency,
+>> since we had a fair mix of octal and symbolic names.
 > 
-> when builtin:
-> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
-> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
-> 
-> or when modular:
-> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
-> 
-> 
-> Full randconfig for modular build is attached.
+> But the conflicts are all trivial ...
 
-Somebody already sent a fix for this. Thanks. (Missing a dependency on
-LIBCOMPOSITE).
+Yep, that certainly does help.
 
-Cheers,
-Ben.
+-- 
+Jens Axboe
