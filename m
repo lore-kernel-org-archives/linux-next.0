@@ -1,64 +1,34 @@
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Subject: Re: linux-next: build failure after merge of the
- drm-intel-fixes tree
-Date: Tue, 29 May 2018 14:45:43 +0300
-Message-ID: <152759434328.7210.11935906789217675792@jlahtine-desk.ger.corp.intel.com>
-References: <20180529192605.617c02ef@canb.auug.org.au>
+From: Mathieu Malaterre <malat@debian.org>
+Subject: Re: linux-next: boot messages from today's linux-next
+Date: Tue, 29 May 2018 13:56:48 +0200
+Message-ID: <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
+References: <20180529210257.26da8de7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <20180529192605.617c02ef@canb.auug.org.au>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: DRI <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Jani Nikula <jani.nikula@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180529210257.26da8de7@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-UXVvdGluZyBTdGVwaGVuIFJvdGh3ZWxsICgyMDE4LTA1LTI5IDEyOjI2OjA1KQo+IEhpIGFsbCwK
-PiAKPiBBZnRlciBtZXJnaW5nIHRoZSBkcm0taW50ZWwtZml4ZXMgdHJlZSwgdG9kYXkncyBsaW51
-eC1uZXh0IGJ1aWxkIChpMzg2Cj4gZGVmY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgoKVGhhbmtz
-IGZvciByZXBvcnRpbmcuIEkndmUgYWRkZWQgYSBwYXRjaCB0byBmaXggdGhlIGlzc3VlIG5vdy4K
-CkknbGwgdGFsayB3aXRoIG91ciBDSSB0ZWFtIGFib3V0IHRlc3RpbmcgMzItYml0IGJ1aWxkaW5n
-IHRvIHRyeSB0bwphdm9pZCB0aGVzZSBpbiB0aGUgZnV0dXJlLgoKUmVnYXJkcywgSm9vbmFzCgo+
-IAo+IEluIGZpbGUgaW5jbHVkZWQgZnJvbSBpbmNsdWRlL2FzbS1nZW5lcmljL2JhcnJpZXIuaDoy
-MDowLAo+ICAgICAgICAgICAgICAgICAgZnJvbSBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9iYXJyaWVy
-Lmg6ODYsCj4gICAgICAgICAgICAgICAgICBmcm9tIGluY2x1ZGUvbGludXgvbm9zcGVjLmg6OCwK
-PiAgICAgICAgICAgICAgICAgIGZyb20gZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9xdWVyeS5j
-Ojc6Cj4gZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9xdWVyeS5jOiBJbiBmdW5jdGlvbiAnaTkx
-NV9xdWVyeV9pb2N0bCc6Cj4gaW5jbHVkZS9saW51eC9jb21waWxlci5oOjMzOTozODogZXJyb3I6
-IGNhbGwgdG8gJ19fY29tcGlsZXRpbWVfYXNzZXJ0XzExOScgZGVjbGFyZWQgd2l0aCBhdHRyaWJ1
-dGUgZXJyb3I6IEJVSUxEX0JVR19PTiBmYWlsZWQ6IHNpemVvZihfcykgPiBzaXplb2YobG9uZykK
-PiAgIF9jb21waWxldGltZV9hc3NlcnQoY29uZGl0aW9uLCBtc2csIF9fY29tcGlsZXRpbWVfYXNz
-ZXJ0XywgX19MSU5FX18pCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBe
-Cj4gaW5jbHVkZS9saW51eC9jb21waWxlci5oOjMxOTo0OiBub3RlOiBpbiBkZWZpbml0aW9uIG9m
-IG1hY3JvICdfX2NvbXBpbGV0aW1lX2Fzc2VydCcKPiAgICAgcHJlZml4ICMjIHN1ZmZpeCgpOyAg
-ICBcCj4gICAgIF5+fn5+fgo+IGluY2x1ZGUvbGludXgvY29tcGlsZXIuaDozMzk6Mjogbm90ZTog
-aW4gZXhwYW5zaW9uIG9mIG1hY3JvICdfY29tcGlsZXRpbWVfYXNzZXJ0Jwo+ICAgX2NvbXBpbGV0
-aW1lX2Fzc2VydChjb25kaXRpb24sIG1zZywgX19jb21waWxldGltZV9hc3NlcnRfLCBfX0xJTkVf
-XykKPiAgIF5+fn5+fn5+fn5+fn5+fn5+fn4KPiBpbmNsdWRlL2xpbnV4L2J1aWxkX2J1Zy5oOjQ1
-OjM3OiBub3RlOiBpbiBleHBhbnNpb24gb2YgbWFjcm8gJ2NvbXBpbGV0aW1lX2Fzc2VydCcKPiAg
-I2RlZmluZSBCVUlMRF9CVUdfT05fTVNHKGNvbmQsIG1zZykgY29tcGlsZXRpbWVfYXNzZXJ0KCEo
-Y29uZCksIG1zZykKPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXn5+fn5+
-fn5+fn5+fn5+fn5+Cj4gaW5jbHVkZS9saW51eC9idWlsZF9idWcuaDo2OToyOiBub3RlOiBpbiBl
-eHBhbnNpb24gb2YgbWFjcm8gJ0JVSUxEX0JVR19PTl9NU0cnCj4gICBCVUlMRF9CVUdfT05fTVNH
-KGNvbmRpdGlvbiwgIkJVSUxEX0JVR19PTiBmYWlsZWQ6ICIgI2NvbmRpdGlvbikKPiAgIF5+fn5+
-fn5+fn5+fn5+fn4KPiBpbmNsdWRlL2xpbnV4L25vc3BlYy5oOjU1OjI6IG5vdGU6IGluIGV4cGFu
-c2lvbiBvZiBtYWNybyAnQlVJTERfQlVHX09OJwo+ICAgQlVJTERfQlVHX09OKHNpemVvZihfaSkg
-PiBzaXplb2YobG9uZykpOyAgIFwKPiAgIF5+fn5+fn5+fn5+fgo+IGRyaXZlcnMvZ3B1L2RybS9p
-OTE1L2k5MTVfcXVlcnkuYzoxMTg6MTU6IG5vdGU6IGluIGV4cGFuc2lvbiBvZiBtYWNybyAnYXJy
-YXlfaW5kZXhfbm9zcGVjJwo+ICAgICBmdW5jX2lkeCA9IGFycmF5X2luZGV4X25vc3BlYyhmdW5j
-X2lkeCwKPiAgICAgICAgICAgICAgICBefn5+fn5+fn5+fn5+fn5+fn4KPiAKPiBDYXVzZWQgYnkg
-Y29tbWl0Cj4gCj4gICA1NDBlYWQ4YzVhMGUgKCJkcm0vaTkxNS9xdWVyeTogUHJvdGVjdCB0YWlu
-dGVkIGZ1bmN0aW9uIHBvaW50ZXIgbG9va3VwIikKPiAKPiBJIGhhdmUgcmV2ZXJ0ZWQgdGhhdCBj
-b21taXQgZm9yIHRvZGF5Lgo+IAo+IC0tIAo+IENoZWVycywKPiBTdGVwaGVuIFJvdGh3ZWxsCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBt
-YWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAo=
+On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> My qemu boots of today's powerpc linux-next kernel produced the following
+> boot message differences:
+>
+> -Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
+> +Max number of cores passed to firmware: u (NR_CPUS = 2048)
+>
+> Seemingly caused by commit
+>
+>   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
+
+My bad. Patch is pending (thanks Michael!):
+
+https://patchwork.ozlabs.org/patch/921948/
+
+> --
+> Cheers,
+> Stephen Rothwell
