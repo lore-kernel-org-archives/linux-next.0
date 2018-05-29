@@ -1,120 +1,67 @@
-From: Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
- tree
-Date: Tue, 29 May 2018 14:20:23 +0200
-Message-ID: <d1e7a14d-ea49-fc8e-a95c-2b4257096187@st.com>
-References: <20180529155257.5ae48830@canb.auug.org.au>
- <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
- <c306fbd9-21d9-5345-e820-52bc23d1b7c7@arm.com>
- <b01f3226-5bb8-071a-e825-73bec913ffa8@st.com>
- <2d647302-0be8-555b-8063-06b0d2d72772@arm.com>
- <b8fa6cc9-5d73-81a2-25b8-f0c858ef0c62@st.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: boot messages from today's linux-next
+Date: Tue, 29 May 2018 22:23:27 +1000
+Message-ID: <20180529222327.29d16eb6@canb.auug.org.au>
+References: <20180529210257.26da8de7@canb.auug.org.au>
+        <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/QVX.L/P4qjtv1+yvwEKFwpx"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <b8fa6cc9-5d73-81a2-25b8-f0c858ef0c62@st.com>
-Content-Language: en-US
+In-Reply-To: <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@st.com>, Marc Zyngier <marc.zyngier@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amelie Delaunay <amelie.delaunay@st.com>
+To: Mathieu Malaterre <malat@debian.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/QVX.L/P4qjtv1+yvwEKFwpx
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Mathieu,
 
-On 05/29/2018 10:55 AM, Alexandre Torgue wrote:
-> 
-> 
-> On 05/29/2018 10:39 AM, Marc Zyngier wrote:
->> On 29/05/18 09:16, Alexandre Torgue wrote:
->>> Hi Marc
->>>
->>> On 05/29/2018 09:47 AM, Marc Zyngier wrote:
->>>> On 29/05/18 08:41, Alexandre Torgue wrote:
->>>>> Hi Stephen
->>>>>
->>>>> On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
->>>>>> Hi all,
->>>>>>
->>>>>> Today's linux-next merge of the irqchip tree got a conflict in:
->>>>>>
->>>>>>      arch/arm/boot/dts/stm32mp157c.dtsi
->>>>>>
->>>>>> between commit:
->>>>>>
->>>>>>      3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to 
->>>>>> stm32mp157c")
->>>>>>
->>>>>> from the arm-soc tree and commit:
->>>>>>
->>>>>>      5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for 
->>>>>> stm32mp157c")
->>>>>>
->>>>>> from the irqchip tree.
->>>>>>
->>>>>> I fixed it up (see below) and can carry the fix as necessary. This
->>>>>> is now fixed as far as linux-next is concerned, but any non trivial
->>>>>> conflicts should be mentioned to your upstream maintainer when 
->>>>>> your tree
->>>>>> is submitted for merging.  You may also want to consider cooperating
->>>>>> with the maintainer of the conflicting tree to minimise any 
->>>>>> particularly
->>>>>> complex conflicts.
->>>>>>
->>>>>
->>>>> Thanks for the fix (I will reorder nodes in a future patch). My 
->>>>> opinion
->>>>> is that all STM32 DT patches should come through my STM32 tree. It 
->>>>> is my
->>>>> role to fix this kind of conflicts. I thought it was a common rule
->>>>> (driver patches go to sub-system maintainer tree and DT to the Machine
->>>>> maintainer). For incoming next-series which contain DT+driver 
->>>>> patches I
->>>>> will indicate clearly that I take DT patch. I'm right ?
->>>> Happy to oblige. Can you make sure you sync up with Ludovic and define
->>>> what you want to do?
->>>
->>> Sorry I don't understand your reply. I just say that for series
->>> containing DT patches + drivers patches, to my point of view it is more
->>> safe that driver patches are taken by sub-system maintainer (you in this
->>> case) and that I take DT patches in my tree.
->> And I'm happy to let you deal with these patches. I'm just asking you
->> sync with Ludovic to split the series on whichever boundary you wish to
->> enforce.
-> ok
-> 
->>
->>>> In the meantime, I'm dropping the series altogether.
->>>>
->>> Why? We could keep it as Stephen fixed the merge issue.
->> Well, you seem to have a strong opinion about who deals with what. I'll
->> let Ludovic repost what you and him decide should go via the irqchip 
->> tree.
-> 
-> It's not a "strong" opinion just my point of view and maybe not the good 
-> one. I thought that's the way of working was like I explained. If you 
-> prefer 2 series (one for driver patches and another one for DT patches) 
-> I will be happy with that.
-> 
-> Ludovic, what is your opinion ?
+On Tue, 29 May 2018 13:56:48 +0200 Mathieu Malaterre <malat@debian.org> wro=
+te:
+>
+> On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+> > Hi all,
+> >
+> > My qemu boots of today's powerpc linux-next kernel produced the followi=
+ng
+> > boot message differences:
+> >
+> > -Max number of cores passed to firmware: 2048 (NR_CPUS =3D 2048)
+> > +Max number of cores passed to firmware: u (NR_CPUS =3D 2048)
+> >
+> > Seemingly caused by commit
+> >
+> >   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf") =20
+>=20
+> My bad. Patch is pending (thanks Michael!):
+>=20
+> https://patchwork.ozlabs.org/patch/921948/
 
-Hi everybody
+Umm, that fixes some other messages, but not this particular one.
 
-For this serie, I think we could keep like that with
-Stephen fix. New stm32 irqchip will be integrated (thanks Marc)
-with no conflict with usb (thanks Stephen).
+--=20
+Cheers,
+Stephen Rothwell
 
-For next series, we may split driver and DT to avoid misunderstanding.
+--Sig_/QVX.L/P4qjtv1+yvwEKFwpx
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-BR
-Ludo
+-----BEGIN PGP SIGNATURE-----
 
-> 
-> Regards
-> Alexandre
-> 
->>
->> Thanks,
->>
->>     M.
->>
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNRj8ACgkQAVBC80lX
+0GwSWAf/X+uepuMrYN2u3rwltVhmCwERj1SOYZwcok8zW/lT25+Ix8rZWes92Xm2
+zadjH7cH0C9Umt7FTc8mnJ51WTKoPz8CKQzvdLGE1DBAEJtLtWdowPbK9BfEbbwN
+DMnjQxekWX5/B7uwPczkRaI9QdqAnJnUAxhBfx+wJEkpXKqo6cfHvu2kcuhEyilw
+rLU/L032uNC92sctqZfJfml9NN0wLy3FnVbSXC3gW9LkffIU2ZS39wus7HNlZLJm
+Lg1qzZS2CagtyJ962TB090Fql4C8lAMEUZEvlCY0GXURh47CxJoLT0RhRFKKtver
+T+P9RxiA90jtjs9eVvmsi5D4N5lbIw==
+=22jt
+-----END PGP SIGNATURE-----
+
+--Sig_/QVX.L/P4qjtv1+yvwEKFwpx--
