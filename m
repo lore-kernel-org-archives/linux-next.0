@@ -1,70 +1,53 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the devicetree tree
-Date: Tue, 29 May 2018 16:04:15 +1000
-Message-ID: <20180529160415.5da54b08@canb.auug.org.au>
-References: <20180509160449.68b865a2@canb.auug.org.au>
-        <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
+From: Alexandre Torgue <alexandre.torgue@st.com>
+Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc
+ tree
+Date: Tue, 29 May 2018 09:41:28 +0200
+Message-ID: <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
+References: <20180529155257.5ae48830@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xGvQJ8uUMEfKuePU45zux=E"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
+In-Reply-To: <20180529155257.5ae48830@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Marc Zyngier <marc.zyngier@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>, Amelie Delaunay <amelie.delaunay@st.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xGvQJ8uUMEfKuePU45zux=E
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Stephen
 
-Hi Rob,
+On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the irqchip tree got a conflict in:
+> 
+>    arch/arm/boot/dts/stm32mp157c.dtsi
+> 
+> between commit:
+> 
+>    3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
+> 
+> from the arm-soc tree and commit:
+> 
+>    5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
+> 
+> from the irqchip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
 
-On Wed, 9 May 2018 07:17:06 -0500 Rob Herring <robherring2@gmail.com> wrote:
->
-> > and over 2000 more :-( =20
->=20
-> I assume you mean on other files. I've already sent out patches for
-> arm and arm64 dts files.
+Thanks for the fix (I will reorder nodes in a future patch). My opinion 
+is that all STM32 DT patches should come through my STM32 tree. It is my 
+role to fix this kind of conflicts. I thought it was a common rule 
+(driver patches go to sub-system maintainer tree and DT to the Machine 
+maintainer). For incoming next-series which contain DT+driver patches I 
+will indicate clearly that I take DT patch. I'm right ?
 
-Yeah, we appear to be just down to this now:
-
-arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning (graph_endpoin=
-t): /soc/mdp@5100000/ports/port@3/endpoint: graph connection to node '/soc/=
-hdmi-tx@4a00000/ports/port@0/endpoint' is not bidirectional
-arch/arm/boot/dts/rk3288-evb-act8846.dtb: Warning (graph_endpoint): /dp@ff9=
-70000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-evb-rk808.dtb: Warning (graph_endpoint): /dp@ff970=
-000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-veyron-jaq.dtb: Warning (graph_endpoint): /dp@ff97=
-0000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-veyron-jerry.dtb: Warning (graph_endpoint): /dp@ff=
-970000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-veyron-minnie.dtb: Warning (graph_endpoint): /dp@f=
-f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-veyron-pinky.dtb: Warning (graph_endpoint): /dp@ff=
-970000/ports/port@1/endpoint: graph node unit address error, expected "0"
-arch/arm/boot/dts/rk3288-veyron-speedy.dtb: Warning (graph_endpoint): /dp@f=
-f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/xGvQJ8uUMEfKuePU45zux=E
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM7V8ACgkQAVBC80lX
-0GzWCgf/dvr0oYnLxzYXLCnLiv/at4ML7V6MPa9mjfwVMkZ324eQKMP+kbTq7TEp
-ndm86b42YXCL41ErG37G054+veq1yE7fvpEj7cgVodkBjbp4K7BiWH1IKeE1+4tq
-1xVDL6jCDG+p7zzdKuxcs86QkRGbxv5vbIt4Cz7q1EvSHtT2CmN2vfCZ1pOVs8pt
-pMuDjdfRQ13Dl9guJRBBxzza7RM+4IZ5MrDk6/sRVlfbJ+t5CC1YYEbjk9GNVKL5
-t3cAqoliK9yQpoICIfPNmosBKwXODJ06aQHU6IbyrLtF5mG1OQr4NGk9rsDfsPMo
-30pt6VILOCo6JqlKLV5PndrBehesYA==
-=d4NB
------END PGP SIGNATURE-----
-
---Sig_/xGvQJ8uUMEfKuePU45zux=E--
+Regards
+Alex
