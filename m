@@ -1,103 +1,115 @@
-From: Alexandre Torgue <alexandre.torgue@st.com>
-Subject: Re: linux-next: manual merge of the irqchip tree with the arm-soc tree
-Date: Tue, 29 May 2018 10:55:25 +0200
-Message-ID: <b8fa6cc9-5d73-81a2-25b8-f0c858ef0c62@st.com>
-References: <20180529155257.5ae48830@canb.auug.org.au>
- <1bedc0b7-21f9-1e15-a11c-3de06e81b5ba@st.com>
- <c306fbd9-21d9-5345-e820-52bc23d1b7c7@arm.com>
- <b01f3226-5bb8-071a-e825-73bec913ffa8@st.com>
- <2d647302-0be8-555b-8063-06b0d2d72772@arm.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the crypto tree
+Date: Tue, 29 May 2018 19:08:46 +1000
+Message-ID: <20180529190846.764421ea@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <2d647302-0be8-555b-8063-06b0d2d72772@arm.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Amelie Delaunay <amelie.delaunay@st.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/KHhFPrq2P4XRRlTrsX5N.H0"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ondrej Mosnacek <omosnacek@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/KHhFPrq2P4XRRlTrsX5N.H0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Herbert,
 
-On 05/29/2018 10:39 AM, Marc Zyngier wrote:
-> On 29/05/18 09:16, Alexandre Torgue wrote:
->> Hi Marc
->>
->> On 05/29/2018 09:47 AM, Marc Zyngier wrote:
->>> On 29/05/18 08:41, Alexandre Torgue wrote:
->>>> Hi Stephen
->>>>
->>>> On 05/29/2018 07:52 AM, Stephen Rothwell wrote:
->>>>> Hi all,
->>>>>
->>>>> Today's linux-next merge of the irqchip tree got a conflict in:
->>>>>
->>>>>      arch/arm/boot/dts/stm32mp157c.dtsi
->>>>>
->>>>> between commit:
->>>>>
->>>>>      3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
->>>>>
->>>>> from the arm-soc tree and commit:
->>>>>
->>>>>      5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
->>>>>
->>>>> from the irqchip tree.
->>>>>
->>>>> I fixed it up (see below) and can carry the fix as necessary. This
->>>>> is now fixed as far as linux-next is concerned, but any non trivial
->>>>> conflicts should be mentioned to your upstream maintainer when your tree
->>>>> is submitted for merging.  You may also want to consider cooperating
->>>>> with the maintainer of the conflicting tree to minimise any particularly
->>>>> complex conflicts.
->>>>>
->>>>
->>>> Thanks for the fix (I will reorder nodes in a future patch). My opinion
->>>> is that all STM32 DT patches should come through my STM32 tree. It is my
->>>> role to fix this kind of conflicts. I thought it was a common rule
->>>> (driver patches go to sub-system maintainer tree and DT to the Machine
->>>> maintainer). For incoming next-series which contain DT+driver patches I
->>>> will indicate clearly that I take DT patch. I'm right ?
->>> Happy to oblige. Can you make sure you sync up with Ludovic and define
->>> what you want to do?
->>
->> Sorry I don't understand your reply. I just say that for series
->> containing DT patches + drivers patches, to my point of view it is more
->> safe that driver patches are taken by sub-system maintainer (you in this
->> case) and that I take DT patches in my tree.
-> And I'm happy to let you deal with these patches. I'm just asking you
-> sync with Ludovic to split the series on whichever boundary you wish to
-> enforce.
-ok
+After merging the crypto tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-> 
->>> In the meantime, I'm dropping the series altogether.
->>>
->> Why? We could keep it as Stephen fixed the merge issue.
-> Well, you seem to have a strong opinion about who deals with what. I'll
-> let Ludovic repost what you and him decide should go via the irqchip tree.
+/home/sfr/next/next/crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.=
+h: No such file or directory
+ #include <asm/fpu/api.h>
+          ^~~~~~~~~~~~~~~
+/home/sfr/next/next/crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api=
+.h: No such file or directory
+ #include <asm/fpu/api.h>
+          ^~~~~~~~~~~~~~~
 
-It's not a "strong" opinion just my point of view and maybe not the good 
-one. I thought that's the way of working was like I explained. If you 
-prefer 2 series (one for driver patches and another one for DT patches) 
-I will be happy with that.
+Caused by commit
 
-Ludovic, what is your opinion ?
+  56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
 
-Regards
-Alexandre
+I have marked them as broken for now:
 
-> 
-> Thanks,
-> 
-> 	M.
-> 
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 May 2018 18:59:17 +1000
+Subject: [PATCH] crypto: make common SIMD glue code for MORUS as BROKEN for
+ now
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ crypto/Kconfig | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 75f5efde9aa3..ad69785dc9d3 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -342,6 +342,7 @@ config CRYPTO_MORUS640
+=20
+ config CRYPTO_MORUS640_GLUE
+ 	tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
++	depends on BROKEN
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_CRYPTD
+ 	help
+@@ -351,6 +352,7 @@ config CRYPTO_MORUS640_GLUE
+ config CRYPTO_MORUS640_SSE2
+ 	tristate "MORUS-640 AEAD algorithm (x86_64 SSE2 implementation)"
+ 	depends on X86 && 64BIT
++	depends on BROKEN
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_MORUS640_GLUE
+ 	help
+@@ -364,6 +366,7 @@ config CRYPTO_MORUS1280
+=20
+ config CRYPTO_MORUS1280_GLUE
+ 	tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
++	depends on BROKEN
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_CRYPTD
+ 	help
+@@ -373,6 +376,7 @@ config CRYPTO_MORUS1280_GLUE
+ config CRYPTO_MORUS1280_SSE2
+ 	tristate "MORUS-1280 AEAD algorithm (x86_64 SSE2 implementation)"
+ 	depends on X86 && 64BIT
++	depends on BROKEN
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_MORUS1280_GLUE
+ 	help
+@@ -382,6 +386,7 @@ config CRYPTO_MORUS1280_SSE2
+ config CRYPTO_MORUS1280_AVX2
+ 	tristate "MORUS-1280 AEAD algorithm (x86_64 AVX2 implementation)"
+ 	depends on X86 && 64BIT
++	depends on BROKEN
+ 	select CRYPTO_AEAD
+ 	select CRYPTO_MORUS1280_GLUE
+ 	help
+--=20
+2.17.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KHhFPrq2P4XRRlTrsX5N.H0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNGJ4ACgkQAVBC80lX
+0Gzdrwf8DU2Wc62pa1uvj8/ve0euPcyeCjQAw4LNKAjdHyJe1tIPSoTYWAQiUf7O
+ei1eNwKK4B4/3KGPMrUnPCKJbl7JqsVcZITAyXEJjVUzSD6hMlTOPGXPG8anqvm8
+4lJy9mdYN0z+ONXjyUQMuVlDD4NykFKjOGoiDCDwUlJOflpxVnyRmstRriWQf7ka
+UdLQqfmmlQztneOpQr0bz+wWuQ16OoXCfOCv31pz9NmNtXso6Wy3IwCTWato+7LJ
+oAtEeFaaLFhHm5G2jS5Ycu6RYsOzL6MyzRoDiMUWSISzUI8DxjWdw9ZPBbY9Sesv
+FLIdj9FYUzPlFCa696MslQYorC8qpQ==
+=Ag3E
+-----END PGP SIGNATURE-----
+
+--Sig_/KHhFPrq2P4XRRlTrsX5N.H0--
