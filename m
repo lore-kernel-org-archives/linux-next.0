@@ -1,102 +1,52 @@
-From: =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build failure after merge of the crypto tree
-Date: Tue, 29 May 2018 12:16:59 +0200
-Message-ID: <CAAUqJDu=Ez2CQY0JPTWA+K2UKVZbjRF-YFQdpP0=xmtqd7kEzQ@mail.gmail.com>
+Date: Tue, 29 May 2018 20:22:51 +1000
+Message-ID: <20180529202251.7db684bc@canb.auug.org.au>
 References: <20180529190846.764421ea@canb.auug.org.au>
+        <CAAUqJDu=Ez2CQY0JPTWA+K2UKVZbjRF-YFQdpP0=xmtqd7kEzQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/yExKcb7HygdgdfjmRx62Rq3"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180529190846.764421ea@canb.auug.org.au>
+In-Reply-To: <CAAUqJDu=Ez2CQY0JPTWA+K2UKVZbjRF-YFQdpP0=xmtqd7kEzQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ondrej =?UTF-8?B?TW9zbsOhxI1law==?= <omosnacek@gmail.com>
 Cc: Herbert Xu <herbert@gondor.apana.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
+--Sig_/yExKcb7HygdgdfjmRx62Rq3
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-there is already a patch pending that fixes the issue:
+Hi Ondrej,
 
-https://patchwork.kernel.org/patch/10416245/
+On Tue, 29 May 2018 12:16:59 +0200 Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gma=
+il.com> wrote:
+>
+> there is already a patch pending that fixes the issue:
+>=20
+> https://patchwork.kernel.org/patch/10416245/
 
+Great, hopefully it will be merged soon.
+
+--=20
 Cheers,
-Ondrej
+Stephen Rothwell
 
-2018-05-29 11:08 GMT+02:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Herbert,
->
-> After merging the crypto tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->
-> /home/sfr/next/next/crypto/morus640_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
->  #include <asm/fpu/api.h>
->           ^~~~~~~~~~~~~~~
-> /home/sfr/next/next/crypto/morus1280_glue.c:24:10: fatal error: asm/fpu/api.h: No such file or directory
->  #include <asm/fpu/api.h>
->           ^~~~~~~~~~~~~~~
->
-> Caused by commit
->
->   56e8e57fc3a7 ("crypto: morus - Add common SIMD glue code for MORUS")
->
-> I have marked them as broken for now:
->
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Tue, 29 May 2018 18:59:17 +1000
-> Subject: [PATCH] crypto: make common SIMD glue code for MORUS as BROKEN for
->  now
->
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  crypto/Kconfig | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/crypto/Kconfig b/crypto/Kconfig
-> index 75f5efde9aa3..ad69785dc9d3 100644
-> --- a/crypto/Kconfig
-> +++ b/crypto/Kconfig
-> @@ -342,6 +342,7 @@ config CRYPTO_MORUS640
->
->  config CRYPTO_MORUS640_GLUE
->         tristate "MORUS-640 AEAD algorithm (glue for SIMD optimizations)"
-> +       depends on BROKEN
->         select CRYPTO_AEAD
->         select CRYPTO_CRYPTD
->         help
-> @@ -351,6 +352,7 @@ config CRYPTO_MORUS640_GLUE
->  config CRYPTO_MORUS640_SSE2
->         tristate "MORUS-640 AEAD algorithm (x86_64 SSE2 implementation)"
->         depends on X86 && 64BIT
-> +       depends on BROKEN
->         select CRYPTO_AEAD
->         select CRYPTO_MORUS640_GLUE
->         help
-> @@ -364,6 +366,7 @@ config CRYPTO_MORUS1280
->
->  config CRYPTO_MORUS1280_GLUE
->         tristate "MORUS-1280 AEAD algorithm (glue for SIMD optimizations)"
-> +       depends on BROKEN
->         select CRYPTO_AEAD
->         select CRYPTO_CRYPTD
->         help
-> @@ -373,6 +376,7 @@ config CRYPTO_MORUS1280_GLUE
->  config CRYPTO_MORUS1280_SSE2
->         tristate "MORUS-1280 AEAD algorithm (x86_64 SSE2 implementation)"
->         depends on X86 && 64BIT
-> +       depends on BROKEN
->         select CRYPTO_AEAD
->         select CRYPTO_MORUS1280_GLUE
->         help
-> @@ -382,6 +386,7 @@ config CRYPTO_MORUS1280_SSE2
->  config CRYPTO_MORUS1280_AVX2
->         tristate "MORUS-1280 AEAD algorithm (x86_64 AVX2 implementation)"
->         depends on X86 && 64BIT
-> +       depends on BROKEN
->         select CRYPTO_AEAD
->         select CRYPTO_MORUS1280_GLUE
->         help
-> --
-> 2.17.0
->
-> --
-> Cheers,
-> Stephen Rothwell
+--Sig_/yExKcb7HygdgdfjmRx62Rq3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNKfsACgkQAVBC80lX
+0GzM2QgAnELJD67MNHavguNSrPxsTQGOPNXIUiBMz2mnrDgikrnQRL2VwfUrfDzJ
+ovk074TZH3TsbvmOW0jLLRDNur6Y4B2sW/xGFPepXYcAFzOBGRye3qG4LLk/xGL8
+SiQFunci4MlpyTwYo4GjxlPVH6Vjs65wgY9H7RCqqpO+UySoXTQeHi3/7xj0GGFp
+Xkjnvy27uFUsvacDaoXCY46LYMFK8yyB/kj/Ahkm+J8bMDV3LWu2EJSbpkUELxr2
+3Kou+NTTZeKef87a2KygPuCO7KZEO+ECA7AUL1EblKroqGGlX8B9eZECUMhLH10j
+quDPlqjy4CztC7O+6qPXyxteyCKp1w==
+=VFM7
+-----END PGP SIGNATURE-----
+
+--Sig_/yExKcb7HygdgdfjmRx62Rq3--
