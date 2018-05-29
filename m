@@ -1,37 +1,28 @@
-From: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Subject: Re: [next-20180517][ppc] watchdog: CPU 88 self-detected hard LOCKUP
- @ update_cfs_group+0x30/0x150
-Date: Tue, 29 May 2018 18:39:40 +0530
-Message-ID: <1527599380.3777.3.camel@abdul>
-References: <1526883300.19317.18.camel@abdul>
-         <20180521165056.5f3dceeb@roar.ozlabs.ibm.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: manual merge of the block tree with the vfs tree
+Date: Tue, 29 May 2018 08:22:43 -0600
+Message-ID: <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
+References: <20180529143357.2a66b0af@canb.auug.org.au>
+ <20180529081205.GB1416@lst.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180521165056.5f3dceeb@roar.ozlabs.ibm.com>
+In-Reply-To: <20180529081205.GB1416@lst.de>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Nicholas Piggin <npiggin@gmail.com>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel <linux-kernel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+To: Christoph Hellwig <hch@lst.de>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, 2018-05-21 at 16:50 +1000, Nicholas Piggin wrote:
-> Ah, it's POWER8.
-> 
-> I'm betting we have a bug with nohz timer offloading somewhere.
-> 
-> I *think* we may have seen similar on P9 as well, but that may be
-> related to problems with stop states.
-> 
-> Can you reproduce it easily? I'm thinking maybe adding some
-> tracepoints that track decrementer settings and interrupts, and
-> nohz offload activity might show something up.
+On 5/29/18 2:12 AM, Christoph Hellwig wrote:
+> Meh.  Do we really need these switch to octal patches to start
+> with?  I mean, I personally prefer octal, but just switching around
+> in random code that isn't otherwise changed creates nothing but churn.
 
-Yes, the problem is reproducible consistently on our CI setup and today
-It triggered on 4.17.0-rc6 (mainline) too.
+This is exactly why I hesitated doing it, I knew it would end up
+with conflicts. The main reason was to get rid of the inconsistency,
+since we had a fair mix of octal and symbolic names.
 
 -- 
-Regard's
-
-Abdul Haleem
-IBM Linux Technology Centre
+Jens Axboe
