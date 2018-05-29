@@ -1,100 +1,70 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the irqchip tree with the arm-soc tree
-Date: Tue, 29 May 2018 15:52:57 +1000
-Message-ID: <20180529155257.5ae48830@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the devicetree tree
+Date: Tue, 29 May 2018 16:04:15 +1000
+Message-ID: <20180529160415.5da54b08@canb.auug.org.au>
+References: <20180509160449.68b865a2@canb.auug.org.au>
+        <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/xukjiupTS1RFg90FaSqfu5U"; protocol="application/pgp-signature"
+ boundary="Sig_/xGvQJ8uUMEfKuePU45zux=E"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_Jsq+nbTv-bnjo=OQR+P49MgjwL7qkcc+47=jRHb4z0V94Vw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ludovic Barre <ludovic.barre@st.com>, Amelie Delaunay <amelie.delaunay@st.com>, Alexandre Torgue <alexandre.torgue@st.com>
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <yamada.masahiro@socionext.com>, Michal Marek <michal.lkml@markovi.net>, Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/xukjiupTS1RFg90FaSqfu5U
+--Sig_/xGvQJ8uUMEfKuePU45zux=E
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rob,
 
-Today's linux-next merge of the irqchip tree got a conflict in:
+On Wed, 9 May 2018 07:17:06 -0500 Rob Herring <robherring2@gmail.com> wrote:
+>
+> > and over 2000 more :-( =20
+>=20
+> I assume you mean on other files. I've already sent out patches for
+> arm and arm64 dts files.
 
-  arch/arm/boot/dts/stm32mp157c.dtsi
+Yeah, we appear to be just down to this now:
 
-between commit:
-
-  3c00436fdb20 ("ARM: dts: stm32: add USBPHYC support to stm32mp157c")
-
-from the arm-soc tree and commit:
-
-  5f0e9d2557d7 ("ARM: dts: stm32: Add exti support for stm32mp157c")
-
-from the irqchip tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+arch/arm/boot/dts/qcom-apq8064-arrow-sd-600eval.dtb: Warning (graph_endpoin=
+t): /soc/mdp@5100000/ports/port@3/endpoint: graph connection to node '/soc/=
+hdmi-tx@4a00000/ports/port@0/endpoint' is not bidirectional
+arch/arm/boot/dts/rk3288-evb-act8846.dtb: Warning (graph_endpoint): /dp@ff9=
+70000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-evb-rk808.dtb: Warning (graph_endpoint): /dp@ff970=
+000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-jaq.dtb: Warning (graph_endpoint): /dp@ff97=
+0000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-jerry.dtb: Warning (graph_endpoint): /dp@ff=
+970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-minnie.dtb: Warning (graph_endpoint): /dp@f=
+f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-pinky.dtb: Warning (graph_endpoint): /dp@ff=
+970000/ports/port@1/endpoint: graph node unit address error, expected "0"
+arch/arm/boot/dts/rk3288-veyron-speedy.dtb: Warning (graph_endpoint): /dp@f=
+f970000/ports/port@1/endpoint: graph node unit address error, expected "0"
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/boot/dts/stm32mp157c.dtsi
-index b66f673b5038,4fa0df853c8a..000000000000
---- a/arch/arm/boot/dts/stm32mp157c.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157c.dtsi
-@@@ -777,26 -183,13 +777,33 @@@
-  			status =3D "disabled";
-  		};
- =20
- +		usbphyc: usbphyc@5a006000 {
- +			#address-cells =3D <1>;
- +			#size-cells =3D <0>;
- +			compatible =3D "st,stm32mp1-usbphyc";
- +			reg =3D <0x5a006000 0x1000>;
- +			clocks =3D <&rcc USBPHY_K>;
- +			resets =3D <&rcc USBPHY_R>;
- +			status =3D "disabled";
- +
- +			usbphyc_port0: usb-phy@0 {
- +				#phy-cells =3D <0>;
- +				reg =3D <0>;
- +			};
- +
- +			usbphyc_port1: usb-phy@1 {
- +				#phy-cells =3D <1>;
- +				reg =3D <1>;
- +			};
- +		};
- +
-+ 		exti: interrupt-controller@5000d000 {
-+ 			compatible =3D "st,stm32mp1-exti", "syscon";
-+ 			interrupt-controller;
-+ 			#interrupt-cells =3D <2>;
-+ 			reg =3D <0x5000d000 0x400>;
-+ 		};
-+=20
-  		usart1: serial@5c000000 {
-  			compatible =3D "st,stm32h7-uart";
-  			reg =3D <0x5c000000 0x400>;
-
---Sig_/xukjiupTS1RFg90FaSqfu5U
+--Sig_/xGvQJ8uUMEfKuePU45zux=E
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM6rkACgkQAVBC80lX
-0Gyyrgf/Uzj5K4V0odofg90cZLU5BBR0op2JpGmfWEdUctcuj9mILMwn5ftvppTk
-4mwEF0qxo2rDujnzxCKdcXloDqeQUw6sowIXaMlTA+FabTerfGUSBhwxCfIoWeVC
-h6eKgcxiwRjv79b8H0n8vYEGuapCxmOH05G+x/VIHtoyPo9sntmLczGsZpML7m3q
-Kacv83kGEN6Tm+MAYODI1e94WhLZjFMgN0Ae3tWGGf567d1J+pVxw4KuFRJ53koa
-GXzO4/yAERheiP/4PmFikvF69FtnYYE0e2NDVXV7nmafNf7G5S5Ftnk99JKMPlxY
-z9h04HbmsqO7wLk/jkOjcH0nrvIeEA==
-=g9L9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsM7V8ACgkQAVBC80lX
+0GzWCgf/dvr0oYnLxzYXLCnLiv/at4ML7V6MPa9mjfwVMkZ324eQKMP+kbTq7TEp
+ndm86b42YXCL41ErG37G054+veq1yE7fvpEj7cgVodkBjbp4K7BiWH1IKeE1+4tq
+1xVDL6jCDG+p7zzdKuxcs86QkRGbxv5vbIt4Cz7q1EvSHtT2CmN2vfCZ1pOVs8pt
+pMuDjdfRQ13Dl9guJRBBxzza7RM+4IZ5MrDk6/sRVlfbJ+t5CC1YYEbjk9GNVKL5
+t3cAqoliK9yQpoICIfPNmosBKwXODJ06aQHU6IbyrLtF5mG1OQr4NGk9rsDfsPMo
+30pt6VILOCo6JqlKLV5PndrBehesYA==
+=d4NB
 -----END PGP SIGNATURE-----
 
---Sig_/xukjiupTS1RFg90FaSqfu5U--
+--Sig_/xGvQJ8uUMEfKuePU45zux=E--
