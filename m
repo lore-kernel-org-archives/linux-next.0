@@ -1,39 +1,81 @@
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Date: Tue, 29 May 2018 16:17:51 -0600
-Message-ID: <20d640dc-77df-1eb1-7310-8282a542cb59@kernel.dk>
-References: <20180529143357.2a66b0af@canb.auug.org.au>
- <20180529081205.GB1416@lst.de>
- <83024e98-8719-7ed2-a5d5-e1653162bacc@kernel.dk>
- <20180530074012.393b74b1@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the dma-mapping tree with Linus' tree
+Date: Wed, 30 May 2018 09:20:27 +1000
+Message-ID: <20180530092027.510bd34a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6CfB4MlC/ShTASRvm=ezsW="; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530074012.393b74b1@canb.auug.org.au>
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christoph Hellwig <hch@lst.de>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greentime Hu <greentime@andestech.com>
 List-Id: linux-next.vger.kernel.org
 
-On 5/29/18 3:40 PM, Stephen Rothwell wrote:
-> Hi Jens,
-> 
-> On Tue, 29 May 2018 08:22:43 -0600 Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 5/29/18 2:12 AM, Christoph Hellwig wrote:
->>> Meh.  Do we really need these switch to octal patches to start
->>> with?  I mean, I personally prefer octal, but just switching around
->>> in random code that isn't otherwise changed creates nothing but churn.  
->>
->> This is exactly why I hesitated doing it, I knew it would end up
->> with conflicts. The main reason was to get rid of the inconsistency,
->> since we had a fair mix of octal and symbolic names.
-> 
-> But the conflicts are all trivial ...
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yep, that certainly does help.
+Hi Christoph,
 
--- 
-Jens Axboe
+Today's linux-next merge of the dma-mapping tree got a conflict in:
+
+  arch/nds32/Kconfig
+
+between commit:
+
+  aeaa7af744fa ("nds32: lib: To use generic lib instead of libgcc to preven=
+t the symbol undefined issue.")
+
+from Linus' tree and commit:
+
+  267d2e18a281 ("nds32: use generic dma_noncoherent_ops")
+
+from the dma-mapping tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/nds32/Kconfig
+index b7404f2dcf5b,67d0ac0a989c..000000000000
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@@ -9,12 -11,7 +11,13 @@@ config NDS3
+  	select CLKSRC_MMIO
+  	select CLONE_BACKWARDS
+  	select COMMON_CLK
++ 	select DMA_NONCOHERENT_OPS
+ +	select GENERIC_ASHLDI3
+ +	select GENERIC_ASHRDI3
+ +	select GENERIC_LSHRDI3
+ +	select GENERIC_CMPDI2
+ +	select GENERIC_MULDI3
+ +	select GENERIC_UCMPDI2
+  	select GENERIC_ATOMIC64
+  	select GENERIC_CPU_DEVICES
+  	select GENERIC_CLOCKEVENTS
+
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN4DsACgkQAVBC80lX
+0GzFAAf+NQxEvchUDErdqIPcuX8NSsb7gnMqqY0bTSv7Gcgb43GZibYUxulYi9/w
+fTt4QNhIMzePHeJN1PNnDhPlwXT7pQ98o8i6PNzWbPoBZp6Cq/pXLV90Zf9o/e3h
+xGPYkxGEWyFIAY/w6cxLyaTsmO0QKD2iK+rk5fCGQwSjBahAj/JHwBhaXb4eyy+B
+QbZJPHGvAtMVFqB01+B5n5Pw/c32wHvbBAOhk5NczbIKWrenQa7PZBH2D0RNbB4Y
+YKKrQwScsd/SeKXgNtsKumzlvw6cl2rTTHOIyw4zT7KgF/h4j0Ur+uN7vD1Y06vX
+Mjlt73cLMWupSUG6xnCzjyHxBzh6Eg==
+=6ZQM
+-----END PGP SIGNATURE-----
+
+--Sig_/6CfB4MlC/ShTASRvm=ezsW=--
