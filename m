@@ -1,67 +1,64 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
+From: Mathieu Malaterre <malat@debian.org>
 Subject: Re: linux-next: boot messages from today's linux-next
-Date: Tue, 29 May 2018 22:23:27 +1000
-Message-ID: <20180529222327.29d16eb6@canb.auug.org.au>
-References: <20180529210257.26da8de7@canb.auug.org.au>
-        <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
+Date: Tue, 29 May 2018 14:39:06 +0200
+Message-ID: <CA+7wUsy8V9zyH+-nU_X+tpXnN3VYGctErquqSX3g7kQGZsvupQ@mail.gmail.com>
+References: <20180529210257.26da8de7@canb.auug.org.au> <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
+ <20180529222327.29d16eb6@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QVX.L/P4qjtv1+yvwEKFwpx"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+7wUsw4Us749j8yO5zpqfMcYWPMujwkNq0CRSSWWVFDJXLS0w@mail.gmail.com>
+In-Reply-To: <20180529222327.29d16eb6@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mathieu Malaterre <malat@debian.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/QVX.L/P4qjtv1+yvwEKFwpx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Stephen,
 
-Hi Mathieu,
-
-On Tue, 29 May 2018 13:56:48 +0200 Mathieu Malaterre <malat@debian.org> wro=
-te:
+On Tue, May 29, 2018 at 2:23 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Mathieu,
 >
-> On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
-> > Hi all,
-> >
-> > My qemu boots of today's powerpc linux-next kernel produced the followi=
-ng
-> > boot message differences:
-> >
-> > -Max number of cores passed to firmware: 2048 (NR_CPUS =3D 2048)
-> > +Max number of cores passed to firmware: u (NR_CPUS =3D 2048)
-> >
-> > Seemingly caused by commit
-> >
-> >   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf") =20
->=20
-> My bad. Patch is pending (thanks Michael!):
->=20
-> https://patchwork.ozlabs.org/patch/921948/
+> On Tue, 29 May 2018 13:56:48 +0200 Mathieu Malaterre <malat@debian.org> wrote:
+>>
+>> On Tue, May 29, 2018 at 1:02 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>> > Hi all,
+>> >
+>> > My qemu boots of today's powerpc linux-next kernel produced the following
+>> > boot message differences:
+>> >
+>> > -Max number of cores passed to firmware: 2048 (NR_CPUS = 2048)
+>> > +Max number of cores passed to firmware: u (NR_CPUS = 2048)
+>> >
+>> > Seemingly caused by commit
+>> >
+>> >   eae5f709a4d7 ("powerpc: Add __printf verification to prom_printf")
+>>
+>> My bad. Patch is pending (thanks Michael!):
+>>
+>> https://patchwork.ozlabs.org/patch/921948/
+>
+> Umm, that fixes some other messages, but not this particular one.
 
-Umm, that fixes some other messages, but not this particular one.
+Here is what I tried to say:
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 4d62f561f272..72ebe5896c1d 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -379,6 +379,11 @@ static void __init prom_printf(const char *format, ...)
+                        }
+                        prom_print_dec(vs);
+                        break;
++               case 'u':
++                       ++q;
++                       vs = va_arg(args, unsigned long);
++                       prom_print_dec(vs);
++                       break;
+                case 'l':
+                        ++q;
+                        if (*q == 0)
 
---Sig_/QVX.L/P4qjtv1+yvwEKFwpx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsNRj8ACgkQAVBC80lX
-0GwSWAf/X+uepuMrYN2u3rwltVhmCwERj1SOYZwcok8zW/lT25+Ix8rZWes92Xm2
-zadjH7cH0C9Umt7FTc8mnJ51WTKoPz8CKQzvdLGE1DBAEJtLtWdowPbK9BfEbbwN
-DMnjQxekWX5/B7uwPczkRaI9QdqAnJnUAxhBfx+wJEkpXKqo6cfHvu2kcuhEyilw
-rLU/L032uNC92sctqZfJfml9NN0wLy3FnVbSXC3gW9LkffIU2ZS39wus7HNlZLJm
-Lg1qzZS2CagtyJ962TB090Fql4C8lAMEUZEvlCY0GXURh47CxJoLT0RhRFKKtver
-T+P9RxiA90jtjs9eVvmsi5D4N5lbIw==
-=22jt
------END PGP SIGNATURE-----
-
---Sig_/QVX.L/P4qjtv1+yvwEKFwpx--
+> --
+> Cheers,
+> Stephen Rothwell
