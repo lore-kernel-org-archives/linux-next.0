@@ -1,42 +1,46 @@
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc tree
-Date: Wed, 30 May 2018 22:52:46 +0200
-Message-ID: <2022143.cJUAM8Fsdd@z50>
-References: <20180530150711.2c7c1fe9@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the nfs tree
+Date: Thu, 31 May 2018 07:26:29 +1000
+Message-ID: <20180531072629.6e19241b@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Fgdwgc49L6q4AR1fWPyS.X8"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180530150711.2c7c1fe9@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>
+To: Trond Myklebust <trondmy@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, NeilBrown <neilb@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wednesday, May 30, 2018 7:07:11 AM CEST Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the regulator tree got a conflict in:
-> 
->   arch/arm/mach-omap1/board-ams-delta.c
-> 
-> between commit:
-> 
->   0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables")
-> 
-> from the arm-soc tree and commit:
-> 
->   6059577cb28d ("regulator: fixed: Convert to use GPIO descriptor only")
-> 
-> from the regulator tree.
-> 
-> I fixed it up (see below - it may be better done) and can carry the fix
-> as necessary. 
+--Sig_/Fgdwgc49L6q4AR1fWPyS.X8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
+Hi Trond,
 
-Your fix looks pretty good to me, but anyway, I will test it and confirm in a 
-day or two, as soon as I have access to the device.
+Commit
 
-Thanks,
-Janusz
+  f217ebf24480 ("NFS: slight optimization for walking list for delegations")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Fgdwgc49L6q4AR1fWPyS.X8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPFwUACgkQAVBC80lX
+0GzoKwgAmBeLnqN0e5750QYsIbHnUm++RSU8SXzDmjmmbBMsOdjkZy+Slfy0AjlZ
+hQxZmHM91a4JLBgHMejH6EtACBuzfOkCzlSwYlqDGzBMQv7T++e6YJ0U/JKonZVn
+vwsGBxHBw/Av9v3Rr1+ISl3+OTsF6OKSVy4qzoBx/Iz+BIBhdFpVX8VsCB6htxwC
+lcuo1FYb4Wlg5Vg5xLLLWNRdeMYPDn+xWvw8Khg4+7JDW0LQPMYC6uid6R2DzwI4
+BSMvlr218JuDlGXr+mndgOKPL0Zt47VW04qSzKcEvUlQjqozHvYxxbxtSPly1UaD
+5Lgw4ex2mwZtUaxIv9BQL2C1kl62nQ==
+=yXJL
+-----END PGP SIGNATURE-----
+
+--Sig_/Fgdwgc49L6q4AR1fWPyS.X8--
