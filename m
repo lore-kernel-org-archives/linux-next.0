@@ -1,86 +1,50 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the arm-soc tree with the arm tree
-Date: Wed, 30 May 2018 09:40:40 +1000
-Message-ID: <20180530094040.5fa6dcdd@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the kbuild tree
+Date: Wed, 30 May 2018 11:29:42 +1000
+Message-ID: <20180530112942.2cfc2251@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oa+IXDveZvT0czFmcgKEI11"; protocol="application/pgp-signature"
+ boundary="Sig_/ezt8wi.HWin5WsXSitODAqj"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Russell King <rmk@armlinux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Florian Fainelli <f.fainelli@gmail.com>, Doug Berger <opendmb@gmail.com>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/oa+IXDveZvT0czFmcgKEI11
+--Sig_/ezt8wi.HWin5WsXSitODAqj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Masahiro,
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
+After merging the kbuild tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-  arch/arm/include/asm/cputype.h
+make was continually spawning test compiles.
 
-between commit:
+I used the kbuild tree from next-20180529 for today.
 
-  1067a8130b17 ("ARM: add more CPU part numbers for Cortex and Brahma B15 C=
-PUs")
-
-from the arm tree and commits:
-
-  9e35ddc962a6 ("ARM: add Broadcom Brahma-B53 main ID definition")
-  842fa17d6c95 ("ARM: add Broadcom Brahma-B15 main ID definition")
-
-from the arm-soc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+A (partial) strace seemed to show that it was testing for compiler flags
+(some more than once).
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm/include/asm/cputype.h
-index 26021980504d,d1b62ee69f3b..000000000000
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@@ -77,15 -75,11 +75,16 @@@
-  #define ARM_CPU_PART_CORTEX_A12		0x4100c0d0
-  #define ARM_CPU_PART_CORTEX_A17		0x4100c0e0
-  #define ARM_CPU_PART_CORTEX_A15		0x4100c0f0
- +#define ARM_CPU_PART_CORTEX_A53		0x4100d030
- +#define ARM_CPU_PART_CORTEX_A57		0x4100d070
- +#define ARM_CPU_PART_CORTEX_A72		0x4100d080
- +#define ARM_CPU_PART_CORTEX_A73		0x4100d090
- +#define ARM_CPU_PART_CORTEX_A75		0x4100d0a0
-  #define ARM_CPU_PART_MASK		0xff00fff0
- =20
-- /* Broadcom cores */
-+ /* Broadcom implemented processors */
-  #define ARM_CPU_PART_BRAHMA_B15		0x420000f0
-+ #define ARM_CPU_PART_BRAHMA_B53		0x42001000
- =20
-  /* DEC implemented cores */
-  #define ARM_CPU_PART_SA1100		0x4400a110
-
---Sig_/oa+IXDveZvT0czFmcgKEI11
+--Sig_/ezt8wi.HWin5WsXSitODAqj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN5PgACgkQAVBC80lX
-0Gx81QgAgJ03X4xrOqGH1jZFJVvCz5nIAKT76vu841k/k/OiJV7o5o4j7ahN+9hr
-DVIFUNA5legOjkCgkWRZboPlUPu9nnOeJfrHFgHGE03u82D3UOddeUBHpFlSOaL1
-B7zej2NWFsIS6HuLRCAVuOY9Qj0DfdFtr+dLEg60AqMw2vtKEnbaTvoJb7Wo0AOx
-AJCMiaxH2CEvWlLvZkwdR7UJDZd3EwO+Qsi2XPoK1Ag4IZRJISeoBPlQZV/sBx/B
-kDyYLKqz7Dx+Io5KpsT3M9VCHI5C9tHPTe/ahlbvnXopJRzDEr77cZkfj1xm0Rb6
-0WVSKgPNcoXDRTC68K7gGIaRKwDkLQ==
-=DVNz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsN/oYACgkQAVBC80lX
+0Gwj7QgAisO4aksHIvPCu7NasI8joEAxTcwWmnEvnBe9miNLq4lvfmFc1XhVKsZR
+sms5E1YvwdyN4UlLNgbKyVwqm7W6tykoFjdozsT6zpvCXyQT8mRFjDpxNjySEEsW
+/dwzh7OmPjtzwSs25HFvN53/WfAgP/v9jl2EP8BR1wMJELZjCeXrGCkdC6n4uEVQ
+RG20hzUkRDikRWw3VErDbOAMnekjeG2hq3pImTYA/pL9nHUJGsVHcMksk8dqqjnH
+P0G9dCCs0T4CIkGBoT9Vhf8AQI993ODFQMTfK4p+wFNZzNBYkuDjVC3jd/LD7Byg
+uBHbGhACh5Ph6DeJVTR2A8EvPp9vTQ==
+=whsx
 -----END PGP SIGNATURE-----
 
---Sig_/oa+IXDveZvT0czFmcgKEI11--
+--Sig_/ezt8wi.HWin5WsXSitODAqj--
