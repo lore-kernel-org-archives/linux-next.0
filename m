@@ -1,68 +1,83 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warnings after merge of the kbuild tree
-Date: Thu, 31 May 2018 08:40:37 +1000
-Message-ID: <20180531084037.2f8b4c1e@canb.auug.org.au>
+Subject: linux-next: manual merge of the powerpc tree with the kbuild tree
+Date: Thu, 31 May 2018 09:32:16 +1000
+Message-ID: <20180531093216.5c91aa2b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YcQ0cgYwznQVM=6GoGAqbNd"; protocol="application/pgp-signature"
+ boundary="Sig_/Ru_ne_nrKN=hqgwpUNXRDNB"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>, "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd
+--Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Masahiro,
+Hi all,
 
-After merging the kbuild tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Today's linux-next merge of the powerpc tree got a conflict in:
 
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_workarounds_nphy_rev7':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warni=
-ng: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_workarounds_nphy_rev3':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warni=
-ng: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function '=
-wlc_phy_cal_txiqlo_nphy':
-drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warni=
-ng: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-=
-than=3D]
- }
- ^
+  arch/powerpc/kernel/module_64.c
 
-I have no idea what caused these warnings to appear ... nothing in those
-functions looks too bad.
+between commit:
+
+  06aeb9e3f2bc ("powerpc/kbuild: move -mprofile-kernel check to Kconfig")
+
+from the kbuild tree and commit:
+
+  250122baed29 ("powerpc64/module: Tighten detection of mcount call sites w=
+ith -mprofile-kernel")
+
+from the powerpc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd
+diff --cc arch/powerpc/kernel/module_64.c
+index 55bccc315e1a,f7667e2ebfcb..000000000000
+--- a/arch/powerpc/kernel/module_64.c
++++ b/arch/powerpc/kernel/module_64.c
+@@@ -462,9 -466,12 +466,12 @@@ static unsigned long stub_for_addr(cons
+  	return (unsigned long)&stubs[i];
+  }
+ =20
+ -#ifdef CC_USING_MPROFILE_KERNEL
+ +#ifdef CONFIG_MPROFILE_KERNEL
+- static bool is_early_mcount_callsite(u32 *instruction)
++ static bool is_mprofile_mcount_callsite(const char *name, u32 *instructio=
+n)
+  {
++ 	if (strcmp("_mcount", name))
++ 		return false;
++=20
+  	/*
+  	 * Check if this is one of the -mprofile-kernel sequences.
+  	 */
+
+--Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPKGUACgkQAVBC80lX
-0Gy2dwf9HgIRhN09P6Vpty/a8LE9OoVMtkQLr2QzJ67t1oRtUyMO0+om6ektF/Vt
-F50uGrp2TPjjx5b3zwfRC6xZoDslnkhWxkr+/DeyzmpH+/LI/yPY8zKXofXvekbV
-i/ltx/VRcHMQXz4dRJO1yTlMAxlhSl4AVJcYi25lOozC1XFLbQHtGYBIHJpP9Bzx
-1UgR6S4KPHctj8Rc3C7OjA9MUn93ebmKy2aKYhhmfPszPicDAK6jAM73ZIMoDoC3
-zPJXSPh7DLSe8FmHHpwonn2YC6IzHLLunm5PkgHg5Si4QIPKiPL9x2t9yX485reY
-O3GASh2D1cXLvN1W4BVYCaIWgm4zLg==
-=PQzO
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPNIAACgkQAVBC80lX
+0GySDwf+KMfNFbnc+SDtymp5YdW9K61AWysy5duqE7dY2up0PK8jZC+7NwLEcJex
+ZVHRK9tmmLSvCfH3sJ8615NNlJUfIgsmL/w8xaNtu+EDIE8uh/wtSweXDqaewdDA
+S7DDzF28Z9CsKPMKQQWEzXZSFi2tGdVznRa3IcSgHsdIVCBlD+RFeWlvhAF/5KIG
+sLTdBo0JfTCMLFrXZtpALcFe2V88HDLA1KUpd8oHyjFaHq/1QROYLEV6aF/HLHb5
+nvpmV7fa+QzJHHEFJuP+Eikindx6YyyQLGXNNis8Ey7WB98vdFuEe/UK0wmywPy4
+j1KXufYi517zjxbVvZ72NYKCxc5QVA==
+=x/mn
 -----END PGP SIGNATURE-----
 
---Sig_/YcQ0cgYwznQVM=6GoGAqbNd--
+--Sig_/Ru_ne_nrKN=hqgwpUNXRDNB--
