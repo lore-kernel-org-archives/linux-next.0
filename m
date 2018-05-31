@@ -1,53 +1,74 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the block tree
-Date: Thu, 31 May 2018 13:49:49 +1000
-Message-ID: <20180531134939.29d8632e@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Wed, 30 May 2018 20:53:45 -0700
+Message-ID: <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Lx2kETMdtyP7YgC0OrD_cFA"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Lx2kETMdtyP7YgC0OrD_cFA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> Hi.
+>> (+CC Kees)
+>>
+>> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>>> Hi Masahiro,
+>>>
+>>> After merging the kbuild tree, today's linux-next build (x86_64
+>>> allmodconfig) produced these warnings:
+>>>
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>  }
+>>>  ^
+>>>
+>>> I have no idea what caused these warnings to appear ... nothing in those
+>>> functions looks too bad.
+>>
+>>
+>> This has been triggered by the following commit:
+>>
+>>
+>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Date:   Mon May 28 18:22:07 2018 +0900
+>>
+>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>
+>>
+>>
+>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+>> for COMPILE_TEST, which is now enabled.
+>
+> Weird -- I do build tests with plugins enabled pretty regularly. I
+> hadn't seen this before. I'll see if I can figure out what the
+> combination is...
 
-Hi Jens,
+Weirdly, I only see this after merging kbuild/for-next into
+next-20180530. (I don't get the warning if I just force the plugins
+on.)
 
-After merging the block tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Regardless, I can confirm that CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+trips it. I'll investigate more tomorrow...
 
-drivers/md/md.c: In function 'mddev_put':
-drivers/md/md.c:543:1: warning: the frame size of 2080 bytes is larger than=
- 2048 bytes [-Wframe-larger-than=3D]
- }
- ^
+-Kees
 
-This is caused because CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL is now
-switched on.  Hopefully Kees (cc'd) can procide some guidance on how to
-eliminate this warning.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Lx2kETMdtyP7YgC0OrD_cFA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPcN0ACgkQAVBC80lX
-0GzkzAf9EVHrOG9Zm2+BO6X/PNvtHJAcKQ5Rr2DEFOeKFO7r2/8X+hdwGJKGVKyg
-VQ+cEuSAqpJsu/9FmYFJY3zci9tjCRiqeU/BKTcgx5aCK91VZghaoGgSPyiyBQwL
-bCuZmL8jo+g1E0OlK/jHE1AEgY9inwnjZ8RwcQ6sB2c9GIywYM75+MuLXqbGulPG
-PK5po51bxRSUa4hKFPUxECfPT/Q3PxMotM+3EPu2A/PsTlbolv/H+g2/HYMH7uFp
-XLDhuu/K0evL2aA0Su9/cgBMaEWQiphwIxD+2fjEXu6bb8ZzwlvN5N5urK4NexAy
-Uz2Ftv0ZyC2gRhMEqzEkH/hc/nggwQ==
-=pv2H
------END PGP SIGNATURE-----
-
---Sig_/Lx2kETMdtyP7YgC0OrD_cFA--
+-- 
+Kees Cook
+Pixel Security
