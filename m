@@ -1,55 +1,66 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the nfs tree
-Date: Thu, 31 May 2018 10:42:21 +1000
-Message-ID: <20180531104221.2a899269@canb.auug.org.au>
-References: <20180531072629.6e19241b@canb.auug.org.au>
-        <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
-        <CAABAsM5W+LsPD_+Fxi_3FePoCBThFjhx15seGA=iZFi-v0XtTA@mail.gmail.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Thu, 31 May 2018 10:12:08 +0900
+Message-ID: <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/dY4Y5hJZIY0pcXzbwrlAYQT"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAABAsM5W+LsPD_+Fxi_3FePoCBThFjhx15seGA=iZFi-v0XtTA@mail.gmail.com>
+In-Reply-To: <20180531084037.2f8b4c1e@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Trond Myklebust <trondmy@gmail.com>
-Cc: List Linux Next Mailing <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, Neil Brown <neilb@suse.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/dY4Y5hJZIY0pcXzbwrlAYQT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi.
+(+CC Kees)
 
-Hi Trond,
-
-On Wed, 30 May 2018 18:26:34 -0400 Trond Myklebust <trondmy@gmail.com> wrot=
-e:
+2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+> Hi Masahiro,
 >
-> Note that there is another known problem with that linux-next branch
-> with the patch "NFSv4: Fix sillyrename to return the delegation when
-> appropriate". You might therefore just want to drop that branch for
-> today. It will be fixed up later tonight.
+> After merging the kbuild tree, today's linux-next build (x86_64
+> allmodconfig) produced these warnings:
+>
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>  }
+>  ^
+>
+> I have no idea what caused these warnings to appear ... nothing in those
+> functions looks too bad.
 
-I used the version of the nfs tree from yesterday (which was empty).
-Thanks for letting me know.
 
---=20
-Cheers,
-Stephen Rothwell
+This has been triggered by the following commit:
 
---Sig_/dY4Y5hJZIY0pcXzbwrlAYQT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+commit 0e461945f3504e09b8ecf947b6398adce1287a28
+Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon May 28 18:22:07 2018 +0900
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPRO0ACgkQAVBC80lX
-0GxQKAf/Y5tfL+U/LLsUgRFZz/x5ZZJuuaLWjuLTZYjq174dGGu1Nh4SEOCU/TeT
-+foc2yd1gYoiD1o85JStZWisModGB/Kq3VgYKtEpV/fbW+Jl9cbgrN1nmP0s2+2K
-zsHAFqWI7NNd6r7NolHPBe2Zpf3GdIH3tD7qpQU9Lx5fg+Qrkjxp0EikAykk/4hz
-kg6q63HI8Ra6HDOs2YLYCfMSlViKASE4pche/MWTbeXYs7oYPBE3JJY+Zrazr9Y/
-wQs+oZvsLt8WXDvdhrxi/+rR4F10GuM9hMY4KyNGRnkulZs3orxhUcm8PPDM6jz4
-T9w6ffxk+jhUefiGxGHanSv/b4PItg==
-=2cfF
------END PGP SIGNATURE-----
+    gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
 
---Sig_/dY4Y5hJZIY0pcXzbwrlAYQT--
+
+
+CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+for COMPILE_TEST, which is now enabled.
+
+
+
+COMPILE_TEST now enables GCC plugin for wider test coverage,
+this is a good thing in general.
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
