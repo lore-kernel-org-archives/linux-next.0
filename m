@@ -1,35 +1,63 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 31 (media/radio/radio-aimslab.c)
-Date: Thu, 31 May 2018 09:58:42 -0700
-Message-ID: <30d330b7-e09e-9e4c-174d-7bc81e553d91@infradead.org>
-References: <20180531194010.1177687e@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the device-mapper tree
+Date: Fri, 1 Jun 2018 07:42:16 +1000
+Message-ID: <20180601074216.10ae824a@canb.auug.org.au>
+References: <20180531142302.5f7b4302@canb.auug.org.au>
+        <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+        <20180531121041.GB8456@redhat.com>
+        <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
+        <9ed288cd-0e85-1cb6-7be0-d9d76c7af66d@kernel.dk>
+        <f5842a01-2bf1-2c18-1531-becae5dc5fb6@kernel.dk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/1RdPe7KjSgXwEJ9yH9mylA."; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180531194010.1177687e@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <f5842a01-2bf1-2c18-1531-becae5dc5fb6@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kent Overstreet <kent.overstreet@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
-On 05/31/2018 02:40 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180530:
-> 
+--Sig_/1RdPe7KjSgXwEJ9yH9mylA.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-on i386:
-when CONFIG_RADIO_ISA=m but CONFIG_RADIO_RTRACK=y (for radio-aimslab.c)
+Hi Jens,
 
-drivers/media/radio/radio-aimslab.o:(.data+0x0): undefined reference to `radio_isa_match'
-drivers/media/radio/radio-aimslab.o:(.data+0x4): undefined reference to `radio_isa_probe'
-drivers/media/radio/radio-aimslab.o:(.data+0x8): undefined reference to `radio_isa_remove'
+On Thu, 31 May 2018 09:02:01 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+>
+> Talked to Mike offline, but for Stephen's sake I'll reiterate here
+> too. Since I'm assuming that dm-writecache is the only problematic
+> user here, and since Mike based dm-4.18 on the block tree, I considered
+> it saner to leave things as-is. This means that the API removal is still
+> in the tree.
 
+Understood.
 
-I was going to add a "select RADIO_ISA" for RADIO_RTRACK, but it looks like
-that line was just removed/deleted in linux-next.  What's going on?
+> Stephen, if you see further conflicts due to that, do let me know and
+> I'll do a proper revert of the patch instead. Hopefully it'll be smooth
+> sailing from here on out.
 
--- 
-~Randy
+Yes, thanks, will do.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1RdPe7KjSgXwEJ9yH9mylA.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQbDgACgkQAVBC80lX
+0Gwh/wf+Ns+X6n6O5Wnn/nAyUfu5NjXx6PEbB7sLFfvrPMpwwEzEWoUm/FJb7HQ+
+aJODeeDqAEiJY14+cyT79zQPgiAnuQWQYByyLBT/lFIXVXE1fCJPUUAmG1VUgbhg
+fd/n/yo0xS3WW7j0GNDdN8O5RSpCzddzlLR1JIP7Rd5Ee+RPZAcCreW7xXX9fBnR
+Nnca3d8aFDnnXdMUldRf+xr6rC7tUZy1vK6QMTqGGrEwuT0O1mk7Uub5ZY27rpTX
+7x8q9MsZzhbv7SWQC5esCVNLLnud1GkFm1ulOCYs3Z5TRyBcRYM7GMP3XC1TpX/i
+cqsO0sju/ix+jqN5OgBlA1ZKKPqGag==
+=i4fw
+-----END PGP SIGNATURE-----
+
+--Sig_/1RdPe7KjSgXwEJ9yH9mylA.--
