@@ -1,50 +1,69 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the device-mapper tree
-Date: Thu, 31 May 2018 14:38:16 +1000
-Message-ID: <20180531143816.01af2db7@canb.auug.org.au>
-References: <20180531142302.5f7b4302@canb.auug.org.au>
-        <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+From: NeilBrown <neilb@suse.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the nfs tree
+Date: Thu, 31 May 2018 15:24:10 +1000
+Message-ID: <87y3g0tn2d.fsf@notabene.neil.brown.name>
+References: <20180531072629.6e19241b@canb.auug.org.au> <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/m3jcP865iScaWobYI.If3oh"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
+In-Reply-To: <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Alasdair G Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kent Overstreet <kent.overstreet@gmail.com>
+To: Trond Myklebust <trondmy@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: List Linux Next Mailing <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/m3jcP865iScaWobYI.If3oh
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+--=-=-=
+Content-Type: text/plain
 
-Hi Jens,
+On Wed, May 30 2018, Trond Myklebust wrote:
 
-On Wed, 30 May 2018 22:35:40 -0600 Jens Axboe <axboe@kernel.dk> wrote:
+> Hi Stephen,
 >
-> I=E2=80=99ll drop the last patch, we can do that at the end of the merge =
-window instead.=20
+> Thanks for noticing and apologies for missing that. I'll take that
+> patch out until Neil can update it.
+>
 
-Thanks.
+Thanks for noticing that Stephen,
+I've sent and updated version.
 
---=20
-Cheers,
-Stephen Rothwell
+Thanks,
+NeilBrown
 
---Sig_/m3jcP865iScaWobYI.If3oh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+
+> Cheers
+>   Trond
+> On Wed, 30 May 2018 at 17:26, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> Hi Trond,
+>>
+>> Commit
+>>
+>>   f217ebf24480 ("NFS: slight optimization for walking list for delegations")
+>>
+>> is missing a Signed-off-by from its author.
+>>
+>> --
+>> Cheers,
+>> Stephen Rothwell
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPfDgACgkQAVBC80lX
-0GzGIwf/eahZ3GVKsRnWnwYyLhmJ+ztrNnFTeTVy6wvlQ4PYaVdCaM6amHopEDQQ
-5TF3ZjC1cyDLj8gruB5mOPeZyiyMBAdw6xRtCx1Q0mb7xR9x+2r12PK9wxll1yy8
-5f0QmhTVI1GTY6c7ya5Pg/luZjuM/JyZWWI6/PZDS6F+07+NVVuGA/wxMpRvxjLl
-/TnKWCQ3r5j3NsEMeSR2T7GAN2wVrXW5OofxqaCK/ICSPwOrE3W3IWFv3ebn/Np6
-Sit4TM3VfZ0iNXwCcVec0RNAvjdhTdrd6ONmsSea89XjrBox1ZWwjkJhE3Did/6k
-Rw/H4p4a3wgdR+/RByySlHA2+e9V9A==
-=rtCm
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsPhvsACgkQOeye3VZi
+gbnMfQ/+Mrg9puY97bp79nb0vdCKOoyVdTElZiQrGwIVc+wyACzzJdKyX9zNc6dP
+TqRxDLmLG5pCG9sPRL+zmdDDjtVf2Hp5InvRdJTP5WcbiYrvy9mDrQzJewpVe8JV
+GC/84WV2/MmSFdNkkAKBeITe9//zX4+x2Ud5yl90ctrFH5U4lbK4mR8l7P9Ogw5g
+4dV+wJBLRKC63URlFNfNVkrzrHWIdx4NsgXTJq0VSJRT1rju+I6P83c6koV3Y/WH
+AiP8WHjPVpFRIeezTfIjRO0GWRppC8P7JsGUVus+71dZDlkPnLLvlKxCxZyswdUW
+WD/S23C+MmavbzGGFk7RqC8f6FRXzO+YjYb4RModstjPp+IHVsTSd2eb71MFRvfk
+zORh69RHtQONc9quUa05qtW9siZSK49kizY6PcH7PeeQlhEU4IpyihlSsJzkGU5R
+UPYHbMIZp4HbpB1l1MGtd5n4c2GVBlf7CLSfrd4qMm/oiSeIZm6exOZWGcelCPY8
+XrJ6rVk0ls4RkHIrG0FqOuPqAGzwsxLSzDKYV3YauRRBHVbmtEt+rV3cVmRpFuef
+fflylH7PBowgLSZOWNNdZWVL8etIL+NPocrgk8TFC/V4u2e7+QbZAl3WlkYhHHeV
+dTi19l+xNzQhUYB67Vl9vLDsb+aOhBWVzEsgOCxq8fCsh3FbOQM=
+=L4IE
 -----END PGP SIGNATURE-----
-
---Sig_/m3jcP865iScaWobYI.If3oh--
+--=-=-=--
