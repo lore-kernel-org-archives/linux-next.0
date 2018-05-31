@@ -1,83 +1,55 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the powerpc tree with the kbuild tree
-Date: Thu, 31 May 2018 09:32:16 +1000
-Message-ID: <20180531093216.5c91aa2b@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the nfs tree
+Date: Thu, 31 May 2018 10:42:21 +1000
+Message-ID: <20180531104221.2a899269@canb.auug.org.au>
+References: <20180531072629.6e19241b@canb.auug.org.au>
+        <CAABAsM7VZcJvtSnbebOAWEAZ7oTkV6JXJF=GxOj=zLYgjSGQ_Q@mail.gmail.com>
+        <CAABAsM5W+LsPD_+Fxi_3FePoCBThFjhx15seGA=iZFi-v0XtTA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Ru_ne_nrKN=hqgwpUNXRDNB"; protocol="application/pgp-signature"
+ boundary="Sig_/dY4Y5hJZIY0pcXzbwrlAYQT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAABAsM5W+LsPD_+Fxi_3FePoCBThFjhx15seGA=iZFi-v0XtTA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>, "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+To: Trond Myklebust <trondmy@gmail.com>
+Cc: List Linux Next Mailing <linux-next@vger.kernel.org>, linux-kernel@vger.kernel.org, Neil Brown <neilb@suse.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
+--Sig_/dY4Y5hJZIY0pcXzbwrlAYQT
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Trond,
 
-Today's linux-next merge of the powerpc tree got a conflict in:
+On Wed, 30 May 2018 18:26:34 -0400 Trond Myklebust <trondmy@gmail.com> wrot=
+e:
+>
+> Note that there is another known problem with that linux-next branch
+> with the patch "NFSv4: Fix sillyrename to return the delegation when
+> appropriate". You might therefore just want to drop that branch for
+> today. It will be fixed up later tonight.
 
-  arch/powerpc/kernel/module_64.c
-
-between commit:
-
-  06aeb9e3f2bc ("powerpc/kbuild: move -mprofile-kernel check to Kconfig")
-
-from the kbuild tree and commit:
-
-  250122baed29 ("powerpc64/module: Tighten detection of mcount call sites w=
-ith -mprofile-kernel")
-
-from the powerpc tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+I used the version of the nfs tree from yesterday (which was empty).
+Thanks for letting me know.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/powerpc/kernel/module_64.c
-index 55bccc315e1a,f7667e2ebfcb..000000000000
---- a/arch/powerpc/kernel/module_64.c
-+++ b/arch/powerpc/kernel/module_64.c
-@@@ -462,9 -466,12 +466,12 @@@ static unsigned long stub_for_addr(cons
-  	return (unsigned long)&stubs[i];
-  }
- =20
- -#ifdef CC_USING_MPROFILE_KERNEL
- +#ifdef CONFIG_MPROFILE_KERNEL
-- static bool is_early_mcount_callsite(u32 *instruction)
-+ static bool is_mprofile_mcount_callsite(const char *name, u32 *instructio=
-n)
-  {
-+ 	if (strcmp("_mcount", name))
-+ 		return false;
-+=20
-  	/*
-  	 * Check if this is one of the -mprofile-kernel sequences.
-  	 */
-
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB
+--Sig_/dY4Y5hJZIY0pcXzbwrlAYQT
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPNIAACgkQAVBC80lX
-0GySDwf+KMfNFbnc+SDtymp5YdW9K61AWysy5duqE7dY2up0PK8jZC+7NwLEcJex
-ZVHRK9tmmLSvCfH3sJ8615NNlJUfIgsmL/w8xaNtu+EDIE8uh/wtSweXDqaewdDA
-S7DDzF28Z9CsKPMKQQWEzXZSFi2tGdVznRa3IcSgHsdIVCBlD+RFeWlvhAF/5KIG
-sLTdBo0JfTCMLFrXZtpALcFe2V88HDLA1KUpd8oHyjFaHq/1QROYLEV6aF/HLHb5
-nvpmV7fa+QzJHHEFJuP+Eikindx6YyyQLGXNNis8Ey7WB98vdFuEe/UK0wmywPy4
-j1KXufYi517zjxbVvZ72NYKCxc5QVA==
-=x/mn
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsPRO0ACgkQAVBC80lX
+0GxQKAf/Y5tfL+U/LLsUgRFZz/x5ZZJuuaLWjuLTZYjq174dGGu1Nh4SEOCU/TeT
++foc2yd1gYoiD1o85JStZWisModGB/Kq3VgYKtEpV/fbW+Jl9cbgrN1nmP0s2+2K
+zsHAFqWI7NNd6r7NolHPBe2Zpf3GdIH3tD7qpQU9Lx5fg+Qrkjxp0EikAykk/4hz
+kg6q63HI8Ra6HDOs2YLYCfMSlViKASE4pche/MWTbeXYs7oYPBE3JJY+Zrazr9Y/
+wQs+oZvsLt8WXDvdhrxi/+rR4F10GuM9hMY4KyNGRnkulZs3orxhUcm8PPDM6jz4
+T9w6ffxk+jhUefiGxGHanSv/b4PItg==
+=2cfF
 -----END PGP SIGNATURE-----
 
---Sig_/Ru_ne_nrKN=hqgwpUNXRDNB--
+--Sig_/dY4Y5hJZIY0pcXzbwrlAYQT--
