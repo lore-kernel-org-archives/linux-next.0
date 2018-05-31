@@ -1,66 +1,70 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Kees Cook <keescook@chromium.org>
 Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Thu, 31 May 2018 10:12:08 +0900
-Message-ID: <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au>
+Date: Wed, 30 May 2018 18:26:08 -0700
+Message-ID: <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180531084037.2f8b4c1e@canb.auug.org.au>
+In-Reply-To: <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Hi.
-(+CC Kees)
-
-2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
-> Hi Masahiro,
+On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Hi.
+> (+CC Kees)
 >
-> After merging the kbuild tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
+> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>> Hi Masahiro,
+>>
+>> After merging the kbuild tree, today's linux-next build (x86_64
+>> allmodconfig) produced these warnings:
+>>
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>  }
+>>  ^
+>>
+>> I have no idea what caused these warnings to appear ... nothing in those
+>> functions looks too bad.
 >
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->  }
->  ^
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->  }
->  ^
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
-> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->  }
->  ^
 >
-> I have no idea what caused these warnings to appear ... nothing in those
-> functions looks too bad.
+> This has been triggered by the following commit:
+>
+>
+> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Date:   Mon May 28 18:22:07 2018 +0900
+>
+>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>
+>
+>
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+> for COMPILE_TEST, which is now enabled.
 
+Weird -- I do build tests with plugins enabled pretty regularly. I
+hadn't seen this before. I'll see if I can figure out what the
+combination is...
 
-This has been triggered by the following commit:
+> COMPILE_TEST now enables GCC plugin for wider test coverage,
+> this is a good thing in general.
 
+Yes indeed!
 
-commit 0e461945f3504e09b8ecf947b6398adce1287a28
-Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon May 28 18:22:07 2018 +0900
-
-    gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
-
-
-
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
-for COMPILE_TEST, which is now enabled.
-
-
-
-COMPILE_TEST now enables GCC plugin for wider test coverage,
-this is a good thing in general.
-
-
-
-
+-Kees
 
 -- 
-Best Regards
-Masahiro Yamada
+Kees Cook
+Pixel Security
