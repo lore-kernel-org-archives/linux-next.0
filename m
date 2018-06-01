@@ -1,73 +1,124 @@
-From: Kees Cook <keescook@chromium.org>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Thu, 31 May 2018 21:01:01 -0700
-Message-ID: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
- <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
- <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com> <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
+Date: Fri, 1 Jun 2018 16:13:52 +1000
+Message-ID: <20180601161352.41bf6b29@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/W+ytlMMLdh4opml_HzIlcML"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
->> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
->>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
->>> <yamada.masahiro@socionext.com> wrote:
->>>> Hi.
->>>> (+CC Kees)
->>>>
->>>> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
->>>>> Hi Masahiro,
->>>>>
->>>>> After merging the kbuild tree, today's linux-next build (x86_64
->>>>> allmodconfig) produced these warnings:
->>>>>
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
->>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
->>>>>  }
->>>>>  ^
->>>>>
->>>>> I have no idea what caused these warnings to appear ... nothing in those
->>>>> functions looks too bad.
->>>>
->>>>
->>>> This has been triggered by the following commit:
->>>>
->>>>
->>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
->>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>> Date:   Mon May 28 18:22:07 2018 +0900
->>>>
->>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
->>>>
->>>>
->>>>
->>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
->>>> for COMPILE_TEST, which is now enabled.
+--Sig_/W+ytlMMLdh4opml_HzIlcML
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-For the moment, can you add "depends on !COMPILE_TEST" to
-CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
-to figure out what's happening?
+Hi all,
 
-Thanks!
+Today's linux-next merge of the kvm-arm tree got a conflict in:
 
--Kees
+  arch/arm64/include/asm/cpufeature.h
 
--- 
-Kees Cook
-Pixel Security
+between commits:
+
+  a43ae4dfe56a ("arm64: Add 'ssbd' command-line option")
+  c32e1736ca03 ("arm64: ssbd: Add global mitigation state accessor")
+  647d0519b53f ("arm64: ssbd: Restore mitigation status on CPU resume")
+
+from the arm64 tree and commit:
+
+  31dc52b3c8fa ("arm64/sve: Move read_zcr_features() out of cpufeature.h")
+
+from the kvm-arm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/include/asm/cpufeature.h
+index 55bc1f073bfb,0a6b7133195e..000000000000
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@@ -510,55 -508,6 +508,28 @@@ static inline bool system_supports_sve(
+  		cpus_have_const_cap(ARM64_SVE);
+  }
+ =20
+- /*
+-  * Read the pseudo-ZCR used by cpufeatures to identify the supported SVE
+-  * vector length.
+-  *
+-  * Use only if SVE is present.
+-  * This function clobbers the SVE vector length.
+-  */
+- static inline u64 read_zcr_features(void)
+- {
+- 	u64 zcr;
+- 	unsigned int vq_max;
+-=20
+- 	/*
+- 	 * Set the maximum possible VL, and write zeroes to all other
+- 	 * bits to see if they stick.
+- 	 */
+- 	sve_kernel_enable(NULL);
+- 	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL1);
+-=20
+- 	zcr =3D read_sysreg_s(SYS_ZCR_EL1);
+- 	zcr &=3D ~(u64)ZCR_ELx_LEN_MASK; /* find sticky 1s outside LEN field */
+- 	vq_max =3D sve_vq_from_vl(sve_get_vl());
+- 	zcr |=3D vq_max - 1; /* set LEN field to maximum effective value */
+-=20
+- 	return zcr;
+- }
+-=20
+ +#define ARM64_SSBD_UNKNOWN		-1
+ +#define ARM64_SSBD_FORCE_DISABLE	0
+ +#define ARM64_SSBD_KERNEL		1
+ +#define ARM64_SSBD_FORCE_ENABLE		2
+ +#define ARM64_SSBD_MITIGATED		3
+ +
+ +static inline int arm64_get_ssbd_state(void)
+ +{
+ +#ifdef CONFIG_ARM64_SSBD
+ +	extern int ssbd_state;
+ +	return ssbd_state;
+ +#else
+ +	return ARM64_SSBD_UNKNOWN;
+ +#endif
+ +}
+ +
+ +#ifdef CONFIG_ARM64_SSBD
+ +void arm64_set_ssbd_mitigation(bool state);
+ +#else
+ +static inline void arm64_set_ssbd_mitigation(bool state) {}
+ +#endif
+ +
+  #endif /* __ASSEMBLY__ */
+ =20
+  #endif
+
+--Sig_/W+ytlMMLdh4opml_HzIlcML
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQ5CAACgkQAVBC80lX
+0GxfWAf9HnXSnCS5eXlPQAySvloaSqSxdCSPdxw9KZSUi9SauyvNTaiERIJPNbkh
+R0IvQoraU/c/+SVqptxuN8Mtp5IZzezLqZRe1zmGK+6r31cUpI1T9DNa3fzALFis
+UuZBrSM63acQh/5zRT9jWrKDT5QpOiMyMhoUnXJHrgAd9i4k/zAkCoK1shrDK3Gc
+jnY15ep2EU7BLEa5AczOLivDX0MrWRQLslHmoXe129cEUYYbwC/MMl65IcLgS0C+
+MCDZLwHqUUf+61REp30JSghytFgowMJqPSEJVaU1C361WNO3Px16BNMfU0xmqAbT
+vsvjBmNNu/Pfc86njzIVbDBHgacl+Q==
+=0O1t
+-----END PGP SIGNATURE-----
+
+--Sig_/W+ytlMMLdh4opml_HzIlcML--
