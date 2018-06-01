@@ -1,53 +1,81 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 1 Jun 2018 09:23:25 +0100
-Message-ID: <bc517d41-dac3-13a1-23b7-9d3f4cab3154@arm.com>
-References: <20180601162320.1ef18d8e@canb.auug.org.au>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+Date: Fri, 1 Jun 2018 04:52:45 -0400
+Message-ID: <20180601085243.3p33sctlpckcq7vl@ast-mbp>
+References: <20180529132548.7f71c2ff@canb.auug.org.au>
+ <20180531073855.29c23fce@canb.auug.org.au>
+ <20180601135943.66b90890@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180601162320.1ef18d8e@canb.auug.org.au>
-Content-Language: en-GB
+Content-Disposition: inline
+In-Reply-To: <20180601135943.66b90890@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoffer Dall <cdall@cs.columbia.edu>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
 List-Id: linux-next.vger.kernel.org
 
-Hi Stephen,
-
-On 01/06/18 07:23, Stephen Rothwell wrote:
+On Fri, Jun 01, 2018 at 01:59:43PM +1000, Stephen Rothwell wrote:
 > Hi all,
 > 
-> Today's linux-next merge of the kvm-arm tree got conflicts in:
+> On Thu, 31 May 2018 07:38:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > On Tue, 29 May 2018 13:25:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> > >
+> > > After merging the net-next tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > > 
+> > > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfilter_umh.o' is incompatible with i386:x86-64 output
+> > > 
+> > > Caused by commit
+> > > 
+> > >   d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+> > > 
+> > > In my builds, the host is PowerPC 64 LE ...
+> > > 
+> > > I have reverted that commit along with
+> > > 
+> > >   61a552eb487f ("bpfilter: fix build dependency")
+> > >   13405468f49d ("bpfilter: don't pass O_CREAT when opening console for debug")
+> > > 
+> > > for today.  
+> > 
+> > I am still getting this failure (well, at least yesterday I did).
 > 
-> arch/arm64/include/asm/kvm_host.h arch/arm64/kvm/hyp/switch.c
+> Still happened today.  My guess is that bpfilter_umh needs to be built
+> with the kernel compiler (not the host compiler - since ir is meant to
+> run on the some machine as the kernel, right?) but will require the
+> kernel architecture libc etc
 > 
-> between commit:
 > 
-> 55e3748e8902 ("arm64: KVM: Add ARCH_WORKAROUND_2 support for
-> guests")
+> I replaced the reverts above with the following:
 > 
-> from the arm64 tree and commits:
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 1 Jun 2018 13:33:28 +1000
+> Subject: [PATCH] net: bpfilter: mark as BROKEN for now
 > 
-> fa89d31c5306 ("KVM: arm64: Repurpose vcpu_arch.debug_flags for
-> general-purpose flags") e6b673b741ea ("KVM: arm64: Optimise FPSIMD
-> handling to reduce guest/host thrashing")
+> This does not build in a cross compile environment
 > 
-> from the kvm-arm tree.
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  net/bpfilter/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I fixed it up (see below) and can carry the fix as necessary. This 
-> is now fixed as far as linux-next is concerned, but any non
-> trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to
-> consider cooperating with the maintainer of the conflicting tree to
-> minimise any particularly complex conflicts.
-> 
+> diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
+> index a948b072c28f..ea4be72fdf6e 100644
+> --- a/net/bpfilter/Kconfig
+> +++ b/net/bpfilter/Kconfig
+> @@ -2,6 +2,7 @@ menuconfig BPFILTER
+>  	bool "BPF based packet filtering framework (BPFILTER)"
+>  	default n
+>  	depends on NET && BPF && INET
+> +	depends on BROKEN
 
-All three resolutions look correct to me.
+yeah. that's another option.
+Sorry for delay. networking folks are traveling to netconf.
+The issue is being discussed here:
+https://patchwork.ozlabs.org/patch/921597/
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Currently we're thinking how to add a check that hostcc's arch
+is equal to cross-cc target arch and ideally equal to arch
+of the host where it will be run.
