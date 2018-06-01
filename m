@@ -1,63 +1,57 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the device-mapper tree
-Date: Fri, 1 Jun 2018 07:42:16 +1000
-Message-ID: <20180601074216.10ae824a@canb.auug.org.au>
-References: <20180531142302.5f7b4302@canb.auug.org.au>
-        <A669939D-1AC5-48AA-AAE2-92694FB25B11@kernel.dk>
-        <20180531121041.GB8456@redhat.com>
-        <6ad38822-0bb4-3099-69b0-7a8a36d79403@kernel.dk>
-        <9ed288cd-0e85-1cb6-7be0-d9d76c7af66d@kernel.dk>
-        <f5842a01-2bf1-2c18-1531-becae5dc5fb6@kernel.dk>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Fri, 1 Jun 2018 10:09:22 +1000
+Message-ID: <20180601100922.56e98097@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1RdPe7KjSgXwEJ9yH9mylA."; protocol="application/pgp-signature"
+ boundary="Sig_/ktz4CCX786EbJPYusXy+G6p"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <f5842a01-2bf1-2c18-1531-becae5dc5fb6@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Mike Snitzer <snitzer@redhat.com>, Alasdair G Kergon <agk@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kent Overstreet <kent.overstreet@gmail.com>
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/1RdPe7KjSgXwEJ9yH9mylA.
+--Sig_/ktz4CCX786EbJPYusXy+G6p
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jens,
+Hi all,
 
-On Thu, 31 May 2018 09:02:01 -0600 Jens Axboe <axboe@kernel.dk> wrote:
->
-> Talked to Mike offline, but for Stephen's sake I'll reiterate here
-> too. Since I'm assuming that dm-writecache is the only problematic
-> user here, and since Mike based dm-4.18 on the block tree, I considered
-> it saner to leave things as-is. This means that the API removal is still
-> in the tree.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-Understood.
+fs/cifs/connect.c: In function 'cifs_mount':
+fs/cifs/connect.c:3967:10: error: 'struct cifs_tcon' has no member named 'p=
+osix_extensions'
+  if (tcon->posix_extensions)
+          ^~
 
-> Stephen, if you see further conflicts due to that, do let me know and
-> I'll do a proper revert of the patch instead. Hopefully it'll be smooth
-> sailing from here on out.
+Caused by commit
 
-Yes, thanks, will do.
+  12a778233fc4 ("smb3: Add posix create context for smb3.11 posix mounts")
+
+# CONFIG_CIFS_SMB311 is not set
+
+I have used the cifs tree from next-20180531 for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/1RdPe7KjSgXwEJ9yH9mylA.
+--Sig_/ktz4CCX786EbJPYusXy+G6p
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQbDgACgkQAVBC80lX
-0Gwh/wf+Ns+X6n6O5Wnn/nAyUfu5NjXx6PEbB7sLFfvrPMpwwEzEWoUm/FJb7HQ+
-aJODeeDqAEiJY14+cyT79zQPgiAnuQWQYByyLBT/lFIXVXE1fCJPUUAmG1VUgbhg
-fd/n/yo0xS3WW7j0GNDdN8O5RSpCzddzlLR1JIP7Rd5Ee+RPZAcCreW7xXX9fBnR
-Nnca3d8aFDnnXdMUldRf+xr6rC7tUZy1vK6QMTqGGrEwuT0O1mk7Uub5ZY27rpTX
-7x8q9MsZzhbv7SWQC5esCVNLLnud1GkFm1ulOCYs3Z5TRyBcRYM7GMP3XC1TpX/i
-cqsO0sju/ix+jqN5OgBlA1ZKKPqGag==
-=i4fw
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQjrIACgkQAVBC80lX
+0GzvYwf+JO+qL0q6LfIZRfeby/D0fduDc+zbzkfL+6NWKBfb1kx05knSOFLZvoXg
+O03y66z7iEQ2zoVe70Xd6X8NvnJdocnzhmb/yySvdm7UeeDm73Jt2dGyE8gaFef5
+gzm5NuFKldwMYJXChyp9g4m20m2HlOPnN091tTEaGgVXNq7hy4W1IyiF84jnJA/H
+UVfJQ4iL3lyVeCyi07ExQFAqJcqEyI1AGgLNcCPBiUwwQscripfzhQIncPrI3bIE
+pVxcWx2RMYU9riKVBu0OaBsN6yT1y9o3A1Mc0FPw4g7dLCHnQ5xAQB28zIusNkqu
+uKQpwJzER4UHQ3IbH5WtES/jzH4ogg==
+=noZ+
 -----END PGP SIGNATURE-----
 
---Sig_/1RdPe7KjSgXwEJ9yH9mylA.--
+--Sig_/ktz4CCX786EbJPYusXy+G6p--
