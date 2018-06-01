@@ -1,7 +1,7 @@
 From: dvhart@infradead.org
 Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86 tree
-Date: Fri, 01 Jun 2018 07:33:41 -0700
-Message-ID: <907F14B1-A97E-46FE-BDFE-F8D4A23DF2EC@infradead.org>
+Date: Fri, 01 Jun 2018 07:38:42 -0700
+Message-ID: <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
 References: <20180601213639.74f49e51@canb.auug.org.au> <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com> <20180601220832.73ad5b84@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain;
@@ -29,15 +29,7 @@ au> wrote:
 >It's unfixable without a rebase, so you could instead consider it an
 >opportunity to improve your processes for the future=2E :-)
 
-Yeah, in this case we have to do a rebase=2E
-
-Andy, I've been wanting to look at using some simple bots and tags for thi=
-s kind of thing=2E GitHub makes this really easy, might be time to move=2E =
-We'll continue this offline=2E
-
-For now, please rebase next to correct the error as this change is on top =
-of any of my commits, we won't make things worse by you recommitting my com=
-mits=2E
+Stephen, are the tests you use available publicly?
 
 --=20
 Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
