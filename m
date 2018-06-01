@@ -1,41 +1,34 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
-Date: Fri, 1 Jun 2018 10:16:08 -0700
-Message-ID: <CAPcyv4gHQBwvC9bGjFNvVWsZe2XW=52eT7QCcP1dduxaY7Gfbw@mail.gmail.com>
-References: <20180601185846.1c5b7d0a@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for Jun 1 (pwm/pwm-stm32)
+Date: Fri, 1 Jun 2018 12:58:37 -0700
+Message-ID: <daca554e-90ea-de33-845e-65a13d9acfe2@infradead.org>
+References: <20180601205621.11f1b9dd@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180601185846.1c5b7d0a@canb.auug.org.au>
+In-Reply-To: <20180601205621.11f1b9dd@canb.auug.org.au>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Fabrice Gasnier <fabrice.gasnier@st.com>, linux-pwm@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 1, 2018 at 1:58 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Dan,
->
-> Today's linux-next merge of the nvdimm tree got a conflict in:
->
->   drivers/dax/super.c
->
-> between commits:
->
->   ba23cba9b3bd ("fs: allow per-device dax status checking for filesystems")
->   80660f20252d ("dax: change bdev_dax_supported() to support boolean returns")
->
-> from the xfs tree and commit:
->
->   e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS")
->
-> from the nvdimm tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On 06/01/2018 03:56 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20180531:
+> 
 
-Resolution looks good to me Stephen. Thanks for fixing this up, I'll
-let Linus know in the libnvdimm pull request.
+
+on i386:
+
+drivers/pwm/pwm-stm32.o: In function `stm32_pwm_raw_capture.isra.0':
+pwm-stm32.c:(.text+0xa01): undefined reference to `stm32_timers_dma_burst_read'
+
+when CONFIG_PWM_STM32=y and CONFIG_MFD_STM32_TIMERS=m
+and CONFIG_COMPILE_TEST=y.
+
+
+-- 
+~Randy
