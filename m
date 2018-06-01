@@ -1,35 +1,41 @@
-From: Darren Hart <dvhart@infradead.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the drivers-x86
- tree
-Date: Fri, 1 Jun 2018 09:43:37 -0700
-Message-ID: <20180601164307.GA3505@localhost.localdomain>
-References: <20180601213639.74f49e51@canb.auug.org.au>
- <CAHp75VeULdbi3_V8JPffYCocmGtjC3QPdE-yPz5eDrkpONeE-A@mail.gmail.com>
- <20180601220832.73ad5b84@canb.auug.org.au>
- <7EC66A28-4E57-4B3C-A5AC-4D7D9CAF727E@infradead.org>
- <20180602012646.2a0801e8@canb.auug.org.au>
+From: Dan Williams <dan.j.williams@intel.com>
+Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
+Date: Fri, 1 Jun 2018 10:16:08 -0700
+Message-ID: <CAPcyv4gHQBwvC9bGjFNvVWsZe2XW=52eT7QCcP1dduxaY7Gfbw@mail.gmail.com>
+References: <20180601185846.1c5b7d0a@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180602012646.2a0801e8@canb.auug.org.au>
+In-Reply-To: <20180601185846.1c5b7d0a@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Haruka Kawajiri <yukx00@gmail.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 02, 2018 at 01:26:46AM +1000, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Fri, 01 Jun 2018 07:38:42 -0700 dvhart@infradead.org wrote:
-> >
-> > Stephen, are the tests you use available publicly?
-> 
-> I use the script below when I am fetching trees.  You don't want the
-> "gitk" invocation if you are doing this automatically, of course.  The
-> script just takes a commit range.
+On Fri, Jun 1, 2018 at 1:58 AM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Dan,
+>
+> Today's linux-next merge of the nvdimm tree got a conflict in:
+>
+>   drivers/dax/super.c
+>
+> between commits:
+>
+>   ba23cba9b3bd ("fs: allow per-device dax status checking for filesystems")
+>   80660f20252d ("dax: change bdev_dax_supported() to support boolean returns")
+>
+> from the xfs tree and commit:
+>
+>   e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS")
+>
+> from the nvdimm tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Thanks for sharing Stephen.
--- 
-Darren Hart
-VMware Open Source Technology Center
+Resolution looks good to me Stephen. Thanks for fixing this up, I'll
+let Linus know in the libnvdimm pull request.
