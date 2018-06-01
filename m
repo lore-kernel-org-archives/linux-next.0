@@ -1,35 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the kvm-arm tree with the arm64 tree
-Date: Fri, 1 Jun 2018 16:13:52 +1000
-Message-ID: <20180601161352.41bf6b29@canb.auug.org.au>
+Date: Fri, 1 Jun 2018 16:23:20 +1000
+Message-ID: <20180601162320.1ef18d8e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/W+ytlMMLdh4opml_HzIlcML"; protocol="application/pgp-signature"
+ boundary="Sig_/Bnf1ja+zn6L3VbNCA3o2aAj"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <marc.zyngier@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Martin <Dave.Martin@arm.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/W+ytlMMLdh4opml_HzIlcML
+--Sig_/Bnf1ja+zn6L3VbNCA3o2aAj
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the kvm-arm tree got a conflict in:
+Today's linux-next merge of the kvm-arm tree got conflicts in:
 
-  arch/arm64/include/asm/cpufeature.h
+  arch/arm64/include/asm/kvm_host.h
+  arch/arm64/kvm/hyp/switch.c
 
-between commits:
+between commit:
 
-  a43ae4dfe56a ("arm64: Add 'ssbd' command-line option")
-  c32e1736ca03 ("arm64: ssbd: Add global mitigation state accessor")
-  647d0519b53f ("arm64: ssbd: Restore mitigation status on CPU resume")
+  55e3748e8902 ("arm64: KVM: Add ARCH_WORKAROUND_2 support for guests")
 
-from the arm64 tree and commit:
+from the arm64 tree and commits:
 
-  31dc52b3c8fa ("arm64/sve: Move read_zcr_features() out of cpufeature.h")
+  fa89d31c5306 ("KVM: arm64: Repurpose vcpu_arch.debug_flags for general-pu=
+rpose flags")
+  e6b673b741ea ("KVM: arm64: Optimise FPSIMD handling to reduce guest/host =
+thrashing")
 
 from the kvm-arm tree.
 
@@ -44,81 +46,65 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc arch/arm64/include/asm/cpufeature.h
-index 55bc1f073bfb,0a6b7133195e..000000000000
---- a/arch/arm64/include/asm/cpufeature.h
-+++ b/arch/arm64/include/asm/cpufeature.h
-@@@ -510,55 -508,6 +508,28 @@@ static inline bool system_supports_sve(
-  		cpus_have_const_cap(ARM64_SVE);
-  }
+diff --cc arch/arm64/include/asm/kvm_host.h
+index 95d8a0e15b5f,a4ca202ff3f2..000000000000
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@@ -216,11 -217,8 +217,11 @@@ struct kvm_vcpu_arch=20
+  	/* Exception Information */
+  	struct kvm_vcpu_fault_info fault;
  =20
-- /*
--  * Read the pseudo-ZCR used by cpufeatures to identify the supported SVE
--  * vector length.
--  *
--  * Use only if SVE is present.
--  * This function clobbers the SVE vector length.
--  */
-- static inline u64 read_zcr_features(void)
-- {
-- 	u64 zcr;
-- 	unsigned int vq_max;
--=20
-- 	/*
-- 	 * Set the maximum possible VL, and write zeroes to all other
-- 	 * bits to see if they stick.
-- 	 */
-- 	sve_kernel_enable(NULL);
-- 	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL1);
--=20
-- 	zcr =3D read_sysreg_s(SYS_ZCR_EL1);
-- 	zcr &=3D ~(u64)ZCR_ELx_LEN_MASK; /* find sticky 1s outside LEN field */
-- 	vq_max =3D sve_vq_from_vl(sve_get_vl());
-- 	zcr |=3D vq_max - 1; /* set LEN field to maximum effective value */
--=20
-- 	return zcr;
-- }
--=20
- +#define ARM64_SSBD_UNKNOWN		-1
- +#define ARM64_SSBD_FORCE_DISABLE	0
- +#define ARM64_SSBD_KERNEL		1
- +#define ARM64_SSBD_FORCE_ENABLE		2
- +#define ARM64_SSBD_MITIGATED		3
+ +	/* State of various workarounds, see kvm_asm.h for bit assignment */
+ +	u64 workaround_flags;
  +
- +static inline int arm64_get_ssbd_state(void)
- +{
- +#ifdef CONFIG_ARM64_SSBD
- +	extern int ssbd_state;
- +	return ssbd_state;
- +#else
- +	return ARM64_SSBD_UNKNOWN;
- +#endif
- +}
- +
- +#ifdef CONFIG_ARM64_SSBD
- +void arm64_set_ssbd_mitigation(bool state);
- +#else
- +static inline void arm64_set_ssbd_mitigation(bool state) {}
- +#endif
- +
-  #endif /* __ASSEMBLY__ */
+- 	/* Guest debug state */
+- 	u64 debug_flags;
++ 	/* Miscellaneous vcpu state flags */
++ 	u64 flags;
  =20
-  #endif
+  	/*
+  	 * We maintain more than a single set of debug registers to support
+diff --cc arch/arm64/kvm/hyp/switch.c
+index c50cedc447f1,2d45bd719a5d..000000000000
+--- a/arch/arm64/kvm/hyp/switch.c
++++ b/arch/arm64/kvm/hyp/switch.c
+@@@ -452,10 -475,6 +511,8 @@@ int kvm_vcpu_run_vhe(struct kvm_vcpu *v
+  		/* And we're baaack! */
+  	} while (fixup_guest_exit(vcpu, &exit_code));
+ =20
+ +	__set_host_arch_workaround_state(vcpu);
+ +
+- 	fp_enabled =3D fpsimd_enabled_vhe();
+-=20
+  	sysreg_save_guest_state_vhe(guest_ctxt);
+ =20
+  	__deactivate_traps(vcpu);
+@@@ -512,10 -525,6 +565,8 @@@ int __hyp_text __kvm_vcpu_run_nvhe(stru
+  		/* And we're baaack! */
+  	} while (fixup_guest_exit(vcpu, &exit_code));
+ =20
+ +	__set_host_arch_workaround_state(vcpu);
+ +
+- 	fp_enabled =3D __fpsimd_enabled_nvhe();
+-=20
+  	__sysreg_save_state_nvhe(guest_ctxt);
+  	__sysreg32_save_state(vcpu);
+  	__timer_disable_traps(vcpu);
 
---Sig_/W+ytlMMLdh4opml_HzIlcML
+--Sig_/Bnf1ja+zn6L3VbNCA3o2aAj
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQ5CAACgkQAVBC80lX
-0GxfWAf9HnXSnCS5eXlPQAySvloaSqSxdCSPdxw9KZSUi9SauyvNTaiERIJPNbkh
-R0IvQoraU/c/+SVqptxuN8Mtp5IZzezLqZRe1zmGK+6r31cUpI1T9DNa3fzALFis
-UuZBrSM63acQh/5zRT9jWrKDT5QpOiMyMhoUnXJHrgAd9i4k/zAkCoK1shrDK3Gc
-jnY15ep2EU7BLEa5AczOLivDX0MrWRQLslHmoXe129cEUYYbwC/MMl65IcLgS0C+
-MCDZLwHqUUf+61REp30JSghytFgowMJqPSEJVaU1C361WNO3Px16BNMfU0xmqAbT
-vsvjBmNNu/Pfc86njzIVbDBHgacl+Q==
-=0O1t
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQ5lgACgkQAVBC80lX
+0Gy1+wgAhXE0xIMgljuJbQ70gw3VeNzUUl3AeUdufN8deeMmXq63PpcQBs5nL6P5
+1+XXvNiKRF4BeEUkMjfziCqYJjDcgL8cAOkEXXXlCyiJnywNm29+wTD1TVSY79aE
+QSQ0d7DsHLwLFBoBZmQpPJdVCQcnLTfBPxVBQexmfCDqHuOX5I+aLa395qe3t50U
+n94JIZph3z+tG4YTECwKzw2nZwRViohQbe75MMuJpmKJwZlJqo5SqCVo/3GbNhSX
+cDA86wKb8Q27KYHGwP+j/y3aEkOFGLa8MIfzFcvQL2JysD0l0pdbumXwINIo95y3
+Ak6n3FTo/vrUSlkPy1n/sK2N0zYjGw==
+=RtD2
 -----END PGP SIGNATURE-----
 
---Sig_/W+ytlMMLdh4opml_HzIlcML--
+--Sig_/Bnf1ja+zn6L3VbNCA3o2aAj--
