@@ -1,105 +1,73 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Date: Fri, 1 Jun 2018 13:59:43 +1000
-Message-ID: <20180601135943.66b90890@canb.auug.org.au>
-References: <20180529132548.7f71c2ff@canb.auug.org.au>
-        <20180531073855.29c23fce@canb.auug.org.au>
+From: Kees Cook <keescook@chromium.org>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Thu, 31 May 2018 21:01:01 -0700
+Message-ID: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+ <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com> <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/n.9LVszNWzS7qnUZXUD2hgH"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180531073855.29c23fce@canb.auug.org.au>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jakub Kicinski <jakub.kicinski@netronome.com>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/n.9LVszNWzS7qnUZXUD2hgH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
+>> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
+>>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+>>> <yamada.masahiro@socionext.com> wrote:
+>>>> Hi.
+>>>> (+CC Kees)
+>>>>
+>>>> 2018-05-31 7:40 GMT+09:00 Stephen Rothwell <sfr@canb.auug.org.au>:
+>>>>> Hi Masahiro,
+>>>>>
+>>>>> After merging the kbuild tree, today's linux-next build (x86_64
+>>>>> allmodconfig) produced these warnings:
+>>>>>
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev7':
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16563:1: warning: the frame size of 3136 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>>>  }
+>>>>>  ^
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_workarounds_nphy_rev3':
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:16905:1: warning: the frame size of 2872 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>>>  }
+>>>>>  ^
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c: In function 'wlc_phy_cal_txiqlo_nphy':
+>>>>> drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_n.c:26033:1: warning: the frame size of 2432 bytes is larger than 2048 bytes [-Wframe-larger-than=]
+>>>>>  }
+>>>>>  ^
+>>>>>
+>>>>> I have no idea what caused these warnings to appear ... nothing in those
+>>>>> functions looks too bad.
+>>>>
+>>>>
+>>>> This has been triggered by the following commit:
+>>>>
+>>>>
+>>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+>>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>> Date:   Mon May 28 18:22:07 2018 +0900
+>>>>
+>>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>>>
+>>>>
+>>>>
+>>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+>>>> for COMPILE_TEST, which is now enabled.
 
-Hi all,
+For the moment, can you add "depends on !COMPILE_TEST" to
+CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
+to figure out what's happening?
 
-On Thu, 31 May 2018 07:38:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 29 May 2018 13:25:48 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > After merging the net-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >=20
-> > x86_64-linux-ld: unknown architecture of input file `net/bpfilter/bpfil=
-ter_umh.o' is incompatible with i386:x86-64 output
-> >=20
-> > Caused by commit
-> >=20
-> >   d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
-> >=20
-> > In my builds, the host is PowerPC 64 LE ...
-> >=20
-> > I have reverted that commit along with
-> >=20
-> >   61a552eb487f ("bpfilter: fix build dependency")
-> >   13405468f49d ("bpfilter: don't pass O_CREAT when opening console for =
-debug")
-> >=20
-> > for today. =20
->=20
-> I am still getting this failure (well, at least yesterday I did).
+Thanks!
 
-Still happened today.  My guess is that bpfilter_umh needs to be built
-with the kernel compiler (not the host compiler - since ir is meant to
-run on the some machine as the kernel, right?) but will require the
-kernel architecture libc etc
+-Kees
 
-
-I replaced the reverts above with the following:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 1 Jun 2018 13:33:28 +1000
-Subject: [PATCH] net: bpfilter: mark as BROKEN for now
-
-This does not build in a cross compile environment
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- net/bpfilter/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
-index a948b072c28f..ea4be72fdf6e 100644
---- a/net/bpfilter/Kconfig
-+++ b/net/bpfilter/Kconfig
-@@ -2,6 +2,7 @@ menuconfig BPFILTER
- 	bool "BPF based packet filtering framework (BPFILTER)"
- 	default n
- 	depends on NET && BPF && INET
-+	depends on BROKEN
- 	help
- 	  This builds experimental bpfilter framework that is aiming to
- 	  provide netfilter compatible functionality via BPF
---=20
-2.17.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/n.9LVszNWzS7qnUZXUD2hgH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQxK8ACgkQAVBC80lX
-0GwCHggAmx8CYmzcPprLmFQPnIWfgChZPxX3eYn/uNyzLGh37itxI78MsrzwIZ2x
-vV4/Y+pEYeQHy8TLComcACQnP8cvgA4stM4/uTk0fgKVp5CO/D/IHr+tdlkeju/J
-M6NQS7jpsCeXfCzZ131BN4+QTKM09NN5OfzmJxhNmW0upNr0Fm3ErxFv2ElgEY1b
-YJwNWcae9+2v0/5P3D4py7JiFgmx2th62DTLxBaOXxRDGARxCH5hE22Wy5LkrGtE
-RgJTcbV1csMinGj7quKxxqHcja04XVDzT1PPjpjd4zsmsCY1FdQP4P+R0pa2HLat
-QIdHpIbtpb7u41WFy9tHCB2JT6/e/w==
-=JYZW
------END PGP SIGNATURE-----
-
---Sig_/n.9LVszNWzS7qnUZXUD2hgH--
+-- 
+Kees Cook
+Pixel Security
