@@ -1,34 +1,33 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with Linus' tree
-Date: Fri, 1 Jun 2018 11:52:14 +1000
-Message-ID: <20180601115214.25f6e1b9@canb.auug.org.au>
+Subject: linux-next: manual merge of the vfs tree with the ext3 tree
+Date: Fri, 1 Jun 2018 11:56:19 +1000
+Message-ID: <20180601115619.73a8f966@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=MtyrY4w.OwqIM_m+9rpcib"; protocol="application/pgp-signature"
+ boundary="Sig_/bC5Wm7niohz05lU=S8+p8Nf"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>, Jan Kara <jack@suse.cz>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amir Goldstein <amir73il@gmail.com>, Adam Manzanares <adam.manzanares@wdc.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib
+--Sig_/bC5Wm7niohz05lU=S8+p8Nf
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+Hi all,
 
 Today's linux-next merge of the vfs tree got a conflict in:
 
-  fs/afs/fsclient.c
+  include/linux/fs.h
 
 between commit:
 
-  684b0f68cf1c ("afs: Fix AFSFetchStatus decoder to provide OpenAFS compati=
-bility")
+  29aca8b3f7cd ("fsnotify: introduce prototype struct fsnotify_obj")
 
-from Linus' tree and commit:
+from the ext3 tree and commit:
 
-  c875c76a061d ("afs: Fix a Sparse warning in xdr_decode_AFSFetchStatus()")
+  d9a08a9e616b ("fs: Add aio iopriority support")
 
 from the vfs tree.
 
@@ -43,66 +42,46 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc fs/afs/fsclient.c
-index b273e1d60478,b695d9e16c65..000000000000
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@@ -138,37 -137,14 +138,31 @@@ static int xdr_decode_AFSFetchStatus(st
-  	u64 data_version, size;
-  	u32 type, abort_code;
-  	u8 flags =3D 0;
-- 	int ret;
--=20
-- 	if (vnode)
-- 		write_seqlock(&vnode->cb_lock);
+diff --cc include/linux/fs.h
+index d1f3d572349f,482563fe549c..000000000000
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@@ -36,7 -36,7 +36,8 @@@
+  #include <linux/delayed_call.h>
+  #include <linux/uuid.h>
+  #include <linux/errseq.h>
+ +#include <linux/fsnotify_obj.h>
++ #include <linux/ioprio.h>
  =20
- +	abort_code =3D ntohl(xdr->abort_code);
- +
-  	if (xdr->if_version !=3D htonl(AFS_FSTATUS_VERSION)) {
- +		if (xdr->if_version =3D=3D htonl(0) &&
- +		    abort_code !=3D 0 &&
- +		    inline_error) {
- +			/* The OpenAFS fileserver has a bug in FS.InlineBulkStatus
- +			 * whereby it doesn't set the interface version in the error
- +			 * case.
- +			 */
- +			status->abort_code =3D abort_code;
-- 			ret =3D 0;
-- 			goto out;
-++			return 0;
- +		}
- +
-  		pr_warn("Unknown AFSFetchStatus version %u\n", ntohl(xdr->if_version));
-  		goto bad;
-  	}
- =20
- +	if (abort_code !=3D 0 && inline_error) {
- +		status->abort_code =3D abort_code;
-- 		ret =3D 0;
-- 		goto out;
-++		return 0;
- +	}
- +
-  	type =3D ntohl(xdr->type);
- -	abort_code =3D ntohl(xdr->abort_code);
-  	switch (type) {
-  	case AFS_FTYPE_FILE:
-  	case AFS_FTYPE_DIR:
+  #include <asm/byteorder.h>
+  #include <uapi/linux/fs.h>
+@@@ -1717,9 -1713,10 +1719,11 @@@ struct file_operations=20
+  	int (*iterate) (struct file *, struct dir_context *);
+  	int (*iterate_shared) (struct file *, struct dir_context *);
+  	__poll_t (*poll) (struct file *, struct poll_table_struct *);
++ 	struct wait_queue_head * (*get_poll_head)(struct file *, __poll_t);
++ 	__poll_t (*poll_mask) (struct file *, __poll_t);
+  	long (*unlocked_ioctl) (struct file *, unsigned int, unsigned long);
+  	long (*compat_ioctl) (struct file *, unsigned int, unsigned long);
+ +	int (*pre_mmap) (struct file *, unsigned long, unsigned long);
+  	int (*mmap) (struct file *, struct vm_area_struct *);
+  	unsigned long mmap_supported_flags;
+  	int (*open) (struct inode *, struct file *);
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib
+--Sig_/bC5Wm7niohz05lU=S8+p8Nf
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQps4ACgkQAVBC80lX
-0Gxsgwf/YfgQXbBQ6SIGH2KiUWRnbLgP6eYxVtt2clNSuZj+4oCgEhgD0W92GNvT
-Ll6QCbGVd60/+sOj0RYpQkcNwe5fftSQLZOQ8BPco+jjsIFRUisIvRdFIGXGvZGZ
-X3OiUNXuiDA4NwKaVzqEJ8n7uE6bmscYVRcEXys+WkVbBznoeSxvcNIYO2KQt+tg
-QkCvCmCGaNflly6BNkEYI1IOiYcI6VJVgmsT/XLiM5RA5tyM81BikdKTlBZDOAdS
-Nj6UZ1L95BHbahvPEuxMVcifb1EYIx/miEMb3MoCKIqGPIgkRi3a4Itv9QD/8/5W
-gKVxaLUhNX9GT6kCeTrJQWI+XHTA5A==
-=gTN7
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsQp8MACgkQAVBC80lX
+0GzUgAgAjU7XasGRJdj+YD03VTFu87ln/F63NDUNlmaElNjXb0XmndzFvqQkQUKj
+KAgJ+TGFMn96EIYzk26i3ArA8R29QPk52Kl1hRZ6iRRfI0YqMlii4asEWfhyxREA
+G+4U5Qkfk5cS+xp/9AslDGu0ppKl98A2MXURcSSze8APiYwyDR5NweZsj6M6JBAL
+KnYWgcruV3fHgZoM5Nr9A1dNHKX1y3PiMbUUI2V4zAdsGlfXN7pZsnHjiVMBsI92
+mVEkGG2f9VKYjT7sGBn4InbKMFFLO60MMztgjHC6jCZeJynkBRIv3xMWiNqhoukC
+Tl2PtiZbrhfW5ykIwtwE5skGTsAUWA==
+=aDcS
 -----END PGP SIGNATURE-----
 
---Sig_/=MtyrY4w.OwqIM_m+9rpcib--
+--Sig_/bC5Wm7niohz05lU=S8+p8Nf--
