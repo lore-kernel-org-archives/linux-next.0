@@ -1,41 +1,48 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
-Date: Fri, 1 Jun 2018 20:37:59 -0700
-Message-ID: <CAPcyv4gTcVL0cWy_uB3MRa4BH+4Tz8uoCvkqBxt-BxxFkWOUdw@mail.gmail.com>
-References: <20180601185846.1c5b7d0a@canb.auug.org.au> <20180602005948.GH7825@magnolia>
- <20180602113312.55667641@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the vfs-fixes tree
+Date: Sat, 2 Jun 2018 17:21:51 +1000
+Message-ID: <20180602172151.300a536e@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/2bCycCLUdPYNZr_2Owstkyi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180602113312.55667641@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, David Chinner <david@fromorbit.com>, linux-xfs <linux-xfs@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:33 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Darrick,
->
-> On Fri, 1 Jun 2018 17:59:48 -0700 "Darrick J. Wong" <darrick.wong@oracle.com> wrote:
->>
->> > +   if (!dax_enabled) {
->> >  -          pr_debug("VFS (%s): error: dax support not enabled\n",
->> >  -                          sb->s_id);
->> >  +          pr_debug("%s: error: dax support not enabled\n",
->> >  +                          bdevname(bdev, buf));
->> > -           return false;
->> > +           return -EOPNOTSUPP;
->>
->> Hang on a sec, the changes in the xfs tree make this function return a
->> boolean (true for dax-is-supported, false for dax-not-supported), but
->> this change partially reverts the boolean return values.
->
-> OK, weird, that is what I though I had done.  Thanks for pointing it
-> out (I guess it was getting late :-().
->
->> >     }
->> > -
->> > -   return true;
->> > +   return 0;
+--Sig_/2bCycCLUdPYNZr_2Owstkyi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Good catch Darrick, I missed that too...
+Hi Al,
+
+Commit
+
+  9b8a76714b3d ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
+
+is missing a Signed-off-by from its author and committer.
+
+Reverts are commits as well ;-)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/2bCycCLUdPYNZr_2Owstkyi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsSRY8ACgkQAVBC80lX
+0GzSnwf/Y45gAf1BPhYkEtMGeTzQ73ucOuELuddbkF/87Dzbglrb/bd3vP5xLj2K
+OgRQTrq3gemeT36f0nCyiNRgmZuUAQdOEBBfdoMB0bEoCjojBXtsZ2A1cxaQjI1c
+cTHLkMDMvCJY6kR8G9y/qc4Iqr8jqdTYLubfLKSlvevM7CsZxpR1xHy5q5sI0DmQ
+WaXySFSxtuULJ+qF6HpL7czBsllmtcMPkxU8OWm+KO6XkwSfDg8fQlD6lbZ2P4ls
+3crm6R8tSuslVX4JeS/6onIyzGZXaDxbMqZLdEh4MKKIdrjK1AHdQZQzxlP4hghv
+KP93GXGN1XlvR3YmIk+pc91RfUBBWQ==
+=DjaX
+-----END PGP SIGNATURE-----
+
+--Sig_/2bCycCLUdPYNZr_2Owstkyi--
