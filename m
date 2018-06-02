@@ -1,48 +1,63 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the vfs-fixes tree
-Date: Sat, 2 Jun 2018 17:21:51 +1000
-Message-ID: <20180602172151.300a536e@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Sat, 2 Jun 2018 22:39:20 +0200
+Message-ID: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+ <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
+ <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com> <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/2bCycCLUdPYNZr_2Owstkyi"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/2bCycCLUdPYNZr_2Owstkyi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Jun 1, 2018 at 6:01 AM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
+>>> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
+>>>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
 
-Hi Al,
+>>>>> This has been triggered by the following commit:
+>>>>>
+>>>>>
+>>>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
+>>>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+>>>>> Date:   Mon May 28 18:22:07 2018 +0900
+>>>>>
+>>>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
+>>>>>
+>>>>>
+>>>>>
+>>>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
+>>>>> for COMPILE_TEST, which is now enabled.
+>
+> For the moment, can you add "depends on !COMPILE_TEST" to
+> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
+> to figure out what's happening?
+>
 
-Commit
+I ran into the same thing indepently and bisected it (which led me to
+arrive at this thread).
+One additional bit of information I have is that this happens with all
+versions of
+gcc-7 for me, but not gcc-6.3 or older.
 
-  9b8a76714b3d ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
+Another finding was the particular instance I noticed:
 
-is missing a Signed-off-by from its author and committer.
+fs/ext4/inode.c: In function 'ext4_inode_csum':
+fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
+than 500 bytes [-Wframe-larger-than=]
 
-Reverts are commits as well ;-)
+comes from inlining the same function multiple times; ext4_inode_csum()
+repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
+this normally only takes up stack space only once, but when initializing it
+to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
+of stack space (the size of the locally defined structure).
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/2bCycCLUdPYNZr_2Owstkyi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsSRY8ACgkQAVBC80lX
-0GzSnwf/Y45gAf1BPhYkEtMGeTzQ73ucOuELuddbkF/87Dzbglrb/bd3vP5xLj2K
-OgRQTrq3gemeT36f0nCyiNRgmZuUAQdOEBBfdoMB0bEoCjojBXtsZ2A1cxaQjI1c
-cTHLkMDMvCJY6kR8G9y/qc4Iqr8jqdTYLubfLKSlvevM7CsZxpR1xHy5q5sI0DmQ
-WaXySFSxtuULJ+qF6HpL7czBsllmtcMPkxU8OWm+KO6XkwSfDg8fQlD6lbZ2P4ls
-3crm6R8tSuslVX4JeS/6onIyzGZXaDxbMqZLdEh4MKKIdrjK1AHdQZQzxlP4hghv
-KP93GXGN1XlvR3YmIk+pc91RfUBBWQ==
-=DjaX
------END PGP SIGNATURE-----
-
---Sig_/2bCycCLUdPYNZr_2Owstkyi--
+       Arnd
