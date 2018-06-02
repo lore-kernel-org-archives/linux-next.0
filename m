@@ -1,111 +1,107 @@
-From: "Darrick J. Wong" <darrick.wong@oracle.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: manual merge of the nvdimm tree with the xfs tree
-Date: Fri, 1 Jun 2018 17:59:48 -0700
-Message-ID: <20180602005948.GH7825@magnolia>
+Date: Sat, 2 Jun 2018 11:33:12 +1000
+Message-ID: <20180602113312.55667641@canb.auug.org.au>
 References: <20180601185846.1c5b7d0a@canb.auug.org.au>
+        <20180602005948.GH7825@magnolia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/sr=3AYeLDjRXYPvJh5U_ts0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180601185846.1c5b7d0a@canb.auug.org.au>
+In-Reply-To: <20180602005948.GH7825@magnolia>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Darrick J. Wong" <darrick.wong@oracle.com>
 Cc: Dan Williams <dan.j.williams@intel.com>, David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dave Jiang <dave.jiang@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 01, 2018 at 06:58:46PM +1000, Stephen Rothwell wrote:
-> Hi Dan,
-> 
-> Today's linux-next merge of the nvdimm tree got a conflict in:
-> 
->   drivers/dax/super.c
-> 
-> between commits:
-> 
->   ba23cba9b3bd ("fs: allow per-device dax status checking for filesystems")
->   80660f20252d ("dax: change bdev_dax_supported() to support boolean returns")
-> 
-> from the xfs tree and commit:
-> 
->   e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS")
-> 
-> from the nvdimm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> diff --cc drivers/dax/super.c
-> index 1d7bd96511f0,88672b6f6252..000000000000
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@@ -80,11 -80,13 +80,12 @@@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev)
->    * This is a library function for filesystems to check if the block device
->    * can be mounted with dax option.
->    *
->  - * Return: negative errno if unsupported, 0 if supported.
->  + * Return: true if supported, false if unsupported
->    */
->  -int __bdev_dax_supported(struct super_block *sb, int blocksize)
->  +bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->   {
->  -	struct block_device *bdev = sb->s_bdev;
->   	struct dax_device *dax_dev;
-> + 	bool dax_enabled = false;
->   	pgoff_t pgoff;
->   	int err, id;
->   	void *kaddr;
-> @@@ -134,15 -135,22 +135,22 @@@
->   		 * on being able to do (page_address(pfn_to_page())).
->   		 */
->   		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
-> + 		dax_enabled = true;
->   	} else if (pfn_t_devmap(pfn)) {
-> - 		/* pass */;
-> - 	} else {
-> + 		struct dev_pagemap *pgmap;
-> + 
-> + 		pgmap = get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
-> + 		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
-> + 			dax_enabled = true;
-> + 		put_dev_pagemap(pgmap);
-> + 	}
-> + 
-> + 	if (!dax_enabled) {
->  -		pr_debug("VFS (%s): error: dax support not enabled\n",
->  -				sb->s_id);
->  +		pr_debug("%s: error: dax support not enabled\n",
->  +				bdevname(bdev, buf));
-> - 		return false;
-> + 		return -EOPNOTSUPP;
+--Sig_/sr=3AYeLDjRXYPvJh5U_ts0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hang on a sec, the changes in the xfs tree make this function return a
-boolean (true for dax-is-supported, false for dax-not-supported), but
-this change partially reverts the boolean return values.
+Hi Darrick,
 
->   	}
-> - 
-> - 	return true;
-> + 	return 0;
+On Fri, 1 Jun 2018 17:59:48 -0700 "Darrick J. Wong" <darrick.wong@oracle.co=
+m> wrote:
+>
+> > + 	if (!dax_enabled) {
+> >  -		pr_debug("VFS (%s): error: dax support not enabled\n",
+> >  -				sb->s_id);
+> >  +		pr_debug("%s: error: dax support not enabled\n",
+> >  +				bdevname(bdev, buf));
+> > - 		return false;
+> > + 		return -EOPNOTSUPP; =20
+>=20
+> Hang on a sec, the changes in the xfs tree make this function return a
+> boolean (true for dax-is-supported, false for dax-not-supported), but
+> this change partially reverts the boolean return values.
 
-The merge should retain the 'return false' above and the 'return true'
-here... or possibly just return dax_enabled:
+OK, weird, that is what I though I had done.  Thanks for pointing it
+out (I guess it was getting late :-().
 
-if (!dax_enabled) {
-	pr_debug(...);
-	pr_debug(...);
+> >   	}
+> > -=20
+> > - 	return true;
+> > + 	return 0; =20
+>=20
+> The merge should retain the 'return false' above and the 'return true'
+> here... or possibly just return dax_enabled:
+>=20
+> if (!dax_enabled) {
+> 	pr_debug(...);
+> 	pr_debug(...);
+> }
+>=20
+> return dax_enabled;
+
+OK, I have fixed up my merge resolution.  The end of that function will
+now look like this:
+
+	if (IS_ENABLED(CONFIG_FS_DAX_LIMITED) && pfn_t_special(pfn)) {
+		/*
+		 * An arch that has enabled the pmem api should also
+		 * have its drivers support pfn_t_devmap()
+		 *
+		 * This is a developer warning and should not trigger in
+		 * production. dax_flush() will crash since it depends
+		 * on being able to do (page_address(pfn_to_page())).
+		 */
+		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
+		dax_enabled =3D true;
+	} else if (pfn_t_devmap(pfn)) {
+		struct dev_pagemap *pgmap;
+
+		pgmap =3D get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
+		if (pgmap && pgmap->type =3D=3D MEMORY_DEVICE_FS_DAX)
+			dax_enabled =3D true;
+		put_dev_pagemap(pgmap);
+	}
+
+	if (!dax_enabled)
+		pr_debug("%s: error: dax support not enabled\n",
+				bdevname(bdev, buf));
+
+	return dax_enabled;
 }
+EXPORT_SYMBOL_GPL(__bdev_dax_supported);
 
-return dax_enabled;
+--=20
+Cheers,
+Stephen Rothwell
 
---D
+--Sig_/sr=3AYeLDjRXYPvJh5U_ts0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->   }
->   EXPORT_SYMBOL_GPL(__bdev_dax_supported);
->   #endif
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsR89gACgkQAVBC80lX
+0GyA2Qf/ZX3JXduaYkrCSj80K7ImW47ZFBitmDJVce5TMwTDCdYvkJvWRccKKYn/
+/UMxxAD6M2OhvrX/D1Z/x603r4gQo3vDED2GHYZodVDWnCeyy25Wy4BuZotYumop
+xWpN/QLBu4C+uy51WGaWOUDWQvPk48MisHjE9B2L5tVdNqmxwehen//RT3SH/ekh
+RTh08MGr2wbkhBHJ2+xUtLKfIZKXfdZpaxd9SHCZdd3VlB8OxXl7dDrAoI9RI0Ei
+LXj4u5f3fD0m6g6ouJjpFtfMliVOmUuLBlH5fflrzOE2x3ARKafbVfa/LpwGkXhU
+wYjTedmU9zxLsGPC5SnFhljoMTFRzw==
+=8N8b
+-----END PGP SIGNATURE-----
+
+--Sig_/sr=3AYeLDjRXYPvJh5U_ts0--
