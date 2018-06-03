@@ -1,47 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commit in the powerpc tree
-Date: Mon, 4 Jun 2018 04:26:26 +1000
-Message-ID: <20180604042626.286a9469@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the drm-msm tree
+Date: Mon, 4 Jun 2018 07:44:39 +1000
+Message-ID: <20180604074431.399aabf2@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/yrmiNp2hjm5+dqn=Kkh9I8M"; protocol="application/pgp-signature"
+ boundary="Sig_/9odY32j6grxYv2/V0NdlAq6"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Suchanek <msuchanek@suse.de>
+To: Rob Clark <robdclark@gmail.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/yrmiNp2hjm5+dqn=Kkh9I8M
+--Sig_/9odY32j6grxYv2/V0NdlAq6
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Rob,
 
 Commit
 
-  cb3d6759a93c ("powerpc/64s: Enable barrier_nospec based on firmware setti=
-ngs")
+  0c999b56810a ("drm/msm: Refactor complete_commit() to look more the helpe=
+rs")
+  240ca9286fcb ("drm/msm: Move implicit sync handling to prepare_fb")
+  a744a6a9e98b ("drm/msm: Issue queued events when disabling crtc")
+  efaa2af8b741 ("drm/msm: Remove msm_commit/worker, use atomic helper commi=
+t")
+  917d7e3c75ec ("drm/msm: Switch to atomic_helper_commit()")
 
-is missing a Signed-off-by from its author.
+are missing a Signed-off-by from their committer.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/yrmiNp2hjm5+dqn=Kkh9I8M
+--Sig_/9odY32j6grxYv2/V0NdlAq6
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUMtIACgkQAVBC80lX
-0GyzXwf+Jvvf6GnqeerEBBIhSq1FMEoGmKS8zXjcNmQSKJHvdnzvJfWMRI/UDibq
-Jo3OAt2ZbglG/iVjPUe/SyAtqLt7lIRFXSwO+5FcMCu99cwc1okCfFKA/RcSP3Jt
-cj+nJpapb1hL3d6M/NWnPJ8QS+flf+jwgfZ9aoy2nNnWqH4GOP+AwCw/nNLVwS0o
-YlG46rW54ulE5pft6x9nqqrE0WvyYxlZoU5hMjgEHgPaPQkMlKGrEI804Y91lvDV
-FRbxUtwG62go26PIc0akzEXgGmVeOk6Q8n+PKUSI9uCPfB4zksC4d49U8x8SStHh
-okjBK0+Ly2wuTG+L6O9RWU93jzIKHg==
-=D5n3
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUYUcACgkQAVBC80lX
+0GyQ+Af+PSmMZ5Kl2ejgfwtY4M/dB4K4VWwZInmuOANwsI4BfoqINMKE85CC73uT
+yTN778H/QcwX/TBzRrWFuurYnyWRYP0HjvK/khUKmFKFmrTOq+gNv61lqLGZzCYl
+qteVjnypfZCDzzNHvxr+EYhAYWfnL2DFwhtBKNOhT/nd7sNu7Y1szYYXnXSUGRSp
+Vwz6YL3ijv8pp+NXo960xHwlV0M+TxbD537rm/ARb6k9NA3l6kdJI9jZCsv8GX5b
+78LJJiNMovuYzjTsYHNlhxk2ncztVfE/6nvnUKDSC5fKU5Rx6xagW/f4Ed3x3k0l
+I0AxbkmifqYXKykK3cwVj4p/U0NDCw==
+=2sxd
 -----END PGP SIGNATURE-----
 
---Sig_/yrmiNp2hjm5+dqn=Kkh9I8M--
+--Sig_/9odY32j6grxYv2/V0NdlAq6--
