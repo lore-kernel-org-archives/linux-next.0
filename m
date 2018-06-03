@@ -1,49 +1,47 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: Signed-off-by missing for commits in the pci tree
-Date: Sun, 3 Jun 2018 11:41:33 +1000
-Message-ID: <20180603114133.64a2cc77@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the powerpc tree
+Date: Mon, 4 Jun 2018 04:26:26 +1000
+Message-ID: <20180604042626.286a9469@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ES9rkGbWIDm.KHmg4dKtuHd"; protocol="application/pgp-signature"
+ boundary="Sig_/yrmiNp2hjm5+dqn=Kkh9I8M"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Suchanek <msuchanek@suse.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ES9rkGbWIDm.KHmg4dKtuHd
+--Sig_/yrmiNp2hjm5+dqn=Kkh9I8M
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bjorn,
+Hi all,
 
-Commits
+Commit
 
-  aeddc65a043f ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver DT =
-bindings")
-  c1efa236b42b ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
-  18eb4158c840 ("PCI: mobiveil: Add MSI support")
+  cb3d6759a93c ("powerpc/64s: Enable barrier_nospec based on firmware setti=
+ngs")
 
-are missing a Signed-off-by from their committer.
+is missing a Signed-off-by from its author.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ES9rkGbWIDm.KHmg4dKtuHd
+--Sig_/yrmiNp2hjm5+dqn=Kkh9I8M
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsTR00ACgkQAVBC80lX
-0GwZPwf+Lc49n0GofSsHYpfyBjT0+A6XrBWH0u2x35FIAvZmoWiyB3hTCf43X/kq
-W15g5NiXPwEer16vEWqc7veFyb4+xN8isK3LDQReEHh18VbamNYy39f/T+oqcdp7
-ikOC5YC8uoCEedrreWNmEXwInuiEA9t6Dxg/gmgCh5SGbWZiEJvS/b4aZkAwZvGP
-/dKN3h5SIY5S2d7Rx630qU5o8fQf42Pr83QRVhS2dN3aQ2vC/HOx5n9n1douBx1z
-kR9IwYtL95NJBP8Hj+VSXiP2kO376HVRvp76ZOXmiLh2fYiCF+NfZmmMEvrJBEdT
-CUcEbBv28xNPGO7xJp8DunoQTyPIyQ==
-=ZSvb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUMtIACgkQAVBC80lX
+0GyzXwf+Jvvf6GnqeerEBBIhSq1FMEoGmKS8zXjcNmQSKJHvdnzvJfWMRI/UDibq
+Jo3OAt2ZbglG/iVjPUe/SyAtqLt7lIRFXSwO+5FcMCu99cwc1okCfFKA/RcSP3Jt
+cj+nJpapb1hL3d6M/NWnPJ8QS+flf+jwgfZ9aoy2nNnWqH4GOP+AwCw/nNLVwS0o
+YlG46rW54ulE5pft6x9nqqrE0WvyYxlZoU5hMjgEHgPaPQkMlKGrEI804Y91lvDV
+FRbxUtwG62go26PIc0akzEXgGmVeOk6Q8n+PKUSI9uCPfB4zksC4d49U8x8SStHh
+okjBK0+Ly2wuTG+L6O9RWU93jzIKHg==
+=D5n3
 -----END PGP SIGNATURE-----
 
---Sig_/ES9rkGbWIDm.KHmg4dKtuHd--
+--Sig_/yrmiNp2hjm5+dqn=Kkh9I8M--
