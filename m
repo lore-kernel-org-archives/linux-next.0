@@ -1,63 +1,49 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Sat, 2 Jun 2018 22:39:20 +0200
-Message-ID: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
- <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
- <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
- <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com> <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commits in the pci tree
+Date: Sun, 3 Jun 2018 11:41:33 +1000
+Message-ID: <20180603114133.64a2cc77@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ES9rkGbWIDm.KHmg4dKtuHd"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 1, 2018 at 6:01 AM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, May 31, 2018 at 6:56 PM, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->> 2018-05-31 12:53 GMT+09:00 Kees Cook <keescook@chromium.org>:
->>> On Wed, May 30, 2018 at 6:26 PM, Kees Cook <keescook@chromium.org> wrote:
->>>> On Wed, May 30, 2018 at 6:12 PM, Masahiro Yamada
+--Sig_/ES9rkGbWIDm.KHmg4dKtuHd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
->>>>> This has been triggered by the following commit:
->>>>>
->>>>>
->>>>> commit 0e461945f3504e09b8ecf947b6398adce1287a28
->>>>> Author: Masahiro Yamada <yamada.masahiro@socionext.com>
->>>>> Date:   Mon May 28 18:22:07 2018 +0900
->>>>>
->>>>>     gcc-plugins: allow to enable GCC_PLUGINS for COMPILE_TEST
->>>>>
->>>>>
->>>>>
->>>>> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL was previously disabled
->>>>> for COMPILE_TEST, which is now enabled.
->
-> For the moment, can you add "depends on !COMPILE_TEST" to
-> CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL in your tree and I'll continue
-> to figure out what's happening?
->
+Hi Bjorn,
 
-I ran into the same thing indepently and bisected it (which led me to
-arrive at this thread).
-One additional bit of information I have is that this happens with all
-versions of
-gcc-7 for me, but not gcc-6.3 or older.
+Commits
 
-Another finding was the particular instance I noticed:
+  aeddc65a043f ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver DT =
+bindings")
+  c1efa236b42b ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+  18eb4158c840 ("PCI: mobiveil: Add MSI support")
 
-fs/ext4/inode.c: In function 'ext4_inode_csum':
-fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
-than 500 bytes [-Wframe-larger-than=]
+are missing a Signed-off-by from their committer.
 
-comes from inlining the same function multiple times; ext4_inode_csum()
-repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
-this normally only takes up stack space only once, but when initializing it
-to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
-of stack space (the size of the locally defined structure).
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/ES9rkGbWIDm.KHmg4dKtuHd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-       Arnd
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsTR00ACgkQAVBC80lX
+0GwZPwf+Lc49n0GofSsHYpfyBjT0+A6XrBWH0u2x35FIAvZmoWiyB3hTCf43X/kq
+W15g5NiXPwEer16vEWqc7veFyb4+xN8isK3LDQReEHh18VbamNYy39f/T+oqcdp7
+ikOC5YC8uoCEedrreWNmEXwInuiEA9t6Dxg/gmgCh5SGbWZiEJvS/b4aZkAwZvGP
+/dKN3h5SIY5S2d7Rx630qU5o8fQf42Pr83QRVhS2dN3aQ2vC/HOx5n9n1douBx1z
+kR9IwYtL95NJBP8Hj+VSXiP2kO376HVRvp76ZOXmiLh2fYiCF+NfZmmMEvrJBEdT
+CUcEbBv28xNPGO7xJp8DunoQTyPIyQ==
+=ZSvb
+-----END PGP SIGNATURE-----
+
+--Sig_/ES9rkGbWIDm.KHmg4dKtuHd--
