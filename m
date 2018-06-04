@@ -1,74 +1,96 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warnings after merge of the kbuild tree
-Date: Mon, 4 Jun 2018 10:39:46 +0200
-Message-ID: <CAK8P3a0K_=dHfsJOkFd5DWMs6i6bxm+2vRbYAc3UEr1bYpNb5g@mail.gmail.com>
-References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
- <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
- <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
- <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
- <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com> <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the akpm-current tree with the nvdimm
+ tree
+Date: Mon, 4 Jun 2018 20:24:53 +1000
+Message-ID: <20180604202453.77342f89@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TZk9mjDh4uUYDCplwBFdHU_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kees Cook <keescook@chromium.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Souptick Joarder <jrdr.linux@gmail.com>, Matthew Wilcox <mawilcox@microsoft.com>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 2, 2018 at 10:39 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+--Sig_/TZk9mjDh4uUYDCplwBFdHU_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> I ran into the same thing indepently and bisected it (which led me to
-> arrive at this thread).
-> One additional bit of information I have is that this happens with all
-> versions of
-> gcc-7 for me, but not gcc-6.3 or older.
->
-> Another finding was the particular instance I noticed:
->
-> fs/ext4/inode.c: In function 'ext4_inode_csum':
-> fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
-> than 500 bytes [-Wframe-larger-than=]
->
-> comes from inlining the same function multiple times; ext4_inode_csum()
-> repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
-> this normally only takes up stack space only once, but when initializing it
-> to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
-> of stack space (the size of the locally defined structure).
+Hi all,
 
-Two more things:
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-* I believe we still want to leave
-  CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL depending on
-  !COMPILE_TEST indefinitely. The reason is that it effectively turns off
-  -Wmaybe-uninitialized warnings by initializing all structures, so we would
-  miss those warnings in allmodconfig builds otherwise. Obviously
-  that shouldn't stop of from fixing the excessive stack usage.
+  fs/dax.c
 
-* Here is the full list of instances in which a function stack usage grows
-   beyond the warning limit with CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
-   enabled, after several hundred randconfig builds on arm32/arm64/x86:
+between commit:
 
-drivers/media/dvb-core/dvb_frontend.c: In function 'dvb_frontend_handle_ioctl':
-drivers/media/dvb-core/dvb_frontend.c:2647:1: error: the frame size of
-1032 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
-fs/ext4/super.c: In function 'ext4_group_desc_csum':
-fs/ext4/super.c:2306:1: error: the frame size of 1160 bytes is larger
-than 1024 bytes [-Werror=frame-larger-than=]
-fs/ext4/xattr.c: In function 'ext4_xattr_block_csum':
-fs/ext4/xattr.c:147:1: error: the frame size of 1168 bytes is larger
-than 1024 bytes [-Werror=frame-larger-than=]
-fs/f2fs/inode.c: In function 'f2fs_inode_chksum':
-fs/f2fs/inode.c:156:1: error: the frame size of 1424 bytes is larger
-than 1024 bytes [-Werror=frame-larger-than=]
-net/bluetooth/l2cap_core.c: In function 'l2cap_recv_frame':
-net/bluetooth/l2cap_core.c:6976:1: error: the frame size of 2240 bytes
-is larger than 2048 bytes [-Werror=frame-larger-than=]
-drivers/media/i2c/soc_camera/ov9740.c: In function 'ov9740_set_res':
-drivers/media/i2c/soc_camera/ov9740.c:668:1: error: the frame size of
-2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+  cc4a90ac816e ("dax: dax_insert_mapping_entry always succeeds")
 
-I did not see the brcmsmac warning on my builds though, so presumably there are
-some others as well.
+from the nvdimm tree and commit:
 
-     Arnd
+  aa726309bde7 ("fs/dax.c: add new return type vm_fault_t")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/dax.c
+index d6b01de7f881,821986c61f7e..000000000000
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@@ -1017,8 -910,9 +1017,8 @@@ static vm_fault_t dax_load_hole(struct=20
+  {
+  	struct inode *inode =3D mapping->host;
+  	unsigned long vaddr =3D vmf->address;
+- 	int ret =3D VM_FAULT_NOPAGE;
++ 	vm_fault_t ret =3D VM_FAULT_NOPAGE;
+  	struct page *zero_page;
+ -	void *entry2;
+  	pfn_t pfn;
+ =20
+  	zero_page =3D ZERO_PAGE(0);
+@@@ -1028,9 -922,14 +1028,9 @@@
+  	}
+ =20
+  	pfn =3D page_to_pfn_t(zero_page);
+ -	entry2 =3D dax_insert_mapping_entry(mapping, vmf, entry, pfn,
+ -			RADIX_DAX_ZERO_PAGE, false);
+ -	if (IS_ERR(entry2)) {
+ -		ret =3D VM_FAULT_SIGBUS;
+ -		goto out;
+ -	}
+ -
+ +	dax_insert_mapping_entry(mapping, vmf, entry, pfn, RADIX_DAX_ZERO_PAGE,
+ +			false);
+- 	vm_insert_mixed(vmf->vma, vaddr, pfn);
++ 	ret =3D vmf_insert_mixed(vmf->vma, vaddr, pfn);
+  out:
+  	trace_dax_load_hole(inode, vmf, ret);
+  	return ret;
+
+--Sig_/TZk9mjDh4uUYDCplwBFdHU_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsVE3UACgkQAVBC80lX
+0Gyafgf8CcqimsaErJyvfatf91bE+Nzma8jdtaTr6F3tghRyL5hnCr7i3tGJXrX4
+1P2tAVgehWg5txNVsfYjggfXexnfemZnWk3lYawCiC7DQVKfC7+Y5Xh/sUA4LGeZ
+QsydgOLJF8Vu726XC6+3qkO3baMllNI798x5+p2Em+nu4daQEuVbLFe53wWOEJGA
+H/qcPgq+jxvespKLtG732/1jw6Pn3oRQg3Kf49jFq6eKVOLO93LUQFPGq8BmY/Ds
+Mby1WH3PBQ672GGGbjUhQEBUvs+DCB4pp+sdFJFcXnVYZ73BuRqZRpGJOmFCo6Ld
+K/zTV3QGnt+AIOmX9sntQ527ctRZew==
+=YFF2
+-----END PGP SIGNATURE-----
+
+--Sig_/TZk9mjDh4uUYDCplwBFdHU_--
