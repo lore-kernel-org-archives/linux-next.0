@@ -1,46 +1,28 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 4 (fs/afs/)
-Date: Mon, 4 Jun 2018 09:12:35 -0700
-Message-ID: <7e4a317a-d57e-1499-dc1e-2eba35610632@infradead.org>
-References: <20180604215911.75399f6e@canb.auug.org.au>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the pci tree
+Date: Mon, 4 Jun 2018 12:04:32 -0500
+Message-ID: <CAErSpo7VL6jajWxHVacbv-43iYZu_0H=+s=ZkGjeQd1irEkucA@mail.gmail.com>
+References: <20180603114133.64a2cc77@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180604215911.75399f6e@canb.auug.org.au>
-Content-Language: en-US
+In-Reply-To: <20180603114133.64a2cc77@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, l.subrahmanya@mobiveil.co.in
 List-Id: linux-next.vger.kernel.org
 
-On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20180601:
-> 
+On Sat, Jun 2, 2018 at 8:41 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>
+> Hi Bjorn,
+>
+> Commits
+>
+>   aeddc65a043f ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver DT bindings")
+>   c1efa236b42b ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
+>   18eb4158c840 ("PCI: mobiveil: Add MSI support")
+>
+> are missing a Signed-off-by from their committer.
 
-on x86_64:
-
-# CONFIG_PROC_FS is not set
-
-
-../fs/afs/proc.c: In function ‘afs_proc_init’:
-../fs/afs/proc.c:604:2: error: implicit declaration of function ‘proc_create_net_data_write’ [-Werror=implicit-function-declaration]
-  if (!proc_create_net_data_write("cells", 0644, p,
-  ^
-../fs/afs/proc.c:609:6: error: implicit declaration of function ‘proc_create_net_single_write’ [-Werror=implicit-function-declaration]
-      !proc_create_net_single_write("rootcell", 0644, p,
-      ^
-../fs/afs/proc.c: At top level:
-../fs/afs/proc.c:517:12: warning: ‘afs_proc_stats_show’ defined but not used [-Wunused-function]
- static int afs_proc_stats_show(struct seq_file *m, void *v)
-            ^
-cc1: some warnings being treated as errors
-../scripts/Makefile.build:311: recipe for target 'fs/afs/proc.o' failed
-
-
-afs seems not to handle CONFIG_PROC_FS=n at all.
-
--- 
-~Randy
+Fixed, thanks.  I had cherry-picked those from Lorenzo's branch to fix
+an issue while he's away, and neglected to add my own Signed-off-by.
