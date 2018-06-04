@@ -1,52 +1,36 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drm-msm tree
-Date: Mon, 4 Jun 2018 13:20:49 +1000
-Message-ID: <20180604132049.117952be@canb.auug.org.au>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/2] pwm: stm32: initialize raw local variables
+Date: Mon, 4 Jun 2018 07:12:33 +0100
+Message-ID: <20180604061233.GC25455@dell>
+References: <1526657044-14879-1-git-send-email-fabrice.gasnier@st.com>
+ <1526657044-14879-3-git-send-email-fabrice.gasnier@st.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1526657044-14879-3-git-send-email-fabrice.gasnier@st.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Clark <robdclark@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Sharat Masetty <smasetty@codeaurora.org>
+To: Fabrice Gasnier <fabrice.gasnier@st.com>
+Cc: thierry.reding@gmail.com, rdunlap@infradead.org, sfr@canb.auug.org.au, gerald.baeza@st.com, alexandre.torgue@st.com, mcoquelin.stm32@gmail.com, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
 List-Id: linux-next.vger.kernel.org
 
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, 18 May 2018, Fabrice Gasnier wrote:
 
-Hi Rob,
+> This removes build warning when COMPILE_TEST=y and MFD_STM32_TIMERS=n
+> in drivers/pwm/pwm-stm32.c. In function 'stm32_pwm_capture' 'raw_prd' and
+> 'raw_dty' may be used uninitialized in this function
+> [-Wmaybe-uninitialized]
+> 
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> ---
+>  drivers/pwm/pwm-stm32.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-After merging the drm-msm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Applied, thanks.
 
-drivers/gpu/drm/msm/adreno/a5xx_gpu.o: In function `a5xx_gpu_busy':
-a5xx_gpu.c:(.text+0xcc): undefined reference to `__aeabi_uldivmod'
-
-Caused by commit
-
-  dd4ff3063899 ("drm/msm: re-factor devfreq code")
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUsBEACgkQAVBC80lX
-0GwwyAf9FIRSiZXmpBSwLztMljQDFRBNWMtC6yuEJ3jNvsCg+JuoMRHutoEvil/1
-YLM7DndxEwZXnE1bwh76AlIWmEWQS5NyeEGuxHwU5GQPXPcv78yDbYpiiVhKB+T8
-4HiEv25ygJp3H6zLBx3ynWbjh4WXhceLm2Y4kJsSsg8QzZEC/182Qhgnkg6C4ZVG
-qq6aTx60c7phlxcxs+Pisuvyz+Qye9hTxdnlicYFOebB7jMCi/UtsBifuGslVb0b
-IufAe0aErv+by1hOQvdMiERYHaqJTLOddK+aT5UjRF+u6bYZK10KJxaG7U5EJN1W
-ZSYCirzVRm6hxpFGPKjykAdoXoIK4w==
-=G44I
------END PGP SIGNATURE-----
-
---Sig_/wUgPFeLpZT0Y/Cu=kxnCwQY--
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
