@@ -1,27 +1,60 @@
-From: Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: linux-next: Signed-off-by missing for commit in the powerpc tree
-Date: Mon, 04 Jun 2018 20:39:54 +1000
-Message-ID: <87in6ybzt1.fsf@concordia.ellerman.id.au>
-References: <20180604042626.286a9469@canb.auug.org.au>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc
+ tree
+Date: Mon, 4 Jun 2018 11:46:42 +0100
+Message-ID: <20180604104642.GC7536@sirena.org.uk>
+References: <20180530150711.2c7c1fe9@canb.auug.org.au>
+ <CACRpkdaotBXbA4pPFHRH0S1SF7-XX_T6yAOwZcbsR3RBcj+-=Q@mail.gmail.com>
+ <2564792.sYBGPVz9u3@z50>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vOmOzSkFvhd7u8Ms"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180604042626.286a9469@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <2564792.sYBGPVz9u3@z50>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Michal Suchanek <msuchanek@suse.de>
+To: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-> Hi all,
->
-> Commit
->
->   cb3d6759a93c ("powerpc/64s: Enable barrier_nospec based on firmware settings")
->
-> is missing a Signed-off-by from its author.
+--vOmOzSkFvhd7u8Ms
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry my fault.
+On Fri, Jun 01, 2018 at 12:49:53AM +0200, Janusz Krzysztofik wrote:
 
-cheers
+> I confirm the fix by Stephen works for me, however, the conflicting patch=
+ by=20
+> Linus breaks things a bit.
+
+> Lookup tables added to board files use function name "enable" while the=
+=20
+> regulator uses NULL. As a result, GPIO descriptor is not matched and not=
+=20
+> assigned to the regulator which ends up running with no control over GPIO=
+ pin.
+
+> Either the regulator driver should use the function name "enable" or that=
+ name=20
+> should be removed from lookup tables.
+
+I'll revert this one as well :(
+
+--vOmOzSkFvhd7u8Ms
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsVGJIACgkQJNaLcl1U
+h9Cw9Af/fZiF09ZPYuhqNpNAeRnPGyhQl+kvwFebr6N9QUHECbSzww9gsFCbuBIs
+jiy0Je3YXSgA3vbsxG6AXw5f2ahno/RqrQbd4m9gk9trKhCSHuRM4Y5Ux0ul7VSJ
+I3oOfcfHeZnJC3alSyBwc5LqUGSNuUMzeEwbrMm2cnBfn/2MSE13QoKGNMGs0fho
+iCG83nfXKp07niQkqxktluJfQ3C0Q13ZdOFdUzCaGEgSkIUVustMup+WdG7nBNCe
+GWMBtBO1iKwbTCcFevpF4ouAOz471op7XmRnqqW5G7/aSbR/UJInir41B+ElHFok
+IyCq5GX+krL9cqamXN7W25zXCxnwng==
+=Hz4K
+-----END PGP SIGNATURE-----
+
+--vOmOzSkFvhd7u8Ms--
