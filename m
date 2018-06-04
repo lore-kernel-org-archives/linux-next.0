@@ -1,73 +1,74 @@
-From: Dave Martin <Dave.Martin@arm.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the arm64 tree
-Date: Mon, 4 Jun 2018 08:33:23 +0100
-Message-ID: <20180604073319.GF22983@e103592.cambridge.arm.com>
-References: <20180604165754.6ae09612@canb.auug.org.au>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build warnings after merge of the kbuild tree
+Date: Mon, 4 Jun 2018 10:39:46 +0200
+Message-ID: <CAK8P3a0K_=dHfsJOkFd5DWMs6i6bxm+2vRbYAc3UEr1bYpNb5g@mail.gmail.com>
+References: <20180531084037.2f8b4c1e@canb.auug.org.au> <CAK7LNAQjVCPwfJ-opUkW3+XTM0uk9PSo3XiyGwCAMKkK05WnxA@mail.gmail.com>
+ <CAGXu5jK8OSJXT5eGK=J0msL9kc+fjOxFUyv=5NYbOH8savc5Xw@mail.gmail.com>
+ <CAGXu5jKb9f7Or9z3eBzAUci2teE6ULVjkuqv00O_j3VuowwbJw@mail.gmail.com>
+ <CAK7LNASYTVNque5kgq7FnyOSjX4byBsWhfB-0Jy9Fp0ZmpuqYA@mail.gmail.com>
+ <CAGXu5jK8F_R-CAt8h92ZG51s5eSnV+6FASLmYCWWgRX_2_m8zA@mail.gmail.com> <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180604165754.6ae09612@canb.auug.org.au>
+In-Reply-To: <CAK8P3a2h1WZ=Jg4MAHoyCt_YLNRCCBG-JRUfy2qZpQ6trRHesg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>, KVM <kvm@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Marc Zyngier <marc.zyngier@arm.com>
+To: Kees Cook <keescook@chromium.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 04, 2018 at 04:57:54PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the kvm tree got a conflict in:
-> 
->   arch/arm64/include/asm/processor.h
-> 
-> between commit:
-> 
->   94b07c1f8c39 ("arm64: signal: Report signal frame size to userspace via auxv")
-> 
-> from the arm64 tree and commit:
-> 
->   9a6e594869b2 ("arm64/sve: Move sve_pffr() to fpsimd.h and make inline")
-> 
-> from the kvm tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+On Sat, Jun 2, 2018 at 10:39 PM, Arnd Bergmann <arnd@arndb.de> wrote:
 
-The resolution looks fine here, thanks.
+> I ran into the same thing indepently and bisected it (which led me to
+> arrive at this thread).
+> One additional bit of information I have is that this happens with all
+> versions of
+> gcc-7 for me, but not gcc-6.3 or older.
+>
+> Another finding was the particular instance I noticed:
+>
+> fs/ext4/inode.c: In function 'ext4_inode_csum':
+> fs/ext4/inode.c:83:1: warning: the frame size of 1688 bytes is larger
+> than 500 bytes [-Wframe-larger-than=]
+>
+> comes from inlining the same function multiple times; ext4_inode_csum()
+> repeatedly calls ext4_chksum(), which has a struct on the stack. Apparently
+> this normally only takes up stack space only once, but when initializing it
+> to zero, each instance takes an additional two CRYPTO_MINALIGN bytes
+> of stack space (the size of the locally defined structure).
 
----Dave
+Two more things:
 
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
-> diff --cc arch/arm64/include/asm/processor.h
-> index 65ab83e8926e,c99e657fdd57..000000000000
-> --- a/arch/arm64/include/asm/processor.h
-> +++ b/arch/arm64/include/asm/processor.h
-> @@@ -246,9 -246,17 +248,20 @@@ void cpu_enable_pan(const struct arm64_
->   void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused);
->   void cpu_clear_disr(const struct arm64_cpu_capabilities *__unused);
->   
->  +extern unsigned long __ro_after_init signal_minsigstksz; /* sigframe size */
->  +extern void __init minsigstksz_setup(void);
->  +
-> + /*
-> +  * Not at the top of the file due to a direct #include cycle between
-> +  * <asm/fpsimd.h> and <asm/processor.h>.  Deferring this #include
-> +  * ensures that contents of processor.h are visible to fpsimd.h even if
-> +  * processor.h is included first.
-> +  *
-> +  * These prctl helpers are the only things in this file that require
-> +  * fpsimd.h.  The core code expects them to be in this header.
-> +  */
-> + #include <asm/fpsimd.h>
-> + 
->   /* Userspace interface for PR_SVE_{SET,GET}_VL prctl()s: */
->   #define SVE_SET_VL(arg)	sve_set_current_vl(arg)
->   #define SVE_GET_VL()	sve_get_current_vl()
+* I believe we still want to leave
+  CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL depending on
+  !COMPILE_TEST indefinitely. The reason is that it effectively turns off
+  -Wmaybe-uninitialized warnings by initializing all structures, so we would
+  miss those warnings in allmodconfig builds otherwise. Obviously
+  that shouldn't stop of from fixing the excessive stack usage.
+
+* Here is the full list of instances in which a function stack usage grows
+   beyond the warning limit with CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
+   enabled, after several hundred randconfig builds on arm32/arm64/x86:
+
+drivers/media/dvb-core/dvb_frontend.c: In function 'dvb_frontend_handle_ioctl':
+drivers/media/dvb-core/dvb_frontend.c:2647:1: error: the frame size of
+1032 bytes is larger than 1024 bytes [-Werror=frame-larger-than=]
+fs/ext4/super.c: In function 'ext4_group_desc_csum':
+fs/ext4/super.c:2306:1: error: the frame size of 1160 bytes is larger
+than 1024 bytes [-Werror=frame-larger-than=]
+fs/ext4/xattr.c: In function 'ext4_xattr_block_csum':
+fs/ext4/xattr.c:147:1: error: the frame size of 1168 bytes is larger
+than 1024 bytes [-Werror=frame-larger-than=]
+fs/f2fs/inode.c: In function 'f2fs_inode_chksum':
+fs/f2fs/inode.c:156:1: error: the frame size of 1424 bytes is larger
+than 1024 bytes [-Werror=frame-larger-than=]
+net/bluetooth/l2cap_core.c: In function 'l2cap_recv_frame':
+net/bluetooth/l2cap_core.c:6976:1: error: the frame size of 2240 bytes
+is larger than 2048 bytes [-Werror=frame-larger-than=]
+drivers/media/i2c/soc_camera/ov9740.c: In function 'ov9740_set_res':
+drivers/media/i2c/soc_camera/ov9740.c:668:1: error: the frame size of
+2768 bytes is larger than 2048 bytes [-Werror=frame-larger-than=]
+
+I did not see the brcmsmac warning on my builds though, so presumably there are
+some others as well.
+
+     Arnd
