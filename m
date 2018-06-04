@@ -1,28 +1,67 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: linux-next: Signed-off-by missing for commits in the pci tree
-Date: Mon, 4 Jun 2018 12:04:32 -0500
-Message-ID: <CAErSpo7VL6jajWxHVacbv-43iYZu_0H=+s=ZkGjeQd1irEkucA@mail.gmail.com>
-References: <20180603114133.64a2cc77@canb.auug.org.au>
+From: Mike Snitzer <snitzer@redhat.com>
+Subject: Re: linux-next: Tree for Jun 4 (md/dm-writecache.c)
+Date: Mon, 4 Jun 2018 14:22:59 -0400
+Message-ID: <20180604182259.GA5440@redhat.com>
+References: <20180604215911.75399f6e@canb.auug.org.au>
+ <0e3fa62d-727e-ccb8-53ae-a6aaa6c506e2@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180603114133.64a2cc77@canb.auug.org.au>
+Content-Disposition: inline
+In-Reply-To: <0e3fa62d-727e-ccb8-53ae-a6aaa6c506e2@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-next list <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, l.subrahmanya@mobiveil.co.in
+To: Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, dm-devel@redhat.com, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Sat, Jun 2, 2018 at 8:41 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Bjorn,
->
-> Commits
->
->   aeddc65a043f ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver DT bindings")
->   c1efa236b42b ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge IP driver")
->   18eb4158c840 ("PCI: mobiveil: Add MSI support")
->
-> are missing a Signed-off-by from their committer.
+On Mon, Jun 04 2018 at 12:06pm -0400,
+Randy Dunlap <rdunlap@infradead.org> wrote:
 
-Fixed, thanks.  I had cherry-picked those from Lorenzo's branch to fix
-an issue while he's away, and neglected to add my own Signed-off-by.
+> On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Changes since 20180601:
+> > 
+> 
+> on x86_64:
+> 
+> In file included from ../drivers/md/dm-writecache.c:8:0:
+> ../drivers/md/dm-writecache.c: In function ‘writecache_status’:
+> ../include/linux/compiler.h:61:17: warning: format ‘%ld’ expects argument of type ‘long int’, but argument 4 has type ‘int’ [-Wformat=]
+>    static struct ftrace_branch_data   \
+>                  ^
+> ../include/linux/device-mapper.h:550:46: note: in definition of macro ‘DMEMIT’
+>       0 : scnprintf(result + sz, maxlen - sz, x))
+>                                               ^
+> ../include/linux/compiler.h:48:24: note: in expansion of macro ‘__branch_check__’
+>  #  define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
+>                         ^
+> ../drivers/md/dm-writecache.c:414:35: note: in expansion of macro ‘unlikely’
+>  #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
+>                                    ^
+> ../include/linux/compiler.h:56:23: note: in expansion of macro ‘__trace_if’
+>  #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
+>                        ^
+> ../include/linux/compiler.h:251:2: note: in expansion of macro ‘if’
+>   if (check)       \
+>   ^
+> ../include/linux/compiler.h:258:22: note: in expansion of macro ‘__READ_ONCE’
+>  #define READ_ONCE(x) __READ_ONCE(x, 1)
+>                       ^
+> ../drivers/md/dm-writecache.c:414:44: note: in expansion of macro ‘READ_ONCE’
+>  #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
+>                                             ^
+> ../drivers/md/dm-writecache.c:2196:32: note: in expansion of macro ‘writecache_has_error’
+>    DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
+>                                 ^
+> 
+> s/%ld/%d/
+
+AFAICT, this is the correct fix:
+https://patchwork.kernel.org/patch/10438865/
+
+Not seen any response to it (Steven and Ingo were emailed, Arnd and LKML
+were cc'd).
+
+Mike
