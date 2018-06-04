@@ -1,58 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the overlayfs tree with Linus' tree
-Date: Mon, 4 Jun 2018 10:31:04 +1000
-Message-ID: <20180604103042.43fe18fe@canb.auug.org.au>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Date: Mon, 4 Jun 2018 13:09:00 +1000
+Message-ID: <20180604130900.07deb177@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ObuA55/wXhkXoZl=D3CUkEq"; protocol="application/pgp-signature"
+ boundary="Sig_/blmek0qS6/Swspi6Zx9D8.A"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+To: Dave Airlie <airlied@linux.ie>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Francis <David.Francis@amd.com>, Alex Deucher <alexander.deucher@amd.com>, Harry Wentland <harry.wentland@amd.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/ObuA55/wXhkXoZl=D3CUkEq
+--Sig_/blmek0qS6/Swspi6Zx9D8.A
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Miklos,
+Hi all,
 
-Today's linux-next merge of the overlayfs tree got a conflict in:
+Today's linux-next merge of the drm tree got a conflict in:
 
-  fs/open.c
+  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
 
 between commit:
 
-  af04fadcaa93 ("Revert "fs: fold open_check_o_direct into do_dentry_open"")
+  a9e8d27574f2 ("drm/amd/display: Make atomic-check validate underscan chan=
+ges")
 
 from Linus' tree and commit:
 
-  e0e3f7de6435 ("vfs: simplify dentry_open()")
+  dm_update_crtcs_state ("drm/amd/display: Couple formatting fixes")
 
-from the overlayfs tree.
+from the drm tree.
 
-I have no idea how to fix this up ... so I just used the overlayfs
-version for now.  I assume that this will need more work before being
-merged into Linus' tree.
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/ObuA55/wXhkXoZl=D3CUkEq
+diff --cc drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 27579443cdc5,1ce10bc2d37b..000000000000
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@@ -4577,14 -4650,11 +4650,14 @@@ static int dm_update_crtcs_state(struc
+  		/* TODO This hack should go away */
+  		if (aconnector && enable) {
+  			// Make sure fake sink is created in plug-in scenario
+ -			new_con_state =3D drm_atomic_get_connector_state(state,
+ +			drm_new_conn_state =3D drm_atomic_get_new_connector_state(state,
+-  								    &aconnector->base);
++ 								    &aconnector->base);
+ +			drm_old_conn_state =3D drm_atomic_get_old_connector_state(state,
+ +								    &aconnector->base);
+ +
+ =20
+ -			if (IS_ERR(new_con_state)) {
+ -				ret =3D PTR_ERR_OR_ZERO(new_con_state);
+ +			if (IS_ERR(drm_new_conn_state)) {
+ +				ret =3D PTR_ERR_OR_ZERO(drm_new_conn_state);
+  				break;
+  			}
+ =20
+
+--Sig_/blmek0qS6/Swspi6Zx9D8.A
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUiEgACgkQAVBC80lX
-0Gx/eAf+MVEZvCWUex0LVL9GBbwVQBVfNghccQM4gMc1VMQ5T8TXYpcdn2muQmRP
-8LIH5lB86d52AbtM6EfOiH/g2+0yz1rFehjd5tgM1kZMPR0JB/DsWUlcPAyEHPUQ
-jJlO2cdXVxz5knCTbXLKATQRurPxBsq68xHzDMr0mH1LFS/LspWgDr81spG+3k3T
-w/tCIkXkxL1Sk75nx9GChTCAaVngWcC6yqvw3/uKcJ+zvjTrIVZUcLXqpgrLvar3
-LX81nN6G3xXqbuFDaRlXOz9SNcVnmy8/Xn26R1PqNoSMvOKwSJ97DQ6Wx+HQ/aOm
-cNCZCmmU+bIbGyhqHFOqIoznkiUl/w==
-=XTWb
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsUrUwACgkQAVBC80lX
+0Gyn2Af+Lpg5Wdv71CFqwaPPxWZ4uIMePiomUygDKAFiJE4X69LCKvZPG6r7L3ww
+KsqxwZ86hr70yEllebObtd0CdhypywI9DHEYH/VNMAu+rAVOgk+KNGKiAC94LBMG
+vLwHSEEdOybfhRXHyZwh7KWccnmKUqk1lFy+wrHV7B/8m/uoIICqJ5Q1RzKkUdfe
+pBkqkrQ7+rnpoYe/W69Nop18QXbllipPnLgMLZVKf4fBhBosItOB5ROCFK1GMixi
+s6g9hOC4Pu5kYBYO5Ok8hdSnxjO22GbQMAhnFwwSgGYMhksqTbcBRtCxzLi85zKC
+XrdE8frv3w+zxB2ZamP6xVHLtZDTtA==
+=7zR4
 -----END PGP SIGNATURE-----
 
---Sig_/ObuA55/wXhkXoZl=D3CUkEq--
+--Sig_/blmek0qS6/Swspi6Zx9D8.A--
