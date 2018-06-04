@@ -1,7 +1,7 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 4 (md/dm-writecache.c)
-Date: Mon, 4 Jun 2018 09:06:36 -0700
-Message-ID: <0e3fa62d-727e-ccb8-53ae-a6aaa6c506e2@infradead.org>
+Subject: Re: linux-next: Tree for Jun 4 (fs/afs/)
+Date: Mon, 4 Jun 2018 09:12:35 -0700
+Message-ID: <7e4a317a-d57e-1499-dc1e-2eba35610632@infradead.org>
 References: <20180604215911.75399f6e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
@@ -11,7 +11,7 @@ In-Reply-To: <20180604215911.75399f6e@canb.auug.org.au>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mikulas Patocka <dm-devel@redhat.com>dm-devel@redhat.com
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, linux-afs@lists.infradead.org, Linux FS Devel <linux-fsdevel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
 On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
@@ -22,38 +22,25 @@ On 06/04/2018 04:59 AM, Stephen Rothwell wrote:
 
 on x86_64:
 
-In file included from ../drivers/md/dm-writecache.c:8:0:
-../drivers/md/dm-writecache.c: In function ‘writecache_status’:
-../include/linux/compiler.h:61:17: warning: format ‘%ld’ expects argument of type ‘long int’, but argument 4 has type ‘int’ [-Wformat=]
-   static struct ftrace_branch_data   \
-                 ^
-../include/linux/device-mapper.h:550:46: note: in definition of macro ‘DMEMIT’
-      0 : scnprintf(result + sz, maxlen - sz, x))
-                                              ^
-../include/linux/compiler.h:48:24: note: in expansion of macro ‘__branch_check__’
- #  define unlikely(x) (__branch_check__(x, 0, __builtin_constant_p(x)))
-                        ^
-../drivers/md/dm-writecache.c:414:35: note: in expansion of macro ‘unlikely’
- #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
-                                   ^
-../include/linux/compiler.h:56:23: note: in expansion of macro ‘__trace_if’
- #define if(cond, ...) __trace_if( (cond , ## __VA_ARGS__) )
-                       ^
-../include/linux/compiler.h:251:2: note: in expansion of macro ‘if’
-  if (check)       \
+# CONFIG_PROC_FS is not set
+
+
+../fs/afs/proc.c: In function ‘afs_proc_init’:
+../fs/afs/proc.c:604:2: error: implicit declaration of function ‘proc_create_net_data_write’ [-Werror=implicit-function-declaration]
+  if (!proc_create_net_data_write("cells", 0644, p,
   ^
-../include/linux/compiler.h:258:22: note: in expansion of macro ‘__READ_ONCE’
- #define READ_ONCE(x) __READ_ONCE(x, 1)
-                      ^
-../drivers/md/dm-writecache.c:414:44: note: in expansion of macro ‘READ_ONCE’
- #define writecache_has_error(wc) (unlikely(READ_ONCE((wc)->error)))
-                                            ^
-../drivers/md/dm-writecache.c:2196:32: note: in expansion of macro ‘writecache_has_error’
-   DMEMIT("%ld %llu %llu %llu", writecache_has_error(wc),
-                                ^
+../fs/afs/proc.c:609:6: error: implicit declaration of function ‘proc_create_net_single_write’ [-Werror=implicit-function-declaration]
+      !proc_create_net_single_write("rootcell", 0644, p,
+      ^
+../fs/afs/proc.c: At top level:
+../fs/afs/proc.c:517:12: warning: ‘afs_proc_stats_show’ defined but not used [-Wunused-function]
+ static int afs_proc_stats_show(struct seq_file *m, void *v)
+            ^
+cc1: some warnings being treated as errors
+../scripts/Makefile.build:311: recipe for target 'fs/afs/proc.o' failed
 
-s/%ld/%d/
 
+afs seems not to handle CONFIG_PROC_FS=n at all.
 
 -- 
 ~Randy
