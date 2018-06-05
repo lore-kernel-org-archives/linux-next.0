@@ -1,69 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
-Date: Tue, 5 Jun 2018 11:25:31 +1000
-Message-ID: <20180605112531.23b392f3@canb.auug.org.au>
-References: <20180605103403.3e5b2c91@canb.auug.org.au>
-        <20180605005904.GY10363@dastard>
+Subject: linux-next: build warning after merge of the mfd tree
+Date: Tue, 5 Jun 2018 13:15:07 +1000
+Message-ID: <20180605131507.3f217038@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa"; protocol="application/pgp-signature"
+ boundary="Sig_/1RNtq60.cfggJ2B5lzgeNCQ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180605005904.GY10363@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>, Christoph Hellwig <hch@lst.de>, Linus <torvalds@linux-foundation.org>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Gwendal Grignou <gwendal@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
+--Sig_/1RNtq60.cfggJ2B5lzgeNCQ
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
+Hi Lee,
 
-On Tue, 5 Jun 2018 10:59:04 +1000 Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Jun 05, 2018 at 10:34:03AM +1000, Stephen Rothwell wrote:
-> >
-> > Today's linux-next merge of the xfs tree got a conflict in:
-> >=20
-> >   fs/gfs2/bmap.c
-> >=20
-> > between commit:
-> >=20
-> >   628e366df11c ("gfs2: Iomap cleanups and improvements")
-> >=20
-> > from Linus' tree and commit:
-> >=20
-> >   7ee66c03e40a ("iomap: move IOMAP_F_BOUNDARY to gfs2")
-> >=20
-> > from the xfs tree.
->=20
-> We should have seen this before the gfs2 tree was merged into Linus'
-> tree. Does that mean the gfs2 tree is not being pulled into the
-> linux-next tree?
+After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-It is pulled in, but the above gfs2 commit was only committed to the
-linux-next included branch overnight and then Linus was asked to pull
-it before I got a chance to build today's linux-next.
+drivers/mfd/cros_ec_dev.c:265:13: warning: '__remove' defined but not used =
+[-Wunused-function]
+ static void __remove(struct device *dev) { }
+             ^~~~~~~~
+
+Introduced by commit
+
+  3aa2177e4787 ("mfd: cros_ec: Use devm_kzalloc for private data")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
+--Sig_/1RNtq60.cfggJ2B5lzgeNCQ
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsV5osACgkQAVBC80lX
-0Gzz/Af/R8kRCCn7j6NYrwbebbUNOJzeT2GtSY1PCf+Jk9pVkY19vL/XrCTRl4CF
-hHL3MPQVwoXniBLNzHNJXLt+Jvth8GG2Z0aXVwk15Qi9VSXWbpQt4XJXA73GzHCK
-42uBHsJXsRWoP9n/q5tDZ+1gApWk+5NZJwhP4emzQcdJjT2dBl0FRKYyQvDXJNgd
-mUAE17UKpHUZqVrMC3/8+4iPCs/lIortOv9V9NCd/p/1mSu4QHI5mi+sCzRmqNJo
-BxccOXwA42ppudSzDQUzmqb9SsIPGUv95b6mYgnJtcfTEAVNH+Dqm9n9ccloPfJr
-Et6B8TS/Ht+5sa4e3uNvhDxHNDMhZQ==
-=V2hG
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsWADsACgkQAVBC80lX
+0Gy1cAgAoM4S48TPh77ODjF8H8yGrNb+Ev4h/LiQ0OeBTruXb5E/6Ian644hY42Q
+MfmvRMoJvPPvoKTxzjkNY62vVYnxjl5A3G0QbfFUVwo5/NfnpJ+EksObHQQK/VZr
+p8qQgWg0t3tR6J9r9U1/zYtcx4fFzTyPxOzq6HHsLbY6vbaY9PfTw/UVyNBnQieQ
+U/ZbLZrXgijPgF5qh1cHWud31P1TpztYUS1jddAO7p9wtZuy8rX/VKCoewpBiqe0
+6EQ+rhMiUYZ4Dk97Wvvd8oc1iYUp8jp/WYb8NRcs6RrTQNx38Rue3Sc7LJO1SxuP
+9vcObUnD7Qd+msTXDYdB2YJEIMn/Eg==
+=GD2C
 -----END PGP SIGNATURE-----
 
---Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa--
+--Sig_/1RNtq60.cfggJ2B5lzgeNCQ--
