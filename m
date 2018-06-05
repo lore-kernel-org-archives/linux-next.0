@@ -1,70 +1,69 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the jc_docs
- tree
-Date: Tue, 5 Jun 2018 11:20:42 +1000
-Message-ID: <20180605112042.54e7c30b@canb.auug.org.au>
-References: <20180509180539.57a360e7@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the xfs tree with Linus' tree
+Date: Tue, 5 Jun 2018 11:25:31 +1000
+Message-ID: <20180605112531.23b392f3@canb.auug.org.au>
+References: <20180605103403.3e5b2c91@canb.auug.org.au>
+        <20180605005904.GY10363@dastard>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/UGmytnCoi_R9vRLCVZW4Bsg"; protocol="application/pgp-signature"
+ boundary="Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180509180539.57a360e7@canb.auug.org.au>
+In-Reply-To: <20180605005904.GY10363@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mike Rapoport <rppt@linux.vnet.ibm.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <darrick.wong@oracle.com>, linux-xfs@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Andreas Gruenbacher <agruenba@redhat.com>, Bob Peterson <rpeterso@redhat.com>, Christoph Hellwig <hch@lst.de>, Linus <torvalds@linux-foundation.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/UGmytnCoi_R9vRLCVZW4Bsg
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Dave,
 
-On Wed, 9 May 2018 18:05:39 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Tue, 5 Jun 2018 10:59:04 +1000 Dave Chinner <david@fromorbit.com> wrote:
 >
-> Today's linux-next merge of the nvdimm tree got a conflict in:
+> On Tue, Jun 05, 2018 at 10:34:03AM +1000, Stephen Rothwell wrote:
+> >
+> > Today's linux-next merge of the xfs tree got a conflict in:
+> >=20
+> >   fs/gfs2/bmap.c
+> >=20
+> > between commit:
+> >=20
+> >   628e366df11c ("gfs2: Iomap cleanups and improvements")
+> >=20
+> > from Linus' tree and commit:
+> >=20
+> >   7ee66c03e40a ("iomap: move IOMAP_F_BOUNDARY to gfs2")
+> >=20
+> > from the xfs tree.
 >=20
->   mm/hmm.c
->=20
-> between commit:
->=20
->   ad56b738c5dd ("docs/vm: rename documentation files to .rst")
->=20
-> from the jc_docs tree and commit:
->=20
->   737b47a6db70 ("mm, dev_pagemap: introduce CONFIG_DEV_PAGEMAP_OPS")
->=20
-> from the nvdimm tree.
->=20
-> I fixed it up (the latter removed the comment modified by the former,
-> so I just did that) and can carry the fix as necessary. This is now
-> fixed as far as linux-next is concerned, but any non trivial conflicts
-> should be mentioned to your upstream maintainer when your tree is
-> submitted for merging. You may also want to consider cooperating with
-> the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> We should have seen this before the gfs2 tree was merged into Linus'
+> tree. Does that mean the gfs2 tree is not being pulled into the
+> linux-next tree?
 
-This is now a conflict between the nvdimm tree and Linus' tree.
+It is pulled in, but the above gfs2 commit was only committed to the
+linux-next included branch overnight and then Linus was asked to pull
+it before I got a chance to build today's linux-next.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/UGmytnCoi_R9vRLCVZW4Bsg
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsV5WoACgkQAVBC80lX
-0Gw6Sgf/dVlFiCI5OZAkqmBPxO9x7GDJRL3Nknl6UL3shpM4oSZxjXhvkNDjZf+t
-9ok7gUq0E93W2fp7ON26+mSpfH2GStdlaHSJoVDzQwbzjmIi1BWm4FK8tWU3HoGJ
-OIalPoiax/RaLQr6hNzdhAQJTM2046x5SKFA0C/XolQXRkUcJloJb40QZArUq4yu
-NnJQdIIUs09oFfP6zb6VhNFFR2PEBGu5miX0Fs/02WG7Q8uxBMrNQSfdrnE0MoOt
-iYhs7p+uJEfHf8qzBf3Xpy7Rgr3M2XL1YsOEZ0bX6+j+V8UNxwkn1pkTFnwFAmcf
-Z+T6FjVHySkar6J2gwAoC0130RkcEw==
-=Hy4y
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsV5osACgkQAVBC80lX
+0Gzz/Af/R8kRCCn7j6NYrwbebbUNOJzeT2GtSY1PCf+Jk9pVkY19vL/XrCTRl4CF
+hHL3MPQVwoXniBLNzHNJXLt+Jvth8GG2Z0aXVwk15Qi9VSXWbpQt4XJXA73GzHCK
+42uBHsJXsRWoP9n/q5tDZ+1gApWk+5NZJwhP4emzQcdJjT2dBl0FRKYyQvDXJNgd
+mUAE17UKpHUZqVrMC3/8+4iPCs/lIortOv9V9NCd/p/1mSu4QHI5mi+sCzRmqNJo
+BxccOXwA42ppudSzDQUzmqb9SsIPGUv95b6mYgnJtcfTEAVNH+Dqm9n9ccloPfJr
+Et6B8TS/Ht+5sa4e3uNvhDxHNDMhZQ==
+=V2hG
 -----END PGP SIGNATURE-----
 
---Sig_/UGmytnCoi_R9vRLCVZW4Bsg--
+--Sig_/fw2ZlOu+ZpCr0EG3KSdrqIa--
