@@ -1,86 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with Linus' tree
-Date: Wed, 6 Jun 2018 14:37:41 +1000
-Message-ID: <20180606143741.194a5a06@canb.auug.org.au>
+Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
+Date: Wed, 6 Jun 2018 14:41:28 +1000
+Message-ID: <20180606144128.2fc46517@canb.auug.org.au>
+References: <20180507120909.1fee1683@canb.auug.org.au>
+        <20180507141003.79783848@canb.auug.org.au>
+        <84481a2d-3930-93c5-9d4f-55b3d066050f@iogearbox.net>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NP9I/APRKw/L5VIzJ6ESjQG"; protocol="application/pgp-signature"
+ boundary="Sig_/5W5QjjIozSx2Yj2DVa5YO1b"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <84481a2d-3930-93c5-9d4f-55b3d066050f@iogearbox.net>
 Sender: linux-kernel-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@redhat.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>
+To: David Miller <davem@davemloft.net>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Networking <netdev@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/NP9I/APRKw/L5VIzJ6ESjQG
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+On Mon, 7 May 2018 10:15:45 +0200 Daniel Borkmann <daniel@iogearbox.net> wr=
+ote:
+>
+> On 05/07/2018 06:10 AM, Stephen Rothwell wrote:
+> > On Mon, 7 May 2018 12:09:09 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> >>
+> >> Today's linux-next merge of the tip tree got a conflict in:
+> >>
+> >>   arch/x86/net/bpf_jit_comp.c
+> >>
+> >> between commit:
+> >>
+> >>   e782bdcf58c5 ("bpf, x64: remove ld_abs/ld_ind")
+> >>
+> >> from the bpf-next tree and commit:
+> >>
+> >>   5f26c50143f5 ("x86/bpf: Clean up non-standard comments, to make the =
+code more readable")
+> >>
+> >> from the tip tree.
+> >>
+> >> I fixed it up (the former commit removed some code modified by the lat=
+ter,
+> >> so I just removed it) and can carry the fix as necessary. This is now
+> >> fixed as far as linux-next is concerned, but any non trivial conflicts
+> >> should be mentioned to your upstream maintainer when your tree is
+> >> submitted for merging.  You may also want to consider cooperating with
+> >> the maintainer of the conflicting tree to minimise any particularly
+> >> complex conflicts. =20
+> >=20
+> > Actually the tip tree commit has been added to the bpf-next tree as a
+> > different commit, so dropping it from the tip tree will clean this up. =
+=20
+>=20
+> Yep, it's been cherry-picked into bpf-next to avoid merge conflicts with
+> ongoing work.
 
-  MAINTAINERS
-
-between commit:
-
-  2562c011f897 ("MAINTAINERS: add Josh Poimboeuf as faddr2line maintainer")
-
-from Linus' tree and commit:
-
-  30c8bd5aa8b2 ("net: Introduce generic failover module")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+This is now a conflict between the net-next tree and Linus' tree.
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc MAINTAINERS
-index 8ac49add2df7,884657f0be11..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -5430,11 -5413,14 +5430,19 @@@ S:	Maintaine
-  F:	Documentation/hwmon/f71805f
-  F:	drivers/hwmon/f71805f.c
- =20
- +FADDR2LINE
- +M:	Josh Poimboeuf <jpoimboe@redhat.com>
- +S:	Maintained
- +F:	scripts/faddr2line
- +
-+ FAILOVER MODULE
-+ M:	Sridhar Samudrala <sridhar.samudrala@intel.com>
-+ L:	netdev@vger.kernel.org
-+ S:	Supported
-+ F:	net/core/failover.c
-+ F:	include/net/failover.h
-+ F:	Documentation/networking/failover.rst
-+=20
-  FANOTIFY
-  M:	Jan Kara <jack@suse.cz>
-  R:	Amir Goldstein <amir73il@gmail.com>
-
---Sig_/NP9I/APRKw/L5VIzJ6ESjQG
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXZRUACgkQAVBC80lX
-0GxYEQgAgT50zctDkkCESwKSac3xKzMrnX/b/t2X5nwGGEtCi6x7LAWG9gwUkr/A
-cHjYVVf+BBYOX/1QGJyH5gbmfheu1lhkApQAF6pO9By4C9/d72sktLGWyhmFxo8m
-h72hoUNCrmcSdD8yKI+NudgXLM31r0Cdzzc/DiB+FtH6tZDkgAYcCTf1qSwFPkbS
-K7woJgtlNMGzGvXqePUOJ50tNul07DIeuSEYIGpYyaT4n7wRNxDuiZwlygpvCIk3
-CaxjllofLlecWe/+24g3y1Mh2O9jAr4VCEPaFmUeMcx3yW5a+zc82kV+TDD1eJEj
-svZdT881xU/DwrhFrwnEhTqYxYcRVg==
-=24o2
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXZfgACgkQAVBC80lX
+0GwLfwf/TuGUTSd1ULEdms7XBs6TsK04Vc+oAEvm4XYaeMP7KjCzniKGmqZkKjhD
+7iEATWHgi9mFEkMfEoR2DqtzUNHeTCsYz/yn+GWJmWH/y9bnucM2tjxhLPISVzTh
+wlzTUKkpWluJPFNrysCz06zyoU5QEgperc4KDLvFgxTgLP7MlY8Sk2udaKXpGEpb
+pIWqtl0SaWyX2AgS5Eje1Q3PKAu3l5zInKjht6VZH690a8447vKpBUn/V2MgFTGY
+QKMSy3YyC2bspMLns92byh1wyT/brXsl5Ta7CW87m0m59fYl0yRG2VSRn8GMIqbT
+kbVzf2lS2fB/9c5AALIFUQfsJXK6WA==
+=GXvh
 -----END PGP SIGNATURE-----
 
---Sig_/NP9I/APRKw/L5VIzJ6ESjQG--
+--Sig_/5W5QjjIozSx2Yj2DVa5YO1b--
