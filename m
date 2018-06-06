@@ -1,66 +1,49 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build warning after merge of the y2038 tree
-Date: Wed, 6 Jun 2018 15:47:25 +0200
-Message-ID: <CAK8P3a3YmgpSNC3m8vW=tkMXxVVVR+riuw4=snwhYYW-rP_htg@mail.gmail.com>
-References: <20180606204116.5b01ed36@canb.auug.org.au>
+From: Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
+Date: Wed, 6 Jun 2018 08:30:55 -0700
+Message-ID: <be9159d4-f53e-1f1a-e87b-dfd55c458c9a@infradead.org>
+References: <20180529204410.63477f88@canb.auug.org.au>
+ <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
+ <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180606204116.5b01ed36@canb.auug.org.au>
+In-Reply-To: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, Deepa Dinamani <deepa.kernel@gmail.com>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 6, 2018 at 12:41 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi all,
->
-> After merging the y2038 tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
->
-> fs/pstore/ram.c: In function 'ramoops_read_kmsg_hdr':
-> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int *', but argument 3 has type 'time64_t * {aka long long int *}' [-Wformat=]
->  #define RAMOOPS_KERNMSG_HDR "===="
->                              ^
-> fs/pstore/ram.c:167:21: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
->   if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n%n",
->                      ^~~~~~~~~~~~~~~~~~~
-> fs/pstore/ram.c:42:23: note: format string is defined here
->  # define TVSEC_FMT "%ld"
->                      ~~^
->                      %lld
-> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int *', but argument 3 has type 'time64_t * {aka long long int *}' [-Wformat=]
->  #define RAMOOPS_KERNMSG_HDR "===="
->                              ^
-> fs/pstore/ram.c:174:28: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
->   } else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu\n%n",
->                             ^~~~~~~~~~~~~~~~~~~
-> fs/pstore/ram.c:42:23: note: format string is defined here
->  # define TVSEC_FMT "%ld"
->                      ~~^
->                      %lld
-> fs/pstore/ram.c: In function 'ramoops_write_kmsg_hdr':
-> fs/pstore/ram.c:39:29: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'time64_t {aka long long int}' [-Wformat=]
->  #define RAMOOPS_KERNMSG_HDR "===="
->                              ^
-> fs/pstore/ram.c:370:30: note: in expansion of macro 'RAMOOPS_KERNMSG_HDR'
->   hdr = kasprintf(GFP_ATOMIC, RAMOOPS_KERNMSG_HDR TVSEC_FMT ".%lu-%c\n",
->                               ^~~~~~~~~~~~~~~~~~~
-> fs/pstore/ram.c:42:23: note: format string is defined here
->  # define TVSEC_FMT "%ld"
->                      ~~^
->                      %lld
->
-> Introduced by commit
->
->   0f0d83b99ef7 ("pstore: Convert internal records to timespec64")
->
+On 05/29/2018 03:16 PM, Benjamin Herrenschmidt wrote:
+> On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
+>> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
+>>> Hi all,
+>>>
+>>> Changes since 20180525:
+>>>
+>>
+>> on i386:
+>>
+>> when builtin:
+>> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
+>> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
+>>
+>> or when modular:
+>> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
+>>
+>>
+>> Full randconfig for modular build is attached.
+> 
+> Somebody already sent a fix for this. Thanks. (Missing a dependency on
+> LIBCOMPOSITE).
 
-Thanks for the report, I had actually provided a fix for this earlier
-(it was a clash
-between a patch in Deepa's tree with one of mine that Thomas had picked up
-into tip) but forgot to apply it before I pushed out the merged tree.
+Hi,
 
-I've updated my tree now.
+linux-next is still having this build error.
+Can we get that fix merged somewhere, please?
 
-      Arnd
+thanks,
+-- 
+~Randy
