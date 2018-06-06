@@ -1,61 +1,43 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the staging tree with Linus' tree
-Date: Wed, 6 Jun 2018 19:08:58 +1000
-Message-ID: <20180606190858.7d4c27ac@canb.auug.org.au>
+From: Greg KH <greg@kroah.com>
+Subject: Re: linux-next: manual merge of the staging tree with Linus' tree
+Date: Wed, 6 Jun 2018 11:10:47 +0200
+Message-ID: <20180606091046.GA28264@kroah.com>
+References: <20180606190858.7d4c27ac@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/qUPQreRBfUw7dMPULvPzkiS"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180606190858.7d4c27ac@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/qUPQreRBfUw7dMPULvPzkiS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 06, 2018 at 07:08:58PM +1000, Stephen Rothwell wrote:
+> Hi Greg,
+> 
+> Today's linux-next merge of the staging tree got a conflict in:
+> 
+>   drivers/staging/ncpfs/dir.c
+> 
+> between commit:
+> 
+>   1c5fedbb508f ("ncp_lookup(): use d_splice_alias()")
+> 
+> from Linus' tree and commit:
+> 
+>   bd32895c750b ("staging: ncpfs: delete it")
+> 
+> from the staging tree.
+> 
+> I fixed it up (the latter removed the file, so I did that) and can
+> carry the fix as necessary. This is now fixed as far as linux-next is
+> concerned, but any non trivial conflicts should be mentioned to your
+> upstream maintainer when your tree is submitted for merging.  You may
+> also want to consider cooperating with the maintainer of the conflicting
+> tree to minimise any particularly complex conflicts.
 
-Hi Greg,
+Thanks, I figured this would show up, not a problem, the file should be
+just removed.
 
-Today's linux-next merge of the staging tree got a conflict in:
-
-  drivers/staging/ncpfs/dir.c
-
-between commit:
-
-  1c5fedbb508f ("ncp_lookup(): use d_splice_alias()")
-
-from Linus' tree and commit:
-
-  bd32895c750b ("staging: ncpfs: delete it")
-
-from the staging tree.
-
-I fixed it up (the latter removed the file, so I did that) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qUPQreRBfUw7dMPULvPzkiS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXpKoACgkQAVBC80lX
-0Gz7WggAgGGB18HKT5IFllrnkrt4dQfrot5xWUH4J7v7hLUbZEKBjFZxfBwBYE0h
-7ATl9uLCExWy5QABQ+5Lr/4qFBdNnssR4dmN2OSu8MtOC3JTo0efiCvLB1NRNDl/
-8RE0GC0KxDUlypZGTtFLibPIzF1zFpm0XOhKi4IpvOD1FxFSFhwqaYbz5rLelJ1Z
-BHiyh00SyNPhIT0RaxiJDU5p2oH1kJN7Dd5Z8k7drCSIwGVVx8+IZIncdhXWTSGL
-j2lJRyHJCcHXRXVIoGbhSD82YkEw6Uupl0dlM3T0xL0p+hO7n2YlXXBwGX5rf4/p
-+d7CxGMZ5lg+Lj5RoStGtNEG0f681g==
-=C8xb
------END PGP SIGNATURE-----
-
---Sig_/qUPQreRBfUw7dMPULvPzkiS--
+greg k-h
