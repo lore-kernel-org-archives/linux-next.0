@@ -1,49 +1,53 @@
-From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for May 29 (usb/gadget/udc/aspeed-vhub)
-Date: Wed, 6 Jun 2018 08:30:55 -0700
-Message-ID: <be9159d4-f53e-1f1a-e87b-dfd55c458c9a@infradead.org>
-References: <20180529204410.63477f88@canb.auug.org.au>
- <00c69bdc-0b70-cb82-ee1e-2718acc19582@infradead.org>
- <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
+From: Leon Romanovsky <leon@kernel.org>
+Subject: linux-next: Please add mlx5-next tree
+Date: Wed, 6 Jun 2018 22:25:00 +0300
+Message-ID: <20180606192500.GZ2958@mtr-leonro.mtl.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XStn23h1fwudRqtG"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <3731dd7511b6a0ee74b062caf616e8041382fb90.camel@kernel.crashing.org>
-Content-Language: en-US
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Benjamin Herrenschmidt <benh@kernel.crashing.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>, linux-netdev <netdev@vger.kernel.org>, RDMA mailing list <linux-rdma@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 05/29/2018 03:16 PM, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-05-29 at 10:04 -0700, Randy Dunlap wrote:
->> On 05/29/2018 03:44 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> Changes since 20180525:
->>>
->>
->> on i386:
->>
->> when builtin:
->> drivers/usb/gadget/udc/aspeed-vhub/hub.o: In function `ast_vhub_std_hub_request':
->> hub.c:(.text+0x3aa): undefined reference to `usb_gadget_get_string'
->>
->> or when modular:
->> ERROR: "usb_gadget_get_string" [drivers/usb/gadget/udc/aspeed-vhub/aspeed-vhub.ko] undefined!
->>
->>
->> Full randconfig for modular build is attached.
-> 
-> Somebody already sent a fix for this. Thanks. (Missing a dependency on
-> LIBCOMPOSITE).
 
-Hi,
+--XStn23h1fwudRqtG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-linux-next is still having this build error.
-Can we get that fix merged somewhere, please?
+Hi Stephen,
 
-thanks,
--- 
-~Randy
+Can you please add the branch "mlx5-next" from the following tree to the
+linux-next integration tree?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
+
+The mlx5-next branch is used to send shared pull requests to both netdev
+and RDMA subsystems and it is worth to have linux-next coverage on it
+before.
+
+Thanks
+
+--XStn23h1fwudRqtG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbGDUMAAoJEORje4g2clingz0P/0RlnQ1cFCde5nlT8RO3LXRm
+tLs174jZmZesAQ3WtTJEqTC9sG+NpREYysbZsSX+2EQmfRTPUdJeKj8uDvFXe8vo
+GR5x2zDbEWUshz+Wc/0YzqEf1Ny8qriDynZi8hJzwhIOTLc+gla6LbpKTy5dX3y0
++MYOtviCJvt/C28f44pjwNzzKQiqd83uoCFoIFlq1W1s/gcorgWPrNfsyGDIlX3u
+63b4zBC+ZEeCAyaqVPxJhT2rhjIRuP9+cakCFim2ul1EYzztsJnpSW729biFZ/hd
+8oJu8U5GmSVZgjvFjyg6r5FVttFueyhFPCTCI1pm52YHXiC8fEQ83xlj2XErRvVx
+QfP2wOc9ZVGercjfHA6FDq53H7ZuQhwjWdCqUfz4MAu9oLqoC3E1k4YQ3S+J6uLa
+8HJVdPslYHUZ0sJ379xa3Lz+1rSN6+8Nyit746P9K3K/Cl+lI4cwKeOdHwHOtW3i
+WrJP0D5a6NFosJ0jCstPCGpYSWYF9wmPHzRy7JtMhqehfggPMjUVgvHMIFr4bGC7
+GoshUncAb51XnnU3MtbbN5YWwTNHjrB12GHLbs+qj4TlimCrFuml0aU155MT3UeB
+3aLgZxdB+Ym5wPqdldNlZnMyC1wlHhrYRodz+dMEGRFBKPM58+WGznuIdvSHENWG
+P/kwfsyjl/r8KopXZokK
+=bCJz
+-----END PGP SIGNATURE-----
+
+--XStn23h1fwudRqtG--
