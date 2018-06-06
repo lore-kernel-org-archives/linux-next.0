@@ -1,43 +1,39 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: merge window
-Date: Wed, 6 Jun 2018 09:48:43 +1000
-Message-ID: <20180606094843.6980d508@canb.auug.org.au>
+From: Deepa Dinamani <deepa.kernel@gmail.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the y2038 tree
+Date: Tue, 5 Jun 2018 17:04:25 -0700
+Message-ID: <CABeXuvoQJ0sSpJCjfeKR+s1esS3kq34F0k=S87GMOC2B5XKxug@mail.gmail.com>
+References: <20180606075535.09b41c23@canb.auug.org.au> <CABeXuvqG_DQMOwa0vrmJB+kx7DPbuMo=s-aS-DK7LdBy_ZGtTw@mail.gmail.com>
+ <20180606091707.18a8f2f0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/SA3goG=MrB_lZ9KutUO7TKv"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180606091707.18a8f2f0@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux-kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/SA3goG=MrB_lZ9KutUO7TKv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Oh, you meant that it has keescook@chromium.org author sign-off, but
+it needs mine because I applied it.
 
-Hi all,
+Please add
 
-Please do *not* add any v4.19 related material to your linux-next
-included branches until after v4.18-rc1 has been released i.e. during
-the current merge window.
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 
---=20
-Cheers,
-Stephen Rothwell
+I also updated it in my tree.
 
---Sig_/SA3goG=MrB_lZ9KutUO7TKv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+- Deepa
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsXIVsACgkQAVBC80lX
-0GxdOQgAkKFbdsbA2kP/lVV6OCAaot7iRziAZwn5IyEitpgnr9eSRgS0TG8OaIID
-TtePPEEJ2ElIwKcrd2f4vBy98e78UFxyEIHNwBEd0bT+OvRFWOwKKxYjRFCYTIEO
-O3rEpmn76BzvJL76SyzvyHEFSyLMLW0/FoABmFUKr+cRjQyjBrnVu90+uoGpvoNq
-BG8Oe8/9Hm/QjjmRs20EVlp0Wixevzn0OtTLqKXRo1GR7O+GwmNRMuesBBl8busn
-zvSYpQN1ldABFOuIzzo/7CmqJ3zO4TnBrDKQ+e8IhWd7uihPN1TpckXutZI4egXd
-ub5gpUOPc9ndoMT6cB95TcECwwy/4g==
-=Uazg
------END PGP SIGNATURE-----
-
---Sig_/SA3goG=MrB_lZ9KutUO7TKv--
+On Tue, Jun 5, 2018 at 4:17 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi Deepa,
+>
+> On Tue, 5 Jun 2018 15:00:24 -0700 Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>>
+>> That patch belongs to Kees.
+>
+> But you committed it to the tree ...
+>
+> --
+> Cheers,
+> Stephen Rothwell
