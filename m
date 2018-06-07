@@ -1,53 +1,75 @@
-From: Leon Romanovsky <leon@kernel.org>
-Subject: linux-next: Please add mlx5-next tree
-Date: Wed, 6 Jun 2018 22:25:00 +0300
-Message-ID: <20180606192500.GZ2958@mtr-leonro.mtl.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Date: Thu, 7 Jun 2018 11:53:50 +1000
+Message-ID: <20180607115350.69251fcf@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XStn23h1fwudRqtG"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/tWhKl/+1bHH7mzrHfeG6KEG"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>, linux-netdev <netdev@vger.kernel.org>, RDMA mailing list <linux-rdma@vger.kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/tWhKl/+1bHH7mzrHfeG6KEG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---XStn23h1fwudRqtG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-Hi Stephen,
+Today's linux-next merge of the tip tree got a conflict in:
 
-Can you please add the branch "mlx5-next" from the following tree to the
-linux-next integration tree?
+  tools/testing/selftests/Makefile
 
-https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
+between commit:
 
-The mlx5-next branch is used to send shared pull requests to both netdev
-and RDMA subsystems and it is worth to have linux-next coverage on it
-before.
+  a12ab9e125f1 ("selftests: move RTC tests to rtc subfolder")
 
-Thanks
+from Linus' tree and commit:
 
---XStn23h1fwudRqtG
-Content-Type: application/pgp-signature; name="signature.asc"
+  ccba8b64452b ("rseq/selftests: Provide Makefile, scripts, gitignore")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/Makefile
+index 4cd339b5366a,593fb44c9cd4..000000000000
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@@ -29,7 -28,7 +29,8 @@@ TARGETS +=3D powerp
+  TARGETS +=3D proc
+  TARGETS +=3D pstore
+  TARGETS +=3D ptrace
++ TARGETS +=3D rseq
+ +TARGETS +=3D rtc
+  TARGETS +=3D seccomp
+  TARGETS +=3D sigaltstack
+  TARGETS +=3D size
+
+--Sig_/tWhKl/+1bHH7mzrHfeG6KEG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJbGDUMAAoJEORje4g2clingz0P/0RlnQ1cFCde5nlT8RO3LXRm
-tLs174jZmZesAQ3WtTJEqTC9sG+NpREYysbZsSX+2EQmfRTPUdJeKj8uDvFXe8vo
-GR5x2zDbEWUshz+Wc/0YzqEf1Ny8qriDynZi8hJzwhIOTLc+gla6LbpKTy5dX3y0
-+MYOtviCJvt/C28f44pjwNzzKQiqd83uoCFoIFlq1W1s/gcorgWPrNfsyGDIlX3u
-63b4zBC+ZEeCAyaqVPxJhT2rhjIRuP9+cakCFim2ul1EYzztsJnpSW729biFZ/hd
-8oJu8U5GmSVZgjvFjyg6r5FVttFueyhFPCTCI1pm52YHXiC8fEQ83xlj2XErRvVx
-QfP2wOc9ZVGercjfHA6FDq53H7ZuQhwjWdCqUfz4MAu9oLqoC3E1k4YQ3S+J6uLa
-8HJVdPslYHUZ0sJ379xa3Lz+1rSN6+8Nyit746P9K3K/Cl+lI4cwKeOdHwHOtW3i
-WrJP0D5a6NFosJ0jCstPCGpYSWYF9wmPHzRy7JtMhqehfggPMjUVgvHMIFr4bGC7
-GoshUncAb51XnnU3MtbbN5YWwTNHjrB12GHLbs+qj4TlimCrFuml0aU155MT3UeB
-3aLgZxdB+Ym5wPqdldNlZnMyC1wlHhrYRodz+dMEGRFBKPM58+WGznuIdvSHENWG
-P/kwfsyjl/r8KopXZokK
-=bCJz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsYkC4ACgkQAVBC80lX
+0GxXbwf/c5j4YyGj+TZPY/nBYPR2xDihK9so/yQdF9R6hHu7Z0LZ2o/zqwyzgaea
+7QybPNk48nTK6yu2wAqkN0thLqirAX9awIJ50AW07fZNQuuBhfVLSTtPLH1szawI
+eVOojJJ0qX56sey+qIGT2C4kQNun9wEgtZhm8tD6e2m/SuPZUDepamGBw3PwefSK
+66f+XzQKuJXYvGQS5Z92c+yYSE3D5ppIqv+oiMJx0b2N7y+5oV9qP59Bwo4FAbL7
+AMIxqzIH6EcJ3cjZtgJyKdwomRRhZ7wVY4/z+INbJSEJ29ffj3c1Q14f45nN5n6p
+H2vuQAlJy8xICCYeqADT5JIYin5gyw==
+=A3Qs
 -----END PGP SIGNATURE-----
 
---XStn23h1fwudRqtG--
+--Sig_/tWhKl/+1bHH7mzrHfeG6KEG--
