@@ -1,35 +1,36 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the tip tree with Linus' tree
-Date: Thu, 7 Jun 2018 11:53:50 +1000
-Message-ID: <20180607115350.69251fcf@canb.auug.org.au>
+Subject: linux-next: manual merge of the nvdimm tree with the tip tree
+Date: Thu, 7 Jun 2018 14:19:04 +1000
+Message-ID: <20180607141904.701b8061@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/tWhKl/+1bHH7mzrHfeG6KEG"; protocol="application/pgp-signature"
+ boundary="Sig_/L3tyTh5XHWRzf_y1_xg_mtu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/tWhKl/+1bHH7mzrHfeG6KEG
+--Sig_/L3tyTh5XHWRzf_y1_xg_mtu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the tip tree got a conflict in:
+Today's linux-next merge of the nvdimm tree got a conflict in:
 
-  tools/testing/selftests/Makefile
+  kernel/Makefile
 
 between commit:
 
-  a12ab9e125f1 ("selftests: move RTC tests to rtc subfolder")
+  d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
 
-from Linus' tree and commit:
+from the tip tree and commit:
 
-  ccba8b64452b ("rseq/selftests: Provide Makefile, scripts, gitignore")
+  5981690ddb8f ("memremap: split devm_memremap_pages() and memremap() infra=
+structure")
 
-from the tip tree.
+from the nvdimm tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -42,34 +43,36 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc tools/testing/selftests/Makefile
-index 4cd339b5366a,593fb44c9cd4..000000000000
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@@ -29,7 -28,7 +29,8 @@@ TARGETS +=3D powerp
-  TARGETS +=3D proc
-  TARGETS +=3D pstore
-  TARGETS +=3D ptrace
-+ TARGETS +=3D rseq
- +TARGETS +=3D rtc
-  TARGETS +=3D seccomp
-  TARGETS +=3D sigaltstack
-  TARGETS +=3D size
+diff --cc kernel/Makefile
+index 7085c841c413,9b9241361311..000000000000
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@@ -112,8 -112,8 +112,9 @@@ obj-$(CONFIG_JUMP_LABEL) +=3D jump_label.
+  obj-$(CONFIG_CONTEXT_TRACKING) +=3D context_tracking.o
+  obj-$(CONFIG_TORTURE_TEST) +=3D torture.o
+ =20
+- obj-$(CONFIG_HAS_IOMEM) +=3D memremap.o
++ obj-$(CONFIG_HAS_IOMEM) +=3D iomem.o
++ obj-$(CONFIG_ZONE_DEVICE) +=3D memremap.o
+ +obj-$(CONFIG_RSEQ) +=3D rseq.o
+ =20
+  $(obj)/configs.o: $(obj)/config_data.h
+ =20
 
---Sig_/tWhKl/+1bHH7mzrHfeG6KEG
+--Sig_/L3tyTh5XHWRzf_y1_xg_mtu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsYkC4ACgkQAVBC80lX
-0GxXbwf/c5j4YyGj+TZPY/nBYPR2xDihK9so/yQdF9R6hHu7Z0LZ2o/zqwyzgaea
-7QybPNk48nTK6yu2wAqkN0thLqirAX9awIJ50AW07fZNQuuBhfVLSTtPLH1szawI
-eVOojJJ0qX56sey+qIGT2C4kQNun9wEgtZhm8tD6e2m/SuPZUDepamGBw3PwefSK
-66f+XzQKuJXYvGQS5Z92c+yYSE3D5ppIqv+oiMJx0b2N7y+5oV9qP59Bwo4FAbL7
-AMIxqzIH6EcJ3cjZtgJyKdwomRRhZ7wVY4/z+INbJSEJ29ffj3c1Q14f45nN5n6p
-H2vuQAlJy8xICCYeqADT5JIYin5gyw==
-=A3Qs
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsYsjgACgkQAVBC80lX
+0GxCmAf/b/ylZzlwBAB6Cbvfg2NuRo4P2oWxKC6Se71d2MWfWJ30GwbKjs0AgshJ
+RDhAVxbhysnCfWiiUhkXVPNiXcrL8jUTGdjRu8lEV3FRFUB/r+AwtmmPFTD4BlWC
+0jqIs0rMyYFnPxHB3m/oPxHd4kltwq1yjrsMQbsF8qq8WR98EY8arjyXRc43//6s
+t6pVHD+2q3kmcFrtJn8Qedj1MvoObvdEw8FEuzmlvIfs/cMSNthwP/GStnipQl+Y
+FaTPkfOAMF2RZf9kZgqG+ICOkBfquCrI101tg5WiZSebO7L/qA2Hl8DjwRt8/oNj
+rQ/ciEbxsRnSmAXlDSwVJSD+WOjenw==
+=jRe3
 -----END PGP SIGNATURE-----
 
---Sig_/tWhKl/+1bHH7mzrHfeG6KEG--
+--Sig_/L3tyTh5XHWRzf_y1_xg_mtu--
