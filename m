@@ -1,85 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the scsi tree with the net-next
- tree
-Date: Fri, 8 Jun 2018 13:11:38 +1000
-Message-ID: <20180608131138.50810e67@canb.auug.org.au>
-References: <20180525013810.GG4828@sirena.org.uk>
+Subject: linux-next: build warning after merge of the random tree
+Date: Fri, 8 Jun 2018 13:37:48 +1000
+Message-ID: <20180608133748.58a272d5@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/oFBvz+qP9J72/FvUYHtLEkd"; protocol="application/pgp-signature"
+ boundary="Sig_/CQuTvknR=BFhx8rb09qkq+T"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180525013810.GG4828@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, linux-scsi@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Chad Dupuis <chad.dupuis@cavium.com>, "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "Tobin C. Harding" <me@tobin.cc>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/oFBvz+qP9J72/FvUYHtLEkd
+--Sig_/CQuTvknR=BFhx8rb09qkq+T
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Theodore,
 
-On Fri, 25 May 2018 02:38:10 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> Today's linux-next merge of the scsi tree got a conflict in:
->=20
->   drivers/scsi/qedf/qedf.h
->=20
-> between commit:
->=20
->   8673daf4f55bf3b91 ("qedf: Add get_generic_tlv_data handler.")
->=20
-> from the net-next tree and commit:
->=20
->   4b9b7fabb39b3e9d7 ("scsi: qedf: Improve firmware debug dump handling")
->=20
-> from the scsi tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/scsi/qedf/qedf.h
-> index cabb6af60fb8,2372a40326f8..000000000000
-> --- a/drivers/scsi/qedf/qedf.h
-> +++ b/drivers/scsi/qedf/qedf.h
-> @@@ -501,9 -499,8 +504,10 @@@ extern int qedf_post_io_req(struct qedf
->   extern void qedf_process_seq_cleanup_compl(struct qedf_ctx *qedf,
->   	struct fcoe_cqe *cqe, struct qedf_ioreq *io_req);
->   extern int qedf_send_flogi(struct qedf_ctx *qedf);
->  +extern void qedf_get_protocol_tlv_data(void *dev, void *data);
->   extern void qedf_fp_io_handler(struct work_struct *work);
->  +extern void qedf_get_generic_tlv_data(void *dev, struct qed_generic_tlv=
-s *data);
-> + extern void qedf_wq_grcdump(struct work_struct *work);
->  =20
->   #define FCOE_WORD_TO_BYTE  4
->   #define QEDF_MAX_TASK_NUM	0xFFFF
+After merging the random tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-This is now a conflict between the scsi tree and Linus' tree.
+lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined but n=
+ot used [-Wunused-variable]
+ static bool have_filled_random_ptr_key __read_mostly;
+             ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Introduced by commit
+
+  bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_hash")
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/oFBvz+qP9J72/FvUYHtLEkd
+--Sig_/CQuTvknR=BFhx8rb09qkq+T
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZ8+oACgkQAVBC80lX
-0Gw+Awf+MwQdnxX0K13gISjEo5GCZeLHu6iCdP6EWClTY7sfUrnsHpBwiHRC3AIH
-pN78mqFO/4HXdYDE1wsHFqx0JIlL3f8R7IJHXX/keqFMUd7er9kA+XgMoMzjNb/c
-scs2RzXnpMnr89gJ8TeRetuuMzCbQBI/YC/fA0O5luamxjcE4pb/L7FCgIE8dVfu
-HTQ1Ql4EqhHRSgAaEyNDPyPNBTSmnPUN/xwUqSXFF1CwGVcz/AwVumrXxzYlr8QR
-YbwCxYdXKeJnTQv+G2lrArVe7fyFnu7KjV4F6stTAqrZ/cKixOAZ5PAft1XnD1YX
-fH/ttnWRBbfCa0rg+4Tujj33vVQ7jQ==
-=9q2W
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsZ+gwACgkQAVBC80lX
+0Gwn4QgApiEiqB/lA1gsaZfeVzvuqOU4jf2K501KHhT1/84mcCxPEzoz4QvXng6y
+ps0JrT1dI2qriqKePzAnpc6dr5WrBay45qkJCUYz8TT4WzoTKaJAySP1G4eP+ItB
++XcL2iWho9dmLCPUdRZqp2qL5HJAV3DCyuH3jxJmH7MVFmYM6Vx0gD3yxZLQEu5L
+ULLmM9Zsy6TaoDdcoarajyDJeeOfgo0NUPBdmpH9p1QKEpVuQqMxdKpc0NW5WD5G
+8dgU2xernEpGKZejOmQJ60nhIFG2LKPzKBGx74D1RcD3pwZ21NNrj1mW/K0U/nAE
+TEP/TPNZjH0lvX1JVdw3PhrNnZe+mQ==
+=G6po
 -----END PGP SIGNATURE-----
 
---Sig_/oFBvz+qP9J72/FvUYHtLEkd--
+--Sig_/CQuTvknR=BFhx8rb09qkq+T--
