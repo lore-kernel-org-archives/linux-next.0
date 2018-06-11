@@ -1,43 +1,53 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: linux-next: manual merge of the regulator tree with the arm-soc tree
-Date: Mon, 11 Jun 2018 13:49:47 +0200
-Message-ID: <CACRpkdaUQkjM3nFWn2aO-Jxy=tWEKWkEUmCA11Xuji2p2x82gg@mail.gmail.com>
-References: <20180530150711.2c7c1fe9@canb.auug.org.au> <CACRpkdaotBXbA4pPFHRH0S1SF7-XX_T6yAOwZcbsR3RBcj+-=Q@mail.gmail.com>
- <2564792.sYBGPVz9u3@z50> <20180604104642.GC7536@sirena.org.uk>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warnings from Linus' tree
+Date: Tue, 12 Jun 2018 08:14:13 +1000
+Message-ID: <20180612081413.323d85b8@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/W/m1/rBdObywzXKqe1sTqIe"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180604104642.GC7536@sirena.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Janusz Krzysztofik <jmkrzyszt@gmail.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Liam Girdwood <lgirdwood@gmail.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 4, 2018 at 12:46 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jun 01, 2018 at 12:49:53AM +0200, Janusz Krzysztofik wrote:
->
->> I confirm the fix by Stephen works for me, however, the conflicting patch by
->> Linus breaks things a bit.
->
->> Lookup tables added to board files use function name "enable" while the
->> regulator uses NULL. As a result, GPIO descriptor is not matched and not
->> assigned to the regulator which ends up running with no control over GPIO pin.
->
->> Either the regulator driver should use the function name "enable" or that name
->> should be removed from lookup tables.
->
-> I'll revert this one as well :(
+--Sig_/W/m1/rBdObywzXKqe1sTqIe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I see this is a generic problem, no idea why I didn't pass these
-unnamed as NULL in the first place, probably my ignorance as usual.
+Hi all,
 
-I fixed it up in my patch making them all anonymous and rebasing
-the rest as well. Let's see how it looks after the merge window.
+Building Linus' tree, today's linux-next build (powerpc ppc64_defconfig)
+produced these warning:
 
-I will also need to rebase on top of Janusz changes and then it
-will look even better.
+ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in=
+ section `.gnu.hash'.
+ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in=
+ section `.gnu.hash'.
+ld: warning: orphan section `.gnu.hash' from `linker stubs' being placed in=
+ section `.gnu.hash'.
 
-Janusz: would be super if you could test my patches after that!
+This may just be because I have started building using the native Debian
+gcc for the powerpc builds ...
 
-Yours,
-Linus Walleij
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/W/m1/rBdObywzXKqe1sTqIe
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlse9DUACgkQAVBC80lX
+0GwAawgApdMf0NhVOmjUuHMCIsVcF2VnHyuaeXZRscavEqHiPxuWDsM4siF5nZ1Z
+EVBIptKv3UADfLoAWr1k26l7LQpg57iCvTVRwd/8l5KTujs0Qh32vJ87hVHGK57a
+7MMD1DC9m2J774Eyrl0ZiZeJPeYP5vdRz5pBcsvINuWwJR51T7NvY6RwZhOrKpNa
+D7z4KRX6xA6X3j2wnMwZQNS+r4BbMP79VRzCq5DUn1LtidTS6BcD3u11m6+m3f5W
+CZY3lXXbEEkK9i0NYmTTKo+3GR5X8W4Nw92UeIGkmE+bI4DffnJe22Fz0mWXRT1h
+hLs6n+kDpZzDtRcB76Tgxy4wyP6fNA==
+=BwqD
+-----END PGP SIGNATURE-----
+
+--Sig_/W/m1/rBdObywzXKqe1sTqIe--
