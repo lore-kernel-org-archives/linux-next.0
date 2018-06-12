@@ -1,83 +1,63 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build warning after merge of the nfc-next tree
-Date: Tue, 12 Jun 2018 10:19:54 +1000
-Message-ID: <20180612101954.63eb9e60@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with Linus' tree
+Date: Tue, 12 Jun 2018 10:46:07 +1000
+Message-ID: <20180612104607.69f6f15b@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_//e3dZxhtjRKoFni_fnm7mO+"; protocol="application/pgp-signature"
+ boundary="Sig_/Xe_ZIm0.oPtMX4pwaSiGPFi"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Amit Pundir <amit.pundir@linaro.org>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <jroedel@suse.de>
 List-Id: linux-next.vger.kernel.org
 
---Sig_//e3dZxhtjRKoFni_fnm7mO+
+--Sig_/Xe_ZIm0.oPtMX4pwaSiGPFi
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Samuel,
+Hi Paul,
 
-After merging the nfc-next tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Today's linux-next merge of the rcu tree got a conflict in:
 
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_open':
-drivers/nfc/fdp/fdp.c:250:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_close':
-drivers/nfc/fdp/fdp.c:260:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_send':
-drivers/nfc/fdp/fdp.c:268:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_recv_frame':
-drivers/nfc/fdp/fdp.c:279:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_core_reset_ntf_packet':
-drivers/nfc/fdp/fdp.c:602:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_prop_patch_ntf_packet':
-drivers/nfc/fdp/fdp.c:614:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
-drivers/nfc/fdp/fdp.c: In function 'fdp_nci_remove':
-drivers/nfc/fdp/fdp.c:789:17: warning: unused variable 'dev' [-Wunused-vari=
-able]
-  struct device *dev =3D &info->phy->i2c_dev->dev;
-                 ^~~
+  drivers/iommu/amd_iommu.c
 
-Introduced by commit
+between commit:
 
-  7579d009c4a1 ("NFC: fdp: Remove __func__ from dev_dbg()")
+  94c793accacd ("iommu/amd: Hide unused iommu_table_lock")
+
+from Linus' tree and commit:
+
+  1df9bb146146 ("EXP iommu: Placeholder for fix in mainline")
+
+from the rcu tree.
+
+I fixed it up (they share some code change) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_//e3dZxhtjRKoFni_fnm7mO+
+--Sig_/Xe_ZIm0.oPtMX4pwaSiGPFi
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsfEaoACgkQAVBC80lX
-0GxXzwf/V+PcEUtg5JzbR3IKI9xp0HjSRSb9DgjrKtLVtK0hd6ExUtu5G2LUjyR9
-EBvf3zxOdHqMP8s9WU6GYrrf555LIYKbgPdubuZaf7iYuy1y6/7xOHazXR0DRGYA
-KZ9FuDTgzGoQXcXHblSdB3DThIDfPZNpFfVVryn3pwTrjsGTZGTnem0Y5kMpohVe
-hrf+JB+uP6EKzv1VgvQ9nf5lm20blHJaXbDQFi76M6QmP14v6jqeVkBwd/rpOQeF
-w53fzcEHzYJogdH5dP+zXi+lwk14rx2z2lt1xzD+ouI6/8deecxYBanrEmXpd5ON
-0gi5mORQN8yh2Yrm8p1Rg4HELQoszg==
-=XmbC
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsfF88ACgkQAVBC80lX
+0GyiGAf+Mac6oviilt+vgKrO4FeFtt3BiSCmcIZdK99igAz+xN2+4XCRRmTO+CGE
+SazbMWIF8K2OojMX8azPN0IOJ0blCGZKRWhem8cMflfglDPb0LEwX4HfrpKB9vtS
+vEZul54gpBnPvTguvkLoo15z8VWvMX2xfMOTl5XTgfVu+gT6u4MIYiUv2ADZfqNM
+U/WD25J8yc2q79Javr1R0yDL2ulXX826C1vVBLNFTeh5S8JvdmboXLsw/5RRsD6w
+4wP1WTNF0soTYsQh0av8OJ8d8oV38qJ9hliUedWF29sd7yJGBCMEZSDG1HiDKW+C
+xEi4cDS6GBTn93m8QnpioLqpLiZbSQ==
+=LL9W
 -----END PGP SIGNATURE-----
 
---Sig_//e3dZxhtjRKoFni_fnm7mO+--
+--Sig_/Xe_ZIm0.oPtMX4pwaSiGPFi--
