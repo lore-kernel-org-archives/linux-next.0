@@ -1,42 +1,56 @@
-From: dvhart@infradead.org
-Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
-Date: Mon, 11 Jun 2018 20:28:01 -0700
-Message-ID: <775DC8EC-94B1-4A6C-B799-4E0156F5BE41@infradead.org>
-References: <20180612112310.2d77e1c3@canb.auug.org.au>
+From: Balbir Singh <bsingharora@gmail.com>
+Subject: Re: [powerpc/powervm]kernel BUG at mm/memory_hotplug.c:1864!
+Date: Tue, 12 Jun 2018 20:28:43 +1000
+Message-ID: <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
+References: <6826dab0e4382380db8d11b047272bda@linux.vnet.ibm.com>
+ <20180608112823.GA20395@techadventures.net>
+ <3d1e7740df56ed35c8b56941acdb7079@linux.vnet.ibm.com>
+ <20180608121553.GA20774@techadventures.net>
+ <0aac625ee724d877b87c69bba5ac9a0e@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180612112310.2d77e1c3@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <0aac625ee724d877b87c69bba5ac9a0e@linux.vnet.ibm.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: vrbagal1 <vrbagal1@linux.vnet.ibm.com>, Oscar Salvador <osalvador@techadventures.net>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Linuxppc-dev <linuxppc-dev-bounces+vrbagal1=linux.vnet.ibm.com@lists.ozlabs.org>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, nfont@linux.vnet.ibm.com, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
 
 
-On June 11, 2018 6:23:10 PM PDT, Stephen Rothwell <sfr@canb=2Eauug=2Eorg=
-=2Eau> wrote:
->Hi all,
->
->After merging the drivers-x86 tree, today's linux-next build (x86_64
->allmodconfig) failed like this:
->
->drivers/platform/x86/silead_dmi=2Ec:84:21: error: variable
->'chuwi_vi10_data' has initializer but incomplete type
-> static const struct ts_dmi_data chuwi_vi10_data =3D {
->                     ^~~~~~~~~~~
-=2E=2E=2E
->Caused by commit
->
->2da502a0aea7 ("platform/x86: silead_dmi: Add touchscreen info for the
->Chuwi Vi10 tablet")
->
->I have reverted that commit for today=2E  More care please=2E
+On 11/06/18 17:41, vrbagal1 wrote:
+> On 2018-06-08 17:45, Oscar Salvador wrote:
+>> On Fri, Jun 08, 2018 at 05:11:24PM +0530, vrbagal1 wrote:
+>>> On 2018-06-08 16:58, Oscar Salvador wrote:
+>>> >On Fri, Jun 08, 2018 at 04:44:24PM +0530, vrbagal1 wrote:
+>>> >>Greetings!!!
+>>> >>
+>>> >>I am seeing kernel bug followed by oops message and system reboots,
+>>> >>while
+>>> >>running dlpar memory hotplug test.
+>>> >>
+>>> >>Machine Details: Power6 PowerVM Platform
+>>> >>GCC version: (gcc version 4.8.3 20140911 (Red Hat 4.8.3-7) (GCC))
+>>> >>Test case: dlpar memory hotplug test (https://github.com/avocado-framework-tests/avocado-misc-tests/blob/master/memory/memhotplug.py)
+>>> >>Kernel Version: Linux version 4.17.0-autotest
+>>> >>
+>>> >>I am seeing this bug on rc7 as well.
+> 
+> Observing similar traces on linux next kernel: 4.17.0-next-20180608-autotest
+> 
+>  Block size [0x4000000] unaligned hotplug range: start 0x220000000, size 0x1000000
 
-Grmbl=2E Thanks Stephen=2E I'll work with Andy tonight to get for-next bac=
-k into good shape=2E
+size < block_size in this case, why? how? Could you confirm that the block size is 64MB and your trying to remove 16MB
 
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+Balbir Singh.
