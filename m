@@ -1,79 +1,53 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the drivers-x86 tree
-Date: Tue, 12 Jun 2018 11:23:10 +1000
-Message-ID: <20180612112310.2d77e1c3@canb.auug.org.au>
+Subject: linux-next: build failure in Linus' tree
+Date: Tue, 12 Jun 2018 12:26:40 +1000
+Message-ID: <20180612122640.534118ed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/C/Fn3bIaRLIIzwXsLHngfG3"; protocol="application/pgp-signature"
+ boundary="Sig_/VyhoGSrerE.YtOd2YUrq1u0"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Darren Hart <dvhart@infradead.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/C/Fn3bIaRLIIzwXsLHngfG3
+--Sig_/VyhoGSrerE.YtOd2YUrq1u0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the drivers-x86 tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Building Linus' tree, today's linux-next build (powerpc allyesconfig)
+failed like this:
 
-drivers/platform/x86/silead_dmi.c:84:21: error: variable 'chuwi_vi10_data' =
-has initializer but incomplete type
- static const struct ts_dmi_data chuwi_vi10_data =3D {
-                     ^~~~~~~~~~~
-drivers/platform/x86/silead_dmi.c:85:3: error: 'const struct ts_dmi_data' h=
-as no member named 'acpi_name'
-  .acpi_name      =3D "MSSL0002:00",
-   ^~~~~~~~~
-drivers/platform/x86/silead_dmi.c:85:20: warning: excess elements in struct=
- initializer
-  .acpi_name      =3D "MSSL0002:00",
-                    ^~~~~~~~~~~~~
-drivers/platform/x86/silead_dmi.c:85:20: note: (near initialization for 'ch=
-uwi_vi10_data')
-drivers/platform/x86/silead_dmi.c:86:3: error: 'const struct ts_dmi_data' h=
-as no member named 'properties'
-  .properties     =3D chuwi_vi10_props,
-   ^~~~~~~~~~
-drivers/platform/x86/silead_dmi.c:86:20: warning: excess elements in struct=
- initializer
-  .properties     =3D chuwi_vi10_props,
-                    ^~~~~~~~~~~~~~~~
-drivers/platform/x86/silead_dmi.c:86:20: note: (near initialization for 'ch=
-uwi_vi10_data')
-drivers/platform/x86/silead_dmi.c:84:33: error: storage size of 'chuwi_vi10=
-_data' isn't known
- static const struct ts_dmi_data chuwi_vi10_data =3D {
-                                 ^~~~~~~~~~~~~~~
+ld: net/bpfilter/bpfilter_umh.o: compiled for a little endian system and ta=
+rget is big endian
+ld: failed to merge target specific data of file net/bpfilter/bpfilter_umh.o
 
-Caused by commit
+This has come to light since I started using a native compiler (i.e. one
+that can build executables, not just the kernel) for my PowerPC builds
+on a powerpcle host.
 
-  2da502a0aea7 ("platform/x86: silead_dmi: Add touchscreen info for the Chu=
-wi Vi10 tablet")
-
-I have reverted that commit for today.  More care please.
+I have switched back to my limited compiler.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/C/Fn3bIaRLIIzwXsLHngfG3
+--Sig_/VyhoGSrerE.YtOd2YUrq1u0
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsfIH4ACgkQAVBC80lX
-0GwfTAgApD0ZSlIZcTAo6Mw/WEyTBVMSwkxwZemzF7CZmLVIaiYh1fyD0Qy27B3Q
-InZTlRu5MXcQQNvavq6VBi0CihGFEgP+8/bCGWM2yXeRYgAwdp7oSMnzmIUh+WcF
-LawiheNrljzou++wBPXElX+eYceSz5Zj/lZYoL37r5Hrd1us0XeCV1LjGv7/sRwS
-3GKr5klgzy/dgCBzcJ+AJaUfiA5Nrp4D5sh1yHYkAN4/Fd0lqFxuw17mFhpFOiei
-bvqen0s8FxIEDCFVsrXAcQasf0ND7i4lH6fIDyKrZfjysmGk2CfZkHtT2f0RDTTK
-+93lFAv739WY2A38Kf2KMnUClTrf4w==
-=rwvg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsfL2AACgkQAVBC80lX
+0GzhhQf/dCEFz2naJA3Uwspxm0fioygm5jpmhvUMa/Mo1QmtdG06VRt9nbQQ/bdw
+lLb/2l/rDp2cl9wXPjWOZnY7nJPvsR/sIw2D1Gi+ZaeWn29nojZ6KmE+bqeJHMIZ
++ecFo4+aa9MHJjy4X7Inig3q4zwfSFD2AuFHX7aoabcBqbYb73xhOYP72CQH5qiV
+K8mz97TZbKTbaVyoeb7N6tbnhyZxZGpKrbuG/uRoE7JJJZDlxMG1FuJZoio3LBJl
+UQVpWrtmOqy4ZAj2o9zH7yfcUiC7NUsKJXHPns1GqChNlZr67Hh6Y24oqEQA3fT0
+2m1c1Isw4u+jQz3EpvOnjiefN5pVVg==
+=f5hV
 -----END PGP SIGNATURE-----
 
---Sig_/C/Fn3bIaRLIIzwXsLHngfG3--
+--Sig_/VyhoGSrerE.YtOd2YUrq1u0--
