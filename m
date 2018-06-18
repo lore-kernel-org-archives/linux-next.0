@@ -1,94 +1,78 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: Please add mlx5-next tree
-Date: Mon, 18 Jun 2018 08:07:59 +1000
-Message-ID: <20180618080759.528b3525@canb.auug.org.au>
-References: <20180606192500.GZ2958@mtr-leonro.mtl.com>
-        <20180608074726.5b3883e2@canb.auug.org.au>
-        <20180610054128.GG12407@mtr-leonro.mtl.com>
-        <20180617185253.GA7393@mtr-leonro.mtl.com>
+Subject: linux-next: manual merge of the mac80211-next tree with Linus' tree
+Date: Mon, 18 Jun 2018 11:29:43 +1000
+Message-ID: <20180618112943.4ceadf24@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=X4x6njnBngG4eYYIfSgoe3"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <20180617185253.GA7393@mtr-leonro.mtl.com>
-Sender: netdev-owner@vger.kernel.org
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Saeed Mahameed <saeedm@mellanox.com>, Jason Gunthorpe <jgg@ziepe.ca>, Doug Ledford <dledford@redhat.com>, "David S. Miller" <davem@davemloft.net>, linux-netdev <netdev@vger.kernel.org>, RDMA mailing list <linux-rdma@vger.kernel.org>
+ boundary="Sig_/T4UnYjLzyJs=UM7dPDwrnvl"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Johannes Berg <johannes@sipsolutions.net>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kees Cook <keescook@chromium.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/=X4x6njnBngG4eYYIfSgoe3
+--Sig_/T4UnYjLzyJs=UM7dPDwrnvl
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Leon,
+Hi all,
 
-On Sun, 17 Jun 2018 21:52:53 +0300 Leon Romanovsky <leon@kernel.org> wrote:
->
-> On Sun, Jun 10, 2018 at 08:41:28AM +0300, Leon Romanovsky wrote:
-> > On Fri, Jun 08, 2018 at 07:47:26AM +1000, Stephen Rothwell wrote: =20
-> > > Hi Leon,
-> > >
-> > > On Wed, 6 Jun 2018 22:25:00 +0300 Leon Romanovsky <leon@kernel.org> w=
-rote: =20
-> > > >
-> > > > Can you please add the branch "mlx5-next" from the following tree t=
-o the
-> > > > linux-next integration tree?
-> > > >
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
-> > > >
-> > > > The mlx5-next branch is used to send shared pull requests to both n=
-etdev
-> > > > and RDMA subsystems and it is worth to have linux-next coverage on =
-it
-> > > > before. =20
-> > >
-> > > I try hard not to add new trees during the merge window, sorry.  If I
-> > > forget to add it after -rc1 has been released, please remind me. =20
-> >
-> > Thanks Stephen, I'll do.
-> > =20
->=20
-> This is reminder.
+Today's linux-next merge of the mac80211-next tree got a conflict in:
 
-I have added it from today.
+  net/mac80211/scan.c
 
-Thanks for adding your subsystem tree as a participant of linux-next.  As
-you may know, this is not a judgement of your code.  The purpose of
-linux-next is for integration testing and to lower the impact of
-conflicts between subsystems in the next merge window.=20
+between commit:
 
-You will need to ensure that the patches/commits in your tree/series have
-been:
-     * submitted under GPL v2 (or later) and include the Contributor's
-        Signed-off-by,
-     * posted to the relevant mailing list,
-     * reviewed by you (or another maintainer of your subsystem tree),
-     * successfully unit tested, and=20
-     * destined for the current or next Linux merge window.
+  6396bb221514 ("treewide: kzalloc() -> kcalloc()")
 
-Basically, this should be just what you would send to Linus (or ask him
-to fetch).  It is allowed to be rebased if you deem it necessary.
+from Linus' tree and commit:
+
+  b9771d41aee7 ("mac80211: support scan features for improved scan privacy")
+
+from the mac80211-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
-Stephen Rothwell=20
-sfr@canb.auug.org.au
+Stephen Rothwell
 
---Sig_/=X4x6njnBngG4eYYIfSgoe3
+diff --cc net/mac80211/scan.c
+index 2e917a6d239d,ae77d1c12856..000000000000
+--- a/net/mac80211/scan.c
++++ b/net/mac80211/scan.c
+@@@ -1157,7 -1197,10 +1197,10 @@@ int __ieee80211_request_sched_scan_star
+  		}
+  	}
+ =20
++ 	if (req->flags & NL80211_SCAN_FLAG_MIN_PREQ_CONTENT)
++ 		flags |=3D IEEE80211_PROBE_FLAG_MIN_CONTENT;
++=20
+ -	ie =3D kzalloc(num_bands * iebufsz, GFP_KERNEL);
+ +	ie =3D kcalloc(iebufsz, num_bands, GFP_KERNEL);
+  	if (!ie) {
+  		ret =3D -ENOMEM;
+  		goto out;
+
+--Sig_/T4UnYjLzyJs=UM7dPDwrnvl
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsm278ACgkQAVBC80lX
-0Gyw0Af/UZjyXvpBi7/6D62OuQIPHTSdlekvGZQwu4cKo/EyfNXewR5gqF/aNZje
-K2PAFwVUbvY7+xoJjfGJ3JI7iFvRPZCCRd59JKObY7OUYn+YMrli04S243fu0JtJ
-tBOkxDiSbOImhUlTkKupWVOm4cqvBBDG5lLpFS+kb3nD3sALxC9s8kTCaO+/v9my
-OSGyrycbM6xfCyhsniE2wRmOhgj2d3AvnAobLUbnl2aJQ7j3IKRWaJfmzHWRZwCq
-KQ4H4E3psbUjpdJ7LcncXwdLlo+M+axHjmJTQnqiQm+OHRArjW8K3GhP7q5Yj3FK
-HOd5bB5vVL+5BkUcLkqBrDjSIhLAUA==
-=cUHO
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnCwcACgkQAVBC80lX
+0GyqXgf9He+f7tztUphMYK0BvO1ZXCa9ZTbKoUvzy973dn07ZgaJFAgF5dbwcr+9
+8XvLxHWbzUEwXYUSxTqZIQQdqFEnBlSeY58sxKoBYCOzQCWHH8CdZTnKEwAoZrDX
+LYBtLob2E1UTHQoCti7Mtf3Pd6SuuPsLkmxnGEVuKFcA16tu7H/n62Cw3Y2FpiXx
++tQrMpIX16D9YYbwnFw7QEdzaqphZV4Rvf019CHCVHElKMFZBR5W6P0wXKD8nAX/
+Mn9DapfLBrvqs/X7ShYZZcVWoSrZ7uvqnyC9o+JTx/I1518lTJy9hU9wL6vQRsIy
+2xLfbvPxnxhYPivIAUklSzF676UzJA==
+=6zxy
 -----END PGP SIGNATURE-----
 
---Sig_/=X4x6njnBngG4eYYIfSgoe3--
+--Sig_/T4UnYjLzyJs=UM7dPDwrnvl--
