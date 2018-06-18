@@ -1,50 +1,60 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Mon, 18 Jun 2018 13:49:47 +1000
-Message-ID: <20180618134947.477f662e@canb.auug.org.au>
-References: <20180612104607.69f6f15b@canb.auug.org.au>
-        <20180618134849.70831fe2@canb.auug.org.au>
+Subject: Re: linux-next: build failure in Linus' tree
+Date: Mon, 18 Jun 2018 13:50:41 +1000
+Message-ID: <20180618135041.5b661a2c@canb.auug.org.au>
+References: <20180612122640.534118ed@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MqWTI.PpNms5ZpCj14pfo5H"; protocol="application/pgp-signature"
+ boundary="Sig_/lwvCwP46zO1EbN+lvHavvXu"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180618134849.70831fe2@canb.auug.org.au>
+In-Reply-To: <20180612122640.534118ed@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <jroedel@suse.de>
+To: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, PowerPC <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/MqWTI.PpNms5ZpCj14pfo5H
+--Sig_/lwvCwP46zO1EbN+lvHavvXu
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Paul,
+Hi all,
 
-On Mon, 18 Jun 2018 13:48:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+On Tue, 12 Jun 2018 12:26:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
 wrote:
 >
-> I am still getting this.
+> Building Linus' tree, today's linux-next build (powerpc allyesconfig)
+> failed like this:
+>=20
+> ld: net/bpfilter/bpfilter_umh.o: compiled for a little endian system and =
+target is big endian
+> ld: failed to merge target specific data of file net/bpfilter/bpfilter_um=
+h.o
+>=20
+> This has come to light since I started using a native compiler (i.e. one
+> that can build executables, not just the kernel) for my PowerPC builds
+> on a powerpcle host.
+>=20
+> I have switched back to my limited compiler.
 
-Maybe this was a bit premature :-)
-
+Any progress on this?
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/MqWTI.PpNms5ZpCj14pfo5H
+--Sig_/lwvCwP46zO1EbN+lvHavvXu
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnK9sACgkQAVBC80lX
-0GzkNwf/QgokYhvDv6eblWRSege3EeDfobTxYPg9gzh5OfzK1mnylliY39FtPrdO
-cgKW07RGLx3jzLlgB/IEBLIiKj26wpaosSlDNHlVSXH8XkM8AoAYRD7xaHSXT8sp
-fKTakvslqj8YkePtHWF8/KEYrhcmRbqrNJ854SPRpfZYvfq0NazlvMEykXRvQ7YZ
-hU+NyM2BZxJJ6glfN+97xtW4twJxLAzXH4MpeS45+fPPWpEkMt7hsZ9Hi0kVB4gg
-RGHCFyRBH9fyInCs2/yQYE/0rsB6ms/xXlxD9WJRReHmCzdcnvorpeFYzegRFxYs
-Lhg2GB+VsFY598VeWqMaUubTOZLutQ==
-=jUQ+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnLBEACgkQAVBC80lX
+0Gxiigf/TavmN8fnRIYbvk8WFY9glYBpJkMjz/X3ZUJBrKAW7V46laetFyUZtkib
+7W3oVrAWPwg0SUXY/q7kPhp/D3wXu2RVUlJh9LIsHBaf5kpNqlSb2rreDqIwoOWB
+qn4lJkhE10AfmbBxbppaNOyNIwpbzWW9gZIxAGUe0pYZqtUBZnAIF5QSFNET6sml
+fLdgNk/dXDCxuEUjdrnQxhoti0NTKuerjnfjRg//TdSHriRLmKHJBK9MezdnNuth
+7qpT/IoTv/JD/EtYFYH8VZ1uxaYHRxAzCHGkKkOMhe18j2E+/u9XeNA09u0iRNfw
+EuNiDaipfXBk+zKeDbiFZBPYf4lcVw==
+=dP4B
 -----END PGP SIGNATURE-----
 
---Sig_/MqWTI.PpNms5ZpCj14pfo5H--
+--Sig_/lwvCwP46zO1EbN+lvHavvXu--
