@@ -1,33 +1,28 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: linux-next: manual merge of the rcu tree with Linus' tree
-Date: Mon, 18 Jun 2018 07:48:18 -0700
-Message-ID: <20180618144818.GT3593@linux.vnet.ibm.com>
-References: <20180612104607.69f6f15b@canb.auug.org.au>
- <20180618134849.70831fe2@canb.auug.org.au>
- <20180618134947.477f662e@canb.auug.org.au>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Matthew Wilcox <willy@infradead.org>
+Subject: Re: linux-next: build warning after merge of the xarray tree
+Date: Mon, 18 Jun 2018 08:58:55 -0700
+Message-ID: <20180618155855.GB28748@bombadil.infradead.org>
+References: <20180618132854.4fcf8d5d@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20180618134947.477f662e@canb.auug.org.au>
+In-Reply-To: <20180618132854.4fcf8d5d@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <jroedel@suse.de>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On Mon, Jun 18, 2018 at 01:49:47PM +1000, Stephen Rothwell wrote:
-> Hi Paul,
+On Mon, Jun 18, 2018 at 01:28:54PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
-> On Mon, 18 Jun 2018 13:48:49 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > I am still getting this.
+> After merging the xarray tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
 > 
-> Maybe this was a bit premature :-)
+> WARNING: modpost: missing MODULE_LICENSE() in lib/test_xarray.o
+> 
+> Introduced by commit
+> 
+>   d968f529e39f ("xarray: Add XArray load operation")
 
-Actually, this whole mess was due to me forgetting to do the merge-window
-reset of rcu/next to the tree actually submitted to mainline.  :-/
-
-Please accept my apologies for the resulting hassles!
-
-							Thanx, Paul
+Thanks; fix pushed.  I hadn't actually built it as a module ;-)
