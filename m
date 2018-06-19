@@ -1,87 +1,52 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Tue, 19 Jun 2018 11:21:40 +1000
-Message-ID: <20180619112140.58be35dd@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the vfs tree
+Date: Tue, 19 Jun 2018 11:29:08 +1000
+Message-ID: <20180619112908.421e512e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fM04mZG8oQ6OrLSZGB6.rfU"; protocol="application/pgp-signature"
+ boundary="Sig_/l609MokBjYqhXJ_4xGx.r/b"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU
+--Sig_/l609MokBjYqhXJ_4xGx.r/b
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi Al,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+After merging the vfs tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-  include/uapi/linux/fs.h
+<stdin>:1338:2: warning: #warning syscall open_tree not implemented [-Wcpp]
+<stdin>:1341:2: warning: #warning syscall move_mount not implemented [-Wcpp]
+<stdin>:1344:2: warning: #warning syscall fsopen not implemented [-Wcpp]
+<stdin>:1347:2: warning: #warning syscall fsmount not implemented [-Wcpp]
+<stdin>:1350:2: warning: #warning syscall fspick not implemented [-Wcpp]
+<stdin>:1353:2: warning: #warning syscall fsinfo not implemented [-Wcpp]
 
-between commit:
-
-  1d91ca426d8d ("Partially revert "locks: fix file locking on overlayfs"")
-
-from the overlayfs tree and commit:
-
-  28514d1edad4 ("vfs: Suppress MS_* flag defs within the kernel unless expl=
-icitly enabled")
-
-from the vfs tree.
-
-I fixed it up (I used the vfs tree version of the file and added the
-following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 19 Jun 2018 11:16:12 +1000
-Subject: [PATCH] overlayfs: fix up for MS_ constants moving
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- include/uapi/linux/mount.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index 3634e065836c..fb104836a51f 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -37,7 +37,6 @@
-=20
- /* These sb flags are internal to the kernel */
- #define MS_SUBMOUNT     (1<<26)
--#define MS_NOREMOTELOCK	(1<<27)
- #define MS_NOSEC	(1<<28)
- #define MS_BORN		(1<<29)
- #define MS_ACTIVE	(1<<30)
---=20
-2.17.1
+Not really suprising.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU
+--Sig_/l609MokBjYqhXJ_4xGx.r/b
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsoWqQACgkQAVBC80lX
-0GysdAgAo1s7cqVK1K67FxOnlVHga7mJD77YJCLhzSujfwH07/mwJgBKI61aIe+X
-0H8/s6trv5LxIMYu8s1y/RwxLU3WjCexG4r+lJMvoxOQ/U2CFHZmQ3okZVC2XVJK
-J+n+gm9vZHFKWkfmerQpoZvLYtMKw6krcq7Ov5mYQ63TmcKlhdXscbbIf67w5Fov
-K8iQH8ORUpJw9q0Onkun7xREu9JrCm6lkGiCpbiL1i79XJkbVJplq/a7JZWwqYXd
-q/tnwQ3Wwa8tsQMXrBzjVAr2L1/J9GNX9PcXZckSrD26Kfi2Q/m4ELki0KjPgcjd
-r1yU/2udnG3j/j5mA/B5Op/JRLCYzQ==
-=8ziM
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsoXGQACgkQAVBC80lX
+0GzHxwf/a4/3VI5fh2YkvwaEN4x7xWpM0xkJ6GOqMKvgtZv0McL9Xar3mmIuhYC7
+WxeLE+zTdpBTYgCvN22oOUku2nxckjA6vEFJo+iXzZZcjULvGem7mMNVBKswce5H
+I+exVtpZ/QL7i74BPwIQyRK9O9cPw8nkO51xdssAmIBHkmXC8Q+oI7TTGOX9WOG/
+pTg0l3bXboYPsHvLSNceU0OimwJCpdKShscQRwlbB4ip1wLa7pHA9YKM4p1lP5yp
+dfrG/WHyLQtfGW7GP18zCWaULBM3YcB5U/hgUlyexk7dvDni3iwpjTkL8p6LMPK5
+YmlPjFYJhU9cAViJPlcujyzI5p+M0Q==
+=/olF
 -----END PGP SIGNATURE-----
 
---Sig_/fM04mZG8oQ6OrLSZGB6.rfU--
+--Sig_/l609MokBjYqhXJ_4xGx.r/b--
