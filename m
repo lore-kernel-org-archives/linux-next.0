@@ -1,30 +1,43 @@
-From: David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Tue, 19 Jun 2018 09:40:38 +0100
-Message-ID: <22145.1529397638@warthog.procyon.org.uk>
-References: <20180619112140.58be35dd@canb.auug.org.au>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: linux-next: manual merge of the userns tree with the vfs tree
+Date: Tue, 19 Jun 2018 05:11:45 -0500
+Message-ID: <874lhz9jby.fsf@xmission.com>
+References: <20180619145605.1eb8e86f@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619112140.58be35dd@canb.auug.org.au>
-Content-ID: <22144.1529397638.1@warthog.procyon.org.uk>
+In-Reply-To: <20180619145605.1eb8e86f@canb.auug.org.au> (Stephen Rothwell's
+        message of "Tue, 19 Jun 2018 14:56:05 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: dhowells@redhat.com, Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
->  /* These sb flags are internal to the kernel */
->  #define MS_SUBMOUNT     (1<<26)
-> -#define MS_NOREMOTELOCK	(1<<27)
->  #define MS_NOSEC	(1<<28)
->  #define MS_BORN		(1<<29)
->  #define MS_ACTIVE	(1<<30)
+> Hi all,
+>
+> Today's linux-next merge of the userns tree got conflicts in:
+>
+>   fs/proc/inode.c
+>   fs/proc/root.c
+>
+> between commits:
+>
+>   0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+>   83cd45075c36 ("proc: Add fs_context support to procfs")
+>
+> from the vfs tree and commit:
+>
+>   cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
+>
+> from the userns tree.
+>
+> I don't know how to fix this up, so I just dropped the userns tree for
+> today (since it only contained that one commit).
 
-Ummm...  Can MS_NOREMOTELOCK be removed?  I know it's listed in the internal
-flags section, but all of these have been exposed to userspace for over a
-year.  Ideally, I'd remove all of these from UAPI, but can anyone guarantee
-that no pieces of userspace refer to them?
+The userns tree is a fix for a regression that I am sending to Linus
+ASAP.  I don't remember any fundamental conflicts.  After we get 4.17
+sorted out I will worry about this.
 
-David
+Eric
