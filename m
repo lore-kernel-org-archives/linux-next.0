@@ -1,43 +1,46 @@
-From: ebiederm@xmission.com (Eric W. Biederman)
-Subject: Re: linux-next: manual merge of the userns tree with the vfs tree
-Date: Tue, 19 Jun 2018 05:11:45 -0500
-Message-ID: <874lhz9jby.fsf@xmission.com>
-References: <20180619145605.1eb8e86f@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the scsi-mkp tree
+Date: Tue, 19 Jun 2018 21:15:33 +1000
+Message-ID: <20180619211533.1dddf9b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H7ghmihbp22fxsmr0Y9XWJK"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619145605.1eb8e86f@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 19 Jun 2018 14:56:05 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+--Sig_/H7ghmihbp22fxsmr0Y9XWJK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Hi all,
->
-> Today's linux-next merge of the userns tree got conflicts in:
->
->   fs/proc/inode.c
->   fs/proc/root.c
->
-> between commits:
->
->   0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
->   83cd45075c36 ("proc: Add fs_context support to procfs")
->
-> from the vfs tree and commit:
->
->   cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
->
-> from the userns tree.
->
-> I don't know how to fix this up, so I just dropped the userns tree for
-> today (since it only contained that one commit).
+Hi Martin,
 
-The userns tree is a fix for a regression that I am sending to Linus
-ASAP.  I don't remember any fundamental conflicts.  After we get 4.17
-sorted out I will worry about this.
+Commit
 
-Eric
+  508fbc44bbb7 ("scsi: be2iscsi: Include null char in SET_HOST_DATA")
+
+is missing a Signed-off-by from its author.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/H7ghmihbp22fxsmr0Y9XWJK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlso5dUACgkQAVBC80lX
+0Gx+vwgAgPZB1PJiKJDrIqDp2XXIoebBXV3ZhTakN3+28u5PQdmAW5cG8ru5t8NH
+quKeTrN/gcbYtAgMzJph+JK0keWs9p6Jw2B7YBUytqGnHO6/oyy8Osh+sSfQ32E/
+KXLqz3NpISTp4n4Wmy4vSC7ylC/WNghDzs+Bmw0RD9qvo5K5kUb6uhjBHE2zJwIT
+Sc95H0ZI+BlYPxFAAqETOsy79IYtF39MiVEk8b58jeqAjYwLcPwvwwxchrP2GbqB
+TJ7Fn2HNt9pyIrwT8IgJopOYpO9acmj0O070j26mjulIHt2YuekMn1DyxdquAE3/
+u5vDTWrATnAGqndaey0dYyr4TKytrQ==
+=zXgi
+-----END PGP SIGNATURE-----
+
+--Sig_/H7ghmihbp22fxsmr0Y9XWJK--
