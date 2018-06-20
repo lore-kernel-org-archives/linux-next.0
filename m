@@ -1,30 +1,42 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp tree
-Date: Wed, 20 Jun 2018 12:37:53 -0400
-Message-ID: <yq1h8lxe7mm.fsf@oracle.com>
-References: <20180619211533.1dddf9b0@canb.auug.org.au>
-        <yq1y3fadxiz.fsf@oracle.com>
-        <20180620145436.4deb9079@canb.auug.org.au>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: linux-next: Tree for Jun 20 (kernel/auditsc.c)
+Date: Wed, 20 Jun 2018 16:00:10 -0400
+Message-ID: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+References: <20180620144227.18bab881@canb.auug.org.au> <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="UTF-8"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180620145436.4deb9079@canb.auug.org.au> (Stephen Rothwell's
-        message of "Wed, 20 Jun 2018 14:54:36 +1000")
+In-Reply-To: <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>
+To: rdunlap@infradead.org, omosnace@redhat.com
+Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, linux-audit@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-
-Stephen,
-
->> Fixed, thanks!
+On Wed, Jun 20, 2018 at 11:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
 >
-> Unfortunately, James had already merged your tree :-(
+> On 06/19/2018 09:42 PM, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > Changes since 20180619:
+> >
+>
+> on x86_64:
+>
+> kernel/auditsc.o: In function `audit_filter_rules.isra.20':
+> auditsc.c:(.text+0x8c5): undefined reference to `groups_search'
+> auditsc.c:(.text+0x909): undefined reference to `groups_search'
+>
+>
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> Full randconfig file is attached.
 
-James' script will drop the offending original commit when I amend
-something in the SCSI tree. So the discrepancy will go away next time he
-updates.
+Thanks Randy.
+
+I believe the issue is that when CONFIG_MULTIUSER is not enabled
+groups.{c.o} is not included.  Ondrej, please look into this and
+submit a fix as soon as possible, thank you.
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+paul moore
+www.paul-moore.com
