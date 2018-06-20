@@ -1,28 +1,216 @@
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp tree
-Date: Tue, 19 Jun 2018 22:03:48 -0400
-Message-ID: <yq1y3fadxiz.fsf@oracle.com>
-References: <20180619211533.1dddf9b0@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the userns tree with the vfs tree
+Date: Wed, 20 Jun 2018 12:39:05 +1000
+Message-ID: <20180620123905.348181b2@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/xHdy3ugyKmaf5SHpn5r_2=/"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180619211533.1dddf9b0@canb.auug.org.au> (Stephen Rothwell's
-        message of "Tue, 19 Jun 2018 21:15:33 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/xHdy3ugyKmaf5SHpn5r_2=/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Stephen,
+Hi all,
 
-> Commit
->
->   508fbc44bbb7 ("scsi: be2iscsi: Include null char in SET_HOST_DATA")
->
-> is missing a Signed-off-by from its author.
+Today's linux-next merge of the userns tree got a conflict in:
 
-Fixed, thanks!
+  fs/proc/inode.c
+  fs/proc/root.c
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+between commit:
+
+  0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
+  83cd45075c36 ("proc: Add fs_context support to procfs")
+
+from the vfs tree and commit:
+
+  cc8cda3af2ba ("proc: Simplify and fix proc by removing the kernel mount")
+  9303f5f81bd4 ("proc: Change proc_parse_options to return an errno value")
+  04035aa33a12 ("proc: Don't change mount options on remount failure.")
+
+from the userns tree.
+
+I effectively reverted 9303f5f81bd4 and 04035aa33a12 since (I think)
+they are subsumed by the vfs tree changes.
+
+I fixed it up (I think I got it mostly right this time - see below) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/proc/root.c
+index efbdc08a3c86,3dceff6cd121..91e9b417bc6d
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@@ -80,71 -78,21 +80,74 @@@ static int proc_parse_option(struct fs_
+  	return 0;
+  }
+ =20
+ -int proc_remount(struct super_block *sb, int *flags, char *data)
+ +static void proc_set_options(struct super_block *s,
+ +			     struct fs_context *fc,
+ +			     struct pid_namespace *pid_ns,
+ +			     struct user_namespace *user_ns)
+  {
+ -	struct pid_namespace *pid =3D sb->s_fs_info;
+ -	struct proc_mount_options opts =3D {
+ -		.pid_gid  =3D pid->pid_gid,
+ -		.hide_pid =3D pid->hide_pid,
+ -	};
+ +	struct proc_fs_context *ctx =3D fc->fs_private;
+ +
+ +	if (ctx->mask & (1 << Opt_gid))
+ +		pid_ns->pid_gid =3D make_kgid(user_ns, ctx->gid);
+ +	if (ctx->mask & (1 << Opt_hidepid))
+ +		pid_ns->hide_pid =3D ctx->hidepid;
+ +}
+ +
+ +static int proc_fill_super(struct super_block *s, struct fs_context *fc)
+ +{
+ +	struct pid_namespace *pid_ns =3D get_pid_ns(s->s_fs_info);
+ +	struct inode *root_inode;
+  	int ret;
+ =20
+ -	sync_filesystem(sb);
+ -	ret =3D proc_parse_options(data, &opts);
+ -	if (ret)
+ +	proc_set_options(s, fc, pid_ns, current_user_ns());
+ +
+ +	/* User space would break if executables or devices appear on proc */
+ +	s->s_iflags |=3D SB_I_USERNS_VISIBLE | SB_I_NOEXEC | SB_I_NODEV;
+ +	s->s_flags |=3D SB_NODIRATIME | SB_NOSUID | SB_NOEXEC;
+ +	s->s_blocksize =3D 1024;
+ +	s->s_blocksize_bits =3D 10;
+ +	s->s_magic =3D PROC_SUPER_MAGIC;
+ +	s->s_op =3D &proc_sops;
+ +	s->s_time_gran =3D 1;
+ +
+ +	/*
+ +	 * procfs isn't actually a stacking filesystem; however, there is
+ +	 * too much magic going on inside it to permit stacking things on
+ +	 * top of it
+ +	 */
+ +	s->s_stack_depth =3D FILESYSTEM_MAX_STACK_DEPTH;
+ +
+ +	pde_get(&proc_root);
+ +	root_inode =3D proc_get_inode(s, &proc_root);
+ +	if (!root_inode) {
+ +		pr_err("proc_fill_super: get root inode failed\n");
+ +		return -ENOMEM;
+ +	}
+ +
+ +	s->s_root =3D d_make_root(root_inode);
+ +	if (!s->s_root) {
+ +		pr_err("proc_fill_super: allocate dentry failed\n");
+ +		return -ENOMEM;
+ +	}
+ +
+ +	ret =3D proc_setup_self(s);
+ +	if (ret) {
+  		return ret;
+ -	pid->pid_gid  =3D opts.pid_gid;
+ -	pid->hide_pid =3D opts.hide_pid;
+ +	}
+- 	return proc_setup_thread_self(s);
+++	ret =3D proc_setup_thread_self(s);
+++
+++	rcu_assign_pointer(pid_ns->proc_super, s);
+++	return ret;
+ +}
+ +
+ +int proc_reconfigure(struct super_block *sb, struct fs_context *fc)
+ +{
+ +	struct pid_namespace *pid =3D sb->s_fs_info;
+ +
+ +	sync_filesystem(sb);
+ +
+ +	if (fc)
+ +		proc_set_options(sb, fc, pid, current_user_ns());
+  	return 0;
+  }
+ =20
+@@@ -288,44 -208,23 +292,22 @@@ struct proc_dir_entry proc_root =3D=20
+  	.proc_fops	=3D &proc_root_operations,
+  	.parent		=3D &proc_root,
+  	.subdir		=3D RB_ROOT,
+ -	.name		=3D proc_root.inline_name,
+ -	.inline_name	=3D "/proc",
+ +	.name		=3D "/proc",
+  };
+ =20
+- int pid_ns_prepare_proc(struct pid_namespace *ns)
++ #if defined(CONFIG_SYSCTL_SYSCALL) || defined(CONFIG_MCONSOLE)
++ struct file *file_open_proc(const char *pathname, int flags, umode_t mode)
+  {
+- 	struct proc_fs_context *ctx;
+- 	struct fs_context *fc;
+  	struct vfsmount *mnt;
+- 	int ret;
+-=20
+- 	fc =3D vfs_new_fs_context(&proc_fs_type, NULL, 0,
+- 				FS_CONTEXT_FOR_KERNEL_MOUNT);
+- 	if (IS_ERR(fc))
+- 		return PTR_ERR(fc);
+-=20
+- 	ctx =3D fc->fs_private;
+- 	if (ctx->pid_ns !=3D ns) {
+- 		put_pid_ns(ctx->pid_ns);
+- 		get_pid_ns(ns);
+- 		ctx->pid_ns =3D ns;
+- 	}
++ 	struct file *file;
+ =20
+- 	ret =3D vfs_get_tree(fc);
+- 	if (ret < 0) {
+- 		put_fs_context(fc);
+- 		return ret;
+- 	}
+-=20
+- 	mnt =3D vfs_create_mount(fc, 0);
+- 	put_fs_context(fc);
++ 	mnt =3D kern_mount(&proc_fs_type);
+  	if (IS_ERR(mnt))
+- 		return PTR_ERR(mnt);
++ 		return ERR_CAST(mnt);
+ =20
+- 	ns->proc_mnt =3D mnt;
+- 	return 0;
+- }
++ 	file =3D file_open_root(mnt->mnt_root, mnt, pathname, flags, mode);
++ 	kern_unmount(mnt);
+ =20
+- void pid_ns_release_proc(struct pid_namespace *ns)
+- {
+- 	kern_unmount(ns->proc_mnt);
++ 	return file;
+  }
++ #endif
+
+--Sig_/xHdy3ugyKmaf5SHpn5r_2=/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlspvkkACgkQAVBC80lX
+0GxUPwf/ZvbJPpoji8aDN/GJEb1BV0oDEvHD+N5N2GQtd7CdQkQIa9VWWq24N8E+
+UC0cVjjcI6wu1E4Qg5My3M3j5q+8Owin3cXwwiOYrQc0YzpFjh9bN0WDNpx32ocw
+AeZ5+7UEll/JCuEXx1h9ebNFVCcMLnQUrGSkN6h9btlYzROgRTTp/cQRNQ3qgNpi
+CChRv4HLiPi/2Vx7+6ZLPf9I9uQ42R5JWyT1eK2dxNDrBI62/5IZbRnubtsYSBPP
+Kn5iqmYgVcnTyNJiiupWfjd72VSRJ5FqWjxs59FeYxh2MLGgYUajM+6ufzD6b7tQ
+h2GEDkh6fVTvIu4kIoiVSgW3feuv1Q==
+=Lw5x
+-----END PGP SIGNATURE-----
+
+--Sig_/xHdy3ugyKmaf5SHpn5r_2=/--
