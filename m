@@ -1,42 +1,59 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: linux-next: Tree for Jun 20 (kernel/auditsc.c)
-Date: Wed, 20 Jun 2018 16:00:10 -0400
-Message-ID: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
-References: <20180620144227.18bab881@canb.auug.org.au> <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp
+ tree
+Date: Thu, 21 Jun 2018 07:30:58 +1000
+Message-ID: <20180621073058.32b95241@canb.auug.org.au>
+References: <20180619211533.1dddf9b0@canb.auug.org.au>
+        <yq1y3fadxiz.fsf@oracle.com>
+        <20180620145436.4deb9079@canb.auug.org.au>
+        <yq1h8lxe7mm.fsf@oracle.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/GhKSn2SRcPWp0IDcfHfwLk4"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <8e17ad17-db3b-7588-b04e-3bd8b54060c0@infradead.org>
+In-Reply-To: <yq1h8lxe7mm.fsf@oracle.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rdunlap@infradead.org, omosnace@redhat.com
-Cc: sfr@canb.auug.org.au, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Eric Paris <eparis@redhat.com>, linux-audit@redhat.com
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
-On Wed, Jun 20, 2018 at 11:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Martin,
+
+On Wed, 20 Jun 2018 12:37:53 -0400 "Martin K. Petersen" <martin.petersen@or=
+acle.com> wrote:
 >
-> On 06/19/2018 09:42 PM, Stephen Rothwell wrote:
-> > Hi all,
+> >> Fixed, thanks! =20
 > >
-> > Changes since 20180619:
-> >
->
-> on x86_64:
->
-> kernel/auditsc.o: In function `audit_filter_rules.isra.20':
-> auditsc.c:(.text+0x8c5): undefined reference to `groups_search'
-> auditsc.c:(.text+0x909): undefined reference to `groups_search'
->
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
->
-> Full randconfig file is attached.
+> > Unfortunately, James had already merged your tree :-( =20
+>=20
+> James' script will drop the offending original commit when I amend
+> something in the SCSI tree. So the discrepancy will go away next time he
+> updates.
 
-Thanks Randy.
+OK, thanks.
 
-I believe the issue is that when CONFIG_MULTIUSER is not enabled
-groups.{c.o} is not included.  Ondrej, please look into this and
-submit a fix as soon as possible, thank you.
+--=20
+Cheers,
+Stephen Rothwell
 
--- 
-paul moore
-www.paul-moore.com
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsqx5IACgkQAVBC80lX
+0GycsQgAhtd3vDUObBgtzNOv5cNx/T/SosCo4ULGolcprqs5HPkeX/FAvh9F6U2c
+A6niay9YK2F8GOdzLc7G++Em1QwSOQCr+lmA1BNCFi4bwNnHc3bLuGWPzQxDKnlY
+T5Umv7Xxk+uEVUj19F3RVv47hA3RJR6KIVd/vRNSRzrH+W9W4oarGvdZYQ4Oqyd7
+THSWz50QvwZXsJHOIDJ0TiQkuYkcda7V6d/OWqbiKUBZgjjAzetmC41FtDJm26j/
+9qtrQV8FWLwzM+wAghgGTh0oWqVfi4RWHPZH3yHhphKEm8V8NACwGWRH13n8nVrm
+rtP+9VLsC0eUykPX0Bv3ZMUbEqujKQ==
+=H9bc
+-----END PGP SIGNATURE-----
+
+--Sig_/GhKSn2SRcPWp0IDcfHfwLk4--
