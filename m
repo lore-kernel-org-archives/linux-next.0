@@ -1,85 +1,28 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the userns tree with the vfs tree
-Date: Wed, 20 Jun 2018 11:44:41 +1000
-Message-ID: <20180620114441.285f5dfa@canb.auug.org.au>
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: Re: linux-next: Signed-off-by missing for commit in the scsi-mkp tree
+Date: Tue, 19 Jun 2018 22:03:48 -0400
+Message-ID: <yq1y3fadxiz.fsf@oracle.com>
+References: <20180619211533.1dddf9b0@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nqzNhFJcXFpmRS21zpIK=ea"; protocol="application/pgp-signature"
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180619211533.1dddf9b0@canb.auug.org.au> (Stephen Rothwell's
+        message of "Tue, 19 Jun 2018 21:15:33 +1000")
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jitendra Bhivare <jitendra.bhivare@broadcom.com>, Ketan Mukadam <ketan.mukadam@broadcom.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nqzNhFJcXFpmRS21zpIK=ea
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Stephen,
 
-Today's linux-next merge of the userns tree got a conflict in:
+> Commit
+>
+>   508fbc44bbb7 ("scsi: be2iscsi: Include null char in SET_HOST_DATA")
+>
+> is missing a Signed-off-by from its author.
 
-  fs/proc/internal.h
+Fixed, thanks!
 
-between commit:
-
-  0223e0999be2 ("procfs: Move proc_fill_super() to fs/proc/root.c")
-
-from the vfs tree and commit:
-
-  04035aa33a12 ("proc: Don't change mount options on remount failure.")
-
-from the userns tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/proc/internal.h
-index ea8c5468eafc,69fa8d953cde..000000000000
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@@ -270,10 -252,16 +270,15 @@@ static inline void proc_tty_init(void)=20
-  /*
-   * root.c
-   */
-+ struct proc_mount_options {
-+ 	kgid_t pid_gid;
-+ 	int hide_pid;
-+ };
-+=20
-  extern struct proc_dir_entry proc_root;
- -extern int proc_parse_options(char *options, struct proc_mount_options *o=
-pts);
- =20
-  extern void proc_self_init(void);
- -extern int proc_remount(struct super_block *, int *, char *);
- +extern int proc_reconfigure(struct super_block *, struct fs_context *);
- =20
-  /*
-   * task_[no]mmu.c
-
---Sig_/nqzNhFJcXFpmRS21zpIK=ea
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlspsYkACgkQAVBC80lX
-0Gx24wf/YNUJzc1Pll442jxlvQsbnadnfTbmTRBLq9XH1lgdBLL5mmnGKDpXS4V+
-0uFSMbvm9y6vNWeOEiAGR2y02CRTDqc9QgMhdaECkq+zN8Z6C+7M9PdhzX5ifAa0
-pZf5+0b6B23rM8rMS+hQb3cEkaml2OfGHW70Sn5juTdKWRKoMww9Bd+DzF/LzfG8
-OUdSk/wgp988BIhl9+XMdPUS4AKor/pPk9HJxgGrhnZcUyjc2p5HyHInLd407eA+
-MLIqIkuDfJYl7fNCH6Q17Tn+X1pUdfT7yyTyWb3t6vFyAaep8GntG5eZLRktxEsT
-CNW0KZJXhlvJQpbtFYQjc8xEor2jzw==
-=wC3J
------END PGP SIGNATURE-----
-
---Sig_/nqzNhFJcXFpmRS21zpIK=ea--
+-- 
+Martin K. Petersen	Oracle Linux Engineering
