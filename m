@@ -1,83 +1,81 @@
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Subject: [PATCH -next] cred: conditionally declare groups-related functions
-Date: Thu, 21 Jun 2018 10:33:16 +0200
-Message-ID: <20180621083316.8765-1-omosnace@redhat.com>
-References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
+Date: Thu, 21 Jun 2018 14:02:00 +0200
+Message-ID: <CAJZ5v0iU5Qqbm6LDNmm=vj_H_sXRasdFN9+xBGto_-eZG6tXrQ@mail.gmail.com>
+References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
+ <20180620102904.GC112168@atomide.com> <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
+ <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com> <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-audit-bounces@redhat.com>
-In-Reply-To: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
-List-Unsubscribe: <https://www.redhat.com/mailman/options/linux-audit>,
-	<mailto:linux-audit-request@redhat.com?subject=unsubscribe>
-List-Archive: <https://www.redhat.com/archives/linux-audit>
-List-Post: <mailto:linux-audit@redhat.com>
-List-Help: <mailto:linux-audit-request@redhat.com?subject=help>
-List-Subscribe: <https://www.redhat.com/mailman/listinfo/linux-audit>,
-	<mailto:linux-audit-request@redhat.com?subject=subscribe>
-Sender: linux-audit-bounces@redhat.com
-Errors-To: linux-audit-bounces@redhat.com
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Roger Quadros <rogerq@ti.com>
+Cc: Samuel Morris <samorris@lexmark.com>, Tony Lindgren <tony@atomide.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, Tejun Heo <tj@kernel.org>, Linux OMAP Mailing List <linux-omap@vger.kernel.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Santosh Shilimkar <ssantosh@kernel.org>, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-The groups-related functions declared in include/linux/cred.h are
-defined in kernel/groups.c, which is compiled only when
-CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-CONFIG_MULTIUSER might be disabled.
+On Thu, Jun 21, 2018 at 9:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+> +Rafael
+>
+> On 20/06/18 18:30, Samuel Morris wrote:
+>> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
+>>> Tony,
+>>>
+>>> On 20/06/18 13:29, Tony Lindgren wrote:
+>>>> Hi,
+>>>>
+>>>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
+>>>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
+>>>>
+>>>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
+>>>> hotplug to save power").
+>>>>
+>>>> Reverting the patch makes things work again. Any ideas what
+>>>> might be going wrong here? Things clearly idle but then there
+>>>> seems to be some register access with clocks disabled.
+>>>
+>>> The commit is doing this in probe.
+>>>
+>>> +       pm_runtime_set_active(dev);
+>>>         pm_runtime_enable(dev);
+>>> -       pm_runtime_get_sync(dev);
+>>> +       pm_runtime_forbid(dev);
+>>>
+>>> On OMAP, the device is not guaranteed to be active at probe and so we can't
+>>> say pm_runtime_set_active() and get rid of pm_runtime_get_sync().
+>>
+>> Okay, by calling set_active(), I'm preventing the rpm_resume from
+>> completing that would normally happen in pm_runtime_forbid(). I assume
+>> you mean that there are parent devices that need to be resumed before
+>
+> Actually, in the OMAP case, the AHCI controller device isn't active when probe is called.
+> For other platforms this might not be the case. So we need to be careful here.
+>
+>> this device may be assumed active. I'm going to try removing the
+>> set_active(), then move that clause to the end of
+>> ahci_platform_init_host(). The pm_runtime_forbid() is effectively the
+>> same as get_sync(), it just also sets the runtime_auto flag to false.
+>> I don't think we should be saying the device is active until the host
+>> is initialized, so that seems like a better, common place for the
+>> pm_runtime init callbacks anyway. How does that sound?
+>
+> Device active and initialized are different things. If the device is powered up
+> and can be accessed it is active, even if it is not yet initialized.
+> I don't think we should club the two.
+>
+> Why do you need to call pm_runtime_set_active() at all in the probe sequence?
+>
+> Documentation for pm_runtime_set_active() says,
+> "(it is only valid to use this function if 'power.runtime_error' is set
+> or 'power.disable_depth' is greater than zero);"
 
-This patch also adds a fallback for groups_search(). Currently this
-function is only called from kernel/groups.c itself and
-keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
-function in -next, so the fallback will be needed to avoid compilation
-errors or ugly workarounds.
+I guess on some platforms the AHCI controller actually is active
+initially and that's a matter of setting the initial status to reflect
+the real situation.
 
-See also:
-https://lkml.org/lkml/2018/6/20/670
-https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+If different things can happen on different platforms, there needs to
+be a way to discover the initial state instead of making assumptions
+on it.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
- include/linux/cred.h | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/cred.h b/include/linux/cred.h
-index 631286535d0f..8917768453cc 100644
---- a/include/linux/cred.h
-+++ b/include/linux/cred.h
-@@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
- 
- extern int in_group_p(kgid_t);
- extern int in_egroup_p(kgid_t);
-+
-+extern int set_current_groups(struct group_info *);
-+extern void set_groups(struct cred *, struct group_info *);
-+extern int groups_search(const struct group_info *, kgid_t);
-+extern bool may_setgroups(void);
-+extern void groups_sort(struct group_info *);
- #else
- static inline void groups_free(struct group_info *group_info)
- {
-@@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
- {
-         return 1;
- }
-+
-+static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-+{
-+	return 0;
-+}
- #endif
--extern int set_current_groups(struct group_info *);
--extern void set_groups(struct cred *, struct group_info *);
--extern int groups_search(const struct group_info *, kgid_t);
--extern bool may_setgroups(void);
--extern void groups_sort(struct group_info *);
- 
- /*
-  * The security context of a task
--- 
-2.17.1
+Thanks,
+Rafael
