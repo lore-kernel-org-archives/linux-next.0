@@ -1,197 +1,83 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: 4.18.0-rc1-next-20180619 boot failed on beagle board x15
-Date: Thu, 21 Jun 2018 10:58:27 +0300
-Message-ID: <6c15a753-c4a8-ff89-f5c0-0fd19c817c91@ti.com>
-References: <CA+G9fYuKW_jCFZPqG4tz=QY9ROfHO38KiCp9XTA+KaDOFVtcqQ@mail.gmail.com>
- <20180620102904.GC112168@atomide.com>
- <d5d57b10-facb-d5f7-ad7f-34afae726756@ti.com>
- <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Subject: [PATCH -next] cred: conditionally declare groups-related functions
+Date: Thu, 21 Jun 2018 10:33:16 +0200
+Message-ID: <20180621083316.8765-1-omosnace@redhat.com>
+References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFY_6qqDcG7+sp7jawhTjuWHizPR75=HUsRJfGPhEPzVE4f5kg@mail.gmail.com>
-Content-Language: en-GB
-Sender: linux-kernel-owner@vger.kernel.org
-To: Samuel Morris <samorris@lexmark.com>
-Cc: Tony Lindgren <tony@atomide.com>, Naresh Kamboju <naresh.kamboju@linaro.org>, Tejun Heo <tj@kernel.org>, linux-omap@vger.kernel.org, Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, ssantosh@kernel.org, Olof Johansson <olof@lixom.net>, Tero Kristo <t-kristo@ti.com>, rafael@kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-audit-bounces@redhat.com>
+In-Reply-To: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+List-Unsubscribe: <https://www.redhat.com/mailman/options/linux-audit>,
+	<mailto:linux-audit-request@redhat.com?subject=unsubscribe>
+List-Archive: <https://www.redhat.com/archives/linux-audit>
+List-Post: <mailto:linux-audit@redhat.com>
+List-Help: <mailto:linux-audit-request@redhat.com?subject=help>
+List-Subscribe: <https://www.redhat.com/mailman/listinfo/linux-audit>,
+	<mailto:linux-audit-request@redhat.com?subject=subscribe>
+Sender: linux-audit-bounces@redhat.com
+Errors-To: linux-audit-bounces@redhat.com
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-+Rafael
+The groups-related functions declared in include/linux/cred.h are
+defined in kernel/groups.c, which is compiled only when
+CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
+CONFIG_MULTIUSER to help avoid accidental usage in contexts where
+CONFIG_MULTIUSER might be disabled.
 
-On 20/06/18 18:30, Samuel Morris wrote:
-> On Wed, Jun 20, 2018 at 8:58 AM, Roger Quadros <rogerq@ti.com> wrote:
->> Tony,
->>
->> On 20/06/18 13:29, Tony Lindgren wrote:
->>> Hi,
->>>
->>> * Naresh Kamboju <naresh.kamboju@linaro.org> [180620 05:55]:
->>>> Linux next (4.18.0-rc1-next-20180619) boot failed on beagle board x15.
->>>
->>> Bisect points to commit aece27a2f01b ("ata: ahci_platform: allow disabling of
->>> hotplug to save power").
->>>
->>> Reverting the patch makes things work again. Any ideas what
->>> might be going wrong here? Things clearly idle but then there
->>> seems to be some register access with clocks disabled.
->>
->> The commit is doing this in probe.
->>
->> +       pm_runtime_set_active(dev);
->>         pm_runtime_enable(dev);
->> -       pm_runtime_get_sync(dev);
->> +       pm_runtime_forbid(dev);
->>
->> On OMAP, the device is not guaranteed to be active at probe and so we can't
->> say pm_runtime_set_active() and get rid of pm_runtime_get_sync().
-> 
-> Okay, by calling set_active(), I'm preventing the rpm_resume from
-> completing that would normally happen in pm_runtime_forbid(). I assume
-> you mean that there are parent devices that need to be resumed before
+This patch also adds a fallback for groups_search(). Currently this
+function is only called from kernel/groups.c itself and
+keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
+audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
+function in -next, so the fallback will be needed to avoid compilation
+errors or ugly workarounds.
 
-Actually, in the OMAP case, the AHCI controller device isn't active when probe is called.
-For other platforms this might not be the case. So we need to be careful here.
+See also:
+https://lkml.org/lkml/2018/6/20/670
+https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
 
-> this device may be assumed active. I'm going to try removing the
-> set_active(), then move that clause to the end of
-> ahci_platform_init_host(). The pm_runtime_forbid() is effectively the
-> same as get_sync(), it just also sets the runtime_auto flag to false.
-> I don't think we should be saying the device is active until the host
-> is initialized, so that seems like a better, common place for the
-> pm_runtime init callbacks anyway. How does that sound?
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+---
+ include/linux/cred.h | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-Device active and initialized are different things. If the device is powered up
-and can be accessed it is active, even if it is not yet initialized.
-I don't think we should club the two.
-
-Why do you need to call pm_runtime_set_active() at all in the probe sequence?
-
-Documentation for pm_runtime_set_active() says,
-"(it is only valid to use this function if 'power.runtime_error' is set
-or 'power.disable_depth' is greater than zero);"
-
-> 
->>
->>
->>>
->>>> Full log of trace please refer this link,
->>>> https://lkft.validation.linaro.org/scheduler/job/291535#L946
->>>>
->>>> Here is back trace,
->>>> [    3.561640] omap_rng 48090000.rng: Random Number Generator ver. 20
->>>> [    3.611949] brd: module loaded
->>>> [    3.641298] loop: module loaded
->>>> [    3.646435] at24 0-0050: 4096 byte 24c32 EEPROM, writable, 1 bytes/write
->>>> [    3.658481] ------------[ cut here ]------------
->>>> [    3.663196] WARNING: CPU: 0 PID: 1 at
->>>> /srv/oe/build/tmp-rpb-glibc/work-shared/am57xx-evm/kernel-source/drivers/bus/omap_l3_noc.c:147
->>>> l3_interrupt_handler+0x27c/0x39c
->>>> [    3.678052] 44000000.ocp:L3 Custom Error: MASTER MPU TARGET L4_CFG
->>>> (Read): Data Access in User mode during Functional access
->>>> [    3.689330] Modules linked in:
->>>> [    3.692426] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
->>>> 4.18.0-rc1-next-20180619 #1
->>>> [    3.699952] Hardware name: Generic DRA74X (Flattened Device Tree)
->>>> [    3.706099] [<c04156f0>] (unwind_backtrace) from [<c040eec4>]
->>>> (show_stack+0x20/0x24)
->>>> [    3.713897] [<c040eec4>] (show_stack) from [<c116a668>]
->>>> (dump_stack+0xb0/0xdc)
->>>> [    3.721171] [<c116a668>] (dump_stack) from [<c0450a14>] (__warn+0x118/0x130)
->>>> [    3.728270] [<c0450a14>] (__warn) from [<c0450a84>]
->>>> (warn_slowpath_fmt+0x58/0x74)
->>>> [    3.735808] [<c0450a84>] (warn_slowpath_fmt) from [<c08be648>]
->>>> (l3_interrupt_handler+0x27c/0x39c)
->>>> [    3.744742] [<c08be648>] (l3_interrupt_handler) from [<c04cd270>]
->>>> (__handle_irq_event_percpu+0x90/0x45c)
->>>> [    3.754286] [<c04cd270>] (__handle_irq_event_percpu) from
->>>> [<c04cd678>] (handle_irq_event_percpu+0x3c/0x8c)
->>>> [    3.764001] [<c04cd678>] (handle_irq_event_percpu) from
->>>> [<c04cd710>] (handle_irq_event+0x48/0x6c)
->>>> [    3.772933] [<c04cd710>] (handle_irq_event) from [<c04d170c>]
->>>> (handle_fasteoi_irq+0xb0/0x164)
->>>> [    3.781513] [<c04d170c>] (handle_fasteoi_irq) from [<c04cc344>]
->>>> (generic_handle_irq+0x34/0x44)
->>>> [    3.790183] [<c04cc344>] (generic_handle_irq) from [<c04cca48>]
->>>> (__handle_domain_irq+0x6c/0xc4)
->>>> [    3.798941] [<c04cca48>] (__handle_domain_irq) from [<c0402528>]
->>>> (gic_handle_irq+0x68/0xac)
->>>> [    3.807347] [<c0402528>] (gic_handle_irq) from [<c04019bc>]
->>>> (__irq_svc+0x5c/0x7c)
->>>> [    3.814874] Exception stack(0xee179c70 to 0xee179cb8)
->>>> [    3.819963] 9c60:                                     fc140000
->>>> ee3e2f10 ee3a9810 00000000
->>>> [    3.828189] 9c80: 00000000 ee3e2f10 fc140004 fc140000 ee3a9800
->>>> ee3a9810 00000000 ee179cdc
->>>> [    3.836414] 9ca0: ee179ce0 ee179cc0 c0c3b364 c0c3b2ec 60000013 ffffffff
->>>> [    3.843079] [<c04019bc>] (__irq_svc) from [<c0c3b2ec>]
->>>> (ahci_enable_ahci+0x24/0x70)
->>>> [    3.850789] [<c0c3b2ec>] (ahci_enable_ahci) from [<c0c3b364>]
->>>> (ahci_save_initial_config+0x2c/0x388)
->>>> [    3.859894] [<c0c3b364>] (ahci_save_initial_config) from
->>>> [<c0c3cbdc>] (ahci_platform_init_host+0x9c/0x4f4)
->>>> [    3.869609] [<c0c3cbdc>] (ahci_platform_init_host) from
->>>> [<c0c3c33c>] (ahci_probe+0xa0/0xc0)
->>>> [    3.878018] [<c0c3c33c>] (ahci_probe) from [<c0ba40f0>]
->>>> (platform_drv_probe+0x58/0xac)
->>>> [    3.885989] [<c0ba40f0>] (platform_drv_probe) from [<c0ba1aec>]
->>>> (driver_probe_device+0x25c/0x338)
->>>> [    3.894915] [<c0ba1aec>] (driver_probe_device) from [<c0ba1cbc>]
->>>> (__driver_attach+0xf4/0xf8)
->>>> [    3.903411] [<c0ba1cbc>] (__driver_attach) from [<c0b9f9ac>]
->>>> (bus_for_each_dev+0x78/0xc4)
->>>> [    3.911643] [<c0b9f9ac>] (bus_for_each_dev) from [<c0ba13b8>]
->>>> (driver_attach+0x2c/0x30)
->>>> [    3.919696] [<c0ba13b8>] (driver_attach) from [<c0ba0cfc>]
->>>> (bus_add_driver+0x114/0x220)
->>>> [    3.927752] [<c0ba0cfc>] (bus_add_driver) from [<c0ba2e2c>]
->>>> (driver_register+0x88/0x11c)
->>>> [    3.935896] [<c0ba2e2c>] (driver_register) from [<c0ba4044>]
->>>> (__platform_driver_register+0x50/0x58)
->>>> [    3.945003] [<c0ba4044>] (__platform_driver_register) from
->>>> [<c1aa9cf0>] (ahci_driver_init+0x24/0x28)
->>>> [    3.954195] [<c1aa9cf0>] (ahci_driver_init) from [<c0403a8c>]
->>>> (do_one_initcall+0x9c/0x434)
->>>> [    3.962517] [<c0403a8c>] (do_one_initcall) from [<c1a01410>]
->>>> (kernel_init_freeable+0x3b8/0x53c)
->>>> [    3.971276] [<c1a01410>] (kernel_init_freeable) from [<c118551c>]
->>>> (kernel_init+0x18/0x128)
->>>> [    3.979597] [<c118551c>] (kernel_init) from [<c04010ac>]
->>>> (ret_from_fork+0x14/0x28)
->>>> [    3.987210] Exception stack(0xee179fb0 to 0xee179ff8)
->>>> [    3.992298] 9fa0:                                     00000000
->>>> 00000000 00000000 00000000
->>>> [    4.000524] 9fc0: 00000000 00000000 00000000 00000000 00000000
->>>> 00000000 00000000 00000000
->>>> [    4.008750] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->>>> [    4.015405] irq event stamp: 663130
->>>> [    4.018926] hardirqs last  enabled at (663129): [<c118d9d4>]
->>>> _raw_spin_unlock_irqrestore+0x40/0x6c
->>>> [    4.027939] hardirqs last disabled at (663130): [<c04019ac>]
->>>> __irq_svc+0x4c/0x7c
->>>> [    4.035384] softirqs last  enabled at (661486): [<c0402c98>]
->>>> __do_softirq+0x2a8/0x5e8
->>>> [    4.043262] softirqs last disabled at (661449): [<c04594a4>]
->>>> irq_exit+0x178/0x1a4
->>>> [    4.050826] ---[ end trace 095abac70926448f ]---
->>>>
->>>> Best regards
->>>> Naresh Kamboju
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->> --
->> cheers,
->> -roger
->>
->> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
->> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+diff --git a/include/linux/cred.h b/include/linux/cred.h
+index 631286535d0f..8917768453cc 100644
+--- a/include/linux/cred.h
++++ b/include/linux/cred.h
+@@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
+ 
+ extern int in_group_p(kgid_t);
+ extern int in_egroup_p(kgid_t);
++
++extern int set_current_groups(struct group_info *);
++extern void set_groups(struct cred *, struct group_info *);
++extern int groups_search(const struct group_info *, kgid_t);
++extern bool may_setgroups(void);
++extern void groups_sort(struct group_info *);
+ #else
+ static inline void groups_free(struct group_info *group_info)
+ {
+@@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
+ {
+         return 1;
+ }
++
++static inline int groups_search(const struct group_info *group_info, kgid_t grp)
++{
++	return 0;
++}
+ #endif
+-extern int set_current_groups(struct group_info *);
+-extern void set_groups(struct cred *, struct group_info *);
+-extern int groups_search(const struct group_info *, kgid_t);
+-extern bool may_setgroups(void);
+-extern void groups_sort(struct group_info *);
+ 
+ /*
+  * The security context of a task
 -- 
-cheers,
--roger
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.17.1
