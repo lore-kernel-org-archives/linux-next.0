@@ -1,59 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
-Date: Fri, 22 Jun 2018 11:56:54 +1000
-Message-ID: <20180622115654.04cef951@canb.auug.org.au>
-References: <20180622115346.1e9cc433@canb.auug.org.au>
+Subject: linux-next: manual merge of the rcu tree with the tip tree
+Date: Fri, 22 Jun 2018 12:27:17 +1000
+Message-ID: <20180622122717.5f475829@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/OWNquzA9DJZdnomFF/PgTEG"; protocol="application/pgp-signature"
+ boundary="Sig_/gRiojqRRqDt/R+sn+bWvhHC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180622115346.1e9cc433@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>
+To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/OWNquzA9DJZdnomFF/PgTEG
+--Sig_/gRiojqRRqDt/R+sn+bWvhHC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Fri, 22 Jun 2018 11:53:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> diff --cc arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> index 38a54f56ff40,7b4a09d81a30..000000000000
-> --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> @@@ -1270,9 -1861,16 +1842,15 @@@ static int rdt_get_tree(struct fs_conte
->   		rdtgroup_default.mon.mon_data_kn =3D kn_mondata;
->   	}
->  =20
-> + 	ret =3D rdt_pseudo_lock_init();
-> + 	if (ret) {
-> + 		dentry =3D ERR_PTR(ret);
+Today's linux-next merge of the rcu tree got a conflict in:
 
-Actually I have removed the above line as well.
+  kernel/rcu/tree_plugin.h
+
+between commit:
+
+  b3dae109fa89 ("sched/swait: Rename to exclusive")
+
+from the tip tree and commit:
+
+  57ada0a7f942 ("rcu: Convert grace-period requests to ->gp_seq")
+
+from the rcu tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/OWNquzA9DJZdnomFF/PgTEG
+diff --cc kernel/rcu/tree_plugin.h
+index ad53d133f709,2cc9bf0d363a..000000000000
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@@ -2082,9 -2159,9 +2159,9 @@@ static void rcu_nocb_wait_gp(struct rcu
+  	 */
+  	trace_rcu_this_gp(rnp, rdp, c, TPS("StartWait"));
+  	for (;;) {
+ -		swait_event_interruptible(
+ +		swait_event_interruptible_exclusive(
+- 			rnp->nocb_gp_wq[c & 0x1],
+- 			(d =3D ULONG_CMP_GE(READ_ONCE(rnp->completed), c)));
++ 			rnp->nocb_gp_wq[rcu_seq_ctr(c) & 0x1],
++ 			(d =3D rcu_seq_done(&rnp->gp_seq, c)));
+  		if (likely(d))
+  			break;
+  		WARN_ON(signal_pending(current));
+
+--Sig_/gRiojqRRqDt/R+sn+bWvhHC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssV2cACgkQAVBC80lX
-0GwK/Af9GKb4Sdcrjz20E8fA986ylWklsNrUoVQvw6qi+fgG6GNTEu9rCYXHUZ11
-8UVxzXzZu54hIuaJSEUsureCpzvtP9gZ/zV//5l9C0rH3wNhVfQ8OWWRN686BfnJ
-R626P2q+mFzdMX0ZIGD6fgoTFcZvu+XOrR/dPtjV5SwbdujmxFu6mgFwBFJnGOOI
-dypRWz6/hFtd5QMazoXXZOIMaB3WUq9KGvPG4uoNHiQ90LQwXOFKX3bV+nqoXisU
-RBhlfmHURUmyFf6yYb4PQOt9SqmzFg8tYBsu0brjTDrJwbf5yXrU6P0vFuBYCWZn
-Bwlify6x7UlwCIs9WBgvJg4NQG6VtQ==
-=iYIR
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssXoYACgkQAVBC80lX
+0GzsQAf/eE3UwZOlUHOWVtJE78DCUkEUU7ugTJm8X8ZreGWsujngUytKdVYEb9rd
+bmDyF4AZNj5boDgKuBygw8dSv6GYcpHgF+m1IqbDbw2Au/OnMixe+3ZP+9JekfhQ
+LNYW6p1FBfBjOcIcixThNT+mugAIFkaTgKr1akdqW7PuCkCH14Bk2F/7kdNWnGoV
+JJhm5ZO4fTTCro4q2LU+F0Crer0f8eHHFVpRoJuI6c1uWK5uFQJR7EMQ9WeLMH6A
+RC7+b2L/JzCdLJhXTRPrn+gpbydQBLOVYlZCTlaiRnYQsMtHBqcg2pq67zdFQyeH
+FqbrdQ4OfgwzmoqpQukdlqSzMV5b4A==
+=nCEk
 -----END PGP SIGNATURE-----
 
---Sig_/OWNquzA9DJZdnomFF/PgTEG--
+--Sig_/gRiojqRRqDt/R+sn+bWvhHC--
