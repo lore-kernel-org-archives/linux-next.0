@@ -1,60 +1,123 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
-Date: Fri, 22 Jun 2018 08:56:07 +0200 (CEST)
-Message-ID: <alpine.DEB.2.21.1806220855090.1591@nanos.tec.linutronix.de>
-References: <20180622115346.1e9cc433@canb.auug.org.au> <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Subject: Re: [PATCH -next] cred: conditionally declare groups-related functions
+Date: Fri, 22 Jun 2018 09:47:16 +0200
+Message-ID: <CAFqZXNs_cKtTZKGkhL4KwTweKEMdVwgS0RAQS_Soqw1c1HSNyw@mail.gmail.com>
+References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+ <20180621083316.8765-1-omosnace@redhat.com> <CAHC9VhQk42UA5c_XAaG20h3TZt20TQyJxDMfqWHHgu2=8+kcVQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com>
+In-Reply-To: <CAHC9VhQk42UA5c_XAaG20h3TZt20TQyJxDMfqWHHgu2=8+kcVQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linux-Audit Mailing List <linux-audit@redhat.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, 21 Jun 2018, Reinette Chatre wrote:
-> I am the contributor of the pseudo-locking related code that caused the
-> conflict.
-> 
-> Stephen, thank you very much for proceeding with the merge and fixing it
-> up. I copied your later fix addition to this email and combined they
-> look good. I did some basic smoke testing of the merged code and it works.
-> 
-> Thomas and David, please let me know what I can do from my side to help
-> with this.
+št 21. 6. 2018 o 23:17 Paul Moore <paul@paul-moore.com> napísal(a):
+>
+> On Thu, Jun 21, 2018 at 4:33 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> >
+> > The groups-related functions declared in include/linux/cred.h are
+> > defined in kernel/groups.c, which is compiled only when
+> > CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
+> > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
+> > CONFIG_MULTIUSER might be disabled.
+> >
+> > This patch also adds a fallback for groups_search(). Currently this
+> > function is only called from kernel/groups.c itself and
+> > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
+> > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
+> > function in -next, so the fallback will be needed to avoid compilation
+> > errors or ugly workarounds.
+> >
+> > See also:
+> > https://lkml.org/lkml/2018/6/20/670
+> > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  include/linux/cred.h | 16 +++++++++++-----
+> >  1 file changed, 11 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/cred.h b/include/linux/cred.h
+> > index 631286535d0f..8917768453cc 100644
+> > --- a/include/linux/cred.h
+> > +++ b/include/linux/cred.h
+> > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
+> >
+> >  extern int in_group_p(kgid_t);
+> >  extern int in_egroup_p(kgid_t);
+> > +
+> > +extern int set_current_groups(struct group_info *);
+> > +extern void set_groups(struct cred *, struct group_info *);
+> > +extern int groups_search(const struct group_info *, kgid_t);
+> > +extern bool may_setgroups(void);
+> > +extern void groups_sort(struct group_info *);
+> >  #else
+> >  static inline void groups_free(struct group_info *group_info)
+> >  {
+> > @@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
+> >  {
+> >          return 1;
+> >  }
+> > +
+> > +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+> > +{
+> > +       return 0;
+>
+> Is this the right fallback value?  If CONFIG_MULTIUSER is disabled,
+> wouldn't we always want to indicate a group match?  The in_group_p()
+> and in_egroup_p() dummy functions would seem to indicate that is the
+> correct behavior ...
 
-I'll have a look later today.
+Hm, indeed this is a bit tricky and I'm guilty of not noticing this...
 
-> 
-> As summary, with the above changes combined the merge can be done using:
-> 
-> ->8-
-> diff --cc arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> index 7b4a09d81a30,38a54f56ff40..caa2754f8948
-> --- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-> @@@ -1861,16 -1270,9 +1842,13 @@@ static int rdt_get_tree(struct fs_conte
->   		rdtgroup_default.mon.mon_data_kn = kn_mondata;
->   	}
-> 
->  +	ret = rdt_pseudo_lock_init();
-> - 	if (ret) {
-> - 		dentry = ERR_PTR(ret);
-> ++	if (ret)
->  +		goto out_mondata;
-> - 	}
->  +
-> - 	dentry = kernfs_mount(fs_type, flags, rdt_root,
-> - 			      RDTGROUP_SUPER_MAGIC, NULL);
-> - 	if (IS_ERR(dentry))
-> + 	ret = kernfs_get_tree(fc);
-> + 	if (ret < 0)
->  -		goto out_mondata;
->  +		goto out_psl;
-> 
->   	if (rdt_alloc_capable)
->   		static_branch_enable_cpuslocked(&rdt_alloc_enable_key);
-> 
-> Reinette
-> 
-> 
+The way I see it (now that I though about it a little), there are
+basically two possible semantics of groups_search():
+1. as an (auxiliary) permissions checking function (like
+in_[e]group_p()) -- in this case we would expect the same return value
+as in_group_p(), i.e. 1.
+2. as a function that simply checks if a group is contained in a list
+of groups (taken from a cred struct) -- in this case we would expect
+it to return 0 in single-user mode, since there will be always no
+supplemental groups set for any task (if I understand it right).
+
+I guess no matter which semantic we pick, we might confuse someone
+expecting the other one, so I would suggest dropping this patch (or at
+least the fallbacks for groups_search) and explicitly handle the
+single-user case in audit.
+
+We should probably default to 1 in audit anyway, because the original
+code used in_[e]group_p(). Even though 0 would seem more logical to
+me, comparing GIDs doesn't really make sense in single-user mode
+anyway, so keeping the legacy behavior will be safer. (In fact now
+that I think of it, having audit enabled (or even compiled) in
+single-user mode does not make much sense either... maybe we should
+just make CONFIG_AUDIT depend on CONFIG_MULTIUSER...).
+
+>
+> > +}
+> >  #endif
+> > -extern int set_current_groups(struct group_info *);
+> > -extern void set_groups(struct cred *, struct group_info *);
+> > -extern int groups_search(const struct group_info *, kgid_t);
+> > -extern bool may_setgroups(void);
+> > -extern void groups_sort(struct group_info *);
+> >
+> >  /*
+> >   * The security context of a task
+> > --
+> > 2.17.1
+> >
+>
+>
+> --
+> paul moore
+> www.paul-moore.com
+
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
