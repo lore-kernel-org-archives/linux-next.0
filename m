@@ -1,64 +1,117 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: linux-next: manual merge of the tip tree with the vfs tree
-Date: Fri, 22 Jun 2018 17:44:12 +0200 (CEST)
-Message-ID: <alpine.DEB.2.21.1806221742280.2402@nanos.tec.linutronix.de>
-References: <e6a26908-67b2-e32e-06b5-d2e62acce305@intel.com> <20180622115346.1e9cc433@canb.auug.org.au> <29411.1529671523@warthog.procyon.org.uk> <20180622130600.GY30522@ZenIV.linux.org.uk> <alpine.DEB.2.21.1806221537570.2402@nanos.tec.linutronix.de>
- <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
+From: Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH -next] cred: conditionally declare groups-related functions
+Date: Fri, 22 Jun 2018 15:19:08 -0400
+Message-ID: <CAHC9VhTO7QQt-ZduEZj2y54zbYefCQiZwEpmXaM82_5MqjYoOA@mail.gmail.com>
+References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
+ <20180621083316.8765-1-omosnace@redhat.com> <CAHC9VhQk42UA5c_XAaG20h3TZt20TQyJxDMfqWHHgu2=8+kcVQ@mail.gmail.com>
+ <CAFqZXNs_cKtTZKGkhL4KwTweKEMdVwgS0RAQS_Soqw1c1HSNyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5462d90a-0cac-ca10-1633-275a9836ad41@intel.com>
+In-Reply-To: <CAFqZXNs_cKtTZKGkhL4KwTweKEMdVwgS0RAQS_Soqw1c1HSNyw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Al Viro <viro@ZenIV.linux.org.uk>, David Howells <dhowells@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: omosnace@redhat.com
+Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-On Fri, 22 Jun 2018, Reinette Chatre wrote:
-> On 6/22/2018 6:39 AM, Thomas Gleixner wrote:
-> > On Fri, 22 Jun 2018, Al Viro wrote:
-> >> On Fri, Jun 22, 2018 at 01:45:23PM +0100, David Howells wrote:
-> >>> Reinette Chatre <reinette.chatre@intel.com> wrote:
-> >>>
-> >>>> Thomas and David, please let me know what I can do from my side to help
-> >>>> with this.
-> >>>
-> >>> You could try basing on Al Viro's for-next tree which has the mount API
-> >>> changes in it.
-> >>
-> >> Umm...  That would be a massive headache for everyone involved; the changes
-> >> in there have very little in common with what you are doing in rdt_mount(),
-> >> so it might make sense to start with a minimal never-rebased branch that
-> >> would
-> >> 	* define rdt_pseudo_lock_init as 0
-> >> 	* define rdt_pseudo_lock_release as empty
-> >> 	* do the rdt_mount() part of a3dbd01e6c9d
-> >> 	* have commit message along the lines of
-> >> "hooks in rdt_mount() for rdt_pseudo_lock to use
-> >>
-> >> Functionally a no-op right now; the only reason for having that
-> >> as a never-rebased branch to get rdt_pseudo_lock and mount series
-> >> out of each other's hair"
-> >>
-> >> Base that on -rc1, then pull it into your rdt branch and David could pull the
-> >> same into his.
-> > 
-> > Yes, that works.
-> > 
-> > Reinette, can you please look into creating that ordering. Then we just zap
-> > the existing branch and redo it with this scheme.
-> 
-> Will do. How would you prefer to consume this to make the branches
-> simple to create? Is it ok if I create a new patch series with Al's
-> suggestion above as the first commit?
-> 
-> The original pseudo-locking patch series consisted out of two sections
-> with the pseudo-locking specific parts starting in the middle. If I
-> create a new series with the above change then it will not be cleanly
-> separate anymore. Is that ok?
+On Fri, Jun 22, 2018 at 3:47 AM Ondrej Mosnacek <omosnace@redhat.com> wrote=
+:
+> =C5=A1t 21. 6. 2018 o 23:17 Paul Moore <paul@paul-moore.com> nap=C3=ADsal=
+(a):
+> > On Thu, Jun 21, 2018 at 4:33 AM Ondrej Mosnacek <omosnace@redhat.com> w=
+rote:
+> > > The groups-related functions declared in include/linux/cred.h are
+> > > defined in kernel/groups.c, which is compiled only when
+> > > CONFIG_MULTIUSER=3Dy. Move all these function declarations under #ifd=
+ef
+> > > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
+> > > CONFIG_MULTIUSER might be disabled.
+> > >
+> > > This patch also adds a fallback for groups_search(). Currently this
+> > > function is only called from kernel/groups.c itself and
+> > > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
+> > > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls thi=
+s
+> > > function in -next, so the fallback will be needed to avoid compilatio=
+n
+> > > errors or ugly workarounds.
+> > >
+> > > See also:
+> > > https://lkml.org/lkml/2018/6/20/670
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/com=
+mit/?h=3Dnext&id=3Daf85d1772e31fed34165a1b3decef340cf4080c0
+> > >
+> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > > ---
+> > >  include/linux/cred.h | 16 +++++++++++-----
+> > >  1 file changed, 11 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/include/linux/cred.h b/include/linux/cred.h
+> > > index 631286535d0f..8917768453cc 100644
+> > > --- a/include/linux/cred.h
+> > > +++ b/include/linux/cred.h
+> > > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
+> > >
+> > >  extern int in_group_p(kgid_t);
+> > >  extern int in_egroup_p(kgid_t);
+> > > +
+> > > +extern int set_current_groups(struct group_info *);
+> > > +extern void set_groups(struct cred *, struct group_info *);
+> > > +extern int groups_search(const struct group_info *, kgid_t);
+> > > +extern bool may_setgroups(void);
+> > > +extern void groups_sort(struct group_info *);
+> > >  #else
+> > >  static inline void groups_free(struct group_info *group_info)
+> > >  {
+> > > @@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
+> > >  {
+> > >          return 1;
+> > >  }
+> > > +
+> > > +static inline int groups_search(const struct group_info *group_info,=
+ kgid_t grp)
+> > > +{
+> > > +       return 0;
+> >
+> > Is this the right fallback value?  If CONFIG_MULTIUSER is disabled,
+> > wouldn't we always want to indicate a group match?  The in_group_p()
+> > and in_egroup_p() dummy functions would seem to indicate that is the
+> > correct behavior ...
+>
+> Hm, indeed this is a bit tricky and I'm guilty of not noticing this...
+>
+> The way I see it (now that I though about it a little), there are
+> basically two possible semantics of groups_search():
+> 1. as an (auxiliary) permissions checking function (like
+> in_[e]group_p()) -- in this case we would expect the same return value
+> as in_group_p(), i.e. 1.
+> 2. as a function that simply checks if a group is contained in a list
+> of groups (taken from a cred struct) -- in this case we would expect
+> it to return 0 in single-user mode, since there will be always no
+> supplemental groups set for any task (if I understand it right).
+>
+> I guess no matter which semantic we pick, we might confuse someone
+> expecting the other one, so I would suggest dropping this patch (or at
+> least the fallbacks for groups_search) and explicitly handle the
+> single-user case in audit.
+>
+> We should probably default to 1 in audit anyway, because the original
+> code used in_[e]group_p(). Even though 0 would seem more logical to
+> me, comparing GIDs doesn't really make sense in single-user mode
+> anyway, so keeping the legacy behavior will be safer. (In fact now
+> that I think of it, having audit enabled (or even compiled) in
+> single-user mode does not make much sense either... maybe we should
+> just make CONFIG_AUDIT depend on CONFIG_MULTIUSER...).
 
-That's fine. Just mention it clearly in the changelog of that first one or
-two patches you need for that.
+If CONFIG_MULTIUSER is unset then basically everything runs as
+root:root, there is no user separation anymore.  With that in mind it
+seems the proper behavior is to always return 1 when groups_search()
+is called.
 
-Thanks,
+Please make the adjustment and resubmit your patch.
 
-	tglx
+--=20
+paul moore
+www.paul-moore.com
