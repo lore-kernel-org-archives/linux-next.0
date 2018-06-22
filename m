@@ -1,89 +1,87 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH -next] cred: conditionally declare groups-related functions
-Date: Thu, 21 Jun 2018 17:17:24 -0400
-Message-ID: <CAHC9VhQk42UA5c_XAaG20h3TZt20TQyJxDMfqWHHgu2=8+kcVQ@mail.gmail.com>
-References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
- <20180621083316.8765-1-omosnace@redhat.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: manual merge of the tip tree with the vfs tree
+Date: Fri, 22 Jun 2018 11:53:46 +1000
+Message-ID: <20180622115346.1e9cc433@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PtLXaja3U9+9ULz58XqSlfI"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180621083316.8765-1-omosnace@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: omosnace@redhat.com
-Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Al Viro <viro@ZenIV.linux.org.uk>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, David Howells <dhowells@redhat.com>, Reinette Chatre <reinette.chatre@intel.com>
 List-Id: linux-next.vger.kernel.org
 
-On Thu, Jun 21, 2018 at 4:33 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> The groups-related functions declared in include/linux/cred.h are
-> defined in kernel/groups.c, which is compiled only when
-> CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-> CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-> CONFIG_MULTIUSER might be disabled.
->
-> This patch also adds a fallback for groups_search(). Currently this
-> function is only called from kernel/groups.c itself and
-> keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-> audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
-> function in -next, so the fallback will be needed to avoid compilation
-> errors or ugly workarounds.
->
-> See also:
-> https://lkml.org/lkml/2018/6/20/670
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->  include/linux/cred.h | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index 631286535d0f..8917768453cc 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
->
->  extern int in_group_p(kgid_t);
->  extern int in_egroup_p(kgid_t);
-> +
-> +extern int set_current_groups(struct group_info *);
-> +extern void set_groups(struct cred *, struct group_info *);
-> +extern int groups_search(const struct group_info *, kgid_t);
-> +extern bool may_setgroups(void);
-> +extern void groups_sort(struct group_info *);
->  #else
->  static inline void groups_free(struct group_info *group_info)
->  {
-> @@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
->  {
->          return 1;
->  }
-> +
-> +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-> +{
-> +       return 0;
+--Sig_/PtLXaja3U9+9ULz58XqSlfI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Is this the right fallback value?  If CONFIG_MULTIUSER is disabled,
-wouldn't we always want to indicate a group match?  The in_group_p()
-and in_egroup_p() dummy functions would seem to indicate that is the
-correct behavior ...
+Hi all,
 
-> +}
->  #endif
-> -extern int set_current_groups(struct group_info *);
-> -extern void set_groups(struct cred *, struct group_info *);
-> -extern int groups_search(const struct group_info *, kgid_t);
-> -extern bool may_setgroups(void);
-> -extern void groups_sort(struct group_info *);
->
->  /*
->   * The security context of a task
-> --
-> 2.17.1
->
+Today's linux-next merge of the tip tree got a conflict in:
 
+  arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
 
--- 
-paul moore
-www.paul-moore.com
+between commit:
+
+  58e4e43911f8 ("kernfs, sysfs, cgroup, intel_rdt: Support fs_context")
+
+from the vfs tree and commit:
+
+  a3dbd01e6c9d ("x86/intel_rdt: Create character device exposing pseudo-loc=
+ked region")
+
+from the tip tree.
+
+I fixed it up (I think - see below) and can carry the fix as necessary.
+This is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+index 38a54f56ff40,7b4a09d81a30..000000000000
+--- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
++++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
+@@@ -1270,9 -1861,16 +1842,15 @@@ static int rdt_get_tree(struct fs_conte
+  		rdtgroup_default.mon.mon_data_kn =3D kn_mondata;
+  	}
+ =20
++ 	ret =3D rdt_pseudo_lock_init();
++ 	if (ret) {
++ 		dentry =3D ERR_PTR(ret);
++ 		goto out_mondata;
++ 	}
++=20
+ -	dentry =3D kernfs_mount(fs_type, flags, rdt_root,
+ -			      RDTGROUP_SUPER_MAGIC, NULL);
+ -	if (IS_ERR(dentry))
+ +	ret =3D kernfs_get_tree(fc);
+ +	if (ret < 0)
+- 		goto out_mondata;
++ 		goto out_psl;
+ =20
+  	if (rdt_alloc_capable)
+  		static_branch_enable_cpuslocked(&rdt_alloc_enable_key);
+
+--Sig_/PtLXaja3U9+9ULz58XqSlfI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssVqoACgkQAVBC80lX
+0Gxz9wf9HJ/dniTuD4KSfg5FhxNVN8J2WYddbbX0+HVTdf+qqBJb2DEJnywtETaN
+2TlMKIhYfwa1rM4s9BJh+vgpGLv2HQQPMKIkvCJfRgV7u2RyagvC/gzf7fLcfwyU
+Mz9hz+mZS3BmEgIi5htcDb30q0OWeIKxuxf0q6Z+QY3y0N9IS2FYRQZP1/DBDnLw
+k2BDueq/gNKMh8sbBGRnjG697+EOcPwS4KfDbHxvBNbySvTkxNRWe+4GbTZA4DAd
+MinhfKmG5r/NDqdHq1+AyMm1EPK364ekuoW9NgzUFVgpb5du0WueS9h0hsGLVBgJ
+XB35mIaocLdgiYENlxcbLaMoeYJaAQ==
+=pBJf
+-----END PGP SIGNATURE-----
+
+--Sig_/PtLXaja3U9+9ULz58XqSlfI--
