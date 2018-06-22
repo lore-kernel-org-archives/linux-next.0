@@ -1,79 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the rcu tree with the tip tree
-Date: Fri, 22 Jun 2018 12:27:17 +1000
-Message-ID: <20180622122717.5f475829@canb.auug.org.au>
+Subject: Re: linux-next: Please add the fsi tree
+Date: Fri, 22 Jun 2018 13:10:48 +1000
+Message-ID: <20180622131048.61b2dcfc@canb.auug.org.au>
+References: <c304c6e08d7baa6e725c2634ea94b7fa326edd5a.camel@kernel.crashing.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gRiojqRRqDt/R+sn+bWvhHC"; protocol="application/pgp-signature"
+ boundary="Sig_/I_9YCRHRbnEQTI/HFKZ6JK_"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c304c6e08d7baa6e725c2634ea94b7fa326edd5a.camel@kernel.crashing.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/gRiojqRRqDt/R+sn+bWvhHC
+--Sig_/I_9YCRHRbnEQTI/HFKZ6JK_
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Ben,
 
-Today's linux-next merge of the rcu tree got a conflict in:
+On Fri, 22 Jun 2018 11:53:50 +1000 Benjamin Herrenschmidt <benh@kernel.cras=
+hing.org> wrote:
+>
+> Please add the fsi tree at
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/benh/linux-fsi.git (maste=
+r)
+>=20
+> To linux-next. It contains the changes that I will send to Greg KH to the=
+ FSI
+> subsystem used by the service processor to communicate with IBM Power chi=
+ps
+> (and eventually S390 as well).
+>=20
+> Commits in there are intende to be merged via Greg's tree. Signed tags in
+> there have already been the subject of pull requests to Greg.
 
-  kernel/rcu/tree_plugin.h
+Added from today.
 
-between commit:
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-  b3dae109fa89 ("sched/swait: Rename to exclusive")
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-from the tip tree and commit:
-
-  57ada0a7f942 ("rcu: Convert grace-period requests to ->gp_seq")
-
-from the rcu tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
 --=20
 Cheers,
-Stephen Rothwell
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-diff --cc kernel/rcu/tree_plugin.h
-index ad53d133f709,2cc9bf0d363a..000000000000
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@@ -2082,9 -2159,9 +2159,9 @@@ static void rcu_nocb_wait_gp(struct rcu
-  	 */
-  	trace_rcu_this_gp(rnp, rdp, c, TPS("StartWait"));
-  	for (;;) {
- -		swait_event_interruptible(
- +		swait_event_interruptible_exclusive(
-- 			rnp->nocb_gp_wq[c & 0x1],
-- 			(d =3D ULONG_CMP_GE(READ_ONCE(rnp->completed), c)));
-+ 			rnp->nocb_gp_wq[rcu_seq_ctr(c) & 0x1],
-+ 			(d =3D rcu_seq_done(&rnp->gp_seq, c)));
-  		if (likely(d))
-  			break;
-  		WARN_ON(signal_pending(current));
-
---Sig_/gRiojqRRqDt/R+sn+bWvhHC
+--Sig_/I_9YCRHRbnEQTI/HFKZ6JK_
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssXoYACgkQAVBC80lX
-0GzsQAf/eE3UwZOlUHOWVtJE78DCUkEUU7ugTJm8X8ZreGWsujngUytKdVYEb9rd
-bmDyF4AZNj5boDgKuBygw8dSv6GYcpHgF+m1IqbDbw2Au/OnMixe+3ZP+9JekfhQ
-LNYW6p1FBfBjOcIcixThNT+mugAIFkaTgKr1akdqW7PuCkCH14Bk2F/7kdNWnGoV
-JJhm5ZO4fTTCro4q2LU+F0Crer0f8eHHFVpRoJuI6c1uWK5uFQJR7EMQ9WeLMH6A
-RC7+b2L/JzCdLJhXTRPrn+gpbydQBLOVYlZCTlaiRnYQsMtHBqcg2pq67zdFQyeH
-FqbrdQ4OfgwzmoqpQukdlqSzMV5b4A==
-=nCEk
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlssaLgACgkQAVBC80lX
+0GxAJQf9E+ydy3+L+bDzJqJYJNnvyvSpNv9qJev5DWiQYSE/Ch3+6HRe5dkISg6p
+t4RJiKDG3JpesfnYe1NaTjRjb7xgMyaU54W2CHQAygLmoMZd54r3nPjLuqPARiuA
+O9KZVrTh7ghw98qdVnt3xfWVegXttg1IpA/TCCqdpig3pEfK6ufrG2YHXfVR9gFm
+wFgQGlSc8CbDcbg2t+Rm2i2NiGu88jlz9S6r4FEcOO+TmnDf/9GGStIKRqQEodQE
+theziVcmndJpj89PC1k6tuPqlS8zC4dObIQzf5Pl+IIAYjxiPh6agl6jVk4futGb
+s2UvbfsYH1FdvlRYc96qZeNNcaiM1w==
+=c9Xq
 -----END PGP SIGNATURE-----
 
---Sig_/gRiojqRRqDt/R+sn+bWvhHC--
+--Sig_/I_9YCRHRbnEQTI/HFKZ6JK_--
