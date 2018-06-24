@@ -1,117 +1,62 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH -next] cred: conditionally declare groups-related functions
-Date: Fri, 22 Jun 2018 15:19:08 -0400
-Message-ID: <CAHC9VhTO7QQt-ZduEZj2y54zbYefCQiZwEpmXaM82_5MqjYoOA@mail.gmail.com>
-References: <CAHC9VhQv26uPWSYmhNdhJ4QM+AMKK=JFkMmDftLb1WpvOUyN8Q@mail.gmail.com>
- <20180621083316.8765-1-omosnace@redhat.com> <CAHC9VhQk42UA5c_XAaG20h3TZt20TQyJxDMfqWHHgu2=8+kcVQ@mail.gmail.com>
- <CAFqZXNs_cKtTZKGkhL4KwTweKEMdVwgS0RAQS_Soqw1c1HSNyw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the cifs tree
+Date: Mon, 25 Jun 2018 09:15:31 +1000
+Message-ID: <20180625091531.60fe90e9@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/TBAvP483fDhCQS/v8MsLHSl"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqZXNs_cKtTZKGkhL4KwTweKEMdVwgS0RAQS_Soqw1c1HSNyw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: omosnace@redhat.com
-Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Aurelien Aptel <aaptel@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Fri, Jun 22, 2018 at 3:47 AM Ondrej Mosnacek <omosnace@redhat.com> wrote=
-:
-> =C5=A1t 21. 6. 2018 o 23:17 Paul Moore <paul@paul-moore.com> nap=C3=ADsal=
-(a):
-> > On Thu, Jun 21, 2018 at 4:33 AM Ondrej Mosnacek <omosnace@redhat.com> w=
-rote:
-> > > The groups-related functions declared in include/linux/cred.h are
-> > > defined in kernel/groups.c, which is compiled only when
-> > > CONFIG_MULTIUSER=3Dy. Move all these function declarations under #ifd=
-ef
-> > > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-> > > CONFIG_MULTIUSER might be disabled.
-> > >
-> > > This patch also adds a fallback for groups_search(). Currently this
-> > > function is only called from kernel/groups.c itself and
-> > > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-> > > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls thi=
-s
-> > > function in -next, so the fallback will be needed to avoid compilatio=
-n
-> > > errors or ugly workarounds.
-> > >
-> > > See also:
-> > > https://lkml.org/lkml/2018/6/20/670
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/com=
-mit/?h=3Dnext&id=3Daf85d1772e31fed34165a1b3decef340cf4080c0
-> > >
-> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >  include/linux/cred.h | 16 +++++++++++-----
-> > >  1 file changed, 11 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/include/linux/cred.h b/include/linux/cred.h
-> > > index 631286535d0f..8917768453cc 100644
-> > > --- a/include/linux/cred.h
-> > > +++ b/include/linux/cred.h
-> > > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
-> > >
-> > >  extern int in_group_p(kgid_t);
-> > >  extern int in_egroup_p(kgid_t);
-> > > +
-> > > +extern int set_current_groups(struct group_info *);
-> > > +extern void set_groups(struct cred *, struct group_info *);
-> > > +extern int groups_search(const struct group_info *, kgid_t);
-> > > +extern bool may_setgroups(void);
-> > > +extern void groups_sort(struct group_info *);
-> > >  #else
-> > >  static inline void groups_free(struct group_info *group_info)
-> > >  {
-> > > @@ -78,12 +84,12 @@ static inline int in_egroup_p(kgid_t grp)
-> > >  {
-> > >          return 1;
-> > >  }
-> > > +
-> > > +static inline int groups_search(const struct group_info *group_info,=
- kgid_t grp)
-> > > +{
-> > > +       return 0;
-> >
-> > Is this the right fallback value?  If CONFIG_MULTIUSER is disabled,
-> > wouldn't we always want to indicate a group match?  The in_group_p()
-> > and in_egroup_p() dummy functions would seem to indicate that is the
-> > correct behavior ...
->
-> Hm, indeed this is a bit tricky and I'm guilty of not noticing this...
->
-> The way I see it (now that I though about it a little), there are
-> basically two possible semantics of groups_search():
-> 1. as an (auxiliary) permissions checking function (like
-> in_[e]group_p()) -- in this case we would expect the same return value
-> as in_group_p(), i.e. 1.
-> 2. as a function that simply checks if a group is contained in a list
-> of groups (taken from a cred struct) -- in this case we would expect
-> it to return 0 in single-user mode, since there will be always no
-> supplemental groups set for any task (if I understand it right).
->
-> I guess no matter which semantic we pick, we might confuse someone
-> expecting the other one, so I would suggest dropping this patch (or at
-> least the fallbacks for groups_search) and explicitly handle the
-> single-user case in audit.
->
-> We should probably default to 1 in audit anyway, because the original
-> code used in_[e]group_p(). Even though 0 would seem more logical to
-> me, comparing GIDs doesn't really make sense in single-user mode
-> anyway, so keeping the legacy behavior will be safer. (In fact now
-> that I think of it, having audit enabled (or even compiled) in
-> single-user mode does not make much sense either... maybe we should
-> just make CONFIG_AUDIT depend on CONFIG_MULTIUSER...).
+--Sig_/TBAvP483fDhCQS/v8MsLHSl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If CONFIG_MULTIUSER is unset then basically everything runs as
-root:root, there is no user separation anymore.  With that in mind it
-seems the proper behavior is to always return 1 when groups_search()
-is called.
+Hi all,
 
-Please make the adjustment and resubmit your patch.
+After merging the cifs tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
+
+fs/cifs/smb2ops.c: In function 'smb311_queryfs':
+fs/cifs/smb2ops.c:1543:11: error: 'struct cifs_tcon' has no member named 'p=
+osix_extensions'
+  if (!tcon->posix_extensions)
+           ^~
+At top level:
+fs/cifs/smb2ops.c:1534:1: warning: 'smb311_queryfs' defined but not used [-=
+Wunused-function]
+ smb311_queryfs(const unsigned int xid, struct cifs_tcon *tcon,
+ ^~~~~~~~~~~~~~
+
+Caused by commit
+
+   ("smb3: add support for statfs for smb3.1.1 posix extensions")
+
+# CONFIG_CIFS_SMB311 is not set
+
+I have used the cifs tree from next-20180622 for today.
 
 --=20
-paul moore
-www.paul-moore.com
+Cheers,
+Stephen Rothwell
+
+--Sig_/TBAvP483fDhCQS/v8MsLHSl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlswJhMACgkQAVBC80lX
+0GzXSwf6AzHV6J1Eh3MwNgqgtrlt7OY7JSC0e14fCb+qtukbZORzOqX9/jfBhdXL
+4BC3dXYvQP5dd4yOITl5uGo3kCxheCqYTmyeGUMQe08vlkNtSuG9TsVA4kWJEcN5
+TkEJnuvxeZl5/urYs+jItpf2R+b/LfseE1iyNW035KbEYwITwbWY2GMBdJpigapO
+1d05JLS1eTyZWNU1j1cns+7nN8HsTm52jgpgtYhKFdjIcJiMcC78VyXHYxgO3hZT
+bHEiOmq2uYjoYltumlDNYQheZkTwdufgq0XbAA0g8JNz8ebYTda0b9uYY6Dm/UuQ
+MLCpzPNwoso40PqSudVBh+D8usZTOg==
+=PNzG
+-----END PGP SIGNATURE-----
+
+--Sig_/TBAvP483fDhCQS/v8MsLHSl--
