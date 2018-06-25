@@ -1,52 +1,84 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jun 25 (efi_64.c)
-Date: Mon, 25 Jun 2018 09:19:29 -0700
-Message-ID: <c75cfdf9-fc2c-52c3-81a4-8584923b85a7@infradead.org>
-References: <20180625154317.7a55dd19@canb.auug.org.au>
+Subject: Re: [PATCH -next v2] cred: conditionally declare groups-related
+ functions
+Date: Mon, 25 Jun 2018 12:49:06 -0700
+Message-ID: <72dc0303-3eda-b07d-9414-0702ff4e5fa6@infradead.org>
+References: <20180625065532.7268-1-omosnace@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180625154317.7a55dd19@canb.auug.org.au>
+In-Reply-To: <20180625065532.7268-1-omosnace@redhat.com>
 Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Ondrej Mosnacek <omosnace@redhat.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
 List-Id: linux-next.vger.kernel.org
 
-On 06/24/2018 10:43 PM, Stephen Rothwell wrote:
-> Hi all,
+On 06/24/2018 11:55 PM, Ondrej Mosnacek wrote:
+> The groups-related functions declared in include/linux/cred.h are
+> defined in kernel/groups.c, which is compiled only when
+> CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
+> CONFIG_MULTIUSER to help avoid accidental usage in contexts where
+> CONFIG_MULTIUSER might be disabled.
 > 
-> Changes since 20180622:
+> This patch also adds a fallback for groups_search(). Currently this
+> function is only called from kernel/groups.c itself and
+> keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
+> audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
+> function in -next, so the fallback will be needed to avoid compilation
+> errors or ugly workarounds.
 > 
+> See also:
+> https://lkml.org/lkml/2018/6/20/670
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+> 
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-on x86_64: (randconfig)
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-  CC      arch/x86/platform/efi/efi_64.o
-In file included from ../include/linux/kernel.h:10:0,
-                 from ../arch/x86/platform/efi/efi_64.c:21:
-../arch/x86/platform/efi/efi_64.c: In function 'efi_sync_low_kernel_mappings':
-../include/linux/compiler.h:319:20: error: call to '__compiletime_assert_277' declared with attribute error: BUILD_BUG_ON failed: p4d_index(EFI_VA_END) != p4d_index(MODULES_END)
-    prefix ## suffix();    \
-                    ^
-../include/linux/compiler.h:327:2: note: in expansion of macro '__compiletime_assert'
-  __compiletime_assert(condition, msg, prefix, suffix)
-  ^
-../include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_assert'
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^
-../include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_assert'
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^
-../include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^
-../arch/x86/platform/efi/efi_64.c:277:2: note: in expansion of macro 'BUILD_BUG_ON'
-  BUILD_BUG_ON(p4d_index(EFI_VA_END) != p4d_index(MODULES_END));
-  ^
-../scripts/Makefile.build:317: recipe for target 'arch/x86/platform/efi/efi_64.o' failed
-make[4]: *** [arch/x86/platform/efi/efi_64.o] Error 1
+Thanks.
 
+> ---
+>  include/linux/cred.h | 15 ++++++++++-----
+>  1 file changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/cred.h b/include/linux/cred.h
+> index 631286535d0f..7eed6101c791 100644
+> --- a/include/linux/cred.h
+> +++ b/include/linux/cred.h
+> @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
+>  
+>  extern int in_group_p(kgid_t);
+>  extern int in_egroup_p(kgid_t);
+> +extern int groups_search(const struct group_info *, kgid_t);
+> +
+> +extern int set_current_groups(struct group_info *);
+> +extern void set_groups(struct cred *, struct group_info *);
+> +extern bool may_setgroups(void);
+> +extern void groups_sort(struct group_info *);
+>  #else
+>  static inline void groups_free(struct group_info *group_info)
+>  {
+> @@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
+>  {
+>          return 1;
+>  }
+> +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+> +{
+> +	return 1;
+> +}
+>  #endif
+> -extern int set_current_groups(struct group_info *);
+> -extern void set_groups(struct cred *, struct group_info *);
+> -extern int groups_search(const struct group_info *, kgid_t);
+> -extern bool may_setgroups(void);
+> -extern void groups_sort(struct group_info *);
+>  
+>  /*
+>   * The security context of a task
+> 
 
 
 -- 
