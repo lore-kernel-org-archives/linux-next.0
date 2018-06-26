@@ -1,53 +1,116 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: linux-next: manual merge of the nvdimm tree with the tip tree
-Date: Tue, 26 Jun 2018 09:06:32 -0700
-Message-ID: <CAPcyv4hdpkFGHZ4sv7Od-ezMXg8JZg+-E=CEsmN1tea+z75hkg@mail.gmail.com>
-References: <20180626121853.0b4ce17c@canb.auug.org.au> <alpine.DEB.2.21.1806261217140.2204@nanos.tec.linutronix.de>
+From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Subject: Re: [powerpc/powervm]kernel BUG at mm/memory_hotplug.c:1864!
+Date: Tue, 26 Jun 2018 09:54:53 -0500
+Message-ID: <345785ef-5da2-b2e8-78b8-2391b54c6141@linux.vnet.ibm.com>
+References: <6826dab0e4382380db8d11b047272bda@linux.vnet.ibm.com>
+ <20180608112823.GA20395@techadventures.net>
+ <3d1e7740df56ed35c8b56941acdb7079@linux.vnet.ibm.com>
+ <20180608121553.GA20774@techadventures.net>
+ <0aac625ee724d877b87c69bba5ac9a0e@linux.vnet.ibm.com>
+ <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.21.1806261217140.2204@nanos.tec.linutronix.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@suse.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Balbir Singh <bsingharora@gmail.com>, vrbagal1 <vrbagal1@linux.vnet.ibm.com>, Oscar Salvador <osalvador@techadventures.net>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, Linuxppc-dev <linuxppc-dev-bounces+vrbagal1=linux.vnet.ibm.com@lists.ozlabs.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 26, 2018 at 3:21 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> On Tue, 26 Jun 2018, Stephen Rothwell wrote:
->> Today's linux-next merge of the nvdimm tree got a conflict in:
+On 06/12/2018 05:28 AM, Balbir Singh wrote:
+> 
+> 
+> On 11/06/18 17:41, vrbagal1 wrote:
+>> On 2018-06-08 17:45, Oscar Salvador wrote:
+>>> On Fri, Jun 08, 2018 at 05:11:24PM +0530, vrbagal1 wrote:
+>>>> On 2018-06-08 16:58, Oscar Salvador wrote:
+>>>>> On Fri, Jun 08, 2018 at 04:44:24PM +0530, vrbagal1 wrote:
+>>>>>> Greetings!!!
+>>>>>>
+>>>>>> I am seeing kernel bug followed by oops message and system reboots,
+>>>>>> while
+>>>>>> running dlpar memory hotplug test.
+>>>>>>
+>>>>>> Machine Details: Power6 PowerVM Platform
+>>>>>> GCC version: (gcc version 4.8.3 20140911 (Red Hat 4.8.3-7) (GCC))
+>>>>>> Test case: dlpar memory hotplug test (https://github.com/avocado-framework-tests/avocado-misc-tests/blob/master/memory/memhotplug.py)
+>>>>>> Kernel Version: Linux version 4.17.0-autotest
+>>>>>>
+>>>>>> I am seeing this bug on rc7 as well.
 >>
->>   arch/x86/kernel/cpu/mcheck/mce.c
+>> Observing similar traces on linux next kernel: 4.17.0-next-20180608-autotest
 >>
->> between commit:
->>
->>   d3d6923cd1ae ("x86/mce: Carve out the crashing_cpu check")
->>
->> from the tip tree and commit:
->>
->>   f6785eac562b ("x86/memory_failure: Introduce {set,clear}_mce_nospec()")
->>
->> from the nvdimm tree.
->
-> Dan, we have rules how to deal with that stuff and there is no excuse for
-> you to collect random patches and apply them as you see fit. Stop this
-> please.
->
+>>  Block size [0x4000000] unaligned hotplug range: start 0x220000000, size 0x1000000
+> 
+> size < block_size in this case, why? how? Could you confirm that the block size is 64MB and your trying to remove 16MB
+> 
 
-Yes, it was stale from the merge window when I was getting late 0day
-and -next testing coverage. I held them back from the merge window
-precisely due to lack of acks and review comments. My mistake was not
-immediately pulling them down from my -next branch when it was clear
-that I needed to circle back and try again for 4.19.
+I was not able to re-create this failure exactly ( I don't have a Power6 system)
+but was able to get a similar re-create on a Power 9 with a few modifications.
 
-> MCE/RAS patches have a well established and working route and if something
-> in your tree really depends on this, which I'm not seeing at all, then
-> there are well documented and established procedures to do that.
+I think the issue you're seeing is due to a change in the validation of memory
+done in remove_memory to ensure the amount of memory being removed spans
+entire memory block. The pseries memory remove code, see pseries_remove_memblock,
+tries to remove each section of a memory block instead of the entire memory block.
 
-Sorry, again I had no intention of bypassing x86 and the offending
-patches have been pulled from my -next branch.
+Could you try the patch below that updates the pseries code to remove the entire
+memory block instead of doing it one section at a time.
 
-I need them for teaching memory_failure() how to handle DAX and
-persistent memory. The primary challenge DAX and PMEM pose to the
-existing error handling flow is that the errors can be repaired and
-that the same poison pages can be accessed safely through the
-device-driver with memcpy_mcsafe().
+-Nathan
+---
+
+ arch/powerpc/platforms/pseries/hotplug-memory.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index c1578f54c626..6072efc793e1 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -316,11 +316,11 @@ static int dlpar_offline_lmb(struct drmem_lmb *lmb)
+ 	return dlpar_change_lmb_state(lmb, false);
+ }
+ 
+-static int pseries_remove_memblock(unsigned long base, unsigned int memblock_size)
++static int pseries_remove_memblock(unsigned long base,
++				   unsigned int memblock_sz)
+ {
+-	unsigned long block_sz, start_pfn;
+-	int sections_per_block;
+-	int i, nid;
++	unsigned long start_pfn;
++	int nid;
+ 
+ 	start_pfn = base >> PAGE_SHIFT;
+ 
+@@ -329,18 +329,12 @@ static int pseries_remove_memblock(unsigned long base, unsigned int memblock_siz
+ 	if (!pfn_valid(start_pfn))
+ 		goto out;
+ 
+-	block_sz = pseries_memory_block_size();
+-	sections_per_block = block_sz / MIN_MEMORY_BLOCK_SIZE;
+ 	nid = memory_add_physaddr_to_nid(base);
+-
+-	for (i = 0; i < sections_per_block; i++) {
+-		remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
+-		base += MIN_MEMORY_BLOCK_SIZE;
+-	}
++	remove_memory(nid, base, memblock_sz);
+ 
+ out:
+ 	/* Update memory regions for memory remove */
+-	memblock_remove(base, memblock_size);
++	memblock_remove(base, memblock_sz);
+ 	unlock_device_hotplug();
+ 	return 0;
+ }
