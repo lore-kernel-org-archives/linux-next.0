@@ -1,117 +1,67 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH -next v2] cred: conditionally declare groups-related functions
-Date: Tue, 26 Jun 2018 09:26:52 -0400
-Message-ID: <CAHC9VhR=y0bk7mK=QMM_kNNDXk8yMdVHWJCZtbhxvaOTse2v0g@mail.gmail.com>
-References: <20180625065532.7268-1-omosnace@redhat.com> <CAHC9VhSQwAH1k-cnpQ4iYs-gtHiQRfFvX9aSVW1_-cFEtJ1JCg@mail.gmail.com>
- <CAFqZXNs5y4AWCnPntGhR_DcrX1d-6h4uPuMKy-WoyCN2Wh1H+A@mail.gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [next-20180601][nvme][ppc] Kernel Oops is triggered when creating lvm snapshots on nvme disks
+Date: Tue, 26 Jun 2018 23:36:58 +1000
+Message-ID: <87d0wd7jph.fsf@concordia.ellerman.id.au>
+References: <1530003645.24245.7.camel@abdul.in.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFqZXNs5y4AWCnPntGhR_DcrX1d-6h4uPuMKy-WoyCN2Wh1H+A@mail.gmail.com>
+In-Reply-To: <1530003645.24245.7.camel@abdul.in.ibm.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: omosnace@redhat.com
-Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com, dhowells@redhat.com
+To: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, linux-scsi <linux-scsi@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, sachinp <sachinp@linux.vnet.ibm.com>, sim <sim@linux.vnet.ibm.com>, manvanth <manvanth@linux.vnet.ibm.com>, Brian King <brking@linux.vnet.ibm.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 26, 2018 at 4:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote=
-:
-> po 25. 6. 2018 o 23:04 Paul Moore <paul@paul-moore.com> nap=C3=ADsal(a):
-> > On Mon, Jun 25, 2018 at 2:56 AM Ondrej Mosnacek <omosnace@redhat.com> w=
-rote:
-> > > The groups-related functions declared in include/linux/cred.h are
-> > > defined in kernel/groups.c, which is compiled only when
-> > > CONFIG_MULTIUSER=3Dy. Move all these function declarations under #ifd=
-ef
-> > > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-> > > CONFIG_MULTIUSER might be disabled.
-> > >
-> > > This patch also adds a fallback for groups_search(). Currently this
-> > > function is only called from kernel/groups.c itself and
-> > > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
-> > > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls thi=
-s
-> > > function in -next, so the fallback will be needed to avoid compilatio=
-n
-> > > errors or ugly workarounds.
-> > >
-> > > See also:
-> > > https://lkml.org/lkml/2018/6/20/670
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/com=
-mit/?h=3Dnext&id=3Daf85d1772e31fed34165a1b3decef340cf4080c0
-> > >
-> > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >  include/linux/cred.h | 15 ++++++++++-----
-> > >  1 file changed, 10 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/include/linux/cred.h b/include/linux/cred.h
-> > > index 631286535d0f..7eed6101c791 100644
-> > > --- a/include/linux/cred.h
-> > > +++ b/include/linux/cred.h
-> > > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
-> > >
-> > >  extern int in_group_p(kgid_t);
-> > >  extern int in_egroup_p(kgid_t);
-> > > +extern int groups_search(const struct group_info *, kgid_t);
-> > > +
-> > > +extern int set_current_groups(struct group_info *);
-> > > +extern void set_groups(struct cred *, struct group_info *);
-> > > +extern bool may_setgroups(void);
-> > > +extern void groups_sort(struct group_info *);
-> > >  #else
-> > >  static inline void groups_free(struct group_info *group_info)
-> > >  {
-> > > @@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
-> > >  {
-> > >          return 1;
-> > >  }
-> > > +static inline int groups_search(const struct group_info *group_info,=
- kgid_t grp)
-> > > +{
-> > > +       return 1;
-> > > +}
-> > >  #endif
-> > > -extern int set_current_groups(struct group_info *);
-> > > -extern void set_groups(struct cred *, struct group_info *);
-> > > -extern int groups_search(const struct group_info *, kgid_t);
-> > > -extern bool may_setgroups(void);
-> > > -extern void groups_sort(struct group_info *);
-> >
-> > I was going through the list of functions to make sure it was safe to
-> > move all of these under CONFIG_MULTIUSER and I believe there may be an
-> > issue with key_task_permission() and groups_search(), specifically one
-> > can disable CONFIG_MULTIUSER yet keep CONFIG_KEYS enabled.
->
-> Oh, you're right, CONFIG_KEYS does not depend on CONFIG_MULTIUSER, for
-> some reason I was looking at CONFIG_SECURITY instead, which does :/ I
-> will need to update the commit message...
->
-> > I'm going to guess that the fix is going to be to have CONFIG_KEYS
-> > depend on CONFIG_MULTIUSER, but I would talk with the keys folks (I've
-> > CC'd David Howells) to see what they would prefer.
->
-> I was wondering why the security/keys/permissions.c did not give the
-> link error and it turns out that it is due to the definition of
-> __kgid_val(), which is hard-coded to 0 if CINFIG_MULTIUSER=3Dn, so the
-> compiler just optimizes out most of the code in key_task_permission()
-> (including the groups_search() call). Thus, for permissions.c it does
-> not matter which fallback we choose (and since this patch always
-> defines groups_search(), it will not lead to compile errors in
-> permissions.c either).
->
-> TL;DR: There is no need to fix anything in the keys code (beyond this
-> patch). I also checked the other functions and they are only used in
-> places that either depend on MULTIUSER or use also groups_alloc(),
-> which is already declared only when CONFIG_MULTIUSER=3Dy.
+Abdul Haleem <abdhalee@linux.vnet.ibm.com> writes:
 
-... and you've already defined a dummy implementation of
-groups_search(); that's the important part.  I clearly was in a rush
-while reviewing this patch.
+> Greeting's
+>
+> Kernel Oops is seen on 4.17.0-rc7-next-20180601 kernel on a bare-metal
+> machine when running lvm snapshot tests on nvme disks.
+>
+> Machine Type: Power 8 bare-metal
+> kernel : 4.17.0-rc7-next-20180601
+> test:  
+> $ pvcreate -y /dev/nvme0n1
+> $ vgcreate avocado_vg /dev/nvme0n1
+> $ lvcreate --size 1.4T --name avocado_lv avocado_vg -y
+> $ mkfs.ext2 /dev/avocado_vg/avocado_lv
+> $ lvcreate --size 1G --snapshot --name avocado_sn /dev/avocado_vg/avocado_lv -y
+> $ lvconvert --merge /dev/avocado_vg/avocado_sn
 
-/me shakes his head
+> the last command results in Oops:
+>
+> Unable to handle kernel paging request for data at address 0x000000d0
+> Faulting instruction address: 0xc0000000002dced4
+> Oops: Kernel access of bad area, sig: 11 [#1]
+> LE SMP NR_CPUS=2048 NUMA PowerNV
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> Modules linked in: dm_snapshot dm_bufio nvme bnx2x iptable_mangle
+> ipt_MASQUERADE iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+> nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4
+> xt_tcpudp tun bridge stp llc iptable_filter dm_mirror dm_region_hash
+> dm_log dm_service_time vmx_crypto powernv_rng rng_core dm_multipath
+> kvm_hv binfmt_misc kvm nfsd ip_tables x_tables autofs4 xfs lpfc
+> crc_t10dif crct10dif_generic mdio nvme_fc libcrc32c nvme_fabrics
+> nvme_core crct10dif_common [last unloaded: nvme]
+> CPU: 70 PID: 157763 Comm: lvconvert Not tainted 4.17.0-rc7-next-20180601-autotest-autotest #1
+> NIP:  c0000000002dced4 LR: c000000000244d14 CTR: c000000000244cf0
+> REGS: c000001f81d6b5a0 TRAP: 0300   Not tainted  (4.17.0-rc7-next-20180601-autotest-autotest)
+> MSR:  900000010280b033 <SF,HV,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22442444  XER: 20000000
+> CFAR: c000000000008934 DAR: 00000000000000d0 DSISR: 40000000 SOFTE: 0
+> GPR00: c000000000244d14 c000001f81d6b820 c00000000109c400 c000003c9d080180
+> GPR04: 0000000000000001 c000001fad510000 c000001fad510000 0000000000000001
+> GPR08: 0000000000000000 f000000000000000 f000000000000008 0000000000000000
+> GPR12: c000000000244cf0 c000001ffffc4f80 00007fffa0e31090 00007fffd9d9b470
+> GPR16: 0000000000000000 000000000000005c 00007fffa0e3a5b0 00007fffa0e62040
+> GPR20: 0000010014ad7d50 0000010014ad7d20 00007fffa0e64210 0000000000000001
+> GPR24: 0000000000000000 c00000000081bae0 c000001ed2461b00 d00000000f859d08
+> GPR28: c000003c9d080180 c000000000244d14 0000000000000001 0000000000000000
+> NIP [c0000000002dced4] kmem_cache_free+0x1a4/0x2b0
+> LR [c000000000244d14] mempool_free_slab+0x24/0x40
 
---=20
-paul moore
-www.paul-moore.com
+Are you running with slub debugging enabled?
+Try booting with slub_debug=FZP
+
+cheers
