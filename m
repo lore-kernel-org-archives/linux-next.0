@@ -1,116 +1,65 @@
-From: Nathan Fontenot <nfont@linux.vnet.ibm.com>
-Subject: Re: [powerpc/powervm]kernel BUG at mm/memory_hotplug.c:1864!
-Date: Tue, 26 Jun 2018 09:54:53 -0500
-Message-ID: <345785ef-5da2-b2e8-78b8-2391b54c6141@linux.vnet.ibm.com>
-References: <6826dab0e4382380db8d11b047272bda@linux.vnet.ibm.com>
- <20180608112823.GA20395@techadventures.net>
- <3d1e7740df56ed35c8b56941acdb7079@linux.vnet.ibm.com>
- <20180608121553.GA20774@techadventures.net>
- <0aac625ee724d877b87c69bba5ac9a0e@linux.vnet.ibm.com>
- <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
+From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: Re: linux-next: manual merge of the rcu tree with the tip tree
+Date: Tue, 26 Jun 2018 12:33:25 -0700
+Message-ID: <20180626193325.GL3593@linux.vnet.ibm.com>
+References: <20180622122717.5f475829@canb.auug.org.au>
+Reply-To: paulmck@linux.vnet.ibm.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Balbir Singh <bsingharora@gmail.com>, vrbagal1 <vrbagal1@linux.vnet.ibm.com>, Oscar Salvador <osalvador@techadventures.net>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, Linuxppc-dev <linuxppc-dev-bounces+vrbagal1=linux.vnet.ibm.com@lists.ozlabs.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180622122717.5f475829@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-On 06/12/2018 05:28 AM, Balbir Singh wrote:
+On Fri, Jun 22, 2018 at 12:27:17PM +1000, Stephen Rothwell wrote:
+> Hi all,
 > 
+> Today's linux-next merge of the rcu tree got a conflict in:
 > 
-> On 11/06/18 17:41, vrbagal1 wrote:
->> On 2018-06-08 17:45, Oscar Salvador wrote:
->>> On Fri, Jun 08, 2018 at 05:11:24PM +0530, vrbagal1 wrote:
->>>> On 2018-06-08 16:58, Oscar Salvador wrote:
->>>>> On Fri, Jun 08, 2018 at 04:44:24PM +0530, vrbagal1 wrote:
->>>>>> Greetings!!!
->>>>>>
->>>>>> I am seeing kernel bug followed by oops message and system reboots,
->>>>>> while
->>>>>> running dlpar memory hotplug test.
->>>>>>
->>>>>> Machine Details: Power6 PowerVM Platform
->>>>>> GCC version: (gcc version 4.8.3 20140911 (Red Hat 4.8.3-7) (GCC))
->>>>>> Test case: dlpar memory hotplug test (https://github.com/avocado-framework-tests/avocado-misc-tests/blob/master/memory/memhotplug.py)
->>>>>> Kernel Version: Linux version 4.17.0-autotest
->>>>>>
->>>>>> I am seeing this bug on rc7 as well.
->>
->> Observing similar traces on linux next kernel: 4.17.0-next-20180608-autotest
->>
->>  Block size [0x4000000] unaligned hotplug range: start 0x220000000, size 0x1000000
+>   kernel/rcu/tree_plugin.h
 > 
-> size < block_size in this case, why? how? Could you confirm that the block size is 64MB and your trying to remove 16MB
+> between commit:
 > 
+>   b3dae109fa89 ("sched/swait: Rename to exclusive")
+> 
+> from the tip tree and commit:
+> 
+>   57ada0a7f942 ("rcu: Convert grace-period requests to ->gp_seq")
+> 
+> from the rcu tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-I was not able to re-create this failure exactly ( I don't have a Power6 system)
-but was able to get a similar re-create on a Power 9 with a few modifications.
+Looks good to me, and thank you!
 
-I think the issue you're seeing is due to a change in the validation of memory
-done in remove_memory to ensure the amount of memory being removed spans
-entire memory block. The pseries memory remove code, see pseries_remove_memblock,
-tries to remove each section of a memory block instead of the entire memory block.
+							Thanx, Paul
 
-Could you try the patch below that updates the pseries code to remove the entire
-memory block instead of doing it one section at a time.
-
--Nathan
----
-
- arch/powerpc/platforms/pseries/hotplug-memory.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
-index c1578f54c626..6072efc793e1 100644
---- a/arch/powerpc/platforms/pseries/hotplug-memory.c
-+++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
-@@ -316,11 +316,11 @@ static int dlpar_offline_lmb(struct drmem_lmb *lmb)
- 	return dlpar_change_lmb_state(lmb, false);
- }
- 
--static int pseries_remove_memblock(unsigned long base, unsigned int memblock_size)
-+static int pseries_remove_memblock(unsigned long base,
-+				   unsigned int memblock_sz)
- {
--	unsigned long block_sz, start_pfn;
--	int sections_per_block;
--	int i, nid;
-+	unsigned long start_pfn;
-+	int nid;
- 
- 	start_pfn = base >> PAGE_SHIFT;
- 
-@@ -329,18 +329,12 @@ static int pseries_remove_memblock(unsigned long base, unsigned int memblock_siz
- 	if (!pfn_valid(start_pfn))
- 		goto out;
- 
--	block_sz = pseries_memory_block_size();
--	sections_per_block = block_sz / MIN_MEMORY_BLOCK_SIZE;
- 	nid = memory_add_physaddr_to_nid(base);
--
--	for (i = 0; i < sections_per_block; i++) {
--		remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
--		base += MIN_MEMORY_BLOCK_SIZE;
--	}
-+	remove_memory(nid, base, memblock_sz);
- 
- out:
- 	/* Update memory regions for memory remove */
--	memblock_remove(base, memblock_size);
-+	memblock_remove(base, memblock_sz);
- 	unlock_device_hotplug();
- 	return 0;
- }
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc kernel/rcu/tree_plugin.h
+> index ad53d133f709,2cc9bf0d363a..000000000000
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@@ -2082,9 -2159,9 +2159,9 @@@ static void rcu_nocb_wait_gp(struct rcu
+>   	 */
+>   	trace_rcu_this_gp(rnp, rdp, c, TPS("StartWait"));
+>   	for (;;) {
+>  -		swait_event_interruptible(
+>  +		swait_event_interruptible_exclusive(
+> - 			rnp->nocb_gp_wq[c & 0x1],
+> - 			(d = ULONG_CMP_GE(READ_ONCE(rnp->completed), c)));
+> + 			rnp->nocb_gp_wq[rcu_seq_ctr(c) & 0x1],
+> + 			(d = rcu_seq_done(&rnp->gp_seq, c)));
+>   		if (likely(d))
+>   			break;
+>   		WARN_ON(signal_pending(current));
