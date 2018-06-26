@@ -1,153 +1,109 @@
-From: "Koenig, Christian" <Christian.Koenig@amd.com>
-Subject: Re: [PATCH 2/2] sample/mdev/mbochs: add mbochs_kunmap_dmabuf
-Date: Tue, 26 Jun 2018 07:33:53 +0000
-Message-ID: <87defe1e-b430-4af0-b258-19aae23317a6@email.android.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Subject: Re: [PATCH -next v2] cred: conditionally declare groups-related functions
+Date: Tue, 26 Jun 2018 10:12:58 +0200
+Message-ID: <CAFqZXNs5y4AWCnPntGhR_DcrX1d-6h4uPuMKy-WoyCN2Wh1H+A@mail.gmail.com>
+References: <20180625065532.7268-1-omosnace@redhat.com> <CAHC9VhSQwAH1k-cnpQ4iYs-gtHiQRfFvX9aSVW1_-cFEtJ1JCg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0162322729=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Language: de-DE
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: "open list:VFIO MEDIATED DEVICE DRIVERS" <kvm@vger.kernel.org>, "airlied@linux.ie" <airlied@linux.ie>, "daniel.vetter@ffwll.ch" <daniel.vetter@ffwll.ch>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kirti Wankhede <kwankhede@nvidia.com>, "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>, Gerd Hoffmann <kraxel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAHC9VhSQwAH1k-cnpQ4iYs-gtHiQRfFvX9aSVW1_-cFEtJ1JCg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Paul Moore <paul@paul-moore.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Eric Paris <eparis@redhat.com>, Linux kernel mailing list <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org, Linux-Audit Mailing List <linux-audit@redhat.com>, dhowells@redhat.com
 List-Id: linux-next.vger.kernel.org
 
---===============0162322729==
-Content-Language: de-DE
-Content-Type: multipart/alternative;
-	boundary="_000_87defe1eb4304af0b25819aae23317a6emailandroidcom_"
+po 25. 6. 2018 o 23:04 Paul Moore <paul@paul-moore.com> napísal(a):
+>
+> On Mon, Jun 25, 2018 at 2:56 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+> > The groups-related functions declared in include/linux/cred.h are
+> > defined in kernel/groups.c, which is compiled only when
+> > CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
+> > CONFIG_MULTIUSER to help avoid accidental usage in contexts where
+> > CONFIG_MULTIUSER might be disabled.
+> >
+> > This patch also adds a fallback for groups_search(). Currently this
+> > function is only called from kernel/groups.c itself and
+> > keys/permissions.c, which depends on CONFIG_MULTIUSER. However, the
+> > audit subsystem (which does not depend on CONFIG_MULTIUSER) calls this
+> > function in -next, so the fallback will be needed to avoid compilation
+> > errors or ugly workarounds.
+> >
+> > See also:
+> > https://lkml.org/lkml/2018/6/20/670
+> > https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
+> >
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> > ---
+> >  include/linux/cred.h | 15 ++++++++++-----
+> >  1 file changed, 10 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/cred.h b/include/linux/cred.h
+> > index 631286535d0f..7eed6101c791 100644
+> > --- a/include/linux/cred.h
+> > +++ b/include/linux/cred.h
+> > @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
+> >
+> >  extern int in_group_p(kgid_t);
+> >  extern int in_egroup_p(kgid_t);
+> > +extern int groups_search(const struct group_info *, kgid_t);
+> > +
+> > +extern int set_current_groups(struct group_info *);
+> > +extern void set_groups(struct cred *, struct group_info *);
+> > +extern bool may_setgroups(void);
+> > +extern void groups_sort(struct group_info *);
+> >  #else
+> >  static inline void groups_free(struct group_info *group_info)
+> >  {
+> > @@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
+> >  {
+> >          return 1;
+> >  }
+> > +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
+> > +{
+> > +       return 1;
+> > +}
+> >  #endif
+> > -extern int set_current_groups(struct group_info *);
+> > -extern void set_groups(struct cred *, struct group_info *);
+> > -extern int groups_search(const struct group_info *, kgid_t);
+> > -extern bool may_setgroups(void);
+> > -extern void groups_sort(struct group_info *);
+>
+> I was going through the list of functions to make sure it was safe to
+> move all of these under CONFIG_MULTIUSER and I believe there may be an
+> issue with key_task_permission() and groups_search(), specifically one
+> can disable CONFIG_MULTIUSER yet keep CONFIG_KEYS enabled.
 
---_000_87defe1eb4304af0b25819aae23317a6emailandroidcom_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Oh, you're right, CONFIG_KEYS does not depend on CONFIG_MULTIUSER, for
+some reason I was looking at CONFIG_SECURITY instead, which does :/ I
+will need to update the commit message...
 
-DQoNCkFtIDI2LjA2LjIwMTggMDk6MjAgc2NocmllYiBBbGV4IFdpbGxpYW1zb24gPGFsZXgud2ls
-bGlhbXNvbkByZWRoYXQuY29tPjoNCk9uIE1vbiwgMjUgSnVuIDIwMTggMDg6NDQ6NTIgKzAyMDAN
-CkdlcmQgSG9mZm1hbm4gPGtyYXhlbEByZWRoYXQuY29tPiB3cm90ZToNCg0KPiBUaGVyZSBpcyBu
-byBkZWZhdWx0IGltcGxlbWVudGF0aW9uIGZvciBkbWFfYnVmX29wcy0+dW5tYXAuDQo+IFNvIGFk
-ZCBhIGZ1bmN0aW9uIHVubWFwcGluZyB0aGUgcGFnZSwgb3RoZXJ3aXNlIHdlJ2xsIGxlYWsgdGhl
-bS4NCj4NCj4gU2lnbmVkLW9mZi1ieTogR2VyZCBIb2ZmbWFubiA8a3JheGVsQHJlZGhhdC5jb20+
-DQo+IC0tLQ0KPiAgc2FtcGxlcy92ZmlvLW1kZXYvbWJvY2hzLmMgfCA3ICsrKysrKysNCj4gIDEg
-ZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykNCj4NCj4gZGlmZiAtLWdpdCBhL3NhbXBsZXMv
-dmZpby1tZGV2L21ib2Nocy5jIGIvc2FtcGxlcy92ZmlvLW1kZXYvbWJvY2hzLmMNCj4gaW5kZXgg
-YWEyNWNkYTIxZC4uODVhYzYwMzc2OSAxMDA2NDQNCj4gLS0tIGEvc2FtcGxlcy92ZmlvLW1kZXYv
-bWJvY2hzLmMNCj4gKysrIGIvc2FtcGxlcy92ZmlvLW1kZXYvbWJvY2hzLmMNCj4gQEAgLTgxMSwx
-MSArODExLDE4IEBAIHN0YXRpYyB2b2lkICptYm9jaHNfa21hcF9kbWFidWYoc3RydWN0IGRtYV9i
-dWYgKmJ1ZiwgdW5zaWduZWQgbG9uZyBwYWdlX251bSkNCj4gICAgICAgIHJldHVybiBrbWFwKHBh
-Z2UpOw0KPiAgfQ0KPg0KPiArc3RhdGljIHZvaWQgbWJvY2hzX2t1bm1hcF9kbWFidWYoc3RydWN0
-IGRtYV9idWYgKmJ1ZiwgdW5zaWduZWQgbG9uZyBwYWdlX251bSwNCj4gKyAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHZvaWQgKnZhZGRyKQ0KPiArew0KPiArICAgICBrdW5tYXAodmFkZHIp
-Ow0KPiArfQ0KPiArDQo+ICBzdGF0aWMgc3RydWN0IGRtYV9idWZfb3BzIG1ib2Noc19kbWFidWZf
-b3BzID0gew0KPiAgICAgICAgLm1hcF9kbWFfYnVmICAgICAgPSBtYm9jaHNfbWFwX2RtYWJ1ZiwN
-Cj4gICAgICAgIC51bm1hcF9kbWFfYnVmICAgID0gbWJvY2hzX3VubWFwX2RtYWJ1ZiwNCj4gICAg
-ICAgIC5yZWxlYXNlICAgICAgICAgID0gbWJvY2hzX3JlbGVhc2VfZG1hYnVmLA0KPiAgICAgICAg
-Lm1hcCAgICAgICAgICAgICAgPSBtYm9jaHNfa21hcF9kbWFidWYsDQo+ICsgICAgIC51bm1hcCAg
-ICAgICAgICAgID0gbWJvY2hzX2t1bm1hcF9kbWFidWYsDQo+ICAgICAgICAubW1hcCAgICAgICAg
-ICAgICA9IG1ib2Noc19tbWFwX2RtYWJ1ZiwNCj4gIH07DQo+DQoNCklzIHRoaXMgYSBmaXggZm9y
-IHY0LjE4PyAgQUZBSUNULCB0aGUga21hcF9hdG9taWMgcmVtb3ZhbCBpcyBvbmx5IGluDQpuZXh0
-LCBub3QgeWV0IHVwc3RyZWFtIGFuZCBob3BlZnVsbHkgaW5jbHVkZXMgdGhpcyBzYW1wbGUgZHJp
-dmVyIGJlZm9yZQ0KaGl0dGluZyBtYWlubGluZS4gIFNob3VsZCB3ZSB0aGVyZWZvcmUgaGF2ZSBh
-IHY0LjE4LXJjIGJhc2VkIHBhdGNoIGZvcg0KdGhpcyB0byBpbmNsdWRlIGJlZm9yZSB2NC4xOCB0
-byByZXNvbHZlIHRoaXM/ICBUaGFua3MsDQoNClRoYXQgYWN0dWFsbHkgZG9lc24ndCBsb29rcyBs
-aWtlIGl0IGhhcyBzb21ldGhpbmcgdG8gZG8gd2l0aCB0aGUga21hcF9hdG9taWMgcmVtb3ZhbC4g
-TW9yZSBsaWtlIGEgZ2VuZXJhbCBidWcgZml4IHRvIGV4aXN0aW5nIGNvZGUuDQoNCkJUVzogVGhl
-IGttYXBfYXRvbWljIHJlbW92YWwgd2FzIGJhc2VkIG9uIGFuIG9sZGVyIGtlcm5lbCB2ZXJzaW9u
-IGFuZCBJJ3ZlIGZvcmdvdHRlbiB0byBjaGVjayBmb3IgbmV3IERNQS1idWYgaW1wbGVtZW50YXRp
-b24gZHVyaW5nIHJlYmFzZS4gU28gc29ycnkgZm9yIHRoZSBub2lzZS4NCg0KQ2hyaXN0aWFuLg0K
-DQpBbGV4DQoNCg==
+> I'm going to guess that the fix is going to be to have CONFIG_KEYS
+> depend on CONFIG_MULTIUSER, but I would talk with the keys folks (I've
+> CC'd David Howells) to see what they would prefer.
 
---_000_87defe1eb4304af0b25819aae23317a6emailandroidcom_
-Content-Type: text/html; charset="utf-8"
-Content-ID: <8A89EA17C114024AAA7FB7107B3D63DA@amdcloud.onmicrosoft.com>
-Content-Transfer-Encoding: base64
+I was wondering why the security/keys/permissions.c did not give the
+link error and it turns out that it is due to the definition of
+__kgid_val(), which is hard-coded to 0 if CINFIG_MULTIUSER=n, so the
+compiler just optimizes out most of the code in key_task_permission()
+(including the groups_search() call). Thus, for permissions.c it does
+not matter which fallback we choose (and since this patch always
+defines groups_search(), it will not lead to compile errors in
+permissions.c either).
 
-PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
-dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdiBkaXI9ImF1
-dG8iPg0KPGRpdj48YnI+DQo8ZGl2IGNsYXNzPSJnbWFpbF9leHRyYSI+PGJyPg0KPGRpdiBjbGFz
-cz0iZ21haWxfcXVvdGUiPkFtIDI2LjA2LjIwMTggMDk6MjAgc2NocmllYiBBbGV4IFdpbGxpYW1z
-b24gJmx0O2FsZXgud2lsbGlhbXNvbkByZWRoYXQuY29tJmd0Ozo8YnIgdHlwZT0iYXR0cmlidXRp
-b24iPg0KPGJsb2NrcXVvdGUgY2xhc3M9InF1b3RlIiBzdHlsZT0ibWFyZ2luOjAgMCAwIC44ZXg7
-Ym9yZGVyLWxlZnQ6MXB4ICNjY2Mgc29saWQ7cGFkZGluZy1sZWZ0OjFleCI+DQo8ZGl2Pjxmb250
-IHNpemU9IjIiPjxzcGFuIHN0eWxlPSJmb250LXNpemU6MTFwdCI+DQo8ZGl2Pk9uIE1vbiwgMjUg
-SnVuIDIwMTggMDg6NDQ6NTIgJiM0MzswMjAwPGJyPg0KR2VyZCBIb2ZmbWFubiAmbHQ7a3JheGVs
-QHJlZGhhdC5jb20mZ3Q7IHdyb3RlOjxicj4NCjxicj4NCiZndDsgVGhlcmUgaXMgbm8gZGVmYXVs
-dCBpbXBsZW1lbnRhdGlvbiBmb3IgZG1hX2J1Zl9vcHMtJmd0O3VubWFwLjxicj4NCiZndDsgU28g
-YWRkIGEgZnVuY3Rpb24gdW5tYXBwaW5nIHRoZSBwYWdlLCBvdGhlcndpc2Ugd2UnbGwgbGVhayB0
-aGVtLjxicj4NCiZndDsgPGJyPg0KJmd0OyBTaWduZWQtb2ZmLWJ5OiBHZXJkIEhvZmZtYW5uICZs
-dDtrcmF4ZWxAcmVkaGF0LmNvbSZndDs8YnI+DQomZ3Q7IC0tLTxicj4NCiZndDsmbmJzcDsgc2Ft
-cGxlcy92ZmlvLW1kZXYvbWJvY2hzLmMgfCA3ICYjNDM7JiM0MzsmIzQzOyYjNDM7JiM0MzsmIzQz
-OyYjNDM7PGJyPg0KJmd0OyZuYnNwOyAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCYjNDM7
-KTxicj4NCiZndDsgPGJyPg0KJmd0OyBkaWZmIC0tZ2l0IGEvc2FtcGxlcy92ZmlvLW1kZXYvbWJv
-Y2hzLmMgYi9zYW1wbGVzL3ZmaW8tbWRldi9tYm9jaHMuYzxicj4NCiZndDsgaW5kZXggYWEyNWNk
-YTIxZC4uODVhYzYwMzc2OSAxMDA2NDQ8YnI+DQomZ3Q7IC0tLSBhL3NhbXBsZXMvdmZpby1tZGV2
-L21ib2Nocy5jPGJyPg0KJmd0OyAmIzQzOyYjNDM7JiM0MzsgYi9zYW1wbGVzL3ZmaW8tbWRldi9t
-Ym9jaHMuYzxicj4NCiZndDsgQEAgLTgxMSwxMSAmIzQzOzgxMSwxOCBAQCBzdGF0aWMgdm9pZCAq
-bWJvY2hzX2ttYXBfZG1hYnVmKHN0cnVjdCBkbWFfYnVmICpidWYsIHVuc2lnbmVkIGxvbmcgcGFn
-ZV9udW0pPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyByZXR1cm4ga21hcChwYWdlKTs8YnI+DQomZ3Q7Jm5ic3A7IH08YnI+DQomZ3Q7Jm5ic3A7IDxi
-cj4NCiZndDsgJiM0MztzdGF0aWMgdm9pZCBtYm9jaHNfa3VubWFwX2RtYWJ1ZihzdHJ1Y3QgZG1h
-X2J1ZiAqYnVmLCB1bnNpZ25lZCBsb25nIHBhZ2VfbnVtLDxicj4NCiZndDsgJiM0MzsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgdm9p
-ZCAqdmFkZHIpPGJyPg0KJmd0OyAmIzQzO3s8IS0tIC0tPjxicj4NCiZndDsgJiM0MzsmbmJzcDsm
-bmJzcDsmbmJzcDsmbmJzcDsga3VubWFwKHZhZGRyKTs8YnI+DQomZ3Q7ICYjNDM7fTxicj4NCiZn
-dDsgJiM0Mzs8YnI+DQomZ3Q7Jm5ic3A7IHN0YXRpYyBzdHJ1Y3QgZG1hX2J1Zl9vcHMgbWJvY2hz
-X2RtYWJ1Zl9vcHMgPSB7PCEtLSAtLT48YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7IC5tYXBfZG1hX2J1ZiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyA9IG1ib2Noc19tYXBfZG1hYnVmLDxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgLnVubWFwX2RtYV9idWYmbmJzcDsmbmJzcDsmbmJzcDsgPSBt
-Ym9jaHNfdW5tYXBfZG1hYnVmLDxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsgLnJlbGVhc2UmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsmbmJzcDsgPSBtYm9jaHNfcmVsZWFzZV9kbWFidWYsPGJyPg0KJmd0OyZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAubWFwJm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7ID0gbWJvY2hzX2ttYXBfZG1hYnVmLDxicj4NCiZndDsgJiM0MzsmbmJzcDsmbmJz
-cDsmbmJzcDsmbmJzcDsgLnVubWFwJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ID0gbWJvY2hzX2t1bm1hcF9kbWFidWYsPGJy
-Pg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAubW1hcCZu
-YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyZuYnNwOyZuYnNwOyA9IG1ib2Noc19tbWFwX2RtYWJ1Ziw8YnI+DQomZ3Q7Jm5ic3A7IH07PGJy
-Pg0KJmd0OyZuYnNwOyA8YnI+DQo8YnI+DQpJcyB0aGlzIGEgZml4IGZvciB2NC4xOD8mbmJzcDsg
-QUZBSUNULCB0aGUga21hcF9hdG9taWMgcmVtb3ZhbCBpcyBvbmx5IGluPGJyPg0KbmV4dCwgbm90
-IHlldCB1cHN0cmVhbSBhbmQgaG9wZWZ1bGx5IGluY2x1ZGVzIHRoaXMgc2FtcGxlIGRyaXZlciBi
-ZWZvcmU8YnI+DQpoaXR0aW5nIG1haW5saW5lLiZuYnNwOyBTaG91bGQgd2UgdGhlcmVmb3JlIGhh
-dmUgYSB2NC4xOC1yYyBiYXNlZCBwYXRjaCBmb3I8YnI+DQp0aGlzIHRvIGluY2x1ZGUgYmVmb3Jl
-IHY0LjE4IHRvIHJlc29sdmUgdGhpcz8mbmJzcDsgVGhhbmtzLDxicj4NCjwvZGl2Pg0KPC9zcGFu
-PjwvZm9udD48L2Rpdj4NCjwvYmxvY2txdW90ZT4NCjwvZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjxk
-aXYgZGlyPSJhdXRvIj48YnI+DQo8L2Rpdj4NCjxkaXYgZGlyPSJhdXRvIj5UaGF0IGFjdHVhbGx5
-IGRvZXNuJ3QgbG9va3MgbGlrZSBpdCBoYXMgc29tZXRoaW5nIHRvIGRvIHdpdGggdGhlIGttYXBf
-YXRvbWljIHJlbW92YWwuIE1vcmUgbGlrZSBhIGdlbmVyYWwgYnVnIGZpeCB0byBleGlzdGluZyBj
-b2RlLjwvZGl2Pg0KPGRpdiBkaXI9ImF1dG8iPjxicj4NCjwvZGl2Pg0KPGRpdiBkaXI9ImF1dG8i
-PkJUVzogVGhlIGttYXBfYXRvbWljIHJlbW92YWwgd2FzIGJhc2VkIG9uIGFuIG9sZGVyIGtlcm5l
-bCB2ZXJzaW9uIGFuZCBJJ3ZlIGZvcmdvdHRlbiB0byBjaGVjayBmb3IgbmV3IERNQS1idWYgaW1w
-bGVtZW50YXRpb24gZHVyaW5nIHJlYmFzZS4gU28gc29ycnkgZm9yIHRoZSBub2lzZS48L2Rpdj4N
-CjxkaXYgZGlyPSJhdXRvIj48YnI+DQo8L2Rpdj4NCjxkaXYgZGlyPSJhdXRvIj5DaHJpc3RpYW4u
-PC9kaXY+DQo8ZGl2IGRpcj0iYXV0byI+DQo8ZGl2IGNsYXNzPSJnbWFpbF9leHRyYSI+DQo8ZGl2
-IGNsYXNzPSJnbWFpbF9xdW90ZSI+DQo8YmxvY2txdW90ZSBjbGFzcz0icXVvdGUiIHN0eWxlPSJt
-YXJnaW46MCAwIDAgLjhleDtib3JkZXItbGVmdDoxcHggI2NjYyBzb2xpZDtwYWRkaW5nLWxlZnQ6
-MWV4Ij4NCjxkaXY+PGZvbnQgc2l6ZT0iMiI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxMXB0Ij4N
-CjxkaXY+PGJyPg0KQWxleDxicj4NCjwvZGl2Pg0KPC9zcGFuPjwvZm9udD48L2Rpdj4NCjwvYmxv
-Y2txdW90ZT4NCjwvZGl2Pg0KPGJyPg0KPC9kaXY+DQo8L2Rpdj4NCjwvZGl2Pg0KPC9ib2R5Pg0K
-PC9odG1sPg0K
+TL;DR: There is no need to fix anything in the keys code (beyond this
+patch). I also checked the other functions and they are only used in
+places that either depend on MULTIUSER or use also groups_alloc(),
+which is already declared only when CONFIG_MULTIUSER=y.
 
---_000_87defe1eb4304af0b25819aae23317a6emailandroidcom_--
+>
+> --
+> paul moore
+> www.paul-moore.com
 
---===============0162322729==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0162322729==--
+--
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
