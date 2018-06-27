@@ -1,46 +1,106 @@
-From: Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 2/2] sample/mdev/mbochs: add mbochs_kunmap_dmabuf
-Date: Wed, 27 Jun 2018 09:55:48 +0800
-Message-ID: <20180627095548.7c8735f2@t450s.home>
-References: <20180625064453.19768-1-kraxel@redhat.com>
- <20180625064453.19768-2-kraxel@redhat.com>
- <20180626152012.530d9c16@t450s.home>
- <20180626073233.kievmdagzgtxs7j7@sirius.home.kraxel.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+Date: Wed, 27 Jun 2018 13:09:50 +1000
+Message-ID: <20180627130950.43922340@canb.auug.org.au>
+References: <20180618132712.4b4eddc9@canb.auug.org.au>
+        <CAPcyv4idNE8ErxNm5bb3rG4jUeZU9HJRmO03omMJxSN-8FYN+w@mail.gmail.com>
+        <20180618170920.GC28748@bombadil.infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180626073233.kievmdagzgtxs7j7@sirius.home.kraxel.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: "open list:VFIO MEDIATED DEVICE DRIVERS" <kvm@vger.kernel.org>, airlied@linux.ie, daniel.vetter@ffwll.ch, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kirti Wankhede <kwankhede@nvidia.com>, linux-next@vger.kernel.org, christian.koenig@amd.com
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Hgc937KfImDIgoXlsGBE6Hd"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180618170920.GC28748@bombadil.infradead.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-T24gVHVlLCAyNiBKdW4gMjAxOCAwOTozMjozMyArMDIwMApHZXJkIEhvZmZtYW5uIDxrcmF4ZWxA
-cmVkaGF0LmNvbT4gd3JvdGU6Cgo+ID4gPiAgCS5tYXAJCSAgPSBtYm9jaHNfa21hcF9kbWFidWYs
-Cj4gPiA+ICsJLnVubWFwCQkgID0gbWJvY2hzX2t1bm1hcF9kbWFidWYsCj4gPiA+ICAJLm1tYXAJ
-CSAgPSBtYm9jaHNfbW1hcF9kbWFidWYsCj4gPiA+ICB9Owo+ID4gPiAgICAKPiA+IAo+ID4gSXMg
-dGhpcyBhIGZpeCBmb3IgdjQuMTg/ICAKPiAKPiBZZXMuCj4gCj4gPiBBRkFJQ1QsIHRoZSBrbWFw
-X2F0b21pYyByZW1vdmFsIGlzIG9ubHkgaW4KPiA+IG5leHQsIG5vdCB5ZXQgdXBzdHJlYW0gYW5k
-IGhvcGVmdWxseSBpbmNsdWRlcyB0aGlzIHNhbXBsZSBkcml2ZXIgYmVmb3JlCj4gPiBoaXR0aW5n
-IG1haW5saW5lLiAgU2hvdWxkIHdlIHRoZXJlZm9yZSBoYXZlIGEgdjQuMTgtcmMgYmFzZWQgcGF0
-Y2ggZm9yCj4gPiB0aGlzIHRvIGluY2x1ZGUgYmVmb3JlIHY0LjE4IHRvIHJlc29sdmUgdGhpcz8g
-IAo+IAo+IFRoZSBrbWFwX2F0b21pYyBpbnRlcmZhY2Ugd2lsbCBiZSByZW1vdmVkIGluIDQuMTkg
-YmVjYXVzZSBub2JvZHkgdXNlcwo+IGl0LCBzbyBkcm9wcGluZyB0aGUgbWJvY2hzIGltcGxlbWVu
-dGF0aW9uIGFscmVhZHkgaW4gNC4xOCBzaG91bGQgbm90Cj4gY2F1c2UgYW55IGlzc3Vlcy4KPiAK
-PiBTbyBqdXN0IHF1ZXVlIGJvdGggZm9yIDQuMTggd291bGQgYmUgdGhlIGVhc2llc3Qgd2F5IGRv
-IGRlYWwgd2l0aCB0aGUKPiBkZXBlbmRlbmN5IEkgdGhpbmsuCgpPaywgc28gSSdsbCBkcm9wIHRo
-ZSBmaXhlcyB0YWcgYW5kIGFwcGx5IGJvdGggdG8gbXkgZm9yLWxpbnVzIGJyYW5jaApmb3IgdjQu
-MTggYW5kIHRoZW4gQ2hyaXN0aWFuIHdvbid0IG5lZWQgdG8gaW5jbHVkZSBpdCBmb3IgdGhlIHY0
-LjE5CnBhdGNoLiAgVGhhbmtzLAoKQWxleApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+--Sig_/Hgc937KfImDIgoXlsGBE6Hd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Mon, 18 Jun 2018 10:09:20 -0700 Matthew Wilcox <willy@infradead.org> wro=
+te:
+>
+> On Mon, Jun 18, 2018 at 09:50:33AM -0700, Dan Williams wrote:
+> > On Sun, Jun 17, 2018 at 8:27 PM, Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote: =20
+> > > Hi all,
+> > >
+> > > After merging the xarray tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this: =20
+> [...]
+> > > from the nvdimm tree.
+> > >
+> > > Willy thanks for the heads up about this.
+> > >
+> > > I have applied the following merge fix patch (taken from the diff bet=
+ween
+> > > the -next tree at this point and the xarray-20180615 branch from the
+> > > xarray tree) for today. =20
+> >=20
+> > I was hoping that dax_lock_page() and the memory_failure() handling
+> > could go in before the xarray rework. This helps -stable and distros
+> > that need to backport this error handling support. Willy, would you be
+> > amenable to rebasing on top of the next rev of the
+> > dax+memory_failure() work?
+> >=20
+> > Apologies for the thrash. =20
+>=20
+> I am absolutely amenable to rebasing.  The only problem is that I'm
+> in Tokyo for the next two weeks.  I can put some work in on this, but
+> coordination may be a little off.  If somebody else wants to do the work,
+> the only (serious) difference between the xarray-20180615 and xarray
+> branches in my repo is that the former is based on the dax_lock_page()
+> changes having gone in.
+>=20
+> The differences sum up to:
+>=20
+> +@@ -414,8 +413,7 @@ struct page *dax_lock_page(unsigned long pfn)
+> +=20
+> +               entry =3D __radix_tree_lookup(&mapping->i_pages, index, N=
+ULL,
+> +                               &slot);
+> +-              if (!entry ||
+> +-                  WARN_ON_ONCE(!radix_tree_exceptional_entry(entry))) {
+> ++              if (!entry || WARN_ON_ONCE(!xa_is_value(entry))) {
+> +                       xa_unlock_irq(&mapping->i_pages);
+> +                       break;
+> +               } else if (!slot_locked(mapping, slot)) {
+>=20
+> (in "xarray: Replace exceptional entries")
+>=20
+> then dax_entry_waitqueue() changing its argument in "dax: Hash on XArray =
+instead of mapping".
+>=20
+> and finally the patch converting dax_lock_page() and dax_unlock_page().
+>=20
+> I really wanted to keep the thrash here to a minimum, but this is the
+> best I could come up with in terms of minimising conflicts :-(
+
+This has all gone away today as the conflicting commits have been
+removed from the nvdimm tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Hgc937KfImDIgoXlsGBE6Hd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsy//4ACgkQAVBC80lX
+0GxlwQf/VJ9c2xUlU1cAdGS5FsKxVc7cz8esTDMQdbjCXPspyL9mAr1iBSCuqc2+
+Fdq5rfTWqxln+qcnOTu5p99s2d9ACpS0bq2OOYWUUnpHOAhxbgONjoDB79M82uab
+lX5vyH0ItNmRjaNOPLc+3IX0zvmIavdRIcD6xCVCZ8s+dy5H4ewhRdXwXpHZQlG9
+VlR0ntmZRsgrf4y96c8IIsYllDAa9eB3zD3TIBnCDzqYfoJaT6Ypr3ifEVgRPxAz
+ECRmA3eAQKoUOvJ/14xZhyia4acxZXCQ0KDHhaYM9UgkFSNzrn6lEqas+h2seyWX
+B4w4ZnAAqYrpOG5XATOKs7wnM9BeJg==
+=ddow
+-----END PGP SIGNATURE-----
+
+--Sig_/Hgc937KfImDIgoXlsGBE6Hd--
