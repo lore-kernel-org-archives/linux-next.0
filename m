@@ -1,98 +1,212 @@
-From: Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Date: Wed, 27 Jun 2018 08:50:01 +0300
-Message-ID: <20180627055001.GI30877@mtr-leonro.mtl.com>
-References: <20180627100726.0092e8b7@canb.auug.org.au>
+From: vrbagal1 <vrbagal1@linux.vnet.ibm.com>
+Subject: Re: [powerpc/powervm]kernel BUG at mm/memory_hotplug.c:1864!
+Date: Wed, 27 Jun 2018 19:12:10 +0530
+Message-ID: <120957da29cd4b6adffb726522726b7a@linux.vnet.ibm.com>
+References: <6826dab0e4382380db8d11b047272bda@linux.vnet.ibm.com>
+ <20180608112823.GA20395@techadventures.net>
+ <3d1e7740df56ed35c8b56941acdb7079@linux.vnet.ibm.com>
+ <20180608121553.GA20774@techadventures.net>
+ <0aac625ee724d877b87c69bba5ac9a0e@linux.vnet.ibm.com>
+ <605b4df2-4cf1-2dda-3661-68b78845f8ec@gmail.com>
+ <345785ef-5da2-b2e8-78b8-2391b54c6141@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180627100726.0092e8b7@canb.auug.org.au>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-Reply-To: <345785ef-5da2-b2e8-78b8-2391b54c6141@linux.vnet.ibm.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Nathan Fontenot <nfont@linux.vnet.ibm.com>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>, Oscar Salvador <osalvador@techadventures.net>, Linuxppc-dev <linuxppc-dev-bounces+vrbagal1=linux.vnet.ibm.com@lists.ozlabs.org>, linux-mm@kvack.org, linux-next <linux-next@vger.kernel.org>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-next.vger.kernel.org
 
-
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jun 27, 2018 at 10:07:26AM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the rdma tree got a conflict in:
->
->   drivers/infiniband/core/uverbs_cmd.c
->
-> between commit:
->
->   940efcc8889f ("RDMA/uverbs: Protect from attempts to create flows on unsupported QP")
->
-> from the rdma-fixes tree and commit:
->
->   e99028ad76e7 ("RDMA/uverbs: Check existence of create_flow callback")
->
-> from the rdma tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/infiniband/core/uverbs_cmd.c
-> index 87ffeebc0b28,5fc14fde274c..000000000000
-> --- a/drivers/infiniband/core/uverbs_cmd.c
-> +++ b/drivers/infiniband/core/uverbs_cmd.c
-> @@@ -3559,11 -3554,11 +3554,16 @@@ int ib_uverbs_ex_create_flow(struct ib_
->   		goto err_uobj;
->   	}
->
->  +	if (qp->qp_type != IB_QPT_UD && qp->qp_type != IB_QPT_RAW_PACKET) {
->  +		err = -EINVAL;
->  +		goto err_put;
->  +	}
->  +
-> + 	if (!qp->device->create_flow) {
-> + 		err = -EOPNOTSUPP;
-> + 		goto err_put;
-> + 	}
-> +
-
-Thanks Stephen, looks good.
-
->   	flow_attr = kzalloc(struct_size(flow_attr, flows,
->   				cmd.flow_attr.num_of_specs), GFP_KERNEL);
->   	if (!flow_attr) {
+On 2018-06-26 20:24, Nathan Fontenot wrote:
+> On 06/12/2018 05:28 AM, Balbir Singh wrote:
+>> 
+>> 
+>> On 11/06/18 17:41, vrbagal1 wrote:
+>>> On 2018-06-08 17:45, Oscar Salvador wrote:
+>>>> On Fri, Jun 08, 2018 at 05:11:24PM +0530, vrbagal1 wrote:
+>>>>> On 2018-06-08 16:58, Oscar Salvador wrote:
+>>>>>> On Fri, Jun 08, 2018 at 04:44:24PM +0530, vrbagal1 wrote:
+>>>>>>> Greetings!!!
+>>>>>>> 
+>>>>>>> I am seeing kernel bug followed by oops message and system 
+>>>>>>> reboots,
+>>>>>>> while
+>>>>>>> running dlpar memory hotplug test.
+>>>>>>> 
+>>>>>>> Machine Details: Power6 PowerVM Platform
+>>>>>>> GCC version: (gcc version 4.8.3 20140911 (Red Hat 4.8.3-7) (GCC))
+>>>>>>> Test case: dlpar memory hotplug test 
+>>>>>>> (https://github.com/avocado-framework-tests/avocado-misc-tests/blob/master/memory/memhotplug.py)
+>>>>>>> Kernel Version: Linux version 4.17.0-autotest
+>>>>>>> 
+>>>>>>> I am seeing this bug on rc7 as well.
+>>> 
+>>> Observing similar traces on linux next kernel: 
+>>> 4.17.0-next-20180608-autotest
+>>> 
+>>>  Block size [0x4000000] unaligned hotplug range: start 0x220000000, 
+>>> size 0x1000000
+>> 
+>> size < block_size in this case, why? how? Could you confirm that the 
+>> block size is 64MB and your trying to remove 16MB
+>> 
+> 
+> I was not able to re-create this failure exactly ( I don't have a 
+> Power6 system)
+> but was able to get a similar re-create on a Power 9 with a few 
+> modifications.
+> 
+> I think the issue you're seeing is due to a change in the validation of 
+> memory
+> done in remove_memory to ensure the amount of memory being removed 
+> spans
+> entire memory block. The pseries memory remove code, see
+> pseries_remove_memblock,
+> tries to remove each section of a memory block instead of the entire
+> memory block.
+> 
+> Could you try the patch below that updates the pseries code to remove 
+> the entire
+> memory block instead of doing it one section at a time.
+> 
+> -Nathan
 
 
+Hi Nathan,
 
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
+With below patch applied on 4.18.0-rc2 I am seeing below oops message.
 
------BEGIN PGP SIGNATURE-----
+------------[ cut here ]------------
+kernel BUG at mm/memory_hotplug.c:150!
+Oops: Exception in kernel mode, sig: 5 [#1]
+BE SMP NR_CPUS=1024 NUMA pSeries
+Modules linked in: rpadlpar_io rpaphp nf_conntrack_netbios_ns 
+nf_conntrack_broadcast ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 
+nf_defrag_ipv6 ipt_REJECT cfg80211 nf_reject_ipv4 nf_conntrack_ipv4 
+nf_defrag_ipv4 rfkill xt_conntrack nf_conntrack libcrc32c ebtable_nat 
+ebtable_broute bridge stp llc ebtable_filter ebtables ip6table_mangle 
+ip6table_security ip6table_raw ip6table_filter ip6_tables iptable_mangle 
+iptable_security iptable_raw iptable_filter ip_tables ses osst enclosure 
+scsi_transport_sas ehea st uio_pdrv_genirq uio nfsd auth_rpcgss nfs_acl 
+lockd grace sunrpc ipv6 crc_ccitt ext4 mbcache jbd2 sd_mod sr_mod cdrom 
+dm_mirror dm_region_hash dm_log dm_mod dax
+CPU: 5 PID: 2925 Comm: drmgr Tainted: G        W         
+4.18.0-rc2-00045-g671afc8 #2
+NIP:  c0000000002cf278 LR: c0000000002c0c38 CTR: 0000000000000400
+REGS: c0000002ac4ab150 TRAP: 0700   Tainted: G        W          
+(4.18.0-rc2-00045-g671afc8)
+MSR:  8000000000029032 <SF,EE,ME,IR,DR,RI>  CR: 28002884  XER: 00000000
+CFAR: c0000000002c0c00 IRQMASK: 0
+GPR00: c0000000002c0c38 c0000002ac4ab3d0 c000000001159b00 
+c0000002b1091810
+GPR04: 0000000000000000 0000000000000000 0000000000000000 
+0000000000002b10
+GPR08: c0000002b3fd0600 0000000000000001 0000000000000000 
+0000000000000220
+GPR12: 0000000088002884 c00000000eeaa000 000000000002b400 
+0000000000024d00
+GPR16: c0000002b3f8ca00 0000000000024c00 c0000000d3fc89c0 
+0000000000024d00
+GPR20: 0000000000000003 0000000000000004 c0000002b3f7ca8c 
+0000000000000000
+GPR24: 0000000000000000 0000000000000000 0000000000000000 
+0000000000000000
+GPR28: c0000002b3fd0600 c0000002b1f7c6c0 c0000002b3f86224 
+c0000002b1091810
+NIP [c0000000002cf278] .put_page_bootmem+0x28/0xf0
+LR [c0000000002c0c38] .sparse_remove_one_section+0x228/0x2c0
+Call Trace:
+[c0000002ac4ab3d0] [c0000002ac4ab450] 0xc0000002ac4ab450 (unreliable)
+[c0000002ac4ab450] [c0000000002c0c38] 
+.sparse_remove_one_section+0x228/0x2c0
+[c0000002ac4ab4f0] [c0000000002cf6f8] .__remove_pages+0x3b8/0x550
+[c0000002ac4ab600] [c0000000008d32a4] .arch_remove_memory+0xb4/0x128
+[c0000002ac4ab680] [c0000000002d1cd0] .remove_memory+0xb0/0x100
+[c0000002ac4ab710] [c0000000000bc7b4] .pseries_remove_memblock+0x94/0xe0
+[c0000002ac4ab790] [c0000000000bd3f8] 
+.pseries_memory_notifier+0x248/0x260
+[c0000002ac4ab820] [c000000000116ee8] .notifier_call_chain+0x78/0xf0
+[c0000002ac4ab8c0] [c000000000117358] 
+.__blocking_notifier_call_chain+0x58/0x90
+[c0000002ac4ab960] [c000000000743e30] .of_property_notify+0x90/0xd0
+[c0000002ac4aba10] [c00000000073ed04] .of_update_property+0x104/0x150
+[c0000002ac4abac0] [c0000000000b045c] .ofdt_write+0x3bc/0x6f0
+[c0000002ac4abb90] [c0000000003735b8] .proc_reg_write+0x78/0xc0
+[c0000002ac4abc10] [c0000000002deaac] .__vfs_write+0x3c/0x200
+[c0000002ac4abcf0] [c0000000002deeb0] .vfs_write+0xc0/0x230
+[c0000002ac4abd90] [c0000000002df214] .ksys_write+0x54/0x100
+[c0000002ac4abe30] [c00000000000b9dc] system_call+0x5c/0x70
+Instruction dump:
+60000000 60000000 7c0802a6 fbe1fff8 7c7f1b78 f8010010 f821ff81 e9230020
+3929fff4 21290002 7d294910 7d2900d0 <0b090000> 7c0004ac 39230034 
+7d404828
+---[ end trace 85b846899f1bdbb7 ]---
 
-iQIcBAEBAgAGBQJbMyWJAAoJEORje4g2clinkT8P/ArcUH7f8+w+Z1u3JZa0K9Ib
-sUX9gS4YDPl/Jkov/wVW8S/cwGLRyCvrN177r4/LOGMJri1l2V4PmP53Gutet9oI
-bBbbdcJ9jvghW3acD+2lzGhddqe8mk6psmjPMh6qK4QP7B7/mO2NxcBUeF3hK8eU
-lal2JbBcMsaLgGWsQ0UrrL4X3zWtLEPgawSwDQjn+dDcs9m6OL8a+Vm1Ayw3VHLU
-wObpB+20f4fq7dCHKKSG2TvBvotptUNCh8QwdSxYipDWFEBBYJOcGfdSj4aI199/
-aozp7hGTD8953VKTcHVnDQcczVE7iovzfd3mHNGVEV+Jy6VaJe2H+JZR9YTE1Vke
-87SvtyTLQIgMwR3BHqBMtcrZglndzFEzQ3JRJHl1cOPZ4G002KyKld6A0YWP0Tsr
-HADhhjUMpiu5PvGOaBzzl0PBprkFbhaouQvlAlhGosdNvi0wuG3pUsKJUzSvVWzn
-TbvmvODagbDxpUI4wm8BJm5Mkn6JVcbXxpXuxXsdYJgxwICS4FvZpPDFVdaF8x0l
-mNhjj/qwT0aEr1I2VpNLiXPIoVxQEFawAVhNKpZU37qd9GVE+ZyPUHc6vneM+AXf
-JrFhcHiw9z1218gNYxSxCnMtDEQj3urnfzuqYzEsr7hqOLFkzPz2T4Y5Swd/8fKN
-XcFskSwW60LlHM+hp4E0
-=k306
------END PGP SIGNATURE-----
 
---ZJcv+A0YCCLh2VIg--
+Regards,
+Venkat.
+
+
+> ---
+> 
+>  arch/powerpc/platforms/pseries/hotplug-memory.c |   18 
+> ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> index c1578f54c626..6072efc793e1 100644
+> --- a/arch/powerpc/platforms/pseries/hotplug-memory.c
+> +++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+> @@ -316,11 +316,11 @@ static int dlpar_offline_lmb(struct drmem_lmb 
+> *lmb)
+>  	return dlpar_change_lmb_state(lmb, false);
+>  }
+> 
+> -static int pseries_remove_memblock(unsigned long base, unsigned int
+> memblock_size)
+> +static int pseries_remove_memblock(unsigned long base,
+> +				   unsigned int memblock_sz)
+>  {
+> -	unsigned long block_sz, start_pfn;
+> -	int sections_per_block;
+> -	int i, nid;
+> +	unsigned long start_pfn;
+> +	int nid;
+> 
+>  	start_pfn = base >> PAGE_SHIFT;
+> 
+> @@ -329,18 +329,12 @@ static int pseries_remove_memblock(unsigned long
+> base, unsigned int memblock_siz
+>  	if (!pfn_valid(start_pfn))
+>  		goto out;
+> 
+> -	block_sz = pseries_memory_block_size();
+> -	sections_per_block = block_sz / MIN_MEMORY_BLOCK_SIZE;
+>  	nid = memory_add_physaddr_to_nid(base);
+> -
+> -	for (i = 0; i < sections_per_block; i++) {
+> -		remove_memory(nid, base, MIN_MEMORY_BLOCK_SIZE);
+> -		base += MIN_MEMORY_BLOCK_SIZE;
+> -	}
+> +	remove_memory(nid, base, memblock_sz);
+> 
+>  out:
+>  	/* Update memory regions for memory remove */
+> -	memblock_remove(base, memblock_size);
+> +	memblock_remove(base, memblock_sz);
+>  	unlock_device_hotplug();
+>  	return 0;
+>  }
