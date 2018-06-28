@@ -1,62 +1,84 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the sunxi tree
-Date: Thu, 28 Jun 2018 08:42:48 +1000
-Message-ID: <20180628084248.3aa1b0fe@canb.auug.org.au>
+Subject: linux-next: manual merge of the xarray tree with the
+ wireless-drivers-next tree
+Date: Thu, 28 Jun 2018 14:59:00 +1000
+Message-ID: <20180628145900.4ca1e648@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/QVywD+8YQ=QWUU4G1WaRUH/"; protocol="application/pgp-signature"
+ boundary="Sig_/w0UTs=DoWUojtQpEhHHC5tx"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Maxime Ripard <maxime.ripard@bootlin.com>, Chen-Yu Tsai <wens@csie.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Jernej Skrabec <jernej.skrabec@siol.net>
+To: Matthew Wilcox <willy@infradead.org>, Kalle Valo <kvalo@codeaurora.org>, Wireless <linux-wireless@vger.kernel.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Johannes Berg <johannes@sipsolutions.net>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/QVywD+8YQ=QWUU4G1WaRUH/
+--Sig_/w0UTs=DoWUojtQpEhHHC5tx
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-After merging the sunxi tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+Today's linux-next merge of the xarray tree got a conflict in:
 
-In file included from arch/arm/boot/dts/sun8i-r40-bananapi-m2-ultra.dts:45:=
-0:
-arch/arm/boot/dts/sun8i-r40.dtsi:47:10: fatal error: dt-bindings/clock/sun8=
-i-tcon-top.h: No such file or directory
- #include <dt-bindings/clock/sun8i-tcon-top.h>
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from arch/arm/boot/dts/sun8i-v40-bananapi-m2-berry.dts:44:=
-0:
-arch/arm/boot/dts/sun8i-r40.dtsi:47:10: fatal error: dt-bindings/clock/sun8=
-i-tcon-top.h: No such file or directory
- #include <dt-bindings/clock/sun8i-tcon-top.h>
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  lib/Kconfig.debug
 
-Caused by commit
+between commit:
 
-  2324106f7e43 ("ARM: dts: sun8i: r40: Add HDMI pipeline")
+  0e2dc70e3d0d ("bitfield: add tests")
 
-I have used the sunxi tree from next-20180627 for today.
+from the wireless-drivers-next tree and commit:
+
+  d968f529e39f ("xarray: Add XArray load operation")
+
+from the xarray tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/QVywD+8YQ=QWUU4G1WaRUH/
+diff --cc lib/Kconfig.debug
+index f2be7503f87c,df1ea92d924c..000000000000
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@@ -1802,13 -1802,9 +1802,16 @@@ config TEST_BITMA
+ =20
+  	  If unsure, say N.
+ =20
+ +config TEST_BITFIELD
+ +	tristate "Test bitfield functions at runtime"
+ +	help
+ +	  Enable this option to test the bitfield functions at boot.
+ +
+ +	  If unsure, say N.
+ +
++ config TEST_XARRAY
++ 	tristate "Test the XArray code at runtime"
++=20
+  config TEST_UUID
+  	tristate "Test functions located in the uuid module at runtime"
+ =20
+
+--Sig_/w0UTs=DoWUojtQpEhHHC5tx
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls0EugACgkQAVBC80lX
-0GyKAgf9G6RElfwsIoRjnob19TaASAOrs0aEjOf4Vv/TDeMtyutFrKSbC5X9JTSk
-DXShui1BJ331UPmHSku4NKKEiJf+NHvYvC3ueUu03OJmpSvmIRIxqRFE+G62MwW8
-cNp1XKVAC/xjQ0h5qVbxqx2/w3cp1Fd0+92LeSSTUvzjLqxcLqRkD65nYS9q57kJ
-GN88NInHMp0bqkyxw41Gt+6kw4VT7XHCOEWYCpE0vkHsnBaBTIrz+wgT+L/0JUat
-l0fgZbjLXQFZLowwgYknGyc1Hz5p1zHMGYbpFR+qfJdROmyi0m9WCtpqOOGeuwT9
-Eyn8zS9Qjnn9d6A/hex7pzkxnRk96Q==
-=Q7Pe
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls0axQACgkQAVBC80lX
+0Gxt7wf+NCxfGPR4S0spDyVUqdi2K48ZHk3jqA+yYRzhX025g0bRG1in3ZO7H74n
+AIFM5rgATSQPlGuXa4qgZzzKhRHvDAPYf4LuFL3M/Usqa3M187AVt6cgFZBf78QA
+oD6ypzvECVpShj5tZQihwdEegBxib9ZdQOXu+8m6VFMaZiPVeCsNQ5nOh7q7zyR5
+RpzUbTbEwAB6K8fZuW2Y/HomKyJruhkMbJ1CCBSi6eGQhKAuh+A5OMdQ8AXxfIAG
+1Cg83FHhb/az1YwyzQQHLr3mVyFee54SXTyLmzbw2QKcluH6QEHQ4Hw1A7Szzv2+
+Nf88LhwOs0NorXjVw4iCrwioOqAKVQ==
+=AT++
 -----END PGP SIGNATURE-----
 
---Sig_/QVywD+8YQ=QWUU4G1WaRUH/--
+--Sig_/w0UTs=DoWUojtQpEhHHC5tx--
