@@ -1,90 +1,27 @@
-From: Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH -next v3] cred: conditionally declare groups-related functions
-Date: Thu, 28 Jun 2018 11:37:29 -0400
-Message-ID: <CAHC9VhTsHby0V=3hv8x4Ut3TU_cn3cRw_WnMP99b_ppXMXpsng@mail.gmail.com>
-References: <20180626110442.21014-1-omosnace@redhat.com>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
+Date: Thu, 28 Jun 2018 18:11:03 +0200
+Message-ID: <20180628161102.GJ2287@suse.cz>
+References: <20180627085936.4f9cc4f2@canb.auug.org.au>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180626110442.21014-1-omosnace@redhat.com>
+Content-Disposition: inline
+In-Reply-To: <20180627085936.4f9cc4f2@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: omosnace@redhat.com
-Cc: akpm@linux-foundation.org, rdunlap@infradead.org, sfr@canb.auug.org.au, Eric Paris <eparis@redhat.com>, dhowells@redhat.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, linux-audit@redhat.com
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jun 26, 2018 at 7:04 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> The groups-related functions declared in include/linux/cred.h are
-> defined in kernel/groups.c, which is compiled only when
-> CONFIG_MULTIUSER=y. Move all these function declarations under #ifdef
-> CONFIG_MULTIUSER to help avoid accidental usage in contexts where
-> CONFIG_MULTIUSER might be disabled.
->
-> This patch also adds a fallback for groups_search(). Currently this
-> function is only called from kernel/groups.c itself and
-> security/keys/permissions.c, where the call is (by coincidence)
-> optimized away in case CONFIG_MULTIUSER=n. However, the audit subsystem
-> (which does not depend on CONFIG_MULTIUSER) calls this function in
-> -next, so the fallback will be needed to avoid compilation errors or
-> ugly workarounds.
->
-> See also:
-> https://lkml.org/lkml/2018/6/20/670
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git/commit/?h=next&id=af85d1772e31fed34165a1b3decef340cf4080c0
->
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> ---
->
-> Changes:
->     v2->v3: commit message corrections
->     v1->v2: change default return value of groups_search() to 1
->
->  include/linux/cred.h | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
+On Wed, Jun 27, 2018 at 08:59:36AM +1000, Stephen Rothwell wrote:
+> After merging the btrfs-kdave tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+> 
+> fs/btrfs/print-tree.c: In function 'print_extent_item':
+> fs/btrfs/print-tree.c:56:3: error: implicit declaration of function 'btrfs_print_v0_err'; did you mean 'btrfs_print_tree'? [-Werror=implicit-function-declaration]
+>    btrfs_print_v0_err(eb->fs_info);
+>    ^~~~~~~~~~~~~~~~~~
+>    btrfs_print_tree
 
-Merged, thanks guys.
-
-> diff --git a/include/linux/cred.h b/include/linux/cred.h
-> index 631286535d0f..7eed6101c791 100644
-> --- a/include/linux/cred.h
-> +++ b/include/linux/cred.h
-> @@ -65,6 +65,12 @@ extern void groups_free(struct group_info *);
->
->  extern int in_group_p(kgid_t);
->  extern int in_egroup_p(kgid_t);
-> +extern int groups_search(const struct group_info *, kgid_t);
-> +
-> +extern int set_current_groups(struct group_info *);
-> +extern void set_groups(struct cred *, struct group_info *);
-> +extern bool may_setgroups(void);
-> +extern void groups_sort(struct group_info *);
->  #else
->  static inline void groups_free(struct group_info *group_info)
->  {
-> @@ -78,12 +84,11 @@ static inline int in_egroup_p(kgid_t grp)
->  {
->          return 1;
->  }
-> +static inline int groups_search(const struct group_info *group_info, kgid_t grp)
-> +{
-> +       return 1;
-> +}
->  #endif
-> -extern int set_current_groups(struct group_info *);
-> -extern void set_groups(struct cred *, struct group_info *);
-> -extern int groups_search(const struct group_info *, kgid_t);
-> -extern bool may_setgroups(void);
-> -extern void groups_sort(struct group_info *);
->
->  /*
->   * The security context of a task
-> --
-> 2.17.1
->
-
-
--- 
-paul moore
-www.paul-moore.com
+Should be fixed in today's branch.
