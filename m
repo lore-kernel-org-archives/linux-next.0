@@ -1,61 +1,79 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
-Date: Fri, 29 Jun 2018 09:58:58 +1000
-Message-ID: <20180629095858.655ae88f@canb.auug.org.au>
-References: <20180627085936.4f9cc4f2@canb.auug.org.au>
-        <20180628161102.GJ2287@suse.cz>
+Subject: linux-next: build failure after merge of the fbdev tree
+Date: Fri, 29 Jun 2018 11:07:44 +1000
+Message-ID: <20180629110744.29b54355@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nI2ElGffOETyszhKHdSp_Ti"; protocol="application/pgp-signature"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180628161102.GJ2287@suse.cz>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>
+Content-Type: multipart/mixed; boundary="===============0016655611=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/nI2ElGffOETyszhKHdSp_Ti
+--===============0016655611==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FzGKjTKmCinIQZX16HKmEJ."; protocol="application/pgp-signature"
+
+--Sig_/FzGKjTKmCinIQZX16HKmEJ.
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi David,
+Hi Bartlomiej,
 
-On Thu, 28 Jun 2018 18:11:03 +0200 David Sterba <dsterba@suse.cz> wrote:
->
-> On Wed, Jun 27, 2018 at 08:59:36AM +1000, Stephen Rothwell wrote:
-> > After merging the btrfs-kdave tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-> >=20
-> > fs/btrfs/print-tree.c: In function 'print_extent_item':
-> > fs/btrfs/print-tree.c:56:3: error: implicit declaration of function 'bt=
-rfs_print_v0_err'; did you mean 'btrfs_print_tree'? [-Werror=3Dimplicit-fun=
-ction-declaration]
-> >    btrfs_print_v0_err(eb->fs_info);
-> >    ^~~~~~~~~~~~~~~~~~
-> >    btrfs_print_tree =20
->=20
-> Should be fixed in today's branch.
+After merging the fbdev tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Sorry, still broken.  I fetched your tree only about 5 minutes ago.
+ERROR: "dummycon_unregister_output_notifier" [drivers/video/fbdev/core/fb.k=
+o] undefined!
+ERROR: "dummycon_register_output_notifier" [drivers/video/fbdev/core/fb.ko]=
+ undefined!
+
+Caused by commit
+
+  83d83bebf401 ("console/fbcon: Add support for deferred console takeover")
+
+I have reverted that commit for today.
+
+I note that this commit is in the drm-misc tree as well.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/nI2ElGffOETyszhKHdSp_Ti
+--Sig_/FzGKjTKmCinIQZX16HKmEJ.
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1dkIACgkQAVBC80lX
-0GxQXAf/YfufiSebI9R2qYp/QA0I67edCMf19zdig0If3eJCDE+3piD8HDTVFfHs
-AqO1NoFFnhAOBTyEjMMQBl9rvVMfhvNYc4OncuFu4aDooe99S5nXw73d7C9pEysn
-tfzmZndJ+GrfwS9ai1v2MklmLfnlHtq0deq3LwD4s+jU2/AAXClDN6G90fsxSnvA
-N6YHphWir89r5IPN8Qd3SU1xUT/GCVZ8KKl3vWclIF13U63Q+580clBXBy88LDx5
-jZz+X3U948pAKGkaipvhOQ/SCuqTLQo6jgILClj/zi9hQvsO6J3lFJng6JG+5VBC
-IqeEYw3na0+2/18+yA9JHGyKk1YEWQ==
-=1SJz
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1hmAACgkQAVBC80lX
+0GyypQgAhNAhIQAYmTGEs5+Y0H5vz92mBk4+b4wnXWPFCV5oyDw1SVxC9ampJ5br
+WjFViE7jAmVP86DQ05J4vX88tZHTQEAXMOwJOKwFFTZxQ5+dxOihuy8jd62YiU5W
+OWayRsQJVovr4fGByVf6Chas9zrB6lL5yQphE57IO8DEReg22YE5vH4d7vwB/q9x
+4tq7mAR8wQR+5gjPJNlOYWWZN6kObAIWHTxH7jEz/Oe+KM8ARLiyK0QYw8Do1ZqH
+2woQdmJfFzT9gR1xBH3nD42l5HelE4vt37/kvI+bp1rBkCnTGVUSTJeQ5Bct2Pib
+3z67UldMvPG6N0dclvu3/+mJUVnv+g==
+=mzU9
 -----END PGP SIGNATURE-----
 
---Sig_/nI2ElGffOETyszhKHdSp_Ti--
+--Sig_/FzGKjTKmCinIQZX16HKmEJ.--
+
+--===============0016655611==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0016655611==--
