@@ -1,40 +1,41 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: linux-next: build failure after merge of the fbdev tree
-Date: Fri, 29 Jun 2018 11:32:08 +0200
-Message-ID: <dff81030-46bd-b80b-3d66-8ccb925accc8@redhat.com>
-References: <20180629110744.29b54355@canb.auug.org.au>
+From: David Sterba <dsterba@suse.cz>
+Subject: Re: linux-next: build failure after merge of the btrfs-kdave tree
+Date: Fri, 29 Jun 2018 13:19:31 +0200
+Message-ID: <20180629111931.GN2287@suse.cz>
+References: <20180627085936.4f9cc4f2@canb.auug.org.au>
+ <20180628161102.GJ2287@suse.cz>
+ <20180629095858.655ae88f@canb.auug.org.au>
+Reply-To: dsterba@suse.cz
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20180629110744.29b54355@canb.auug.org.au>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20180629095858.655ae88f@canb.auug.org.au>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nikolay Borisov <nborisov@suse.com>
 List-Id: linux-next.vger.kernel.org
 
-SGksCgpPbiAyOS0wNi0xOCAwMzowNywgU3RlcGhlbiBSb3Rod2VsbCB3cm90ZToKPiBIaSBCYXJ0
-bG9taWVqLAo+IAo+IEFmdGVyIG1lcmdpbmcgdGhlIGZiZGV2IHRyZWUsIHRvZGF5J3MgbGludXgt
-bmV4dCBidWlsZCAoeDg2XzY0Cj4gYWxsbW9kY29uZmlnKSBmYWlsZWQgbGlrZSB0aGlzOgo+IAo+
-IEVSUk9SOiAiZHVtbXljb25fdW5yZWdpc3Rlcl9vdXRwdXRfbm90aWZpZXIiIFtkcml2ZXJzL3Zp
-ZGVvL2ZiZGV2L2NvcmUvZmIua29dIHVuZGVmaW5lZCEKPiBFUlJPUjogImR1bW15Y29uX3JlZ2lz
-dGVyX291dHB1dF9ub3RpZmllciIgW2RyaXZlcnMvdmlkZW8vZmJkZXYvY29yZS9mYi5rb10gdW5k
-ZWZpbmVkIQo+IAo+IENhdXNlZCBieSBjb21taXQKPiAKPiAgICA4M2Q4M2JlYmY0MDEgKCJjb25z
-b2xlL2ZiY29uOiBBZGQgc3VwcG9ydCBmb3IgZGVmZXJyZWQgY29uc29sZSB0YWtlb3ZlciIpCj4g
-Cj4gSSBoYXZlIHJldmVydGVkIHRoYXQgY29tbWl0IGZvciB0b2RheS4KPiAKPiBJIG5vdGUgdGhh
-dCB0aGlzIGNvbW1pdCBpcyBpbiB0aGUgZHJtLW1pc2MgdHJlZSBhcyB3ZWxsLgoKVWdoLCBteSBi
-YWQuIEkgZGlkIG5vdCB0YWtlIHRoZSBmYiBjb2RlIGJlaW5nIG1vZHVsYXIgaW50byBhY2NvdW50
-CmhlcmUuIEkgd2lsbCBzdWJtaXQgYSBmb2xsb3cgdXAgcGF0Y2ggZml4aW5nIHRoaXMgdG9kYXku
-CgpSZWdhcmRzLAoKSGFucwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On Fri, Jun 29, 2018 at 09:58:58AM +1000, Stephen Rothwell wrote:
+> Hi David,
+> 
+> On Thu, 28 Jun 2018 18:11:03 +0200 David Sterba <dsterba@suse.cz> wrote:
+> >
+> > On Wed, Jun 27, 2018 at 08:59:36AM +1000, Stephen Rothwell wrote:
+> > > After merging the btrfs-kdave tree, today's linux-next build (powerpc
+> > > ppc64_defconfig) failed like this:
+> > > 
+> > > fs/btrfs/print-tree.c: In function 'print_extent_item':
+> > > fs/btrfs/print-tree.c:56:3: error: implicit declaration of function 'btrfs_print_v0_err'; did you mean 'btrfs_print_tree'? [-Werror=implicit-function-declaration]
+> > >    btrfs_print_v0_err(eb->fs_info);
+> > >    ^~~~~~~~~~~~~~~~~~
+> > >    btrfs_print_tree  
+> > 
+> > Should be fixed in today's branch.
+> 
+> Sorry, still broken.  I fetched your tree only about 5 minutes ago.
+
+It was a build problem that I did not recognize in my setup
+immediatelly, the warning appears only withtout CONFIG_BTRFS_ASSERT.
+The branch has been updated, commit 1607c1cbdaa0b6b80b0d4a, sorry for
+inconvenience.
