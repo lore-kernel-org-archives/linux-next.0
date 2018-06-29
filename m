@@ -1,79 +1,86 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the fbdev tree
-Date: Fri, 29 Jun 2018 11:07:44 +1000
-Message-ID: <20180629110744.29b54355@canb.auug.org.au>
+Subject: linux-next: manual merge of the usb tree with the usb.current tree
+Date: Fri, 29 Jun 2018 14:57:19 +1000
+Message-ID: <20180629145719.0d7b8fe7@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0016655611=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Intel Graphics <intel-gfx@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>, Hans de Goede <hdegoede@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/L40r_4KLPcaV2A3wfd+01p="; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <greg@kroah.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Li Jun <jun.li@nxp.com>
 List-Id: linux-next.vger.kernel.org
 
---===============0016655611==
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FzGKjTKmCinIQZX16HKmEJ."; protocol="application/pgp-signature"
-
---Sig_/FzGKjTKmCinIQZX16HKmEJ.
+--Sig_/L40r_4KLPcaV2A3wfd+01p=
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bartlomiej,
+Hi Greg,
 
-After merging the fbdev tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Today's linux-next merge of the usb tree got a conflict in:
 
-ERROR: "dummycon_unregister_output_notifier" [drivers/video/fbdev/core/fb.k=
-o] undefined!
-ERROR: "dummycon_register_output_notifier" [drivers/video/fbdev/core/fb.ko]=
- undefined!
+  drivers/staging/typec/Kconfig
 
-Caused by commit
+between commit:
 
-  83d83bebf401 ("console/fbcon: Add support for deferred console takeover")
+  e16711c32bca ("staging/typec: fix tcpci_rt1711h build errors")
 
-I have reverted that commit for today.
+from the usb.current tree and commit:
 
-I note that this commit is in the drm-misc tree as well.
+  990da41530b3 ("staging: typec: tcpci: move tcpci drivers out of staging")
+
+from the usb tree.
+
+I fixed it up (I removed the file and allpied the patch below) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 29 Jun 2018 14:54:04 +1000
+Subject: [PATCH] usb: update for tcpci drivers moving out of staging
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/usb/typec/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/typec/Kconfig b/drivers/usb/typec/Kconfig
+index 972fd1911045..ee808903983f 100644
+--- a/drivers/usb/typec/Kconfig
++++ b/drivers/usb/typec/Kconfig
+@@ -65,6 +65,7 @@ config TYPEC_TCPCI
+=20
+ config TYPEC_RT1711H
+ 	tristate "Richtek RT1711H Type-C chip driver"
++	depends on I2C
+ 	select TYPEC_TCPCI
+ 	help
+ 	  Richtek RT1711H Type-C chip driver that works with
+--=20
+2.17.1
+
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/FzGKjTKmCinIQZX16HKmEJ.
+--Sig_/L40r_4KLPcaV2A3wfd+01p=
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1hmAACgkQAVBC80lX
-0GyypQgAhNAhIQAYmTGEs5+Y0H5vz92mBk4+b4wnXWPFCV5oyDw1SVxC9ampJ5br
-WjFViE7jAmVP86DQ05J4vX88tZHTQEAXMOwJOKwFFTZxQ5+dxOihuy8jd62YiU5W
-OWayRsQJVovr4fGByVf6Chas9zrB6lL5yQphE57IO8DEReg22YE5vH4d7vwB/q9x
-4tq7mAR8wQR+5gjPJNlOYWWZN6kObAIWHTxH7jEz/Oe+KM8ARLiyK0QYw8Do1ZqH
-2woQdmJfFzT9gR1xBH3nD42l5HelE4vt37/kvI+bp1rBkCnTGVUSTJeQ5Bct2Pib
-3z67UldMvPG6N0dclvu3/+mJUVnv+g==
-=mzU9
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1vC8ACgkQAVBC80lX
+0GzydggAov5EbQ+wOVAxirdqIjoX9a99U9dblvLIduzdGc0O2ufxgxLe5R48QNVL
+nc78eta7q+wzrx4DtYgYVXoxqvy1c+ZCDeJBCV7JwD2bxtcP0vgcVfx0aY7grQ2Q
+cqntGtjzPSaJM84VA4vFT+Z3G/KsGZiSOav3ajxfiWGq3NlMFPGWXUxT2WYrp9FN
+KyIc79GaWXws1Eyge23F15UKVQnIEjV2yrMDzK8K5VOkO6AA7S063epBYLMKQXgm
+Rqoit2fbYpEUjammqXMSdmUWdx6ne2UT5DcZRj9a0gALwHNPwnTvDFrwHz0WUzw0
+TKe9ADgr8donOu47vOD9qP8P+dRzyQ==
+=lkU6
 -----END PGP SIGNATURE-----
 
---Sig_/FzGKjTKmCinIQZX16HKmEJ.--
-
---===============0016655611==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0016655611==--
+--Sig_/L40r_4KLPcaV2A3wfd+01p=--
