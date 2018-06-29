@@ -1,106 +1,82 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: build failure after merge of the random tree
-Date: Fri, 29 Jun 2018 16:06:10 +1000
-Message-ID: <20180629160610.5abd17c0@canb.auug.org.au>
+Subject: linux-next: build failure after merge of the akpm-current tree
+Date: Fri, 29 Jun 2018 17:49:46 +1000
+Message-ID: <20180629174946.1b4f40ef@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/uW3YB7B95BxXcRBkn=3QYaN"; protocol="application/pgp-signature"
+ boundary="Sig_/kC6n6m0sbVYWzVTz_IMJyL+"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexey Dobriyan <adobriyan@gmail.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/uW3YB7B95BxXcRBkn=3QYaN
+--Sig_/kC6n6m0sbVYWzVTz_IMJyL+
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Theodore,
+Hi Andrew,
 
-After merging the random tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+After merging the akpm tree, today's linux-next build (powerpc
+allyesconfig) failed like this:
 
-In file included from include/linux/mmzone.h:10:0,
-                 from include/linux/gfp.h:6,
-                 from include/linux/umh.h:4,
-                 from include/linux/kmod.h:22,
-                 from include/linux/module.h:13,
-                 from drivers/char/random.c:242:
-drivers/char/random.c: In function 'random_ioctl':
-drivers/char/random.c:1973:32: error: 'random_wait' undeclared (first use i=
-n this function); did you mean 'random_write'?
-    wake_up_interruptible_poll(&random_wait, POLLIN);
-                                ^
-include/linux/wait.h:216:12: note: in definition of macro 'wake_up_interrup=
-tible_poll'
-  __wake_up(x, TASK_INTERRUPTIBLE, 1, poll_to_key(m))
-            ^
-drivers/char/random.c:1973:32: note: each undeclared identifier is reported=
- only once for each function it appears in
-    wake_up_interruptible_poll(&random_wait, POLLIN);
-                                ^
-include/linux/wait.h:216:12: note: in definition of macro 'wake_up_interrup=
-tible_poll'
-  __wake_up(x, TASK_INTERRUPTIBLE, 1, poll_to_key(m))
-            ^
+In file included from include/linux/kernel.h:10:0,
+                 from include/linux/list.h:9,
+                 from include/linux/preempt.h:11,
+                 from include/linux/spinlock.h:51,
+                 from include/linux/seqlock.h:36,
+                 from include/linux/time.h:6,
+                 from fs/proc/inode.c:9:
+fs/proc/inode.c: In function 'proc_init_kmemcache':
+include/linux/compiler.h:339:38: error: call to '__compiletime_assert_110' =
+declared with attribute error: BUILD_BUG_ON failed: sizeof(struct proc_dir_=
+entry) >=3D SIZEOF_PDE
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+                                      ^
+include/linux/compiler.h:319:4: note: in definition of macro '__compiletime=
+_assert'
+    prefix ## suffix();    \
+    ^~~~~~
+include/linux/compiler.h:339:2: note: in expansion of macro '_compiletime_a=
+ssert'
+  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
+  ^~~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:45:37: note: in expansion of macro 'compiletime_a=
+ssert'
+ #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+                                     ^~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:69:2: note: in expansion of macro 'BUILD_BUG_ON_M=
+SG'
+  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+  ^~~~~~~~~~~~~~~~
+fs/proc/inode.c:110:2: note: in expansion of macro 'BUILD_BUG_ON'
+  BUILD_BUG_ON(sizeof(struct proc_dir_entry) >=3D SIZEOF_PDE);
+  ^~~~~~~~~~~~
 
 Caused by commit
 
-  e4f3df9712bb ("random: Wake up writers when random pools are zapped")
+  527ae8759f10 ("proc: fixup PDE allocation bloat")
 
-interacting with commit
-
-  a11e1d432b51 ("Revert changes to convert to ->poll_mask() and aio IOCB_CM=
-D_POLL")
-
-from Linus' tree.
-
-I took a stab and applied the following patch:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 29 Jun 2018 15:43:01 +1000
-Subject: [PATCH] random: fix up for revert of poll_mask changes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/char/random.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index 00db7aed3204..d686aa2a129b 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1970,7 +1970,7 @@ static long random_ioctl(struct file *f, unsigned int=
- cmd, unsigned long arg)
- 		input_pool.entropy_count =3D 0;
- 		blocking_pool.entropy_count =3D 0;
- 		if (random_write_wakeup_bits) {
--			wake_up_interruptible_poll(&random_wait, POLLIN);
-+			wake_up_interruptible_poll(&random_write_wait, POLLIN);
- 			kill_fasync(&fasync, SIGIO, POLL_OUT);
- 		}
- 		return 0;
---=20
-2.17.1
+I have reverted that commit for today.
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/uW3YB7B95BxXcRBkn=3QYaN
+--Sig_/kC6n6m0sbVYWzVTz_IMJyL+
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls1zFIACgkQAVBC80lX
-0GwHvAf+L2N9Iey4ayCFP/sBek5BrbC6Lvb/E1zhzIs3+m1rX1xK5X2V5JMDO98k
-zVIxKR4EuUzWup5KpsF2vbAj/BTsLjBPOQ2/sXFpGisI0sMNYTucKj/VKc5ciOSX
-Y88HUUVQdJItTkiFGX1GQOk7jDVfXMoc1Jb7zu/1GoICSea+OyAB381POGKkLCOx
-ak2pWfQKs/jScFcl14DnTZDeQiaOO/ISHIjWPgC40xO6UCgBWMi2TYRl7JRBQ6NP
-9WjYEJi342f+D+Pc4Gr7Zs6MPFiZ5oJs6AEhGSbcV+wIoSI4ZGmjS+BZSIpbPqp4
-U5Je2g4pWXPv7Nq6SG25ex5y8yPbIQ==
-=36uH
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls15JoACgkQAVBC80lX
+0Gy4UQf/ZmPl9OWfJxZMfy995TKmvAjaa7Qkzxy522Ov4X7v8WnKi/RA4vQJ3RAo
+T3s5KDwLRFRgWHFFVQZjv+Bc2VjQOAQzhqyWiG1YNsV/K6hY5U8T5zXhl0YQBF3t
+9gyt98yZuQ5lQA7G+Q5vM03Gz9JptuRQ162ahBZmMajqKxYRVYxbFd5hIxTCCyc2
+qzBg6HGnbSqBNPJJ8zTflaZo6UpbqHjEWjBRPrBnWhfIhKzWuKEz6ZX9PYBM79kk
+fcG2m4RVqtwpscTH65XX0I1qhUqjSuHDFZZhxg8b//IVuu5HJjK59K2VFXcVow/A
+hJHfGBlh40DHuFOiz+kr8WGh2Ypl/A==
+=rHHR
 -----END PGP SIGNATURE-----
 
---Sig_/uW3YB7B95BxXcRBkn=3QYaN--
+--Sig_/kC6n6m0sbVYWzVTz_IMJyL+--
