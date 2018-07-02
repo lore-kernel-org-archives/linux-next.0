@@ -1,38 +1,53 @@
 From: Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: linux-next: Tree for Jul 2 (media/pci/meye/)
-Date: Mon, 2 Jul 2018 09:39:02 -0700
-Message-ID: <c38838a6-5582-6b33-5b6b-8938cfdce571@infradead.org>
+Subject: Re: linux-next: Tree for Jul 2 (sound/soc/pxa/)
+Date: Mon, 2 Jul 2018 09:41:16 -0700
+Message-ID: <c12cc7c4-03d0-4b0b-d02f-7e72b8a135d4@infradead.org>
 References: <20180702145158.10190101@canb.auug.org.au>
+ <2276786f-3f50-0740-0500-68a26a49704a@infradead.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180702145158.10190101@canb.auug.org.au>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2276786f-3f50-0740-0500-68a26a49704a@infradead.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-media <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@s-opensource.com>, Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: moderated for non-subscribers <alsa-devel@alsa-project.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-arm-kernel@lists.infradead.org, Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>
 List-Id: linux-next.vger.kernel.org
 
-On 07/01/18 21:51, Stephen Rothwell wrote:
-> Hi all,
+[add other maintainers]
+
+On 07/02/18 09:09, Randy Dunlap wrote:
+> On 07/01/18 21:51, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> Changes since 20180629:
+>>
 > 
-> Changes since 20180629:
+> on i386 or x86_64:
 > 
-
-on x86_64:
-
-drivers/media/pci/meye/meye.o: In function `meye_s_ctrl':
-meye.c:(.text+0x710): undefined reference to `sony_pic_camera_command'
-meye.c:(.text+0x736): undefined reference to `sony_pic_camera_command'
-meye.c:(.text+0x75c): undefined reference to `sony_pic_camera_command'
-meye.c:(.text+0x782): undefined reference to `sony_pic_camera_command'
-meye.c:(.text+0x7a8): undefined reference to `sony_pic_camera_command'
-
-when
-CONFIG_SONY_LAPTOP=m
-CONFIG_VIDEO_MEYE=y
-CONFIG_COMPILE_TEST=y
+> builtin:
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x228): undefined reference to `pxa2xx_soc_pcm_new'
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x22c): undefined reference to `pxa2xx_pcm_free_dma_buffers'
+> sound/soc/pxa/pxa-ssp.o:(.rodata+0x250): undefined reference to `pxa2xx_pcm_ops'
+> /home/rdunlap/lnx/next/linux-next-20180702/Makefile:1023: recipe for target 'vmlinux' failed
+> 
+> modular:
+> ERROR: "pxa2xx_pcm_ops" [sound/soc/pxa/snd-soc-pxa-ssp.ko] undefined!
+> ERROR: "pxa2xx_pcm_free_dma_buffers" [sound/soc/pxa/snd-soc-pxa-ssp.ko] undefined!
+> ERROR: "pxa2xx_soc_pcm_new" [sound/soc/pxa/snd-soc-pxa-ssp.ko] undefined!
+> 
+> 
+> x86_64 [modular] randconfig file is attached.
+> 
 
 
 -- 
