@@ -1,37 +1,46 @@
-From: Robert Jarzmik <robert.jarzmik@free.fr>
-Subject: Re: linux-next: Tree for Jul 2 (sound/soc/pxa/)
-Date: Mon, 02 Jul 2018 21:22:45 +0200
-Message-ID: <87h8lhh27u.fsf@belgarion.home>
-References: <20180702145158.10190101@canb.auug.org.au>
-        <2276786f-3f50-0740-0500-68a26a49704a@infradead.org>
-        <c12cc7c4-03d0-4b0b-d02f-7e72b8a135d4@infradead.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: Signed-off-by missing for commit in the omap tree
+Date: Tue, 3 Jul 2018 07:41:43 +1000
+Message-ID: <20180703074143.3947b094@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/eHb6nov.o6xrU6gFJ/zthJY"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <c12cc7c4-03d0-4b0b-d02f-7e72b8a135d4@infradead.org> (Randy
-        Dunlap's message of "Mon, 2 Jul 2018 09:41:16 -0700")
 Sender: linux-kernel-owner@vger.kernel.org
-To: Randy Dunlap <rdunlap@infradead.org>, Daniel Mack <zonque@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, moderated for non-subscribers <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>, Daniel Mack <daniel@zonque.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
-> [add other maintainers]
-> on i386 or x86_64:
-> 
-> builtin:
-> sound/soc/pxa/pxa-ssp.o:(.rodata+0x228): undefined reference to `pxa2xx_soc_pcm_new'
-> sound/soc/pxa/pxa-ssp.o:(.rodata+0x22c): undefined reference to `pxa2xx_pcm_free_dma_buffers'
-> sound/soc/pxa/pxa-ssp.o:(.rodata+0x250): undefined reference to `pxa2xx_pcm_ops'
+--Sig_/eHb6nov.o6xrU6gFJ/zthJY
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Randy,
+Hi Tony,
 
-I think the fix is already queued in Mark's tree, the commit message should be
-"ASoC: pxa: select SND_PXA2XX_LIB for drivers that depend on it".
+Commit
 
-Adding Daniel as he is the original author.
+  5322c19b117a ("ARM: OMAP1: ams-delta: Hog "keybrd_dataout" GPIO pin")
 
-Cheers.
+is missing a Signed-off-by from its committer.
 
---
-Robert
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/eHb6nov.o6xrU6gFJ/zthJY
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAls6nBcACgkQAVBC80lX
+0GwI/Qf/cPVzdF/coLtj0WhLsnGtH6rDzglFOPvi0dkUF6Ssdr8l00GkHJyWYzWb
+t/4bSDzMOAmDoh49RJfJ0z/L25PjC+KITHTCx0xOGv+EdvP0xNL27KHYr62V/q1f
+BfzP4gx5hzeptzRrZeNJPYuTuj5UbZbm5TTdBrd9jNlGP/8yeYar7QzpQ1dTUd0O
+rKvd92pVi0mp5XzyY+Rdg/1tRzt26bJQp0jmoWfpLi9EMcGu6FK3gH1sin4po7VU
+G4kjUrZVOsLLBPL7VbneGL2i4zLFaqTaPwAfmOMy7te6Y+kaXAywqJhRA+WQBjML
+SSJLIE3zWmpn/ouqUTZAsxPsZ4tlvA==
+=wI3D
+-----END PGP SIGNATURE-----
+
+--Sig_/eHb6nov.o6xrU6gFJ/zthJY--
