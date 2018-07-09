@@ -1,79 +1,130 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 9 Jul 2018 11:03:58 +1000
-Message-ID: <20180709110358.338e5113@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the nand tree
+Date: Mon, 9 Jul 2018 11:51:15 +1000
+Message-ID: <20180709115115.354d625f@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9PpNYWlCsVIL+lh_In2gPfm"; protocol="application/pgp-signature"
-Return-path: <netdev-owner@vger.kernel.org>
-Sender: netdev-owner@vger.kernel.org
-To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Davide Caratti <dcaratti@redhat.com>, Vlad Buslov <vladbu@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
+ boundary="Sig_/i_a.lkinMZ57zMQzJgIFBZR"; protocol="application/pgp-signature"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/9PpNYWlCsVIL+lh_In2gPfm
+--Sig_/i_a.lkinMZ57zMQzJgIFBZR
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Boris,
 
-Today's linux-next merge of the net-next tree got a conflict in:
+After merging the nand tree, today's linux-next build (x86_64
+allmodconfig) produced this warning:
 
-  net/sched/act_tunnel_key.c
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_hwcontrol':
+drivers/mtd/nand/raw/davinci_nand.c:115:21: warning: cast to pointer from i=
+nteger of different size [-Wint-to-pointer-cast]
+   nand->IO_ADDR_W =3D (void __iomem __force *)addr;
+                     ^
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_select_chip':
+drivers/mtd/nand/raw/davinci_nand.c:132:25: warning: cast to pointer from i=
+nteger of different size [-Wint-to-pointer-cast]
+  info->chip.IO_ADDR_W =3D (void __iomem __force *)addr;
+                         ^
+In file included from arch/x86/include/asm/bug.h:83:0,
+                 from include/linux/bug.h:5,
+                 from include/linux/thread_info.h:12,
+                 from arch/x86/include/asm/preempt.h:7,
+                 from include/linux/preempt.h:81,
+                 from include/linux/spinlock.h:51,
+                 from include/linux/seqlock.h:36,
+                 from include/linux/time.h:6,
+                 from include/linux/stat.h:19,
+                 from include/linux/module.h:10,
+                 from drivers/mtd/nand/raw/davinci_nand.c:27:
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_correct_4bit=
+':
+drivers/mtd/nand/raw/davinci_nand.c:322:21: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  if (WARN_ON(0x01 & (unsigned) ecc_code))
+                     ^
+include/asm-generic/bug.h:112:25: note: in definition of macro 'WARN_ON'
+  int __ret_warn_on =3D !!(condition);    \
+                         ^~~~~~~~~
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_read_buf':
+drivers/mtd/nand/raw/davinci_nand.c:444:15: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  if ((0x03 & ((unsigned)buf)) =3D=3D 0 && (0x03 & len) =3D=3D 0)
+               ^
+drivers/mtd/nand/raw/davinci_nand.c:446:20: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  else if ((0x01 & ((unsigned)buf)) =3D=3D 0 && (0x01 & len) =3D=3D 0)
+                    ^
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_write_buf':
+drivers/mtd/nand/raw/davinci_nand.c:457:15: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  if ((0x03 & ((unsigned)buf)) =3D=3D 0 && (0x03 & len) =3D=3D 0)
+               ^
+drivers/mtd/nand/raw/davinci_nand.c:459:20: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  else if ((0x01 & ((unsigned)buf)) =3D=3D 0 && (0x01 & len) =3D=3D 0)
+                    ^
+drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_probe':
+drivers/mtd/nand/raw/davinci_nand.c:683:18: warning: cast from pointer to i=
+nteger of different size [-Wpointer-to-int-cast]
+  info->ioaddr  =3D (uint32_t __force) vaddr;
+                  ^
+drivers/mtd/nand/raw/atmel/nand-controller.c: In function 'atmel_smc_nand_c=
+ontroller_init':
+drivers/mtd/nand/raw/atmel/nand-controller.c:2053:21: warning: cast from po=
+inter to integer of different size [-Wpointer-to-int-cast]
+  nc->ebi_csa_offs =3D (unsigned int)match->data;
+                     ^
+drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_read_chunk=
+s_dma':
+drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly=
+ truncated to unsigned type [-Woverflow]
+ #define NFC_PAGE_OP  (2 << 30)
+                      ^
+drivers/mtd/nand/raw/sunxi_nand.c:1040:9: note: in expansion of macro 'NFC_=
+PAGE_OP'
+  writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD | NFC_DATA_TRANS,
+         ^~~~~~~~~~~
+drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_write_page=
+_dma':
+drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly=
+ truncated to unsigned type [-Woverflow]
+ #define NFC_PAGE_OP  (2 << 30)
+                      ^
+drivers/mtd/nand/raw/sunxi_nand.c:1406:9: note: in expansion of macro 'NFC_=
+PAGE_OP'
+  writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD |
+         ^~~~~~~~~~~
 
-between commit:
+Presumably exposed by commits
 
-  38230a3e0e09 ("net/sched: act_tunnel_key: fix NULL dereference when 'goto=
- chain' is used")
-
-from the net tree and commit:
-
-  036bb44327f5 ("net: sched: change type of reference and bind counters")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  347af8918e8a ("mtd: rawnand: davinci: Allow selection of this driver when=
+ COMPILE_TEST=3Dy")
+  b3d926a3d6e0 ("mtd: rawnand: sunxi: Allow selection of this driver when C=
+OMPILE_TEST=3Dy")
 
 --=20
 Cheers,
 Stephen Rothwell
 
-diff --cc net/sched/act_tunnel_key.c
-index 9bc6c2ae98a5,3ec585d58762..000000000000
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@@ -252,9 -477,8 +477,9 @@@ static int tunnel_key_dump(struct sk_bu
-  	struct tcf_tunnel_key_params *params;
-  	struct tc_tunnel_key opt =3D {
-  		.index    =3D t->tcf_index,
-- 		.refcnt   =3D t->tcf_refcnt - ref,
-- 		.bindcnt  =3D t->tcf_bindcnt - bind,
-+ 		.refcnt   =3D refcount_read(&t->tcf_refcnt) - ref,
-+ 		.bindcnt  =3D atomic_read(&t->tcf_bindcnt) - bind,
- +		.action   =3D t->tcf_action,
-  	};
-  	struct tcf_t tm;
- =20
-
---Sig_/9PpNYWlCsVIL+lh_In2gPfm
+--Sig_/i_a.lkinMZ57zMQzJgIFBZR
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCtH4ACgkQAVBC80lX
-0Gx3BwgAi4vk3GYrxETkRJFC4YltgXQX5XuXZRioXt26KtfPe9XkMPydt8yFykp1
-B17hdMzT07CIyxXXh9yPrblVcOj9ASekjgd8UU2JVahH5w1JmybFGSOYWWmLtSs5
-BjORfp/ZWOcaI7d8FHnrItlXI9ud+HQwJhIBeUDmYPrInqXGEKPpIg+bSIXCvAAE
-mcd+in8o0DytVwbPdzbJXMQ+8bmS7AMGSf5U/8xEnoiFAc8x9NEsro+CgojElnqO
-gDkV/+i6x6qcy3MbYA2QYqcAo5a1OcsJnwHXyCmMtRzZzTIMIXaEI/nHFcrSKRti
-aIMAaHwTpJMgA2O7IL4ruT/dGUMeDQ==
-=1VZg
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCv5MACgkQAVBC80lX
+0GyO/gf+NT2k46jcLeQD7Gq6Lnim2lRhq4I3PTHceLvqQ0k9lccX7Ptj2GKxsrim
+Tru91HOwjfGcUkWV4hfv5BTKr/CZzhti1Zg2yAh6FGxo+g4yiX9ac5kiLcWdenGl
++0vPW0rpKalOnQCARPbG1qnZgCe6NBaazkM7Ycx919Yf8B325NtyNdjSPvnI9R5L
+kKac0UFFXGFvsRlEeM7BfOsgrgTxqzuZXbi9e8L2OulxWgiNDmfa95CPx9Z1r5pj
+RbFhf801PCBHdpl6myAjytngBZWnChTbdLD0UDVKmRxdOLXgKXISTs3PEw8jvdRz
+/kWqFOhd/2XNmu+km+MsjMccnBxIJg==
+=wuB2
 -----END PGP SIGNATURE-----
 
---Sig_/9PpNYWlCsVIL+lh_In2gPfm--
+--Sig_/i_a.lkinMZ57zMQzJgIFBZR--
