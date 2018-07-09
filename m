@@ -1,17 +1,17 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: linux-next: manual merge of the net-next tree with the net tree
-Date: Mon, 9 Jul 2018 10:28:47 +1000
-Message-ID: <20180709102847.214c31d5@canb.auug.org.au>
+Date: Mon, 9 Jul 2018 10:46:38 +1000
+Message-ID: <20180709104638.2dbfd48e@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/6Y7hqhR_ZAi=/8EfbWwa6n9"; protocol="application/pgp-signature"
+ boundary="Sig_/j4u=J+N0W/DuI_wqnoij4VC"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: David Miller <davem@davemloft.net>, Networking <netdev@vger.kernel.org>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Anton Mikaev <amikaev@aquantia.com>, Igor Russkikh <igor.russkikh@aquantia.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Davide Caratti <dcaratti@redhat.com>, Vlad Buslov <vladbu@mellanox.com>, Jiri Pirko <jiri@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/6Y7hqhR_ZAi=/8EfbWwa6n9
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
@@ -19,15 +19,16 @@ Hi all,
 
 Today's linux-next merge of the net-next tree got a conflict in:
 
-  drivers/net/ethernet/aquantia/atlantic/aq_hw.h
+  net/sched/act_csum.c
 
 between commit:
 
-  94b3b542303f ("net: aquantia: vlan unicast address list correct handling")
+  11a245e2f7bf ("net/sched: act_csum: fix NULL dereference when 'goto chain=
+' is used")
 
 from the net tree and commit:
 
-  c1af5427954b ("net: aquantia: Ethtool based ring size configuration")
+  036bb44327f5 ("net: sched: change type of reference and bind counters")
 
 from the net-next tree.
 
@@ -42,37 +43,37 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-index 2c6ebd91a9f2,1a51152029c3..000000000000
---- a/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_hw.h
-@@@ -98,8 -100,9 +100,11 @@@ struct aq_stats_s=20
-  #define AQ_HW_MEDIA_TYPE_TP    1U
-  #define AQ_HW_MEDIA_TYPE_FIBRE 2U
+diff --cc net/sched/act_csum.c
+index 6e7124e57918,bd232d3bd022..000000000000
+--- a/net/sched/act_csum.c
++++ b/net/sched/act_csum.c
+@@@ -597,9 -603,8 +603,9 @@@ static int tcf_csum_dump(struct sk_buf
+  	struct tcf_csum_params *params;
+  	struct tc_csum opt =3D {
+  		.index   =3D p->tcf_index,
+- 		.refcnt  =3D p->tcf_refcnt - ref,
+- 		.bindcnt =3D p->tcf_bindcnt - bind,
++ 		.refcnt  =3D refcount_read(&p->tcf_refcnt) - ref,
++ 		.bindcnt =3D atomic_read(&p->tcf_bindcnt) - bind,
+ +		.action  =3D p->tcf_action,
+  	};
+  	struct tcf_t t;
  =20
- +#define AQ_HW_MULTICAST_ADDRESS_MAX     32U
- +
-+ #define AQ_HW_TXD_MULTIPLE 8U
-+ #define AQ_HW_RXD_MULTIPLE 8U
-+=20
-  struct aq_hw_s {
-  	atomic_t flags;
-  	u8 rbl_enabled:1;
 
---Sig_/6Y7hqhR_ZAi=/8EfbWwa6n9
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCrD8ACgkQAVBC80lX
-0Gw2mAf8DaLNprLEBug2cwtVjrJvqe5vJ6CxF3lCr0QPX0jVYhM0invbbtsvuoXE
-b9y1ieWTPb+4Y9huDg8hpf2kPfHQqYh2VhGUmU37d3XfbmPmKpN7DqQDDzr16mzU
-adNMHeGZGo4YeAzDFvkofIfK8nSbp+yQ6OJjzzgv5I3LR0tn4NvKjOf2SZQvALVk
-ksI0wywhTMq/WQVqQO/AmCEa3KiVCRSJiiGxypgJJiiiFyCELXwMDkQQqiIpqtuw
-LfvXDzOszvi5RnTRsXuZbWxrh8rXJs8BPVb+hWYl6wONkYrQ8OJ1xI2Ddm8flAJl
-mZskpyeEWB536A4w60DmBCfvwP+Ckg==
-=sI/h
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCsG4ACgkQAVBC80lX
+0GzV1gf+LmaWWvp/3F3qcOeJxD4wNZC3fC3kqSobZGMHfqj7ZXvrvcYmLupQqQCl
+yR5hfeYXSWo92AB2Y8n3SoqISA0LxUOFkIxASH2CkKVtGx8WLcMnCMO4ZEfy9YOK
+sblxxOH80xga1Jd/kstAeWt9aub7e/DFzltdNCDJcKrKmlauCLRez3kavOLG1X3u
+/ZMXyGanM1gTUM5dzT15cJC+VmQYV8MOvftIOrWqg+KPdEK1cg9doE44h3TCAtrh
+6CKSryKb7rtD4Wex0RO9xUe7Dtu4Blh+mLBL+S07e1WY48Wb70B/DazhwXztoOVV
+5zH/hl0EeUnoyBs1vp4wWunqIyY9bg==
+=p/CG
 -----END PGP SIGNATURE-----
 
---Sig_/6Y7hqhR_ZAi=/8EfbWwa6n9--
+--Sig_/j4u=J+N0W/DuI_wqnoij4VC--
