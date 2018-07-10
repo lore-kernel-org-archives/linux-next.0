@@ -1,60 +1,56 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Date: Tue, 10 Jul 2018 09:07:20 +0200
-Message-ID: <CAMuHMdUr1kX=EX32tY0nGZYeriFG+NkmmEQ=ANeb29nN-gBB0Q@mail.gmail.com>
-References: <20180710075439.4a449b3d@canb.auug.org.au> <CACRpkdZrsGzULrNaoaX6bSy6z6o-gshQXrRhzUk=tuFF86shDw@mail.gmail.com>
- <OSBPR01MB22933EFD31CAC8A88CE08EDAD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+From: Maninder Singh <maninder1.s@samsung.com>
+Subject: RE: linux-next: build warning after merge of the printk tree
+Date: Tue, 10 Jul 2018 12:46:14 +0530
+Message-ID: <2014348883.271177.1531206974788.JavaMail.jboss@ep1ml503>
+References: <20180710164514.22c552db@canb.auug.org.au>
+        <CGME20180710064527epcas1p16fd9ad765711d69264b3251890bbcc2e@epcms5p5>
+Reply-To: maninder1.s@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed;
+        boundary="----=_Part_271176_1830423383.1531206974788"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <OSBPR01MB22933EFD31CAC8A88CE08EDAD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+In-Reply-To: <20180710164514.22c552db@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux-Next <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Takeshi Kihara <takeshi.kihara.df@renesas.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Petr Mladek <pmladek@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vaneet Narang <v.narang@samsung.com>, PANKAJ MISHRA <pankaj.m@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
-Hi Shimoda-san, Linus,
+------=_Part_271176_1830423383.1531206974788
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Jul 10, 2018 at 3:18 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > -----Original Message-----
-> > From: Linus Walleij, Sent: Tuesday, July 10, 2018 7:46 AM
-> >
-> > Hm must have come from Geert's pull request?
-> >
-> > (I'm regularly wrong about this so not so certain...)
-> >
-> > Geert can I fix it the usual way by simply rebasing and
-> > adding the right SoB?
->
-> I'm very sorry for this trouble.
-> When I ported this patch, I dropped the author's Signed-of-by wrongly..
->
-> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Hi Petr,
+ 
+> Hi all,
+ 
+> After merging the printk tree, today's linux-next build (x86_64
+> allnoconfig) produced this warning:
+ 
+> kernel/printk/printk.c:2033:13: warning: 'suppress_message_printing' defined but not used [-Wunused-function]
+> static bool suppress_message_printing(int level) { return false; }
+             ^~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+seems there is no user for suppress_message_printing when CONFIG_PRINTK is disabled,
+because earlier it was getting used in console_unlock and now we shifted this into vprintk_emit
+which will be disabled on disabling CONFIG_PRINTk.
 
-Thank you!
+should we remove this defination when CONFIG_PRINTK is disabled ?
 
-Since this was the top commit from my last pull request, I've just ammended it,
-retagged, and pushed.
+> Introduced by commit
+>  375899cddcbb ("printk: make sure to print log on console.")
+------=_Part_271176_1830423383.1531206974788
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="No File Name 0"
+Content-Transfer-Encoding: base64
 
-Sorry for the trouble.
+LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NCg0KaVFFekJBRUJDQUFkRmlFRU5JQzk2Z2la
+ODF0V2RMZ0tBVkJDODBsWDBHd0ZBbHRFVmZvQUNna1FBVkJDODBsWA0KMEd4UVR3ZjlFWndkdHJY
+TUxRd0QxL3FKT2FkUkhzMWZ5dlQ1bnlVZE1iQ1BjdGFNa2RJbTROc3l4MWxhaThyLw0Kb0ZNamps
+TXFtd08rWXFuZVJ3b2podituQVo3NytDdEJVUm5WN2sycmlhemYzbUhjclVqSEN6ZlEyZWw1Rmdz
+ag0KNnAzWWFvd2w0NStsVFZZYTl1RVp4czU5UVdXRnJabmZQS2REazhqREZlRnBwRzFOM1VIcjly
+UUptOXBpczZUQQ0KOXJaRnVjeWVXQVpBZTd3TWticGVLUGw4d2hwVlVQWHh3RGd0Z0lqaW90Vmc1
+dEtsdUM3Uk5jUXdMek1iQkgwbw0KdTJoYVgzU0RmZXFPZHhpMDVXZWg0UUlYS283a0ZBeVgzb3Mr
+d3l5VVBvSXY0MHVXdWhMQWYxSTZXaGRQQmRiaQ0KZ0xDaXVLNXhybk5ZbWd4VVJnN21vSFVRKzBQ
+ekR3PT0NCj1iU3JNDQotLS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0NCg==
 
-/me looks into improving checkpatch.pl...
-
-> > On Mon, Jul 9, 2018 at 11:54 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > Commit
-> > >
-> > >   a742fcf72902 ("pinctrl: sh-pfc: r8a77990: Add USB3.0 pins, groups and functions")
-> > >
-> > > is missing a Signed-off-by from its author.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+------=_Part_271176_1830423383.1531206974788--
