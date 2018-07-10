@@ -1,101 +1,63 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next/master boot: 173 boots: 4 failed, 136 passed with 32
- offline, 1 untried/unknown (next-20180710)
-Date: Tue, 10 Jul 2018 15:02:13 +0100
-Message-ID: <20180710140213.GB8104@sirena.org.uk>
-References: <5b44b87b.1c69fb81.97804.0122@mx.google.com>
+From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Tue, 10 Jul 2018 08:09:57 -0600
+Message-ID: <280ebbdf-fafb-1744-f517-815a30e682bb@kernel.dk>
+References: <20180620132911.5f6ab464@canb.auug.org.au>
+ <20180710173114.17ee69ad@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5875692418262172749=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5b44b87b.1c69fb81.97804.0122@mx.google.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kevin hilman <khilman@baylibre.com>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-next@vger.kernel.org, linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org, "kernelci.org bot" <bot@kernelci.org>, kernel-build-reports@lists.linaro.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20180710173114.17ee69ad@canb.auug.org.au>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Rothwell <sfr@canb.auug.org.au>, James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Felipe Balbi <felipe.balbi@linux.intel.com>, Omar Sandoval <osandov@fb.com>
 List-Id: linux-next.vger.kernel.org
 
+On 7/10/18 1:31 AM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 20 Jun 2018 13:29:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the scsi tree, today's linux-next build (powerpc
+>> allyesconfig) produced this warning:
+>>
+>> In file included from include/target/target_core_base.h:7:0,
+>>                  from drivers/target/target_core_tmr.c:31:
+>> include/linux/sbitmap.h:331:46: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
+>>                                               ^~~~~~~~
+>> include/linux/sbitmap.h:342:53: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_bitmap_show(struct sbitmap *sb, struct seq_file *m);
+>>                                                      ^~~~~~~~
+>> include/linux/sbitmap.h:530:59: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_queue_show(struct sbitmap_queue *sbq, struct seq_file *m);
+>>                                                            ^~~~~~~~
+>> In file included from include/target/target_core_base.h:7:0,
+>>                  from drivers/target/target_core_ua.c:30:
+>> include/linux/sbitmap.h:331:46: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
+>>                                               ^~~~~~~~
+>> include/linux/sbitmap.h:342:53: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_bitmap_show(struct sbitmap *sb, struct seq_file *m);
+>>                                                      ^~~~~~~~
+>> include/linux/sbitmap.h:530:59: warning: 'struct seq_file' declared inside parameter list will not be visible outside of this definition or declaration
+>>  void sbitmap_queue_show(struct sbitmap_queue *sbq, struct seq_file *m);
+>>                                                            ^~~~~~~~
+>>
+>> Introduced by commit
+>>
+>>   24af1ccfe12a ("sbitmap: add helpers for dumping to a seq_file")
+>>
+>> in v4.11.rc1, but exposed by commit
+>>
+>>   eca7ee1f33e8 ("scsi: target: Convert target drivers to use sbitmap")
+> 
+> I am still seeing these warnings ...
 
---===============5875692418262172749==
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aVD9QWMuhilNxW9f"
-Content-Disposition: inline
+Martin queued up the forward declaration patch for this one, not sure
+why it isn't showing up in the scsi tree yet.
 
-
---aVD9QWMuhilNxW9f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jul 10, 2018 at 06:45:31AM -0700, kernelci.org bot wrote:
-
-Today's linux-next fails to boot on mt7622-rfb1 with defconfig and
-defconfig+RANDOMIZE_BASE:
-
-> arm64:
-
->     defconfig:
->         mt7622-rfb1:
->             lab-baylibre-seattle: new failure (last pass: next-20180709)
-
->     defconfig+CONFIG_RANDOMIZE_BASE=y:
->         mt7622-rfb1:
->             lab-baylibre-seattle: new failure (last pass: next-20180709)
-
-I'm not 100% sure if this is a lab failure or an early boot failure:
-
-| Starting kernel ...
-
-| [ATF][    34.233534]save kernel info
-| [ATF][    34.236565]Kernel_EL2
-| [ATF][    34.239322]Kernel is 64Bit
-| [ATF][    34.242509]pc=0x40080000, r0=0x5cf48000, r1=0x0
-| INFO:    BL3-1: Preparing for EL3 exit to normal world, Kernel
-| INFO:    BL3-1: Next image address = 0x40080000
-| INFO:    BL3-1: Next image spsr = 0x3c9
-| [ATF][    34.260778]el3_exit
-| ~$off
-| # PYBOOT: Exception: kernel: ERROR: did not start booting.
-
-It only seems to affect this platform, other arm64 platforms seem fine.
-More details at:
-
-   https://kernelci.org/boot/id/5b44981a59b5141e5996baa1/
-
-for the defconfig case, symptoms seem similar with RANDOMIZE_BASE.
-
---aVD9QWMuhilNxW9f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltEvGUACgkQJNaLcl1U
-h9ATugf/dpCkqeVefVDcj1ZLT6nMzbk9vzlIO6211HCrAXpZUvgSsYvUpC3VbhKA
-0D0m6SsVgF5lXKnmLVPv8QHuoFIZ6J6v/EUQcn2tl17MHVSs03vA3DBikgueFAum
-WyO8R/98878kamnvkQPKglfiC4utMXffp0euuTsgENY0xzwV63AeN7lfViqvqsBX
-SNqfzFDFZH4grPObeNUmjMjtiNdYKVusEfS0hwIk4BHCtn8aYmRNEc7lZTC8vwC5
-VurtFM+qm+dQOJxwDQdYMDMFL2pt6sR7ZWonRhdQdeMs3OxyWiQuEHO85bGEZjsD
-LbOgEJPjunREz+K37HK8OtJ8gZqWEw==
-=6Smt
------END PGP SIGNATURE-----
-
---aVD9QWMuhilNxW9f--
-
-
---===============5875692418262172749==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============5875692418262172749==--
+-- 
+Jens Axboe
