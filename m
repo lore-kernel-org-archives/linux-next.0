@@ -1,34 +1,99 @@
-From: Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
-Date: Tue, 10 Jul 2018 17:56:57 +0200
-Message-ID: <20180710155657.GA13019@gmail.com>
-References: <1531129883.6480.7.camel@abdul.in.ibm.com>
- <20180709114716.GN2476@hirez.programming.kicks-ass.net>
- <1531159814.6480.11.camel@abdul.in.ibm.com>
- <20180710114210.GI2476@hirez.programming.kicks-ass.net>
+From: tip-bot for Peter Zijlstra <tipbot@zytor.com>
+Subject: [tip:sched/core] watchdog/softlockup: Fix the SOFTLOCKUP_DETECTOR=n
+ build
+Date: Tue, 10 Jul 2018 09:00:55 -0700
+Message-ID: <tip-aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e@git.kernel.org>
+References: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
+Reply-To: mpe@ellerman.id.au, linux-next@vger.kernel.org,
+          linuxppc-dev@lists.ozlabs.org, abdhalee@linux.vnet.ibm.com,
+          tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
+          peterz@infradead.org, mingo@kernel.org,
+          sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+          sfr@canb.auug.org.au
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
 In-Reply-To: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Abdul Haleem <abdhalee@linux.vnet.ibm.com>, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, linux-next <linux-next@vger.kernel.org>, stephen Rothwell <sfr@canb.auug.org.au>, mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>, linux-kernel <linux-kernel@vger.kernel.org>
+To: linux-tip-commits@vger.kernel.org
+Cc: mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org, peterz@infradead.org, sfr@canb.auug.org.au, sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, mpe@ellerman.id.au, tglx@linutronix.de, linuxppc-dev@lists.ozlabs.org, abdhalee@linux.vnet.ibm.com
 List-Id: linux-next.vger.kernel.org
 
+Commit-ID:  aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e
+Gitweb:     https://git.kernel.org/tip/aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e
+Author:     Peter Zijlstra <peterz@infradead.org>
+AuthorDate: Tue, 10 Jul 2018 13:42:10 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 10 Jul 2018 17:56:22 +0200
 
-* Peter Zijlstra <peterz@infradead.org> wrote:
+watchdog/softlockup: Fix the SOFTLOCKUP_DETECTOR=n build
 
-> On Mon, Jul 09, 2018 at 11:40:14PM +0530, Abdul Haleem wrote:
-> 
-> > Thanks Peter for the patch, build and boot is fine.
-> > 
-> > Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-> 
-> Excellent, Ingo can you stick this in?
+I got confused by all the various CONFIG options here about and
+conflated CONFIG_LOCKUP_DETECTOR and CONFIG_SOFTLOCKUP_DETECTOR.
 
-Sure, done!
+This results in a build failure for:
 
-Thanks,
+   CONFIG_LOCKUP_DETECTOR=y && CONFIG_SOFTLOCKUP_DETECTOR=n
 
-	Ingo
+As reported by Abdul.
+
+Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-next <linux-next@vger.kernel.org>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc: mpe <mpe@ellerman.id.au>
+Cc: sachinp <sachinp@linux.vnet.ibm.com>
+Cc: stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 9cf57731b63e ("watchdog/softlockup: Replace "watchdog/%u" threads with cpu_stop_work")
+Link: http://lkml.kernel.org/r/20180710114210.GI2476@hirez.programming.kicks-ass.net
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/nmi.h | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+index 80664bbeca43..08f9247e9827 100644
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -33,15 +33,10 @@ extern int sysctl_hardlockup_all_cpu_backtrace;
+ #define sysctl_hardlockup_all_cpu_backtrace 0
+ #endif /* !CONFIG_SMP */
+ 
+-extern int lockup_detector_online_cpu(unsigned int cpu);
+-extern int lockup_detector_offline_cpu(unsigned int cpu);
+-
+ #else /* CONFIG_LOCKUP_DETECTOR */
+ static inline void lockup_detector_init(void) { }
+ static inline void lockup_detector_soft_poweroff(void) { }
+ static inline void lockup_detector_cleanup(void) { }
+-#define lockup_detector_online_cpu	NULL
+-#define lockup_detector_offline_cpu	NULL
+ #endif /* !CONFIG_LOCKUP_DETECTOR */
+ 
+ #ifdef CONFIG_SOFTLOCKUP_DETECTOR
+@@ -50,12 +45,18 @@ extern void touch_softlockup_watchdog(void);
+ extern void touch_softlockup_watchdog_sync(void);
+ extern void touch_all_softlockup_watchdogs(void);
+ extern unsigned int  softlockup_panic;
+-#else
++
++extern int lockup_detector_online_cpu(unsigned int cpu);
++extern int lockup_detector_offline_cpu(unsigned int cpu);
++#else /* CONFIG_SOFTLOCKUP_DETECTOR */
+ static inline void touch_softlockup_watchdog_sched(void) { }
+ static inline void touch_softlockup_watchdog(void) { }
+ static inline void touch_softlockup_watchdog_sync(void) { }
+ static inline void touch_all_softlockup_watchdogs(void) { }
+-#endif
++
++#define lockup_detector_online_cpu	NULL
++#define lockup_detector_offline_cpu	NULL
++#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK
+ void reset_hung_task_detector(void);
