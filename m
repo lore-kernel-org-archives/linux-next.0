@@ -1,71 +1,52 @@
-From: Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-Date: Tue, 10 Jul 2018 08:19:33 +0300
-Message-ID: <20180710051933.GM3014@mtr-leonro.mtl.com>
-References: <20180710111740.5f345088@canb.auug.org.au>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the printk tree
+Date: Tue, 10 Jul 2018 16:45:14 +1000
+Message-ID: <20180710164514.22c552db@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="W1G4cAX3lNqeBRc9"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/FURb5/juwPe4KedDlPCpTFT"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180710111740.5f345088@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Maninder Singh <maninder1.s@samsung.com>
 List-Id: linux-next.vger.kernel.org
 
+--Sig_/FURb5/juwPe4KedDlPCpTFT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
---W1G4cAX3lNqeBRc9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi all,
 
-On Tue, Jul 10, 2018 at 11:17:40AM +1000, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the rdma tree got a conflict in:
->
->   drivers/infiniband/core/uverbs_cmd.c
->
-> between commit:
->
->   4fae7f170416 ("RDMA/uverbs: Fix slab-out-of-bounds in ib_uverbs_ex_create_flow")
->
-> from the rdma-fixes tree and commit:
->
->   2cc1e3b80942 ("IB/uverbs: Replace file->ucontext with file in uverbs_cmd.c")
->
-> from the rdma tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
+After merging the printk tree, today's linux-next build (x86_64
+allnoconfig) produced this warning:
 
-Thanks Stephen, Looks good.
+kernel/printk/printk.c:2033:13: warning: 'suppress_message_printing' define=
+d but not used [-Wunused-function]
+ static bool suppress_message_printing(int level) { return false; }
+             ^~~~~~~~~~~~~~~~~~~~~~~~~
 
---W1G4cAX3lNqeBRc9
-Content-Type: application/pgp-signature; name="signature.asc"
+Introduced by commit
+
+  375899cddcbb ("printk: make sure to print log on console.")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/FURb5/juwPe4KedDlPCpTFT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAEBAgAGBQJbREHlAAoJEORje4g2clinnfoQAMji/2el6Ih7MaASVtQVqUaG
-HG0fX390+Mm3eBit3E/RlNE8h7igZodEi857vR1bZPhumNbTW6XULzXxM8g7s2qK
-Zy7wUq4xSTjgPrylyYiPu+kEDmWbXsbBbeOwyPPWbCQ9SNI57+D0IYz+Idr7ViIZ
-yRURHbrjZaNwgeA1ez3TEABCnYBYkidNkALlDVV0K22jDuhVEKc25cM6QDwEkGmF
-k36o9g5C0YKN04eAmiHiCv633xEy+VBG0psTTmuZ91PdYv5B9ufMythU2ac7WVK0
-4YacmjHbVQLPEhJZ9wFF8ob3d5lsM3EGZdsnO8pTFRTs7184xHC47aflLwguyRpE
-truyMBwnOQBrohpd3rCsm3N9l+uf2cE6oG/VF12ZIKfgyelhrq1pRoLLvuoygoa9
-6EG01/cxV6Ba46Fs1xF8wAmnkTN+vkvpFZDnzBR4fsuvCTKmb8th07+tvN+sTRQN
-Rrzwra9h6UujHHRZOhAoUCKPeEdX0P71LYPdh0GtK4LzJwgQ5h1ZtfOaVfyhvDF4
-AV5EnMvJaJdnZrlPPOlbdnnF+UbLiQoBG8jesgaWJVv2NHrzZ4bhEGonQUv6tAtQ
-bj2GQ9lspb/ci/POEdcX1uqoY/yRDsJwjhy2Km3wdZTuFnaHIi9259A++RZ1s0vv
-3mnWoiY1tYe4ndARmTAJ
-=tZj6
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEVfoACgkQAVBC80lX
+0GxQTwf9EZwdtrXMLQwD1/qJOadRHs1fyvT5nyUdMbCPctaMkdIm4Nsyx1lai8r/
+oFMjjlMqmwO+YqneRwojhv+nAZ77+CtBURnV7k2riazf3mHcrUjHCzfQ2el5Fgsj
+6p3Yaowl45+lTVYa9uEZxs59QWWFrZnfPKdDk8jDFeFppG1N3UHr9rQJm9pis6TA
+9rZFucyeWAZAe7wMkbpeKPl8whpVUPXxwDgtgIjiotVg5tKluC7RNcQwLzMbBH0o
+u2haX3SDfeqOdxi05Weh4QIXKo7kFAyX3os+wyyUPoIv40uWuhLAf1I6WhdPBdbi
+gLCiuK5xrnNYmgxURg7moHUQ+0PzDw==
+=bSrM
 -----END PGP SIGNATURE-----
 
---W1G4cAX3lNqeBRc9--
+--Sig_/FURb5/juwPe4KedDlPCpTFT--
