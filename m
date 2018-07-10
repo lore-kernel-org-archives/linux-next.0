@@ -1,33 +1,70 @@
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: RE: linux-next: Signed-off-by missing for commit in the pinctrl tree
-Date: Tue, 10 Jul 2018 01:18:13 +0000
-Message-ID: <OSBPR01MB22933EFD31CAC8A88CE08EDAD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <20180710075439.4a449b3d@canb.auug.org.au>
- <CACRpkdZrsGzULrNaoaX6bSy6z6o-gshQXrRhzUk=tuFF86shDw@mail.gmail.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: linux-next: build warning after merge of the rdma tree
+Date: Tue, 10 Jul 2018 11:28:31 +1000
+Message-ID: <20180710112831.40add0eb@canb.auug.org.au>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JTUXcpEHUhp==jV4n4.f5.m"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZrsGzULrNaoaX6bSy6z6o-gshQXrRhzUk=tuFF86shDw@mail.gmail.com>
-Content-Language: ja-JP
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Rothwell <sfr@canb.auug.org.au>, Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>
 List-Id: linux-next.vger.kernel.org
 
-SGkgU3RlcGhlbiwgTGludXMsIEdlZXJ0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
-DQo+IEZyb206IExpbnVzIFdhbGxlaWosIFNlbnQ6IFR1ZXNkYXksIEp1bHkgMTAsIDIwMTggNzo0
-NiBBTQ0KPiANCj4gSG0gbXVzdCBoYXZlIGNvbWUgZnJvbSBHZWVydCdzIHB1bGwgcmVxdWVzdD8N
-Cj4gDQo+IChJJ20gcmVndWxhcmx5IHdyb25nIGFib3V0IHRoaXMgc28gbm90IHNvIGNlcnRhaW4u
-Li4pDQo+IA0KPiBHZWVydCBjYW4gSSBmaXggaXQgdGhlIHVzdWFsIHdheSBieSBzaW1wbHkgcmVi
-YXNpbmcgYW5kDQo+IGFkZGluZyB0aGUgcmlnaHQgU29CPw0KDQpJJ20gdmVyeSBzb3JyeSBmb3Ig
-dGhpcyB0cm91YmxlLg0KV2hlbiBJIHBvcnRlZCB0aGlzIHBhdGNoLCBJIGRyb3BwZWQgdGhlIGF1
-dGhvcidzIFNpZ25lZC1vZi1ieSB3cm9uZ2x5Li4NCg0KU2lnbmVkLW9mZi1ieTogVGFrZXNoaSBL
-aWhhcmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KDQpCZXN0IHJlZ2FyZHMsDQpZ
-b3NoaWhpcm8gU2hpbW9kYQ0KDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo+IA0KPiBPbiBN
-b24sIEp1bCA5LCAyMDE4IGF0IDExOjU0IFBNIFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1
-dWcub3JnLmF1PiB3cm90ZToNCj4gPg0KPiA+IEhpIExpbnVzLA0KPiA+DQo+ID4gQ29tbWl0DQo+
-ID4NCj4gPiAgIGE3NDJmY2Y3MjkwMiAoInBpbmN0cmw6IHNoLXBmYzogcjhhNzc5OTA6IEFkZCBV
-U0IzLjAgcGlucywgZ3JvdXBzIGFuZCBmdW5jdGlvbnMiKQ0KPiA+DQo+ID4gaXMgbWlzc2luZyBh
-IFNpZ25lZC1vZmYtYnkgZnJvbSBpdHMgYXV0aG9yLg0KPiA+DQo+ID4gLS0NCj4gPiBDaGVlcnMs
-DQo+ID4gU3RlcGhlbiBSb3Rod2VsbA0K
+--Sig_/JTUXcpEHUhp==jV4n4.f5.m
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the rdma tree, today's linux-next build (powerpc
+ppc64_defconfig) produced this warning:
+
+In file included from include/linux/kernel.h:14:0,
+                 from include/asm-generic/bug.h:18,
+                 from arch/powerpc/include/asm/bug.h:128,
+                 from include/linux/bug.h:5,
+                 from arch/powerpc/include/asm/mmu.h:126,
+                 from arch/powerpc/include/asm/lppaca.h:36,
+                 from arch/powerpc/include/asm/paca.h:21,
+                 from arch/powerpc/include/asm/current.h:16,
+                 from include/linux/mutex.h:14,
+                 from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:34,
+                 from drivers/infiniband/hw/cxgb4/cq.c:33:
+drivers/infiniband/hw/cxgb4/cq.c: In function '__c4iw_poll_cq_one':
+include/linux/printk.h:308:2: warning: 'cqe.header' may be used uninitializ=
+ed in this function [-Wmaybe-uninitialized]
+  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+  ^~~~~~
+drivers/infiniband/hw/cxgb4/cq.c:674:16: note: 'cqe.header' was declared he=
+re
+  struct t4_cqe cqe;
+                ^~~
+
+Introduced by commit
+
+  4ab39e2f98f2 ("RDMA/cxgb4: Make c4iw_poll_cq_one() easier to analyze")
+
+I can't tell easily if this is a false positive or not.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/JTUXcpEHUhp==jV4n4.f5.m
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEC78ACgkQAVBC80lX
+0GyPCAf+IqZk0Sv0KxNnHkDKpk02JHcaxI5+FeOlTfNvhD6i0LUgK6fsviV7NN8M
+XE71jz0hsPeywZLRKw8A3WP0xAcN9F1EolfG5pBXkdHIQ0s/HMziLT9qplBREqAt
+HkkMgEXX8BBYIObUGF8B73GrEqHRLbeYf7cZtExepvOMLZeFEp2mCzliKpFJuFjc
+FIYAZmob6kM77Ns6WlpEmhy80mOkvFNALsSf5dN8+p17kN3PEbE74YQhxBDc4cFI
+XP7mlhaD8sFI9abFVh1jwj807615nMe8xi4Jur3LJI+g0miHdOiMKi7mod1jioQ/
+Twvb57Xnqk1sdMkIp/4cvlkacCcXew==
+=HGmh
+-----END PGP SIGNATURE-----
+
+--Sig_/JTUXcpEHUhp==jV4n4.f5.m--
