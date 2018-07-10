@@ -1,56 +1,77 @@
-From: Maninder Singh <maninder1.s@samsung.com>
-Subject: RE: linux-next: build warning after merge of the printk tree
-Date: Tue, 10 Jul 2018 12:46:14 +0530
-Message-ID: <2014348883.271177.1531206974788.JavaMail.jboss@ep1ml503>
-References: <20180710164514.22c552db@canb.auug.org.au>
-        <CGME20180710064527epcas1p16fd9ad765711d69264b3251890bbcc2e@epcms5p5>
-Reply-To: maninder1.s@samsung.com
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: linux-next: build warning after merge of the random tree
+Date: Tue, 10 Jul 2018 17:26:19 +1000
+Message-ID: <20180710172619.45e290a2@canb.auug.org.au>
+References: <20180608133748.58a272d5@canb.auug.org.au>
+        <20180618133523.30db3ba0@canb.auug.org.au>
+        <20180618052900.GA4579@eros>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-        boundary="----=_Part_271176_1830423383.1531206974788"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H55fNMiWsX4Atmo=EKYh.Lq"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180710164514.22c552db@canb.auug.org.au>
+In-Reply-To: <20180618052900.GA4579@eros>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Petr Mladek <pmladek@suse.com>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Vaneet Narang <v.narang@samsung.com>, PANKAJ MISHRA <pankaj.m@samsung.com>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: "Tobin C. Harding" <me@tobin.cc>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-next.vger.kernel.org
 
-------=_Part_271176_1830423383.1531206974788
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Hi Petr,
- 
-> Hi all,
- 
-> After merging the printk tree, today's linux-next build (x86_64
-> allnoconfig) produced this warning:
- 
-> kernel/printk/printk.c:2033:13: warning: 'suppress_message_printing' defined but not used [-Wunused-function]
-> static bool suppress_message_printing(int level) { return false; }
-             ^~~~~~~~~~~~~~~~~~~~~~~~~
- 
-seems there is no user for suppress_message_printing when CONFIG_PRINTK is disabled,
-because earlier it was getting used in console_unlock and now we shifted this into vprintk_emit
-which will be disabled on disabling CONFIG_PRINTk.
+Hi all,
 
-should we remove this defination when CONFIG_PRINTK is disabled ?
+On Mon, 18 Jun 2018 15:29:00 +1000 "Tobin C. Harding" <me@tobin.cc> wrote:
+>
+> On Mon, Jun 18, 2018 at 01:35:23PM +1000, Stephen Rothwell wrote:
+> >=20
+> > On Fri, 8 Jun 2018 13:37:48 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> > >
+> > > After merging the random tree, today's linux-next build (arm
+> > > multi_v7_defconfig) produced this warning:
+> > >=20
+> > > lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined=
+ but not used [-Wunused-variable]
+> > >  static bool have_filled_random_ptr_key __read_mostly;
+> > >              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >=20
+> > > Introduced by commit
+> > >=20
+> > >   bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_ha=
+sh") =20
+> >=20
+> > I am still getting this ... =20
+>=20
+> This is fixed in:
+>=20
+> 	[PATCH v7 0/4] enable early printing of hashed pointers
+>=20
+>=20
+> FYI v8 to come with unrelated change removing EXPORT_SYMBOL() (as suggest=
+ed
+> on LKML in response to v7)
 
-> Introduced by commit
->  375899cddcbb ("printk: make sure to print log on console.")
-------=_Part_271176_1830423383.1531206974788
-Content-Type: application/octet-stream
-Content-Disposition: attachment; filename="No File Name 0"
-Content-Transfer-Encoding: base64
+Still getting this warning ...
 
-LS0tLS1CRUdJTiBQR1AgU0lHTkFUVVJFLS0tLS0NCg0KaVFFekJBRUJDQUFkRmlFRU5JQzk2Z2la
-ODF0V2RMZ0tBVkJDODBsWDBHd0ZBbHRFVmZvQUNna1FBVkJDODBsWA0KMEd4UVR3ZjlFWndkdHJY
-TUxRd0QxL3FKT2FkUkhzMWZ5dlQ1bnlVZE1iQ1BjdGFNa2RJbTROc3l4MWxhaThyLw0Kb0ZNamps
-TXFtd08rWXFuZVJ3b2podituQVo3NytDdEJVUm5WN2sycmlhemYzbUhjclVqSEN6ZlEyZWw1Rmdz
-ag0KNnAzWWFvd2w0NStsVFZZYTl1RVp4czU5UVdXRnJabmZQS2REazhqREZlRnBwRzFOM1VIcjly
-UUptOXBpczZUQQ0KOXJaRnVjeWVXQVpBZTd3TWticGVLUGw4d2hwVlVQWHh3RGd0Z0lqaW90Vmc1
-dEtsdUM3Uk5jUXdMek1iQkgwbw0KdTJoYVgzU0RmZXFPZHhpMDVXZWg0UUlYS283a0ZBeVgzb3Mr
-d3l5VVBvSXY0MHVXdWhMQWYxSTZXaGRQQmRiaQ0KZ0xDaXVLNXhybk5ZbWd4VVJnN21vSFVRKzBQ
-ekR3PT0NCj1iU3JNDQotLS0tLUVORCBQR1AgU0lHTkFUVVJFLS0tLS0NCg==
+--=20
+Cheers,
+Stephen Rothwell
 
-------=_Part_271176_1830423383.1531206974788--
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEX5sACgkQAVBC80lX
+0Gyqmgf/RHgGjnLbREECJ1WUC0Vi1jsbkSm3sPMHcKFSJntJ2AAnE2qOGKTdXQFO
+kVQpVgTiklTnzayjVCYHrWlHBA/4wgxYgsDRv+mLDszCcPyTg4AsHSNSDUHwAffY
+uIxWJTWfCtqmGZKjP44l6eQRUrrPDPB41tdG0d4swFCYTFfx888LAQ9lB6Z5hbRu
+HBDUdpuMZ6pq3VYBNd21JuwaXagOCEMDRfUYeY3Vi6M25GMaYvn52x1Z6/lTsgWw
+caOpl9CTBHBBXxGsWFNSCAl1zti947G9LRG4VBe4G7aN7FrnzNKd1U4njuMRkC0n
+bNUlAxArrbRMzxbgp7LMTKN+bwcAGQ==
+=Ke9K
+-----END PGP SIGNATURE-----
+
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq--
