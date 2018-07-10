@@ -1,36 +1,37 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: linux-next: manual merge of the vfs tree with the overlayfs tree
-Date: Tue, 10 Jul 2018 10:22:20 +1000
-Message-ID: <20180710102220.44ebfc7a@canb.auug.org.au>
+Subject: linux-next: manual merge of the rdma tree with the rdma-fixes tree
+Date: Tue, 10 Jul 2018 11:17:40 +1000
+Message-ID: <20180710111740.5f345088@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/NUDafgH0O3dc96lb6xzdwU/"; protocol="application/pgp-signature"
+ boundary="Sig_/Te+p1LKerFUhZtZMfBnBc/9"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Al Viro <viro@ZenIV.linux.org.uk>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Leon Romanovsky <leonro@mellanox.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/NUDafgH0O3dc96lb6xzdwU/
+--Sig_/Te+p1LKerFUhZtZMfBnBc/9
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-Today's linux-next merge of the vfs tree got a conflict in:
+Today's linux-next merge of the rdma tree got a conflict in:
 
-  include/linux/fs.h
+  drivers/infiniband/core/uverbs_cmd.c
 
 between commit:
 
-  5c299f73cc9e ("vfs: add path_open()")
+  4fae7f170416 ("RDMA/uverbs: Fix slab-out-of-bounds in ib_uverbs_ex_create=
+_flow")
 
-from the overlayfs tree and commit:
+from the rdma-fixes tree and commit:
 
-  bfd4fa6990f0 ("turn filp_clone_open() into inline wrapper for dentry_open=
-()")
+  2cc1e3b80942 ("IB/uverbs: Replace file->ucontext with file in uverbs_cmd.=
+c")
 
-from the vfs tree.
+from the rdma tree.
 
 I fixed it up (see below) and can carry the fix as necessary. This
 is now fixed as far as linux-next is concerned, but any non trivial
@@ -43,56 +44,65 @@ complex conflicts.
 Cheers,
 Stephen Rothwell
 
-diff --cc include/linux/fs.h
-index be8de5925a12,b3a210bfea85..000000000000
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@@ -152,10 -158,10 +158,13 @@@ typedef int (dio_iodone_t)(struct kioc
-  #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
+diff --cc drivers/infiniband/core/uverbs_cmd.c
+index cc06e8404e9b,d048cabc4246..000000000000
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@@ -3559,11 -3505,11 +3505,16 @@@ int ib_uverbs_ex_create_flow(struct ib_
+  		goto err_uobj;
+  	}
  =20
-  /* File is capable of returning -EAGAIN if I/O will block */
---#define FMODE_NOWAIT	((__force fmode_t)0x8000000)
-++#define FMODE_NOWAIT		((__force fmode_t)0x8000000)
-+=20
-+ /* File represents mount that needs unmounting */
- -#define FMODE_NEED_UNMOUNT     ((__force fmode_t)0x10000000)
-++#define FMODE_NEED_UNMOUNT	((__force fmode_t)0x10000000)
+ +	if (qp->qp_type !=3D IB_QPT_UD && qp->qp_type !=3D IB_QPT_RAW_PACKET) {
+ +		err =3D -EINVAL;
+ +		goto err_put;
+ +	}
  +
- +/* File does not contribute to nr_files count */
-- #define FMODE_NOACCOUNT	((__force fmode_t)0x20000000)
-++#define FMODE_NOACCOUNT		((__force fmode_t)0x20000000)
++ 	if (!qp->device->create_flow) {
++ 		err =3D -EOPNOTSUPP;
++ 		goto err_put;
++ 	}
++=20
+  	flow_attr =3D kzalloc(struct_size(flow_attr, flows,
+  				cmd.flow_attr.num_of_specs), GFP_KERNEL);
+  	if (!flow_attr) {
+@@@ -3583,15 -3529,13 +3534,15 @@@
+  	flow_attr->flags =3D kern_flow_attr->flags;
+  	flow_attr->size =3D sizeof(*flow_attr);
  =20
-  /*
-   * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
-@@@ -2419,8 -2445,10 +2442,12 @@@ extern struct file *filp_open(const cha
-  extern struct file *file_open_root(struct dentry *, struct vfsmount *,
-  				   const char *, int, umode_t);
-  extern struct file * dentry_open(const struct path *, int, const struct c=
-red *);
- +extern struct file *path_open(const struct path *, int, struct inode *,
- +			      const struct cred *, bool);
-+ static inline struct file *file_clone_open(struct file *file)
-+ {
-+ 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
-+ }
-  extern int filp_close(struct file *, fl_owner_t id);
+ -	kern_spec =3D kern_flow_attr + 1;
+ +	kern_spec =3D kern_flow_attr->flow_specs;
+  	ib_spec =3D flow_attr + 1;
+  	for (i =3D 0; i < flow_attr->num_of_specs &&
+ -	     cmd.flow_attr.size > offsetof(struct ib_uverbs_flow_spec, reserved)=
+ &&
+ -	     cmd.flow_attr.size >=3D
+ -	     ((struct ib_uverbs_flow_spec *)kern_spec)->size; i++) {
+ -		err =3D kern_spec_to_ib_spec(file, kern_spec, ib_spec, uflow_res);
+ +			cmd.flow_attr.size >=3D sizeof(*kern_spec) &&
+ +			cmd.flow_attr.size >=3D kern_spec->size;
+ +	     i++) {
+ +		err =3D kern_spec_to_ib_spec(
+- 				file->ucontext, (struct ib_uverbs_flow_spec *)kern_spec,
+++				file, (struct ib_uverbs_flow_spec *)kern_spec,
+ +				ib_spec, uflow_res);
+  		if (err)
+  			goto err_free;
  =20
-  extern struct filename *getname_flags(const char __user *, int, int *);
 
---Sig_/NUDafgH0O3dc96lb6xzdwU/
+--Sig_/Te+p1LKerFUhZtZMfBnBc/9
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltD/DwACgkQAVBC80lX
-0GxoLgf/Y0ak4Mvwoe3pFrxwDlKE3okWJayV4oXKG+gGn7n8mP9nmJdJ5CxYPGXV
-Cwa3Uhvr5cLx5fpy/LrwACfVybvIdwEVPcwUpye8Z7GPOIUMlSw+fk8Wjamqjh2D
-3/H7uXdcuCzUq5PsPv0AkS+fp3HArOxXGklPU1PrSOs+9iqIKD+cOElZrPsdThyc
-bBt2N45cRkadp/IXXkH7UeCemhlKtgdA+/dBD8ZYwUk0QzzHOV6CnBYIsOJeDG3H
-SDdbs4lht7CAu5M6GKyqzgQ4+WL1K6R6tvfiD0KAi7zow40ttVbQRcRMoi4GmGBa
-NSgzdDXEMK5nCh2Ypr540mGDiTBwdA==
-=URye
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltECTQACgkQAVBC80lX
+0Gwx0wf/T1xiq4+0+/x3zkIaiz4fgpeOo7TCASY5+s3c+UBoxI9ZvLyWKaqiE3Z+
+wrRnEAckCBYX78e0BDFXVkj+2Ca03/e+9WRxeoC5eYYvbujXAeE4ySmGxXfjO18B
+G6QINMvKxPdilfxLfH5SofdViJiVs5TlGxOKoOjo0IaHZJcgY2gx9wOHmeIdNjeI
+VJs2CYK8law/Gmx+3Zc1xIqNnsA3iUi4WNSeoyNPv8Aki8gMblFGs6mXThLHn1UT
+Hf3jfC6Q7hy7L4Fnnl0TiPg+oKgJBTVWMjThSalRJVnuhgmoRmLdJbEAyZTi3ema
+6/PAewnTtEkBRFUY8y2XcaPy/oarTw==
+=lZby
 -----END PGP SIGNATURE-----
 
---Sig_/NUDafgH0O3dc96lb6xzdwU/--
+--Sig_/Te+p1LKerFUhZtZMfBnBc/9--
