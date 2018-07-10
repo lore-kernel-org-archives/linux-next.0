@@ -1,77 +1,93 @@
 From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: linux-next: build warning after merge of the random tree
-Date: Tue, 10 Jul 2018 17:26:19 +1000
-Message-ID: <20180710172619.45e290a2@canb.auug.org.au>
-References: <20180608133748.58a272d5@canb.auug.org.au>
-        <20180618133523.30db3ba0@canb.auug.org.au>
-        <20180618052900.GA4579@eros>
+Subject: Re: linux-next: build warning after merge of the scsi tree
+Date: Tue, 10 Jul 2018 17:31:26 +1000
+Message-ID: <20180710173114.17ee69ad@canb.auug.org.au>
+References: <20180620132911.5f6ab464@canb.auug.org.au>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/H55fNMiWsX4Atmo=EKYh.Lq"; protocol="application/pgp-signature"
+ boundary="Sig_/kzjMS7hkaBT=6vyhyCFXfXm"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20180618052900.GA4579@eros>
+In-Reply-To: <20180620132911.5f6ab464@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: "Tobin C. Harding" <me@tobin.cc>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, Jens Axboe <axboe@kernel.dk>, Felipe Balbi <felipe.balbi@linux.intel.com>, Omar Sandoval <osandov@fb.com>
 List-Id: linux-next.vger.kernel.org
 
---Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+--Sig_/kzjMS7hkaBT=6vyhyCFXfXm
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
 Hi all,
 
-On Mon, 18 Jun 2018 15:29:00 +1000 "Tobin C. Harding" <me@tobin.cc> wrote:
+On Wed, 20 Jun 2018 13:29:10 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Mon, Jun 18, 2018 at 01:35:23PM +1000, Stephen Rothwell wrote:
-> >=20
-> > On Fri, 8 Jun 2018 13:37:48 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote: =20
-> > >
-> > > After merging the random tree, today's linux-next build (arm
-> > > multi_v7_defconfig) produced this warning:
-> > >=20
-> > > lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined=
- but not used [-Wunused-variable]
-> > >  static bool have_filled_random_ptr_key __read_mostly;
-> > >              ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >=20
-> > > Introduced by commit
-> > >=20
-> > >   bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_ha=
-sh") =20
-> >=20
-> > I am still getting this ... =20
+> After merging the scsi tree, today's linux-next build (powerpc
+> allyesconfig) produced this warning:
 >=20
-> This is fixed in:
+> In file included from include/target/target_core_base.h:7:0,
+>                  from drivers/target/target_core_tmr.c:31:
+> include/linux/sbitmap.h:331:46: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
+>                                               ^~~~~~~~
+> include/linux/sbitmap.h:342:53: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_bitmap_show(struct sbitmap *sb, struct seq_file *m);
+>                                                      ^~~~~~~~
+> include/linux/sbitmap.h:530:59: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_queue_show(struct sbitmap_queue *sbq, struct seq_file *m);
+>                                                            ^~~~~~~~
+> In file included from include/target/target_core_base.h:7:0,
+>                  from drivers/target/target_core_ua.c:30:
+> include/linux/sbitmap.h:331:46: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_show(struct sbitmap *sb, struct seq_file *m);
+>                                               ^~~~~~~~
+> include/linux/sbitmap.h:342:53: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_bitmap_show(struct sbitmap *sb, struct seq_file *m);
+>                                                      ^~~~~~~~
+> include/linux/sbitmap.h:530:59: warning: 'struct seq_file' declared insid=
+e parameter list will not be visible outside of this definition or declarat=
+ion
+>  void sbitmap_queue_show(struct sbitmap_queue *sbq, struct seq_file *m);
+>                                                            ^~~~~~~~
 >=20
-> 	[PATCH v7 0/4] enable early printing of hashed pointers
+> Introduced by commit
 >=20
+>   24af1ccfe12a ("sbitmap: add helpers for dumping to a seq_file")
 >=20
-> FYI v8 to come with unrelated change removing EXPORT_SYMBOL() (as suggest=
-ed
-> on LKML in response to v7)
+> in v4.11.rc1, but exposed by commit
+>=20
+>   eca7ee1f33e8 ("scsi: target: Convert target drivers to use sbitmap")
 
-Still getting this warning ...
+I am still seeing these warnings ...
 
 --=20
 Cheers,
 Stephen Rothwell
 
---Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+--Sig_/kzjMS7hkaBT=6vyhyCFXfXm
 Content-Type: application/pgp-signature
 Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEX5sACgkQAVBC80lX
-0Gyqmgf/RHgGjnLbREECJ1WUC0Vi1jsbkSm3sPMHcKFSJntJ2AAnE2qOGKTdXQFO
-kVQpVgTiklTnzayjVCYHrWlHBA/4wgxYgsDRv+mLDszCcPyTg4AsHSNSDUHwAffY
-uIxWJTWfCtqmGZKjP44l6eQRUrrPDPB41tdG0d4swFCYTFfx888LAQ9lB6Z5hbRu
-HBDUdpuMZ6pq3VYBNd21JuwaXagOCEMDRfUYeY3Vi6M25GMaYvn52x1Z6/lTsgWw
-caOpl9CTBHBBXxGsWFNSCAl1zti947G9LRG4VBe4G7aN7FrnzNKd1U4njuMRkC0n
-bNUlAxArrbRMzxbgp7LMTKN+bwcAGQ==
-=Ke9K
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEYM4ACgkQAVBC80lX
+0GyOOwf8C7idYXHXskyM+Q0xKibPieG/XF2sl5g6jfQ/hq4+HvIxhiK0UPvxufFq
+OY3EL7qDmnpytxP3AU4Luo3LDOTgGssd/0RJ+VG2lTszjlb9RmYbn1YwukSPfE9x
+KSUs/375mYOVvL8jMbQRXslYnsuLr09wj0XhGPNk0pEeTc7vTChJJUMhg55QPU2u
+qww8Sl7r3rI4nVomSKedHhVc3gaeSBr37iTMTPN6Ts/UNHxWP5FIVsjGfSe/A/yc
+H4KsnooLckfJyj8+K7pSLALLJTmZPAb9o1GWRVywpI0V7gG5bVEsh3Bvf12sZYFm
+nEYwuyupgE6CORAIwTJ98TgyG/MGoA==
+=PTOQ
 -----END PGP SIGNATURE-----
 
---Sig_/H55fNMiWsX4Atmo=EKYh.Lq--
+--Sig_/kzjMS7hkaBT=6vyhyCFXfXm--
