@@ -1,78 +1,63 @@
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
 Subject: Re: linux-next: build warnings after merge of the rdma tree
-Date: Mon, 9 Jul 2018 21:41:57 -0600
-Message-ID: <20180710034157.GA17400@mellanox.com>
+Date: Tue, 10 Jul 2018 14:05:12 +1000
+Message-ID: <20180710140512.53d67d40@canb.auug.org.au>
 References: <20180710113342.605e53e8@canb.auug.org.au>
+        <20180710034157.GA17400@mellanox.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/AXPEU1Cs7but9NPo_7FPSCJ"; protocol="application/pgp-signature"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20180710113342.605e53e8@canb.auug.org.au>
+In-Reply-To: <20180710034157.GA17400@mellanox.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jason Gunthorpe <jgg@mellanox.com>
 Cc: Doug Ledford <dledford@redhat.com>, Linux-Next Mailing List <linux-next@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Bart Van Assche <bart.vanassche@wdc.com>
 List-Id: linux-next.vger.kernel.org
 
-On Tue, Jul 10, 2018 at 11:33:42AM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the rdma tree, today's linux-next build (x86_64
-> allmodconfig) produced these warnings:
-> 
-> In file included from include/linux/printk.h:336:0,
->                  from include/linux/kernel.h:14,
->                  from arch/x86/include/asm/percpu.h:45,
->                  from arch/x86/include/asm/current.h:6,
->                  from include/linux/mutex.h:14,
->                  from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:34,
->                  from drivers/infiniband/hw/cxgb4/cq.c:33:
-> drivers/infiniband/hw/cxgb4/cq.c: In function '__c4iw_poll_cq_one':
-> include/linux/dynamic_debug.h:127:3: warning: 'cqe.u.gen.wrid_hi' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    __dynamic_pr_debug(&descriptor, pr_fmt(fmt), \
->    ^~~~~~~~~~~~~~~~~~
-> drivers/infiniband/hw/cxgb4/cq.c:674:16: note: 'cqe.u.gen.wrid_hi' was declared here
->   struct t4_cqe cqe;
->                 ^~~
-> In file included from include/linux/printk.h:336:0,
->                  from include/linux/kernel.h:14,
->                  from arch/x86/include/asm/percpu.h:45,
->                  from arch/x86/include/asm/current.h:6,
->                  from include/linux/mutex.h:14,
->                  from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:34,
->                  from drivers/infiniband/hw/cxgb4/cq.c:33:
-> include/linux/dynamic_debug.h:127:3: warning: 'cqe.u.gen.wrid_low' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    __dynamic_pr_debug(&descriptor, pr_fmt(fmt), \
->    ^~~~~~~~~~~~~~~~~~
-> drivers/infiniband/hw/cxgb4/cq.c:674:16: note: 'cqe.u.gen.wrid_low' was declared here
->   struct t4_cqe cqe;
->                 ^~~
-> In file included from include/linux/printk.h:336:0,
->                  from include/linux/kernel.h:14,
->                  from arch/x86/include/asm/percpu.h:45,
->                  from arch/x86/include/asm/current.h:6,
->                  from include/linux/mutex.h:14,
->                  from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:34,
->                  from drivers/infiniband/hw/cxgb4/cq.c:33:
-> include/linux/dynamic_debug.h:127:3: warning: 'cqe.len' may be used uninitialized in this function [-Wmaybe-uninitialized]
->    __dynamic_pr_debug(&descriptor, pr_fmt(fmt), \
->    ^~~~~~~~~~~~~~~~~~
-> drivers/infiniband/hw/cxgb4/cq.c:674:16: note: 'cqe.len' was declared here
->   struct t4_cqe cqe;
->                 ^~~
-> 
-> Introduced by commit
-> 
->   4ab39e2f98f2 ("RDMA/cxgb4: Make c4iw_poll_cq_one() easier to analyze")
-> 
-> Again, I can't easily tell if these are false positives or not.
+--Sig_/AXPEU1Cs7but9NPo_7FPSCJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What compiler is producing these? I got nothing from 0-day build
-service or my local gcc-7..
+Hi Jason,
 
-They are false positives and I guess we need to put the
-uninitialized_var back that was hiding them.
+On Mon, 9 Jul 2018 21:41:57 -0600 Jason Gunthorpe <jgg@mellanox.com> wrote:
+>=20
+> What compiler is producing these? I got nothing from 0-day build
+> service or my local gcc-7..
 
-Also curious that the powerpc compiler gets a different set..
+The x86 compiler is a v7.3.1 cross compiler hosted on PowerPC LE and
+built from sources.
 
-Thanks,
-Jason
+> They are false positives and I guess we need to put the
+> uninitialized_var back that was hiding them.
+
+Rats.  :-(
+
+> Also curious that the powerpc compiler gets a different set..
+
+The powerpc builds are done with:
+
+$ gcc --version
+gcc (Debian 7.3.0-21) 7.3.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AXPEU1Cs7but9NPo_7FPSCJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEMHgACgkQAVBC80lX
+0GzmKAf/TQ3jI1F/1ppuDloSvl/wgPT7Nibra2HbZlIMH9o8td31xB4GGw7TcqIp
+hVjnMsAL385tLSIWvztmM9qdIsmDWQAOeJus4Sdsx4vqO4DhXvA7EHa9bu3P8S4O
+DsVmrQPAWF9/N1QEFEcVVZh84mBP6zgyY/hzsmbq2JahN5JWHdkz4/oixcaQhQbQ
+TEG+uo+xtmHyLXE2s5pLaTsfYQ87BGCxwr+ASn+X44BcIVI4hTfoS0fTqDDIG9bT
+sCciBRYE016sXuxpgQWWBGt7D1K9Db0mHs/PWcVtXBQ+2VlJXi4dcxiih3zuxzaA
+aW4TEPVrNwzHxtXD+dVuQ/P0IiRHhA==
+=Du4I
+-----END PGP SIGNATURE-----
+
+--Sig_/AXPEU1Cs7but9NPo_7FPSCJ--
